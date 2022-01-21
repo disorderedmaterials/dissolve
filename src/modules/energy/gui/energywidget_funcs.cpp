@@ -47,25 +47,20 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module, Di
 // Update controls within widget
 void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
-    const auto cfgs = module_->keywords().get<std::vector<Configuration *>>("Configuration");
-
-    // Update partial set (Configuration) targets
-    auto optConfig =
-        combo_box_updater(ui_.ConfigurationTargetCombo, cfgs.begin(), cfgs.end(), [](auto *item) { return item->name(); });
+    const auto *cfg = module_->keywords().get<Configuration *>("Configuration");
 
     // Set gradient and stability labels
     auto stabilityWindow = module_->keywords().get<int>("StabilityWindow");
     ui_.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
 
     // Create / update renderables?
-    if (optConfig == cfgs.end())
+    if (!cfg)
         energyGraph_->clearRenderables();
     else if (updateType == ModuleWidget::UpdateType::RecreateRenderables || energyGraph_->renderables().empty())
     {
         // Clear any existing renderables
         energyGraph_->clearRenderables();
 
-        auto cfg = *optConfig;
         auto prefix = fmt::format("{}//{}", module_->uniqueName(), cfg->niceName());
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Total", prefix), "Total", "Totals");
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Inter", prefix), "Inter", "Totals")
@@ -87,10 +82,8 @@ void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 
     // Update labels
     QPalette labelPalette = ui_.StableLabel->palette();
-    if (optConfig != cfgs.end())
+    if (cfg)
     {
-        auto cfg = *optConfig;
-
         if (dissolve_.processingModuleData().contains("EnergyGradient", cfg->niceName()))
             ui_.GradientValueLabel->setText(
                 QString::number(dissolve_.processingModuleData().value<double>("EnergyGradient", cfg->niceName())));
@@ -119,13 +112,4 @@ void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
     ui_.PlotWidget->updateToolbar();
 
     energyGraph_->postRedisplay();
-}
-
-/*
- * Widgets / Functions
- */
-
-void EnergyModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
-{
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
 }

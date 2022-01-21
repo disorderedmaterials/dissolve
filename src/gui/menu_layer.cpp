@@ -28,8 +28,7 @@ void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checke
     newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Basic Atomic)"));
 
     Module *module;
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add some Monte Carlo
     module = ModuleRegistry::create("AtomShake", newLayer);
@@ -53,8 +52,7 @@ void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
     newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Atomic)"));
 
     Module *module;
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add some Monte Carlo
     module = ModuleRegistry::create("AtomShake", newLayer);
@@ -83,8 +81,7 @@ void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
     newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Standard)"));
 
     Module *module;
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add a Monte Carlo shake (MolShake) module
     module = ModuleRegistry::create("MolShake", newLayer);
@@ -113,8 +110,7 @@ void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
     newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (EPSR)"));
 
     Module *module;
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add some Monte Carlo
     module = ModuleRegistry::create("MolShake", newLayer);
@@ -162,8 +158,7 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF"));
     newLayer->setFrequency(5);
 
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the RDF module
     auto *module = ModuleRegistry::create("RDF", newLayer);
@@ -183,8 +178,7 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggere
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Unweighted S(Q)"));
     newLayer->setFrequency(5);
 
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the RDF module
     auto *rdfModule = dynamic_cast<RDFModule *>(ModuleRegistry::create("RDF", newLayer));
@@ -208,8 +202,7 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool c
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q)"));
     newLayer->setFrequency(5);
 
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the RDF module
     auto *rdfModule = ModuleRegistry::create("RDF", newLayer);
@@ -237,8 +230,7 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bo
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q) / X-Ray S(Q)"));
     newLayer->setFrequency(5);
 
-    auto firstCfg = dissolve_.configurations().empty() ? std::vector<Configuration *>()
-                                                       : std::vector<Configuration *>{dissolve_.configurations().front().get()};
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the RDF module
     auto *rdfModule = ModuleRegistry::create("RDF", newLayer);

@@ -170,20 +170,21 @@ bool Dissolve::prepare()
     {
         Messenger::print("Generating attached atom lists for required species...");
         for (auto *module : intraShakeModules)
-            for (auto *cfg :
-                 dynamic_cast<IntraShakeModule *>(module)->keywords().get<std::vector<Configuration *>>("Configuration"))
-                for (auto &sp : coreData_.species())
-                    if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
-                    {
-                        Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
-                                         "terms in Species '{}'...\n",
-                                         sp->name());
-                        if (sp->nAtoms() > 500)
-                            Messenger::warn("'{}' is a large molecule - this might take a while! Consider using a "
-                                            "different evolution module.\n",
-                                            sp->name());
-                        sp->generateAttachedAtomLists();
-                    }
+        {
+            auto *cfg = dynamic_cast<IntraShakeModule *>(module)->keywords().get<Configuration *>("Configuration");
+            for (auto &sp : coreData_.species())
+                if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
+                {
+                    Messenger::print("Performing one-time generation of attached atom lists for intramolecular "
+                                     "terms in Species '{}'...\n",
+                                     sp->name());
+                    if (sp->nAtoms() > 500)
+                        Messenger::warn("'{}' is a large molecule - this might take a while! Consider using a "
+                                        "different evolution module.\n",
+                                        sp->name());
+                    sp->generateAttachedAtomLists();
+                }
+        }
     }
 
     // Set up parallel comms / limits etc.
