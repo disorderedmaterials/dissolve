@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -53,7 +54,7 @@ class ModuleLayer
      * Modules
      */
     private:
-    // List of Modules
+    // Vector of Modules in the layer
     std::vector<std::unique_ptr<Module>> modules_;
 
     public:
@@ -65,6 +66,8 @@ class ModuleLayer
     bool contains(Module *searchModule) const;
     // Return vector of Modules
     std::vector<std::unique_ptr<Module>> &modules();
+    // Return map of modules in the layer, optionally preceding the specified module
+    std::map<std::string, std::vector<const Module *>> modulesAsMap(const Module *beforeThis = nullptr) const;
 
     /*
      * General Actions
