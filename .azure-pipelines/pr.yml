@@ -35,6 +35,7 @@ stages:
               package: "checks.x86_64-linux.dissolve-mpi"
       - job: "test_linux_gui"
         displayName: "Testing GUI"
+        timeoutInMinutes: 90
         pool:
           vmImage: "ubuntu-latest"
         steps:
