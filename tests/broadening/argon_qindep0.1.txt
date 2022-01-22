@@ -28,7 +28,7 @@ EndConfiguration
 Layer  'Processing'
 
 Module  RDF  'RDF01'
-  Configuration  'liquid'
+  Configurations  'liquid'
   Frequency  1
 EndModule
 

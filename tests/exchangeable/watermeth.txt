@@ -69,7 +69,7 @@ EndConfiguration
 Layer  'Correlations'
   # Calculate and test g(r)
   Module  RDF  RDFs
-    Configuration  'Mix'
+    Configurations  'Mix'
     #Save  On
     Frequency  1
     BinWidth 0.03

@@ -129,7 +129,7 @@ Layer  'Processing'
 
 # Calculate RDFs
 Module  RDF  'RDFs'
-  Configuration  'Liquid'
+  Configurations  'Liquid'
   IntraBroadening  None
   BinWidth  0.03
   IntraBroadening  None

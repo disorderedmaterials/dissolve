@@ -53,7 +53,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals
                 uniqueName_, module->uniqueName());
 
         // Check for number of targets, or different target if there's only 1
-        auto rdfConfigs = rdfModule->keywords().get<std::vector<Configuration *>>("Configuration");
+        auto rdfConfigs = rdfModule->keywords().get<std::vector<Configuration *>>("Configurations");
         if (rdfConfigs.size() != 1)
             return Messenger::error(
                 "[SETUP {}] RDF module '{}' targets multiple configurations, which is not permitted when using "

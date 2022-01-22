@@ -12,7 +12,7 @@
 RDFModule::RDFModule() : Module("RDF")
 {
     // Targets
-    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
+    keywords_.addTarget<ConfigurationVectorKeyword>("Configurations", "Set target configuration(s) for the module",
                                                     targetConfigurations_);
 
     // Control
