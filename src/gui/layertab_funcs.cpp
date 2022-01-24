@@ -178,6 +178,8 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
         if (dissolveWindow_->dissolveIterating())
             mcw->disableSensitiveControls();
     }
+    else
+        mcw->updateControls();
 }
 
 void LayerTab::layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
