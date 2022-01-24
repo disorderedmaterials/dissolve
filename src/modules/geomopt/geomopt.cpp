@@ -2,15 +2,14 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "modules/geomopt/geomopt.h"
-#include "keywords/configurationvector.h"
+#include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
 
 GeometryOptimisationModule::GeometryOptimisationModule() : Module("GeometryOptimisation")
 {
     // Targets
-    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
-                                                    targetConfigurations_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Method Control
     keywords_.add<IntegerKeyword>("Control", "MaxCycles", "Maximum number of minimisation cycles to perform", maxCycles_, 1);

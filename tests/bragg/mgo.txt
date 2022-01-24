@@ -37,7 +37,7 @@ Layer  'Main Processing'
   Module  RDF  'RDFs'
     Frequency  1
     Method  Simple
-    Configuration  'Crystal'
+    Configurations  'Crystal'
 
   EndModule
 

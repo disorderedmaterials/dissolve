@@ -25,7 +25,7 @@ Layer  'Processing'
 
   # Test 'Simple' Method
   Module  RDF
-    Configuration  'Box'
+    Configurations  'Box'
     Frequency  1
     InternalTest  On
     Method  Simple

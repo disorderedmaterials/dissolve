@@ -3,13 +3,13 @@
 
 #include "modules/benchmark/benchmark.h"
 #include "keywords/bool.h"
+#include "keywords/configuration.h"
 #include "keywords/integer.h"
 
 BenchmarkModule::BenchmarkModule() : Module("Benchmark")
 {
     // Targets
-    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
-                                                    targetConfigurations_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Control
     keywords_.add<IntegerKeyword>("Control", "N", "Number of times to run each benchmark in order to form average", nRepeats_,

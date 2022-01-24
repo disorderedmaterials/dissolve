@@ -14,7 +14,7 @@ bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
     collectVector_->keywords().set("RangeX", rangeX_);

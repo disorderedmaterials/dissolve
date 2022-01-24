@@ -15,168 +15,165 @@
 bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
+    if (!targetConfiguration_)
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Get options
     Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", nRepeats_, nRepeats_ == 1 ? "run" : "runs");
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
 
-    // Loop over target Configurations
-    for (auto *cfg : targetConfigurations_)
+    // Set up process pool - must do this to ensure we are using all available processes
+    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
+    ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+
+    /*
+     * Configuration Generation
+     */
+    if (testGenerator_)
     {
-        // Set up process pool - must do this to ensure we are using all available processes
-        procPool.assignProcessesToGroups(cfg->processPool());
-        ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
-
-        /*
-         * Configuration Generation
-         */
-        if (testGenerator_)
+        SampledDouble timing;
+        for (auto n = 0; n < nRepeats_; ++n)
         {
-            SampledDouble timing;
-            for (auto n = 0; n < nRepeats_; ++n)
-            {
-                srand(dissolve.seed());
+            srand(dissolve.seed());
 
-                Timer timer;
-                Messenger::mute();
-                cfg->generate(procPool, dissolve.pairPotentialRange());
-                Messenger::unMute();
-                timing += timer.split();
-            }
-            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "Generator"),
-                              "Configuration generator", timing, save_);
+            Timer timer;
+            Messenger::mute();
+            targetConfiguration_->generate(procPool, dissolve.pairPotentialRange());
+            Messenger::unMute();
+            timing += timer.split();
         }
+        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "Generator"),
+                          "Configuration generator", timing, save_);
+    }
 
-        /*
-         * RDF Calculation - Cells method, to maximum range allowed by box
-         */
-        if (testRDFCells_)
+    /*
+     * RDF Calculation - Cells method, to maximum range allowed by box
+     */
+    if (testRDFCells_)
+    {
+        SampledDouble timing;
+        for (auto n = 0; n < nRepeats_; ++n)
         {
-            SampledDouble timing;
-            for (auto n = 0; n < nRepeats_; ++n)
-            {
-                RDFModule rdfModule;
-                rdfModule.keywords().set("Configuration", cfg);
-                cfg->incrementContentsVersion();
-                srand(dissolve.seed());
+            RDFModule rdfModule;
+            rdfModule.keywords().set("Configuration", targetConfiguration_);
+            targetConfiguration_->incrementContentsVersion();
+            srand(dissolve.seed());
 
-                // Run the Module calculation
-                bool upToDate;
-                Timer timer;
-                Messenger::mute();
-                rdfModule.calculateGR(dissolve.processingModuleData(), procPool, cfg, RDFModule::CellsMethod,
-                                      cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
-                Messenger::unMute();
-                timing += timer.split();
-            }
-            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RDFCells"),
-                              "RDF (Cells) to half-cell limit", timing, save_);
+            // Run the Module calculation
+            bool upToDate;
+            Timer timer;
+            Messenger::mute();
+            rdfModule.calculateGR(dissolve.processingModuleData(), procPool, targetConfiguration_, RDFModule::CellsMethod,
+                                  targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
+            Messenger::unMute();
+            timing += timer.split();
         }
+        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "RDFCells"),
+                          "RDF (Cells) to half-cell limit", timing, save_);
+    }
 
-        /*
-         * RDF Calculation - Simple method, to maximum range allowed by box
-         */
-        if (testRDFSimple_)
+    /*
+     * RDF Calculation - Simple method, to maximum range allowed by box
+     */
+    if (testRDFSimple_)
+    {
+        SampledDouble timing;
+        for (auto n = 0; n < nRepeats_; ++n)
         {
-            SampledDouble timing;
-            for (auto n = 0; n < nRepeats_; ++n)
-            {
-                RDFModule rdfModule;
-                rdfModule.keywords().set("Configuration", cfg);
-                cfg->incrementContentsVersion();
-                srand(dissolve.seed());
+            RDFModule rdfModule;
+            rdfModule.keywords().set("Configuration", targetConfiguration_);
+            targetConfiguration_->incrementContentsVersion();
+            srand(dissolve.seed());
 
-                // Run the Module calculation
-                bool upToDate;
-                Timer timer;
-                Messenger::mute();
-                rdfModule.calculateGR(dissolve.processingModuleData(), procPool, cfg, RDFModule::SimpleMethod,
-                                      cfg->box()->inscribedSphereRadius(), 0.05, upToDate);
-                Messenger::unMute();
-                timing += timer.split();
-            }
-            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RDFSimple"),
-                              "RDF (Simple) to half-cell limit", timing, save_);
+            // Run the Module calculation
+            bool upToDate;
+            Timer timer;
+            Messenger::mute();
+            rdfModule.calculateGR(dissolve.processingModuleData(), procPool, targetConfiguration_, RDFModule::SimpleMethod,
+                                  targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
+            Messenger::unMute();
+            timing += timer.split();
         }
+        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "RDFSimple"),
+                          "RDF (Simple) to half-cell limit", timing, save_);
+    }
 
-        /*
-         * Energy Calculation - Intramolecular Terms
-         */
-        if (testIntraEnergy_)
+    /*
+     * Energy Calculation - Intramolecular Terms
+     */
+    if (testIntraEnergy_)
+    {
+        SampledDouble timing;
+        for (auto n = 0; n < nRepeats_; ++n)
         {
-            SampledDouble timing;
-            for (auto n = 0; n < nRepeats_; ++n)
-            {
-                Timer timer;
-                Messenger::mute();
-                EnergyModule::intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
-                Messenger::unMute();
-                timing += timer.split();
-            }
-            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "IntraEnergy"),
-                              "Intramolecular energy", timing, save_);
+            Timer timer;
+            Messenger::mute();
+            EnergyModule::intraMolecularEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
+            Messenger::unMute();
+            timing += timer.split();
         }
+        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "IntraEnergy"),
+                          "Intramolecular energy", timing, save_);
+    }
 
-        /*
-         * Energy Calculation - Intermolecular Terms
-         */
-        if (testInterEnergy_)
+    /*
+     * Energy Calculation - Intermolecular Terms
+     */
+    if (testInterEnergy_)
+    {
+        SampledDouble timing;
+        for (auto n = 0; n < nRepeats_; ++n)
         {
-            SampledDouble timing;
-            for (auto n = 0; n < nRepeats_; ++n)
-            {
-                Timer timer;
-                Messenger::mute();
-                EnergyModule::interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
-                Messenger::unMute();
-                timing += timer.split();
-            }
-            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "InterEnergy"), "Interatomic energy",
-                              timing, save_);
+            Timer timer;
+            Messenger::mute();
+            EnergyModule::interAtomicEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
+            Messenger::unMute();
+            timing += timer.split();
         }
+        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "InterEnergy"),
+                          "Interatomic energy", timing, save_);
+    }
 
-        /*
-         * Distributors
-         */
-        if (testDistributors_)
+    /*
+     * Distributors
+     */
+    if (testDistributors_)
+    {
+        SampledDouble timing;
+        for (auto n = 0; n < nRepeats_; ++n)
         {
-            SampledDouble timing;
-            for (auto n = 0; n < nRepeats_; ++n)
-            {
-                // Create a Molecule distributor
-                RegionalDistributor distributor(cfg->nMolecules(), cfg->cells(), procPool, strategy);
+            // Create a Molecule distributor
+            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), procPool,
+                                            strategy);
 
-                Timer timer;
-                Messenger::mute();
-                while (distributor.cycle())
+            Timer timer;
+            Messenger::mute();
+            while (distributor.cycle())
+            {
+                // Get next set of Molecule targets from the distributor
+                auto targetMolecules = distributor.assignedMolecules();
+
+                // Switch parallel strategy if necessary
+                if (distributor.currentStrategy() != strategy)
                 {
-                    // Get next set of Molecule targets from the distributor
-                    auto targetMolecules = distributor.assignedMolecules();
+                    // Set the new strategy
+                    strategy = distributor.currentStrategy();
 
-                    // Switch parallel strategy if necessary
-                    if (distributor.currentStrategy() != strategy)
-                    {
-                        // Set the new strategy
-                        strategy = distributor.currentStrategy();
-
-                        // Re-initialise the random buffer
-                        procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
-                    }
-
-                    // Loop over target Molecules
-                    for (auto &molId : targetMolecules)
-                        // Get Molecule index and pointer
-                        auto mol = cfg->molecule(molId);
+                    // Re-initialise the random buffer
+                    procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
                 }
-                Messenger::unMute();
-                timing += timer.split();
+
+                // Loop over target Molecules
+                for (auto &molId : targetMolecules)
+                    // Get Molecule index and pointer
+                    auto mol = targetConfiguration_->molecule(molId);
             }
-            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RegionalDist"),
-                              "Distributor (regional)", timing, save_);
+            Messenger::unMute();
+            timing += timer.split();
         }
+        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "RegionalDist"),
+                          "Distributor (regional)", timing, save_);
     }
 
     return true;

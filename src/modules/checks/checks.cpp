@@ -2,15 +2,14 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "modules/checks/checks.h"
-#include "keywords/configurationvector.h"
+#include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/geometrylist.h"
 
 ChecksModule::ChecksModule() : Module("Checks")
 {
     // Targets
-    keywords_.addTarget<ConfigurationVectorKeyword>("Configuration", "Set target configuration(s) for the module",
-                                                    targetConfigurations_);
+    keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Distance
     keywords_.add<GeometryListKeyword>("Distance", "Distance", "Define a distance between Atoms to be checked", distances_,

@@ -89,7 +89,7 @@ Layer  'Processing'
   # Calculate RDFs (no averaging)
   Module  RDF  'RDF01'
     Frequency  1
-    Configuration  'Bulk'
+    Configurations  'Bulk'
     Range  10.0
     BinWidth  0.01
     IntraBroadening  None
@@ -105,7 +105,7 @@ Layer  'Processing'
   # Calculate RDFs (with averaging)
   Module  RDF  'AveragedRDF'
     Frequency  1
-    Configuration  'Bulk'
+    Configurations  'Bulk'
     Range  10.0
     BinWidth  0.01
     IntraBroadening  None

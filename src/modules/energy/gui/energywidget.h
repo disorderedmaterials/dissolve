@@ -40,10 +40,4 @@ class EnergyModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(ModuleWidget::UpdateType updateType) override;
-
-    /*
-     * Widgets / Functions
-     */
-    private slots:
-    void on_ConfigurationTargetCombo_currentIndexChanged(int index);
 };

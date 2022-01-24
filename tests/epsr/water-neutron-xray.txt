@@ -102,7 +102,7 @@ Layer  'RDF / Neutron / XRay'
   Module  RDF  'RDFs'
     Frequency  1
 
-    Configuration  'Bulk'
+    Configurations  'Bulk'
     IntraBroadening  None
     #Save  On
   EndModule

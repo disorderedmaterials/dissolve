@@ -17,7 +17,7 @@ class MolShakeModule : public Module
      */
     private:
     // Target configurations
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_{nullptr};
     // Interatomic cutoff distance to use for energy calculation
     std::optional<double> cutoffDistance_;
     // Number of shakes to attempt per molecule

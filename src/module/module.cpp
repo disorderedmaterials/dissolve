@@ -4,6 +4,7 @@
 #include "module/module.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "keywords/configuration.h"
 
 // Static Singletons
 std::vector<Module *> Module::instances_;
@@ -99,6 +100,26 @@ bool Module::isDisabled() const { return !enabled_; }
 
 // Run main processing
 bool Module::process(Dissolve &dissolve, ProcessPool &procPool) { return false; }
+
+// Set target data
+void Module::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+                        const std::map<std::string, std::vector<const Module *>> &moduleMap)
+{
+    // Search for Configuration-based targets
+    if (!configurations.empty())
+        for (auto &target : keywords_.targetsGroup())
+        {
+            if (target->typeIndex() == typeid(ConfigurationKeyword *))
+                keywords_.set(target->name(), configurations.front().get());
+            else if (target->typeIndex() == typeid(ConfigurationVectorKeyword *))
+            {
+                std::vector<Configuration *> rawCfgs(configurations.size());
+                std::transform(configurations.begin(), configurations.end(), rawCfgs.begin(),
+                               [](const auto &unique) { return unique.get(); });
+                keywords_.set(target->name(), rawCfgs);
+            }
+        }
+}
 
 // Run set-up stage
 bool Module::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }

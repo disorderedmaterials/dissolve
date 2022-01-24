@@ -17,22 +17,18 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
     Messenger::print("\n");
 
     // Check for zero Configuration targets
-    if (targetConfigurations_.empty())
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
+    if (!targetConfiguration_)
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
-    // Loop over target Configurations
-    for (auto *cfg : targetConfigurations_)
-    {
-        // Set up process pool - must do this to ensure we are using all available processes
-        procPool.assignProcessesToGroups(cfg->processPool());
+    // Set up process pool - must do this to ensure we are using all available processes
+    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
-        // Initialise working arrays for coordinates and forces
-        rRef_.resize(cfg->nAtoms(), Vec3<double>());
-        rTemp_.resize(cfg->nAtoms(), Vec3<double>());
-        f_.resize(cfg->nAtoms(), Vec3<double>());
+    // Initialise working arrays for coordinates and forces
+    rRef_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
+    rTemp_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
+    f_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
 
-        optimise<Configuration>(dissolve.potentialMap(), procPool, cfg);
-    }
+    optimise<Configuration>(dissolve.potentialMap(), procPool, targetConfiguration_);
 
     return true;
 }

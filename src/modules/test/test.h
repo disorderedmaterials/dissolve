@@ -17,7 +17,7 @@ class TestModule : public Module
      */
     private:
     // Target configuration
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_{nullptr};
 
     /*
      * Processing

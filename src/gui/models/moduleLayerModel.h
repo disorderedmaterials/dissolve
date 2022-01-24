@@ -4,9 +4,13 @@
 #pragma once
 
 #include "module/layer.h"
+#include "templates/optionalref.h"
 #include <QAbstractListModel>
 #include <QMimeData>
 #include <QModelIndex>
+
+// Forward Declarations
+class Dissolve;
 
 class ModuleLayerModel : public QAbstractListModel
 {
@@ -15,12 +19,16 @@ class ModuleLayerModel : public QAbstractListModel
     private:
     // Source ModuleLayer
     ModuleLayer *moduleLayer_{nullptr};
+    // Reference to Dissolve (for Configuration target setting)
+    OptionalReferenceWrapper<Dissolve> dissolve_;
     // Return object represented by specified model index
     Module *rawData(const QModelIndex &index) const;
 
     public:
-    // Set source Species data
-    void setData(ModuleLayer *moduleLayer);
+    // Set source data
+    void setData(ModuleLayer *moduleLayer, Dissolve &dissolve);
+    // Reset model data, forcing update
+    void reset();
 
     /*
      * QAbstractItemModel overrides

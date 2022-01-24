@@ -24,7 +24,7 @@ class ForcesModule : public Module
      */
     private:
     // Target configurations
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_{nullptr};
     // Test parallel force routines against basic serial versions and supplied reference values (if provided)
     bool test_{false};
     // Use analytic interatomic forces rather than (production) tabulated potentials for tests

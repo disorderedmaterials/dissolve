@@ -34,7 +34,7 @@ Layer  'Processing'
 
   # Calculate and test RDFs
   Module  RDF  'RDF01'
-    Configuration  'Bulk'
+    Configurations  'Bulk'
     Frequency  1
     BinWidth 0.03
     IntraBroadening  None

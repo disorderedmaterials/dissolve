@@ -89,7 +89,7 @@ template <ProblemType problem, Population population> struct Problem
     void setUpRDF()
     {
         rdfmodule_ = std::make_unique<RDFModule>();
-        rdfmodule_->keywords().set("Configuration", std::vector<Configuration *>{cfg_});
+        rdfmodule_->keywords().set("Configurations", std::vector<Configuration *>{cfg_});
     }
 
     template <RDFModule::PartialsMethod method> void iterateGR()

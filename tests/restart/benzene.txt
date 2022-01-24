@@ -200,7 +200,7 @@ Layer  'RDF / Neutron S(Q)'
   Module  RDF  'RDF01'
     Frequency  1
 
-    Configuration  'Bulk'
+    Configurations  'Bulk'
     IntraBroadening    Gaussian  1.800000e-01
   EndModule
 

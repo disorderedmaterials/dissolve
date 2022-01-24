@@ -2,24 +2,35 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/models/moduleLayerModel.h"
+#include "main/dissolve.h"
 #include "module/module.h"
 #include "modules/registry.h"
 #include <QIODevice>
 #include <QIcon>
 #include <QMimeData>
 
-// Set source Species data
-void ModuleLayerModel::setData(ModuleLayer *moduleLayer)
+// Return object represented by specified model index
+Module *ModuleLayerModel::rawData(const QModelIndex &index) const
 {
+    assert(moduleLayer_);
+    return moduleLayer_->modules()[index.row()].get();
+}
+
+// Set source data
+void ModuleLayerModel::setData(ModuleLayer *moduleLayer, Dissolve &dissolve)
+{
+    dissolve_ = dissolve;
+
     beginResetModel();
     moduleLayer_ = moduleLayer;
     endResetModel();
 }
 
-Module *ModuleLayerModel::rawData(const QModelIndex &index) const
+// Reset model data, forcing update
+void ModuleLayerModel::reset()
 {
-    assert(moduleLayer_);
-    return moduleLayer_->modules()[index.row()].get();
+    beginResetModel();
+    endResetModel();
 }
 
 /*
@@ -86,6 +97,8 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         // Probably indicates a drop operation - the "value" is the type of the module to create at the specified index
         auto moduleType = value.toString().toStdString();
         moduleLayer_->modules()[index.row()] = ModuleRegistry::create(moduleType);
+        auto *modulePtr = moduleLayer_->modules()[index.row()].get();
+        modulePtr->setTargets(dissolve_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
 
         emit dataChanged(index, index);
 

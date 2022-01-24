@@ -17,7 +17,7 @@ class IntraShakeModule : public Module
      */
     private:
     // Target configurations
-    std::vector<Configuration *> targetConfigurations_;
+    Configuration *targetConfiguration_{nullptr};
     // Whether Bonds in the molecule should be shaken
     bool adjustBonds_{true};
     // Whether Angles in the molecule should be shaken

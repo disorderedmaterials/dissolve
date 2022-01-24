@@ -13,7 +13,7 @@ bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
     collectDistance_->keywords().set("RangeX", distanceRange_);

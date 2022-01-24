@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "classes/box.h"
 #include "classes/configuration.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
@@ -10,6 +9,15 @@
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
+
+// Set target data
+void SQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+                          const std::map<std::string, std::vector<const Module *>> &moduleMap)
+{
+    auto sqIt = moduleMap.find("RDF");
+    if (sqIt != moduleMap.end())
+        sourceRDF_ = dynamic_cast<const RDFModule *>(sqIt->second.front());
+}
 
 // Run main processing
 bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
