@@ -5,9 +5,10 @@
 #include "keywords/bool.h"
 #include "keywords/data1dstore.h"
 #include "keywords/double.h"
-#include "keywords/integer.h"
 #include "keywords/modulevector.h"
+#include "keywords/optionalint.h"
 #include "keywords/stdstring.h"
+#include "keywords/vector_stringdouble.h"
 
 EPSRModule::EPSRModule() : Module("EPSR")
 {
@@ -42,12 +43,16 @@ EPSRModule::EPSRModule() : Module("EPSR")
                                  0.001, 1.0);
     keywords_.add<DoubleKeyword>("Expansion Function", "GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001,
                                  1.0);
-    keywords_.add<IntegerKeyword>("Expansion Function", "NCoeffP",
-                                  "Number of coefficients used to define the empirical potential (-1 for automatic)", nCoeffP_,
-                                  -1);
-    keywords_.add<IntegerKeyword>("Expansion Function", "NPItSs", "Number of steps for refining the potential", nPItSs_, 1);
+    keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NCoeffP",
+                                          "Number of coefficients used to define the empirical potential (-1 for automatic)",
+                                          nCoeffP_, 0, std::nullopt, 100, "Automatic");
+    keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NPItSs",
+                                          "Number of steps for refining fits to delta functions", nPItSs_, 0, std::nullopt, 100,
+                                          "Off (No Fitting - CAUTION!)");
+    keywords_.add<StringKeyword>("Expansion Function", "InpAFile",
+                                 "EPSR inpa file from which to read starting coefficients from", inpaFilename_);
     keywords_.add<StringKeyword>("Expansion Function", "PCofFile",
-                                 "EPSR pcof file from which to read starting coefficients from", pCofFilename_);
+                                 "EPSR pcof file from which to read empirical potential coefficients from", pCofFilename_);
     keywords_.add<DoubleKeyword>("Expansion Function", "PSigma1",
                                  "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_,
                                  0.001, 1.0);
@@ -62,6 +67,10 @@ EPSRModule::EPSRModule() : Module("EPSR")
 
     // Test
     keywords_.add<BoolKeyword>("Test", "Test", "Test against supplied reference data", test_);
+    keywords_.add<StringDoubleVectorKeyword>("Test", "TestAbsEnergyEP",
+                                             "Specify test absolute EP energy values for pair potentials", testAbsEnergyEP_);
+    keywords_.add<DoubleKeyword>("Test", "TestAbsEnergyEPThreshold", "Test threshold above which absolute EP energy test fails",
+                                 testAbsEnergyEPThreshold_, 1.0e-8);
     keywords_.add<Data1DStoreKeyword>("Test", "TestReference", "Specify test reference data", testReferenceData_);
     keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Test threshold (%error) above which test fails", testThreshold_,
                                  1.0e-5);

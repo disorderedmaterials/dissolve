@@ -2,9 +2,11 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "math/svd.h"
+#include "base/messenger.h"
 #include "templates/array2d.h"
-#include <algorithm>
 
+namespace SVD
+{
 static double sqrarg;
 #define SQR(a) ((sqrarg = (a)) == 0.0 ? 0.0 : sqrarg * sqrarg)
 
@@ -24,7 +26,7 @@ double pythag(double a, double b)
 
 // Perform single value decomposition of the supplied matrix A, putting left-orthogonal (U), diagonal single-value (S), and
 // right-orthogonal (V transpose) matrices into the supplied Arrays
-bool SVD::decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double> &S, Array2D<double> &Vt)
+bool decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double> &S, Array2D<double> &Vt)
 {
     int flag, i, its, j, jj, k, l, nm;
     double anorm, c, f, g, h, s, scale, x, y, z;
@@ -304,65 +306,8 @@ bool SVD::decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double
     return true;
 }
 
-// Test SVD
-void SVD::test()
-{
-    Array2D<double> A, U, V, S, I, Ut, Vt;
-
-    /*
-     * Decompose the identity matrix I.
-     * Should result in U = -I, S = I, and V = -I.
-     */
-    A.initialise(3, 3);
-    A = 0.0;
-    A[{0, 0}] = 1.0;
-    A[{1, 1}] = 1.0;
-    A[{2, 2}] = 1.0;
-    A.print("A");
-    decompose(A, U, S, V);
-    U.print("U");
-    S.print("S");
-    V.print("V");
-
-    // Test for unitary matrices U and V (take transpose and multiply)
-    Ut = U.transposed();
-    Ut.print("Ut");
-    I = U * Ut;
-    I.print("U * Ut");
-
-    Vt = V.transposed();
-    Vt.print("Vt");
-    I = V * Vt;
-    I.print("V * Vt");
-
-    /*
-     */
-    A.initialise(5, 4);
-    A = 0.0;
-    A[{0, 0}] = 1.0;
-    A[{4, 0}] = 2.0;
-    A[{2, 1}] = 3.0;
-    A[{1, 3}] = 2.0;
-    A.print("A");
-    decompose(A, U, S, V);
-    U.print("U");
-    S.print("S");
-    V.print("V");
-
-    // Test for unitary matrices U and V (take transpose and multiply)
-    Ut = U.transposed();
-    Ut.print("Ut");
-    I = U * Ut;
-    I.print("U * Ut");
-
-    Vt = V.transposed();
-    Vt.print("Vt");
-    I = V * Vt;
-    I.print("V * Vt");
-}
-
 // Compute in-place pseudoinverse of supplied matrix
-bool SVD::pseudoinverse(Array2D<double> &A)
+bool pseudoinverse(Array2D<double> &A)
 {
     // First, compute SVD of the matrix A
     Array2D<double> U, S, Vt;
@@ -391,3 +336,5 @@ bool SVD::pseudoinverse(Array2D<double> &A)
 
     return true;
 }
+
+}; // namespace SVD

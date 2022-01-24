@@ -41,21 +41,22 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWra
 }
 
 // Create / retrieve arrays for storage of empirical potential coefficients
-Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
+Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes,
+                                                                std::optional<int> ncoeffp)
 {
     auto &coefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
         "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
 
     auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
-        ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
+        (ncoeffp && ncoeffp.value() != arrayNCoeffP))
     {
         coefficients.initialise(nAtomTypes, nAtomTypes, true);
         for (auto &n : coefficients)
         {
             n.clear();
-            if (ncoeffp > 0)
-                n.resize(ncoeffp, 0);
+            if (ncoeffp && ncoeffp.value() > 0)
+                n.resize(ncoeffp.value(), 0);
         }
     }
 
@@ -64,8 +65,8 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
 
 // Generate empirical potentials from current coefficients
 bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType expansionFunction_,
-                                             double averagedRho, int ncoeffp, double rminpt, double rmaxpt, double sigma1,
-                                             double sigma2)
+                                             double averagedRho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
+                                             double sigma1, double sigma2)
 {
     const auto nAtomTypes = dissolve.nAtomTypes();
 
@@ -193,6 +194,42 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
     dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), unaryOp);
 
     return absEnergyEP;
+}
+
+// Test absolute energy of empirical potentials
+bool EPSRModule::testAbsEnergyEP(Dissolve &dissolve)
+{
+    auto &coefficients = potentialCoefficients(dissolve, dissolve.nAtomTypes());
+    if (coefficients.empty())
+        return false;
+
+    auto result = true;
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+            auto id1 = fmt::format("{}-{}", at1->name(), at2->name());
+            auto id2 = fmt::format("{}-{}", at2->name(), at1->name());
+            auto it = std::find_if(testAbsEnergyEP_.begin(), testAbsEnergyEP_.end(),
+                                   [id1, id2](const auto &pair) { return pair.first == id1 || pair.first == id2; });
+
+            if (it != testAbsEnergyEP_.end())
+            {
+                auto &potCoeff = coefficients[{i, j}];
+
+                auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
+                auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
+                auto range = cMax - cMin;
+
+                auto error = fabs(it->second - range);
+                Messenger::print("Absolute EP magnitude for '{}' has error of {} with reference data "
+                                 "and is {} (threshold is {})\n\n",
+                                 it->first, error, error <= testAbsEnergyEPThreshold_ ? "OK" : "NOT OK",
+                                 testAbsEnergyEPThreshold_);
+                if (error > testAbsEnergyEPThreshold_)
+                    result = false;
+            }
+        });
+
+    return result;
 }
 
 // Truncate the supplied data

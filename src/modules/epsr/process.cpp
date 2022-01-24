@@ -77,7 +77,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals
 
         // Read in the coefficients / setup from the supplied file
         if (!readPCof(dissolve, procPool, pCofFilename_))
-            return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n");
+            return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", uniqueName_);
 
         // Set up the additional potentials - reconstruct them from the current coefficients
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
@@ -90,6 +90,16 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals
             if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rMinPT_, rMaxPT_, pSigma1_, pSigma2_))
                 return false;
         }
+    }
+
+    // If an inpa file was provided, read in the parameters from it here
+    if (!inpaFilename_.empty())
+    {
+        Messenger::print("[SETUP {}] Reading fit coefficients from '{}'...\n", uniqueName_, inpaFilename_);
+
+        // Read in the coefficients / setup from the supplied file
+        if (!readFitCoefficients(dissolve, procPool, inpaFilename_))
+            return Messenger::error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", uniqueName_);
     }
 
     // Try to calculate the deltaSQ array
@@ -111,14 +121,14 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         rMaxPT_ = dissolve.pairPotentialRange();
     if (rMinPT_ < 0.0)
         rMinPT_ = rMaxPT_ - 2.0;
-    if (nCoeffP_ <= 0)
+    if (!nCoeffP_)
         nCoeffP_ = std::min(int(10.0 * rMaxPT_ + 0.0001), mcoeff);
 
     // Print option summary
     Messenger::print("EPSR: Feedback factor is {}.\n", feedback_);
     Messenger::print("EPSR: {} functions will be used to approximate difference data.\n",
                      expansionFunctionTypes().keyword(expansionFunction_));
-    Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", nCoeffP_, pSigma2_);
+    Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", nCoeffP_.value(), pSigma2_);
     if (modifyPotential_)
         Messenger::print("EPSR: Perturbations to interatomic potentials will be generated and applied.\n");
     else
@@ -172,7 +182,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Set up storage for the changes to coefficients used to generate the empirical potentials
     const auto nAtomTypes = dissolve.nAtomTypes();
-    Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, nCoeffP_);
+    Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, nCoeffP_.value());
     fluctuationCoefficients = 0.0;
 
     // Create storage for our summed UnweightedSQ
@@ -267,30 +277,32 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 
         auto fitError = 0.0;
+        auto nIterations = nPItSs_.value_or(0);
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
             // Construct our fitting object
             GaussFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_, gSigma1_, nPItSs_, 0.01, 0, 3, 3, false);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01, 0, 3,
+                                                              3, false);
             else
             {
                 if (fitCoefficients.size() != nCoeffP_)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_);
-                    fitError =
-                        coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_, gSigma1_, nPItSs_, 0.01, 0, 3, 3, false);
+                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_.value());
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01,
+                                                                  0, 3, 3, false);
                 }
                 else
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, gSigma1_, nPItSs_, 0.01, 0, 3,
-                                                                  3, false);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, gSigma1_, nIterations, 0.01, 0,
+                                                                  3, 3, false);
             }
 
             // Store the new fit coefficients
-            std::copy(coeffMinimiser.A().begin(), coeffMinimiser.A().end(), fitCoefficients.begin());
+            fitCoefficients = coeffMinimiser.A();
 
             deltaFQFit = coeffMinimiser.approximation();
         }
@@ -300,21 +312,21 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             PoissonFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_, pSigma1_, pSigma2_, nPItSs_, 0.1, 0, 3, 3,
-                                                              false);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_, nIterations,
+                                                              0.1, 0, 3, 3, false);
             else
             {
                 if (fitCoefficients.size() != nCoeffP_)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_);
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_, pSigma1_, pSigma2_, nPItSs_, 0.01, 0,
-                                                                  3, 3, false);
+                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_.value());
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_,
+                                                                  nIterations, 0.01, 0, 3, 3, false);
                 }
                 else
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_, nPItSs_,
-                                                                  0.01, 0, 3, 3, false);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_,
+                                                                  nIterations, 0.01, 0, 3, 3, false);
             }
 
             // Store the new fit coefficients
@@ -531,7 +543,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             for (auto &sq : estimatedSQ)
             {
-                Data1DExportFileFormat exportFormat(sq.tag());
+                Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", uniqueName_, sq.tag()));
                 if (!exportFormat.exportData(sq))
                     return procPool.decideFalse();
             }
@@ -598,14 +610,26 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 [&](int i, auto at1, int j, auto at2) {
                                     auto weight = scatteringMatrix.pairWeightInverse(0.0, at1, at2, dataIndex);
 
-                                    // Halve contribution from unlike terms to avoid adding double the potential for those
-                                    // partials
+                                    /*
+                                     * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
+                                     * combination with the following weighting factors (see circa line 3378 in
+                                     * epsr_standalone_rev1.f):
+                                     *
+                                     * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
+                                     * disable potential generation)
+                                     * 2. A flag controlling whether specific potentials are refined (efacp)
+                                     * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
+                                     * multiplied by the feedback factor.
+                                     */
+
+                                    // In the original EPSR the off-diagonal elements in the inverse matrix have also been
+                                    // halved so as not to double-count the i != j terms
                                     if (i != j)
                                         weight *= 0.5;
 
                                     // Store fluctuation coefficients ready for addition to potential coefficients later on.
                                     for (auto n = 0; n < nCoeffP_; ++n)
-                                        fluctuationCoefficients[{i, j, n}] += weight * fitCoefficients[n];
+                                        fluctuationCoefficients[{i, j, n}] += weight * feedback_ * fitCoefficients[n];
                                 });
 
         // Increase dataIndex
@@ -626,16 +650,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                     if (overwritePotentials_)
                                         std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
-                                    // Perform smoothing of the fluctuation coefficients before we sum them into the potential
-                                    // (the un-smoothed coefficients are stored)
-                                    Data1D smoothedCoefficients;
-                                    for (auto n = 0; n < nCoeffP_; ++n)
-                                        smoothedCoefficients.addPoint(n, fluctuationCoefficients[{i, j, n}]);
-                                    Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
-
                                     // Add in fluctuation coefficients
                                     for (auto n = 0; n < nCoeffP_; ++n)
-                                        potCoeff[n] += weighting_ * smoothedCoefficients.value(n);
+                                        potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
 
                                     // Set first term to zero (following EPSR)
                                     potCoeff[0] = 0.0;
@@ -643,11 +660,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Determine absolute energy of empirical potentials
         energabs = absEnergyEP(dissolve);
-
-        // Apply factor of 1.0/rho to abs energy if using Poisson approximation (since this term is not present in the
-        // fit functions)
-        if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
-            energabs /= targetConfiguration_->atomicDensity();
 
         /*
          * Determine the scaling we will apply to the coefficients (if any)
@@ -694,6 +706,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         energabs = absEnergyEP(dissolve);
 
+    // Test absolute EP energy?
+    if (!testAbsEnergyEP_.empty() && !testAbsEnergyEP(dissolve))
+        return false;
+
     // Save data?
     if (saveEmpiricalPotentials_)
     {
@@ -705,7 +721,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                         PairPotential *pp = dissolve.pairPotential(at1, at2);
 
                                         Data1DExportFileFormat exportFormat(
-                                            fmt::format("EP-{}-{}.txt", at1->name(), at2->name()));
+                                            fmt::format("{}-EP-{}-{}.txt", uniqueName_, at1->name(), at2->name()));
                                         if (!exportFormat.exportData(pp->uAdditional()))
                                             return procPool.decideFalse();
                                         return std::nullopt;
@@ -721,20 +737,21 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, nCoeffP_);
 
-            dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
-                                        // Grab reference to coefficients
-                                        auto &potCoeff = coefficients[{i, j}];
+            dissolve::for_each_pair(
+                ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                    // Grab reference to coefficients
+                    auto &potCoeff = coefficients[{i, j}];
 
-                                        LineParser fileParser;
-                                        if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))
-                                            return procPool.decideFalse();
-                                        for (auto n : potCoeff)
-                                            if (!fileParser.writeLineF("{}\n", n))
-                                                return procPool.decideFalse();
-                                        fileParser.closeFiles();
-                                        return std::nullopt;
-                                    });
+                    LineParser fileParser;
+                    if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", uniqueName_, at1->name(), at2->name())))
+                        return procPool.decideFalse();
+                    for (auto n : potCoeff)
+                        if (!fileParser.writeLineF("{}\n", n))
+                            return procPool.decideFalse();
+                    fileParser.closeFiles();
+                    return std::nullopt;
+                });
 
             procPool.decideTrue();
         }
