@@ -7,7 +7,6 @@
 #include "math/data1d.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/nodereference.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class Collect1DProcedureNode;

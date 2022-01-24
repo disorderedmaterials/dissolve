@@ -4,7 +4,6 @@
 #pragma once
 
 #include "gui/ui_gettabnamedialog.h"
-#include "templates/reflist.h"
 #include <QDialog>
 
 // Forward Declarations

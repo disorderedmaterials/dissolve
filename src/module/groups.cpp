@@ -4,6 +4,7 @@
 #include "module/groups.h"
 #include "base/sysfunc.h"
 #include "module/group.h"
+#include <algorithm>
 
 /*
  * Module Types

@@ -505,7 +505,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
     summedUnweightedGR.setUpPartials(combinedAtomTypes);
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
-    // RefList for simplicity
+    // Vector for simplicity
     std::vector<std::pair<Configuration *, double>> configWeights;
     double totalWeight = 0.0;
     for (Configuration *cfg : parentCfgs)

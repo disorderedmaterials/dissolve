@@ -3,7 +3,9 @@
 
 #pragma once
 
-#include "templates/reflist.h"
+#include <string>
+#include <string_view>
+#include <vector>
 
 // Forward Declarations
 class Module;
@@ -21,8 +23,8 @@ class ModuleGroup
     private:
     // Name of the group
     std::string name_;
-    // RefList of Modules in this group
-    RefList<Module> modules_;
+    // vector of Modules in this group
+    std::vector<Module *> modules_;
 
     public:
     // Return name of group
@@ -38,5 +40,5 @@ class ModuleGroup
     // Return number of Modules in the group
     int nModules() const;
     // Return reflist of Modules
-    const RefList<Module> &modules() const;
+    const std::vector<Module *> &modules() const;
 };

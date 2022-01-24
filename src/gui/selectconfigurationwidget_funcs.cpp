@@ -115,7 +115,7 @@ std::vector<Configuration *> SelectConfigurationWidget::currentConfiguration() c
 {
     std::vector<Configuration *> selection;
 
-    // Loop over items in the list and construct the selection RefList
+    // Loop over items in the list and construct the selection
     for (auto n = 0; n < ui_.ConfigurationList->count(); ++n)
     {
         QListWidgetItem *item = ui_.ConfigurationList->item(n);

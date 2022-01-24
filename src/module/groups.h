@@ -4,6 +4,7 @@
 #pragma once
 
 #include "module/group.h"
+#include <memory>
 #include <vector>
 
 // Forward Declarations
@@ -40,7 +41,7 @@ class ModuleGroups
     private:
     // Current list of groups
     std::vector<std::unique_ptr<ModuleGroup>> groups_;
-    // RefList of all Modules present in all groups
+    // Vector of all Modules present in all groups
     std::vector<std::pair<Module *, ModuleGroup *>> allModules_;
 
     public:

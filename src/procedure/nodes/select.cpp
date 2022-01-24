@@ -205,7 +205,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
     excludedSites_.clear();
     for (auto node : sameSiteExclusions_)
         if (node->currentSite())
-            excludedSites_.addUnique(node->currentSite());
+            excludedSites_.insert(node->currentSite());
 
     // Get required Molecule parent, if requested
     std::shared_ptr<const Molecule> moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : nullptr;
@@ -237,7 +237,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
                 continue;
 
             // Check Site exclusions
-            if (excludedSites_.contains(&site))
+            if (std::find(excludedSites_.begin(), excludedSites_.end(), &site) != excludedSites_.end())
                 continue;
 
             // Check distance from reference site (if defined)

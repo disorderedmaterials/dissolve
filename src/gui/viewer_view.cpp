@@ -23,10 +23,14 @@ const View &BaseViewer::view() const
 }
 
 // Register that the specified viewer depends on (links to) this one
-void BaseViewer::addDependentViewer(BaseViewer *viewer) { dependentViewers_.addUnique(viewer); }
+void BaseViewer::addDependentViewer(BaseViewer *viewer) { dependentViewers_.insert(viewer); }
 
 // Unregister the specified viewer
-void BaseViewer::removeDependentViewer(BaseViewer *viewer) { dependentViewers_.remove(viewer); }
+void BaseViewer::removeDependentViewer(BaseViewer *viewer)
+{
+    auto it = std::find(dependentViewers_.begin(), dependentViewers_.end(), viewer);
+    dependentViewers_.erase(it);
+}
 
 // Link this viewer to the one specified
 void BaseViewer::linkView(BaseViewer *viewToLinkTo)

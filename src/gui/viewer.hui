@@ -9,13 +9,13 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/data1d.h"
-#include "templates/reflist.h"
 #include <QMenu>
 #include <QObject>
 #include <QOffscreenSurface>
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
 #include <QTimer>
+#include <set>
 #include <vector>
 
 // Forward Declarations
@@ -51,7 +51,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Viewer to which this view is linked (is dependent on for its view)
     BaseViewer *linkedViewer_;
     // List of other viewers that are dependent on (i.e. are linked to) this one
-    RefList<BaseViewer> dependentViewers_;
+    std::set<BaseViewer *> dependentViewers_;
 
     private:
     // Register that the specified viewer depends on (links to) this one

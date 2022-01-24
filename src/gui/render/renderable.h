@@ -39,7 +39,7 @@ class Renderable
      */
     private:
     // List of all current renderables
-    static RefList<Renderable> instances_;
+    static std::vector<Renderable *> instances_;
 
     /*
      * Identity
