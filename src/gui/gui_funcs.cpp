@@ -361,7 +361,8 @@ void DissolveWindow::updateMenus()
     ui_.FileCloseAction->setEnabled(allowEditing);
 
     // Enable / disable other menu items as appropriate
-    ui_.SimulationMenu->setEnabled(allowEditing);
+    for (auto *action : ui_.SimulationMenu->actions())
+        action->setEnabled(action == ui_.SimulationStopAction == !allowEditing);
     ui_.SpeciesMenu->setEnabled(allowEditing);
     ui_.ConfigurationMenu->setEnabled(allowEditing);
     ui_.LayerMenu->setEnabled(allowEditing);
