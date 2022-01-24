@@ -137,6 +137,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     std::shared_ptr<SequenceProcedureNode> scope_;
 
     public:
+    // Find the node which owns this node.
+    NodeRef parent() const;
     // Set scope
     void setScope(std::shared_ptr<SequenceProcedureNode> scopeNode);
     // Return scope (SequenceNode) in which this node exists

@@ -122,6 +122,14 @@ const KeywordStore &ProcedureNode::keywords() const { return keywords_; }
 // Set scope
 void ProcedureNode::setScope(std::shared_ptr<SequenceProcedureNode> scopeNode) { scope_ = scopeNode; }
 
+// Find the node which owns this node.
+NodeRef ProcedureNode::parent() const
+{
+    if (!scope_)
+        return nullptr;
+    return scope_->parentNode();
+}
+
 // Return scope (SequenceNode) in which this node exists
 std::shared_ptr<SequenceProcedureNode> ProcedureNode::scope() const { return scope_; }
 
