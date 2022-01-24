@@ -4,6 +4,7 @@
 #include "module/groups.h"
 #include "base/sysfunc.h"
 #include "module/group.h"
+#include <algorithm>
 
 /*
  * Module Types
@@ -51,11 +52,12 @@ ModuleGroup *ModuleGroups::addModule(Module *module, std::string_view groupName)
     }
 
     // Is the Module already in the list and assigned to a group?
-    RefDataItem<Module, ModuleGroup *> *moduleItem = allModules_.contains(module);
-    if (moduleItem)
-        moduleItem->data()->remove(module);
+    auto moduleItem =
+        std::find_if(allModules_.begin(), allModules_.end(), [module](const auto &pair) { return pair.first == module; });
+    if (moduleItem != allModules_.end())
+        moduleItem->second->remove(module);
     else
-        allModules_.append(module, moduleGroup->get());
+        allModules_.emplace_back(module, moduleGroup->get());
 
     // Add the Module to its new group
     moduleGroup->get()->add(module);
@@ -67,14 +69,15 @@ ModuleGroup *ModuleGroups::addModule(Module *module, std::string_view groupName)
 void ModuleGroups::removeModule(Module *module)
 {
     // Find the Module in our list
-    RefDataItem<Module, ModuleGroup *> *moduleItem = allModules_.contains(module);
-    if (!moduleItem)
+    auto moduleItem =
+        std::find_if(allModules_.begin(), allModules_.end(), [module](const auto &pair) { return pair.first == module; });
+    if (moduleItem == allModules_.end())
         return;
 
-    auto *group = moduleItem->data();
+    auto *group = moduleItem->second;
 
     group->remove(module);
-    allModules_.remove(module);
+    allModules_.erase(moduleItem);
 
     // Is the group now empty?
     if (group->nModules() == 0)
@@ -82,21 +85,25 @@ void ModuleGroups::removeModule(Module *module)
 }
 
 // Number of Modules present of all groups
-int ModuleGroups::nModules() const { return allModules_.nItems(); }
+int ModuleGroups::nModules() const { return allModules_.size(); }
 
 // Return current list of groups
 const std::vector<std::unique_ptr<ModuleGroup>> &ModuleGroups::groups() const { return groups_; }
 
 // Return reflist of all Modules present over all groups
-const RefDataList<Module, ModuleGroup *> &ModuleGroups::modules() const { return allModules_; }
+const std::vector<std::pair<Module *, ModuleGroup *>> &ModuleGroups::modules() const { return allModules_; }
 
 // Return whether the specified Module is present (in any group)
-bool ModuleGroups::contains(const Module *module) const { return allModules_.contains(module); }
+bool ModuleGroups::contains(const Module *module) const
+{
+    return allModules_.end() !=
+           std::find_if(allModules_.begin(), allModules_.end(), [module](const auto &pair) { return pair.first == module; });
+}
 
 // Return name of group assigned to specified Module (if present)
 std::string_view ModuleGroups::groupName(const Module *module) const
 {
-    auto *ri = allModules_.contains(module);
+    auto ri = std::find_if(allModules_.begin(), allModules_.end(), [module](const auto &pair) { return pair.first == module; });
 
-    return (ri ? ri->data()->name() : "Default");
+    return (ri != allModules_.end() ? ri->second->name() : "Default");
 }

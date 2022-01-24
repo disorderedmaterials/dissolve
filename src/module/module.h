@@ -8,7 +8,6 @@
 #include "keywords/configurationvector.h"
 #include "keywords/store.h"
 #include "math/sampleddouble.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class Dissolve;

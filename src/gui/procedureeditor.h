@@ -4,7 +4,6 @@
 #pragma once
 
 #include "gui/ui_procedureeditor.h"
-#include "templates/refdatalist.h"
 
 // Forward Declarations
 class CoreData;
@@ -30,8 +29,6 @@ class ProcedureEditor : public QWidget
     private:
     // Procedure to be edited
     Procedure *procedure_;
-    // Module categories and their associated MimeTreeWidgetItems
-    RefDataList<MimeTreeWidgetItem, QString> moduleCategories_;
 
     public:
     // Set up to display / edit the target Procedure

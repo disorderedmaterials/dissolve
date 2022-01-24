@@ -4,7 +4,7 @@
 #pragma once
 
 #include "module/group.h"
-#include "templates/refdatalist.h"
+#include <memory>
 #include <vector>
 
 // Forward Declarations
@@ -41,8 +41,8 @@ class ModuleGroups
     private:
     // Current list of groups
     std::vector<std::unique_ptr<ModuleGroup>> groups_;
-    // RefList of all Modules present in all groups
-    RefDataList<Module, ModuleGroup *> allModules_;
+    // Vector of all Modules present in all groups
+    std::vector<std::pair<Module *, ModuleGroup *>> allModules_;
 
     public:
     // Add Module to specified group, creating it if necessary
@@ -54,7 +54,7 @@ class ModuleGroups
     // Return current list of groups
     const std::vector<std::unique_ptr<ModuleGroup>> &groups() const;
     // Return reflist of all Modules present over all groups
-    const RefDataList<Module, ModuleGroup *> &modules() const;
+    const std::vector<std::pair<Module *, ModuleGroup *>> &modules() const;
     // Return whether the specified Module is present (in any group)
     bool contains(const Module *module) const;
     // Return name of group assigned to specified Module (if present)

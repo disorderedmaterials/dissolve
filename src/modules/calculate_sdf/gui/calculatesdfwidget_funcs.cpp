@@ -59,14 +59,14 @@ void CalculateSDFModuleWidget::updateControls(ModuleWidget::UpdateType updateTyp
     refreshing_ = true;
 
     // Update available reference molecule combo
-    RefDataList<Species, std::string> refMolecules;
+    std::vector<std::pair<Species *, std::string>> refMolecules;
     // -- Find available AvgMol results
     auto avgMolModules = Module::allOfType<CalculateAvgMolModule>();
     for (CalculateAvgMolModule *module : avgMolModules)
-        refMolecules.append(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
+        refMolecules.emplace_back(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species
     for (const auto &sp : dissolve_.coreData().species())
-        refMolecules.append(sp.get(), fmt::format("{} (Species)", sp->name()));
+        refMolecules.emplace_back(sp.get(), fmt::format("{} (Species)", sp->name()));
     ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 
     if (updateType == ModuleWidget::UpdateType::RecreateRenderables || sdfGraph_->renderables().empty())

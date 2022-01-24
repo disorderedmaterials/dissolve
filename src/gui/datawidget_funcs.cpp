@@ -122,12 +122,14 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
     if (checked)
     {
         // Get possible target GraphGizmos, and construct list of associated DataViewers
-        RefList<GraphGizmo> graphGizmos = Gizmo::findAll<GraphGizmo>("Graph");
-        RefDataList<DataViewer, GraphGizmo *> targets;
+        std::vector<GraphGizmo *> graphGizmos = Gizmo::findAll<GraphGizmo>("Graph");
+        std::vector<std::pair<DataViewer *, GraphGizmo *>> targets;
         for (GraphGizmo *gizmo : graphGizmos)
-            targets.append(gizmo->dataViewer(), gizmo);
-        targets.remove(dataViewer());
-        if (targets.nItems() == 0)
+            targets.emplace_back(gizmo->dataViewer(), gizmo);
+        targets.erase(
+            std::remove_if(targets.begin(), targets.end(), [v = dataViewer()](const auto pair) { return v == pair.first; }),
+            targets.end());
+        if (targets.empty())
         {
             ui_.ViewLinkedViewButton->setChecked(false);
             return;
@@ -136,10 +138,9 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
         // Construct a list of targets as a QStringList
         QStringList destinations;
         auto currentItem = -1, count = 0;
-        RefDataListIterator<DataViewer, GraphGizmo *> targetIterator(targets);
-        while (DataViewer *viewer = targetIterator.iterate())
+        for (auto &[viewer, gizmo] : targets)
         {
-            destinations << targetIterator.currentData()->uniqueName();
+            destinations << gizmo->uniqueName();
             if (&viewer->view() == dataViewer()->view().linkedView())
                 currentItem = count;
             ++count;
@@ -156,7 +157,7 @@ void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
 
         // The destination view from the
         auto viewIndex = destinations.indexOf(viewName);
-        DataViewer *viewParent = targets.item(viewIndex);
+        DataViewer *viewParent = targets[viewIndex].first;
         if (!viewParent)
             return;
 

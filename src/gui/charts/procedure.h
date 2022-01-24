@@ -48,16 +48,16 @@ class ProcedureChart : public ChartBase
      */
     private:
     // Widgets for our root sequence Procedure nodes
-    RefList<ProcedureChartNodeBlock> rootSequenceNodeWidgets_;
+    std::vector<ProcedureChartNodeBlock *> rootSequenceNodeWidgets_;
 
     private:
     // Create / own chart block widgets for the specified sequence
     void updateContentBlocks(std::shared_ptr<const SequenceProcedureNode> sequenceNode,
-                             RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel);
+                             std::vector<ProcedureChartNodeBlock *> &oldSequenceWidgets, int &indentLevel);
     // Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
     ProcedureChartNodeBlock *nodeBlock(NodeRef node);
     // Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
-    ProcedureChartNodeBlock *nodeBlock(NodeRef node, const RefList<ProcedureChartNodeBlock> &list);
+    ProcedureChartNodeBlock *nodeBlock(NodeRef node, const std::vector<ProcedureChartNodeBlock *> &list);
 
     protected:
     // Update the content block widgets against the current target data
@@ -78,7 +78,7 @@ class ProcedureChart : public ChartBase
 
     private:
     // Calculate geometries for the widgets in the supplied sequence list
-    void calculateGeometries(RefList<ProcedureChartNodeBlock> &nodeWidgets, QSize &requiredSize, int &indentLevel);
+    void calculateGeometries(std::vector<ProcedureChartNodeBlock *> &nodeWidgets, QSize &requiredSize, int &indentLevel);
     // Calculate new widget geometry according to the layout requirements, returning the entire area required
     QSize calculateNewWidgetGeometry(QSize currentSize);
 };

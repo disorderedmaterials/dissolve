@@ -386,7 +386,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
     // Now, loop over extent integers and construct list of gridReferences within range
     std::vector<Vec3<int>> neighbourIndices;
-    RefList<const Cell> cellNbrs;
+    std::vector<const Cell *> cellNbrs;
     Vec3<int> i, j;
     const Cell *nbr;
     for (auto x = -extents_.x; x <= extents_.x; ++x)
@@ -428,12 +428,12 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
                 if (!close)
                     continue;
 
-                // Check that the cell is not already in the list by querying the cellNbrs RefList
+                // Check that the cell is not already in the list by querying the cellNbrs vector
                 nbr = cell(x, y, z);
-                if (cellNbrs.contains(nbr))
+                if (std::find(cellNbrs.begin(), cellNbrs.end(), nbr) != cellNbrs.end())
                     continue;
                 neighbourIndices.emplace_back(x, y, z);
-                cellNbrs.append(nbr);
+                cellNbrs.push_back(nbr);
             }
         }
     }

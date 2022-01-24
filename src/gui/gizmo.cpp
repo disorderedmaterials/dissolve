@@ -4,19 +4,20 @@
 #include "gui/gizmo.h"
 #include "base/sysfunc.h"
 #include <QMdiSubWindow>
+#include <algorithm>
 
 // Static Singletons
-RefList<Gizmo> Gizmo::allGizmos_;
+std::vector<Gizmo *> Gizmo::allGizmos_;
 
 Gizmo::Gizmo(Dissolve &dissolve, const QString uniqueName) : dissolve_(dissolve)
 {
     window_ = nullptr;
     uniqueName_ = uniqueName;
     refreshing_ = false;
-    allGizmos_.append(this);
+    allGizmos_.push_back(this);
 }
 
-Gizmo::~Gizmo() { allGizmos_.remove(this); }
+Gizmo::~Gizmo() { allGizmos_.erase(std::remove(allGizmos_.begin(), allGizmos_.end(), this), allGizmos_.end()); }
 
 /*
  * Core
@@ -85,13 +86,13 @@ Gizmo *Gizmo::find(QMdiSubWindow *window)
 bool Gizmo::acceptsData(const QString &dataType) { return false; }
 
 // Return all Gizmos that accept data of the specified type
-RefList<Gizmo> Gizmo::allThatAccept(const QString &dataType)
+std::vector<Gizmo *> Gizmo::allThatAccept(const QString &dataType)
 {
-    RefList<Gizmo> gizmos;
+    std::vector<Gizmo *> gizmos;
 
     for (Gizmo *gizmo : allGizmos_)
         if (gizmo->acceptsData(dataType))
-            gizmos.append(gizmo);
+            gizmos.push_back(gizmo);
 
     return gizmos;
 }

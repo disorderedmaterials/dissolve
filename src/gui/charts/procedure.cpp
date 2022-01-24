@@ -56,10 +56,10 @@ void ProcedureChart::paintEvent(QPaintEvent *event)
 
 // Update the content block widgets against the current target data for the supplied SequenceNode
 void ProcedureChart::updateContentBlocks(std::shared_ptr<const SequenceProcedureNode> sequence,
-                                         RefList<ProcedureChartNodeBlock> &oldSequenceWidgets, int &indentLevel)
+                                         std::vector<ProcedureChartNodeBlock *> &oldSequenceWidgets, int &indentLevel)
 {
     // Create a temporary list that will store our widgets to be 'reused'
-    RefList<ProcedureChartNodeBlock> newSequenceWidgets;
+    std::vector<ProcedureChartNodeBlock *> newSequenceWidgets;
 
     // Iterate through the nodes in this sequence, searching for their widgets in the oldWidgetsList
     for (auto node : sequence->sequence())
@@ -69,8 +69,8 @@ void ProcedureChart::updateContentBlocks(std::shared_ptr<const SequenceProcedure
         if (block)
         {
             // Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
-            newSequenceWidgets.append(block);
-            oldSequenceWidgets.remove(block);
+            newSequenceWidgets.push_back(block);
+            oldSequenceWidgets.erase(std::find(oldSequenceWidgets.begin(), oldSequenceWidgets.end(), block));
         }
         else
         {
@@ -78,8 +78,8 @@ void ProcedureChart::updateContentBlocks(std::shared_ptr<const SequenceProcedure
             block = new ProcedureChartNodeBlock(this, node, coreData_);
             connect(block, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
             connect(block, SIGNAL(keywordsToggled()), this, SLOT(recalculateLayout()));
-            newSequenceWidgets.append(block);
-            chartBlocks_.append(block);
+            newSequenceWidgets.push_back(block);
+            chartBlocks_.push_back(block);
         }
 
         // Set the colour of the widget according to the current indent level
@@ -99,7 +99,7 @@ void ProcedureChart::updateContentBlocks(std::shared_ptr<const SequenceProcedure
     // Any widgets remaining in oldSequenceWidgets are no longer used, and can thus be deleted
     for (ProcedureChartNodeBlock *block : oldSequenceWidgets)
     {
-        chartBlocks_.remove(block);
+        chartBlocks_.erase(std::find(chartBlocks_.begin(), chartBlocks_.end(), block));
         delete block;
     }
 
@@ -111,7 +111,7 @@ void ProcedureChart::updateContentBlocks(std::shared_ptr<const SequenceProcedure
 ProcedureChartNodeBlock *ProcedureChart::nodeBlock(NodeRef node) { return nodeBlock(node, rootSequenceNodeWidgets_); }
 
 // Find ProcedureChartNodeBlock displaying specified ProcedureNode in the supplied list
-ProcedureChartNodeBlock *ProcedureChart::nodeBlock(NodeRef node, const RefList<ProcedureChartNodeBlock> &list)
+ProcedureChartNodeBlock *ProcedureChart::nodeBlock(NodeRef node, const std::vector<ProcedureChartNodeBlock *> &list)
 {
     for (ProcedureChartNodeBlock *block : list)
     {
@@ -152,7 +152,8 @@ void ProcedureChart::updateContentBlocks()
  */
 
 // Calculate geometries for the widgets in the supplied sequence list
-void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock> &nodeWidgets, QSize &requiredSize, int &indentLevel)
+void ProcedureChart::calculateGeometries(std::vector<ProcedureChartNodeBlock *> &nodeWidgets, QSize &requiredSize,
+                                         int &indentLevel)
 {
     // Precalculate some useful metrics
     const auto leftIndent = indentLevel * metrics_.indentWidth();
@@ -176,7 +177,7 @@ void ProcedureChart::calculateGeometries(RefList<ProcedureChartNodeBlock> &nodeW
         requiredSize.setHeight(requiredSize.height() + block->widgetHeight() + metrics_.blockVerticalSpacing());
 
         // If this block has sub-blocks (i.e. the node has a branch), recurse in to it
-        if (block->branchWidgets().nItems() > 0)
+        if (!block->branchWidgets().empty())
         {
             // Increase the indent level
             ++indentLevel;

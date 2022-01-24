@@ -6,7 +6,6 @@
 #include "math/range.h"
 #include "math/sampleddouble.h"
 #include "procedure/nodes/node.h"
-#include "templates/reflist.h"
 
 // Forward Declarations
 class Process1DProcedureNode;
