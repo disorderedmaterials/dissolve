@@ -6,7 +6,8 @@
 #include "gui/models/procedureModel.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
-#include "procedure/nodes/parameters.h"
+#include "procedure/nodes/calculatedistance.h"
+#include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest
@@ -17,11 +18,13 @@ TEST(ProcedureModelTest, Basic)
     Dissolve dissolve(coreData);
 
     // Create a simple procedure with a parameters node
-    Procedure procedure(ProcedureNode::GenerationContext);
-    auto adder = std::make_shared<AddProcedureNode>();
-    auto parameters = std::make_shared<ParametersProcedureNode>();
-    adder->scope()->addNode(parameters);
-    procedure.addRootSequenceNode(adder);
+    Procedure procedure(ProcedureNode::AnalysisContext);
+    auto selectA = std::make_shared<SelectProcedureNode>();
+    auto selectB = std::make_shared<SelectProcedureNode>();
+    selectA->setName("A");
+    selectB->setName("B");
+    auto calcAB = std::make_shared<CalculateDistanceProcedureNode>(selectA, selectB);
+    procedure.addRootSequenceNode(calcAB);
 
     // Create a second set of data since we can't get the ParametersProcedureNode data non-const
     // Set up the model, supplying our mutable data and the parameters node as the parent
@@ -34,11 +37,11 @@ TEST(ProcedureModelTest, Basic)
     EXPECT_EQ(model.rowCount(model.index(0, 0)), 1);
 
     // Data
-    EXPECT_EQ(model.data(model.index(0, 0), Qt::DisplayRole).toString().toStdString(), "Add");
-    // auto root = model.index(0, 0);
-    // EXPECT_NE(model.index(0, 0, root).internalPointer(), root.internalPointer());
-    // EXPECT_EQ(model.rowCount(model.index(0, 0, root)), 0);
-    // EXPECT_EQ(model.data(model.index(0, 0, root), Qt::DisplayRole).toString().toStdString(), "Foo");
+    EXPECT_EQ(model.data(model.index(0, 0), Qt::DisplayRole).toString().toStdString(), "CalculateDistance");
+    auto root = model.index(0, 0);
+    EXPECT_NE(model.index(0, 0, root).internalPointer(), root.internalPointer());
+    EXPECT_EQ(model.rowCount(model.index(0, 0, root)), 0);
+    EXPECT_EQ(model.data(model.index(0, 0, root), Qt::DisplayRole).toString().toStdString(), "Foo");
 }
 
 } // namespace UnitTest
