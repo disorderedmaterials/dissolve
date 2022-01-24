@@ -248,6 +248,19 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &repGR =
         dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
+    auto ftQMax = 0.0;
+    if (referenceFTQMax_)
+        ftQMax = referenceFTQMax_.value();
+    else if (referenceFQ_.hasFilename())
+    {
+        // Take FT max Q limit from reference data
+        auto &referenceData =
+            dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
+        ftQMax = referenceData.xAxis().back();
+    }
+    else
+        ftQMax = weightedSQ.total().xAxis().back();
+    Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
