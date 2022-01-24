@@ -95,7 +95,7 @@ void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     refreshing_ = true;
 
-    const auto cfgs = module_->keywords().get<std::vector<Configuration *>>("Configuration");
+    const auto cfgs = module_->keywords().get<std::vector<Configuration *>>("Configurations");
 
     // Update partial set (Configuration) targets
     auto optConfig =
