@@ -70,7 +70,12 @@ void IsotopologueSetKeywordWidget::modelDataChanged(const QModelIndex &topLeft, 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
 
-void IsotopologueSetKeywordWidget::addSpeciesButton_clicked(bool checked) { setModel_.addMissingSpecies(coreData_.species()); }
+void IsotopologueSetKeywordWidget::addSpeciesButton_clicked(bool checked)
+{
+    auto newIndices = setModel_.addMissingSpecies(coreData_.species());
+    for (auto &index : newIndices)
+        ui_.IsotopologueTree->expand(index);
+}
 
 void IsotopologueSetKeywordWidget::addIsotopologueButton_clicked(bool checked)
 {

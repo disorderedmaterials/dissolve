@@ -37,7 +37,7 @@ class IsotopologueSetModel : public QAbstractItemModel
 
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
-    void addMissingSpecies(const std::vector<std::unique_ptr<Species>> &species);
+    std::vector<QModelIndex> addMissingSpecies(const std::vector<std::unique_ptr<Species>> &species);
     void addIsotopologueWeight(const QModelIndex index);
     void removeIndex(const QModelIndex index);
 };
