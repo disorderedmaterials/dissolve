@@ -34,14 +34,16 @@ TEST(ProcedureModelTest, Basic)
     EXPECT_EQ(model.columnCount(QModelIndex()), 1);
     EXPECT_EQ(model.rowCount(QModelIndex()), 1);
     EXPECT_EQ(model.columnCount(model.index(0, 0)), 1);
-    EXPECT_EQ(model.rowCount(model.index(0, 0)), 1);
+    EXPECT_EQ(model.rowCount(model.index(0, 0)), 2);
 
     // Data
     EXPECT_EQ(model.data(model.index(0, 0), Qt::DisplayRole).toString().toStdString(), "CalculateDistance");
     auto root = model.index(0, 0);
+    EXPECT_EQ(model.parent(root), QModelIndex());
     EXPECT_NE(model.index(0, 0, root).internalPointer(), root.internalPointer());
+    EXPECT_NE(model.parent(model.index(0, 0, root)), root);
     EXPECT_EQ(model.rowCount(model.index(0, 0, root)), 0);
-    EXPECT_EQ(model.data(model.index(0, 0, root), Qt::DisplayRole).toString().toStdString(), "Foo");
+    EXPECT_EQ(model.data(model.index(0, 0, root), Qt::DisplayRole).toString().toStdString(), "Select");
 }
 
 } // namespace UnitTest

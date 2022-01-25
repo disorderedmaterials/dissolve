@@ -45,6 +45,8 @@ class CalculateProcedureNodeBase : public ProcedureNode
     virtual int nSitesRequired() const = 0;
     // Return dimensionality of calculated observable
     virtual int dimensionality() const = 0;
+    // Find the nodes owned by this node
+    std::vector<ConstNodeRef> children() const override;
 
     /*
      * Execute

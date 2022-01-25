@@ -9,6 +9,7 @@
 #include "classes/site.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/procedure.h"
+#include <algorithm>
 #include <utility>
 
 // Return enum option info for NodeClass
@@ -69,7 +70,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 }
 
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, ProcedureNode::NodeClass classType)
-    : class_(classType), type_(nodeType), scope_(nullptr)
+    : class_(classType), type_(nodeType), scope_(nullptr), parent_(nullptr)
 {
     // Assign default, unique name to the node
     static int nodeCount = 0;
@@ -123,12 +124,13 @@ const KeywordStore &ProcedureNode::keywords() const { return keywords_; }
 void ProcedureNode::setScope(std::shared_ptr<SequenceProcedureNode> scopeNode) { scope_ = scopeNode; }
 
 // Find the node which owns this node.
-NodeRef ProcedureNode::parent() const
-{
-    if (!scope_)
-        return nullptr;
-    return scope_->parentNode();
-}
+NodeRef ProcedureNode::parent() const { return parent_; }
+
+// Update the parentage
+void ProcedureNode::setParent(NodeRef parent) { parent_ = parent; }
+
+// Find the nodes owned by this node
+std::vector<ConstNodeRef> ProcedureNode::children() const { return {}; }
 
 // Return scope (SequenceNode) in which this node exists
 std::shared_ptr<SequenceProcedureNode> ProcedureNode::scope() const { return scope_; }

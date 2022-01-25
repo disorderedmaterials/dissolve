@@ -16,7 +16,7 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
     if (!node)
         return procedure_.nodes().size();
 
-    return node->scope()->sequence().size();
+    return node->children().size();
 }
 
 int ProcedureModel::columnCount(const QModelIndex &parent) const
@@ -60,25 +60,27 @@ QVariant ProcedureModel::headerData(int section, Qt::Orientation orientation, in
 QModelIndex ProcedureModel::index(int row, int column, const QModelIndex &parent) const
 {
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
-    if (!parent.isValid() || !node)
+    if (!node)
     {
         return createIndex(row, column, procedure_.nodes()[row].get());
     }
-    return createIndex(row, column, node->scope()->sequence()[row].get());
+    return createIndex(row, column, node->children()[row].get());
 }
 
 QModelIndex ProcedureModel::parent(const QModelIndex &index) const
 {
-    auto source = static_cast<ProcedureNode *>(index.internalPointer());
+    auto source = static_cast<ProcedureNode *>(index.internalPointer())->parent();
+    if (!source)
+        return QModelIndex();
     auto gp = source->parent();
-    if (!gp)
+    if (gp)
     {
-        auto it = std::find_if(procedure_.nodes().begin(), procedure_.nodes().end(),
-                               [source](const auto n) { return n.get() == source; });
-        int row = it - procedure_.nodes().begin();
-        return createIndex(row, 0, nullptr);
+        auto it = std::find(gp->children().begin(), gp->children().end(), source);
+        return createIndex(it - gp->children().begin(), 0, gp.get());
     }
-    auto it = std::find_if(gp->nodesInScope().begin(), gp->nodesInScope().end(),
-                           [source](const auto n) { return n.get() == source; });
-    return createIndex(it - gp->nodesInScope().begin(), 0, gp.get());
+    else
+    {
+        auto it = std::find(procedure_.nodes().begin(), procedure_.nodes().end(), source);
+        return createIndex(it - procedure_.nodes().begin(), 0, nullptr);
+    }
 }
