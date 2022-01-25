@@ -31,10 +31,6 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     if (role != Qt::DisplayRole && role != Qt::UserRole)
         return {};
     auto node = static_cast<ProcedureNode *>(index.internalPointer());
-    if (!node)
-    {
-        return "Foo";
-    }
     switch (role)
     {
         case Qt::DisplayRole:
