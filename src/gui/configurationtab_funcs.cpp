@@ -233,7 +233,7 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
 {
     QVariant var = procedureModel_.data(index, Qt::UserRole);
-    auto data = var.value<std::shared_ptr<const ProcedureNode>>();
+    auto data = var.value<std::shared_ptr<ProcedureNode>>();
 
     if (data != nullptr)
     {

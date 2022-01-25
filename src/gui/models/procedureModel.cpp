@@ -36,7 +36,7 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
         case Qt::DisplayRole:
             return QString::fromStdString(fmt::format("{}", node->nodeTypes().keyword(node->type())));
         case Qt::UserRole:
-            return QVariant::fromValue(node);
+            return QVariant::fromValue(node->shared_from_this());
         default:
             return {};
     }
