@@ -51,12 +51,12 @@ class ImportCIFDialog : public WizardDialog
     // Pages Enum
     enum WizardPage
     {
-        SelectCIFFilePage,      /* Select CIF file page */
-        SelectSpacegroupPage,   /* Select space group page */
-        CIFInfoPage,            /* Basic CIF info page to check parsing */
-        StructurePage,          /* Structure page */
-        SupercellPage,          /* Options to create supercell */
-        SpeciesPartitioningPage /* Species partitioning scheme page */
+        SelectCIFFilePage,    /* Select CIF file page */
+        SelectSpacegroupPage, /* Select space group page */
+        CIFInfoPage,          /* Basic CIF info page to check parsing */
+        StructurePage,        /* Structure page */
+        SupercellPage,        /* Options to create supercell */
+        OutputSpeciesPage     /* Output Species page */
     };
 
     protected:
