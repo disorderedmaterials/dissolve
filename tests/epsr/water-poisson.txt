@@ -91,7 +91,7 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
     Averaging  0
     AveragingScheme  Linear
-    Configuration  'Bulk'
+    Configurations  'Bulk'
     IntraBroadening  'None'  
     Method  Auto
   EndModule
