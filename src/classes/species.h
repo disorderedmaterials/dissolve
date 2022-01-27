@@ -158,6 +158,8 @@ class Species
     OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
     // Add missing bonds
     void addMissingBonds(double tolerance = 1.1);
+    // Remove bonds crossing periodic boundaries
+    void removePeriodicBonds();
     // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
     void updateIntramolecularTerms();
     // Add new SpeciesAngle definition
@@ -230,6 +232,8 @@ class Species
     public:
     // Return periodic box
     const Box *box() const;
+    // Remove Box definition and revert to single image
+    void removeBox();
     // Create Box definition with specified lengths and angles
     void createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic = false);
 

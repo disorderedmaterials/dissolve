@@ -39,9 +39,9 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="ViewGenerateTab">
+     <widget class="QWidget" name="StructureTab">
       <attribute name="title">
-       <string>View / Generate</string>
+       <string>Structure</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
@@ -71,9 +71,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="ContentsTab">
+     <widget class="QWidget" name="ForcefieldTab">
       <attribute name="title">
-       <string>Contents &amp;&amp; Forcefield</string>
+       <string>Forcefield</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_17">
        <property name="spacing">

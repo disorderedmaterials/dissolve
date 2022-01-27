@@ -55,6 +55,7 @@ class ModuleLayerModel : public QAbstractListModel
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
     bool insertRows(int row, int count, const QModelIndex &parent) override;
     bool removeRows(int row, int count, const QModelIndex &parent) override;
+    QModelIndex appendNew(const QString &moduleType);
 
     signals:
     void moduleNameChanged(const QModelIndex &);

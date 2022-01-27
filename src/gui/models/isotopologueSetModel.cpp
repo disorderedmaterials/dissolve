@@ -165,10 +165,10 @@ bool IsotopologueSetModel::setData(const QModelIndex &index, const QVariant &val
     return false;
 }
 
-void IsotopologueSetModel::addMissingSpecies(const std::vector<std::unique_ptr<Species>> &species)
+std::vector<QModelIndex> IsotopologueSetModel::addMissingSpecies(const std::vector<std::unique_ptr<Species>> &species)
 {
     if (!set_)
-        return;
+        return {};
 
     auto &set = set_->get();
 
@@ -185,7 +185,15 @@ void IsotopologueSetModel::addMissingSpecies(const std::vector<std::unique_ptr<S
     }
 
     if (nAdded > 0)
+    {
         emit(dataChanged(createIndex(set.nSpecies() - nAdded, 0), createIndex(set.nSpecies() - 1, 0)));
+        std::vector<QModelIndex> newIndices;
+        for (auto n = set.nSpecies() - nAdded; n < set.nSpecies(); ++n)
+            newIndices.push_back(createIndex(n, 0));
+        return newIndices;
+    }
+
+    return {};
 }
 
 void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)

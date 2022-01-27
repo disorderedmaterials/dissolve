@@ -48,7 +48,7 @@ CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(Proced
 
     // Ranges
     keywords_.add<RangeKeyword>("Ranges", "RangeA", "Distance range for first coordination number", sum1D_->range(0));
-    keywords_.add<BoolKeyword>("anges", "RangeBEnabled", "Whether calculation of the second coordination number is enabled",
+    keywords_.add<BoolKeyword>("Ranges", "RangeBEnabled", "Whether calculation of the second coordination number is enabled",
                                sum1D_->rangeEnabled(1));
     keywords_.add<RangeKeyword>("Ranges", "RangeB", "Distance range for second coordination number", sum1D_->range(1));
     keywords_.add<BoolKeyword>("Ranges", "RangeCEnabled", "Whether calculation of the third coordination number is enabled",

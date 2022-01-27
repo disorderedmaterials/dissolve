@@ -19,8 +19,8 @@ EnumOptions<ModuleBlock::ModuleKeyword> ModuleBlock::keywords()
 bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, GenericList &targetList,
                         bool moduleInConfiguration)
 {
-    Messenger::print("\nParsing {} block '{}'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
-                     module->type());
+    Messenger::print("\nParsing {} block '{}' ({})...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
+                     module->uniqueName(), module->type());
 
     auto blockDone = false, error = false;
 

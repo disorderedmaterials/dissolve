@@ -59,14 +59,14 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ui_.MasterImpropersTable->horizontalHeader()->setFont(font());
     ui_.MasterImpropersTable->horizontalHeader()->setVisible(true);
 
-    connect(&masterBondsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
-            SLOT(setModified()));
-    connect(&masterAnglesTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
-            SLOT(setModified()));
-    connect(&masterTorsionsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
-            SLOT(setModified()));
-    connect(&masterImpropersTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_,
-            SLOT(setModified()));
+    connect(&masterBondsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(masterBondsDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(&masterAnglesTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(masterAnglesDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(&masterTorsionsTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(masterTorsionsDataChanged(const QModelIndex &, const QModelIndex &)));
+    connect(&masterImpropersTableModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(masterImpropersDataChanged(const QModelIndex &, const QModelIndex &)));
 
     /*
      * Atom Types
@@ -149,6 +149,10 @@ void ForcefieldTab::updateControls()
     masterAnglesTableModel_.setSourceData(dissolve_.coreData().masterAngles());
     masterTorsionsTableModel_.setSourceData(dissolve_.coreData().masterTorsions());
     masterImpropersTableModel_.setSourceData(dissolve_.coreData().masterImpropers());
+    ui_.MasterBondsTable->resizeColumnsToContents();
+    ui_.MasterAnglesTable->resizeColumnsToContents();
+    ui_.MasterTorsionsTable->resizeColumnsToContents();
+    ui_.MasterImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
     atoms_.setData(dissolve_.atomTypes());
@@ -330,6 +334,29 @@ void ForcefieldTab::pairPotentialTableRowChanged(const QModelIndex &current, con
     ui_.PairPotentialsPlotWidget->dataViewer()
         ->createRenderable<RenderableData1D>(pp->dUFull(), fmt::format("Force {}-{}", pp->atomTypeNameI(), pp->atomTypeNameJ()))
         ->setColour(StockColours::RedStockColour);
+}
+
+void ForcefieldTab::masterBondsDataChanged(const QModelIndex &, const QModelIndex &)
+{
+    ui_.MasterBondsTable->resizeColumnsToContents();
+    dissolveWindow_->setModified();
+}
+void ForcefieldTab::masterAnglesDataChanged(const QModelIndex &, const QModelIndex &)
+{
+    ui_.MasterAnglesTable->resizeColumnsToContents();
+    dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::masterTorsionsDataChanged(const QModelIndex &, const QModelIndex &)
+{
+    ui_.MasterTorsionsTable->resizeColumnsToContents();
+    dissolveWindow_->setModified();
+}
+
+void ForcefieldTab::masterImpropersDataChanged(const QModelIndex &, const QModelIndex &)
+{
+    ui_.MasterImpropersTable->resizeColumnsToContents();
+    dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }

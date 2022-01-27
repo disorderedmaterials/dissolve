@@ -217,7 +217,7 @@ bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         insertRows(insertAtRow, 1, QModelIndex());
         auto idx = index(insertAtRow, 0, QModelIndex());
 
-        // Move the specified module name to its new index
+        // Create a new module of the specified type at the index we just inserted
         setData(idx, moduleType, ModuleLayerModelAction::CreateNew);
 
         return true;
@@ -253,4 +253,19 @@ bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
     endRemoveRows();
 
     return true;
+}
+
+QModelIndex ModuleLayerModel::appendNew(const QString &moduleType)
+{
+    // Get the target row for the new module
+    auto insertAtRow = rowCount();
+
+    // Create a new row to store the data (the soon-to-be-empty row will be deleted automatically by the model)
+    insertRows(insertAtRow, 1, QModelIndex());
+    auto idx = index(insertAtRow, 0, QModelIndex());
+
+    // Create a new module of the specified type at the index we just inserted
+    setData(idx, moduleType, ModuleLayerModelAction::CreateNew);
+
+    return idx;
 }

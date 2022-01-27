@@ -86,6 +86,10 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
     void pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous);
     // Master Terms
+    void masterBondsDataChanged(const QModelIndex &, const QModelIndex &);
+    void masterAnglesDataChanged(const QModelIndex &, const QModelIndex &);
+    void masterTorsionsDataChanged(const QModelIndex &, const QModelIndex &);
+    void masterImpropersDataChanged(const QModelIndex &, const QModelIndex &);
     void on_MasterTermAddBondButton_clicked(bool checked);
     void on_MasterTermRemoveBondButton_clicked(bool checked);
     void on_MasterTermAddAngleButton_clicked(bool checked);

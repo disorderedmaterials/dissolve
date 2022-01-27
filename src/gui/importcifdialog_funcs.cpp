@@ -24,8 +24,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::SelectSpacegroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
     registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::SupercellPage);
-    registerPage(ImportCIFDialog::SupercellPage, "Create Supercell", ImportCIFDialog::SpeciesPartitioningPage);
-    registerPage(ImportCIFDialog::SpeciesPartitioningPage, "Species Partitioning");
+    registerPage(ImportCIFDialog::SupercellPage, "Create Supercell", ImportCIFDialog::OutputSpeciesPage);
+    registerPage(ImportCIFDialog::OutputSpeciesPage, "Species Partitioning");
 
     // Add spacegroup list
     for (auto n = 1; n <= SpaceGroup::nSpaceGroups(); ++n)
@@ -92,9 +92,9 @@ bool ImportCIFDialog::progressionAllowed(int index) const
             break;
         case (ImportCIFDialog::SelectSpacegroupPage):
             return ui_.SpacegroupsList->currentRow() != -1;
-        case (ImportCIFDialog::SpeciesPartitioningPage):
-            // If the "No Partitioning" option is chosen, the "Crystal" species must be a single moiety
-            if (ui_.PartioningNoneRadio->isChecked())
+        case (ImportCIFDialog::OutputSpeciesPage):
+            // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
+            if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
                 return ui_.PartitioningIndicator->state() == CheckIndicator::OKState;
             break;
         default:
@@ -171,14 +171,27 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
 // Perform any final actions before the wizard is closed
 void ImportCIFDialog::finalise()
 {
-    if (ui_.PartioningNoneRadio->isChecked())
+    auto *supercell = temporaryCoreData_.findSpecies("Supercell");
+    assert(supercell);
+
+    if (ui_.OutputFrameworkRadio->isChecked())
     {
-        // Copy the species to the main Dissolve instance and set its new name
-        auto *supercell = temporaryCoreData_.findSpecies("Supercell");
-        assert(supercell);
+        // Just copy the species
         supercell->updateIntramolecularTerms();
         auto *sp = dissolve_.copySpecies(supercell);
         sp->setName(cifImporter_.chemicalFormula());
+    }
+    else if (ui_.OutputSupermoleculeRadio->isChecked())
+    {
+        // Copy the species
+        supercell->updateIntramolecularTerms();
+        auto *sp = dissolve_.copySpecies(supercell);
+        sp->setName(cifImporter_.chemicalFormula());
+
+        // Remove the unit cell and any cell-crossing bonds
+        sp->removePeriodicBonds();
+        sp->updateIntramolecularTerms();
+        sp->removeBox();
     }
 }
 
@@ -507,7 +520,7 @@ bool ImportCIFDialog::createPartitionedSpecies()
 
     auto validSpecies = true;
 
-    if (ui_.PartioningNoneRadio->isChecked())
+    if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
     {
         // Add the supercell species to the configuration
         AtomChangeToken lock(*partitioningConfiguration_);

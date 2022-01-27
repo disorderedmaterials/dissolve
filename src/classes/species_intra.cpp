@@ -123,6 +123,20 @@ void Species::addMissingBonds(double tolerance)
     }
 }
 
+// Remove bonds crossing periodic boundaries
+void Species::removePeriodicBonds()
+{
+    if (box_->type() == Box::BoxType::NonPeriodic)
+        return;
+
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [&](const auto &b) {
+        // Check the literal vs the minimum image distance between the involved atoms 'i' and 'j'
+        return fabs(box_->minimumDistance(b.i()->r(), b.j()->r()) - (b.j()->r() - b.i()->r()).magnitude()) > 1.0e-3;
+    });
+    if (it != bonds_.end())
+        bonds_.erase(it, bonds_.end());
+}
+
 // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
 void Species::updateIntramolecularTerms()
 {
@@ -656,6 +670,9 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
 
 // Return periodic box
 const Box *Species::box() const { return box_.get(); }
+
+// Remove Box definition and revert to single image
+void Species::removeBox() { box_ = std::make_unique<SingleImageBox>(); }
 
 // Create Box definition with specified lengths and angles
 void Species::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
