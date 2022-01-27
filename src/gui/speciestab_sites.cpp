@@ -95,7 +95,7 @@ void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
 
 std::string siteName(const SpeciesAtom &i)
 {
-    return i.atomType() ? fmt::format("{}({})", i.index() + 1, i.atomType()->name()) : fmt::format("{}", i.index() + 1);
+    return i.atomType() ? fmt::format("{} [{}]", i.index() + 1, i.atomType()->name()) : fmt::format("{}", i.index() + 1);
 }
 
 // Update sites tab
