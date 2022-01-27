@@ -71,6 +71,9 @@ bool SpeciesSite::setOriginAtoms(const std::vector<SpeciesAtom *> &atoms)
     return true;
 }
 
+// Return origin atom vector
+const std::vector<const SpeciesAtom *> &SpeciesSite::originAtoms() const { return originAtoms_; }
+
 // Return integer array of indices from which the origin should be formed
 std::vector<int> SpeciesSite::originAtomIndices() const
 {
@@ -130,6 +133,9 @@ bool SpeciesSite::setXAxisAtoms(const std::vector<SpeciesAtom *> &atoms)
     return true;
 }
 
+// Return x-axis atom vector
+const std::vector<const SpeciesAtom *> &SpeciesSite::xAxisAtoms() const { return xAxisAtoms_; }
+
 // Return integer array of indices from which x-axis should be formed
 std::vector<int> SpeciesSite::xAxisAtomIndices() const
 {
@@ -177,6 +183,9 @@ bool SpeciesSite::setYAxisAtoms(const std::vector<SpeciesAtom *> &atoms)
 
     return true;
 }
+
+// Return y-axis atom vector
+const std::vector<const SpeciesAtom *> &SpeciesSite::yAxisAtoms() const { return yAxisAtoms_; }
 
 // Return integer array of indices from which y-axis should be formed
 std::vector<int> SpeciesSite::yAxisAtomIndices() const
