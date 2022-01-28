@@ -15,6 +15,8 @@ SpeciesSiteVectorKeywordWidget::SpeciesSiteVectorKeywordWidget(QWidget *parent, 
     ui_.setupUi(dropWidget());
 
     sitesFilterProxy_.setSourceModel(&sites_);
+    if (keyword->axesRequired())
+        sitesFilterProxy_.addFlag(SitesFilterProxy::HasAxes);
     ui_.SitesTree->setModel(&sitesFilterProxy_);
     sites_.setCheckStateData(keyword_->data());
     connect(&sites_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,

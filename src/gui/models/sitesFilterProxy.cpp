@@ -19,10 +19,11 @@ void SitesFilterProxy::addFlag(SitesFilterProxy::FilterFlags flag)
 
 bool SitesFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    if (filterFlags_.none())
+    if (filterFlags_.none() || !parent.isValid())
         return true;
 
-    const auto *site = sourceModel()->data(sourceModel()->index(row, 0, parent), Qt::UserRole).value<SpeciesSite *>();
+    const auto *site = sourceModel()->data(sourceModel()->index(row, 1, parent), Qt::UserRole).value<SpeciesSite *>();
+    assert(site);
 
     if (filterFlags_.test(SitesFilterProxy::HasAxes) && !site->hasAxes())
         return false;
