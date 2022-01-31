@@ -28,6 +28,7 @@ int CalculateDistanceProcedureNode::nSitesRequired() const { return 2; }
 
 // Return dimensionality of calculated observable
 int CalculateDistanceProcedureNode::dimensionality() const { return 1; }
+
 /*
  * Execute
  */
