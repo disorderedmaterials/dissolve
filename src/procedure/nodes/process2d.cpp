@@ -81,6 +81,8 @@ std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::addNormalisationB
     if (!normalisationBranch_)
         normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
 
+    normalisationBranch_->setParent(shared_from_this());
+
     return normalisationBranch_;
 }
 
@@ -92,10 +94,9 @@ std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::branch() { return
 
 std::vector<ConstNodeRef> Process2DProcedureNode::children() const
 {
-    std::vector<ConstNodeRef> result = {std::static_pointer_cast<const ProcedureNode>(sourceData_)};
     if (normalisationBranch_)
-        result.push_back(std::static_pointer_cast<const ProcedureNode>(normalisationBranch_));
-    return result;
+        return {std::static_pointer_cast<const ProcedureNode>(normalisationBranch_)};
+    return {};
 }
 
 /*
