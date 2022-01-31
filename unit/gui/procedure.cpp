@@ -30,26 +30,26 @@ TEST(ProcedureModelTest, Basic)
     collect->addSubCollectBranch(ProcedureNode::AnalysisContext);
     procedure.addRootSequenceNode(collect);
 
-    // Create a second set of data since we can't get the ParametersProcedureNode data non-const
-    // Set up the model, supplying our mutable data and the parameters node as the parent
     ProcedureModel model(procedure);
 
-    // Size
+    // Check out model root
     EXPECT_EQ(model.columnCount(QModelIndex()), 1);
     EXPECT_EQ(model.rowCount(QModelIndex()), 1);
-    EXPECT_EQ(model.columnCount(model.index(0, 0)), 1);
-    EXPECT_EQ(model.rowCount(model.index(0, 0)), 1);
 
-    // Data
-    EXPECT_EQ(model.data(model.index(0, 0), Qt::DisplayRole).toString().toStdString(), "Collect1D");
-    EXPECT_EQ(model.data(model.index(0, 0), Qt::UserRole).value<NodeRef>(), collect);
+    // Checkout out first child
+    auto child = model.index(0, 0);
+    EXPECT_EQ(model.columnCount(child), 1);
+    EXPECT_EQ(model.rowCount(child), 1);
+    EXPECT_EQ(model.data(child, Qt::DisplayRole).toString().toStdString(), "Collect1D");
+    EXPECT_EQ(model.data(child, Qt::UserRole).value<NodeRef>(), collect);
 
-    auto root = model.index(0, 0);
-    EXPECT_EQ(model.parent(root), QModelIndex());
-    EXPECT_NE(model.index(0, 0, root).internalPointer(), root.internalPointer());
-    EXPECT_NE(model.parent(model.index(0, 0, root)), root);
-    EXPECT_EQ(model.rowCount(model.index(0, 0, root)), 0);
-    EXPECT_EQ(model.data(model.index(0, 0, root), Qt::DisplayRole).toString().toStdString(), "Sequence");
+    EXPECT_EQ(model.parent(child), QModelIndex());
+
+    auto grandchild = model.index(0, 0, child);
+    EXPECT_NE(grandchild.internalPointer(), child.internalPointer());
+    EXPECT_NE(model.parent(grandchild), child);
+    EXPECT_EQ(model.rowCount(grandchild), 0);
+    EXPECT_EQ(model.data(grandchild, Qt::DisplayRole).toString().toStdString(), "Sequence");
 }
 
 } // namespace UnitTest
