@@ -57,6 +57,8 @@ class Collect1DProcedureNode : public ProcedureNode
     bool hasBranch() const override;
     // Return SequenceNode for the branch (if it exists)
     std::shared_ptr<SequenceProcedureNode> branch() override;
+    // Find the nodes owned by this node
+    std::vector<ConstNodeRef> children() const override;
 
     /*
      * Execute
