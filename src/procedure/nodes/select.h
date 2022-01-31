@@ -46,6 +46,8 @@ class SelectProcedureNode : public ProcedureNode
     std::vector<const SpeciesSite *> &speciesSites();
     // Return whether sites must have a defined orientation
     bool axesRequired();
+    // Return Nodes owned by this node
+    std::vector<ConstNodeRef> children() const override;
 
     /*
      * Selection Control
