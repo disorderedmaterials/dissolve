@@ -25,16 +25,6 @@ bool CalculateProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext co
     return (context == ProcedureNode::AnalysisContext);
 }
 
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> CalculateProcedureNodeBase::children() const
-{
-    std::vector<ConstNodeRef> result;
-    auto it = std::find_if(sites_.begin(), sites_.end(), [](const auto site) { return site == nullptr; });
-    std::transform(sites_.begin(), it, std::back_inserter(result),
-                   [](const auto site) { return std::static_pointer_cast<const ProcedureNode>(site); });
-    return result;
-}
-
 /*
  * Observable Target
  */

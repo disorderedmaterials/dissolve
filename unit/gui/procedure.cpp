@@ -7,6 +7,7 @@
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/calculatedistance.h"
+#include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
 
@@ -24,7 +25,10 @@ TEST(ProcedureModelTest, Basic)
     selectA->setName("A");
     selectB->setName("B");
     auto calcAB = std::make_shared<CalculateDistanceProcedureNode>(selectA, selectB);
-    procedure.addRootSequenceNode(calcAB);
+    auto collect = std::make_shared<Collect1DProcedureNode>(calcAB);
+
+    collect->addSubCollectBranch(ProcedureNode::AnalysisContext);
+    procedure.addRootSequenceNode(collect);
 
     // Create a second set of data since we can't get the ParametersProcedureNode data non-const
     // Set up the model, supplying our mutable data and the parameters node as the parent
@@ -34,19 +38,18 @@ TEST(ProcedureModelTest, Basic)
     EXPECT_EQ(model.columnCount(QModelIndex()), 1);
     EXPECT_EQ(model.rowCount(QModelIndex()), 1);
     EXPECT_EQ(model.columnCount(model.index(0, 0)), 1);
-    EXPECT_EQ(model.rowCount(model.index(0, 0)), 2);
+    EXPECT_EQ(model.rowCount(model.index(0, 0)), 1);
 
     // Data
-    EXPECT_EQ(model.data(model.index(0, 0), Qt::DisplayRole).toString().toStdString(), "CalculateDistance");
-    EXPECT_EQ(model.data(model.index(0, 0), Qt::UserRole).value<NodeRef>(), calcAB);
+    EXPECT_EQ(model.data(model.index(0, 0), Qt::DisplayRole).toString().toStdString(), "Collect1D");
+    EXPECT_EQ(model.data(model.index(0, 0), Qt::UserRole).value<NodeRef>(), collect);
+
     auto root = model.index(0, 0);
     EXPECT_EQ(model.parent(root), QModelIndex());
     EXPECT_NE(model.index(0, 0, root).internalPointer(), root.internalPointer());
     EXPECT_NE(model.parent(model.index(0, 0, root)), root);
     EXPECT_EQ(model.rowCount(model.index(0, 0, root)), 0);
-    EXPECT_EQ(model.data(model.index(0, 0, root), Qt::DisplayRole).toString().toStdString(), "Select");
-    EXPECT_EQ(model.data(model.index(0, 0, root), Qt::UserRole).value<NodeRef>(), selectA);
-    EXPECT_EQ(model.data(model.index(1, 0, root), Qt::UserRole).value<NodeRef>(), selectB);
+    EXPECT_EQ(model.data(model.index(0, 0, root), Qt::DisplayRole).toString().toStdString(), "Sequence");
 }
 
 } // namespace UnitTest
