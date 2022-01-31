@@ -32,7 +32,7 @@ class ConfigurationTab : public QWidget, public MainTab
     Ui::ConfigurationTab ui_;
     // Model for import file format
     EnumOptionsModel importEnumOptionsModel_;
-    //Currently displayed widget
+    // Currently displayed widget
     QWidget *activeWidget_;
 
     /*
