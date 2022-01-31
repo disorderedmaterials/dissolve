@@ -247,9 +247,6 @@ void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
             ui_.ProcedureLayout->replaceWidget(activeWidget_, widget);
             delete temp;
         }
-        ui_.TempLabel->setText(QString::fromStdString(std::string(data->name())));
         activeWidget_ = widget;
     }
-    else
-        ui_.TempLabel->setText(var.typeName());
 }
