@@ -20,14 +20,6 @@ const Vec3<NodeValue> &Vec3NodeValueKeyword::data() const { return data_; }
 // Return label type to display in GUI
 Vec3Labels::LabelType Vec3NodeValueKeyword::labelType() const { return labelType_; }
 
-// Display in GUI
-std::string Vec3NodeValueKeyword::toString() const {
-  return fmt::format("{},{},{}",
-		     data_.x.asString(),
-		     data_.y.asString(),
-		     data_.z.asString());
-}
-
 // Set the value from supplied expression text
 bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
 {

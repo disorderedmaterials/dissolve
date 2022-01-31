@@ -6,7 +6,6 @@
 #include "classes/coredata.h"
 #include "expression/variable.h"
 #include "procedure/nodes/node.h"
-#include "templates/algorithms.h"
 #include <memory>
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(std::vector<std::shared_ptr<ExpressionVariable>> &data,

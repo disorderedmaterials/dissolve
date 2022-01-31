@@ -62,7 +62,6 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     // Return reference to data
     E &data() { return data_; }
     const E &data() const { return data_; }
-    std::string toString() const { return  optionData_.keyword(data_); }
     // Validate supplied value
     bool isValid(std::string_view value) { return optionData_.isValid(value); }
 

@@ -37,8 +37,6 @@ class Vec3NodeValueKeyword : public KeywordBase
     bool setData(int index, std::string_view expressionText);
     // Return label type to display in GUI
     Vec3Labels::LabelType labelType() const;
-    // Display in gui
-    std::string toString() const;
 
     /*
      * Arguments

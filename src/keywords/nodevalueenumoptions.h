@@ -87,6 +87,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 
         return true;
     }
+
     /*
      * Arguments
      */
