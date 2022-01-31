@@ -89,8 +89,6 @@ class SequenceProcedureNode : public ProcedureNode
     public:
     // Return parent Procedure to which this sequence belongs
     const Procedure *procedure() const override;
-    // Return the offical parentNode
-    NodeRef parentNode() const;
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present (and matches the type / class given)

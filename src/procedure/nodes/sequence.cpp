@@ -123,8 +123,6 @@ SequenceProcedureNode::searchParameters(std::string_view name,
     return nullptr;
 }
 
-NodeRef SequenceProcedureNode::parentNode() const { return parentNode_; }
-
 // Return parent Procedure to which this sequence belongs
 const Procedure *SequenceProcedureNode::procedure() const { return procedure_; }
 
