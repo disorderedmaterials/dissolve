@@ -80,13 +80,7 @@ std::vector<const SpeciesSite *> &SelectProcedureNode::speciesSites() { return s
 bool SelectProcedureNode::axesRequired() { return axesRequired_; }
 
 // Return nodes owned by this node
-std::vector<ConstNodeRef> SelectProcedureNode::children() const
-{
-    std::vector<ConstNodeRef> result;
-    std::transform(dynamicSites_.begin(), dynamicSites_.end(), std::back_inserter(result),
-                   [](const auto &site) { return std::static_pointer_cast<ProcedureNode>(site); });
-    return result;
-}
+std::vector<ConstNodeRef> SelectProcedureNode::children() const { return {forEachBranch_}; }
 
 /*
  * Selection Control
