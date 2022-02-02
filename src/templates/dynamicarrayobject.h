@@ -3,9 +3,6 @@
 
 #pragma once
 
-// Forward Declarations
-template <class T> class DynamicArray;
-
 // Dynamic Array Object Class
 template <class T> class DynamicArrayObjectBase
 {
