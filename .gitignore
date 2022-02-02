@@ -41,5 +41,16 @@ changes
 *.gr
 *.sq
 *.rewrite
+tests/epsr/D2O-ReferenceData.q
+tests/epsr/D2O-ReferenceData.r
+tests/epsr/EPSR01-EstSQ-HW-HW.txt
+tests/epsr/EPSR01-EstSQ-OW-HW.txt
+tests/epsr/EPSR01-EstSQ-OW-OW.txt
+tests/epsr/H2O-ReferenceData.q
+tests/epsr/H2O-ReferenceData.r
+tests/epsr/H2O-weighted-total.gr.broad
+tests/epsr/H2OX-weighted-total.gr.broad
+tests/epsr/HDO-ReferenceData.q
+tests/epsr/HDO-ReferenceData.r
 
 .vscode/
