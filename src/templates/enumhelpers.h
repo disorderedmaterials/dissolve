@@ -26,23 +26,3 @@ template <class E> class EnumCast
     // Integer conversion of enum
     int integerValue_;
 };
-
-// Enum Container
-template <class E> class EnumContainer
-{
-    /*
-     * Template-only class that stores an enum for inclusion in a list or similar.
-     */
-    public:
-    EnumContainer(E value = 0) : value_(value) {}
-    operator E() { return value_; }
-    void operator=(const E value) { value_ = value; }
-
-    private:
-    // Original enum
-    E value_;
-
-    public:
-    // Return value
-    E &value() { return value_; }
-};
