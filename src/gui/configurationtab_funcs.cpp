@@ -11,7 +11,6 @@
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
 #include "main/dissolve.h"
-#include "templates/variantpointer.h"
 #include <QMessageBox>
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,

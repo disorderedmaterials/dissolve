@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/selectelementdialog.h"
-#include "templates/variantpointer.h"
 
 SelectElementDialog::SelectElementDialog(QWidget *parent) { ui_.setupUi(this); }
 

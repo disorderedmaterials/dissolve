@@ -13,7 +13,6 @@
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
-#include "templates/variantpointer.h"
 
 EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

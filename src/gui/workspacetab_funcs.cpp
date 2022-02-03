@@ -10,7 +10,6 @@
 #include "gui/tmdiarea.hui"
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"
-#include "templates/variantpointer.h"
 #include <QMdiSubWindow>
 #include <QMenu>
 
