@@ -286,6 +286,8 @@ class ProcessPool
     // Broadcast std::vector<double>
     bool broadcast(std::vector<double> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool broadcast(LineParser::ParseReturnValue *source, int count, int rootRank = 0,
+                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
     /*
      * Special Array Functions
