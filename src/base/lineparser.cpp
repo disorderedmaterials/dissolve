@@ -4,7 +4,6 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
-#include "templates/enumhelpers.h"
 #include <limits>
 
 LineParser::LineParser(ProcessPool *procPool)
