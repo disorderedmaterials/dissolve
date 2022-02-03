@@ -255,10 +255,7 @@ class ProcessPool
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast single integer
     bool broadcast(int &source, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);    
-    // Broadcast LineParser::ParseReturnValue to all Processes
-    bool broadcast(LineParser::ParseReturnValue &source, int rootRank = 0,
-                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast integers
     bool broadcast(int *source, int count, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
