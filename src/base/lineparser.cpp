@@ -585,8 +585,12 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
     // Broadcast result of file check
     if (processPool_)
     {
-        if (!processPool_->broadcast(EnumCast<LineParser::ParseReturnValue>(result)))
+        int enumValue = getIntFromParseReturnValue(result);
+        if (!processPool_->broadcast(enumValue))
+        {
+            result = getParseReturnValueFromInt(enumValue);
             return LineParser::Fail;
+        }
         if (result != LineParser::Success)
             return result;
     }
@@ -668,8 +672,12 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
     // Broadcast result
     if (processPool_)
     {
-        if (!processPool_->broadcast(EnumCast<LineParser::ParseReturnValue>(result)))
+        int enumValue = getIntFromParseReturnValue(result);
+        if (!processPool_->broadcast(enumValue))
+        {
+            result = getParseReturnValueFromInt(enumValue);
             return LineParser::Fail;
+        }
         if (result != LineParser::Success)
             return result;
     }
@@ -947,4 +955,25 @@ bool LineParser::hasArg(int i) const
     if ((i < 0) || (i >= nArgs()))
         return false;
     return true;
+}
+
+// Utility LineParser::ParseReturnValue converter to int
+int LineParser::getIntFromParseReturnValue(LineParser::ParseReturnValue value)
+{
+    int enumValue = value;
+    return enumValue;
+}
+// Utility LineParser::ParseReturnValue converter from int
+LineParser::ParseReturnValue LineParser::getParseReturnValueFromInt(int value)
+{
+    LineParser::ParseReturnValue valueEnum;
+
+    if(value == -1)
+        valueEnum = LineParser::ParseReturnValue::EndOfFile;
+    else if(value == 0)
+        valueEnum = LineParser::ParseReturnValue::Success;
+    else
+        valueEnum = LineParser::ParseReturnValue::Fail;
+
+    return valueEnum;
 }
