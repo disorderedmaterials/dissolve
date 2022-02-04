@@ -959,9 +959,9 @@ LineParser::ParseReturnValue LineParser::getParseReturnValueFromInt(int value)
 {
     LineParser::ParseReturnValue valueEnum;
 
-    if(value == -1)
+    if (value == -1)
         valueEnum = LineParser::ParseReturnValue::EndOfFile;
-    else if(value == 0)
+    else if (value == 0)
         valueEnum = LineParser::ParseReturnValue::Success;
     else
         valueEnum = LineParser::ParseReturnValue::Fail;
