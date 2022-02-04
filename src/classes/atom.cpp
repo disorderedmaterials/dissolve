@@ -10,10 +10,6 @@ Atom::Atom() { clear(); }
 
 Atom::~Atom() = default;
 
-/*
- * DynamicArrayObject Virtuals
- */
-
 // Clear object, ready for re-use
 void Atom::clear()
 {

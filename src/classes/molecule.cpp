@@ -12,10 +12,6 @@ Molecule::Molecule() { species_ = nullptr; }
 
 Molecule::~Molecule() = default;
 
-/*
- * DynamicArrayObject Virtuals
- */
-
 // Clear object, ready for re-use
 void Molecule::clear()
 {

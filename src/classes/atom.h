@@ -20,9 +20,6 @@ class Atom : public DynamicArrayObject<Atom>
     Atom();
     ~Atom();
 
-    /*
-     * DynamicArrayObject Virtuals
-     */
     public:
     // Clear object, ready for re-use
     void clear() override;
