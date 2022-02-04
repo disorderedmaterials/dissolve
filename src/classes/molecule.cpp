@@ -35,15 +35,15 @@ void Molecule::setSpecies(const Species *sp) { species_ = sp; }
 const Species *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
-void Molecule::addAtom(Atom *i)
+void Molecule::addAtom(Atom *atom)
 {
-    atoms_.push_back(i);
-    atomIndices_.push_back(i->arrayIndex());
+    atoms_.push_back(atom);
+    atomIndices_.push_back(atom->arrayIndex());
 
-    if (i->molecule() != nullptr)
-        Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
+    if (atom->molecule() != nullptr)
+        Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", atom->arrayIndex());
     std::shared_ptr<Molecule> parent = shared_from_this();
-    i->setMolecule(parent);
+    atom->setMolecule(parent);
 }
 
 // Return size of Atom array
