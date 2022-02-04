@@ -8,18 +8,6 @@
 #include "classes/speciesbond.h"
 #include "templates/algorithms.h"
 
-Molecule::Molecule() { species_ = nullptr; }
-
-Molecule::~Molecule() = default;
-
-// Clear object, ready for re-use
-void Molecule::clear()
-{
-    species_ = nullptr;
-
-    atoms_.clear();
-}
-
 /*
  * Contents
  */
@@ -58,6 +46,10 @@ void Molecule::updateAtoms(std::vector<Atom> &source)
         std::transform(atomIndices_.begin(), atomIndices_.end(), atoms_.begin(),
                        [&source](const auto idx) { return &source[idx]; });
 }
+// Sets the index of the object within the parent DynamicArray
+void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }
+// Gets the index of the object within the parent DynamicArray
+int Molecule::getArrayIndex() const { return arrayIndex_; }
 
 /*
  * Manipulations

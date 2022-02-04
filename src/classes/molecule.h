@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/dynamicarrayobject.h"
 #include "templates/vector3.h"
 #include <functional>
 #include <memory>
@@ -16,25 +15,19 @@ class Matrix3;
 class Species;
 
 // Molecule Definition
-class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_from_this<Molecule>
+class Molecule : public std::enable_shared_from_this<Molecule>
 {
-    public:
-    Molecule();
-    ~Molecule();
-
-    public:
-    // Clear object, ready for re-use
-    void clear();
-
     /*
      * Contents
      */
     private:
     // Species that this Molecule represents
-    const Species *species_;
+    const Species *species_ {nullptr};
     // Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
     std::vector<Atom *> atoms_;
     std::vector<int> atomIndices_;
+    // Object's index within the parent DynamicArray
+    int arrayIndex_ {-1};
 
     public:
     // Set Species that this Molecule represents
@@ -52,6 +45,10 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     // Return nth Atom pointer
     Atom *atom(int n) const;
     void updateAtoms(std::vector<Atom> &source);
+    // Sets the index of the object within the parent DynamicArray
+    void setArrayIndex(int index);
+    // Gets the index of the object within the parent DynamicArray
+    int getArrayIndex() const;
 
     /*
      * Manipulations
