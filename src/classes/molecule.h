@@ -24,7 +24,7 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
 
     public:
     // Clear object, ready for re-use
-    void clear() override;
+    void clear();
 
     /*
      * Contents

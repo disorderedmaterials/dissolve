@@ -22,7 +22,7 @@ class Atom : public DynamicArrayObject<Atom>
 
     public:
     // Clear object, ready for re-use
-    void clear() override;
+    void clear();
 
     /*
      * Properties

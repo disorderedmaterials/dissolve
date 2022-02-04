@@ -51,7 +51,7 @@ double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool ex
         return 0.0;
 
     // Check indices of Atoms if required
-    if (excludeIgeJ && (i.arrayIndex() >= j.arrayIndex()))
+    if (excludeIgeJ && (i.getArrayIndex() >= j.getArrayIndex()))
         return 0.0;
 
     if (applyMim)

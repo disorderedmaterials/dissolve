@@ -16,8 +16,5 @@ template <class T> class DynamicArrayObject
     // Sets the index of the object within the parent DynamicArray
     void setArrayIndex(int index) { arrayIndex_ = index; }
     // Gets the index of the object within the parent DynamicArray
-    int arrayIndex() const { return arrayIndex_; }
-
-    // Clear object, ready for re-use
-    virtual void clear() = 0;
+    int getArrayIndex() const { return arrayIndex_; }
 };
