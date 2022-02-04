@@ -96,12 +96,7 @@ bool Process3DProcedureNode::hasBranch() const { return (normalisationBranch_ !=
 // Return SequenceNode for the branch (if it exists)
 std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::branch() { return normalisationBranch_; }
 
-std::vector<ConstNodeRef> Process3DProcedureNode::children() const
-{
-    if (normalisationBranch_)
-        return {std::static_pointer_cast<const ProcedureNode>(normalisationBranch_)};
-    return {};
-}
+std::vector<ConstNodeRef> Process3DProcedureNode::children() const { return {normalisationBranch_}; }
 
 /*
  * Execute
