@@ -22,12 +22,12 @@ class Molecule : public std::enable_shared_from_this<Molecule>
      */
     private:
     // Species that this Molecule represents
-    const Species *species_ {nullptr};
+    const Species *species_{nullptr};
     // Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
     std::vector<Atom *> atoms_;
     std::vector<int> atomIndices_;
     // Object's index within the parent DynamicArray
-    int arrayIndex_ {-1};
+    int arrayIndex_{-1};
 
     public:
     // Set Species that this Molecule represents

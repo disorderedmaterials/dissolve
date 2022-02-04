@@ -22,11 +22,11 @@ class Atom
     // Coordinates
     Vec3<double> r_;
     // Assigned AtomType index, local to Configuration (for partial indexing etc.)
-    int localTypeIndex_ {-1};
+    int localTypeIndex_{-1};
     // Assigned master AtomType index (for pair potential indexing)
-    int masterTypeIndex_ {-1};
+    int masterTypeIndex_{-1};
     // Object's index within the parent DynamicArray
-    int arrayIndex_ {-1};
+    int arrayIndex_{-1};
 
     public:
     // Set coordinates
@@ -63,7 +63,7 @@ class Atom
     // Molecule in which this Atom exists
     std::shared_ptr<Molecule> molecule_{nullptr};
     // Cell in which the atom exists
-    Cell *cell_ {nullptr};
+    Cell *cell_{nullptr};
 
     public:
     // Set SpeciesAtom that this Atom represents

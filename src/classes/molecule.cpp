@@ -25,7 +25,8 @@ void Molecule::addAtom(Atom *atom)
     atomIndices_.push_back(atom->getArrayIndex());
 
     if (atom->molecule() != nullptr)
-        Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", atom->getArrayIndex());
+        Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n",
+                        atom->getArrayIndex());
     std::shared_ptr<Molecule> parent = shared_from_this();
     atom->setMolecule(parent);
 }
