@@ -585,13 +585,9 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
     if (processPool_)
     {
         int enumValue = getIntFromParseReturnValue(result);
-        if (!processPool_->broadcast(enumValue))
-        {
-            result = getParseReturnValueFromInt(enumValue);
-            return LineParser::Fail;
-        }
-        if (result != LineParser::Success)
-            return result;
+        processPool_->broadcast(enumValue);
+        result = getParseReturnValueFromInt(enumValue);
+        return result;
     }
 
     // Master (if appropriate) will read the line and broadcast the result of the read
@@ -672,13 +668,9 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
     if (processPool_)
     {
         int enumValue = getIntFromParseReturnValue(result);
-        if (!processPool_->broadcast(enumValue))
-        {
-            result = getParseReturnValueFromInt(enumValue);
-            return LineParser::Fail;
-        }
-        if (result != LineParser::Success)
-            return result;
+        processPool_->broadcast(enumValue);
+        result = getParseReturnValueFromInt(enumValue);
+        return result;
     }
 
     // Broadcast line
