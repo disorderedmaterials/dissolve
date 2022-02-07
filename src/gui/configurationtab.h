@@ -6,6 +6,7 @@
 #include "base/units.h"
 #include "gui/maintab.h"
 #include "gui/models/enumOptionsModel.h"
+#include "gui/models/procedureModel.h"
 #include "gui/ui_configurationtab.h"
 
 // Forward Declarations
@@ -31,6 +32,8 @@ class ConfigurationTab : public QWidget, public MainTab
     Ui::ConfigurationTab ui_;
     // Model for import file format
     EnumOptionsModel importEnumOptionsModel_;
+    // Currently displayed widget
+    QWidget *activeWidget_;
 
     /*
      * MainTab Reimplementations
@@ -51,6 +54,8 @@ class ConfigurationTab : public QWidget, public MainTab
     private:
     // Configuration data to display
     Configuration *configuration_;
+    // Procedure Model
+    ProcedureModel procedureModel_;
 
     public:
     // Return displayed Configuration
@@ -86,4 +91,5 @@ class ConfigurationTab : public QWidget, public MainTab
     void on_CoordinatesFileSelectButton_clicked(bool checked);
     // Size Factor Scaling
     void on_RequestedSizeFactorSpin_valueChanged(double value);
+    void updateProcedureWidget(const QModelIndex &);
 };

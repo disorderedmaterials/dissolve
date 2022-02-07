@@ -40,6 +40,15 @@ let
       "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_611/qt.qt6.611.gcc_64/6.1.1-0-202106031044qtbase-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";
     sha256 = "fcE1ShAuAbKPihOG4OILnijM0mgAsa5l8V8V1bOYykM=";
   };
+  qtchart = pkgs.fetchurl {
+    url =
+      "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_611/qt.qt6.611.addons.qtcharts.gcc_64/6.1.1-0-202106031044qtcharts-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";
+    sha256 = "16kms6dfgxm2d54rdwz8r56s35rd8823nsjrmj7ak39wzlkzm173";
+  };
+  qtdeclarative = pkgs.fetchurl {
+    url = "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_611/qt.qt6.611.gcc_64/6.1.1-0-202106031044qtdeclarative-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";
+    sha256 = "11r2nv6n9xr5lvvj1g3lhqqwxlnjn7xjz3jdgqqvlj3c7r73q8fk";
+  };
   qtsvg = pkgs.fetchurl {
     url =
       "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_611/qt.qt6.611.gcc_64/6.1.1-0-202106031044qtsvg-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";

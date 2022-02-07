@@ -4,6 +4,8 @@
 cmake_policy(SET CMP0054 NEW)
 find_package(GTest REQUIRED)
 
+set(TEST_GUI FALSE)
+
 function(dissolve_unit_test src_file)
   # Strip path and extension from source file to get test name
   get_filename_component(test_file ${src_file} NAME_WE)
@@ -34,14 +36,14 @@ function(dissolve_unit_test src_file)
     )
   endif(CONAN)
 
-  if(GUI)
+  if(TEST_GUI)
     target_include_directories(${TEST_NAME} PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
     target_link_libraries(
       ${TEST_NAME}
       PUBLIC keywordwidgets models widgets
       PRIVATE Qt6::Core Qt6::Widgets
     )
-  endif(GUI)
+  endif(TEST_GUI)
 
   # Register the test
   if(${ARGC} EQUAL "2")

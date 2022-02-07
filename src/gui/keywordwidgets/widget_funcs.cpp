@@ -20,7 +20,7 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QToolBox(parent)
  */
 
 // Set up controls for specified keywords
-void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
+void KeywordsWidget::setUp(const KeywordStore &keywords, const CoreData &coreData)
 {
     // Clear existing item groups....
     while (count() > 0)

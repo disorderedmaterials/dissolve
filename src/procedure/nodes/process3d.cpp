@@ -85,6 +85,8 @@ std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::addNormalisationB
     if (!normalisationBranch_)
         normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
 
+    normalisationBranch_->setParent(shared_from_this());
+
     return normalisationBranch_;
 }
 
@@ -93,6 +95,8 @@ bool Process3DProcedureNode::hasBranch() const { return (normalisationBranch_ !=
 
 // Return SequenceNode for the branch (if it exists)
 std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::branch() { return normalisationBranch_; }
+
+std::vector<ConstNodeRef> Process3DProcedureNode::children() const { return {normalisationBranch_}; }
 
 /*
  * Execute

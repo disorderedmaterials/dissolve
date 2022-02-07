@@ -103,6 +103,8 @@ std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::addSubCollectBran
     if (!subCollectBranch_)
         subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure());
 
+    subCollectBranch_->setParent(shared_from_this());
+
     return subCollectBranch_;
 }
 
@@ -111,6 +113,12 @@ bool Collect3DProcedureNode::hasBranch() const { return (subCollectBranch_ != nu
 // Return SequenceNode for the branch (if it exists)
 std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::branch() { return subCollectBranch_; }
 
+std::vector<ConstNodeRef> Collect3DProcedureNode::children() const
+{
+    if (!subCollectBranch_)
+        return {};
+    return {subCollectBranch_};
+}
 /*
  * Execute
  */

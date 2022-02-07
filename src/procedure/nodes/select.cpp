@@ -14,6 +14,7 @@
 #include "keywords/speciessitevector.h"
 #include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/sequence.h"
+#include <algorithm>
 
 SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
     : ProcedureNode(ProcedureNode::NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired)
@@ -77,6 +78,9 @@ std::vector<const SpeciesSite *> &SelectProcedureNode::speciesSites() { return s
 
 // Return whether sites must have a defined orientation
 bool SelectProcedureNode::axesRequired() { return axesRequired_; }
+
+// Return nodes owned by this node
+std::vector<ConstNodeRef> SelectProcedureNode::children() const { return {forEachBranch_}; }
 
 /*
  * Selection Control

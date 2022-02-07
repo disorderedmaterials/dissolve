@@ -68,6 +68,8 @@ class Process1DProcedureNode : public ProcedureNode
     bool hasBranch() const override;
     // Return SequenceNode for the branch (if it exists)
     std::shared_ptr<SequenceProcedureNode> branch() override;
+    // Return nodes that belond to this node
+    std::vector<ConstNodeRef> children() const override;
 
     /*
      * Execute

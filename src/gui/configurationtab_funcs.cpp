@@ -10,13 +10,16 @@
 #include "gui/getconfigurationnamedialog.h"
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
+#include "gui/keywordwidgets/producers.h"
+#include "gui/keywordwidgets/widget.hui"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
-    : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this)
+    : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
+      procedureModel_(cfg->generator()), activeWidget_(nullptr)
 {
     ui_.setupUi(this);
 
@@ -35,8 +38,12 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.ViewerWidget->setConfiguration(configuration_);
 
     // Set target for ProcedureEditor, and connect signals
-    ui_.ProcedureWidget->setUp(&configuration_->generator(), dissolve.coreData());
-    connect(ui_.ProcedureWidget, SIGNAL(dataModified()), dissolveWindow, SLOT(setModified()));
+    ui_.ProcedureWidget->setModel(&procedureModel_);
+    connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow,
+            SLOT(setModified()));
+    connect(ui_.ProcedureWidget, SIGNAL(clicked(const QModelIndex &)), this, SLOT(updateProcedureWidget(const QModelIndex &)));
+    connect(ui_.ProcedureWidget, SIGNAL(activated(const QModelIndex &)), this,
+            SLOT(updateProcedureWidget(const QModelIndex &)));
 }
 
 /*
@@ -141,9 +148,6 @@ void ConfigurationTab::updateControls()
     ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
     ui_.AppliedSizeFactorLabel->setText(QString::number(configuration_->appliedSizeFactor()));
 
-    // Generator
-    ui_.ProcedureWidget->updateControls();
-
     // Viewer
     ui_.ViewerWidget->postRedisplay();
 }
@@ -221,4 +225,25 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
     configuration_->setRequestedSizeFactor(value);
 
     dissolveWindow_->setModified();
+}
+
+void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
+{
+    QVariant var = procedureModel_.data(index, Qt::UserRole);
+    auto data = var.value<std::shared_ptr<ProcedureNode>>();
+
+    if (data != nullptr)
+    {
+        KeywordsWidget *widget = new KeywordsWidget(this);
+        widget->setUp(data->keywords(), dissolve_.coreData());
+        if (!activeWidget_)
+            ui_.ProcedureLayout->addWidget(widget);
+        else
+        {
+            auto temp = activeWidget_;
+            ui_.ProcedureLayout->replaceWidget(activeWidget_, widget);
+            delete temp;
+        }
+        activeWidget_ = widget;
+    }
 }
