@@ -46,6 +46,9 @@ class SampledDouble
     operator const double &() const;
     SampledDouble &operator=(double x);
     SampledDouble &operator=(const SampledDouble &source);
+    SampledDouble operator+(double x) const;
+    SampledDouble operator*(double x) const;
+    SampledDouble operator/(double x) const;
     void operator+=(double x);
     void operator+=(int i);
     void operator+=(const SampledDouble &source);
