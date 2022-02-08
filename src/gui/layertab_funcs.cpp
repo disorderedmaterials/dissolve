@@ -210,6 +210,43 @@ void LayerTab::updateModuleList()
         ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
 }
 
+void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
+{
+    auto index = ui_.ModulesList->indexAt(pos);
+    if (!index.isValid())
+        return;
+    auto module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
+    assert(module);
+
+    QMenu menu;
+    menu.setFont(font());
+
+    // Construct the context menu
+    auto *enableModule = menu.addAction("&Enable this");
+    enableModule->setEnabled(!module->isEnabled());
+    auto *disableModule = menu.addAction("&Disable this");
+    disableModule->setEnabled(module->isEnabled());
+    menu.addSeparator();
+    auto *enableOnlyModule = menu.addAction("Enable &only this");
+
+    auto *action = menu.exec(ui_.ModulesList->mapToGlobal(pos));
+    if (action == enableModule)
+        module->setEnabled(true);
+    else if (action == disableModule)
+        module->setEnabled(false);
+    else if (action == enableOnlyModule)
+        for (auto &m : moduleLayer_->modules())
+            m->setEnabled(m.get() == module);
+
+    // Update required objects
+    if (action == enableModule || action == disableModule || action == enableOnlyModule)
+    {
+        updateModuleList();
+        updateControls();
+        dissolveWindow_->setModified();
+    }
+}
+
 void LayerTab::on_AvailableModulesTree_doubleClicked(const QModelIndex &index)
 {
     moduleLayerModel_.appendNew(modulePaletteModel_.data(index, Qt::DisplayRole).toString());
