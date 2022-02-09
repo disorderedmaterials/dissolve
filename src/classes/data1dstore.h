@@ -20,7 +20,7 @@ class Data1DStore
      */
     private:
     // Vector of contained data
-    std::list<std::pair<Data1D, Data1DImportFileFormat>> data_;
+    std::vector<std::pair<Data1D, Data1DImportFileFormat>> data_;
 
     public:
     // Add named data reference to store, reading file and format from specified parser / starting argument
@@ -31,5 +31,5 @@ class Data1DStore
     // Return named data
     OptionalReferenceWrapper<const Data1D> data(std::string_view name) const;
     // Return vector of all data
-    const std::list<std::pair<Data1D, Data1DImportFileFormat>> &data() const;
+    const std::vector<std::pair<Data1D, Data1DImportFileFormat>> &data() const;
 };

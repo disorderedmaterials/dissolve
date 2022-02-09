@@ -42,4 +42,4 @@ OptionalReferenceWrapper<const Data1D> Data1DStore::data(std::string_view name) 
 }
 
 // Return vector of all data
-const std::list<std::pair<Data1D, Data1DImportFileFormat>> &Data1DStore::data() const { return data_; }
+const std::vector<std::pair<Data1D, Data1DImportFileFormat>> &Data1DStore::data() const { return data_; }

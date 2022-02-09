@@ -42,4 +42,4 @@ OptionalReferenceWrapper<const Data3D> Data3DStore::data(std::string_view name) 
 }
 
 // Return vector of all data
-const std::list<std::pair<Data3D, Data3DImportFileFormat>> &Data3DStore::data() const { return data_; }
+const std::vector<std::pair<Data3D, Data3DImportFileFormat>> &Data3DStore::data() const { return data_; }
