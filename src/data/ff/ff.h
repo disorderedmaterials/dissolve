@@ -186,8 +186,8 @@ class Forcefield
     };
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
     // Returns any elements that were unassigned
-    std::vector<Elements::Element> assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
-                                                   bool setSpeciesAtomCharges) const;
+    std::vector<int> assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
+                                     bool setSpeciesAtomCharges) const;
     // Assign specific AtomType to the supplied atom
     void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const;
     // Assign intramolecular parameters to the supplied Species

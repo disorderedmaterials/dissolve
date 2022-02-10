@@ -498,13 +498,10 @@ void AddForcefieldTermsDialog::on_MasterTermsSuffixButton_clicked(bool checked)
 }
 
 // Helper function for error messages
-bool AddForcefieldTermsDialog::alertAboutAtomTypeErrors(std::vector<Elements::Element> errs)
+bool AddForcefieldTermsDialog::alertAboutAtomTypeErrors(std::vector<int> errs)
 {
-    std::set<Elements::Element> unique;
-    std::copy(errs.begin(), errs.end(), std::inserter(unique, unique.begin()));
-    QMessageBox::critical(
-        this, "Error",
-        QString("No matching atoms types for ") +
-            QString::fromStdString(joinStrings(unique, ", ", [](const auto &e) { return Elements::symbol(e); })));
+    QMessageBox::critical(this, "Error",
+                          QString("No matching atoms types for indices ") +
+                              QString::fromStdString(joinStrings(errs, ", ", [](const auto &i) { return std::to_string(i); })));
     return false;
 }

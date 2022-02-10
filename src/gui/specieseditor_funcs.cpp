@@ -217,12 +217,10 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     auto assignErrs = uff->assignAtomTypes(sp, coreData, Forcefield::TypeAll, false);
     if (!assignErrs.empty())
     {
-        std::set<Elements::Element> unique;
-        std::copy(assignErrs.begin(), assignErrs.end(), std::inserter(unique, unique.begin()));
         QMessageBox::critical(
             this, "Error",
-            QString("No matching atom types for ") +
-                QString::fromStdString(joinStrings(unique, ", ", [](const auto &e) { return Elements::symbol(e); })));
+            QString("No matching atom types for indices ") +
+                QString::fromStdString(joinStrings(assignErrs, ", ", [](const auto &i) { return std::to_string(i); })));
         return;
     }
     if (!uff->assignIntramolecular(sp))
