@@ -2,7 +2,7 @@ parameters:
   - name: extraflags
     default: ''
   - name: qtver
-    default: 6.1.1
+    default: 6.2.2
   - name: ftrepo
     default: https://gitlab.freedesktop.org/freetype/freetype.git
   - name: ftglrepo
