@@ -105,6 +105,7 @@ class AddForcefieldTermsDialog : public WizardDialog
     bool assignIntramolecularTerms(const Forcefield *ff);
     // Helper function for error messages
     bool alertAboutAtomTypeErrors(std::vector<Elements::Element> errs);
+
     /*
      * MasterTerms Page
      */
