@@ -112,8 +112,6 @@ if(GUI)
   find_package(OpenGL REQUIRED)
   find_package(
     Qt6
-    COMPONENTS Core DBusTools Gui Widgets OpenGL OpenGLWidgets
-    REQUIRED
     COMPONENTS Core
                DBusTools
                Gui
