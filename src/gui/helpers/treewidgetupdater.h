@@ -218,7 +218,7 @@ template <class T, class I> class TreeWidgetUpdater
     }
 
     // Update the top-level items of the specified parent QTreeWidget
-    TreeWidgetUpdater(QTreeWidget *treeWidget, std::list<I> &data, T *functionParent,
+    TreeWidgetUpdater(QTreeWidget *treeWidget, std::vector<I> &data, T *functionParent,
                       TreeWidgetTopLevelUpdateRefFunction updateTopLevelFunction)
     {
         int count = 0;
@@ -262,7 +262,7 @@ template <class T, class I> class TreeWidgetUpdater
     }
 
     // Update the children of the specified parent QTreeWidgetItem
-    TreeWidgetUpdater(QTreeWidgetItem *parentItem, const std::list<I> &data, T *functionParent,
+    TreeWidgetUpdater(QTreeWidgetItem *parentItem, const std::vector<I> &data, T *functionParent,
                       TreeWidgetChildUpdateFunction updateChildFunction)
     {
         int count = 0;

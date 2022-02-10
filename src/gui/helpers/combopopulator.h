@@ -50,7 +50,7 @@ template <class T> class ComboNameListPopulator
             combo->addItem(QString("%1%2").arg(prefix, QString::fromStdString(std::string(item->name()))),
                            VariantPointer<T>(item.get()));
     }
-    ComboNameListPopulator(QComboBox *combo, const std::list<T> &items, QString prefix, bool append = false)
+    ComboNameListPopulator(QComboBox *combo, const std::vector<T> &items, QString prefix, bool append = false)
     {
         // Clear the combobox
         if (!append)

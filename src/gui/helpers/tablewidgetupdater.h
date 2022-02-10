@@ -69,7 +69,7 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Co
         // iterate over
         table->setRowCount(rowCount);
     }
-    ConstTableWidgetUpdater(QTableWidget *table, const std::list<I> &vector, T *functionParent,
+    ConstTableWidgetUpdater(QTableWidget *table, const std::vector<I> &vector, T *functionParent,
                             TableWidgetRowUpdateFunction updateRow)
     {
 
@@ -166,7 +166,7 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
         // iterate over
         table->setRowCount(rowCount);
     }
-    TableWidgetUpdater(QTableWidget *table, std::list<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+    TableWidgetUpdater(QTableWidget *table, std::vector<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
     {
         int rowCount = 0;
         for (auto &dataItem : list)
