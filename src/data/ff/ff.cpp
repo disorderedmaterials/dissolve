@@ -289,7 +289,7 @@ std::vector<Elements::Element> Forcefield::assignAtomTypes(Species *sp, CoreData
     Messenger::print("Assigning atomtypes to species '{}' from forcefield '{}'...\n", sp->name(), name());
 
     // Loop over Species atoms
-    std::vector<Elements::Element> failed;
+    std::vector<Elements::Element> failedElements;
     for (auto &i : sp->atoms())
     {
         // Obey the supplied strategy:
@@ -304,15 +304,15 @@ std::vector<Elements::Element> Forcefield::assignAtomTypes(Species *sp, CoreData
         if (!assignAtomType(i, coreData, setSpeciesAtomCharges))
         {
             Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
-            failed.push_back(i.Z());
+            failedElements.push_back(i.Z());
         }
     }
 
-    if (!failed.empty())
-        Messenger::error("Failed to assign atom {} to {} {}.\n", (failed.size() == 1 ? "type" : "types"), failed.size(),
-                         (failed.size() == 1 ? "atom" : "atoms"));
+    if (!failedElements.empty())
+        Messenger::error("Failed to assign atom {} to {} {}.\n", (failedElements.size() == 1 ? "type" : "types"),
+                         failedElements.size(), (failedElements.size() == 1 ? "atom" : "atoms"));
 
-    return failed;
+    return failedElements;
 }
 
 // Assign specific AtomType to the supplied atom
