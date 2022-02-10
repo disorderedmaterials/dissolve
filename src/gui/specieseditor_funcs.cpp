@@ -221,7 +221,7 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
         std::copy(assignErrs.begin(), assignErrs.end(), std::inserter(unique, unique.begin()));
         QMessageBox::critical(
             this, "Error",
-            QString("No matching forcefields for ") +
+            QString("No matching atom types for ") +
                 QString::fromStdString(joinStrings(unique, ", ", [](const auto &e) { return Elements::symbol(e); })));
         return;
     }

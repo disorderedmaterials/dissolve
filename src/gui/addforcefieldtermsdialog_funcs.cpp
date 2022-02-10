@@ -504,7 +504,7 @@ bool AddForcefieldTermsDialog::alertAboutAtomTypeErrors(std::vector<Elements::El
     std::copy(errs.begin(), errs.end(), std::inserter(unique, unique.begin()));
     QMessageBox::critical(
         this, "Error",
-        QString("No matching forcefields for ") +
+        QString("No matching atoms types for ") +
             QString::fromStdString(joinStrings(unique, ", ", [](const auto &e) { return Elements::symbol(e); })));
     return false;
 }
