@@ -185,7 +185,9 @@ class Forcefield
         SelectionOnlyFlag = 4      /* Only assign terms where all atoms are in the current selection */
     };
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
-    int assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy, bool setSpeciesAtomCharges) const;
+    // Returns any elements that were unassigned
+    std::vector<Elements::Element> assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
+                                                   bool setSpeciesAtomCharges) const;
     // Assign specific AtomType to the supplied atom
     void assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const;
     // Assign intramolecular parameters to the supplied Species

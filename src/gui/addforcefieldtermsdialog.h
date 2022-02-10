@@ -103,7 +103,8 @@ class AddForcefieldTermsDialog : public WizardDialog
     bool intramolecularTermsAssigned_;
     // Assign intramolecular terms to species
     bool assignIntramolecularTerms(const Forcefield *ff);
-
+    // Helper function for error messages
+    bool alertAboutAtomTypeErrors(std::vector<Elements::Element> errs);
     /*
      * MasterTerms Page
      */
