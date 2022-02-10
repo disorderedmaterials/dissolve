@@ -40,6 +40,8 @@ class GenericList
     int version(std::string_view name, std::string_view prefix = "") const;
     // Remove named item
     void remove(std::string_view name, std::string_view prefix);
+    // Remove all items with specified prefix
+    void removeWithPrefix(std::string_view prefix);
     // Rename item
     void rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName, std::string_view newPrefix);
     // Prune all items with '@suffix'

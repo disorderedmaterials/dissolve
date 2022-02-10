@@ -228,6 +228,8 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
     disableModule->setEnabled(module->isEnabled());
     menu.addSeparator();
     auto *enableOnlyModule = menu.addAction("Enable &only this");
+    menu.addSeparator();
+    auto *clearData = menu.addAction("&Clear associated data");
 
     auto *action = menu.exec(ui_.ModulesList->mapToGlobal(pos));
     if (action == enableModule)
@@ -237,14 +239,16 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
     else if (action == enableOnlyModule)
         for (auto &m : moduleLayer_->modules())
             m->setEnabled(m.get() == module);
+    else if (action == clearData)
+        dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
 
     // Update required objects
     if (action == enableModule || action == disableModule || action == enableOnlyModule)
     {
         updateModuleList();
-        updateControls();
         dissolveWindow_->setModified();
     }
+    updateControls();
 }
 
 void LayerTab::on_AvailableModulesTree_doubleClicked(const QModelIndex &index)

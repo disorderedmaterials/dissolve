@@ -48,6 +48,14 @@ void GenericList::remove(std::string_view name, std::string_view prefix)
     items_.erase(it);
 }
 
+// Remove all items with specified prefix
+void GenericList::removeWithPrefix(std::string_view prefix)
+{
+    for (auto it = items_.begin(); it != items_.end(); ++it)
+        if (DissolveSys::startsWith(it->first, prefix))
+            items_.erase(it);
+}
+
 // Rename item
 void GenericList::rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName,
                          std::string_view newPrefix)
