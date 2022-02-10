@@ -52,7 +52,7 @@ class Atom
     // Sets the index of the object within the parent DynamicArray
     void setArrayIndex(int index);
     // Gets the index of the object within the parent DynamicArray
-    int getArrayIndex() const;
+    int arrayIndex() const;
 
     /*
      * Location

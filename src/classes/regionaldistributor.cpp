@@ -154,15 +154,15 @@ bool RegionalDistributor::cycle()
                 else
                 {
                     // Valid Molecule found, so add it to our distribution array and mark it as such
-                    assignedMolecules_[processOrGroup].push_back(molecule->getArrayIndex());
-                    moleculeStatus_[molecule->getArrayIndex()] = MoleculeStatusFlag::Distributed;
+                    assignedMolecules_[processOrGroup].push_back(molecule->arrayIndex());
+                    moleculeStatus_[molecule->arrayIndex()] = MoleculeStatusFlag::Distributed;
                     ++nMoleculesDistributed_;
                     ++nMoleculesAssigned;
 
                     if (DND)
                         Messenger::print("Molecule {} assigned to process/group {} - nMoleculesDistributed is "
                                          "now {}. Process/group has {} locked Cells in total.\n",
-                                         molecule->getArrayIndex(), processOrGroup, nMoleculesDistributed_,
+                                         molecule->arrayIndex(), processOrGroup, nMoleculesDistributed_,
                                          lockedCells_[processOrGroup].size());
                 }
 
@@ -267,7 +267,7 @@ bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &
     Cell *primaryCell = nullptr;
 
     // Obvious check first - is the Molecule available for distribution / assignment?
-    const auto molId = mol->getArrayIndex();
+    const auto molId = mol->arrayIndex();
 
     if (DND)
         Messenger::print("  -- Checking Molecule {} for process/group {}: status = {}\n", molId, processOrGroup,
@@ -416,7 +416,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(const Cell *cell, 
         if (DND)
             Messenger::print(
                 "  <> Molecule index is {} (from Atom index {}) and this molecule {} already in our list..\n",
-                mol->getArrayIndex(), atom->getArrayIndex(),
+                mol->arrayIndex(), atom->arrayIndex(),
                 std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end() ? "IS" : "IS NOT");
 
         // Have we already checked this Molecule?

@@ -55,7 +55,7 @@ bool Configuration::serialise(LineParser &parser) const
         return false;
     for (const auto &i : atoms_)
     {
-        if (!parser.writeLineF("{} {} {} {}\n", i.molecule()->getArrayIndex(), i.x(), i.y(), i.z()))
+        if (!parser.writeLineF("{} {} {} {}\n", i.molecule()->arrayIndex(), i.x(), i.y(), i.z()))
             return false;
     }
 

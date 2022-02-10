@@ -55,11 +55,11 @@ void Cell::addAtom(Atom *atom)
 {
     assert(atom);
     atoms_.push_back(atom);
-    atomIndices_.push_back(atom->getArrayIndex());
+    atomIndices_.push_back(atom->arrayIndex());
 
     if (atom->cell())
         Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n",
-                        atom->getArrayIndex());
+                        atom->arrayIndex());
     atom->setCell(this);
 }
 
@@ -67,7 +67,7 @@ void Cell::addAtom(Atom *atom)
 void Cell::removeAtom(Atom *atom)
 {
     auto it = std::find(atoms_.begin(), atoms_.end(), atom);
-    auto itIndex = std::find(atomIndices_.begin(), atomIndices_.end(), atom->getArrayIndex());
+    auto itIndex = std::find(atomIndices_.begin(), atomIndices_.end(), atom->arrayIndex());
     assert(it != atoms_.end());
     assert(itIndex != atomIndices_.end());
     (*it)->setCell(nullptr);

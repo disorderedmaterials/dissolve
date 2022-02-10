@@ -39,7 +39,7 @@ int Atom::masterTypeIndex() const { return masterTypeIndex_; }
 void Atom::setArrayIndex(int index) { arrayIndex_ = index; }
 
 // Gets the index of the object within the parent DynamicArray
-int Atom::getArrayIndex() const { return arrayIndex_; }
+int Atom::arrayIndex() const { return arrayIndex_; }
 
 /*
  * Location

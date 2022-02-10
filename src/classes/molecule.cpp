@@ -22,11 +22,11 @@ const Species *Molecule::species() const { return species_; }
 void Molecule::addAtom(Atom *atom)
 {
     atoms_.push_back(atom);
-    atomIndices_.push_back(atom->getArrayIndex());
+    atomIndices_.push_back(atom->arrayIndex());
 
     if (atom->molecule() != nullptr)
         Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n",
-                        atom->getArrayIndex());
+                        atom->arrayIndex());
     std::shared_ptr<Molecule> parent = shared_from_this();
     atom->setMolecule(parent);
 }
@@ -50,7 +50,7 @@ void Molecule::updateAtoms(std::vector<Atom> &source)
 // Sets the index of the object within the parent DynamicArray
 void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }
 // Gets the index of the object within the parent DynamicArray
-int Molecule::getArrayIndex() const { return arrayIndex_; }
+int Molecule::arrayIndex() const { return arrayIndex_; }
 
 /*
  * Manipulations

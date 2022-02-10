@@ -48,7 +48,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     // Sets the index of the object within the parent DynamicArray
     void setArrayIndex(int index);
     // Gets the index of the object within the parent DynamicArray
-    int getArrayIndex() const;
+    int arrayIndex() const;
 
     /*
      * Manipulations

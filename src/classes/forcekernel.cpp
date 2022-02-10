@@ -33,8 +33,8 @@ void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f,
     auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
-    f[i.getArrayIndex()] += force;
-    f[j.getArrayIndex()] -= force;
+    f[i.arrayIndex()] += force;
+    f[j.arrayIndex()] -= force;
 }
 
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
@@ -48,8 +48,8 @@ void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, do
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
 
-    f[i.getArrayIndex()] += force;
-    f[j.getArrayIndex()] -= force;
+    f[i.arrayIndex()] += force;
+    f[j.arrayIndex()] -= force;
 }
 
 /*
@@ -64,7 +64,7 @@ void ForceKernel::forces(const Atom &i, const Atom &j, bool applyMim, bool exclu
         return;
 
     // Check indices of atoms if required
-    if (excludeIgeJ && (i.getArrayIndex() >= j.getArrayIndex()))
+    if (excludeIgeJ && (i.arrayIndex() >= j.arrayIndex()))
         return;
 
     if (applyMim)
@@ -101,7 +101,7 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
             for (auto *jj : otherAtoms)
             {
                 // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->getArrayIndex() >= jj->getArrayIndex()))
+                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
                     continue;
 
                 // Check for atoms in the same Molecule
@@ -129,7 +129,7 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
             for (auto &jj : otherAtoms)
             {
                 // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->getArrayIndex() >= jj->getArrayIndex()))
+                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
                     continue;
 
                 // Check for atoms in the same molecule
@@ -193,7 +193,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
             for (const auto &jj : otherAtoms)
             {
                 // Check for i >= jj
-                if (i.getArrayIndex() >= jj->getArrayIndex())
+                if (i.arrayIndex() >= jj->arrayIndex())
                     continue;
 
                 // Check for atoms in the same species
@@ -220,7 +220,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                 else
                 {
                     // Check for i >= jj
-                    if (i.getArrayIndex() >= jj->getArrayIndex())
+                    if (i.arrayIndex() >= jj->arrayIndex())
                         continue;
 
                     double scale = i.scaling(jj);
@@ -280,7 +280,7 @@ void ForceKernel::forces(const Atom &i, const Cell *cell, int flags, ProcessPool
                 auto &jj = *indexJ;
 
                 // Check for i >= jj
-                if (i.getArrayIndex() >= jj->getArrayIndex())
+                if (i.arrayIndex() >= jj->arrayIndex())
                     continue;
 
                 // Check for atoms in the same species
@@ -417,8 +417,8 @@ void ForceKernel::forces(const SpeciesBond &bond, const Atom &i, const Atom &j, 
     vecji *= bond.force(distance);
 
     // Calculate forces
-    f[i.getArrayIndex()] -= vecji;
-    f[j.getArrayIndex()] += vecji;
+    f[i.arrayIndex()] -= vecji;
+    f[j.arrayIndex()] += vecji;
 }
 
 // Calculate SpeciesBond forces for specified Atom only
@@ -434,9 +434,9 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesBond &bond, const At
 
     // Calculate forces
     if (&onlyThis == &i)
-        f[onlyThis.getArrayIndex()] -= vecji;
+        f[onlyThis.arrayIndex()] -= vecji;
     else
-        f[onlyThis.getArrayIndex()] += vecji;
+        f[onlyThis.arrayIndex()] += vecji;
 }
 
 // Calculate SpeciesBond forces
@@ -484,9 +484,9 @@ void ForceKernel::forces(const SpeciesAngle &angle, const Atom &i, const Atom &j
     angleParameters.dfk_dtheta_ *= force;
 
     // Store forces
-    f[i.getArrayIndex()] += angleParameters.dfi_dtheta_;
-    f[j.getArrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
-    f[k.getArrayIndex()] += angleParameters.dfk_dtheta_;
+    f[i.arrayIndex()] += angleParameters.dfi_dtheta_;
+    f[j.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
+    f[k.arrayIndex()] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces for specified Atom only
@@ -503,11 +503,11 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesAngle &angle, const 
 
     // Store forces
     if (&onlyThis == &i)
-        f[onlyThis.getArrayIndex()] += angleParameters.dfi_dtheta_;
+        f[onlyThis.arrayIndex()] += angleParameters.dfi_dtheta_;
     else if (&onlyThis == &j)
-        f[onlyThis.getArrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
+        f[onlyThis.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
     else
-        f[onlyThis.getArrayIndex()] += angleParameters.dfk_dtheta_;
+        f[onlyThis.arrayIndex()] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces
@@ -583,10 +583,10 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom &i, const Ato
     const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, i.getArrayIndex(), torsionParameters, f);
-    addTorsionForceJ(du_dphi, j.getArrayIndex(), torsionParameters, f);
-    addTorsionForceK(du_dphi, k.getArrayIndex(), torsionParameters, f);
-    addTorsionForceL(du_dphi, l.getArrayIndex(), torsionParameters, f);
+    addTorsionForceI(du_dphi, i.arrayIndex(), torsionParameters, f);
+    addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
+    addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
+    addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces for specified Atom only
@@ -602,13 +602,13 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesTorsion &torsion, co
 
     // Sum forces for specified atom
     if (&onlyThis == &i)
-        addTorsionForceI(du_dphi, onlyThis.getArrayIndex(), torsionParameters, f);
+        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else if (&onlyThis == &j)
-        addTorsionForceJ(du_dphi, onlyThis.getArrayIndex(), torsionParameters, f);
+        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else if (&onlyThis == &k)
-        addTorsionForceK(du_dphi, onlyThis.getArrayIndex(), torsionParameters, f);
+        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else
-        addTorsionForceL(du_dphi, onlyThis.getArrayIndex(), torsionParameters, f);
+        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces
@@ -640,10 +640,10 @@ void ForceKernel::forces(const SpeciesImproper &improper, const Atom &i, const A
     const auto du_dphi = improper.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, i.getArrayIndex(), torsionParameters, f);
-    addTorsionForceJ(du_dphi, j.getArrayIndex(), torsionParameters, f);
-    addTorsionForceK(du_dphi, k.getArrayIndex(), torsionParameters, f);
-    addTorsionForceL(du_dphi, l.getArrayIndex(), torsionParameters, f);
+    addTorsionForceI(du_dphi, i.arrayIndex(), torsionParameters, f);
+    addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
+    addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
+    addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesImproper forces for specified Atom only
@@ -659,13 +659,13 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesImproper &imp, const
 
     // Sum forces for specified atom
     if (&onlyThis == &i)
-        addTorsionForceI(du_dphi, onlyThis.getArrayIndex(), torsionParameters, f);
+        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else if (&onlyThis == &j)
-        addTorsionForceJ(du_dphi, onlyThis.getArrayIndex(), torsionParameters, f);
+        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else if (&onlyThis == &k)
-        addTorsionForceK(du_dphi, onlyThis.getArrayIndex(), torsionParameters, f);
+        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
     else
-        addTorsionForceL(du_dphi, onlyThis.getArrayIndex(), torsionParameters, f);
+        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesImproper forces

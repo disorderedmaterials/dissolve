@@ -103,7 +103,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Get Molecule index and pointer
             std::shared_ptr<Molecule> mol = targetConfiguration_->molecule(molId);
-            const auto indexOffset = mol->atom(0)->getArrayIndex();
+            const auto indexOffset = mol->atom(0)->arrayIndex();
 
             // Set current atom targets in ChangeStore (whole molecule)
             changeStore.add(mol);
