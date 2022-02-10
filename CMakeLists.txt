@@ -110,7 +110,11 @@ if(GUI)
   endif(APPLE)
 
   find_package(OpenGL REQUIRED)
-  find_package(Qt6 COMPONENTS Core DBusTools Gui Widgets OpenGL OpenGLWidgets REQUIRED)
+  find_package(
+    Qt6
+    COMPONENTS Core DBusTools Gui Widgets OpenGL OpenGLWidgets
+    REQUIRED
+  )
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
 
