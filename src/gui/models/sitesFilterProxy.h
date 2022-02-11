@@ -27,8 +27,8 @@ class SitesFilterProxy : public QSortFilterProxyModel
     std::bitset<nFilterFlags> filterFlags_;
 
     public:
-    // Add filter flag
-    void addFlag(FilterFlags flag);
+    // Set filter flag
+    void setFlag(FilterFlags flag);
 
     /*
      * QSortFilterProxyModel overrides

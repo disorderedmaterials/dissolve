@@ -6,8 +6,8 @@
 
 SitesFilterProxy::SitesFilterProxy(int flags) : filterFlags_(flags) {}
 
-// Add filter flag
-void SitesFilterProxy::addFlag(SitesFilterProxy::FilterFlags flag)
+// Set filter flag
+void SitesFilterProxy::setFlag(SitesFilterProxy::FilterFlags flag)
 {
     filterFlags_.set(flag);
     invalidateFilter();
