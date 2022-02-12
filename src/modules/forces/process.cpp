@@ -11,7 +11,7 @@
 #include "modules/import_trajectory/importtraj.h"
 
 // Run set-up stage
-bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
+bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (referenceForces_.hasFilename())
     {

@@ -176,5 +176,5 @@ class EPSRModule : public Module
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) override;
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };

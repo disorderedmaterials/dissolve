@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "keywords/signals.h"
 #include "procedure/nodes/aliases.h"
+#include "templates/flags.h"
 #include <memory>
 #include <optional>
 #include <string>
@@ -83,15 +83,24 @@ class KeywordBase
     /*
      * GUI Signalling
      */
+    public:
+    // Keyword Signals
+    enum KeywordSignal
+    {
+        ClearData,
+        RecreateRenderables,
+        ReloadExternalData
+    };
+
     private:
     // Signals to be emitted (via Qt) when editing this keyword in the GUI
-    KeywordSignals signals_;
+    Flags<KeywordSignal> signals_;
 
     public:
     // Set signals to be emitted (via Qt) when editing this keyword in the GUI
-    void setEditSignals(std::initializer_list<KeywordSignals::KeywordSignal> editSignals);
+    void setEditSignals(Flags<KeywordSignal> editSignals);
     // Return signals to be emitted (via Qt) when editing this keyword in the GUI
-    KeywordSignals editSignals() const;
+    Flags<KeywordSignal> editSignals() const;
 
     /*
      * Object Management
