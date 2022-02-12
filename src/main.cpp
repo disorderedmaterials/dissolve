@@ -7,8 +7,6 @@
 #include "main/dissolve.h"
 #include "main/version.h"
 
-#include "io/export/data1d.h"
-#include "keywords/fileandformat.h"
 int main(int args, char **argv)
 {
 #ifdef PARALLEL
