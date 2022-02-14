@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/keywordwidgets/ui_dialog.h"
-#include "keywords/signals.h"
+#include "keywords/base.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -28,7 +28,7 @@ class KeywordsDialog : public QDialog
     // Whether any keywords have been modified in the current 'show'
     bool keywordsModified_;
     // Combined signal mask for all keyword changes
-    KeywordSignals keywordSignalMask_;
+    Flags<KeywordBase::KeywordSignal> keywordSignalMask_;
 
     public:
     // Run the dialog
@@ -36,7 +36,7 @@ class KeywordsDialog : public QDialog
     // Return whether any keywords have been modified in the current 'show'
     bool keywordsModified() const;
     // Return combined signal mask for all keyword changes
-    KeywordSignals keywordSignalMask() const;
+    Flags<KeywordBase::KeywordSignal> keywordSignalMask() const;
 
     /*
      * Slots

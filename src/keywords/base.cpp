@@ -52,14 +52,10 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
  */
 
 // Set signals to be emitted (via Qt) when editing this keyword in the GUI
-void KeywordBase::setEditSignals(std::initializer_list<KeywordSignals::KeywordSignal> editSignals)
-{
-    for (auto sig : editSignals)
-        signals_ += sig;
-}
+void KeywordBase::setEditSignals(Flags<KeywordBase::KeywordSignal> editSignals) { signals_ += editSignals; }
 
 // Return signals to be emitted (via Qt) when editing this keyword in the GUI
-KeywordSignals KeywordBase::editSignals() const { return signals_; }
+Flags<KeywordBase::KeywordSignal> KeywordBase::editSignals() const { return signals_; }
 
 /*
  * Object Management

@@ -90,7 +90,7 @@ class Module
     virtual void setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
                             const std::map<std::string, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
-    virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals = {});
+    virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
     bool executeProcessing(Dissolve &dissolve, ProcessPool &procPool);
 
