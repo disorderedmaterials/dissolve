@@ -19,7 +19,6 @@
 SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
     : ProcedureNode(ProcedureNode::NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired)
 {
-    axesRequired_ = axesRequired;
     inclusiveDistanceRange_.set(0.0, 5.0);
 
     keywords_.add<SpeciesSiteVectorKeyword>("Control", "Site", "Add target site(s) to the selection", speciesSites_,

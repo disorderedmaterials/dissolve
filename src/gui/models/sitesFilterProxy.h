@@ -4,6 +4,7 @@
 #pragma once
 
 #include <QSortFilterProxyModel>
+#include <bitset>
 
 // Forward Declarations
 class QModelIndex;
@@ -13,19 +14,21 @@ class SitesFilterProxy : public QSortFilterProxyModel
     Q_OBJECT
 
     public:
-    SitesFilterProxy(int flags = SitesFilterProxy::None);
-
-    public:
+    SitesFilterProxy(int flags = 0);
     // Filter flags
     enum FilterFlags
     {
-        None = 0,
-        IsOriented = 1
+        HasAxes,
+        nFilterFlags
     };
+
+    private:
     // Current filter flags
-    int filterFlags_;
-    // Set filter flags
-    void setFlags(int flags);
+    std::bitset<nFilterFlags> filterFlags_;
+
+    public:
+    // Set filter flag
+    void setFlag(FilterFlags flag);
 
     /*
      * QSortFilterProxyModel overrides

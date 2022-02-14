@@ -93,6 +93,11 @@ void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
  * Public Functions
  */
 
+std::string siteName(const SpeciesAtom &i)
+{
+    return i.atomType() ? fmt::format("{} [{}]", i.index() + 1, i.atomType()->name()) : fmt::format("{}", i.index() + 1);
+}
+
 // Update sites tab
 void SpeciesTab::updateSitesTab()
 {
@@ -119,14 +124,17 @@ void SpeciesTab::updateSitesTab()
     }
 
     // Set origin atom indices
-    ui_.SiteOriginAtomsEdit->setText(QString::fromStdString(joinStrings(site->originAtomIndices(), " ")));
+    ui_.SiteOriginAtomsEdit->setText(
+        QString::fromStdString(joinStrings(site->originAtoms(), " ", [](const auto &i) { return siteName(*i); })));
     ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
     // Set x axis atom indices
-    ui_.SiteXAxisAtomsEdit->setText(QString::fromStdString(joinStrings(site->xAxisAtomIndices(), " ")));
+    ui_.SiteXAxisAtomsEdit->setText(
+        QString::fromStdString(joinStrings(site->xAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
 
     // Set y axis atom indices
-    ui_.SiteYAxisAtomsEdit->setText(QString::fromStdString(joinStrings(site->yAxisAtomIndices(), " ")));
+    ui_.SiteYAxisAtomsEdit->setText(
+        QString::fromStdString(joinStrings(site->yAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
 
     // If the current site has changed, also regenerate the SpeciesSite renderable
     if (ui_.SiteViewerWidget->siteViewer()->speciesSite() != site)
