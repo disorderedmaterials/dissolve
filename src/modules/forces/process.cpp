@@ -216,8 +216,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     // Sum forces on Atoms
                     fIntra[i->arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
-                                                   du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
-                                                   du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
+                                                du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
+                                                du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
                     fIntra[j->arrayIndex()].add(
                         du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
@@ -236,8 +236,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                    tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
                     fIntra[l->arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
-                                                   du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
-                                                   du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
+                                                du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
+                                                du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
                 }
 
                 // Improper forces
@@ -260,8 +260,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     // Sum forces on Atoms
                     fIntra[i->arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
-                                                   du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
-                                                   du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
+                                                du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
+                                                du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
                     fIntra[j->arrayIndex()].add(
                         du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
@@ -280,8 +280,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                    tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
                     fIntra[l->arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
-                                                   du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
-                                                   du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
+                                                du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
+                                                du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
                 }
             }
         }

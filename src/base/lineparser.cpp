@@ -587,7 +587,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
         int enumValue = getIntFromParseReturnValue(result);
         if (!processPool_->broadcast(enumValue))
             return LineParser::Fail;
-        
+
         result = getParseReturnValueFromInt(enumValue);
         if (result != LineParser::Success)
             return result;
@@ -967,7 +967,7 @@ LineParser::ParseReturnValue LineParser::getParseReturnValueFromInt(int value)
     if (value == -1)
         return LineParser::ParseReturnValue::EndOfFile;
     else if (value == 0)
-        return LineParser::ParseReturnValue::Success;  
+        return LineParser::ParseReturnValue::Success;
 
     return LineParser::ParseReturnValue::Fail;
 }
