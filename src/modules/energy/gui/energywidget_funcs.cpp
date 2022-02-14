@@ -44,7 +44,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module, Di
  */
 
 // Update controls within widget
-void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     const auto *cfg = module_->keywords().get<Configuration *>("Configuration");
 
@@ -55,7 +55,7 @@ void EnergyModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
     // Create / update renderables?
     if (!cfg)
         energyGraph_->clearRenderables();
-    else if (updateType == ModuleWidget::UpdateType::RecreateRenderables || energyGraph_->renderables().empty())
+    else if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || energyGraph_->renderables().empty())
     {
         // Clear any existing renderables
         energyGraph_->clearRenderables();

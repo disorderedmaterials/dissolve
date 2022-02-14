@@ -38,7 +38,7 @@ class EPSRModuleWidget : public ModuleWidget
 
     public:
     // Update controls within widget
-    void updateControls(ModuleWidget::UpdateType updateType) override;
+    void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
 
     /*
      * Widgets / Functions

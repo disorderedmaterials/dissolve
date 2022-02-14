@@ -82,7 +82,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     {
         ui_.ModuleControlsStack->addWidget(moduleWidget_);
         ui_.ModuleOutputButton->setEnabled(true);
-        moduleWidget_->updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+        moduleWidget_->updateControls(ModuleWidget::RecreateRenderablesFlag);
     }
 
     updateControls();
@@ -96,7 +96,7 @@ Module *ModuleControlWidget::module() const { return module_; }
  */
 
 // Update controls within widget
-void ModuleControlWidget::updateControls()
+void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> updateFlags)
 {
     if ((!module_) || (!dissolve_))
         return;
@@ -123,7 +123,7 @@ void ModuleControlWidget::updateControls()
 
     // Update additional controls (if they exist)
     if (moduleWidget_)
-        moduleWidget_->updateControls(ModuleWidget::UpdateType::Normal);
+        moduleWidget_->updateControls(updateFlags);
 }
 
 // Disable sensitive controls
@@ -205,7 +205,5 @@ void ModuleControlWidget::moduleKeywordChanged(int signalMask)
 
     // Handle specific flags for the module widget
     if (moduleWidget_)
-        moduleWidget_->updateControls(keywordSignals.isSet(KeywordBase::RecreateRenderables)
-                                          ? ModuleWidget::UpdateType::RecreateRenderables
-                                          : ModuleWidget::UpdateType::Normal);
+        moduleWidget_->updateControls(Flags<ModuleWidget::UpdateFlags>(signalMask));
 }

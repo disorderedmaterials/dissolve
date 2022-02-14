@@ -29,9 +29,9 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDF
 }
 
 // Update controls within widget
-void CalculateRDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void CalculateRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
         rdfGraph_->clearRenderables();
 
     if (rdfGraph_->renderables().empty())

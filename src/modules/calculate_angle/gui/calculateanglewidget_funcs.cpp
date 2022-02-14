@@ -76,7 +76,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, Calculat
 
     setGraphDataTargets(module_);
 
-    updateControls(ModuleWidget::UpdateType::Normal);
+    updateControls();
 
     refreshing_ = false;
 }
@@ -86,7 +86,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, Calculat
  */
 
 // Update controls within widget
-void CalculateAngleModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void CalculateAngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     ui_.RDFABPlotWidget->updateToolbar();
     ui_.RDFBCPlotWidget->updateToolbar();

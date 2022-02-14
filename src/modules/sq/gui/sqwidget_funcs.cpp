@@ -85,13 +85,13 @@ void SQModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 }
 
 // Update controls within widget
-void SQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void SQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || (!ui_.TotalButton->isChecked() && !targetPartials_))
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || (!ui_.TotalButton->isChecked() && !targetPartials_))
     {
         ui_.SQPlotWidget->clearRenderableData();
 
@@ -126,7 +126,7 @@ void SQModuleWidget::on_TotalButton_clicked(bool checked)
     sqGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
     sqGraph_->view().axes().setTitle(1, "F(Q)");
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void SQModuleWidget::on_PartialsButton_clicked(bool checked)
@@ -137,13 +137,13 @@ void SQModuleWidget::on_PartialsButton_clicked(bool checked)
     sqGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     sqGraph_->view().axes().setTitle(1, "S(Q)");
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void SQModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::UpdateType::RecreateRenderables); }
+void SQModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::RecreateRenderablesFlag); }
 
 void SQModuleWidget::on_ClearFilterButton_clicked(bool checked)
 {
     ui_.FilterEdit->setText("");
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }

@@ -10,7 +10,7 @@ ModuleWidget::ModuleWidget(QWidget *parent, Dissolve &dissolve) : QWidget(parent
  */
 
 // Update controls within widget
-void ModuleWidget::updateControls(UpdateType updateType) {}
+void ModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags) {}
 
 // Disable sensitive controls within widget
 void ModuleWidget::disableSensitiveControls() {}

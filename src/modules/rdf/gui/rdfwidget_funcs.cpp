@@ -90,7 +90,7 @@ void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 }
 
 // Update controls within widget
-void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void RDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
@@ -102,7 +102,7 @@ void RDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || (!ui_.TotalsButton->isChecked() && !targetPartials_))
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || (!ui_.TotalsButton->isChecked() && !targetPartials_))
     {
         ui_.RDFPlotWidget->clearRenderableData();
 
@@ -147,7 +147,7 @@ void RDFModuleWidget::on_SummedPartialsButton_clicked(bool checked)
     rdfGraph_->view().axes().setTitle(1, "g(r)");
     rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void RDFModuleWidget::on_TotalsButton_clicked(bool checked)
@@ -160,7 +160,7 @@ void RDFModuleWidget::on_TotalsButton_clicked(bool checked)
     rdfGraph_->view().axes().setTitle(1, "G(r)");
     rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::OneVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void RDFModuleWidget::on_ConfigurationPartialsButton_clicked(bool checked)
@@ -173,7 +173,7 @@ void RDFModuleWidget::on_ConfigurationPartialsButton_clicked(bool checked)
     rdfGraph_->view().axes().setTitle(1, "g(r)");
     rdfGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void RDFModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
@@ -181,13 +181,13 @@ void RDFModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
     if (refreshing_)
         return;
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void RDFModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::UpdateType::RecreateRenderables); }
+void RDFModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::RecreateRenderablesFlag); }
 
 void RDFModuleWidget::on_ClearFilterButton_clicked(bool checked)
 {
     ui_.FilterEdit->setText("");
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }

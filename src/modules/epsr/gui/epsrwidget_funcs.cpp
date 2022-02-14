@@ -60,11 +60,11 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
  */
 
 // Update controls within widget
-void EPSRModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || ui_.PlotWidget->dataViewer()->renderables().empty())
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || ui_.PlotWidget->dataViewer()->renderables().empty())
     {
         ui_.PlotWidget->clearRenderableData();
 
@@ -245,7 +245,7 @@ void EPSRModuleWidget::on_TotalFQButton_clicked(bool checked)
     graph_->view().axes().setNumberFormat(0, NumberFormat(NumberFormat::FormatType::Decimal));
     graph_->view().axes().setNumberFormat(1, NumberFormat(NumberFormat::FormatType::Decimal));
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void EPSRModuleWidget::on_DeltaFQButton_clicked(bool checked)
@@ -260,7 +260,7 @@ void EPSRModuleWidget::on_DeltaFQButton_clicked(bool checked)
     graph_->view().axes().setNumberFormat(0, NumberFormat(NumberFormat::FormatType::Decimal));
     graph_->view().axes().setNumberFormat(1, NumberFormat(NumberFormat::FormatType::Decimal));
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void EPSRModuleWidget::on_EstimatedSQButton_clicked(bool checked)
@@ -275,7 +275,7 @@ void EPSRModuleWidget::on_EstimatedSQButton_clicked(bool checked)
     graph_->view().axes().setNumberFormat(0, NumberFormat(NumberFormat::FormatType::Decimal));
     graph_->view().axes().setNumberFormat(1, NumberFormat(NumberFormat::FormatType::Decimal));
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void EPSRModuleWidget::on_EstimatedGRButton_clicked(bool checked)
@@ -290,7 +290,7 @@ void EPSRModuleWidget::on_EstimatedGRButton_clicked(bool checked)
     graph_->view().axes().setNumberFormat(0, NumberFormat(NumberFormat::FormatType::Decimal));
     graph_->view().axes().setNumberFormat(1, NumberFormat(NumberFormat::FormatType::Decimal));
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void EPSRModuleWidget::on_TotalGRButton_clicked(bool checked)
@@ -305,7 +305,7 @@ void EPSRModuleWidget::on_TotalGRButton_clicked(bool checked)
     graph_->view().axes().setNumberFormat(0, NumberFormat(NumberFormat::FormatType::Decimal));
     graph_->view().axes().setNumberFormat(1, NumberFormat(NumberFormat::FormatType::Decimal));
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void EPSRModuleWidget::on_PotentialsButton_clicked(bool checked)
@@ -320,7 +320,7 @@ void EPSRModuleWidget::on_PotentialsButton_clicked(bool checked)
     graph_->view().axes().setNumberFormat(0, NumberFormat(NumberFormat::FormatType::Decimal));
     graph_->view().axes().setNumberFormat(1, NumberFormat(NumberFormat::FormatType::Decimal));
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void EPSRModuleWidget::on_RFactorButton_clicked(bool checked)
@@ -335,7 +335,7 @@ void EPSRModuleWidget::on_RFactorButton_clicked(bool checked)
     graph_->view().axes().setNumberFormat(0, NumberFormat(NumberFormat::FormatType::Integer));
     graph_->view().axes().setNumberFormat(1, NumberFormat(NumberFormat::FormatType::Scientific));
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void EPSRModuleWidget::on_EReqButton_clicked(bool checked)
@@ -350,5 +350,5 @@ void EPSRModuleWidget::on_EReqButton_clicked(bool checked)
     graph_->view().axes().setNumberFormat(0, NumberFormat(NumberFormat::FormatType::Integer));
     graph_->view().axes().setNumberFormat(1, NumberFormat(NumberFormat::FormatType::Decimal));
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }

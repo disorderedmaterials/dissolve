@@ -54,7 +54,7 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDF
  */
 
 // Update controls within widget
-void CalculateSDFModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void CalculateSDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
@@ -69,7 +69,7 @@ void CalculateSDFModuleWidget::updateControls(ModuleWidget::UpdateType updateTyp
         refMolecules.emplace_back(sp.get(), fmt::format("{} (Species)", sp->name()));
     ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || sdfGraph_->renderables().empty())
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || sdfGraph_->renderables().empty())
     {
         sdfGraph_->clearRenderables();
         sdfRenderable_ = nullptr;
@@ -162,5 +162,5 @@ void CalculateSDFModuleWidget::on_ReferenceMoleculeCombo_currentIndexChanged(int
         referenceMoleculeRenderable_ = nullptr;
     }
 
-    updateControls(ModuleWidget::UpdateType::Normal);
+    updateControls();
 }
