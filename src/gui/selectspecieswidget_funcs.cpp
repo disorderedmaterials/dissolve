@@ -5,7 +5,6 @@
 #include "classes/species.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/selectspecieswidget.h"
-#include "templates/variantpointer.h"
 
 SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
 {

@@ -3,7 +3,6 @@
 
 #include "data/isotopes.h"
 #include "gui/delegates/isotopecombo.hui"
-#include "templates/variantpointer.h"
 
 IsotopeComboDelegate::IsotopeComboDelegate(QObject *parent) : QItemDelegate(parent) {}
 

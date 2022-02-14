@@ -4,7 +4,6 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
-#include "templates/enumhelpers.h"
 #include <limits>
 
 LineParser::LineParser(ProcessPool *procPool)
@@ -585,8 +584,11 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
     // Broadcast result of file check
     if (processPool_)
     {
-        if (!processPool_->broadcast(EnumCast<LineParser::ParseReturnValue>(result)))
+        int enumValue = getIntFromParseReturnValue(result);
+        if (!processPool_->broadcast(enumValue))
             return LineParser::Fail;
+
+        result = getParseReturnValueFromInt(enumValue);
         if (result != LineParser::Success)
             return result;
     }
@@ -668,8 +670,11 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
     // Broadcast result
     if (processPool_)
     {
-        if (!processPool_->broadcast(EnumCast<LineParser::ParseReturnValue>(result)))
+        int enumValue = getIntFromParseReturnValue(result);
+        if (!processPool_->broadcast(enumValue))
             return LineParser::Fail;
+
+        result = getParseReturnValueFromInt(enumValue);
         if (result != LineParser::Success)
             return result;
     }
@@ -947,4 +952,22 @@ bool LineParser::hasArg(int i) const
     if ((i < 0) || (i >= nArgs()))
         return false;
     return true;
+}
+
+// Utility LineParser::ParseReturnValue converter to int
+int LineParser::getIntFromParseReturnValue(LineParser::ParseReturnValue value)
+{
+    int enumValue = value;
+    return enumValue;
+}
+
+// Utility LineParser::ParseReturnValue converter from int
+LineParser::ParseReturnValue LineParser::getParseReturnValueFromInt(int value)
+{
+    if (value == -1)
+        return LineParser::ParseReturnValue::EndOfFile;
+    else if (value == 0)
+        return LineParser::ParseReturnValue::Success;
+
+    return LineParser::ParseReturnValue::Fail;
 }

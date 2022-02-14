@@ -6,30 +6,6 @@
 #include "classes/speciesatom.h"
 #include <utility>
 
-Atom::Atom() { clear(); }
-
-Atom::~Atom() = default;
-
-/*
- * DynamicArrayObject Virtuals
- */
-
-// Clear object, ready for re-use
-void Atom::clear()
-{
-    molecule_ = nullptr;
-    speciesAtom_ = nullptr;
-    cell_ = nullptr;
-
-    // Properties
-    localTypeIndex_ = -1;
-    masterTypeIndex_ = -1;
-}
-
-/*
- * Properties
- */
-
 // Set coordinates
 void Atom::set(const Vec3<double> r) { r_ = r; }
 
@@ -59,6 +35,11 @@ void Atom::setMasterTypeIndex(int id) { masterTypeIndex_ = id; }
 
 // Return master AtomType index
 int Atom::masterTypeIndex() const { return masterTypeIndex_; }
+// Sets the index of the object within the parent DynamicArray
+void Atom::setArrayIndex(int index) { arrayIndex_ = index; }
+
+// Gets the index of the object within the parent DynamicArray
+int Atom::arrayIndex() const { return arrayIndex_; }
 
 /*
  * Location

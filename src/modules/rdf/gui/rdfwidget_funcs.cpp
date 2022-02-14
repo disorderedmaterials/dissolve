@@ -11,7 +11,6 @@
 #include "modules/rdf/gui/rdfwidget.h"
 #include "modules/rdf/rdf.h"
 #include "templates/algorithms.h"
-#include "templates/variantpointer.h"
 
 Q_DECLARE_METATYPE(Configuration *);
 

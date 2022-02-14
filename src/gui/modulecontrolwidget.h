@@ -5,7 +5,6 @@
 
 #include "base/lock.h"
 #include "gui/ui_modulecontrolwidget.h"
-#include "templates/variantpointer.h"
 
 // Forward Declarations
 class ConfigurationVectorKeyword;

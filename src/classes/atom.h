@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "templates/dynamicarrayobject.h"
 #include "templates/vector3.h"
 #include <memory>
 #include <vector>
@@ -14,19 +13,8 @@ class Molecule;
 class SpeciesAtom;
 
 // Atom Definition
-class Atom : public DynamicArrayObject<Atom>
+class Atom
 {
-    public:
-    Atom();
-    ~Atom();
-
-    /*
-     * DynamicArrayObject Virtuals
-     */
-    public:
-    // Clear object, ready for re-use
-    void clear() override;
-
     /*
      * Properties
      */
@@ -34,9 +22,11 @@ class Atom : public DynamicArrayObject<Atom>
     // Coordinates
     Vec3<double> r_;
     // Assigned AtomType index, local to Configuration (for partial indexing etc.)
-    int localTypeIndex_;
+    int localTypeIndex_{-1};
     // Assigned master AtomType index (for pair potential indexing)
-    int masterTypeIndex_;
+    int masterTypeIndex_{-1};
+    // Object's index within the parent DynamicArray
+    int arrayIndex_{-1};
 
     public:
     // Set coordinates
@@ -59,17 +49,21 @@ class Atom : public DynamicArrayObject<Atom>
     void setMasterTypeIndex(int id);
     // Return master AtomType index
     int masterTypeIndex() const;
+    // Sets the index of the object within the parent DynamicArray
+    void setArrayIndex(int index);
+    // Gets the index of the object within the parent DynamicArray
+    int arrayIndex() const;
 
     /*
      * Location
      */
     private:
     // SpeciesAtom that this Atom represents
-    const SpeciesAtom *speciesAtom_;
+    const SpeciesAtom *speciesAtom_{nullptr};
     // Molecule in which this Atom exists
-    std::shared_ptr<Molecule> molecule_;
+    std::shared_ptr<Molecule> molecule_{nullptr};
     // Cell in which the atom exists
-    Cell *cell_;
+    Cell *cell_{nullptr};
 
     public:
     // Set SpeciesAtom that this Atom represents
