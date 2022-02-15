@@ -69,22 +69,6 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Co
         // iterate over
         table->setRowCount(rowCount);
     }
-    ConstTableWidgetUpdater(QTableWidget *table, const std::vector<I> &vector, T *functionParent,
-                            TableWidgetRowUpdateFunction updateRow)
-    {
-
-        int rowCount = 0;
-
-        for (auto &dataItem : vector)
-        {
-            updateItemAtIndex(table, rowCount, &dataItem, functionParent, updateRow);
-            ++rowCount;
-        }
-
-        // Set the number of table rows again here in order to catch the case where there were zero data items to
-        // iterate over
-        table->setRowCount(rowCount);
-    }
 
     ConstTableWidgetUpdater(QTableWidget *table, const std::vector<std::shared_ptr<I>> &list, T *functionParent,
                             TableWidgetRowUpdateFunction updateRow)
@@ -165,15 +149,6 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
         // Set the number of table rows again here in order to catch the case where there were zero data items to
         // iterate over
         table->setRowCount(rowCount);
-    }
-    TableWidgetUpdater(QTableWidget *table, std::vector<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
-    {
-        int rowCount = 0;
-        for (auto &dataItem : list)
-        {
-            updateItemAtIndex(table, rowCount, &dataItem, functionParent, updateRow);
-            ++rowCount;
-        }
     }
 
     TableWidgetUpdater(QTableWidget *table, std::vector<std::shared_ptr<I>> &list, T *functionParent,
