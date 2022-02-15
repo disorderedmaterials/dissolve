@@ -78,7 +78,7 @@ std::vector<const SpeciesSite *> &SelectProcedureNode::speciesSites() { return s
 // Return whether sites must have a defined orientation
 bool SelectProcedureNode::axesRequired() { return axesRequired_; }
 
-// Return nodes owned by this node
+// Find the nodes owned by this node
 std::vector<ConstNodeRef> SelectProcedureNode::children() const { return {forEachBranch_}; }
 
 /*
