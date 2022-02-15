@@ -25,8 +25,8 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
-    connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &)), this,
-            SLOT(moduleNameChanged(const QModelIndex &)));
+    connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &, const QString &, const QString &)), this,
+            SLOT(moduleNameChanged(const QModelIndex &, const QString &, const QString &)));
 
     if (moduleLayer_->modules().size() >= 1)
     {
@@ -187,7 +187,7 @@ void LayerTab::layerDataChanged(const QModelIndex &, const QModelIndex &, const 
     dissolveWindow_->setModified();
 }
 
-void LayerTab::moduleNameChanged(const QModelIndex &index)
+void LayerTab::moduleNameChanged(const QModelIndex &index, const QString &oldName, const QString &newName)
 {
     auto *module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
     assert(module);
@@ -196,6 +196,9 @@ void LayerTab::moduleNameChanged(const QModelIndex &index)
     auto *mcw = getControlWidget(module);
     if (mcw)
         mcw->updateControls();
+
+    // Rename processing module data
+    dissolve_.processingModuleData().renamePrefix(oldName.toStdString(), newName.toStdString());
 }
 
 // Update the module list

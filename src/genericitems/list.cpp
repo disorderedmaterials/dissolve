@@ -51,8 +51,9 @@ void GenericList::remove(std::string_view name, std::string_view prefix)
 // Remove all items with specified prefix
 void GenericList::removeWithPrefix(std::string_view prefix)
 {
+    auto delimitedPrefix = fmt::format("{}//", prefix);
     for (auto it = items_.begin(); it != items_.end(); ++it)
-        if (DissolveSys::startsWith(it->first, prefix))
+        if (DissolveSys::startsWith(it->first, delimitedPrefix))
             items_.erase(it);
 }
 
@@ -70,6 +71,19 @@ void GenericList::rename(std::string_view oldName, std::string_view oldPrefix, s
     auto handle = items_.extract(oldVarName);
     handle.key() = newVarName;
     items_.insert(std::move(handle));
+}
+
+// Rename prefix of items
+void GenericList::renamePrefix(std::string_view oldPrefix, std::string_view newPrefix)
+{
+    auto delimitedPrefix = fmt::format("{}//", oldPrefix);
+    for (auto &[key, value] : items_)
+        if (DissolveSys::startsWith(key, delimitedPrefix))
+        {
+            auto handle = items_.extract(key);
+            handle.key() = fmt::format("{}//{}", newPrefix, DissolveSys::afterString(key, "//"));
+            items_.insert(std::move(handle));
+        }
 }
 
 // Prune all items with '@suffix'

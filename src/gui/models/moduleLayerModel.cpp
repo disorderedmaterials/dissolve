@@ -70,10 +70,19 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 {
     if (role == Qt::EditRole)
     {
-        moduleLayer_->modules()[index.row()]->setUniqueName(value.toString().toStdString());
+        auto *module = rawData(index);
 
-        emit dataChanged(index, index);
-        emit(moduleNameChanged(index));
+        // Check for identical old/new names
+        if (value.toString() == QString::fromStdString(std::string(module->uniqueName())))
+            return false;
+
+        // Ensure uniqueness of new name
+        auto oldName = QString::fromStdString(std::string(module->uniqueName()));
+        auto newName = Module::uniqueName(value.toString().toStdString(), module);
+        module->setUniqueName(newName);
+
+        emit(dataChanged(index, index));
+        emit(moduleNameChanged(index, oldName, QString::fromStdString(newName)));
 
         return true;
     }

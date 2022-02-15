@@ -44,6 +44,8 @@ class GenericList
     void removeWithPrefix(std::string_view prefix);
     // Rename item
     void rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName, std::string_view newPrefix);
+    // Rename prefix of items
+    void renamePrefix(std::string_view oldPrefix, std::string_view newPrefix);
     // Prune all items with '@suffix'
     void pruneWithSuffix(std::string_view suffix);
 
