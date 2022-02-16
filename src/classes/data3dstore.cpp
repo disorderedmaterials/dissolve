@@ -14,7 +14,7 @@ bool Data3DStore::addData(std::string_view dataName, LineParser &parser, int sta
                           const CoreData &coreData)
 {
     // Create new data
-    auto &[data, format] = data_.emplace_back();
+    auto &[data, format] = data_.emplace_back().get();
     data.setTag(dataName);
 
     // Read the file / format
@@ -28,18 +28,18 @@ bool Data3DStore::addData(std::string_view dataName, LineParser &parser, int sta
 // Check to see if the named data is present in the store
 bool Data3DStore::containsData(std::string_view name) const
 {
-    return std::find_if(data_.begin(), data_.end(), [&name](auto &data) { return data.first.tag() == name; }) != data_.end();
+    return std::find_if(data_.begin()->get(), data_.end()->get(), [&name](auto &data) { return data.first.tag() == name; }) != data_.end()->get();
 }
 
 // Return named data
 OptionalReferenceWrapper<const Data3D> Data3DStore::data(std::string_view name) const
 {
-    auto it = std::find_if(data_.begin(), data_.end(), [&name](auto &data) { return data.first.tag() == name; });
-    if (it == data_.end())
+    auto it = std::find_if(data_.begin()->get(), data_.end()->get(), [&name](auto &data) { return data.first.tag() == name; });
+    if (it == data_.end()->get())
         return {};
 
-    return it->first;
+    return it.first;
 }
 
 // Return vector of all data
-const std::vector<std::pair<Data3D, Data3DImportFileFormat>> &Data3DStore::data() const { return data_; }
+const std::vector<std::reference_wrapper<std::pair<Data3D, Data3DImportFileFormat>>> &Data3DStore::data() const { return data_; }
