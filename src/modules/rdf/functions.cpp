@@ -645,8 +645,9 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     LineParser parser;
 
     // Loop over supplied test data and see if we can locate it amongst our PartialSets
-    for (auto &[data, format] : testData.data())
+    for (auto sharedDataPointer : testData.data())
     {
+        auto &[data, format] = *sharedDataPointer.get();
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data.tag()};
         std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
@@ -675,8 +676,9 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     LineParser parser;
 
     // Loop over supplied test data and see if we can locate it amongst our PartialSets
-    for (auto &[data, format] : testData.data())
+    for (auto sharedDataPointer : testData.data())
     {
+        auto &[data, format] = *sharedDataPointer.get();
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data.tag()};
         std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');

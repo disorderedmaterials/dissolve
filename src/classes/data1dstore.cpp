@@ -14,7 +14,7 @@ bool Data1DStore::addData(std::string_view dataName, LineParser &parser, int sta
                           const CoreData &coreData)
 {
     // Create new data
-    auto &[data, format] = data_.emplace_back().get();
+    auto &[data, format] = *data_.emplace_back().get();
     data.setTag(dataName);
 
     // Read the file / format
@@ -38,8 +38,8 @@ OptionalReferenceWrapper<const Data1D> Data1DStore::data(std::string_view name) 
     if (it == data_.end()->get())
         return {};
 
-    return it.first;
+    return it->first;
 }
 
 // Return vector of all data
-const std::vector<std::reference_wrapper<std::pair<Data1D, Data1DImportFileFormat>>> &Data1DStore::data() const { return data_; }
+const std::vector<std::shared_ptr<std::pair<Data1D, Data1DImportFileFormat>>> &Data1DStore::data() const { return data_; }

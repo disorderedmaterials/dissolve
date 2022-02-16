@@ -22,8 +22,9 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("\n");
 
     // Loop over reference one-dimensional data supplied
-    for (auto &[referenceData, format] : test1DData_.data())
+    for (auto sharedDataPointer : test1DData_.data())
     {
+        auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
         auto optData = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
         if (!optData)
@@ -63,8 +64,9 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Loop over reference two-dimensional data supplied
-    for (auto &[referenceData, format] : test2DData_.data())
+    for (auto sharedDataPointer : test2DData_.data())
     {
+        auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
         auto optData = dissolve.processingModuleData().search<const Data2D>(referenceData.tag());
         if (!optData)
