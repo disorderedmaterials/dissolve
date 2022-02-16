@@ -8,6 +8,8 @@
 #include "gui/helpers/treewidgetupdater.h"
 #include "templates/algorithms.h"
 #include <QInputDialog>
+#include <QMessageBox>
+#include <set>
 
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp)
     : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_), targetSpecies_(sp),
@@ -102,24 +104,27 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                 modifiedSpecies_->clearAtomTypes();
                 temporaryDissolve_.clearAtomTypes();
 
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
-                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
-                    return false;
+                auto assignErrs = ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
+                                                      !ui_.KeepSpeciesAtomChargesCheck->isChecked());
+                if (!assignErrs.empty())
+                    return alertAboutAtomTypeErrors(assignErrs);
 
                 for (auto &at : temporaryDissolve_.atomTypes())
                     originalAtomTypeNames_.emplace_back(std::string(at->name()));
             }
             else if (ui_.AtomTypesAssignSelectionRadio->isChecked())
             {
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
-                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
-                    return false;
+                auto assignErrs = ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
+                                                      !ui_.KeepSpeciesAtomChargesCheck->isChecked());
+                if (!assignErrs.empty())
+                    return alertAboutAtomTypeErrors(assignErrs);
             }
             else if (ui_.AtomTypesAssignMissingRadio->isChecked())
             {
-                if (ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
-                                        !ui_.KeepSpeciesAtomChargesCheck->isChecked()) != 0)
-                    return false;
+                auto assignErrs = ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
+                                                      !ui_.KeepSpeciesAtomChargesCheck->isChecked());
+                if (!assignErrs.empty())
+                    return alertAboutAtomTypeErrors(assignErrs);
             }
 
             atomTypeModel_.setData(temporaryCoreData_.atomTypes());
@@ -490,4 +495,13 @@ void AddForcefieldTermsDialog::on_MasterTermsSuffixButton_clicked(bool checked)
     masterTermModel_.suffixNames(ui_.MasterTermsTree->selectionModel()->selection().indexes(), suffix);
 
     updateMasterTermsPage();
+}
+
+// Helper function for error messages
+bool AddForcefieldTermsDialog::alertAboutAtomTypeErrors(std::vector<int> errs)
+{
+    QMessageBox::critical(this, "Error",
+                          QString("No matching atoms types for indices ") +
+                              QString::fromStdString(joinStrings(errs, ", ", [](const auto &i) { return std::to_string(i); })));
+    return false;
 }

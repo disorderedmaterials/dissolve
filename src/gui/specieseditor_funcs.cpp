@@ -214,7 +214,16 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     sp->updateIntramolecularTerms();
 
     // Apply new forcefield terms
-    if (uff->assignAtomTypes(sp, coreData, Forcefield::TypeAll, false) != 0 || !uff->assignIntramolecular(sp))
+    auto assignErrs = uff->assignAtomTypes(sp, coreData, Forcefield::TypeAll, false);
+    if (!assignErrs.empty())
+    {
+        QMessageBox::critical(
+            this, "Error",
+            QString("No matching atom types for indices ") +
+                QString::fromStdString(joinStrings(assignErrs, ", ", [](const auto &i) { return std::to_string(i); })));
+        return;
+    }
+    if (!uff->assignIntramolecular(sp))
     {
         QMessageBox::critical(this, "Error", "Failed to apply UFF to the species - molecule clean-up is not possible.");
         return;
