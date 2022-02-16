@@ -114,8 +114,7 @@ if(GUI)
     Qt6
     COMPONENTS Core
                # DBusTools
-               Gui Widgets OpenGL OpenGLWidgets
-    REQUIRED
+               Gui Widgets OpenGL OpenGLWidgets REQUIRED
   )
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
