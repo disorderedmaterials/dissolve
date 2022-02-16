@@ -21,9 +21,9 @@ steps:
       Qt6_DIR=/tmp/qt/${{ parameters.qtver }}/clang_64/lib/cmake/Qt6
       QT_BASE_DIR=/tmp/qt/${{ parameters.qtver }}/clang_64
       QTVER=${{ parameters.qtver }}
-      ls Qt6_DIR
+      ls $Qt6_DIR
       echo "------------------------------------------"
-      ls QT_BASE_DIR
+      ls $QT_BASE_DIR
       ANTLR_EXE=`find /usr/local/Cellar/antlr/4.9* -iname antlr`
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
       mkdir build
