@@ -113,7 +113,7 @@ if(GUI)
   find_package(
     Qt6
     COMPONENTS Core
-               DBusTools
+               # DBusTools
                Gui
                Widgets
                OpenGL
