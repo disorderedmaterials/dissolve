@@ -247,7 +247,7 @@ if(GUI)
 
   # Because Qt has its own way of checking for C++17
   if(MSVC)
-    target_compile_options(${gui_target_name} PRIVATE "/std:c++latest")
+    target_compile_options(${gui_target_name} PUBLIC "/Zc:__cplusplus")
   endif(MSVC)
 
   # Add the ANTLR4 dependency if building locally
