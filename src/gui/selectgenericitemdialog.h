@@ -5,7 +5,6 @@
 
 #include "gui/ui_selectgenericitemdialog.h"
 #include "main/dissolve.h"
-#include "templates/variantpointer.h"
 #include <QDialog>
 
 // Forward Declarations

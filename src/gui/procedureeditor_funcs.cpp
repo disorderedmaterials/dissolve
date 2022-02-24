@@ -7,7 +7,6 @@
 #include "gui/procedureeditor.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
-#include "templates/variantpointer.h"
 
 ProcedureEditor::ProcedureEditor(QWidget *parent) : QWidget(parent)
 {

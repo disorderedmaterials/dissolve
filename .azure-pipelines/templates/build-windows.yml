@@ -25,8 +25,6 @@ steps:
       $ErrorActionPreference = 'Stop'
       cd $(Build.BinariesDirectory)
       git clone ${{ parameters.ftrepo }} freetype-latest
-      # Hack on a file...
-      (Get-Content freetype-latest\src\gzip\zutil.h).replace('#ifdef Z_SOLO', '#ifdef Z_SOLO_NO') | Set-Content freetype-latest\src\gzip\zutil.h
       mkdir freetype-build
       cd freetype-build
       cmake -G "Visual Studio 16 2019" -A "x64" ../freetype-latest -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install

@@ -196,7 +196,8 @@ void ModuleControlWidget::moduleKeywordChanged(int signalMask)
     // Always emit the 'dataModified' signal
     emit(dataModified());
 
-    KeywordSignals keywordSignals(signalMask);
+    // Determine flags
+    Flags<KeywordBase::KeywordSignal> keywordSignals(signalMask);
 
     // Call the module's setUp() function with it
     if (keywordSignals.anySet())
@@ -204,7 +205,7 @@ void ModuleControlWidget::moduleKeywordChanged(int signalMask)
 
     // Handle specific flags for the module widget
     if (moduleWidget_)
-        moduleWidget_->updateControls(keywordSignals.isSet(KeywordSignals::RecreateRenderables)
+        moduleWidget_->updateControls(keywordSignals.isSet(KeywordBase::RecreateRenderables)
                                           ? ModuleWidget::UpdateType::RecreateRenderables
                                           : ModuleWidget::UpdateType::Normal);
 }

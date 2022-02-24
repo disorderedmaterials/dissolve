@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/delegates/combolist.hui"
-#include "templates/variantpointer.h"
 
 /*
  * ComboListItems

@@ -9,7 +9,6 @@
 #include "modules/bragg/bragg.h"
 #include "modules/bragg/gui/braggwidget.h"
 #include "templates/algorithms.h"
-#include "templates/variantpointer.h"
 
 BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

@@ -122,7 +122,7 @@ void Module::setTargets(std::vector<std::unique_ptr<Configuration>> &configurati
 }
 
 // Run set-up stage
-bool Module::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals) { return true; }
+bool Module::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) { return true; }
 
 // Run main processing stage
 bool Module::executeProcessing(Dissolve &dissolve, ProcessPool &procPool)

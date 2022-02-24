@@ -58,6 +58,26 @@ SampledDouble &SampledDouble::operator=(double x)
 
 SampledDouble &SampledDouble::operator=(const SampledDouble &source) = default;
 
+SampledDouble SampledDouble::operator+(double x) const
+{
+    auto result = *this;
+    result += x;
+    return result;
+}
+
+SampledDouble SampledDouble::operator*(double x) const
+{
+    auto result = *this;
+    result *= x;
+    return result;
+}
+SampledDouble SampledDouble::operator/(double x) const
+{
+    auto result = *this;
+    result /= x;
+    return result;
+}
+
 void SampledDouble::operator+=(double x)
 {
     // Accumulate value using Welford's online algorithm

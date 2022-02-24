@@ -11,7 +11,7 @@
 #include "modules/energy/energy.h"
 
 // Run set-up stage
-bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
+bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // For the Configuration target add a flag to its moduleData (which is *not* stored in the restart file) to specify that we
     // are targeting it

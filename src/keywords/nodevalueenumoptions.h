@@ -7,7 +7,6 @@
 #include "keywords/base.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
-#include "templates/venum.h"
 
 // Forward Declarations
 class ProcedureNode;

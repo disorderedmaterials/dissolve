@@ -5,7 +5,6 @@
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
-#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;

@@ -61,6 +61,8 @@ class SpeciesSite
     bool addOriginAtom(int atomIndex);
     // Set origin atoms
     bool setOriginAtoms(const std::vector<SpeciesAtom *> &atoms);
+    // Return origin atom vector
+    const std::vector<const SpeciesAtom *> &originAtoms() const;
     // Return integer array of indices from which the origin should be formed
     std::vector<int> originAtomIndices() const;
     // Set whether the origin should be calculated with mass-weighted positions
@@ -73,6 +75,8 @@ class SpeciesSite
     bool addXAxisAtom(int atomIndex);
     // Set x-axis atoms
     bool setXAxisAtoms(const std::vector<SpeciesAtom *> &atoms);
+    // Return x-axis atom vector
+    const std::vector<const SpeciesAtom *> &xAxisAtoms() const;
     // Return integer array of indices from which x-axis should be formed
     std::vector<int> xAxisAtomIndices() const;
     // Add y-axis atom
@@ -81,6 +85,8 @@ class SpeciesSite
     bool addYAxisAtom(int atomIndex);
     // Set y-axis atoms
     bool setYAxisAtoms(const std::vector<SpeciesAtom *> &atoms);
+    // Return y-axis atom vector
+    const std::vector<const SpeciesAtom *> &yAxisAtoms() const;
     // Return integer array of indices from which y-axis should be formed
     std::vector<int> yAxisAtomIndices() const;
     // Return whether the site has defined axes sites

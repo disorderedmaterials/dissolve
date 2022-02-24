@@ -29,7 +29,7 @@ void KeywordsDialog::showOptions()
 bool KeywordsDialog::keywordsModified() const { return keywordsModified_; }
 
 // Return combined signal mask for all keyword changes
-KeywordSignals KeywordsDialog::keywordSignalMask() const { return keywordSignalMask_; }
+Flags<KeywordBase::KeywordSignal> KeywordsDialog::keywordSignalMask() const { return keywordSignalMask_; }
 
 /*
  * Slots

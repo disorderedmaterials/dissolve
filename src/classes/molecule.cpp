@@ -8,22 +8,6 @@
 #include "classes/speciesbond.h"
 #include "templates/algorithms.h"
 
-Molecule::Molecule() { species_ = nullptr; }
-
-Molecule::~Molecule() = default;
-
-/*
- * DynamicArrayObject Virtuals
- */
-
-// Clear object, ready for re-use
-void Molecule::clear()
-{
-    species_ = nullptr;
-
-    atoms_.clear();
-}
-
 /*
  * Contents
  */
@@ -35,15 +19,16 @@ void Molecule::setSpecies(const Species *sp) { species_ = sp; }
 const Species *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
-void Molecule::addAtom(Atom *i)
+void Molecule::addAtom(Atom *atom)
 {
-    atoms_.push_back(i);
-    atomIndices_.push_back(i->arrayIndex());
+    atoms_.push_back(atom);
+    atomIndices_.push_back(atom->arrayIndex());
 
-    if (i->molecule() != nullptr)
-        Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
+    if (atom->molecule() != nullptr)
+        Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n",
+                        atom->arrayIndex());
     std::shared_ptr<Molecule> parent = shared_from_this();
-    i->setMolecule(parent);
+    atom->setMolecule(parent);
 }
 
 // Return size of Atom array
@@ -62,6 +47,10 @@ void Molecule::updateAtoms(std::vector<Atom> &source)
         std::transform(atomIndices_.begin(), atomIndices_.end(), atoms_.begin(),
                        [&source](const auto idx) { return &source[idx]; });
 }
+// Sets the index of the object within the parent DynamicArray
+void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }
+// Gets the index of the object within the parent DynamicArray
+int Molecule::arrayIndex() const { return arrayIndex_; }
 
 /*
  * Manipulations

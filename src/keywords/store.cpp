@@ -37,6 +37,7 @@ KeywordTypeMap::KeywordTypeMap()
     registerDirectMapping<std::shared_ptr<Collect1DProcedureNode>, NodeKeyword<Collect1DProcedureNode>>();
     registerDirectMapping<std::vector<std::shared_ptr<const Collect1DProcedureNode>>,
                           NodeVectorKeyword<Collect1DProcedureNode>>();
+    registerDirectMapping<std::shared_ptr<RegionProcedureNodeBase>, NodeKeyword<RegionProcedureNodeBase>>();
     registerDirectMapping<std::shared_ptr<SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>();
     registerDirectMapping<std::vector<std::shared_ptr<const SelectProcedureNode>>, NodeVectorKeyword<SelectProcedureNode>>();
     registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
