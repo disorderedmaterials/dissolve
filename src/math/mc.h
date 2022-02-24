@@ -17,7 +17,6 @@ template <class T> class MonteCarloMinimiser
     MonteCarloMinimiser<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
         : object_(object), costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
     {
-        parameterSmoothingFrequency_ = 0;
         acceptanceMemoryLength_ = 25;
         targetAcceptanceRatio_ = 0.33;
         maxIterations_ = 100;
@@ -53,13 +52,13 @@ template <class T> class MonteCarloMinimiser
     // Whether minimum limits have been set for targets
     std::vector<bool> minimumLimit_;
     // Scaling factor for penalties incurred when outside of allowable limit
-    double penaltyFactor_;
+    const double penaltyFactor_ = 1e5;
     // Minimum limiting values for targets
     std::vector<double> minimumValue_;
     // Maximum limiting values for targets
     std::vector<double> maximumValue_;
     // Integer power of penalty function when outside allowable limit
-    int penaltyPower_;
+    const int penaltyPower_ = 2;
 
     private:
     void pokeValues(const std::vector<double> &values)
