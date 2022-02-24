@@ -4,17 +4,18 @@
 #pragma once
 
 #include "base/messenger.h"
+#include "expression/variable.h"
 #include "math/mathfunc.h"
-#include "math/minimiser.h"
 #include <iomanip>
 #include <numeric>
 
-template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
+template <class T> class MonteCarloMinimiser
 {
+    using MinimiserCostFunction = double (T::*)(const std::vector<double> &);
+
     public:
-    MonteCarloMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction,
-                           bool pokeBeforeCost = false)
-        : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
+    MonteCarloMinimiser<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
+        : object_(object), costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
     {
         parameterSmoothingFrequency_ = 0;
         acceptanceMemoryLength_ = 25;
@@ -25,6 +26,8 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
     }
 
     private:
+    // Where thos poke values into targets before calling the cost function
+    bool pokeBeforeCost_;
     // Maximum number of iterations to perform
     int maxIterations_;
     // Step size
@@ -39,8 +42,55 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
     int acceptanceMemoryLength_;
     // Target acceptance ratio
     double targetAcceptanceRatio_;
+    // Object used to call cost function
+    T &object_;
+    // Pointer to cost function
+    MinimiserCostFunction costFunction_;
+    // Pointers to double values to be fit
+    std::vector<double *> targets_;
+    // Whether maximum limits have been set for targets
+    std::vector<bool> maximumLimit_;
+    // Whether minimum limits have been set for targets
+    std::vector<bool> minimumLimit_;
+    // Scaling factor for penalties incurred when outside of allowable limit
+    double penaltyFactor_;
+    // Minimum limiting values for targets
+    std::vector<double> minimumValue_;
+    // Maximum limiting values for targets
+    std::vector<double> maximumValue_;
+    // Integer power of penalty function when outside allowable limit
+    int penaltyPower_;
 
     private:
+    void pokeValues(const std::vector<double> &values)
+    {
+        for (auto n = 0; n < targets_.size(); ++n)
+            (*targets_[n]) = values[n];
+    }
+    // Calculate cost from specified values, including contributions from any supplied limits
+    double cost(const std::vector<double> &alpha)
+    {
+        // Poke values into targets before calling cost function?
+        if (pokeBeforeCost_)
+            pokeValues(alpha);
+
+        // Evaluate cost function
+        double x = (object_.*costFunction_)(alpha);
+
+        // Add penalties from values exceeding set limits
+        for (auto n = 0; n < alpha.size(); ++n)
+        {
+            // Minimum limit
+            if (minimumLimit_[n] && (alpha[n] < minimumValue_[n]))
+                x += penaltyFactor_ * pow(minimumValue_[n] - alpha[n], penaltyPower_);
+
+            // Minimum limit
+            if (maximumLimit_[n] && (alpha[n] > maximumValue_[n]))
+                x += penaltyFactor_ * pow(alpha[n] - maximumValue_[n], penaltyPower_);
+        }
+
+        return x;
+    }
     // Smooth current parameter set
     void smoothParameters(std::vector<double> &values)
     {
@@ -74,8 +124,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
                 newY[n] /= (values.size() - n + i + 1);
             }
 
-            for (auto n = 0; n < values.size(); ++n)
-                values[n] = newY[n];
+            std::copy(newY.begin(), newY.end(), values.begin());
         }
     }
 
@@ -104,10 +153,10 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
     // Target acceptance ratio
     void setTargetAcceptanceRatio(double ratio) { targetAcceptanceRatio_ = ratio; }
     // Perform minimisation
-    double execute(std::vector<double> &values) override
+    double execute(std::vector<double> &values)
     {
         // Get initial error of input parameters
-        double currentError = MinimiserBase<T>::cost(values);
+        double currentError = cost(values);
         Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Initial error = {}\n", currentError);
 
         double trialError;
@@ -133,7 +182,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
                 trialValues[i] += DissolveMath::randomPlusMinusOne() * trialValues[i] * stepSize_;
 
             // Get error for the new parameters, and store if improved
-            trialError = MinimiserBase<T>::cost(trialValues);
+            trialError = cost(trialValues);
             accepted = trialError < currentError;
             if (accepted)
             {
@@ -164,7 +213,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
             if ((parameterSmoothingFrequency_ > 0) && (smoothingNAccepted == parameterSmoothingFrequency_))
             {
                 smoothParameters(values);
-                currentError = MinimiserBase<T>::cost(values);
+                currentError = cost(values);
                 smoothingNAccepted = 0;
             }
 
@@ -174,5 +223,49 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
         }
 
         return currentError;
+    }
+    // Minimise target parameters
+    double minimise()
+    {
+        // Check for zero variable parameters
+        if (targets_.size() == 0)
+        {
+            Messenger::warn("No variables specified for fitting, so nothing to do.\n");
+            return 0.0;
+        }
+
+        // Create a local array of values to pass to the fitting routine
+        std::vector<double> values(targets_.size());
+        std::transform(targets_.begin(), targets_.end(), values.begin(), [](auto *target) { return *target; });
+
+        // Minimise the function
+        double finalCost = execute(values);
+
+        // Set optimised values back into their original variables
+        pokeValues(values);
+
+        return finalCost;
+    }
+    // Add pointer as fit target, with limits specified
+    void addTarget(double *var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
+    {
+        // Add pointer and current value
+        targets_.push_back(var);
+
+        // Add/set limits
+        minimumLimit_.push_back(minLimit);
+        minimumValue_.push_back(minValue);
+        maximumLimit_.push_back(maxLimit);
+        maximumValue_.push_back(maxValue);
+    }
+    // Add reference as fit target, with limits specified
+    void addTarget(double &var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
+    {
+        addTarget(&var, minLimit, minValue, maxLimit, maxValue);
+    }
+    void addTarget(const std::shared_ptr<ExpressionVariable> &var, bool minLimit = false, double minValue = 0.0,
+                   bool maxLimit = false, double maxValue = 0.0)
+    {
+        addTarget(var->valuePointer()->doublePointer(), minLimit, minValue, maxLimit, maxValue);
     }
 };

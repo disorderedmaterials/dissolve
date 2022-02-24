@@ -4,16 +4,17 @@
 #pragma once
 
 #include "base/messenger.h"
-#include "math/minimiser.h"
 #include <iomanip>
 #include <limits>
 
 // Brent's Principal Axis Minimiser
-template <class T> class PrAxisMinimiser : public MinimiserBase<T>
+template <class T> class PrAxisMinimiser
 {
+    using MinimiserCostFunction = double (T::*)(const std::vector<double> &);
+
     public:
-    PrAxisMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
-        : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
+    PrAxisMinimiser<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
+        : object_(object), costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
     {
         maxStep_ = 0.01;
         tolerance_ = 1.0e-3;
@@ -30,10 +31,59 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     double tolerance_;
     // Print level
     int printLevel_;
+    // Object used to call cost function
+    T &object_;
+    // Pointer to cost function
+    MinimiserCostFunction costFunction_;
+    // Where thos poke values into targets before calling the cost function
+    bool pokeBeforeCost_;
+    // Pointers to double values to be fit
+    std::vector<double *> targets_;
+    // Whether maximum limits have been set for targets
+    std::vector<bool> maximumLimit_;
+    // Whether minimum limits have been set for targets
+    std::vector<bool> minimumLimit_;
+    // Scaling factor for penalties incurred when outside of allowable limit
+    double penaltyFactor_;
+    // Minimum limiting values for targets
+    std::vector<double> minimumValue_;
+    // Maximum limiting values for targets
+    std::vector<double> maximumValue_;
+    // Integer power of penalty function when outside allowable limit
+    int penaltyPower_;
 
     private:
+    void pokeValues(const std::vector<double> &values)
+    {
+        for (auto n = 0; n < targets_.size(); ++n)
+            (*targets_[n]) = values[n];
+    }
+    // Calculate cost from specified values, including contributions from any supplied limits
+    double cost(const std::vector<double> &alpha)
+    {
+        // Poke values into targets before calling cost function?
+        if (pokeBeforeCost_)
+            pokeValues(alpha);
+
+        // Evaluate cost function
+        double x = (object_.*costFunction_)(alpha);
+
+        // Add penalties from values exceeding set limits
+        for (auto n = 0; n < alpha.size(); ++n)
+        {
+            // Minimum limit
+            if (minimumLimit_[n] && (alpha[n] < minimumValue_[n]))
+                x += penaltyFactor_ * pow(minimumValue_[n] - alpha[n], penaltyPower_);
+
+            // Minimum limit
+            if (maximumLimit_[n] && (alpha[n] > maximumValue_[n]))
+                x += penaltyFactor_ * pow(alpha[n] - maximumValue_[n], penaltyPower_);
+        }
+
+        return x;
+    }
     // Perform minimisation
-    double execute(std::vector<double> &values) override { return praxis(tolerance_, maxStep_, values, printLevel_); }
+    double execute(std::vector<double> &values) { return praxis(tolerance_, maxStep_, values, printLevel_); }
 
     public:
     // Set maximum step size
@@ -42,7 +92,46 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     void setTolerance(double tol) { tolerance_ = tol; }
     // Set print level
     void setPrintLevel(int level) { printLevel_ = level; }
+    // Minimise target parameters
+    double minimise()
+    {
+        // Check for zero variable parameters
+        if (targets_.size() == 0)
+        {
+            Messenger::warn("No variables specified for fitting, so nothing to do.\n");
+            return 0.0;
+        }
 
+        // Create a local array of values to pass to the fitting routine
+        std::vector<double> values(targets_.size());
+        std::transform(targets_.begin(), targets_.end(), values.begin(), [](auto *target) { return *target; });
+
+        // Minimise the function
+        double finalCost = execute(values);
+
+        // Set optimised values back into their original variables
+        pokeValues(values);
+
+        return finalCost;
+    }
+
+    // Add pointer as fit target, with limits specified
+    void addTarget(double *var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
+    {
+        // Add pointer and current value
+        targets_.push_back(var);
+
+        // Add/set limits
+        minimumLimit_.push_back(minLimit);
+        minimumValue_.push_back(minValue);
+        maximumLimit_.push_back(maxLimit);
+        maximumValue_.push_back(maxValue);
+    }
+    // Add reference as fit target, with limits specified
+    void addTarget(double &var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
+    {
+        addTarget(&var, minLimit, minValue, maxLimit, maxValue);
+    }
     /*
      * Algorithm
      *
@@ -186,7 +275,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         //
         //  Evaluate the function.
         //
-        value = MinimiserBase<T>::cost(t);
+        value = cost(t);
 
         return value;
     }
@@ -2032,7 +2121,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         nl = 0;
         nf = 1;
 
-        fx = MinimiserBase<T>::cost(x);
+        fx = cost(x);
 
         qf1 = fx;
         t = smallValue + fabs(t0);
@@ -2139,7 +2228,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                             }
                         }
 
-                        fx = MinimiserBase<T>::cost(x);
+                        fx = cost(x);
                         nf = nf + 1;
                     }
                     //

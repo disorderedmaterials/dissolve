@@ -57,7 +57,6 @@ add_library(
   matrix3.h
   matrix4.h
   mc.h
-  minimiser.h
   poissonfit.h
   praxis.h
   range.h
