@@ -162,9 +162,11 @@ class Dissolve
     void removeConfiguration(Configuration *cfg);
     // Return number of defined Configurations
     int nConfigurations() const;
-    // Return Configuration list
+    // Return Configuration vector
     std::vector<std::unique_ptr<Configuration>> &configurations();
     const std::vector<std::unique_ptr<Configuration>> &configurations() const;
+    // Return raw Configuration vector
+    std::vector<Configuration *> rawConfigurations() const;
     // Find configuration by name
     Configuration *findConfiguration(std::string_view name) const;
     // Find configuration by 'nice' name

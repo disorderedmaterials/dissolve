@@ -44,8 +44,17 @@ void Dissolve::removeConfiguration(Configuration *cfg)
 // Return number of defined Configurations
 int Dissolve::nConfigurations() const { return coreData_.nConfigurations(); }
 
-// Return Configuration list
+// Return Configuration vector
 std::vector<std::unique_ptr<Configuration>> &Dissolve::configurations() { return coreData_.configurations(); }
+
+// Return raw Configuration vector
+std::vector<Configuration *> Dissolve::rawConfigurations() const
+{
+    std::vector<Configuration *> cfgs(coreData_.configurations().size());
+    std::transform(coreData_.configurations().begin(), coreData_.configurations().end(), cfgs.begin(),
+                   [](auto &cfg) { return cfg.get(); });
+    return cfgs;
+}
 
 const std::vector<std::unique_ptr<Configuration>> &Dissolve::configurations() const { return coreData_.configurations(); }
 
