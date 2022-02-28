@@ -50,9 +50,9 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Check that Configurations have unmodified size factor
-    if (std::all_of(targetConfigurations_.begin(), targetConfigurations_.end(),
-                    [](const auto *cfg)
-                    { return std::abs(cfg->appliedSizeFactor() - 1.0) > 2 * std::numeric_limits<double>::epsilon(); }))
+    if (std::all_of(targetConfigurations_.begin(), targetConfigurations_.end(), [](const auto *cfg) {
+            return std::abs(cfg->appliedSizeFactor() - 1.0) > 2 * std::numeric_limits<double>::epsilon();
+        }))
     {
         Messenger::print("One or more configurations have an applied size factor, so RDF calculation will be skipped.\n");
         return true;
