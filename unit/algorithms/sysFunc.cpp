@@ -29,11 +29,12 @@ TEST(SysFunc, StringManipulation)
     EXPECT_FALSE(DissolveSys::sameWildString("abc*efg", "ABCDEFGH"));
     EXPECT_TRUE(DissolveSys::sameWildString("abc*efg?", "ABCDEFGH"));
 
-    // Before / after char
+    // Before / after chars and strings
     EXPECT_TRUE(DissolveSys::beforeChar("Something=This", '=') == "Something");
     EXPECT_TRUE(DissolveSys::afterChar("Something=This", '=') == "This");
     EXPECT_TRUE(DissolveSys::beforeChar("Something=This=That=Other", '=') == "Something");
     EXPECT_TRUE(DissolveSys::afterChar("Something=This=That=Other", '=') == "This=That=Other");
+    EXPECT_TRUE(DissolveSys::afterString("Something=This=That=Other", "This=") == "That=Other");
     EXPECT_TRUE(DissolveSys::beforeLastChar("Something=This=That=Other", '=') == "Something=This=That");
     EXPECT_TRUE(DissolveSys::afterLastChar("Something=This=That=Other", '=') == "Other");
     EXPECT_TRUE(DissolveSys::beforeChar("Just a string", '=').empty());

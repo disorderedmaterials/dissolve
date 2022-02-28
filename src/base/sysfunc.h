@@ -41,6 +41,8 @@ class DissolveSys
     static std::string_view afterChar(const std::string_view s, char c);
     // Get characters after first occurrence of any of the supplied characters, or an empty string if none are present
     static std::string_view afterChar(const std::string_view s, std::string_view chars);
+    // Get characters after first occurrence of the supplied string, or an empty string if it is not present
+    static std::string_view afterString(const std::string_view s, std::string_view searchString);
     // Get characters before last occurrence of designated character, or an empty string if the character does not exist
     static std::string_view beforeLastChar(const std::string_view s, char c);
     // Get characters after last occurrence of designated character, or an empty string if the character does not exist

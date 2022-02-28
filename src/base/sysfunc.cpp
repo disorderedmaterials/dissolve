@@ -139,6 +139,16 @@ std::string_view DissolveSys::afterChar(const std::string_view s, std::string_vi
     return "";
 }
 
+// Get characters after first occurrence of the supplied string, or an empty string if it is not present
+std::string_view DissolveSys::afterString(const std::string_view s, std::string_view searchString)
+{
+    auto pos = s.find(searchString);
+    if ((pos == std::string::npos) || (pos == s.length() - searchString.length()))
+        return "";
+
+    return s.substr(pos + searchString.length());
+}
+
 // Get characters before last occurrence of designated character, or an empty string if the character does not exist
 std::string_view DissolveSys::beforeLastChar(const std::string_view s, char c)
 {
