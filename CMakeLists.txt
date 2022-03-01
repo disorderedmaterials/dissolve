@@ -247,7 +247,7 @@ if(GUI)
 
   # Because Qt has its own way of checking for C++17
   if(MSVC)
-    add_compile_options(/Zc:__cplusplus)
+    add_compile_options(/std:c++17 /Zc:__cplusplus)
   endif(MSVC)
 
   # Add the ANTLR4 dependency if building locally
