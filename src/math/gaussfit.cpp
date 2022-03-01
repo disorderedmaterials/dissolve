@@ -274,8 +274,28 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser<GaussFit> gaussMinimiser(*this,
-                                                         std::bind(&GaussFit::costAnalyticA, *this, std::placeholders::_1));
+            MonteCarloMinimiser<GaussFit> gaussMinimiser(
+                *this,
+                [this](const std::vector<double> &alpha)
+                {
+                    double sose = 0.0;
+                    double multiplier = 1.0;
+
+                    // Loop over data points, add in our Gaussian contributions, and
+                    double dy;
+                    for (auto &&[x, y, refY] :
+                         zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
+                    {
+                        // Add in contributions from our Gaussians
+                        for (auto &&[g, A] : zip(alphaIndex_, alpha))
+                            y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
+
+                        dy = refY - y;
+                        sose += dy * dy;
+                    }
+
+                    return sose * multiplier;
+                });
             gaussMinimiser.setMaxIterations(100);
             gaussMinimiser.setStepSize(0.01);
             alphaSpace_ = space;
@@ -578,27 +598,6 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
 /*
  * Cost Function Callbacks
  */
-
-// One-parameter cost function (amplitude) with alpha array containing A values, including current approximate data into sum
-double GaussFit::costAnalyticA(const std::vector<double> &alpha)
-{
-    double sose = 0.0;
-    double multiplier = 1.0;
-
-    // Loop over data points, add in our Gaussian contributions, and
-    double dy;
-    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
-    {
-        // Add in contributions from our Gaussians
-        for (auto &&[g, A] : zip(alphaIndex_, alpha))
-            y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
-
-        dy = refY - y;
-        sose += dy * dy;
-    }
-
-    return sose * multiplier;
-}
 
 // Two-parameter cost function (amplitude and FWHM) with alpha array containing A and FWHM values, including current approximate
 // data into sum
