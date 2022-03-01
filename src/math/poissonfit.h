@@ -116,9 +116,6 @@ class PoissonFit
      * Cost Functions
      */
     private:
-    // One-parameter cost function (coefficient) with alpha array containing C values, including current approximate data
-    // into sum
-    double costAnalyticC(const std::vector<double> &alpha);
     // One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in
     // sum
     double costTabulatedC(const std::vector<double> &alpha);
