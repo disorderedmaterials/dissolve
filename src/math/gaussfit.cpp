@@ -274,7 +274,8 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticA);
+            MonteCarloMinimiser<GaussFit> gaussMinimiser(*this,
+                                                         std::bind(&GaussFit::costAnalyticA, *this, std::placeholders::_1));
             gaussMinimiser.setMaxIterations(100);
             gaussMinimiser.setStepSize(0.01);
             alphaSpace_ = space;
@@ -370,7 +371,8 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
                 Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = {}\n", trialX);
 
                 // Set up minimiser, minimising test Gaussian only
-                PrAxisMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
+                PrAxisMinimiser<GaussFit> gaussMinimiser(*this,
+                                                         std::bind(&GaussFit::costAnalyticAFX, *this, std::placeholders::_1));
                 gaussMinimiser.setMaxStep(0.1);
                 gaussMinimiser.setTolerance(0.01);
                 gaussMinimiser.addTarget(trialA);
@@ -492,7 +494,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
+    MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -544,7 +546,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
+    MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);

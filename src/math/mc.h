@@ -6,12 +6,13 @@
 #include "base/messenger.h"
 #include "expression/variable.h"
 #include "math/mathfunc.h"
+#include <functional>
 #include <iomanip>
 #include <numeric>
 
 template <class T> class MonteCarloMinimiser
 {
-    using MinimiserCostFunction = double (T::*)(const std::vector<double> &);
+    using MinimiserCostFunction = std::function<double(const std::vector<double> &)>;
 
     public:
     MonteCarloMinimiser<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
@@ -74,7 +75,7 @@ template <class T> class MonteCarloMinimiser
             pokeValues(alpha);
 
         // Evaluate cost function
-        double x = (object_.*costFunction_)(alpha);
+        double x = costFunction_(alpha);
 
         // Add penalties from values exceeding set limits
         for (auto n = 0; n < alpha.size(); ++n)
