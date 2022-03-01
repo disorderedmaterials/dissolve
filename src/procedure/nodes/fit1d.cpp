@@ -10,6 +10,7 @@
 #include "math/mc.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/process1d.h"
+#include "templates/algorithms.h"
 
 Fit1DProcedureNode::Fit1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Fit1D)
@@ -75,32 +76,6 @@ std::shared_ptr<ExpressionVariable> Fit1DProcedureNode::getConstant(std::string_
     return nullptr;
 }
 
-// Fitting cost function
-double Fit1DProcedureNode::equationCost(const std::vector<double> &alpha)
-{
-    // We assume that the minimiser has 'pokeBeforeCost' set, so our Expression's variables are up-to-date with new test
-    // values.
-    double cost = 0.0;
-    const auto &x = referenceData_.xAxis();
-    const auto &y = referenceData_.values();
-    double equationY;
-    for (auto n = 0; n < referenceData_.nValues(); ++n)
-    {
-        // Set axis value
-        xVariable_->setValue(x[n]);
-
-        // Evaluate expression
-        equationY = equation_.asDouble();
-
-        // Sum squared error
-        cost += (equationY - y[n]) * (equationY - y[n]);
-    }
-
-    cost /= referenceData_.nValues();
-
-    return sqrt(cost);
-}
-
 // Set whether to save processed data
 void Fit1DProcedureNode::setSaveData(bool on) { saveData_ = on; }
 
@@ -150,7 +125,32 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     {
         // Create a minimiser
         MonteCarloMinimiser<Fit1DProcedureNode> mcMinimiser(
-            *this, std::bind(&Fit1DProcedureNode::equationCost, *this, std::placeholders::_1), true);
+            *this,
+            [this](const std::vector<double> &alpha)
+            {
+                // We assume that the minimiser has 'pokeBeforeCost' set, so our Expression's variables are up-to-date with new
+                // test values.
+                double cost = 0.0;
+                const auto &xs = referenceData_.xAxis();
+                const auto &ys = referenceData_.values();
+                double equationY;
+                for (auto &&[x, y] : zip(xs, ys))
+                {
+                    // Set axis value
+                    xVariable_->setValue(x);
+
+                    // Evaluate expression
+                    equationY = equation_.asDouble();
+
+                    // Sum squared error
+                    cost += (equationY - y) * (equationY - y);
+                }
+
+                cost /= referenceData_.nValues();
+
+                return sqrt(cost);
+            },
+            true);
         mcMinimiser.setMaxIterations(1000);
         mcMinimiser.setStepSize(0.1);
         for (const auto &var : fitTargets_)
