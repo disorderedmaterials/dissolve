@@ -15,6 +15,8 @@ Implements ZIF-8 forcefield found in "[Sorption-Induced Structural Transition of
 
 Covers only ZIF-8 parameters listed in the supplementary information. Sorbate parameters are not included.
 
+Includes additional parameters for hydrogen-capping of imidazole nitrogens in non-bulk systems as published in: ["Crystal-Size-Dependent Structural Transitions in Nanoporous Crystals: Adsorption-Induced Transitions in ZIF‑8"](https://dx.doi.org/10.1021/jp5081466), C. Zhang, J. A. Gee, D. S. Sholl, and Ryan P. Lively, J. Phys. Chem. C *118*, 20727 (2014).
+
 ### Implementation Notes
 
 #### Intramolecular Parameters
