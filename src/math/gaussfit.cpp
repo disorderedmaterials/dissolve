@@ -274,28 +274,24 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser<GaussFit> gaussMinimiser(
-                *this,
-                [this](const std::vector<double> &alpha)
+            MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, [this](const std::vector<double> &alpha) {
+                double sose = 0.0;
+                double multiplier = 1.0;
+
+                // Loop over data points, add in our Gaussian contributions, and
+                double dy;
+                for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
                 {
-                    double sose = 0.0;
-                    double multiplier = 1.0;
+                    // Add in contributions from our Gaussians
+                    for (auto &&[g, A] : zip(alphaIndex_, alpha))
+                        y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
 
-                    // Loop over data points, add in our Gaussian contributions, and
-                    double dy;
-                    for (auto &&[x, y, refY] :
-                         zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
-                    {
-                        // Add in contributions from our Gaussians
-                        for (auto &&[g, A] : zip(alphaIndex_, alpha))
-                            y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
+                    dy = refY - y;
+                    sose += dy * dy;
+                }
 
-                        dy = refY - y;
-                        sose += dy * dy;
-                    }
-
-                    return sose * multiplier;
-                });
+                return sose * multiplier;
+            });
             gaussMinimiser.setMaxIterations(100);
             gaussMinimiser.setStepSize(0.01);
             alphaSpace_ = space;
@@ -391,40 +387,37 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
                 Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = {}\n", trialX);
 
                 // Set up minimiser, minimising test Gaussian only
-                PrAxisMinimiser<GaussFit> gaussMinimiser(
-                    *this,
-                    [this](const std::vector<double> &alpha)
+                PrAxisMinimiser<GaussFit> gaussMinimiser(*this, [this](const std::vector<double> &alpha) {
+                    const auto nGauss = alpha.size() / 2;
+
+                    auto sose = 0.0, multiplier = 1.0;
+
+                    double A, fwhm, xCentre, dy;
+
+                    // Loop over data points, add in our Gaussian contributions
+                    for (auto &&[x, y, refY] :
+                         zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
                     {
-                        const auto nGauss = alpha.size() / 2;
-
-                        auto sose = 0.0, multiplier = 1.0;
-
-                        double A, fwhm, xCentre, dy;
-
-                        // Loop over data points, add in our Gaussian contributions
-                        for (auto &&[x, y, refY] :
-                             zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
+                        // Add in contributions from our Gaussians
+                        for (auto n = 0; n < nGauss; ++n)
                         {
-                            // Add in contributions from our Gaussians
-                            for (auto n = 0; n < nGauss; ++n)
-                            {
-                                A = alpha[n * 2];
-                                xCentre = alpha[n * 2 + 1];
-                                fwhm = fwhm_[alphaIndex_[n]];
+                            A = alpha[n * 2];
+                            xCentre = alpha[n * 2 + 1];
+                            fwhm = fwhm_[alphaIndex_[n]];
 
-                                // Must check for FWHM approaching zero and penalise accordingly
-                                if (fabs(fwhm) < 1.0e-5)
-                                    ++multiplier;
+                            // Must check for FWHM approaching zero and penalise accordingly
+                            if (fabs(fwhm) < 1.0e-5)
+                                ++multiplier;
 
-                                y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
-                            }
-
-                            dy = refY - y;
-                            sose += dy * dy;
+                            y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
                         }
 
-                        return sose * multiplier;
-                    });
+                        dy = refY - y;
+                        sose += dy * dy;
+                    }
+
+                    return sose * multiplier;
+                });
                 gaussMinimiser.setMaxStep(0.1);
                 gaussMinimiser.setTolerance(0.01);
                 gaussMinimiser.addTarget(trialA);

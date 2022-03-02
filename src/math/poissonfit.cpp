@@ -303,31 +303,28 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser<PoissonFit> poissonMinimiser(
-                *this,
-                [this](const std::vector<double> &alpha)
+            MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, [this](const std::vector<double> &alpha) {
+                auto sose = 0.0;
+                auto multiplier = 1.0;
+
+                // Loop over data points, add in our Gaussian contributions, and
+                double x, y, dy;
+                for (auto i = 0; i < approximateData_.nValues(); ++i)
                 {
-                    auto sose = 0.0;
-                    auto multiplier = 1.0;
+                    // Get approximate data x and y for this point
+                    x = approximateData_.xAxis(i);
+                    y = approximateData_.value(i);
 
-                    // Loop over data points, add in our Gaussian contributions, and
-                    double x, y, dy;
-                    for (auto i = 0; i < approximateData_.nValues(); ++i)
-                    {
-                        // Get approximate data x and y for this point
-                        x = approximateData_.xAxis(i);
-                        y = approximateData_.value(i);
+                    // Add in contributions from our Gaussians
+                    for (auto &&[nIndex, C] : zip(alphaIndex_, alpha))
+                        y += (alphaSpace_ == FunctionSpace::RealSpace ? C * poisson(x, nIndex) : C * poissonFT(i, nIndex));
 
-                        // Add in contributions from our Gaussians
-                        for (auto &&[nIndex, C] : zip(alphaIndex_, alpha))
-                            y += (alphaSpace_ == FunctionSpace::RealSpace ? C * poisson(x, nIndex) : C * poissonFT(i, nIndex));
+                    dy = referenceData_.value(i) - y;
+                    sose += dy * dy;
+                }
 
-                        dy = referenceData_.value(i) - y;
-                        sose += dy * dy;
-                    }
-
-                    return sose * multiplier;
-                });
+                return sose * multiplier;
+            });
 
             alphaSpace_ = space;
 
