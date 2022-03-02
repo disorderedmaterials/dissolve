@@ -303,7 +303,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, [this](const std::vector<double> &alpha) {
+            MonteCarloMinimiser poissonMinimiser([this](const std::vector<double> &alpha) {
                 auto sose = 0.0;
                 auto multiplier = 1.0;
 
@@ -391,8 +391,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
     approximateData_.initialise(referenceData_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this,
-                                                     std::bind(&PoissonFit::costTabulatedC, *this, std::placeholders::_1));
+    MonteCarloMinimiser poissonMinimiser(std::bind(&PoissonFit::costTabulatedC, *this, std::placeholders::_1));
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
     poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -443,8 +442,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
     approximateData_.initialise(referenceData_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this,
-                                                     std::bind(&PoissonFit::costTabulatedC, *this, std::placeholders::_1));
+    MonteCarloMinimiser poissonMinimiser(std::bind(&PoissonFit::costTabulatedC, *this, std::placeholders::_1));
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
     poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);

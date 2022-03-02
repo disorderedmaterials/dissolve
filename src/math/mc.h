@@ -10,13 +10,13 @@
 #include <iomanip>
 #include <numeric>
 
-template <class T> class MonteCarloMinimiser
+class MonteCarloMinimiser
 {
     using MinimiserCostFunction = std::function<double(const std::vector<double> &)>;
 
     public:
-    MonteCarloMinimiser<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
-        : object_(object), costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
+    MonteCarloMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
+        : costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
     {
         acceptanceMemoryLength_ = 25;
         targetAcceptanceRatio_ = 0.33;
@@ -42,8 +42,6 @@ template <class T> class MonteCarloMinimiser
     int acceptanceMemoryLength_;
     // Target acceptance ratio
     double targetAcceptanceRatio_;
-    // Object used to call cost function
-    T &object_;
     // Pointer to cost function
     MinimiserCostFunction costFunction_;
     // Pointers to double values to be fit

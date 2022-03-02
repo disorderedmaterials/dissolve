@@ -9,13 +9,13 @@
 #include <limits>
 
 // Brent's Principal Axis Minimiser
-template <class T> class PrAxisMinimiser
+class PrAxisMinimiser
 {
     using MinimiserCostFunction = std::function<double(const std::vector<double> &)>;
 
     public:
-    PrAxisMinimiser<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
-        : object_(object), costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
+    PrAxisMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
+        : costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
     {
         maxStep_ = 0.01;
         tolerance_ = 1.0e-3;
@@ -32,8 +32,6 @@ template <class T> class PrAxisMinimiser
     double tolerance_;
     // Print level
     int printLevel_;
-    // Object used to call cost function
-    T &object_;
     // Pointer to cost function
     MinimiserCostFunction costFunction_;
     // Where thos poke values into targets before calling the cost function

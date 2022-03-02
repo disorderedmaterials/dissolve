@@ -274,7 +274,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, [this](const std::vector<double> &alpha) {
+            MonteCarloMinimiser gaussMinimiser([this](const std::vector<double> &alpha) {
                 double sose = 0.0;
                 double multiplier = 1.0;
 
@@ -387,7 +387,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
                 Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = {}\n", trialX);
 
                 // Set up minimiser, minimising test Gaussian only
-                PrAxisMinimiser<GaussFit> gaussMinimiser(*this, [this](const std::vector<double> &alpha) {
+                PrAxisMinimiser gaussMinimiser([this](const std::vector<double> &alpha) {
                     const auto nGauss = alpha.size() / 2;
 
                     auto sose = 0.0, multiplier = 1.0;
@@ -539,7 +539,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
+    MonteCarloMinimiser gaussMinimiser(std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -591,7 +591,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
+    MonteCarloMinimiser gaussMinimiser(std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
