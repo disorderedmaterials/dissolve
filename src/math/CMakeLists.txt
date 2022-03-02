@@ -22,6 +22,7 @@ add_library(
   matrix3.cpp
   matrix4.cpp
   mc.cpp
+  praxis.cpp
   poissonfit.cpp
   range.cpp
   regression.cpp
