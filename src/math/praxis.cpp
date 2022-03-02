@@ -17,14 +17,14 @@ PrAxisMinimiser::PrAxisMinimiser(MinimiserCostFunction costFunction, bool pokeBe
 void PrAxisMinimiser::pokeValues(const std::vector<double> &values)
 {
     for (auto n = 0; n < targets_.size(); ++n)
-	(*targets_[n]) = values[n];
+        (*targets_[n]) = values[n];
 }
 // Calculate cost from specified values, including contributions from any supplied limits
 double PrAxisMinimiser::cost(const std::vector<double> &alpha)
 {
     // Poke values into targets before calling cost function?
     if (pokeBeforeCost_)
-	pokeValues(alpha);
+        pokeValues(alpha);
 
     // Evaluate cost function
     double x = costFunction_(alpha);
@@ -32,13 +32,13 @@ double PrAxisMinimiser::cost(const std::vector<double> &alpha)
     // Add penalties from values exceeding set limits
     for (auto n = 0; n < alpha.size(); ++n)
     {
-	// Minimum limit
-	if (minimumLimit_[n] && (alpha[n] < minimumValue_[n]))
-	    x += penaltyFactor_ * pow(minimumValue_[n] - alpha[n], penaltyPower_);
+        // Minimum limit
+        if (minimumLimit_[n] && (alpha[n] < minimumValue_[n]))
+            x += penaltyFactor_ * pow(minimumValue_[n] - alpha[n], penaltyPower_);
 
-	// Minimum limit
-	if (maximumLimit_[n] && (alpha[n] > maximumValue_[n]))
-	    x += penaltyFactor_ * pow(alpha[n] - maximumValue_[n], penaltyPower_);
+        // Minimum limit
+        if (maximumLimit_[n] && (alpha[n] > maximumValue_[n]))
+            x += penaltyFactor_ * pow(alpha[n] - maximumValue_[n], penaltyPower_);
     }
 
     return x;
@@ -58,8 +58,8 @@ double PrAxisMinimiser::minimise()
     // Check for zero variable parameters
     if (targets_.size() == 0)
     {
-	Messenger::warn("No variables specified for fitting, so nothing to do.\n");
-	return 0.0;
+        Messenger::warn("No variables specified for fitting, so nothing to do.\n");
+        return 0.0;
     }
 
     // Create a local array of values to pass to the fitting routine
@@ -127,7 +127,7 @@ void PrAxisMinimiser::addTarget(double &var, bool minLimit, double minValue, boo
 //****************************************************************************80
 
 double PrAxisMinimiser::flin(const std::vector<double> &alpha, int jsearch, double l, int &nf, double v[], double q0[],
-			     double q1[], double &qd0, double &qd1, double &qa, double &qb, double &qc)
+                             double q1[], double &qd0, double &qd1, double &qa, double &qb, double &qc)
 
 //****************************************************************************80
 //
@@ -208,24 +208,24 @@ double PrAxisMinimiser::flin(const std::vector<double> &alpha, int jsearch, doub
     //
     if (0 <= jsearch)
     {
-	for (i = 0; i < n; i++)
-	{
-	    t[i] = alpha[i] + l * v[i + jsearch * n];
-	}
+        for (i = 0; i < n; i++)
+        {
+            t[i] = alpha[i] + l * v[i + jsearch * n];
+        }
     }
     //
     //  The search is along a parabolic space curve.
     //
     else
     {
-	qa = l * (l - qd1) / (qd0 + qd1) / qd0;
-	qb = -(l + qd0) * (l - qd1) / qd1 / qd0;
-	qc = (l + qd0) * l / qd1 / (qd0 + qd1);
+        qa = l * (l - qd1) / (qd0 + qd1) / qd0;
+        qb = -(l + qd0) * (l - qd1) / qd1 / qd0;
+        qc = (l + qd0) * l / qd1 / (qd0 + qd1);
 
-	for (i = 0; i < n; i++)
-	{
-	    t[i] = qa * q0[i] + qb * alpha[i] + qc * q1[i];
-	}
+        for (i = 0; i < n; i++)
+        {
+            t[i] = qa * q0[i] + qb * alpha[i] + qc * q1[i];
+        }
     }
     //
     //  The function evaluation counter NF is incremented.
@@ -331,9 +331,9 @@ void PrAxisMinimiser::minfit(int n, double tol, double a[], double q[])
     //
     if (n == 1)
     {
-	q[0] = a[0 + 0 * n];
-	a[0 + 0 * n] = 1.0;
-	return;
+        q[0] = a[0 + 0 * n];
+        a[0 + 0 * n] = 1.0;
+        return;
     }
 
     e = new double[n];
@@ -344,99 +344,99 @@ void PrAxisMinimiser::minfit(int n, double tol, double a[], double q[])
 
     for (i = 1; i <= n; i++)
     {
-	e[i - 1] = g;
-	l = i + 1;
+        e[i - 1] = g;
+        l = i + 1;
 
-	s = 0.0;
-	for (ii = i; ii <= n; ii++)
-	{
-	    s = s + a[ii - 1 + (i - 1) * n] * a[ii - 1 + (i - 1) * n];
-	}
+        s = 0.0;
+        for (ii = i; ii <= n; ii++)
+        {
+            s = s + a[ii - 1 + (i - 1) * n] * a[ii - 1 + (i - 1) * n];
+        }
 
-	g = 0.0;
+        g = 0.0;
 
-	if (tol <= s)
-	{
-	    f = a[i - 1 + (i - 1) * n];
+        if (tol <= s)
+        {
+            f = a[i - 1 + (i - 1) * n];
 
-	    g = sqrt(s);
+            g = sqrt(s);
 
-	    if (0.0 <= f)
-	    {
-		g = -g;
-	    }
+            if (0.0 <= f)
+            {
+                g = -g;
+            }
 
-	    h = f * g - s;
-	    a[i - 1 + (i - 1) * n] = f - g;
+            h = f * g - s;
+            a[i - 1 + (i - 1) * n] = f - g;
 
-	    for (j = l; j <= n; j++)
-	    {
-		f = 0.0;
-		for (ii = i; ii <= n; ii++)
-		{
-		    f = f + a[ii - 1 + (i - 1) * n] * a[ii - 1 + (j - 1) * n];
-		}
-		f = f / h;
+            for (j = l; j <= n; j++)
+            {
+                f = 0.0;
+                for (ii = i; ii <= n; ii++)
+                {
+                    f = f + a[ii - 1 + (i - 1) * n] * a[ii - 1 + (j - 1) * n];
+                }
+                f = f / h;
 
-		for (ii = i; ii <= n; ii++)
-		{
-		    a[ii - 1 + (j - 1) * n] = a[ii - 1 + (j - 1) * n] + f * a[ii - 1 + (i - 1) * n];
-		}
-	    }
-	}
+                for (ii = i; ii <= n; ii++)
+                {
+                    a[ii - 1 + (j - 1) * n] = a[ii - 1 + (j - 1) * n] + f * a[ii - 1 + (i - 1) * n];
+                }
+            }
+        }
 
-	q[i - 1] = g;
+        q[i - 1] = g;
 
-	s = 0.0;
-	for (j = l; j <= n; j++)
-	{
-	    s = s + a[i - 1 + (j - 1) * n] * a[i - 1 + (j - 1) * n];
-	}
+        s = 0.0;
+        for (j = l; j <= n; j++)
+        {
+            s = s + a[i - 1 + (j - 1) * n] * a[i - 1 + (j - 1) * n];
+        }
 
-	g = 0.0;
+        g = 0.0;
 
-	if (tol <= s)
-	{
-	    if (i < n)
-	    {
-		f = a[i - 1 + i * n];
-	    }
+        if (tol <= s)
+        {
+            if (i < n)
+            {
+                f = a[i - 1 + i * n];
+            }
 
-	    g = sqrt(s);
+            g = sqrt(s);
 
-	    if (0.0 <= f)
-	    {
-		g = -g;
-	    }
+            if (0.0 <= f)
+            {
+                g = -g;
+            }
 
-	    h = f * g - s;
+            h = f * g - s;
 
-	    if (i < n)
-	    {
-		a[i - 1 + i * n] = f - g;
-		for (jj = l; jj <= n; jj++)
-		{
-		    e[jj - 1] = a[i - 1 + (jj - 1) * n] / h;
-		}
+            if (i < n)
+            {
+                a[i - 1 + i * n] = f - g;
+                for (jj = l; jj <= n; jj++)
+                {
+                    e[jj - 1] = a[i - 1 + (jj - 1) * n] / h;
+                }
 
-		for (j = l; j <= n; j++)
-		{
-		    s = 0.0;
-		    for (jj = l; jj <= n; jj++)
-		    {
-			s = s + a[j - 1 + (jj - 1) * n] * a[i - 1 + (jj - 1) * n];
-		    }
-		    for (jj = l; jj <= n; jj++)
-		    {
-			a[j - 1 + (jj - 1) * n] = a[j - 1 + (jj - 1) * n] + s * e[jj - 1];
-		    }
-		}
-	    }
-	}
+                for (j = l; j <= n; j++)
+                {
+                    s = 0.0;
+                    for (jj = l; jj <= n; jj++)
+                    {
+                        s = s + a[j - 1 + (jj - 1) * n] * a[i - 1 + (jj - 1) * n];
+                    }
+                    for (jj = l; jj <= n; jj++)
+                    {
+                        a[j - 1 + (jj - 1) * n] = a[j - 1 + (jj - 1) * n] + s * e[jj - 1];
+                    }
+                }
+            }
+        }
 
-	y = fabs(q[i - 1]) + fabs(e[i - 1]);
+        y = fabs(q[i - 1]) + fabs(e[i - 1]);
 
-	x = std::max(x, y);
+        x = std::max(x, y);
     }
     //
     //  Accumulation of right-hand transformations.
@@ -447,45 +447,45 @@ void PrAxisMinimiser::minfit(int n, double tol, double a[], double q[])
 
     for (i = n - 1; 1 <= i; i--)
     {
-	if (g != 0.0)
-	{
-	    h = a[i - 1 + i * n] * g;
+        if (g != 0.0)
+        {
+            h = a[i - 1 + i * n] * g;
 
-	    for (ii = l; ii <= n; ii++)
-	    {
-		a[ii - 1 + (i - 1) * n] = a[i - 1 + (ii - 1) * n] / h;
-	    }
+            for (ii = l; ii <= n; ii++)
+            {
+                a[ii - 1 + (i - 1) * n] = a[i - 1 + (ii - 1) * n] / h;
+            }
 
-	    for (j = l; j <= n; j++)
-	    {
-		s = 0.0;
-		for (jj = l; jj <= n; jj++)
-		{
-		    s = s + a[i - 1 + (jj - 1) * n] * a[jj - 1 + (j - 1) * n];
-		}
+            for (j = l; j <= n; j++)
+            {
+                s = 0.0;
+                for (jj = l; jj <= n; jj++)
+                {
+                    s = s + a[i - 1 + (jj - 1) * n] * a[jj - 1 + (j - 1) * n];
+                }
 
-		for (ii = l; ii <= n; ii++)
-		{
-		    a[ii - 1 + (j - 1) * n] = a[ii - 1 + (j - 1) * n] + s * a[ii - 1 + (i - 1) * n];
-		}
-	    }
-	}
+                for (ii = l; ii <= n; ii++)
+                {
+                    a[ii - 1 + (j - 1) * n] = a[ii - 1 + (j - 1) * n] + s * a[ii - 1 + (i - 1) * n];
+                }
+            }
+        }
 
-	for (jj = l; jj <= n; jj++)
-	{
-	    a[i - 1 + (jj - 1) * n] = 0.0;
-	}
+        for (jj = l; jj <= n; jj++)
+        {
+            a[i - 1 + (jj - 1) * n] = 0.0;
+        }
 
-	for (ii = l; ii <= n; ii++)
-	{
-	    a[ii - 1 + (i - 1) * n] = 0.0;
-	}
+        for (ii = l; ii <= n; ii++)
+        {
+            a[ii - 1 + (i - 1) * n] = 0.0;
+        }
 
-	a[i - 1 + (i - 1) * n] = 1.0;
+        a[i - 1 + (i - 1) * n] = 1.0;
 
-	g = e[i - 1];
+        g = e[i - 1];
 
-	l = i;
+        l = i;
     }
     //
     //  Diagonalization of the bidiagonal form.
@@ -494,169 +494,169 @@ void PrAxisMinimiser::minfit(int n, double tol, double a[], double q[])
 
     for (k = n; 1 <= k; k--)
     {
-	kt = 0;
+        kt = 0;
 
-	for (;;)
-	{
-	    kt = kt + 1;
+        for (;;)
+        {
+            kt = kt + 1;
 
-	    if (kt_max < kt)
-	    {
-		e[k - 1] = 0.0;
-		Messenger::error("MINFIT - Fatal error! - The QR algorithm failed to converge.\n");
-		return;
-	    }
+            if (kt_max < kt)
+            {
+                e[k - 1] = 0.0;
+                Messenger::error("MINFIT - Fatal error! - The QR algorithm failed to converge.\n");
+                return;
+            }
 
-	    skip = 0;
+            skip = 0;
 
-	    for (l2 = k; 1 <= l2; l2--)
-	    {
-		l = l2;
+            for (l2 = k; 1 <= l2; l2--)
+            {
+                l = l2;
 
-		if (fabs(e[l - 1]) <= eps)
-		{
-		    skip = 1;
-		    break;
-		}
+                if (fabs(e[l - 1]) <= eps)
+                {
+                    skip = 1;
+                    break;
+                }
 
-		if (1 < l)
-		{
-		    if (fabs(q[l - 2]) <= eps)
-		    {
-			break;
-		    }
-		}
-	    }
-	    //
-	    //  Cancellation of E(L) if 1 < L.
-	    //
-	    if (!skip)
-	    {
-		c = 0.0;
-		s = 1.0;
+                if (1 < l)
+                {
+                    if (fabs(q[l - 2]) <= eps)
+                    {
+                        break;
+                    }
+                }
+            }
+            //
+            //  Cancellation of E(L) if 1 < L.
+            //
+            if (!skip)
+            {
+                c = 0.0;
+                s = 1.0;
 
-		for (i = l; i <= k; i++)
-		{
-		    f = s * e[i - 1];
-		    e[i - 1] = c * e[i - 1];
-		    if (fabs(f) <= eps)
-		    {
-			break;
-		    }
-		    g = q[i - 1];
-		    //
-		    //  q(i) = h = sqrt(g*g + f*f).
-		    //
-		    h = r8_hypot(f, g);
+                for (i = l; i <= k; i++)
+                {
+                    f = s * e[i - 1];
+                    e[i - 1] = c * e[i - 1];
+                    if (fabs(f) <= eps)
+                    {
+                        break;
+                    }
+                    g = q[i - 1];
+                    //
+                    //  q(i) = h = sqrt(g*g + f*f).
+                    //
+                    h = r8_hypot(f, g);
 
-		    q[i - 1] = h;
+                    q[i - 1] = h;
 
-		    if (h == 0.0)
-		    {
-			g = 1.0;
-			h = 1.0;
-		    }
+                    if (h == 0.0)
+                    {
+                        g = 1.0;
+                        h = 1.0;
+                    }
 
-		    c = g / h;
-		    s = -f / h;
-		}
-	    }
-	    //
-	    //  Test for convergence for this index K.
-	    //
-	    z = q[k - 1];
+                    c = g / h;
+                    s = -f / h;
+                }
+            }
+            //
+            //  Test for convergence for this index K.
+            //
+            z = q[k - 1];
 
-	    if (l == k)
-	    {
-		if (z < 0.0)
-		{
-		    q[k - 1] = -z;
-		    for (i = 1; i <= n; i++)
-		    {
-			a[i - 1 + (k - 1) * n] = -a[i - 1 + (k - 1) * n];
-		    }
-		}
-		break;
-	    }
-	    //
-	    //  Shift from bottom 2*2 minor.
-	    //
-	    x = q[l - 1];
-	    y = q[k - 2];
-	    g = e[k - 2];
-	    h = e[k - 1];
-	    f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
+            if (l == k)
+            {
+                if (z < 0.0)
+                {
+                    q[k - 1] = -z;
+                    for (i = 1; i <= n; i++)
+                    {
+                        a[i - 1 + (k - 1) * n] = -a[i - 1 + (k - 1) * n];
+                    }
+                }
+                break;
+            }
+            //
+            //  Shift from bottom 2*2 minor.
+            //
+            x = q[l - 1];
+            y = q[k - 2];
+            g = e[k - 2];
+            h = e[k - 1];
+            f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
 
-	    g = r8_hypot(f, 1.0);
+            g = r8_hypot(f, 1.0);
 
-	    if (f < 0.0)
-	    {
-		temp = f - g;
-	    }
-	    else
-	    {
-		temp = f + g;
-	    }
+            if (f < 0.0)
+            {
+                temp = f - g;
+            }
+            else
+            {
+                temp = f + g;
+            }
 
-	    f = ((x - z) * (x + z) + h * (y / temp - h)) / x;
-	    //
-	    //  Next QR transformation.
-	    //
-	    c = 1.0;
-	    s = 1.0;
+            f = ((x - z) * (x + z) + h * (y / temp - h)) / x;
+            //
+            //  Next QR transformation.
+            //
+            c = 1.0;
+            s = 1.0;
 
-	    for (i = l + 1; i <= k; i++)
-	    {
-		g = e[i - 1];
-		y = q[i - 1];
-		h = s * g;
-		g = g * c;
+            for (i = l + 1; i <= k; i++)
+            {
+                g = e[i - 1];
+                y = q[i - 1];
+                h = s * g;
+                g = g * c;
 
-		z = r8_hypot(f, h);
+                z = r8_hypot(f, h);
 
-		e[i - 2] = z;
+                e[i - 2] = z;
 
-		if (z == 0.0)
-		{
-		    f = 1.0;
-		    z = 1.0;
-		}
+                if (z == 0.0)
+                {
+                    f = 1.0;
+                    z = 1.0;
+                }
 
-		c = f / z;
-		s = h / z;
-		f = x * c + g * s;
-		g = -x * s + g * c;
-		h = y * s;
-		y = y * c;
+                c = f / z;
+                s = h / z;
+                f = x * c + g * s;
+                g = -x * s + g * c;
+                h = y * s;
+                y = y * c;
 
-		for (j = 1; j <= n; j++)
-		{
-		    x = a[j - 1 + (i - 2) * n];
-		    z = a[j - 1 + (i - 1) * n];
-		    a[j - 1 + (i - 2) * n] = x * c + z * s;
-		    a[j - 1 + (i - 1) * n] = -x * s + z * c;
-		}
+                for (j = 1; j <= n; j++)
+                {
+                    x = a[j - 1 + (i - 2) * n];
+                    z = a[j - 1 + (i - 1) * n];
+                    a[j - 1 + (i - 2) * n] = x * c + z * s;
+                    a[j - 1 + (i - 1) * n] = -x * s + z * c;
+                }
 
-		z = r8_hypot(f, h);
+                z = r8_hypot(f, h);
 
-		q[i - 2] = z;
+                q[i - 2] = z;
 
-		if (z == 0.0)
-		{
-		    f = 1.0;
-		    z = 1.0;
-		}
+                if (z == 0.0)
+                {
+                    f = 1.0;
+                    z = 1.0;
+                }
 
-		c = f / z;
-		s = h / z;
-		f = c * g + s * y;
-		x = -s * g + c * y;
-	    }
+                c = f / z;
+                s = h / z;
+                f = c * g + s * y;
+                x = -s * g + c * y;
+            }
 
-	    e[l - 1] = 0.0;
-	    e[k - 1] = f;
-	    q[k - 1] = x;
-	}
+            e[l - 1] = 0.0;
+            e[k - 1] = f;
+            q[k - 1] = x;
+        }
     }
 
     delete[] e;
@@ -666,8 +666,8 @@ void PrAxisMinimiser::minfit(int n, double tol, double a[], double q[])
 //****************************************************************************80
 
 void PrAxisMinimiser::minny(std::vector<double> &alpha, int jsearch, int nits, double &d2, double &x1, double &f1, bool fk,
-			    double t, double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, double ldt,
-			    double &fx, double &qa, double &qb, double &qc, double &qd0, double &qd1)
+                            double t, double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, double ldt,
+                            double &fx, double &qa, double &qb, double &qc, double &qd0, double &qd1)
 
 //****************************************************************************80
 //
@@ -796,18 +796,18 @@ void PrAxisMinimiser::minny(std::vector<double> &alpha, int jsearch, int nits, d
 
     if (dz)
     {
-	temp = dmin;
+        temp = dmin;
     }
     else
     {
-	temp = d2;
+        temp = d2;
     }
 
     t2 = m4 * sqrt(fabs(fx) / temp + s * ldt) + m2 * ldt;
     s = m4 * s + t;
     if (dz && s < t2)
     {
-	t2 = s;
+        t2 = s;
     }
 
     t2 = std::max(t2, smallValue);
@@ -815,119 +815,119 @@ void PrAxisMinimiser::minny(std::vector<double> &alpha, int jsearch, int nits, d
 
     if (fk && f1 <= fm)
     {
-	xm = x1;
-	fm = f1;
+        xm = x1;
+        fm = f1;
     }
 
     if ((!fk) || fabs(x1) < t2)
     {
-	if (0.0 <= x1)
-	{
-	    temp = 1.0;
-	}
-	else
-	{
-	    temp = -1.0;
-	}
+        if (0.0 <= x1)
+        {
+            temp = 1.0;
+        }
+        else
+        {
+            temp = -1.0;
+        }
 
-	x1 = temp * t2;
-	f1 = flin(alpha, jsearch, x1, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
+        x1 = temp * t2;
+        f1 = flin(alpha, jsearch, x1, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
     }
 
     if (f1 <= fm)
     {
-	xm = x1;
-	fm = f1;
+        xm = x1;
+        fm = f1;
     }
     //
     //  Evaluate FLIN at another point and estimate the second derivative.
     //
     for (;;)
     {
-	if (dz)
-	{
-	    if (f1 <= f0)
-	    {
-		x2 = 2.0 * x1;
-	    }
-	    else
-	    {
-		x2 = -x1;
-	    }
+        if (dz)
+        {
+            if (f1 <= f0)
+            {
+                x2 = 2.0 * x1;
+            }
+            else
+            {
+                x2 = -x1;
+            }
 
-	    f2 = flin(alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
+            f2 = flin(alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
 
-	    if (f2 <= fm)
-	    {
-		xm = x2;
-		fm = f2;
-	    }
+            if (f2 <= fm)
+            {
+                xm = x2;
+                fm = f2;
+            }
 
-	    d2 = (x2 * (f1 - f0) - x1 * (f2 - f0)) / ((x1 * x2) * (x1 - x2));
-	}
-	//
-	//  Estimate the first derivative at 0.
-	//
-	d1 = (f1 - f0) / x1 - x1 * d2;
-	dz = 1;
-	//
-	//  Predict the minimum.
-	//
-	if (d2 <= smallValue)
-	{
-	    if (0.0 <= d1)
-	    {
-		x2 = -h;
-	    }
-	    else
-	    {
-		x2 = h;
-	    }
-	}
-	else
-	{
-	    x2 = (-0.5 * d1) / d2;
-	}
+            d2 = (x2 * (f1 - f0) - x1 * (f2 - f0)) / ((x1 * x2) * (x1 - x2));
+        }
+        //
+        //  Estimate the first derivative at 0.
+        //
+        d1 = (f1 - f0) / x1 - x1 * d2;
+        dz = 1;
+        //
+        //  Predict the minimum.
+        //
+        if (d2 <= smallValue)
+        {
+            if (0.0 <= d1)
+            {
+                x2 = -h;
+            }
+            else
+            {
+                x2 = h;
+            }
+        }
+        else
+        {
+            x2 = (-0.5 * d1) / d2;
+        }
 
-	if (h < fabs(x2))
-	{
-	    if (x2 <= 0.0)
-	    {
-		x2 = -h;
-	    }
-	    else
-	    {
-		x2 = h;
-	    }
-	}
-	//
-	//  Evaluate F at the predicted minimum.
-	//
-	ok = 1;
+        if (h < fabs(x2))
+        {
+            if (x2 <= 0.0)
+            {
+                x2 = -h;
+            }
+            else
+            {
+                x2 = h;
+            }
+        }
+        //
+        //  Evaluate F at the predicted minimum.
+        //
+        ok = 1;
 
-	for (;;)
-	{
-	    f2 = flin(alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
+        for (;;)
+        {
+            f2 = flin(alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
 
-	    if (nits <= k || f2 <= f0)
-	    {
-		break;
-	    }
+            if (nits <= k || f2 <= f0)
+            {
+                break;
+            }
 
-	    k = k + 1;
+            k = k + 1;
 
-	    if (f0 < f1 && 0.0 < x1 * x2)
-	    {
-		ok = 0;
-		break;
-	    }
-	    x2 = 0.5 * x2;
-	}
+            if (f0 < f1 && 0.0 < x1 * x2)
+            {
+                ok = 0;
+                break;
+            }
+            x2 = 0.5 * x2;
+        }
 
-	if (ok)
-	{
-	    break;
-	}
+        if (ok)
+        {
+            break;
+        }
     }
     //
     //  Increment the one-dimensional search counter.
@@ -936,25 +936,25 @@ void PrAxisMinimiser::minny(std::vector<double> &alpha, int jsearch, int nits, d
 
     if (fm < f2)
     {
-	x2 = xm;
+        x2 = xm;
     }
     else
     {
-	fm = f2;
+        fm = f2;
     }
     //
     //  Get a new estimate of the second derivative.
     //
     if (smallValue < fabs(x2 * (x2 - x1)))
     {
-	d2 = (x2 * (f1 - f0) - x1 * (fm - f0)) / ((x1 * x2) * (x1 - x2));
+        d2 = (x2 * (f1 - f0) - x1 * (fm - f0)) / ((x1 * x2) * (x1 - x2));
     }
     else
     {
-	if (0 < k)
-	{
-	    d2 = 0.0;
-	}
+        if (0 < k)
+        {
+            d2 = 0.0;
+        }
     }
 
     d2 = std::max(d2, smallValue);
@@ -964,18 +964,18 @@ void PrAxisMinimiser::minny(std::vector<double> &alpha, int jsearch, int nits, d
 
     if (sf1 < fx)
     {
-	fx = sf1;
-	x1 = sx1;
+        fx = sf1;
+        x1 = sx1;
     }
     //
     //  Update X for linear search.
     //
     if (0 <= jsearch)
     {
-	for (i = 0; i < n; i++)
-	{
-	    alpha[i] = alpha[i] + x1 * v[i + jsearch * n];
-	}
+        for (i = 0; i < n; i++)
+        {
+            alpha[i] = alpha[i] + x1 * v[i + jsearch * n];
+        }
     }
 
     return;
@@ -1040,7 +1040,7 @@ void PrAxisMinimiser::print2(int n, double x[], int prin, double fx, int nf, int
 
     if (n <= 4 || 2 < prin)
     {
-	r8vec_print(n, x, "  X:");
+        r8vec_print(n, x, "  X:");
     }
 
     return;
@@ -1048,8 +1048,8 @@ void PrAxisMinimiser::print2(int n, double x[], int prin, double fx, int nf, int
 //****************************************************************************80
 
 void PrAxisMinimiser::quad(std::vector<double> &alpha, double t, double h, double v[], double q0[], double q1[], int &nl,
-			   int &nf, double dmin, double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc,
-			   double &qd0, double &qd1)
+                           int &nf, double dmin, double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc,
+                           double &qd0, double &qd1)
 
 //****************************************************************************80
 //
@@ -1129,49 +1129,49 @@ void PrAxisMinimiser::quad(std::vector<double> &alpha, double t, double h, doubl
 
     for (i = 0; i < n; i++)
     {
-	temp = alpha[i];
-	alpha[i] = q1[i];
-	q1[i] = temp;
+        temp = alpha[i];
+        alpha[i] = q1[i];
+        q1[i] = temp;
     }
 
     qd1 = 0.0;
     for (i = 0; i < n; i++)
     {
-	qd1 = qd1 + (alpha[i] - q1[i]) * (alpha[i] - q1[i]);
+        qd1 = qd1 + (alpha[i] - q1[i]) * (alpha[i] - q1[i]);
     }
     qd1 = sqrt(qd1);
 
     if (qd0 <= 0.0 || qd1 <= 0.0 || nl < 3 * n * n)
     {
-	fx = qf1;
-	qa = 0.0;
-	qb = 0.0;
-	qc = 1.0;
-	s = 0.0;
+        fx = qf1;
+        qa = 0.0;
+        qb = 0.0;
+        qc = 1.0;
+        s = 0.0;
     }
     else
     {
-	jsearch = -1;
-	nits = 2;
-	s = 0.0;
-	l = qd1;
-	value = qf1;
-	fk = true;
+        jsearch = -1;
+        nits = 2;
+        s = 0.0;
+        l = qd1;
+        value = qf1;
+        fk = true;
 
-	minny(alpha, jsearch, nits, s, l, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+        minny(alpha, jsearch, nits, s, l, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
 
-	qa = l * (l - qd1) / (qd0 + qd1) / qd0;
-	qb = -(l + qd0) * (l - qd1) / qd1 / qd0;
-	qc = (l + qd0) * l / qd1 / (qd0 + qd1);
+        qa = l * (l - qd1) / (qd0 + qd1) / qd0;
+        qb = -(l + qd0) * (l - qd1) / qd1 / qd0;
+        qc = (l + qd0) * l / qd1 / (qd0 + qd1);
     }
 
     qd0 = qd1;
 
     for (i = 0; i < n; i++)
     {
-	s = q0[i];
-	q0[i] = alpha[i];
-	alpha[i] = qa * s + qb * alpha[i] + qc * q1[i];
+        s = q0[i];
+        q0[i] = alpha[i];
+        alpha[i] = qa * s + qb * alpha[i] + qc * q1[i];
     }
 
     return;
@@ -1212,24 +1212,24 @@ double PrAxisMinimiser::r8_hypot(double x, double y)
 
     if (fabs(x) < fabs(y))
     {
-	a = fabs(y);
-	b = fabs(x);
+        a = fabs(y);
+        b = fabs(x);
     }
     else
     {
-	a = fabs(x);
-	b = fabs(y);
+        a = fabs(x);
+        b = fabs(y);
     }
     //
     //  A contains the larger value.
     //
     if (a == 0.0)
     {
-	value = 0.0;
+        value = 0.0;
     }
     else
     {
-	value = a * sqrt(1.0 + (b / a) * (b / a));
+        value = a * sqrt(1.0 + (b / a) * (b / a));
     }
 
     return value;
@@ -1320,8 +1320,8 @@ double PrAxisMinimiser::r8_uniform_01(int &seed)
 
     if (seed == 0)
     {
-	Messenger::error("R8_UNIFORM_01 - Fatal error! - Input value of SEED = 0.\n");
-	return 0.0;
+        Messenger::error("R8_UNIFORM_01 - Fatal error! - Input value of SEED = 0.\n");
+        return 0.0;
     }
 
     k = seed / 127773;
@@ -1330,7 +1330,7 @@ double PrAxisMinimiser::r8_uniform_01(int &seed)
 
     if (seed < 0)
     {
-	seed = seed + i4_huge;
+        seed = seed + i4_huge;
     }
     r = (double)(seed)*4.656612875E-10;
     return r;
@@ -1435,68 +1435,68 @@ void PrAxisMinimiser::r8mat_print_some(int m, int n, double a[], int ilo, int jl
 
     if (m <= 0 || n <= 0)
     {
-	Messenger::print("  (None)\n");
-	return;
+        Messenger::print("  (None)\n");
+        return;
     }
     //
     //  Print the columns of the matrix, in strips of 5.
     //
     for (j2lo = jlo; j2lo <= jhi; j2lo = j2lo + INCX)
     {
-	j2hi = j2lo + INCX - 1;
-	if (n < j2hi)
-	{
-	    j2hi = n;
-	}
-	if (jhi < j2hi)
-	{
-	    j2hi = jhi;
-	}
-	Messenger::print("\n");
-	//
-	//  For each column J in the current range...
-	//
-	//  Write the header.
-	//
-	Messenger::print("  Col:    ");
-	for (j = j2lo; j <= j2hi; j++)
-	{
-	    Messenger::print("{:10d}   ", j - 1);
-	}
-	Messenger::print("\n");
-	Messenger::print("  Row\n");
-	//
-	//  Determine the range of the rows in this strip.
-	//
-	if (1 < ilo)
-	{
-	    i2lo = ilo;
-	}
-	else
-	{
-	    i2lo = 1;
-	}
-	if (ihi < m)
-	{
-	    i2hi = ihi;
-	}
-	else
-	{
-	    i2hi = m;
-	}
+        j2hi = j2lo + INCX - 1;
+        if (n < j2hi)
+        {
+            j2hi = n;
+        }
+        if (jhi < j2hi)
+        {
+            j2hi = jhi;
+        }
+        Messenger::print("\n");
+        //
+        //  For each column J in the current range...
+        //
+        //  Write the header.
+        //
+        Messenger::print("  Col:    ");
+        for (j = j2lo; j <= j2hi; j++)
+        {
+            Messenger::print("{:10d}   ", j - 1);
+        }
+        Messenger::print("\n");
+        Messenger::print("  Row\n");
+        //
+        //  Determine the range of the rows in this strip.
+        //
+        if (1 < ilo)
+        {
+            i2lo = ilo;
+        }
+        else
+        {
+            i2lo = 1;
+        }
+        if (ihi < m)
+        {
+            i2hi = ihi;
+        }
+        else
+        {
+            i2hi = m;
+        }
 
-	for (i = i2lo; i <= i2hi; i++)
-	{
-	    //
-	    //  Print out (up to) 5 entries in row I, that lie in the current strip.
-	    //
-	    Messenger::print("{}i: ", i - 1);
-	    for (j = j2lo; j <= j2hi; j++)
-	    {
-		Messenger::print("{:12.4e} ", a[i - 1 + (j - 1) * m]);
-	    }
-	    Messenger::print("\n");
-	}
+        for (i = i2lo; i <= i2hi; i++)
+        {
+            //
+            //  Print out (up to) 5 entries in row I, that lie in the current strip.
+            //
+            Messenger::print("{}i: ", i - 1);
+            for (j = j2lo; j <= j2hi; j++)
+            {
+                Messenger::print("{:12.4e} ", a[i - 1 + (j - 1) * m]);
+            }
+            Messenger::print("\n");
+        }
     }
 
     return;
@@ -1542,12 +1542,12 @@ void PrAxisMinimiser::r8mat_transpose_in_place(int n, double a[])
 
     for (j = 0; j < n; j++)
     {
-	for (i = 0; i < j; i++)
-	{
-	    t = a[i + j * n];
-	    a[i + j * n] = a[j + i * n];
-	    a[j + i * n] = t;
-	}
+        for (i = 0; i < j; i++)
+        {
+            t = a[i + j * n];
+            a[i + j * n] = a[j + i * n];
+            a[j + i * n] = t;
+        }
     }
     return;
 }
@@ -1590,7 +1590,7 @@ void PrAxisMinimiser::r8vec_copy(int n, double a1[], double a2[])
 
     for (i = 0; i < n; i++)
     {
-	a2[i] = a1[i];
+        a2[i] = a1[i];
     }
     return;
 }
@@ -1637,10 +1637,10 @@ double PrAxisMinimiser::r8vec_max(int n, double r8vec[])
 
     for (i = 1; i < n; i++)
     {
-	if (value < r8vec[i])
-	{
-	    value = r8vec[i];
-	}
+        if (value < r8vec[i])
+        {
+            value = r8vec[i];
+        }
     }
     return value;
 }
@@ -1686,10 +1686,10 @@ double PrAxisMinimiser::r8vec_min(int n, double r8vec[])
 
     for (i = 1; i < n; i++)
     {
-	if (r8vec[i] < value)
-	{
-	    value = r8vec[i];
-	}
+        if (r8vec[i] < value)
+        {
+            value = r8vec[i];
+        }
     }
     return value;
 }
@@ -1739,7 +1739,7 @@ double PrAxisMinimiser::r8vec_norm(int n, double a[])
 
     for (i = 0; i < n; i++)
     {
-	v = v + a[i] * a[i];
+        v = v + a[i] * a[i];
     }
     v = sqrt(v);
 
@@ -1785,7 +1785,7 @@ void PrAxisMinimiser::r8vec_print(int n, double a[], std::string_view title)
     Messenger::print("{}\n", title);
     for (i = 0; i < n; i++)
     {
-	Messenger::print("  {:8i}: {:14.6e}\n", i, a[i]);
+        Messenger::print("  {:8i}: {:14.6e}\n", i, a[i]);
     }
 
     return;
@@ -1848,33 +1848,33 @@ void PrAxisMinimiser::svsort(int n, double d[], double v[])
 
     for (j1 = 0; j1 < n - 1; j1++)
     {
-	//
-	//  Find J3, the index of the largest entry in D[J1:N-1].
-	//  MAXLOC apparently requires its output to be an array.
-	//
-	j3 = j1;
-	for (j2 = j1 + 1; j2 < n; j2++)
-	{
-	    if (d[j3] < d[j2])
-	    {
-		j3 = j2;
-	    }
-	}
-	//
-	//  If J1 != J3, swap D[J1] and D[J3], and columns J1 and J3 of V.
-	//
-	if (j1 != j3)
-	{
-	    t = d[j1];
-	    d[j1] = d[j3];
-	    d[j3] = t;
-	    for (i = 0; i < n; i++)
-	    {
-		t = v[i + j1 * n];
-		v[i + j1 * n] = v[i + j3 * n];
-		v[i + j3 * n] = t;
-	    }
-	}
+        //
+        //  Find J3, the index of the largest entry in D[J1:N-1].
+        //  MAXLOC apparently requires its output to be an array.
+        //
+        j3 = j1;
+        for (j2 = j1 + 1; j2 < n; j2++)
+        {
+            if (d[j3] < d[j2])
+            {
+                j3 = j2;
+            }
+        }
+        //
+        //  If J1 != J3, swap D[J1] and D[J3], and columns J1 and J3 of V.
+        //
+        if (j1 != j3)
+        {
+            t = d[j1];
+            d[j1] = d[j3];
+            d[j3] = t;
+            for (i = 0; i < n; i++)
+            {
+                t = v[i + j1 * n];
+                v[i + j1 * n] = v[i + j3 * n];
+                v[i + j3 * n] = t;
+            }
+        }
     }
 
     return;
@@ -2070,11 +2070,11 @@ double PrAxisMinimiser::praxis(double t0, double h0, std::vector<double> &x, int
 
     if (illc)
     {
-	ldfac = 0.1;
+        ldfac = 0.1;
     }
     else
     {
-	ldfac = 0.01;
+        ldfac = 0.01;
     }
 
     kt = 0;
@@ -2095,16 +2095,16 @@ double PrAxisMinimiser::praxis(double t0, double h0, std::vector<double> &x, int
     //
     for (j = 0; j < nAlpha; j++)
     {
-	for (i = 0; i < nAlpha; i++)
-	{
-	    v[i + j * nAlpha] = 0.0;
-	}
-	v[j + j * nAlpha] = 1.0;
+        for (i = 0; i < nAlpha; i++)
+        {
+            v[i + j * nAlpha] = 0.0;
+        }
+        v[j + j * nAlpha] = 1.0;
     }
 
     for (i = 0; i < nAlpha; i++)
     {
-	d[i] = 0.0;
+        d[i] = 0.0;
     }
     qa = 0.0;
     qb = 0.0;
@@ -2116,412 +2116,412 @@ double PrAxisMinimiser::praxis(double t0, double h0, std::vector<double> &x, int
 
     if (0 < prin)
     {
-	print2(nAlpha, x.data(), prin, fx, nf, nl);
+        print2(nAlpha, x.data(), prin, fx, nf, nl);
     }
     //
     //  The main loop starts here.
     //
     for (;;)
     {
-	sf = d[0];
-	d[0] = 0.0;
-	//
-	//  Minimize along the first direction V(*,1).
-	//
-	jsearch = 0;
-	nits = 2;
-	d2 = d[0];
-	s = 0.0;
-	value = fx;
-	fk = false;
+        sf = d[0];
+        d[0] = 0.0;
+        //
+        //  Minimize along the first direction V(*,1).
+        //
+        jsearch = 0;
+        nits = 2;
+        d2 = d[0];
+        s = 0.0;
+        value = fx;
+        fk = false;
 
-	minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+        minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
 
-	d[0] = d2;
+        d[0] = d2;
 
-	if (s <= 0.0)
-	{
-	    for (i = 0; i < nAlpha; i++)
-	    {
-		v[i + 0 * nAlpha] = -v[i + 0 * nAlpha];
-	    }
-	}
+        if (s <= 0.0)
+        {
+            for (i = 0; i < nAlpha; i++)
+            {
+                v[i + 0 * nAlpha] = -v[i + 0 * nAlpha];
+            }
+        }
 
-	if (sf <= 0.9 * d[0] || d[0] <= 0.9 * sf)
-	{
-	    for (i = 1; i < nAlpha; i++)
-	    {
-		d[i] = 0.0;
-	    }
-	}
-	//
-	//  The inner loop starts here.
-	//
-	for (k = 1; k <= nAlpha; k++)
-	{
-	    r8vec_copy(x.size(), x.data(), y);
+        if (sf <= 0.9 * d[0] || d[0] <= 0.9 * sf)
+        {
+            for (i = 1; i < nAlpha; i++)
+            {
+                d[i] = 0.0;
+            }
+        }
+        //
+        //  The inner loop starts here.
+        //
+        for (k = 1; k <= nAlpha; k++)
+        {
+            r8vec_copy(x.size(), x.data(), y);
 
-	    sf = fx;
+            sf = fx;
 
-	    if (0 < kt)
-	    {
-		illc = true;
-	    }
+            if (0 < kt)
+            {
+                illc = true;
+            }
 
-	    for (;;)
-	    {
-		kl = k;
-		df = 0.0;
-		//
-		//  A random step follows, to avoid resolution valleys.
-		//
-		if (illc)
-		{
-		    for (j = 0; j < nAlpha; j++)
-		    {
-			r = r8_uniform_01(seed);
-			s = (0.1 * ldt + t2 * pow(10.0, kt)) * (r - 0.5);
-			z[j] = s;
-			for (i = 0; i < nAlpha; i++)
-			{
-			    x[i] = x[i] + s * v[i + j * nAlpha];
-			}
-		    }
+            for (;;)
+            {
+                kl = k;
+                df = 0.0;
+                //
+                //  A random step follows, to avoid resolution valleys.
+                //
+                if (illc)
+                {
+                    for (j = 0; j < nAlpha; j++)
+                    {
+                        r = r8_uniform_01(seed);
+                        s = (0.1 * ldt + t2 * pow(10.0, kt)) * (r - 0.5);
+                        z[j] = s;
+                        for (i = 0; i < nAlpha; i++)
+                        {
+                            x[i] = x[i] + s * v[i + j * nAlpha];
+                        }
+                    }
 
-		    fx = cost(x);
-		    nf = nf + 1;
-		}
-		//
-		//  Minimize along the "non-conjugate" directions V(*,K),...,V(*,N).
-		//
-		for (k2 = k; k2 <= nAlpha; k2++)
-		{
-		    sl = fx;
+                    fx = cost(x);
+                    nf = nf + 1;
+                }
+                //
+                //  Minimize along the "non-conjugate" directions V(*,K),...,V(*,N).
+                //
+                for (k2 = k; k2 <= nAlpha; k2++)
+                {
+                    sl = fx;
 
-		    jsearch = k2 - 1;
-		    nits = 2;
-		    d2 = d[k2 - 1];
-		    s = 0.0;
-		    value = fx;
-		    fk = false;
+                    jsearch = k2 - 1;
+                    nits = 2;
+                    d2 = d[k2 - 1];
+                    s = 0.0;
+                    value = fx;
+                    fk = false;
 
-		    minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+                    minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
 
-		    d[k2 - 1] = d2;
+                    d[k2 - 1] = d2;
 
-		    if (illc)
-		    {
-			s = d[k2 - 1] * pow(s + z[k2 - 1], 2);
-		    }
-		    else
-		    {
-			s = sl - fx;
-		    }
+                    if (illc)
+                    {
+                        s = d[k2 - 1] * pow(s + z[k2 - 1], 2);
+                    }
+                    else
+                    {
+                        s = sl - fx;
+                    }
 
-		    if (df <= s)
-		    {
-			df = s;
-			kl = k2;
-		    }
-		}
-		//
-		//  If there was not much improvement on the first try, set
-		//  ILLC = true and start the inner loop again.
-		//
-		if (illc)
-		{
-		    break;
-		}
+                    if (df <= s)
+                    {
+                        df = s;
+                        kl = k2;
+                    }
+                }
+                //
+                //  If there was not much improvement on the first try, set
+                //  ILLC = true and start the inner loop again.
+                //
+                if (illc)
+                {
+                    break;
+                }
 
-		if (fabs(100.0 * machep * fx) <= df)
-		{
-		    break;
-		}
-		illc = true;
-	    }
+                if (fabs(100.0 * machep * fx) <= df)
+                {
+                    break;
+                }
+                illc = true;
+            }
 
-	    if (k == 2 && 1 < prin)
-	    {
-		r8vec_print(nAlpha, d, "  The second difference array:");
-	    }
-	    //
-	    //  Minimize along the "conjugate" directions V(*,1),...,V(*,K-1).
-	    //
-	    for (k2 = 1; k2 < k; k2++)
-	    {
-		jsearch = k2 - 1;
-		nits = 2;
-		d2 = d[k2 - 1];
-		s = 0.0;
-		value = fx;
-		fk = false;
+            if (k == 2 && 1 < prin)
+            {
+                r8vec_print(nAlpha, d, "  The second difference array:");
+            }
+            //
+            //  Minimize along the "conjugate" directions V(*,1),...,V(*,K-1).
+            //
+            for (k2 = 1; k2 < k; k2++)
+            {
+                jsearch = k2 - 1;
+                nits = 2;
+                d2 = d[k2 - 1];
+                s = 0.0;
+                value = fx;
+                fk = false;
 
-		minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+                minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
 
-		d[k2 - 1] = d2;
-	    }
+                d[k2 - 1] = d2;
+            }
 
-	    f1 = fx;
-	    fx = sf;
+            f1 = fx;
+            fx = sf;
 
-	    for (i = 0; i < nAlpha; i++)
-	    {
-		temp = x[i];
-		x[i] = y[i];
-		y[i] = temp - y[i];
-	    }
+            for (i = 0; i < nAlpha; i++)
+            {
+                temp = x[i];
+                x[i] = y[i];
+                y[i] = temp - y[i];
+            }
 
-	    lds = r8vec_norm(nAlpha, y);
-	    //
-	    //  Discard direction V(*,kl).
-	    //
-	    //  If no random step was taken, V(*,KL) is the "non-conjugate"
-	    //  direction along which the greatest improvement was made.
-	    //
-	    if (smallValue < lds)
-	    {
-		for (j = kl - 1; k <= j; j--)
-		{
-		    for (i = 1; i <= nAlpha; i++)
-		    {
-			v[i - 1 + j * nAlpha] = v[i - 1 + (j - 1) * nAlpha];
-		    }
-		    d[j] = d[j - 1];
-		}
+            lds = r8vec_norm(nAlpha, y);
+            //
+            //  Discard direction V(*,kl).
+            //
+            //  If no random step was taken, V(*,KL) is the "non-conjugate"
+            //  direction along which the greatest improvement was made.
+            //
+            if (smallValue < lds)
+            {
+                for (j = kl - 1; k <= j; j--)
+                {
+                    for (i = 1; i <= nAlpha; i++)
+                    {
+                        v[i - 1 + j * nAlpha] = v[i - 1 + (j - 1) * nAlpha];
+                    }
+                    d[j] = d[j - 1];
+                }
 
-		d[k - 1] = 0.0;
+                d[k - 1] = 0.0;
 
-		for (i = 1; i <= nAlpha; i++)
-		{
-		    v[i - 1 + (k - 1) * nAlpha] = y[i - 1] / lds;
-		}
-		//
-		//  Minimize along the new "conjugate" direction V(*,k), which is
-		//  the normalized vector:  (new x) - (old x).
-		//
-		jsearch = k - 1;
-		nits = 4;
-		d2 = d[k - 1];
-		value = f1;
-		fk = true;
+                for (i = 1; i <= nAlpha; i++)
+                {
+                    v[i - 1 + (k - 1) * nAlpha] = y[i - 1] / lds;
+                }
+                //
+                //  Minimize along the new "conjugate" direction V(*,k), which is
+                //  the normalized vector:  (new x) - (old x).
+                //
+                jsearch = k - 1;
+                nits = 4;
+                d2 = d[k - 1];
+                value = f1;
+                fk = true;
 
-		minny(x, jsearch, nits, d2, lds, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+                minny(x, jsearch, nits, d2, lds, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
 
-		d[k - 1] = d2;
+                d[k - 1] = d2;
 
-		if (lds <= 0.0)
-		{
-		    lds = -lds;
-		    for (i = 1; i <= nAlpha; i++)
-		    {
-			v[i - 1 + (k - 1) * nAlpha] = -v[i - 1 + (k - 1) * nAlpha];
-		    }
-		}
-	    }
+                if (lds <= 0.0)
+                {
+                    lds = -lds;
+                    for (i = 1; i <= nAlpha; i++)
+                    {
+                        v[i - 1 + (k - 1) * nAlpha] = -v[i - 1 + (k - 1) * nAlpha];
+                    }
+                }
+            }
 
-	    ldt = ldfac * ldt;
-	    ldt = std::max(ldt, lds);
+            ldt = ldfac * ldt;
+            ldt = std::max(ldt, lds);
 
-	    if (0 < prin)
-	    {
-		print2(nAlpha, x.data(), prin, fx, nf, nl);
-	    }
+            if (0 < prin)
+            {
+                print2(nAlpha, x.data(), prin, fx, nf, nl);
+            }
 
-	    t2 = r8vec_norm(nAlpha, x.data());
+            t2 = r8vec_norm(nAlpha, x.data());
 
-	    t2 = m2 * t2 + t;
-	    //
-	    //  See whether the length of the step taken since starting the
-	    //  inner loop exceeds half the tolerance.
-	    //
-	    if (0.5 * t2 < ldt)
-	    {
-		kt = -1;
-	    }
+            t2 = m2 * t2 + t;
+            //
+            //  See whether the length of the step taken since starting the
+            //  inner loop exceeds half the tolerance.
+            //
+            if (0.5 * t2 < ldt)
+            {
+                kt = -1;
+            }
 
-	    kt = kt + 1;
+            kt = kt + 1;
 
-	    if (ktm < kt)
-	    {
-		if (0 < prin)
-		{
-		    r8vec_print(nAlpha, x.data(), "  X:");
-		}
+            if (ktm < kt)
+            {
+                if (0 < prin)
+                {
+                    r8vec_print(nAlpha, x.data(), "  X:");
+                }
 
-		delete[] d;
-		delete[] q0;
-		delete[] q1;
-		delete[] v;
-		delete[] y;
-		delete[] z;
+                delete[] d;
+                delete[] q0;
+                delete[] q1;
+                delete[] v;
+                delete[] y;
+                delete[] z;
 
-		return fx;
-	    }
-	}
-	//
-	//  The inner loop ends here.
-	//
-	//  Try quadratic extrapolation in case we are in a curved valley.
-	//
-	quad(x, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, qa, qb, qc, qd0, qd1);
+                return fx;
+            }
+        }
+        //
+        //  The inner loop ends here.
+        //
+        //  Try quadratic extrapolation in case we are in a curved valley.
+        //
+        quad(x, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, qa, qb, qc, qd0, qd1);
 
-	for (j = 0; j < nAlpha; j++)
-	{
-	    d[j] = 1.0 / sqrt(d[j]);
-	}
+        for (j = 0; j < nAlpha; j++)
+        {
+            d[j] = 1.0 / sqrt(d[j]);
+        }
 
-	dn = r8vec_max(nAlpha, d);
+        dn = r8vec_max(nAlpha, d);
 
-	if (3 < prin)
-	{
-	    r8mat_print(nAlpha, nAlpha, v, "  The new direction vectors:");
-	}
+        if (3 < prin)
+        {
+            r8mat_print(nAlpha, nAlpha, v, "  The new direction vectors:");
+        }
 
-	for (j = 0; j < nAlpha; j++)
-	{
-	    for (i = 0; i < nAlpha; i++)
-	    {
-		v[i + j * nAlpha] = (d[j] / dn) * v[i + j * nAlpha];
-	    }
-	}
-	//
-	//  Scale the axes to try to reduce the condition number.
-	//
-	if (1.0 < scbd)
-	{
-	    for (i = 0; i < nAlpha; i++)
-	    {
-		s = 0.0;
-		for (j = 0; j < nAlpha; j++)
-		{
-		    s = s + v[i + j * nAlpha] * v[i + j * nAlpha];
-		}
-		s = sqrt(s);
-		z[i] = std::max(m4, s);
-	    }
+        for (j = 0; j < nAlpha; j++)
+        {
+            for (i = 0; i < nAlpha; i++)
+            {
+                v[i + j * nAlpha] = (d[j] / dn) * v[i + j * nAlpha];
+            }
+        }
+        //
+        //  Scale the axes to try to reduce the condition number.
+        //
+        if (1.0 < scbd)
+        {
+            for (i = 0; i < nAlpha; i++)
+            {
+                s = 0.0;
+                for (j = 0; j < nAlpha; j++)
+                {
+                    s = s + v[i + j * nAlpha] * v[i + j * nAlpha];
+                }
+                s = sqrt(s);
+                z[i] = std::max(m4, s);
+            }
 
-	    s = r8vec_min(nAlpha, z);
+            s = r8vec_min(nAlpha, z);
 
-	    for (i = 0; i < nAlpha; i++)
-	    {
-		sl = s / z[i];
-		z[i] = 1.0 / sl;
+            for (i = 0; i < nAlpha; i++)
+            {
+                sl = s / z[i];
+                z[i] = 1.0 / sl;
 
-		if (scbd < z[i])
-		{
-		    sl = 1.0 / scbd;
-		    z[i] = scbd;
-		}
-		for (j = 0; j < nAlpha; j++)
-		{
-		    v[i + j * nAlpha] = sl * v[i + j * nAlpha];
-		}
-	    }
-	}
-	//
-	//  Calculate a new set of orthogonal directions before repeating
-	//  the main loop.
-	//
-	//  Transpose V for MINFIT:
-	//
-	r8mat_transpose_in_place(nAlpha, v);
-	//
-	//  MINFIT finds the singular value decomposition of V.
-	//
-	//  This gives the principal values and principal directions of the
-	//  approximating quadratic form without squaring the condition number.
-	//
-	minfit(nAlpha, vsmall, v, d);
-	//
-	//  Unscale the axes.
-	//
-	if (1.0 < scbd)
-	{
-	    for (i = 0; i < nAlpha; i++)
-	    {
-		for (j = 0; j < nAlpha; j++)
-		{
-		    v[i + j * nAlpha] = z[i] * v[i + j * nAlpha];
-		}
-	    }
+                if (scbd < z[i])
+                {
+                    sl = 1.0 / scbd;
+                    z[i] = scbd;
+                }
+                for (j = 0; j < nAlpha; j++)
+                {
+                    v[i + j * nAlpha] = sl * v[i + j * nAlpha];
+                }
+            }
+        }
+        //
+        //  Calculate a new set of orthogonal directions before repeating
+        //  the main loop.
+        //
+        //  Transpose V for MINFIT:
+        //
+        r8mat_transpose_in_place(nAlpha, v);
+        //
+        //  MINFIT finds the singular value decomposition of V.
+        //
+        //  This gives the principal values and principal directions of the
+        //  approximating quadratic form without squaring the condition number.
+        //
+        minfit(nAlpha, vsmall, v, d);
+        //
+        //  Unscale the axes.
+        //
+        if (1.0 < scbd)
+        {
+            for (i = 0; i < nAlpha; i++)
+            {
+                for (j = 0; j < nAlpha; j++)
+                {
+                    v[i + j * nAlpha] = z[i] * v[i + j * nAlpha];
+                }
+            }
 
-	    for (j = 0; j < nAlpha; j++)
-	    {
-		s = 0.0;
-		for (i = 0; i < nAlpha; i++)
-		{
-		    s = s + v[i + j * nAlpha] * v[i + j * nAlpha];
-		}
-		s = sqrt(s);
+            for (j = 0; j < nAlpha; j++)
+            {
+                s = 0.0;
+                for (i = 0; i < nAlpha; i++)
+                {
+                    s = s + v[i + j * nAlpha] * v[i + j * nAlpha];
+                }
+                s = sqrt(s);
 
-		d[j] = s * d[j];
-		for (i = 0; i < nAlpha; i++)
-		{
-		    v[i + j * nAlpha] = v[i + j * nAlpha] / s;
-		}
-	    }
-	}
+                d[j] = s * d[j];
+                for (i = 0; i < nAlpha; i++)
+                {
+                    v[i + j * nAlpha] = v[i + j * nAlpha] / s;
+                }
+            }
+        }
 
-	for (i = 0; i < nAlpha; i++)
-	{
-	    dni = dn * d[i];
+        for (i = 0; i < nAlpha; i++)
+        {
+            dni = dn * d[i];
 
-	    if (large < dni)
-	    {
-		d[i] = vsmall;
-	    }
-	    else if (dni < smallValue)
-	    {
-		d[i] = vlarge;
-	    }
-	    else
-	    {
-		d[i] = 1.0 / dni / dni;
-	    }
-	}
-	//
-	//  Sort the eigenvalues and eigenvectors.
-	//
-	svsort(nAlpha, d, v);
-	//
-	//  Determine the smallest eigenvalue.
-	//
-	dmin = std::max(d[nAlpha - 1], smallValue);
-	//
-	//  The ratio of the smallest to largest eigenvalue determines whether
-	//  the system is ill conditioned.
-	//
-	if (dmin < m2 * d[0])
-	{
-	    illc = true;
-	}
-	else
-	{
-	    illc = false;
-	}
+            if (large < dni)
+            {
+                d[i] = vsmall;
+            }
+            else if (dni < smallValue)
+            {
+                d[i] = vlarge;
+            }
+            else
+            {
+                d[i] = 1.0 / dni / dni;
+            }
+        }
+        //
+        //  Sort the eigenvalues and eigenvectors.
+        //
+        svsort(nAlpha, d, v);
+        //
+        //  Determine the smallest eigenvalue.
+        //
+        dmin = std::max(d[nAlpha - 1], smallValue);
+        //
+        //  The ratio of the smallest to largest eigenvalue determines whether
+        //  the system is ill conditioned.
+        //
+        if (dmin < m2 * d[0])
+        {
+            illc = true;
+        }
+        else
+        {
+            illc = false;
+        }
 
-	if (1 < prin)
-	{
-	    if (1.0 < scbd)
-	    {
-		r8vec_print(nAlpha, z, "  The scale factors:");
-	    }
-	    r8vec_print(nAlpha, d, "  Principal values of the quadratic form:");
-	}
+        if (1 < prin)
+        {
+            if (1.0 < scbd)
+            {
+                r8vec_print(nAlpha, z, "  The scale factors:");
+            }
+            r8vec_print(nAlpha, d, "  Principal values of the quadratic form:");
+        }
 
-	if (3 < prin)
-	{
-	    r8mat_print(nAlpha, nAlpha, v, "  The principal axes:");
-	}
+        if (3 < prin)
+        {
+            r8mat_print(nAlpha, nAlpha, v, "  The principal axes:");
+        }
 
-	//
-	//  The main loop ends here.
-	//
+        //
+        //  The main loop ends here.
+        //
     }
 
     if (0 < prin)
     {
-	r8vec_print(nAlpha, x.data(), "  X:");
+        r8vec_print(nAlpha, x.data(), "  X:");
     }
     //
     //  Free memory.
