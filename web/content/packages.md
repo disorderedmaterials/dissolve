@@ -29,7 +29,8 @@ linkTitle = "Packages"
 {{< blocks/section color="primary" >}}
 
 {{% blocks/feature icon="fab fa-linux" title="Linux" %}}
-{{< releaselink target="GUI" urlSuffix="-x86_64.AppImage" textSuffix="AppImage" >}}
+{{< releaselink target="GUI" urlSuffix="" textSuffix="Binary" >}}
+{{< releaselink target="GUI" urlSuffix=".sif" textSuffix="Singularity Container" >}}
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
