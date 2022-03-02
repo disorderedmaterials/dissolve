@@ -158,11 +158,9 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF"));
     newLayer->setFrequency(5);
 
-    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
-
     // Add the RDF module
     auto *module = ModuleRegistry::create("RDF", newLayer);
-    module->keywords().set("Configuration", firstCfg);
+    module->keywords().set("Configurations", dissolve_.rawConfigurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -178,11 +176,9 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggere
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Unweighted S(Q)"));
     newLayer->setFrequency(5);
 
-    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
-
     // Add the RDF module
     auto *rdfModule = dynamic_cast<RDFModule *>(ModuleRegistry::create("RDF", newLayer));
-    rdfModule->keywords().set("Configuration", firstCfg);
+    rdfModule->keywords().set("Configurations", dissolve_.rawConfigurations());
 
     // Add a plain structure factor module
     auto *module = ModuleRegistry::create("SQ", newLayer);
@@ -202,11 +198,9 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool c
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q)"));
     newLayer->setFrequency(5);
 
-    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
-
     // Add the RDF module
     auto *rdfModule = ModuleRegistry::create("RDF", newLayer);
-    rdfModule->keywords().set("Configuration", firstCfg);
+    rdfModule->keywords().set("Configurations", dissolve_.rawConfigurations());
 
     // Add a plain structure factor module
     auto *sqModule = dynamic_cast<SQModule *>(ModuleRegistry::create("SQ", newLayer));
@@ -230,11 +224,9 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bo
     newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q) / X-Ray S(Q)"));
     newLayer->setFrequency(5);
 
-    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
-
     // Add the RDF module
     auto *rdfModule = ModuleRegistry::create("RDF", newLayer);
-    rdfModule->keywords().set("Configuration", firstCfg);
+    rdfModule->keywords().set("Configurations", dissolve_.rawConfigurations());
 
     // Add a plain structure factor module
     auto *sqModule = ModuleRegistry::create("SQ", newLayer);
