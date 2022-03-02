@@ -21,6 +21,7 @@ add_library(
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
+  mc.cpp
   poissonfit.cpp
   range.cpp
   regression.cpp
