@@ -5,6 +5,7 @@
 #include "base/messenger.h"
 #include "math/mathfunc.h"
 #include <numeric>
+#include <vector>
 
 MonteCarloMinimiser::MonteCarloMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost)
     : costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
