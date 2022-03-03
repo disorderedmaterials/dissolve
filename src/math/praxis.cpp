@@ -5,7 +5,6 @@
 #include "base/messenger.h"
 #include <iomanip>
 #include <limits>
-#include <vector>
 
 PrAxisMinimiser::PrAxisMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost)
     : costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)

@@ -6,6 +6,7 @@
 #include "expression/variable.h"
 #include <functional>
 #include <memory>
+#include <vector>
 
 class MonteCarloMinimiser
 {

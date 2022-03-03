@@ -4,6 +4,7 @@
 #pragma once
 
 #include <functional>
+#include <vector>
 
 // Brent's Principal Axis Minimiser
 class PrAxisMinimiser
