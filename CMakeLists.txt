@@ -245,11 +245,6 @@ if(GUI)
   # Main Dissolve GUI
   add_executable(${gui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui.cpp)
 
-  # Because Qt has its own way of checking for C++17
-  if(MSVC)
-    add_compile_options(/std:c++17 /Zc:__cplusplus)
-  endif(MSVC)
-
   # Add the ANTLR4 dependency if building locally
   if(BUILD_ANTLR_RUNTIME)
     add_dependencies(${target_name} antlr_runtime)
