@@ -4,6 +4,7 @@
 #pragma once
 
 #include <functional>
+#include <string_view>
 #include <vector>
 
 // Brent's Principal Axis Minimiser
