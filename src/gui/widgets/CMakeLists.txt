@@ -39,3 +39,8 @@ set(widgets_SRCS
 add_library(widgets ${widgets_UIS_H} ${widgets_SRCS} ${widgets_MOC_SRCS})
 target_include_directories(widgets PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
 target_link_libraries(widgets PRIVATE base)
+
+# Because Qt has its own way of checking for C++17
+if(MSVC)
+  target_compile_options(render PUBLIC /Zc:__cplusplus)
+endif(MSVC)
