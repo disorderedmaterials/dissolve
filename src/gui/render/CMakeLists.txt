@@ -106,8 +106,8 @@ target_include_directories(
 )
 
 # Because Qt has its own way of checking for C++17
-if (MSVC)
+if(MSVC)
   target_compile_options(render PUBLIC /Zc:__cplusplus)
-endif (MSVC)
+endif(MSVC)
 
 target_link_libraries(render PRIVATE base)
