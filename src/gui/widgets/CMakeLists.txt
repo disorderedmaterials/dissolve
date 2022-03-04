@@ -42,5 +42,5 @@ target_link_libraries(widgets PRIVATE base)
 
 # Because Qt has its own way of checking for C++17
 if(MSVC)
-  target_compile_options(render PUBLIC /Zc:__cplusplus)
+  target_compile_options(widgets PUBLIC /Zc:__cplusplus)
 endif(MSVC)
