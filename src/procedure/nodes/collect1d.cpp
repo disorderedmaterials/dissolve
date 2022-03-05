@@ -79,12 +79,8 @@ bool Collect1DProcedureNode::hasBranch() const { return (subCollectBranch_ != nu
 // Return SequenceNode for the branch (if it exists)
 std::shared_ptr<SequenceProcedureNode> Collect1DProcedureNode::branch() { return subCollectBranch_; }
 
-std::vector<ConstNodeRef> Collect1DProcedureNode::children() const
-{
-    if (!subCollectBranch_)
-        return {};
-    return {subCollectBranch_};
-}
+// Find the nodes owned by this node
+std::vector<ConstNodeRef> Collect1DProcedureNode::children() const { return {subCollectBranch_}; }
 
 /*
  * Execute

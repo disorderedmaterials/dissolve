@@ -13,7 +13,6 @@
 #include "gui/keywordwidgets/producers.h"
 #include "gui/keywordwidgets/widget.hui"
 #include "main/dissolve.h"
-#include "templates/variantpointer.h"
 #include <QMessageBox>
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,

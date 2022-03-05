@@ -28,7 +28,7 @@
 #include <functional>
 
 // Run set-up stage
-bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
+bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;

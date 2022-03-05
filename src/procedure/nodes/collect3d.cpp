@@ -110,15 +110,13 @@ std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::addSubCollectBran
 
 // Return whether this node has a branch
 bool Collect3DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
+
 // Return SequenceNode for the branch (if it exists)
 std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::branch() { return subCollectBranch_; }
 
-std::vector<ConstNodeRef> Collect3DProcedureNode::children() const
-{
-    if (!subCollectBranch_)
-        return {};
-    return {subCollectBranch_};
-}
+// Find the nodes owned by this node
+std::vector<ConstNodeRef> Collect3DProcedureNode::children() const { return {subCollectBranch_}; }
+
 /*
  * Execute
  */

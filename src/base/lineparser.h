@@ -239,4 +239,10 @@ class LineParser
     std::vector<double> argvd(int i) const;
     // Returns whether the specified argument exists
     bool hasArg(int i) const;
+
+    private:
+    // Utility LineParser::ParseReturnValue converter to int
+    int getIntFromParseReturnValue(LineParser::ParseReturnValue value);
+    // Utility LineParser::ParseReturnValue converter from int
+    LineParser::ParseReturnValue getParseReturnValueFromInt(int value);
 };

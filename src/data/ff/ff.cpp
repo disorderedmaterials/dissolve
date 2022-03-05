@@ -283,13 +283,13 @@ bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpec
 }
 
 // Assign suitable atom types to the supplied Species, returning the number of failures
-int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
-                                bool setSpeciesAtomCharges) const
+std::vector<int> Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy,
+                                             bool setSpeciesAtomCharges) const
 {
     Messenger::print("Assigning atomtypes to species '{}' from forcefield '{}'...\n", sp->name(), name());
 
     // Loop over Species atoms
-    auto nFailed = 0;
+    std::vector<int> failedElements;
     for (auto &i : sp->atoms())
     {
         // Obey the supplied strategy:
@@ -304,15 +304,15 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
         if (!assignAtomType(i, coreData, setSpeciesAtomCharges))
         {
             Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
-            ++nFailed;
+            failedElements.push_back(i.userIndex());
         }
     }
 
-    if (nFailed)
-        Messenger::error("Failed to assign atom {} to {} {}.\n", (nFailed == 1 ? "type" : "types"), nFailed,
-                         (nFailed == 1 ? "atom" : "atoms"));
+    if (!failedElements.empty())
+        Messenger::error("Failed to assign atom {} to {} {}.\n", (failedElements.size() == 1 ? "type" : "types"),
+                         failedElements.size(), (failedElements.size() == 1 ? "atom" : "atoms"));
 
-    return nFailed;
+    return failedElements;
 }
 
 // Assign specific AtomType to the supplied atom

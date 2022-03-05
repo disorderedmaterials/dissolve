@@ -138,6 +138,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
     if (displayStyle_ == LinesStyle)
     {
         // Set basic styling and content for assemblies
+        speciesAssembly_.add(LineStyle(1.0));
         speciesAssembly_.add(false, GL_LINE);
         speciesAssembly_.add(lineSpeciesPrimitive_, A);
 

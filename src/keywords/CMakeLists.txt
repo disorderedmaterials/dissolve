@@ -26,7 +26,6 @@ add_library(
   optionalint.cpp
   procedure.cpp
   range.cpp
-  signals.cpp
   species.cpp
   speciessite.cpp
   speciessitevector.cpp
@@ -73,7 +72,6 @@ add_library(
   optionalint.h
   procedure.h
   range.h
-  signals.h
   species.h
   speciessite.h
   speciessitevector.h

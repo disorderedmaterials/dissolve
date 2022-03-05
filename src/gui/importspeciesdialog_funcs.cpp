@@ -6,7 +6,6 @@
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"
 #include "gui/importspeciesdialog.h"
-#include "templates/variantpointer.h"
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
