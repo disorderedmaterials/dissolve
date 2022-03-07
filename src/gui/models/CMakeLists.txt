@@ -111,6 +111,11 @@ target_include_directories(
   models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
 )
 
+# Because Qt has its own way of checking for C++17
+if(MSVC)
+  target_compile_options(models PUBLIC /Zc:__cplusplus)
+endif(MSVC)
+
 if(CONAN)
   target_link_libraries(models PUBLIC CONAN_PKG::pugixml ${THREADING_LINK_LIBS})
 else(CONAN)

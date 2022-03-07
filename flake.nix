@@ -49,7 +49,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         nixGL = import nixGL-src { inherit pkgs; };
-        QTDIR = "${import ./nix/qt6.nix { inherit pkgs; }}/6.1.1/gcc_64";
+        QTDIR = "${import ./nix/qt6.nix { inherit pkgs; }}/6.2.2/gcc_64";
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));

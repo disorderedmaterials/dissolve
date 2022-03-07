@@ -113,3 +113,8 @@ set(keywordwidgets_SRCS
 add_library(keywordwidgets ${keywordwidgets_UIS_H} ${keywordwidgets_SRCS} ${keywordwidgets_MOC_SRCS})
 target_include_directories(keywordwidgets PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
 target_link_libraries(keywordwidgets PRIVATE base)
+
+# Because Qt has its own way of checking for C++17
+if(MSVC)
+  target_compile_options(keywordwidgets PUBLIC /Zc:__cplusplus)
+endif(MSVC)
