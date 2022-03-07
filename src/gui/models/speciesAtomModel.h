@@ -13,7 +13,6 @@ class SpeciesAtomModel : public QAbstractTableModel
     Q_OBJECT
 
     private:
-    std::vector<SpeciesAtom> &atoms_;
     Species &species_;
     Dissolve &dissolve_;
 
@@ -21,7 +20,7 @@ class SpeciesAtomModel : public QAbstractTableModel
     void atomTypeChanged();
 
     public:
-    SpeciesAtomModel(std::vector<SpeciesAtom> &atoms, Species &species, Dissolve &dissolve);
+    SpeciesAtomModel(Species &species, Dissolve &dissolve);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
