@@ -66,6 +66,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<ModuleKeywordBase, ModuleKeywordWidget>();
     registerProducer<ModuleVectorKeyword, ModuleVectorKeywordWidget>();
     registerProducer<NodeKeywordBase, NodeKeywordWidget>();
+    registerProducer<NodeAndIntegerKeywordBase, NodeAndIntegerKeywordWidget>();
     registerProducer<NodeValueEnumOptionsBaseKeyword, NodeValueEnumOptionsKeywordWidget>();
     registerProducer<NodeValueKeyword, NodeValueKeywordWidget>();
     registerProducer<OptionalDoubleKeyword, OptionalDoubleKeywordWidget>();
@@ -91,6 +92,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<IntegerDoubleVectorKeyword>();
     registerNullProducer<IntegerStringVectorKeyword>();
     registerNullProducer<NodeBranchKeyword>();
+    registerNullProducer<NodeVectorKeywordBase>();
     registerNullProducer<ProcedureKeyword>();
     registerNullProducer<StringDoubleVectorKeyword>();
     registerNullProducer<StringPairVectorKeyword>();
@@ -106,9 +108,9 @@ std::pair<QWidget *, KeywordWidgetBase *> KeywordWidgetProducer::produce(Keyword
 {
     auto it = producers_.find(keyword->typeIndex());
     if (it == producers_.end())
-        throw(std::runtime_error(fmt::format(
-            "A producer has not been registered for type '{}', so a new widget for this keyword cannot be created.\n",
-            keyword->typeIndex().name())));
+        throw(std::runtime_error(fmt::format("A producer has not been registered for type '{}' (keyword name is '{}'), so a "
+                                             "new widget for this keyword cannot be created.\n",
+                                             keyword->typeIndex().name(), keyword->name())));
 
     return (it->second)(keyword, coreData);
 }

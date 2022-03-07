@@ -178,7 +178,7 @@ long int Histogram3D::nBinned() const { return nBinned_; }
 void Histogram3D::accumulate()
 {
     std::transform(averages_.begin(), averages_.end(), bins_.begin(), averages_.begin(),
-                   [](auto avg, auto bin) { return avg + bin; });
+                   [](auto avg, auto bin) { return avg + double(bin); });
 
     // Update accumulated data
     updateAccumulatedData();

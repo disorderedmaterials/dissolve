@@ -3,7 +3,6 @@
 
 #include "data/ff/ff.h"
 #include "gui/selectforcefieldwidget.h"
-#include "templates/variantpointer.h"
 #include <QRegularExpression>
 
 SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields)

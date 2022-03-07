@@ -74,8 +74,6 @@ class Fit1DProcedureNode : public ProcedureNode
     std::shared_ptr<ExpressionVariable> getFitTarget(std::string_view name);
     // Return the named constant, if it exists
     std::shared_ptr<ExpressionVariable> getConstant(std::string_view name);
-    // Fitting cost function
-    double equationCost(const std::vector<double> &alpha);
 
     public:
     // Return fitted data

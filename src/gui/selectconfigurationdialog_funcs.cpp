@@ -4,7 +4,6 @@
 #include "data/ff/ff.h"
 #include "gui/selectconfigurationdialog.h"
 #include "gui/selectconfigurationwidget.h"
-#include "templates/variantpointer.h"
 
 SelectConfigurationDialog::SelectConfigurationDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)
 {

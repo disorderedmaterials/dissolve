@@ -3,7 +3,6 @@
 
 #include "gui/render/symbol.h"
 #include "gui/selectsymbol.h"
-#include "templates/variantpointer.h"
 #include <QScrollBar>
 
 SelectSymbolDialog::SelectSymbolDialog(QWidget *parent) : QDialog(parent), itemSize_(32)

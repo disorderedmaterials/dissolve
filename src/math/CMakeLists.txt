@@ -21,6 +21,8 @@ add_library(
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
+  mc.cpp
+  praxis.cpp
   poissonfit.cpp
   range.cpp
   regression.cpp
@@ -57,7 +59,6 @@ add_library(
   matrix3.h
   matrix4.h
   mc.h
-  minimiser.h
   poissonfit.h
   praxis.h
   range.h

@@ -9,6 +9,10 @@
  *
  * Forcefield covers ZIF-8. Sorbate parameters published in the original paper are not implemented here.
  *
+ * Includes additional parameters for hydrogen-capping of imidazole nitrogens in non-bulk systems as published in:
+ * "Crystal-Size-Dependent Structural Transitions in Nanoporous Crystals: Adsorption-Induced Transitions in ZIF‑8",
+ * C. Zhang, J. A. Gee, D. S. Sholl, and Ryan P. Lively, J. Phys. Chem. C *118*, 20727 (2014), 10.1021/jp5081466
+ *
  * Notes:
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of TGAY.
  * All energy values are in kJ/mol.
@@ -30,6 +34,8 @@ bool Forcefield_Zhang2013::setUp()
     addAtomType(Elements::C, 5, "C3", "nh=3,-C,ring(n=0)", "Methyl carbon on imidazolate", -0.5726, {0.237233, 3.431});
     addAtomType(Elements::H, 6, "H1", "-&5", "Hydrogen on methyl carbon", 0.1481, {0.0995792, 2.571});
     addAtomType(Elements::H, 7, "H2", "-&4", "Hydrogen on C4,5 carbon", 0.1536, {0.0995792, 2.571});
+    // -- Hydrogen Capping - J. Phys. Chem. C *118*, 20727 (2014)
+    addAtomType(Elements::H, 8, "H3", "-&2", "Capping hydrogen on nitrogen", 0.17235, {0.0995792, 2.571});
 
     // Intramolecular terms
     addBondTerm("N", "C1", BondFunctions::Form::Harmonic, {4083.58, 1.339});
@@ -66,6 +72,14 @@ bool Forcefield_Zhang2013::setUp()
     addTorsionTerm("H1", "C3", "C1", "N", TorsionFunctions::Form::None, {});
     addImproperTerm("C1", "C3", "N", "N", TorsionFunctions::Form::Cosine, {4.6024, 180.0, 2, 1.0});
     addImproperTerm("C2", "C2", "H2", "N", TorsionFunctions::Form::Cosine, {4.6024, 180.0, 2, 1.0});
+    // -- Hydrogen Capping - J. Phys. Chem. C *118*, 20727 (2014)
+    addBondTerm("H3", "N", BondFunctions::Form::Harmonic, {3631.712, 1.01});
+    addAngleTerm("H3", "N", "C1", AngleFunctions::Form::Harmonic, {585.76, 125.8});
+    addAngleTerm("H3", "N", "C2", AngleFunctions::Form::Harmonic, {585.76, 125.8});
+    addTorsionTerm("H3", "N", "C1", "N", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
+    addTorsionTerm("H3", "N", "C1", "C3", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
+    addTorsionTerm("H3", "N", "C2", "C2", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
+    addTorsionTerm("H3", "N", "C2", "H2", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
 
     return true;
 }
@@ -83,7 +97,11 @@ std::string_view Forcefield_Zhang2013::description() const
     return "Implements ZIF-8 forcefield found in 'Sorption-Induced Structural Transition of "
            "Zeolitic Imidazolate Framework-8: A Hybrid Molecular Simulation Study', L. Zhang, Z. Hu and J. Jiang, <i>J. Am. "
            "Chem. Soc.</i> <b>135</b>, 3722 (2013), <a href='http:/dx.doi.org/10.1021/ja401129h'></a>.<br/>Covers only ZIF-8 "
-           "parameters listed in the supplementary information. Sorbate parameters are not included.";
+           "parameters listed in the supplementary information. Sorbate parameters are not included.</br>"
+           "</br>Includes additional parameters for hydrogen-capping of imidazole nitrogens in non-bulk systems as published "
+           "in: 'Crystal-Size-Dependent Structural Transitions in Nanoporous Crystals: Adsorption-Induced Transitions in "
+           "ZIF‑8', C. Zhang, J. A. Gee, D. S. Sholl, and Ryan P. Lively, <i>J. Phys. Chem. C</i> <b>118</b>, 20727 (2014), <a "
+           "href='http:/dx.doi.org/10.1021/jp5081466'></a>.";
 }
 
 // Return short-range interaction style for AtomTypes

@@ -6,10 +6,10 @@
 
 SitesFilterProxy::SitesFilterProxy(int flags) : filterFlags_(flags) {}
 
-// Set filter flags
-void SitesFilterProxy::setFlags(int flags)
+// Set filter flag
+void SitesFilterProxy::setFlag(SitesFilterProxy::FilterFlags flag)
 {
-    filterFlags_ = flags;
+    filterFlags_.set(flag);
     invalidateFilter();
 }
 
@@ -19,12 +19,13 @@ void SitesFilterProxy::setFlags(int flags)
 
 bool SitesFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    if (filterFlags_ == SitesFilterProxy::None)
+    if (filterFlags_.none() || !parent.isValid())
         return true;
 
-    const auto *site = sourceModel()->data(sourceModel()->index(row, 0, parent), Qt::UserRole).value<SpeciesSite *>();
+    const auto *site = sourceModel()->data(sourceModel()->index(row, 1, parent), Qt::UserRole).value<SpeciesSite *>();
+    assert(site);
 
-    if (filterFlags_ & SitesFilterProxy::IsOriented && !site->hasAxes())
+    if (filterFlags_.test(SitesFilterProxy::HasAxes) && !site->hasAxes())
         return false;
 
     return true;

@@ -15,6 +15,8 @@ SpeciesSiteVectorKeywordWidget::SpeciesSiteVectorKeywordWidget(QWidget *parent, 
     ui_.setupUi(dropWidget());
 
     sitesFilterProxy_.setSourceModel(&sites_);
+    if (keyword->axesRequired())
+        sitesFilterProxy_.setFlag(SitesFilterProxy::HasAxes);
     ui_.SitesTree->setModel(&sitesFilterProxy_);
     sites_.setCheckStateData(keyword_->data());
     connect(&sites_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
@@ -70,6 +72,7 @@ void SpeciesSiteVectorKeywordWidget::updateSummaryText()
     if (keyword_->data().empty())
         setSummaryText("<None>");
     else
-        setSummaryText(
-            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &site) { return site->name(); })));
+        setSummaryText(QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &site) {
+            return fmt::format("{} ({})", site->name(), site->parent()->name());
+        })));
 }

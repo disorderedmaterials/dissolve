@@ -96,6 +96,7 @@ bool Process3DProcedureNode::hasBranch() const { return (normalisationBranch_ !=
 // Return SequenceNode for the branch (if it exists)
 std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::branch() { return normalisationBranch_; }
 
+// Find the nodes owned by this node
 std::vector<ConstNodeRef> Process3DProcedureNode::children() const { return {normalisationBranch_}; }
 
 /*

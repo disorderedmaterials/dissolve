@@ -8,6 +8,7 @@
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
+#include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/parameters.h"
 #include <QFileDialog>
 #include <QMessageBox>
@@ -147,6 +148,11 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     paramsNode->addParameter("populationA", 100);
     generator.addRootSequenceNode(paramsNode);
 
+    // Add a GeneralRegion node
+    auto regionNode = std::make_shared<GeneralRegionProcedureNode>();
+    regionNode->keywords().set("Tolerance", 5.0);
+    generator.addRootSequenceNode(regionNode);
+
     auto count = 0;
     for (auto *sp : adsorbates)
     {
@@ -163,6 +169,8 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
                 sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
         }
         addSpeciesNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+        addSpeciesNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Region);
+        addSpeciesNode->keywords().set<std::shared_ptr<RegionProcedureNodeBase>>("Region", regionNode);
         generator.addRootSequenceNode(addSpeciesNode);
 
         ++count;

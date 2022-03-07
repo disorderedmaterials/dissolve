@@ -25,7 +25,7 @@ bool Species::applyForcefieldTerms(CoreData &coreData)
         return Messenger::error("No forcefield set in Species '{}', so can't apply terms.\n", name());
 
     // Assign atom types to the species
-    if (forcefield_->assignAtomTypes(this, coreData, Forcefield::TypeAll, false) != 0)
+    if (!forcefield_->assignAtomTypes(this, coreData, Forcefield::TypeAll, false).empty())
         return false;
 
     // Assign intramolecular terms

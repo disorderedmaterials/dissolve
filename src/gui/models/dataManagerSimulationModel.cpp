@@ -3,7 +3,6 @@
 
 #include "gui/models/dataManagerSimulationModel.h"
 #include "genericitems/list.h"
-#include "templates/variantpointer.h"
 #include <QFileDialog>
 
 DataManagerSimulationModel::DataManagerSimulationModel(Dissolve &dissolve, GenericList &items)

@@ -1078,7 +1078,10 @@
                  <item>
                   <widget class="QLineEdit" name="SiteOriginAtomsEdit">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -1117,7 +1120,10 @@
                  <item>
                   <widget class="QLineEdit" name="SiteXAxisAtomsEdit">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -1149,7 +1155,10 @@
                  <item>
                   <widget class="QLineEdit" name="SiteYAxisAtomsEdit">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>

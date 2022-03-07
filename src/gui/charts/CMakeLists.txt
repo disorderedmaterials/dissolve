@@ -26,3 +26,8 @@ set(charts_SRCS
 add_library(charts ${charts_UIS_H} ${charts_SRCS} ${charts_MOC_SRCS})
 target_include_directories(charts PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
 target_link_libraries(charts PRIVATE base)
+
+# Because Qt has its own way of checking for C++17
+if(MSVC)
+  target_compile_options(charts PUBLIC /Zc:__cplusplus)
+endif(MSVC)

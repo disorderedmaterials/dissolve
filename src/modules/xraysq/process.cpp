@@ -24,12 +24,12 @@ void XRaySQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &confi
 }
 
 // Run set-up stage
-bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, KeywordSignals actionSignals)
+bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     /*
      * Load and set up reference data (if a file/format was given)
      */
-    if (referenceFQ_.hasFilename() && actionSignals.isSetOrNone(KeywordSignals::ReloadExternalData))
+    if (referenceFQ_.hasFilename() && actionSignals.isSetOrNone(KeywordBase::ReloadExternalData))
     {
         // Load the data
         Data1D referenceData;

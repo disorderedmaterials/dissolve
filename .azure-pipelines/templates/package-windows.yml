@@ -1,6 +1,6 @@
 parameters:
   - name: qtver
-    default: 6.1.1
+    default: 6.2.2
 
 steps:
   - script: |

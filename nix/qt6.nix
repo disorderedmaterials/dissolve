@@ -1,70 +1,49 @@
 { pkgs }:
 
 let
-  aqt = pkgs.python3.pkgs.buildPythonPackage rec {
-    pname = "aqtinstall";
-    version = "1.2.4";
-    src = pkgs.python3.pkgs.fetchPypi {
-      inherit pname version;
-      sha256 = "fmaAYOSHrx5LVUoPlIw0p/0jMRVGSPE+teEVlNurz10=";
-    };
-    propagatedBuildInputs = [
-      pkgs.python3.pkgs.setuptools-scm
-      pkgs.python3.pkgs.texttable
-      pkgs.python3.pkgs.patch
-      pkgs.python3.pkgs.requests
-      semantic_version
-      pkgs.p7zip
-    ];
-    pipInstallFlags = [ "--no-deps" ];
-
-    doCheck = false;
-  };
-
-  semantic_version = pkgs.python3.pkgs.buildPythonPackage rec {
-    pname = "semantic_version";
-    version = "2.8.5";
-    src = pkgs.python3.pkgs.fetchPypi {
-      inherit pname version;
-      sha256 = "0sst4FWHYpNGebmhBOguynr0SMn0l00fPuzP9lHfilQ=";
-    };
-    # propagatedBuildInputs =
-    #   [ pkgs.python3.pkgs.setuptools-scm pkgs.python3.pkgs.semantic_verion ];
-    # pipInstallFlags = [ "--no-deps" ];
-
-    doCheck = false;
-  };
-
+  version = "622";
+  dot_version = "6.2.2";
   qtbase = pkgs.fetchurl {
     url =
-      "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_611/qt.qt6.611.gcc_64/6.1.1-0-202106031044qtbase-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";
-    sha256 = "fcE1ShAuAbKPihOG4OILnijM0mgAsa5l8V8V1bOYykM=";
+      "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_${version}/qt.qt6.${version}.gcc_64/${dot_version}-0-202111281958qtbase-Linux-RHEL_8_2-GCC-Linux-RHEL_8_2-X86_64.7z";
+    sha256 = "1ix827lr2k7dn96xjn12lfnkhjly1hjllkqbm8q9wn4skjrbi6i0";
   };
   qtchart = pkgs.fetchurl {
     url =
-      "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_611/qt.qt6.611.addons.qtcharts.gcc_64/6.1.1-0-202106031044qtcharts-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";
-    sha256 = "16kms6dfgxm2d54rdwz8r56s35rd8823nsjrmj7ak39wzlkzm173";
+      "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_${version}/qt.qt6.${version}.addons.qtcharts.gcc_64/${dot_version}-0-202106031044qtcharts-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";
+    sha256 = "17kms6dfgxm2d54rdwz8r56s35rd8823nsjrmj7ak39wzlkzm173";
   };
   qtdeclarative = pkgs.fetchurl {
-    url = "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_611/qt.qt6.611.gcc_64/6.1.1-0-202106031044qtdeclarative-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";
-    sha256 = "11r2nv6n9xr5lvvj1g3lhqqwxlnjn7xjz3jdgqqvlj3c7r73q8fk";
+    url = "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_${version}/qt.qt6.${version}.gcc_64/${dot_version}-0-202111281958qtdeclarative-Linux-RHEL_8_2-GCC-Linux-RHEL_8_2-X86_64.7z";
+    sha256 = "11a881g37f507birn72pl32rgixcb6pjr3aa58rhqdm14fr4kvaf";
   };
   qtsvg = pkgs.fetchurl {
     url =
-      "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_611/qt.qt6.611.gcc_64/6.1.1-0-202106031044qtsvg-Linux-CentOS_8_3-GCC-Linux-CentOS_8_3-X86_64.7z";
-    sha256 = "zO9CAMNN7k5k51V4JcrCZFbAag3sn2gmd0YoYvh+qng=";
+      "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_${version}/qt.qt6.${version}.gcc_64/${dot_version}-0-202111281958qtsvg-Linux-RHEL_8_2-GCC-Linux-RHEL_8_2-X86_64.7z";
+    sha256 = "06bfr0cmxz3n5m4k9hv2r7k1rhw0b70x7w4f7vj3jrskpay49j67";
+  };
+  qttools = pkgs.fetchurl {
+    url = "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_${version}/qt.qt6.${version}.gcc_64/${dot_version}-0-202111281958qttools-Linux-RHEL_8_2-GCC-Linux-RHEL_8_2-X86_64.7z";
+    sha256 = "1s6b17npy0d7bka5ckjkclwm5gy1kh596anb046rv0n80x7fvjnk";
+  };
+  qtwayland = pkgs.fetchurl {
+    url = "https://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/linux_x64/desktop/qt6_622/qt.qt6.622.gcc_64/6.2.2-0-202111281958qtwayland-Linux-RHEL_8_2-GCC-Linux-RHEL_8_2-X86_64.7z";
+    sha256 = "11ivdg25gg3z6iswi0lp4pbjbldjc9fs17gshayrvsiwnb58rs68";
   };
 
 in pkgs.stdenv.mkDerivation {
   name = "qt6";
   unpackPhase = ''
     ${pkgs.p7zip}/bin/7z x ${qtbase} -o$out
+    ${pkgs.p7zip}/bin/7z x ${qtdeclarative} -o$out
     ${pkgs.p7zip}/bin/7z x ${qtsvg} -o$out
+    ${pkgs.p7zip}/bin/7z x ${qttools} -o$out
+    ${pkgs.p7zip}/bin/7z x ${qtwayland} -o$out
   '';
   installPhase = ''
     mkdir $out/lib
     ln -s ${pkgs.libmysqlclient}/lib/mysql/libmysqlclient.so $out/lib/libmysqlclient.so.21
-    patchelf --set-rpath $out/lib $out/6.1.1/gcc_64/lib/libQt6Core.so.6.1.1
+    patchelf --set-rpath $out/lib $out/${dot_version}/gcc_64/lib/libQt6Core.so.${dot_version}
     echo No Install
   '';
   nativeBuildInputs = [ pkgs.autoPatchelfHook ];
