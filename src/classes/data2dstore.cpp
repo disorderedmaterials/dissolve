@@ -14,7 +14,7 @@ bool Data2DStore::addData(std::string_view dataName, LineParser &parser, int sta
                           const CoreData &coreData)
 {
     // Create new data
-    auto &[data, format] = *data_.emplace_back().get();
+    auto &[data, format] = *data_.emplace_back(std::make_shared<std::pair<Data2D, Data2DImportFileFormat>>()).get();
     data.setTag(dataName);
 
     // Read the file / format
