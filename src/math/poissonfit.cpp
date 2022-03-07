@@ -303,7 +303,29 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costAnalyticC);
+            MonteCarloMinimiser poissonMinimiser([this](const std::vector<double> &alpha) {
+                auto sose = 0.0;
+                auto multiplier = 1.0;
+
+                // Loop over data points, add in our Gaussian contributions, and
+                double x, y, dy;
+                for (auto i = 0; i < approximateData_.nValues(); ++i)
+                {
+                    // Get approximate data x and y for this point
+                    x = approximateData_.xAxis(i);
+                    y = approximateData_.value(i);
+
+                    // Add in contributions from our Gaussians
+                    for (auto &&[nIndex, C] : zip(alphaIndex_, alpha))
+                        y += (alphaSpace_ == FunctionSpace::RealSpace ? C * poisson(x, nIndex) : C * poissonFT(i, nIndex));
+
+                    dy = referenceData_.value(i) - y;
+                    sose += dy * dy;
+                }
+
+                return sose * multiplier;
+            });
+
             alphaSpace_ = space;
 
             // Set-up fitting targets
@@ -369,7 +391,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
     approximateData_.initialise(referenceData_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
+    MonteCarloMinimiser poissonMinimiser(std::bind(&PoissonFit::costTabulatedC, *this, std::placeholders::_1));
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
     poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -420,7 +442,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
     approximateData_.initialise(referenceData_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
+    MonteCarloMinimiser poissonMinimiser(std::bind(&PoissonFit::costTabulatedC, *this, std::placeholders::_1));
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
     poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -452,31 +474,6 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
 /*
  * Cost Function Callbacks
  */
-
-// One-parameter cost function (amplitude) with alpha array containing A values, including current approximate data into sum
-double PoissonFit::costAnalyticC(const std::vector<double> &alpha)
-{
-    auto sose = 0.0;
-    auto multiplier = 1.0;
-
-    // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
-    {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
-        // Add in contributions from our Gaussians
-        for (auto &&[nIndex, C] : zip(alphaIndex_, alpha))
-            y += (alphaSpace_ == FunctionSpace::RealSpace ? C * poisson(x, nIndex) : C * poissonFT(i, nIndex));
-
-        dy = referenceData_.value(i) - y;
-        sose += dy * dy;
-    }
-
-    return sose * multiplier;
-}
 
 // One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in sum
 double PoissonFit::costTabulatedC(const std::vector<double> &alpha)

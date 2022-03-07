@@ -274,7 +274,24 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticA);
+            MonteCarloMinimiser gaussMinimiser([this](const std::vector<double> &alpha) {
+                double sose = 0.0;
+                double multiplier = 1.0;
+
+                // Loop over data points, add in our Gaussian contributions, and
+                double dy;
+                for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
+                {
+                    // Add in contributions from our Gaussians
+                    for (auto &&[g, A] : zip(alphaIndex_, alpha))
+                        y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
+
+                    dy = refY - y;
+                    sose += dy * dy;
+                }
+
+                return sose * multiplier;
+            });
             gaussMinimiser.setMaxIterations(100);
             gaussMinimiser.setStepSize(0.01);
             alphaSpace_ = space;
@@ -370,7 +387,37 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
                 Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = {}\n", trialX);
 
                 // Set up minimiser, minimising test Gaussian only
-                PrAxisMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
+                PrAxisMinimiser gaussMinimiser([this](const std::vector<double> &alpha) {
+                    const auto nGauss = alpha.size() / 2;
+
+                    auto sose = 0.0, multiplier = 1.0;
+
+                    double A, fwhm, xCentre, dy;
+
+                    // Loop over data points, add in our Gaussian contributions
+                    for (auto &&[x, y, refY] :
+                         zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
+                    {
+                        // Add in contributions from our Gaussians
+                        for (auto n = 0; n < nGauss; ++n)
+                        {
+                            A = alpha[n * 2];
+                            xCentre = alpha[n * 2 + 1];
+                            fwhm = fwhm_[alphaIndex_[n]];
+
+                            // Must check for FWHM approaching zero and penalise accordingly
+                            if (fabs(fwhm) < 1.0e-5)
+                                ++multiplier;
+
+                            y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
+                        }
+
+                        dy = refY - y;
+                        sose += dy * dy;
+                    }
+
+                    return sose * multiplier;
+                });
                 gaussMinimiser.setMaxStep(0.1);
                 gaussMinimiser.setTolerance(0.01);
                 gaussMinimiser.addTarget(trialA);
@@ -492,7 +539,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
+    MonteCarloMinimiser gaussMinimiser(std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -544,7 +591,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
+    MonteCarloMinimiser gaussMinimiser(std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -576,129 +623,6 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
 /*
  * Cost Function Callbacks
  */
-
-// One-parameter cost function (amplitude) with alpha array containing A values, including current approximate data into sum
-double GaussFit::costAnalyticA(const std::vector<double> &alpha)
-{
-    double sose = 0.0;
-    double multiplier = 1.0;
-
-    // Loop over data points, add in our Gaussian contributions, and
-    double dy;
-    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
-    {
-        // Add in contributions from our Gaussians
-        for (auto &&[g, A] : zip(alphaIndex_, alpha))
-            y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
-
-        dy = refY - y;
-        sose += dy * dy;
-    }
-
-    return sose * multiplier;
-}
-
-// Two-parameter cost function (amplitude and FWHM) with alpha array containing A and FWHM values, including current approximate
-// data into sum
-double GaussFit::costAnalyticAF(const std::vector<double> &alpha)
-{
-    const auto nGauss = alpha.size() / 2;
-
-    auto sose = 0.0, multiplier = 1.0;
-
-    double A, fwhm, xCentre, dy;
-
-    // Loop over data points, add in our Gaussian contributions, and
-    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
-    {
-        // Add in contributions from our Gaussians
-        for (auto n = 0; n < nGauss; ++n)
-        {
-            xCentre = x_[alphaIndex_[n]];
-            A = alpha[n * 2];
-            fwhm = alpha[n * 2 + 1];
-
-            // Must check for FWHM approaching zero and penalise accordingly
-            if (fabs(fwhm) < 1.0e-5)
-                ++multiplier;
-
-            y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
-        }
-
-        dy = refY - y;
-        sose += dy * dy;
-    }
-
-    return sose * multiplier;
-}
-
-// Two-parameter cost function (amplitude and xCentre) with alpha array containing A and FWHM values, including current
-// approximate data into sum
-double GaussFit::costAnalyticAX(const std::vector<double> &alpha)
-{
-    const auto nGauss = alpha.size() / 2;
-
-    auto sose = 0.0, multiplier = 1.0;
-
-    double A, fwhm, xCentre, dy;
-
-    // Loop over data points, add in our Gaussian contributions
-    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
-    {
-        // Add in contributions from our Gaussians
-        for (auto n = 0; n < nGauss; ++n)
-        {
-            A = alpha[n * 2];
-            xCentre = alpha[n * 2 + 1];
-            fwhm = fwhm_[alphaIndex_[n]];
-
-            // Must check for FWHM approaching zero and penalise accordingly
-            if (fabs(fwhm) < 1.0e-5)
-                ++multiplier;
-
-            y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
-        }
-
-        dy = refY - y;
-        sose += dy * dy;
-    }
-
-    return sose * multiplier;
-}
-
-// Three-parameter cost function (amplitude, FWHM, and xCentre) with alpha array containing A and FWHM values, including current
-// approximate data into sum
-double GaussFit::costAnalyticAFX(const std::vector<double> &alpha)
-{
-    const auto nGauss = alpha.size() / 2;
-
-    auto sose = 0.0, multiplier = 1.0;
-
-    double A, fwhm, xCentre, dy;
-
-    // Loop over data points, add in our Gaussian contributions
-    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
-    {
-        // Add in contributions from our Gaussians
-        for (auto n = 0; n < nGauss; ++n)
-        {
-            A = alpha[n * 2];
-            fwhm = alpha[n * 2 + 1];
-            xCentre = alpha[n * 2 + 2];
-
-            // Must check for FWHM approaching zero and penalise accordingly
-            if (fabs(fwhm) < 1.0e-5)
-                ++multiplier;
-
-            y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
-        }
-
-        dy = refY - y;
-        sose += dy * dy;
-    }
-
-    return sose * multiplier;
-}
 
 // One-parameter cost function (amplitude) using pre-calculated function array, including current approximate data in sum
 double GaussFit::costTabulatedA(const std::vector<double> &alpha)
