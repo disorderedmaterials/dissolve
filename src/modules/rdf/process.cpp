@@ -48,6 +48,16 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * multiple independent Configurations, we must loop over the specified targetConfigurations_ and calculate the partials
      * for each.
      */
+
+    // Check that Configurations have unmodified size factor
+    if (std::all_of(targetConfigurations_.begin(), targetConfigurations_.end(), [](const auto *cfg) {
+            return std::abs(cfg->appliedSizeFactor() - 1.0) > 2 * std::numeric_limits<double>::epsilon();
+        }))
+    {
+        Messenger::print("One or more configurations have an applied size factor, so RDF calculation will be skipped.\n");
+        return true;
+    }
+
     for (auto *cfg : targetConfigurations_)
     {
         // Set up process pool - must do this to ensure we are using all available processes
