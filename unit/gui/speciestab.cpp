@@ -37,7 +37,7 @@ TEST_F(SpeciesTabTest, Atoms)
     ASSERT_TRUE(dissolve.loadInput("inputs/benzene.txt"));
     auto &species = dissolve.species()[0];
 
-    SpeciesAtomModel atom(species->atoms(), dissolve);
+    SpeciesAtomModel atom(species->atoms(), *species, dissolve);
 
     // Test Atoms
     EXPECT_EQ(atom.columnCount(), 6);

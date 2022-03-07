@@ -1,7 +1,10 @@
 #include "gui/models/speciesAtomModel.h"
 #include "classes/atomtype.h"
 
-SpeciesAtomModel::SpeciesAtomModel(std::vector<SpeciesAtom> &atoms, Dissolve &dissolve) : atoms_(atoms), dissolve_(dissolve) {}
+SpeciesAtomModel::SpeciesAtomModel(std::vector<SpeciesAtom> &atoms, Species &species, Dissolve &dissolve)
+    : atoms_(atoms), dissolve_(dissolve), species_(species)
+{
+}
 
 int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
 {
@@ -94,6 +97,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
                 if (!atomType)
                     return false;
                 item.setAtomType(atomType);
+                species_.updateIsotopologues();
                 emit atomTypeChanged();
             }
             break;
