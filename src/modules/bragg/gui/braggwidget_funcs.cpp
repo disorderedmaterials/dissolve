@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
+#include "classes/kvector.h"
 #include "gui/dataviewer.hui"
 #include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
@@ -42,6 +43,10 @@ BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module, Disso
 void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 {
     refreshing_ = true;
+
+    // Clear braggKVectors.  This will trigger recalculating the
+    // reflections on the next call to calculateBraggTerms
+    dissolve_.processingModuleData().realise<std::vector<KVector>>("KVectors", module_->uniqueName()).clear();
 
     // Check / update summed atom types data
     if (!reflectionAtomTypesData_)
