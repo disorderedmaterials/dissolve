@@ -5,6 +5,7 @@ gtest/1.10.0
 pugixml/1.11
 tbb/2020.3
 onedpl/20200330
+toml11/3.7.0
 
 [generators]
 cmake
