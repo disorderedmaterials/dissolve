@@ -1,12 +1,12 @@
 #include "gui/models/speciesAtomModel.h"
 #include "classes/atomtype.h"
 
-SpeciesAtomModel::SpeciesAtomModel(std::vector<SpeciesAtom> &atoms, Dissolve &dissolve) : atoms_(atoms), dissolve_(dissolve) {}
+SpeciesAtomModel::SpeciesAtomModel(Species &species, Dissolve &dissolve) : dissolve_(dissolve), species_(species) {}
 
 int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return atoms_.size();
+    return species_.atoms().size();
 }
 
 int SpeciesAtomModel::columnCount(const QModelIndex &parent) const
@@ -20,7 +20,7 @@ QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
     if (role == Qt::ToolTipRole)
         return headerData(index.column(), Qt::Horizontal, Qt::DisplayRole);
 
-    auto &item = *std::next(atoms_.begin(), index.row());
+    auto &item = species_.atom(index.row());
 
     if (role == Qt::UserRole)
         return QVariant::fromValue(&item);
@@ -82,7 +82,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
 {
     if (role != Qt::EditRole)
         return false;
-    SpeciesAtom &item = *std::next(atoms_.begin(), index.row());
+    SpeciesAtom &item = species_.atom(index.row());
     switch (index.column())
     {
         case 0:
@@ -94,6 +94,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
                 if (!atomType)
                     return false;
                 item.setAtomType(atomType);
+                species_.updateIsotopologues();
                 emit atomTypeChanged();
             }
             break;
