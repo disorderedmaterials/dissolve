@@ -28,18 +28,18 @@ bool Data1DStore::addData(std::string_view dataName, LineParser &parser, int sta
 // Check to see if the named data is present in the store
 bool Data1DStore::containsData(std::string_view name) const
 {
-    return std::find_if(data_.begin()->get(), data_.end()->get(), [&name](auto &data) { return data.first.tag() == name; }) !=
-           data_.end()->get();
+    return std::find_if(data_.begin(), data_.end(), [&name](auto &data) { return data->first.tag() == name; }) !=
+           data_.end();
 }
 
 // Return named data
 OptionalReferenceWrapper<const Data1D> Data1DStore::data(std::string_view name) const
 {
-    auto it = std::find_if(data_.begin()->get(), data_.end()->get(), [&name](auto &data) { return data.first.tag() == name; });
-    if (it == data_.end()->get())
+    auto it = std::find_if(data_.begin(), data_.end(), [&name](auto &data) { return data->first.tag() == name; });
+    if (it == data_.end())
         return {};
 
-    return it->first;
+    return (*it)->first;
 }
 
 // Return vector of all data

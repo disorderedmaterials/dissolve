@@ -45,7 +45,7 @@ bool Data1DStoreKeyword::deserialise(LineParser &parser, int startArg, const Cor
 // Serialise data to specified LineParser
 bool Data1DStoreKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    for (const auto sharedDataPointer : data_.data())
+    for (const auto &sharedDataPointer : data_.data())
     {
         auto &[data, format] = *sharedDataPointer.get();
         if (!format.writeFilenameAndFormat(parser, fmt::format("{}{}  '{}'  ", prefix, keywordName, data.tag())))

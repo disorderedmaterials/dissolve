@@ -64,7 +64,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Loop over reference two-dimensional data supplied
-    for (auto sharedDataPointer : test2DData_.data())
+    for (auto &sharedDataPointer : test2DData_.data())
     {
         auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
