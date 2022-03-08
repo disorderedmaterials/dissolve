@@ -28,8 +28,7 @@ bool Data2DStore::addData(std::string_view dataName, LineParser &parser, int sta
 // Check to see if the named data is present in the store
 bool Data2DStore::containsData(std::string_view name) const
 {
-    return std::find_if(data_.begin(), data_.end(), [&name](auto &data) { return data->first.tag() == name; }) !=
-           data_.end();
+    return std::find_if(data_.begin(), data_.end(), [&name](auto &data) { return data->first.tag() == name; }) != data_.end();
 }
 
 // Return named data
