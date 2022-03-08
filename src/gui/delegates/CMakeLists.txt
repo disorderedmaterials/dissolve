@@ -26,3 +26,8 @@ add_library(
 )
 target_include_directories(delegates PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS})
 target_link_libraries(delegates PRIVATE base)
+
+# Because Qt has its own way of checking for C++17
+if(MSVC)
+  target_compile_options(delegates PUBLIC /Zc:__cplusplus)
+endif(MSVC)

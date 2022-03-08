@@ -106,18 +106,6 @@ class GaussFit
      * Cost Functions
      */
     private:
-    // One-parameter cost function (amplitude) with alpha array containing A values, including current approximate data into
-    // sum
-    double costAnalyticA(const std::vector<double> &alpha);
-    // Two-parameter cost function (amplitude and FWHM) with alpha array containing A and FWHM values, including current
-    // approximate data into sum
-    double costAnalyticAF(const std::vector<double> &alpha);
-    // Two-parameter cost function (amplitude and xCentre) with alpha array containing A and FWHM values, including current
-    // approximate data into sum
-    double costAnalyticAX(const std::vector<double> &alpha);
-    // Three-parameter cost function (amplitude, FWHM, and xCentre) with alpha array containing A and FWHM values, including
-    // current approximate data into sum
-    double costAnalyticAFX(const std::vector<double> &alpha);
     // One-parameter cost function (amplitude) using pre-calculated function array, including current approximate data in
     // sum
     double costTabulatedA(const std::vector<double> &alpha);

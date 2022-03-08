@@ -105,4 +105,9 @@ target_include_directories(
           ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
 )
 
+# Because Qt has its own way of checking for C++17
+if(MSVC)
+  target_compile_options(render PUBLIC /Zc:__cplusplus)
+endif(MSVC)
+
 target_link_libraries(render PRIVATE base)

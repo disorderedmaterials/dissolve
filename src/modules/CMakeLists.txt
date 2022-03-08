@@ -79,6 +79,11 @@ macro(dissolve_add_module_gui modulename)
       CACHE INTERNAL "" FORCE
   )
 
+  # Because Qt has its own way of checking for C++17
+  if(MSVC)
+    target_compile_options(module_${modulename}_gui PUBLIC /Zc:__cplusplus)
+  endif(MSVC)
+
   # Add dependency on main GUI components
   add_dependencies(module_${modulename}_gui gui)
 
@@ -136,6 +141,11 @@ include_directories(
 if(GUI)
   add_library(modulewidgetproducer widget.cpp widgetproducer.cpp widget.h widgetproducer.h)
   add_dependencies(modulewidgetproducer ${MODULEGUI_LINK_LIBS})
+
+  # Because Qt has its own way of checking for C++17
+  if(MSVC)
+    target_compile_options(modulewidgetproducer PUBLIC /Zc:__cplusplus)
+  endif(MSVC)
 
   include_directories(
     modulewidgetproducer
