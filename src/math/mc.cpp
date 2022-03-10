@@ -26,23 +26,9 @@ double MonteCarloMinimiser::cost(const std::vector<double> &alpha)
     // Poke values into targets before calling cost function
     pokeValues(alpha);
 
-    // Evaluate cost function
-    auto x = costFunction_();
-
-    // Add penalties from values exceeding set limits
-    for (auto n = 0; n < alpha.size(); ++n)
-    {
-        // Minimum limit
-        if (minimumLimit_[n] && (alpha[n] < minimumValue_[n]))
-            x += penaltyFactor_ * pow(minimumValue_[n] - alpha[n], penaltyPower_);
-
-        // Minimum limit
-        if (maximumLimit_[n] && (alpha[n] > maximumValue_[n]))
-            x += penaltyFactor_ * pow(alpha[n] - maximumValue_[n], penaltyPower_);
-    }
-
-    return x;
+    return costFunction_();
 }
+
 // Smooth current parameter set
 void MonteCarloMinimiser::smoothParameters(std::vector<double> &values)
 {
@@ -206,14 +192,4 @@ double MonteCarloMinimiser::minimise()
 }
 
 // Add fit target, with limits specified
-void MonteCarloMinimiser::addTarget(double *var, bool minLimit, double minValue, bool maxLimit, double maxValue)
-{
-    // Add pointer to variable
-    targets_.push_back(var);
-
-    // Add/set limits
-    minimumLimit_.push_back(minLimit);
-    minimumValue_.push_back(minValue);
-    maximumLimit_.push_back(maxLimit);
-    maximumValue_.push_back(maxValue);
-}
+void MonteCarloMinimiser::addTarget(double *var) { targets_.push_back(var); }
