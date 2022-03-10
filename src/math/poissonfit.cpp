@@ -364,8 +364,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 // Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin
 // will be zeroed)
 double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations,
-                                       double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
-                                       bool reFitAtEnd)
+                                       double initialStepSize, bool reFitAtEnd)
 {
     // Clear any existing data
     nPoissons_ = nPoissons;
@@ -433,8 +432,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 
 // Construct suitable reciprocal-space representation using provided coefficients as a starting point
 double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vector<double> &coefficients, double sigmaQ,
-                                       double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold,
-                                       int smoothingK, int smoothingM, bool reFitAtEnd)
+                                       double sigmaR, int nIterations, double initialStepSize, bool reFitAtEnd)
 {
     // Set up data
     nPoissons_ = coefficients.size();

@@ -330,8 +330,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 
 // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
 double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ, int nIterations,
-                                     double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
-                                     bool reFitAtEnd)
+                                     double initialStepSize, bool reFitAtEnd)
 {
     // Clear any existing data
     x_.clear();
@@ -401,8 +400,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 
 // Construct function representation in reciprocal space using specified parameters as starting point
 double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ, int nIterations,
-                                     double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
-                                     bool reFitAtEnd)
+                                     double initialStepSize, bool reFitAtEnd)
 {
     // Create the fitting functions
     A_ = A;
