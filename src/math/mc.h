@@ -22,10 +22,6 @@ class MonteCarloMinimiser
     double stepSize_;
     // Minimum step size
     double minStepSize_;
-    // Parameter smoothing frequency (required number of accepted moves)
-    int parameterSmoothingFrequency_;
-    // Parameter smoothing control (Kolmogorov-Zurbenko)
-    int parameterSmoothingK_, parameterSmoothingM_;
     // Acceptance memory length
     int acceptanceMemoryLength_;
     // Target acceptance ratio
@@ -41,9 +37,6 @@ class MonteCarloMinimiser
     // Calculate cost from specified values, including contributions from any supplied limits
     double cost(const std::vector<double> &alpha);
 
-    // Smooth current parameter set
-    void smoothParameters(std::vector<double> &values);
-
     public:
     // Set maximum number of iterations to perform
     void setMaxIterations(int maxIterations);
@@ -53,8 +46,6 @@ class MonteCarloMinimiser
     double stepSize();
     // Set minimum step size
     void setMinStepSize(double minStepSize);
-    // Enable parameter smoothing
-    void enableParameterSmoothing(int everyNAccepted, int smoothK, int smoothM);
 
     // Set acceptance memory length
     void setAcceptanceMemoryLength(int length);

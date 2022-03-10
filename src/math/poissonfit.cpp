@@ -408,7 +408,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
     });
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
-    poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
+
     alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add coefficients for minimising
@@ -476,7 +476,6 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
     });
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
-    poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
     alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add coefficients for minimising

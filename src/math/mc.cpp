@@ -29,43 +29,6 @@ double MonteCarloMinimiser::cost(const std::vector<double> &alpha)
     return costFunction_();
 }
 
-// Smooth current parameter set
-void MonteCarloMinimiser::smoothParameters(std::vector<double> &values)
-{
-    // Apply Kolmogorov–Zurbenko filter
-    for (auto k = 0; k < parameterSmoothingK_; ++k)
-    {
-        std::vector<double> newY(values.size(), 0.0);
-        int n, m, i = parameterSmoothingM_ / 2;
-
-        // Left-most region of data
-        for (n = 0; n < i; ++n)
-        {
-            for (m = 0; m <= n + i; ++m)
-                newY[n] += values[m];
-            newY[n] /= (i + 1 + n);
-        }
-
-        // Central region (full average width available)
-        for (n = i; n < values.size() - i; ++n)
-        {
-            for (m = n - i; m <= n + i; ++m)
-                newY[n] += (values[m]);
-            newY[n] /= parameterSmoothingM_;
-        }
-
-        // Right-most region of data
-        for (n = values.size() - i; n < values.size(); ++n)
-        {
-            for (m = n - i; m < values.size(); ++m)
-                newY[n] += values[m];
-            newY[n] /= (values.size() - n + i + 1);
-        }
-
-        std::copy(newY.begin(), newY.end(), values.begin());
-    }
-}
-
 // Set maximum number of iterations to perform
 void MonteCarloMinimiser::setMaxIterations(int maxIterations) { maxIterations_ = maxIterations; }
 
@@ -77,18 +40,6 @@ double MonteCarloMinimiser::stepSize() { return stepSize_; }
 
 // Set minimum step size
 void MonteCarloMinimiser::setMinStepSize(double minStepSize) { minStepSize_ = minStepSize; }
-
-// Enable parameter smoothing
-void MonteCarloMinimiser::enableParameterSmoothing(int everyNAccepted, int smoothK, int smoothM)
-{
-    parameterSmoothingFrequency_ = everyNAccepted;
-    parameterSmoothingK_ = smoothK;
-    parameterSmoothingM_ = smoothM;
-
-    // Make sure 'm' is odd
-    if (parameterSmoothingM_ % 2 == 0)
-        --parameterSmoothingM_;
-}
 
 // Set acceptance memory length
 void MonteCarloMinimiser::setAcceptanceMemoryLength(int length) { acceptanceMemoryLength_ = length; }
@@ -151,14 +102,6 @@ double MonteCarloMinimiser::execute(std::vector<double> &values)
                 stepSize_ = minStepSize_;
 
             accepts.clear();
-        }
-
-        // Perform periodic smoothing if requested
-        if ((parameterSmoothingFrequency_ > 0) && (smoothingNAccepted == parameterSmoothingFrequency_))
-        {
-            smoothParameters(values);
-            currentError = cost(values);
-            smoothingNAccepted = 0;
         }
 
         if (maxIterations_ < 10 || (iter % (maxIterations_ / 10) == 0))

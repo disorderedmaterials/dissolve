@@ -561,7 +561,6 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     });
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
-    gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
     alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
@@ -632,7 +631,6 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     });
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
-    gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
     alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
