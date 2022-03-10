@@ -258,7 +258,10 @@ bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
 
     beginRemoveRows(parent, row, row + count - 1);
     for (auto i = 0; i < count; ++i)
+    {
+        KeywordStore::objectNoLongerValid(moduleLayer_->modules()[row].get());
         moduleLayer_->modules().erase(moduleLayer_->modules().begin() + row);
+    }
     endRemoveRows();
 
     return true;

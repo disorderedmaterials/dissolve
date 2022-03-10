@@ -233,6 +233,9 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
     auto *enableOnlyModule = menu.addAction("Enable &only this");
     menu.addSeparator();
     auto *clearData = menu.addAction("&Clear associated data");
+    menu.addSeparator();
+    auto *deleteModule = menu.addAction("&Delete");
+    deleteModule->setIcon(QIcon(":/general/icons/general_cross.svg"));
 
     auto *action = menu.exec(ui_.ModulesList->mapToGlobal(pos));
     if (action == enableModule)
@@ -244,9 +247,15 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
             m->setEnabled(m.get() == module);
     else if (action == clearData)
         dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+    else if (action == deleteModule)
+    {
+        // Remove the module's data, then the module
+        dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+        moduleLayerModel_.removeRows(index.row(), 1, QModelIndex());
+    }
 
     // Update required objects
-    if (action == enableModule || action == disableModule || action == enableOnlyModule)
+    if (action == enableModule || action == disableModule || action == enableOnlyModule || action == deleteModule)
     {
         updateModuleList();
         dissolveWindow_->setModified();
