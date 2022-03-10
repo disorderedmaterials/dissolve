@@ -30,6 +30,7 @@
           fmt_8.dev
           freetype
           inetutils # for rsh
+          libtorch-bin
           jre
           pkgconfig
           pugixml
