@@ -260,6 +260,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
      */
 
     currentError_ = 1.0e9;
+    alphaSpace_ = space;
 
     for (auto loop = 0; loop < nLoops; ++loop)
     {
@@ -267,11 +268,9 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
         auto g = loop * (sampleSize / nLoops);
         while (g < nGaussians_)
         {
-            // Generate the approximate data - we will subtract the Gaussians that we are fitting in the next loop
-            generateApproximation(space);
 
-            // Clear the reference array of Gaussian indices
-            alphaIndex_.clear();
+            // Generate the approximate data - we will subtract the Gaussians that we are fitting in the next loop
+            generateApproximation(alphaSpace_);
 
             // Set up minimiser for the next batch
             MonteCarloMinimiser gaussMinimiser([this]() {
@@ -292,9 +291,6 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 
                 return sose * multiplier;
             });
-            gaussMinimiser.setMaxIterations(100);
-            gaussMinimiser.setStepSize(0.01);
-            alphaSpace_ = space;
 
             // Add Gaussian parameters as fitting targets
             for (auto n = 0; n < sampleSize; ++n)
@@ -303,7 +299,6 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
                 if (x_[g] >= xMin)
                 {
                     gaussMinimiser.addTarget(&A_[g]);
-                    alphaIndex_.push_back(g);
 
                     // Remove this Gaussian from the approximate data
                     addFunction(approximateData_, space, x_[g], -A_[g], fwhm_[g]);
@@ -316,6 +311,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
             }
 
             // Optimise this set of Gaussians
+            gaussMinimiser.setStepSize(0.01);
             currentError_ = gaussMinimiser.minimise();
             Messenger::printVerbose("GaussFit::reFitA() - G = {}, error = {}\n", g, currentError_);
 
@@ -332,189 +328,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
     return Error::percent(referenceData_, approximateData_);
 }
 
-// Construct suitable representation with minimal Gaussians automatically
-double GaussFit::constructReal(double requiredError, int maxGaussians)
-{
-    // Clear any existing data
-    x_.clear();
-    A_.clear();
-    fwhm_.clear();
-    nGaussians_ = 0;
-    approximateData_.initialise(referenceData_);
-
-    const auto regionWidth = 5, regionDelta = regionWidth / 2;
-    auto lastSign = 0;
-    double gradient, trialX, trialA, trialFWHM, lastX;
-    Data1D referenceDelta;
-
-    // Set starting error
-    currentError_ = 100.0;
-
-    // Outer loop
-    while ((nGaussians_ < maxGaussians) || (maxGaussians == -1))
-    {
-        // Calculate the delta function between the reference and current approximate data
-        referenceDelta.clear();
-        for (auto n = 0; n < referenceData_.nValues(); ++n)
-            referenceDelta.addPoint(referenceData_.xAxis(n), referenceData_.value(n) - approximateData_.value(n));
-
-        // Keep track of the number of Gaussians we add this cycle
-        auto nAdded = 0;
-        lastX = -1.0;
-
-        // Go over points in the delta, calculating the gradient as we go, and seeking gradient minima (actually,
-        // crossovers between -ve and +ve gradients)
-        for (auto n = regionDelta; n < referenceData_.nValues() - regionDelta; ++n)
-        {
-            // Calculate gradient at this point
-            gradient = 0.0;
-            for (auto m = -regionDelta; m < regionDelta; ++m)
-                gradient += (referenceDelta.value(n + m + 1) - referenceDelta.value(n + m)) /
-                            (referenceDelta.xAxis(n + m + 1) - referenceDelta.xAxis(n + m));
-
-            // If the x value of the current point is less than the last accepted Gaussian in this cycle, don't
-            // attempt any function addition
-            if (referenceDelta.xAxis(n) < lastX)
-                continue;
-
-            // Check sign of previous gradient vs the current one - do we add a Gaussian at this point?
-            if ((lastSign != DissolveMath::sgn(gradient)))
-            {
-                trialX = referenceDelta.xAxis(n);
-                trialA = referenceDelta.value(n);
-                trialFWHM = 0.25;
-
-                Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = {}\n", trialX);
-
-                // Set up minimiser, minimising test Gaussian only
-                PrAxisMinimiser gaussMinimiser([this](const std::vector<double> &alpha) {
-                    const auto nGauss = alpha.size() / 2;
-
-                    auto sose = 0.0, multiplier = 1.0;
-
-                    double A, fwhm, xCentre, dy;
-
-                    // Loop over data points, add in our Gaussian contributions
-                    for (auto &&[x, y, refY] :
-                         zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
-                    {
-                        // Add in contributions from our Gaussians
-                        for (auto n = 0; n < nGauss; ++n)
-                        {
-                            A = alpha[n * 2];
-                            xCentre = alpha[n * 2 + 1];
-                            fwhm = fwhm_[alphaIndex_[n]];
-
-                            // Must check for FWHM approaching zero and penalise accordingly
-                            if (fabs(fwhm) < 1.0e-5)
-                                ++multiplier;
-
-                            y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
-                        }
-
-                        dy = refY - y;
-                        sose += dy * dy;
-                    }
-
-                    return sose * multiplier;
-                });
-                gaussMinimiser.setMaxStep(0.1);
-                gaussMinimiser.setTolerance(0.01);
-                gaussMinimiser.addTarget(trialA);
-                gaussMinimiser.addTarget(trialFWHM);
-                gaussMinimiser.addTarget(trialX);
-                alphaSpace_ = FunctionSpace::RealSpace;
-                double trialError = gaussMinimiser.minimise();
-
-                // Sanity check fitted parameters before we (potentially) accept the new function
-                if (fabs(trialA) < 1.0e-4)
-                {
-                    Messenger::printVerbose("Rejecting new Gaussian x = {}, A = {}, FWHM = {} - amplitude is too small\n",
-                                            trialX, trialA, fabs(trialFWHM));
-                }
-                else if (fabs(trialFWHM) < 1.0e-2)
-                {
-                    Messenger::printVerbose("Rejecting new Gaussian x = {}, A = {}, FWHM = {} - FWHM is too small\n", trialX,
-                                            trialA, fabs(trialFWHM));
-                }
-                else if ((trialError < currentError_) || (nGaussians_ == 0))
-                {
-                    if (nGaussians_ == 0)
-                        Messenger::printVerbose("Accepting first Gaussian at x = {}, A = {}, FWHM = {} - error is {}\n", trialX,
-                                                trialA, fabs(trialFWHM), trialError);
-                    else
-                        Messenger::printVerbose("Accepting new Gaussian x = {}, A = {}, FWHM = {} - "
-                                                "error reduced from {} to {}\n",
-                                                trialX, trialA, fabs(trialFWHM), currentError_, trialError);
-                    currentError_ = trialError;
-
-                    A_.push_back(trialA);
-                    x_.push_back(trialX);
-                    fwhm_.push_back(fabs(trialFWHM));
-                    ++nGaussians_;
-                    ++nAdded;
-                    lastX = trialX;
-
-                    // Add the accepted Gaussian in to the approximate data, and remove it from the
-                    // reference delta
-                    double x, y;
-                    for (auto m = 0; m < referenceData_.nValues(); ++m)
-                    {
-                        x = referenceData_.xAxis(m);
-                        y = gaussian(x, trialX, trialA, trialFWHM);
-                        approximateData_.value(m) += y;
-                        referenceDelta.value(m) -= y;
-                    }
-
-                    // Check on error / nGaussians
-                    if (currentError_ <= requiredError)
-                        break;
-                    if (nGaussians_ == maxGaussians)
-                        break;
-                }
-                else
-                    Messenger::printVerbose("Rejecting new Gaussian x = {}, A = {}, FWHM = {} - error "
-                                            "increased from {} to {}\n",
-                                            trialX, trialA, fabs(trialFWHM), currentError_, trialError);
-            }
-
-            // Store current sign of gradient
-            lastSign = DissolveMath::sgn(gradient);
-
-            // Check to see if we have reached the error threshold already
-            if (currentError_ <= requiredError)
-                break;
-        }
-
-        // Check on error
-        if (currentError_ <= requiredError)
-        {
-            Messenger::printVerbose("Required error threshold ({}) achieved - current error is {}, nGaussians = {}\n",
-                                    requiredError, currentError_, nGaussians_);
-            break;
-        }
-
-        // Check on nGaussians
-        if (nGaussians_ == maxGaussians)
-        {
-            Messenger::printVerbose("Maximum number of Gaussians ({}) reached - current error is {}\n", nGaussians_,
-                                    currentError_);
-            break;
-        }
-
-        // If we added no Gaussians this cycle, bail out now
-        if (nAdded == 0)
-        {
-            Messenger::printVerbose("No Gaussians added during last cycle, so exiting now.\n");
-            break;
-        }
-    }
-
-    return currentError_;
-}
-
-// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax (those below
-// rMin will be ignored)
+// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
 double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ, int nIterations,
                                      double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM,
                                      bool reFitAtEnd)
@@ -536,7 +350,8 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     }
 
     // Update the tabulated functions
-    updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
+    alphaSpace_ = FunctionSpace::ReciprocalSpace;
+    updatePrecalculatedFunctions(alphaSpace_);
 
     // Perform Monte Carlo minimisation on the amplitudes
     MonteCarloMinimiser gaussMinimiser([this]() {
@@ -559,20 +374,18 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 
         return sose;
     });
-    gaussMinimiser.setMaxIterations(nIterations);
-    gaussMinimiser.setStepSize(initialStepSize);
-    alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
     for (auto n = 0; n < nGaussians_; ++n)
     {
         if (x_[n] < rMin)
             continue;
-        alphaIndex_.push_back(n);
         gaussMinimiser.addTarget(&A_[n]);
     }
 
     // Optimise this set of Gaussians
+    gaussMinimiser.setMaxIterations(nIterations);
+    gaussMinimiser.setStepSize(initialStepSize);
     currentError_ = gaussMinimiser.minimise();
 
     // Perform a final grouped refit of the amplitudes
@@ -606,7 +419,8 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     }
 
     // Update the tabulated functions
-    updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
+    alphaSpace_ = FunctionSpace::ReciprocalSpace;
+    updatePrecalculatedFunctions(alphaSpace_);
 
     // Perform Monte Carlo minimisation on the amplitudes
     MonteCarloMinimiser gaussMinimiser([this]() {
@@ -629,20 +443,18 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
 
         return sose;
     });
-    gaussMinimiser.setMaxIterations(nIterations);
-    gaussMinimiser.setStepSize(initialStepSize);
-    alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
     for (auto n = 0; n < nGaussians_; ++n)
     {
         if (x_[n] < rMin)
             continue;
-        alphaIndex_.push_back(n);
         gaussMinimiser.addTarget(&A_[n]);
     }
 
     // Optimise this set of Gaussians
+    gaussMinimiser.setMaxIterations(nIterations);
+    gaussMinimiser.setStepSize(initialStepSize);
     currentError_ = gaussMinimiser.minimise();
 
     // Perform a final grouped refit of the amplitudes
@@ -654,31 +466,4 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     currentError_ = Error::percent(referenceData_, approximateData_, true);
 
     return currentError_;
-}
-
-/*
- * Cost Function Callbacks
- */
-
-// One-parameter cost function (amplitude) using pre-calculated function array, including current approximate data in sum
-double GaussFit::costTabulatedA(const std::vector<double> &alpha)
-{
-    auto sose = 0.0;
-
-    // Loop over data points and sum contributions from tabulated functions on to the current approximate data
-    double y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
-    {
-        // Get approximate data x and y for this point
-        y = approximateData_.value(i);
-
-        // Add in contributions from our Gaussians
-        for (auto &&[g, A] : zip(alphaIndex_, alpha))
-            y += functions_[{g, i}] * A;
-
-        dy = referenceData_.value(i) - y;
-        sose += dy * dy;
-    }
-
-    return sose;
 }

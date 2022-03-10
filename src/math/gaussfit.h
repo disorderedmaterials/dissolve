@@ -78,8 +78,6 @@ class GaussFit
     double currentError_;
     // Function space relevant to current functions being fit space
     FunctionSpace::SpaceType alphaSpace_;
-    // Indices of Gaussians being fit
-    std::vector<int> alphaIndex_;
     // Precalculated function data
     Array2D<double> functions_;
 
@@ -90,10 +88,7 @@ class GaussFit
     double sweepFitA(FunctionSpace::SpaceType space, double xMin, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
     public:
-    // Construct suitable representation in with minimal real-space Gaussians
-    double constructReal(double requiredError, int maxGaussians = -1);
-    // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax (those
-    // below rMin will be excluded)
+    // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
     double constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ = 0.02, int nIterations = 1000,
                                double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3,
                                int smoothingM = 3, bool reFitAtEnd = false);
@@ -101,12 +96,4 @@ class GaussFit
     double constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ = 0.02,
                                int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
                                int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
-
-    /*
-     * Cost Functions
-     */
-    private:
-    // One-parameter cost function (amplitude) using pre-calculated function array, including current approximate data in
-    // sum
-    double costTabulatedA(const std::vector<double> &alpha);
 };

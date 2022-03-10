@@ -344,7 +344,6 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
             }
 
             // Optimise this set of Gaussians
-            poissonMinimiser.setMaxIterations(100);
             poissonMinimiser.setStepSize(0.01);
             currentError_ = poissonMinimiser.minimise();
             Messenger::printVerbose("PoissonFit::reFitC() - P = {}, error = {}\n", p, currentError_);
@@ -381,7 +380,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 
     // Pre-calculate the necessary terms and function data
     preCalculateTerms();
-    updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
+    alphaSpace_ = FunctionSpace::ReciprocalSpace;
+    updatePrecalculatedFunctions(alphaSpace_);
 
     // Clear the approximate data
     approximateData_.initialise(referenceData_);
@@ -406,10 +406,6 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 
         return sose;
     });
-    poissonMinimiser.setMaxIterations(nIterations);
-    poissonMinimiser.setStepSize(initialStepSize);
-
-    alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add coefficients for minimising
     for (auto n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
@@ -420,6 +416,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
         poissonMinimiser.addTarget(&C_[n]);
     }
 
+    poissonMinimiser.setMaxIterations(nIterations);
+    poissonMinimiser.setStepSize(initialStepSize);
     currentError_ = poissonMinimiser.minimise();
 
     // Perform a final grouped refit of the amplitudes
@@ -449,7 +447,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
 
     // Pre-calculate the necessary terms and function data
     preCalculateTerms();
-    updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
+    alphaSpace_ = FunctionSpace::ReciprocalSpace;
+    updatePrecalculatedFunctions(alphaSpace_);
 
     // Clear the approximate data
     approximateData_.initialise(referenceData_);
@@ -474,9 +473,6 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
 
         return sose;
     });
-    poissonMinimiser.setMaxIterations(nIterations);
-    poissonMinimiser.setStepSize(initialStepSize);
-    alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add coefficients for minimising
     for (auto n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
@@ -487,6 +483,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
         poissonMinimiser.addTarget(&C_[n]);
     }
 
+    poissonMinimiser.setMaxIterations(nIterations);
+    poissonMinimiser.setStepSize(initialStepSize);
     currentError_ = poissonMinimiser.minimise();
 
     // Perform a final grouped refit of the amplitudes
