@@ -6,8 +6,7 @@
 #include "math/mathfunc.h"
 #include <numeric>
 
-MonteCarloMinimiser::MonteCarloMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost)
-    : costFunction_(costFunction), pokeBeforeCost_(pokeBeforeCost)
+MonteCarloMinimiser::MonteCarloMinimiser(MinimiserCostFunction costFunction) : costFunction_(costFunction)
 {
     acceptanceMemoryLength_ = 25;
     targetAcceptanceRatio_ = 0.33;
@@ -24,12 +23,11 @@ void MonteCarloMinimiser::pokeValues(const std::vector<double> &values)
 // Calculate cost from specified values, including contributions from any supplied limits
 double MonteCarloMinimiser::cost(const std::vector<double> &alpha)
 {
-    // Poke values into targets before calling cost function?
-    if (pokeBeforeCost_)
-        pokeValues(alpha);
+    // Poke values into targets before calling cost function
+    pokeValues(alpha);
 
     // Evaluate cost function
-    double x = costFunction_(alpha);
+    auto x = costFunction_();
 
     // Add penalties from values exceeding set limits
     for (auto n = 0; n < alpha.size(); ++n)
@@ -84,12 +82,16 @@ void MonteCarloMinimiser::smoothParameters(std::vector<double> &values)
 
 // Set maximum number of iterations to perform
 void MonteCarloMinimiser::setMaxIterations(int maxIterations) { maxIterations_ = maxIterations; }
+
 // Set step size
 void MonteCarloMinimiser::setStepSize(double stepSize) { stepSize_ = stepSize; }
+
 // Return step size
 double MonteCarloMinimiser::stepSize() { return stepSize_; }
+
 // Set minimum step size
 void MonteCarloMinimiser::setMinStepSize(double minStepSize) { minStepSize_ = minStepSize; }
+
 // Enable parameter smoothing
 void MonteCarloMinimiser::enableParameterSmoothing(int everyNAccepted, int smoothK, int smoothM)
 {
@@ -101,10 +103,13 @@ void MonteCarloMinimiser::enableParameterSmoothing(int everyNAccepted, int smoot
     if (parameterSmoothingM_ % 2 == 0)
         --parameterSmoothingM_;
 }
+
 // Set acceptance memory length
 void MonteCarloMinimiser::setAcceptanceMemoryLength(int length) { acceptanceMemoryLength_ = length; }
+
 // Target acceptance ratio
 void MonteCarloMinimiser::setTargetAcceptanceRatio(double ratio) { targetAcceptanceRatio_ = ratio; }
+
 // Perform minimisation
 double MonteCarloMinimiser::execute(std::vector<double> &values)
 {
@@ -199,10 +204,11 @@ double MonteCarloMinimiser::minimise()
 
     return finalCost;
 }
-// Add pointer as fit target, with limits specified
+
+// Add fit target, with limits specified
 void MonteCarloMinimiser::addTarget(double *var, bool minLimit, double minValue, bool maxLimit, double maxValue)
 {
-    // Add pointer and current value
+    // Add pointer to variable
     targets_.push_back(var);
 
     // Add/set limits
@@ -210,14 +216,4 @@ void MonteCarloMinimiser::addTarget(double *var, bool minLimit, double minValue,
     minimumValue_.push_back(minValue);
     maximumLimit_.push_back(maxLimit);
     maximumValue_.push_back(maxValue);
-}
-// Add reference as fit target, with limits specified
-void MonteCarloMinimiser::addTarget(double &var, bool minLimit, double minValue, bool maxLimit, double maxValue)
-{
-    addTarget(&var, minLimit, minValue, maxLimit, maxValue);
-}
-void MonteCarloMinimiser::addTarget(const std::shared_ptr<ExpressionVariable> &var, bool minLimit, double minValue,
-                                    bool maxLimit, double maxValue)
-{
-    addTarget(var->valuePointer()->doublePointer(), minLimit, minValue, maxLimit, maxValue);
 }

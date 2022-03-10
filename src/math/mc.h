@@ -10,14 +10,12 @@
 
 class MonteCarloMinimiser
 {
-    using MinimiserCostFunction = std::function<double(const std::vector<double> &)>;
+    using MinimiserCostFunction = std::function<double()>;
 
     public:
-    MonteCarloMinimiser(MinimiserCostFunction costFunction, bool pokeBeforeCost = false);
+    MonteCarloMinimiser(MinimiserCostFunction costFunction);
 
     private:
-    // Where thos poke values into targets before calling the cost function
-    bool pokeBeforeCost_;
     // Maximum number of iterations to perform
     int maxIterations_;
     // Step size
@@ -80,12 +78,6 @@ class MonteCarloMinimiser
     // Minimise target parameters
     double minimise();
 
-    // Add pointer as fit target, with limits specified
+    // Add fit target
     void addTarget(double *var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0);
-
-    // Add reference as fit target, with limits specified
-    void addTarget(double &var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0);
-
-    void addTarget(const std::shared_ptr<ExpressionVariable> &var, bool minLimit = false, double minValue = 0.0,
-                   bool maxLimit = false, double maxValue = 0.0);
 };

@@ -90,8 +90,8 @@ class PoissonFit
     double fourPiSigmaRCubed_;
     // Precalculated function data
     Array2D<double> functions_;
-    // Indices of Gaussians being fit
-    std::vector<int> alphaIndex_;
+    // Index of first Poisson in cost function
+    int costFirstAlphaIndex_;
 
     private:
     // Precalculate necessary terms
@@ -111,12 +111,4 @@ class PoissonFit
     double constructReciprocal(double rMin, double rMax, const std::vector<double> &coefficients, double sigmaQ = 0.02,
                                double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01,
                                int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
-
-    /*
-     * Cost Functions
-     */
-    private:
-    // One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in
-    // sum
-    double costTabulatedC(const std::vector<double> &alpha);
 };

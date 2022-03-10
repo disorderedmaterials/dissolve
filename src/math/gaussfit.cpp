@@ -274,7 +274,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
             alphaIndex_.clear();
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser gaussMinimiser([this](const std::vector<double> &alpha) {
+            MonteCarloMinimiser gaussMinimiser([this]() {
                 double sose = 0.0;
                 double multiplier = 1.0;
 
@@ -283,8 +283,8 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
                 for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
                 {
                     // Add in contributions from our Gaussians
-                    for (auto &&[g, A] : zip(alphaIndex_, alpha))
-                        y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
+                    for (auto n = 0; n < A_.size(); ++n)
+                        y += functionValue(alphaSpace_, x, x_[n], A_[n], fwhm_[n]);
 
                     dy = refY - y;
                     sose += dy * dy;
@@ -302,7 +302,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
                 // Add the Gaussian only if its xCentre is above xMin
                 if (x_[g] >= xMin)
                 {
-                    gaussMinimiser.addTarget(A_[g]);
+                    gaussMinimiser.addTarget(&A_[g]);
                     alphaIndex_.push_back(g);
 
                     // Remove this Gaussian from the approximate data
@@ -539,7 +539,26 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser gaussMinimiser(std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
+    MonteCarloMinimiser gaussMinimiser([this]() {
+        auto sose = 0.0;
+
+        // Loop over data points and sum contributions from tabulated functions on to the current approximate data
+        double y, dy;
+        for (auto i = 0; i < approximateData_.nValues(); ++i)
+        {
+            // Get approximate data x and y for this point
+            y = approximateData_.value(i);
+
+            // Add in contributions from our Gaussians
+            for (auto n = 0; n < A_.size(); ++n)
+                y += functions_[{n, i}] * A_[n];
+
+            dy = referenceData_.value(i) - y;
+            sose += dy * dy;
+        }
+
+        return sose;
+    });
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -551,7 +570,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
         if (x_[n] < rMin)
             continue;
         alphaIndex_.push_back(n);
-        gaussMinimiser.addTarget(A_[n]);
+        gaussMinimiser.addTarget(&A_[n]);
     }
 
     // Optimise this set of Gaussians
@@ -591,7 +610,26 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser gaussMinimiser(std::bind(&GaussFit::costTabulatedA, *this, std::placeholders::_1));
+    MonteCarloMinimiser gaussMinimiser([this]() {
+        auto sose = 0.0;
+
+        // Loop over data points and sum contributions from tabulated functions on to the current approximate data
+        double y, dy;
+        for (auto i = 0; i < approximateData_.nValues(); ++i)
+        {
+            // Get approximate data x and y for this point
+            y = approximateData_.value(i);
+
+            // Add in contributions from our Gaussians
+            for (auto n = 0; n < A_.size(); ++n)
+                y += functions_[{n, i}] * A_[n];
+
+            dy = referenceData_.value(i) - y;
+            sose += dy * dy;
+        }
+
+        return sose;
+    });
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
@@ -603,7 +641,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
         if (x_[n] < rMin)
             continue;
         alphaIndex_.push_back(n);
-        gaussMinimiser.addTarget(A_[n]);
+        gaussMinimiser.addTarget(&A_[n]);
     }
 
     // Optimise this set of Gaussians
