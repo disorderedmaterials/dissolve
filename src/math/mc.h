@@ -20,10 +20,6 @@ class MonteCarloMinimiser
     int maxIterations_{100};
     // Step size
     double stepSize_{0.1};
-    // Minimum step size
-    double minStepSize_{1.0e-5};
-    // Acceptance memory length
-    int acceptanceMemoryLength_{25};
     // Target acceptance ratio
     double targetAcceptanceRatio_{0.33};
     // Pointer to cost function
@@ -43,11 +39,7 @@ class MonteCarloMinimiser
     // Set step size
     void setStepSize(double stepSize);
     // Return step size
-    double stepSize();
-    // Set minimum step size
-    void setMinStepSize(double minStepSize);
-    // Set acceptance memory length
-    void setAcceptanceMemoryLength(int length);
+    double stepSize() const;
     // Target acceptance ratio
     void setTargetAcceptanceRatio(double ratio);
     // Add fit target

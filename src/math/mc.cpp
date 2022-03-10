@@ -31,13 +31,7 @@ void MonteCarloMinimiser::setMaxIterations(int maxIterations) { maxIterations_ =
 void MonteCarloMinimiser::setStepSize(double stepSize) { stepSize_ = stepSize; }
 
 // Return step size
-double MonteCarloMinimiser::stepSize() { return stepSize_; }
-
-// Set minimum step size
-void MonteCarloMinimiser::setMinStepSize(double minStepSize) { minStepSize_ = minStepSize; }
-
-// Set acceptance memory length
-void MonteCarloMinimiser::setAcceptanceMemoryLength(int length) { acceptanceMemoryLength_ = length; }
+double MonteCarloMinimiser::stepSize() const { return stepSize_; }
 
 // Target acceptance ratio
 void MonteCarloMinimiser::setTargetAcceptanceRatio(double ratio) { targetAcceptanceRatio_ = ratio; }
@@ -49,7 +43,7 @@ void MonteCarloMinimiser::addTarget(double *var) { targets_.push_back(var); }
 double MonteCarloMinimiser::minimise()
 {
     // Check for zero variable parameters
-    if (targets_.size() == 0)
+    if (targets_.empty())
     {
         Messenger::warn("No variables specified for fitting, so nothing to do.\n");
         return 0.0;
@@ -61,60 +55,34 @@ double MonteCarloMinimiser::minimise()
 
     // Get initial error of input parameters
     auto currentError = cost(values);
-    Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Initial error = {}\n", currentError);
+    Messenger::printVerbose("MonteCarloMinimiser::minimise() - Initial error = {}\n", currentError);
 
     double trialError;
-    std::vector<double> trialValues;
-    std::vector<int> accepts;
-    bool accepted;
-    int smoothingNAccepted = 0;
+    std::vector<double> trialValues(values);
+    auto nAccepted = 0;
 
     // Outer loop
     for (auto iter = 0; iter < maxIterations_; ++iter)
     {
-        // Copy current best alpha
-        trialValues = values;
-
-        // Perform a Monte Carlo move on a random parameter
-        auto i = int(trialValues.size() * DissolveMath::random());
-        if (i >= trialValues.size())
-            i = trialValues.size() - 1;
-
-        if (fabs(trialValues[i]) < 1.0e-8)
-            trialValues[i] += DissolveMath::randomPlusMinusOne() * 0.01 * stepSize_;
-        else
-            trialValues[i] += DissolveMath::randomPlusMinusOne() * trialValues[i] * stepSize_;
+        // Generate a set of trial values
+        std::transform(values.begin(), values.end(), trialValues.begin(),
+                       [&](const auto x) { return x + DissolveMath::randomPlusMinusOne() * stepSize_; });
 
         // Get error for the new parameters, and store if improved
         trialError = cost(trialValues);
-        accepted = trialError < currentError;
-        if (accepted)
+        if (trialError < currentError)
         {
-            values[i] = trialValues[i];
+            values = trialValues;
             currentError = trialError;
-
-            ++smoothingNAccepted;
+            ++nAccepted;
         }
-        else
-            trialValues[i] = values[i];
 
-        // Accumulate acceptance memory
-        accepts.push_back(accepted);
-
-        // If we have enough acceptance memory, adjust the step size
-        if (accepts.size() == acceptanceMemoryLength_)
-        {
-            double ratio =
-                targetAcceptanceRatio_ / (std::accumulate(accepts.begin(), accepts.end(), 0.0) / acceptanceMemoryLength_);
-            stepSize_ /= ratio;
-            if (stepSize_ < minStepSize_)
-                stepSize_ = minStepSize_;
-
-            accepts.clear();
-        }
+        // Adjust step size
+        auto acceptanceRate = double(nAccepted) / (iter + 1);
+        stepSize_ *= nAccepted == 0 ? 0.8 : acceptanceRate / targetAcceptanceRatio_;
 
         if (maxIterations_ < 10 || (iter % (maxIterations_ / 10) == 0))
-            Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Iteration {} error = {}, stepSize = {}\n", iter + 1,
+            Messenger::printVerbose("MonteCarloMinimiser::minimise() - Iteration {} error = {}, stepSize = {}\n", iter + 1,
                                     currentError, stepSize_);
     }
 
