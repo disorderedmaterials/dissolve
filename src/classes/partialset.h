@@ -26,10 +26,6 @@ class PartialSet
     private:
     // AtomTypeMix used to generate matrices
     AtomTypeMix atomTypeMix_;
-    // RDF range used to initialise arrays
-    double rdfRange_;
-    // RDF bin width used to initialise arrays
-    double rdfBinWidth_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
     std::string fingerprint_;
     // Histograms used for calculating full atom-atom partials in r
@@ -62,10 +58,6 @@ class PartialSet
     int nAtomTypes() const;
     // Return atom types mis
     const AtomTypeMix &atomTypeMix() const;
-    // Return RDF range used to initialise arrays
-    double rdfRange() const;
-    // Return RDF bin width used to initialise arrays
-    double rdfBinWidth() const;
     // Set new fingerprint
     void setFingerprint(std::string_view fingerprint);
     // Return fingerprint of partials

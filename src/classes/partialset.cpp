@@ -78,9 +78,6 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
 // Set up histogram arrays for g(r) calculation
 void PartialSet::setUpHistograms(double rdfRange, double binWidth)
 {
-    rdfRange_ = rdfRange;
-    rdfBinWidth_ = binWidth;
-
     auto nTypes = atomTypeMix_.nItems();
 
     fullHistograms_.initialise(nTypes, nTypes, true);
@@ -125,12 +122,6 @@ int PartialSet::nAtomTypes() const { return atomTypeMix_.nItems(); }
 
 // Return atom types list
 const AtomTypeMix &PartialSet::atomTypeMix() const { return atomTypeMix_; }
-
-// Return RDF range used to initialise arrays
-double PartialSet::rdfRange() const { return rdfRange_; }
-
-// Return RDF bin width used to initialise arrays
-double PartialSet::rdfBinWidth() const { return rdfBinWidth_; }
 
 // Set new fingerprint
 void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
