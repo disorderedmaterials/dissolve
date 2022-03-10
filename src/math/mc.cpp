@@ -1,26 +1,21 @@
-/*
- */
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2022 Team Dissolve and contributors
 
 #include "math/mc.h"
 #include "base/messenger.h"
 #include "math/mathfunc.h"
 #include <numeric>
 
-MonteCarloMinimiser::MonteCarloMinimiser(MinimiserCostFunction costFunction) : costFunction_(costFunction)
-{
-    acceptanceMemoryLength_ = 25;
-    targetAcceptanceRatio_ = 0.33;
-    maxIterations_ = 100;
-    stepSize_ = 0.1;
-    minStepSize_ = 1.0e-5;
-}
+MonteCarloMinimiser::MonteCarloMinimiser(MinimiserCostFunction costFunction) : costFunction_(std::move(costFunction)) {}
 
+// Poke supplied values into target variables
 void MonteCarloMinimiser::pokeValues(const std::vector<double> &values)
 {
     for (auto n = 0; n < targets_.size(); ++n)
         (*targets_[n]) = values[n];
 }
-// Calculate cost from specified values, including contributions from any supplied limits
+
+// Calculate cost from specified values
 double MonteCarloMinimiser::cost(const std::vector<double> &alpha)
 {
     // Poke values into targets before calling cost function
@@ -47,11 +42,25 @@ void MonteCarloMinimiser::setAcceptanceMemoryLength(int length) { acceptanceMemo
 // Target acceptance ratio
 void MonteCarloMinimiser::setTargetAcceptanceRatio(double ratio) { targetAcceptanceRatio_ = ratio; }
 
-// Perform minimisation
-double MonteCarloMinimiser::execute(std::vector<double> &values)
+// Add fit target, with limits specified
+void MonteCarloMinimiser::addTarget(double *var) { targets_.push_back(var); }
+
+// Minimise target parameters
+double MonteCarloMinimiser::minimise()
 {
+    // Check for zero variable parameters
+    if (targets_.size() == 0)
+    {
+        Messenger::warn("No variables specified for fitting, so nothing to do.\n");
+        return 0.0;
+    }
+
+    // Create a local array of values to pass to the fitting routine
+    std::vector<double> values(targets_.size());
+    std::transform(targets_.begin(), targets_.end(), values.begin(), [](auto *target) { return *target; });
+
     // Get initial error of input parameters
-    double currentError = cost(values);
+    auto currentError = cost(values);
     Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Initial error = {}\n", currentError);
 
     double trialError;
@@ -109,30 +118,8 @@ double MonteCarloMinimiser::execute(std::vector<double> &values)
                                     currentError, stepSize_);
     }
 
-    return currentError;
-}
-// Minimise target parameters
-double MonteCarloMinimiser::minimise()
-{
-    // Check for zero variable parameters
-    if (targets_.size() == 0)
-    {
-        Messenger::warn("No variables specified for fitting, so nothing to do.\n");
-        return 0.0;
-    }
-
-    // Create a local array of values to pass to the fitting routine
-    std::vector<double> values(targets_.size());
-    std::transform(targets_.begin(), targets_.end(), values.begin(), [](auto *target) { return *target; });
-
-    // Minimise the function
-    double finalCost = execute(values);
-
     // Set optimised values back into their original variables
     pokeValues(values);
 
-    return finalCost;
+    return currentError;
 }
-
-// Add fit target, with limits specified
-void MonteCarloMinimiser::addTarget(double *var) { targets_.push_back(var); }
