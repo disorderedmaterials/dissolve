@@ -360,7 +360,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = originalReferenceData;
-            Interpolator::addInterpolated(refMinusIntra, weightedSQ.boundTotal(false), -1.0);
+            Interpolator::addInterpolated(refMinusIntra, weightedSQ.boundTotal(), -1.0);
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
             // normalisation from the reference data (we assume that the two are consistent)
@@ -400,7 +400,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             // Our reference data is normalised to AverageOfSquares at this point, so must do the same to the
             // bound total before subtracting it.
-            auto boundTotal = weightedSQ.boundTotal(false);
+            auto boundTotal = weightedSQ.boundTotal();
             auto bbar = weights.boundCoherentAverageOfSquares(boundTotal.xAxis());
             std::transform(boundTotal.values().begin(), boundTotal.values().end(), bbar.begin(), boundTotal.values().begin(),
                            std::divides<>());

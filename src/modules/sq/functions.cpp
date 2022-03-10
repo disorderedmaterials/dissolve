@@ -43,7 +43,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &un
     });
 
     // Sum into total
-    unweightedsq.formTotal(true);
+    unweightedsq.formTotals(true);
 
     timer.stop();
     Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) ({} elapsed, {} comms).\n",
