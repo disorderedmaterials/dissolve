@@ -108,8 +108,8 @@ class PartialSet
     // Add in partials from source PartialSet to our own, with specified weighting
     bool addPartials(PartialSet &source, double weighting);
     // Calculate RDF from supplied Histogram and normalisation data
-    static void calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
-                             double multiplier);
+    static void calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
+                             int nSurrounding, double multiplier);
 
     /*
      * Operators

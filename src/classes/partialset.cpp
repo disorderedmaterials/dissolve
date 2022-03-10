@@ -369,9 +369,9 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
     return true;
 }
 
-// Calculate and return RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
-                              double multiplier)
+// Calculate RDF from supplied Histogram and normalisation data
+void PartialSet::calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
+                              int nSurrounding, double multiplier)
 {
     auto nBins = histogram.nBins();
     double delta = histogram.binWidth();
