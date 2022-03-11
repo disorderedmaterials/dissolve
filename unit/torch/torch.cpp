@@ -26,7 +26,8 @@ TEST(TorchTest, Torch)
 
 TEST(TorchTest, Pairs)
 {
-    std::vector<double> rs = {1, 0, 0, 1, 1, 0, 0, 1, 0, 2, 1, 0};
+    std::vector<double> rs = {1, 0, 0, 1, 1, 0, 0, 1, 0, 3, 1, 0};
+    int N = rs.size() / 3;
     // std::vector<double> idx(cfg->nAtoms());
     // auto it = rs.begin();
     // auto jt = idx.begin();
@@ -39,9 +40,11 @@ TEST(TorchTest, Pairs)
     // }
 
     auto opts = torch::TensorOptions().dtype(torch::kFloat64);
-    auto r = torch::from_blob(rs.data(), {4, 3}, opts);
-    auto comb = torch::nn::functional::pdist(r).reshape({3, 2});
-    EXPECT_EQ(comb.size(0), 3);
-    EXPECT_EQ(comb.size(1), 2);
+    auto r = torch::from_blob(rs.data(), {N, 3}, opts);
+    // std::cout << r << std::endl;
+    auto comb = at::cdist(r, r);
+    // std::cout << comb << std::endl;
+    EXPECT_EQ(comb.size(0), N);
+    EXPECT_EQ(comb.size(0), N);
 }
 } // namespace UnitTest
