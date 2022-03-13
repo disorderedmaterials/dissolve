@@ -90,8 +90,6 @@ class PoissonFit
     double fourPiSigmaRCubed_;
     // Precalculated function data
     Array2D<double> functions_;
-    // Index of first Poisson in cost function
-    int costFirstAlphaIndex_;
 
     private:
     // Precalculate necessary terms
