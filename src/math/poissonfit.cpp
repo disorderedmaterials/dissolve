@@ -273,6 +273,28 @@ void PoissonFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, do
     }
 }
 
+// Calculate sum of squares error between reference data and function represented by current parameters
+double PoissonFit::calculateReferenceError() const
+{
+    auto sose = 0.0;
+
+    double y, dy;
+    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    {
+        // Get approximate data x and y for this point
+        y = approximateData_.value(i);
+
+        // Add in contributions from our Gaussians
+        for (auto n = 0; n < C_.size(); ++n)
+            y += functions_[{n, i}] * C_[n];
+
+        dy = referenceData_.value(i) - y;
+        sose += dy * dy;
+    }
+
+    return sose;
+}
+
 // Sweep-fit coefficients in specified space, starting from current parameters
 double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sampleSize, int overlap, int nLoops)
 {
@@ -386,25 +408,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
     approximateData_.initialise(referenceData_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser poissonMinimiser([this]() {
-        auto sose = 0.0;
-
-        double y, dy;
-        for (auto i = 0; i < approximateData_.nValues(); ++i)
-        {
-            // Get approximate data x and y for this point
-            y = approximateData_.value(i);
-
-            // Add in contributions from our Gaussians
-            for (auto n = 0; n < C_.size(); ++n)
-                y += functions_[{n, i}] * C_[n];
-
-            dy = referenceData_.value(i) - y;
-            sose += dy * dy;
-        }
-
-        return sose;
-    });
+    MonteCarloMinimiser poissonMinimiser([this]() { return calculateReferenceError(); });
 
     // Add coefficients for minimising
     for (auto n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
@@ -452,25 +456,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
     approximateData_.initialise(referenceData_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser poissonMinimiser([this]() {
-        auto sose = 0.0;
-
-        double y, dy;
-        for (auto i = 0; i < approximateData_.nValues(); ++i)
-        {
-            // Get approximate data x and y for this point
-            y = approximateData_.value(i);
-
-            // Add in contributions from our Gaussians
-            for (auto n = 0; n < C_.size(); ++n)
-                y += functions_[{n, i}] * C_[n];
-
-            dy = referenceData_.value(i) - y;
-            sose += dy * dy;
-        }
-
-        return sose;
-    });
+    MonteCarloMinimiser poissonMinimiser([this]() { return calculateReferenceError(); });
 
     // Add coefficients for minimising
     for (auto n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)

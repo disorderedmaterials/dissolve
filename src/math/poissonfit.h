@@ -96,6 +96,8 @@ class PoissonFit
     void preCalculateTerms();
     // Update precalculated function data using specified C
     void updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double C = 1.0);
+    // Calculate sum of squares error between reference data and function represented by current parameters
+    double calculateReferenceError() const;
     // Sweep-fit coefficients in specified space, starting from current parameters
     double sweepFitC(FunctionSpace::SpaceType space, double xMin, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
