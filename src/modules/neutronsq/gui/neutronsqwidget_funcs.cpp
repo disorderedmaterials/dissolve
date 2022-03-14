@@ -102,7 +102,15 @@ void NeutronSQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         if (ui_.TotalFQButton->isChecked())
         {
             graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", module_->uniqueName()),
-                                                       "Calculated", "Calculated");
+                                                       "Total F(Q)", "Calculated");
+            auto boundTotal = graph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//WeightedSQ//BoundTotal", module_->uniqueName()), "Bound F(Q)", "Calculated");
+            boundTotal->setColour(StockColours::GreenStockColour);
+            boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
+            auto unboundTotal = graph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//WeightedSQ//UnboundTotal", module_->uniqueName()), "Unbound F(Q)", "Calculated");
+            unboundTotal->setColour(StockColours::GreenStockColour);
+            unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
             // Add on reference F(Q) data if present
             if (referenceFileAndFormat.hasFilename())

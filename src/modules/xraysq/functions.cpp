@@ -34,7 +34,7 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
     }
 
     // Form total G(r)
-    weightedgr.formTotal(false);
+    weightedgr.formTotals(false);
     if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
         weightedgr.total() /= weights.boundCoherentAverageOfSquares(0.0);
     else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
@@ -68,7 +68,7 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
     }
 
     // Form total structure factor
-    weightedsq.formTotal(false);
+    weightedsq.formTotals(false);
     if (normalisation == StructureFactors::SquareOfAverageNormalisation)
     {
         auto bbar = weights.boundCoherentSquareOfAverage(unweightedsq.boundPartial(0, 0).xAxis());

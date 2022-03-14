@@ -70,6 +70,7 @@ class Histogram1D
     const std::vector<double> &binCentres() const;
     // Return histogram data
     std::vector<long int> &bins();
+    const std::vector<long int> &bins() const;
     // Add source histogram data into local array
     void add(Histogram1D &other, int factor = 1);
     // Return current data

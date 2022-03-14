@@ -412,7 +412,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     originalgr.formPartials(box->volume());
 
     // Sum total functions
-    originalgr.formTotal(true);
+    originalgr.formTotals(true);
     timer.stop();
     Messenger::print("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n",
                      timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -481,7 +481,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Calculate total
-    unweightedgr.formTotal(true);
+    unweightedgr.formTotals(true);
 
     return true;
 }

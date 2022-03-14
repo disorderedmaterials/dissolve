@@ -66,9 +66,13 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
             unboundPartials_[{n, m}].setTag(fmt::format("{}-{}//Unbound", at1.atomTypeName(), at2.atomTypeName()));
         });
 
-    // Set up array for total
+    // Set up arrays for totals
     total_.setTag("Total");
+    boundTotal_.setTag("BoundTotal");
+    unboundTotal_.setTag("UnboundTotal");
     total_.clear();
+    boundTotal_.clear();
+    unboundTotal_.clear();
 
     fingerprint_ = "NO_FINGERPRINT";
 
@@ -78,9 +82,6 @@ bool PartialSet::setUpPartials(const AtomTypeMix &atomTypeMix)
 // Set up histogram arrays for g(r) calculation
 void PartialSet::setUpHistograms(double rdfRange, double binWidth)
 {
-    rdfRange_ = rdfRange;
-    rdfBinWidth_ = binWidth;
-
     auto nTypes = atomTypeMix_.nItems();
 
     fullHistograms_.initialise(nTypes, nTypes, true);
@@ -114,8 +115,10 @@ void PartialSet::reset()
         emptyBoundPartials_[{i, j}] = true;
     });
 
-    // Zero total
+    // Zero totals
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
+    std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
+    std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
 
     fingerprint_ = "NO_FINGERPRINT";
 }
@@ -125,12 +128,6 @@ int PartialSet::nAtomTypes() const { return atomTypeMix_.nItems(); }
 
 // Return atom types list
 const AtomTypeMix &PartialSet::atomTypeMix() const { return atomTypeMix_; }
-
-// Return RDF range used to initialise arrays
-double PartialSet::rdfRange() const { return rdfRange_; }
-
-// Return RDF bin width used to initialise arrays
-double PartialSet::rdfBinWidth() const { return rdfBinWidth_; }
 
 // Set new fingerprint
 void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
@@ -163,100 +160,55 @@ const Data1D &PartialSet::boundPartial(int i, int j) const { return boundPartial
 bool PartialSet::isBoundPartialEmpty(int i, int j) const { return emptyBoundPartials_[{i, j}]; }
 
 // Sum partials into total
-void PartialSet::formTotal(bool applyConcentrationWeights)
+void PartialSet::formTotals(bool applyConcentrationWeights)
 {
     auto nTypes = atomTypeMix_.nItems();
     if (nTypes == 0)
     {
         total_.clear();
+        boundTotal_.clear();
+        unboundTotal_.clear();
         return;
     }
 
     // Copy x and y arrays from one of the partials, and zero the latter
+    boundTotal_.initialise(partials_[{0, 0}]);
+    unboundTotal_.initialise(partials_[{0, 0}]);
     total_.initialise(partials_[{0, 0}]);
+    std::fill(boundTotal_.values().begin(), boundTotal_.values().end(), 0.0);
+    std::fill(unboundTotal_.values().begin(), unboundTotal_.values().end(), 0.0);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
-                                // Calculate weighting factor if requested
-                                double factor = 1.0;
-                                if (applyConcentrationWeights)
-                                {
-                                    double ci = at1.fraction();
-                                    double cj = at2.fraction();
-                                    factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-                                }
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
+        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
+            // Set weighting factor if requested
+            auto factor = applyConcentrationWeights ? at1.fraction() * at2.fraction() * (typeI == typeJ ? 1.0 : 2.0) : 1.0;
 
-                                // Add contribution from partials (bound + unbound)
-                                std::transform(total_.values().begin(), total_.values().end(),
-                                               partials_[{typeI, typeJ}].values().begin(), total_.values().begin(),
-                                               [=](auto total, auto partial) { return total + partial * factor; });
-                            });
+            // Sum bound term
+            std::transform(boundTotal_.values().begin(), boundTotal_.values().end(),
+                           boundPartials_[{typeI, typeJ}].values().begin(), boundTotal_.values().begin(),
+                           [=](auto total, auto partial) { return total + partial * factor; });
+
+            // Sum unbound term
+            std::transform(unboundTotal_.values().begin(), unboundTotal_.values().end(),
+                           unboundPartials_[{typeI, typeJ}].values().begin(), unboundTotal_.values().begin(),
+                           [=](auto total, auto partial) { return total + partial * factor; });
+        });
+
+    total_ += boundTotal_;
+    total_ += unboundTotal_;
 }
 
 // Return total function
 Data1D &PartialSet::total() { return total_; }
 const Data1D &PartialSet::total() const { return total_; }
 
-// Calculate and return total bound function
-Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
-{
-    const auto nTypes = atomTypeMix_.nItems();
-    if (nTypes == 0)
-        return Data1D();
+// Return total bound function
+const Data1D &PartialSet::boundTotal() const { return boundTotal_; }
 
-    Data1D bound;
-    bound.initialise(boundPartials_[{0, 0}]);
-
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                                // Calculate weighting factor if requested
-                                double factor = 1.0;
-                                if (applyConcentrationWeights)
-                                {
-                                    double ci = atd1.fraction();
-                                    double cj = atd2.fraction();
-                                    factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-                                }
-
-                                // Add contribution
-                                std::transform(bound.values().begin(), bound.values().end(),
-                                               boundPartials_[{typeI, typeJ}].values().begin(), bound.values().begin(),
-                                               [=](auto bound, auto partial) { return bound + partial * factor; });
-                            });
-
-    return bound;
-}
-
-// Calculate and return total unbound function
-Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
-{
-    const auto nTypes = atomTypeMix_.nItems();
-    if (nTypes == 0)
-        return Data1D();
-
-    Data1D unbound;
-    unbound.initialise(boundPartials_[{0, 0}]);
-
-    dissolve::for_each_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                                // Calculate weighting factor if requested
-                                double factor = 1.0;
-                                if (applyConcentrationWeights)
-                                {
-                                    double ci = atd1.fraction();
-                                    double cj = atd2.fraction();
-                                    factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-                                }
-
-                                // Add contribution
-                                std::transform(unbound.values().begin(), unbound.values().end(),
-                                               unboundPartials_[{typeI, typeJ}].values().begin(), unbound.values().begin(),
-                                               [=](auto unbound, auto partial) { return unbound + partial * factor; });
-                            });
-
-    return unbound;
-}
+// Return total unbound function
+const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }
 
 // Save all partials and total
 bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix,
@@ -291,8 +243,18 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
                         });
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
-    Data1DExportFileFormat exportFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
-    return exportFormat.exportData(total_);
+    if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(total_))
+        return false;
+
+    Messenger::printVerbose("Writing bound total file '{}'...\n", boundTotal_.tag());
+    if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(boundTotal_))
+        return false;
+
+    Messenger::printVerbose("Writing unbound total file '{}'...\n", unboundTotal_.tag());
+    if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(unboundTotal_))
+        return false;
+
+    return true;
 }
 
 /*
@@ -310,6 +272,8 @@ void PartialSet::adjust(double delta)
                             });
 
     total_ += delta;
+    boundTotal_ += delta;
+    unboundTotal_ += delta;
 }
 
 // Form partials from stored Histogram data
@@ -373,14 +337,16 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
     }
 
     // Add total function
-    Interpolator::addInterpolated(total_, source.total(), weighting);
+    Interpolator::addInterpolated(total_, source.total_, weighting);
+    Interpolator::addInterpolated(boundTotal_, source.boundTotal_, weighting);
+    Interpolator::addInterpolated(unboundTotal_, source.unboundTotal_, weighting);
 
     return true;
 }
 
-// Calculate and return RDF from supplied Histogram and normalisation data
-void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding,
-                              double multiplier)
+// Calculate RDF from supplied Histogram and normalisation data
+void PartialSet::calculateRDF(Data1D &destination, const Histogram1D &histogram, double boxVolume, int nCentres,
+                              int nSurrounding, double multiplier)
 {
     auto nBins = histogram.nBins();
     double delta = histogram.binWidth();
@@ -458,15 +424,15 @@ void PartialSet::operator-=(const double delta) { adjust(-delta); }
 
 void PartialSet::operator*=(const double factor)
 {
-    auto nTypes = atomTypeMix_.nItems();
-
-    dissolve::for_each_pair(ParallelPolicies::par, 0, nTypes, [&](auto n, auto m) {
+    dissolve::for_each_pair(ParallelPolicies::par, 0, atomTypeMix_.nItems(), [&](auto n, auto m) {
         partials_[{n, m}] *= factor;
         boundPartials_[{n, m}] *= factor;
         unboundPartials_[{n, m}] *= factor;
     });
 
     total_ *= factor;
+    boundTotal_ *= factor;
+    unboundTotal_ *= factor;
 }
 
 /*
@@ -489,6 +455,10 @@ OptionalReferenceWrapper<const Data1D> PartialSet::searchData1D(std::string_view
         return *unboundIt;
     if (total_.tag() == tag)
         return total_;
+    if (boundTotal_.tag() == tag)
+        return boundTotal_;
+    if (unboundTotal_.tag() == tag)
+        return unboundTotal_;
     return {};
 }
 
@@ -579,8 +549,12 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
         }
     }
 
-    // Read total
+    // Read totals
     if (!total_.deserialise(parser))
+        return false;
+    if (!boundTotal_.deserialise(parser))
+        return false;
+    if (!unboundTotal_.deserialise(parser))
         return false;
 
     // Read empty bound flags
@@ -636,8 +610,12 @@ bool PartialSet::serialise(LineParser &parser) const
     if (!success.value_or(true))
         return false;
 
-    // Write total
+    // Write totals
     if (!total_.serialise(parser))
+        return false;
+    if (!boundTotal_.serialise(parser))
+        return false;
+    if (!unboundTotal_.serialise(parser))
         return false;
 
     // Write empty bound flags
