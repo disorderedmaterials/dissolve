@@ -286,6 +286,18 @@ void LayerTab::on_AvailableModulesTree_doubleClicked(const QModelIndex &index)
     moduleLayerModel_.appendNew(modulePaletteModel_.data(index, Qt::DisplayRole).toString());
 }
 
+// Remove all module control widgets
+void LayerTab::removeModuleControlWidgets()
+{
+    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        auto *w = ui_.ModuleControlsStack->widget(n);
+        ui_.ModuleControlsStack->removeWidget(w);
+        w->setParent(nullptr);
+        w->deleteLater();
+    }
+}
+
 /*
  * Update
  */

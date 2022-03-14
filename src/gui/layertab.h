@@ -72,6 +72,10 @@ class LayerTab : public QWidget, public MainTab
     void on_ModulesList_customContextMenuRequested(const QPoint &pos);
     void on_AvailableModulesTree_doubleClicked(const QModelIndex &index);
 
+    public:
+    // Remove all module control widgets
+    void removeModuleControlWidgets();
+
     /*
      * Update
      */

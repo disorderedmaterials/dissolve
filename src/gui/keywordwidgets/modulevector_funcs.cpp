@@ -17,10 +17,9 @@ ModuleVectorKeywordWidget::ModuleVectorKeywordWidget(QWidget *parent, ModuleVect
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
 
-    allowedModules_ = Module::allOfType(keyword->moduleTypes());
-    moduleModel_.setData(allowedModules_);
     moduleModel_.setCheckStateData(keyword_->data());
     ui_.ModuleList->setModel(&moduleModel_);
+    updateAllowedModules();
 
     // Connect signals / slots
     connect(&moduleModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
@@ -48,10 +47,26 @@ void ModuleVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMod
  * Update
  */
 
+// Check / update allowed modules and displayed data
+void ModuleVectorKeywordWidget::updateAllowedModules()
+{
+    refreshing_ = true;
+
+    // Update allowed modules
+    allowedModules_ = Module::allOfType(keyword_->moduleTypes());
+    moduleModel_.setData(allowedModules_);
+
+    refreshing_ = false;
+}
+
 // Update value displayed in widget
 void ModuleVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
-    updateWidgetValues(coreData_);
+    if (mutationFlags.isSet(DissolveSignals::ModulesMutated))
+    {
+        updateAllowedModules();
+        updateSummaryText();
+    }
 }
 
 // Update widget values data based on keyword data

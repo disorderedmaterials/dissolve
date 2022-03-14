@@ -46,6 +46,10 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
     /*
      * Update
      */
+    private:
+    // Check / update allowed modules and displayed data
+    void updateAllowedModules();
+
     public:
     // Update value displayed in widget
     void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
