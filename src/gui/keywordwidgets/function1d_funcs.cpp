@@ -87,7 +87,10 @@ void Function1DKeywordWidget::parameterSpin_valueChanged(double value)
  */
 
 // Update value displayed in widget
-void Function1DKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void Function1DKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetValues(coreData_);
+}
 
 // Update widget values data based on keyword data
 void Function1DKeywordWidget::updateWidgetValues(const CoreData &coreData)

@@ -10,10 +10,6 @@
 ConfigurationKeywordWidget::ConfigurationKeywordWidget(QWidget *parent, ConfigurationKeyword *keyword, const CoreData &coreData)
     : QComboBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
-    // Set current information
-    updateValue();
-
-    // Connect the
     connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(comboIndexChanged(int)));
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
@@ -42,7 +38,7 @@ void ConfigurationKeywordWidget::comboIndexChanged(int index)
  */
 
 // Update value displayed in widget
-void ConfigurationKeywordWidget::updateValue()
+void ConfigurationKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

@@ -49,7 +49,10 @@ void ModuleVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMod
  */
 
 // Update value displayed in widget
-void ModuleVectorKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void ModuleVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetValues(coreData_);
+}
 
 // Update widget values data based on keyword data
 void ModuleVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) {}

@@ -48,4 +48,4 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
  */
 
 // Update value displayed in widget
-void ModuleKeywordWidget::updateValue() {}
+void ModuleKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
