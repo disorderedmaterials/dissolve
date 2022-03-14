@@ -23,7 +23,7 @@ class ModuleControlWidget : public QWidget
     Q_OBJECT
 
     public:
-    ModuleControlWidget(QWidget *parent = nullptr);
+    ModuleControlWidget(DissolveWindow *dissolveWindow, Module *module);
     ~ModuleControlWidget() = default;
 
     private:
@@ -34,14 +34,12 @@ class ModuleControlWidget : public QWidget
      * Module Target
      */
     private:
-    // Pointer to Dissolve
-    Dissolve *dissolve_;
+    // Reference to Dissolve
+    Dissolve &dissolve_;
     // Associated Module
     Module *module_;
 
     public:
-    // Set target Module to display
-    void setModule(Module *module, Dissolve *dissolve);
     // Return target Module for the widget
     Module *module() const;
 

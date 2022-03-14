@@ -169,8 +169,7 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
     if (!mcw)
     {
         // Create a new widget to display this Module
-        mcw = new ModuleControlWidget;
-        mcw->setModule(module, &dissolveWindow_->dissolve());
+        mcw = new ModuleControlWidget(dissolveWindow_, module);
         connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
         connect(mcw, SIGNAL(statusChanged()), this, SLOT(updateModuleList()));
         ui_.ModuleControlsStack->setCurrentIndex(ui_.ModuleControlsStack->addWidget(mcw));

@@ -11,14 +11,14 @@
 #include "modules/widget.h"
 #include "modules/widgetproducer.h"
 
-ModuleControlWidget::ModuleControlWidget(QWidget *parent)
+ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module *module) : dissolve_(dissolveWindow->dissolve())
 {
     // Set up user interface
     ui_.setupUi(this);
 
-    dissolve_ = nullptr;
-    module_ = nullptr;
+    module_ = module;
     moduleWidget_ = nullptr;
+    assert(module_);
 
     // Connect signals from keywords widget
     connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(moduleKeywordChanged(int)));
@@ -26,19 +26,6 @@ ModuleControlWidget::ModuleControlWidget(QWidget *parent)
     // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
     // will exist in a QScrollArea)
     ui_.FrequencySpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.FrequencySpin));
-}
-
-/*
- * Module Target
- */
-
-// Set target Module to display
-void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
-{
-    module_ = module;
-    dissolve_ = dissolve;
-    if ((!module_) || (!dissolve_))
-        throw(std::runtime_error("Can't create a ModuleControlWidget without both Module and Dissolve pointers.\n"));
 
     // Set the icon label
     ui_.ModuleIconLabel->setPixmap(
@@ -51,7 +38,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
         for (auto *keyword : module_->keywords().targetsGroup())
         {
             // Try to create a suitable widget
-            auto [widget, base] = KeywordWidgetProducer::create(keyword, dissolve_->coreData());
+            auto [widget, base] = KeywordWidgetProducer::create(keyword, dissolve_.coreData());
             if (!widget || !base)
                 throw(std::runtime_error(fmt::format("No widget created for keyword '{}'.\n", keyword->name())));
 
@@ -72,10 +59,10 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     }
 
     // Set up our control widgets
-    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->coreData());
+    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.coreData());
 
     // Create any additional controls offered by the Module
-    moduleWidget_ = ModuleWidgetProducer::create(module_, *dissolve_);
+    moduleWidget_ = ModuleWidgetProducer::create(module_, dissolve_);
     if (moduleWidget_ == nullptr)
         Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
     else
@@ -98,9 +85,6 @@ Module *ModuleControlWidget::module() const { return module_; }
 // Update controls within widget
 void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> updateFlags)
 {
-    if ((!module_) || (!dissolve_))
-        return;
-
     Locker refreshLocker(refreshLock_);
 
     // Ensure module name is up to date
@@ -201,7 +185,7 @@ void ModuleControlWidget::moduleKeywordChanged(int signalMask)
 
     // Call the module's setUp() function with it
     if (keywordSignals.anySet())
-        module_->setUp(*dissolve_, dissolve_->worldPool(), keywordSignals);
+        module_->setUp(dissolve_, dissolve_.worldPool(), keywordSignals);
 
     // Handle specific flags for the module widget
     if (moduleWidget_)
