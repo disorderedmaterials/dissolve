@@ -195,6 +195,10 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
 // Global data mutated
 void ModuleControlWidget::globalDataMutated(int mutationFlags)
 {
+    // If we have no valid parent, don't try to update keyword data
+    if (!parent())
+        return;
+
     Flags<DissolveSignals::DataMutations> dataMutations(mutationFlags);
     if (!dataMutations.anySet())
         return;

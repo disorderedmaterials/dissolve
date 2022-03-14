@@ -109,6 +109,24 @@ ModuleControlWidget *LayerTab::getControlWidget(const Module *module, bool setAs
     return nullptr;
 }
 
+// Remove ModuleControlWidget for the specified Module (if it exists)
+void LayerTab::removeControlWidget(const Module *module)
+{
+    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        auto *w = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (w && (w->module() == module))
+        {
+            if (ui_.ModuleControlsStack->currentIndex() == n)
+                ui_.ModuleControlsStack->setCurrentIndex((n + 1) < ui_.ModuleControlsStack->count() ? n + 1 : n - 1);
+            ui_.ModuleControlsStack->removeWidget(w);
+            w->setParent(nullptr);
+            w->deleteLater();
+            return;
+        }
+    }
+}
+
 void LayerTab::on_ShowAvailableModulesButton_clicked(bool checked)
 {
     // Toggle the visibility of the available modules tree
@@ -248,8 +266,9 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
         dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
     else if (action == deleteModule)
     {
-        // Remove the module's data, then the module
+        // Remove the module's data, the module control widget, then the module itself
         dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+        removeControlWidget(module);
         moduleLayerModel_.removeRows(index.row(), 1, QModelIndex());
     }
 
