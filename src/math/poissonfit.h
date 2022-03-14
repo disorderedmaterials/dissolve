@@ -90,14 +90,14 @@ class PoissonFit
     double fourPiSigmaRCubed_;
     // Precalculated function data
     Array2D<double> functions_;
-    // Indices of Gaussians being fit
-    std::vector<int> alphaIndex_;
 
     private:
     // Precalculate necessary terms
     void preCalculateTerms();
     // Update precalculated function data using specified C
     void updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double C = 1.0);
+    // Calculate sum of squares error between reference data and function represented by current parameters
+    double calculateReferenceError() const;
     // Sweep-fit coefficients in specified space, starting from current parameters
     double sweepFitC(FunctionSpace::SpaceType space, double xMin, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
@@ -105,18 +105,9 @@ class PoissonFit
     // Construct suitable reciprocal-space representation using given number of Poissons spaced evenly in real space up to
     // rMax (those below rMin will be ignored)
     double constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ = 0.02, double sigmaR = 0.08,
-                               int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
-                               int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
+                               int nIterations = 1000, double initialStepSize = 0.01, bool reFitAtEnd = false);
     // Construct suitable reciprocal-space representation using provided coefficients as a starting point
     double constructReciprocal(double rMin, double rMax, const std::vector<double> &coefficients, double sigmaQ = 0.02,
                                double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01,
-                               int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
-
-    /*
-     * Cost Functions
-     */
-    private:
-    // One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in
-    // sum
-    double costTabulatedC(const std::vector<double> &alpha);
+                               bool reFitAtEnd = false);
 };

@@ -124,35 +124,33 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     if (fitTargets_.size() > 0)
     {
         // Create a minimiser
-        MonteCarloMinimiser mcMinimiser(
-            [this](const std::vector<double> &alpha) {
-                // We assume that the minimiser has 'pokeBeforeCost' set, so our
-                // Expression's variables are up-to-date with new test values.
-                double cost = 0.0;
-                const auto &xs = referenceData_.xAxis();
-                const auto &ys = referenceData_.values();
-                double equationY;
-                for (auto &&[x, y] : zip(xs, ys))
-                {
-                    // Set axis value
-                    xVariable_->setValue(x);
+        MonteCarloMinimiser mcMinimiser([this]() {
+            // We assume that the minimiser has 'pokeBeforeCost' set, so our
+            // Expression's variables are up-to-date with new test values.
+            double cost = 0.0;
+            const auto &xs = referenceData_.xAxis();
+            const auto &ys = referenceData_.values();
+            double equationY;
+            for (auto &&[x, y] : zip(xs, ys))
+            {
+                // Set axis value
+                xVariable_->setValue(x);
 
-                    // Evaluate expression
-                    equationY = equation_.asDouble();
+                // Evaluate expression
+                equationY = equation_.asDouble();
 
-                    // Sum squared error
-                    cost += (equationY - y) * (equationY - y);
-                }
+                // Sum squared error
+                cost += (equationY - y) * (equationY - y);
+            }
 
-                cost /= referenceData_.nValues();
+            cost /= referenceData_.nValues();
 
-                return sqrt(cost);
-            },
-            true);
+            return sqrt(cost);
+        });
         mcMinimiser.setMaxIterations(1000);
         mcMinimiser.setStepSize(0.1);
         for (const auto &var : fitTargets_)
-            mcMinimiser.addTarget(var);
+            mcMinimiser.addTarget(var->valuePointer()->doublePointer());
 
         mcMinimiser.minimise();
 
