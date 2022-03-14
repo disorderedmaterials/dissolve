@@ -70,7 +70,12 @@ class ModuleControlWidget : public QWidget
     void on_ModuleOutputButton_clicked(bool checked);
     void on_EnabledButton_clicked(bool checked);
     void on_FrequencySpin_valueChanged(int value);
-    void moduleKeywordChanged(int signalMask);
+
+    public slots:
+    // Local keyword data changed
+    void localKeywordChanged(int signalMask);
+    // Global data mutated
+    void globalDataMutated(int mutationFlags);
 
     signals:
     // Notify that the Module's data has been modified in some way

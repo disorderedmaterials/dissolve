@@ -183,7 +183,7 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
 
 void LayerTab::layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
 {
-    dissolveWindow_->setModified();
+    dissolveWindow_->setModified({DissolveSignals::ModulesMutated});
 }
 
 void LayerTab::moduleNameChanged(const QModelIndex &index, const QString &oldName, const QString &newName)
@@ -257,7 +257,7 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
     if (action == enableModule || action == disableModule || action == enableOnlyModule || action == deleteModule)
     {
         updateModuleList();
-        dissolveWindow_->setModified();
+        dissolveWindow_->setModified({DissolveSignals::ModulesMutated});
     }
     updateControls();
 }

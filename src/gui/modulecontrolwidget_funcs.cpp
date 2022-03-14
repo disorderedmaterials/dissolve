@@ -6,7 +6,6 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/producers.h"
 #include "gui/modulecontrolwidget.h"
-#include "main/dissolve.h"
 #include "module/module.h"
 #include "modules/widget.h"
 #include "modules/widgetproducer.h"
@@ -20,8 +19,9 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     moduleWidget_ = nullptr;
     assert(module_);
 
-    // Connect signals from keywords widget
-    connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(moduleKeywordChanged(int)));
+    // Connect signals
+    connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
+    connect(dissolveWindow, SIGNAL(dataMutated(int)), this, SLOT(globalDataMutated(int)));
 
     // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
     // will exist in a QScrollArea)
@@ -43,7 +43,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
                 throw(std::runtime_error(fmt::format("No widget created for keyword '{}'.\n", keyword->name())));
 
             // Connect it up
-            connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(moduleKeywordChanged(int)));
+            connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(localKeywordChanged(int)));
 
             // Create the label
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
@@ -58,7 +58,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         ui_.TargetsLayout->addStretch(2);
     }
 
-    // Set up our control widgets
+    // Set up our keyword widget
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.coreData());
 
     // Create any additional controls offered by the Module
@@ -172,7 +172,7 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 }
 
 // Target keyword data changed
-void ModuleControlWidget::moduleKeywordChanged(int signalMask)
+void ModuleControlWidget::localKeywordChanged(int signalMask)
 {
     if (refreshLock_.isLocked())
         return;
@@ -190,4 +190,19 @@ void ModuleControlWidget::moduleKeywordChanged(int signalMask)
     // Handle specific flags for the module widget
     if (moduleWidget_)
         moduleWidget_->updateControls(Flags<ModuleWidget::UpdateFlags>(signalMask));
+}
+
+// Global data mutated
+void ModuleControlWidget::globalDataMutated(int mutationFlags)
+{
+    Flags<DissolveSignals::DataMutations> dataMutations(mutationFlags);
+    if (!dataMutations.anySet())
+        return;
+
+    // Target keywords
+    for (auto w : targetKeywordWidgets_)
+        w->updateValue(dataMutations);
+
+    // Control keywords
+    ui_.ModuleKeywordsWidget->updateControls(mutationFlags);
 }
