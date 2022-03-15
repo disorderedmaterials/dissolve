@@ -8,6 +8,7 @@ namespace DissolveSignals
 // Data Mutation Flags
 enum DataMutations
 {
+    ConfigurationsMutated,
     ModulesMutated
 };
 }; // namespace DissolveSignals
