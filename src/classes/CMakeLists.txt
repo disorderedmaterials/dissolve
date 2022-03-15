@@ -128,4 +128,8 @@ add_library(
 )
 
 include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(classes PRIVATE base ${THREADING_LINK_LIBS})
+if(CONAN)
+  target_link_libraries(classes PUBLIC base ${THREADING_LINK_LIBS} CONAN_PKG::toml11)
+else(CONAN)
+  target_link_libraries(classes PUBLIC base ${THREADING_LINK_LIBS} toml11::toml11)
+endif(CONAN)

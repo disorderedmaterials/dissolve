@@ -9,6 +9,8 @@
 #include "data/elements.h"
 #include <algorithm>
 
+#include <toml11/toml.hpp>
+
 SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }
 
 SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept
@@ -455,4 +457,17 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
 
     // Return the negative of the bound OS, or zero if we were only bound to the same element as ourselves
     return (nSameElement == i->nBonds() ? 0 : -osBound);
+}
+
+std::string SpeciesAtom::serialize(std::string species) 
+{ 
+    toml::value atom
+    {
+        {"z", Elements::name(Z_)}, 
+        {"r", {{"x", r_.x}, {"y", r_.y}, {"z", r_.z}}}, 
+        {"charge", charge_}, 
+        {"atomType", 1}, 
+        {"index", index_}
+    };
+    return "[species." + species + ".atoms]\n" + toml::format(atom);
 }

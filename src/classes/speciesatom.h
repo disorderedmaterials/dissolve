@@ -185,4 +185,6 @@ class SpeciesAtom
     static bool isGeometry(const SpeciesAtom *i, AtomGeometry geom);
     // Guess and return oxidation state for the specified SpeciesAtom
     static int guessOxidationState(const SpeciesAtom *i);
+
+    std::string serialize(std::string species);
 };

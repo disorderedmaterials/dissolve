@@ -10,6 +10,7 @@
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
+#include <toml11/toml.hpp>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -153,6 +154,17 @@ bool Dissolve::loadInput(std::string_view filename)
 
     if (result)
     {
+
+        std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
+        for (auto &element : species())
+        {
+            auto &atoms = element.get()->atoms();
+            for (auto &atom : atoms)
+            {
+                output << atom.serialize("Water") << "\n";
+            }
+        }
+
         Messenger::print("Finished reading input file.\n");
         setInputFilename(filename);
     }
