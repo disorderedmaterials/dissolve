@@ -9,8 +9,6 @@
 #include "data/elements.h"
 #include <algorithm>
 
-#include <toml11/toml.hpp>
-
 SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }
 
 SpeciesAtom &SpeciesAtom::operator=(SpeciesAtom &&source) noexcept

@@ -9,6 +9,7 @@
 #include "templates/vector3.h"
 #include <memory>
 #include <vector>
+#include <toml11/toml.hpp>
 
 // Forward Declarations
 class AtomType;
