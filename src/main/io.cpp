@@ -156,9 +156,9 @@ bool Dissolve::loadInput(std::string_view filename)
     {
 
         std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
-        for (auto &element : species())
+        for (auto &species : species())
         {
-            auto &atoms = element.get()->atoms();
+            auto &atoms = species.get()->atoms();
             for (auto &atom : atoms)
             {
                 output << atom.serialize("Water") << "\n";

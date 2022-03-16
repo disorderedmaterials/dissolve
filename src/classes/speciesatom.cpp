@@ -463,10 +463,10 @@ std::string SpeciesAtom::serialize(std::string species)
 { 
     toml::value atom
     {
-        {"z", Elements::name(Z_)}, 
+        {"z", Elements::symbol(Z_).data()}, 
         {"r", {{"x", r_.x}, {"y", r_.y}, {"z", r_.z}}}, 
-        {"charge", charge_}, 
-        {"atomType", 1}, 
+        {"charge", charge_ }, 
+        {"atomType", atomType_->name().data()}, 
         {"index", index_}
     };
     return "[species." + species + ".atoms]\n" + toml::format(atom);
