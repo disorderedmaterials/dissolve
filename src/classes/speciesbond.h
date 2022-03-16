@@ -120,6 +120,8 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     double energy(double distance) const;
     // Return force multiplier for specified distance
     double force(double distance) const;
+
+    std::string serialize(std::string species);
 };
 
 // MasterBond Definition

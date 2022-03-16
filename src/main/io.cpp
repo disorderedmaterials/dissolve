@@ -163,6 +163,10 @@ bool Dissolve::loadInput(std::string_view filename)
             {
                 output << atom.serialize("Water") << "\n";
             }
+
+            auto &bonds = species.get()->bonds();
+            for (auto &bond : bonds)
+                output << bond.serialize("Water") << "\n";
         }
 
         Messenger::print("Finished reading input file.\n");
