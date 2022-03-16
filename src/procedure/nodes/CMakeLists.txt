@@ -83,5 +83,5 @@ add_library(
   sum1d.h
 )
 
-include_directories(procedurenodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(procedurenodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(procedurenodes PRIVATE base)

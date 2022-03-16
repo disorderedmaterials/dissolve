@@ -11,5 +11,5 @@ add_library(
   serialisers.h
 )
 
-include_directories(genericitems PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(genericitems PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(genericitems PRIVATE base)

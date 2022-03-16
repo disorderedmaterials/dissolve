@@ -71,5 +71,5 @@ add_library(
   windowfunction.h
 )
 
-include_directories(math PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(math PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(math PRIVATE base)

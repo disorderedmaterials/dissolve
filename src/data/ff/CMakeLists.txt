@@ -20,7 +20,7 @@ macro(dissolve_add_forcefield ffname)
   )
 
   # Set common include dirs
-  include_directories(ff_${ffname} PRIVATE ${PROJECT_SOURCE_DIR}/src)
+  target_include_directories(ff_${ffname} PRIVATE ${PROJECT_SOURCE_DIR}/src)
   target_link_libraries(ff_${ffname} PRIVATE base)
 endmacro()
 
@@ -43,7 +43,7 @@ add_library(
   torsionterm.h
 )
 
-include_directories(ff PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(ff PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(ff PRIVATE base)
 
 # Forcefield subdirectories
