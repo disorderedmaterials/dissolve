@@ -4,12 +4,12 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
-#include "gui/configurationwidget.h"
+#include "gui/configurationviewerwidget.h"
 #include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
 #include <QButtonGroup>
 
-ConfigurationWidget::ConfigurationWidget(QWidget *parent) : QWidget(parent)
+ConfigurationViewerWidget::ConfigurationViewerWidget(QWidget *parent) : QWidget(parent)
 {
     // Set up our UI
     ui_.setupUi(this);
@@ -19,23 +19,23 @@ ConfigurationWidget::ConfigurationWidget(QWidget *parent) : QWidget(parent)
     connect(ui_.ConfigurationView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
 }
 
-ConfigurationWidget::~ConfigurationWidget() {}
+ConfigurationViewerWidget::~ConfigurationViewerWidget() {}
 
 /*
  * UI
  */
 
 // Notify that the style of displayed data in the underlying viewer has changed
-void ConfigurationWidget::notifyStyleModified() { emit(styleModified()); }
+void ConfigurationViewerWidget::notifyStyleModified() { emit(styleModified()); }
 
 // Notify that the displayed data in the underlying viewer has changed
-void ConfigurationWidget::notifyDataModified() { emit(dataModified()); }
+void ConfigurationViewerWidget::notifyDataModified() { emit(dataModified()); }
 
 // Post redisplay in the underlying view
-void ConfigurationWidget::postRedisplay() { ui_.ConfigurationView->postRedisplay(); }
+void ConfigurationViewerWidget::postRedisplay() { ui_.ConfigurationView->postRedisplay(); }
 
 // Update toolbar to reflect current viewer state
-void ConfigurationWidget::updateToolbar()
+void ConfigurationViewerWidget::updateToolbar()
 {
     // Set current interaction mode
     switch (configurationViewer()->interactionMode())
@@ -57,7 +57,7 @@ void ConfigurationWidget::updateToolbar()
  */
 
 // Set target Configuration, updating widget as necessary
-void ConfigurationWidget::setConfiguration(Configuration *cfg)
+void ConfigurationViewerWidget::setConfiguration(Configuration *cfg)
 {
     ui_.ConfigurationView->setConfiguration(cfg);
 
@@ -72,13 +72,13 @@ void ConfigurationWidget::setConfiguration(Configuration *cfg)
 }
 
 // Return contained ConfigurationViewer
-ConfigurationViewer *ConfigurationWidget::configurationViewer() { return ui_.ConfigurationView; }
+ConfigurationViewer *ConfigurationViewerWidget::configurationViewer() { return ui_.ConfigurationView; }
 
 /*
  * Toolbar
  */
 
-void ConfigurationWidget::on_ViewResetButton_clicked(bool checked)
+void ConfigurationViewerWidget::on_ViewResetButton_clicked(bool checked)
 {
     configurationViewer()->view().showAllData();
     configurationViewer()->view().resetViewMatrix();
@@ -86,7 +86,7 @@ void ConfigurationWidget::on_ViewResetButton_clicked(bool checked)
     configurationViewer()->postRedisplay();
 }
 
-void ConfigurationWidget::on_ViewSpheresButton_clicked(bool checked)
+void ConfigurationViewerWidget::on_ViewSpheresButton_clicked(bool checked)
 {
     configurationViewer()->setRenderableDrawStyle(checked ? RenderableConfiguration::SpheresStyle
                                                           : RenderableConfiguration::LinesStyle);
@@ -96,14 +96,14 @@ void ConfigurationWidget::on_ViewSpheresButton_clicked(bool checked)
     configurationViewer()->postRedisplay();
 }
 
-void ConfigurationWidget::on_ViewAxesVisibleButton_clicked(bool checked)
+void ConfigurationViewerWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 {
     configurationViewer()->setAxesVisible(checked);
 
     configurationViewer()->postRedisplay();
 }
 
-void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
+void ConfigurationViewerWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
 {
     configurationViewer()->copyViewToClipboard(checked);
 }

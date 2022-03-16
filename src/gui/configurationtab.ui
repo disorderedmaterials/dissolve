@@ -697,7 +697,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ConfigurationWidget" name="ViewerWidget" native="true">
+    <widget class="ConfigurationViewerWidget" name="ViewerWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>1</horstretch>
@@ -715,9 +715,9 @@
    <header>gui/widgets/exponentialspin.hui</header>
   </customwidget>
   <customwidget>
-   <class>ConfigurationWidget</class>
+   <class>ConfigurationViewerWidget</class>
    <extends>QWidget</extends>
-   <header>gui/configurationwidget.h</header>
+   <header>gui/configurationviewerwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

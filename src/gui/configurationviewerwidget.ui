@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConfigurationWidget</class>
- <widget class="QWidget" name="ConfigurationWidget">
+ <class>ConfigurationViewerWidget</class>
+ <widget class="QWidget" name="ConfigurationViewerWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
