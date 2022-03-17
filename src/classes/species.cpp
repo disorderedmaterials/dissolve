@@ -223,3 +223,18 @@ int Species::nCoordinateSets() const { return coordinateSets_.size(); }
 
 // Return coordinates sets
 const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { return coordinateSets_; }
+
+
+toml::value Species::serialize() 
+{
+    toml::array atoms;
+    for (auto &atom : atoms_)
+        atoms.push_back(atom.serialize());
+
+    toml::array bonds;
+    for (auto &bond : bonds_)
+        bonds.push_back(bond.serialize());
+
+    toml::value species{atoms, bonds};
+    return species;
+}

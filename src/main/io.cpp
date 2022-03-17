@@ -151,22 +151,19 @@ bool Dissolve::loadInput(std::string_view filename)
         return false;
 
     auto result = loadInput(parser);
-
     if (result)
     {
-
         std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
         for (auto &species : species())
         {
-            auto &atoms = species.get()->atoms();
+            output << toml::format(species->serialize());
+            /*auto &atoms = species.get()->atoms();
             for (auto &atom : atoms)
-            {
-                output << atom.serialize("Water") << "\n";
-            }
+                output << atom.serialize() << "\n";
 
             auto &bonds = species.get()->bonds();
             for (auto &bond : bonds)
-                output << bond.serialize("Water") << "\n";
+                output << bond.serialize() << "\n";*/
         }
 
         Messenger::print("Finished reading input file.\n");

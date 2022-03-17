@@ -6,7 +6,6 @@
 #include "classes/speciesatom.h"
 #include "data/atomicmasses.h"
 #include <map>
-#include <toml11/toml.hpp>
 
 // Return enum options for BondFunction
 EnumOptions<BondFunctions::Form> BondFunctions::forms()
@@ -335,7 +334,7 @@ double SpeciesBond::force(double distance) const
                                          BondFunctions::forms().keyword(bondForm))));
 }
 
-std::string SpeciesBond::serialize(std::string species)
+toml::value SpeciesBond::serialize()
 {
     toml::value bond
     {
@@ -343,5 +342,6 @@ std::string SpeciesBond::serialize(std::string species)
         {"j", j_->index()},
         {"bondType", SpeciesBond::bondType(bondType_).data()}
     };
-    return "[species." + species + ".bonds]\n" + toml::format(bond);
+    return bond;
+    //return "[species." + species + ".bonds]\n" + toml::format(bond);
 }

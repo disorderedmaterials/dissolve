@@ -457,7 +457,7 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
     return (nSameElement == i->nBonds() ? 0 : -osBound);
 }
 
-std::string SpeciesAtom::serialize(std::string species) 
+toml::value SpeciesAtom::serialize() 
 { 
     toml::value atom
     {
@@ -467,5 +467,6 @@ std::string SpeciesAtom::serialize(std::string species)
         {"atomType", atomType_->name().data()}, 
         {"index", index_}
     };
-    return "[species." + species + ".atoms]\n" + toml::format(atom);
+    return atom;
+    //return "[species." + species + ".atoms]\n" + toml::format(atom);
 }
