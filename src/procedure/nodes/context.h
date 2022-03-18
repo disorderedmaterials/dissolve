@@ -4,7 +4,7 @@
 #pragma once
 
 #include "templates/optionalref.h"
-#include <string_view>
+#include <string>
 
 // Forward Declarations
 class Configuration;
@@ -23,7 +23,7 @@ class ProcedureContext
     // Target Configuration
     Configuration *configuration_{nullptr};
     // Prefix for generated data
-    std::string_view dataPrefix_;
+    std::string dataPrefix_;
     // Target list for generated data
     OptionalReferenceWrapper<GenericList> dataList_;
 
