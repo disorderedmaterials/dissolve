@@ -334,18 +334,18 @@ std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::paramete
  */
 
 // Prepare any necessary data, ready for execution
-bool SequenceProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool SequenceProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Loop over nodes in the list, preparing each in turn
     for (auto node : sequence_)
-        if (!node->prepare(cfg, prefix, targetList))
+        if (!node->prepare(procedureContext))
             return false;
 
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+// Execute node
+bool SequenceProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     // If there are no nodes, just exit now
     if (sequence_.empty())
@@ -353,19 +353,18 @@ bool SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, s
 
     // Loop over nodes in the list, executing each in turn
     for (auto node : sequence_)
-        if (!node->execute(procPool, cfg, prefix, targetList))
+        if (!node->execute(procedureContext))
             return false;
 
     return true;
 }
 
 // Finalise any necessary data after execution
-bool SequenceProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                     GenericList &targetList)
+bool SequenceProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // Loop over nodes in the list, finalising each in turn
     for (auto node : sequence_)
-        if (!node->finalise(procPool, cfg, prefix, targetList))
+        if (!node->finalise(procedureContext))
             return false;
 
     return true;

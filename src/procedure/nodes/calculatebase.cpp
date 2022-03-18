@@ -40,7 +40,7 @@ Vec3<double> CalculateProcedureNodeBase::values() const { return value_; }
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateProcedureNodeBase::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool CalculateProcedureNodeBase::prepare(const ProcedureContext &procedureContext)
 {
     // Check that the sites have been properly defined
     for (auto n = 0; n < nSitesRequired(); ++n)

@@ -84,11 +84,12 @@ std::vector<ConstNodeRef> Collect2DProcedureNode::children() const { return {sub
  */
 
 // Prepare any necessary data, ready for execution
-bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool Collect2DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Construct our data name, and search for it in the supplied list
-    std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
-    auto [target, status] = targetList.realiseIf<Histogram2D>(dataName, prefix, GenericItem::InRestartFileFlag);
+    std::string dataName = fmt::format("{}_{}_Bins", name(), procedureContext.configuration()->niceName());
+    auto [target, status] = procedureContext.dataList().realiseIf<Histogram2D>(dataName, procedureContext.dataPrefix(),
+                                                                               GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
         Messenger::printVerbose("Two-dimensional histogram data for '{}' was not in the target list, so it will now be "
@@ -110,15 +111,14 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
         return Messenger::error("No valid y quantity set in '{}'.\n", name());
 
     // Prepare any branches
-    if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList)))
+    if (subCollectBranch_ && (!subCollectBranch_->prepare(procedureContext)))
         return false;
 
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                     GenericList &targetList)
+// Execute node
+bool Collect2DProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto [xObs, xIndex] = xObservable_;
     auto [yObs, yIndex] = yObservable_;
@@ -127,14 +127,13 @@ bool Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
 
     // Bin the current value of the observable
     if (histogram_->get().bin(xObs->value(xIndex), yObs->value(yIndex)) && subCollectBranch_)
-        return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
+        return subCollectBranch_->execute(procedureContext);
 
     return true;
 }
 
 // Finalise any necessary data after execution
-bool Collect2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                      GenericList &targetList)
+bool Collect2DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     assert(histogram_);
 
@@ -142,7 +141,7 @@ bool Collect2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
     histogram_->get().accumulate();
 
     // Finalise any branches
-    if (subCollectBranch_ && (!subCollectBranch_->finalise(procPool, cfg, prefix, targetList)))
+    if (subCollectBranch_ && (!subCollectBranch_->finalise(procedureContext)))
         return false;
 
     return true;

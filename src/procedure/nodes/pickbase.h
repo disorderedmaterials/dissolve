@@ -49,5 +49,5 @@ class PickProcedureNodeBase : public ProcedureNode
      */
     protected:
     // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    bool finalise(const ProcedureContext &procedureContext) override;
 };

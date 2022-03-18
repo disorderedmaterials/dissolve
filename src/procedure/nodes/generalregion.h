@@ -33,5 +33,5 @@ class GeneralRegionProcedureNode : public RegionProcedureNodeBase
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    bool prepare(const ProcedureContext &procedureContext) override;
 };

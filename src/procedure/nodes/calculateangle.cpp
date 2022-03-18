@@ -36,17 +36,16 @@ int CalculateAngleProcedureNode::dimensionality() const { return 1; }
  * Execute
  */
 
-// Execute node, targetting the supplied Configuration
-bool CalculateAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                          GenericList &targetList)
+// Execute node
+bool CalculateAngleProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
     assert(sites_[2] && sites_[2]->currentSite());
 
     // Determine the value of the observable
-    value_.x = cfg->box()->angleInDegrees(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(),
-                                          sites_[2]->currentSite()->origin());
+    value_.x = procedureContext.configuration()->box()->angleInDegrees(
+        sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(), sites_[2]->currentSite()->origin());
 
     return true;
 }

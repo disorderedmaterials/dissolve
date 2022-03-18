@@ -25,9 +25,8 @@ PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase
  * Execute
  */
 
-// Execute node, targetting the supplied Configuration
-bool PickProximityProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                         GenericList &targetList)
+// Execute node
+bool PickProximityProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     Messenger::print("[PickProximity] Molecules will be selected from {}.\n", moleculePoolName());
 
@@ -52,10 +51,10 @@ bool PickProximityProcedureNode::execute(ProcessPool &procPool, Configuration *c
     else
         Messenger::print("[PickProximity] Allowed coordination count is N >= {}.\n", nMin);
 
-    const auto *box = cfg->box();
+    const auto *box = procedureContext.configuration()->box();
 
     // Loop over all target molecules
-    for (const auto &molI : moleculePool(cfg))
+    for (const auto &molI : moleculePool(procedureContext.configuration()))
     {
         auto count = 0;
 
@@ -63,7 +62,7 @@ bool PickProximityProcedureNode::execute(ProcessPool &procPool, Configuration *c
         auto iCog = molI->centreOfGeometry(box);
 
         // Loop over all molecules
-        for (const auto &molJ : cfg->molecules())
+        for (const auto &molJ : procedureContext.configuration()->molecules())
         {
             // Count surrounding species (if defined)
             if (std::find(speciesToPick_.begin(), speciesToPick_.end(), molJ->species()) != speciesToPick_.end())

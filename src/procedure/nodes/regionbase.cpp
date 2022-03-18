@@ -46,10 +46,9 @@ const Region RegionProcedureNodeBase::generateRegion(const Configuration *cfg) c
  * Execute
  */
 
-// Execute node, targetting the supplied Configuration
-bool RegionProcedureNodeBase::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                      GenericList &targetList)
+// Execute node
+bool RegionProcedureNodeBase::execute(const ProcedureContext &procedureContext)
 {
-    return region_.generate(cfg, voxelSize_,
+    return region_.generate(procedureContext.configuration(), voxelSize_,
                             [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) != invert_; });
 }

@@ -77,15 +77,15 @@ bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, std::string_v
     }
 
     // Prepare the nodes
-    if (!rootSequence_->prepare(cfg, prefix, targetList))
+    if (!rootSequence_->prepare({procPool, cfg, prefix, targetList}))
         return Messenger::error("Failed to prepare procedure for execution.\n");
 
     // Execute the root sequence
-    if (!rootSequence_->execute(procPool, cfg, prefix, targetList))
+    if (!rootSequence_->execute({procPool, cfg, prefix, targetList}))
         return Messenger::error("Failed to execute procedure.\n");
 
     // Finalise any nodes that need it
-    if (!rootSequence_->finalise(procPool, cfg, prefix, targetList))
+    if (!rootSequence_->finalise({procPool, cfg, prefix, targetList}))
         return Messenger::error("Failed to finalise procedure after execution.\n");
 
     return true;

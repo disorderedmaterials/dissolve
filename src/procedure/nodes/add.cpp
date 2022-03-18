@@ -80,7 +80,7 @@ EnumOptions<AddProcedureNode::PositioningType> AddProcedureNode::positioningType
  */
 
 // Prepare any necessary data, ready for execution
-bool AddProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool AddProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     if (!species_)
         return Messenger::error("No Species set in Add node.\n");
@@ -99,8 +99,8 @@ bool AddProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Gene
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+// Execute node
+bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     // Can't add the Species if it has any missing core information
     if (!species_->checkSetUp())
@@ -113,6 +113,8 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         Messenger::print("[Add] Population of species '{}' is zero so it will not be added.\n", species_->name());
         return true;
     }
+
+    auto *cfg = procedureContext.configuration();
 
     const auto nAtomsToAdd = population_ * species_->nAtoms();
     auto [rho, rhoUnits] = density_;
@@ -200,12 +202,12 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
             return Messenger::error("Target species '{}' is not periodic!.\n", species_->name());
 
         cfg->createBox(species_->box()->axisLengths(), species_->box()->axisAngles());
+        auto *box = cfg->box();
 
         Messenger::print("[Add] Box type is now {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = "
                          "{:10.4e} gamma = {:10.4e}\n",
-                         Box::boxTypes().keyword(cfg->box()->type()), cfg->box()->axisLengths().x, cfg->box()->axisLengths().y,
-                         cfg->box()->axisLengths().z, cfg->box()->axisAngles().x, cfg->box()->axisAngles().y,
-                         cfg->box()->axisAngles().z);
+                         Box::boxTypes().keyword(box->type()), box->axisLengths().x, box->axisLengths().y, box->axisLengths().z,
+                         box->axisAngles().x, box->axisAngles().y, box->axisAngles().z);
 
         // Check on the requestedPopulation - we can have exactly one copy and no more
         if (population_ > 1)
@@ -226,7 +228,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
             return Messenger::error("Positioning type set to '{}' but no region was given.\n",
                                     AddProcedureNode::positioningTypes().keyword(positioningType_));
 
-        region = region_->generateRegion(cfg);
+        region = region_->generateRegion(procedureContext.configuration());
         if (!region.isValid())
             return Messenger::error("Region '{}' is invalid, probably because it contains no free space.\n", region_->name());
 
@@ -235,7 +237,7 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
     }
 
     // Now we add the molecules
-    procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
+    procedureContext.processPool().initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
     Vec3<double> r, cog, newCentre, fr;
     auto coordSetIt = species_->coordinateSets().begin();
     Matrix3 transform;
@@ -269,7 +271,8 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         switch (positioningType_)
         {
             case (AddProcedureNode::PositioningType::Random):
-                fr.set(procPool.random(), procPool.random(), procPool.random());
+                fr.set(procedureContext.processPool().random(), procedureContext.processPool().random(),
+                       procedureContext.processPool().random());
                 newCentre = box->getReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
@@ -291,7 +294,8 @@ bool AddProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::s
         // Generate and apply a random rotation matrix
         if (rotate_)
         {
-            transform.createRotationXY(procPool.randomPlusMinusOne() * 180.0, procPool.randomPlusMinusOne() * 180.0);
+            transform.createRotationXY(procedureContext.processPool().randomPlusMinusOne() * 180.0,
+                                       procedureContext.processPool().randomPlusMinusOne() * 180.0);
             mol->transform(box, transform);
         }
     }

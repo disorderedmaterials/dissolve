@@ -37,24 +37,24 @@ int CalculateVectorProcedureNode::dimensionality() const { return 3; }
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateVectorProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool CalculateVectorProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Call the base class function
-    if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList))
+    if (!CalculateProcedureNodeBase::prepare(procedureContext))
         return false;
 
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool CalculateVectorProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                           GenericList &targetList)
+// Execute node
+bool CalculateVectorProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
 
     // Determine the value of the observable
-    value_ = cfg->box()->minimumVector(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin());
+    value_ = procedureContext.configuration()->box()->minimumVector(sites_[0]->currentSite()->origin(),
+                                                                    sites_[1]->currentSite()->origin());
 
     // Rotate the vector into the local frame defined on the first site?
     if (rotateIntoFrame_)

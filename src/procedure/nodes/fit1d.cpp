@@ -84,10 +84,10 @@ void Fit1DProcedureNode::setSaveData(bool on) { saveData_ = on; }
  */
 
 // Prepare any necessary data, ready for execution
-bool Fit1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
+bool Fit1DProcedureNode::prepare(const ProcedureContext &procedureContext) { return true; }
 
 // Finalise any necessary data after execution
-bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool Fit1DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // Copy reference data from the associated node
     std::shared_ptr<const Collect1DProcedureNode> collect1DNode;
@@ -162,7 +162,8 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
     auto &data =
-        targetList.realise<Data1D>(fmt::format("{}//{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
+        procedureContext.dataList().realise<Data1D>(fmt::format("{}//{}", name(), procedureContext.configuration()->niceName()),
+                                                    procedureContext.dataPrefix(), GenericItem::InRestartFileFlag);
 
     data.setTag(name());
     data.clear();
@@ -180,29 +181,29 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     // Save data?
     if (saveData_)
     {
-        if (procPool.isMaster())
+        if (procedureContext.processPool().isMaster())
         {
             LineParser parser;
-            if (!parser.openOutput(fmt::format("{}_{}.fit", name(), cfg->name())))
-                return procPool.decideFalse();
+            if (!parser.openOutput(fmt::format("{}_{}.fit", name(), procedureContext.configuration()->name())))
+                return procedureContext.processPool().decideFalse();
             if (!parser.writeLineF("# Fit Equation : {}\n", equation_.expressionString()))
-                return procPool.decideFalse();
+                return procedureContext.processPool().decideFalse();
             if (!parser.writeLineF("#  {:10}                (axis variable)\n", xVariable_->name()))
-                return procPool.decideFalse();
+                return procedureContext.processPool().decideFalse();
             for (const auto &var : fitTargets_)
                 if (!parser.writeLineF("#  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble()))
-                    return procPool.decideFalse();
+                    return procedureContext.processPool().decideFalse();
             for (const auto &var : constants_)
                 if (!parser.writeLineF("#  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble()))
-                    return procPool.decideFalse();
+                    return procedureContext.processPool().decideFalse();
 
             Data1DExportFileFormat exportFormat(name());
             if (exportFormat.exportData(data))
-                procPool.decideTrue();
+                procedureContext.processPool().decideTrue();
             else
-                return procPool.decideFalse();
+                return procedureContext.processPool().decideFalse();
         }
-        else if (!procPool.decision())
+        else if (!procedureContext.processPool().decision())
             return false;
     }
 

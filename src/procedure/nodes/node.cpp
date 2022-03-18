@@ -256,19 +256,13 @@ OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>>
  */
 
 // Prepare any necessary data, ready for execution
-bool ProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
+bool ProcedureNode::prepare(const ProcedureContext &procedureContext) { return true; }
 
-// Execute node, targetting the supplied Configuration
-bool ProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
-{
-    return true;
-}
+// Execute node
+bool ProcedureNode::execute(const ProcedureContext &procedureContext) { return true; }
 
 // Finalise any necessary data after execution
-bool ProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
-{
-    return true;
-}
+bool ProcedureNode::finalise(const ProcedureContext &procedureContext) { return true; }
 
 /*
  * Read / Write

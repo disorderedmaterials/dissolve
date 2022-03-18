@@ -77,18 +77,17 @@ bool OperateProcedureNodeBase::operateData3D(ProcessPool &procPool, Configuratio
  */
 
 // Prepare any necessary data, ready for execution
-bool OperateProcedureNodeBase::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
+bool OperateProcedureNodeBase::prepare(const ProcedureContext &procedureContext) { return true; }
 
-// Execute node, targetting the supplied Configuration
-bool OperateProcedureNodeBase::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                       GenericList &targetList)
+// Execute node
+bool OperateProcedureNodeBase::execute(const ProcedureContext &procedureContext)
 {
     // Run the operation on any data target that exists
-    if (targetData1D_ && (!operateData1D(procPool, cfg)))
+    if (targetData1D_ && (!operateData1D(procedureContext.processPool(), procedureContext.configuration())))
         return false;
-    if (targetData2D_ && (!operateData2D(procPool, cfg)))
+    if (targetData2D_ && (!operateData2D(procedureContext.processPool(), procedureContext.configuration())))
         return false;
-    if (targetData3D_ && (!operateData3D(procPool, cfg)))
+    if (targetData3D_ && (!operateData3D(procedureContext.processPool(), procedureContext.configuration())))
         return false;
 
     return true;

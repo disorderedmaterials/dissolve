@@ -54,6 +54,6 @@ class RegionProcedureNodeBase : public ProcedureNode
      * Execute
      */
     public:
-    // Execute node, targetting the supplied Configuration
-    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    // Execute node
+    bool execute(const ProcedureContext &procedureContext) override;
 };
