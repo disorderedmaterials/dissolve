@@ -29,7 +29,9 @@ bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
     procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Execute the analysis
-    if (!analyser_.execute(procPool, targetConfiguration_, uniqueName(), dissolve.processingModuleData()))
+    ProcedureContext context(procPool, targetConfiguration_);
+    context.setDataListAndPrefix(dissolve.processingModuleData(), uniqueName());
+    if (!analyser_.execute(context))
         return Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
 
     return true;

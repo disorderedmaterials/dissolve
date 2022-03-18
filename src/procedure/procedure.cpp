@@ -52,12 +52,14 @@ std::vector<ConstNodeRef> Procedure::nodes(std::optional<ProcedureNode::NodeType
  * Execute
  */
 
-// Run procedure for specified Configuration, storing / retrieving generated data from supplied list
-bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+// Run procedure in the specified data context
+bool Procedure::execute(const ProcedureContext &context)
 {
     // Depending on context, we may or may not operate on the supplied Configuration
     if (context_ == ProcedureNode::AnalysisContext)
     {
+        auto *cfg = context.configuration();
+
         // Check that the Configuration has changed before we do any more analysis on it
         auto ri = std::find_if(configurationPoints_.begin(), configurationPoints_.end(),
                                [cfg](const auto pair) { return pair.first == cfg; });
@@ -77,15 +79,15 @@ bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, std::string_v
     }
 
     // Prepare the nodes
-    if (!rootSequence_->prepare({procPool, cfg, prefix, targetList}))
+    if (!rootSequence_->prepare(context))
         return Messenger::error("Failed to prepare procedure for execution.\n");
 
     // Execute the root sequence
-    if (!rootSequence_->execute({procPool, cfg, prefix, targetList}))
+    if (!rootSequence_->execute(context))
         return Messenger::error("Failed to execute procedure.\n");
 
     // Finalise any nodes that need it
-    if (!rootSequence_->finalise({procPool, cfg, prefix, targetList}))
+    if (!rootSequence_->finalise(context))
         return Messenger::error("Failed to finalise procedure after execution.\n");
 
     return true;

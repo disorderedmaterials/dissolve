@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "templates/optionalref.h"
 #include <string_view>
 
 // Forward Declarations
@@ -14,7 +15,7 @@ class ProcessPool;
 class ProcedureContext
 {
     public:
-    ProcedureContext(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    ProcedureContext(ProcessPool &procPool, Configuration *cfg = nullptr);
 
     private:
     // Available process pool
@@ -24,13 +25,17 @@ class ProcedureContext
     // Prefix for generated data
     std::string_view dataPrefix_;
     // Target list for generated data
-    GenericList &dataList_;
+    OptionalReferenceWrapper<GenericList> dataList_;
 
     public:
     // Return available process pool
     ProcessPool &processPool() const;
+    // Set target Configuration
+    void setConfiguration(Configuration *cfg);
     // Return target Configuration
     Configuration *configuration() const;
+    // Set target data list and prefix
+    void setDataListAndPrefix(GenericList &list, std::string_view prefix);
     // Return prefix for generated data
     std::string_view dataPrefix() const;
     // Return target list for generated data
