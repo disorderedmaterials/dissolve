@@ -8,6 +8,7 @@
 #include "procedure/nodevalue.h"
 
 // Forward Declarations
+class CoordinateSetsProcedureNode;
 class Species;
 class RegionProcedureNodeBase;
 
@@ -56,6 +57,8 @@ class AddProcedureNode : public ProcedureNode
     private:
     // Action to take on the Box geometry / volume on addition of the species
     AddProcedureNode::BoxActionStyle boxAction_{AddProcedureNode::BoxActionStyle::AddVolume};
+    // Coordinate set source for Species (if any)
+    std::shared_ptr<const CoordinateSetsProcedureNode> coordinateSets_{nullptr};
     // Target density when adding molecules
     std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add

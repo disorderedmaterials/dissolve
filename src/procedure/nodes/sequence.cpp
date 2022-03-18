@@ -436,6 +436,9 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             case (ProcedureNode::NodeType::Collect3D):
                 newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Collect3DProcedureNode>());
                 break;
+            case (ProcedureNode::NodeType::CoordinateSets):
+                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CoordinateSetsProcedureNode>());
+                break;
             case (ProcedureNode::NodeType::CylindricalRegion):
                 newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CylindricalRegionProcedureNode>());
                 break;

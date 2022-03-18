@@ -15,6 +15,7 @@
 #include "keywords/nodevalue.h"
 #include "keywords/nodevalueenumoptions.h"
 #include "keywords/species.h"
+#include "procedure/nodes/coordinatesets.h"
 #include "procedure/nodes/regionbase.h"
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
@@ -37,6 +38,9 @@ AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &populatio
         "Control", "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
     keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Control", "Region", "Region into which to add the species", region_,
                                                         this, ProcedureNode::NodeClass::Region, true);
+    keywords_.add<NodeKeyword<CoordinateSetsProcedureNode>>("Control", "CoordinateSets",
+                                                            "Source coordinate sets for the species", coordinateSets_, this,
+                                                            ProcedureNode::NodeType::CoordinateSets, true);
 }
 
 /*
@@ -96,6 +100,14 @@ bool AddProcedureNode::prepare(const ProcedureContext &procedureContext)
     // Check scalable axes definitions
     if (!scaleA_ && !scaleB_ && !scaleC_)
         return Messenger::error("Must have at least one scalable box axis!\n");
+
+    // Check coordinate set specification
+    if (coordinateSets_)
+    {
+        auto *setSpecies = coordinateSets_->keywords().get<const Species *>("Species");
+        if (!setSpecies || setSpecies != species_)
+            return Messenger::error("Coordinate set source is either not set up properly or targets a different species.\n");
+    }
 
     return true;
 }
@@ -240,7 +252,15 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
     // Now we add the molecules
     RandomBuffer randomBuffer(procedureContext.processPool(), ProcessPool::PoolProcessesCommunicator);
     Vec3<double> r, cog, newCentre, fr;
-    auto coordSetIt = species_->coordinateSets().begin();
+    auto coordinateSetIndex = 0;
+    auto hasCoordinateSets = false;
+    if (coordinateSets_)
+    {
+        if (coordinateSets_->nSets() == 0)
+            return Messenger::error("Coordinate set source appears to be empty.");
+
+        hasCoordinateSets = true;
+    }
     Matrix3 transform;
     const auto *box = cfg->box();
     cfg->atoms().reserve(cfg->atoms().size() + population_ * species_->nAtoms());
@@ -255,14 +275,14 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
             // we could have a single lock for the whole loop, but that
             // will require some thought.
             AtomChangeToken lock(*cfg);
-            if (coordSetIt != species_->coordinateSets().end())
+            if (hasCoordinateSets)
             {
-                mol = cfg->addMolecule(lock, species_, *coordSetIt);
+                mol = cfg->addMolecule(lock, species_, coordinateSets_->set(coordinateSetIndex));
 
                 // Move to next coordinate set
-                ++coordSetIt;
-                if (coordSetIt == species_->coordinateSets().end())
-                    coordSetIt = species_->coordinateSets().begin();
+                ++coordinateSetIndex;
+                if (coordinateSetIndex == coordinateSets_->nSets())
+                    coordinateSetIndex = 0;
             }
             else
                 mol = cfg->addMolecule(lock, species_);
