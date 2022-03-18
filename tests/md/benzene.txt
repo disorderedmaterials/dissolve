@@ -162,6 +162,7 @@ Layer  'Evolve (Standard)'
     Configuration  'Bulk'
 
     OnlyWhenEnergyStable  False
+    VariableTimestep  True
     NSteps  10
   EndModule
 
