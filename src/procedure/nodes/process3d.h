@@ -11,7 +11,6 @@
 class Collect3DProcedureNode;
 class Data3D;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Process3D
 class Process3DProcedureNode : public ProcedureNode

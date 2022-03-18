@@ -14,7 +14,6 @@ class CoreData;
 class ExpressionVariable;
 class GenericList;
 class LineParser;
-class NodeScopeStack;
 class Procedure;
 class ProcessPool;
 class SequenceProcedureNode;

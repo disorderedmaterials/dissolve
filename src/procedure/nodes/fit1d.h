@@ -13,7 +13,6 @@ class Collect1DProcedureNode;
 class SelectProcedureNode;
 class Data1D;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Fit1D
 class Fit1DProcedureNode : public ProcedureNode

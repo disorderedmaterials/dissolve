@@ -10,7 +10,6 @@
 class CalculateProcedureNodeBase;
 class SequenceProcedureNode;
 class LineParser;
-class NodeScopeStack;
 
 // Procedure Node - Collect2D
 class Collect2DProcedureNode : public ProcedureNode

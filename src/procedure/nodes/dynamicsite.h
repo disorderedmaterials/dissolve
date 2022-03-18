@@ -14,7 +14,6 @@ class SelectProcedureNode;
 class AtomType;
 class LineParser;
 class Molecule;
-class NodeScopeStack;
 
 // Procedure Node - Dynamic Site
 class DynamicSiteProcedureNode : public ProcedureNode
