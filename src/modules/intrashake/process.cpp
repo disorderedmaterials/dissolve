@@ -50,16 +50,17 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+    Timer commsTimer(false);
 
     // Create a Molecule distributor
     RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), procPool, strategy);
 
     // Create a local ChangeStore and EnergyKernel
-    ChangeStore changeStore(procPool);
+    ChangeStore changeStore(procPool, commsTimer);
     EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer
-    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy));
+    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
     // Ensure that the Species used in the present Configuration have attached atom lists
     for (auto &spPop : targetConfiguration_->speciesPopulations())
@@ -79,7 +80,6 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Atom *i, *j, *k, *l;
 
     Timer timer;
-    procPool.resetAccumulatedTime();
     while (distributor.cycle())
     {
         // Get next set of Molecule targets from the distributor
@@ -294,25 +294,24 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     timer.stop();
 
     // Collect statistics across all processes
-    if (!procPool.allSum(&totalDelta, 1, strategy))
+    if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
         return false;
-    if (!procPool.allSum(&nBondAttempts, 1, strategy))
+    if (!procPool.allSum(&nBondAttempts, 1, strategy, commsTimer))
         return false;
-    if (!procPool.allSum(&nBondAccepted, 1, strategy))
+    if (!procPool.allSum(&nBondAccepted, 1, strategy, commsTimer))
         return false;
-    if (!procPool.allSum(&nAngleAttempts, 1, strategy))
+    if (!procPool.allSum(&nAngleAttempts, 1, strategy, commsTimer))
         return false;
-    if (!procPool.allSum(&nAngleAccepted, 1, strategy))
+    if (!procPool.allSum(&nAngleAccepted, 1, strategy, commsTimer))
         return false;
-    if (!procPool.allSum(&nTorsionAttempts, 1, strategy))
+    if (!procPool.allSum(&nTorsionAttempts, 1, strategy, commsTimer))
         return false;
-    if (!procPool.allSum(&nTorsionAccepted, 1, strategy))
+    if (!procPool.allSum(&nTorsionAccepted, 1, strategy, commsTimer))
         return false;
 
     Messenger::print("IntraShake: Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
     Messenger::print("IntraShake: Total number of attempted moves was {} ({} work, {} comms).\n",
-                     nBondAttempts + nAngleAttempts + nTorsionAttempts, timer.totalTimeString(),
-                     procPool.accumulatedTimeString());
+                     nBondAttempts + nAngleAttempts + nTorsionAttempts, timer.totalTimeString(), commsTimer.totalTimeString());
 
     // Calculate and report acceptance rates and adjust step sizes - if no moves were accepted, just decrease the
     // current stepSize by a constant factor

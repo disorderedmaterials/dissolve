@@ -326,8 +326,6 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
      */
 
     Timer timer;
-    timer.start();
-    procPool.resetAccumulatedTime();
     if (method == RDFModule::TestMethod)
         calculateGRTestSerial(cfg, originalgr);
     else if (method == RDFModule::SimpleMethod)
@@ -340,8 +338,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
                               : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
     }
     timer.stop();
-    Messenger::print("Finished calculation of partials ({} elapsed, {} comms).\n", timer.totalTimeString(),
-                     procPool.accumulatedTimeString());
+    Messenger::print("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
 
     /*
      * Calculate intramolecular partials
@@ -376,8 +373,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     }
 
     timer.stop();
-    Messenger::print("Finished calculation of intramolecular partials ({} elapsed, {} comms).\n", timer.totalTimeString(),
-                     procPool.accumulatedTimeString());
+    Messenger::print("Finished calculation of intramolecular partials ({} elapsed).\n", timer.totalTimeString());
 
     /*
      * Sum histogram data
@@ -385,17 +381,17 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
      * knows that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
      */
 
-    procPool.resetAccumulatedTime();
     timer.start();
+    Timer commsTimer(false);
     auto success = for_each_pair_early(
-        0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
+        0, originalgr.nAtomTypes(), [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
             // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
             // processes have all data already)
             if (method != RDFModule::TestMethod)
             {
-                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
+                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
                     return false;
-                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
+                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
                     return false;
             }
 
@@ -415,7 +411,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     originalgr.formTotals(true);
     timer.stop();
     Messenger::print("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n",
-                     timer.totalTimeString(), procPool.accumulatedTimeString());
+                     timer.totalTimeString(), commsTimer.totalTimeString());
 
     /*
      * Partials are now up-to-date

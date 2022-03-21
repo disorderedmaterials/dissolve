@@ -197,10 +197,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                          "deltaT(ps)\n");
     }
 
-    // Start a timer and reset the ProcessPool's time accumulator
-    Timer timer;
-    timer.start();
-    procPool.resetAccumulatedTime();
+    // Start a timer
+    Timer timer, commsTimer(false);
 
     // Variable timestep requires forces to be available immediately
     if (variableTimestep_)
@@ -211,12 +209,13 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (targetMolecules.empty())
             intramolecularForcesOnly_
                 ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), forces);
+                : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), forces, commsTimer);
         else
             intramolecularForcesOnly_
                 ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces,
                                                        targetMolecules)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), forces);
+                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), forces,
+                                            commsTimer);
 
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         std::transform(forces.begin(), forces.end(), forces.begin(), [](auto f) { return f * 100.0; });
@@ -352,7 +351,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
                          double(nCapped) / nSteps_);
     Messenger::print("{} steps performed ({} work, {} comms)\n", nSteps_, timer.totalTimeString(),
-                     procPool.accumulatedTimeString());
+                     commsTimer.totalTimeString());
 
     // Variable timestep?
     if (variableTimestep_)

@@ -22,7 +22,6 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &un
 
     // Subtract 1.0 from the full and unbound partials so as to give (g(r)-1) and FT into S(Q)
     // Don't subtract 1.0 from the bound partials
-    procPool.resetAccumulatedTime();
     Timer timer;
     timer.start();
     dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedgr.nAtomTypes(), [&](int n, int m) {
@@ -45,8 +44,8 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &un
     unweightedsq.formTotals(true);
 
     timer.stop();
-    Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) ({} elapsed, {} comms).\n",
-                     timer.totalTimeString(), procPool.accumulatedTimeString());
+    Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) ({} elapsed).\n",
+                     timer.totalTimeString());
 
     return true;
 }

@@ -8,6 +8,7 @@
 
 #include "base/processgroup.h"
 #include "base/timer.h"
+#include "templates/optionalref.h"
 #include "templates/vector3.h"
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL
@@ -65,23 +66,10 @@ class ProcessPool
     static bool isWorldMaster();
 
     /*
-     * Timing
-     */
-    private:
-    // Communication Timer
-    Timer timer_;
-
-    public:
-    // Reset accumulated Comm time
-    void resetAccumulatedTime();
-    // Return accumulated time string
-    std::string accumulatedTimeString();
-
-    /*
      * Process Identification
      */
     private:
-    // Local rank of this process in the pool (corrsponding to array index in worldRanks_)
+    // Local rank of this process in the pool (corresponding to array index in worldRanks_)
     int poolRank_;
     // Index of local group in which this process exists
     int groupIndex_;
@@ -213,35 +201,46 @@ class ProcessPool
     // Wait for all processes
     bool wait(ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Send single integer value to target rank within the specified communicator
-    bool send(int value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool send(int value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+              OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Receive single integer from source rank within the specified communicator
-    bool receive(int &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool receive(int &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                 OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Send single long integer value to target rank within the specified communicator
-    bool send(long int value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool send(long int value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+              OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Receive single long integer from source rank within the specified communicator
     bool receive(long int &value, int sourceRank,
-                 ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                 ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                 OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Send single double value to target rank within the specified communicator
-    bool send(double value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool send(double value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+              OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Receive single double value from source rank within the specified communicator
-    bool receive(double &value, int sourceRank,
-                 ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool receive(double &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                 OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Send single bool value to target rank within the specified communicator
-    bool send(bool value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool send(bool value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+              OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Receive single bool value from source rank within the specified communicator
-    bool receive(bool &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool receive(bool &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                 OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Send integer array data to target rank within the specified communicator
     bool send(int *source, int nData, int targetRank,
-              ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+              ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+              OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Receive integer array data from target rank within the specified communicator
     bool receive(int *source, int nData, int sourceRank,
-                 ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                 ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                 OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Send double array data to target rank within the specified communicator
     bool send(double *source, int nData, int targetRank,
-              ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+              ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+              OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Receive double array data from target rank within the specified communicator
     bool receive(double *source, int nData, int sourceRank,
-                 ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                 ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                 OptionalReferenceWrapper<Timer> timer = std::nullopt);
 
     /*
      * Broadcast Functions
@@ -249,43 +248,56 @@ class ProcessPool
     public:
     // Broadcast std::string
     bool broadcast(std::string &source, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast char data
     bool broadcast(char *source, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast single integer
     bool broadcast(int &source, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast integers
     bool broadcast(int *source, int count, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast chars
     bool broadcast(char *source, int count, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast single long integer
     bool broadcast(long int &source, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast long integer to all Processes
     bool broadcast(long int *source, int count, int rootRank,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast single double
     bool broadcast(double &source, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast double(s)
     bool broadcast(double *source, int count, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast float(s)
     bool broadcast(float *source, int count, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast bool
     bool broadcast(bool &source, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast std::vector<int>
     bool broadcast(std::vector<int> &array, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Broadcast std::vector<double>
     bool broadcast(std::vector<double> &array, int rootRank = 0,
-                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                   OptionalReferenceWrapper<Timer> timer = std::nullopt);
 
     /*
      * Special Array Functions
@@ -293,29 +305,39 @@ class ProcessPool
     public:
     // Reduce (sum) double data to root process
     bool sum(double *source, int count, int rootRank = 0,
-             ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+             ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+             OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Reduce (sum) int data to root process
     bool sum(int *source, int count, int rootRank = 0,
-             ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+             ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+             OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Reduce (sum) double data to all processes
-    bool allSum(double *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool allSum(double *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Reduce (sum) vector of Vec3<double> data to all processes
     bool allSum(std::vector<Vec3<double>> &source,
-                ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Reduce (sum) int data to all processes
-    bool allSum(int *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool allSum(int *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Reduce (sum) int data to all processes
-    bool allSum(long int *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool allSum(long int *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Reduce (sum) double data over processes relevant to specified strategy
-    bool allSum(double *source, int count, ProcessPool::DivisionStrategy strategy);
+    bool allSum(double *source, int count, ProcessPool::DivisionStrategy strategy,
+                OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Reduce (sum) int data over processes relevant to specified strategy
-    bool allSum(int *source, int count, ProcessPool::DivisionStrategy strategy);
+    bool allSum(int *source, int count, ProcessPool::DivisionStrategy strategy,
+                OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Assemble integer array on target rank within the specified communicator
     bool assemble(int *array, int nData, int *rootDest, int rootMaxData, int rootRank = 0,
-                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                  OptionalReferenceWrapper<Timer> timer = std::nullopt);
     // Assemble double array on target rank within the specified communicator
     bool assemble(double *array, int nLocalData, double *rootDest, int rootMaxData, int rootRank = 0,
-                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator,
+                  OptionalReferenceWrapper<Timer> timer = std::nullopt);
 
     /*
      * Decisions

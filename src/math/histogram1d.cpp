@@ -250,10 +250,10 @@ bool Histogram1D::serialise(LineParser &parser) const
  */
 
 // Sum histogram data onto all processes
-bool Histogram1D::allSum(ProcessPool &procPool)
+bool Histogram1D::allSum(ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer)
 {
 #ifdef PARALLEL
-    if (!procPool.allSum(bins_.data(), nBins_))
+    if (!procPool.allSum(bins_.data(), nBins_, ProcessPool::PoolProcessesCommunicator, commsTimer))
         return false;
 #endif
     return true;

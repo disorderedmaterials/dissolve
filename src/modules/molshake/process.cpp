@@ -45,6 +45,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+    Timer commsTimer(false);
 
     // Create a Molecule distributor
     RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), procPool, strategy);
@@ -64,11 +65,11 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Create a local ChangeStore and a suitable EnergyKernel
-    ChangeStore changeStore(procPool);
+    ChangeStore changeStore(procPool, commsTimer);
     EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer
-    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy));
+    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
     int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0,
                nGeneralAttempts = 0;
@@ -88,7 +89,6 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     bool rotate, translate;
 
     Timer timer;
-    procPool.resetAccumulatedTime();
     while (distributor.cycle())
     {
         // Get next set of Molecule targets from the distributor
@@ -217,21 +217,21 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         changeStore.reset();
     }
 
-    // Collect statistics across all processes
-    if (!procPool.allSum(&totalDelta, 1))
-        return false;
-    if (!procPool.allSum(&nGeneralAttempts, 1))
-        return false;
-    if (!procPool.allSum(&nTranslationAttempts, 1))
-        return false;
-    if (!procPool.allSum(&nTranslationsAccepted, 1))
-        return false;
-    if (!procPool.allSum(&nRotationAttempts, 1))
-        return false;
-    if (!procPool.allSum(&nRotationsAccepted, 1))
-        return false;
-
     timer.stop();
+
+    // Collect statistics across all processes
+    if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
+        return false;
+    if (!procPool.allSum(&nGeneralAttempts, 1, strategy, commsTimer))
+        return false;
+    if (!procPool.allSum(&nTranslationAttempts, 1, strategy, commsTimer))
+        return false;
+    if (!procPool.allSum(&nTranslationsAccepted, 1, strategy, commsTimer))
+        return false;
+    if (!procPool.allSum(&nRotationAttempts, 1, strategy, commsTimer))
+        return false;
+    if (!procPool.allSum(&nRotationsAccepted, 1, strategy, commsTimer))
+        return false;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
@@ -239,7 +239,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     double transRate = double(nTranslationsAccepted) / nTranslationAttempts;
     double rotRate = double(nRotationsAccepted) / nRotationAttempts;
     Messenger::print("Total number of attempted moves was {} ({} work, {} comms)\n", nGeneralAttempts, timer.totalTimeString(),
-                     procPool.accumulatedTimeString());
+                     commsTimer.totalTimeString());
     Messenger::print("Overall translation acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * transRate,
                      nTranslationsAccepted, nTranslationAttempts);
     Messenger::print("Overall rotation acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rotRate,

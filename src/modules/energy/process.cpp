@@ -311,8 +311,6 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * This is a serial routine (subroutines called from within are parallel).
          */
 
-        procPool.resetAccumulatedTime();
-
         // Calculate intermolecular energy
         Timer interTimer;
         auto interEnergy = interAtomicEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
@@ -325,8 +323,8 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                 angleEnergy, torsionEnergy, improperEnergy);
         intraTimer.stop();
 
-        Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {} ({} comms).\n",
-                         interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
+        Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
+                         intraTimer.totalTimeString());
         Messenger::print("Total Energy (World) is {:15.9e} kJ/mol ({:15.9e} kJ/mol interatomic + {:15.9e} kJ/mol "
                          "intramolecular).\n",
                          interEnergy + intraEnergy, interEnergy, intraEnergy);

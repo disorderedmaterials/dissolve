@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/changedata.h"
+#include "templates/optionalref.h"
 #include <memory>
 #include <vector>
 
@@ -13,12 +14,13 @@ class Cell;
 class Molecule;
 class Configuration;
 class ProcessPool;
+class Timer;
 
 // ChangeStore
 class ChangeStore
 {
     public:
-    ChangeStore(ProcessPool &procPool);
+    ChangeStore(ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer = {});
     ~ChangeStore() = default;
 
     /*
@@ -67,6 +69,8 @@ class ChangeStore
     private:
     // ProcessPool over which this ChangeStore should broadcast
     ProcessPool &processPool_;
+    // Optional timer for capturing communication times
+    OptionalReferenceWrapper<Timer> commsTimer_;
 
     public:
     // Distribute and apply change data to all processes

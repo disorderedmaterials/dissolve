@@ -118,7 +118,7 @@ void ForcesModule::pairPotentialForces(ProcessPool &procPool, Configuration *cfg
 
 // Calculate total forces within the supplied Configuration
 void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                               std::vector<Vec3<double>> &f)
+                               std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
 {
     /*
      * Calculates the total forces within the supplied Configuration, arising from PairPotential interactions
@@ -146,13 +146,14 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     Messenger::printVerbose("Time to do internal molecule forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
-    if (!procPool.allSum(f))
+    if (!procPool.allSum(f, ProcessPool::PoolProcessesCommunicator, commsTimer))
         return;
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
 void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const std::vector<const Molecule *> &targetMolecules,
-                               const PotentialMap &potentialMap, std::vector<Vec3<double>> &f)
+                               const PotentialMap &potentialMap, std::vector<Vec3<double>> &f,
+                               OptionalReferenceWrapper<Timer> commsTimer)
 {
     /*
      * Calculates the total forces acting on the supplied Molecules, arising from PairPotential interactions
@@ -167,7 +168,7 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     // Create a temporary
     std::vector<Vec3<double>> tempf(f.size(), Vec3<double>());
     std::fill(f.begin(), f.end(), Vec3<double>());
-    totalForces(procPool, cfg, potentialMap, tempf);
+    totalForces(procPool, cfg, potentialMap, tempf, commsTimer);
 
     // Convert the Molecule array into an array of atoms
     // TODO Calculating forces for whole molecule at once may be more efficient

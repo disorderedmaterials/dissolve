@@ -64,10 +64,11 @@ class ForcesModule : public Module
                                     std::vector<Vec3<double>> &f);
     // Calculate total forces within the specified Configuration
     static void totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                            std::vector<Vec3<double>> &f);
+                            std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer = {});
     // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
     static void totalForces(ProcessPool &procPool, Configuration *cfg, const std::vector<const Molecule *> &targetMolecules,
-                            const PotentialMap &potentialMap, std::vector<Vec3<double>> &f);
+                            const PotentialMap &potentialMap, std::vector<Vec3<double>> &f,
+                            OptionalReferenceWrapper<Timer> commsTimer = {});
     // Calculate total forces within the specified Species
     static void totalForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap, std::vector<Vec3<double>> &f);
 };
