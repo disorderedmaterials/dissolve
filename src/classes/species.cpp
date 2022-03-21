@@ -224,7 +224,6 @@ int Species::nCoordinateSets() const { return coordinateSets_.size(); }
 // Return coordinates sets
 const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { return coordinateSets_; }
 
-
 toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serialize()
 {
     toml::array atoms;
@@ -239,11 +238,18 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
     for (auto &angle : angles_)
         angles.push_back(angle.serialize());
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> species
-    {
-        {"species." + name_ + ".atoms", atoms}, 
-        {"species." + name_ + ".bonds", bonds}, 
-        {"species." + name_ + ".angles", angles}
-    };
+    toml::array impropers;
+    for (auto &improper : impropers_)
+        impropers.push_back(improper.serialize());
+
+    toml::array torsions;
+    for (auto &torsion : torsions_)
+        torsions.push_back(torsion.serialize());
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> species{{"species." + name_ + ".atoms", atoms},
+                                                                             {"species." + name_ + ".bonds", bonds},
+                                                                             {"species." + name_ + ".angles", angles},
+                                                                             {"species." + name_ + ".impropers", impropers},
+                                                                             {"species." + name_ + ".torsions", torsions}};
     return species;
 }

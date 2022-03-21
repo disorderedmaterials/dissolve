@@ -223,3 +223,15 @@ double SpeciesImproper::force(double angleInDegrees) const
 {
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> improper{
+        {"i", i_->userIndex()},
+        {"j", j_->userIndex()},
+        {"k", k_->userIndex()},
+        {"l", l_->userIndex()},
+        {"form", "form"},
+        {"parameters", SpeciesImproper::interactionPotential().parametersAsString()}};
+    return improper;
+}

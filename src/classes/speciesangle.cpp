@@ -361,15 +361,13 @@ double SpeciesAngle::force(double angleInDegrees) const
                                          AngleFunctions::forms().keyword(angleForm))));
 }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::serialize() 
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::serialize()
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> angle
-    {
-        {"i", i_->userIndex()}, 
+    toml::basic_value<toml::discard_comments, std::map, std::vector> angle{
+        {"i", i_->userIndex()},
         {"j", j_->userIndex()},
-        {"k", k_->userIndex()}, 
-        {"form", "form"}, 
-        {"parameters", SpeciesAngle::interactionPotential().parametersAsString()}
-    };
+        {"k", k_->userIndex()},
+        {"form", "form"},
+        {"parameters", SpeciesAngle::interactionPotential().parametersAsString()}};
     return angle;
 }

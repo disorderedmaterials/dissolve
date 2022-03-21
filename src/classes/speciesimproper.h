@@ -7,6 +7,10 @@
 #include "classes/speciesintra.h"
 #include "classes/speciestorsion.h"
 
+#include <map>
+#include <vector>
+#include <toml11/toml.hpp>
+
 // Forward Declarations
 class SpeciesAtom;
 class Species;
@@ -82,6 +86,8 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };
 
 // MasterImproper Definition
