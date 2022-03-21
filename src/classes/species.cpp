@@ -235,10 +235,15 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
     for (auto &bond : bonds_)
         bonds.push_back(bond.serialize());
 
+    toml::array angles;
+    for (auto &angle : angles_)
+        angles.push_back(angle.serialize());
+
     toml::basic_value<toml::discard_comments, std::map, std::vector> species
     {
         {"species." + name_ + ".atoms", atoms}, 
-        {"species." + name_ + ".bonds", bonds}
+        {"species." + name_ + ".bonds", bonds}, 
+        {"species." + name_ + ".angles", angles}
     };
     return species;
 }

@@ -462,11 +462,11 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAtom::se
     toml::array position{r_.x, r_.y, r_.z};
     toml::basic_value<toml::discard_comments, std::map, std::vector> atom
     {
-        {"index", index_},
+        {"index", userIndex()},
         {"z", Elements::symbol(Z_).data()}, 
         {"r", position}, 
         {"charge", charge_ }, 
-        {"atomType", atomType_->name().data()}
+        {"type", atomType_->name().data()}
     };
     return atom;
 }

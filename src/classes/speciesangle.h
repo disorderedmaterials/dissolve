@@ -6,6 +6,10 @@
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
 
+#include <map>
+#include <vector>
+#include <toml11/toml.hpp>
+
 // Forward Declarations
 class SpeciesAtom;
 class Species;
@@ -94,6 +98,8 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };
 
 // MasterAngle Definition

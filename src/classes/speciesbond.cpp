@@ -338,9 +338,10 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
 {
     toml::basic_value <toml::discard_comments, std::map, std::vector> bond
     {
-        {"i", i_->index()},
-        {"j", j_->index()},
-        {"bondType", SpeciesBond::bondType(bondType_).data()}
+        {"i", i_->userIndex()}, 
+        {"j", j_->userIndex()}, 
+        {"parameters", SpeciesBond::interactionPotential().parametersAsString()},
+        {"form", SpeciesBond::bondType(bondType_).data()}
     };
     return bond;
 }
