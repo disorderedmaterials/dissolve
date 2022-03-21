@@ -159,9 +159,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     // Set the new strategy
                     strategy = distributor.currentStrategy();
-
-                    // Re-initialise the random buffer
-                    procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
                 }
 
                 // Loop over target Molecules

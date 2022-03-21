@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "base/lineparser.h"
+#include "base/randombuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
 #include "data/atomicmasses.h"
@@ -106,7 +107,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Initialise the random number buffer for all processes
-    procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
+    RandomBuffer randomBuffer(procPool, ProcessPool::PoolProcessesCommunicator);
 
     // Read in or assign random velocities
     auto [velocities, status] = dissolve.processingModuleData().realiseIf<std::vector<Vec3<double>>>(
@@ -118,7 +119,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for (auto &&[v, iFree] : zip(velocities, free))
         {
             if (iFree)
-                v.set(exp(procPool.random() - 0.5), exp(procPool.random() - 0.5), exp(procPool.random() - 0.5));
+                v.set(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5));
             else
                 v.zero();
             v /= sqrt(TWOPI);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "base/processpool.h"
+#include "base/randombuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
 #include "classes/changestore.h"
@@ -44,7 +44,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
-    procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy));
 
     int shake, n;
     auto nAttempts = 0, nAccepted = 0;
@@ -66,7 +66,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             strategy = distributor.currentStrategy();
 
             // Re-initialise the random buffer
-            procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+            randomBuffer.reset(ProcessPool::subDivisionStrategy(strategy));
         }
 
         // Loop over target Molecules
@@ -94,8 +94,8 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (shake = 0; shake < nShakesPerAtom_; ++shake)
                 {
                     // Create a random translation vector
-                    rDelta.set(procPool.randomPlusMinusOne() * stepSize_, procPool.randomPlusMinusOne() * stepSize_,
-                               procPool.randomPlusMinusOne() * stepSize_);
+                    rDelta.set(randomBuffer.randomPlusMinusOne() * stepSize_, randomBuffer.randomPlusMinusOne() * stepSize_,
+                               randomBuffer.randomPlusMinusOne() * stepSize_);
 
                     // Translate Atom and update its Cell position
                     i->translateCoordinates(rDelta);
@@ -107,7 +107,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     // Trial the transformed Atom position
                     delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);
-                    accept = delta < 0 ? true : (procPool.random() < exp(-delta * rRT));
+                    accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
 
                     if (accept)
                     {

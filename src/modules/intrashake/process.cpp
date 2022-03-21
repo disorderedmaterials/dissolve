@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
+#include "base/randombuffer.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/changestore.h"
@@ -58,7 +59,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer
-    procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy));
 
     // Ensure that the Species used in the present Configuration have attached atom lists
     for (auto &spPop : targetConfiguration_->speciesPopulations())
@@ -91,7 +92,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             strategy = distributor.currentStrategy();
 
             // Re-initialise the random buffer
-            procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+            randomBuffer.reset(ProcessPool::subDivisionStrategy(strategy));
         }
 
         // Loop over target Molecule
@@ -124,7 +125,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     intraEnergy = bond.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(bond, *i, *j);
 
                     // Select random terminus
-                    terminus = procPool.random() > 0.5 ? 1 : 0;
+                    terminus = randomBuffer.random() > 0.5 ? 1 : 0;
 
                     // Loop over number of shakes per term
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
@@ -132,7 +133,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         // Get translation vector, normalise, and apply random delta
                         vji = box->minimumVector(i->r(), j->r());
                         vji.normalise();
-                        vji *= procPool.randomPlusMinusOne() * bondStepSize_;
+                        vji *= randomBuffer.randomPlusMinusOne() * bondStepSize_;
 
                         // Adjust the Atoms attached to the selected terminus
                         mol->translate(vji, bond.attachedAtoms(terminus));
@@ -146,7 +147,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                         // Trial the transformed Molecule
                         delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 ? true : (procPool.random() < exp(-delta * rRT));
+                        accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
 
                         // Accept new (current) positions of the Molecule's Atoms?
                         if (accept)
@@ -177,7 +178,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     intraEnergy = angle.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(angle, *i, *j, *k);
 
                     // Select random terminus
-                    terminus = procPool.random() > 0.5 ? 1 : 0;
+                    terminus = randomBuffer.random() > 0.5 ? 1 : 0;
 
                     // Loop over number of shakes per term
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
@@ -188,7 +189,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         v = vji * vjk;
 
                         // Create suitable transformation matrix
-                        transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne() * angleStepSize_, true);
+                        transform.createRotationAxis(v.x, v.y, v.z, randomBuffer.randomPlusMinusOne() * angleStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
                         mol->transform(box, transform, angle.j()->r(), angle.attachedAtoms(terminus));
@@ -202,7 +203,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                         // Trial the transformed Molecule
                         delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 ? true : (procPool.random() < exp(-delta * rRT));
+                        accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
 
                         // Accept new (current) positions of the Molecule's Atoms?
                         if (accept)
@@ -235,7 +236,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
 
                     // Select random terminus
-                    terminus = procPool.random() > 0.5 ? 1 : 0;
+                    terminus = randomBuffer.random() > 0.5 ? 1 : 0;
 
                     // Loop over number of shakes per term
                     for (shake = 0; shake < nShakesPerTerm_; ++shake)
@@ -244,7 +245,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         vjk = box->minimumVector(j->r(), k->r());
 
                         // Create suitable transformation matrix
-                        transform.createRotationAxis(vjk.x, vjk.y, vjk.z, procPool.randomPlusMinusOne() * torsionStepSize_,
+                        transform.createRotationAxis(vjk.x, vjk.y, vjk.z, randomBuffer.randomPlusMinusOne() * torsionStepSize_,
                                                      true);
 
                         // Adjust the Atoms attached to the selected terminus
@@ -260,7 +261,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                         // Trial the transformed Molecule
                         delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 ? true : (procPool.random() < exp(-delta * rRT));
+                        accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
 
                         // Accept new (current) positions of the Molecule's Atoms?
                         if (accept)

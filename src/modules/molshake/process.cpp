@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "base/processpool.h"
+#include "base/randombuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -68,7 +68,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer
-    procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy));
 
     int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0,
                nGeneralAttempts = 0;
@@ -84,7 +84,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Set initial random offset for our counter determining whether to perform R+T, R, or T.
-    auto count = procPool.random() * 10;
+    auto count = randomBuffer.random() * 10;
     bool rotate, translate;
 
     Timer timer;
@@ -101,7 +101,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             strategy = distributor.currentStrategy();
 
             // Re-initialise the random buffer
-            procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+            randomBuffer.reset(ProcessPool::subDivisionStrategy(strategy));
         }
 
         // Loop over target Molecules
@@ -143,17 +143,17 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Create a random translation vector and apply it to the Molecule's centre
                 if (translate)
                 {
-                    rDelta.set(procPool.randomPlusMinusOne() * translationStepSize_,
-                               procPool.randomPlusMinusOne() * translationStepSize_,
-                               procPool.randomPlusMinusOne() * translationStepSize_);
+                    rDelta.set(randomBuffer.randomPlusMinusOne() * translationStepSize_,
+                               randomBuffer.randomPlusMinusOne() * translationStepSize_,
+                               randomBuffer.randomPlusMinusOne() * translationStepSize_);
                     mol->translate(rDelta);
                 }
 
                 // Create a random rotation matrix and apply it to the Molecule
                 if (rotate)
                 {
-                    transform.createRotationXY(procPool.randomPlusMinusOne() * rotationStepSize_,
-                                               procPool.randomPlusMinusOne() * rotationStepSize_);
+                    transform.createRotationXY(randomBuffer.randomPlusMinusOne() * rotationStepSize_,
+                                               randomBuffer.randomPlusMinusOne() * rotationStepSize_);
                     mol->transform(box, transform);
                 }
 
@@ -165,7 +165,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 // Trial the transformed atom position
                 delta = newEnergy - currentEnergy;
-                accept = delta < 0 ? true : (procPool.random() < exp(-delta * rRT));
+                accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
 
                 if (accept)
                 {

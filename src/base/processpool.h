@@ -331,31 +331,6 @@ class ProcessPool
     bool allTrue(bool isOK, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
     /*
-     * Buffered Random Numbers
-     */
-    private:
-    // Random number buffer
-    double randomBuffer_[RANDBUFFERSIZE];
-    // Index of next buffered number
-    int randomBufferIndex_;
-    // Communicator for random number buffer
-    ProcessPool::CommunicatorType randomBufferCommGroup_;
-
-    private:
-    // Refill random number buffer
-    void refillRandomBuffer();
-
-    public:
-    // Initialise random number buffer for processes
-    void initialiseRandomBuffer(ProcessPool::CommunicatorType commType);
-    // Initialise random number buffer for processes
-    void initialiseRandomBuffer(ProcessPool::DivisionStrategy strategy);
-    // Get next buffered random number (0-1 inclusive)
-    double random();
-    // Get next buffered random number (-1 to +1 inclusive)
-    double randomPlusMinusOne();
-
-    /*
      * Macro Variables
      */
     public:
