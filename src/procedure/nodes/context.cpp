@@ -2,7 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "procedure/nodes/context.h"
-#include <exception>
+#include <stdexcept>
 
 ProcedureContext::ProcedureContext(ProcessPool &procPool, Configuration *cfg) : processPool_(procPool), configuration_(cfg) {}
 
