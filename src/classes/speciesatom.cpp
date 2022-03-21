@@ -457,7 +457,7 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
     return (nSameElement == i->nBonds() ? 0 : -osBound);
 }
 
-tomlNode SpeciesAtom::serialize() 
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAtom::serialize()
 { 
     toml::array position{r_.x, r_.y, r_.z};
     toml::basic_value<toml::discard_comments, std::map, std::vector> atom

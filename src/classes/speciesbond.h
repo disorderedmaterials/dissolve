@@ -14,8 +14,6 @@
 class SpeciesAtom;
 class Species;
 
-typedef toml::basic_value<toml::discard_comments, std::map, std::vector> tomlNode;
-
 // Bond functional forms
 class BondFunctions
 {
@@ -127,7 +125,7 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     // Return force multiplier for specified distance
     double force(double distance) const;
 
-    tomlNode serialize();
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };
 
 // MasterBond Definition

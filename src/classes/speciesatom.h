@@ -17,9 +17,7 @@ class AtomType;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
-class SpeciesTorsion;
-
-typedef toml::basic_value<toml::discard_comments, std::map, std::vector> tomlNode; 
+class SpeciesTorsion; 
 
 // SpeciesAtom Definition
 class SpeciesAtom
@@ -190,5 +188,5 @@ class SpeciesAtom
     // Guess and return oxidation state for the specified SpeciesAtom
     static int guessOxidationState(const SpeciesAtom *i);
 
-    tomlNode serialize();
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

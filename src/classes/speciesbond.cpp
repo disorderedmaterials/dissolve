@@ -334,7 +334,7 @@ double SpeciesBond::force(double distance) const
                                          BondFunctions::forms().keyword(bondForm))));
 }
 
-tomlNode SpeciesBond::serialize()
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::serialize()
 {
     toml::basic_value <toml::discard_comments, std::map, std::vector> bond
     {
