@@ -9,6 +9,7 @@
 #include "templates/vector3.h"
 #include <memory>
 #include <vector>
+#include <map>
 #include <toml11/toml.hpp>
 
 // Forward Declarations
@@ -17,6 +18,8 @@ class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
 class SpeciesTorsion;
+
+typedef toml::basic_value<toml::discard_comments, std::map, std::vector> tomlNode; 
 
 // SpeciesAtom Definition
 class SpeciesAtom
@@ -187,5 +190,5 @@ class SpeciesAtom
     // Guess and return oxidation state for the specified SpeciesAtom
     static int guessOxidationState(const SpeciesAtom *i);
 
-    toml::value serialize();
+    tomlNode serialize();
 };
