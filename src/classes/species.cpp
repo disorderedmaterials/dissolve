@@ -225,7 +225,7 @@ int Species::nCoordinateSets() const { return coordinateSets_.size(); }
 const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { return coordinateSets_; }
 
 
-tomlNode Species::serialize() 
+toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serialize()
 {
     toml::array atoms;
     for (auto &atom : atoms_)
