@@ -6,7 +6,7 @@
 #include "modules/analyse/analyse.h"
 
 // Run main processing
-bool AnalyseModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

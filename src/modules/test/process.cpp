@@ -5,7 +5,7 @@
 #include "modules/test/test.h"
 
 // Run main processing
-bool TestModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool TestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

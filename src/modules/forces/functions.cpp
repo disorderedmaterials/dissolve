@@ -20,7 +20,7 @@ dissolve::CombinableContainer<std::vector<Vec3<double>>> createCombinableForces(
 } // namespace
 
 // Calculate internal molecule forces, optionally only over the supplied molecules
-void ForcesModule::internalMoleculeForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+void ForcesModule::internalMoleculeForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                           bool includePairPotentialTerms, std::vector<Vec3<double>> &f,
                                           OptionalReferenceWrapper<std::vector<const Molecule *>> targetMolecules)
 {
@@ -79,7 +79,7 @@ void ForcesModule::internalMoleculeForces(ProcessPool &procPool, Configuration *
 }
 
 // Calculate pair potential forces within the specified Configuration
-void ForcesModule::pairPotentialForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+void ForcesModule::pairPotentialForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                        std::vector<Vec3<double>> &f)
 {
     /*
@@ -110,6 +110,7 @@ void ForcesModule::pairPotentialForces(ProcessPool &procPool, Configuration *cfg
         // Interatomic interactions between atoms in this cell and its neighbours
         kernel.forces(cellI, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
     };
+
     // Execute lambda operator for each cell
     dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin), dissolve::counting_iterator<int>(end),
                        unaryOp);
@@ -117,7 +118,7 @@ void ForcesModule::pairPotentialForces(ProcessPool &procPool, Configuration *cfg
 }
 
 // Calculate total forces within the supplied Configuration
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
 {
     /*
@@ -151,9 +152,9 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const std::vector<const Molecule *> &targetMolecules,
-                               const PotentialMap &potentialMap, std::vector<Vec3<double>> &f,
-                               OptionalReferenceWrapper<Timer> commsTimer)
+void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
+                               const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
+                               std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
 {
     /*
      * Calculates the total forces acting on the supplied Molecules, arising from PairPotential interactions
@@ -180,7 +181,7 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 }
 
 // Calculate total forces within the specified Species
-void ForcesModule::totalForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
+void ForcesModule::totalForces(const ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f)
 {
     // Zero force array

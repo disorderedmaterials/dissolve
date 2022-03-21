@@ -79,7 +79,7 @@ CellArray &Configuration::cells() { return cells_; }
 const CellArray &Configuration::cells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
-void Configuration::applySizeFactor(ProcessPool &procPool, const PotentialMap &potentialMap)
+void Configuration::applySizeFactor(const ProcessPool &procPool, const PotentialMap &potentialMap)
 {
     const auto reductionFactor = 0.95;
 

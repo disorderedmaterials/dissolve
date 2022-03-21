@@ -10,7 +10,7 @@
 #include "modules/export_trajectory/exporttraj.h"
 
 // Run main processing
-bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool ExportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!trajectoryFormat_.hasFilename())
         Messenger::error("No valid file/format set for trajectory export.\n");

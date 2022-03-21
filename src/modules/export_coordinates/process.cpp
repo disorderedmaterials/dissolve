@@ -8,7 +8,7 @@
 #include "modules/export_coordinates/exportcoords.h"
 
 // Run main processing
-bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!coordinatesFormat_.hasFilename())
         Messenger::error("No valid file/format set for coordinate export.\n");

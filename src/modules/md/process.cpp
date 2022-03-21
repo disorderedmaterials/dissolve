@@ -13,7 +13,7 @@
 #include "templates/algorithms.h"
 
 // Run main processing
-bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

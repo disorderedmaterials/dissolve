@@ -76,7 +76,7 @@ void ProcessPool::clear()
 
 #ifdef PARALLEL
 // Return communicator specified
-MPI_Comm ProcessPool::communicator(ProcessPool::CommunicatorType commType)
+MPI_Comm ProcessPool::communicator(ProcessPool::CommunicatorType commType) const
 {
     if (commType == ProcessPool::GroupProcessesCommunicator)
         return groupCommunicator_;
@@ -635,7 +635,7 @@ int ProcessPool::twoBodyLoopEnd(int nItems) const
  */
 
 // Wait for all processes
-bool ProcessPool::wait(ProcessPool::CommunicatorType commType)
+bool ProcessPool::wait(ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     if (MPI_Barrier(communicator(commType)) != MPI_SUCCESS)
@@ -645,7 +645,8 @@ bool ProcessPool::wait(ProcessPool::CommunicatorType commType)
 }
 
 // Send single integer value to target process
-bool ProcessPool::send(int value, int targetRank, ProcessPool::CommunicatorType commType, OptionalReferenceWrapper<Timer> timer)
+bool ProcessPool::send(int value, int targetRank, ProcessPool::CommunicatorType commType,
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -660,7 +661,7 @@ bool ProcessPool::send(int value, int targetRank, ProcessPool::CommunicatorType 
 
 // Receive single integer value from source process
 bool ProcessPool::receive(int &value, int sourceRank, ProcessPool::CommunicatorType commType,
-                          OptionalReferenceWrapper<Timer> timer)
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -676,7 +677,7 @@ bool ProcessPool::receive(int &value, int sourceRank, ProcessPool::CommunicatorT
 
 // Send single long integer value to target process
 bool ProcessPool::send(long int value, int targetRank, ProcessPool::CommunicatorType commType,
-                       OptionalReferenceWrapper<Timer> timer)
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -691,7 +692,7 @@ bool ProcessPool::send(long int value, int targetRank, ProcessPool::Communicator
 
 // Receive single long integer value from source process
 bool ProcessPool::receive(long int &value, int sourceRank, ProcessPool::CommunicatorType commType,
-                          OptionalReferenceWrapper<Timer> timer)
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -707,7 +708,7 @@ bool ProcessPool::receive(long int &value, int sourceRank, ProcessPool::Communic
 
 // Send single double value to target process
 bool ProcessPool::send(double value, int targetRank, ProcessPool::CommunicatorType commType,
-                       OptionalReferenceWrapper<Timer> timer)
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -722,7 +723,7 @@ bool ProcessPool::send(double value, int targetRank, ProcessPool::CommunicatorTy
 
 // Receive single double value from source process
 bool ProcessPool::receive(double &value, int sourceRank, ProcessPool::CommunicatorType commType,
-                          OptionalReferenceWrapper<Timer> timer)
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -738,7 +739,7 @@ bool ProcessPool::receive(double &value, int sourceRank, ProcessPool::Communicat
 
 // Send single bool value to target process
 bool ProcessPool::send(bool value, int targetRank, ProcessPool::CommunicatorType commType,
-                       OptionalReferenceWrapper<Timer> timer)
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -754,7 +755,7 @@ bool ProcessPool::send(bool value, int targetRank, ProcessPool::CommunicatorType
 
 // Receive single bool value from source process
 bool ProcessPool::receive(bool &value, int sourceRank, ProcessPool::CommunicatorType commType,
-                          OptionalReferenceWrapper<Timer> timer)
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -772,7 +773,7 @@ bool ProcessPool::receive(bool &value, int sourceRank, ProcessPool::Communicator
 
 // Send integer array data to target process
 bool ProcessPool::send(int *source, int nData, int targetRank, ProcessPool::CommunicatorType commType,
-                       OptionalReferenceWrapper<Timer> timer)
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -787,7 +788,7 @@ bool ProcessPool::send(int *source, int nData, int targetRank, ProcessPool::Comm
 
 // Receive integer array data from target process
 bool ProcessPool::receive(int *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType,
-                          OptionalReferenceWrapper<Timer> timer)
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -803,7 +804,7 @@ bool ProcessPool::receive(int *source, int nData, int sourceRank, ProcessPool::C
 
 // Send double array data to target process
 bool ProcessPool::send(double *source, int nData, int targetRank, ProcessPool::CommunicatorType commType,
-                       OptionalReferenceWrapper<Timer> timer)
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -818,7 +819,7 @@ bool ProcessPool::send(double *source, int nData, int targetRank, ProcessPool::C
 
 // Receive double array data from target process
 bool ProcessPool::receive(double *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType,
-                          OptionalReferenceWrapper<Timer> timer)
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -838,7 +839,7 @@ bool ProcessPool::receive(double *source, int nData, int sourceRank, ProcessPool
 
 // Broadcast std::string
 bool ProcessPool::broadcast(std::string &source, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -889,7 +890,7 @@ bool ProcessPool::broadcast(std::string &source, int rootRank, ProcessPool::Comm
 
 // Broadcast char data to all Processes
 bool ProcessPool::broadcast(char *source, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -938,14 +939,14 @@ bool ProcessPool::broadcast(char *source, int rootRank, ProcessPool::Communicato
 
 // Broadcast single integer
 bool ProcessPool::broadcast(int &source, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
     return broadcast(&source, 1, rootRank, commType);
 }
 
 // Broadcast integer(s) to all Processes
 bool ProcessPool::broadcast(int *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -963,7 +964,7 @@ bool ProcessPool::broadcast(int *source, int count, int rootRank, ProcessPool::C
 
 // Broadcast char(s) to all Processes
 bool ProcessPool::broadcast(char *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -981,7 +982,7 @@ bool ProcessPool::broadcast(char *source, int count, int rootRank, ProcessPool::
 
 // Broadcast long integer to all Processes
 bool ProcessPool::broadcast(long int &source, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -999,7 +1000,7 @@ bool ProcessPool::broadcast(long int &source, int rootRank, ProcessPool::Communi
 
 // Broadcast long integer to all Processes
 bool ProcessPool::broadcast(long int *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1017,14 +1018,14 @@ bool ProcessPool::broadcast(long int *source, int count, int rootRank, ProcessPo
 
 // Broadcast single double
 bool ProcessPool::broadcast(double &source, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
     return broadcast(&source, 1, rootRank, commType);
 }
 
 // Broadcast double(s) to all Processes
 bool ProcessPool::broadcast(double *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1042,7 +1043,7 @@ bool ProcessPool::broadcast(double *source, int count, int rootRank, ProcessPool
 
 // Broadcast float(s) to all Processes
 bool ProcessPool::broadcast(float *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1061,7 +1062,7 @@ bool ProcessPool::broadcast(float *source, int count, int rootRank, ProcessPool:
 
 // Broadcast bool to all Processes
 bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1081,7 +1082,7 @@ bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::Communicato
 
 // Broadcast std::vector<int>
 bool ProcessPool::broadcast(std::vector<int> &array, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1102,7 +1103,7 @@ bool ProcessPool::broadcast(std::vector<int> &array, int rootRank, ProcessPool::
 
 // Broadcast std::vector<double>
 bool ProcessPool::broadcast(std::vector<double> &array, int rootRank, ProcessPool::CommunicatorType commType,
-                            OptionalReferenceWrapper<Timer> timer)
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1127,7 +1128,7 @@ bool ProcessPool::broadcast(std::vector<double> &array, int rootRank, ProcessPoo
 
 // Reduce (sum) double data to root rank
 bool ProcessPool::sum(double *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
-                      OptionalReferenceWrapper<Timer> timer)
+                      OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1157,7 +1158,7 @@ bool ProcessPool::sum(double *source, int count, int rootRank, ProcessPool::Comm
 
 // Reduce (sum) int data to root rank
 bool ProcessPool::sum(int *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
-                      OptionalReferenceWrapper<Timer> timer)
+                      OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1187,7 +1188,7 @@ bool ProcessPool::sum(int *source, int count, int rootRank, ProcessPool::Communi
 
 // Reduce (sum) double data to all processes
 bool ProcessPool::allSum(double *source, int count, ProcessPool::CommunicatorType commType,
-                         OptionalReferenceWrapper<Timer> timer)
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1207,7 +1208,7 @@ bool ProcessPool::allSum(double *source, int count, ProcessPool::CommunicatorTyp
 
 // Reduce (sum) vector of Vec3<double> data to all processes
 bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::CommunicatorType commType,
-                         OptionalReferenceWrapper<Timer> timer)
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1241,7 +1242,8 @@ bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::Communi
 }
 
 // Reduce (sum) int data to all processes
-bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType commType, OptionalReferenceWrapper<Timer> timer)
+bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType commType,
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1264,7 +1266,7 @@ bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType c
 
 // Reduce (sum) long int data to all processes
 bool ProcessPool::allSum(long int *source, int count, ProcessPool::CommunicatorType commType,
-                         OptionalReferenceWrapper<Timer> timer)
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1285,7 +1287,7 @@ bool ProcessPool::allSum(long int *source, int count, ProcessPool::CommunicatorT
 
 // Reduce (sum) double data over processes relevant to specified strategy
 bool ProcessPool::allSum(double *source, int count, ProcessPool::DivisionStrategy strategy,
-                         OptionalReferenceWrapper<Timer> timer)
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1317,7 +1319,8 @@ bool ProcessPool::allSum(double *source, int count, ProcessPool::DivisionStrateg
 }
 
 // Reduce (sum) int data over processes relevant to specified strategy
-bool ProcessPool::allSum(int *source, int count, ProcessPool::DivisionStrategy strategy, OptionalReferenceWrapper<Timer> timer)
+bool ProcessPool::allSum(int *source, int count, ProcessPool::DivisionStrategy strategy,
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
     if (timer)
@@ -1350,7 +1353,7 @@ bool ProcessPool::allSum(int *source, int count, ProcessPool::DivisionStrategy s
 
 // Assemble integer array for entire pool on target process
 bool ProcessPool::assemble(int *array, int nData, int *rootDest, int rootMaxData, int rootRank,
-                           ProcessPool::CommunicatorType commType, OptionalReferenceWrapper<Timer> timer)
+                           ProcessPool::CommunicatorType commType, OptionalReferenceWrapper<Timer> timer) const
 {
     /*
      * Given that the integer 'array' exists on all processes, and each process has stored nData at the
@@ -1408,7 +1411,7 @@ bool ProcessPool::assemble(int *array, int nData, int *rootDest, int rootMaxData
 
 // Assemble double array for entire pool on target process
 bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int rootMaxData, int rootRank,
-                           ProcessPool::CommunicatorType commType, OptionalReferenceWrapper<Timer> timer)
+                           ProcessPool::CommunicatorType commType, OptionalReferenceWrapper<Timer> timer) const
 {
     /*
      * Given that the double 'array' exists on all processes, and each process has stored nData at the
@@ -1468,7 +1471,7 @@ bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int 
  */
 
 // Broadcast logical 'true' decision to all processes (Master only)
-bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     auto decision = true;
@@ -1479,7 +1482,7 @@ bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commTyp
 }
 
 // Broadcast logical 'false' decision to all processes (Master only)
-bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     auto decision = false;
@@ -1490,7 +1493,7 @@ bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commTy
 }
 
 // Receive logical decision from master (Slaves only)
-bool ProcessPool::decision(int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::decision(int rootRank, ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     bool data;
@@ -1502,7 +1505,7 @@ bool ProcessPool::decision(int rootRank, ProcessPool::CommunicatorType commType)
 }
 
 // Test the supplied condition over all processes, returning true only if they all report truth
-bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
+bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     // First, sum all bool values of the processes in the pool

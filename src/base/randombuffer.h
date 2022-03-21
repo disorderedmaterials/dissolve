@@ -18,14 +18,14 @@
 class RandomBuffer
 {
     public:
-    RandomBuffer(ProcessPool &procPool, ProcessPool::CommunicatorType commType,
+    RandomBuffer(const ProcessPool &procPool, ProcessPool::CommunicatorType commType,
                  OptionalReferenceWrapper<Timer> commsTimer = {});
-    RandomBuffer(ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
+    RandomBuffer(const ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
                  OptionalReferenceWrapper<Timer> commsTimer = {});
 
     private:
     // Process pool in which the random buffer is operating
-    ProcessPool &processPool_;
+    const ProcessPool &processPool_;
     // Random number buffer
     std::array<double, RANDBUFFERSIZE> buffer_;
     // Index of next buffered number

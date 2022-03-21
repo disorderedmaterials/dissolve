@@ -28,7 +28,7 @@
 #include <functional>
 
 // Run set-up stage
-bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
@@ -109,7 +109,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordB
 }
 
 // Run main processing
-bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     std::string testDataName;
 

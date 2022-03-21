@@ -9,7 +9,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateDAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

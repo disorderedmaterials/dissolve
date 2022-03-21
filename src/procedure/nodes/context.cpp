@@ -4,10 +4,13 @@
 #include "procedure/nodes/context.h"
 #include <stdexcept>
 
-ProcedureContext::ProcedureContext(ProcessPool &procPool, Configuration *cfg) : processPool_(procPool), configuration_(cfg) {}
+ProcedureContext::ProcedureContext(const ProcessPool &procPool, Configuration *cfg)
+    : processPool_(procPool), configuration_(cfg)
+{
+}
 
 // Return available process pool
-ProcessPool &ProcedureContext::processPool() const { return processPool_; };
+const ProcessPool &ProcedureContext::processPool() const { return processPool_; };
 
 // Set target Configuration
 void ProcedureContext::setConfiguration(Configuration *cfg) { configuration_ = cfg; }

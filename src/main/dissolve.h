@@ -143,7 +143,7 @@ class Dissolve
     // Return whether specified PairPotential is defined
     PairPotential *pairPotential(std::string_view at1, std::string_view at2) const;
     // Return map for PairPotentials
-    const PotentialMap &potentialMap();
+    const PotentialMap &potentialMap() const;
     // Clear and regenerate all PairPotentials, replacing those currently defined
     bool regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
@@ -301,7 +301,13 @@ class Dissolve
     /*
      * Parallel Comms
      */
+    private:
+    // World process pool
+    ProcessPool worldPool_;
+
     public:
-    // Return world process pool
-    ProcessPool &worldPool();
+    // Return the world process pool
+    const ProcessPool &worldPool() const;
+    // Set up local MPI pools
+    bool setUpMPIPools();
 };

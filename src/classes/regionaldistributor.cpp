@@ -12,7 +12,7 @@
 // Debug Mode
 const bool DND = true;
 
-RegionalDistributor::RegionalDistributor(const int nMolecules, const CellArray &cellArray, ProcessPool &procPool,
+RegionalDistributor::RegionalDistributor(const int nMolecules, const CellArray &cellArray, const ProcessPool &procPool,
                                          ProcessPool::DivisionStrategy strategy)
     : processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray)
 {

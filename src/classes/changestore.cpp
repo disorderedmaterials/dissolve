@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-ChangeStore::ChangeStore(ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer)
+ChangeStore::ChangeStore(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer)
     : processPool_(procPool), commsTimer_(commsTimer)
 {
 }

@@ -8,7 +8,7 @@
 #include "modules/geomopt/geomopt.h"
 
 // Run main processing
-bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool GeometryOptimisationModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);

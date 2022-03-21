@@ -12,7 +12,7 @@
 #include "modules/rdf/rdf.h"
 
 // Run main processing
-bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

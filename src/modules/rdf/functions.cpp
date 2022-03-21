@@ -55,7 +55,8 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
 }
 
 // Calculate partial g(r) with optimised double-loop
-bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth)
+bool RDFModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
+                                  const double binWidth)
 {
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -163,7 +164,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     return true;
 }
 
-bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
+bool RDFModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
     auto &cellArray = cfg->cells();
 
@@ -290,7 +291,7 @@ std::vector<std::pair<const Species *, double>> RDFModule::speciesPopulations() 
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, Configuration *cfg,
+bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
                             RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth,
                             bool &alreadyUpToDate)
 {
@@ -423,7 +424,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 }
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
-bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
+bool RDFModule::calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
                                       PartialSet &unweightedgr, const Functions::Function1DWrapper intraBroadening,
                                       int smoothing)
 {
@@ -483,7 +484,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, std::string_view targetPrefix,
+bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
                                 std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
                                 PartialSet &summedUnweightedGR)
 {

@@ -9,7 +9,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

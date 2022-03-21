@@ -9,7 +9,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

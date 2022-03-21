@@ -17,7 +17,7 @@ class Molecule;
 class RegionalDistributor
 {
     public:
-    RegionalDistributor(const int nMolecules, const CellArray &cellArray, ProcessPool &procPool,
+    RegionalDistributor(const int nMolecules, const CellArray &cellArray, const ProcessPool &procPool,
                         ProcessPool::DivisionStrategy strategy);
     ~RegionalDistributor() = default;
     // Molecule Status Flag

@@ -12,7 +12,7 @@
  */
 
 // Generate S(Q) from supplied g(r)
-bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
+bool SQModule::calculateUnweightedSQ(const ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
                                      double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
                                      Functions::Function1DWrapper broadening)
 {

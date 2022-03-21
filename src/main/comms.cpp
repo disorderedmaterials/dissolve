@@ -5,21 +5,18 @@
 #include "main/dissolve.h"
 #include <numeric>
 
-// Return a world process pool
-ProcessPool &Dissolve::worldPool()
+// Return the world process pool
+const ProcessPool &Dissolve::worldPool() const { return worldPool_; }
+
+// Set up communications
+bool Dissolve::setUpMPIPools()
 {
-    static bool firstRun = true;
-    static ProcessPool world;
+    Messenger::print("*** Setting up MPI pools...\n");
 
-    // If this is the first time we've been called, construct the pool
-    if (firstRun)
-    {
-        // Assemble list of (world) process ranks for the pool
-        std::vector<int> ranks(ProcessPool::nWorldProcesses());
-        std::iota(ranks.begin(), ranks.end(), 0);
-        world.setUp("World", ranks);
-        firstRun = false;
-    }
+    // Set up the world pool
+    std::vector<int> allProcesses(ProcessPool::nWorldProcesses());
+    std::iota(allProcesses.begin(), allProcesses.end(), 0);
+    worldPool_.setUp("World", allProcesses);
 
-    return world;
+    return true;
 }

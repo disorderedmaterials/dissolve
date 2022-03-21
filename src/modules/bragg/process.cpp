@@ -11,7 +11,7 @@
 #include "templates/algorithms.h"
 
 // Run main processing
-bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Bragg contributions.

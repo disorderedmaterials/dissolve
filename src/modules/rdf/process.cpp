@@ -8,7 +8,7 @@
 #include "modules/rdf/rdf.h"
 
 // Run main processing
-bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate standard partial g(r)

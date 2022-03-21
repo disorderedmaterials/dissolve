@@ -108,7 +108,7 @@ std::map<std::string, std::vector<const Module *>> ModuleLayer::modulesAsMap(con
  */
 
 // Run set-up stages for all modules
-bool ModuleLayer::setUpAll(Dissolve &dissolve, ProcessPool &procPool)
+bool ModuleLayer::setUpAll(Dissolve &dissolve, const ProcessPool &procPool)
 {
     auto result = true;
 

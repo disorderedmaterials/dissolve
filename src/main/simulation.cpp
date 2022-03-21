@@ -187,6 +187,10 @@ bool Dissolve::prepare()
         }
     }
 
+    // Set up parallel comms
+    if (!setUpMPIPools())
+        return Messenger::error("Failed to set up parallel communications.\n");
+
     // Set up all modules and return
     return setUpProcessingLayerModules();
 }

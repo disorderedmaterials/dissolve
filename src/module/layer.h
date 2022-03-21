@@ -74,5 +74,5 @@ class ModuleLayer
      */
     public:
     // Run set-up stages for all modules
-    bool setUpAll(Dissolve &dissolve, ProcessPool &procPool);
+    bool setUpAll(Dissolve &dissolve, const ProcessPool &procPool);
 };

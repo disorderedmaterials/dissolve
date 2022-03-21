@@ -20,7 +20,7 @@ class Timer;
 class ChangeStore
 {
     public:
-    ChangeStore(ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer = {});
+    ChangeStore(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer = {});
     ~ChangeStore() = default;
 
     /*
@@ -68,7 +68,7 @@ class ChangeStore
      */
     private:
     // ProcessPool over which this ChangeStore should broadcast
-    ProcessPool &processPool_;
+    const ProcessPool &processPool_;
     // Optional timer for capturing communication times
     OptionalReferenceWrapper<Timer> commsTimer_;
 

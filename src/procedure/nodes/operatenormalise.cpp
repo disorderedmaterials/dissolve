@@ -21,7 +21,7 @@ OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)
  */
 
 // Operate on Data1D target
-bool OperateNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
+bool OperateNormaliseProcedureNode::operateData1D(const ProcessPool &procPool, Configuration *cfg)
 {
     // Get sum of absolute values
     auto sum = absolute_ ? Integrator::absSum(*targetData1D_) : Integrator::sum(*targetData1D_);
@@ -33,7 +33,7 @@ bool OperateNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configu
 }
 
 // Operate on Data2D target
-bool OperateNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
+bool OperateNormaliseProcedureNode::operateData2D(const ProcessPool &procPool, Configuration *cfg)
 {
     // Get sum of absolute values
     auto sum = absolute_ ? Integrator::absSum(*targetData2D_) : Integrator::sum(*targetData2D_);
@@ -44,7 +44,7 @@ bool OperateNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configu
 }
 
 // Operate on Data3D target
-bool OperateNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
+bool OperateNormaliseProcedureNode::operateData3D(const ProcessPool &procPool, Configuration *cfg)
 {
     // Get sum of absolute values
     auto sum = absolute_ ? Integrator::absSum(*targetData3D_) : Integrator::sum(*targetData3D_);

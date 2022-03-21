@@ -7,7 +7,7 @@
 #include "modules/checks/checks.h"
 
 // Run main processing
-bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool ChecksModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Perform simple checks for the target Configuration(s)

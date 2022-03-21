@@ -8,7 +8,7 @@
 #include "modules/import_trajectory/importtraj.h"
 
 // Run main processing
-bool ImportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

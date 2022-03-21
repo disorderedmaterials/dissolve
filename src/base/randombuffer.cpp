@@ -3,14 +3,14 @@
 
 #include "base/randombuffer.h"
 
-RandomBuffer::RandomBuffer(ProcessPool &procPool, ProcessPool::CommunicatorType commType,
+RandomBuffer::RandomBuffer(const ProcessPool &procPool, ProcessPool::CommunicatorType commType,
                            OptionalReferenceWrapper<Timer> commsTimer)
     : processPool_(procPool), commsGroup_(commType), index_(0), commsTimer_(commsTimer)
 {
     refill();
 }
 
-RandomBuffer::RandomBuffer(ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
+RandomBuffer::RandomBuffer(const ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
                            OptionalReferenceWrapper<Timer> commsTimer)
     : processPool_(procPool), index_(0), commsTimer_(commsTimer)
 {

@@ -15,11 +15,11 @@ class ProcessPool;
 class ProcedureContext
 {
     public:
-    ProcedureContext(ProcessPool &procPool, Configuration *cfg = nullptr);
+    ProcedureContext(const ProcessPool &procPool, Configuration *cfg = nullptr);
 
     private:
     // Available process pool
-    ProcessPool &processPool_;
+    const ProcessPool &processPool_;
     // Target Configuration
     Configuration *configuration_{nullptr};
     // Prefix for generated data
@@ -29,7 +29,7 @@ class ProcedureContext
 
     public:
     // Return available process pool
-    ProcessPool &processPool() const;
+    const ProcessPool &processPool() const;
     // Set target Configuration
     void setConfiguration(Configuration *cfg);
     // Return target Configuration
