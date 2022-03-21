@@ -37,7 +37,7 @@ double MDModule::determineTimeStep(const std::vector<Vec3<double>> &f)
 }
 
 // Evolve Species coordinates, returning new coordinates
-std::vector<Vec3<double>> MDModule::evolve(ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
+std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
                                            double temperature, int nSteps, double deltaT,
                                            const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities)
 {

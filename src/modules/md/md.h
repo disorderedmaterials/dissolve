@@ -60,7 +60,7 @@ class MDModule : public Module
 
     public:
     // Evolve Species coordinates, returning new coordinates
-    static std::vector<Vec3<double>> evolve(ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
+    static std::vector<Vec3<double>> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
                                             double temperature, int nSteps, double deltaT,
                                             const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities);
 
