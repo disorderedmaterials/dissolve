@@ -134,7 +134,10 @@ void FileAndFormatKeywordWidget::checkFileValidity()
 }
 
 // Update value displayed in widget
-void FileAndFormatKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void FileAndFormatKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetValues(coreData_);
+}
 
 // Update widget values data based on keyword data
 void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData &coreData)

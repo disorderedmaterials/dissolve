@@ -10,7 +10,7 @@ set(gui_MOC_HDRS
     graphgizmo.h
     integrator1dgizmo.h
     # Viewers
-    configurationwidget.h
+    configurationviewerwidget.h
     datawidget.h
     selectsymbol.h
     sitewidget.h
@@ -71,7 +71,7 @@ set(gui_UIS
     graphgizmo.ui
     integrator1dgizmo.ui
     # Viewers
-    configurationwidget.ui
+    configurationviewerwidget.ui
     datawidget.ui
     selectsymbol.ui
     sitewidget.ui
@@ -129,7 +129,7 @@ set(gui_SRCS
     configurationviewer_input.cpp
     configurationviewer_interaction.cpp
     configurationviewer_render.cpp
-    configurationwidget_funcs.cpp
+    configurationviewerwidget_funcs.cpp
     dataviewer_funcs.cpp
     dataviewer_input.cpp
     dataviewer_interaction.cpp

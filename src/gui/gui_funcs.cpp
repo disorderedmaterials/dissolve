@@ -97,18 +97,26 @@ void DissolveWindow::resizeEvent(QResizeEvent *event) {}
  * Dissolve Integration
  */
 
-// Flag that data has been modified via the GUI
-void DissolveWindow::setModified()
-{
-    modified_ = true;
-
-    updateWindowTitle();
-}
-
 // Return reference to Dissolve
 Dissolve &DissolveWindow::dissolve() { return dissolve_; }
 
 const Dissolve &DissolveWindow::dissolve() const { return dissolve_; }
+
+/*
+ * Data Mutation Signalling
+ */
+
+// Flag that data has been modified via the GUI
+void DissolveWindow::setModified(Flags<DissolveSignals::DataMutations> dataMutationFlags)
+{
+    modified_ = true;
+
+    // Signal if any data was modified
+    if (dataMutationFlags.anySet())
+        emit(dataMutated(dataMutationFlags));
+
+    updateWindowTitle();
+}
 
 /*
  * Statusbar

@@ -12,8 +12,6 @@ Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget *parent, Vec3Node
 
     refreshing_ = true;
 
-    updateValue();
-
     // Set appropriate labels
     Vec3WidgetLabels::set(ui_.ValueALabel, keyword_->labelType(), 0);
     Vec3WidgetLabels::set(ui_.ValueBLabel, keyword_->labelType(), 1);
@@ -97,7 +95,7 @@ void Vec3NodeValueKeywordWidget::on_ValueCEdit_returnPressed()
  */
 
 // Update value displayed in widget
-void Vec3NodeValueKeywordWidget::updateValue()
+void Vec3NodeValueKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

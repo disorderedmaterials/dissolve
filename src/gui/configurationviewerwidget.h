@@ -3,24 +3,24 @@
 
 #pragma once
 
-#include "gui/ui_configurationwidget.h"
+#include "gui/ui_configurationviewerwidget.h"
 
 // Configuration Widget
-class ConfigurationWidget : public QWidget
+class ConfigurationViewerWidget : public QWidget
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    ConfigurationWidget(QWidget *parent = 0);
-    ~ConfigurationWidget();
+    ConfigurationViewerWidget(QWidget *parent = 0);
+    ~ConfigurationViewerWidget();
 
     /*
      * UI
      */
     private:
     // Main form declaration
-    Ui::ConfigurationWidget ui_;
+    Ui::ConfigurationViewerWidget ui_;
 
     private slots:
     // Notify that the style of displayed data in the underlying viewer has changed

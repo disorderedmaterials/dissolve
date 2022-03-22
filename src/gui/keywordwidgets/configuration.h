@@ -4,13 +4,12 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/ui_configuration.h"
+#include "gui/models/configurationModel.h"
 #include "keywords/configuration.h"
-#include <QComboBox>
+#include <QWidget>
 
-// Forward Declarations
-class Configuration;
-
-class ConfigurationKeywordWidget : public QComboBox, public KeywordWidgetBase
+class ConfigurationKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
@@ -26,11 +25,17 @@ class ConfigurationKeywordWidget : public QComboBox, public KeywordWidgetBase
     ConfigurationKeyword *keyword_;
 
     /*
-     * Signals / Slots
+     * Widgets
      */
+    private:
+    // Main form declaration
+    Ui::ConfigurationWidget ui_;
+    // Model for combo box
+    ConfigurationModel configurationModel_;
+
     private slots:
-    // Combo box item changed
-    void comboIndexChanged(int index);
+    // Value changed
+    void on_ConfigurationCombo_currentIndexChanged(int index);
 
     signals:
     // Keyword data changed
@@ -39,7 +44,11 @@ class ConfigurationKeywordWidget : public QComboBox, public KeywordWidgetBase
     /*
      * Update
      */
+    private:
+    // Reset model data
+    void resetModelData();
+
     public:
     // Update value displayed in widget
-    void updateValue() override;
+    void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
 };

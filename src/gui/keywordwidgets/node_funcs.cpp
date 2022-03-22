@@ -51,4 +51,4 @@ void NodeKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QMode
  */
 
 // Update value displayed in widget
-void NodeKeywordWidget::updateValue() {}
+void NodeKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}

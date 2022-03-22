@@ -46,5 +46,5 @@ class SpeciesKeywordWidget : public QWidget, public KeywordWidgetBase
      */
     public:
     // Update value displayed in widget
-    void updateValue() override;
+    void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
 };

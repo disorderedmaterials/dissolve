@@ -45,5 +45,5 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
      */
     public:
     // Update value displayed in widget
-    void updateValue() override;
+    void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
 };

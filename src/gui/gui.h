@@ -6,6 +6,7 @@
 #include "classes/referencepoint.h"
 #include "gui/maintab.h"
 #include "gui/outputhandler.hui"
+#include "gui/signals.h"
 #include "gui/thread.hui"
 #include "gui/ui_gui.h"
 
@@ -52,14 +53,20 @@ class DissolveWindow : public QMainWindow
     // Prepare the simulation and run for a set count
     void setupIteration(int count);
 
-    public slots:
-    // Flag that data has been modified via the GUI
-    void setModified();
-
     public:
     // Return reference to Dissolve
     Dissolve &dissolve();
     const Dissolve &dissolve() const;
+
+    /*
+     * Data Mutation Signalling
+     */
+    public slots:
+    // Flag that data has been modified via the GUI
+    void setModified(Flags<DissolveSignals::DataMutations> dataMutationFlags = {});
+
+    signals:
+    void dataMutated(int);
 
     /*
      * StatusBar
