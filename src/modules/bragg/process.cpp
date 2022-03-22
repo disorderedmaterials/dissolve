@@ -37,9 +37,6 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
                      multiplicity_.z);
     Messenger::print("\n");
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     // Realise an AtomTypeList containing the sum of atom types over all target configurations (currently only one)
     auto &combinedAtomTypes =
         dissolve.processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", uniqueName_, GenericItem::InRestartFileFlag);

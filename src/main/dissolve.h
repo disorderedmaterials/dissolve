@@ -304,6 +304,4 @@ class Dissolve
     public:
     // Return world process pool
     ProcessPool &worldPool();
-    // Set up local MPI pools
-    bool setUpMPIPools();
 };

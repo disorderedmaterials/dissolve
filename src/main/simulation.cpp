@@ -187,10 +187,6 @@ bool Dissolve::prepare()
         }
     }
 
-    // Set up parallel comms / limits etc.
-    if (!setUpMPIPools())
-        return Messenger::error("Failed to set up parallel communications.\n");
-
     // Set up all modules and return
     return setUpProcessingLayerModules();
 }
@@ -249,7 +245,7 @@ bool Dissolve::iterate(int nIterations)
             Messenger::heading("'{}'", cfg->name());
 
             // Apply the current size factor
-            cfg->applySizeFactor(potentialMap_);
+            cfg->applySizeFactor(worldPool(), potentialMap_);
         }
 
         // Sync up all processes

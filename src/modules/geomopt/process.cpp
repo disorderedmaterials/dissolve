@@ -20,9 +20,6 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     // Initialise working arrays for coordinates and forces
     rRef_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
     rTemp_.resize(targetConfiguration_->nAtoms(), Vec3<double>());

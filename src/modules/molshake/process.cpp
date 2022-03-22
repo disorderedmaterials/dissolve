@@ -20,9 +20,6 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());

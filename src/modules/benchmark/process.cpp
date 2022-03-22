@@ -23,8 +23,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
     /*

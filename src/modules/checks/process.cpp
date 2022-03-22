@@ -19,9 +19,6 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     Messenger::print("Checks: Threshold for distance checks is {} Angstroms\n", distanceThreshold_);
     Messenger::print("Checks: Threshold for angle checks is {} degrees\n", angleThreshold_);
 

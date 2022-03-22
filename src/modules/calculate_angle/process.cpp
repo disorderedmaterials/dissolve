@@ -40,9 +40,6 @@ bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         selectC_->keywords().set("ExcludeSameSite", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), uniqueName());

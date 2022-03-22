@@ -139,24 +139,3 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 
 // Return configuration temperature
 double Configuration::temperature() const { return temperature_; }
-
-/*
- * Parallel Comms
- */
-
-// Set up process pool for this Configuration
-bool Configuration::setUpProcessPool(const std::vector<int> &worldRanks)
-{
-    // Create pool
-    processPool_.setUp(name_, worldRanks);
-
-    // Assign processes, and
-    if (!processPool_.assignProcessesToGroups())
-        return false;
-    processPool_.setGroupsFixed();
-
-    return true;
-}
-
-// Return process pool for this Configuration
-ProcessPool &Configuration::processPool() { return processPool_; }

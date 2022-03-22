@@ -191,7 +191,7 @@ class Configuration
     CellArray &cells();
     const CellArray &cells() const;
     // Scale Box, Cells, and Molecule geometric centres according to current size factor
-    void applySizeFactor(const PotentialMap &potentialMap);
+    void applySizeFactor(ProcessPool &procPool, const PotentialMap &potentialMap);
 
     /*
      * Upkeep
@@ -225,17 +225,4 @@ class Configuration
     bool serialise(LineParser &parser) const;
     // Read through specified LineParser
     bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
-
-    /*
-     * Parallel Comms
-     */
-    private:
-    // Process pool for this Configuration
-    ProcessPool processPool_;
-
-    public:
-    // Set up process pool for this Configuration
-    bool setUpProcessPool(const std::vector<int> &worldRanks);
-    // Return process pool for this Configuration
-    ProcessPool &processPool();
 };

@@ -58,9 +58,6 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Grab Box pointer
     const auto *box = targetConfiguration_->box();
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     // Get the target site
     if (!targetSite_)
         return Messenger::error("No target site defined.\n");

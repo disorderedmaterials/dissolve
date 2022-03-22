@@ -23,29 +23,3 @@ ProcessPool &Dissolve::worldPool()
 
     return world;
 }
-
-// Set up communications
-bool Dissolve::setUpMPIPools()
-{
-    Messenger::print("*** Setting up MPI pools...\n");
-
-    // Default pool - all world ranks
-    std::vector<int> allProcesses(ProcessPool::nWorldProcesses());
-    std::iota(allProcesses.begin(), allProcesses.end(), 0);
-
-    // Set up pool based on selected strategy
-    auto cfgIndex = 0;
-    for (auto &cfg : coreData_.configurations())
-    {
-        Messenger::print("Configuration '{}':\n", cfg->name());
-
-        // Simple, sequential strategy - all processes assigned to all Configurations
-        if (!cfg->setUpProcessPool(allProcesses))
-            return false;
-
-        // Increase Configuration index
-        ++cfgIndex;
-    }
-
-    return true;
-}

@@ -22,9 +22,6 @@ bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         selectB_->setSameMoleculeExclusions({});
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), uniqueName());

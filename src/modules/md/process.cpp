@@ -61,9 +61,6 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
     Messenger::print("\n");
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     if (onlyWhenEnergyStable_)
     {
         auto stabilityResult = EnergyModule::checkStability(dissolve.processingModuleData(), targetConfiguration_);
