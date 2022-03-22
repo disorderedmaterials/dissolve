@@ -39,7 +39,7 @@ BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module, Disso
  */
 
 // Update controls within widget
-void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
@@ -49,7 +49,7 @@ void BraggModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
             dissolve_.processingModuleData().valueIf<const AtomTypeMix>("SummedAtomTypes", module_->uniqueName());
 
     // Need to recreate renderables if requested as the updateType
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
     {
         ui_.PlotWidget->clearRenderableData();
 
@@ -128,7 +128,7 @@ void BraggModuleWidget::on_PartialsButton_clicked(bool checked)
 
     ui_.Stack->setCurrentIndex(0);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void BraggModuleWidget::on_TotalsButton_clicked(bool checked)
@@ -138,7 +138,7 @@ void BraggModuleWidget::on_TotalsButton_clicked(bool checked)
 
     ui_.Stack->setCurrentIndex(0);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void BraggModuleWidget::on_ReflectionsButton_clicked(bool checked)
@@ -148,7 +148,7 @@ void BraggModuleWidget::on_ReflectionsButton_clicked(bool checked)
 
     ui_.Stack->setCurrentIndex(1);
 
-    updateControls(ModuleWidget::UpdateType::Normal);
+    updateControls();
 }
 
 void BraggModuleWidget::on_HideSmallIntensitiesCheck_clicked(bool checked) { braggFilterProxy_.setEnabled(checked); }

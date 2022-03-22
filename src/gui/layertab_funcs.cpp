@@ -25,8 +25,8 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
-    connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &)), this,
-            SLOT(moduleNameChanged(const QModelIndex &)));
+    connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &, const QString &, const QString &)), this,
+            SLOT(moduleNameChanged(const QModelIndex &, const QString &, const QString &)));
 
     if (moduleLayer_->modules().size() >= 1)
     {
@@ -187,7 +187,7 @@ void LayerTab::layerDataChanged(const QModelIndex &, const QModelIndex &, const 
     dissolveWindow_->setModified();
 }
 
-void LayerTab::moduleNameChanged(const QModelIndex &index)
+void LayerTab::moduleNameChanged(const QModelIndex &index, const QString &oldName, const QString &newName)
 {
     auto *module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
     assert(module);
@@ -196,6 +196,9 @@ void LayerTab::moduleNameChanged(const QModelIndex &index)
     auto *mcw = getControlWidget(module);
     if (mcw)
         mcw->updateControls();
+
+    // Rename processing module data
+    dissolve_.processingModuleData().renamePrefix(oldName.toStdString(), newName.toStdString());
 }
 
 // Update the module list
@@ -208,6 +211,56 @@ void LayerTab::updateModuleList()
     moduleLayerModel_.reset();
     if (selectedIndex)
         ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
+}
+
+void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
+{
+    auto index = ui_.ModulesList->indexAt(pos);
+    if (!index.isValid())
+        return;
+    auto module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
+    assert(module);
+
+    QMenu menu;
+    menu.setFont(font());
+
+    // Construct the context menu
+    auto *enableModule = menu.addAction("&Enable this");
+    enableModule->setEnabled(!module->isEnabled());
+    auto *disableModule = menu.addAction("&Disable this");
+    disableModule->setEnabled(module->isEnabled());
+    menu.addSeparator();
+    auto *enableOnlyModule = menu.addAction("Enable &only this");
+    menu.addSeparator();
+    auto *clearData = menu.addAction("&Clear associated data");
+    menu.addSeparator();
+    auto *deleteModule = menu.addAction("&Delete");
+    deleteModule->setIcon(QIcon(":/general/icons/general_cross.svg"));
+
+    auto *action = menu.exec(ui_.ModulesList->mapToGlobal(pos));
+    if (action == enableModule)
+        module->setEnabled(true);
+    else if (action == disableModule)
+        module->setEnabled(false);
+    else if (action == enableOnlyModule)
+        for (auto &m : moduleLayer_->modules())
+            m->setEnabled(m.get() == module);
+    else if (action == clearData)
+        dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+    else if (action == deleteModule)
+    {
+        // Remove the module's data, then the module
+        dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+        moduleLayerModel_.removeRows(index.row(), 1, QModelIndex());
+    }
+
+    // Update required objects
+    if (action == enableModule || action == disableModule || action == enableOnlyModule || action == deleteModule)
+    {
+        updateModuleList();
+        dissolveWindow_->setModified();
+    }
+    updateControls();
 }
 
 void LayerTab::on_AvailableModulesTree_doubleClicked(const QModelIndex &index)

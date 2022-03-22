@@ -74,7 +74,7 @@ void AccumulateModuleWidget::createPartialSetRenderables(std::string_view target
 }
 
 // Update controls within widget
-void AccumulateModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void AccumulateModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
@@ -86,7 +86,7 @@ void AccumulateModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
 
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || (!ui_.TotalButton->isChecked() && !targetPartials_))
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || (!ui_.TotalButton->isChecked() && !targetPartials_))
     {
         ui_.PlotWidget->clearRenderableData();
 
@@ -126,7 +126,7 @@ void AccumulateModuleWidget::on_TotalButton_clicked(bool checked)
     graph_->view().axes().setTitle(0, hasSQ ? "\\it{Q}, \\sym{angstrom}\\sup{-1}" : "\\it{r}, \\sym{angstrom}");
     graph_->view().axes().setTitle(1, hasSQ ? "F(Q)" : "G(r)");
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void AccumulateModuleWidget::on_PartialsButton_clicked(bool checked)
@@ -141,5 +141,5 @@ void AccumulateModuleWidget::on_PartialsButton_clicked(bool checked)
     graph_->view().axes().setTitle(0, hasSQ ? "\\it{Q}, \\sym{angstrom}\\sup{-1}" : "\\it{r}, \\sym{angstrom}");
     graph_->view().axes().setTitle(1, hasSQ ? "S(Q)" : "g(r)");
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }

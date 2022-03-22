@@ -5,6 +5,7 @@
 
 #include "base/lock.h"
 #include "gui/ui_modulecontrolwidget.h"
+#include "modules/widget.h"
 
 // Forward Declarations
 class ConfigurationVectorKeyword;
@@ -49,7 +50,7 @@ class ModuleControlWidget : public QWidget
      */
     public:
     // Update controls within widget
-    void updateControls();
+    void updateControls(Flags<ModuleWidget::UpdateFlags> updateFlags = {});
     // Disable sensitive controls
     void disableSensitiveControls();
     // Enable sensitive controls
