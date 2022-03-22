@@ -23,8 +23,9 @@ class RegionalDistributor
     // Molecule Status Flag
     enum class MoleculeStatusFlag
     {
-        Waiting,
-        Distributed
+        ToDo,
+        Assigned,
+        Completed
     };
     // Return string for specified MoleculeStatusFlag
     std::string_view moleculeStatusFlag(MoleculeStatusFlag flag);
