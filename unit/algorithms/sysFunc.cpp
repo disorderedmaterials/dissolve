@@ -41,6 +41,8 @@ TEST(SysFunc, StringManipulation)
     EXPECT_TRUE(DissolveSys::afterChar("Just a string", '=').empty());
     EXPECT_TRUE(DissolveSys::beforeLastChar("Just a string", '=').empty());
     EXPECT_TRUE(DissolveSys::afterLastChar("Just a string", '=').empty());
+    EXPECT_TRUE(DissolveSys::afterString("Just a string", "I'm not here").empty());
+    EXPECT_TRUE(DissolveSys::afterString("Just a string", "string").empty());
 
     // Starts / ends with
     EXPECT_TRUE(DissolveSys::startsWith("I am a little man", "I am"));

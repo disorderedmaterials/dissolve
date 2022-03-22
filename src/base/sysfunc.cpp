@@ -143,7 +143,7 @@ std::string_view DissolveSys::afterChar(const std::string_view s, std::string_vi
 std::string_view DissolveSys::afterString(const std::string_view s, std::string_view searchString)
 {
     auto pos = s.find(searchString);
-    if ((pos == std::string::npos) || (pos == s.length() - searchString.length()))
+    if (pos == std::string::npos)
         return "";
 
     return s.substr(pos + searchString.length());
