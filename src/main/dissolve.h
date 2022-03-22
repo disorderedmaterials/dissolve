@@ -306,8 +306,8 @@ class Dissolve
     ProcessPool worldPool_;
 
     public:
+    // Set up the world pool
+    void setUpWorldPool();
     // Return the world process pool
     const ProcessPool &worldPool() const;
-    // Set up local MPI pools
-    bool setUpMPIPools();
 };

@@ -24,10 +24,6 @@ class ProcessPool
      */
     public:
     ProcessPool();
-    ProcessPool(const ProcessPool &source);
-    void operator=(const ProcessPool &source);
-    // Clear all data
-    void clear();
     // Communicator Types (for subroutines)
     enum CommunicatorType
     {
@@ -147,8 +143,6 @@ class ProcessPool
     int rootWorldRank() const;
     // Assign processes to groups
     bool assignProcessesToGroups();
-    // Assign processes to groups taken from supplied ProcessPool
-    bool assignProcessesToGroups(ProcessPool &groupsSource);
     // Return number of process groups
     int nProcessGroups() const;
     // Return nth process group

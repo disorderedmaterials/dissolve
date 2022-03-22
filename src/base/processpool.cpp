@@ -16,45 +16,7 @@ int ProcessPool::FAILED = 0;
 int ProcessPool::SUCCEEDED = 1;
 int ProcessPool::RESULT;
 
-ProcessPool::ProcessPool() { clear(); }
-
-ProcessPool::ProcessPool(const ProcessPool &source)
-{
-    (*this) = source;
-    poolRank_ = -99;
-    groupIndex_ = -99;
-    groupRank_ = -99;
-}
-
-void ProcessPool::operator=(const ProcessPool &source)
-{
-    // Process Identification
-    name_ = source.name_;
-    poolRank_ = source.poolRank_;
-    worldRanks_ = source.worldRanks_;
-
-    // Local groups
-    processGroups_ = source.processGroups_;
-    groupIndex_ = source.groupIndex_;
-    groupRank_ = source.groupRank_;
-    groupLeaders_ = source.groupLeaders_;
-    maxProcessGroups_ = source.maxProcessGroups_;
-#ifdef PARALLEL
-    groupGroup_ = source.groupGroup_;
-    groupCommunicator_ = source.groupCommunicator_;
-    leaderGroup_ = source.leaderGroup_;
-    leaderCommunicator_ = source.leaderCommunicator_;
-    poolGroup_ = source.poolGroup_;
-    poolCommunicator_ = source.poolCommunicator_;
-#endif
-    groupsModifiable_ = source.groupsModifiable_;
-
-    // Random number buffer
-    // ???
-}
-
-// Clear all data
-void ProcessPool::clear()
+ProcessPool::ProcessPool()
 {
     poolRank_ = -1;
     groupIndex_ = -1;
@@ -65,12 +27,12 @@ void ProcessPool::clear()
     groupLeaders_.clear();
     groupsModifiable_ = true;
 #ifdef PARALLEL
-    groupGroup_ = 0;
-    groupCommunicator_ = 0;
-    leaderGroup_ = 0;
-    leaderCommunicator_ = 0;
-    poolGroup_ = 0;
-    poolCommunicator_ = 0;
+    groupGroup_ = nullptr;
+    groupCommunicator_ = nullptr;
+    leaderGroup_ = nullptr;
+    leaderCommunicator_ = nullptr;
+    poolGroup_ = nullptr;
+    poolCommunicator_ = nullptr;
 #endif
 }
 
@@ -207,8 +169,6 @@ bool ProcessPool::groupLeader() const { return (groupRank_ == 0); }
 // Set up pool with world ranks specified
 bool ProcessPool::setUp(std::string_view name, const std::vector<int> &worldRanks)
 {
-    clear();
-
     name_ = name;
 
     Messenger::print("Setting up process pool '{}'...\n", name_);
@@ -372,61 +332,6 @@ bool ProcessPool::assignProcessesToGroups()
     groupIndex_ = 0;
     groupRank_ = 0;
 #endif
-
-    return true;
-}
-
-// Assign processes to groups taken from supplied ProcessPool
-bool ProcessPool::assignProcessesToGroups(ProcessPool &groupsSource)
-{
-    /*
-     * Since we have the ability to run Modules with any ProcessPool and at any point, we must occasionally
-     * re-assign the processes in the pool (typically the Dissolve::worldPool_) to a different set of groups in
-     * order to utilise all available processing power (e.g. when a Module is run as, or is performing, a
-     * post-processing step).
-     */
-
-    // If we have been supplied with ourself as the reference ProcessPool, we can exit gracefully now
-    if (this == &groupsSource)
-        return true;
-
-    // First check that we are allowed to modify the groups within this pool
-    if (!groupsModifiable_)
-    {
-        Messenger::error("Tried to modify the group contents of a ProcessPool in which they have explicitly been fixed.\n");
-        return false;
-    }
-
-#ifdef PARALLEL
-    // All processes in this pool first abandon their current groupGroup_ and leaderGroup_ communicators and groups
-    if (groupGroup_ != 0)
-        MPI_Group_free(&groupGroup_);
-    if (groupCommunicator_ != 0)
-        MPI_Comm_free(&groupCommunicator_);
-    if (leaderGroup_ != 0)
-        MPI_Group_free(&leaderGroup_);
-    // -- NOTE If a group slave tries to free the leaderCommunicator_, we get an 'invalid communicator' error
-    if (groupLeader() && (leaderCommunicator_ != 0))
-        MPI_Comm_free(&leaderCommunicator_);
-    groupGroup_ = 0;
-    groupCommunicator_ = 0;
-    leaderGroup_ = 0;
-    leaderCommunicator_ = 0;
-    groupRank_ = -1;
-    groupIndex_ = -1;
-#endif
-
-    // Reset the groupLeaders and processGroups arrays
-    groupLeaders_.clear();
-    processGroups_.clear();
-
-    // Copy over the number of allowable groups from the source ProcessPool
-    maxProcessGroups_ = 1;
-    if (!assignProcessesToGroups())
-    {
-        Messenger::error("Failed to re-assign processes to groups in this ProcessPool.\n");
-        return false;
-    }
 
     return true;
 }
