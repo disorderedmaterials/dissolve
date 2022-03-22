@@ -246,10 +246,22 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
     for (auto &torsion : torsions_)
         torsions.push_back(torsion.serialize());
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> species{{"species." + name_ + ".atoms", atoms},
-                                                                             {"species." + name_ + ".bonds", bonds},
-                                                                             {"species." + name_ + ".angles", angles},
-                                                                             {"species." + name_ + ".impropers", impropers},
-                                                                             {"species." + name_ + ".torsions", torsions}};
+    toml::array isotopologues;
+    for (auto &isotopologue : isotopologues_)
+        isotopologues.push_back(isotopologue.get()->serialize());
+
+    toml::array sites;
+    for (auto &site : sites_)
+        sites.push_back(site.get()->serialize());
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> species;
+    species[name_]["atoms"] = atoms;
+    species[name_]["bonds"] = bonds;
+    species[name_]["sites"] = sites;
+    species[name_]["angles"] = angles;
+    species[name_]["torsions"] = torsions;
+    species[name_]["impropers"] = impropers;
+    species[name_]["isotopologues"] = isotopologues;
+
     return species;
 }

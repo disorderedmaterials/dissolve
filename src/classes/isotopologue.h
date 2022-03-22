@@ -8,6 +8,8 @@
 #include <memory>
 #include <tuple>
 #include <vector>
+#include <map>
+#include <toml11/toml.hpp>
 
 // Forward Declarations
 class AtomType;
@@ -59,4 +61,6 @@ class Isotopologue
     Sears91::Isotope atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

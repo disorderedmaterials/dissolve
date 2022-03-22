@@ -423,3 +423,13 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 
     return true;
 }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesSite::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> site{{"name", name_},
+                                                                          {"originAtoms", "originAtoms"},
+                                                                          {"xAxis", "xAxisAtoms"},
+                                                                          {"yAxis", "yAxisAtoms"},
+                                                                          {"originMassWeighted", originMassWeighted_}};
+    return site;
+}
