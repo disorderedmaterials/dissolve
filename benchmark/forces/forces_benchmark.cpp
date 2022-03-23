@@ -85,6 +85,17 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
         ForcesModule::internalMoleculeForces(procPool, cfg, potentialMap, true, forces);
 }
 
+template <ProblemType problem, Population population> static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
+{
+    Problem<problem, population> problemDef;
+    auto &sp = problemDef.dissolve_.species().front();
+    std::vector<Vec3<double>> forces(sp->nAtoms());
+    auto &procPool = problemDef.dissolve_.worldPool();
+    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    for (auto _ : state)
+        ForcesModule::totalForces(procPool, sp.get(), potentialMap, forces);
+}
+
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
 {
 
@@ -121,6 +132,7 @@ BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, ProblemType::smallMolecule, P
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesAngle, ProblemType::smallMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateForces_TotalIntraMolecular, ProblemType::smallMolecule, Population::small)
     ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, ProblemType::smallMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateForces_TotalInterAtomic, ProblemType::smallMolecule, Population::small)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
@@ -137,8 +149,12 @@ BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesTorsion, ProblemType::mediumMolecul
 BENCHMARK_TEMPLATE(BM_CalculateForces_TotalInterAtomic, ProblemType::mediumMolecule, Population::small)
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, ProblemType::mediumMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateForces_TotalIntraMolecular, ProblemType::mediumMolecule, Population::small)
     ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_CalculateForces_TotalForces, ProblemType::mediumMolecule, Population::small)
     ->Iterations(5)
+    ->Unit(benchmark::kMillisecond);
+
+BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, ProblemType::frameworkMolecule, Population::single)
     ->Unit(benchmark::kMillisecond);
