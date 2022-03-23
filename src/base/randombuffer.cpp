@@ -5,7 +5,7 @@
 
 RandomBuffer::RandomBuffer(const ProcessPool &procPool, ProcessPool::CommunicatorType commType,
                            OptionalReferenceWrapper<Timer> commsTimer)
-    : processPool_(procPool), commsGroup_(commType), index_(0), commsTimer_(commsTimer)
+    : processPool_(procPool), index_(0), commsGroup_(commType), commsTimer_(commsTimer)
 {
     refill();
 }
