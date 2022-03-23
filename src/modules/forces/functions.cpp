@@ -185,38 +185,42 @@ void ForcesModule::totalForces(ProcessPool &procPool, Species *sp, const Potenti
     // Zero force array
     std::fill(f.begin(), f.end(), Vec3<double>());
 
-    double scale, r, magjisq;
+    auto *box = sp->box();
     const auto cutoffSq = potentialMap.range() * potentialMap.range();
-    Vec3<double> vecij;
-    // NOTE PR #334 : use for_each_pair
-    for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
-    {
-        auto &i = sp->atom(indexI);
 
-        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+    auto combinableForces = createCombinableForces(f);
+    auto pairwiseForceOperator = [&combinableForces, &potentialMap, cutoffSq, box](int indexI, const auto &i, int indexJ,
+                                                                                   const auto &j) {
+        if (indexI == indexJ)
+            return;
+        auto scale = i.scaling(&j);
+        if (scale >= 1.0e-3)
         {
-            auto &j = sp->atom(indexJ);
-
-            // Get intramolecular scaling of atom pair
-            scale = i.scaling(&j);
-            if (scale < 1.0e-3)
-                continue;
-
             // Determine final forces
-            vecij = j.r() - i.r();
-            magjisq = vecij.magnitudeSq();
-            if (magjisq > cutoffSq)
-                continue;
-            r = sqrt(magjisq);
-            vecij /= r;
+            auto vecij = box->minimumVector(j.r(), i.r());
+            auto magjisq = vecij.magnitudeSq();
+            if (magjisq <= cutoffSq)
+            {
+                auto r = sqrt(magjisq);
+                vecij /= r;
 
-            vecij *= potentialMap.force(&i, &j, r) * scale;
-            f[indexI] += vecij;
-            f[indexJ] -= vecij;
+                vecij *= potentialMap.force(&i, &j, r) * scale;
+                auto &fLocal = combinableForces.local();
+                fLocal[indexI] += vecij;
+                fLocal[indexJ] -= vecij;
+            }
         }
-    }
+    };
 
-    // Create a ForceKernel with a dummy CellArray - we only want it for the intramolecular force routines
+    // Calculate pairwise forces between atoms
+    if (sp->nAtoms() < 100)
+        dissolve::for_each_pair(ParallelPolicies::seq, sp->atoms().begin(), sp->atoms().end(), pairwiseForceOperator);
+    else
+        dissolve::for_each_pair(ParallelPolicies::par, sp->atoms().begin(), sp->atoms().end(), pairwiseForceOperator);
+
+    combinableForces.finalize();
+
+    // Create a ForceKernel with a dummy CellArray
     CellArray dummyCellArray;
     ForceKernel kernel(procPool, sp->box(), dummyCellArray, potentialMap);
 
