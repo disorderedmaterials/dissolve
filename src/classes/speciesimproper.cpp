@@ -226,6 +226,12 @@ double SpeciesImproper::force(double angleInDegrees) const
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper::serialize()
 {
+    std::string form = "@";
+    if (masterTerm_ != nullptr)
+        form += masterTerm_->name();
+    else
+        form = TorsionFunctions::forms().keyword(interactionForm());
+
     toml::basic_value<toml::discard_comments, std::map, std::vector> improper{
         {"i", i_->userIndex()},
         {"j", j_->userIndex()},
