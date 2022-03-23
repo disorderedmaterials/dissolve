@@ -102,3 +102,20 @@ jobs:
         env:
           GITHUB_TOKEN: $(REPO_SECRET)
         displayName: 'Update Web Release Info'
+      - bash: |
+          VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+          singularity remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
+          singularity push $(System.ArtifactsDirectory)/singularity-gui-artifacts/dissolve-$VERSION.sif  oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:latest
+        env:
+            HARBOR_USER: $(HARBOR_USER)
+            HARBOR_SECRET: $(HARBOR_SECRET)
+        displayName: "Publish latest singularity image to Harbor registry."
+      - bash: |
+          VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+          singularity remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
+          singularity push $(System.ArtifactsDirectory)/singularity-gui-artifacts/dissolve-$VERSION.sif  oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$VERSION
+        condition: eq('${{ parameters.continuous }}', false)
+        env:
+            HARBOR_USER: $(HARBOR_USER)
+            HARBOR_SECRET: $(HARBOR_SECRET)
+        displayName: "Publish versioned singularity image to Harbor registry."
