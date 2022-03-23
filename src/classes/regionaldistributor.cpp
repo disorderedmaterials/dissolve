@@ -100,7 +100,7 @@ bool RegionalDistributor::cycle()
 
     std::shared_ptr<Molecule> molecule;
     std::vector<bool> allPossibleMoleculesAssigned(nProcessesOrGroups_, false);
-    int processOrGroup, nMoleculesAssigned, allPossibleMoleculesAssignedCount = 0;
+    int processOrGroup, allPossibleMoleculesAssignedCount = 0;
 
     // Set Molecule completed flags and clear distribution arrays
     for (processOrGroup = 0; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
