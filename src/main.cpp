@@ -16,7 +16,6 @@ int main(int args, char **argv)
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
-    dissolve.setUpWorldPool();
 
     // Parse CLI options
     CLIOptions options;
