@@ -38,9 +38,8 @@ bool TransmuteProcedureNode::mustBeNamed() const { return false; }
  * Execute
  */
 
-// Execute node, targetting the supplied Configuration
-bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                     GenericList &targetList)
+// Execute node
+bool TransmuteProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     // Check target species
     if (!targetSpecies_)
@@ -51,7 +50,7 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
 
     // Transmute molecules by Species type
     if (!speciesToTransmute_.empty())
-        for (const auto &mol : cfg->molecules())
+        for (const auto &mol : procedureContext.configuration()->molecules())
             if (std::find(speciesToTransmute_.begin(), speciesToTransmute_.end(), mol->species()) != speciesToTransmute_.end())
                 targets.push_back(mol);
 
@@ -64,16 +63,16 @@ bool TransmuteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, 
     }
 
     // Perform the magic
-    const auto *box = cfg->box();
-    AtomChangeToken lock(*cfg);
+    const auto *box = procedureContext.configuration()->box();
+    AtomChangeToken lock(*procedureContext.configuration());
     for (const auto &mol : targets)
     {
-        auto newMol = cfg->addMolecule(lock, targetSpecies_);
+        auto newMol = procedureContext.configuration()->addMolecule(lock, targetSpecies_);
         newMol->setCentreOfGeometry(box, mol->centreOfGeometry(box));
     }
 
     // Remove the old molecules
-    cfg->removeMolecules(targets);
+    procedureContext.configuration()->removeMolecules(targets);
 
     Messenger::print("[Transmute] Transmuted {} molecules into '{}'.\n", targets.size(), targetSpecies_->name());
 
