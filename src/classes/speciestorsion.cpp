@@ -595,12 +595,18 @@ double SpeciesTorsion::force(double angleInDegrees) const
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion::serialize()
 {
+    std::string form = "@";
+    if (masterTerm_ != nullptr)
+        form += masterTerm_->name();
+    else
+        form = TorsionFunctions::forms().keyword(interactionForm());
+
     toml::basic_value<toml::discard_comments, std::map, std::vector> improper{
         {"i", i_->userIndex()},
         {"j", j_->userIndex()},
         {"k", k_->userIndex()},
         {"l", l_->userIndex()},
-        {"form", "form"},
+        {"form", form},
         {"parameters", SpeciesTorsion::interactionPotential().parametersAsString()}};
     return improper;
 }
