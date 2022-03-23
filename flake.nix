@@ -11,7 +11,8 @@
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
-  outputs = { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
+  outputs =
+    { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
     let
       exe-name = mpi: gui:
         if mpi then
@@ -36,6 +37,7 @@
         ];
       gui_libs = pkgs:
         with pkgs; [
+          glib
           freetype
           ftgl
           libGL.dev
@@ -64,6 +66,7 @@
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
+            nativeBuildInputs = [pkgs.wrapGAppsHook];
 
             TBB_DIR = "${pkgs.tbb}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
