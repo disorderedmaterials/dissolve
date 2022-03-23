@@ -156,9 +156,9 @@ bool Dissolve::loadInput(std::string_view filename)
         std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
 
         toml::basic_value<toml::discard_comments, std::map, std::vector> root;
-        toml::array speciesNode;
+        toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
         for (auto &species : species())
-            speciesNode.push_back(species->serialize());
+            speciesNode[species->name().data()] = species->serialize();
 
         root["species"] = speciesNode;
         output << std::setw(40) << root;

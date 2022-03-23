@@ -4,6 +4,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "data/isotopes.h"
+#include "data/ff/ff.h"
 
 Species::Species() : attachedAtomListsGenerated_(false), forcefield_(nullptr)
 {
@@ -255,13 +256,21 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         sites.push_back(site.get()->serialize());
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> species;
-    species[name_]["atoms"] = atoms;
-    species[name_]["bonds"] = bonds;
-    species[name_]["sites"] = sites;
-    species[name_]["angles"] = angles;
-    species[name_]["torsions"] = torsions;
-    species[name_]["impropers"] = impropers;
-    species[name_]["isotopologues"] = isotopologues;
+    species["forcefield"] = forcefield_->name().data();
+    if (atoms.size() > 0)
+        species["atoms"] = atoms;
+    if (bonds.size() > 0)
+        species["bonds"] = bonds;
+    if (sites.size() > 0)
+        species["sites"] = sites;
+    if (angles.size() > 0)
+        species["angles"] = angles;
+    if (torsions.size() > 0)
+        species["torsions"] = torsions;
+    if (impropers.size() > 0)
+        species["impropers"] = impropers;
+    if (isotopologues.size() > 0)
+        species["isotopologues"] = isotopologues;
 
     return species;
 }
