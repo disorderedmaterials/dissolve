@@ -11,7 +11,7 @@ Species::Species() : attachedAtomListsGenerated_(false), forcefield_(nullptr)
     box_ = std::make_unique<SingleImageBox>();
 
     // Set up natural Isotopologue
-    naturalIsotopologue_.setName("Natural");
+    naturalIsotopologue_.setName("Default");
     naturalIsotopologue_.setParent(this);
 }
 
@@ -227,50 +227,65 @@ const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { 
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serialize()
 {
-    toml::array atoms;
-    for (auto &atom : atoms_)
-        atoms.push_back(atom.serialize());
-
-    toml::array bonds;
-    for (auto &bond : bonds_)
-        bonds.push_back(bond.serialize());
-
-    toml::array angles;
-    for (auto &angle : angles_)
-        angles.push_back(angle.serialize());
-
-    toml::array impropers;
-    for (auto &improper : impropers_)
-        impropers.push_back(improper.serialize());
-
-    toml::array torsions;
-    for (auto &torsion : torsions_)
-        torsions.push_back(torsion.serialize());
-
-    toml::array isotopologues;
-    for (auto &isotopologue : isotopologues_)
-        isotopologues.push_back(isotopologue.get()->serialize());
-
-    toml::array sites;
-    for (auto &site : sites_)
-        sites.push_back(site.get()->serialize());
-
     toml::basic_value<toml::discard_comments, std::map, std::vector> species;
-    species["forcefield"] = forcefield_->name().data();
-    if (atoms.size() > 0)
-        species["atoms"] = atoms;
-    if (bonds.size() > 0)
-        species["bonds"] = bonds;
-    if (sites.size() > 0)
-        species["sites"] = sites;
-    if (angles.size() > 0)
-        species["angles"] = angles;
-    if (torsions.size() > 0)
-        species["torsions"] = torsions;
-    if (impropers.size() > 0)
-        species["impropers"] = impropers;
-    if (isotopologues.size() > 0)
+    if (forcefield_ != nullptr)
+        species["forcefield"] = forcefield_->name().data();
+
+    if (atoms_.size() > 0)
+    {
+        toml::array atoms;
+        for (auto &atom : atoms_)
+            atoms.push_back(atom.serialize());
+        species["atom"] = atoms;
+    }
+
+    if (bonds_.size() > 0)
+    {
+        toml::array bonds;
+        for (auto &bond : bonds_)
+            bonds.push_back(bond.serialize());
+        species["bond"] = bonds;
+    }
+
+    if (angles_.size() > 0)
+    {
+        toml::array angles;
+        for (auto &angle : angles_)
+            angles.push_back(angle.serialize());
+        species["angle"] = angles;
+    }
+
+    if (impropers_.size() > 0)
+    {
+        toml::array impropers;
+        for (auto &improper : impropers_)
+            impropers.push_back(improper.serialize());
+        species["improper"] = impropers;
+    }
+
+    if (torsions_.size() > 0)
+    {
+        toml::array torsions;
+        for (auto &torsion : torsions_)
+            torsions.push_back(torsion.serialize());
+        species["torsion"] = torsions;
+    }
+
+    if (isotopologues_.size() > 0)
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> isotopologues;
+        for (auto &isotopologue : isotopologues_)
+            isotopologues[isotopologue->name().data()] = isotopologue->serialize();
         species["isotopologues"] = isotopologues;
+    }
+
+    if (sites_.size() > 0)
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> sites;
+        for (auto &site : sites_)
+            sites[site.get()->name().data()] = site.get()->serialize();
+        species["sites"] = sites;
+    }
 
     return species;
 }

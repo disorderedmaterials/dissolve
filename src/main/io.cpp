@@ -145,6 +145,8 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)
 {
+    std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
+
     // Open file and check that we're OK to proceed reading from it
     LineParser parser(&worldPool());
     if (!parser.openInput(filename))
@@ -153,8 +155,6 @@ bool Dissolve::loadInput(std::string_view filename)
     auto result = loadInput(parser);
     if (result)
     {
-        std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
-
         toml::basic_value<toml::discard_comments, std::map, std::vector> root;
         toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
         for (auto &species : species())

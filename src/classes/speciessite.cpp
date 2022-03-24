@@ -426,10 +426,31 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesSite::serialize()
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> site{{"name", name_},
-                                                                          {"originAtoms", "originAtoms"},
-                                                                          {"xAxis", "xAxisAtoms"},
-                                                                          {"yAxis", "yAxisAtoms"},
-                                                                          {"originMassWeighted", originMassWeighted_}};
+    toml::basic_value<toml::discard_comments, std::map, std::vector> site;
+    if (originAtoms_.size() > 0)
+    {
+        toml::array originAtoms;
+        for (auto &atom : originAtoms_)
+            originAtoms.push_back(atom->index());
+        site["originAtoms"] = originAtoms;
+    }
+
+    if (xAxisAtoms_.size() > 0)
+    {
+        toml::array xAxisAtoms;
+        for (auto &atom : xAxisAtoms_)
+            xAxisAtoms.push_back(atom->index());
+        site["xAxisAtoms"] = xAxisAtoms;
+    }
+
+    if (yAxisAtoms_.size() > 0)
+    {
+        toml::array yAxisAtoms;
+        for (auto &atom : yAxisAtoms_)
+            yAxisAtoms.push_back(atom->index());
+        site["yAxisAtoms"] = yAxisAtoms;
+    }
+
+    site["originMassWeighted"] = originMassWeighted_;
     return site;
 }
