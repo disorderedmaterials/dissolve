@@ -20,7 +20,7 @@ ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const CellArray 
 }
 
 /*
- * Internal Force Calculation
+ * Force Calculation
  */
 
 // Calculate PairPotential forces between Atoms provided (no minimum image calculation)
@@ -55,23 +55,6 @@ void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, do
 /*
  * PairPotential Terms
  */
-
-// Calculate forces between atoms
-void ForceKernel::forces(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ, ForceVector &f) const
-{
-    // If Atoms are the same, we refuse to calculate
-    if (&i == &j)
-        return;
-
-    // Check indices of atoms if required
-    if (excludeIgeJ && (i.arrayIndex() >= j.arrayIndex()))
-        return;
-
-    if (applyMim)
-        forcesWithMim(i, j, f);
-    else
-        forcesWithoutMim(i, j, f);
-}
 
 // Calculate forces between atoms in supplied cells
 void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,

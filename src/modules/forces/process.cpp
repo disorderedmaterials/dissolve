@@ -309,7 +309,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Timer interTimer;
             interTimer.start();
 
-            interAtomicForces(procPool, targetConfiguration_, dissolve.potentialMap(), fInterCheck);
+            pairPotentialForces(procPool, targetConfiguration_, dissolve.potentialMap(), fInterCheck);
             if (!procPool.allSum(fInterCheck))
                 return false;
 
@@ -323,7 +323,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Timer intraTimer;
             intraTimer.start();
 
-            intraMolecularForces(procPool, targetConfiguration_, dissolve.potentialMap(), fIntraCheck);
+            internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), false, fIntraCheck);
             if (!procPool.allSum(fIntraCheck))
                 return false;
 
