@@ -10,7 +10,7 @@
 #include <algorithm>
 
 // Debug Mode
-const bool debugDistributor = true;
+const bool debugDistributor = false;
 
 RegionalDistributor::RegionalDistributor(const int nMolecules, const CellArray &cellArray, const ProcessPool &procPool,
                                          ProcessPool::DivisionStrategy strategy)
