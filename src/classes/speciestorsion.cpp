@@ -595,18 +595,28 @@ double SpeciesTorsion::force(double angleInDegrees) const
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion::serialize()
 {
+    toml::basic_value<toml::discard_comments, std::map, std::vector> torsion;
+    torsion["i"] = i_->userIndex();
+    torsion["j"] = j_->userIndex();
+    torsion["k"] = k_->userIndex();
+    torsion["l"] = l_->userIndex();
+
     std::string form = "@";
     if (masterTerm_ != nullptr)
         form += masterTerm_->name();
     else
         form = TorsionFunctions::forms().keyword(interactionForm());
+    torsion["form"] = form;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> improper{
-        {"i", i_->userIndex()},
-        {"j", j_->userIndex()},
-        {"k", k_->userIndex()},
-        {"l", l_->userIndex()},
-        {"form", form},
-        {"parameters", SpeciesTorsion::interactionPotential().parametersAsString()}};
-    return improper;
+    std::vector<double> values = SpeciesTorsion::interactionPotential().parameters();
+    if (values.size() > 0)
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
+        for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
+            parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+        torsion["parameters"] = parametersNode;
+    }
+
+    return torsion;
 }

@@ -363,17 +363,27 @@ double SpeciesAngle::force(double angleInDegrees) const
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::serialize()
 {
+    toml::basic_value<toml::discard_comments, std::map, std::vector> angle;
+    angle["i"] = i_->userIndex();
+    angle["j"] = j_->userIndex();
+    angle["k"] = k_->userIndex();
+
     std::string form = "@";
     if (masterTerm_ != nullptr)
         form += masterTerm_->name();
     else
         form = AngleFunctions::forms().keyword(interactionForm());
+    angle["form"] = form;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> angle{
-        {"i", i_->userIndex()},
-        {"j", j_->userIndex()},
-        {"k", k_->userIndex()},
-        {"form", form},
-        {"parameters", SpeciesAngle::interactionPotential().parametersAsString()}};
+    std::vector<double> values = SpeciesAngle::interactionPotential().parameters();
+    if (values.size() > 0)
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
+        for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
+            parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+        angle["parameters"] = parametersNode;
+    }
+
     return angle;
 }

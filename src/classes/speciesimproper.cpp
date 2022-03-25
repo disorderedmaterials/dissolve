@@ -226,18 +226,28 @@ double SpeciesImproper::force(double angleInDegrees) const
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper::serialize()
 {
+    toml::basic_value<toml::discard_comments, std::map, std::vector> improper;
+    improper["i"] = i_->userIndex();
+    improper["j"] = j_->userIndex();
+    improper["k"] = k_->userIndex();
+    improper["l"] = l_->userIndex();
+
     std::string form = "@";
     if (masterTerm_ != nullptr)
         form += masterTerm_->name();
     else
         form = TorsionFunctions::forms().keyword(interactionForm());
+    improper["form"] = form;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> improper{
-        {"i", i_->userIndex()},
-        {"j", j_->userIndex()},
-        {"k", k_->userIndex()},
-        {"l", l_->userIndex()},
-        {"form", "form"},
-        {"parameters", SpeciesImproper::interactionPotential().parametersAsString()}};
+    std::vector<double> values = SpeciesImproper::interactionPotential().parameters();
+    if (values.size() > 0)
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
+        for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
+            parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+        improper["parameters"] = parametersNode;
+    }
+
     return improper;
 }
