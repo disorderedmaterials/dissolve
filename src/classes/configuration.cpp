@@ -166,10 +166,12 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Configuration::
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> configuration;
 
-    configuration["name"] = name_.data();
-    configuration["generator"] = "generator";
     configuration["temperature"] = temperature_;
     configuration["sizeFactor"] = requestedSizeFactor_;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> generator;
+    generator["box"] = box_->serialize();
+    configuration["generator"] = generator;
 
     return configuration;
 }

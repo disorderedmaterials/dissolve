@@ -596,10 +596,14 @@ double SpeciesTorsion::force(double angleInDegrees) const
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> torsion;
-    torsion["i"] = i_->userIndex();
-    torsion["j"] = j_->userIndex();
-    torsion["k"] = k_->userIndex();
-    torsion["l"] = l_->userIndex();
+    if (i_ != nullptr)
+        torsion["i"] = i_->userIndex();
+    if (j_ != nullptr)
+        torsion["j"] = j_->userIndex();
+    if (k_ != nullptr)
+        torsion["k"] = k_->userIndex();
+    if (l_ != nullptr)
+        torsion["l"] = l_->userIndex();
 
     std::string form = "@";
     if (masterTerm_ != nullptr)
@@ -619,4 +623,11 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
     }
 
     return torsion;
+}
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> MasterTorsion::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> masterTorsion = SpeciesTorsion::serialize();
+    masterTorsion["name"] = name_.data();
+    return masterTorsion;
 }

@@ -156,6 +156,37 @@ bool Dissolve::loadInput(std::string_view filename)
     if (result)
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> root;
+        toml::basic_value<toml::discard_comments, std::map, std::vector> masterNode;
+        if (coreData_.nMasterBonds() > 0)
+        {
+            toml::array bonds;
+            for (auto &bond : coreData_.masterBonds())
+                bonds.push_back(bond->serialize());
+            masterNode["bond"] = bonds; 
+        }
+        if (coreData_.nMasterAngles() > 0)
+        {
+            toml::array angles;
+            for (auto &angle : coreData_.masterAngles())
+                angles.push_back(angle->serialize());
+            masterNode["angle"] = angles;
+        }
+        if (coreData_.nMasterTorsions() > 0)
+        {
+            toml::array torsions;
+            for (auto &torsion : coreData_.masterTorsions())
+                torsions.push_back(torsion->serialize());
+            masterNode["torsion"] = torsions;
+        }
+        if (coreData_.nMasterImpropers() > 0)
+        {
+            toml::array impropers;
+            for (auto &improper : coreData_.masterImpropers())
+                impropers.push_back(improper->serialize());
+            masterNode["improper"] = impropers;
+        }
+        root["master"] = masterNode;
+
         toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
         for (auto &species : species())
             speciesNode[species->name().data()] = species->serialize();

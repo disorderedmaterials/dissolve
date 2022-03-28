@@ -337,8 +337,10 @@ double SpeciesBond::force(double distance) const
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> bond;
-    bond["i"] = i_->userIndex();
-    bond["j"] = j_->userIndex();
+    if (i_ != nullptr)
+        bond["i"] = i_->userIndex();
+    if (j_ != nullptr)
+        bond["j"] = j_->userIndex();
 
     std::string form = "@";
     if (masterTerm_ != nullptr)
@@ -358,4 +360,10 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
     }
 
     return bond;
+}
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> MasterBond::serialize() {
+    toml::basic_value<toml::discard_comments, std::map, std::vector> masterBond = SpeciesBond::serialize();
+    masterBond["name"] = name_.data();
+    return masterBond;
 }

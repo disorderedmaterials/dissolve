@@ -227,10 +227,14 @@ double SpeciesImproper::force(double angleInDegrees) const
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> improper;
-    improper["i"] = i_->userIndex();
-    improper["j"] = j_->userIndex();
-    improper["k"] = k_->userIndex();
-    improper["l"] = l_->userIndex();
+    if (i_ != nullptr)
+        improper["i"] = i_->userIndex();
+    if (j_ != nullptr)
+        improper["j"] = j_->userIndex();
+    if (k_ != nullptr)
+        improper["k"] = k_->userIndex();
+    if (l_ != nullptr)
+        improper["l"] = l_->userIndex();
 
     std::string form = "@";
     if (masterTerm_ != nullptr)
@@ -250,4 +254,11 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
     }
 
     return improper;
+}
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> MasterImproper::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> masterImproper = SpeciesImproper::serialize();
+    masterImproper["name"] = name_.data();
+    return masterImproper;
 }
