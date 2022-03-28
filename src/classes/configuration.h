@@ -21,6 +21,10 @@
 #include <deque>
 #include <memory>
 
+#include <map>
+#include <vector>
+#include <toml11/toml.hpp>
+
 // Forward Declarations
 class AtomChangeToken;
 class Cell;
@@ -238,4 +242,6 @@ class Configuration
     bool setUpProcessPool(const std::vector<int> &worldRanks);
     // Return process pool for this Configuration
     ProcessPool &processPool();
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

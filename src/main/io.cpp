@@ -159,8 +159,13 @@ bool Dissolve::loadInput(std::string_view filename)
         toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
         for (auto &species : species())
             speciesNode[species->name().data()] = species->serialize();
-
         root["species"] = speciesNode;
+
+        toml::basic_value<toml::discard_comments, std::map, std::vector> configurationsNode;
+        for (auto &configuration : configurations())
+            configurationsNode[configuration->name().data()] = configuration->serialize();
+        root["configurations"] = configurationsNode;
+
         output << std::setw(40) << root;
 
         Messenger::print("Finished reading input file.\n");

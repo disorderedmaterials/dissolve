@@ -161,3 +161,15 @@ bool Configuration::setUpProcessPool(const std::vector<int> &worldRanks)
 
 // Return process pool for this Configuration
 ProcessPool &Configuration::processPool() { return processPool_; }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> Configuration::serialize() 
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> configuration;
+
+    configuration["name"] = name_.data();
+    configuration["generator"] = "generator";
+    configuration["temperature"] = temperature_;
+    configuration["sizeFactor"] = requestedSizeFactor_;
+
+    return configuration;
+}
