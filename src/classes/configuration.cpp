@@ -162,12 +162,16 @@ bool Configuration::setUpProcessPool(const std::vector<int> &worldRanks)
 // Return process pool for this Configuration
 ProcessPool &Configuration::processPool() { return processPool_; }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> Configuration::serialize() 
+toml::basic_value<toml::discard_comments, std::map, std::vector> Configuration::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> configuration;
 
-    configuration["temperature"] = temperature_;
-    configuration["sizeFactor"] = requestedSizeFactor_;
+    if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
+        configuration["cellDivisionLength"] = requestedCellDivisionLength_;
+    if (requestedSizeFactor_ != defaultSizeFactor_)
+        configuration["sizeFactor"] = requestedSizeFactor_;
+    if (temperature_ != defaultTemperature_)
+        configuration["temperature"] = temperature_;
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> generator;
     generator["box"] = box_->serialize();

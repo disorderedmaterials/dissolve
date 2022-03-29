@@ -56,8 +56,9 @@ class Configuration
     Procedure generator_;
     // File / format of input coordinates file, if provided
     CoordinateImportFileFormat inputCoordinates_;
+    static constexpr double defaultTemperature_ = 300.0;
     // Temperature of this configuration (K)
-    double temperature_{300.0};
+    double temperature_{defaultTemperature_};
 
     public:
     // Set name of the Configuration
@@ -156,14 +157,16 @@ class Configuration
      * Periodic Box and Cells
      */
     private:
+    static constexpr double defaultSizeFactor_ = 1.0;
     // Requested size factor for Box
-    double requestedSizeFactor_{1.0};
+    double requestedSizeFactor_{defaultSizeFactor_};
     // Size factor currently applied to Box / Cells
-    double appliedSizeFactor_{1.0};
+    double appliedSizeFactor_{defaultSizeFactor_};
     // Periodic Box
     std::unique_ptr<Box> box_{nullptr};
+    static constexpr double defaultCellDivisionLength_ = 7.0;
     // Requested side length for individual Cell
-    double requestedCellDivisionLength_{7.0};
+    double requestedCellDivisionLength_{defaultCellDivisionLength_};
     // Cell array
     CellArray cells_;
 

@@ -393,11 +393,11 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Box::serialize(
 
     toml::array boxLengths = {a_, b_, c_};
     toml::array boxAngles = {alpha_, beta_, gamma_};
+    toml::array boxNonPeriodic = {!periodic_.x, !periodic_.y, !periodic_.z};
 
     box["lengths"] = boxLengths;
     box["angles"] = boxAngles;
-    box["volume"] = volume_;
-    box["periodic"] = type_ != BoxType::NonPeriodic ? "true" : "false";
+    box["nonPeriodic"] = boxNonPeriodic;
 
     return box;
 }
