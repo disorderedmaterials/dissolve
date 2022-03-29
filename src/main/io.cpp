@@ -159,31 +159,31 @@ bool Dissolve::loadInput(std::string_view filename)
         toml::basic_value<toml::discard_comments, std::map, std::vector> masterNode;
         if (coreData_.nMasterBonds() > 0)
         {
-            toml::array bonds;
+            toml::basic_value<toml::discard_comments, std::map, std::vector> bonds;
             for (auto &bond : coreData_.masterBonds())
-                bonds.push_back(bond->serialize());
-            masterNode["bond"] = bonds; 
+                bonds[bond->name().data()] = bond->serialize();
+            masterNode["bonds"] = bonds; 
         }
         if (coreData_.nMasterAngles() > 0)
         {
-            toml::array angles;
+            toml::basic_value<toml::discard_comments, std::map, std::vector> angles;
             for (auto &angle : coreData_.masterAngles())
-                angles.push_back(angle->serialize());
-            masterNode["angle"] = angles;
+                angles[angle->name().data()] = angle->serialize();
+            masterNode["angles"] = angles;
         }
         if (coreData_.nMasterTorsions() > 0)
         {
-            toml::array torsions;
+            toml::basic_value<toml::discard_comments, std::map, std::vector> torsions;
             for (auto &torsion : coreData_.masterTorsions())
-                torsions.push_back(torsion->serialize());
-            masterNode["torsion"] = torsions;
+                torsions[torsion->name().data()] = torsion->serialize();
+            masterNode["torsions"] = torsions;
         }
         if (coreData_.nMasterImpropers() > 0)
         {
-            toml::array impropers;
+            toml::basic_value<toml::discard_comments, std::map, std::vector> impropers;
             for (auto &improper : coreData_.masterImpropers())
-                impropers.push_back(improper->serialize());
-            masterNode["improper"] = impropers;
+                impropers[improper->name().data()] = improper->serialize();
+            masterNode["impropers"] = impropers;
         }
         root["master"] = masterNode;
 

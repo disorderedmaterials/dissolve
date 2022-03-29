@@ -363,7 +363,5 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
 }
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> MasterBond::serialize() {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> masterBond = SpeciesBond::serialize();
-    masterBond["name"] = name_.data();
-    return masterBond;
+    return SpeciesBond::serialize();
 }

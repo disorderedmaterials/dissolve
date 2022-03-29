@@ -258,7 +258,5 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> MasterImproper::serialize()
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> masterImproper = SpeciesImproper::serialize();
-    masterImproper["name"] = name_.data();
-    return masterImproper;
+    return SpeciesImproper::serialize();
 }
