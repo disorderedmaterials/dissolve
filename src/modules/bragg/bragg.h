@@ -56,4 +56,6 @@ class BraggModule : public Module
     private:
     // Run main processing
     bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };

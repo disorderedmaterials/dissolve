@@ -44,10 +44,6 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
 {
     refreshing_ = true;
 
-    // Clear braggKVectors.  This will trigger recalculating the
-    // reflections on the next call to calculateBraggTerms
-    dissolve_.processingModuleData().realise<std::vector<KVector>>("KVectors", module_->uniqueName()).clear();
-
     // Check / update summed atom types data
     if (!reflectionAtomTypesData_)
         reflectionAtomTypesData_ =

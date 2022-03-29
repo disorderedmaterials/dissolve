@@ -89,7 +89,8 @@ class KeywordBase
     {
         ClearData,
         RecreateRenderables,
-        ReloadExternalData
+        ReloadExternalData,
+        RecalculateBraggReflections
     };
 
     private:
