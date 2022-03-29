@@ -390,8 +390,3 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::s
 
     return angle;
 }
-
-toml::basic_value<toml::discard_comments, std::map, std::vector> MasterAngle::serialize()
-{
-    return SpeciesAngle::serialize();
-}

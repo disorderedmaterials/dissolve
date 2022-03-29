@@ -624,8 +624,3 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
 
     return torsion;
 }
-
-toml::basic_value<toml::discard_comments, std::map, std::vector> MasterTorsion::serialize()
-{
-    return SpeciesTorsion::serialize();
-}

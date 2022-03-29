@@ -255,8 +255,3 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
 
     return improper;
 }
-
-toml::basic_value<toml::discard_comments, std::map, std::vector> MasterImproper::serialize()
-{
-    return SpeciesImproper::serialize();
-}

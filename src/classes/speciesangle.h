@@ -120,6 +120,4 @@ class MasterAngle : public SpeciesAngle
     void setName(std::string_view name) override { name_ = name; }
     // Return identifying name
     std::string_view name() const override { return name_; };
-
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

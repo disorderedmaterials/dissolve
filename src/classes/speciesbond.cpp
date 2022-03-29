@@ -361,7 +361,3 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
 
     return bond;
 }
-
-toml::basic_value<toml::discard_comments, std::map, std::vector> MasterBond::serialize() {
-    return SpeciesBond::serialize();
-}
