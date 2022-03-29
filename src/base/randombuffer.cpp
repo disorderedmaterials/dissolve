@@ -30,7 +30,7 @@ void RandomBuffer::refill()
         // Master creates buffer and sends to slaves
         if (processPool_.isMaster())
         {
-            std::generate(buffer_.begin(), buffer_.end(), []() {return DissolveMath::random(); });
+            std::generate(buffer_.begin(), buffer_.end(), []() { return DissolveMath::random(); });
             processPool_.broadcast(buffer_.data(), RANDBUFFERSIZE, 0, commsGroup_);
         }
         else
@@ -41,7 +41,7 @@ void RandomBuffer::refill()
         // Master creates buffer and sends to slaves
         if (processPool_.isMaster())
         {
-            std::generate(buffer_.begin(), buffer_.end(), []() {return DissolveMath::random(); });
+            std::generate(buffer_.begin(), buffer_.end(), []() { return DissolveMath::random(); });
             processPool_.broadcast(buffer_.data(), RANDBUFFERSIZE, 0, commsGroup_);
         }
         else
@@ -52,7 +52,7 @@ void RandomBuffer::refill()
         // Group leader creates buffer and sends to slaves
         if (processPool_.groupLeader())
         {
-            std::generate(buffer_.begin(), buffer_.end(), []() {return DissolveMath::random(); });
+            std::generate(buffer_.begin(), buffer_.end(), []() { return DissolveMath::random(); });
             processPool_.broadcast(buffer_.data(), RANDBUFFERSIZE, 0, commsGroup_);
         }
         else
@@ -61,7 +61,7 @@ void RandomBuffer::refill()
     else
     {
         // Create own random buffer
-        std::generate(buffer_.begin(), buffer_.end(), []() {return DissolveMath::random(); });
+        std::generate(buffer_.begin(), buffer_.end(), []() { return DissolveMath::random(); });
     }
 #endif
 }
