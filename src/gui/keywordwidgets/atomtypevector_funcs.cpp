@@ -45,7 +45,10 @@ void AtomTypeVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
  */
 
 // Update value displayed in widget
-void AtomTypeVectorKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void AtomTypeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetValues(coreData_);
+}
 
 // Update widget values data based on keyword data
 void AtomTypeVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)

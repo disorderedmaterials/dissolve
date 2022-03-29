@@ -44,7 +44,10 @@ void ConfigurationVectorKeywordWidget::modelDataChanged(const QModelIndex &topLe
  */
 
 // Update value displayed in widget
-void ConfigurationVectorKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void ConfigurationVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetValues(coreData_);
+}
 
 // Update widget values data based on keyword data
 void ConfigurationVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)

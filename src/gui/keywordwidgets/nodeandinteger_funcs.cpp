@@ -63,4 +63,4 @@ void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
  */
 
 // Update value displayed in widget
-void NodeAndIntegerKeywordWidget::updateValue() {}
+void NodeAndIntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}

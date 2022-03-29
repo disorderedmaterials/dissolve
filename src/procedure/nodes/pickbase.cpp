@@ -47,8 +47,7 @@ const std::vector<std::shared_ptr<Molecule>> &PickProcedureNodeBase::pickedMolec
  */
 
 // Finalise any necessary data after execution
-bool PickProcedureNodeBase::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                     GenericList &targetList)
+bool PickProcedureNodeBase::finalise(const ProcedureContext &procedureContext)
 {
     // Clear picked molecules
     pickedMolecules_.clear();

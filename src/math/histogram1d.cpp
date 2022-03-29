@@ -145,6 +145,7 @@ const std::vector<double> &Histogram1D::binCentres() const { return binCentres_;
 
 // Return histogram data
 std::vector<long int> &Histogram1D::bins() { return bins_; }
+const std::vector<long int> &Histogram1D::bins() const { return bins_; }
 
 // Add source histogram data into local array
 void Histogram1D::add(Histogram1D &other, int factor)

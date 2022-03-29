@@ -26,15 +26,9 @@ macro(dissolve_add_module header modulename)
   )
 
   # Set common include dirs
-  include_directories(
-    module_${modulename}
-    PRIVATE
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_BINARY_DIR}/src
-    ${PROJECT_SOURCE_DIR}
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/src
-    ${CONAN_INCLUDE_DIRS_TBB}
+  target_include_directories(
+    module_${modulename} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR} ${CMAKE_BINARY_DIR}
+                                 ${CMAKE_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_TBB}
   )
   target_link_libraries(
     module_${modulename}
@@ -88,17 +82,16 @@ macro(dissolve_add_module_gui modulename)
   add_dependencies(module_${modulename}_gui gui)
 
   # Set common include dirs
-  include_directories(
+  target_include_directories(
     module_${modulename}_gui
-    PRIVATE
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_BINARY_DIR}/src
-    ${Qt6Core_INCLUDE_DIRS}
-    ${Qt6Gui_INCLUDE_DIRS}
-    ${Qt6Widgets_INCLUDE_DIRS}
-    ${Qt6OpenGL_INCLUDE_DIRS}
-    ${Qt6OpenGLWidgets_INCLUDE_DIRS}
-    ${FREETYPE_INCLUDE_DIRS}
+    PRIVATE ${PROJECT_SOURCE_DIR}/src
+            ${PROJECT_BINARY_DIR}/src
+            ${Qt6Core_INCLUDE_DIRS}
+            ${Qt6Gui_INCLUDE_DIRS}
+            ${Qt6Widgets_INCLUDE_DIRS}
+            ${Qt6OpenGL_INCLUDE_DIRS}
+            ${Qt6OpenGLWidgets_INCLUDE_DIRS}
+            ${FREETYPE_INCLUDE_DIRS}
   )
   target_link_libraries(
     module_${modulename}_gui
@@ -127,15 +120,9 @@ endforeach()
 
 add_library(moduleregistry registry.cpp registry.h)
 
-include_directories(
-  moduleregistry
-  PRIVATE
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_BINARY_DIR}/src
-  ${PROJECT_SOURCE_DIR}
-  ${CMAKE_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}/src
-  ${CONAN_INCLUDE_DIRS}
+target_include_directories(
+  moduleregistry PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR} ${CMAKE_BINARY_DIR}
+                         ${CMAKE_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS}
 )
 
 if(GUI)
@@ -147,20 +134,19 @@ if(GUI)
     target_compile_options(modulewidgetproducer PUBLIC /Zc:__cplusplus)
   endif(MSVC)
 
-  include_directories(
+  target_include_directories(
     modulewidgetproducer
-    PRIVATE
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_BINARY_DIR}/src
-    ${PROJECT_SOURCE_DIR}
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/src
-    ${Qt6Core_INCLUDE_DIRS}
-    ${Qt6Gui_INCLUDE_DIRS}
-    ${Qt6Widgets_INCLUDE_DIRS}
-    ${Qt6OpenGL_INCLUDE_DIRS}
-    ${Qt6OpenGLWidgets_INCLUDE_DIRS}
-    ${FREETYPE_INCLUDE_DIRS}
-    ${CONAN_INCLUDE_DIRS}
+    PRIVATE ${PROJECT_SOURCE_DIR}/src
+            ${PROJECT_BINARY_DIR}/src
+            ${PROJECT_SOURCE_DIR}
+            ${CMAKE_BINARY_DIR}
+            ${CMAKE_BINARY_DIR}/src
+            ${Qt6Core_INCLUDE_DIRS}
+            ${Qt6Gui_INCLUDE_DIRS}
+            ${Qt6Widgets_INCLUDE_DIRS}
+            ${Qt6OpenGL_INCLUDE_DIRS}
+            ${Qt6OpenGLWidgets_INCLUDE_DIRS}
+            ${FREETYPE_INCLUDE_DIRS}
+            ${CONAN_INCLUDE_DIRS}
   )
 endif(GUI)

@@ -28,7 +28,7 @@ bool GeneralRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Ve
  */
 
 // Prepare any necessary data, ready for execution
-bool GeneralRegionProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool GeneralRegionProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Retrieve keyword values
     toleranceSquared_ = tolerance_ * tolerance_;

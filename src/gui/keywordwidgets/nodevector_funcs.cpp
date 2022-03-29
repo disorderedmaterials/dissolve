@@ -48,7 +48,10 @@ void NodeVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const
  */
 
 // Update value displayed in widget
-void NodeVectorKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void NodeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetValues(coreData_);
+}
 
 // Update widget values data based on keyword data
 void NodeVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)

@@ -186,7 +186,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         });
 
         // Re-form the total function
-        unweightedsq.formTotal(true);
+        unweightedsq.formTotals(true);
     }
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date

@@ -33,7 +33,7 @@ CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, CalculateCNMod
 }
 
 // Update controls within widget
-void CalculateCNModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void CalculateCNModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     // Update CN labels
     ui_.RegionAResultFrame->setText(
@@ -50,7 +50,7 @@ void CalculateCNModuleWidget::updateControls(ModuleWidget::UpdateType updateType
     ui_.RegionCResultFrame->setEnabled(rangeCOn);
 
     // Clear and recreate graph data targets?
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables || !rdfData_)
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || !rdfData_)
     {
         rdfGraph_->clearRenderables();
 

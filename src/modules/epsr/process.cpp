@@ -284,8 +284,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             GaussFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01, 0, 3,
-                                                              3, false);
+                fitError =
+                    coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01, false);
             else
             {
                 if (fitCoefficients.size() != nCoeffP_)
@@ -293,12 +293,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
                                     fitCoefficients.size(), module->uniqueName(), nCoeffP_.value());
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01,
-                                                                  0, 3, 3, false);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01);
                 }
                 else
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, gSigma1_, nIterations, 0.01, 0,
-                                                                  3, 3, false);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, gSigma1_, nIterations, 0.01);
             }
 
             // Store the new fit coefficients
@@ -313,7 +311,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             if (status == GenericItem::ItemStatus::Created)
                 fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_, nIterations,
-                                                              0.1, 0, 3, 3, false);
+                                                              0.1, false);
             else
             {
                 if (fitCoefficients.size() != nCoeffP_)
@@ -322,11 +320,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                     "not match the current number ({}), so will fit from scratch.\n",
                                     fitCoefficients.size(), module->uniqueName(), nCoeffP_.value());
                     fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_,
-                                                                  nIterations, 0.01, 0, 3, 3, false);
+                                                                  nIterations, 0.01);
                 }
                 else
                     fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_,
-                                                                  nIterations, 0.01, 0, 3, 3, false);
+                                                                  nIterations, 0.01);
             }
 
             // Store the new fit coefficients
@@ -360,7 +358,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = originalReferenceData;
-            Interpolator::addInterpolated(refMinusIntra, weightedSQ.boundTotal(false), -1.0);
+            Interpolator::addInterpolated(refMinusIntra, weightedSQ.boundTotal(), -1.0);
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
             // normalisation from the reference data (we assume that the two are consistent)
@@ -400,7 +398,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             // Our reference data is normalised to AverageOfSquares at this point, so must do the same to the
             // bound total before subtracting it.
-            auto boundTotal = weightedSQ.boundTotal(false);
+            auto boundTotal = weightedSQ.boundTotal();
             auto bbar = weights.boundCoherentAverageOfSquares(boundTotal.xAxis());
             std::transform(boundTotal.values().begin(), boundTotal.values().end(), bbar.begin(), boundTotal.values().begin(),
                            std::divides<>());

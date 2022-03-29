@@ -23,8 +23,9 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
     siteNormaliser_->keywords().set("Site", std::vector<std::shared_ptr<const SelectProcedureNode>>{sourceRDF_->selectANode()});
 
     // Execute the analysis on the Configuration targeted by the RDF module
-    auto *cfg = sourceRDF_->keywords().get<Configuration *>("Configuration");
-    if (!analyser_.execute(procPool, cfg, fmt::format("{}//Analyser", uniqueName()), dissolve.processingModuleData()))
+    ProcedureContext context(procPool, sourceRDF_->keywords().get<Configuration *>("Configuration"));
+    context.setDataListAndPrefix(dissolve.processingModuleData(), fmt::format("{}//Analyser", uniqueName()));
+    if (!analyser_.execute(context))
         return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 
     // Test?

@@ -70,10 +70,19 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
 {
     if (role == Qt::EditRole)
     {
-        moduleLayer_->modules()[index.row()]->setUniqueName(value.toString().toStdString());
+        auto *module = rawData(index);
 
-        emit dataChanged(index, index);
-        emit(moduleNameChanged(index));
+        // Check for identical old/new names
+        if (value.toString() == QString::fromStdString(std::string(module->uniqueName())))
+            return false;
+
+        // Ensure uniqueness of new name
+        auto oldName = QString::fromStdString(std::string(module->uniqueName()));
+        auto newName = Module::uniqueName(value.toString().toStdString(), module);
+        module->setUniqueName(newName);
+
+        emit(dataChanged(index, index));
+        emit(moduleNameChanged(index, oldName, QString::fromStdString(newName)));
 
         return true;
     }
@@ -249,7 +258,10 @@ bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
 
     beginRemoveRows(parent, row, row + count - 1);
     for (auto i = 0; i < count; ++i)
+    {
+        KeywordStore::objectNoLongerValid(moduleLayer_->modules()[row].get());
         moduleLayer_->modules().erase(moduleLayer_->modules().begin() + row);
+    }
     endRemoveRows();
 
     return true;

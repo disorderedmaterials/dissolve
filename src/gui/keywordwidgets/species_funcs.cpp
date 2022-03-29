@@ -49,4 +49,4 @@ void SpeciesKeywordWidget::on_SpeciesCombo_currentIndexChanged(int index)
  */
 
 // Update value displayed in widget
-void SpeciesKeywordWidget::updateValue() {}
+void SpeciesKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}

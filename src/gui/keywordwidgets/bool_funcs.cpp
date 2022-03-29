@@ -33,7 +33,7 @@ void BoolKeywordWidget::checkBoxClicked(bool checked)
  */
 
 // Update value displayed in widget
-void BoolKeywordWidget::updateValue()
+void BoolKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

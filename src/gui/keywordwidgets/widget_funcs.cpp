@@ -3,6 +3,7 @@
 
 #include "gui/keywordwidgets/producers.h"
 #include "gui/keywordwidgets/widget.hui"
+#include "gui/signals.h"
 #include "main/dissolve.h"
 #include "module/module.h"
 #include <QFormLayout>
@@ -62,13 +63,15 @@ void KeywordsWidget::setUp(const KeywordStore &keywords, const CoreData &coreDat
 }
 
 // Update controls within widget
-void KeywordsWidget::updateControls()
+void KeywordsWidget::updateControls(int dataMutationFlags)
 {
     refreshing_ = true;
 
+    Flags<DissolveSignals::DataMutations> mutationFlags(dataMutationFlags);
+
     // Update all our keyword widgets
     for (auto *keywordWidget : keywordWidgets_)
-        keywordWidget->updateValue();
+        keywordWidget->updateValue(mutationFlags);
 
     refreshing_ = false;
 }

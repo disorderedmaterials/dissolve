@@ -166,7 +166,7 @@ Layer  'Evolve (Standard)'
   EndModule
 
   Module  MD  'MD01'
-    Frequency  5
+    Frequency  2
 
     Configuration  'Bulk'
   EndModule
@@ -195,7 +195,7 @@ Layer  'Analysis'
 EndLayer
 
 Layer  'RDF / Neutron S(Q)'
-  Frequency  5
+  Frequency  1
 
   Module  RDF  'RDF01'
     Frequency  1

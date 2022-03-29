@@ -28,9 +28,6 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *pa
     // will exist in a QScrollArea)
     ui_.OptionsCombo->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.OptionsCombo));
 
-    // Update values
-    updateValue();
-
     refreshing_ = false;
 }
 
@@ -75,7 +72,7 @@ void NodeValueEnumOptionsKeywordWidget::on_OptionsCombo_currentIndexChanged(int 
  */
 
 // Update value displayed in widget
-void NodeValueEnumOptionsKeywordWidget::updateValue()
+void NodeValueEnumOptionsKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

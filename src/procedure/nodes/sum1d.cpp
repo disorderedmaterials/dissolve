@@ -73,7 +73,7 @@ bool Sum1DProcedureNode::isRangeCEnabled() const { return rangeEnabled_[2]; }
  */
 
 // Prepare any necessary data, ready for execution
-bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool Sum1DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     if (!sourceData_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
@@ -82,7 +82,7 @@ bool Sum1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Ge
 }
 
 // Finalise any necessary data after execution
-bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool Sum1DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // Calculate integrals
     const std::vector<std::string> rangeNames = {"A", "B", "C"};
@@ -90,8 +90,9 @@ bool Sum1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
         if (rangeEnabled_[i])
         {
             if (!sum_[i].has_value())
-                sum_[i] = targetList.realise<SampledDouble>(fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), prefix,
-                                                            GenericItem::InRestartFileFlag);
+                sum_[i] = procedureContext.dataList().realise<SampledDouble>(
+                    fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), procedureContext.dataPrefix(),
+                    GenericItem::InRestartFileFlag);
             sum_[i]->get() += Integrator::sum(sourceData_->processedData(), range_[i]);
         }
 

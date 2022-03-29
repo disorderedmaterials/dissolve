@@ -19,9 +19,8 @@ PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionPro
  * Execute
  */
 
-// Execute node, targetting the supplied Configuration
-bool PickRegionProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                      GenericList &targetList)
+// Execute node
+bool PickRegionProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     if (!region_)
         return Messenger::error("A region must be supplied to PickRegion.\n");
@@ -32,7 +31,7 @@ bool PickRegionProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
     pickedMolecules_.clear();
 
     // Get the updated region
-    auto region = region_->generateRegion(cfg);
+    auto region = region_->generateRegion(procedureContext.configuration());
     if (!region.isValid())
     {
         Messenger::warn("Region will not capture any molecules...\n");
@@ -40,8 +39,8 @@ bool PickRegionProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Loop over all molecules in supplied Configuration
-    for (const auto &mol : moleculePool(cfg))
-        if (region.validCoordinate(mol->centreOfGeometry(cfg->box())))
+    for (const auto &mol : moleculePool(procedureContext.configuration()))
+        if (region.validCoordinate(mol->centreOfGeometry(procedureContext.configuration()->box())))
             pickedMolecules_.push_back(mol);
 
     Messenger::print("[PickRegion] Total molecules picked = {}.\n", pickedMolecules_.size());

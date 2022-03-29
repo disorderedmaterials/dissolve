@@ -10,5 +10,5 @@ add_library(
   module.h
 )
 
-include_directories(module PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(module PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(module PRIVATE base)
