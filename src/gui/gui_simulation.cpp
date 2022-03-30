@@ -14,7 +14,6 @@ void DissolveWindow::disableSensitiveControls()
     ui_.SimulationStepFiveAction->setEnabled(false);
     ui_.SimulationSaveRestartPointAction->setEnabled(false);
     ui_.SimulationDataManagerAction->setEnabled(false);
-    ui_.SimulationSetRandomSeedAction->setEnabled(false);
 
     // Disable necessary menus
     ui_.SpeciesMenu->setEnabled(false);
@@ -35,7 +34,6 @@ void DissolveWindow::enableSensitiveControls()
     ui_.SimulationStepFiveAction->setEnabled(true);
     ui_.SimulationSaveRestartPointAction->setEnabled(true);
     ui_.SimulationDataManagerAction->setEnabled(true);
-    ui_.SimulationSetRandomSeedAction->setEnabled(true);
 
     // Enable necessary menus
     ui_.SpeciesMenu->setEnabled(true);
