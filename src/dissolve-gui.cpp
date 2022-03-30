@@ -16,13 +16,13 @@ int main(int args, char **argv)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    // Initialise random seed
-    srand((unsigned)time(nullptr));
-
     // Parse CLI options
     CLIOptions options;
     if (options.parse(args, argv, true) != CLIOptions::Success)
         return 1;
+
+    // Initialise random seed
+    srand(options.randomSeed().value_or((unsigned)time(nullptr)));
 
     // Create the main QApplication
     QApplication app(args, argv);

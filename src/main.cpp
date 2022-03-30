@@ -17,9 +17,6 @@ int main(int args, char **argv)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    // Initialise random seed
-    srand((unsigned)time(nullptr));
-
     // Parse CLI options
     CLIOptions options;
 #ifdef PARALLEL
@@ -29,6 +26,9 @@ int main(int args, char **argv)
     if (options.parse(args, argv) != CLIOptions::Success)
         return 1;
 #endif
+
+    // Initialise random seed
+    srand(options.randomSeed().value_or((unsigned)time(nullptr)));
 
     // Enable redirect if requested
     if (options.redirectionBasename())
