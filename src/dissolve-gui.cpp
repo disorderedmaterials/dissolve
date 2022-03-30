@@ -21,6 +21,9 @@ int main(int args, char **argv)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
+    // Initialise random seed
+    srand((unsigned)time(nullptr));
+
     // Parse CLI options
     CLIOptions options;
     if (options.parse(args, argv, true) != CLIOptions::Success)

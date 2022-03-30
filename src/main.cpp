@@ -17,6 +17,9 @@ int main(int args, char **argv)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
+    // Initialise random seed
+    srand((unsigned)time(nullptr));
+
     // Parse CLI options
     CLIOptions options;
 #ifdef PARALLEL

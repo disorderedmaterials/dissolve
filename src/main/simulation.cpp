@@ -28,12 +28,6 @@ bool Dissolve::prepare()
 {
     Messenger::banner("Preparing Simulation");
 
-    // Initialise random seed
-    if (seed_ == -1)
-        srand((unsigned)time(nullptr));
-    else
-        srand(seed_);
-
     // Check Species
     for (const auto &sp : species())
         if (!sp->checkSetUp())
