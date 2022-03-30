@@ -12,11 +12,6 @@
 
 int main(int args, char **argv)
 {
-#ifdef PARALLEL
-    // Initialise parallel communication
-    ProcessPool::initialiseMPI(&args, &argv);
-#endif
-
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
@@ -83,9 +78,6 @@ int main(int args, char **argv)
     dissolveWindow.fullUpdate();
 
     auto result = app.exec();
-
-    // End parallel communication
-    ProcessPool::finalise();
 
     // Done.
     return result;
