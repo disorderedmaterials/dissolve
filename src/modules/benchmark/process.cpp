@@ -33,8 +33,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         SampledDouble timing;
         for (auto n = 0; n < nRepeats_; ++n)
         {
-            srand(dissolve.seed());
-
             Timer timer;
             Messenger::mute();
             targetConfiguration_->generate(procPool, dissolve.pairPotentialRange());
@@ -56,7 +54,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             RDFModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
             targetConfiguration_->incrementContentsVersion();
-            srand(dissolve.seed());
 
             // Run the Module calculation
             bool upToDate;
@@ -82,7 +79,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             RDFModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
             targetConfiguration_->incrementContentsVersion();
-            srand(dissolve.seed());
 
             // Run the Module calculation
             bool upToDate;

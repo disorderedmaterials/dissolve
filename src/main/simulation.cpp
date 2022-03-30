@@ -11,12 +11,6 @@
 #include <cstdio>
 #include <numeric>
 
-// Set random seed
-void Dissolve::setSeed(int seed) { seed_ = seed; }
-
-// Return random seed
-int Dissolve::seed() const { return seed_; }
-
 // Set frequency with which to write various iteration data
 void Dissolve::setRestartFileFrequency(int n) { restartFileFrequency_ = n; }
 

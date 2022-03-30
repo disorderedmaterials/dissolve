@@ -10,7 +10,6 @@
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
     // Set core simulation variables
-    seed_ = -1;
     restartFileFrequency_ = 10;
 
     setUpWorldPool();
