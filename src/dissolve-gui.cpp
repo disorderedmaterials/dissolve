@@ -26,8 +26,8 @@ int main(int args, char **argv)
 
     // Create the main QApplication
     QApplication app(args, argv);
-    QCoreApplication::setOrganizationName("ProjectAten");
-    QCoreApplication::setOrganizationDomain("www.projectaten.com");
+    QCoreApplication::setOrganizationName("Team Dissolve");
+    QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI");
 
     // Set native siblings attribute to prevent odd rendering artefacts on some systems
