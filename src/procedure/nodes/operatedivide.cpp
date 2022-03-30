@@ -17,7 +17,7 @@ OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeB
  */
 
 // Operate on Data1D target
-bool OperateDivideProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
+bool OperateDivideProcedureNode::operateData1D(const ProcessPool &procPool, Configuration *cfg)
 {
     (*targetData1D_) /= value_.asDouble();
 
@@ -25,7 +25,7 @@ bool OperateDivideProcedureNode::operateData1D(ProcessPool &procPool, Configurat
 }
 
 // Operate on Data2D target
-bool OperateDivideProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
+bool OperateDivideProcedureNode::operateData2D(const ProcessPool &procPool, Configuration *cfg)
 {
     (*targetData2D_) /= value_.asDouble();
 
@@ -33,7 +33,7 @@ bool OperateDivideProcedureNode::operateData2D(ProcessPool &procPool, Configurat
 }
 
 // Operate on Data3D target
-bool OperateDivideProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
+bool OperateDivideProcedureNode::operateData3D(const ProcessPool &procPool, Configuration *cfg)
 {
     (*targetData3D_) /= value_.asDouble();
 

@@ -10,7 +10,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateSDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -24,9 +24,6 @@ bool CalculateSDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
     else
         selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

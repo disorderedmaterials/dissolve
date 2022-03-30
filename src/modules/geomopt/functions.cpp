@@ -62,7 +62,7 @@ void GeometryOptimisationModule::sortBoundsAndEnergies(std::array<double, 3> &bo
 
 // Return energy of adjusted coordinates, following the force vectors by the supplied amount
 template <>
-double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Configuration *cfg,
+double GeometryOptimisationModule::energyAtGradientPoint(const ProcessPool &procPool, Configuration *cfg,
                                                          const PotentialMap &potentialMap, double delta)
 {
     for (auto &&[i, r, f] : zip(cfg->atoms(), rRef_, f_))
@@ -74,8 +74,8 @@ double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, 
 
 // Return energy of adjusted coordinates, following the force vectors by the supplied amount
 template <>
-double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
-                                                         double delta)
+double GeometryOptimisationModule::energyAtGradientPoint(const ProcessPool &procPool, Species *sp,
+                                                         const PotentialMap &potentialMap, double delta)
 {
     for (auto &&[i, r, f] : zip(sp->atoms(), rRef_, f_))
         sp->setAtomCoordinates(&i, Vec3<double>(r.x + f.x * delta, r.y + f.y * delta, r.z + f.z * delta));
@@ -88,7 +88,7 @@ double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, 
  */
 
 // Geometry optimise supplied Species
-bool GeometryOptimisationModule::optimiseSpecies(const PotentialMap &potentialMap, ProcessPool &procPool, Species *sp)
+bool GeometryOptimisationModule::optimiseSpecies(const PotentialMap &potentialMap, const ProcessPool &procPool, Species *sp)
 {
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);

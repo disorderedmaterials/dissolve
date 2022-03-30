@@ -60,7 +60,7 @@ class ForceImportFileFormat : public FileAndFormat
 
     public:
     // Import forces using current filename and format
-    bool importData(std::vector<Vec3<double>> &f, ProcessPool *procPool = nullptr);
+    bool importData(std::vector<Vec3<double>> &f, const ProcessPool *procPool = nullptr);
     // Import forces using supplied parser and current format
     bool importData(LineParser &parser, std::vector<Vec3<double>> &f);
 };

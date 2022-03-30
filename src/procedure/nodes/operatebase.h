@@ -46,11 +46,11 @@ class OperateProcedureNodeBase : public ProcedureNode
     // Set target Data3D
     void setTarget(Data3D *target);
     // Operate on Data1D target
-    virtual bool operateData1D(ProcessPool &procPool, Configuration *cfg);
+    virtual bool operateData1D(const ProcessPool &procPool, Configuration *cfg);
     // Operate on Data2D target
-    virtual bool operateData2D(ProcessPool &procPool, Configuration *cfg);
+    virtual bool operateData2D(const ProcessPool &procPool, Configuration *cfg);
     // Operate on Data3D target
-    virtual bool operateData3D(ProcessPool &procPool, Configuration *cfg);
+    virtual bool operateData3D(const ProcessPool &procPool, Configuration *cfg);
 
     /*
      * Execute

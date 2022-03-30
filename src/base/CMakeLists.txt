@@ -8,6 +8,7 @@ add_library(
   outputhandler.cpp
   processgroup.cpp
   processpool.cpp
+  randombuffer.cpp
   sysfunc.cpp
   timer.cpp
   units.cpp
@@ -22,6 +23,7 @@ add_library(
   outputhandler.h
   processgroup.h
   processpool.h
+  randombuffer.h
   sysfunc.h
   timer.h
   units.h

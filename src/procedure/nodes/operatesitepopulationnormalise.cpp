@@ -24,7 +24,7 @@ OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProce
  */
 
 // Operate on Data1D target
-bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
+bool OperateSitePopulationNormaliseProcedureNode::operateData1D(const ProcessPool &procPool, Configuration *cfg)
 {
     for (const auto node : normalisationSites_)
         (*targetData1D_) /= node->nAverageSites();
@@ -33,7 +33,7 @@ bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool &pro
 }
 
 // Operate on Data2D target
-bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
+bool OperateSitePopulationNormaliseProcedureNode::operateData2D(const ProcessPool &procPool, Configuration *cfg)
 {
     for (const auto node : normalisationSites_)
         (*targetData2D_) /= node->nAverageSites();
@@ -42,7 +42,7 @@ bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool &pro
 }
 
 // Operate on Data3D target
-bool OperateSitePopulationNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
+bool OperateSitePopulationNormaliseProcedureNode::operateData3D(const ProcessPool &procPool, Configuration *cfg)
 {
     for (const auto node : normalisationSites_)
         (*targetData3D_) /= node->nAverageSites();

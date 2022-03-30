@@ -18,7 +18,7 @@ OperateMultiplyProcedureNode::OperateMultiplyProcedureNode()
  */
 
 // Operate on Data1D target
-bool OperateMultiplyProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
+bool OperateMultiplyProcedureNode::operateData1D(const ProcessPool &procPool, Configuration *cfg)
 {
     (*targetData1D_) *= value_.asDouble();
 
@@ -26,7 +26,7 @@ bool OperateMultiplyProcedureNode::operateData1D(ProcessPool &procPool, Configur
 }
 
 // Operate on Data2D target
-bool OperateMultiplyProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
+bool OperateMultiplyProcedureNode::operateData2D(const ProcessPool &procPool, Configuration *cfg)
 {
     (*targetData2D_) *= value_.asDouble();
 
@@ -34,7 +34,7 @@ bool OperateMultiplyProcedureNode::operateData2D(ProcessPool &procPool, Configur
 }
 
 // Operate on Data3D target
-bool OperateMultiplyProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
+bool OperateMultiplyProcedureNode::operateData3D(const ProcessPool &procPool, Configuration *cfg)
 {
     (*targetData3D_) *= value_.asDouble();
 

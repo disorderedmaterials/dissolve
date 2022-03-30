@@ -12,7 +12,7 @@
 #include "procedure/nodes/sum1d.h"
 
 // Run main processing
-bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for valid CalculateRDF pointer
     if (!sourceRDF_)

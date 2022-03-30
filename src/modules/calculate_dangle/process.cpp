@@ -9,7 +9,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateDAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -24,9 +24,6 @@ bool CalculateDAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
         selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
     else
         selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

@@ -50,26 +50,26 @@ class EnergyModule : public Module
         EnergyUnstable = 1
     };
     // Return total interatomic energy of Configuration
-    static double interAtomicEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
+    static double interAtomicEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total interatomic energy of Species
-    static double interAtomicEnergy(ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap);
+    static double interAtomicEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap);
     // Return total intermolecular energy
-    static double interMolecularEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
+    static double interMolecularEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total intramolecular energy of Configuration
-    static double intraMolecularEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
+    static double intraMolecularEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total intramolecular energy of Configuration, storing components in provided variables
-    static double intraMolecularEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
+    static double intraMolecularEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
                                        double &bondEnergy, double &angleEnergy, double &torsionEnergy, double &improperEnergy);
     // Return total intramolecular energy of Species
     static double intraMolecularEnergy(const Species *sp);
     // Return total energy (interatomic and intramolecular)
-    static double totalEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
+    static double totalEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap);
     // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
-    static double totalEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
+    static double totalEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
                               double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy,
                               double &improperEnergy);
     // Return total energy (interatomic and intramolecular) of Species
-    static double totalEnergy(ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap);
+    static double totalEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap);
     // Check energy stability of specified Configuration
     static EnergyStability checkStability(GenericList &processingData, const Configuration *cfg);
     // Check energy stability of specified Configurations, returning the number that are unstable
@@ -80,9 +80,9 @@ class EnergyModule : public Module
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };
