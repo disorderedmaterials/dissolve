@@ -34,15 +34,10 @@ bool SpeciesKeyword::deserialise(LineParser &parser, int startArg, const CoreDat
 // Serialise data to specified LineParser
 bool SpeciesKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    if (data_)
-    {
-        if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_->name()))
-            return false;
-    }
-    else if (!parser.writeLineF("{}{}  '?_?'\n", prefix, name()))
-        return false;
+    if (!data_)
+        return true;
 
-    return true;
+    return parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_->name());
 }
 
 /*
