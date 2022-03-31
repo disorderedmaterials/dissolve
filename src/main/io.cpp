@@ -192,6 +192,19 @@ bool Dissolve::loadInput(std::string_view filename)
             speciesNode[species->name().data()] = species->serialize();
         root["species"] = speciesNode;
 
+        toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentialsNode;
+        pairPotentialsNode["range"] = pairPotentialRange_;
+        pairPotentialsNode["delta"] = pairPotentialDelta_;
+        pairPotentialsNode["includeCoulomb"] = "true";
+        pairPotentialsNode["coulombTruncation"] = "shifted";
+        pairPotentialsNode["shortRangeTruncation"] = "shifted";
+        if (nAtomTypes() > 0)
+        {
+            for (auto &atomType : atomTypes())
+                pairPotentialsNode[atomType->name().data()] = atomType->serialize();
+        }
+        root["pairPotentials"] = pairPotentialsNode;
+
         toml::basic_value<toml::discard_comments, std::map, std::vector> configurationsNode;
         for (auto &configuration : configurations())
             configurationsNode[configuration->name().data()] = configuration->serialize();

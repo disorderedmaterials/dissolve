@@ -7,6 +7,10 @@
 #include "classes/interactionpotential.h"
 #include "data/elements.h"
 
+#include <map>
+#include <vector>
+#include <toml11/toml.hpp>
+
 // Short-range functional forms
 class ShortRangeFunctions
 {
@@ -78,4 +82,6 @@ class AtomType
     int index() const;
     // Return whether our parameters are the same as those provided
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };
