@@ -14,7 +14,7 @@
 // Run set-up stage
 bool BraggModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
-    if (actionSignals.isSet(KeywordBase::RecalculateBraggReflections))
+    if (actionSignals.isSet(KeywordBase::ClearModuleData))
         dissolve.processingModuleData().realise<std::vector<KVector>>("KVectors", uniqueName()).clear();
     return true;
 }

@@ -90,7 +90,7 @@ class KeywordBase
         ClearData,
         RecreateRenderables,
         ReloadExternalData,
-        RecalculateBraggReflections
+        ClearModuleData
     };
 
     private:
