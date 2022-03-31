@@ -54,8 +54,12 @@ bool Dissolve::loadInput(LineParser &parser)
                     break;
                 }
 
+                // Need to update pair potentials in case they're needed in the generator
+                generatePairPotentials();
+                potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
+
                 // Prepare the Configuration
-                if (!cfg->initialiseContent({worldPool(), potentialMap()}))
+                if (!cfg->initialiseContent({worldPool_, potentialMap_}))
                     error = true;
                 break;
             case (BlockKeywords::LayerBlockKeyword):
