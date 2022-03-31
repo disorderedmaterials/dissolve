@@ -35,7 +35,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         {
             Timer timer;
             Messenger::mute();
-            targetConfiguration_->generate(procPool, dissolve.pairPotentialRange());
+            targetConfiguration_->generate({dissolve.worldPool(), dissolve.potentialMap()});
             Messenger::unMute();
             timing += timer.split();
         }

@@ -55,7 +55,7 @@ bool Dissolve::loadInput(LineParser &parser)
                 }
 
                 // Prepare the Configuration
-                if (!cfg->initialiseContent(worldPool(), pairPotentialRange_))
+                if (!cfg->initialiseContent({worldPool(), potentialMap()}))
                     error = true;
                 break;
             case (BlockKeywords::LayerBlockKeyword):

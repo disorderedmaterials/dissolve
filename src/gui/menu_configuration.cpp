@@ -42,7 +42,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
         generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(sp, 100, NodeValue("rho", paramsNode->parameters())));
 
     // Run the generator
-    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
 
     setModified();
     fullUpdate();
@@ -87,7 +87,7 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     }
 
     // Run the generator
-    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
 
     setModified();
     fullUpdate();
@@ -113,7 +113,7 @@ void DissolveWindow::on_ConfigurationCreateEmptyFrameworkAction_triggered(bool c
     generator.addRootSequenceNode(node);
 
     // Run the generator
-    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
 
     setModified();
     fullUpdate();
@@ -177,7 +177,7 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     }
 
     // Run the generator
-    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
 
     setModified();
     fullUpdate();
