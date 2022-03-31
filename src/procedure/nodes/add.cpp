@@ -38,9 +38,9 @@ AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &populatio
         "Control", "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
     keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Control", "Region", "Region into which to add the species", region_,
                                                         this, ProcedureNode::NodeClass::Region, true);
-    keywords_.add<NodeKeyword<CoordinateSetsProcedureNode>>("Control", "CoordinateSets",
-                                                            "Source coordinate sets for the species", coordinateSets_, this,
-                                                            ProcedureNode::NodeType::CoordinateSets, true);
+    keywords_.add<NodeKeyword<CoordinateSetsProcedureNode>>("Control", "CoordinateSets", "Target coordinate sets to add",
+                                                            coordinateSets_, this, ProcedureNode::NodeType::CoordinateSets,
+                                                            true);
 }
 
 /*
@@ -87,8 +87,11 @@ EnumOptions<AddProcedureNode::PositioningType> AddProcedureNode::positioningType
 // Prepare any necessary data, ready for execution
 bool AddProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
-    if (!species_)
-        return Messenger::error("No Species set in Add node.\n");
+    if (!species_ && !coordinateSets_)
+        return Messenger::error("No target Species or coordinate sets specified in Add node.\n");
+
+    if (species_ && coordinateSets_)
+        return Messenger::error("Specify either target Species or target coordinate sets, but not both.\n");
 
     // If positioningType_ type is 'Region', must have a suitable node defined
     if (positioningType_ == AddProcedureNode::PositioningType::Region && !region_)
@@ -101,35 +104,30 @@ bool AddProcedureNode::prepare(const ProcedureContext &procedureContext)
     if (!scaleA_ && !scaleB_ && !scaleC_)
         return Messenger::error("Must have at least one scalable box axis!\n");
 
-    // Check coordinate set specification
-    if (coordinateSets_)
-    {
-        auto *setSpecies = coordinateSets_->keywords().get<const Species *>("Species");
-        if (!setSpecies || setSpecies != species_)
-            return Messenger::error("Coordinate set source is either not set up properly or targets a different species.\n");
-    }
-
     return true;
 }
 
 // Execute node
 bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
 {
+    // Get target species
+    auto *sp = species_ ? species_ : coordinateSets_->keywords().get<const Species *>("Species");
+
     // Can't add the Species if it has any missing core information
-    if (!species_->checkSetUp())
-        return Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", species_->name());
+    if (!sp->checkSetUp())
+        return Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", sp->name());
 
     if (population_ > 0)
-        Messenger::print("[Add] Adding species '{}' - population is {}.\n", species_->name(), population_.asInteger());
+        Messenger::print("[Add] Adding species '{}' - population is {}.\n", sp->name(), population_.asInteger());
     else
     {
-        Messenger::print("[Add] Population of species '{}' is zero so it will not be added.\n", species_->name());
+        Messenger::print("[Add] Population of species '{}' is zero so it will not be added.\n", sp->name());
         return true;
     }
 
     auto *cfg = procedureContext.configuration();
 
-    const auto nAtomsToAdd = population_ * species_->nAtoms();
+    const auto nAtomsToAdd = population_ * sp->nAtoms();
     auto [rho, rhoUnits] = density_;
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
@@ -148,7 +146,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         if (rhoUnits == Units::AtomsPerAngstromUnits)
             requiredVolume = nAtomsToAdd / rho;
         else
-            requiredVolume = ((species_->mass() * population_) / AVOGADRO) / (rho / 1.0E24);
+            requiredVolume = ((sp->mass() * population_) / AVOGADRO) / (rho / 1.0E24);
 
         Messenger::print("[Add] Density for new species is {} {}.\n", rho.asDouble(), Units::densityUnits().keyword(rhoUnits));
         Messenger::print("[Add] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
@@ -189,7 +187,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         if (rhoUnits == Units::AtomsPerAngstromUnits)
             requiredVolume = nAtomsToAdd / rho;
         else
-            requiredVolume = ((species_->mass() * population_) / AVOGADRO) / (rho / 1.0E24);
+            requiredVolume = ((sp->mass() * population_) / AVOGADRO) / (rho / 1.0E24);
 
         Messenger::print("[Add] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
@@ -211,10 +209,10 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
     else if (boxAction_ == AddProcedureNode::BoxActionStyle::Set)
     {
         Messenger::print("[Add] Box geometry will be set from the species box definition.\n");
-        if (species_->box()->type() == Box::BoxType::NonPeriodic)
-            return Messenger::error("Target species '{}' is not periodic!.\n", species_->name());
+        if (sp->box()->type() == Box::BoxType::NonPeriodic)
+            return Messenger::error("Target species '{}' is not periodic!.\n", sp->name());
 
-        cfg->createBox(species_->box()->axisLengths(), species_->box()->axisAngles());
+        cfg->createBox(sp->box()->axisLengths(), sp->box()->axisAngles());
         auto *box = cfg->box();
 
         Messenger::print("[Add] Box type is now {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = "
@@ -225,7 +223,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         // Check on the requestedPopulation - we can have exactly one copy and no more
         if (population_ > 1)
         {
-            Messenger::warn("Population for species '{}' reset to 1.\n", species_->name());
+            Messenger::warn("Population for species '{}' reset to 1.\n", sp->name());
             population_ = 0;
         }
     }
@@ -263,7 +261,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
     }
     Matrix3 transform;
     const auto *box = cfg->box();
-    cfg->atoms().reserve(cfg->atoms().size() + population_ * species_->nAtoms());
+    cfg->atoms().reserve(cfg->atoms().size() + population_ * sp->nAtoms());
     for (auto n = 0; n < population_; ++n)
     {
         // Add the Molecule - use coordinate set if one is available
@@ -277,7 +275,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
             AtomChangeToken lock(*cfg);
             if (hasCoordinateSets)
             {
-                mol = cfg->addMolecule(lock, species_, coordinateSets_->set(coordinateSetIndex));
+                mol = cfg->addMolecule(lock, sp, coordinateSets_->set(coordinateSetIndex));
 
                 // Move to next coordinate set
                 ++coordinateSetIndex;
@@ -285,7 +283,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
                     coordinateSetIndex = 0;
             }
             else
-                mol = cfg->addMolecule(lock, species_);
+                mol = cfg->addMolecule(lock, sp);
         }
 
         // Set / generate position of Molecule
