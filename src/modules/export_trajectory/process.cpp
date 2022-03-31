@@ -10,7 +10,7 @@
 #include "modules/export_trajectory/exporttraj.h"
 
 // Run main processing
-bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool ExportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!trajectoryFormat_.hasFilename())
         Messenger::error("No valid file/format set for trajectory export.\n");
@@ -18,9 +18,6 @@ bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Check for Configuration target
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Only the pool master saves the data
     if (procPool.isMaster())

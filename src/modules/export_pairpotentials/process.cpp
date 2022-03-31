@@ -10,7 +10,7 @@
 #include "modules/export_pairpotentials/exportpp.h"
 
 // Run main processing
-bool ExportPairPotentialsModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!pairPotentialFormat_.hasFilename())
         return Messenger::error("No valid file/format set for pair potential export.\n");

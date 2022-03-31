@@ -11,7 +11,7 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+ForceKernel::ForceKernel(const ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
                          std::optional<double> energyCutoff)
     : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
 {

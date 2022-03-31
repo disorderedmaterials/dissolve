@@ -10,7 +10,7 @@
 #include "modules/datatest/datatest.h"
 
 // Run main processing
-bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool DataTestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * This is a serial routine.

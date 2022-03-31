@@ -6,14 +6,11 @@
 #include "modules/analyse/analyse.h"
 
 // Run main processing
-bool AnalyseModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

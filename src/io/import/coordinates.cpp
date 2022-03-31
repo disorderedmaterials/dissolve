@@ -34,7 +34,7 @@ void CoordinateImportFileFormat::setUpKeywords() {}
  */
 
 // Import coordinates using current filename and format
-bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, ProcessPool *procPool)
+bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
@@ -50,7 +50,7 @@ bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, Proces
 }
 
 // Import coordinates direct to configuration using current filename and format
-bool CoordinateImportFileFormat::importData(Configuration *cfg, ProcessPool *procPool)
+bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);

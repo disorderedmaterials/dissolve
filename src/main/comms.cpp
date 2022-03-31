@@ -5,47 +5,14 @@
 #include "main/dissolve.h"
 #include <numeric>
 
-// Return a world process pool
-ProcessPool &Dissolve::worldPool()
+// Set up the world pool
+void Dissolve::setUpWorldPool()
 {
-    static bool firstRun = true;
-    static ProcessPool world;
-
-    // If this is the first time we've been called, construct the pool
-    if (firstRun)
-    {
-        // Assemble list of (world) process ranks for the pool
-        std::vector<int> ranks(ProcessPool::nWorldProcesses());
-        std::iota(ranks.begin(), ranks.end(), 0);
-        world.setUp("World", ranks);
-        firstRun = false;
-    }
-
-    return world;
-}
-
-// Set up communications
-bool Dissolve::setUpMPIPools()
-{
-    Messenger::print("*** Setting up MPI pools...\n");
-
-    // Default pool - all world ranks
     std::vector<int> allProcesses(ProcessPool::nWorldProcesses());
     std::iota(allProcesses.begin(), allProcesses.end(), 0);
-
-    // Set up pool based on selected strategy
-    auto cfgIndex = 0;
-    for (auto &cfg : coreData_.configurations())
-    {
-        Messenger::print("Configuration '{}':\n", cfg->name());
-
-        // Simple, sequential strategy - all processes assigned to all Configurations
-        if (!cfg->setUpProcessPool(allProcesses))
-            return false;
-
-        // Increase Configuration index
-        ++cfgIndex;
-    }
-
-    return true;
+    worldPool_.setUp("World", allProcesses);
+    worldPool_.assignProcessesToGroups();
 }
+
+// Return the world process pool
+const ProcessPool &Dissolve::worldPool() const { return worldPool_; }

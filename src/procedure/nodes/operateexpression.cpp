@@ -32,7 +32,7 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view 
  */
 
 // Operate on Data1D target
-bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
+bool OperateExpressionProcedureNode::operateData1D(const ProcessPool &procPool, Configuration *cfg)
 {
     const auto &x = targetData1D_->xAxis();
     auto &values = targetData1D_->values();
@@ -55,7 +55,7 @@ bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Config
 }
 
 // Operate on Data2D target
-bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
+bool OperateExpressionProcedureNode::operateData2D(const ProcessPool &procPool, Configuration *cfg)
 {
     const auto &x = targetData2D_->xAxis();
     const auto &y = targetData2D_->yAxis();
@@ -84,7 +84,7 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Config
 }
 
 // Operate on Data3D target
-bool OperateExpressionProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
+bool OperateExpressionProcedureNode::operateData3D(const ProcessPool &procPool, Configuration *cfg)
 {
     const auto &x = targetData3D_->xAxis();
     const auto &y = targetData3D_->yAxis();

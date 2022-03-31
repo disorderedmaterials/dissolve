@@ -9,7 +9,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -21,9 +21,6 @@ bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         selectB_->setSameMoleculeExclusions({selectA_});
     else
         selectB_->setSameMoleculeExclusions({});
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

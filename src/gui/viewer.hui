@@ -46,6 +46,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
      * View
      */
     protected:
+    // Font instance for this viewer
+    FontInstance fontInstance_;
     // View for renderable data
     View view_;
     // Viewer to which this view is linked (is dependent on for its view)
@@ -198,8 +200,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     bool valid_;
     // Flag indicating if we are currently drawing to this context
     bool drawing_;
-    // Font instance for this viewer
-    FontInstance fontInstance_;
     // Flag specifying whether we are currently rendering offscreen
     bool renderingOffScreen_;
     // Scaling to use for objects measured in pixel widths / point sizes

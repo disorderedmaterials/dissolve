@@ -47,7 +47,7 @@ void Data1DImportFileFormat::setUpKeywords()
  */
 
 // Import Data1D using current filename and format
-bool Data1DImportFileFormat::importData(Data1D &data, ProcessPool *procPool)
+bool Data1DImportFileFormat::importData(Data1D &data, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);

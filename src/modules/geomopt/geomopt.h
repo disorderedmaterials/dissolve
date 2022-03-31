@@ -52,10 +52,10 @@ class GeometryOptimisationModule : public Module
     void sortBoundsAndEnergies(std::array<double, 3> &bounds, std::array<double, 3> &energies);
     // Return energy of adjusted coordinates, following the force vectors by the supplied amount
     template <class T>
-    double energyAtGradientPoint(ProcessPool &procPool, T *target, const PotentialMap &potentialMap, double delta);
+    double energyAtGradientPoint(const ProcessPool &procPool, T *target, const PotentialMap &potentialMap, double delta);
     // Perform Golden Search within specified bounds
     template <class T>
-    double goldenSearch(ProcessPool &procPool, T *target, const PotentialMap &potentialMap, const double tolerance,
+    double goldenSearch(const ProcessPool &procPool, T *target, const PotentialMap &potentialMap, const double tolerance,
                         std::array<double, 3> &bounds, std::array<double, 3> &energies, int &nPointsAccepted)
     {
         // Ensure that the energy minimum is the midpoint
@@ -107,7 +107,7 @@ class GeometryOptimisationModule : public Module
     }
     // Line minimise supplied target from the reference coordinates along the stored force vectors
     template <class T>
-    double lineMinimise(ProcessPool &procPool, T *target, const PotentialMap &potentialMap, const double tolerance,
+    double lineMinimise(const ProcessPool &procPool, T *target, const PotentialMap &potentialMap, const double tolerance,
                         double &stepSize)
     {
         // Brent-style line minimiser with parabolic interpolation and Golden Search backup
@@ -198,7 +198,7 @@ class GeometryOptimisationModule : public Module
         return energies[1];
     }
     // Geometry optimise the target object
-    template <class T> void optimise(const PotentialMap &potentialMap, ProcessPool &procPool, T *target)
+    template <class T> void optimise(const PotentialMap &potentialMap, const ProcessPool &procPool, T *target)
     {
         const auto nStepSizeResetsAllowed = 0;
 
@@ -261,12 +261,12 @@ class GeometryOptimisationModule : public Module
 
     public:
     // Geometry optimise supplied Species
-    bool optimiseSpecies(const PotentialMap &potentialMap, ProcessPool &procPool, Species *sp);
+    bool optimiseSpecies(const PotentialMap &potentialMap, const ProcessPool &procPool, Species *sp);
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };
