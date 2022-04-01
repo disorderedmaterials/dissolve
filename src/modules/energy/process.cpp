@@ -11,7 +11,7 @@
 #include "modules/energy/energy.h"
 
 // Run set-up stage
-bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool EnergyModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // For the Configuration target add a flag to its moduleData (which is *not* stored in the restart file) to specify that we
     // are targeting it
@@ -23,7 +23,7 @@ bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<Keywor
 }
 
 // Run main processing
-bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Energy for the target Configuration(s)
@@ -35,8 +35,6 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
     auto strategy = procPool.bestStrategy();
 
     // Print parameter summary
@@ -311,8 +309,6 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * This is a serial routine (subroutines called from within are parallel).
          */
 
-        procPool.resetAccumulatedTime();
-
         // Calculate intermolecular energy
         Timer interTimer;
         auto interEnergy = interAtomicEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
@@ -325,8 +321,8 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                 angleEnergy, torsionEnergy, improperEnergy);
         intraTimer.stop();
 
-        Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {} ({} comms).\n",
-                         interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
+        Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {}.\n", interTimer.totalTimeString(),
+                         intraTimer.totalTimeString());
         Messenger::print("Total Energy (World) is {:15.9e} kJ/mol ({:15.9e} kJ/mol interatomic + {:15.9e} kJ/mol "
                          "intramolecular).\n",
                          interEnergy + intraEnergy, interEnergy, intraEnergy);

@@ -30,7 +30,7 @@ EnumOptions<EPSRModule::EPSRPCofKeyword> EPSRModule::epsrPCofKeywords()
 }
 
 // Read data from supplied pcof file
-bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string_view filename)
+bool EPSRModule::readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::string_view filename)
 {
     /*
      * Read EPSR potential coefficients from supplied file.
@@ -174,7 +174,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
 }
 
 // Read fit coefficients from 'inpa' file
-bool EPSRModule::readFitCoefficients(Dissolve &dissolve, ProcessPool &procPool, std::string_view inpaFilename)
+bool EPSRModule::readFitCoefficients(Dissolve &dissolve, const ProcessPool &procPool, std::string_view inpaFilename)
 {
     /*
      * Read EPSR fit coefficients from supplied file.

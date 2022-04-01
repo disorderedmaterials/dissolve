@@ -8,7 +8,7 @@
 #include "modules/rdf/rdf.h"
 
 // Run main processing
-bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate standard partial g(r)
@@ -60,15 +60,10 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     for (auto *cfg : targetConfigurations_)
     {
-        // Set up process pool - must do this to ensure we are using all available processes
-        procPool.assignProcessesToGroups(cfg->processPool());
-
         // Check RDF range
         double rdfRange = cfg->box()->inscribedSphereRadius();
         if (useHalfCellRange_)
-        {
             Messenger::print("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->niceName(), rdfRange);
-        }
         else
         {
             if (requestedRange_ > rdfRange)

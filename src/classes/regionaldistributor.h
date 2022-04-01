@@ -17,14 +17,15 @@ class Molecule;
 class RegionalDistributor
 {
     public:
-    RegionalDistributor(const int nMolecules, const CellArray &cellArray, ProcessPool &procPool,
+    RegionalDistributor(const int nMolecules, const CellArray &cellArray, const ProcessPool &procPool,
                         ProcessPool::DivisionStrategy strategy);
     ~RegionalDistributor() = default;
     // Molecule Status Flag
     enum class MoleculeStatusFlag
     {
-        Waiting,
-        Distributed
+        ToDo,
+        Assigned,
+        Completed
     };
     // Return string for specified MoleculeStatusFlag
     std::string_view moleculeStatusFlag(MoleculeStatusFlag flag);

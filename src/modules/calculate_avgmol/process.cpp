@@ -7,7 +7,8 @@
 #include "templates/algorithms.h"
 
 // Run set-up stage
-bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool CalculateAvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPool,
+                                  Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Clear species
     averageSpecies_.clear();
@@ -49,7 +50,7 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Fla
 }
 
 // Run main processing
-bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateAvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -57,9 +58,6 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Grab Box pointer
     const auto *box = targetConfiguration_->box();
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Get the target site
     if (!targetSite_)

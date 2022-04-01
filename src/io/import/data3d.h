@@ -51,7 +51,7 @@ class Data3DImportFileFormat : public FileAndFormat
 
     public:
     // Import Data3D using current filename and format
-    bool importData(Data3D &data, ProcessPool *procPool = nullptr);
+    bool importData(Data3D &data, const ProcessPool *procPool = nullptr);
     // Import Data3D using supplied parser and current format
     bool importData(LineParser &parser, Data3D &data);
 };

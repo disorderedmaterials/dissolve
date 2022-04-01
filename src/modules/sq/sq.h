@@ -60,7 +60,7 @@ class SQModule : public Module
      */
     public:
     // Calculate unweighted S(Q) from unweighted g(r)
-    static bool calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
+    static bool calculateUnweightedSQ(const ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
                                       double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
                                       Functions::Function1DWrapper broadening);
 
@@ -69,7 +69,7 @@ class SQModule : public Module
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
 
     public:
     // Set target data

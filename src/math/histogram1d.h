@@ -99,5 +99,5 @@ class Histogram1D
      */
     public:
     // Sum histogram data onto all processes
-    bool allSum(ProcessPool &procPool);
+    bool allSum(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer = {});
 };

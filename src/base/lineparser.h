@@ -16,7 +16,7 @@
 class LineParser
 {
     public:
-    LineParser(ProcessPool *procPool = nullptr);
+    LineParser(const ProcessPool *procPool = nullptr);
     ~LineParser();
     // Parse Options Enum
     enum ParseOption
@@ -45,7 +45,7 @@ class LineParser
      */
     private:
     // Associated process pool (if any)
-    ProcessPool *processPool_;
+    const ProcessPool *processPool_;
     // Current input filename (if any)
     std::string inputFilename_;
     // Current output filename (if any)
@@ -73,7 +73,7 @@ class LineParser
 
     public:
     // Return associated process pool (if any)
-    ProcessPool *processPool() const;
+    const ProcessPool *processPool() const;
     // Return filename of current inputFile (if any)
     std::string_view inputFilename() const;
     // Return filename of current outputFile (if any)

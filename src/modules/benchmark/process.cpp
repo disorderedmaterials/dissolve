@@ -12,7 +12,7 @@
 #include "modules/rdf/rdf.h"
 
 // Run main processing
-bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -23,8 +23,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
     /*
@@ -159,9 +157,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     // Set the new strategy
                     strategy = distributor.currentStrategy();
-
-                    // Re-initialise the random buffer
-                    procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
                 }
 
                 // Loop over target Molecules

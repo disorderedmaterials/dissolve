@@ -13,6 +13,8 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
     seed_ = -1;
     restartFileFrequency_ = 10;
 
+    setUpWorldPool();
+
     // Clear everything
     clear();
 }

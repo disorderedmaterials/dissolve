@@ -59,7 +59,7 @@ std::string_view Configuration::niceName() const { return niceName_; }
 Procedure &Configuration::generator() { return generator_; }
 
 // Create the Configuration according to its generator Procedure
-bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
+bool Configuration::generate(const ProcessPool &procPool, double pairPotentialRange)
 {
     // Empty the current contents
     empty();
@@ -93,7 +93,7 @@ bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
 CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
 
 // Initialise (generate or load) the basic contents of the Configuration
-bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent)
+bool Configuration::initialiseContent(const ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent)
 {
     // Clear existing content?
     if (emptyCurrentContent)
@@ -139,24 +139,3 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 
 // Return configuration temperature
 double Configuration::temperature() const { return temperature_; }
-
-/*
- * Parallel Comms
- */
-
-// Set up process pool for this Configuration
-bool Configuration::setUpProcessPool(const std::vector<int> &worldRanks)
-{
-    // Create pool
-    processPool_.setUp(name_, worldRanks);
-
-    // Assign processes, and
-    if (!processPool_.assignProcessesToGroups())
-        return false;
-    processPool_.setGroupsFixed();
-
-    return true;
-}
-
-// Return process pool for this Configuration
-ProcessPool &Configuration::processPool() { return processPool_; }

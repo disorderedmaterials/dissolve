@@ -91,8 +91,6 @@ template <ProblemType problem, Population population> struct Problem
         dissolve_.loadInput(file);
         dissolve_.prepare();
         cfg_ = dissolve_.configurations().front().get();
-        auto &procPool = dissolve_.worldPool();
-        procPool.assignProcessesToGroups(cfg_->processPool());
         setUpRDF();
     }
 

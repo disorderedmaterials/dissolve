@@ -65,11 +65,11 @@ class Configuration
     // Return the current generator
     Procedure &generator();
     // Create the Configuration according to its generator Procedure
-    bool generate(ProcessPool &procPool, double pairPotentialRange);
+    bool generate(const ProcessPool &procPool, double pairPotentialRange);
     // Return import coordinates file / format
     CoordinateImportFileFormat &inputCoordinates();
     // Initialise (generate or load) the basic contents of the Configuration
-    bool initialiseContent(ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent = false);
+    bool initialiseContent(const ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent = false);
     // Set configuration temperature
     void setTemperature(double t);
     // Return configuration temperature
@@ -191,7 +191,7 @@ class Configuration
     CellArray &cells();
     const CellArray &cells() const;
     // Scale Box, Cells, and Molecule geometric centres according to current size factor
-    void applySizeFactor(const PotentialMap &potentialMap);
+    void applySizeFactor(const ProcessPool &procPool, const PotentialMap &potentialMap);
 
     /*
      * Upkeep
@@ -225,17 +225,4 @@ class Configuration
     bool serialise(LineParser &parser) const;
     // Read through specified LineParser
     bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
-
-    /*
-     * Parallel Comms
-     */
-    private:
-    // Process pool for this Configuration
-    ProcessPool processPool_;
-
-    public:
-    // Set up process pool for this Configuration
-    bool setUpProcessPool(const std::vector<int> &worldRanks);
-    // Return process pool for this Configuration
-    ProcessPool &processPool();
 };

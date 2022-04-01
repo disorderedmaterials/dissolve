@@ -3,6 +3,7 @@
 
 #include "procedure/nodes/add.h"
 #include "base/lineparser.h"
+#include "base/randombuffer.h"
 #include "base/sysfunc.h"
 #include "classes/atomchangetoken.h"
 #include "classes/box.h"
@@ -237,7 +238,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
     }
 
     // Now we add the molecules
-    procedureContext.processPool().initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
+    RandomBuffer randomBuffer(procedureContext.processPool(), ProcessPool::PoolProcessesCommunicator);
     Vec3<double> r, cog, newCentre, fr;
     auto coordSetIt = species_->coordinateSets().begin();
     Matrix3 transform;
@@ -271,8 +272,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         switch (positioningType_)
         {
             case (AddProcedureNode::PositioningType::Random):
-                fr.set(procedureContext.processPool().random(), procedureContext.processPool().random(),
-                       procedureContext.processPool().random());
+                fr.set(randomBuffer.random(), randomBuffer.random(), randomBuffer.random());
                 newCentre = box->getReal(fr);
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
@@ -294,8 +294,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         // Generate and apply a random rotation matrix
         if (rotate_)
         {
-            transform.createRotationXY(procedureContext.processPool().randomPlusMinusOne() * 180.0,
-                                       procedureContext.processPool().randomPlusMinusOne() * 180.0);
+            transform.createRotationXY(randomBuffer.randomPlusMinusOne() * 180.0, randomBuffer.randomPlusMinusOne() * 180.0);
             mol->transform(box, transform);
         }
     }

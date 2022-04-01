@@ -19,7 +19,7 @@ OperateSphericalShellNormaliseProcedureNode::OperateSphericalShellNormaliseProce
  */
 
 // Operate on Data1D target
-bool OperateSphericalShellNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
+bool OperateSphericalShellNormaliseProcedureNode::operateData1D(const ProcessPool &procPool, Configuration *cfg)
 {
     // We expect x values to be centre-bin values, and regularly spaced
     const auto &xAxis = targetData1D_->xAxis();

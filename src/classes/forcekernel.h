@@ -23,7 +23,7 @@ class SpeciesTorsion;
 class ForceKernel
 {
     public:
-    ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+    ForceKernel(const ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
                 std::optional<double> energyCutoff = std::nullopt);
     ~ForceKernel() = default;
 
@@ -142,5 +142,5 @@ class ForceKernel
      */
     private:
     // Process pool over which this kernel operates
-    ProcessPool &processPool_;
+    const ProcessPool &processPool_;
 };
