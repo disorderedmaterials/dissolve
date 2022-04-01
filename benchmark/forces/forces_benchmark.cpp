@@ -53,7 +53,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &angle = mol->species()->angles().back();
     for (auto _ : state)
-        forceKernel.forces(angle, angle.i()->r(),  angle.j()->r(),  angle.k()->r(), forces);
+        forceKernel.forces(angle, angle.i()->r(), angle.j()->r(), angle.k()->r(), forces);
 }
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesTorsion(benchmark::State &state)
 {
