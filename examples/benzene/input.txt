@@ -135,8 +135,11 @@ Configuration  'Bulk'
       Angles  9.000000e+01  9.000000e+01  9.000000e+01
       NonPeriodic  False
     EndBox
-    Add
+    CoordinateSets  'Benzene_Sets'
       Species  'Benzene'
+    EndCoordinateSets
+    Add
+      CoordinateSets  'Benzene_Sets'
       Population  '200'
       BoxAction  AddVolume
       Density  'rho'  g/cm3
