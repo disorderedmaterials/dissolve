@@ -1,0 +1,19 @@
+parameters:
+  - name: nix_version
+    default: 2.4
+
+steps:
+  - bash: |
+      set -ex
+      # -- General
+      sudo apt-get update -q
+      sudo apt-get install curl gpg
+      curl -o install-nix${{ parameters.nix_version }} https://releases.nixos.org/nix/nix-${{ parameters.nix_version }}/install
+      curl -o install-nix${{ parameters.nix_version }}.asc https://releases.nixos.org/nix/nix-${{ parameters.nix_version }}/install.asc
+      gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
+      gpg2 --verify ./install-nix${{ parameters.nix_version }}.asc
+      sh ./install-nix${{ parameters.nix_version }}
+      mkdir -p ~/.config/nix/
+      echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+      echo "system-features = kvm" >> ~/.config/nix/nix.conf
+    displayName: 'Install nix'
