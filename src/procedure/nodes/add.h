@@ -16,9 +16,15 @@ class RegionProcedureNodeBase;
 class AddProcedureNode : public ProcedureNode
 {
     public:
-    AddProcedureNode(const Species *sp = nullptr, const NodeValue &population = 0, const NodeValue &density = 0.1,
-                     Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
+    explicit AddProcedureNode(const Species *sp = nullptr, const NodeValue &population = 0, const NodeValue &density = 0.1,
+                              Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
+    explicit AddProcedureNode(const CoordinateSetsProcedureNode *sets, const NodeValue &population = 0,
+                              const NodeValue &density = 0.1, Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
     ~AddProcedureNode() override = default;
+
+    private:
+    // Set up keywords for node
+    void setUpKeywords();
 
     /*
      * Identity

@@ -2,9 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "procedure/nodes/add.h"
-#include "base/lineparser.h"
 #include "base/randombuffer.h"
-#include "base/sysfunc.h"
 #include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -21,6 +19,20 @@
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)
     : ProcedureNode(ProcedureNode::NodeType::Add), density_{density, densityUnits}, population_(population), species_(sp)
+{
+    setUpKeywords();
+}
+
+AddProcedureNode::AddProcedureNode(const CoordinateSetsProcedureNode *sets, const NodeValue &population,
+                                   const NodeValue &density, Units::DensityUnits densityUnits)
+    : ProcedureNode(ProcedureNode::NodeType::Add), coordinateSets_(sets), density_{density, densityUnits},
+      population_(population)
+{
+    setUpKeywords();
+}
+
+// Set up keywords for node
+void AddProcedureNode::setUpKeywords()
 {
     // Set up keywords
     keywords_.add<SpeciesKeyword>("Control", "Species", "Target species to add", species_);
