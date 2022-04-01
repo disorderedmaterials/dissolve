@@ -195,9 +195,9 @@ bool Dissolve::loadInput(std::string_view filename)
         toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentialsNode;
         pairPotentialsNode["range"] = pairPotentialRange_;
         pairPotentialsNode["delta"] = pairPotentialDelta_;
-        pairPotentialsNode["includeCoulomb"] = "true";
-        pairPotentialsNode["coulombTruncation"] = "shifted";
-        pairPotentialsNode["shortRangeTruncation"] = "shifted";
+        pairPotentialsNode["includeCoulomb"] = atomTypeChargeSource_;
+        pairPotentialsNode["coulombTruncation"] = PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme());
+        pairPotentialsNode["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(PairPotential::shortRangeTruncationScheme());
         if (nAtomTypes() > 0)
         {
             for (auto &atomType : atomTypes())
