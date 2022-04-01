@@ -3,12 +3,21 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/kvector.h"
 #include "classes/neutronweights.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "modules/bragg/bragg.h"
 #include "templates/algorithms.h"
+
+// Run set-up stage
+bool BraggModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+{
+    if (actionSignals.isSet(KeywordBase::ClearModuleData))
+        dissolve.processingModuleData().realise<std::vector<KVector>>("KVectors", uniqueName()).clear();
+    return true;
+}
 
 // Run main processing
 bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
