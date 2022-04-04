@@ -27,7 +27,10 @@ SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
  */
 
 // Set flags for the filter proxy
-void SelectSpeciesWidget::setFilterProxyFlags(int flags) { speciesFilterProxy_.setFlags(flags); }
+void SelectSpeciesWidget::setFilterProxyFlags(const Flags<SpeciesFilterProxy::FilterFlags> &flags)
+{
+    speciesFilterProxy_.setFlags(flags);
+}
 
 // Set target Species data
 void SelectSpeciesWidget::setSpecies(const std::vector<std::unique_ptr<Species>> &species) { speciesModel_.setData(species); }
