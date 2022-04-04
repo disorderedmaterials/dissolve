@@ -102,21 +102,10 @@ jobs:
         env:
           GITHUB_TOKEN: $(REPO_SECRET)
         displayName: 'Update Web Release Info'
-      - bash: |
-          source ~/.nix-profile/etc/profile.d/nix.sh
-          VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-          nix run .#uploader ${HARBOR_USER} ${HARBOR_SECRET} $(System.ArtifactsDirectory)/singularity-gui-artifacts/dissolve-gui-$VERSION.sif  continuous
-        condition: eq('${{ parameters.continuous }}', true)
-        env:
-            HARBOR_USER: $(HARBOR_USER)
-            HARBOR_SECRET: $(HARBOR_SECRET)
-        displayName: "Publish continuous singularity image to Harbor registry."
-      - bash: |
-          source ~/.nix-profile/etc/profile.d/nix.sh
-          VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-          nix run .#uploader ${HARBOR_USER} ${HARBOR_SECRET} $(System.ArtifactsDirectory)/singularity-gui-artifacts/dissolve-gui-$VERSION.sif  latest
-        condition: eq('${{ parameters.continuous }}', false)
-        env:
-            HARBOR_USER: $(HARBOR_USER)
-            HARBOR_SECRET: $(HARBOR_SECRET)
-        displayName: "Publish latest singularity image to Harbor registry."
+      - template: install-nix.yml
+      - template: push-harbor.yml
+        parameters:
+          ${{ if eq('${{ parameters.continuous }}', true) }}:
+            tag: "continuous"
+          ${{ if eq('${{ parameters.continuous }}', false) }}:
+            tag: "latest"

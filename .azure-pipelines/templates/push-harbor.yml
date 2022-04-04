@@ -1,0 +1,11 @@
+parameters:
+  - name: tag
+steps:
+  - bash: |
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+      nix run .#uploader ${HARBOR_USER} ${HARBOR_SECRET} $(System.ArtifactsDirectory)/singularity-gui-artifacts/dissolve-gui-$VERSION.sif  ${{ parameters.tag }}
+    env:
+      HARBOR_USER: $(HARBOR_USER)
+      HARBOR_SECRET: $(HARBOR_SECRET)
+    displayName: "Publish ${{ parameters.tag }} singularity image to Harbor registry."
