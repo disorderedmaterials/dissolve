@@ -21,7 +21,6 @@ steps:
       sudo rm -rf /usr/share*
       sudo rm -rf /usr/src*
     displayName: 'Remove redundant ubuntu data'
-    condition: eq( '${{ parameters.export }}', 'true' )
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
