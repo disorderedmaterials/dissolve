@@ -11,7 +11,7 @@
 #include "templates/algorithms.h"
 
 // Set target data
-void SQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                           const std::map<std::string, std::vector<const Module *>> &moduleMap)
 {
     auto sqIt = moduleMap.find("RDF");

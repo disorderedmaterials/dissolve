@@ -102,7 +102,7 @@ bool Module::isDisabled() const { return !enabled_; }
 bool Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return false; }
 
 // Set target data
-void Module::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                         const std::map<std::string, std::vector<const Module *>> &moduleMap)
 {
     // Search for Configuration-based targets

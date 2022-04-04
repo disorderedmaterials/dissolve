@@ -84,7 +84,7 @@ class NeutronSQModule : public Module
 
     public:
     // Set target data
-    void setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+    void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                     const std::map<std::string, std::vector<const Module *>> &moduleMap) override;
     // Run set-up stage
     bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) override;
