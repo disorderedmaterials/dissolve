@@ -1,5 +1,7 @@
 parameters:
   - name: tag
+    default: continuous
+
 steps:
   - bash: |
       source ~/.nix-profile/etc/profile.d/nix.sh
