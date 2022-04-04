@@ -24,6 +24,8 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     app.add_flag_callback("-q,--quiet", []() { Messenger::setQuiet(true); },
                           "Be quiet - don't output any messages whatsoever (output files are still written)")
         ->group("Basic Control");
+    app.add_option("--seed", randomSeed_, "Random number seed to use (otherwise determined by system time)")
+        ->group("Basic Control");
     app.add_flag_callback("-v,--verbose", []() { Messenger::setVerbose(true); },
                           "Print lots of additional output, useful for debugging")
         ->group("Basic Control");
@@ -84,6 +86,9 @@ int CLIOptions::nIterations() const { return nIterations_; }
 
 // Return frequency at which to write restart file
 int CLIOptions::restartFileFrequency() const { return restartFileFrequency_; }
+
+// Return seed for random number generator
+std::optional<int> CLIOptions::randomSeed() const { return randomSeed_; }
 
 // Return redirection basename (for per-process output)
 std::optional<std::string> CLIOptions::redirectionBasename() const { return redirectionBasename_; }

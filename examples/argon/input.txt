@@ -107,12 +107,3 @@ Layer  'RDF / Neutron S(Q)'
     ReferenceNormalisation  SquareOfAverage
   EndModule
 EndLayer
-
-#==============================================================================#
-#                                  Simulation                                  #
-#==============================================================================#
-
-Simulation
-  Seed  -1
-EndSimulation
-

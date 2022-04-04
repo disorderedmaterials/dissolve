@@ -205,8 +205,6 @@ class Dissolve
      * Simulation
      */
     private:
-    // Random seed
-    int seed_;
     // Frequency at which to write restart file
     int restartFileFrequency_;
     // Current simulation step
@@ -223,10 +221,6 @@ class Dissolve
     void setNBoxNormalisationPoints(int nPoints);
     // Return number of test points to use when calculating Box normalisation arrays
     int nBoxNormalisationPoints() const;
-    // Set random seed
-    void setSeed(int seed);
-    // Return random seed
-    int seed() const;
     // Set frequency with which to write various iteration data
     void setRestartFileFrequency(int n);
     // Return frequency with which to write restart file

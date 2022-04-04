@@ -165,8 +165,6 @@
     <addaction name="SimulationSaveRestartPointAction"/>
     <addaction name="SimulationDataManagerAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
-    <addaction name="separator"/>
-    <addaction name="SimulationSetRandomSeedAction"/>
    </widget>
    <widget class="QMenu" name="HelpMenu">
     <property name="font">
@@ -259,7 +257,7 @@
       <rect>
        <x>990</x>
        <y>290</y>
-       <width>211</width>
+       <width>213</width>
        <height>172</height>
       </rect>
      </property>
@@ -577,20 +575,6 @@
     <string>Go to the online tutorials resource</string>
    </property>
   </action>
-  <action name="SimulationSetRandomSeedAction">
-   <property name="text">
-    <string>Set &amp;Random Seed...</string>
-   </property>
-  </action>
-  <action name="LayerAddAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/tabs/icons/tabs_modulelayer.svg</normaloff>:/tabs/icons/tabs_modulelayer.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add &amp;Processing Layer...</string>
-   </property>
-  </action>
   <action name="SpeciesAddForcefieldTermsAction">
    <property name="icon">
     <iconset resource="main.qrc">
@@ -598,18 +582,6 @@
    </property>
    <property name="text">
     <string>Add &amp;Forcefield Terms...</string>
-   </property>
-  </action>
-  <action name="FileNewFromTemplateAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/start/icons/start_template.svg</normaloff>:/start/icons/start_template.svg</iconset>
-   </property>
-   <property name="text">
-    <string>New from &amp;Template...</string>
-   </property>
-   <property name="toolTip">
-    <string>Start a new simulation from a system template</string>
    </property>
   </action>
   <action name="ConfigurationRenameAction">
@@ -620,15 +592,6 @@
   <action name="SpeciesRenameAction">
    <property name="text">
     <string>&amp;Rename...</string>
-   </property>
-  </action>
-  <action name="SpeciesCreateEmptyAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Empty</string>
    </property>
   </action>
   <action name="SpeciesCreateAtomicAction">
@@ -824,11 +787,6 @@
   <action name="ConfigurationCreateFrameworkAdsorbatesAction">
    <property name="text">
     <string>&amp;Framework with adsorbates</string>
-   </property>
-  </action>
-  <action name="ImportOpenMMAction">
-   <property name="text">
-    <string>OpenMM (XML)</string>
    </property>
   </action>
   <action name="SpeciesImportLigParGenAction">

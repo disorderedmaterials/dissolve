@@ -156,12 +156,3 @@ Layer  'Analysis'
     ExcludeSameSiteAC  True
   EndModule
 EndLayer
-
-#------------------------------------------------------------------------------#
-#                                  Simulation                                  #
-#------------------------------------------------------------------------------#
-
-Simulation
-  Seed  -1
-EndSimulation
-

@@ -18,7 +18,6 @@ EnumOptions<BlockKeywords::BlockKeyword> BlockKeywords::keywords()
                                                      {BlockKeywords::MasterBlockKeyword, "Master"},
                                                      {BlockKeywords::ModuleBlockKeyword, "Module"},
                                                      {BlockKeywords::PairPotentialsBlockKeyword, "PairPotentials"},
-                                                     {BlockKeywords::SimulationBlockKeyword, "Simulation"},
                                                      {BlockKeywords::SiteBlockKeyword, "Site"},
                                                      {BlockKeywords::SpeciesBlockKeyword, "Species"}});
 }

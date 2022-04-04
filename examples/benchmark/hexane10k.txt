@@ -234,11 +234,3 @@ Layer  'Benchmark'
     Configuration  'Hexane10k'
   EndModule
 EndLayer
-
-#==============================================================================#
-#                                  Simulation                                  #
-#==============================================================================#
-
-Simulation
-  Seed  12345
-EndSimulation

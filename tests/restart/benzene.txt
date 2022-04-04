@@ -231,12 +231,3 @@ Layer  'RDF / Neutron S(Q)'
     Isotopologue  'Benzene'  'Deuterated'  1.000000
   EndModule
 EndLayer
-
-#------------------------------------------------------------------------------#
-#                                  Simulation                                  #
-#------------------------------------------------------------------------------#
-
-Simulation
-  Seed  -1
-EndSimulation
-

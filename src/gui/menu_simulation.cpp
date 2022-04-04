@@ -113,24 +113,3 @@ void DissolveWindow::on_SimulationClearModuleDataAction_triggered(bool checked)
         fullUpdate();
     }
 }
-
-void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
-{
-    // Create an input dialog to get the new seed
-    bool ok;
-    dissolve_.seed();
-    int newSeed =
-        QInputDialog::getInt(this, "Set random seed", "Enter the new value of the random seed, or -1 to remove set value",
-                             dissolve_.seed(), -1, 2147483647, 1, &ok);
-
-    if (!ok)
-        return;
-
-    // Set and initialise random seed
-    dissolve_.setSeed(newSeed);
-
-    if (dissolve_.seed() == -1)
-        srand((unsigned)time(nullptr));
-    else
-        srand(dissolve_.seed());
-}
