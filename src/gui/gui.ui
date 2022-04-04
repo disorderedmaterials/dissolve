@@ -202,6 +202,7 @@
      </property>
      <addaction name="SpeciesCreateAtomicAction"/>
      <addaction name="SpeciesCreateDrawAction"/>
+     <addaction name="SpeciesCreateFromExistingAction"/>
     </widget>
     <widget class="QMenu" name="SpeciesImportMenu">
      <property name="font">
@@ -752,7 +753,7 @@
   </action>
   <action name="SpeciesCreateDrawAction">
    <property name="text">
-    <string>Draw...</string>
+    <string>&amp;Draw...</string>
    </property>
   </action>
   <action name="WorkspaceRenameCurrentGizmoAction">
@@ -830,6 +831,11 @@
   <action name="SimulationCheckAction">
    <property name="text">
     <string>Prepare / Check</string>
+   </property>
+  </action>
+  <action name="SpeciesCreateFromExistingAction">
+   <property name="text">
+    <string>From &amp;Existing...</string>
    </property>
   </action>
  </widget>
