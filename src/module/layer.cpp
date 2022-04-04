@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "module/module.h"
+#include "modules/registry.h"
 
 /*
  * Layer Definition
@@ -66,6 +67,14 @@ bool ModuleLayer::runThisIteration(int iteration) const
 
 // Clear modules
 void ModuleLayer::clear() { modules_.clear(); }
+
+// Append new module to this layer
+Module *ModuleLayer::append(std::string_view moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs)
+{
+    auto *module = ModuleRegistry::create(moduleType, this);
+    module->setTargets(cfgs, modulesAsMap());
+    return module;
+}
 
 // Find associated Module by unique name
 Module *ModuleLayer::find(std::string_view uniqueName) const
