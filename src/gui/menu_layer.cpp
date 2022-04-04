@@ -159,8 +159,7 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
     newLayer->setFrequency(5);
 
     // Add the RDF module
-    auto *module = ModuleRegistry::create("RDF", newLayer);
-    module->keywords().set("Configurations", dissolve_.rawConfigurations());
+    newLayer->append("RDF", dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -177,12 +176,10 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggere
     newLayer->setFrequency(5);
 
     // Add the RDF module
-    auto *rdfModule = dynamic_cast<RDFModule *>(ModuleRegistry::create("RDF", newLayer));
-    rdfModule->keywords().set("Configurations", dissolve_.rawConfigurations());
+    newLayer->append("RDF", dissolve_.configurations());
 
     // Add a plain structure factor module
-    auto *module = ModuleRegistry::create("SQ", newLayer);
-    module->keywords().set<const Module *>("SourceRDFs", rdfModule);
+    newLayer->append("SQ", dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -199,16 +196,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool c
     newLayer->setFrequency(5);
 
     // Add the RDF module
-    auto *rdfModule = ModuleRegistry::create("RDF", newLayer);
-    rdfModule->keywords().set("Configurations", dissolve_.rawConfigurations());
+    newLayer->append("RDF", dissolve_.configurations());
 
     // Add a plain structure factor module
-    auto *sqModule = dynamic_cast<SQModule *>(ModuleRegistry::create("SQ", newLayer));
-    sqModule->keywords().set<const Module *>("SourceRDFs", rdfModule);
+    newLayer->append("SQ", dissolve_.configurations());
 
     // Add a NeutronSQ module
-    Module *module = ModuleRegistry::create("NeutronSQ", newLayer);
-    module->keywords().set<const Module *>("SourceSQs", sqModule);
+    newLayer->append("NeutronSQ", dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -225,16 +219,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFXRayAction_triggered(bool chec
     newLayer->setFrequency(5);
 
     // Add the RDF module
-    auto *rdfModule = ModuleRegistry::create("RDF", newLayer);
-    rdfModule->keywords().set("Configurations", dissolve_.rawConfigurations());
+    newLayer->append("RDF", dissolve_.configurations());
 
     // Add a plain structure factor module
-    auto *sqModule = dynamic_cast<SQModule *>(ModuleRegistry::create("SQ", newLayer));
-    sqModule->keywords().set<const Module *>("SourceRDFs", rdfModule);
+    newLayer->append("SQ", dissolve_.configurations());
 
     // Add an XRaySQ module
-    Module *module = ModuleRegistry::create("XRaySQ", newLayer);
-    module->keywords().set<const Module *>("SourceSQs", sqModule);
+    newLayer->append("XRaySQ", dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -251,20 +242,16 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bo
     newLayer->setFrequency(5);
 
     // Add the RDF module
-    auto *rdfModule = ModuleRegistry::create("RDF", newLayer);
-    rdfModule->keywords().set("Configurations", dissolve_.rawConfigurations());
+    newLayer->append("RDF", dissolve_.configurations());
 
     // Add a plain structure factor module
-    auto *sqModule = ModuleRegistry::create("SQ", newLayer);
-    sqModule->keywords().set<const Module *>("SourceRDFs", rdfModule);
+    newLayer->append("SQ", dissolve_.configurations());
 
     // Add a NeutronSQ module
-    auto *module = ModuleRegistry::create("NeutronSQ", newLayer);
-    module->keywords().set<const Module *>("SourceSQs", sqModule);
+    newLayer->append("NeutronSQ", dissolve_.configurations());
 
     // Add an XRaySQ module
-    module = ModuleRegistry::create("XRaySQ", newLayer);
-    module->keywords().set<const Module *>("SourceSQs", sqModule);
+    newLayer->append("XRaySQ", dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
