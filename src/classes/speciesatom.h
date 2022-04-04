@@ -7,17 +7,17 @@
 #include "data/elements.h"
 #include "templates/optionalref.h"
 #include "templates/vector3.h"
-#include <memory>
-#include <vector>
 #include <map>
+#include <memory>
 #include <toml11/toml.hpp>
+#include <vector>
 
 // Forward Declarations
 class AtomType;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
-class SpeciesTorsion; 
+class SpeciesTorsion;
 
 // SpeciesAtom Definition
 class SpeciesAtom

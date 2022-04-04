@@ -162,7 +162,7 @@ bool Dissolve::loadInput(std::string_view filename)
             toml::basic_value<toml::discard_comments, std::map, std::vector> bonds;
             for (auto &bond : coreData_.masterBonds())
                 bonds[bond->name().data()] = bond->serialize();
-            masterNode["bonds"] = bonds; 
+            masterNode["bonds"] = bonds;
         }
         if (coreData_.nMasterAngles() > 0)
         {
@@ -196,8 +196,10 @@ bool Dissolve::loadInput(std::string_view filename)
         pairPotentialsNode["range"] = pairPotentialRange_;
         pairPotentialsNode["delta"] = pairPotentialDelta_;
         pairPotentialsNode["includeCoulomb"] = atomTypeChargeSource_;
-        pairPotentialsNode["coulombTruncation"] = PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme());
-        pairPotentialsNode["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(PairPotential::shortRangeTruncationScheme());
+        pairPotentialsNode["coulombTruncation"] =
+            PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme());
+        pairPotentialsNode["shortRangeTruncation"] =
+            PairPotential::shortRangeTruncationSchemes().keyword(PairPotential::shortRangeTruncationScheme());
         if (nAtomTypes() > 0)
         {
             for (auto &atomType : atomTypes())

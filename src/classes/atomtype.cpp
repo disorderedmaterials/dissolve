@@ -94,7 +94,8 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
     return true;
 }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::serialize() {
+toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::serialize()
+{
     toml::basic_value<toml::discard_comments, std::map, std::vector> atomType;
 
     atomType["z"] = Elements::symbol(Z_).data();

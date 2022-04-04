@@ -5,11 +5,11 @@
 
 #include "data/elements.h"
 #include "data/isotopes.h"
+#include <map>
 #include <memory>
+#include <toml11/toml.hpp>
 #include <tuple>
 #include <vector>
-#include <map>
-#include <toml11/toml.hpp>
 
 // Forward Declarations
 class AtomType;

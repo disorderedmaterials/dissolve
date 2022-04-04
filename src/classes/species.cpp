@@ -3,8 +3,8 @@
 
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include "data/isotopes.h"
 #include "data/ff/ff.h"
+#include "data/isotopes.h"
 
 Species::Species() : attachedAtomListsGenerated_(false), forcefield_(nullptr)
 {

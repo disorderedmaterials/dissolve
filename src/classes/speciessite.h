@@ -8,8 +8,8 @@
 #include "templates/vector3.h"
 
 #include <map>
-#include <vector>
 #include <toml11/toml.hpp>
+#include <vector>
 
 // Forward Declarations
 class LineParser;
@@ -124,7 +124,7 @@ class SpeciesSite
     // Read site definition from specified LineParser
     bool read(LineParser &parser);
     // Write site definition to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix);    
+    bool write(LineParser &parser, std::string_view prefix);
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

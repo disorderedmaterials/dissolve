@@ -22,8 +22,8 @@
 #include <memory>
 
 #include <map>
-#include <vector>
 #include <toml11/toml.hpp>
+#include <vector>
 
 // Forward Declarations
 class AtomChangeToken;
