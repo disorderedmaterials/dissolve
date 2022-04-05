@@ -32,6 +32,7 @@ if(CONAN)
 else(CONAN)
   find_package(fmt REQUIRED)
   find_package(CLI11 REQUIRED)
+  find_package(toml11 REQUIRED)
   find_package(pugixml REQUIRED)
 endif(CONAN)
 
