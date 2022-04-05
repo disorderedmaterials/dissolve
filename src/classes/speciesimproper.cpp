@@ -255,3 +255,16 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
 
     return improper;
 }
+void SpeciesImproper::deserialize(toml::value node, std::vector<SpeciesAtom> atoms)
+{
+    if (!node["i"].is_uninitialized())
+        i_ = &atoms[node["i"].as_integer()];
+    if (!node["j"].is_uninitialized())
+        j_ = &atoms[node["j"].as_integer()];
+    if (!node["k"].is_uninitialized())
+        k_ = &atoms[node["k"].as_integer()];
+    if (!node["l"].is_uninitialized())
+        l_ = &atoms[node["l"].as_integer()];
+    // if (!node["form"].is_uninitialized())
+    // if (!node["parameters"].is_uninitialized())
+}

@@ -88,6 +88,7 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     double force(double angleInDegrees) const;
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    void deserialize(toml::value node, std::vector<SpeciesAtom> atoms);
 };
 
 // MasterImproper Definition

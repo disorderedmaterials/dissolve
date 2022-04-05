@@ -467,3 +467,24 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAtom::se
     atom["type"] = atomType_->name().data();
     return atom;
 }
+void SpeciesAtom::deserialize(toml::value node)
+{
+    if (!node["index"].is_uninitialized())
+        index_ = node["index"].as_integer();
+    if (!node["z"].is_uninitialized())
+        Z_ = Elements::element(std::string(node["z"].as_string()));
+
+    if (!node["r"].is_uninitialized())
+    {
+        std::vector r = node["r"].as_array();
+        r_ = Vec3<double>(r[0].as_floating(), r[1].as_floating(), r[2].as_floating());
+    }
+    if (!node["charge"].is_uninitialized())
+        charge_ = node["charge"].as_floating();
+
+    if (!node["type"].is_uninitialized() && Z_ != Elements::Unknown)
+    {
+        atomType_ = std::make_shared<AtomType>(AtomType(Z_));
+        atomType_->setName(std::string(node["type"].as_string()));
+    }
+}

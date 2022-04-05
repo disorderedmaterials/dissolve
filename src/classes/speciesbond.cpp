@@ -361,3 +361,12 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
 
     return bond;
 }
+void SpeciesBond::deserialize(toml::value node, std::vector<SpeciesAtom> atoms)
+{
+    if (!node["i"].is_uninitialized())
+        i_ = &atoms[node["i"].as_integer()];
+    if (!node["j"].is_uninitialized())
+        j_ = &atoms[node["j"].as_integer()];
+    //if (!node["form"].is_uninitialized())
+    //if (!node["parameters"].is_uninitialized())
+}
