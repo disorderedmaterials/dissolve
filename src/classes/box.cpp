@@ -387,7 +387,7 @@ Vec3<double> Box::scaleFactors(double requestedVolume, Vec3<bool> scalableAxes) 
     return {scalableAxes.x ? ratio : 1.0, scalableAxes.y ? ratio : 1.0, scalableAxes.z ? ratio : 1.0};
 }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> Box::serialize() 
+toml::basic_value<toml::discard_comments, std::map, std::vector> Box::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> box;
 

@@ -8,8 +8,8 @@
 #include "data/elements.h"
 
 #include <map>
-#include <vector>
 #include <toml11/toml.hpp>
+#include <vector>
 
 // Short-range functional forms
 class ShortRangeFunctions
