@@ -145,8 +145,6 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)
 {
-    std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
-
     // Open file and check that we're OK to proceed reading from it
     LineParser parser(&worldPool());
     if (!parser.openInput(filename))
@@ -155,64 +153,67 @@ bool Dissolve::loadInput(std::string_view filename)
     auto result = loadInput(parser);
     if (result)
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> root;
-        toml::basic_value<toml::discard_comments, std::map, std::vector> masterNode;
-        if (coreData_.nMasterBonds() > 0)
+        if (toml_testing_flag)
         {
-            toml::basic_value<toml::discard_comments, std::map, std::vector> bonds;
-            for (auto &bond : coreData_.masterBonds())
-                bonds[bond->name().data()] = bond->serialize();
-            masterNode["bonds"] = bonds;
-        }
-        if (coreData_.nMasterAngles() > 0)
-        {
-            toml::basic_value<toml::discard_comments, std::map, std::vector> angles;
-            for (auto &angle : coreData_.masterAngles())
-                angles[angle->name().data()] = angle->serialize();
-            masterNode["angles"] = angles;
-        }
-        if (coreData_.nMasterTorsions() > 0)
-        {
-            toml::basic_value<toml::discard_comments, std::map, std::vector> torsions;
-            for (auto &torsion : coreData_.masterTorsions())
-                torsions[torsion->name().data()] = torsion->serialize();
-            masterNode["torsions"] = torsions;
-        }
-        if (coreData_.nMasterImpropers() > 0)
-        {
-            toml::basic_value<toml::discard_comments, std::map, std::vector> impropers;
-            for (auto &improper : coreData_.masterImpropers())
-                impropers[improper->name().data()] = improper->serialize();
-            masterNode["impropers"] = impropers;
-        }
-        root["master"] = masterNode;
+            std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
 
-        toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
-        for (auto &species : species())
-            speciesNode[species->name().data()] = species->serialize();
-        root["species"] = speciesNode;
+            toml::basic_value<toml::discard_comments, std::map, std::vector> root;
+            toml::basic_value<toml::discard_comments, std::map, std::vector> masterNode;
+            if (!coreData_.masterBonds().empty())
+            {
+                toml::basic_value<toml::discard_comments, std::map, std::vector> bonds;
+                for (auto &bond : coreData_.masterBonds())
+                    bonds[bond->name().data()] = bond->serialize();
+                masterNode["bonds"] = bonds;
+            }
+            if (!coreData_.masterAngles().empty())
+            {
+                toml::basic_value<toml::discard_comments, std::map, std::vector> angles;
+                for (auto &angle : coreData_.masterAngles())
+                    angles[angle->name().data()] = angle->serialize();
+                masterNode["angles"] = angles;
+            }
+            if (!coreData_.masterTorsions().empty())
+            {
+                toml::basic_value<toml::discard_comments, std::map, std::vector> torsions;
+                for (auto &torsion : coreData_.masterTorsions())
+                    torsions[torsion->name().data()] = torsion->serialize();
+                masterNode["torsions"] = torsions;
+            }
+            if (!coreData_.masterImpropers().empty())
+            {
+                toml::basic_value<toml::discard_comments, std::map, std::vector> impropers;
+                for (auto &improper : coreData_.masterImpropers())
+                    impropers[improper->name().data()] = improper->serialize();
+                masterNode["impropers"] = impropers;
+            }
+            root["master"] = masterNode;
 
-        toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentialsNode;
-        pairPotentialsNode["range"] = pairPotentialRange_;
-        pairPotentialsNode["delta"] = pairPotentialDelta_;
-        pairPotentialsNode["includeCoulomb"] = atomTypeChargeSource_;
-        pairPotentialsNode["coulombTruncation"] =
-            PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme());
-        pairPotentialsNode["shortRangeTruncation"] =
-            PairPotential::shortRangeTruncationSchemes().keyword(PairPotential::shortRangeTruncationScheme());
-        if (nAtomTypes() > 0)
-        {
-            for (auto &atomType : atomTypes())
-                pairPotentialsNode[atomType->name().data()] = atomType->serialize();
+            toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
+            for (auto &species : species())
+                speciesNode[species->name().data()] = species->serialize();
+            root["species"] = speciesNode;
+
+            toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentialsNode;
+            pairPotentialsNode["range"] = pairPotentialRange_;
+            pairPotentialsNode["delta"] = pairPotentialDelta_;
+            pairPotentialsNode["includeCoulomb"] = atomTypeChargeSource_;
+            pairPotentialsNode["coulombTruncation"] =
+                PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme());
+            pairPotentialsNode["shortRangeTruncation"] =
+                PairPotential::shortRangeTruncationSchemes().keyword(PairPotential::shortRangeTruncationScheme());
+            if (!atomTypes().empty())
+                for (auto &atomType : atomTypes())
+                    pairPotentialsNode[atomType->name().data()] = atomType->serialize();
+            root["pairPotentials"] = pairPotentialsNode;
+
+            toml::basic_value<toml::discard_comments, std::map, std::vector> configurationsNode;
+            for (auto &configuration : configurations())
+                configurationsNode[configuration->name().data()] = configuration->serialize();
+            root["configurations"] = configurationsNode;
+
+            output << std::setw(40) << root;
         }
-        root["pairPotentials"] = pairPotentialsNode;
-
-        toml::basic_value<toml::discard_comments, std::map, std::vector> configurationsNode;
-        for (auto &configuration : configurations())
-            configurationsNode[configuration->name().data()] = configuration->serialize();
-        root["configurations"] = configurationsNode;
-
-        output << std::setw(40) << root;
 
         Messenger::print("Finished reading input file.\n");
         setInputFilename(filename);

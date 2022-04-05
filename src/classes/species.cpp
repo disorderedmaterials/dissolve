@@ -283,7 +283,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> sites;
         for (auto &site : sites_)
-            sites[site.get()->name().data()] = site.get()->serialize();
+            sites[site->name().data()] = site->serialize();
         species["sites"] = sites;
     }
 

@@ -459,11 +459,11 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
 
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAtom::serialize()
 {
-    toml::array position{r_.x, r_.y, r_.z};
-    toml::basic_value<toml::discard_comments, std::map, std::vector> atom{{"index", userIndex()},
-                                                                          {"z", Elements::symbol(Z_).data()},
-                                                                          {"r", position},
-                                                                          {"charge", charge_},
-                                                                          {"type", atomType_->name().data()}};
+    toml::basic_value<toml::discard_comments, std::map, std::vector> atom;
+    atom["index"] = userIndex();
+    atom["z"] = Elements::symbol(Z_).data();
+    atom["r"] = toml::array{r_.x, r_.y, r_.z};
+    atom["charge"] = charge_;
+    atom["type"] = atomType_->name().data();
     return atom;
 }

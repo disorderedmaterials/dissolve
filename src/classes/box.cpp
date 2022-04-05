@@ -390,14 +390,8 @@ Vec3<double> Box::scaleFactors(double requestedVolume, Vec3<bool> scalableAxes) 
 toml::basic_value<toml::discard_comments, std::map, std::vector> Box::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> box;
-
-    toml::array boxLengths = {a_, b_, c_};
-    toml::array boxAngles = {alpha_, beta_, gamma_};
-    toml::array boxNonPeriodic = {!periodic_.x, !periodic_.y, !periodic_.z};
-
-    box["lengths"] = boxLengths;
-    box["angles"] = boxAngles;
-    box["nonPeriodic"] = boxNonPeriodic;
-
+    box["lengths"] = toml::array{a_, b_, c_};
+    box["angles"] = toml::array{alpha_, beta_, gamma_};
+    box["nonPeriodic"] = toml::array{!periodic_.x, !periodic_.y, !periodic_.z};
     return box;
 }

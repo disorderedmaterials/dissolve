@@ -617,8 +617,8 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
         std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
-        for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
-            parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+        for (auto &[parameter, value] : zip(parameters, values))
+            parametersNode[parameter] = value;
         torsion["parameters"] = parametersNode;
     }
 
