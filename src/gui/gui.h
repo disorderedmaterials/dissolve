@@ -201,6 +201,7 @@ class DissolveWindow : public QMainWindow
     void on_LayerCreateCorrelationsRDFAction_triggered(bool checked);
     void on_LayerCreateCorrelationsRDFStructureFactorAction_triggered(bool checked);
     void on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFXRayAction_triggered(bool checked);
     void on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bool checked);
     void on_LayerCreateAnalyseRDFCNAction_triggered(bool checked);
     void on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked);

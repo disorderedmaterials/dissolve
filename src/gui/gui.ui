@@ -358,6 +358,7 @@
       <addaction name="LayerCreateCorrelationsRDFAction"/>
       <addaction name="LayerCreateCorrelationsRDFStructureFactorAction"/>
       <addaction name="LayerCreateCorrelationsRDFNeutronAction"/>
+      <addaction name="LayerCreateCorrelationsRDFXRayAction"/>
       <addaction name="LayerCreateCorrelationsRDFNeutronXRayAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateAnalyseMenu">
@@ -686,7 +687,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>RDF, Neutron S(Q), and &amp;X-ray S(Q)</string>
+    <string>RDF, Neutron &amp;S(Q), and X-ray S(Q)</string>
    </property>
   </action>
   <action name="LayerCreateCorrelationsRDFStructureFactorAction">
@@ -836,6 +837,10 @@
   <action name="SpeciesCreateFromExistingAction">
    <property name="text">
     <string>From &amp;Existing...</string>
+  </action>
+  <action name="LayerCreateCorrelationsRDFXRayAction">
+   <property name="text">
+     <string>RDF and &amp;X-ray S(Q)</string>
    </property>
   </action>
  </widget>

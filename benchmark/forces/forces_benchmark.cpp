@@ -156,5 +156,6 @@ BENCHMARK_TEMPLATE(BM_CalculateForces_TotalForces, ProblemType::mediumMolecule, 
     ->Iterations(5)
     ->Unit(benchmark::kMillisecond);
 
-BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, ProblemType::frameworkMolecule, Population::single)
-    ->Unit(benchmark::kMillisecond);
+// framework molecule benchmarks
+// BENCHMARK_TEMPLATE(BM_CalculateForces_TotalSpecies, ProblemType::frameworkMolecule, Population::single)
+//    ->Unit(benchmark::kMillisecond);
