@@ -226,22 +226,5 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 
 void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
 {
-    auto it = widgetMap_.find(index);
-    if (it == widgetMap_.end())
-    {
-        QVariant var = procedureModel_.data(index, Qt::UserRole);
-        auto data = var.value<std::shared_ptr<ProcedureNode>>();
-
-        // Don't do anything if there is no widget
-        if (data == nullptr)
-            return;
-
-        KeywordsWidget *widget = new KeywordsWidget(this);
-        connect(widget, SIGNAL(keywordChanged(int)), dissolveWindow_, SLOT(setModified()));
-        widget->setUp(data->keywords(), dissolve_.coreData());
-        ui_.ProcedureControlStack->addWidget(widget);
-        widgetMap_[index] = widget;
-    }
-
-    ui_.ProcedureControlStack->setCurrentWidget(widgetMap_[index]);
+    ui_.ProcedureStack->updateProcedureWidget(dissolve_, dissolveWindow_, procedureModel_, index);
 }

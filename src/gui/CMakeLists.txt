@@ -16,6 +16,7 @@ set(gui_MOC_HDRS
     sitewidget.h
     specieseditor.h
     specieswidget.h
+    procedurecontrolstack.h
     configurationviewer.hui
     dataviewer.hui
     siteviewer.hui
@@ -160,6 +161,7 @@ set(gui_SRCS
     selectforcefieldwidget_funcs.cpp
     selectspecieswidget_funcs.cpp
     wizard_funcs.cpp
+    procedurecontrolstack.cpp
     # Dialogs
     addforcefieldtermsdialog_funcs.cpp
     copyspeciestermsdialog_funcs.cpp
