@@ -4,10 +4,12 @@
 #pragma once
 
 #include "base/units.h"
+#include "gui/keywordwidgets/widget.hui"
 #include "gui/maintab.h"
 #include "gui/models/enumOptionsModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_configurationtab.h"
+#include <map>
 
 // Forward Declarations
 class Configuration;
@@ -32,8 +34,8 @@ class ConfigurationTab : public QWidget, public MainTab
     Ui::ConfigurationTab ui_;
     // Model for import file format
     EnumOptionsModel importEnumOptionsModel_;
-    // Currently displayed widget
-    QWidget *activeWidget_;
+    // Widget Map
+    std::map<const QModelIndex, KeywordsWidget *> widgetMap_;
 
     /*
      * MainTab Reimplementations
