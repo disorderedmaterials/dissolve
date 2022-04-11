@@ -47,7 +47,6 @@ set(gui_MOC_HDRS
     selectspeciesdialog.h
     # Editors
     modulecontrolwidget.h
-    procedureeditor.h
     # Main Tabs
     configurationtab.h
     forcefieldtab.h
@@ -104,7 +103,6 @@ set(gui_UIS
     selectspeciesdialog.ui
     # Editors
     modulecontrolwidget.ui
-    procedureeditor.ui
     # Main Tabs
     configurationtab.ui
     forcefieldtab.ui
@@ -182,7 +180,6 @@ set(gui_SRCS
     selectspeciesdialog_funcs.cpp
     # Editors
     modulecontrolwidget_funcs.cpp
-    procedureeditor_funcs.cpp
     # Main Tabs
     configurationtab_funcs.cpp
     forcefieldtab_funcs.cpp

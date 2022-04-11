@@ -720,12 +720,6 @@
    <header>gui/configurationviewerwidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>ProcedureEditor</class>
-   <extends>QWidget</extends>
-   <header>gui/procedureeditor.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="main.qrc"/>
