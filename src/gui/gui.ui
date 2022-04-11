@@ -837,6 +837,7 @@
   <action name="SpeciesCreateFromExistingAction">
    <property name="text">
     <string>From &amp;Existing...</string>
+   </property>
   </action>
   <action name="LayerCreateCorrelationsRDFXRayAction">
    <property name="text">
