@@ -21,7 +21,7 @@ class ProcedureControlStack : public QStackedWidget
     ProcedureControlStack(QWidget *parent = nullptr);
     ~ProcedureControlStack() override = default;
     void updateProcedureWidget(Dissolve &dissolve, DissolveWindow *dissolveWindow, ProcedureModel &procedureModel,
-			       const QModelIndex &index);
+                               const QModelIndex &index);
 
     private:
     // Widget Map
