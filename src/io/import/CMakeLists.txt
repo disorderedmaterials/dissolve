@@ -65,4 +65,4 @@ target_include_directories(
   import PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLRRUNTIME_INCLUDE_DIRS} ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
                  ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
 )
-target_link_libraries(import PRIVATE base)
+target_link_libraries(import PRIVATE base CONAN_PKG::antlr4-cppruntime)
