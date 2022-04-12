@@ -31,10 +31,10 @@ void SelectSpeciesDialog::on_SelectButton_clicked(bool checked) { accept(); }
 void SelectSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
 // Run the dialog, returning a single selected Species
-const Species *SelectSpeciesDialog::selectSingleSpecies(int filterProxyFlags)
+const Species *SelectSpeciesDialog::selectSingleSpecies(const Flags<SpeciesFilterProxy::FilterFlags> &flags)
 {
     ui_.SpeciesWidget->reset(1);
-    ui_.SpeciesWidget->setFilterProxyFlags(filterProxyFlags);
+    ui_.SpeciesWidget->setFilterProxyFlags(flags);
 
     show();
 
@@ -45,11 +45,11 @@ const Species *SelectSpeciesDialog::selectSingleSpecies(int filterProxyFlags)
 }
 
 // Run the dialog, returning a list of selected Species
-std::vector<const Species *> SelectSpeciesDialog::selectSpecies(int filterProxyFlags, int minSpecies,
-                                                                std::optional<int> maxSpecies)
+std::vector<const Species *> SelectSpeciesDialog::selectSpecies(const Flags<SpeciesFilterProxy::FilterFlags> &flags,
+                                                                int minSpecies, std::optional<int> maxSpecies)
 {
     ui_.SpeciesWidget->reset(minSpecies, maxSpecies);
-    ui_.SpeciesWidget->setFilterProxyFlags(filterProxyFlags);
+    ui_.SpeciesWidget->setFilterProxyFlags(flags);
 
     show();
 
