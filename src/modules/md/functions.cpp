@@ -58,26 +58,19 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
     const auto kb = 0.8314462;
 
     // Store atomic masses for future use
-    for (auto &&[i, m] : zip(atoms, mass))
-        m = AtomicMass::mass(i.Z());
+    std::transform(atoms.begin(), atoms.end(), mass.begin(), [](const auto &atom) { return AtomicMass::mass(atom.Z()); });
 
     // Calculate total velocity and mass over all atoms
-    Vec3<double> vCom;
-    auto massSum = 0.0;
-    for (auto &&[v, m] : zip(velocities, mass))
-    {
-        vCom += v * m;
-        massSum += m;
-    }
+    auto massSum = std::accumulate(mass.begin(), mass.end(), 0.0);
+    auto vCom = std::transform_reduce(velocities.begin(), velocities.end(), mass.begin(), Vec3<double>());
 
     // Remove any velocity shift
     vCom /= massSum;
     std::transform(velocities.begin(), velocities.end(), velocities.begin(), [vCom](auto vel) { return vel - vCom; });
 
     // Calculate instantaneous temperature
-    ke = 0.0;
-    for (auto &&[m, v] : zip(mass, velocities))
-        ke += 0.5 * m * v.dp(v);
+    ke = std::transform_reduce(mass.begin(), mass.end(), velocities.begin(), 0.0, std::plus<>(),
+                               [](const auto m, const auto &v) { return 0.5 * m * v.dp(v); });
     tInstant = ke * 2.0 / (3.0 * atoms.size() * kb);
 
     // Rescale velocities for desired temperature
