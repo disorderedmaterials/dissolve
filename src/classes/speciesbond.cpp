@@ -361,12 +361,22 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
 
     return bond;
 }
-void SpeciesBond::deserialize(toml::value node, std::vector<SpeciesAtom> atoms)
+void SpeciesBond::deserialize(toml::value node, std::vector<SpeciesAtom> &atoms)
 {
-    if (!node["i"].is_uninitialized())
-        i_ = &atoms[node["i"].as_integer()];
-    if (!node["j"].is_uninitialized())
-        j_ = &atoms[node["j"].as_integer()];
-    //if (!node["form"].is_uninitialized())
-    //if (!node["parameters"].is_uninitialized())
+    if (!node["form"].is_uninitialized())
+    {
+        std::string form = node["form"].as_string();
+        if (form.find("@") != std::string::npos)
+            form = "wololo"; // set master
+        else
+            setInteractionForm(BondFunctions::forms().enumeration(form));
+    }
+    if (!node["parameters"].is_uninitialized())
+    {
+        std::vector<std::string> parameters = BondFunctions::parameters(interactionForm());
+        std::vector<double> values;
+        std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                       [&node](const auto param) { return node["parameters"][param].as_floating(); });
+        setInteractionFormAndParameters(interactionForm(), values);
+    }
 }

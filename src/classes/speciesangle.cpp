@@ -390,7 +390,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::s
 
     return angle;
 }
-void SpeciesAngle::deserialize(toml::value node, std::vector<SpeciesAtom> atoms)
+void SpeciesAngle::deserialize(toml::value node, std::vector<SpeciesAtom> &atoms)
 {
     if (!node["i"].is_uninitialized())
         i_ = &atoms[node["i"].as_integer()];
@@ -398,6 +398,20 @@ void SpeciesAngle::deserialize(toml::value node, std::vector<SpeciesAtom> atoms)
         j_ = &atoms[node["j"].as_integer()];
     if (!node["k"].is_uninitialized())
         k_ = &atoms[node["k"].as_integer()];
-    // if (!node["form"].is_uninitialized())
-    // if (!node["parameters"].is_uninitialized())
+    if (!node["form"].is_uninitialized())
+    {
+        std::string form = node["form"].as_string();
+        if (form.find("@") != std::string::npos)
+            form = "wololo"; // set master
+        else
+            setInteractionForm(AngleFunctions::forms().enumeration(form));
+    }
+    if (!node["parameters"].is_uninitialized())
+    {
+        std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
+        std::vector<double> values;
+        for (auto parameter : parameters)
+            values.push_back(node["parameters"][parameter].as_floating());
+        setInteractionFormAndParameters(interactionForm(), values);
+    }
 }

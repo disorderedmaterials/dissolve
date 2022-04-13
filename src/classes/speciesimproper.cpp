@@ -255,7 +255,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
 
     return improper;
 }
-void SpeciesImproper::deserialize(toml::value node, std::vector<SpeciesAtom> atoms)
+void SpeciesImproper::deserialize(toml::value node, std::vector<SpeciesAtom> &atoms)
 {
     if (!node["i"].is_uninitialized())
         i_ = &atoms[node["i"].as_integer()];
@@ -265,6 +265,20 @@ void SpeciesImproper::deserialize(toml::value node, std::vector<SpeciesAtom> ato
         k_ = &atoms[node["k"].as_integer()];
     if (!node["l"].is_uninitialized())
         l_ = &atoms[node["l"].as_integer()];
-    // if (!node["form"].is_uninitialized())
-    // if (!node["parameters"].is_uninitialized())
+    if (!node["form"].is_uninitialized())
+    {
+        std::string form = node["form"].as_string();
+        if (form.find("@") != std::string::npos)
+            form = "wololo"; // set master
+        else
+            setInteractionForm(TorsionFunctions::forms().enumeration(form));
+    }
+    if (!node["parameters"].is_uninitialized())
+    {
+        std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
+        std::vector<double> values;
+        for (auto parameter : parameters)
+            values.push_back(node["parameters"][parameter].as_floating());
+        setInteractionFormAndParameters(interactionForm(), values);
+    }
 }
