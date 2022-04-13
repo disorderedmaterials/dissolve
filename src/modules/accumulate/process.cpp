@@ -21,7 +21,7 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 }
 
 // Run main processing
-bool AccumulateModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Get the module and decide on the PartialSet data name we're looking for
     if (targetModule_.empty())

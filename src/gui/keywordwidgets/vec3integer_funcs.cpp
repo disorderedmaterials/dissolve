@@ -87,7 +87,7 @@ void Vec3IntegerKeywordWidget::on_Spin3_valueChanged(int value)
  */
 
 // Update value displayed in widget
-void Vec3IntegerKeywordWidget::updateValue()
+void Vec3IntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

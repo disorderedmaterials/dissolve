@@ -40,5 +40,5 @@ class OptionalIntegerKeywordWidget : public ExponentialSpin, public KeywordWidge
      */
     public:
     // Update value displayed in widget
-    void updateValue() override;
+    void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
 };

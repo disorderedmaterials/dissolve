@@ -46,18 +46,18 @@ class OperateProcedureNodeBase : public ProcedureNode
     // Set target Data3D
     void setTarget(Data3D *target);
     // Operate on Data1D target
-    virtual bool operateData1D(ProcessPool &procPool, Configuration *cfg);
+    virtual bool operateData1D(const ProcessPool &procPool, Configuration *cfg);
     // Operate on Data2D target
-    virtual bool operateData2D(ProcessPool &procPool, Configuration *cfg);
+    virtual bool operateData2D(const ProcessPool &procPool, Configuration *cfg);
     // Operate on Data3D target
-    virtual bool operateData3D(ProcessPool &procPool, Configuration *cfg);
+    virtual bool operateData3D(const ProcessPool &procPool, Configuration *cfg);
 
     /*
      * Execute
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
-    // Execute node, targetting the supplied Configuration
-    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    bool prepare(const ProcedureContext &procedureContext) override;
+    // Execute node
+    bool execute(const ProcedureContext &procedureContext) override;
 };

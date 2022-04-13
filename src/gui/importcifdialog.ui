@@ -648,7 +648,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="ConfigurationWidget" name="StructureViewer" native="true">
+           <widget class="ConfigurationViewerWidget" name="StructureViewer" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>1</horstretch>
@@ -1318,7 +1318,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="ConfigurationWidget" name="SupercellViewer" native="true">
+           <widget class="ConfigurationViewerWidget" name="SupercellViewer" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>1</horstretch>
@@ -1578,7 +1578,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="ConfigurationWidget" name="PartitioningViewer" native="true">
+           <widget class="ConfigurationViewerWidget" name="PartitioningViewer" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>1</horstretch>
@@ -1601,9 +1601,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ConfigurationWidget</class>
+   <class>ConfigurationViewerWidget</class>
    <extends>QWidget</extends>
-   <header>gui/configurationwidget.h</header>
+   <header>gui/configurationviewerwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

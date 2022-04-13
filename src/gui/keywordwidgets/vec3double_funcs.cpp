@@ -94,7 +94,7 @@ void Vec3DoubleKeywordWidget::on_Spin3_valueChanged(double value)
  */
 
 // Update value displayed in widget
-void Vec3DoubleKeywordWidget::updateValue()
+void Vec3DoubleKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

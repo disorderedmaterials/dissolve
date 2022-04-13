@@ -81,10 +81,6 @@ bool Dissolve::loadInput(LineParser &parser)
                 if (!PairPotentialsBlock::parse(parser, this))
                     error = true;
                 break;
-            case (BlockKeywords::SimulationBlockKeyword):
-                if (!SimulationBlock::parse(parser, this))
-                    error = true;
-                break;
             case (BlockKeywords::SpeciesBlockKeyword):
                 // Check to see if a Species with this name already exists...
                 if (findSpecies(parser.argsv(1)))
@@ -452,16 +448,6 @@ bool Dissolve::saveInput(std::string_view filename)
         if (!parser.writeLineF("{}\n", LayerBlock::keywords().keyword(LayerBlock::EndLayerKeyword)))
             return false;
     }
-
-    // Write Simulation block
-    if (!parser.writeBannerComment("Simulation"))
-        return false;
-    if (!parser.writeLineF("\n{}\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword)))
-        return false;
-    if (!parser.writeLineF("  {}  {}\n", SimulationBlock::keywords().keyword(SimulationBlock::SeedKeyword), seed_))
-        return false;
-    if (!parser.writeLineF("{}\n\n", SimulationBlock::keywords().keyword(SimulationBlock::EndSimulationKeyword)))
-        return false;
 
     parser.closeFiles();
 

@@ -85,13 +85,13 @@ void NeutronSQModuleWidget::createPartialSetRenderables(std::string_view targetP
 }
 
 // Update controls within widget
-void NeutronSQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void NeutronSQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables ||
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) ||
         (!ui_.TotalFQButton->isChecked() && !ui_.TotalGRButton->isChecked() && !targetPartials_))
     {
         ui_.PlotWidget->clearRenderableData();
@@ -102,7 +102,15 @@ void NeutronSQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         if (ui_.TotalFQButton->isChecked())
         {
             graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", module_->uniqueName()),
-                                                       "Calculated", "Calculated");
+                                                       "Total F(Q)", "Calculated");
+            auto boundTotal = graph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//WeightedSQ//BoundTotal", module_->uniqueName()), "Bound F(Q)", "Calculated");
+            boundTotal->setColour(StockColours::GreenStockColour);
+            boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
+            auto unboundTotal = graph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//WeightedSQ//UnboundTotal", module_->uniqueName()), "Unbound F(Q)", "Calculated");
+            unboundTotal->setColour(StockColours::GreenStockColour);
+            unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
             // Add on reference F(Q) data if present
             if (referenceFileAndFormat.hasFilename())
@@ -161,7 +169,7 @@ void NeutronSQModuleWidget::on_TotalFQButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "F(Q)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void NeutronSQModuleWidget::on_PartialSQButton_clicked(bool checked)
@@ -173,7 +181,7 @@ void NeutronSQModuleWidget::on_PartialSQButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "S(Q)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void NeutronSQModuleWidget::on_TotalGRButton_clicked(bool checked)
@@ -185,7 +193,7 @@ void NeutronSQModuleWidget::on_TotalGRButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "G(r)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void NeutronSQModuleWidget::on_PartialGRButton_clicked(bool checked)
@@ -197,16 +205,13 @@ void NeutronSQModuleWidget::on_PartialGRButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "g(r)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void NeutronSQModuleWidget::on_FilterEdit_textChanged(QString text)
-{
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
-}
+void NeutronSQModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::RecreateRenderablesFlag); }
 
 void NeutronSQModuleWidget::on_ClearFilterButton_clicked(bool checked)
 {
     ui_.FilterEdit->setText("");
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }

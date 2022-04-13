@@ -6,6 +6,7 @@ pugixml/1.11
 tbb/2020.3
 onedpl/20200330
 toml11/3.7.0
+antlr4-cppruntime/4.9.3
 
 [generators]
 cmake

@@ -32,7 +32,7 @@ void StringKeywordWidget::lineEditTextChanged(const QString &text)
  */
 
 // Update value displayed in widget
-void StringKeywordWidget::updateValue()
+void StringKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

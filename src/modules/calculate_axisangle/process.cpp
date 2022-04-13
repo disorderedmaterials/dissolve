@@ -9,7 +9,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-bool CalculateAxisAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateAxisAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -25,12 +25,11 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, ProcessPool &procPool
     else
         selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     // Execute the analysis
-    if (!analyser_.execute(procPool, targetConfiguration_, uniqueName(), dissolve.processingModuleData()))
-        return Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
+    ProcedureContext context(procPool, targetConfiguration_);
+    context.setDataListAndPrefix(dissolve.processingModuleData(), uniqueName());
+    if (!analyser_.execute(context))
+        return Messenger::error("CalculateAxisAngle experienced problems with its analysis.\n");
 
     return true;
 }

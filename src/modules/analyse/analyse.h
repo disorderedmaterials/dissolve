@@ -31,5 +31,5 @@ class AnalyseModule : public Module
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };

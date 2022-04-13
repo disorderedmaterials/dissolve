@@ -35,7 +35,7 @@ bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Partia
     }
 
     // Calculate and normalise total to form factor if requested
-    weightedgr.formTotal(false);
+    weightedgr.formTotals(false);
     if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
         weightedgr.total() /= weights.boundCoherentAverageOfSquares();
     else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
@@ -72,7 +72,7 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
     }
 
     // Calculate and normalise total to form factor if requested
-    weightedsq.formTotal(false);
+    weightedsq.formTotals(false);
     if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
         weightedsq.total() /= weights.boundCoherentAverageOfSquares();
     else if (normalisation == StructureFactors::SquareOfAverageNormalisation)

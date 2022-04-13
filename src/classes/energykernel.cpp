@@ -12,8 +12,8 @@
 #include <iterator>
 #include <numeric>
 
-EnergyKernel::EnergyKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
-                           std::optional<double> energyCutoff)
+EnergyKernel::EnergyKernel(const ProcessPool &procPool, const Box *box, const CellArray &cells,
+                           const PotentialMap &potentialMap, std::optional<double> energyCutoff)
     : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
 {
     cutoffDistanceSquared_ =

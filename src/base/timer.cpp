@@ -4,7 +4,11 @@
 #include "base/timer.h"
 #include <fmt/format.h>
 
-Timer::Timer() { start(); }
+Timer::Timer(bool immediateStart)
+{
+    if (immediateStart)
+        start();
+}
 
 /*
  * Timing Routines

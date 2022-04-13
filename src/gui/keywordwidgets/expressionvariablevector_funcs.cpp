@@ -40,4 +40,4 @@ void ExpressionVariableVectorKeywordWidget::modelDataChanged(const QModelIndex &
 }
 
 // Update value displayed in widget
-void ExpressionVariableVectorKeywordWidget::updateValue() {}
+void ExpressionVariableVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}

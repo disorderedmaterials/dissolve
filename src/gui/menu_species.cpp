@@ -11,6 +11,7 @@
 #include "gui/importspeciesdialog.h"
 #include "gui/selectatomtypedialog.h"
 #include "gui/selectelementdialog.h"
+#include "gui/selectspeciesdialog.h"
 #include "gui/speciestab.h"
 #include <QFileDialog>
 #include <QInputDialog>
@@ -37,6 +38,33 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
 {
     auto *newSpecies = dissolve_.addSpecies();
+
+    EditSpeciesDialog editSpeciesDialog(this, newSpecies);
+    if (editSpeciesDialog.editSpecies())
+    {
+        // Renumber the atoms so they are sequential
+        newSpecies->renumberAtoms();
+        newSpecies->updateIntramolecularTerms();
+
+        setModified();
+        fullUpdate();
+        ui_.MainTabs->setCurrentTab(newSpecies);
+    }
+    else
+        dissolve_.removeSpecies(newSpecies);
+}
+
+void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
+{
+    // Create a SpeciesSelectDialog and use it to get the Species to add to the mix
+    SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to use as basis");
+
+    auto baseSpecies = speciesSelectDialog.selectSpecies({}, 1, 1);
+    if (baseSpecies.empty())
+        return;
+
+    // Copy the base species
+    auto *newSpecies = dissolve_.copySpecies(baseSpecies.front());
 
     EditSpeciesDialog editSpeciesDialog(this, newSpecies);
     if (editSpeciesDialog.editSpecies())

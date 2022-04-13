@@ -83,12 +83,3 @@ Layer  'Benchmark'
     Configuration  'Water100k'
   EndModule
 EndLayer
-
-#------------------------------------------------------------------------------#
-#                                  Simulation                                  #
-#------------------------------------------------------------------------------#
-
-Simulation
-  Seed  12345
-EndSimulation
-

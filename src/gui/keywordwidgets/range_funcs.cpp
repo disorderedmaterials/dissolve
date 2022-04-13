@@ -60,7 +60,7 @@ void RangeKeywordWidget::on_Spin2_valueChanged(double value)
  */
 
 // Update value displayed in widget
-void RangeKeywordWidget::updateValue()
+void RangeKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

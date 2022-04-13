@@ -83,13 +83,13 @@ void XRaySQModuleWidget::createPartialSetRenderables(std::string_view targetPref
 }
 
 // Update controls within widget
-void XRaySQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void XRaySQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
     // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
     // located it
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables ||
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) ||
         (!ui_.TotalFQButton->isChecked() && !ui_.TotalGRButton->isChecked() && !targetPartials_))
     {
         ui_.PlotWidget->clearRenderableData();
@@ -101,6 +101,14 @@ void XRaySQModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
         {
             graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", module_->uniqueName()),
                                                        "Calculated", "Calculated");
+            auto boundTotal = graph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//WeightedSQ//BoundTotal", module_->uniqueName()), "Bound F(Q)", "Calculated");
+            boundTotal->setColour(StockColours::GreenStockColour);
+            boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
+            auto unboundTotal = graph_->createRenderable<RenderableData1D>(
+                fmt::format("{}//WeightedSQ//UnboundTotal", module_->uniqueName()), "Unbound F(Q)", "Calculated");
+            unboundTotal->setColour(StockColours::GreenStockColour);
+            unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
             // Add on reference F(Q) data if present
             if (referenceFileAndFormat.hasFilename())
@@ -159,7 +167,7 @@ void XRaySQModuleWidget::on_TotalFQButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "F(Q)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void XRaySQModuleWidget::on_PartialSQButton_clicked(bool checked)
@@ -171,7 +179,7 @@ void XRaySQModuleWidget::on_PartialSQButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "S(Q)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void XRaySQModuleWidget::on_TotalGRButton_clicked(bool checked)
@@ -183,7 +191,7 @@ void XRaySQModuleWidget::on_TotalGRButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "G(r)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
 void XRaySQModuleWidget::on_PartialGRButton_clicked(bool checked)
@@ -195,16 +203,13 @@ void XRaySQModuleWidget::on_PartialGRButton_clicked(bool checked)
     graph_->view().axes().setTitle(1, "g(r)");
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
 
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void XRaySQModuleWidget::on_FilterEdit_textChanged(QString text)
-{
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
-}
+void XRaySQModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::RecreateRenderablesFlag); }
 
 void XRaySQModuleWidget::on_ClearFilterButton_clicked(bool checked)
 {
     ui_.FilterEdit->setText("");
-    updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
 }

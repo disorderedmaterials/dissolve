@@ -32,7 +32,7 @@ struct Energies
 } // namespace
 
 // Return total interatomic energy of Configuration
-double EnergyModule::interAtomicEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap)
+double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap)
 {
     /*
      * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
@@ -62,7 +62,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, const Configuratio
 }
 
 // Return total interatomic energy of Species
-double EnergyModule::interAtomicEnergy(ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap)
+double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap)
 {
     const auto cutoff = potentialMap.range();
 
@@ -98,7 +98,8 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, const Species *sp,
 }
 
 // Return total intermolecular energy of Configuration
-double EnergyModule::interMolecularEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap)
+double EnergyModule::interMolecularEnergy(const ProcessPool &procPool, const Configuration *cfg,
+                                          const PotentialMap &potentialMap)
 {
     /*
      * Calculates the total intermolecular energy of the system, i.e. the energy contributions from PairPotential
@@ -128,7 +129,8 @@ double EnergyModule::interMolecularEnergy(ProcessPool &procPool, const Configura
 }
 
 // Return total intramolecular energy of Configuration
-double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap)
+double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Configuration *cfg,
+                                          const PotentialMap &potentialMap)
 {
     double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
 
@@ -136,9 +138,9 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, const Configura
 }
 
 // Return total intramolecular energy of Configuration, storing components in provided variables
-double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
-                                          double &bondEnergy, double &angleEnergy, double &torsionEnergy,
-                                          double &improperEnergy)
+double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Configuration *cfg,
+                                          const PotentialMap &potentialMap, double &bondEnergy, double &angleEnergy,
+                                          double &torsionEnergy, double &improperEnergy)
 {
     /*
      * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
@@ -268,13 +270,13 @@ double EnergyModule::intraMolecularEnergy(const Species *sp)
 }
 
 // Return total energy (interatomic and intramolecular) of Configuration
-double EnergyModule::totalEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap)
+double EnergyModule::totalEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap)
 {
     return (interAtomicEnergy(procPool, cfg, potentialMap) + intraMolecularEnergy(procPool, cfg, potentialMap));
 }
 
 // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
-double EnergyModule::totalEnergy(ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
+double EnergyModule::totalEnergy(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
                                  double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy,
                                  double &improperEnergy)
 {
@@ -285,7 +287,7 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, const Configuration *cfg
 }
 
 // Return total energy (interatomic and intramolecular) of Species
-double EnergyModule::totalEnergy(ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap)
+double EnergyModule::totalEnergy(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap)
 {
     return (interAtomicEnergy(procPool, sp, potentialMap) + intraMolecularEnergy(sp));
 }

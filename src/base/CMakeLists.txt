@@ -8,6 +8,7 @@ add_library(
   outputhandler.cpp
   processgroup.cpp
   processpool.cpp
+  randombuffer.cpp
   sysfunc.cpp
   timer.cpp
   units.cpp
@@ -22,13 +23,14 @@ add_library(
   outputhandler.h
   processgroup.h
   processpool.h
+  randombuffer.h
   sysfunc.h
   timer.h
   units.h
   version.h
 )
 
-include_directories(base PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(base PRIVATE ${PROJECT_SOURCE_DIR}/src)
 if(CONAN)
   target_link_libraries(base PUBLIC CONAN_PKG::fmt ${THREADING_LINK_LIBS})
 else(CONAN)

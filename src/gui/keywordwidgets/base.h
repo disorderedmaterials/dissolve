@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include "gui/signals.h"
+#include "templates/flags.h"
+
 // Forward Declarations
 class CoreData;
 class GenericList;
@@ -29,5 +32,5 @@ class KeywordWidgetBase
 
     public:
     // Update value displayed in widget
-    virtual void updateValue() = 0;
+    virtual void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags = {}) = 0;
 };
