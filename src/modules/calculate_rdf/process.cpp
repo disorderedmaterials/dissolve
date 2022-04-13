@@ -9,7 +9,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool CalculateRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -22,11 +22,10 @@ bool CalculateRDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     else
         selectB_->setSameMoleculeExclusions({});
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
-
     // Execute the analysis
-    if (!analyser_.execute(procPool, targetConfiguration_, uniqueName(), dissolve.processingModuleData()))
+    ProcedureContext context(procPool, targetConfiguration_);
+    context.setDataListAndPrefix(dissolve.processingModuleData(), uniqueName());
+    if (!analyser_.execute(context))
         return Messenger::error("CalculateRDF experienced problems with its analysis.\n");
 
     return true;

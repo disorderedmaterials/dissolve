@@ -14,7 +14,6 @@ void DissolveWindow::disableSensitiveControls()
     ui_.SimulationStepFiveAction->setEnabled(false);
     ui_.SimulationSaveRestartPointAction->setEnabled(false);
     ui_.SimulationDataManagerAction->setEnabled(false);
-    ui_.SimulationSetRandomSeedAction->setEnabled(false);
 
     // Disable necessary menus
     ui_.SpeciesMenu->setEnabled(false);
@@ -35,7 +34,6 @@ void DissolveWindow::enableSensitiveControls()
     ui_.SimulationStepFiveAction->setEnabled(true);
     ui_.SimulationSaveRestartPointAction->setEnabled(true);
     ui_.SimulationDataManagerAction->setEnabled(true);
-    ui_.SimulationSetRandomSeedAction->setEnabled(true);
 
     // Enable necessary menus
     ui_.SpeciesMenu->setEnabled(true);
@@ -99,22 +97,25 @@ void DissolveWindow::closeTab(QWidget *page)
         auto *cfg = dynamic_cast<ConfigurationTab *>(tab)->configuration();
         ui_.MainTabs->removeByPage(page);
         dissolve_.removeConfiguration(cfg);
+        setModified({DissolveSignals::ConfigurationsMutated});
     }
     else if (tab->type() == MainTab::TabType::Layer)
     {
-        auto *layer = dynamic_cast<LayerTab *>(tab)->moduleLayer();
+        auto *layerTab = dynamic_cast<LayerTab *>(tab);
+        layerTab->removeModuleControlWidgets();
         ui_.MainTabs->removeByPage(page);
-        dissolve_.removeProcessingLayer(layer);
+        dissolve_.removeProcessingLayer(layerTab->moduleLayer());
+        setModified({DissolveSignals::ModulesMutated});
     }
     else if (tab->type() == MainTab::TabType::Species)
     {
         auto *sp = dynamic_cast<SpeciesTab *>(tab)->species();
         ui_.MainTabs->removeByPage(page);
         dissolve_.removeSpecies(sp);
+        setModified();
     }
     else
         return;
 
-    setModified();
     fullUpdate();
 }

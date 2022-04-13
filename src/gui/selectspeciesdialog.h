@@ -33,8 +33,8 @@ class SelectSpeciesDialog : public QDialog
 
     public:
     // Run the dialog, returning a single selected Species
-    const Species *selectSingleSpecies(int filterProxyFlags = SpeciesFilterProxy::None);
+    const Species *selectSingleSpecies(const Flags<SpeciesFilterProxy::FilterFlags> &flags = {});
     // Run the dialog, returning a list of selected Species
-    std::vector<const Species *> selectSpecies(int filterProxyFlags = SpeciesFilterProxy::None, int minSpecies = 1,
+    std::vector<const Species *> selectSpecies(const Flags<SpeciesFilterProxy::FilterFlags> &flags = {}, int minSpecies = 1,
                                                std::optional<int> maxSpecies = std::nullopt);
 };

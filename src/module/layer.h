@@ -9,6 +9,7 @@
 #include <vector>
 
 // Forward Declarations
+class Configuration;
 class Dissolve;
 class GenericList;
 class Module;
@@ -60,6 +61,8 @@ class ModuleLayer
     public:
     // Clear modules
     void clear();
+    // Append new module to this layer
+    Module *append(std::string_view moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs);
     // Find associated Module by unique name
     Module *find(std::string_view uniqueName) const;
     // Return whether specified Module is present in the layer
@@ -74,5 +77,5 @@ class ModuleLayer
      */
     public:
     // Run set-up stages for all modules
-    bool setUpAll(Dissolve &dissolve, ProcessPool &procPool);
+    bool setUpAll(Dissolve &dissolve, const ProcessPool &procPool);
 };

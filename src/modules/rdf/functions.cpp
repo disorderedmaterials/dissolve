@@ -55,7 +55,8 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
 }
 
 // Calculate partial g(r) with optimised double-loop
-bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth)
+bool RDFModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
+                                  const double binWidth)
 {
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -163,7 +164,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     return true;
 }
 
-bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
+bool RDFModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
     auto &cellArray = cfg->cells();
 
@@ -290,7 +291,7 @@ std::vector<std::pair<const Species *, double>> RDFModule::speciesPopulations() 
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, Configuration *cfg,
+bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
                             RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth,
                             bool &alreadyUpToDate)
 {
@@ -326,8 +327,6 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
      */
 
     Timer timer;
-    timer.start();
-    procPool.resetAccumulatedTime();
     if (method == RDFModule::TestMethod)
         calculateGRTestSerial(cfg, originalgr);
     else if (method == RDFModule::SimpleMethod)
@@ -340,8 +339,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
                               : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
     }
     timer.stop();
-    Messenger::print("Finished calculation of partials ({} elapsed, {} comms).\n", timer.totalTimeString(),
-                     procPool.accumulatedTimeString());
+    Messenger::print("Finished calculation of partials ({} elapsed).\n", timer.totalTimeString());
 
     /*
      * Calculate intramolecular partials
@@ -376,8 +374,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     }
 
     timer.stop();
-    Messenger::print("Finished calculation of intramolecular partials ({} elapsed, {} comms).\n", timer.totalTimeString(),
-                     procPool.accumulatedTimeString());
+    Messenger::print("Finished calculation of intramolecular partials ({} elapsed).\n", timer.totalTimeString());
 
     /*
      * Sum histogram data
@@ -385,17 +382,17 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
      * knows that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
      */
 
-    procPool.resetAccumulatedTime();
     timer.start();
+    Timer commsTimer(false);
     auto success = for_each_pair_early(
-        0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
+        0, originalgr.nAtomTypes(), [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
             // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
             // processes have all data already)
             if (method != RDFModule::TestMethod)
             {
-                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
+                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
                     return false;
-                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
+                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
                     return false;
             }
 
@@ -412,10 +409,10 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     originalgr.formPartials(box->volume());
 
     // Sum total functions
-    originalgr.formTotal(true);
+    originalgr.formTotals(true);
     timer.stop();
     Messenger::print("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n",
-                     timer.totalTimeString(), procPool.accumulatedTimeString());
+                     timer.totalTimeString(), commsTimer.totalTimeString());
 
     /*
      * Partials are now up-to-date
@@ -427,7 +424,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
 }
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
-bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
+bool RDFModule::calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
                                       PartialSet &unweightedgr, const Functions::Function1DWrapper intraBroadening,
                                       int smoothing)
 {
@@ -481,13 +478,13 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Calculate total
-    unweightedgr.formTotal(true);
+    unweightedgr.formTotals(true);
 
     return true;
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPool, std::string_view targetPrefix,
+bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
                                 std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
                                 PartialSet &summedUnweightedGR)
 {
@@ -645,8 +642,9 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     LineParser parser;
 
     // Loop over supplied test data and see if we can locate it amongst our PartialSets
-    for (auto &[data, format] : testData.data())
+    for (auto &sharedDataPointer : testData.data())
     {
+        auto &[data, format] = *sharedDataPointer.get();
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data.tag()};
         std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
@@ -675,8 +673,9 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     LineParser parser;
 
     // Loop over supplied test data and see if we can locate it amongst our PartialSets
-    for (auto &[data, format] : testData.data())
+    for (auto &sharedDataPointer : testData.data())
     {
+        auto &[data, format] = *sharedDataPointer.get();
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data.tag()};
         std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');

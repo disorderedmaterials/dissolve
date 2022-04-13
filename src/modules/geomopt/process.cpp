@@ -8,7 +8,7 @@
 #include "modules/geomopt/geomopt.h"
 
 // Run main processing
-bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool GeometryOptimisationModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);
@@ -19,9 +19,6 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Initialise working arrays for coordinates and forces
     rRef_.resize(targetConfiguration_->nAtoms(), Vec3<double>());

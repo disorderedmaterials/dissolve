@@ -19,20 +19,26 @@ enum ProblemType
     atomic,
     smallMolecule,
     mediumMolecule,
+    frameworkMolecule,
 };
 
 enum Population
 {
+    single,
     small,
     medium,
-    large,
+    large
 };
 
 template <Population population> std::string getFileName(const std::string &systemName)
 {
     std::stringstream fileName;
     fileName << benchmark_path << systemName;
-    if constexpr (population == Population::small)
+    if constexpr (population == Population::single)
+    {
+        fileName << "single";
+    }
+    else if constexpr (population == Population::small)
     {
         fileName << "1k";
     }
@@ -62,6 +68,10 @@ template <ProblemType problem, Population population> std::string benchmarkFileP
     {
         return getFileName<population>("hexane");
     }
+    else if constexpr (problem == ProblemType::frameworkMolecule)
+    {
+        return getFileName<population>("mof5-3x3x3");
+    }
     else
         return {};
 }
@@ -81,8 +91,6 @@ template <ProblemType problem, Population population> struct Problem
         dissolve_.loadInput(file);
         dissolve_.prepare();
         cfg_ = dissolve_.configurations().front().get();
-        auto &procPool = dissolve_.worldPool();
-        procPool.assignProcessesToGroups(cfg_->processPool());
         setUpRDF();
     }
 

@@ -23,7 +23,7 @@ class SpeciesTorsion;
 class ForceKernel
 {
     public:
-    ForceKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+    ForceKernel(const ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
                 std::optional<double> energyCutoff = std::nullopt);
     ~ForceKernel() = default;
 
@@ -44,20 +44,13 @@ class ForceKernel
     double cutoffDistanceSquared_;
 
     /*
-     * Internal Force Calculation
+     * PairPotential Terms
      */
-    private:
+    public:
     // Calculate inter-particle forces between Atoms provided (no minimum image calculation)
     void forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double scale = 1.00) const;
     // Calculate inter-particle forces between Atoms provided (minimum image calculation)
     void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double scale = 1.00) const;
-
-    /*
-     * PairPotential Terms
-     */
-    public:
-    // Calculate forces between atoms provided
-    void forces(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ, ForceVector &f) const;
     // Calculate forces between two cells
     void forces(const Cell *cell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
                 ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
@@ -149,5 +142,5 @@ class ForceKernel
      */
     private:
     // Process pool over which this kernel operates
-    ProcessPool &processPool_;
+    const ProcessPool &processPool_;
 };

@@ -50,8 +50,8 @@ class Procedure
     std::vector<std::pair<Configuration *, int>> configurationPoints_;
 
     public:
-    // Run procedure on specified Configuration, storing / retrieving generated data from supplied list
-    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    // Run procedure in the specified data context
+    bool execute(const ProcedureContext &context);
 
     /*
      * Read / Write

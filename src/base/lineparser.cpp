@@ -6,12 +6,10 @@
 #include "base/sysfunc.h"
 #include <limits>
 
-LineParser::LineParser(ProcessPool *procPool)
+LineParser::LineParser(const ProcessPool *procPool) : processPool_(procPool)
 {
     arguments_.clear();
     reset();
-
-    processPool_ = procPool;
 }
 
 LineParser::~LineParser()
@@ -59,7 +57,7 @@ std::istream *LineParser::inputStream() const
 }
 
 // Return associated process pool (if any)
-ProcessPool *LineParser::processPool() const { return processPool_; }
+const ProcessPool *LineParser::processPool() const { return processPool_; }
 
 // Return filename of current input file (if any)
 std::string_view LineParser::inputFilename() const { return inputFilename_; }

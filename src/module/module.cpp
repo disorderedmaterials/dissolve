@@ -99,10 +99,10 @@ bool Module::isDisabled() const { return !enabled_; }
  */
 
 // Run main processing
-bool Module::process(Dissolve &dissolve, ProcessPool &procPool) { return false; }
+bool Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return false; }
 
 // Set target data
-void Module::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                         const std::map<std::string, std::vector<const Module *>> &moduleMap)
 {
     // Search for Configuration-based targets
@@ -122,10 +122,13 @@ void Module::setTargets(std::vector<std::unique_ptr<Configuration>> &configurati
 }
 
 // Run set-up stage
-bool Module::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) { return true; }
+bool Module::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+{
+    return true;
+}
 
 // Run main processing stage
-bool Module::executeProcessing(Dissolve &dissolve, ProcessPool &procPool)
+bool Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Begin timer
     Timer timer;

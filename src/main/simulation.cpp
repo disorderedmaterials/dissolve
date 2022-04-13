@@ -11,12 +11,6 @@
 #include <cstdio>
 #include <numeric>
 
-// Set random seed
-void Dissolve::setSeed(int seed) { seed_ = seed; }
-
-// Return random seed
-int Dissolve::seed() const { return seed_; }
-
 // Set frequency with which to write various iteration data
 void Dissolve::setRestartFileFrequency(int n) { restartFileFrequency_ = n; }
 
@@ -27,12 +21,6 @@ int Dissolve::restartFileFrequency() const { return restartFileFrequency_; }
 bool Dissolve::prepare()
 {
     Messenger::banner("Preparing Simulation");
-
-    // Initialise random seed
-    if (seed_ == -1)
-        srand((unsigned)time(nullptr));
-    else
-        srand(seed_);
 
     // Check Species
     for (const auto &sp : species())
@@ -187,10 +175,6 @@ bool Dissolve::prepare()
         }
     }
 
-    // Set up parallel comms / limits etc.
-    if (!setUpMPIPools())
-        return Messenger::error("Failed to set up parallel communications.\n");
-
     // Set up all modules and return
     return setUpProcessingLayerModules();
 }
@@ -249,7 +233,7 @@ bool Dissolve::iterate(int nIterations)
             Messenger::heading("'{}'", cfg->name());
 
             // Apply the current size factor
-            cfg->applySizeFactor(potentialMap_);
+            cfg->applySizeFactor(worldPool(), potentialMap_);
         }
 
         // Sync up all processes

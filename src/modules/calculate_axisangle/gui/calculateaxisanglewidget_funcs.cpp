@@ -59,9 +59,9 @@ CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, 
  */
 
 // Update controls within widget
-void CalculateAxisAngleModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void CalculateAxisAngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
         rdfGraph_->clearRenderables();
 
     auto cfg = module_->keywords().get<Configuration *>("Configuration");

@@ -83,16 +83,16 @@ class Module
      */
     private:
     // Run main processing
-    virtual bool process(Dissolve &dissolve, ProcessPool &procPool) = 0;
+    virtual bool process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
 
     public:
     // Set target data
-    virtual void setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+    virtual void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                             const std::map<std::string, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
-    virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
+    virtual bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    bool executeProcessing(Dissolve &dissolve, ProcessPool &procPool);
+    bool executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
 
     /*
      * Timing

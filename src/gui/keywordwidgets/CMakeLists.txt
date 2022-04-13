@@ -3,6 +3,7 @@
 # Meta-Objects
 set(keywordwidgets_MOC_HDRS
     atomtypevector.h
+    configuration.h
     configurationvector.h
     dialog.h
     dropdown.h
@@ -26,7 +27,6 @@ set(keywordwidgets_MOC_HDRS
     vec3integer.h
     vec3nodevalue.h
     bool.hui
-    configuration.hui
     double.hui
     dropwidget.hui
     enumoptions.hui
@@ -41,6 +41,7 @@ qt6_wrap_cpp(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 # User Interface Files
 set(keywordwidgets_UIS
     atomtypevector.ui
+    configuration.ui
     configurationvector.ui
     dialog.ui
     dropdown.ui

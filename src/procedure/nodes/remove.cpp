@@ -34,23 +34,24 @@ bool RemoveProcedureNode::mustBeNamed() const { return false; }
  * Execute
  */
 
-// Execute node, targetting the supplied Configuration
-bool RemoveProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+// Execute node
+bool RemoveProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     // Store current molecule population
-    auto nStartMolecules = cfg->nMolecules();
+    auto nStartMolecules = procedureContext.configuration()->nMolecules();
 
     // Remove molecules by Species type
     if (!speciesToRemove_.empty())
         for (auto *sp : speciesToRemove_)
-            cfg->removeMolecules(sp);
+            procedureContext.configuration()->removeMolecules(sp);
 
     // Remove molecules by selection
     if (selection_)
-        cfg->removeMolecules(selection_->pickedMolecules());
+        procedureContext.configuration()->removeMolecules(selection_->pickedMolecules());
 
-    Messenger::print("[Remove] Removed {} molecules from configuration '{}'.\n", nStartMolecules - cfg->nMolecules(),
-                     cfg->name());
+    Messenger::print("[Remove] Removed {} molecules from configuration '{}'.\n",
+                     nStartMolecules - procedureContext.configuration()->nMolecules(),
+                     procedureContext.configuration()->name());
 
     return true;
 }

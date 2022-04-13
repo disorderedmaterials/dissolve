@@ -11,9 +11,6 @@ Species 'Water'
   Bond    1    2   Harmonic    0.0   1.012
   Bond    1    3   Harmonic    0.0   1.012
   Angle    2    1    3  Harmonic   0.0   113.24
-
-  # Isotopologues
-  Isotopologue  'Natural'  OW=0  HW=0
 EndSpecies
 
 # Define Configuration

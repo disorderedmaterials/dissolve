@@ -27,7 +27,7 @@ bool Forcefield_Zhang2013::setUp()
 {
     // Atom types
     addAtomType(Elements::Zn, 1, "Zn", "-N", "Zinc", 0.6894, {0.280328, 2.462});
-    addAtomType(Elements::N, 2, "N", "-Zn,ring(size=5,N,C,N,C,C)", "Imidazolate nitrogen", -0.28, {0.156063, 3.261});
+    addAtomType(Elements::N, 2, "N", "-[Zn,H],ring(size=5,N,C,N,C,C)", "Imidazolate nitrogen", -0.28, {0.156063, 3.261});
     addAtomType(Elements::C, 3, "C1", "-C(nh=3),-N(n=2),ring(size=5,N,C,N,C,C)", "Imidazolate methylated carbon", 0.4184,
                 {0.237233, 3.431});
     addAtomType(Elements::C, 4, "C2", "-H,ring(size=5,N,C,N,C,C)", "Imidazolate C4,5 carbon", -0.191, {0.237233, 3.431});

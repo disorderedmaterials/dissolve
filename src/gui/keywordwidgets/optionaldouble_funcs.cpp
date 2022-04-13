@@ -58,7 +58,7 @@ void OptionalDoubleKeywordWidget::spinBoxValueNullified()
  */
 
 // Update value displayed in widget
-void OptionalDoubleKeywordWidget::updateValue()
+void OptionalDoubleKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

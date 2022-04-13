@@ -127,5 +127,5 @@ add_library(
   xrayweights.h
 )
 
-include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(classes PRIVATE base ${THREADING_LINK_LIBS})

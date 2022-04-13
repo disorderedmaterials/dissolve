@@ -27,9 +27,9 @@ class OperateNormaliseProcedureNode : public OperateProcedureNodeBase
      */
     public:
     // Operate on Data1D target
-    bool operateData1D(ProcessPool &procPool, Configuration *cfg) override;
+    bool operateData1D(const ProcessPool &procPool, Configuration *cfg) override;
     // Operate on Data2D target
-    bool operateData2D(ProcessPool &procPool, Configuration *cfg) override;
+    bool operateData2D(const ProcessPool &procPool, Configuration *cfg) override;
     // Operate on Data3D target
-    bool operateData3D(ProcessPool &procPool, Configuration *cfg) override;
+    bool operateData3D(const ProcessPool &procPool, Configuration *cfg) override;
 };

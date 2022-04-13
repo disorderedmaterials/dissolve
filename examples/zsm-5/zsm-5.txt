@@ -5415,9 +5415,3 @@ PairPotentials
   Parameters  'Si'  Si  0.0  1.681968  3.826410
   GenerateAll  'LJ'
 EndPairPotentials
-
-Simulation
-  MaxIterations  1
-  WriteIterationData  false
-EndSimulation
-

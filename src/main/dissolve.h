@@ -143,7 +143,7 @@ class Dissolve
     // Return whether specified PairPotential is defined
     PairPotential *pairPotential(std::string_view at1, std::string_view at2) const;
     // Return map for PairPotentials
-    const PotentialMap &potentialMap();
+    const PotentialMap &potentialMap() const;
     // Clear and regenerate all PairPotentials, replacing those currently defined
     bool regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
@@ -205,8 +205,6 @@ class Dissolve
      * Simulation
      */
     private:
-    // Random seed
-    int seed_;
     // Frequency at which to write restart file
     int restartFileFrequency_;
     // Current simulation step
@@ -223,10 +221,6 @@ class Dissolve
     void setNBoxNormalisationPoints(int nPoints);
     // Return number of test points to use when calculating Box normalisation arrays
     int nBoxNormalisationPoints() const;
-    // Set random seed
-    void setSeed(int seed);
-    // Return random seed
-    int seed() const;
     // Set frequency with which to write various iteration data
     void setRestartFileFrequency(int n);
     // Return frequency with which to write restart file
@@ -301,9 +295,13 @@ class Dissolve
     /*
      * Parallel Comms
      */
+    private:
+    // World process pool
+    ProcessPool worldPool_;
+
     public:
-    // Return world process pool
-    ProcessPool &worldPool();
-    // Set up local MPI pools
-    bool setUpMPIPools();
+    // Set up the world pool
+    void setUpWorldPool();
+    // Return the world process pool
+    const ProcessPool &worldPool() const;
 };

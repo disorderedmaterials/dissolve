@@ -15,7 +15,7 @@
 #include "templates/algorithms.h"
 
 // Set target data
-void XRaySQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+void XRaySQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                               const std::map<std::string, std::vector<const Module *>> &moduleMap)
 {
     auto sqIt = moduleMap.find("SQ");
@@ -24,7 +24,7 @@ void XRaySQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &confi
 }
 
 // Run set-up stage
-bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     /*
      * Load and set up reference data (if a file/format was given)
@@ -119,7 +119,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<Keywor
 }
 
 // Run main processing
-bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate x-ray structure factors from existing g(r) data

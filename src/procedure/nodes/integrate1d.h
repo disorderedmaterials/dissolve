@@ -45,7 +45,7 @@ class Integrate1DProcedureNode : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    bool prepare(const ProcedureContext &procedureContext) override;
     // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    bool finalise(const ProcedureContext &procedureContext) override;
 };

@@ -23,6 +23,8 @@ class CLIOptions
     int nIterations_{0};
     // Frequency at which to write restart file
     int restartFileFrequency_{10};
+    // Seed for random number generator
+    std::optional<int> randomSeed_;
     // Redirection basename (for per-process output)
     std::optional<std::string> redirectionBasename_;
     // Restart file to load, overriding default
@@ -50,6 +52,8 @@ class CLIOptions
     int nIterations() const;
     // Return frequency at which to write restart file
     int restartFileFrequency() const;
+    // Return seed for random number generator
+    std::optional<int> randomSeed() const;
     // Return redirection basename (for per-process output)
     std::optional<std::string> redirectionBasename() const;
     // Return restart file to load, overriding default

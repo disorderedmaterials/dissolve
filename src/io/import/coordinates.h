@@ -60,9 +60,9 @@ class CoordinateImportFileFormat : public FileAndFormat
 
     public:
     // Import coordinates using current filename and format
-    bool importData(std::vector<Vec3<double>> &r, ProcessPool *procPool = nullptr);
+    bool importData(std::vector<Vec3<double>> &r, const ProcessPool *procPool = nullptr);
     // Import coordinates direct to configuration using current filename and format
-    bool importData(Configuration *cfg, ProcessPool *procPool = nullptr);
+    bool importData(Configuration *cfg, const ProcessPool *procPool = nullptr);
     // Import coordinates using supplied parser and current format
     bool importData(LineParser &parser, std::vector<Vec3<double>> &r);
     // Import coordinates direct to configuration using supplied parser and current format

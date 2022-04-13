@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "base/processpool.h"
+#include "base/randombuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
 #include "classes/changestore.h"
@@ -12,14 +12,11 @@
 #include "modules/atomshake/atomshake.h"
 
 // Run main processing
-bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
@@ -35,16 +32,17 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+    Timer commsTimer(false);
 
     // Create a Molecule distributor
     RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), procPool, strategy);
 
     // Create a local ChangeStore and EnergyKernel
-    ChangeStore changeStore(procPool);
+    ChangeStore changeStore(procPool, commsTimer);
     EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
-    procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
     int shake, n;
     auto nAttempts = 0, nAccepted = 0;
@@ -53,7 +51,6 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Vec3<double> rDelta;
 
     Timer timer;
-    procPool.resetAccumulatedTime();
     while (distributor.cycle())
     {
         // Get next set of Molecule targets from the distributor
@@ -66,7 +63,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
             strategy = distributor.currentStrategy();
 
             // Re-initialise the random buffer
-            procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
+            randomBuffer.reset(ProcessPool::subDivisionStrategy(strategy));
         }
 
         // Loop over target Molecules
@@ -94,8 +91,8 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 for (shake = 0; shake < nShakesPerAtom_; ++shake)
                 {
                     // Create a random translation vector
-                    rDelta.set(procPool.randomPlusMinusOne() * stepSize_, procPool.randomPlusMinusOne() * stepSize_,
-                               procPool.randomPlusMinusOne() * stepSize_);
+                    rDelta.set(randomBuffer.randomPlusMinusOne() * stepSize_, randomBuffer.randomPlusMinusOne() * stepSize_,
+                               randomBuffer.randomPlusMinusOne() * stepSize_);
 
                     // Translate Atom and update its Cell position
                     i->translateCoordinates(rDelta);
@@ -107,7 +104,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     // Trial the transformed Atom position
                     delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);
-                    accept = delta < 0 ? true : (procPool.random() < exp(-delta * rRT));
+                    accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
 
                     if (accept)
                     {
@@ -147,22 +144,22 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         changeStore.reset();
     }
 
-    // Collect statistics across all processes
-    if (!procPool.allSum(&nAccepted, 1, strategy))
-        return false;
-    if (!procPool.allSum(&nAttempts, 1, strategy))
-        return false;
-    if (!procPool.allSum(&totalDelta, 1, strategy))
-        return false;
-
     timer.stop();
+
+    // Collect statistics across all processes
+    if (!procPool.allSum(&nAccepted, 1, strategy, commsTimer))
+        return false;
+    if (!procPool.allSum(&nAttempts, 1, strategy, commsTimer))
+        return false;
+    if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
+        return false;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
     // Calculate and print acceptance rate
     double rate = double(nAccepted) / nAttempts;
     Messenger::print("Total number of attempted moves was {} ({} work, {} comms)\n", nAttempts, timer.totalTimeString(),
-                     procPool.accumulatedTimeString());
+                     commsTimer.totalTimeString());
 
     Messenger::print("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
 

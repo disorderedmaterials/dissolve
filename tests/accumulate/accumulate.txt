@@ -23,7 +23,6 @@ Species 'Water'
   Angle 1    2    3  @HOH
 
   # Isotopologues
-  Isotopologue  'Natural'  OW=0  HW=0
   Isotopologue  'Deuteriated'  OW=0  HW=2
 
   # Analysis Sites

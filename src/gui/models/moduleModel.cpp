@@ -3,7 +3,7 @@
 
 #include "gui/models/moduleModel.h"
 
-// Set source Species data
+// Set source Module data
 void ModuleModel::setData(const std::vector<Module *> &modules)
 {
     beginResetModel();

@@ -10,7 +10,7 @@
 class Timer
 {
     public:
-    Timer();
+    explicit Timer(bool immediateStart = true);
 
     private:
     // Start time
