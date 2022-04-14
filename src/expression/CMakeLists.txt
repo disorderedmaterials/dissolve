@@ -58,4 +58,8 @@ target_include_directories(
                      ${ANTLR_ExpressionGrammarLexer_OUTPUT_DIR} ${ANTLR_ExpressionGrammarParser_OUTPUT_DIR}
 )
 
-target_link_libraries(expression base)
+if(CONAN)
+  target_link_libraries(expression base CONAN_PKG::antlr4-cppruntime)
+else(CONAN)
+  target_link_libraries(expression base antlr4-runtime)
+endif(CONAN)

@@ -38,8 +38,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     // Set target for ProcedureEditor, and connect signals
     ui_.ProcedureWidget->setModel(&procedureModel_);
-    connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow,
-            SLOT(setModified()));
     connect(ui_.ProcedureWidget, SIGNAL(clicked(const QModelIndex &)), this, SLOT(updateProcedureWidget(const QModelIndex &)));
     connect(ui_.ProcedureWidget, SIGNAL(activated(const QModelIndex &)), this,
             SLOT(updateProcedureWidget(const QModelIndex &)));
@@ -234,6 +232,7 @@ void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
     if (data != nullptr)
     {
         KeywordsWidget *widget = new KeywordsWidget(this);
+        connect(widget, SIGNAL(keywordChanged(int)), dissolveWindow_, SLOT(setModified()));
         widget->setUp(data->keywords(), dissolve_.coreData());
         if (!activeWidget_)
             ui_.ProcedureLayout->addWidget(widget);
