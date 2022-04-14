@@ -20,7 +20,7 @@ Run Dissolve for the specified number of iterations, and then quit. For the GUI 
 Give a specific random seed with which to initialise the random number generator.
 
 ### `-q`, `--quiet`
-Don't print any output to the console whatsoever. Output files such as the restart file and any data output requested in individual modules will still be written. Use the [`-x`](#-x---no-restart-file) flag to prevent the restart and heartbeat files being written.
+Don't print any output to the console whatsoever. Output files such as the restart file and any data output requested in individual modules will still be written. Use the [`-x`](#-x---no-restart-file) flag to explicitly disable writing of the restart file.
 
 ### `-v`, `--verbose`
 Print lots more output, mostly useful for debugging

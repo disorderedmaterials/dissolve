@@ -97,8 +97,7 @@ Assuming that no errors have arisen to this point, Dissolve is ready to enter it
 {{< mermaid >}}
 graph TD;
   Start((Iteration N)) --> PrintTasks;
-  PrintTasks[Print Task Schedule] --> Heartbeat;
-  Heartbeat[Write Heartbeat File] --> ConfigCheck;
+  PrintTasks[Print Task Schedule] --> ConfigCheck;
   subgraph  ForEach Configuration;
     ConfigCheck{Run This Iteration?} --> |Yes|ConfigRun;
     ConfigRun[Execute Local Module Layer];
