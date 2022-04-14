@@ -10,10 +10,13 @@
 
 // Forward Declarations
 class AtomType;
+class SerializablePairPotential;
 
 // PairPotential Definition
 class PairPotential
 {
+    friend class SerializablePairPotential;
+
     public:
     PairPotential();
     // Coulomb Truncation Scheme enum

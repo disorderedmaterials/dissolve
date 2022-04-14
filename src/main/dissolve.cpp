@@ -7,7 +7,9 @@
 #include "classes/neutronweights.h"
 #include "classes/species.h"
 
-Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
+Dissolve::Dissolve(CoreData &coreData)
+    : coreData_(coreData),
+      pairPotential_(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_, coreData_.atomTypes())
 {
     // Set core simulation variables
     restartFileFrequency_ = 10;
@@ -16,15 +18,6 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 
     // Clear everything
     clear();
-
-    //pairPotential_.setPairPotentialDelta(pairPotentialDelta_);
-    //pairPotential_.setPairPotentialRange(pairPotentialRange_);
-    
-    //pairPotential_.setAtomTypes(atomTypes());
-    //pairPotential_.setAtomTypeChargeSource(atomTypeChargeSource_);
-
-    //pairPotential_.setCoulombTruncationScheme(PairPotential::coulombTruncationScheme());
-    //pairPotential_.setShortRangeTruncationScheme(PairPotential::shortRangeTruncationScheme());
 }
 
 Dissolve::~Dissolve() { clear(); }

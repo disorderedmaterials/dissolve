@@ -20,10 +20,7 @@ class SerializablePairPotential
 
     // AtomTypes
     public:
-    SerializablePairPotential(double &range, double &delta, bool &source, std::vector<std::shared_ptr<AtomType>> &types,
-                              PairPotential::CoulombTruncationScheme &coulombScheme,
-                              PairPotential::ShortRangeTruncationScheme &shortRangeScheme);
-    ~SerializablePairPotential();
+    SerializablePairPotential(double &range, double &delta, bool &source, std::vector<std::shared_ptr<AtomType>> &types);
 
     double &range();
     const double &range() const;

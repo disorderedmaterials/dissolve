@@ -1,11 +1,10 @@
 #include "serializablepairpotential.h"
 
 SerializablePairPotential::SerializablePairPotential(double &range, double &delta, bool &source,
-                                                     std::vector<std::shared_ptr<AtomType>> &types,
-                                                     PairPotential::CoulombTruncationScheme &coulombScheme,
-                                                     PairPotential::ShortRangeTruncationScheme &shortRangeScheme)
-    : range_(range), delta_(delta), atomTypeChargeSource_(source), atomTypes_(types), coulombTruncationScheme_(coulombScheme),
-      shortRangeTruncationScheme_(shortRangeScheme){};
+                                                     std::vector<std::shared_ptr<AtomType>> &types)
+    : range_(range), delta_(delta), atomTypeChargeSource_(source), atomTypes_(types),
+      coulombTruncationScheme_(PairPotential::coulombTruncationScheme_),
+      shortRangeTruncationScheme_(PairPotential::shortRangeTruncationScheme_){};
 
 double &SerializablePairPotential::range() { return range_; }
 const double &SerializablePairPotential::range() const { return range_; }
