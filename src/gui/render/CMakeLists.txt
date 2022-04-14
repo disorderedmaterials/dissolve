@@ -100,7 +100,6 @@ target_include_directories(
           ${PROJECT_BINARY_DIR}/src
           ${Qt6Widgets_INCLUDE_DIRS}
           ${FREETYPE_INCLUDE_DIRS}
-          ${ANTLRRUNTIME_INCLUDE_DIRS}
           ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR}
           ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
 )
@@ -110,4 +109,8 @@ if(MSVC)
   target_compile_options(render PUBLIC /Zc:__cplusplus)
 endif(MSVC)
 
-target_link_libraries(render PRIVATE base)
+if (CONAN)
+  target_link_libraries(render PRIVATE base CONAN_PKG::antlr4-cppruntime)
+else(CONAN)
+  target_link_libraries(render PRIVATE base antlr4-cppruntime)
+endif(CONAN)
