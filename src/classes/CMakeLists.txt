@@ -51,6 +51,7 @@ add_library(
   regionaldistributor.cpp
   scaledenergykernel.cpp
   scatteringmatrix.cpp
+  serializablepairpotential.cpp
   site.cpp
   sitereference.cpp
   sitestack.cpp
@@ -111,6 +112,7 @@ add_library(
   regionaldistributor.h
   scaledenergykernel.h
   scatteringmatrix.h
+  serializablepairpotential.h
   site.h
   sitereference.h
   sitestack.h
