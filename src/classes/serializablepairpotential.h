@@ -26,11 +26,17 @@ class SerializablePairPotential
     ~SerializablePairPotential();
 
     double &range();
+    const double &range() const;
     double &delta();
+    const double &delta() const;
     bool &atomTypeChargeSource();
+    const bool &atomTypeChargeSource() const;
 
     std::vector<std::shared_ptr<AtomType>> &atomTypes();
+    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
 
     PairPotential::CoulombTruncationScheme &coulombTruncationScheme();
+    const PairPotential::CoulombTruncationScheme &coulombTruncationScheme() const;
     PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme();
+    const PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme() const;
 };
