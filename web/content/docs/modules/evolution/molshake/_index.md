@@ -40,9 +40,15 @@ $$ \delta_{new}^{rot} = \delta_{old}^{rot} \frac{\alpha_{actual}^{rot}}{\alpha} 
 
 If it occurs that no moves are accepted for either of the move types, the corresponding step size is multiplied by a factor of 0.8 instead of using the above equations. Following adjustment of the step sizes they are clamped such that $\delta_{min} \le \delta_{new} \le \delta_{max}$.
 
-## Configuration
+## Keywords
 
-### Control Keywords
+### Targets
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
+
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

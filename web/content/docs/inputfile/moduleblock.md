@@ -19,7 +19,11 @@ Every module recognises the following keywords, giving control over its basic op
 |`EndModule`|--|--|Indicates the end of the current `Module` block.|
 |`Frequency`|`n`|`1`|Frequency `n` at which the module should be run. A frequency of `1` indicates that the module will run every time the encompassing processing layer is run, a value of `5` runs the module on every 5th execution of the layer. Note that the [layer itself]({{< ref "layerblock" >}}) also has an associated frequency, relative the main loop counter.|
 
-## Module Keywords
+## Target Keywords
+
+Modules tend to require one or main "targets" upon which they operate or take data from. Most modules will target a single [configuration]({{< ref "configurationblock" >}}) in order to change its contents or make a meaningful calculation based on the current contents. Modules may also target other modules.
+
+## Control Keywords
 
 In addition to the basic keywords, each module has its own unique set of control keywords used to set up and define its behaviour. Refer to the individual [module pages]({{< ref "modules" >}}) for more information.
 

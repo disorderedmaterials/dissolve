@@ -18,7 +18,7 @@ The `Remove` node removes all molecules of one or more types of species from a c
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

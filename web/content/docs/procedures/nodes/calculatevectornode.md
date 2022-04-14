@@ -24,7 +24,7 @@ The `CalculateVector` node calculates the vector between two provided sites $i$ 
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

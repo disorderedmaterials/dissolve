@@ -22,7 +22,7 @@ The sole purpose of the `Box` node is to set the geometry of the unit cell (box)
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

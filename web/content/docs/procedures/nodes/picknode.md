@@ -18,7 +18,7 @@ The `Pick` node picks (selects) all molecules of a given species type from the c
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

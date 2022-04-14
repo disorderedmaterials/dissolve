@@ -31,7 +31,7 @@ When resizing the box, the default is to scale equally in all directions A, B, a
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

@@ -18,9 +18,15 @@ The `Bragg` module calculates the Bragg reflections over a specified Q-range, st
 
 The Bragg module does not handle broadening of the calculated reflections into "observed" peak structures - this is handled by the module referencing the reflection data.
 
-## Configuration
+## Keywords
 
-### Control Keywords
+### Targets
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
+
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
@@ -31,7 +37,7 @@ The Bragg module does not handle broadening of the calculated reflections into "
 |`QMax`|`qmax`|`30.0`|$Q_{max}$ limit for reflection calculation. Any reflections at $Q$ values above this value will be ignored.|
 |`QMin`|`qmin`|`0.01`|$Q_{min}$ limit for reflection calculation. Any reflections at $Q$ values below this value will be ignored.|
 
-### Export Keywords
+### Export
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

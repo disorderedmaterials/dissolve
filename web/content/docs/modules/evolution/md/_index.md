@@ -36,15 +36,15 @@ $$ v_i\left(t + \Delta t\right) = v_i\left(t + \frac{1}{2}\Delta t\right) + \fra
 
 $$ v_i\left(t + \Delta t, T\right) = v_i\left(t + \Delta t\right) \sqrt{\frac{T}{ \frac{2}{3 N k_b}\sum_i{\frac{1}{2} m_i\left(v_i\left(t + \Delta t, T\right) \cdot v_i\left(t + \Delta t, T\right)\right)}}} $$
 
-## Configuration
+## Keywords
 
-### Target Keywords
+### Targets
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Configuration`|`Configuration ...`|--|Target configuration(s) on which to run the molecular dynamics. At least one must be provided.|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

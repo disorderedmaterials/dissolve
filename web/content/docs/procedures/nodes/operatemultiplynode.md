@@ -24,7 +24,7 @@ The `OperateMultiply` node simply multiplies the values (not the axes) of the su
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

@@ -28,7 +28,7 @@ The hidden `ForEach` keyword / branch is executed for each site selected by the 
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

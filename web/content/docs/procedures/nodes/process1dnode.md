@@ -30,7 +30,7 @@ The `Process*` nodes all have a branch with the "Operate" context (accessed thro
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
@@ -38,7 +38,7 @@ The `Process*` nodes all have a branch with the "Operate" context (accessed thro
 |`LabelValue`|`label`|`"Y"`|Label for the value axis|
 |`LabelX`|`label`|`"X"`|Label for the x axis|
 
-### Export Keywords
+### Export
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

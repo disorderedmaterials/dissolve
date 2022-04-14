@@ -8,9 +8,15 @@ description: Export pair potential data
 
 The `ExportPairPotentials` module writes interatomic pair potential data to disk, one file per unique pair potential.
 
-## Configuration
+## Keywords
 
-### Control Keywords
+### Targets
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
+
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

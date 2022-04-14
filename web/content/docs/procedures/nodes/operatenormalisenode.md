@@ -24,7 +24,7 @@ The `OperateNormalise` node calculates the sum (or absolute sum) of the supplied
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

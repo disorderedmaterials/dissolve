@@ -24,7 +24,7 @@ The `OperateSphericalShellNormalise` node can only operate on one-dimensional da
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

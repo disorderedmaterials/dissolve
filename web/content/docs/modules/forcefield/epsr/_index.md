@@ -20,9 +20,9 @@ What follows is a brief overview of the basic ideas behind the EPSR methodology.
 
 ### Intramolecular Potentials
 
-## Configuration
+## Keywords
 
-### Control Keywords
+### Control
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`StabilityThreshold`|`double`|`1.0e-3`|Threshold value at which energy is deemed stable over the defined windowing period|

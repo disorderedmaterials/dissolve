@@ -24,7 +24,7 @@ The `OperateSitePopulationNormalise` node simply divides the values (not the axe
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

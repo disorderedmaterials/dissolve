@@ -24,7 +24,7 @@ The `CalculateAxisAngle` node calculates the angle, in degrees, between specific
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

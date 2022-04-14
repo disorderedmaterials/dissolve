@@ -36,7 +36,7 @@ For the full derivation of this equation see https://mathworld.wolfram.com/Point
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

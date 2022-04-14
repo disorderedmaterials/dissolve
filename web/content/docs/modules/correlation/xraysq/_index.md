@@ -22,20 +22,24 @@ where $b_i(Q)$ and $b_j(Q)$ are the Q-dependent form factors of the atom types $
 
 $$ F^{X}(Q) = \sum^N_{i,j,i \geq j} [2-\delta_{ij}] b_i(Q) b_j(Q) c_i c_j S_{ij}(Q) $$
 
-Depending on the need, $F^{X}(Q)$ may be normalised to an appropriate constant with the [`Normalisation`](#control-keywords) keyword.
+Depending on the need, $F^{X}(Q)$ may be normalised to an appropriate constant with the [`Normalisation`](#control) keyword.
 
 ### Instrumental Broadening
 
-The application of instrumental broadening is the responsibility of the source {{< gui-module "SQ" >}} module - see its [`QBroadening`]({{< ref "sq#control-keywords" >}}) keyword.
+The application of instrumental broadening is the responsibility of the source {{< gui-module "SQ" >}} module - see its [`QBroadening`]({{< ref "sq#control" >}}) keyword.
 
-## Configuration
+## Keywords
 
-### Control Keywords
+### Targets
+|Keyword|Arguments|Default|Description|
+|:------|:-------:|:-----:|-----------|
+|`SourceSQs`|`Module`|--|{{< required-label >}} Source {{< gui-module "SQ" >}} module from which to take unweighted $S(Q)$.|
+
+### Control
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`FormFactors`|[`XRayFormFactors`]({{< ref "xrayformfactors" >}})|`WK1995`|Atomic form factors to use for weighting|
 |`Normalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Quantity against which to normalise the total structure factor|
-|`SourceSQs`|`Module`|--|{{< required-label >}} Source {{< gui-module "SQ" >}} module from which to take unweighted $S(Q)$.|
 
 ### Reference Data
 Keyword|Arguments|Default|Description|

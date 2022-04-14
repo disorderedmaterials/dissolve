@@ -30,9 +30,14 @@ $F_{pairpotential}$ is calculated using standard rules for interactions occurrin
 
 Dissolve implements several functional forms for each of the distinct intra- and interatomic interaction types, and which are detailed in the [functional forms]({{< ref "forms" >}}) section.
 
-## Configuration
+## Keywords
 
-### Test Keywords
+### Targets
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
+
+### Test
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`Test`|`true|false`|`false`|Test parallel force routines against basic serial versions and supplied reference values (if provided)|
@@ -42,7 +47,7 @@ Dissolve implements several functional forms for each of the distinct intra- and
 |`TestReference`|[`ForcesFileAndFormat`]({{< ref "forcesformat" >}})|--|Reference forces to test calculated forces against|
 |`TestThreshold`|`double`|`0.1`|Threshold of force (%) at which test comparison will fail|
 
-### Export Keywords
+### Export
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`SaveForces`|[`ForcesFileAndFormat`]({{< ref "forcesformat" >}})|--|Save calculated energies to the specified file / format|

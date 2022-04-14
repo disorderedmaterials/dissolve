@@ -24,7 +24,7 @@ The `CalculateDistance` node calculates the distance, in Angstroms, between two 
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

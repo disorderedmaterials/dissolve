@@ -24,7 +24,7 @@ The `CalculateAngle` node calculates the angle, in degrees, between three provid
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
