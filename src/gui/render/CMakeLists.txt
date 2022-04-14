@@ -96,7 +96,7 @@ add_library(
 
 target_include_directories(
   render PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
-          ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR} ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
+                 ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR} ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
 )
 
 # Because Qt has its own way of checking for C++17
