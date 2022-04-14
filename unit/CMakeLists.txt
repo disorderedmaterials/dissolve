@@ -18,8 +18,7 @@ function(dissolve_unit_test src_file)
 
   # Configure target
   target_include_directories(
-    ${TEST_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src
-                         ${CONAN_INCLUDE_DIRS_GTEST} ${CONAN_INCLUDE_DIRS_PUGIXML}
+    ${TEST_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_GTEST} ${CONAN_INCLUDE_DIRS_PUGIXML}
   )
   if(CONAN)
     target_link_libraries(
