@@ -4,11 +4,11 @@ SerializablePairPotential::SerializablePairPotential(double &range, double &delt
                                                      std::vector<std::shared_ptr<AtomType>> &types,
                                                      PairPotential::CoulombTruncationScheme &coulombScheme,
                                                      PairPotential::ShortRangeTruncationScheme &shortRangeScheme)
-    : pairPotentialRange_(range), pairPotentialDelta_(delta), atomTypeChargeSource_(source), atomTypes_(types),
-      coulombTruncationScheme_(coulombScheme), shortRangeTruncationScheme_(shortRangeScheme){};
+    : range_(range), delta_(delta), atomTypeChargeSource_(source), atomTypes_(types), coulombTruncationScheme_(coulombScheme),
+      shortRangeTruncationScheme_(shortRangeScheme){};
 
-double &SerializablePairPotential::pairPotentialRange() { return pairPotentialRange_; }
-double &SerializablePairPotential::pairPotentialDelta() { return pairPotentialDelta_; }
+double &SerializablePairPotential::range() { return range_; }
+double &SerializablePairPotential::delta() { return delta_; }
 bool &SerializablePairPotential::atomTypeChargeSource() { return atomTypeChargeSource_; }
 
 std::vector<std::shared_ptr<AtomType>> &SerializablePairPotential::atomTypes() { return atomTypes_; }

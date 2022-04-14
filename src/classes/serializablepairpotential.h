@@ -9,8 +9,8 @@
 class SerializablePairPotential
 {
     private:
-    double &pairPotentialRange_;
-    double &pairPotentialDelta_;
+    double &range_;
+    double &delta_;
     bool &atomTypeChargeSource_;
 
     std::vector<std::shared_ptr<AtomType>> &atomTypes_;
@@ -25,8 +25,8 @@ class SerializablePairPotential
                               PairPotential::ShortRangeTruncationScheme &shortRangeScheme);
     ~SerializablePairPotential();
 
-    double &pairPotentialRange();
-    double &pairPotentialDelta();
+    double &range();
+    double &delta();
     bool &atomTypeChargeSource();
 
     std::vector<std::shared_ptr<AtomType>> &atomTypes();
