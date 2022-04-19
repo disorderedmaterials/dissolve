@@ -25,6 +25,7 @@
         with pkgs; [
           antlr4
           antlr4.runtime.cpp
+          antlr4.runtime.cpp.dev
           cmake
           cli11
           fmt_8
@@ -73,6 +74,8 @@
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
             cmakeFlags = [
+              "-DAntlrRuntime_INCLUDE_DIRS=${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime"
+              "-DAntlrRuntime_LINK_DIRS=${pkgs.antlr4.runtime.cpp}/lib"
               "-DCONAN=OFF"
               ("-DMULTI_THREADING=" + (cmake-bool threading))
               ("-DPARALLEL=" + (cmake-bool mpi))
@@ -165,6 +168,8 @@
           Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
           PATH = "${QTDIR}/bin";
           THREADING_LINK_LIBS = "${pkgs.tbb}/lib/libtbb.so";
+          AntlrRuntime_INCLUDE_DIRS = "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
+          AntlrRuntime_LINK_DIRS = "${pkgs.antlr4.runtime.cpp}/lib";
         };
 
         apps = {
