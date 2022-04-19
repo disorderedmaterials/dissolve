@@ -51,7 +51,7 @@ The application of instrumental broadening is the responsibility of the source {
 ### Reference Data
 Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`Reference`|[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|Format and filename of reference $F(Q)$ data, to be displayed in the GUI alongside calculated data, and made available for other modules to utilise (e.g. [`EPSR`]({{< ref "sq" >}})|
+|`Reference`|[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|Format and filename of reference $F(Q)$ data, to be displayed in the GUI alongside calculated data, and made available for other modules to utilise (e.g. {{< gui-module "EPSR" >}})|
 |`ReferenceFTDeltaR`|`double`|0.05|Spacing in $r$ to use when generating the Fourier-transform of the $F(Q)$|
 |`ReferenceFTQMax`|`double`|--|Maximum Q value to use when Fourier-transforming the reference $F(Q)$ to its $G(r)$|
 |`ReferenceFTQMin`|`double`|--|Minimum Q value to use when Fourier-transforming the reference $F(Q)$ to its $G(r)$|
