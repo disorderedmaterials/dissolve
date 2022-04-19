@@ -41,9 +41,9 @@ Additional details for any particular action are provided in sub-banners like so
 
 Tips and warnings are also highlighted where relevant:
 
-{{< tip text="Tip - Provides a helpful bit of extra advice" >}}
+{{< tip text="Tip - Provides a helpful bit of extra advice" />}}
 
-{{< warn text="Warning - Brings something potentially important to your attention" >}}
+{{< warn text="Warning - Brings something potentially important to your attention" />}}
 
 ### Associated Data Files
 
