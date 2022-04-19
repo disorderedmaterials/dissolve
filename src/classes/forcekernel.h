@@ -101,38 +101,37 @@ class ForceKernel
 
     public:
     // Bond terms
-    // Calculate SpeciesBond forces for given atoms
-    void forces(const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const;
     // Calculate SpeciesBond forces
-    void forces(const SpeciesBond &bond, ForceVector &f) const;
+    void forces(const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const;
+    void forces(const SpeciesBond &bond, const Vec3<double> &ri, const Vec3<double> &rj, ForceVector &f) const;
     // Calculate SpeciesBond forces for specified Atom only
     void forces(const Atom &onlyThis, const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const;
 
     // Angle terms
-    // Calculate SpeciesAngle forces for given atoms
-    void forces(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k, ForceVector &f) const;
     // Calculate SpeciesAngle forces
-    void forces(const SpeciesAngle &angle, ForceVector &f) const;
+    void forces(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k, ForceVector &f) const;
+    void forces(const SpeciesAngle &angle, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
+                ForceVector &f) const;
     // Calculate SpeciesAngle forces for specified Atom only
     void forces(const Atom &onlyThis, const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k,
                 ForceVector &f) const;
 
     // Torsion terms
-    // Calculate SpeciesTorsion forces for given atoms
+    // Calculate SpeciesTorsion forces
     void forces(const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
                 ForceVector &f) const;
-    // Calculate SpeciesTorsion forces
-    void forces(const SpeciesTorsion &torsion, ForceVector &f) const;
+    void forces(const SpeciesTorsion &torsion, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
+                const Vec3<double> &rl, ForceVector &f) const;
     // Calculate SpeciesTorsion forces for specified Atom only
     void forces(const Atom &onlyThis, const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
                 ForceVector &f) const;
 
     // Improper Terms
-    // Calculate SpeciesImproper forces for given atoms
+    // Calculate SpeciesImproper forces
     void forces(const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
                 ForceVector &f) const;
-    // Calculate SpeciesImproper forces
-    void forces(const SpeciesImproper &improper, ForceVector &f) const;
+    void forces(const SpeciesImproper &torsion, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
+                const Vec3<double> &rl, ForceVector &f) const;
     // Calculate SpeciesImproper forces for specified Atom only
     void forces(const Atom &onlyThis, const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k,
                 const Atom &l, ForceVector &f) const;

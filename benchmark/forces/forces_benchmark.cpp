@@ -41,9 +41,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     const auto &bond = mol->species()->bonds().back();
 
     for (auto _ : state)
-    {
-        forceKernel.forces(bond, forces);
-    }
+        forceKernel.forces(bond, bond.i()->r(), bond.j()->r(), forces);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesAngle(benchmark::State &state)
@@ -55,9 +53,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &angle = mol->species()->angles().back();
     for (auto _ : state)
-    {
-        forceKernel.forces(angle, forces);
-    }
+        forceKernel.forces(angle, angle.i()->r(), angle.j()->r(), angle.k()->r(), forces);
 }
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesTorsion(benchmark::State &state)
 {
@@ -68,9 +64,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &torsion = mol->species()->torsions().back();
     for (auto _ : state)
-    {
-        forceKernel.forces(torsion, forces);
-    }
+        forceKernel.forces(torsion, torsion.i()->r(), torsion.j()->r(), torsion.k()->r(), torsion.l()->r(), forces);
 }
 
 template <ProblemType problem, Population population>

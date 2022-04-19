@@ -17,6 +17,15 @@ Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget *parent, Vec3Node
     Vec3WidgetLabels::set(ui_.ValueBLabel, keyword_->labelType(), 1);
     Vec3WidgetLabels::set(ui_.ValueCLabel, keyword_->labelType(), 2);
 
+    // Set expression texts
+    ui_.ValueAEdit->setText(QString::fromStdString(keyword_->data().x.asString()));
+    ui_.ValueBEdit->setText(QString::fromStdString(keyword_->data().y.asString()));
+    ui_.ValueCEdit->setText(QString::fromStdString(keyword_->data().z.asString()));
+
+    ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
+    ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
+    ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
+
     refreshing_ = false;
 }
 

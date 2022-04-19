@@ -82,7 +82,6 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
                            {Species::SpeciesKeyword::BoxAngles, "BoxAngles", 3},
                            {Species::SpeciesKeyword::BoxLengths, "BoxLengths", 3},
                            {Species::SpeciesKeyword::Charge, "Charge", 2},
-                           {Species::SpeciesKeyword::CoordinateSets, "CoordinateSets", 2, OptionArguments::AnyNumber},
                            {Species::SpeciesKeyword::EndSpecies, "EndSpecies"},
                            {Species::SpeciesKeyword::Forcefield, "Forcefield", 1},
                            {Species::SpeciesKeyword::Improper, "Improper", 5, OptionArguments::AnyNumber},
@@ -337,40 +336,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 i.setCharge(parser.argd(2));
                 break;
             }
-            case (Species::SpeciesKeyword::CoordinateSets):
-                if (!coordinateSetInputCoordinates_.read(
-                        parser, 1, fmt::format("End{}", keywords().keyword(Species::SpeciesKeyword::CoordinateSets)), coreData))
-                {
-                    Messenger::error("Failed to set coordinate sets file / format.\n");
-                    error = true;
-                }
-                else
-                {
-                    // Open the specified file
-                    LineParser coordinateSetParser(parser.processPool());
-                    if ((!coordinateSetParser.openInput(coordinateSetInputCoordinates_.filename())) ||
-                        (!coordinateSetParser.isFileGoodForReading()))
-                    {
-                        Messenger::error("Couldn't open coordinate sets file '{}'.\n",
-                                         coordinateSetInputCoordinates_.filename());
-                        error = true;
-                        break;
-                    }
-
-                    while (!coordinateSetParser.eofOrBlank())
-                    {
-                        auto &coordSet = addCoordinateSet();
-                        if (!coordinateSetInputCoordinates_.importData(coordinateSetParser, coordSet))
-                        {
-                            Messenger::error("Failed to read coordinate set {} from file.\n", nCoordinateSets());
-                            error = true;
-                            break;
-                        }
-                    }
-
-                    Messenger::print("{} coordinate sets read in for Species '{}'.\n", nCoordinateSets(), name());
-                }
-                break;
             case (Species::SpeciesKeyword::EndSpecies):
                 // Set periodic box?
                 if (boxLengths)
@@ -861,18 +826,6 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         for (auto &site : sites())
             if (!site->write(parser, newPrefix))
                 return false;
-    }
-
-    // Input Coordinates
-    if (coordinateSetInputCoordinates_.hasFilename())
-    {
-        if (!coordinateSetInputCoordinates_.writeFilenameAndFormat(
-                parser, fmt::format("\n{}{}  ", newPrefix, keywords().keyword(Species::SpeciesKeyword::CoordinateSets))))
-            return false;
-        if (!coordinateSetInputCoordinates_.writeBlock(parser, newPrefix))
-            return false;
-        if (!parser.writeLineF("{}End{}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::CoordinateSets)))
-            return false;
     }
 
     // Done with this species

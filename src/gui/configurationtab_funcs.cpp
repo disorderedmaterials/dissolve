@@ -182,7 +182,7 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 
     if (ret == QMessageBox::Yes)
     {
-        configuration_->initialiseContent(dissolve_.worldPool(), dissolve_.pairPotentialRange(), true);
+        configuration_->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
         updateControls();
     }
 }

@@ -8,6 +8,7 @@
 #include "procedure/nodevalue.h"
 
 // Forward Declarations
+class CoordinateSetsProcedureNode;
 class Species;
 class RegionProcedureNodeBase;
 
@@ -15,9 +16,15 @@ class RegionProcedureNodeBase;
 class AddProcedureNode : public ProcedureNode
 {
     public:
-    AddProcedureNode(const Species *sp = nullptr, const NodeValue &population = 0, const NodeValue &density = 0.1,
-                     Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
+    explicit AddProcedureNode(const Species *sp = nullptr, const NodeValue &population = 0, const NodeValue &density = 0.1,
+                              Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
+    explicit AddProcedureNode(const CoordinateSetsProcedureNode *sets, const NodeValue &population = 0,
+                              const NodeValue &density = 0.1, Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
     ~AddProcedureNode() override = default;
+
+    private:
+    // Set up keywords for node
+    void setUpKeywords();
 
     /*
      * Identity
@@ -56,6 +63,8 @@ class AddProcedureNode : public ProcedureNode
     private:
     // Action to take on the Box geometry / volume on addition of the species
     AddProcedureNode::BoxActionStyle boxAction_{AddProcedureNode::BoxActionStyle::AddVolume};
+    // Coordinate set source for Species (if any)
+    std::shared_ptr<const CoordinateSetsProcedureNode> coordinateSets_{nullptr};
     // Target density when adding molecules
     std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add
