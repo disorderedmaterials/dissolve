@@ -30,7 +30,6 @@ build-*/
 *swp
 changes
 *.tokens
-windbuild.ps1
 
 # Example files
 *.beat
