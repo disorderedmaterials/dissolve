@@ -32,7 +32,7 @@ class Dissolve
     private:
     // Reference to CoreData
     CoreData &coreData_;
-    SerializablePairPotential pairPotential_;
+    SerializablePairPotential serializablePairPotential_;
 
     public:
     // Return reference to CoreData

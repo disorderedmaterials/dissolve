@@ -1,4 +1,8 @@
-#include "serializablepairpotential.h"
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+// Copyright (c) 2022 Team Dissolve and contributors
+
+#include "classes/serializablepairpotential.h"
 
 SerializablePairPotential::SerializablePairPotential(double &range, double &delta, bool &source,
                                                      std::vector<std::shared_ptr<AtomType>> &types)
