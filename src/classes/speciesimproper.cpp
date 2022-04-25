@@ -244,7 +244,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
     improper["form"] = form;
 
     std::vector<double> values = SpeciesImproper::interactionPotential().parameters();
-    if (values.size() > 0)
+    if (!values.empty())
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
         std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());

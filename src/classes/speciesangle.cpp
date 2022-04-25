@@ -379,7 +379,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::s
     angle["form"] = form;
 
     std::vector<double> values = SpeciesAngle::interactionPotential().parameters();
-    if (values.size() > 0)
+    if (!values.empty())
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
         std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());

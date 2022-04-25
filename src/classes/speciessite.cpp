@@ -427,7 +427,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesSite::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> site;
-    if (originAtoms_.size() > 0)
+    if (!originAtoms_.empty())
     {
         toml::array originAtoms;
         for (auto &atom : originAtoms_)
@@ -435,7 +435,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesSite::se
         site["originAtoms"] = originAtoms;
     }
 
-    if (xAxisAtoms_.size() > 0)
+    if (!xAxisAtoms_.empty())
     {
         toml::array xAxisAtoms;
         for (auto &atom : xAxisAtoms_)
@@ -443,7 +443,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesSite::se
         site["xAxisAtoms"] = xAxisAtoms;
     }
 
-    if (yAxisAtoms_.size() > 0)
+    if (!yAxisAtoms_.empty())
     {
         toml::array yAxisAtoms;
         for (auto &atom : yAxisAtoms_)
