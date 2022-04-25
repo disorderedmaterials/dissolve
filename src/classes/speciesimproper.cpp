@@ -248,7 +248,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
         std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
-        for (auto &[parameter, value] : zip(parameters, values))
+        for (auto &&[parameter, value] : zip(parameters, values))
             parametersNode[parameter] = value;
         improper["parameters"] = parametersNode;
     }

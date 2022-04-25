@@ -85,7 +85,7 @@ const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isot
 toml::basic_value<toml::discard_comments, std::map, std::vector> Isotopologue::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> isotopologue;
-    for (auto &[type, isotope] : isotopes_)
+    for (auto &&[type, isotope] : isotopes_)
         isotopologue[type->name().data()] = Sears91::A(isotope);
     return isotopologue;
 }
