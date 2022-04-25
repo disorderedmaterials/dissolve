@@ -6,6 +6,7 @@
 #include "module/module.h"
 
 // Forward Declarations
+class PotentialMap;
 class Species;
 
 // Molecular Dynamics Module
@@ -28,9 +29,11 @@ class MDModule : public Module
     // Interatomic cutoff distance to employ
     std::optional<double> cutoffDistance_;
     // Timestep (ps) to use in MD simulation
-    double deltaT_{1.0e-4};
+    double deltaT_{5.0e-4};
     // Frequency at which to calculate total system energy (or 0 to inhibit)
     int energyFrequency_{10};
+    // Whether to restrict force calculation to intramolecular contributions only
+    bool intramolecularForcesOnly_{false};
     // Number of steps to perform
     int nSteps_{50};
     // Only run MD when target Configuration energies are stable
@@ -44,7 +47,7 @@ class MDModule : public Module
     // Write frequency for trajectory file (or 0 to inhibit)
     int trajectoryFrequency_{0};
     // Whether a variable timestep should be used, determined from the maximal force vector
-    bool variableTimestep_{true};
+    bool variableTimestep_{false};
 
     /*
      * Functions
@@ -55,10 +58,16 @@ class MDModule : public Module
     // Determine timestep based on maximal force component
     double determineTimeStep(const std::vector<Vec3<double>> &f);
 
+    public:
+    // Evolve Species coordinates, returning new coordinates
+    static std::vector<Vec3<double>> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
+                                            double temperature, int nSteps, double deltaT,
+                                            const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities);
+
     /*
      * Processing
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
+    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };

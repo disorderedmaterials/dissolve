@@ -11,7 +11,8 @@
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
-  outputs = { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
+  outputs =
+    { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
     let
       exe-name = mpi: gui:
         if mpi then
@@ -24,6 +25,7 @@
         with pkgs; [
           antlr4
           antlr4.runtime.cpp
+          antlr4.runtime.cpp.dev
           cmake
           cli11
           fmt_8
@@ -36,6 +38,7 @@
         ];
       gui_libs = pkgs:
         with pkgs; [
+          glib
           freetype
           ftgl
           libGL.dev
@@ -64,11 +67,14 @@
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
+            nativeBuildInputs = [ pkgs.wrapGAppsHook ];
 
             TBB_DIR = "${pkgs.tbb}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
 
             cmakeFlags = [
+              "-DAntlrRuntime_INCLUDE_DIRS=${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime"
+              "-DAntlrRuntime_LINK_DIRS=${pkgs.antlr4.runtime.cpp}/lib"
               "-DCONAN=OFF"
               ("-DMULTI_THREADING=" + (cmake-bool threading))
               ("-DPARALLEL=" + (cmake-bool mpi))
@@ -171,6 +177,19 @@
           };
           dissolve-gui = flake-utils.lib.mkApp {
             drv = self.packages.${system}.dissolve-gui;
+          };
+          uploader = {
+            type="app";
+            program = toString (pkgs.writeScript "upload.sh" ''
+              #!/bin/sh
+              set -e
+              if [ "$#" -ne 4 ] ; then
+                echo "Usage: nix run .#uploader HARBOR_USER HARBOR_SECRET IMAGE TAG" >&2
+                exit 1
+              fi
+              ${outdated.legacyPackages.${system}.singularity}/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
+              ${outdated.legacyPackages.${system}.singularity}/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
+            '');
           };
         };
 

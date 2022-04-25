@@ -18,7 +18,7 @@ PickProcedureNode::PickProcedureNode(std::vector<const Species *> species)
  */
 
 // Prepare any necessary data, ready for execution
-bool PickProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool PickProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Check for at least one site being defined
     if (speciesToPick_.empty())
@@ -27,8 +27,8 @@ bool PickProcedureNode::prepare(Configuration *cfg, std::string_view prefix, Gen
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool PickProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+// Execute node
+bool PickProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     Messenger::print("[Pick] Molecules will be selected from {}.\n", moleculePoolName());
 
@@ -36,7 +36,7 @@ bool PickProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::
     pickedMolecules_.clear();
 
     // Loop over all molecules in supplied Configuration
-    for (const auto &mol : moleculePool(cfg))
+    for (const auto &mol : moleculePool(procedureContext.configuration()))
     {
         // Check Species type
         if (std::find(speciesToPick_.begin(), speciesToPick_.end(), mol->species()) == speciesToPick_.end())

@@ -171,7 +171,7 @@ std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::addForEachBranch(Pro
  */
 
 // Prepare any necessary data, ready for execution
-bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool SelectProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Check for at least one site being defined
     if (speciesSites_.empty() && dynamicSites_.empty())
@@ -182,19 +182,19 @@ bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, G
     nCumulativeSites_ = 0;
 
     // If one exists, prepare the ForEach branch nodes
-    if (forEachBranch_ && (!forEachBranch_->prepare(cfg, prefix, targetList)))
+    if (forEachBranch_ && (!forEachBranch_->prepare(procedureContext)))
         return false;
 
     // Prepare any dynamic site nodes
     for (auto dynamicNode : dynamicSites_)
-        if (!dynamicNode->prepare(cfg, prefix, targetList))
+        if (!dynamicNode->prepare(procedureContext))
             return false;
 
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+// Execute node
+bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     // Create our site vector
     sites_.clear();
@@ -222,7 +222,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
     double r;
     for (auto *spSite : speciesSites_)
     {
-        const auto *siteStack = cfg->siteStack(spSite);
+        const auto *siteStack = procedureContext.configuration()->siteStack(spSite);
         if (siteStack == nullptr)
             return false;
 
@@ -246,7 +246,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
             // Check distance from reference site (if defined)
             if (distanceRef)
             {
-                r = cfg->box()->minimumDistance(site.origin(), distanceRef->origin());
+                r = procedureContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->origin());
                 if (!inclusiveDistanceRange_.contains(r))
                     continue;
             }
@@ -263,7 +263,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
      */
     for (auto dynamicNode : dynamicSites_)
     {
-        if (!dynamicNode->execute(procPool, cfg, prefix, targetList))
+        if (!dynamicNode->execute(procedureContext))
             return false;
 
         for (auto &s : dynamicNode->generatedSites())
@@ -282,7 +282,7 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
             ++nCumulativeSites_;
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
-            if (!forEachBranch_->execute(procPool, cfg, prefix, targetList))
+            if (!forEachBranch_->execute(procedureContext))
                 return false;
         }
     }
@@ -291,15 +291,15 @@ bool SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std
 }
 
 // Finalise any necessary data after execution
-bool SelectProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool SelectProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // If one exists, finalise the ForEach branch nodes
-    if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, prefix, targetList)))
+    if (forEachBranch_ && (!forEachBranch_->finalise(procedureContext)))
         return false;
 
     // Finalise any dynamic site nodes
     for (auto dynamicNode : dynamicSites_)
-        if (!dynamicNode->finalise(procPool, cfg, prefix, targetList))
+        if (!dynamicNode->finalise(procedureContext))
             return false;
 
     // Print out summary information

@@ -96,7 +96,7 @@ PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at
 }
 
 // Return map for PairPotentials
-const PotentialMap &Dissolve::potentialMap() { return potentialMap_; }
+const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
 
 // Clear and regenerate all PairPotentials, replacing those currently defined
 bool Dissolve::regeneratePairPotentials()

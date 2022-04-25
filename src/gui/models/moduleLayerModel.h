@@ -58,5 +58,5 @@ class ModuleLayerModel : public QAbstractListModel
     QModelIndex appendNew(const QString &moduleType);
 
     signals:
-    void moduleNameChanged(const QModelIndex &);
+    void moduleNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
 };

@@ -12,7 +12,7 @@
 #include "modules/rdf/rdf.h"
 
 // Run main processing
-bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -23,8 +23,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
 
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
     /*
@@ -35,11 +33,9 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         SampledDouble timing;
         for (auto n = 0; n < nRepeats_; ++n)
         {
-            srand(dissolve.seed());
-
             Timer timer;
             Messenger::mute();
-            targetConfiguration_->generate(procPool, dissolve.pairPotentialRange());
+            targetConfiguration_->generate({dissolve.worldPool(), dissolve.potentialMap()});
             Messenger::unMute();
             timing += timer.split();
         }
@@ -58,7 +54,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
             RDFModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
             targetConfiguration_->incrementContentsVersion();
-            srand(dissolve.seed());
 
             // Run the Module calculation
             bool upToDate;
@@ -84,7 +79,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
             RDFModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
             targetConfiguration_->incrementContentsVersion();
-            srand(dissolve.seed());
 
             // Run the Module calculation
             bool upToDate;
@@ -159,9 +153,6 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     // Set the new strategy
                     strategy = distributor.currentStrategy();
-
-                    // Re-initialise the random buffer
-                    procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
                 }
 
                 // Loop over target Molecules

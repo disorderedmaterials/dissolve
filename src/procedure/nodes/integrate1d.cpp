@@ -47,7 +47,7 @@ const SampledDouble &Integrate1DProcedureNode::integral(int index) const { retur
  */
 
 // Prepare any necessary data, ready for execution
-bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool Integrate1DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     if (!sourceData_)
         return Messenger::error("No source Process1D node set in '{}'.\n", name());
@@ -56,8 +56,7 @@ bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view pref
 }
 
 // Finalise any necessary data after execution
-bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                        GenericList &targetList)
+bool Integrate1DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // Calculate integrals
     integral_[0] += Integrator::trapezoid(sourceData_->processedData(), range_[0]);

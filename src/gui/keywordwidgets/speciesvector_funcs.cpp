@@ -42,7 +42,10 @@ void SpeciesVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, co
  */
 
 // Update value displayed in widget
-void SpeciesVectorKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void SpeciesVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetValues(coreData_);
+}
 
 // Update widget values data based on keyword data
 void SpeciesVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)

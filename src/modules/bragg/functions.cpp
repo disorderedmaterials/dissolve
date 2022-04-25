@@ -17,8 +17,9 @@
  */
 
 // Calculate unweighted Bragg scattering for specified Configuration
-bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &procPool, Configuration *cfg, const double qMin,
-                                      const double qDelta, const double qMax, Vec3<int> multiplicity, bool &alreadyUpToDate)
+bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg,
+                                      const double qMin, const double qDelta, const double qMax, Vec3<int> multiplicity,
+                                      bool &alreadyUpToDate)
 {
     // Check to see if the arrays are up-to-date
     auto braggDataVersion = moduleData.valueOr<int>("Version", uniqueName_, -1);
@@ -297,8 +298,8 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
 }
 
 // Form partial and total reflection functions from calculated reflection data
-bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &procPool, Configuration *cfg, const double qMin,
-                                          const double qDelta, const double qMax)
+bool BraggModule::formReflectionFunctions(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg,
+                                          const double qMin, const double qDelta, const double qMax)
 {
     // Retrieve BraggReflection data from the Configuration's module data
     const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", uniqueName());
@@ -365,7 +366,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
 }
 
 // Re-bin reflection data into supplied arrays
-bool BraggModule::reBinReflections(GenericList &moduleData, ProcessPool &procPool, Configuration *cfg,
+bool BraggModule::reBinReflections(GenericList &moduleData, const ProcessPool &procPool, Configuration *cfg,
                                    Array2D<Data1D> &braggPartials)
 {
     // Retrieve BraggReflection data

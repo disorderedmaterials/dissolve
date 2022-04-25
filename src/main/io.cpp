@@ -55,8 +55,12 @@ bool Dissolve::loadInput(LineParser &parser)
                     break;
                 }
 
+                // Need to update pair potentials in case they're needed in the generator
+                generatePairPotentials();
+                potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
+
                 // Prepare the Configuration
-                if (!cfg->initialiseContent(worldPool(), pairPotentialRange_))
+                if (!cfg->initialiseContent({worldPool_, potentialMap_}))
                     error = true;
                 break;
             case (BlockKeywords::LayerBlockKeyword):
@@ -79,10 +83,6 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::PairPotentialsBlockKeyword):
                 if (!PairPotentialsBlock::parse(parser, this))
-                    error = true;
-                break;
-            case (BlockKeywords::SimulationBlockKeyword):
-                if (!SimulationBlock::parse(parser, this))
                     error = true;
                 break;
             case (BlockKeywords::SpeciesBlockKeyword):
@@ -421,16 +421,6 @@ bool Dissolve::saveInput(std::string_view filename)
         if (!parser.writeLineF("{}\n", LayerBlock::keywords().keyword(LayerBlock::EndLayerKeyword)))
             return false;
     }
-
-    // Write Simulation block
-    if (!parser.writeBannerComment("Simulation"))
-        return false;
-    if (!parser.writeLineF("\n{}\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword)))
-        return false;
-    if (!parser.writeLineF("  {}  {}\n", SimulationBlock::keywords().keyword(SimulationBlock::SeedKeyword), seed_))
-        return false;
-    if (!parser.writeLineF("{}\n\n", SimulationBlock::keywords().keyword(SimulationBlock::EndSimulationKeyword)))
-        return false;
 
     parser.closeFiles();
 

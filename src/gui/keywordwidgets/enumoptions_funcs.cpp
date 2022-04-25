@@ -52,7 +52,7 @@ void EnumOptionsKeywordWidget::comboBoxIndexChanged(int index)
  */
 
 // Update value displayed in widget
-void EnumOptionsKeywordWidget::updateValue()
+void EnumOptionsKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

@@ -58,16 +58,23 @@ class LayerTab : public QWidget, public MainTab
     private:
     // Return ModuleControlWidget for the specified Module (if it exists)
     ModuleControlWidget *getControlWidget(const Module *module, bool setAsCurrent = false);
+    // Remove ModuleControlWidget for the specified Module (if it exists)
+    void removeControlWidget(const Module *module);
 
     private slots:
     void on_ShowAvailableModulesButton_clicked(bool checked);
     void on_EnabledButton_clicked(bool checked);
     void on_FrequencySpin_valueChanged(int value);
     void moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
-    void moduleNameChanged(const QModelIndex &);
+    void moduleNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
     void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     void updateModuleList();
+    void on_ModulesList_customContextMenuRequested(const QPoint &pos);
     void on_AvailableModulesTree_doubleClicked(const QModelIndex &index);
+
+    public:
+    // Remove all module control widgets
+    void removeModuleControlWidgets();
 
     /*
      * Update

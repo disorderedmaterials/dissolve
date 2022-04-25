@@ -11,7 +11,7 @@
 #include "modules/import_trajectory/importtraj.h"
 
 // Run set-up stage
-bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool ForcesModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (referenceForces_.hasFilename())
     {
@@ -29,14 +29,11 @@ bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<Keywor
 }
 
 // Run main processing
-bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Retrieve control parameters
     const auto saveData = exportedForces_.hasFilename();
@@ -309,7 +306,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Timer interTimer;
             interTimer.start();
 
-            interAtomicForces(procPool, targetConfiguration_, dissolve.potentialMap(), fInterCheck);
+            pairPotentialForces(procPool, targetConfiguration_, dissolve.potentialMap(), fInterCheck);
             if (!procPool.allSum(fInterCheck))
                 return false;
 
@@ -323,7 +320,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Timer intraTimer;
             intraTimer.start();
 
-            intraMolecularForces(procPool, targetConfiguration_, dissolve.potentialMap(), fIntraCheck);
+            internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), false, fIntraCheck);
             if (!procPool.allSum(fIntraCheck))
                 return false;
 

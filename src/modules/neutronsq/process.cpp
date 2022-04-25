@@ -14,7 +14,7 @@
 #include "modules/sq/sq.h"
 
 // Set target data
-void NeutronSQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+void NeutronSQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                                  const std::map<std::string, std::vector<const Module *>> &moduleMap)
 {
     auto sqIt = moduleMap.find("SQ");
@@ -23,7 +23,7 @@ void NeutronSQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &co
 }
 
 // Run set-up stage
-bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     /*
      * Load and set up reference data (if a file/format was given)
@@ -115,7 +115,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool, Flags<Key
 }
 
 // Run main processing
-bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate neutron structure factors from existing S(Q) data

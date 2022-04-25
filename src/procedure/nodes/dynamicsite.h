@@ -14,7 +14,6 @@ class SelectProcedureNode;
 class AtomType;
 class LineParser;
 class Molecule;
-class NodeScopeStack;
 
 // Procedure Node - Dynamic Site
 class DynamicSiteProcedureNode : public ProcedureNode
@@ -65,6 +64,6 @@ class DynamicSiteProcedureNode : public ProcedureNode
      * Execute
      */
     public:
-    // Execute node, targetting the supplied Configuration
-    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    // Execute node
+    bool execute(const ProcedureContext &procedureContext) override;
 };

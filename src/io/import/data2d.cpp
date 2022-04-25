@@ -32,7 +32,7 @@ void Data2DImportFileFormat::setUpKeywords()
  */
 
 // Import Data2D using current filename and format
-bool Data2DImportFileFormat::importData(Data2D &data, ProcessPool *procPool)
+bool Data2DImportFileFormat::importData(Data2D &data, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);

@@ -59,7 +59,7 @@ void OptionalIntegerKeywordWidget::spinBoxValueNullified()
  */
 
 // Update value displayed in widget
-void OptionalIntegerKeywordWidget::updateValue()
+void OptionalIntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

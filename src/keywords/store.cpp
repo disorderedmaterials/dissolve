@@ -12,6 +12,7 @@
 #include "keywords/module.h"
 #include "keywords/modulevector.h"
 #include "keywords/nodevector.h"
+#include "keywords/species.h"
 #include "keywords/stdstring.h"
 #include "keywords/vec3double.h"
 #include "procedure/nodes/nodes.h"
@@ -46,6 +47,7 @@ KeywordTypeMap::KeywordTypeMap()
         [](ModuleKeywordBase *keyword) { return keyword->module(); });
     registerDirectMapping<Configuration *, ConfigurationKeyword>();
     registerDirectMapping<std::vector<Configuration *>, ConfigurationVectorKeyword>();
+    registerDirectMapping<const Species *, SpeciesKeyword>();
 
     // STL / Common Classes
     registerDirectMapping<std::string, StringKeyword>();

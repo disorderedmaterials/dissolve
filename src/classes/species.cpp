@@ -204,27 +204,6 @@ void Species::print() const
 // Return version
 int Species::version() const { return version_; }
 
-/*
- * Coordinate Sets
- */
-
-// Clear coordinate sets
-void Species::clearCoordinateSets() { coordinateSets_.clear(); }
-
-// Add new coordinate set
-std::vector<Vec3<double>> &Species::addCoordinateSet()
-{
-    auto &newSet = coordinateSets_.emplace_back(atoms_.size(), Vec3<double>());
-
-    return newSet;
-}
-
-// Return number of defined coordinate sets
-int Species::nCoordinateSets() const { return coordinateSets_.size(); }
-
-// Return coordinates sets
-const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { return coordinateSets_; }
-
 toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> species;

@@ -46,7 +46,7 @@ class SelectSpeciesWidget : public QWidget
 
     public:
     // Set flags for the filter proxy
-    void setFilterProxyFlags(int flags);
+    void setFilterProxyFlags(const Flags<SpeciesFilterProxy::FilterFlags> &flags);
     // Set target Species data
     void setSpecies(const std::vector<std::unique_ptr<Species>> &species);
     // Reset widget, applying specified min and max limits to selection

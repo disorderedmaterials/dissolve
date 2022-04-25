@@ -10,6 +10,8 @@ add_library(
   collect1d.cpp
   collect2d.cpp
   collect3d.cpp
+  context.cpp
+  coordinatesets.cpp
   cylindricalregion.cpp
   dynamicsite.cpp
   fit1d.cpp
@@ -50,6 +52,8 @@ add_library(
   collect1d.h
   collect2d.h
   collect3d.h
+  context.h
+  coordinatesets.h
   cylindricalregion.h
   dynamicsite.h
   fit1d.h
@@ -83,5 +87,5 @@ add_library(
   sum1d.h
 )
 
-include_directories(procedurenodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(procedurenodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(procedurenodes PRIVATE base)

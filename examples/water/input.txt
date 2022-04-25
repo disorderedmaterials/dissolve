@@ -77,8 +77,11 @@ Configuration  'Bulk'
       Angles  9.000000e+01  9.000000e+01  9.000000e+01
       NonPeriodic  False
     EndBox
-    Add
+    CoordinateSets  'Water_Sets'
       Species  'Water'
+    EndCoordinateSets
+    Add
+      CoordinateSets  'Water_Sets'
       Population  '1000'
       Density  'rho'  atoms/A3
       Rotate  True
@@ -126,7 +129,7 @@ Layer  'RDF / Neutron S(Q)'
   Module  RDF  'RDF01'
     Frequency  1
 
-    Configuration  'Bulk'
+    Configurations  'Bulk'
     IntraBroadening    Gaussian  1.800000e-01
   EndModule
 
@@ -235,8 +238,3 @@ EndLayer
 #------------------------------------------------------------------------------#
 #                                  Simulation                                  #
 #------------------------------------------------------------------------------#
-
-Simulation
-  Seed  -1
-EndSimulation
-

@@ -6,6 +6,7 @@
 #include "classes/referencepoint.h"
 #include "gui/maintab.h"
 #include "gui/outputhandler.hui"
+#include "gui/signals.h"
 #include "gui/thread.hui"
 #include "gui/ui_gui.h"
 
@@ -52,14 +53,20 @@ class DissolveWindow : public QMainWindow
     // Prepare the simulation and run for a set count
     void setupIteration(int count);
 
-    public slots:
-    // Flag that data has been modified via the GUI
-    void setModified();
-
     public:
     // Return reference to Dissolve
     Dissolve &dissolve();
     const Dissolve &dissolve() const;
+
+    /*
+     * Data Mutation Signalling
+     */
+    public slots:
+    // Flag that data has been modified via the GUI
+    void setModified(Flags<DissolveSignals::DataMutations> dataMutationFlags = {});
+
+    signals:
+    void dataMutated(int);
 
     /*
      * StatusBar
@@ -158,10 +165,10 @@ class DissolveWindow : public QMainWindow
     void on_SimulationSaveRestartPointAction_triggered(bool checked);
     void on_SimulationDataManagerAction_triggered(bool checked);
     void on_SimulationClearModuleDataAction_triggered(bool checked);
-    void on_SimulationSetRandomSeedAction_triggered(bool checked);
     // Species
     void on_SpeciesCreateAtomicAction_triggered(bool checked);
     void on_SpeciesCreateDrawAction_triggered(bool checked);
+    void on_SpeciesCreateFromExistingAction_triggered(bool checked);
     void on_SpeciesImportFromDissolveAction_triggered(bool checked);
     void on_SpeciesImportFromXYZAction_triggered(bool checked);
     void on_SpeciesImportLigParGenAction_triggered(bool checked);
@@ -194,6 +201,7 @@ class DissolveWindow : public QMainWindow
     void on_LayerCreateCorrelationsRDFAction_triggered(bool checked);
     void on_LayerCreateCorrelationsRDFStructureFactorAction_triggered(bool checked);
     void on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool checked);
+    void on_LayerCreateCorrelationsRDFXRayAction_triggered(bool checked);
     void on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bool checked);
     void on_LayerCreateAnalyseRDFCNAction_triggered(bool checked);
     void on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked);

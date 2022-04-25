@@ -3,6 +3,7 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/kvector.h"
 #include "classes/neutronweights.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
@@ -10,8 +11,16 @@
 #include "modules/bragg/bragg.h"
 #include "templates/algorithms.h"
 
+// Run set-up stage
+bool BraggModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+{
+    if (actionSignals.isSet(KeywordBase::ClearModuleData))
+        dissolve.processingModuleData().realise<std::vector<KVector>>("KVectors", uniqueName()).clear();
+    return true;
+}
+
 // Run main processing
-bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Bragg contributions.
@@ -36,9 +45,6 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity_.x, multiplicity_.y,
                      multiplicity_.z);
     Messenger::print("\n");
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // Realise an AtomTypeList containing the sum of atom types over all target configurations (currently only one)
     auto &combinedAtomTypes =

@@ -52,7 +52,7 @@ void NodeValueKeywordWidget::on_ValueEdit_returnPressed()
 void NodeValueKeywordWidget::checkValueValidity() { ui_.ValueValidIndicator->setOK(keyword_->data().isValid()); }
 
 // Update value displayed in widget
-void NodeValueKeywordWidget::updateValue()
+void NodeValueKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

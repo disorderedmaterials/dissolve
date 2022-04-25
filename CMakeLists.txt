@@ -29,11 +29,14 @@ if(CONAN)
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
   conan_basic_setup(TARGETS)
   include_directories(${CONAN_INCLUDE_DIRS_TOML11})
+  include_directories(${CONAN_INCLUDE_DIRS_FMT})
 else(CONAN)
   find_package(fmt REQUIRED)
   find_package(CLI11 REQUIRED)
   find_package(toml11 REQUIRED)
   find_package(pugixml REQUIRED)
+  include_directories(${AntlrRuntime_INCLUDE_DIRS})
+  link_directories(${AntlrRuntime_LINK_DIRS})
 endif(CONAN)
 
 add_compile_definitions(FMT_HEADER_ONLY)
@@ -64,44 +67,6 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 # Find ANTLR4 Java
 include(FindANTLR)
 find_package(ANTLR REQUIRED)
-
-# Find / build ANTLR4 runtime dependency
-if(BUILD_ANTLR_RUNTIME)
-
-  if(BUILD_ANTLR_ZIPFILE)
-    set(ANTLR_SOURCE_URL "${BUILD_ANTLR_ZIPFILE}")
-  else(BUILD_ANTLR_ZIPFILE)
-    set(ANTLR_SOURCE_URL "https://www.antlr.org/download/antlr4-cpp-runtime-4.8-source.zip")
-  endif(BUILD_ANTLR_ZIPFILE)
-
-  if(BUILD_ANTLR_LINK_LIB)
-    set(ANTLR_LINK_LIB "${BUILD_ANTLR_LINK_LIB}")
-  else(BUILD_ANTLR_LINK_LIB)
-    set(ANTLR_LINK_LIB "dist/libantlr4-runtime.a")
-  endif(BUILD_ANTLR_LINK_LIB)
-
-  include(ExternalProject)
-  externalproject_add(
-    antlr_runtime
-    PREFIX antlr4runtime
-    URL "${ANTLR_SOURCE_URL}"
-    BUILD_ALWAYS ON
-    BUILD_BYPRODUCTS "antlr4runtime/src/antlr_runtime/${ANTLR_LINK_LIB}"
-    CMAKE_ARGS "-DCMAKE_BUILD_TYPE:STRING=Release"
-    INSTALL_COMMAND ""
-  )
-  externalproject_get_property(antlr_runtime source_dir)
-
-  # Tell CMake that the ExternalProject generated a library
-  add_library(antlr4-runtime STATIC IMPORTED GLOBAL)
-  set_property(TARGET antlr4-runtime PROPERTY IMPORTED_LOCATION "${source_dir}/${ANTLR_LINK_LIB}")
-  set(ANTLRRUNTIME_INCLUDE_DIRS "${source_dir}/runtime/src")
-else(BUILD_ANTLR_RUNTIME)
-  include(FindANTLRRUNTIME)
-  find_package(ANTLRRUNTIME REQUIRED)
-  add_library(antlr4-runtime STATIC IMPORTED GLOBAL)
-  set_property(TARGET antlr4-runtime PROPERTY IMPORTED_LOCATION "${ANTLRRUNTIME_LIBRARIES}")
-endif(BUILD_ANTLR_RUNTIME)
 
 if(GUI)
   # Add extra functions
@@ -230,11 +195,6 @@ add_subdirectory(${SRCS})
 # Add executable target(s)
 add_executable(${target_name} MACOSX_BUNDLE ${SRCS}/main.cpp)
 
-# Add the ANTLR4 dependency if building locally
-if(BUILD_ANTLR_RUNTIME)
-  add_dependencies(${target_name} antlr_runtime)
-endif(BUILD_ANTLR_RUNTIME)
-
 # Set project-local include directories for target
 target_include_directories(
   ${target_name} PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${FREETYPE_INCLUDE_DIRS} ${ANTLR4_INCLUDE_DIRS}
@@ -246,11 +206,6 @@ if(GUI)
 
   # Main Dissolve GUI
   add_executable(${gui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui.cpp)
-
-  # Add the ANTLR4 dependency if building locally
-  if(BUILD_ANTLR_RUNTIME)
-    add_dependencies(${target_name} antlr_runtime)
-  endif(BUILD_ANTLR_RUNTIME)
 
   # Set project-local include directories for target
   target_include_directories(
@@ -336,7 +291,7 @@ target_link_libraries(
   ${target_name}
   PUBLIC ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
   PRIVATE # External libs
-          antlr4-runtime ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
+          ${EXTRA_LINK_LIBS} ${THREADING_LINK_LIBS}
 )
 
 # Build GUI target executables
@@ -360,7 +315,6 @@ if(GUI)
            gui
            ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
-            antlr4-runtime
             Qt6::Widgets
             Qt6::Core
             OpenGL::GL

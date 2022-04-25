@@ -102,3 +102,10 @@ jobs:
         env:
           GITHUB_TOKEN: $(REPO_SECRET)
         displayName: 'Update Web Release Info'
+      - template: install-nix.yml
+      - template: push-harbor.yml
+        parameters:
+          ${{ if eq('${{ parameters.continuous }}', true) }}:
+            tag: "continuous"
+          ${{ if eq('${{ parameters.continuous }}', false) }}:
+            tag: "latest"

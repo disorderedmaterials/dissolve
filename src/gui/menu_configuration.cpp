@@ -8,6 +8,7 @@
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
+#include "procedure/nodes/coordinatesets.h"
 #include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/parameters.h"
 #include <QFileDialog>
@@ -39,10 +40,16 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
     generator.addRootSequenceNode(paramsNode);
     generator.addRootSequenceNode(std::make_shared<BoxProcedureNode>());
     for (const auto *sp : mixSpecies)
-        generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(sp, 100, NodeValue("rho", paramsNode->parameters())));
+    {
+        auto coordSets = std::make_shared<CoordinateSetsProcedureNode>(sp);
+        coordSets->setName(fmt::format("{}_Sets", sp->name()));
+        generator.addRootSequenceNode(coordSets);
+        generator.addRootSequenceNode(
+            std::make_shared<AddProcedureNode>(coordSets.get(), 100, NodeValue("rho", paramsNode->parameters())));
+    }
 
     // Run the generator
-    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
 
     setModified();
     fullUpdate();
@@ -69,17 +76,22 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     auto count = 0;
     for (auto *sp : mixSpecies)
     {
+        auto coordSets = std::make_shared<CoordinateSetsProcedureNode>(sp);
+        coordSets->setName(fmt::format("{}_Sets", sp->name()));
+        generator.addRootSequenceNode(coordSets);
+
         // Add a parameter for the ratio of this species to the first (or the population of the first)
         if (count == 0)
-            generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(
-                sp, NodeValue("populationA", paramsNode->parameters()), NodeValue("rho", paramsNode->parameters())));
+            generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(coordSets.get(),
+                                                                             NodeValue("populationA", paramsNode->parameters()),
+                                                                             NodeValue("rho", paramsNode->parameters())));
         else
         {
             auto parameterName = fmt::format("ratio{}", char(65 + count));
             paramsNode->addParameter(parameterName, 1);
 
             generator.addRootSequenceNode(std::make_shared<AddProcedureNode>(
-                sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()),
+                coordSets.get(), NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()),
                 NodeValue("rho", paramsNode->parameters())));
         }
 
@@ -87,7 +99,7 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     }
 
     // Run the generator
-    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
 
     setModified();
     fullUpdate();
@@ -113,7 +125,7 @@ void DissolveWindow::on_ConfigurationCreateEmptyFrameworkAction_triggered(bool c
     generator.addRootSequenceNode(node);
 
     // Run the generator
-    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
 
     setModified();
     fullUpdate();
@@ -156,17 +168,22 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     auto count = 0;
     for (auto *sp : adsorbates)
     {
+        auto coordSets = std::make_shared<CoordinateSetsProcedureNode>(sp);
+        coordSets->setName(fmt::format("{}_Sets", sp->name()));
+        generator.addRootSequenceNode(coordSets);
+
         // Add a parameter for the ratio of this species to the first (or the population of the first)
         std::shared_ptr<AddProcedureNode> addSpeciesNode = nullptr;
         if (count == 0)
-            addSpeciesNode = std::make_shared<AddProcedureNode>(sp, NodeValue("populationA", paramsNode->parameters()));
+            addSpeciesNode =
+                std::make_shared<AddProcedureNode>(coordSets.get(), NodeValue("populationA", paramsNode->parameters()));
         else
         {
             auto parameterName = fmt::format("ratio{}", char(65 + count));
             paramsNode->addParameter(parameterName, 1);
 
             addSpeciesNode = std::make_shared<AddProcedureNode>(
-                sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
+                coordSets.get(), NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameters()));
         }
         addSpeciesNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
         addSpeciesNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Region);
@@ -177,7 +194,7 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     }
 
     // Run the generator
-    newConfiguration->generate(dissolve_.worldPool(), dissolve_.pairPotentialRange());
+    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
 
     setModified();
     fullUpdate();

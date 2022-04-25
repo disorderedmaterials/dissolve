@@ -24,12 +24,13 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *pa
             ui_.OptionsCombo->setCurrentIndex(n);
     }
 
+    // Set expression text
+    ui_.ValueEdit->setText(QString::fromStdString(keyword_->value().asString()));
+    checkValueValidity();
+
     // Set event filtering on the combo so that we do not blindly accept mouse wheel events (problematic since we
     // will exist in a QScrollArea)
     ui_.OptionsCombo->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.OptionsCombo));
-
-    // Update values
-    updateValue();
 
     refreshing_ = false;
 }
@@ -44,7 +45,7 @@ void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_editingFinished()
         return;
 
     keyword_->setValue(qPrintable(ui_.ValueEdit->text()));
-    ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
+    checkValueValidity();
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
@@ -55,7 +56,7 @@ void NodeValueEnumOptionsKeywordWidget::on_ValueEdit_returnPressed()
         return;
 
     keyword_->setValue(qPrintable(ui_.ValueEdit->text()));
-    ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
+    checkValueValidity();
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
@@ -74,14 +75,18 @@ void NodeValueEnumOptionsKeywordWidget::on_OptionsCombo_currentIndexChanged(int 
  * Update
  */
 
+// Check validity of current value
+void NodeValueEnumOptionsKeywordWidget::checkValueValidity() { ui_.ValueValidIndicator->setOK(keyword_->value().isValid()); }
+
 // Update value displayed in widget
-void NodeValueEnumOptionsKeywordWidget::updateValue()
+void NodeValueEnumOptionsKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 
     ui_.ValueEdit->setText(QString::fromStdString(keyword_->value().asString()));
-    ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
     ui_.OptionsCombo->setCurrentIndex(keyword_->baseOptions().index());
+
+    checkValueValidity();
 
     refreshing_ = false;
 }

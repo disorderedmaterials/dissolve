@@ -12,11 +12,6 @@
 
 int main(int args, char **argv)
 {
-#ifdef PARALLEL
-    // Initialise parallel communication
-    ProcessPool::initialiseMPI(&args, &argv);
-#endif
-
     // Instantiate main classes
     CoreData coreData;
     Dissolve dissolve(coreData);
@@ -26,10 +21,13 @@ int main(int args, char **argv)
     if (options.parse(args, argv, true) != CLIOptions::Success)
         return 1;
 
+    // Initialise random seed
+    srand(options.randomSeed().value_or((unsigned)time(nullptr)));
+
     // Create the main QApplication
     QApplication app(args, argv);
-    QCoreApplication::setOrganizationName("ProjectAten");
-    QCoreApplication::setOrganizationDomain("www.projectaten.com");
+    QCoreApplication::setOrganizationName("Team Dissolve");
+    QCoreApplication::setOrganizationDomain("www.projectdissolve.com");
     QCoreApplication::setApplicationName("Dissolve-GUI");
 
     // Set native siblings attribute to prevent odd rendering artefacts on some systems
@@ -80,9 +78,6 @@ int main(int args, char **argv)
     dissolveWindow.fullUpdate();
 
     auto result = app.exec();
-
-    // End parallel communication
-    ProcessPool::finalise();
 
     // Done.
     return result;
