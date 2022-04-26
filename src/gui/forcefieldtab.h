@@ -73,6 +73,7 @@ class ForcefieldTab : public QWidget, public MainTab
     // Atom Types
     void on_AtomTypeAddButton_clicked(bool checked);
     void on_AtomTypeRemoveButton_clicked(bool checked);
+    void atomTypeDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
     // Pair Potentials
     void on_PairPotentialRangeSpin_valueChanged(double value);
     void on_PairPotentialDeltaSpin_valueChanged(double value);
@@ -84,6 +85,7 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_ForceChargeSourceCheck_clicked(bool checked);
     void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
     void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
+    void pairPotentialDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
     void pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous);
     // Master Terms
     void masterBondsDataChanged(const QModelIndex &, const QModelIndex &);
