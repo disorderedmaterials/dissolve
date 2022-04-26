@@ -73,9 +73,6 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, ProcedureNode::NodeClass classType)
     : class_(classType), type_(nodeType), scope_(nullptr), parent_(nullptr)
 {
-    // Assign default, unique name to the node
-    static int nodeCount = 0;
-    name_ = fmt::format("Node{:04d}", ++nodeCount);
 }
 
 /*
@@ -95,19 +92,10 @@ bool ProcedureNode::isContextRelevant(NodeContext context) { return false; }
 bool ProcedureNode::mustBeNamed() const { return true; }
 
 // Set node name (and nice name)
-void ProcedureNode::setName(std::string_view name)
-{
-    name_ = name;
-
-    // Generate a nice name (i.e. no spaces, slashes etc.)
-    niceName_ = DissolveSys::niceName(name);
-}
+void ProcedureNode::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
 
 // Return node name
 std::string_view ProcedureNode::name() const { return name_; }
-
-// Return nice node name
-std::string_view ProcedureNode::niceName() const { return niceName_; }
 
 /*
  * Keywords
@@ -300,15 +288,15 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 // Write node data to specified LineParser
 bool ProcedureNode::write(LineParser &parser, std::string_view prefix)
 {
-    // Block Start - does this node have a required name?
-    if (mustBeNamed())
+    // Block Start - node type and name (if specified)
+    if (name_.empty())
     {
-        if (!parser.writeLineF("{}{}  '{}'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name()))
+        if (!parser.writeLineF("{}{}\n", prefix, ProcedureNode::nodeTypes().keyword(type_)))
             return false;
     }
     else
     {
-        if (!parser.writeLineF("{}{}\n", prefix, ProcedureNode::nodeTypes().keyword(type_)))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name()))
             return false;
     }
 

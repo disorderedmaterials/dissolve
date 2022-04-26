@@ -99,8 +99,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     NodeType type_;
     // Node name
     std::string name_;
-    // Node nice name
-    std::string niceName_;
 
     public:
     // Return node class
@@ -115,8 +113,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     void setName(std::string_view name);
     // Return node name
     std::string_view name() const;
-    // Return node nice name
-    std::string_view niceName() const;
 
     /*
      * Keywords
