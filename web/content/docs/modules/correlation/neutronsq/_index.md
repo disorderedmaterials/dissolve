@@ -8,7 +8,7 @@ description: Calculate neutron-weighted S(Q) and G(r)
 
 `NeutronSQ` is responsible for taking a set of previously calculated $S(Q)$ from an {{< gui-module "SQ" >}} module and generating a new set of neutron-weighted structure factors. The total neutron-weighted structure factor, $F^{N}(Q)$, is generated through summation of the individual partial neutron-weighted $S(Q)$. Neutron-weighted partial and total radial distribution functions are also calculated.
 
-The `NeutronSQ` module does not target any configurations itself - the underlying [`RDF`]({{< ref "sq" >}}) module, referenced by the {{< gui-module "SQ" >}} module, dictates the source configuration data.
+The `NeutronSQ` module does not target any configurations itself - the underlying  {{< gui-module "RDF" >}}  module, referenced by the {{< gui-module "SQ" >}} module, dictates the source configuration data.
 
 ## Description
 
