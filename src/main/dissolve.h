@@ -29,7 +29,7 @@ class Dissolve
      * Core
      */
     private:
-    const bool toml_testing_flag = true;
+    const bool toml_testing_flag = false;
     // Reference to CoreData
     CoreData &coreData_;
 
