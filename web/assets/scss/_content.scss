@@ -129,6 +129,9 @@
 .gui-button.gui-button-output::before {
   background-image: url(/img/tabs_workspace.svg);
 }
+.gui-button.gui-button-palette::before {
+  background-image: url(/img/general_palette.svg);
+}
 
 .gui-button::after {
   content: '';

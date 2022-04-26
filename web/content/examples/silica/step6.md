@@ -1,10 +1,10 @@
 ---
-title: Step 5 - Set up Potential Refinement
+title: Step 6 - Set up Potential Refinement
 type: docs
 ---
 
 
-Add the standard [`EPSR`]({{< ref "epsr" >}}) refinement layer to your simulation:
+Add the standard EPSR-style refinement layer to your simulation:
 
 {{< action type="menu" text="Layer &#8680; Create &#8680; Refinement &#8680; Standard EPSR" />}}
 
@@ -12,7 +12,7 @@ Double-click the {{< gui-module "EPSR" >}} module to open it up as a tab - it's 
 
 {{< action type="tabs" text="**EPSR** module tab" />}}
 {{< action type="groups" text="Open the **Control** settings group" />}}
-{{< step text="Set **EReq** to 50.0" />}}
+{{< action type="edit" text="Set **EReq** to `50.0`" />}}
 
 On the _R-Factor_ tab of the {{< gui-module "EPSR" >}} module you will see that the magnitude of the potential (top graph) increases rather quickly to 50 (within 100 steps in the plot below), but the quality of fit as measure by the r-factor (bottom graph) takes rather longer to reach a steady state.
 
@@ -31,5 +31,5 @@ The question is, can it be better? The answer is, of course, yes - the intensity
 For the purposes of the example, let's move on and calculate something from the (semi-) refined structure.
 
 * * *
-{{< button pos="left" text="Previous Step" path="step4/">}}
-{{< button pos="right" text="Next Step" path="step6/">}}
+{{< button pos="left" text="Previous Step" path="step5/">}}
+{{< button pos="right" text="Next Step" path="step7/">}}

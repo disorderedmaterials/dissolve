@@ -6,7 +6,7 @@ type: docs
 With our two processing layers set up we can start to run the simulation and monitor how the system is evolving. We'll do this from the {{< gui-button text="Output" type="output" >}} page of the {{< gui-module "NeutronSQ" >}} module.
 
 {{< action type="tabs" >}}Go to the {{< gui-tab type="Layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
-{{< action type="groups" >}}Select the {{< gui-module "NeutronSQ" >}} module and open {{< gui-button text="Output" type="output" >}} page{{< /action >}}
+{{< action type="groups" >}}Select the {{< gui-module "NeutronSQ" >}} module and open the {{< gui-button text="Output" type="output" >}} page{{< /action >}}
 {{< step text="We'll visually compare the simulated total structure factor to the experimental one" />}}
 {{< action type="menu" text="Simulation &#8680; Run" />}}
 {{< step text="You can also use `Ctrl-R` to start a simulation running" />}}
