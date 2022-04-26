@@ -127,6 +127,17 @@ bool CoordinateSetsProcedureNode::execute(const ProcedureContext &procedureConte
         return Messenger::error("Can't generate coordinate sets via MD for species '{}' because it is not set up correctly.\n",
                                 species_->name());
 
+    // Also can't do MD on the Species if it has too few degrees of freedom
+    if (species_->nAtoms() == 1)
+    {
+        Messenger::print("[CoordinateSets] Atomic species, so adding reference coordinate to a single set and exiting.\n");
+
+        // Store a new set
+        addSet() = {species_->atoms().begin()->r()};
+
+        return true;
+    }
+
     // Initialise the random number buffer for all processes
     RandomBuffer randomBuffer(procedureContext.processPool(),
                               ProcessPool::subDivisionStrategy(procedureContext.processPool().bestStrategy()));
