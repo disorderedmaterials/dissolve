@@ -22,6 +22,12 @@ steps:
     displayName: 'Download & Install Hugo (Extended Version)'
   - bash: |
       set -ex
+      mkdir web/static/img
+      cp -v src/gui/icons/*.svg web/static/img
+      cp -v src/gui/icons/*.png web/static/img
+    displayName: 'Copy Images'
+  - bash: |
+      set -ex
       cd web
       npm install
       hugo

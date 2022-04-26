@@ -83,13 +83,13 @@
   background-size: 18px;
 }
 .gui-tab.gui-tab-Forcefield::before {
-  background-image: url(/img/tabs_ff.png);
+  background-image: url(/img/tabs_ff.svg);
 }
 .gui-tab.gui-tab-Layer::before {
-  background-image: url(/img/tabs_modulelayer.png);
+  background-image: url(/img/tabs_modulelayer.svg);
 }
 .gui-tab.gui-tab-Species::before {
-  background-image: url(/img/tabs_species.png);
+  background-image: url(/img/tabs_species.svg);
 }
 
 .gui-tab::after {
@@ -121,13 +121,13 @@
   background-size: 17px;
 }
 .gui-button.gui-button-add::before {
-  background-image: url(/img/general_add.png);
+  background-image: url(/img/general_add.svg);
 }
 .gui-button.gui-button-options::before {
-  background-image: url(/img/general_options.png);
+  background-image: url(/img/general_options.svg);
 }
 .gui-button.gui-button-output::before {
-  background-image: url(/img/tabs_workspace.png);
+  background-image: url(/img/tabs_workspace.svg);
 }
 
 .gui-button::after {
@@ -157,7 +157,7 @@
 
 @mixin gui-module($module) {
   .gui-module.gui-module-#{$module}::before{
-       background-image: url(/img/modules_#{$module}.png);
+       background-image: url(/img/modules_#{$module}.svg);
   }
 }
 @mixin generate-gui-module(){
@@ -191,7 +191,7 @@ $modules: ("atomshake", "calculatecn", "calculaterdf", "energy", "epsr", "forces
 
 @mixin gui-node($node) {
   .gui-node.gui-node-#{$node}::before{
-       background-image: url(/img/nodes_#{$node}.png);
+       background-image: url(/img/nodes_#{$node}.svg);
   }
 }
 @mixin generate-gui-node(){
@@ -332,7 +332,7 @@ blockquote.action-menu {
   border-left: 8px solid #478cc6;
 }
 blockquote.action-dissolve::before {
-  background-image: url(/img/action-dissolve.png);
+  background-image: url(/img/action-dissolve.svg);
 }
 
 // Action (Tabs)
