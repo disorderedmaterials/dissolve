@@ -1,0 +1,2 @@
+{{ $type := index .Params 0 }}{{ $pageName := printf "%snode" $type }}
+<a href="{{ ref .Page $pageName }}"><span class="gui-node gui-node-{{ lower $type }}">{{ $type }}</span></a>

@@ -168,6 +168,40 @@
 $modules: ("atomshake", "calculatecn", "calculaterdf", "energy", "epsr", "forces", "md", "molshake", "neutronsq", "rdf", "sq", "xraysq");
 @include generate-gui-module();
 
+// Node
+.gui-node {
+   padding: 0px 0px 0px 1.2em;
+   position: relative;
+}
+
+.gui-node::before {
+  content: '';
+  width: 1.1em;
+  height: 1.1em;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 1.1em;
+}
+
+.gui-node::after {
+  content: '';
+}
+
+@mixin gui-node($node) {
+  .gui-node.gui-node-#{$node}::before{
+       background-image: url(/img/nodes_#{$node}.png);
+  }
+}
+@mixin generate-gui-node(){
+   @each $node in $nodes{
+     @include gui-node($node);
+   }
+}
+$nodes: ("add", "aliases", "box", "calculateangle", "calculateaxisangle", "calculatebase", "calculatedistance", "calculatevector", "collect1d", "collect2d", "collect3d", "context", "coordinatesets", "cylindricalregion", "dynamicsite", "fit1d", "generalregion", "integrate1d", "node", "nodereference", "nodes", "operatebase", "operatedivide", "operateexpression", "operategridnormalise", "operatemultiply", "operatenormalise", "operatenumberdensitynormalise", "operatesitepopulationnormalise", "operatesphericalshellnormalise", "parameters", "pickbase", "pick", "pickproximity", "pickregion", "process1d", "process2d", "process3d", "regionbase", "remove", "select", "sequence", "sum1d", "transmute");
+@include generate-gui-node();
+
 /*
  * Buttons
  */
