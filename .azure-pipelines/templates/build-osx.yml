@@ -12,7 +12,8 @@ steps:
       # -- General
       brew update-reset
       brew install ftgl
-      curl https://github.com/antlr/website-antlr4/raw/gh-pages/download/antlr-4.9.3-complete.jar > antlr.jar
+      curl https://github.com/antlr/website-antlr4/raw/gh-pages/download/antlr-4.9.3-complete.jar --output antlr.jar
+      ls -al *.jar
       # -- Qt
       sudo pip3 install conan aqtinstall
       aqt install-qt --outputdir /tmp/qt mac desktop ${{ parameters.qtver }} -m qtcharts
