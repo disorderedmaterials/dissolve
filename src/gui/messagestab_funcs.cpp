@@ -59,8 +59,8 @@ MainTab::TabType MessagesTab::type() const { return MainTab::TabType::Messages; 
 // Update controls in tab
 void MessagesTab::updateControls() {}
 
-// Disable sensitive controls within tab
-void MessagesTab::disableSensitiveControls() {}
+// Prevent editing within tab
+void MessagesTab::preventEditing() {}
 
-// Enable sensitive controls within tab
-void MessagesTab::enableSensitiveControls() {}
+// Enable editing within tab
+void MessagesTab::enableEditing() {}

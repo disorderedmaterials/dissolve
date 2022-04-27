@@ -149,16 +149,16 @@ void ConfigurationTab::updateControls()
     ui_.ViewerWidget->postRedisplay();
 }
 
-// Disable sensitive controls within tab
-void ConfigurationTab::disableSensitiveControls()
+// Prevent editing within tab
+void ConfigurationTab::preventEditing()
 {
     ui_.GeneratorGroup->setEnabled(false);
     ui_.TemperatureGroup->setEnabled(false);
     ui_.SizeFactorGroup->setEnabled(false);
 }
 
-// Enable sensitive controls within tab
-void ConfigurationTab::enableSensitiveControls()
+// Enable editing within tab
+void ConfigurationTab::enableEditing()
 {
     ui_.GeneratorGroup->setEnabled(true);
     ui_.TemperatureGroup->setEnabled(true);

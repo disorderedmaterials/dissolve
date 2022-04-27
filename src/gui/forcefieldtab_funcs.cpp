@@ -179,11 +179,11 @@ void ForcefieldTab::updateControls()
     refreshLocker.unlock();
 }
 
-// Disable sensitive controls within tab
-void ForcefieldTab::disableSensitiveControls() { setEnabled(false); }
+// Prevent editing within tab
+void ForcefieldTab::preventEditing() { setEnabled(false); }
 
-// Enable sensitive controls within tab
-void ForcefieldTab::enableSensitiveControls() { setEnabled(true); }
+// Enable editing within tab
+void ForcefieldTab::enableEditing() { setEnabled(true); }
 
 /*
  * Signals / Slots

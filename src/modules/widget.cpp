@@ -12,8 +12,8 @@ ModuleWidget::ModuleWidget(QWidget *parent, Dissolve &dissolve) : QWidget(parent
 // Update controls within widget
 void ModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags) {}
 
-// Disable sensitive controls within widget
-void ModuleWidget::disableSensitiveControls() {}
+// Disable editing within widget
+void ModuleWidget::preventEditing() {}
 
-// Enable sensitive controls within widget
-void ModuleWidget::enableSensitiveControls() {}
+// Enable editing within widget
+void ModuleWidget::enableEditing() {}

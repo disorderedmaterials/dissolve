@@ -193,7 +193,7 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
         ui_.ModuleControlsStack->setCurrentIndex(ui_.ModuleControlsStack->addWidget(mcw));
 
         if (dissolveWindow_->dissolveIterating())
-            mcw->disableSensitiveControls();
+            mcw->preventEditing();
     }
     else
         mcw->updateControls();
@@ -318,8 +318,8 @@ void LayerTab::updateControls()
         mcw->updateControls();
 }
 
-// Disable sensitive controls within tab
-void LayerTab::disableSensitiveControls()
+// Prevent editing within tab
+void LayerTab::preventEditing()
 {
     ui_.EnabledButton->setEnabled(false);
     ui_.FrequencySpin->setEnabled(false);
@@ -330,12 +330,12 @@ void LayerTab::disableSensitiveControls()
     {
         auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw)
-            mcw->disableSensitiveControls();
+            mcw->preventEditing();
     }
 }
 
-// Enable sensitive controls within tab
-void LayerTab::enableSensitiveControls()
+// Enable editing within tab
+void LayerTab::enableEditing()
 {
     ui_.EnabledButton->setEnabled(true);
     ui_.FrequencySpin->setEnabled(true);
@@ -346,6 +346,6 @@ void LayerTab::enableSensitiveControls()
     {
         auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw)
-            mcw->enableSensitiveControls();
+            mcw->enableEditing();
     }
 }

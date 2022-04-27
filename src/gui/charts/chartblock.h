@@ -54,8 +54,8 @@ class ChartBlock
     public:
     // Update controls within widget
     virtual void updateControls() = 0;
-    // Disable sensitive controls
-    virtual void disableSensitiveControls() = 0;
-    // Enable sensitive controls
-    virtual void enableSensitiveControls() = 0;
+    // Disable editing
+    virtual void preventEditing() = 0;
+    // Enable editing
+    virtual void enableEditing() = 0;
 };

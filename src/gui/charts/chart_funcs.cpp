@@ -55,18 +55,18 @@ void ChartBase::updateControls()
     layOutWidgets();
 }
 
-// Disable sensitive controls within widget
-void ChartBase::disableSensitiveControls()
+// Prevent editing within widget
+void ChartBase::preventEditing()
 {
     for (ChartBlock *block : chartBlocks_)
-        block->disableSensitiveControls();
+        block->preventEditing();
 }
 
-// Enable sensitive controls within widget
-void ChartBase::enableSensitiveControls()
+// Enable editing within widget
+void ChartBase::enableEditing()
 {
     for (ChartBlock *block : chartBlocks_)
-        block->enableSensitiveControls();
+        block->enableEditing();
 }
 
 /*

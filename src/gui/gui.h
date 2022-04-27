@@ -240,10 +240,10 @@ class DissolveWindow : public QMainWindow
     const std::vector<MainTab *> allTabs() const;
 
     public slots:
-    // Disable sensitive controls
-    void disableSensitiveControls();
-    // Enable sensitive controls
-    void enableSensitiveControls();
+    // Disable editing
+    void preventEditing();
+    // Enable editing
+    void enableEditing();
     // All iterations requested are complete
     void iterationsComplete();
     // Specified tab (indicated by page widget) has been closed, and relevant data should be deleted accordingly

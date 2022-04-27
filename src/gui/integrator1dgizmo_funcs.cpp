@@ -64,11 +64,11 @@ void Integrator1DGizmo::updateControls()
     refreshing_ = false;
 }
 
-// Disable sensitive controls within widget
-void Integrator1DGizmo::disableSensitiveControls() {}
+// Prevent editing within widget
+void Integrator1DGizmo::preventEditing() {}
 
-// Enable sensitive controls within widget
-void Integrator1DGizmo::enableSensitiveControls() {}
+// Enable editing within widget
+void Integrator1DGizmo::enableEditing() {}
 
 /*
  * Data

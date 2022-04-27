@@ -110,26 +110,26 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
         moduleWidget_->updateControls(updateFlags);
 }
 
-// Disable sensitive controls
-void ModuleControlWidget::disableSensitiveControls()
+// Disable editing
+void ModuleControlWidget::preventEditing()
 {
     ui_.FrequencySpin->setEnabled(false);
     ui_.EnabledButton->setEnabled(false);
     ui_.TargetsGroup->setEnabled(false);
     ui_.ModuleKeywordsWidget->setEnabled(false);
     if (moduleWidget_)
-        moduleWidget_->disableSensitiveControls();
+        moduleWidget_->preventEditing();
 }
 
-// Enable sensitive controls
-void ModuleControlWidget::enableSensitiveControls()
+// Enable editing
+void ModuleControlWidget::enableEditing()
 {
     ui_.FrequencySpin->setEnabled(true);
     ui_.EnabledButton->setEnabled(true);
     ui_.TargetsGroup->setEnabled(true);
     ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
-        moduleWidget_->enableSensitiveControls();
+        moduleWidget_->enableEditing();
 }
 
 /*

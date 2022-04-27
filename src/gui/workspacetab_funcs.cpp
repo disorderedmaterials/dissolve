@@ -66,20 +66,20 @@ void WorkspaceTab::updateControls()
         gizmo->updateControls();
 }
 
-// Disable sensitive controls within tab
-void WorkspaceTab::disableSensitiveControls()
+// Prevent editing within tab
+void WorkspaceTab::preventEditing()
 {
-    // Disable sensitive controls in subwindows
+    // Prevent editing in subwindows
     for (auto &gizmo : gizmos_)
-        gizmo->disableSensitiveControls();
+        gizmo->preventEditing();
 }
 
-// Enable sensitive controls within tab
-void WorkspaceTab::enableSensitiveControls()
+// Enable editing within tab
+void WorkspaceTab::enableEditing()
 {
-    // Enable sensitive controls in subwindows
+    // Enable editing in subwindows
     for (auto &gizmo : gizmos_)
-        gizmo->enableSensitiveControls();
+        gizmo->enableEditing();
 }
 
 /*
