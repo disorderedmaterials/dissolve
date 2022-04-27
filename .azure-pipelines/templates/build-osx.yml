@@ -11,7 +11,7 @@ steps:
       set -ex
       # -- General
       brew update-reset
-      brew install antlr antlr4-cpp-runtime ftgl
+      brew install antlr ftgl
       # -- Qt
       sudo pip3 install conan aqtinstall
       aqt install-qt --outputdir /tmp/qt mac desktop ${{ parameters.qtver }} -m qtcharts
