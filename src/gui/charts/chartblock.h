@@ -56,6 +56,6 @@ class ChartBlock
     virtual void updateControls() = 0;
     // Disable editing
     virtual void preventEditing() = 0;
-    // Enable editing
-    virtual void enableEditing() = 0;
+    // Allow editing
+    virtual void allowEditing() = 0;
 };

@@ -15,5 +15,5 @@ void ModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &update
 // Disable editing within widget
 void ModuleWidget::preventEditing() {}
 
-// Enable editing within widget
-void ModuleWidget::enableEditing() {}
+// Allow editing within widget
+void ModuleWidget::allowEditing() {}

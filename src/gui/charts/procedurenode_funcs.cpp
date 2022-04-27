@@ -177,8 +177,8 @@ void ProcedureChartNodeBlock::preventEditing()
     ui_.RemoveButton->setEnabled(false);
 }
 
-// Enable editing
-void ProcedureChartNodeBlock::enableEditing()
+// Allow editing
+void ProcedureChartNodeBlock::allowEditing()
 {
     ui_.KeywordsControlWidget->setEnabled(true);
     ui_.RemoveButton->setEnabled(true);

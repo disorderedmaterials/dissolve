@@ -242,8 +242,8 @@ class DissolveWindow : public QMainWindow
     public slots:
     // Disable editing
     void preventEditing();
-    // Enable editing
-    void enableEditing();
+    // Allow editing
+    void allowEditing();
     // All iterations requested are complete
     void iterationsComplete();
     // Specified tab (indicated by page widget) has been closed, and relevant data should be deleted accordingly

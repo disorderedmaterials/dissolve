@@ -24,8 +24,8 @@ void DissolveWindow::preventEditing()
     ui_.MainTabs->preventEditing();
 }
 
-// Enable editing
-void DissolveWindow::enableEditing()
+// Allow editing
+void DissolveWindow::allowEditing()
 {
     // Enable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(true);
@@ -40,14 +40,14 @@ void DissolveWindow::enableEditing()
     ui_.ConfigurationMenu->setEnabled(true);
     ui_.LayerMenu->setEnabled(true);
 
-    // Enable editing in all tabs
-    ui_.MainTabs->enableEditing();
+    // Allow editing in all tabs
+    ui_.MainTabs->allowEditing();
 }
 
 // All iterations requested are complete
 void DissolveWindow::iterationsComplete()
 {
-    enableEditing();
+    allowEditing();
     Renderable::setSourceDataAccessEnabled(true);
     dissolveIterating_ = false;
 

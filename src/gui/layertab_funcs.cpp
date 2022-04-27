@@ -336,8 +336,8 @@ void LayerTab::preventEditing()
     }
 }
 
-// Enable editing within tab
-void LayerTab::enableEditing()
+// Allow editing within tab
+void LayerTab::allowEditing()
 {
     ui_.EnabledButton->setEnabled(true);
     ui_.FrequencySpin->setEnabled(true);
@@ -348,6 +348,6 @@ void LayerTab::enableEditing()
     {
         auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw)
-            mcw->enableEditing();
+            mcw->allowEditing();
     }
 }

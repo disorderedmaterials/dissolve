@@ -141,8 +141,8 @@ void SpeciesTab::updateControls()
 // Prevent editing within tab
 void SpeciesTab::preventEditing() { setEnabled(false); }
 
-// Enable editing within tab
-void SpeciesTab::enableEditing() { setEnabled(true); }
+// Allow editing within tab
+void SpeciesTab::allowEditing() { setEnabled(true); }
 
 /*
  * MainTab Reimplementations

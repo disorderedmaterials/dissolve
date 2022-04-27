@@ -102,8 +102,8 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
     void updateControls();
     // Disable editing
     void preventEditing();
-    // Enable editing
-    void enableEditing();
+    // Allow editing
+    void allowEditing();
 
     /*
      * Signals / Slots

@@ -63,8 +63,8 @@ void GraphGizmo::updateControls()
 // Prevent editing within widget
 void GraphGizmo::preventEditing() {}
 
-// Enable editing within widget
-void GraphGizmo::enableEditing() {}
+// Allow editing within widget
+void GraphGizmo::allowEditing() {}
 
 /*
  * Data Handling

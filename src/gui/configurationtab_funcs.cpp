@@ -157,8 +157,8 @@ void ConfigurationTab::preventEditing()
     ui_.SizeFactorGroup->setEnabled(false);
 }
 
-// Enable editing within tab
-void ConfigurationTab::enableEditing()
+// Allow editing within tab
+void ConfigurationTab::allowEditing()
 {
     ui_.GeneratorGroup->setEnabled(true);
     ui_.TemperatureGroup->setEnabled(true);

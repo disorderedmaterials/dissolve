@@ -88,6 +88,6 @@ class MainTab
     virtual void updateControls() = 0;
     // Prevent editing within the tab
     virtual void preventEditing() = 0;
-    // Enable editing within the tab
-    virtual void enableEditing() = 0;
+    // Allow editing within the tab
+    virtual void allowEditing() = 0;
 };

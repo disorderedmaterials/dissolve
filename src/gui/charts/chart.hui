@@ -50,8 +50,8 @@ class ChartBase : public QWidget
     void updateControls();
     // Prevent editing within widget
     void preventEditing();
-    // Enable editing within widget
-    void enableEditing();
+    // Allow editing within widget
+    void allowEditing();
 
     /*
      * QWidget Reimplementations

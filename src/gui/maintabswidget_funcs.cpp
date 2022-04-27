@@ -452,11 +452,11 @@ void MainTabsWidget::preventEditing()
         button->setDisabled(true);
 }
 
-// Enable editing in all tabs
-void MainTabsWidget::enableEditing()
+// Allow editing in all tabs
+void MainTabsWidget::allowEditing()
 {
     for (auto tab : allTabs_)
-        tab->enableEditing();
+        tab->allowEditing();
 
     // Enable tab close buttons
     for (auto &[button, page] : closeButtons_)

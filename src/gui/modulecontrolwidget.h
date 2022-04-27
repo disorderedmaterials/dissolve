@@ -51,8 +51,8 @@ class ModuleControlWidget : public QWidget
     void updateControls(Flags<ModuleWidget::UpdateFlags> updateFlags = {});
     // Disable editing
     void preventEditing();
-    // Enable editing
-    void enableEditing();
+    // Allow editing
+    void allowEditing();
 
     /*
      * UI

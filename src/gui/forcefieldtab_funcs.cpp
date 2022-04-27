@@ -182,8 +182,8 @@ void ForcefieldTab::updateControls()
 // Prevent editing within tab
 void ForcefieldTab::preventEditing() { setEnabled(false); }
 
-// Enable editing within tab
-void ForcefieldTab::enableEditing() { setEnabled(true); }
+// Allow editing within tab
+void ForcefieldTab::allowEditing() { setEnabled(true); }
 
 /*
  * Signals / Slots

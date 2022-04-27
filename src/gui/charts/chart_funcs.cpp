@@ -62,11 +62,11 @@ void ChartBase::preventEditing()
         block->preventEditing();
 }
 
-// Enable editing within widget
-void ChartBase::enableEditing()
+// Allow editing within widget
+void ChartBase::allowEditing()
 {
     for (ChartBlock *block : chartBlocks_)
-        block->enableEditing();
+        block->allowEditing();
 }
 
 /*

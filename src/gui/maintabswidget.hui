@@ -120,8 +120,8 @@ class MainTabsWidget : public QTabWidget
     void updateAllTabs();
     // Prevent editing in all tabs
     void preventEditing();
-    // Enable editing in all tabs
-    void enableEditing();
+    // Allow editing in all tabs
+    void allowEditing();
 
     /*
      * Tab Styling

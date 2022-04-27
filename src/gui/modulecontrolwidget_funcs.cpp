@@ -121,15 +121,15 @@ void ModuleControlWidget::preventEditing()
         moduleWidget_->preventEditing();
 }
 
-// Enable editing
-void ModuleControlWidget::enableEditing()
+// Allow editing
+void ModuleControlWidget::allowEditing()
 {
     ui_.FrequencySpin->setEnabled(true);
     ui_.EnabledButton->setEnabled(true);
     ui_.TargetsGroup->setEnabled(true);
     ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
-        moduleWidget_->enableEditing();
+        moduleWidget_->allowEditing();
 }
 
 /*

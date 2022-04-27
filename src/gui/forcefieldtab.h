@@ -59,8 +59,8 @@ class ForcefieldTab : public QWidget, public MainTab
     void updateControls() override;
     // Prevent editing within tab
     void preventEditing() override;
-    // Enable editing within tab
-    void enableEditing() override;
+    // Allow editing within tab
+    void allowEditing() override;
 
     /*
      * Signals / Slots

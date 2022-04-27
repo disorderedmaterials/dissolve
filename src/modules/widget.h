@@ -36,6 +36,6 @@ class ModuleWidget : public QWidget
     virtual void updateControls(const Flags<UpdateFlags> &updateFlags = {});
     // Disable editing within widget
     virtual void preventEditing();
-    // Enable editing within widget
-    virtual void enableEditing();
+    // Allow editing within widget
+    virtual void allowEditing();
 };

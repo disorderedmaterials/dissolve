@@ -62,5 +62,5 @@ void MessagesTab::updateControls() {}
 // Prevent editing within tab
 void MessagesTab::preventEditing() {}
 
-// Enable editing within tab
-void MessagesTab::enableEditing() {}
+// Allow editing within tab
+void MessagesTab::allowEditing() {}

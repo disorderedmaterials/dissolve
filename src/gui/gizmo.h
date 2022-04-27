@@ -75,8 +75,8 @@ class Gizmo
     virtual void updateControls() = 0;
     // Prevent editing within widget
     virtual void preventEditing() = 0;
-    // Enable editing within widget
-    virtual void enableEditing() = 0;
+    // Allow editing within widget
+    virtual void allowEditing() = 0;
 
     /*
      * Data Handling

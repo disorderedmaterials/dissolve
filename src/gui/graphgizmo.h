@@ -43,8 +43,8 @@ class GraphGizmo : public QWidget, public Gizmo
     void updateControls();
     // Prevent editing within widget
     void preventEditing();
-    // Enable editing within widget
-    void enableEditing();
+    // Allow editing within widget
+    void allowEditing();
 
     /*
      * Data Handling

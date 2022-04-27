@@ -74,12 +74,12 @@ void WorkspaceTab::preventEditing()
         gizmo->preventEditing();
 }
 
-// Enable editing within tab
-void WorkspaceTab::enableEditing()
+// Allow editing within tab
+void WorkspaceTab::allowEditing()
 {
-    // Enable editing in subwindows
+    // Allow editing in subwindows
     for (auto &gizmo : gizmos_)
-        gizmo->enableEditing();
+        gizmo->allowEditing();
 }
 
 /*

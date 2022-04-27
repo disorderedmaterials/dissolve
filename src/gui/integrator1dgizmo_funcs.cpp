@@ -67,8 +67,8 @@ void Integrator1DGizmo::updateControls()
 // Prevent editing within widget
 void Integrator1DGizmo::preventEditing() {}
 
-// Enable editing within widget
-void Integrator1DGizmo::enableEditing() {}
+// Allow editing within widget
+void Integrator1DGizmo::allowEditing() {}
 
 /*
  * Data
