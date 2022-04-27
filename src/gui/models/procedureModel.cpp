@@ -36,13 +36,15 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
             if (node->name().empty())
                 return QString::fromStdString(std::string(node->nodeTypes().keyword(node->type())));
             else
-                return QString("%1 (%2)").arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))),
-                                              QString::fromStdString(std::string(node->name())));
+                return QString("%1 (%2)").arg(
+                    QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))),
+                    QString::fromStdString(std::string(node->name())));
         case Qt::UserRole:
             return QVariant::fromValue(node->shared_from_this());
-         case Qt::DecorationRole:
-             return QIcon((QPixmap(
-                 QString(":/nodes/icons/nodes_%1.svg").arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))).toLower()))));
+        case Qt::DecorationRole:
+            return QIcon((QPixmap(
+                QString(":/nodes/icons/nodes_%1.svg")
+                    .arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))).toLower()))));
         default:
             return {};
     }
