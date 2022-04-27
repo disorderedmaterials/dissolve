@@ -192,6 +192,7 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
         connect(mcw, SIGNAL(statusChanged()), this, SLOT(updateModuleList()));
         ui_.ModuleControlsStack->setCurrentIndex(ui_.ModuleControlsStack->addWidget(mcw));
 
+        // If we're currently running, don;t allow editing in our new widget
         if (dissolveWindow_->dissolveIterating())
             mcw->preventEditing();
     }
@@ -240,6 +241,7 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
 
     QMenu menu;
     menu.setFont(font());
+    menu.setEnabled(!dissolveWindow_->dissolveIterating());
 
     // Construct the context menu
     auto *enableModule = menu.addAction("&Enable this");
