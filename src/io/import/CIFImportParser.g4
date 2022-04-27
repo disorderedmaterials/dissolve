@@ -11,7 +11,7 @@ options {
 @parser::header {/* CIFImport ANTLR Parser */}
 
 // Add custom includes after standard ANTLR includes in both *.h and *.cpp files
-@parser::postinclude {#include <any> }
+@parser::postinclude { }
 
 // Appears in the private part of the parser in the h file.
 @parser::members { /* public parser declarations/members section */ }
