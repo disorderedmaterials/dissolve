@@ -7,6 +7,7 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/cell.h"
+#include "classes/potentialmap.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 
@@ -59,20 +60,22 @@ std::string_view Configuration::niceName() const { return niceName_; }
 Procedure &Configuration::generator() { return generator_; }
 
 // Create the Configuration according to its generator Procedure
-bool Configuration::generate(const ProcessPool &procPool, double pairPotentialRange)
+bool Configuration::generate(const ProcedureContext &procedureContext)
 {
     // Empty the current contents
     empty();
 
     // Generate the contents
     Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
-    auto result = generator_.execute({procPool, this});
+    auto context = procedureContext;
+    context.setConfiguration(this);
+    auto result = generator_.execute(context);
     if (!result)
         return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
+    cells_.generate(box_.get(), requestedCellDivisionLength_, context.potentialMap().range());
 
     // Make sure Cell contents / Atom locations are up-to-date
     updateCellContents();
@@ -93,7 +96,7 @@ bool Configuration::generate(const ProcessPool &procPool, double pairPotentialRa
 CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
 
 // Initialise (generate or load) the basic contents of the Configuration
-bool Configuration::initialiseContent(const ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent)
+bool Configuration::initialiseContent(const ProcedureContext &procedureContext, bool emptyCurrentContent)
 {
     // Clear existing content?
     if (emptyCurrentContent)
@@ -105,7 +108,7 @@ bool Configuration::initialiseContent(const ProcessPool &procPool, double pairPo
     if (nAtoms() == 0)
     {
         // Run the generator procedure (we will need species / atom info to load any coordinates in)
-        if (!generate(procPool, pairPotentialRange))
+        if (!generate(procedureContext))
             return false;
 
         // If there are still no atoms, complain.
@@ -118,7 +121,7 @@ bool Configuration::initialiseContent(const ProcessPool &procPool, double pairPo
             if (DissolveSys::fileExists(inputCoordinates_))
             {
                 Messenger::print("Loading initial coordinates from file '{}'...\n", inputCoordinates_.filename());
-                if (!inputCoordinates_.importData(this, &procPool))
+                if (!inputCoordinates_.importData(this, &procedureContext.processPool()))
                     return false;
 
                 // Need to update cell locations now, as we have new atom positions
