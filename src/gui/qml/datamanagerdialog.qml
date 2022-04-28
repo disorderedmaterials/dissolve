@@ -5,7 +5,19 @@ import QtQuick.Window 2
 Row {
     GroupBox {
 	title: "Available Data"
-	Label {text: "Hello, World!"}
+	Row {
+	    Image {
+		width: 20
+		height: 20
+		fillMode: Image.PreserveAspectFit
+		source: "qrc:/general/icons/general_filter.svg"
+	    }
+	    TextField {
+		id: filterEdit
+		ToolTip.text: "Filter templates by name / description"
+		ToolTip.visible: hovered
+	    }
+	}
     }
     GroupBox {
 	title: "Reference Points"
