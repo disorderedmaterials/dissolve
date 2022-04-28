@@ -16,9 +16,8 @@ Item {
 		title: "Available Data"
 		RowLayout {
 		    Image {
-			width: 20
-			height: 20
-			fillMode: Image.PreserveAspectFit
+			Layout.preferredWidth: 20
+			Layout.preferredHeight: 20
 			source: "qrc:/general/icons/general_filter.svg"
 		    }
 		    TextField {
