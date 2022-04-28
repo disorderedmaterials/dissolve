@@ -151,7 +151,7 @@ bool Dissolve::loadInput(std::string_view filename)
     {
         if (toml_testing_flag)
         {
-            std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output.toml");
+            std::ofstream output("C:/ProjectDissolve/dissolve/build/bin/output.toml");
             toml::basic_value<toml::discard_comments, std::map, std::vector> root;
 
             if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
