@@ -470,7 +470,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAtom::se
 void SpeciesAtom::deserialize(toml::value node)
 {
     if (!node["index"].is_uninitialized())
-        index_ = node["index"].as_integer();
+        index_ = node["index"].as_integer() - 1;
     if (!node["z"].is_uninitialized())
         Z_ = Elements::element(std::string(node["z"].as_string()));
 

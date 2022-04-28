@@ -124,7 +124,7 @@ bool Dissolve::loadInput(LineParser &parser)
 
 // Load input from supplied string
 bool Dissolve::loadInputFromString(std::string_view inputString)
-{   
+{
     // Set strings and check that we're OK to proceed reading from them
     LineParser parser(&worldPool());
     if (!parser.openInputString(inputString))
@@ -140,7 +140,7 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
 
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)
-{  
+{
     // Open file and check that we're OK to proceed reading from it
     LineParser parser(&worldPool());
     if (!parser.openInput(filename))
@@ -189,10 +189,13 @@ bool Dissolve::loadInput(std::string_view filename)
                 root["master"] = masterNode;
             }
 
-            toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
-            for (auto &species : species())
-                speciesNode[species->name().data()] = species->serialize();
-            root["species"] = speciesNode;
+            if (!species().empty())
+            {
+                toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
+                for (auto &species : species())
+                    speciesNode[species->name().data()] = species->serialize();
+                root["species"] = speciesNode;
+            }
 
             toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentialsNode;
             pairPotentialsNode["range"] = pairPotentialRange_;
@@ -224,16 +227,16 @@ bool Dissolve::loadInput(std::string_view filename)
 
     if (toml_testing_flag)
     {
-        toml::value file = toml::parse("C:/ProjectDissolve/Dissolve/build/Release/output.toml");
-        std::ofstream output("C:/ProjectDissolve/dissolve/build/Release/output-d.toml");
+        toml::value file = toml::parse("C:/ProjectDissolve/Dissolve/build/bin/output.toml");
+        std::ofstream output("C:/ProjectDissolve/dissolve/build/bin/output-d.toml");
 
         if (file.is_uninitialized())
             std::cout << "Couldn't find the file";
         toml::value speciesNode = toml::find(file, "species");
         for (auto &[name, data] : speciesNode.as_table())
         {
-            //auto &species = species().emplace_back(name);
-            //species->deserialize(data);
+            // auto &species = species().emplace_back(name);
+            // species->deserialize(data);
             Species *species = addSpecies();
             species->deserialize(data, name);
         }

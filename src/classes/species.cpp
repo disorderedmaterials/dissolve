@@ -300,7 +300,7 @@ void Species::deserialize(toml::value node, std::string name)
     std::vector tomlBonds = toml::find(node, "bond").as_array();
     for(auto tomlBond : tomlBonds)
         if (!tomlBond["i"].is_uninitialized() && !tomlBond["j"].is_uninitialized())
-            bonds_.emplace_back(&atoms_[tomlBond["i"].as_integer()], &atoms_[tomlBond["j"].as_integer()]).deserialize(tomlBond, atoms_);
+            bonds_.emplace_back(&atoms_[tomlBond["i"].as_integer() - 1], &atoms_[tomlBond["j"].as_integer() - 1]).deserialize(tomlBond, atoms_);
     /*std::vector tomlAngles = toml::find(node, "angle").as_array();
     for (auto tomlAngle : tomlAngles)
         if (!tomlAngle["i"].is_uninitialized() && !tomlAngle["j"].is_uninitialized() && !tomlAngle["k"].is_uninitialized())
