@@ -297,35 +297,47 @@ void Species::deserialize(toml::value node, std::string name)
     for (auto tomlAtom : tomlAtoms)
         atoms_.emplace_back().deserialize(tomlAtom);
 
-    std::vector tomlBonds = toml::find(node, "bond").as_array();
-    for (auto tomlBond : tomlBonds)
-        if (!tomlBond["i"].is_uninitialized() && !tomlBond["j"].is_uninitialized())
-            bonds_.emplace_back(&atoms_[tomlBond["i"].as_integer() - 1], &atoms_[tomlBond["j"].as_integer() - 1])
-                .deserialize(tomlBond, atoms_);
+    if (node.contains("bond"))
+    {
+        std::vector tomlBonds = toml::find(node, "bond").as_array();
+        for (auto tomlBond : tomlBonds)
+            if (!tomlBond["i"].is_uninitialized() && !tomlBond["j"].is_uninitialized())
+                bonds_.emplace_back(&atoms_[tomlBond["i"].as_integer() - 1], &atoms_[tomlBond["j"].as_integer() - 1])
+                    .deserialize(tomlBond, atoms_);
+    }
 
-    std::vector tomlAngles = toml::find(node, "angle").as_array();
-    for (auto tomlAngle : tomlAngles)
-        if (!tomlAngle["i"].is_uninitialized() && !tomlAngle["j"].is_uninitialized() && !tomlAngle["k"].is_uninitialized())
-            angles_
-                .emplace_back(&atoms_[tomlAngle["i"].as_integer() - 1], &atoms_[tomlAngle["j"].as_integer() - 1],
-                              &atoms_[tomlAngle["k"].as_integer() - 1])
-                .deserialize(tomlAngle, atoms_);
+    if (node.contains("angle"))
+    {
+        std::vector tomlAngles = toml::find(node, "angle").as_array();
+        for (auto tomlAngle : tomlAngles)
+            if (!tomlAngle["i"].is_uninitialized() && !tomlAngle["j"].is_uninitialized() && !tomlAngle["k"].is_uninitialized())
+                angles_
+                    .emplace_back(&atoms_[tomlAngle["i"].as_integer() - 1], &atoms_[tomlAngle["j"].as_integer() - 1],
+                                  &atoms_[tomlAngle["k"].as_integer() - 1])
+                    .deserialize(tomlAngle, atoms_);
+    }
 
-    std::vector tomlImpropers = toml::find(node, "improper").as_array();
-    for (auto tomlImproper : tomlImpropers)
-        if (!tomlImproper["i"].is_uninitialized() && !tomlImproper["j"].is_uninitialized() &&
-            !tomlImproper["k"].is_uninitialized() && !tomlImproper["l"].is_uninitialized())
-            impropers_
-                .emplace_back(&atoms_[tomlImproper["i"].as_integer() - 1], &atoms_[tomlImproper["j"].as_integer() - 1],
-                              &atoms_[tomlImproper["k"].as_integer() - 1], &atoms_[tomlImproper["l"].as_integer() - 1])
-                .deserialize(tomlImproper, atoms_);
+    if (node.contains("improper"))
+    {
+        std::vector tomlImpropers = toml::find(node, "improper").as_array();
+        for (auto tomlImproper : tomlImpropers)
+            if (!tomlImproper["i"].is_uninitialized() && !tomlImproper["j"].is_uninitialized() &&
+                !tomlImproper["k"].is_uninitialized() && !tomlImproper["l"].is_uninitialized())
+                impropers_
+                    .emplace_back(&atoms_[tomlImproper["i"].as_integer() - 1], &atoms_[tomlImproper["j"].as_integer() - 1],
+                                  &atoms_[tomlImproper["k"].as_integer() - 1], &atoms_[tomlImproper["l"].as_integer() - 1])
+                    .deserialize(tomlImproper, atoms_);
+    }
 
-    std::vector tomlTorsions = toml::find(node, "torsion").as_array();
-    for (auto tomlTorsion : tomlTorsions)
-        if (!tomlTorsion["i"].is_uninitialized() && !tomlTorsion["j"].is_uninitialized() &&
-            !tomlTorsion["k"].is_uninitialized() && !tomlTorsion["l"].is_uninitialized())
-            torsions_
-                .emplace_back(&atoms_[tomlTorsion["i"].as_integer() - 1], &atoms_[tomlTorsion["j"].as_integer() - 1],
-                              &atoms_[tomlTorsion["k"].as_integer() - 1], &atoms_[tomlTorsion["l"].as_integer() - 1])
-                .deserialize(tomlTorsion, atoms_);
+    if (node.contains("torsion"))
+    {
+        std::vector tomlTorsions = toml::find(node, "torsion").as_array();
+        for (auto tomlTorsion : tomlTorsions)
+            if (!tomlTorsion["i"].is_uninitialized() && !tomlTorsion["j"].is_uninitialized() &&
+                !tomlTorsion["k"].is_uninitialized() && !tomlTorsion["l"].is_uninitialized())
+                torsions_
+                    .emplace_back(&atoms_[tomlTorsion["i"].as_integer() - 1], &atoms_[tomlTorsion["j"].as_integer() - 1],
+                                  &atoms_[tomlTorsion["k"].as_integer() - 1], &atoms_[tomlTorsion["l"].as_integer() - 1])
+                    .deserialize(tomlTorsion, atoms_);
+    }
 }
