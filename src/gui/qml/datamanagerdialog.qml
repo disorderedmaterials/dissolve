@@ -5,6 +5,7 @@ import QtQuick.Window 2
 
 Item {
     id: main
+    property string foo: "Xyzzy";
 
     Dialog {
 	title: "Data Manager"
@@ -14,21 +15,26 @@ Item {
 	RowLayout {
 	    GroupBox {
 		title: "Available Data"
-		RowLayout {
-		    Image {
-			Layout.preferredWidth: 20
-			Layout.preferredHeight: 20
-			source: "qrc:/general/icons/general_filter.svg"
+		ColumnLayout {
+		    RowLayout {
+			Image {
+			    Layout.preferredWidth: 20
+			    Layout.preferredHeight: 20
+			    source: "qrc:/general/icons/general_filter.svg"
+			}
+			TextField {
+			    id: filterEdit
+			    ToolTip.text: "Filter templates by name / description"
+			    ToolTip.visible: hovered
+			}
 		    }
-		    TextField {
-			id: filterEdit
-			ToolTip.text: "Filter templates by name / description"
-			ToolTip.visible: hovered
+		    TableView {
+			Layout.preferredHeight: 200
 		    }
 		}
 	    }
 	    GroupBox {
-		title: "Reference Points"
+		title: main.foo // "Reference Points"
 		RowLayout {
 		    Button {
 			icon.source: "qrc:/general/icons/general_remove.svg"

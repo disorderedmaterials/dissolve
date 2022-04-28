@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QQuickItem>
 #include <QQuickView>
 
 void DissolveWindow::setupIteration(int count)
@@ -87,6 +88,7 @@ void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
     // dataManagerDialog.exec();
     QQuickView *qmlView = new QQuickView();
     qmlView->setSource(QUrl("file:///home/adam/Code/dissolve/src/gui/qml/datamanagerdialog.qml"));
+    qmlView->rootObject()->setProperty("foo", "Quux");
     qmlView->show();
 }
 
