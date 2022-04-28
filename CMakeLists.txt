@@ -83,6 +83,7 @@ if(GUI)
                Widgets
                OpenGL
                OpenGLWidgets
+	       Quick
                REQUIRED
   )
   find_package(FTGL REQUIRED)
@@ -215,6 +216,7 @@ if(GUI)
             ${Qt6Gui_INCLUDE_DIRS}
             ${Qt6OpenGL_INCLUDE_DIRS}
             ${Qt6Widgets_INCLUDE_DIRS}
+            ${Qt6Quick_INCLUDE_DIRS}
             ${Qt6OpenGL_INCLUDE_DIRS}
             ${Qt6OpenGLWidgets_INCLUDE_DIRS}
   )

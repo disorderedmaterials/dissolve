@@ -165,8 +165,14 @@
           Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
           Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
           Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
+          Qt6Quick_DIR = "${QTDIR}/lib/cmake/Qt6Quick";
+          Qt6Qml_DIR = "${QTDIR}/lib/cmake/Qt6Qml";
+          Qt6QmlTools_DIR = "${QTDIR}/lib/cmake/Qt6QmlTools";
           PATH = "${QTDIR}/bin";
           THREADING_LINK_LIBS = "${pkgs.tbb}/lib/libtbb.so";
+          AntlrRuntime_INCLUDE_DIRS =
+            "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
+          AntlrRuntime_LINK_DIRS = "${pkgs.antlr4.runtime.cpp}/lib";
         };
 
         apps = {
@@ -179,7 +185,7 @@
             drv = self.packages.${system}.dissolve-gui;
           };
           uploader = {
-            type="app";
+            type = "app";
             program = toString (pkgs.writeScript "upload.sh" ''
               #!/bin/sh
               set -e
@@ -187,8 +193,12 @@
                 echo "Usage: nix run .#uploader HARBOR_USER HARBOR_SECRET IMAGE TAG" >&2
                 exit 1
               fi
-              ${outdated.legacyPackages.${system}.singularity}/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
-              ${outdated.legacyPackages.${system}.singularity}/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
+              ${
+                outdated.legacyPackages.${system}.singularity
+              }/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
+              ${
+                outdated.legacyPackages.${system}.singularity
+              }/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
             '');
           };
         };

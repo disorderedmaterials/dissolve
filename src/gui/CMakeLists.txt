@@ -220,8 +220,9 @@ qt6_add_resources(gui_RES ${gui_RES_QRC})
 # Target 'gui'
 add_library(gui ${gui_RES} ${gui_UIS_H} ${gui_SRCS} ${gui_MOC_SRCS})
 target_include_directories(
-  gui PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} Qt6::OpenGL
+  gui PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${Qt6Quick_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} Qt6::OpenGL
               Qt6::OpenGLWidgets
+              Qt6::Quick
 )
 target_link_libraries(
   gui
@@ -233,6 +234,7 @@ target_link_libraries(
   base
   Qt6::OpenGL
   Qt6::OpenGLWidgets
+  Qt6::Quick
 )
 
 # Subdirectories
