@@ -232,16 +232,22 @@ bool Dissolve::loadInput(std::string_view filename)
 
         if (file.is_uninitialized())
             std::cout << "Couldn't find the file";
-        toml::value speciesNode = toml::find(file, "species");
-        for (auto &[name, data] : speciesNode.as_table())
-            species().emplace_back(std::make_unique<Species>(name))->deserialize(data);
+        if (file.contains("species"))
+        {
+            toml::value speciesNode = toml::find(file, "species");
+            for (auto &[name, data] : speciesNode.as_table())
+                species().emplace_back(std::make_unique<Species>(name))->deserialize(data);
+        }
 
-        toml::basic_value<toml::discard_comments, std::map, std::vector> root;
-        toml::basic_value<toml::discard_comments, std::map, std::vector> oSpeciesNode;
-        for (auto &species : species())
-            oSpeciesNode[species->name().data()] = species->serialize();
-        root["species"] = oSpeciesNode;
-        output << std::setw(40) << root;
+        if (!species().empty())
+        {
+            toml::basic_value<toml::discard_comments, std::map, std::vector> root;
+            toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
+            for (auto &species : species())
+                speciesNode[species->name().data()] = species->serialize();
+            root["species"] = speciesNode;
+            output << std::setw(40) << root;
+        }
     }
 
     return result;
