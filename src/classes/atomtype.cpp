@@ -93,3 +93,24 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
             return false;
     return true;
 }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> atomType;
+
+    atomType["z"] = Elements::symbol(Z_).data();
+    atomType["charge"] = charge_;
+    atomType["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
+
+    std::vector<double> values = interactionPotential().parameters();
+    if (!values.empty())
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> atomTypeParameters;
+        std::vector<std::string> parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+        for (auto &&[parameter, value] : zip(parameters, values))
+            atomTypeParameters[parameter] = value;
+        atomType["parameters"] = atomTypeParameters;
+    }
+
+    return atomType;
+}

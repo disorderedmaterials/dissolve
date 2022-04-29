@@ -142,3 +142,20 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 
 // Return configuration temperature
 double Configuration::temperature() const { return temperature_; }
+toml::basic_value<toml::discard_comments, std::map, std::vector> Configuration::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> configuration;
+
+    if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
+        configuration["cellDivisionLength"] = requestedCellDivisionLength_;
+    if (requestedSizeFactor_ != defaultSizeFactor_)
+        configuration["sizeFactor"] = requestedSizeFactor_;
+    if (temperature_ != defaultTemperature_)
+        configuration["temperature"] = temperature_;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> generator;
+    generator["box"] = box_->serialize();
+    configuration["generator"] = generator;
+
+    return configuration;
+}

@@ -333,3 +333,31 @@ double SpeciesBond::force(double distance) const
     throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate force.\n",
                                          BondFunctions::forms().keyword(bondForm))));
 }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> bond;
+    if (i_ != nullptr)
+        bond["i"] = i_->userIndex();
+    if (j_ != nullptr)
+        bond["j"] = j_->userIndex();
+
+    std::string form = "@";
+    if (masterTerm_ != nullptr)
+        form += masterTerm_->name();
+    else
+        form = BondFunctions::forms().keyword(interactionForm());
+    bond["form"] = form;
+
+    std::vector<double> values = SpeciesBond::interactionPotential().parameters();
+    if (!values.empty())
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        std::vector<std::string> parameters = BondFunctions::parameters(interactionForm());
+        for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
+            parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+        bond["parameters"] = parametersNode;
+    }
+
+    return bond;
+}

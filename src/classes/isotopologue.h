@@ -5,7 +5,9 @@
 
 #include "data/elements.h"
 #include "data/isotopes.h"
+#include <map>
 #include <memory>
+#include <toml11/toml.hpp>
 #include <tuple>
 #include <vector>
 
@@ -59,4 +61,6 @@ class Isotopologue
     Sears91::Isotope atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

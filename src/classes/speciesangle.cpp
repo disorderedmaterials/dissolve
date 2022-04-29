@@ -360,3 +360,33 @@ double SpeciesAngle::force(double angleInDegrees) const
     throw(std::runtime_error(fmt::format("Angle functional form '{}' not accounted for, so can't calculate force.\n",
                                          AngleFunctions::forms().keyword(angleForm))));
 }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> angle;
+    if (i_ != nullptr)
+        angle["i"] = i_->userIndex();
+    if (j_ != nullptr)
+        angle["j"] = j_->userIndex();
+    if (k_ != nullptr)
+        angle["k"] = k_->userIndex();
+
+    std::string form = "@";
+    if (masterTerm_ != nullptr)
+        form += masterTerm_->name();
+    else
+        form = AngleFunctions::forms().keyword(interactionForm());
+    angle["form"] = form;
+
+    std::vector<double> values = SpeciesAngle::interactionPotential().parameters();
+    if (!values.empty())
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
+        for (auto &&[parameter, value] : zip(parameters, values))
+            parametersNode[parameter] = value;
+        angle["parameters"] = parametersNode;
+    }
+
+    return angle;
+}

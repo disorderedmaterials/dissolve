@@ -3,6 +3,7 @@
 
 #include "classes/species.h"
 #include "classes/atomtype.h"
+#include "data/ff/ff.h"
 #include "data/isotopes.h"
 
 Species::Species() : attachedAtomListsGenerated_(false), forcefield_(nullptr)
@@ -202,3 +203,68 @@ void Species::print() const
 
 // Return version
 int Species::version() const { return version_; }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> species;
+    if (forcefield_ != nullptr)
+        species["forcefield"] = forcefield_->name().data();
+
+    if (!atoms_.empty())
+    {
+        toml::array atoms;
+        for (auto &atom : atoms_)
+            atoms.push_back(atom.serialize());
+        species["atom"] = atoms;
+    }
+
+    if (!bonds_.empty())
+    {
+        toml::array bonds;
+        for (auto &bond : bonds_)
+            bonds.push_back(bond.serialize());
+        species["bond"] = bonds;
+    }
+
+    if (!angles_.empty())
+    {
+        toml::array angles;
+        for (auto &angle : angles_)
+            angles.push_back(angle.serialize());
+        species["angle"] = angles;
+    }
+
+    if (!impropers_.empty())
+    {
+        toml::array impropers;
+        for (auto &improper : impropers_)
+            impropers.push_back(improper.serialize());
+        species["improper"] = impropers;
+    }
+
+    if (!torsions_.empty())
+    {
+        toml::array torsions;
+        for (auto &torsion : torsions_)
+            torsions.push_back(torsion.serialize());
+        species["torsion"] = torsions;
+    }
+
+    if (!isotopologues_.empty())
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> isotopologues;
+        for (auto &isotopologue : isotopologues_)
+            isotopologues[isotopologue->name().data()] = isotopologue->serialize();
+        species["isotopologues"] = isotopologues;
+    }
+
+    if (!sites_.empty())
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> sites;
+        for (auto &site : sites_)
+            sites[site->name().data()] = site->serialize();
+        species["sites"] = sites;
+    }
+
+    return species;
+}

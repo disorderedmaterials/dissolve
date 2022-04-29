@@ -18,6 +18,11 @@
 #include <memory>
 #include <variant>
 
+#include <map>
+#include <vector>
+
+#include <toml11/toml.hpp>
+
 // Forward Declarations
 class Forcefield;
 
@@ -362,4 +367,6 @@ class Species
     bool read(LineParser &parser, CoreData &coreData);
     // Write Species definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

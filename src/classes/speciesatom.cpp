@@ -456,3 +456,14 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
     // Return the negative of the bound OS, or zero if we were only bound to the same element as ourselves
     return (nSameElement == i->nBonds() ? 0 : -osBound);
 }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAtom::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> atom;
+    atom["index"] = userIndex();
+    atom["z"] = Elements::symbol(Z_).data();
+    atom["r"] = toml::array{r_.x, r_.y, r_.z};
+    atom["charge"] = charge_;
+    atom["type"] = atomType_->name().data();
+    return atom;
+}

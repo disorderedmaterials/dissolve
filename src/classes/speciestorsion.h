@@ -6,6 +6,10 @@
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
 
+#include <map>
+#include <toml11/toml.hpp>
+#include <vector>
+
 // Forward Declarations
 class SpeciesAtom;
 class Species;
@@ -109,6 +113,8 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     static double force(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params);
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };
 
 // MasterTorsion Definition

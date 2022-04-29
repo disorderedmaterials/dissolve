@@ -6,6 +6,10 @@
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
 
+#include <map>
+#include <toml11/toml.hpp>
+#include <vector>
+
 // Forward Declarations
 class SpeciesAtom;
 class Species;
@@ -120,6 +124,8 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     double energy(double distance) const;
     // Return force multiplier for specified distance
     double force(double distance) const;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };
 
 // MasterBond Definition

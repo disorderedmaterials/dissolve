@@ -36,3 +36,17 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
 {
     return shortRangeTruncationScheme_;
 }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePairPotential::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentials;
+    pairPotentials["range"] = range_;
+    pairPotentials["delta"] = delta_;
+    pairPotentials["includeCoulomb"] = atomTypeChargeSource_;
+    pairPotentials["coulombTruncation"] = PairPotential::coulombTruncationSchemes().keyword(coulombTruncationScheme_);
+    pairPotentials["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(shortRangeTruncationScheme_);
+    if (!atomTypes_.empty())
+        for (auto &atomType : atomTypes_)
+            pairPotentials[atomType->name().data()] = atomType->serialize();
+    return pairPotentials;
+}

@@ -423,3 +423,34 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 
     return true;
 }
+
+toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesSite::serialize()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> site;
+    if (!originAtoms_.empty())
+    {
+        toml::array originAtoms;
+        for (auto &atom : originAtoms_)
+            originAtoms.push_back(atom->index());
+        site["originAtoms"] = originAtoms;
+    }
+
+    if (!xAxisAtoms_.empty())
+    {
+        toml::array xAxisAtoms;
+        for (auto &atom : xAxisAtoms_)
+            xAxisAtoms.push_back(atom->index());
+        site["xAxisAtoms"] = xAxisAtoms;
+    }
+
+    if (!yAxisAtoms_.empty())
+    {
+        toml::array yAxisAtoms;
+        for (auto &atom : yAxisAtoms_)
+            yAxisAtoms.push_back(atom->index());
+        site["yAxisAtoms"] = yAxisAtoms;
+    }
+
+    site["originMassWeighted"] = originMassWeighted_;
+    return site;
+}

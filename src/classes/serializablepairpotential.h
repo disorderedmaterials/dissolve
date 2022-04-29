@@ -6,9 +6,12 @@
 
 #include "pairpotential.h"
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <toml11/toml.hpp>
 
 class SerializablePairPotential
 {
@@ -40,4 +43,6 @@ class SerializablePairPotential
     const PairPotential::CoulombTruncationScheme &coulombTruncationScheme() const;
     PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme();
     const PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme() const;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

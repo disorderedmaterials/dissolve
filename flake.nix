@@ -11,9 +11,11 @@
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
-  outputs =
-    { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
+  outputs = { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli}:
     let
+      toml = pkgs: ((import ./nix/toml11.nix) {
+        inherit pkgs;
+      });
       exe-name = mpi: gui:
         if mpi then
           "dissolve-mpi"
@@ -35,6 +37,7 @@
           jre
           pkgconfig
           pugixml
+          (toml pkgs)
         ];
       gui_libs = pkgs:
         with pkgs; [
@@ -179,7 +182,7 @@
             drv = self.packages.${system}.dissolve-gui;
           };
           uploader = {
-            type="app";
+            type = "app";
             program = toString (pkgs.writeScript "upload.sh" ''
               #!/bin/sh
               set -e
@@ -187,8 +190,12 @@
                 echo "Usage: nix run .#uploader HARBOR_USER HARBOR_SECRET IMAGE TAG" >&2
                 exit 1
               fi
-              ${outdated.legacyPackages.${system}.singularity}/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
-              ${outdated.legacyPackages.${system}.singularity}/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
+              ${
+                outdated.legacyPackages.${system}.singularity
+              }/bin/singularity remote login --username $1 --password $2 docker://harbor.stfc.ac.uk
+              ${
+                outdated.legacyPackages.${system}.singularity
+              }/bin/singularity push $3 oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:$4
             '');
           };
         };

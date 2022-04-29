@@ -6,6 +6,10 @@
 #include "base/enumoptions.h"
 #include "math/matrix3.h"
 
+#include <map>
+#include <toml11/toml.hpp>
+#include <vector>
+
 // Forward Declarations
 class Cell;
 class Data1D;
@@ -176,6 +180,8 @@ class Box
     Vec3<double> foldFrac(const Vec3<double> &r) const;
     // Determine axis scale factors to give requested volume, with scaling ratios provided
     Vec3<double> scaleFactors(double requestedVolume, Vec3<bool> scalableAxes = {true, true, true}) const;
+
+    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };
 
 // Single Image Box Definition
