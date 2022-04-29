@@ -616,9 +616,9 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
     if (!values.empty())
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
-        int idx = 0;
+        int index = 0;
         for (auto &value : values)
-            parametersNode[TorsionFunctions::parameter(interactionForm(), idx++)] = value;
+            parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;
         torsion["parameters"] = parametersNode;
     }
 
