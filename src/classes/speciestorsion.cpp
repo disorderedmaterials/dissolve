@@ -624,7 +624,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
 
     return torsion;
 }
-void SpeciesTorsion::deserialize(toml::value node, std::vector<SpeciesAtom> &atoms)
+void SpeciesTorsion::deserialize(toml::value node)
 {
     if (!node["form"].is_uninitialized())
     {

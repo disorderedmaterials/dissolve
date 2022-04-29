@@ -234,12 +234,7 @@ bool Dissolve::loadInput(std::string_view filename)
             std::cout << "Couldn't find the file";
         toml::value speciesNode = toml::find(file, "species");
         for (auto &[name, data] : speciesNode.as_table())
-        {
-            // auto &species = species().emplace_back(name);
-            // species->deserialize(data);
-            Species *species = addSpecies();
-            species->deserialize(data, name);
-        }
+            species().emplace_back(std::make_unique<Species>(name))->deserialize(data);
 
         toml::basic_value<toml::discard_comments, std::map, std::vector> root;
         toml::basic_value<toml::discard_comments, std::map, std::vector> oSpeciesNode;

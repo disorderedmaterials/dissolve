@@ -31,6 +31,7 @@ class Species
 {
     public:
     Species();
+    Species(std::string name);
     ~Species() = default;
     // Clear Data
     void clear();
@@ -389,5 +390,5 @@ class Species
     bool write(LineParser &parser, std::string_view prefix);
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
-    void deserialize(toml::value node, std::string name);
+    void deserialize(toml::value node);
 };

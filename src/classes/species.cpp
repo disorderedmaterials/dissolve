@@ -6,7 +6,8 @@
 #include "data/ff/ff.h"
 #include "data/isotopes.h"
 
-Species::Species() : attachedAtomListsGenerated_(false), forcefield_(nullptr)
+Species::Species() : Species(std::string("Natural")) {}
+Species::Species(std::string name) : attachedAtomListsGenerated_(false), forcefield_(nullptr), name_(name)
 {
     box_ = std::make_unique<SingleImageBox>();
 
@@ -289,10 +290,8 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
 
     return species;
 }
-void Species::deserialize(toml::value node, std::string name)
+void Species::deserialize(toml::value node)
 {
-    name_ = name;
-
     std::vector tomlAtoms = toml::find(node, "atom").as_array();
     for (auto tomlAtom : tomlAtoms)
         atoms_.emplace_back().deserialize(tomlAtom);
@@ -303,7 +302,7 @@ void Species::deserialize(toml::value node, std::string name)
         for (auto tomlBond : tomlBonds)
             if (!tomlBond["i"].is_uninitialized() && !tomlBond["j"].is_uninitialized())
                 bonds_.emplace_back(&atoms_[tomlBond["i"].as_integer() - 1], &atoms_[tomlBond["j"].as_integer() - 1])
-                    .deserialize(tomlBond, atoms_);
+                    .deserialize(tomlBond);
     }
 
     if (node.contains("angle"))
@@ -314,7 +313,7 @@ void Species::deserialize(toml::value node, std::string name)
                 angles_
                     .emplace_back(&atoms_[tomlAngle["i"].as_integer() - 1], &atoms_[tomlAngle["j"].as_integer() - 1],
                                   &atoms_[tomlAngle["k"].as_integer() - 1])
-                    .deserialize(tomlAngle, atoms_);
+                    .deserialize(tomlAngle);
     }
 
     if (node.contains("improper"))
@@ -326,7 +325,7 @@ void Species::deserialize(toml::value node, std::string name)
                 impropers_
                     .emplace_back(&atoms_[tomlImproper["i"].as_integer() - 1], &atoms_[tomlImproper["j"].as_integer() - 1],
                                   &atoms_[tomlImproper["k"].as_integer() - 1], &atoms_[tomlImproper["l"].as_integer() - 1])
-                    .deserialize(tomlImproper, atoms_);
+                    .deserialize(tomlImproper);
     }
 
     if (node.contains("torsion"))
@@ -338,6 +337,6 @@ void Species::deserialize(toml::value node, std::string name)
                 torsions_
                     .emplace_back(&atoms_[tomlTorsion["i"].as_integer() - 1], &atoms_[tomlTorsion["j"].as_integer() - 1],
                                   &atoms_[tomlTorsion["k"].as_integer() - 1], &atoms_[tomlTorsion["l"].as_integer() - 1])
-                    .deserialize(tomlTorsion, atoms_);
+                    .deserialize(tomlTorsion);
     }
 }

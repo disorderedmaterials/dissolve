@@ -255,7 +255,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
 
     return improper;
 }
-void SpeciesImproper::deserialize(toml::value node, std::vector<SpeciesAtom> &atoms)
+void SpeciesImproper::deserialize(toml::value node)
 {
     if (!node["form"].is_uninitialized())
     {

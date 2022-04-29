@@ -126,7 +126,7 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     double force(double distance) const;
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
-    void deserialize(toml::value node, std::vector<SpeciesAtom> &atoms);
+    void deserialize(toml::value node);
 };
 
 // MasterBond Definition

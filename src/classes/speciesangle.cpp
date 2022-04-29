@@ -390,7 +390,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::s
 
     return angle;
 }
-void SpeciesAngle::deserialize(toml::value node, std::vector<SpeciesAtom> &atoms)
+void SpeciesAngle::deserialize(toml::value node)
 {
     if (!node["form"].is_uninitialized())
     {

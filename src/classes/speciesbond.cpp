@@ -361,7 +361,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
 
     return bond;
 }
-void SpeciesBond::deserialize(toml::value node, std::vector<SpeciesAtom> &atoms)
+void SpeciesBond::deserialize(toml::value node)
 {
     if (!node["form"].is_uninitialized())
     {
