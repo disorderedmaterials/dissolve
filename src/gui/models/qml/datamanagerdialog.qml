@@ -2,6 +2,7 @@ import QtQuick 2
 import QtQuick.Controls 2
 import QtQuick.Layouts 2
 import QtQuick.Window 2
+import dataRef 1.0
 
 Item {
     id: main
