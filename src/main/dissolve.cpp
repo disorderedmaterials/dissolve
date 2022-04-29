@@ -7,7 +7,9 @@
 #include "classes/neutronweights.h"
 #include "classes/species.h"
 
-Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
+Dissolve::Dissolve(CoreData &coreData)
+    : coreData_(coreData),
+      serializablePairPotential_(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_, coreData_.atomTypes())
 {
     // Set core simulation variables
     restartFileFrequency_ = 10;

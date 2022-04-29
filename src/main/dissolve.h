@@ -7,6 +7,7 @@
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
+#include "classes/serializablepairpotential.h"
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
@@ -32,6 +33,7 @@ class Dissolve
     const bool toml_testing_flag = false;
     // Reference to CoreData
     CoreData &coreData_;
+    SerializablePairPotential serializablePairPotential_;
 
     public:
     // Return reference to CoreData
