@@ -30,7 +30,7 @@ class Dissolve
      * Core
      */
     private:
-    const bool toml_testing_flag = false;
+    static constexpr bool toml_testing_flag = true;
     // Reference to CoreData
     CoreData &coreData_;
     SerializablePairPotential serializablePairPotential_;

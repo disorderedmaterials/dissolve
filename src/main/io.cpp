@@ -200,18 +200,7 @@ bool Dissolve::loadInput(std::string_view filename)
                 root["species"] = speciesNode;
             }
 
-            toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentialsNode;
-            pairPotentialsNode["range"] = pairPotentialRange_;
-            pairPotentialsNode["delta"] = pairPotentialDelta_;
-            pairPotentialsNode["includeCoulomb"] = atomTypeChargeSource_;
-            pairPotentialsNode["coulombTruncation"] =
-                PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme());
-            pairPotentialsNode["shortRangeTruncation"] =
-                PairPotential::shortRangeTruncationSchemes().keyword(PairPotential::shortRangeTruncationScheme());
-            if (!atomTypes().empty())
-                for (auto &atomType : atomTypes())
-                    pairPotentialsNode[atomType->name().data()] = atomType->serialize();
-            root["pairPotentials"] = pairPotentialsNode;
+            root["pairPotentials"] = serializablePairPotential_.serialize();
 
             if (!configurations().empty())
             {
