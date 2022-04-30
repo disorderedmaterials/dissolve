@@ -90,7 +90,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     selectB_ = std::make_shared<SelectProcedureNode, std::vector<const SpeciesSite *>, bool>({}, true);
     selectB_->setName("B");
     selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
-    std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Calculate: 'rAB'
@@ -104,7 +104,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
 
     // -- -- Collect2D:  'rAB vs axisAngle)'
     collectDAngle_ = std::make_shared<Collect2DProcedureNode>(calcDistance, calcAngle, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-    std::shared_ptr<SequenceProcedureNode> subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
+    auto subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
     forEachB->addNode(collectDAngle_);
 
     // -- -- -- Collect1D:  'RDF(AB)'
@@ -121,7 +121,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     processDistance_->keywords().set("LabelValue", std::string("g(r)"));
     processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
-    std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
+    auto rdfNormalisation = processDistance_->addNormalisationBranch();
     rdfNormalisation->addNode(
         std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode>>>(
             {selectA_}));
@@ -136,7 +136,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     processAngle_->setName("AxisAngle(AB)");
     processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
     processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
-    std::shared_ptr<SequenceProcedureNode> angleNormalisation = processAngle_->addNormalisationBranch();
+    auto angleNormalisation = processAngle_->addNormalisationBranch();
     angleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(x)"));
     angleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
     analyser_.addRootSequenceNode(processAngle_);
@@ -146,7 +146,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     processDAngle_->setName("DAxisAngle");
     processDAngle_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
     processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
-    std::shared_ptr<SequenceProcedureNode> dAngleNormalisation = processDAngle_->addNormalisationBranch();
+    auto dAngleNormalisation = processDAngle_->addNormalisationBranch();
     dAngleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)"));
     dAngleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
     analyser_.addRootSequenceNode(processDAngle_);
