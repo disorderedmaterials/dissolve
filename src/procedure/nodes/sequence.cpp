@@ -46,16 +46,25 @@ EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> SequenceProcedureNode::s
 void SequenceProcedureNode::clear() { sequence_.clear(); }
 
 // Add (own) node into sequence, checking the context
-void SequenceProcedureNode::addNode(NodeRef node)
+void SequenceProcedureNode::addNode(NodeRef nodeToAdd)
 {
-    if (!node)
-        return;
+    assert(nodeToAdd);
 
-    if (!node->isContextRelevant(context_))
-        Messenger::error("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
-                         ProcedureNode::nodeTypes().keyword(node->type()), ProcedureNode::nodeContexts().keyword(context_));
+    if (!nodeToAdd->isContextRelevant(context_))
+        Messenger::error("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", nodeToAdd->name(),
+                         ProcedureNode::nodeTypes().keyword(nodeToAdd->type()),
+                         ProcedureNode::nodeContexts().keyword(context_));
 
-    sequence_.push_back(node);
+    // If the node hasn't been given a name, generate a unique one for it now based on its type
+    if (nodeToAdd->name().empty())
+    {
+        auto n = 1;
+        while (node(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n)))
+            ++n;
+        nodeToAdd->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n));
+    }
+
+    sequence_.push_back(nodeToAdd);
 }
 
 // Return sSequential node list
@@ -223,7 +232,6 @@ std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef query
     // If one was give, start from the querying node and work backwards...
     if (queryingNode)
     {
-
         auto range = QueryRange(queryingNode, sequence_);
         assert(!range.empty());
 
