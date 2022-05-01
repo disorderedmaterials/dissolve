@@ -138,11 +138,11 @@ void SpeciesTab::updateControls()
     speciesVersion_ = species_->version();
 }
 
-// Disable sensitive controls within tab
-void SpeciesTab::disableSensitiveControls() { setEnabled(false); }
+// Prevent editing within tab
+void SpeciesTab::preventEditing() { setEnabled(false); }
 
-// Enable sensitive controls within tab
-void SpeciesTab::enableSensitiveControls() { setEnabled(true); }
+// Allow editing within tab
+void SpeciesTab::allowEditing() { setEnabled(true); }
 
 /*
  * MainTab Reimplementations

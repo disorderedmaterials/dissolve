@@ -71,10 +71,10 @@ class ConfigurationTab : public QWidget, public MainTab
     protected:
     // Update controls in tab
     void updateControls() override;
-    // Disable sensitive controls within tab
-    void disableSensitiveControls() override;
-    // Enable sensitive controls within tab
-    void enableSensitiveControls() override;
+    // Prevent editing within tab
+    void preventEditing() override;
+    // Allow editing within tab
+    void allowEditing() override;
 
     /*
      * Signals / Slots

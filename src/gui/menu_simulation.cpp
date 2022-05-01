@@ -28,7 +28,7 @@ void DissolveWindow::setupIteration(int count)
     }
 
     // Prepare the GUI
-    disableSensitiveControls();
+    preventEditing();
     Renderable::setSourceDataAccessEnabled(false);
     dissolveIterating_ = true;
 

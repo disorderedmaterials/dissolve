@@ -441,22 +441,22 @@ void MainTabsWidget::updateAllTabs()
         tab->updateControls();
 }
 
-// Disable sensitive controls in all tabs
-void MainTabsWidget::disableSensitiveControls()
+// Prevent editing in all tabs
+void MainTabsWidget::preventEditing()
 {
     for (auto tab : allTabs_)
-        tab->disableSensitiveControls();
+        tab->preventEditing();
 
     // Disable tab close buttons
     for (auto &[button, page] : closeButtons_)
         button->setDisabled(true);
 }
 
-// Enable sensitive controls in all tabs
-void MainTabsWidget::enableSensitiveControls()
+// Allow editing in all tabs
+void MainTabsWidget::allowEditing()
 {
     for (auto tab : allTabs_)
-        tab->enableSensitiveControls();
+        tab->allowEditing();
 
     // Enable tab close buttons
     for (auto &[button, page] : closeButtons_)

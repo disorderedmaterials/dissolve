@@ -4,8 +4,8 @@
 #include "gui/gui.h"
 #include "main/dissolve.h"
 
-// Disable sensitive controls
-void DissolveWindow::disableSensitiveControls()
+// Disable editing
+void DissolveWindow::preventEditing()
 {
     // Disable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(false);
@@ -20,12 +20,12 @@ void DissolveWindow::disableSensitiveControls()
     ui_.ConfigurationMenu->setEnabled(false);
     ui_.LayerMenu->setEnabled(false);
 
-    // Disable sensitive controls in all tabs
-    ui_.MainTabs->disableSensitiveControls();
+    // Disable editing in all tabs
+    ui_.MainTabs->preventEditing();
 }
 
-// Enable sensitive controls
-void DissolveWindow::enableSensitiveControls()
+// Allow editing
+void DissolveWindow::allowEditing()
 {
     // Enable necessary simulation menu items
     ui_.SimulationRunAction->setEnabled(true);
@@ -40,14 +40,14 @@ void DissolveWindow::enableSensitiveControls()
     ui_.ConfigurationMenu->setEnabled(true);
     ui_.LayerMenu->setEnabled(true);
 
-    // Enable sensitive controls in all tabs
-    ui_.MainTabs->enableSensitiveControls();
+    // Allow editing in all tabs
+    ui_.MainTabs->allowEditing();
 }
 
 // All iterations requested are complete
 void DissolveWindow::iterationsComplete()
 {
-    enableSensitiveControls();
+    allowEditing();
     Renderable::setSourceDataAccessEnabled(true);
     dissolveIterating_ = false;
 

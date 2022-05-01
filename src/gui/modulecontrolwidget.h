@@ -49,10 +49,10 @@ class ModuleControlWidget : public QWidget
     public:
     // Update controls within widget
     void updateControls(Flags<ModuleWidget::UpdateFlags> updateFlags = {});
-    // Disable sensitive controls
-    void disableSensitiveControls();
-    // Enable sensitive controls
-    void enableSensitiveControls();
+    // Disable editing
+    void preventEditing();
+    // Allow editing
+    void allowEditing();
 
     /*
      * UI

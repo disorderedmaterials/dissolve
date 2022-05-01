@@ -170,15 +170,15 @@ void ProcedureChartNodeBlock::updateControls()
     refreshing_ = false;
 }
 
-// Disable sensitive controls
-void ProcedureChartNodeBlock::disableSensitiveControls()
+// Disable editing
+void ProcedureChartNodeBlock::preventEditing()
 {
     ui_.KeywordsControlWidget->setEnabled(false);
     ui_.RemoveButton->setEnabled(false);
 }
 
-// Enable sensitive controls
-void ProcedureChartNodeBlock::enableSensitiveControls()
+// Allow editing
+void ProcedureChartNodeBlock::allowEditing()
 {
     ui_.KeywordsControlWidget->setEnabled(true);
     ui_.RemoveButton->setEnabled(true);

@@ -118,10 +118,10 @@ class MainTabsWidget : public QTabWidget
     public:
     // Update all tabs
     void updateAllTabs();
-    // Disable sensitive controls in all tabs
-    void disableSensitiveControls();
-    // Enable sensitive controls in all tabs
-    void enableSensitiveControls();
+    // Prevent editing in all tabs
+    void preventEditing();
+    // Allow editing in all tabs
+    void allowEditing();
 
     /*
      * Tab Styling
