@@ -46,16 +46,25 @@ EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> SequenceProcedureNode::s
 void SequenceProcedureNode::clear() { sequence_.clear(); }
 
 // Add (own) node into sequence, checking the context
-void SequenceProcedureNode::addNode(NodeRef node)
+void SequenceProcedureNode::addNode(NodeRef nodeToAdd)
 {
-    if (!node)
-        return;
+    assert(nodeToAdd);
 
-    if (!node->isContextRelevant(context_))
-        Messenger::error("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
-                         ProcedureNode::nodeTypes().keyword(node->type()), ProcedureNode::nodeContexts().keyword(context_));
+    if (!nodeToAdd->isContextRelevant(context_))
+        Messenger::error("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", nodeToAdd->name(),
+                         ProcedureNode::nodeTypes().keyword(nodeToAdd->type()),
+                         ProcedureNode::nodeContexts().keyword(context_));
 
-    sequence_.push_back(node);
+    // If the node hasn't been given a name, generate a unique one for it now based on its type
+    if (nodeToAdd->name().empty())
+    {
+        auto n = 1;
+        while (node(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n)))
+            ++n;
+        nodeToAdd->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n));
+    }
+
+    sequence_.push_back(nodeToAdd);
 }
 
 // Return sSequential node list
@@ -223,7 +232,6 @@ std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef query
     // If one was give, start from the querying node and work backwards...
     if (queryingNode)
     {
-
         auto range = QueryRange(queryingNode, sequence_);
         assert(!range.empty());
 
@@ -511,30 +519,26 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
                     fmt::format("Epic Developer Fail - Don't know how to create a node of type '{}'.\n", parser.argsv(0))));
         }
 
-        // Check for clash of names with existing node in scope
-        if (!sequence_.empty() && nodeInScope(sequence_.back(), parser.hasArg(1) ? parser.argsv(1) : newNode->name()))
-        {
-            return Messenger::error("A node named '{}' is already in scope.\n",
-                                    parser.hasArg(1) ? parser.argsv(1) : newNode->name());
-        }
+        // Set the name of the node if it is required / provided
+        if (newNode->mustBeNamed() && !parser.hasArg(1))
+            Messenger::error("A name must be given explicitly to a node of type {}.\n",
+                             ProcedureNode::nodeTypes().keyword(newNode->type()));
 
-        // Set the name of the node if it is required
-        if (newNode->mustBeNamed())
+        if (parser.hasArg(1))
         {
-            if (!parser.hasArg(1))
-                Messenger::error("A name must be given explicitly to a node of type {}.\n",
-                                 ProcedureNode::nodeTypes().keyword(newNode->type()));
-            else
-                newNode->setName(parser.argsv(1));
+            // Set the name (to nice-ify it)
+            newNode->setName(parser.argsv(1));
+
+            // Check for clash of names with existing node in scope
+            if (!sequence_.empty() && nodeInScope(sequence_.back(), newNode->name()))
+                return Messenger::error("A node named '{}' is already in scope.\n", newNode->name());
         }
 
         // Is the new node permitted in our context?
         if (!newNode->isContextRelevant(context_))
-        {
             return Messenger::error("'{}' node not allowed / relevant in '{}' context.\n",
                                     ProcedureNode::nodeTypes().keyword(newNode->type()),
                                     ProcedureNode::nodeContexts().keyword(context_));
-        }
 
         // Add the new node to our list, and set ourself as its scope
         sequence_.push_back(newNode);

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>283</width>
+    <width>309</width>
     <height>30</height>
    </rect>
   </property>
@@ -98,7 +98,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string/>
+      <string>Options</string>
      </property>
      <property name="icon">
       <iconset resource="../main.qrc">
@@ -109,6 +109,9 @@
        <width>20</width>
        <height>20</height>
       </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
      </property>
     </widget>
    </item>

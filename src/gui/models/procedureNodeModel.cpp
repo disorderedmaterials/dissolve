@@ -43,12 +43,14 @@ int ProcedureNodeModel::rowCount(const QModelIndex &parent) const
 
 QVariant ProcedureNodeModel::data(const QModelIndex &index, int role) const
 {
+    auto node = rawData(index);
+
     if (role == Qt::DisplayRole)
-        return QString::fromStdString(std::string(rawData(index)->name()));
+        return QString::fromStdString(std::string(node->name()));
     else if (role == Qt::CheckStateRole && nodePresenceFunction_)
-        return nodePresenceFunction_(rawData(index)) ? Qt::Unchecked : Qt::Checked;
+        return nodePresenceFunction_(node) ? Qt::Unchecked : Qt::Checked;
     else if (role == Qt::UserRole)
-        return QVariant::fromValue(rawData(index));
+        return QVariant::fromValue(node);
 
     return {};
 }
