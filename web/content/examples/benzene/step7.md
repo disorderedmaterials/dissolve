@@ -6,23 +6,35 @@ type: docs
 
 Restart the simulation and monitor the progress of the r-factors and eReq value in the {{< gui-module "EPSR" >}} module.
 
-{{< action type="tabs" text="**Refine (EPSR)** layer tab" />}}
-{{< action type="mouse" text="Double-click the `EPSR` module to open it in a tab and see all of the associated graphs" />}}
-{{< action type="mouse" text="Click the `R-Factor` tab to view the `R-Factor` (bottom) and `EReq` (top) graphs" />}}
+{{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Refine (EPSR)">}} layer tab{{< /action >}}
+{{< action type="mouse">}}Select the {{< gui-module "EPSR" >}} module and show its {{< gui-button icon="general_output" text="Output" >}} tab{{< /action >}}
+{{< action type="mouse" text="Click the _R Factors_ tab to display it" />}}
+
+You'll see here a graph of the individual r-factors for the three datasets, as well as the total (summed) R-factor. The current "strength" of applied potential is shown at the bottom-left of the plot (**Current EReq""). Once you've been running for a few hundred steps the ereq value should have increased to 3.0, and the fits might look something like this (on the _F(Q)_ tab of the {{< gui-module "EPSR" >}} module):
+
+{{< cimage src="../ereq3.png" caption="Comparison of reference vs simulated structure factors at ereq=3.0" >}}
+
+The fits should be reqlly quite good, but you might observe some "ripples" in the simulated structure factors at lower $Q$ values, as is the case in the image above. These do not arise from structure in the system, but rather are high-frequency Fourier ripples caused by truncation of the partial radial distribution functions, made worse in the present case because our system isn't that large (100 molecules). We can remove some of that effect by introducing a window function into the Fourier transform when generating our structure factors:
+
+First, stop the simulation if it's running:
+{{< action type="key" text="Escape" />}}
 
 
-Once the additional energy has stabilised at 10.0, we can increase it to 20.0 to improve our fit a little more.
-
-{{< action text="Pause the simulation" >}}
-{{< action type="mouse" text="Find the `EPSR` module options" />}}
-{{< action type="edit" text="Change the **EReq** value to 20" />}}
-{{< action text="Start the simulation" >}}
+{{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="RDF / Neutron S(Q)">}} layer tab{{< /action >}}
+{{< action type="mouse">}}Select the {{< gui-module "SQ" >}} module{{< /action >}}
+{{< action type="edit">}}In the **Control** settings group change the **WindowFunction** to `Lorch0`{{< /action >}}
 
 
-Keep running until the applied potential gets to the new limit - we don't want the empirical potential to be varying too much while we're conducting our production run, otherwise any properties we calculate may be calculated from a series of configuration that do no represent a stable structural point. Once it has, we can save another restart file if we want:
+Start the simulation running again and after a few steps you should see much smoother structure factors:
 
-{{< action type="menu" text="Simulation &#8680; Save Restart Point..." />}}
-{{< action type="edit" text="Change the filename to `refined.restart` and click _Save_" />}}
+{{< cimage src="../ereq3-lorch0.png" caption="Comparison of reference vs simulated structure factors at ereq=3.0, and with the Lorch0 window function applied during Fourier transform of g(r) to S(Q)" >}}
+
+{{< warn text="Applying a window function in this way can have unwanted effects as well, with structural features \"smoothed out\". Look closely at the C<sub>6</sub>D<sub>6</sub> data around 1.5 < $Q$ < 2.0 and you can see that the pair of peaks has been somewhat blended together with the Lorch0 function applied." />}}
+
+With our refinement progressed to an acceptable level (in the data shown above the total r-factor is of the order of 5.5&times;10<sup>-4</sup>), we're now in a position to save another restart point:
+
+{{< action type="menu" text="File &#8680; Save Restart Point..." />}}
+{{< action type="edit">}}Change the filename to `ereq3.restart` and click {{< gui-button text="Save">}}{{< /action >}}
 
 
 * * *

@@ -5,16 +5,17 @@ type: docs
 
 
 Now that the analysis processing layer is prepared, we need to run it for a while in order to get some good statistics on our quantities. A good 500 iterations  (preferably 1000) is needed to get the statistics for the 2D map, so let's ask Dissolve to run for a set number of steps:
+
 {{< action type="menu" text="Simulation &#8680; Run For..." />}}
-{{< action type="edit" text=" Enter 1000 and click _OK_" />}}
+{{< action type="edit">}}Enter `1000` and click {{< gui-button text="OK" >}}{{< /action >}}
 
 
 Dissolve will now iterate for 1000 iterations and stop - you can see the estimated time (ETA) to complete these 1000 steps in the status bar at the bottom of the main window. Now might be a good time to have a drink, or write that email you've been putting off. If you think 1000 iterations is going to take too long, press **Escape** to stop the simulation and go for 500 iterations instead.
 
-To see what's being calculated, go back to the [`CalculateAxisAngle`]({{< ref "calculateaxisangle" >}}) module and look at its output section:
+To see what's being calculated, go back to the {{< gui-module "CalculateAxisAngle" >}} module and look at its output section:
 
-{{< action type="tabs" text="**Analysis** layer tab" />}}
-{{< action type="mouse" text="Click the `CalculateAxisAngle` module and select the **Output** section" />}}
+{{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Analysis" >}} layer{{< /action >}}
+{{< action type="mouse">}}Click the {{< gui-module "CalculateAxisAngle" >}} module and select the {{< gui-button icon="general_output" text="Output">}} section{{< /action >}}
 
 We have three graphs - top-left is the radial distribution function between the centres-of-geometry of the benzene, while the bottom-left is the angle histogram of the z-axis angles (averaged over all distances). The main graph to the right shows the distance-angle map of the two quantities. You might want to explore the latter in 3D space, rather than a top-down view - you can change the view style for the plot in the toolbar at the top (change the view type from `XY` to `3D`).
 
@@ -22,11 +23,12 @@ Once the iterations have completed, we need to do a bit of housekeeping.
 
 ### Snapshot the Current Data
 
-Let's save the current data now, as it represents our reference point to which we'll compare later on:
+Let's save the current data now, as it represents our reference point against which we'll compare things later on:
 
-{{< action type="menu" text="Simulation &#8680; Save Restart Point..." />}}
-{{< action type="edit" text="Change the filename to `reference.restart` and click _Save_" />}}
+{{< action type="menu" text="File &#8680; Save Restart Point..." />}}
+{{< action type="edit">}}Change the filename to `reference.restart` and click {{< gui-button text="Save" >}}{{< /action >}}
 
+You might also find it useful to copy images of the graphs here to help with comparison later on - right-click on an empty part of the graph and select _Copy to clipboard_ - or you can right-click on a particular curve and save the data directly in order to plot it in some other external software.
 
 ### Clear the Current Data
 
@@ -35,14 +37,14 @@ Since we're about to refine our simulation against experimental data and re-run 
 Time to get rid of that data...
 
 {{< action type="menu" text="Simulation &#8680; Clear Module Data" />}}
-{{< step text="Accept the consequences, and click _OK_" />}}
+{{< step >}}Accept the consequences, and click {{< gui-button text="OK" >}}{{< /step >}}
 
 ### Turn off the Analysis Layer
 
 We need to refine the simulation before we calculate our properties again, so we need to temporarily turn off our analysis layer:
 
-{{< action type="tabs" text="**Analysis** layer tab" />}}
-{{< step text="Disable the layer by clicking the ![](/img/slider-on.png) button so it displays ![](/img/slider-off.png)" />}}
+{{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Analysis" >}} layer{{< /action >}}
+{{< step text="Disable the layer by clicking the ![](/img/slider-on.png) button in _Layer Control_ at the top-left of the tab so it displays ![](/img/slider-off.png)" />}}
 
 
 * * *
