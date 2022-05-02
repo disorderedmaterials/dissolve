@@ -171,7 +171,7 @@ bool ProcessPool::setUp(std::string_view name, const std::vector<int> &worldRank
 {
     name_ = name;
 
-    Messenger::print("Setting up process pool '{}'...\n", name_);
+    Messenger::printVerbose("Setting up process pool '{}'...\n", name_);
 
     // Set rank list
     worldRanks_ = worldRanks;
@@ -182,7 +182,8 @@ bool ProcessPool::setUp(std::string_view name, const std::vector<int> &worldRank
         if (worldRank_ == worldRanks_[n])
         {
             poolRank_ = n;
-            Messenger::print("Process with world rank {} added to pool '{}' with local rank {}.\n", worldRanks_[n], name_, n);
+            Messenger::printVerbose("Process with world rank {} added to pool '{}' with local rank {}.\n", worldRanks_[n],
+                                    name_, n);
             break;
         }
     }
@@ -190,7 +191,8 @@ bool ProcessPool::setUp(std::string_view name, const std::vector<int> &worldRank
     // Set default maximum number of groups
     maxProcessGroups_ = worldRanks_.size();
 
-    Messenger::print("There are {} processes in pool '{}' (max groups = {}).\n", worldRanks_.size(), name_, maxProcessGroups_);
+    Messenger::printVerbose("There are {} processes in pool '{}' (max groups = {}).\n", worldRanks_.size(), name_,
+                            maxProcessGroups_);
 
 #ifdef PARALLEL
     // Create pool group and communicator
