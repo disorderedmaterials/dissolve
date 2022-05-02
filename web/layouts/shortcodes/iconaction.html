@@ -1,9 +1,11 @@
 {{ $type := .Get "type" }}
 <style>
-blockquote.action-{{ $type }}::before {
-  background-image: url(/img/{{ $type }}.png);
+blockquote.iconaction-{{ $type }}::before {
+  background-image: url(/img/{{ $type }}.svg);
+  background-size: cover;
 }
 </style>
-<blockquote class="action action-{{ $type }}">
-{{ with .Get "text" }}<p>{{ . | safeHTML | markdownify }}</p>{{ end }}
+<blockquote class="iconaction iconaction-{{ $type }}">
+  {{ if .Inner }}<p>{{ .Inner | safeHTML | markdownify }}</p>{{ end }}
+  {{ if .Get "text" }}<p>{{ .Get "text" | safeHTML | markdownify }}</p>{{ end }}
 </blockquote>

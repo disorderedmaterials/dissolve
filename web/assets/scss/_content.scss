@@ -283,7 +283,7 @@ blockquote.tip {
   border-left: 8px solid #78C0A8;
 }
 blockquote.tip::before {
-  background-image: url(/img/blocktip.svg);
+  background-image: url(/img/block_tip.svg);
 }
 
 // Warning
@@ -291,7 +291,7 @@ blockquote.warn {
   border-left: 8px solid #fb9a49;
 }
 blockquote.warn::before {
-  background-image: url(/img/blockwarn.svg);
+  background-image: url(/img/block_warn.svg);
 }
 
 // Question
@@ -299,7 +299,7 @@ blockquote.question {
   border-left: 8px solid #329819;
 }
 blockquote.question::before {
-  background-image: url(/img/blockquestion.svg);
+  background-image: url(/img/block_question.svg);
 }
 
 // Action (Quote-style)
@@ -326,7 +326,7 @@ blockquote.step {
 blockquote.step::before {
   left: 5px;
   top: 10px;
-  background-image: url(/img/action-general.svg);
+  background-image: url(/img/action_general.svg);
 }
 
 // Action (Dissolve)
@@ -335,21 +335,21 @@ blockquote.action-menu {
   border-left: 8px solid #478cc6;
 }
 blockquote.action-dissolve::before {
-  background-image: url(/img/action-dissolve.svg);
+  background-image: url(/img/action_dissolve.svg);
 }
 
 // Action (Tabs)
 blockquote.action-tabs::before {
   left: 8px;
   top: 8px;
-  background-image: url(/img/action-tabs.svg);
+  background-image: url(/img/action_tabs.svg);
 }
 
 // Action (Groups)
 blockquote.action-groups::before {
   left: 8px;
   top: 8px;
-  background-image: url(/img/action-groups.svg);
+  background-image: url(/img/action_groups.svg);
 }
 
 // Action (Menu)
@@ -358,14 +358,14 @@ blockquote.action-menu {
 }
 blockquote.action-menu::before {
   left: 8px;
-  background-image: url(/img/action-menu.svg);
+  background-image: url(/img/action_menu.svg);
 }
 
 // Action (Mouse)
 blockquote.action-mouse::before {
   left: 10px;
   top: 8px;
-  background-image: url(/img/action-mouse.svg);
+  background-image: url(/img/action_mouse.svg);
 }
 
 // Action (Key)
@@ -375,19 +375,19 @@ blockquote.action-key {
 blockquote.action-key::before {
   left: 10px;
   top: 8px;
-  background-image: url(/img/action-key.svg);
+  background-image: url(/img/action_key.svg);
 }
 
 // Action (Edit)
 blockquote.action-edit::before {
-  background-image: url(/img/action-edit.svg);
+  background-image: url(/img/action_edit.svg);
 }
 
 // Action (Settings)
 blockquote.action-settings {
 }
 blockquote.action-settings::before {
-  background-image: url(/img/action-settings.svg);
+  background-image: url(/img/action_settings.svg);
 }
 
 // Tables

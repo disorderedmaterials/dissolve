@@ -22,10 +22,8 @@ steps:
     displayName: 'Download & Install Hugo (Extended Version)'
   - bash: |
       set -ex
-      mkdir web/static/img
       cp -v src/gui/icons/*.svg web/static/img
-      cp -v src/gui/icons/*.png web/static/img
-    displayName: 'Copy Images'
+    displayName: 'Copy Icons'
   - bash: |
       set -ex
       cd web
