@@ -84,4 +84,5 @@ class AtomType
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    void deserialize(toml::value node);
 };

@@ -114,3 +114,19 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::seria
 
     return atomType;
 }
+void AtomType::deserialize(toml::value node)
+{
+    if (!node["charge"].is_uninitialized())
+        charge_ = node["charge"].as_floating();
+    if (!node["form"].is_uninitialized())
+        interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node["form"].as_string())));
+
+    if (!node["parameters"].is_uninitialized())
+    {
+        std::vector<std::string> parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+        std::vector<double> values;
+        std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                       [&node](const auto parameter) { return node["parameters"][parameter].as_floating(); });
+        interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
+    }
+}
