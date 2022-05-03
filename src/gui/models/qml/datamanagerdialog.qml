@@ -3,32 +3,11 @@ import QtQuick.Controls 2
 import QtQuick.Layouts 2
 import QtQuick.Window 2
 import DataManagerReferencePointModel 1.0
-import Qt.labs.qmlmodels 1.0
+import DataManagerSimulationModel 1.0
 
 Item {
     id: main;
-    required property DataManagerReferencePointModel ref;
-
-    TableModel {
-	id: myModel
-	TableModelColumn { display: "name" }
-	TableModelColumn { display: "color" }
-
-	rows: [
-	    {
-		"name": "cat",
-		"color": "black"
-	    },
-	    {
-		"name": "dog",
-		"color": "brown"
-	    },
-	    {
-		"name": "bird",
-		"color": "white"
-	    }
-	]
-    }
+    required property DataManagerSimulationModel ref;
 
     Dialog {
 	title: "Data Manager"
@@ -52,30 +31,15 @@ Item {
 			}
 		    }
 		    TableView {
-			Layout.preferredWidth: 200
-			Layout.preferredHeight: 200
-			columnSpacing: 1
-			rowSpacing: 1
+			Layout.preferredWidth: 400
+			Layout.preferredHeight: 400
+			columnSpacing: 0
+			rowSpacing: 0
 			clip: true
-			model: myModel; //ref;
-
-			delegate: DelegateChooser {
-			    DelegateChoice {
-				column: 0
-				delegate: TextField {
-				    width: 100
-				    text: display
-				    color: "blue"
-				}
-			    }
-			    DelegateChoice {
-				column: 1
-				delegate: TextField {
-				    width: 100
-				    text: display
-				    color: "green"
-				}
-			    }
+			model: ref
+			delegate: TextField {
+			    width: 200
+			    text: display
 			}
 		    }
 		}

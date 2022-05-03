@@ -86,18 +86,16 @@ void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
 {
-    // DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_, dissolve_.processingModuleData());
-    // dataManagerDialog.exec();
-
     qmlRegisterType<DataManagerReferencePointModel>("DataManagerReferencePointModel", 1, 0, "DataManagerReferencePointModel");
-    // qRegisterMetaType<DataManagerReferencePointModel *>("DataManagerReferencePointModel");
+    qmlRegisterType<DataManagerSimulationModel>("DataManagerSimulationModel", 1, 0, "DataManagerSimulationModel");
 
-    DataManagerReferencePointModel refModel(dissolve_, referencePoints_);
+    DataManagerReferencePointModel *refModel = new DataManagerReferencePointModel(dissolve_, referencePoints_);
+    DataManagerSimulationModel *simModel = new DataManagerSimulationModel(dissolve_, dissolve_.processingModuleData());
 
     QQuickView *qmlView = new QQuickView;
-    // qmlView->setInitialProperties({{"ref", QVariant::fromValue(2)}});
-    qmlView->setInitialProperties({{"ref", QVariant::fromValue(&refModel)}});
-    qmlView->setSource(QUrl("qrc:/qml/datamanagerdialog.qml"));
+    qmlView->setInitialProperties({{"ref", QVariant::fromValue(simModel)}});
+    // qmlView->setSource(QUrl("qrc:/qml/datamanagerdialog.qml"));
+    qmlView->setSource(QUrl("file:///home/adam/Code/dissolve/src/gui/models/qml/datamanagerdialog.qml"));
     qmlView->show();
 }
 
