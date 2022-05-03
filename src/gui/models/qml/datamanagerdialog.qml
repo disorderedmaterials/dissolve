@@ -2,12 +2,11 @@ import QtQuick 2
 import QtQuick.Controls 2
 import QtQuick.Layouts 2
 import QtQuick.Window 2
-import DataManagerReferencePointModel 1.0
 import DataManagerSimulationModel 1.0
 
 Item {
     id: main;
-    required property DataManagerSimulationModel ref;
+    required property DataManagerSimulationModel sim;
 
     Dialog {
 	title: "Data Manager"
@@ -36,8 +35,8 @@ Item {
 			columnSpacing: 0
 			rowSpacing: 0
 			clip: true
-			model: ref
-			delegate: TextField {
+			model: sim
+			delegate: Label {
 			    width: 200
 			    text: display
 			}
