@@ -43,6 +43,7 @@ std::optional<int> ShortRangeFunctions::parameterIndex(Form form, std::string_vi
 }
 
 AtomType::AtomType(Elements::Element Z) : Z_(Z), interactionPotential_(ShortRangeFunctions::Form::None) {}
+AtomType::AtomType(std::string name) : interactionPotential_(ShortRangeFunctions::Form::None), name_(name) {}
 
 /*
  * Character
@@ -116,6 +117,8 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::seria
 }
 void AtomType::deserialize(toml::value node)
 {
+    if (!node["z"].is_uninitialized())
+        Z_ = Elements::element(std::string(node["z"].as_string()));
     if (!node["charge"].is_uninitialized())
         charge_ = node["charge"].as_floating();
     if (!node["form"].is_uninitialized())

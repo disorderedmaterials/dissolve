@@ -36,6 +36,7 @@ class AtomType
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);
+    AtomType(std::string name);
     ~AtomType() = default;
 
     /*

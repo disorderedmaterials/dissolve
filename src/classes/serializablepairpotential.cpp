@@ -47,26 +47,29 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePai
     pairPotentials["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(shortRangeTruncationScheme_);
     if (!atomTypes_.empty())
         for (auto &atomType : atomTypes_)
-            pairPotentials[atomType->name().data()] = atomType->serialize();
+            pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialize();
     return pairPotentials;
 }
 
 void SerializablePairPotential::deserialize(toml::value node)
 {
-    range_ = node["range"].as_floating();
-    delta_ = node["delta"].as_floating();
-    atomTypeChargeSource_ = node["includeCoulomb"].as_boolean();
-    coulombTruncationScheme_ =
-        PairPotential::coulombTruncationSchemes().enumeration(std::string(node["coulombTruncation"].as_string()));
-    shortRangeTruncationScheme_ =
-        PairPotential::shortRangeTruncationSchemes().enumeration(std::string(node["shortRangeTruncation"].as_string()));
+    if (!node["range"].is_uninitialized())
+        range_ = node["range"].as_floating();
+    if (!node["delta"].is_uninitialized())
+        delta_ = node["delta"].as_floating();
+    if (!node["includeCoulomb"].is_uninitialized())
+        atomTypeChargeSource_ = node["includeCoulomb"].as_boolean();
+    if (!node["coulombTruncation"].is_uninitialized())
+        coulombTruncationScheme_ =
+            PairPotential::coulombTruncationSchemes().enumeration(std::string(node["coulombTruncation"].as_string()));
+    if (!node["shortRangeTruncation"].is_uninitialized())
+        shortRangeTruncationScheme_ =
+            PairPotential::shortRangeTruncationSchemes().enumeration(std::string(node["shortRangeTruncation"].as_string()));
 
-    toml::value file = toml::parse("C:/ProjectDissolve/Dissolve/build/Release/input.toml");
-    PairPotential::setCoulombTruncationScheme(
-        PairPotential::coulombTruncationSchemes().enumeration(std::string(file["coulombTruncation"].as_string())));
-    PairPotential::setShortRangeTruncationScheme(
-        PairPotential::shortRangeTruncationSchemes().enumeration(std::string(file["shortRangeTruncation"].as_string())));
-    //std::vector tomlAtomTypes = file["pairPotentials"].as_array();
-    //for (auto atomType : tomlAtomTypes)
-    //    addAtomType(Elements::element(std::string(atomType["z"].as_string())));
+    if (node.contains("atomTypes"))
+    {
+        toml::value atomTypesNode = node["atomTypes"];
+        for (auto &[name, data] : atomTypesNode.as_table())
+            atomTypes_.emplace_back(std::make_unique<AtomType>(name))->deserialize(data);
+    }
 }

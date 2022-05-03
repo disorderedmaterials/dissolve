@@ -150,21 +150,6 @@ bool Dissolve::loadInput(std::string_view filename)
     if (!parser.openInput(filename))
         return false;
 
-    if (toml_testing_flag)
-    {
-        toml::value file = toml::parse("C:/ProjectDissolve/Dissolve/build/Release/input.toml");
-        pairPotentialRange_ = file["range"].as_floating();
-        pairPotentialDelta_ = file["delta"].as_floating();
-        atomTypeChargeSource_ = file["includeCoulomb"].as_boolean();
-        PairPotential::setCoulombTruncationScheme(
-            PairPotential::coulombTruncationSchemes().enumeration(std::string(file["coulombTruncation"].as_string())));
-        PairPotential::setShortRangeTruncationScheme(
-            PairPotential::shortRangeTruncationSchemes().enumeration(std::string(file["shortRangeTruncation"].as_string())));
-        std::vector tomlAtomTypes = file["pairPotentials"].as_array();
-        for (auto atomType : tomlAtomTypes)
-            addAtomType(Elements::element(std::string(atomType["z"].as_string())));
-    }
-
     auto result = loadInput(parser);
     if (result)
     {
