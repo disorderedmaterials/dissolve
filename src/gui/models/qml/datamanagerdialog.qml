@@ -3,10 +3,17 @@ import QtQuick.Controls 2
 import QtQuick.Layouts 2
 import QtQuick.Window 2
 import DataManagerSimulationModel 1.0
+import SortFilterProxyModel 1.0
 
 Item {
     id: main;
     required property DataManagerSimulationModel sim;
+
+    SortFilterProxyModel {
+	id: sims
+	source: sim
+	filterString: filterEdit.text
+    }
 
     Dialog {
 	title: "Data Manager"
@@ -35,7 +42,7 @@ Item {
 			columnSpacing: 0
 			rowSpacing: 0
 			clip: true
-			model: sim
+			model: sims
 			delegate: Rectangle{
 			    implicitWidth: simLabel.width + 5
 			    implicitHeight: simLabel.height + 5

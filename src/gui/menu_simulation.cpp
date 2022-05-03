@@ -3,6 +3,7 @@
 
 #include "gui/datamanagerdialog.h"
 #include "gui/gui.h"
+#include "gui/models/sortfilterproxymodel.h"
 #include "main/dissolve.h"
 #include <QFileDialog>
 #include <QInputDialog>
@@ -88,6 +89,7 @@ void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
 {
     qmlRegisterType<DataManagerReferencePointModel>("DataManagerReferencePointModel", 1, 0, "DataManagerReferencePointModel");
     qmlRegisterType<DataManagerSimulationModel>("DataManagerSimulationModel", 1, 0, "DataManagerSimulationModel");
+    qmlRegisterType<SortFilterProxyModel>("SortFilterProxyModel", 1, 0, "SortFilterProxyModel");
 
     DataManagerReferencePointModel *refModel = new DataManagerReferencePointModel(dissolve_, referencePoints_);
     DataManagerSimulationModel *simModel = new DataManagerSimulationModel(dissolve_, dissolve_.processingModuleData());
