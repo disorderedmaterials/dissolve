@@ -17,7 +17,7 @@ set(models_MOC_HDRS
     modulePaletteModel.h
     sitesFilterProxy.h
     sitesModel.h
-    sortfilterproxymodel.h
+    sortFilterProxyModel.h
     speciesFilterProxy.h
     speciesModel.h
     speciesSiteFilterProxy.h
@@ -97,7 +97,7 @@ qt_wrap_cpp(
   xmlImproperModel.h
   xmlTreeModel.h
   xmlTorsionModel.h
-  sortfilterproxymodel.h
+  sortFilterProxyModel.h
   speciesAngleModel.h
   speciesAtomModel.h
   speciesBondModel.h

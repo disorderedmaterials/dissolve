@@ -3,7 +3,7 @@
 
 #include "gui/datamanagerdialog.h"
 #include "gui/gui.h"
-#include "gui/models/sortfilterproxymodel.h"
+#include "gui/models/sortFilterProxyModel.h"
 #include "main/dissolve.h"
 #include <QFileDialog>
 #include <QInputDialog>

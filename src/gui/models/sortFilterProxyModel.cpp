@@ -1,4 +1,4 @@
-#include "sortfilterproxymodel.h"
+#include "sortFilterProxyModel.h"
 #include <QAbstractItemModel>
 #include <QRegularExpression>
 
