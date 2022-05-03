@@ -9,7 +9,6 @@ Rectangle {
     id: main;
     required property DataManagerSimulationModel sim;
     anchors.fill: parent
-    color: red
 
     SortFilterProxyModel {
 	id: sims
@@ -38,8 +37,15 @@ Rectangle {
 	    ToolTip.text: "Filter templates by name / description"
 	    ToolTip.visible: hovered
 	}
-	TableView {
+	HorizontalHeaderView {
+	    id: simTableHeader
+	    syncView: simTable
 	    anchors.top: filterEdit.bottom
+	    anchors.left: simTable.left
+	}
+	TableView {
+	    id: simTable
+	    anchors.top: simTableHeader.bottom
 	    anchors.left: parent.left
 	    anchors.right: parent.right
 	    anchors.bottom: parent.bottom
