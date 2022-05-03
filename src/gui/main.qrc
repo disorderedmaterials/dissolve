@@ -134,4 +134,7 @@
     <file>icons/control_step.svg</file>
     <file>icons/control_play.svg</file>
   </qresource>
+  <qresource prefix="qml">
+    <file alias="datamanagerdialog.qml">models/qml/datamanagerdialog.qml</file>
+  </qresource>
 </RCC>

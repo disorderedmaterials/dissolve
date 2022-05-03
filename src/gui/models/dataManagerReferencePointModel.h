@@ -20,6 +20,7 @@ class DataManagerReferencePointModel : public QAbstractTableModel
 
     public:
     DataManagerReferencePointModel(Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints);
+    DataManagerReferencePointModel &operator=(const DataManagerReferencePointModel &) = default;
 
     std::optional<std::string> addFile(std::string &&suffix, std::string &&path);
 
@@ -34,3 +35,5 @@ class DataManagerReferencePointModel : public QAbstractTableModel
     // Register all changes to the model
     void update();
 };
+
+Q_DECLARE_METATYPE(DataManagerReferencePointModel)

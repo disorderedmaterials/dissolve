@@ -7,6 +7,8 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickView>
 
@@ -86,9 +88,16 @@ void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
 {
     // DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_, dissolve_.processingModuleData());
     // dataManagerDialog.exec();
-    QQuickView *qmlView = new QQuickView();
-    qmlView->setSource(QUrl("file:///home/adam/Code/dissolve/src/gui/qml/datamanagerdialog.qml"));
-    qmlView->rootObject()->setProperty("foo", "Quux");
+
+    qmlRegisterType<DataManagerReferencePointModel>("DataManagerReferencePointModel", 1, 0, "DataManagerReferencePointModel");
+    // qRegisterMetaType<DataManagerReferencePointModel *>("DataManagerReferencePointModel");
+
+    DataManagerReferencePointModel refModel(dissolve_, referencePoints_);
+
+    QQuickView *qmlView = new QQuickView;
+    // qmlView->setInitialProperties({{"ref", QVariant::fromValue(2)}});
+    qmlView->setInitialProperties({{"ref", QVariant::fromValue(&refModel)}});
+    qmlView->setSource(QUrl("qrc:/qml/datamanagerdialog.qml"));
     qmlView->show();
 }
 

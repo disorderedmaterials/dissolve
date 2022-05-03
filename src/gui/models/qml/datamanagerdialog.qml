@@ -2,11 +2,33 @@ import QtQuick 2
 import QtQuick.Controls 2
 import QtQuick.Layouts 2
 import QtQuick.Window 2
-import dataRef 1.0
+import DataManagerReferencePointModel 1.0
+import Qt.labs.qmlmodels 1.0
 
 Item {
-    id: main
-    property string foo: "Xyzzy";
+    id: main;
+    required property DataManagerReferencePointModel ref;
+
+    TableModel {
+	id: myModel
+	TableModelColumn { display: "name" }
+	TableModelColumn { display: "color" }
+
+	rows: [
+	    {
+		"name": "cat",
+		"color": "black"
+	    },
+	    {
+		"name": "dog",
+		"color": "brown"
+	    },
+	    {
+		"name": "bird",
+		"color": "white"
+	    }
+	]
+    }
 
     Dialog {
 	title: "Data Manager"
@@ -30,12 +52,44 @@ Item {
 			}
 		    }
 		    TableView {
+			Layout.preferredWidth: 200
 			Layout.preferredHeight: 200
+			columnSpacing: 1
+			rowSpacing: 1
+			clip: true
+			model: myModel; //ref;
+
+			delegate: DelegateChooser {
+			    DelegateChoice {
+				column: 0
+				delegate: Rectangle {
+				    implicitWidth: 100
+				    implicitHeight: 50
+				    Text {
+					text: display
+					color: "red"
+					anchors.centerIn: parent
+				    }
+				}
+			    }
+			    DelegateChoice {
+				column: 1
+				delegate: Rectangle {
+				    implicitWidth: 100
+				    implicitHeight: 50
+				    Text {
+					text: display
+					color: "green"
+					anchors.centerIn: parent
+				    }
+				}
+			    }
+			}
 		    }
 		}
 	    }
 	    GroupBox {
-		title: main.foo // "Reference Points"
+		title: "Reference Points"
 		RowLayout {
 		    Button {
 			icon.source: "qrc:/general/icons/general_remove.svg"
