@@ -51,7 +51,10 @@ void SpeciesSiteKeywordWidget::siteRadioButton_clicked(bool checked)
  */
 
 // Update value displayed in widget
-void SpeciesSiteKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void SpeciesSiteKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetValues(coreData_);
+}
 
 // Update widget values data based on keyword data
 void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)

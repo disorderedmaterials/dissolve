@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "templates/flags.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -26,16 +27,15 @@ class ModuleWidget : public QWidget
     bool refreshing_;
 
     public:
-    // Update Types
-    enum class UpdateType
+    // Update Flags
+    enum UpdateFlags
     {
-        Normal,             /* Standard update - refresh / update existing content etc. */
-        RecreateRenderables /* Update as normal, but any existing renderables must be cleared and regenerated */
+        RecreateRenderablesFlag /* Update as normal, but any existing renderables must be cleared and regenerated */
     };
     // Update controls within widget
-    virtual void updateControls(UpdateType updateType);
-    // Disable sensitive controls within widget
-    virtual void disableSensitiveControls();
-    // Enable sensitive controls within widget
-    virtual void enableSensitiveControls();
+    virtual void updateControls(const Flags<UpdateFlags> &updateFlags = {});
+    // Disable editing within widget
+    virtual void preventEditing();
+    // Allow editing within widget
+    virtual void allowEditing();
 };

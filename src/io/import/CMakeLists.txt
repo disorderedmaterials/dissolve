@@ -61,13 +61,13 @@ add_library(
   ${ANTLR_CIFImportGrammarParser_CXX_OUTPUTS}
 )
 
-include_directories(
-  import
-  PRIVATE
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_BINARY_DIR}/src
-  ${ANTLRRUNTIME_INCLUDE_DIRS}
-  ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
-  ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
+target_include_directories(
+  import PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${ANTLRRUNTIME_INCLUDE_DIRS} ${ANTLR_CIFImportGrammarLexer_OUTPUT_DIR}
+                 ${ANTLR_CIFImportGrammarParser_OUTPUT_DIR}
 )
-target_link_libraries(import PRIVATE base)
+
+if(CONAN)
+  target_link_libraries(import base CONAN_PKG::antlr4-cppruntime)
+else(CONAN)
+  target_link_libraries(import base antlr4-runtime)
+endif(CONAN)

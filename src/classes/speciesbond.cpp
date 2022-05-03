@@ -350,7 +350,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
     bond["form"] = form;
 
     std::vector<double> values = SpeciesBond::interactionPotential().parameters();
-    if (values.size() > 0)
+    if (!values.empty())
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
         std::vector<std::string> parameters = BondFunctions::parameters(interactionForm());

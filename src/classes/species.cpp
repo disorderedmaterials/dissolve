@@ -204,34 +204,13 @@ void Species::print() const
 // Return version
 int Species::version() const { return version_; }
 
-/*
- * Coordinate Sets
- */
-
-// Clear coordinate sets
-void Species::clearCoordinateSets() { coordinateSets_.clear(); }
-
-// Add new coordinate set
-std::vector<Vec3<double>> &Species::addCoordinateSet()
-{
-    auto &newSet = coordinateSets_.emplace_back(atoms_.size(), Vec3<double>());
-
-    return newSet;
-}
-
-// Return number of defined coordinate sets
-int Species::nCoordinateSets() const { return coordinateSets_.size(); }
-
-// Return coordinates sets
-const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { return coordinateSets_; }
-
 toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> species;
     if (forcefield_ != nullptr)
         species["forcefield"] = forcefield_->name().data();
 
-    if (atoms_.size() > 0)
+    if (!atoms_.empty())
     {
         toml::array atoms;
         for (auto &atom : atoms_)
@@ -239,7 +218,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         species["atom"] = atoms;
     }
 
-    if (bonds_.size() > 0)
+    if (!bonds_.empty())
     {
         toml::array bonds;
         for (auto &bond : bonds_)
@@ -247,7 +226,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         species["bond"] = bonds;
     }
 
-    if (angles_.size() > 0)
+    if (!angles_.empty())
     {
         toml::array angles;
         for (auto &angle : angles_)
@@ -255,7 +234,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         species["angle"] = angles;
     }
 
-    if (impropers_.size() > 0)
+    if (!impropers_.empty())
     {
         toml::array impropers;
         for (auto &improper : impropers_)
@@ -263,7 +242,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         species["improper"] = impropers;
     }
 
-    if (torsions_.size() > 0)
+    if (!torsions_.empty())
     {
         toml::array torsions;
         for (auto &torsion : torsions_)
@@ -271,7 +250,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         species["torsion"] = torsions;
     }
 
-    if (isotopologues_.size() > 0)
+    if (!isotopologues_.empty())
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> isotopologues;
         for (auto &isotopologue : isotopologues_)
@@ -279,7 +258,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         species["isotopologues"] = isotopologues;
     }
 
-    if (sites_.size() > 0)
+    if (!sites_.empty())
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> sites;
         for (auto &site : sites_)

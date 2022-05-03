@@ -100,10 +100,10 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
     public:
     // Update controls within widget
     void updateControls();
-    // Disable sensitive controls
-    void disableSensitiveControls();
-    // Enable sensitive controls
-    void enableSensitiveControls();
+    // Disable editing
+    void preventEditing();
+    // Allow editing
+    void allowEditing();
 
     /*
      * Signals / Slots

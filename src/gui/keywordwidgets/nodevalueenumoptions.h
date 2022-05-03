@@ -44,6 +44,8 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
      * Update
      */
     public:
+    // Check validity of current value
+    void checkValueValidity();
     // Update value displayed in widget
-    void updateValue() override;
+    void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
 };

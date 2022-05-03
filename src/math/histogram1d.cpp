@@ -145,6 +145,7 @@ const std::vector<double> &Histogram1D::binCentres() const { return binCentres_;
 
 // Return histogram data
 std::vector<long int> &Histogram1D::bins() { return bins_; }
+const std::vector<long int> &Histogram1D::bins() const { return bins_; }
 
 // Add source histogram data into local array
 void Histogram1D::add(Histogram1D &other, int factor)
@@ -249,10 +250,10 @@ bool Histogram1D::serialise(LineParser &parser) const
  */
 
 // Sum histogram data onto all processes
-bool Histogram1D::allSum(ProcessPool &procPool)
+bool Histogram1D::allSum(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer)
 {
 #ifdef PARALLEL
-    if (!procPool.allSum(bins_.data(), nBins_))
+    if (!procPool.allSum(bins_.data(), nBins_, ProcessPool::PoolProcessesCommunicator, commsTimer))
         return false;
 #endif
     return true;

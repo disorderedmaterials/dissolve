@@ -60,7 +60,7 @@ class SequenceProcedureNode : public ProcedureNode
     // Clear all data
     void clear();
     // Add (own) node into sequence
-    void addNode(NodeRef node);
+    void addNode(NodeRef nodeToAdd);
     // Return sequential node list
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence
@@ -123,11 +123,11 @@ class SequenceProcedureNode : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
-    // Execute node, targetting the supplied Configuration
-    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    bool prepare(const ProcedureContext &procedureContext) override;
+    // Execute node
+    bool execute(const ProcedureContext &procedureContext) override;
     // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList) override;
+    bool finalise(const ProcedureContext &procedureContext) override;
 
     /*
      * Read / Write

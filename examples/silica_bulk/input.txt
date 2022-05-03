@@ -111,7 +111,7 @@ Layer  'RDF / Neutron S(Q)'
   Module  RDF  'RDF01'
     Frequency  1
 
-    Configuration  'Bulk'
+    Configurations  'Bulk'
   EndModule
 
   Module  SQ  'SQ01'
@@ -156,12 +156,3 @@ Layer  'Analysis'
     ExcludeSameSiteAC  True
   EndModule
 EndLayer
-
-#------------------------------------------------------------------------------#
-#                                  Simulation                                  #
-#------------------------------------------------------------------------------#
-
-Simulation
-  Seed  -1
-EndSimulation
-

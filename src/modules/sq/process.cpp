@@ -11,7 +11,7 @@
 #include "templates/algorithms.h"
 
 // Set target data
-void SQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &configurations,
+void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                           const std::map<std::string, std::vector<const Module *>> &moduleMap)
 {
     auto sqIt = moduleMap.find("RDF");
@@ -20,7 +20,7 @@ void SQModule::setTargets(std::vector<std::unique_ptr<Configuration>> &configura
 }
 
 // Run main processing
-bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate S(Q) from Configuration's g(r).
@@ -186,7 +186,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         });
 
         // Re-form the total function
-        unweightedsq.formTotal(true);
+        unweightedsq.formTotals(true);
     }
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date

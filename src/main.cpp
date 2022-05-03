@@ -27,6 +27,9 @@ int main(int args, char **argv)
         return 1;
 #endif
 
+    // Initialise random seed
+    srand(options.randomSeed().value_or((unsigned)time(nullptr)));
+
     // Enable redirect if requested
     if (options.redirectionBasename())
         Messenger::enableRedirect(fmt::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));

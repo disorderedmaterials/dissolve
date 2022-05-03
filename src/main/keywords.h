@@ -16,7 +16,6 @@ class Module;
 class ModuleLayer;
 class GenericList;
 class Data;
-class SpeciesInfo;
 class SpeciesSite;
 
 /*
@@ -32,7 +31,6 @@ enum BlockKeyword
     MasterBlockKeyword,         /* 'Master' - Contains master intramolecular terms for use in Species */
     ModuleBlockKeyword,         /* 'Module' - Sets up a Module to run after Configuration processing */
     PairPotentialsBlockKeyword, /* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
-    SimulationBlockKeyword,     /* 'Simulation' - Setting of simulation variables affecting the calculation */
     SiteBlockKeyword,           /* 'Site' - Defines an analysis site within a Species */
     SpeciesBlockKeyword         /* 'Species' - Begins a definition of a Species */
 };
@@ -145,20 +143,3 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> keywords();
 // Parse PairPotentials block
 bool parse(LineParser &parser, Dissolve *dissolve);
 }; // namespace PairPotentialsBlock
-
-/*
- * Simulation Block Keywords
- */
-namespace SimulationBlock
-{
-// Simulation Block Keyword Enum
-enum SimulationKeyword
-{
-    EndSimulationKeyword, /* 'EndSimulation' - Signals the end of the Simulation block */
-    SeedKeyword           /* 'Seed' - Random seed to use */
-};
-// Return enum option info for SimulationKeyword
-EnumOptions<SimulationBlock::SimulationKeyword> keywords();
-// Parse Simulation block
-bool parse(LineParser &parser, Dissolve *dissolve);
-}; // namespace SimulationBlock

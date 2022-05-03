@@ -81,7 +81,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ui_.AtomTypesTable->horizontalHeader()->setFont(font());
     ui_.AtomTypesTable->horizontalHeader()->setVisible(true);
     ui_.AtomTypesTable->setModel(&atoms_);
-
+    connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+            SLOT(atomTypeDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
     /*
      * Pair Potentials
      */
@@ -106,8 +107,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     viewer->view().axes().setTitle(1, "U, kj/mol");
     viewer->view().axes().setRange(1, -100.0, 100.0);
 
-    connect(&pairs_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), dissolveWindow,
-            SLOT(setModified()));
+    connect(&pairs_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+            SLOT(pairPotentialDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
     connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
             this, SLOT(pairPotentialTableRowChanged(const QModelIndex &, const QModelIndex &)));
 }
@@ -179,11 +180,11 @@ void ForcefieldTab::updateControls()
     refreshLocker.unlock();
 }
 
-// Disable sensitive controls within tab
-void ForcefieldTab::disableSensitiveControls() { setEnabled(false); }
+// Prevent editing within tab
+void ForcefieldTab::preventEditing() { setEnabled(false); }
 
-// Enable sensitive controls within tab
-void ForcefieldTab::enableSensitiveControls() { setEnabled(true); }
+// Allow editing within tab
+void ForcefieldTab::allowEditing() { setEnabled(true); }
 
 /*
  * Signals / Slots
@@ -218,6 +219,13 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 }
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+
+void ForcefieldTab::atomTypeDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
+{
+    ui_.AtomTypesTable->resizeColumnsToContents();
+
+    dissolveWindow_->setModified();
+}
 
 void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
 {
@@ -319,6 +327,11 @@ void ForcefieldTab::on_AutoUpdatePairPotentialsCheck_clicked(bool checked)
 {
     if (checked)
         updatePairPotentials();
+}
+
+void ForcefieldTab::pairPotentialDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
+{
+    dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous)

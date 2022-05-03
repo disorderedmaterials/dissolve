@@ -25,7 +25,7 @@ class SpeciesTorsion;
 class EnergyKernel
 {
     public:
-    EnergyKernel(ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+    EnergyKernel(const ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
                  std::optional<double> energyCutoff = std::nullopt);
     ~EnergyKernel() = default;
     // Clear all data
@@ -98,5 +98,5 @@ class EnergyKernel
      */
     private:
     // Process pool over which this kernel operates
-    ProcessPool &processPool_;
+    const ProcessPool &processPool_;
 };

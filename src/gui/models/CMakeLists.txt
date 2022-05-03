@@ -105,10 +105,9 @@ qt_wrap_cpp(
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})
 
-include_directories(models PUBLIC ${CONAN_INCLUDE_DIRS_PUGIXML} PRIVATE ${PROJECT_SOURCE_DIR}/src ${CONAN_INCLUDE_DIRS_FMT})
-
 target_include_directories(
-  models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
+  models PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CONAN_INCLUDE_DIRS_PUGIXML} ${Qt6Widgets_INCLUDE_DIRS}
+                 ${FREETYPE_INCLUDE_DIRS}
 )
 
 # Because Qt has its own way of checking for C++17
@@ -121,5 +120,3 @@ if(CONAN)
 else(CONAN)
   target_link_libraries(models PUBLIC pugixml::pugixml ${THREADING_LINK_LIBS})
 endif(CONAN)
-
-include_directories(models PRIVATE ${PROJECT_SOURCE_DIR}/src)

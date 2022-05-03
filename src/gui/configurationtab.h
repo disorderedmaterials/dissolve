@@ -7,7 +7,9 @@
 #include "gui/maintab.h"
 #include "gui/models/enumOptionsModel.h"
 #include "gui/models/procedureModel.h"
+#include "gui/procedurecontrolstack.h"
 #include "gui/ui_configurationtab.h"
+#include <map>
 
 // Forward Declarations
 class Configuration;
@@ -32,8 +34,6 @@ class ConfigurationTab : public QWidget, public MainTab
     Ui::ConfigurationTab ui_;
     // Model for import file format
     EnumOptionsModel importEnumOptionsModel_;
-    // Currently displayed widget
-    QWidget *activeWidget_;
 
     /*
      * MainTab Reimplementations
@@ -71,10 +71,10 @@ class ConfigurationTab : public QWidget, public MainTab
     protected:
     // Update controls in tab
     void updateControls() override;
-    // Disable sensitive controls within tab
-    void disableSensitiveControls() override;
-    // Enable sensitive controls within tab
-    void enableSensitiveControls() override;
+    // Prevent editing within tab
+    void preventEditing() override;
+    // Allow editing within tab
+    void allowEditing() override;
 
     /*
      * Signals / Slots

@@ -16,7 +16,7 @@
 
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                        Species *species)
-    : MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this), atoms_(species->atoms(), dissolve),
+    : MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this), atoms_(*species, dissolve),
       angles_(species->angles(), dissolve.coreData()), bonds_(species->bonds(), dissolve.coreData()),
       torsions_(species->torsions(), dissolve.coreData()), impropers_(species->impropers(), dissolve.coreData()),
       isos_(*species), sites_(species->sites())
@@ -138,11 +138,11 @@ void SpeciesTab::updateControls()
     speciesVersion_ = species_->version();
 }
 
-// Disable sensitive controls within tab
-void SpeciesTab::disableSensitiveControls() { setEnabled(false); }
+// Prevent editing within tab
+void SpeciesTab::preventEditing() { setEnabled(false); }
 
-// Enable sensitive controls within tab
-void SpeciesTab::enableSensitiveControls() { setEnabled(true); }
+// Allow editing within tab
+void SpeciesTab::allowEditing() { setEnabled(true); }
 
 /*
  * MainTab Reimplementations

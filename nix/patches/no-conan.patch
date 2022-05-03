@@ -39,7 +39,7 @@ index 2f27c755e..85e111b70 100644
 @@ -29,4 +29,4 @@ add_library(
  )
  
- include_directories(base PRIVATE ${PROJECT_SOURCE_DIR}/src)
+ target_include_directories(base PRIVATE ${PROJECT_SOURCE_DIR}/src)
 -target_link_libraries(base PUBLIC CONAN_PKG::fmt ${THREADING_LINK_LIBS})
 +target_link_libraries(base PUBLIC fmt::fmt ${THREADING_LINK_LIBS})
 diff --git a/src/main/CMakeLists.txt b/src/main/CMakeLists.txt
@@ -49,7 +49,7 @@ index 5e5d464ac..61b4e7185 100644
 @@ -28,4 +28,4 @@ add_library(
  )
  
- include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/src)
+ target_include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/src)
 -target_link_libraries(main PRIVATE CONAN_PKG::fmt CONAN_PKG::cli11)
 +target_link_libraries(main PRIVATE fmt::fmt CLI11::CLI11)
 diff --git a/unit/CMakeLists.txt b/unit/CMakeLists.txt
@@ -72,7 +72,7 @@ index bc806b3e9..ea2e3ef9f 100644
 @@ -3,4 +3,4 @@ add_subdirectory(nodes)
  add_library(procedure procedure.cpp nodevalue.cpp procedure.h nodevalue.h)
  
- include_directories(procedure PRIVATE ${PROJECT_SOURCE_DIR}/src)
+ target_include_directories(procedure PRIVATE ${PROJECT_SOURCE_DIR}/src)
 -target_link_libraries(procedure PRIVATE CONAN_PKG::fmt)
 +target_link_libraries(procedure PRIVATE fmt::fmt)
 diff --git a/CMakeLists.txt b/CMakeLists.txt
@@ -98,4 +98,4 @@ index 965126088..7211da363 100644
 -target_link_libraries(models PUBLIC CONAN_PKG::pugixml ${THREADING_LINK_LIBS})
 +target_link_libraries(models PUBLIC pugixml::pugixml ${THREADING_LINK_LIBS})
  
- include_directories(models PRIVATE ${PROJECT_SOURCE_DIR}/src)
+ target_include_directories(models PRIVATE ${PROJECT_SOURCE_DIR}/src)

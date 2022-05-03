@@ -25,7 +25,7 @@ void Data3DImportFileFormat::setUpKeywords() {}
  */
 
 // Import Data3D using current filename and format
-bool Data3DImportFileFormat::importData(Data3D &data, ProcessPool *procPool)
+bool Data3DImportFileFormat::importData(Data3D &data, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);

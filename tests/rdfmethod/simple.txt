@@ -4,8 +4,6 @@
 Species 'Ball'
   # Atoms
   Atom    1    Ar     0.0  0.0  0.0  'Ar'
-
-  Isotopologue  'Natural'
 EndSpecies
 
 # Define Configuration

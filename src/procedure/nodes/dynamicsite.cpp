@@ -70,9 +70,8 @@ const std::vector<Site> &DynamicSiteProcedureNode::generatedSites() const { retu
  * Execute
  */
 
-// Execute node, targetting the supplied Configuration
-bool DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                       GenericList &targetList)
+// Execute node
+bool DynamicSiteProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     // Clear our current list of sites
     generatedSites_.clear();
@@ -93,7 +92,7 @@ bool DynamicSiteProcedureNode::execute(ProcessPool &procPool, Configuration *cfg
     else
     {
         // Loop over Molecules in the target Configuration
-        for (const auto &molecule : cfg->molecules())
+        for (const auto &molecule : procedureContext.configuration()->molecules())
         {
             // Check Molecule exclusions
             if (std::find(excludedMolecules.begin(), excludedMolecules.end(), molecule) != excludedMolecules.end())

@@ -6,39 +6,26 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/producers.h"
 #include "gui/modulecontrolwidget.h"
-#include "main/dissolve.h"
 #include "module/module.h"
 #include "modules/widget.h"
 #include "modules/widgetproducer.h"
 
-ModuleControlWidget::ModuleControlWidget(QWidget *parent)
+ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module *module) : dissolve_(dissolveWindow->dissolve())
 {
     // Set up user interface
     ui_.setupUi(this);
 
-    dissolve_ = nullptr;
-    module_ = nullptr;
+    module_ = module;
     moduleWidget_ = nullptr;
+    assert(module_);
 
-    // Connect signals from keywords widget
-    connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(moduleKeywordChanged(int)));
+    // Connect signals
+    connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
+    connect(dissolveWindow, SIGNAL(dataMutated(int)), this, SLOT(globalDataMutated(int)));
 
     // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
     // will exist in a QScrollArea)
     ui_.FrequencySpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.FrequencySpin));
-}
-
-/*
- * Module Target
- */
-
-// Set target Module to display
-void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
-{
-    module_ = module;
-    dissolve_ = dissolve;
-    if ((!module_) || (!dissolve_))
-        throw(std::runtime_error("Can't create a ModuleControlWidget without both Module and Dissolve pointers.\n"));
 
     // Set the icon label
     ui_.ModuleIconLabel->setPixmap(
@@ -51,12 +38,12 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
         for (auto *keyword : module_->keywords().targetsGroup())
         {
             // Try to create a suitable widget
-            auto [widget, base] = KeywordWidgetProducer::create(keyword, dissolve_->coreData());
+            auto [widget, base] = KeywordWidgetProducer::create(keyword, dissolve_.coreData());
             if (!widget || !base)
                 throw(std::runtime_error(fmt::format("No widget created for keyword '{}'.\n", keyword->name())));
 
             // Connect it up
-            connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(moduleKeywordChanged(int)));
+            connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(localKeywordChanged(int)));
 
             // Create the label
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
@@ -71,18 +58,18 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
         ui_.TargetsLayout->addStretch(2);
     }
 
-    // Set up our control widgets
-    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->coreData());
+    // Set up our keyword widget
+    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.coreData());
 
     // Create any additional controls offered by the Module
-    moduleWidget_ = ModuleWidgetProducer::create(module_, *dissolve_);
+    moduleWidget_ = ModuleWidgetProducer::create(module_, dissolve_);
     if (moduleWidget_ == nullptr)
         Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
     else
     {
         ui_.ModuleControlsStack->addWidget(moduleWidget_);
         ui_.ModuleOutputButton->setEnabled(true);
-        moduleWidget_->updateControls(ModuleWidget::UpdateType::RecreateRenderables);
+        moduleWidget_->updateControls(ModuleWidget::RecreateRenderablesFlag);
     }
 
     updateControls();
@@ -96,11 +83,8 @@ Module *ModuleControlWidget::module() const { return module_; }
  */
 
 // Update controls within widget
-void ModuleControlWidget::updateControls()
+void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> updateFlags)
 {
-    if ((!module_) || (!dissolve_))
-        return;
-
     Locker refreshLocker(refreshLock_);
 
     // Ensure module name is up to date
@@ -123,29 +107,29 @@ void ModuleControlWidget::updateControls()
 
     // Update additional controls (if they exist)
     if (moduleWidget_)
-        moduleWidget_->updateControls(ModuleWidget::UpdateType::Normal);
+        moduleWidget_->updateControls(updateFlags);
 }
 
-// Disable sensitive controls
-void ModuleControlWidget::disableSensitiveControls()
+// Disable editing
+void ModuleControlWidget::preventEditing()
 {
     ui_.FrequencySpin->setEnabled(false);
     ui_.EnabledButton->setEnabled(false);
     ui_.TargetsGroup->setEnabled(false);
     ui_.ModuleKeywordsWidget->setEnabled(false);
     if (moduleWidget_)
-        moduleWidget_->disableSensitiveControls();
+        moduleWidget_->preventEditing();
 }
 
-// Enable sensitive controls
-void ModuleControlWidget::enableSensitiveControls()
+// Allow editing
+void ModuleControlWidget::allowEditing()
 {
     ui_.FrequencySpin->setEnabled(true);
     ui_.EnabledButton->setEnabled(true);
     ui_.TargetsGroup->setEnabled(true);
     ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
-        moduleWidget_->enableSensitiveControls();
+        moduleWidget_->allowEditing();
 }
 
 /*
@@ -188,7 +172,7 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 }
 
 // Target keyword data changed
-void ModuleControlWidget::moduleKeywordChanged(int signalMask)
+void ModuleControlWidget::localKeywordChanged(int signalMask)
 {
     if (refreshLock_.isLocked())
         return;
@@ -201,11 +185,28 @@ void ModuleControlWidget::moduleKeywordChanged(int signalMask)
 
     // Call the module's setUp() function with it
     if (keywordSignals.anySet())
-        module_->setUp(*dissolve_, dissolve_->worldPool(), keywordSignals);
+        module_->setUp(dissolve_, dissolve_.worldPool(), keywordSignals);
 
     // Handle specific flags for the module widget
     if (moduleWidget_)
-        moduleWidget_->updateControls(keywordSignals.isSet(KeywordBase::RecreateRenderables)
-                                          ? ModuleWidget::UpdateType::RecreateRenderables
-                                          : ModuleWidget::UpdateType::Normal);
+        moduleWidget_->updateControls(Flags<ModuleWidget::UpdateFlags>(signalMask));
+}
+
+// Global data mutated
+void ModuleControlWidget::globalDataMutated(int mutationFlags)
+{
+    // If we have no valid parent, don't try to update keyword data
+    if (!parent())
+        return;
+
+    Flags<DissolveSignals::DataMutations> dataMutations(mutationFlags);
+    if (!dataMutations.anySet())
+        return;
+
+    // Target keywords
+    for (auto w : targetKeywordWidgets_)
+        w->updateValue(dataMutations);
+
+    // Control keywords
+    ui_.ModuleKeywordsWidget->updateControls(mutationFlags);
 }

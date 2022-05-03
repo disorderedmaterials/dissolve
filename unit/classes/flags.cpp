@@ -18,9 +18,8 @@ enum Crew
 
 TEST(FlagsTest, Basic)
 {
-    Flags<RedDwarf::Crew> blueMidget, starBug;
-
     // Add single signal
+    Flags<RedDwarf::Crew> blueMidget;
     blueMidget += RedDwarf::Crew::Lister;
     EXPECT_TRUE(blueMidget.isSet(RedDwarf::Crew::Lister));
     EXPECT_TRUE(blueMidget.isSetOrNone(RedDwarf::Crew::Lister));
@@ -29,6 +28,22 @@ TEST(FlagsTest, Basic)
     blueMidget = 0;
     EXPECT_FALSE(blueMidget.isSet(RedDwarf::Crew::Lister));
     EXPECT_TRUE(blueMidget.isSetOrNone(RedDwarf::Crew::Lister));
+
+    // Construct from single enum
+    Flags<RedDwarf::Crew> starBug1(RedDwarf::Crew::Rimmer);
+    EXPECT_FALSE(starBug1.isSet(RedDwarf::Crew::Cat));
+    EXPECT_FALSE(starBug1.isSet(RedDwarf::Crew::Holly));
+    EXPECT_FALSE(starBug1.isSet(RedDwarf::Crew::Kryten));
+    EXPECT_FALSE(starBug1.isSet(RedDwarf::Crew::Lister));
+    EXPECT_TRUE(starBug1.isSet(RedDwarf::Crew::Rimmer));
+
+    // Construct from integer
+    Flags<RedDwarf::Crew> starBug2(11);
+    EXPECT_TRUE(starBug2.isSet(RedDwarf::Crew::Cat));
+    EXPECT_TRUE(starBug2.isSet(RedDwarf::Crew::Holly));
+    EXPECT_FALSE(starBug2.isSet(RedDwarf::Crew::Kryten));
+    EXPECT_TRUE(starBug2.isSet(RedDwarf::Crew::Lister));
+    EXPECT_FALSE(starBug2.isSet(RedDwarf::Crew::Rimmer));
 }
 
 TEST(FlagsTest, Manipulation)

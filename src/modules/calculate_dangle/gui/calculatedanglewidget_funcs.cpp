@@ -58,9 +58,9 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, Calcul
  */
 
 // Update controls within widget
-void CalculateDAngleModuleWidget::updateControls(ModuleWidget::UpdateType updateType)
+void CalculateDAngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
-    if (updateType == ModuleWidget::UpdateType::RecreateRenderables)
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
         rdfGraph_->clearRenderables();
 
     // Calculated B...C RDF

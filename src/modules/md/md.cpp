@@ -33,6 +33,10 @@ MDModule::MDModule() : Module("MD")
                                randomVelocities_);
     keywords_.add<SpeciesVectorKeyword>("Control", "RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
+    keywords_.add<BoolKeyword>(
+        "Control", "IntraOnly",
+        "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",
+        intramolecularForcesOnly_);
 
     // Output
     keywords_.add<IntegerKeyword>("Output", "EnergyFrequency",

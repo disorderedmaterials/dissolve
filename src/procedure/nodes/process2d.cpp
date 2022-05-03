@@ -100,23 +100,23 @@ std::vector<ConstNodeRef> Process2DProcedureNode::children() const { return {nor
  */
 
 // Prepare any necessary data, ready for execution
-bool Process2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool Process2DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     if (!sourceData_)
         return Messenger::error("No source Collect2D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
-        normalisationBranch_->prepare(cfg, prefix, targetList);
+        normalisationBranch_->prepare(procedureContext);
 
     return true;
 }
 
 // Finalise any necessary data after execution
-bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                      GenericList &targetList)
+bool Process2DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // Retrieve / realise the normalised data from the supplied list
-    auto &data = targetList.realise<Data2D>(fmt::format("Process2D//{}", name()), prefix, GenericItem::InRestartFileFlag);
+    auto &data = procedureContext.dataList().realise<Data2D>(fmt::format("Process2D//{}", name()),
+                                                             procedureContext.dataPrefix(), GenericItem::InRestartFileFlag);
     processedData_ = &data;
     data.setTag(name());
 
@@ -137,24 +137,24 @@ bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg,
             operateNode->setTarget(processedData_);
         }
 
-        if (!normalisationBranch_->execute(procPool, cfg, prefix, targetList))
+        if (!normalisationBranch_->execute(procedureContext))
             return false;
     }
 
     // Save data?
     if (exportFileAndFormat_.hasFilename())
     {
-        if (procPool.isMaster())
+        if (procedureContext.processPool().isMaster())
         {
             if (exportFileAndFormat_.exportData(data))
-                procPool.decideTrue();
+                procedureContext.processPool().decideTrue();
             else
             {
-                procPool.decideFalse();
+                procedureContext.processPool().decideFalse();
                 return false;
             }
         }
-        else if (!procPool.decision())
+        else if (!procedureContext.processPool().decision())
             return false;
     }
 

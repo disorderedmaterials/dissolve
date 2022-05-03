@@ -39,7 +39,7 @@ void SpeciesKeywordWidget::on_SpeciesCombo_currentIndexChanged(int index)
     if (index == -1)
         keyword_->data() = nullptr;
     else
-        keyword_->data() = ui_.SpeciesCombo->currentData(Qt::UserRole).value<Species *>();
+        keyword_->data() = ui_.SpeciesCombo->currentData(Qt::UserRole).value<const Species *>();
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
@@ -49,4 +49,4 @@ void SpeciesKeywordWidget::on_SpeciesCombo_currentIndexChanged(int index)
  */
 
 // Update value displayed in widget
-void SpeciesKeywordWidget::updateValue() {}
+void SpeciesKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}

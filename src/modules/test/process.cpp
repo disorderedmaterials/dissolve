@@ -5,14 +5,11 @@
 #include "modules/test/test.h"
 
 // Run main processing
-bool TestModule::process(Dissolve &dissolve, ProcessPool &procPool)
+bool TestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
-
-    // Set up process pool - must do this to ensure we are using all available processes
-    procPool.assignProcessesToGroups(targetConfiguration_->processPool());
 
     // MODULE CODE
 

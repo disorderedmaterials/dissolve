@@ -16,45 +16,7 @@ int ProcessPool::FAILED = 0;
 int ProcessPool::SUCCEEDED = 1;
 int ProcessPool::RESULT;
 
-ProcessPool::ProcessPool() { clear(); }
-
-ProcessPool::ProcessPool(const ProcessPool &source)
-{
-    (*this) = source;
-    poolRank_ = -99;
-    groupIndex_ = -99;
-    groupRank_ = -99;
-}
-
-void ProcessPool::operator=(const ProcessPool &source)
-{
-    // Process Identification
-    name_ = source.name_;
-    poolRank_ = source.poolRank_;
-    worldRanks_ = source.worldRanks_;
-
-    // Local groups
-    processGroups_ = source.processGroups_;
-    groupIndex_ = source.groupIndex_;
-    groupRank_ = source.groupRank_;
-    groupLeaders_ = source.groupLeaders_;
-    maxProcessGroups_ = source.maxProcessGroups_;
-#ifdef PARALLEL
-    groupGroup_ = source.groupGroup_;
-    groupCommunicator_ = source.groupCommunicator_;
-    leaderGroup_ = source.leaderGroup_;
-    leaderCommunicator_ = source.leaderCommunicator_;
-    poolGroup_ = source.poolGroup_;
-    poolCommunicator_ = source.poolCommunicator_;
-#endif
-    groupsModifiable_ = source.groupsModifiable_;
-
-    // Random number buffer
-    // ???
-}
-
-// Clear all data
-void ProcessPool::clear()
+ProcessPool::ProcessPool()
 {
     poolRank_ = -1;
     groupIndex_ = -1;
@@ -65,18 +27,18 @@ void ProcessPool::clear()
     groupLeaders_.clear();
     groupsModifiable_ = true;
 #ifdef PARALLEL
-    groupGroup_ = 0;
-    groupCommunicator_ = 0;
-    leaderGroup_ = 0;
-    leaderCommunicator_ = 0;
-    poolGroup_ = 0;
-    poolCommunicator_ = 0;
+    groupGroup_ = nullptr;
+    groupCommunicator_ = nullptr;
+    leaderGroup_ = nullptr;
+    leaderCommunicator_ = nullptr;
+    poolGroup_ = nullptr;
+    poolCommunicator_ = nullptr;
 #endif
 }
 
 #ifdef PARALLEL
 // Return communicator specified
-MPI_Comm ProcessPool::communicator(ProcessPool::CommunicatorType commType)
+MPI_Comm ProcessPool::communicator(ProcessPool::CommunicatorType commType) const
 {
     if (commType == ProcessPool::GroupProcessesCommunicator)
         return groupCommunicator_;
@@ -143,16 +105,6 @@ int ProcessPool::worldRank() { return worldRank_; }
 bool ProcessPool::isWorldMaster() { return (worldRank_ == 0); }
 
 /*
- * Timing
- */
-
-// Reset accumulated Comm time
-void ProcessPool::resetAccumulatedTime() { timer_.zero(); }
-
-// Return accumulated time string
-std::string ProcessPool::accumulatedTimeString() { return timer_.totalTimeString(); }
-
-/*
  * Process Identification
  */
 
@@ -172,7 +124,7 @@ bool ProcessPool::isMaster(ProcessPool::CommunicatorType commType) const
     return false;
 }
 
-// Return whether this process is a local slave for the specified communicatyr
+// Return whether this process is a local slave for the specified communicator
 bool ProcessPool::isSlave(ProcessPool::CommunicatorType commType) const
 {
     if (commType == ProcessPool::PoolProcessesCommunicator)
@@ -217,11 +169,9 @@ bool ProcessPool::groupLeader() const { return (groupRank_ == 0); }
 // Set up pool with world ranks specified
 bool ProcessPool::setUp(std::string_view name, const std::vector<int> &worldRanks)
 {
-    clear();
-
     name_ = name;
 
-    Messenger::print("Setting up process pool '{}'...\n", name_);
+    Messenger::printVerbose("Setting up process pool '{}'...\n", name_);
 
     // Set rank list
     worldRanks_ = worldRanks;
@@ -232,7 +182,8 @@ bool ProcessPool::setUp(std::string_view name, const std::vector<int> &worldRank
         if (worldRank_ == worldRanks_[n])
         {
             poolRank_ = n;
-            Messenger::print("Process with world rank {} added to pool '{}' with local rank {}.\n", worldRanks_[n], name_, n);
+            Messenger::printVerbose("Process with world rank {} added to pool '{}' with local rank {}.\n", worldRanks_[n],
+                                    name_, n);
             break;
         }
     }
@@ -240,7 +191,8 @@ bool ProcessPool::setUp(std::string_view name, const std::vector<int> &worldRank
     // Set default maximum number of groups
     maxProcessGroups_ = worldRanks_.size();
 
-    Messenger::print("There are {} processes in pool '{}' (max groups = {}).\n", worldRanks_.size(), name_, maxProcessGroups_);
+    Messenger::printVerbose("There are {} processes in pool '{}' (max groups = {}).\n", worldRanks_.size(), name_,
+                            maxProcessGroups_);
 
 #ifdef PARALLEL
     // Create pool group and communicator
@@ -382,61 +334,6 @@ bool ProcessPool::assignProcessesToGroups()
     groupIndex_ = 0;
     groupRank_ = 0;
 #endif
-
-    return true;
-}
-
-// Assign processes to groups taken from supplied ProcessPool
-bool ProcessPool::assignProcessesToGroups(ProcessPool &groupsSource)
-{
-    /*
-     * Since we have the ability to run Modules with any ProcessPool and at any point, we must occasionally
-     * re-assign the processes in the pool (typically the Dissolve::worldPool_) to a different set of groups in
-     * order to utilise all available processing power (e.g. when a Module is run as, or is performing, a
-     * post-processing step).
-     */
-
-    // If we have been supplied with ourself as the reference ProcessPool, we can exit gracefully now
-    if (this == &groupsSource)
-        return true;
-
-    // First check that we are allowed to modify the groups within this pool
-    if (!groupsModifiable_)
-    {
-        Messenger::error("Tried to modify the group contents of a ProcessPool in which they have explicitly been fixed.\n");
-        return false;
-    }
-
-#ifdef PARALLEL
-    // All processes in this pool first abandon their current groupGroup_ and leaderGroup_ communicators and groups
-    if (groupGroup_ != 0)
-        MPI_Group_free(&groupGroup_);
-    if (groupCommunicator_ != 0)
-        MPI_Comm_free(&groupCommunicator_);
-    if (leaderGroup_ != 0)
-        MPI_Group_free(&leaderGroup_);
-    // -- NOTE If a group slave tries to free the leaderCommunicator_, we get an 'invalid communicator' error
-    if (groupLeader() && (leaderCommunicator_ != 0))
-        MPI_Comm_free(&leaderCommunicator_);
-    groupGroup_ = 0;
-    groupCommunicator_ = 0;
-    leaderGroup_ = 0;
-    leaderCommunicator_ = 0;
-    groupRank_ = -1;
-    groupIndex_ = -1;
-#endif
-
-    // Reset the groupLeaders and processGroups arrays
-    groupLeaders_.clear();
-    processGroups_.clear();
-
-    // Copy over the number of allowable groups from the source ProcessPool
-    maxProcessGroups_ = 1;
-    if (!assignProcessesToGroups())
-    {
-        Messenger::error("Failed to re-assign processes to groups in this ProcessPool.\n");
-        return false;
-    }
 
     return true;
 }
@@ -645,7 +542,7 @@ int ProcessPool::twoBodyLoopEnd(int nItems) const
  */
 
 // Wait for all processes
-bool ProcessPool::wait(ProcessPool::CommunicatorType commType)
+bool ProcessPool::wait(ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     if (MPI_Barrier(communicator(commType)) != MPI_SUCCESS)
@@ -655,154 +552,190 @@ bool ProcessPool::wait(ProcessPool::CommunicatorType commType)
 }
 
 // Send single integer value to target process
-bool ProcessPool::send(int value, int targetRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(int value, int targetRank, ProcessPool::CommunicatorType commType,
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Send(&value, 1, MPI_INTEGER, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Receive single integer value from source process
-bool ProcessPool::receive(int &value, int sourceRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(int &value, int sourceRank, ProcessPool::CommunicatorType commType,
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     MPI_Status status;
     if (MPI_Recv(&value, 1, MPI_INTEGER, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Send single long integer value to target process
-bool ProcessPool::send(long int value, int targetRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(long int value, int targetRank, ProcessPool::CommunicatorType commType,
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Send(&value, 1, MPI_LONG, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Receive single long integer value from source process
-bool ProcessPool::receive(long int &value, int sourceRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(long int &value, int sourceRank, ProcessPool::CommunicatorType commType,
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     MPI_Status status;
     if (MPI_Recv(&value, 1, MPI_LONG, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Send single double value to target process
-bool ProcessPool::send(double value, int targetRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(double value, int targetRank, ProcessPool::CommunicatorType commType,
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Send(&value, 1, MPI_DOUBLE, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Receive single double value from source process
-bool ProcessPool::receive(double &value, int sourceRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(double &value, int sourceRank, ProcessPool::CommunicatorType commType,
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     MPI_Status status;
     if (MPI_Recv(&value, 1, MPI_DOUBLE, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Send single bool value to target process
-bool ProcessPool::send(bool value, int targetRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(bool value, int targetRank, ProcessPool::CommunicatorType commType,
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     int data = value;
     if (MPI_Send(&data, 1, MPI_INTEGER, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Receive single bool value from source process
-bool ProcessPool::receive(bool &value, int sourceRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(bool &value, int sourceRank, ProcessPool::CommunicatorType commType,
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     MPI_Status status;
     int result;
     if (MPI_Recv(&result, 1, MPI_INTEGER, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
     value = result;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Send integer array data to target process
-bool ProcessPool::send(int *source, int nData, int targetRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(int *source, int nData, int targetRank, ProcessPool::CommunicatorType commType,
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Send(source, nData, MPI_INTEGER, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Receive integer array data from target process
-bool ProcessPool::receive(int *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(int *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType,
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     MPI_Status status;
     if (MPI_Recv(source, nData, MPI_INTEGER, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Send double array data to target process
-bool ProcessPool::send(double *source, int nData, int targetRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(double *source, int nData, int targetRank, ProcessPool::CommunicatorType commType,
+                       OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Send(source, nData, MPI_DOUBLE, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Receive double array data from target process
-bool ProcessPool::receive(double *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(double *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType,
+                          OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     MPI_Status status;
     if (MPI_Recv(source, nData, MPI_DOUBLE, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
@@ -812,10 +745,12 @@ bool ProcessPool::receive(double *source, int nData, int sourceRank, ProcessPool
  */
 
 // Broadcast std::string
-bool ProcessPool::broadcast(std::string &source, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(std::string &source, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     int length;
     if (poolRank_ == rootRank)
     {
@@ -854,16 +789,19 @@ bool ProcessPool::broadcast(std::string &source, int rootRank, ProcessPool::Comm
             return false;
         }
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast char data to all Processes
-bool ProcessPool::broadcast(char *source, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(char *source, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     int length;
     if (poolRank_ == rootRank)
     {
@@ -900,119 +838,142 @@ bool ProcessPool::broadcast(char *source, int rootRank, ProcessPool::Communicato
             return false;
         }
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast single integer
-bool ProcessPool::broadcast(int &source, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(int &source, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
     return broadcast(&source, 1, rootRank, commType);
 }
 
 // Broadcast integer(s) to all Processes
-bool ProcessPool::broadcast(int *source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(int *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Bcast(source, count, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast int data from root rank {}.\n", rootRank);
         return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast char(s) to all Processes
-bool ProcessPool::broadcast(char *source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(char *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Bcast(source, count, MPI_CHAR, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast char array data from root rank {}.\n", rootRank);
         return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast long integer to all Processes
-bool ProcessPool::broadcast(long int &source, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(long int &source, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Bcast(&source, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast long int data from root rank {}.\n", rootRank);
         return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast long integer to all Processes
-bool ProcessPool::broadcast(long int *source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(long int *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Bcast(source, count, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast long int data from root rank {}.\n", rootRank);
         return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast single double
-bool ProcessPool::broadcast(double &source, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(double &source, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
     return broadcast(&source, 1, rootRank, commType);
 }
 
 // Broadcast double(s) to all Processes
-bool ProcessPool::broadcast(double *source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(double *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Bcast(source, count, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast int data from root rank {}.\n", rootRank);
         return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast float(s) to all Processes
-bool ProcessPool::broadcast(float *source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(float *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (MPI_Bcast(source, count, MPI_FLOAT, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast float data from root rank {}.\n", rootRank);
         return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
 
     return true;
 }
 
 // Broadcast bool to all Processes
-bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     int result = (source ? 1 : 0);
     if (MPI_Bcast(&result, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
@@ -1020,16 +981,19 @@ bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::Communicato
         return false;
     }
     source = result;
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast std::vector<int>
-bool ProcessPool::broadcast(std::vector<int> &array, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(std::vector<int> &array, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
 
     if (!broadcast(array.data(), array.size(), rootRank, commType))
     {
@@ -1038,16 +1002,19 @@ bool ProcessPool::broadcast(std::vector<int> &array, int rootRank, ProcessPool::
         return false;
     }
 
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Broadcast std::vector<double>
-bool ProcessPool::broadcast(std::vector<double> &array, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(std::vector<double> &array, int rootRank, ProcessPool::CommunicatorType commType,
+                            OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
 
     if (!broadcast(array.data(), array.size(), rootRank, commType))
     {
@@ -1056,7 +1023,8 @@ bool ProcessPool::broadcast(std::vector<double> &array, int rootRank, ProcessPoo
         return false;
     }
 
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
@@ -1066,10 +1034,12 @@ bool ProcessPool::broadcast(std::vector<double> &array, int rootRank, ProcessPoo
  */
 
 // Reduce (sum) double data to root rank
-bool ProcessPool::sum(double *source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::sum(double *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
+                      OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     // If we are the target process then we need to construct a temporary buffer to store the received data in.
     if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader()))
         return true;
@@ -1087,16 +1057,19 @@ bool ProcessPool::sum(double *source, int count, int rootRank, ProcessPool::Comm
         if (MPI_Reduce(source, nullptr, count, MPI_DOUBLE, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS)
             return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Reduce (sum) int data to root rank
-bool ProcessPool::sum(int *source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::sum(int *source, int count, int rootRank, ProcessPool::CommunicatorType commType,
+                      OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     // If we are the target process then we need to construct a temporary buffer to store the received data in.
     if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader()))
         return true;
@@ -1114,16 +1087,19 @@ bool ProcessPool::sum(int *source, int count, int rootRank, ProcessPool::Communi
         if (MPI_Reduce(source, nullptr, count, MPI_INTEGER, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS)
             return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Reduce (sum) double data to all processes
-bool ProcessPool::allSum(double *source, int count, ProcessPool::CommunicatorType commType)
+bool ProcessPool::allSum(double *source, int count, ProcessPool::CommunicatorType commType,
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     double buffer[count];
     if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader()))
         return true;
@@ -1131,16 +1107,19 @@ bool ProcessPool::allSum(double *source, int count, ProcessPool::CommunicatorTyp
         return false;
     // Put reduced data back into original buffer
     std::copy(buffer, buffer + count, source);
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Reduce (sum) vector of Vec3<double> data to all processes
-bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::CommunicatorType commType)
+bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::CommunicatorType commType,
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader()))
         return true;
 
@@ -1163,16 +1142,19 @@ bool ProcessPool::allSum(std::vector<Vec3<double>> &source, ProcessPool::Communi
             val[n] = rcvd;
     }
 
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Reduce (sum) int data to all processes
-bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType commType)
+bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType commType,
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     int buffer[count];
     std::fill(buffer, buffer + count, 0);
 
@@ -1183,16 +1165,19 @@ bool ProcessPool::allSum(int *source, int count, ProcessPool::CommunicatorType c
 
     // Put reduced data back into original buffer
     std::copy(buffer, buffer + count, source);
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Reduce (sum) long int data to all processes
-bool ProcessPool::allSum(long int *source, int count, ProcessPool::CommunicatorType commType)
+bool ProcessPool::allSum(long int *source, int count, ProcessPool::CommunicatorType commType,
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     long int buffer[count];
     if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader()))
         return true;
@@ -1201,16 +1186,19 @@ bool ProcessPool::allSum(long int *source, int count, ProcessPool::CommunicatorT
 
     // Put reduced data back into original buffer
     std::copy(buffer, buffer + count, source);
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Reduce (sum) double data over processes relevant to specified strategy
-bool ProcessPool::allSum(double *source, int count, ProcessPool::DivisionStrategy strategy)
+bool ProcessPool::allSum(double *source, int count, ProcessPool::DivisionStrategy strategy,
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (strategy == ProcessPool::GroupsStrategy)
     {
         // Sum values from group leaders, then broadcast to other processes in their respective groups
@@ -1231,16 +1219,19 @@ bool ProcessPool::allSum(double *source, int count, ProcessPool::DivisionStrateg
     {
         // No need to perform any summation
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Reduce (sum) int data over processes relevant to specified strategy
-bool ProcessPool::allSum(int *source, int count, ProcessPool::DivisionStrategy strategy)
+bool ProcessPool::allSum(int *source, int count, ProcessPool::DivisionStrategy strategy,
+                         OptionalReferenceWrapper<Timer> timer) const
 {
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (strategy == ProcessPool::GroupsStrategy)
     {
         // Sum values from group leaders, then broadcast to other processes in their respective groups
@@ -1261,14 +1252,15 @@ bool ProcessPool::allSum(int *source, int count, ProcessPool::DivisionStrategy s
     {
         // No need to perform any summation
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Assemble integer array for entire pool on target process
 bool ProcessPool::assemble(int *array, int nData, int *rootDest, int rootMaxData, int rootRank,
-                           ProcessPool::CommunicatorType commType)
+                           ProcessPool::CommunicatorType commType, OptionalReferenceWrapper<Timer> timer) const
 {
     /*
      * Given that the integer 'array' exists on all processes, and each process has stored nData at the
@@ -1276,7 +1268,8 @@ bool ProcessPool::assemble(int *array, int nData, int *rootDest, int rootMaxData
      * maxData elements in the new array rootDest) on the rootRank.
      */
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (poolRank_ == rootRank)
     {
         int n;
@@ -1317,14 +1310,15 @@ bool ProcessPool::assemble(int *array, int nData, int *rootDest, int rootMaxData
         if (!send(array, nData, rootRank, commType))
             return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
 
 // Assemble double array for entire pool on target process
 bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int rootMaxData, int rootRank,
-                           ProcessPool::CommunicatorType commType)
+                           ProcessPool::CommunicatorType commType, OptionalReferenceWrapper<Timer> timer) const
 {
     /*
      * Given that the double 'array' exists on all processes, and each process has stored nData at the
@@ -1332,7 +1326,8 @@ bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int 
      * maxData elements in the new array rootDest) on the root.
      */
 #ifdef PARALLEL
-    timer_.start();
+    if (timer)
+        timer->get().start();
     if (poolRank_ == rootRank)
     {
         // The root's data must be copied into the local array
@@ -1372,7 +1367,8 @@ bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int 
         if (!send(array, nLocalData, rootRank, commType))
             return false;
     }
-    timer_.accumulate();
+    if (timer)
+        timer->get().accumulate();
 #endif
     return true;
 }
@@ -1382,7 +1378,7 @@ bool ProcessPool::assemble(double *array, int nLocalData, double *rootDest, int 
  */
 
 // Broadcast logical 'true' decision to all processes (Master only)
-bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     auto decision = true;
@@ -1393,7 +1389,7 @@ bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commTyp
 }
 
 // Broadcast logical 'false' decision to all processes (Master only)
-bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     auto decision = false;
@@ -1404,7 +1400,7 @@ bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commTy
 }
 
 // Receive logical decision from master (Slaves only)
-bool ProcessPool::decision(int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::decision(int rootRank, ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     bool data;
@@ -1416,7 +1412,7 @@ bool ProcessPool::decision(int rootRank, ProcessPool::CommunicatorType commType)
 }
 
 // Test the supplied condition over all processes, returning true only if they all report truth
-bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
+bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType) const
 {
 #ifdef PARALLEL
     // First, sum all bool values of the processes in the pool
@@ -1429,122 +1425,4 @@ bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
         return (summedResult == nProcesses());
 #endif
     return value;
-}
-
-/*
- * Buffered Random Numbers
- */
-
-// Refill random number buffer
-void ProcessPool::refillRandomBuffer()
-{
-#ifdef PARALLEL
-    // Reset index
-    randomBufferIndex_ = 0;
-
-    // Generate new random numbers in array
-    if (randomBufferCommGroup_ == ProcessPool::PoolProcessesCommunicator)
-    {
-        // Master creates buffer and sends to slaves
-        Messenger::printVerbose("Random Buffer - Pool parallel, so master ({}) will create and send array.\n",
-                                isMaster() ? "me" : "not me");
-        if (isMaster())
-        {
-            for (auto n = 0; n < RANDBUFFERSIZE; ++n)
-                randomBuffer_[n] = DissolveMath::random();
-            broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
-        }
-        else
-            broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
-    }
-    else if (randomBufferCommGroup_ == ProcessPool::GroupLeadersCommunicator)
-    {
-        // Master creates buffer and sends to slaves
-        Messenger::printVerbose("Random Buffer - Group leaders parallel, so master ({}) will create and send array.\n",
-                                isMaster() ? "me" : "not me");
-        if (isMaster())
-        {
-            for (auto n = 0; n < RANDBUFFERSIZE; ++n)
-                randomBuffer_[n] = DissolveMath::random();
-            broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
-        }
-        else
-            broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
-    }
-    else if (randomBufferCommGroup_ == ProcessPool::GroupProcessesCommunicator)
-    {
-        // Group leader creates buffer and sends to slaves
-        Messenger::printVerbose("Random Buffer - Group parallel, so process leader ({}) will create and send array.\n",
-                                groupLeader() ? "me" : "not me");
-        if (groupLeader())
-        {
-            for (auto n = 0; n < RANDBUFFERSIZE; ++n)
-                randomBuffer_[n] = DissolveMath::random();
-            broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
-        }
-        else
-            broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
-    }
-    else
-    {
-        // Create own random buffer
-        Messenger::printVerbose("Random Buffer - Solo parallel, so will create own array.\n");
-        for (auto n = 0; n < RANDBUFFERSIZE; ++n)
-            randomBuffer_[n] = DissolveMath::random();
-    }
-#endif
-}
-
-// Initialise random number buffer
-void ProcessPool::initialiseRandomBuffer(ProcessPool::CommunicatorType commType)
-{
-    randomBufferCommGroup_ = commType;
-    refillRandomBuffer();
-}
-
-// Initialise random number buffer for processes
-void ProcessPool::initialiseRandomBuffer(ProcessPool::DivisionStrategy strategy)
-{
-    switch (strategy)
-    {
-        case (GroupsStrategy):
-            randomBufferCommGroup_ = ProcessPool::GroupLeadersCommunicator;
-            break;
-        case (GroupProcessesStrategy):
-            randomBufferCommGroup_ = ProcessPool::GroupProcessesCommunicator;
-            break;
-        case (PoolStrategy):
-            randomBufferCommGroup_ = ProcessPool::PoolProcessesCommunicator;
-            break;
-        case (PoolProcessesStrategy):
-            randomBufferCommGroup_ = ProcessPool::NoCommunicator;
-            break;
-    }
-    refillRandomBuffer();
-}
-
-// Get next buffered random number
-double ProcessPool::random()
-{
-#ifdef PARALLEL
-    // Have we exhausted the buffer?
-    if (randomBufferIndex_ == RANDBUFFERSIZE)
-        refillRandomBuffer();
-    return randomBuffer_[randomBufferIndex_++];
-#else
-    return DissolveMath::random();
-#endif
-}
-
-// Get next buffered random number (-1 to +1 inclusive)
-double ProcessPool::randomPlusMinusOne()
-{
-#ifdef PARALLEL
-    // Have we exhausted the buffer?
-    if (randomBufferIndex_ == RANDBUFFERSIZE)
-        refillRandomBuffer();
-    return (randomBuffer_[randomBufferIndex_++] - 0.5) * 2.0;
-#else
-    return DissolveMath::randomPlusMinusOne();
-#endif
 }

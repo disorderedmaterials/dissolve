@@ -25,8 +25,8 @@ LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsW
             SLOT(moduleSelectionChanged(const QItemSelection &, const QItemSelection &)));
     connect(&moduleLayerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
-    connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &)), this,
-            SLOT(moduleNameChanged(const QModelIndex &)));
+    connect(&moduleLayerModel_, SIGNAL(moduleNameChanged(const QModelIndex &, const QString &, const QString &)), this,
+            SLOT(moduleNameChanged(const QModelIndex &, const QString &, const QString &)));
 
     if (moduleLayer_->modules().size() >= 1)
     {
@@ -109,6 +109,24 @@ ModuleControlWidget *LayerTab::getControlWidget(const Module *module, bool setAs
     return nullptr;
 }
 
+// Remove ModuleControlWidget for the specified Module (if it exists)
+void LayerTab::removeControlWidget(const Module *module)
+{
+    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        auto *w = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
+        if (w && (w->module() == module))
+        {
+            if (ui_.ModuleControlsStack->currentIndex() == n)
+                ui_.ModuleControlsStack->setCurrentIndex((n + 1) < ui_.ModuleControlsStack->count() ? n + 1 : n - 1);
+            ui_.ModuleControlsStack->removeWidget(w);
+            w->setParent(nullptr);
+            w->deleteLater();
+            return;
+        }
+    }
+}
+
 void LayerTab::on_ShowAvailableModulesButton_clicked(bool checked)
 {
     // Toggle the visibility of the available modules tree
@@ -169,14 +187,14 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
     if (!mcw)
     {
         // Create a new widget to display this Module
-        mcw = new ModuleControlWidget;
-        mcw->setModule(module, &dissolveWindow_->dissolve());
+        mcw = new ModuleControlWidget(dissolveWindow_, module);
         connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
         connect(mcw, SIGNAL(statusChanged()), this, SLOT(updateModuleList()));
         ui_.ModuleControlsStack->setCurrentIndex(ui_.ModuleControlsStack->addWidget(mcw));
 
+        // If we're currently running, don;t allow editing in our new widget
         if (dissolveWindow_->dissolveIterating())
-            mcw->disableSensitiveControls();
+            mcw->preventEditing();
     }
     else
         mcw->updateControls();
@@ -184,10 +202,10 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
 
 void LayerTab::layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
 {
-    dissolveWindow_->setModified();
+    dissolveWindow_->setModified({DissolveSignals::ModulesMutated});
 }
 
-void LayerTab::moduleNameChanged(const QModelIndex &index)
+void LayerTab::moduleNameChanged(const QModelIndex &index, const QString &oldName, const QString &newName)
 {
     auto *module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
     assert(module);
@@ -196,6 +214,9 @@ void LayerTab::moduleNameChanged(const QModelIndex &index)
     auto *mcw = getControlWidget(module);
     if (mcw)
         mcw->updateControls();
+
+    // Rename processing module data
+    dissolve_.processingModuleData().renamePrefix(oldName.toStdString(), newName.toStdString());
 }
 
 // Update the module list
@@ -210,9 +231,73 @@ void LayerTab::updateModuleList()
         ui_.ModulesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
 }
 
+void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
+{
+    auto index = ui_.ModulesList->indexAt(pos);
+    if (!index.isValid())
+        return;
+    auto module = moduleLayerModel_.data(index, Qt::UserRole).value<Module *>();
+    assert(module);
+
+    QMenu menu;
+    menu.setFont(font());
+    menu.setEnabled(!dissolveWindow_->dissolveIterating());
+
+    // Construct the context menu
+    auto *enableModule = menu.addAction("&Enable this");
+    enableModule->setEnabled(!module->isEnabled());
+    auto *disableModule = menu.addAction("&Disable this");
+    disableModule->setEnabled(module->isEnabled());
+    menu.addSeparator();
+    auto *enableOnlyModule = menu.addAction("Enable &only this");
+    menu.addSeparator();
+    auto *clearData = menu.addAction("&Clear associated data");
+    menu.addSeparator();
+    auto *deleteModule = menu.addAction("&Delete");
+    deleteModule->setIcon(QIcon(":/general/icons/general_cross.svg"));
+
+    auto *action = menu.exec(ui_.ModulesList->mapToGlobal(pos));
+    if (action == enableModule)
+        module->setEnabled(true);
+    else if (action == disableModule)
+        module->setEnabled(false);
+    else if (action == enableOnlyModule)
+        for (auto &m : moduleLayer_->modules())
+            m->setEnabled(m.get() == module);
+    else if (action == clearData)
+        dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+    else if (action == deleteModule)
+    {
+        // Remove the module's data, the module control widget, then the module itself
+        dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+        removeControlWidget(module);
+        moduleLayerModel_.removeRows(index.row(), 1, QModelIndex());
+    }
+
+    // Update required objects
+    if (action == enableModule || action == disableModule || action == enableOnlyModule || action == deleteModule)
+    {
+        updateModuleList();
+        dissolveWindow_->setModified({DissolveSignals::ModulesMutated});
+    }
+    updateControls();
+}
+
 void LayerTab::on_AvailableModulesTree_doubleClicked(const QModelIndex &index)
 {
     moduleLayerModel_.appendNew(modulePaletteModel_.data(index, Qt::DisplayRole).toString());
+}
+
+// Remove all module control widgets
+void LayerTab::removeModuleControlWidgets()
+{
+    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
+    {
+        auto *w = ui_.ModuleControlsStack->widget(n);
+        ui_.ModuleControlsStack->removeWidget(w);
+        w->setParent(nullptr);
+        w->deleteLater();
+    }
 }
 
 /*
@@ -235,8 +320,8 @@ void LayerTab::updateControls()
         mcw->updateControls();
 }
 
-// Disable sensitive controls within tab
-void LayerTab::disableSensitiveControls()
+// Prevent editing within tab
+void LayerTab::preventEditing()
 {
     ui_.EnabledButton->setEnabled(false);
     ui_.FrequencySpin->setEnabled(false);
@@ -247,12 +332,12 @@ void LayerTab::disableSensitiveControls()
     {
         auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw)
-            mcw->disableSensitiveControls();
+            mcw->preventEditing();
     }
 }
 
-// Enable sensitive controls within tab
-void LayerTab::enableSensitiveControls()
+// Allow editing within tab
+void LayerTab::allowEditing()
 {
     ui_.EnabledButton->setEnabled(true);
     ui_.FrequencySpin->setEnabled(true);
@@ -263,6 +348,6 @@ void LayerTab::enableSensitiveControls()
     {
         auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw)
-            mcw->enableSensitiveControls();
+            mcw->allowEditing();
     }
 }

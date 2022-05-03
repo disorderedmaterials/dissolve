@@ -58,7 +58,7 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
     // Select: Site 'A'
     selectA_ = std::make_shared<SelectProcedureNode>();
     selectA_->setName("A");
-    std::shared_ptr<SequenceProcedureNode> forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);
 
     // -- Select: Site 'B'
@@ -66,7 +66,7 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
     selectB_->setName("B");
     selectB_->keywords().set("ExcludeSameSite", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
     selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
-    std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Calculate: 'rAB'
@@ -84,7 +84,7 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
     processDistance_->keywords().set("LabelValue", std::string("g(r)"));
     processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
-    std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
+    auto rdfNormalisation = processDistance_->addNormalisationBranch();
     rdfNormalisation->addNode(
         std::make_shared<OperateSitePopulationNormaliseProcedureNode>(std::vector<std::shared_ptr<const SelectProcedureNode>>(
             {std::dynamic_pointer_cast<const SelectProcedureNode>(selectA_)})));

@@ -42,7 +42,7 @@ void IntegerKeywordWidget::spinBoxValueChanged(int newValue)
  */
 
 // Update value displayed in widget
-void IntegerKeywordWidget::updateValue()
+void IntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     refreshing_ = true;
 

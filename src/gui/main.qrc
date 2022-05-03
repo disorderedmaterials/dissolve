@@ -8,6 +8,52 @@
     <file>icons/menu_save.svg</file>
     <file>icons/menu_connect.svg</file>
   </qresource>
+  <qresource prefix="nodes">
+    <file>icons/nodes_add.svg</file>
+    <file>icons/nodes_aliases.svg</file>
+    <file>icons/nodes_box.svg</file>
+    <file>icons/nodes_calculateangle.svg</file>
+    <file>icons/nodes_calculateaxisangle.svg</file>
+    <file>icons/nodes_calculatebase.svg</file>
+    <file>icons/nodes_calculatedistance.svg</file>
+    <file>icons/nodes_calculatevector.svg</file>
+    <file>icons/nodes_collect1d.svg</file>
+    <file>icons/nodes_collect2d.svg</file>
+    <file>icons/nodes_collect3d.svg</file>
+    <file>icons/nodes_context.svg</file>
+    <file>icons/nodes_coordinatesets.svg</file>
+    <file>icons/nodes_cylindricalregion.svg</file>
+    <file>icons/nodes_dynamicsite.svg</file>
+    <file>icons/nodes_fit1d.svg</file>
+    <file>icons/nodes_generalregion.svg</file>
+    <file>icons/nodes_integrate1d.svg</file>
+    <file>icons/nodes_node.svg</file>
+    <file>icons/nodes_nodereference.svg</file>
+    <file>icons/nodes_nodes.svg</file>
+    <file>icons/nodes_operatebase.svg</file>
+    <file>icons/nodes_operatedivide.svg</file>
+    <file>icons/nodes_operateexpression.svg</file>
+    <file>icons/nodes_operategridnormalise.svg</file>
+    <file>icons/nodes_operatemultiply.svg</file>
+    <file>icons/nodes_operatenormalise.svg</file>
+    <file>icons/nodes_operatenumberdensitynormalise.svg</file>
+    <file>icons/nodes_operatesitepopulationnormalise.svg</file>
+    <file>icons/nodes_operatesphericalshellnormalise.svg</file>
+    <file>icons/nodes_parameters.svg</file>
+    <file>icons/nodes_pick.svg</file>
+    <file>icons/nodes_pickbase.svg</file>
+    <file>icons/nodes_pickproximity.svg</file>
+    <file>icons/nodes_pickregion.svg</file>
+    <file>icons/nodes_process1d.svg</file>
+    <file>icons/nodes_process2d.svg</file>
+    <file>icons/nodes_process3d.svg</file>
+    <file>icons/nodes_regionbase.svg</file>
+    <file>icons/nodes_remove.svg</file>
+    <file>icons/nodes_select.svg</file>
+    <file>icons/nodes_sequence.svg</file>
+    <file>icons/nodes_sum1d.svg</file>
+    <file>icons/nodes_transmute.svg</file>
+  </qresource>
   <qresource prefix="wizard">
     <file>icons/wizard_allatoms.svg</file>
     <file>icons/wizard_selectedatoms.svg</file>

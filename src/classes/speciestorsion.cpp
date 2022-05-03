@@ -613,12 +613,12 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
     torsion["form"] = form;
 
     std::vector<double> values = SpeciesTorsion::interactionPotential().parameters();
-    if (values.size() > 0)
+    if (!values.empty())
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
-        std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
-        for (auto &[parameter, value] : zip(parameters, values))
-            parametersNode[parameter] = value;
+        int index = 0;
+        for (auto &value : values)
+            parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;
         torsion["parameters"] = parametersNode;
     }
 

@@ -53,18 +53,17 @@ int CalculateAxisAngleProcedureNode::dimensionality() const { return 1; }
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateAxisAngleProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
+bool CalculateAxisAngleProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Call the base class function
-    if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList))
+    if (!CalculateProcedureNodeBase::prepare(procedureContext))
         return false;
 
     return true;
 }
 
-// Execute node, targetting the supplied Configuration
-bool CalculateAxisAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
-                                              GenericList &targetList)
+// Execute node
+bool CalculateAxisAngleProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());

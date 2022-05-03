@@ -5,6 +5,7 @@
 
 #include "base/lock.h"
 #include "gui/ui_modulecontrolwidget.h"
+#include "modules/widget.h"
 
 // Forward Declarations
 class ConfigurationVectorKeyword;
@@ -22,7 +23,7 @@ class ModuleControlWidget : public QWidget
     Q_OBJECT
 
     public:
-    ModuleControlWidget(QWidget *parent = nullptr);
+    ModuleControlWidget(DissolveWindow *dissolveWindow, Module *module);
     ~ModuleControlWidget() = default;
 
     private:
@@ -33,14 +34,12 @@ class ModuleControlWidget : public QWidget
      * Module Target
      */
     private:
-    // Pointer to Dissolve
-    Dissolve *dissolve_;
+    // Reference to Dissolve
+    Dissolve &dissolve_;
     // Associated Module
     Module *module_;
 
     public:
-    // Set target Module to display
-    void setModule(Module *module, Dissolve *dissolve);
     // Return target Module for the widget
     Module *module() const;
 
@@ -49,11 +48,11 @@ class ModuleControlWidget : public QWidget
      */
     public:
     // Update controls within widget
-    void updateControls();
-    // Disable sensitive controls
-    void disableSensitiveControls();
-    // Enable sensitive controls
-    void enableSensitiveControls();
+    void updateControls(Flags<ModuleWidget::UpdateFlags> updateFlags = {});
+    // Disable editing
+    void preventEditing();
+    // Allow editing
+    void allowEditing();
 
     /*
      * UI
@@ -71,7 +70,12 @@ class ModuleControlWidget : public QWidget
     void on_ModuleOutputButton_clicked(bool checked);
     void on_EnabledButton_clicked(bool checked);
     void on_FrequencySpin_valueChanged(int value);
-    void moduleKeywordChanged(int signalMask);
+
+    public slots:
+    // Local keyword data changed
+    void localKeywordChanged(int signalMask);
+    // Global data mutated
+    void globalDataMutated(int mutationFlags);
 
     signals:
     // Notify that the Module's data has been modified in some way

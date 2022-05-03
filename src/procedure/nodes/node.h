@@ -6,6 +6,7 @@
 #include "base/enumoptions.h"
 #include "keywords/store.h"
 #include "procedure/nodes/aliases.h"
+#include "procedure/nodes/context.h"
 #include "templates/optionalref.h"
 
 // Forward Declarations
@@ -14,7 +15,6 @@ class CoreData;
 class ExpressionVariable;
 class GenericList;
 class LineParser;
-class NodeScopeStack;
 class Procedure;
 class ProcessPool;
 class SequenceProcedureNode;
@@ -47,6 +47,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Collect1D,
         Collect2D,
         Collect3D,
+        CoordinateSets,
         CylindricalRegion,
         DynamicSite,
         Fit1D,
@@ -98,8 +99,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     NodeType type_;
     // Node name
     std::string name_;
-    // Node nice name
-    std::string niceName_;
 
     public:
     // Return node class
@@ -114,8 +113,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     void setName(std::string_view name);
     // Return node name
     std::string_view name() const;
-    // Return node nice name
-    std::string_view niceName() const;
 
     /*
      * Keywords
@@ -200,11 +197,11 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
      */
     public:
     // Prepare any necessary data, ready for execution
-    virtual bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
-    // Execute node, targetting the supplied Configuration
-    virtual bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    virtual bool prepare(const ProcedureContext &procedureContext);
+    // Execute node
+    virtual bool execute(const ProcedureContext &procedureContext);
     // Finalise any necessary data after execution
-    virtual bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
+    virtual bool finalise(const ProcedureContext &procedureContext);
 
     /*
      * Read / Write

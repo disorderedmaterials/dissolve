@@ -24,7 +24,7 @@ add_library(
   structurefactors.h
 )
 
-include_directories(data PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(data PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(data PRIVATE base)
 
 add_subdirectory(ff)
