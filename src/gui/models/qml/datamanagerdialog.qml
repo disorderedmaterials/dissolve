@@ -3,11 +3,13 @@ import QtQuick.Controls 2
 import QtQuick.Layouts 2
 import QtQuick.Window 2
 import DataManagerSimulationModel 1.0
+import DataManagerReferencePointModel 1.0
 import SortFilterProxyModel 1.0
 
 Rectangle {
     id: main;
     required property DataManagerSimulationModel sim;
+    required property DataManagerReferencePointModel ref;
     anchors.fill: parent
 
     SortFilterProxyModel {

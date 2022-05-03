@@ -95,7 +95,7 @@ void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
     DataManagerSimulationModel *simModel = new DataManagerSimulationModel(dissolve_, dissolve_.processingModuleData());
 
     QQuickView *qmlView = new QQuickView;
-    qmlView->setInitialProperties({{"sim", QVariant::fromValue(simModel)}});
+    qmlView->setInitialProperties({{"ref", QVariant::fromValue(refModel)}, {"sim", QVariant::fromValue(simModel)}});
     // qmlView->setSource(QUrl("qrc:/qml/datamanagerdialog.qml"));
     qmlView->setSource(QUrl("file:///home/adam/Code/dissolve/src/gui/models/qml/datamanagerdialog.qml"));
     qmlView->show();
