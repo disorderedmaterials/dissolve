@@ -62,26 +62,18 @@ Item {
 			delegate: DelegateChooser {
 			    DelegateChoice {
 				column: 0
-				delegate: Rectangle {
-				    implicitWidth: 100
-				    implicitHeight: 50
-				    Text {
-					text: display
-					color: "red"
-					anchors.centerIn: parent
-				    }
+				delegate: TextField {
+				    width: 100
+				    text: display
+				    color: "blue"
 				}
 			    }
 			    DelegateChoice {
 				column: 1
-				delegate: Rectangle {
-				    implicitWidth: 100
-				    implicitHeight: 50
-				    Text {
-					text: display
-					color: "green"
-					anchors.centerIn: parent
-				    }
+				delegate: TextField {
+				    width: 100
+				    text: display
+				    color: "green"
 				}
 			    }
 			}
