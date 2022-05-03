@@ -60,15 +60,24 @@ void DataManagerReferencePointModel::update()
     endResetModel();
 }
 
-std::optional<std::string> DataManagerReferencePointModel::addFile(std::string &&suffix, std::string &&path)
+std::optional<std::string> DataManagerReferencePointModel::addFile(QString suffix, QString path)
 {
-    if (!dissolve_.loadRestartAsReference(path, suffix))
+    QUrl url(path);
+    path = url.toLocalFile();
+    if (!dissolve_.loadRestartAsReference(path.toStdString(), suffix.toStdString()))
         return "Couldn't load the reference point data.\n"
                "Which is odd, annoying, and something you should let the developer know about.";
 
     beginResetModel();
-    referencePoints_.emplace_back(suffix, QDir::current().relativeFilePath(QString(path.c_str())).toStdString());
+    referencePoints_.emplace_back(suffix.toStdString(), QDir::current().relativeFilePath(path).toStdString());
     endResetModel();
 
     return {};
+}
+
+bool DataManagerReferencePointModel::saveRestart(QString filename)
+{
+    QUrl url(filename);
+    filename = url.toLocalFile();
+    return dissolve_.saveRestart(filename.toStdString());
 }

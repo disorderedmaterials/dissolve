@@ -22,7 +22,9 @@ class DataManagerReferencePointModel : public QAbstractTableModel
     DataManagerReferencePointModel(Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints);
     DataManagerReferencePointModel &operator=(const DataManagerReferencePointModel &) = default;
 
-    std::optional<std::string> addFile(std::string &&suffix, std::string &&path);
+    Q_INVOKABLE std::optional<std::string> addFile(QString suffix, QString path);
+
+    Q_INVOKABLE bool saveRestart(QString filename);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

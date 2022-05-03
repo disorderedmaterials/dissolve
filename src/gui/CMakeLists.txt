@@ -31,7 +31,6 @@ set(gui_MOC_HDRS
     # Dialogs
     addforcefieldtermsdialog.h
     copyspeciestermsdialog.h
-    datamanagerdialog.h
     editspeciesdialog.h
     getconfigurationnamedialog.h
     getgizmonamedialog.h
@@ -87,7 +86,6 @@ set(gui_UIS
     # Dialogs
     addforcefieldtermsdialog.ui
     copyspeciestermsdialog.ui
-    datamanagerdialog.ui
     editspeciesdialog.ui
     getconfigurationnamedialog.ui
     getgizmonamedialog.ui
@@ -165,7 +163,6 @@ set(gui_SRCS
     # Dialogs
     addforcefieldtermsdialog_funcs.cpp
     copyspeciestermsdialog_funcs.cpp
-    datamanagerdialog_funcs.cpp
     editspeciesdialog_funcs.cpp
     getconfigurationnamedialog_funcs.cpp
     getgizmonamedialog_funcs.cpp

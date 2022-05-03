@@ -5,6 +5,7 @@ import QtQuick.Window 2
 import DataManagerSimulationModel 1.0
 import DataManagerReferencePointModel 1.0
 import SortFilterProxyModel 1.0
+import Qt.labs.platform
 
 Rectangle {
     id: main;
@@ -67,24 +68,85 @@ Rectangle {
     }
     GroupBox {
 	id: refbox
+	width: parent.width / 2
 	anchors.top: parent.top
 	anchors.bottom: parent.bottom
 	anchors.right: parent.right
 	title: "Reference Points"
-	RowLayout {
-	    Button {
-		icon.source: "qrc:/general/icons/general_remove.svg"
-		enabled: false
-		text: "Remove"
+	Label {
+	    anchors.right: suffixField.left
+	}
+	TextField {
+	    id: suffixField
+	    anchors.right: removeButton.left
+	}
+	Button {
+	    id: removeButton
+	    icon.source: "qrc:/general/icons/general_remove.svg"
+	    anchors.right: openButton.left
+	    enabled: false
+	    text: "Remove"
+	}
+	Button {
+	    id: openButton
+	    anchors.top: parent.top
+	    anchors.right: createButton.left
+	    icon.source: "qrc:/menu/icons/menu_open.svg"
+	    text: "Open"
+	    onClicked: openDialog.open()
+	}
+	Button {
+	    id: createButton
+	    anchors.top: parent.top
+	    anchors.right: parent.right
+	    icon.source: "qrc:/menu/icons/menu_new.svg"
+	    text: "Create"
+	    onClicked: saveDialog.open()
+	}
+	HorizontalHeaderView {
+	    id: refTableHeader
+	    syncView: refTable
+	    anchors.top: createButton.bottom
+	    anchors.left: refTable.left
+	}
+	TableView {
+	    id: refTable
+	    anchors.right: parent.right
+	    anchors.left: parent.left
+	    anchors.bottom: parent.bottom
+	    anchors.top: refTableHeader.bottom
+	    clip: true
+	    model: ref
+	    delegate: Rectangle{
+		implicitWidth: refLabel.width + 5
+		implicitHeight: refLabel.height + 5
+		border.width: 1;
+		color: "white";
+		Label {
+		    id: refLabel
+		    text: display
+		}
 	    }
-	    Button {
-		icon.source: "qrc:/menu/icons/menu_open.svg"
-		text: "Open"
-	    }
-	    Button {
-		icon.source: "qrc:/menu/icons/menu_new.svg"
-		text: "Create"
-	    }
+	}
+    }
+    FileDialog {
+	id: openDialog
+	fileMode: FileDialog.OpenFile
+	title: "Please choose a file"
+	nameFilters: ["Restart files (*.restart)", "All files (*)"]
+	/* folder: shortcuts.home */
+	onAccepted: ref.addFile(suffixField.text, file)
+    }
+    FileDialog {
+	id: saveDialog
+	fileMode: FileDialog.SaveFile
+	title: "Please choose a file"
+	defaultSuffix: "restart"
+	nameFilters: ["Restart files (*.restart)", "All files (*)"]
+	/* folder: shortcuts.home */
+	onAccepted: function() {
+	    ref.saveRestart(file)
+	    ref.addFile(suffixField.text, file)
 	}
     }
 }
