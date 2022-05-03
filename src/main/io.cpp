@@ -229,6 +229,26 @@ bool Dissolve::loadInput(std::string_view filename)
 
         Messenger::print("Finished reading input file.\n");
         setInputFilename(filename);
+
+        if (toml_testing_flag)
+        {
+            toml::value file = toml::parse("C:/ProjectDissolve/Dissolve/build/bin/output.toml");
+            std::ofstream output("C:/ProjectDissolve/Dissolve/build/bin/output-d.toml");
+
+            if (file.is_uninitialized())
+                std::cout << "Couldn't find the file";
+
+            if (file.contains("pairPotentials"))
+            {
+                toml::value pairPotentialsNode = toml::find(file, "pairPotentials");
+                if (!pairPotentialsNode.is_uninitialized())
+                    serializablePairPotential_.deserialize(pairPotentialsNode);
+            }
+
+            toml::basic_value<toml::discard_comments, std::map, std::vector> root;
+            root["pairPotentials"] = serializablePairPotential_.serialize();
+            output << std::setw(40) << root;
+        }
     }
 
     return result;
