@@ -36,9 +36,15 @@ Item {
 			rowSpacing: 0
 			clip: true
 			model: sim
-			delegate: Label {
-			    width: 200
-			    text: display
+			delegate: Rectangle{
+			    implicitWidth: simLabel.width + 5
+			    implicitHeight: simLabel.height + 5
+			    border.width: 1;
+			    color: "white";
+			    Label {
+				id: simLabel
+				text: display
+			    }
 			}
 		    }
 		}
