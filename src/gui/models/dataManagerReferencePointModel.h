@@ -26,6 +26,8 @@ class DataManagerReferencePointModel : public QAbstractTableModel
 
     Q_INVOKABLE bool saveRestart(QString filename);
 
+    Q_INVOKABLE void remove(QModelIndexList indices);
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;

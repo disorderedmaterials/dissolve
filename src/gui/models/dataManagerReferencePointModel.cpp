@@ -81,3 +81,12 @@ bool DataManagerReferencePointModel::saveRestart(QString filename)
     filename = url.toLocalFile();
     return dissolve_.saveRestart(filename.toStdString());
 }
+
+void DataManagerReferencePointModel::remove(QModelIndexList indices)
+{
+    for (auto &index : indices)
+    {
+        auto refPoint = VariantPointer<ReferencePoint>(data(index, Qt::UserRole));
+        dissolve_.processingModuleData().pruneWithSuffix(std::get<0>(*refPoint));
+    }
+}

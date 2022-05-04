@@ -16,7 +16,7 @@ GroupBox {
 	id: removeButton
 	icon.source: "qrc:/general/icons/general_remove.svg"
 	anchors.right: openButton.left
-	enabled: false
+	enabled: selModel.hasSelection
 	text: "Remove"
     }
     Button {
