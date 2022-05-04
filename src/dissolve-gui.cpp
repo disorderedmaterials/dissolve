@@ -70,17 +70,17 @@ int main(int args, char **argv)
                 options.restartFilename().value_or(fmt::format("{}.restart", options.inputFile().value()))};
             loadSuccessful = dissolveWindow.loadRestartFile(actualRestartFile);
         }
-    }
 
-    // If we successfully loaded an input file (and maybe a restart file) iterate before launching the GUI?
-    if (options.inputFile() && loadSuccessful && options.nIterations() > 0)
-    {
-        // Prepare for run
-        if (!dissolve.prepare())
-            return 1;
+        // Iterate before launching the GUI?
+        if (loadSuccessful && options.nIterations() > 0)
+        {
+            // Prepare for run
+            if (!dissolve.prepare())
+                return 1;
 
-        // Run main simulation
-        dissolve.iterate(options.nIterations());
+            // Run main simulation
+            dissolve.iterate(options.nIterations());
+        }
     }
 
     // Update the main window and exec the app
