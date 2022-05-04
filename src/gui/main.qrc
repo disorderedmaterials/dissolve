@@ -136,5 +136,7 @@
   </qresource>
   <qresource prefix="qml">
     <file alias="datamanagerdialog.qml">models/qml/datamanagerdialog.qml</file>
+    <file alias="DataManagerReferenceBox.qml">models/qml/DataManagerReferenceBox.qml</file>
+    <file alias="DataManagerDataBox.qml">models/qml/DataManagerDataBox.qml</file>
   </qresource>
 </RCC>
