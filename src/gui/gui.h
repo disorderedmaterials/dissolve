@@ -20,7 +20,6 @@ class Species;
 class SpeciesTab;
 class ModuleLayer;
 class LayerTab;
-class WorkspaceTab;
 
 class DissolveWindow : public QMainWindow
 {

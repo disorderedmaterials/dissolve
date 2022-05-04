@@ -33,7 +33,7 @@ QString GetTabNameDialog::newName() const { return ui_.NameEdit->text(); }
  * Slots
  */
 
-// Workspace name edited
+// Tab name edited
 void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
 {
     // Make sure the name is valid
