@@ -205,7 +205,6 @@ set(gui_SRCS
     menu_layer.cpp
     menu_simulation.cpp
     menu_species.cpp
-    menu_workspace.cpp
     outputhandler_funcs.cpp
     stockcolours.cpp
     thread_funcs.cpp

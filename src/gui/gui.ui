@@ -132,18 +132,6 @@
     <addaction name="separator"/>
     <addaction name="FileQuitAction"/>
    </widget>
-   <widget class="QMenu" name="WorkspaceMenu">
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="title">
-     <string>&amp;Workspace</string>
-    </property>
-    <addaction name="WorkspaceCreateEmptyAction"/>
-    <addaction name="WorkspaceRenameCurrentGizmoAction"/>
-   </widget>
    <widget class="QMenu" name="SimulationMenu">
     <property name="font">
      <font>
@@ -389,7 +377,6 @@
    <addaction name="SpeciesMenu"/>
    <addaction name="ConfigurationMenu"/>
    <addaction name="LayerMenu"/>
-   <addaction name="WorkspaceMenu"/>
    <addaction name="HelpMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -841,7 +828,7 @@
   </action>
   <action name="LayerCreateCorrelationsRDFXRayAction">
    <property name="text">
-     <string>RDF and &amp;X-ray S(Q)</string>
+    <string>RDF and &amp;X-ray S(Q)</string>
    </property>
   </action>
  </widget>

@@ -140,7 +140,6 @@ Gizmo *WorkspaceTab::createGizmo(QString type)
     gizmos_.emplace_back(gizmo);
 
     mdiArea_->setActiveSubWindow(window);
-    dissolveWindow_->currentWorkspaceGizmoChanged(window);
 
     return gizmo;
 }

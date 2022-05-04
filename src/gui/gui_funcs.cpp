@@ -374,7 +374,6 @@ void DissolveWindow::updateMenus()
     ui_.SpeciesMenu->setEnabled(allowEditing);
     ui_.ConfigurationMenu->setEnabled(allowEditing);
     ui_.LayerMenu->setEnabled(allowEditing);
-    ui_.WorkspaceMenu->setEnabled(allowEditing);
 
     auto activeTab = ui_.MainTabs->currentTab();
     if (!activeTab)
