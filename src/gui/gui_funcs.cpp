@@ -152,9 +152,8 @@ QLabel *DissolveWindow::addStatusBarIcon(QString resource, bool permanent)
  * File
  */
 
-// Open specified input file from the CLI
-bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile,
-                                   bool ignoreRestartFile)
+// Load specified input file
+bool DissolveWindow::loadInputFile(std::string_view inputFile)
 {
     // Clear any current tabs
     refreshing_ = true;
@@ -200,35 +199,38 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
     else
         return Messenger::error("Input file does not exist.\n");
 
-    // Load restart file if it exists
-    Messenger::banner("Parse Restart File");
-    if (ignoreRestartFile)
-        Messenger::print("Restart file (if it exists) will be ignored.\n");
-    else
-    {
-        std::string actualRestartFile{restartFile.value_or(fmt::format("{}.restart", dissolve_.inputFilename()))};
-
-        if (DissolveSys::fileExists(actualRestartFile))
-        {
-            Messenger::print("Restart file '{}' exists and will be loaded.\n", actualRestartFile);
-            if (!dissolve_.loadRestart(actualRestartFile))
-                QMessageBox::warning(this, "Restart file contained errors.",
-                                     "The restart file failed to load correctly.\nSee the messages for more details.",
-                                     QMessageBox::Ok, QMessageBox::Ok);
-
-            // Reset the restart filename to be the standard one
-            dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
-        }
-        else
-            Messenger::print("Restart file '{}' does not exist.\n", actualRestartFile);
-    }
-
     modified_ = false;
     dissolveIterating_ = false;
 
     Messenger::banner("Setting Up Processing Modules");
 
     return dissolve_.setUpProcessingLayerModules();
+}
+
+// Load specified restart file
+bool DissolveWindow::loadRestartFile(std::string_view restartFile)
+{
+    Messenger::banner("Parse Restart File");
+
+    auto loadSuccess = true;
+
+    if (DissolveSys::fileExists(restartFile))
+    {
+        Messenger::print("Restart file '{}' exists and will be loaded.\n", restartFile);
+        loadSuccess = dissolve_.loadRestart(restartFile);
+
+        // Reset the restart filename to be the standard one
+        dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
+    }
+    else
+        Messenger::print("Restart file '{}' does not exist.\n", restartFile);
+
+    if (!loadSuccess)
+        QMessageBox::warning(this, "Restart file contained errors.",
+                             "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok,
+                             QMessageBox::Ok);
+
+    return loadSuccess;
 }
 
 /*
@@ -256,7 +258,7 @@ void DissolveWindow::openRecent()
     if (action)
     {
         std::string filePath = action->data().toString().toUtf8().constData();
-        openLocalFile(filePath);
+        loadInputFile(filePath);
 
         fullUpdate();
     }

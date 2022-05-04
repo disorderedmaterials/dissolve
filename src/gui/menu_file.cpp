@@ -86,7 +86,7 @@ void DissolveWindow::on_FileOpenAction_triggered(bool checked)
     if (inputFile.isEmpty())
         return;
 
-    openLocalFile(qPrintable(inputFile), "", false);
+    loadInputFile(qPrintable(inputFile));
 
     fullUpdate();
 }

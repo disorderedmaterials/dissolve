@@ -91,9 +91,10 @@ class DissolveWindow : public QMainWindow
      * File
      */
     public:
-    // Open specified input file
-    bool openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile = std::nullopt,
-                       bool ignoreRestartFile = false);
+    // Load specified input file
+    bool loadInputFile(std::string_view inputFile);
+    // Load specified restart file
+    bool loadRestartFile(std::string_view restartFile);
 
     /*
      * Reference Points
