@@ -145,9 +145,7 @@ void DissolveWindow::on_FileOpenAction_triggered(bool checked)
     if (inputFile.isEmpty())
         return;
 
-    loadInputFile(qPrintable(inputFile));
-
-    fullUpdate();
+    loadInputFile(qPrintable(inputFile), true);
 }
 
 void DissolveWindow::recentFileSelected()
@@ -158,8 +156,7 @@ void DissolveWindow::recentFileSelected()
     auto *action = qobject_cast<QAction *>(sender());
     if (action)
     {
-        std::string filePath = action->data().toString().toUtf8().constData();
-        loadInputFile(filePath);
+        loadInputFile(action->data().toString().toStdString(), true);
 
         fullUpdate();
     }

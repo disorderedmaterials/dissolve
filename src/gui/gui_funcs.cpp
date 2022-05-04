@@ -6,6 +6,7 @@
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/layertab.h"
+#include "gui/selectrestartfiledialog.h"
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"
 #include "main/version.h"
@@ -154,8 +155,8 @@ QLabel *DissolveWindow::addStatusBarIcon(QString resource, bool permanent)
  * File
  */
 
-// Load specified input file
-bool DissolveWindow::loadInputFile(std::string_view inputFile)
+// Load specified input file, and optionally handle restart file choice as well
+bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestartFile)
 {
     // Clear any current tabs
     refreshing_ = true;
@@ -206,7 +207,24 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile)
 
     Messenger::banner("Setting Up Processing Modules");
 
-    return dissolve_.setUpProcessingLayerModules();
+    if (!dissolve_.setUpProcessingLayerModules())
+        return false;
+
+    // Handle restart file loading?
+    if (handleRestartFile)
+    {
+        fullUpdate();
+
+        // Load / handle restart file
+        SelectRestartFileDialog selectRestartFileDialog(this);
+        auto restartFile = selectRestartFileDialog.getRestartFileName(inputFileInfo.filePath());
+        if (!restartFile.isEmpty())
+            loadRestartFile(restartFile.toStdString());
+
+        fullUpdate();
+    }
+
+    return true;
 }
 
 // Load specified restart file

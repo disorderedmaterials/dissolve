@@ -91,8 +91,8 @@ class DissolveWindow : public QMainWindow
      * File
      */
     public:
-    // Load specified input file
-    bool loadInputFile(std::string_view inputFile);
+    // Load specified input file, and optionally handle restart file choice as well
+    bool loadInputFile(std::string_view inputFile, bool handleRestartFile = false);
     // Load specified restart file
     bool loadRestartFile(std::string_view restartFile);
 
