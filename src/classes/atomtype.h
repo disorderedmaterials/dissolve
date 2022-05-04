@@ -84,6 +84,8 @@ class AtomType
     // Return whether our parameters are the same as those provided
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
+    // This method generates a 'pairPotentials' TOML node from the object's members
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // This method populates the object's members with values read from a 'pairPotentials' TOML node
     void deserialize(toml::value node);
 };

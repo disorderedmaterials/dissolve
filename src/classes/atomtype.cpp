@@ -95,6 +95,7 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
     return true;
 }
 
+// This method generates a 'pairPotentials' TOML node from the object's members
 toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> atomType;
@@ -115,16 +116,17 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::seria
 
     return atomType;
 }
+// This method populates the object's members with values read from a 'pairPotentials' TOML node
 void AtomType::deserialize(toml::value node)
 {
-    if (!node["z"].is_uninitialized())
+    if (node.contains("z"))
         Z_ = Elements::element(std::string(node["z"].as_string()));
-    if (!node["charge"].is_uninitialized())
+    if (node.contains("charge"))
         charge_ = node["charge"].as_floating();
-    if (!node["form"].is_uninitialized())
+    if (node.contains("form"))
         interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node["form"].as_string())));
 
-    if (!node["parameters"].is_uninitialized())
+    if (node.contains("parameters"))
     {
         std::vector<std::string> parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
         std::vector<double> values;

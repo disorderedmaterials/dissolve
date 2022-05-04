@@ -215,7 +215,7 @@ bool Dissolve::loadInput(std::string_view filename)
         Messenger::print("Finished reading input file.\n");
         setInputFilename(filename);
 
-        if (toml_testing_flag)
+        if constexpr(toml_testing_flag)
         {
             toml::value file = toml::parse("C:/ProjectDissolve/Dissolve/build/bin/output.toml");
             std::ofstream output("C:/ProjectDissolve/Dissolve/build/bin/output-d.toml");

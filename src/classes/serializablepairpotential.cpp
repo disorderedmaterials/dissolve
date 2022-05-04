@@ -37,6 +37,7 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
     return shortRangeTruncationScheme_;
 }
 
+// This method generates a 'pairPotentials' TOML node from the object's members
 toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePairPotential::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentials;
@@ -45,24 +46,24 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePai
     pairPotentials["includeCoulomb"] = atomTypeChargeSource_;
     pairPotentials["coulombTruncation"] = PairPotential::coulombTruncationSchemes().keyword(coulombTruncationScheme_);
     pairPotentials["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(shortRangeTruncationScheme_);
-    if (!atomTypes_.empty())
-        for (auto &atomType : atomTypes_)
-            pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialize();
+    for (auto &atomType : atomTypes_)
+        pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialize();
     return pairPotentials;
 }
 
+// This method populates the object's members with values read from a 'pairPotentials' TOML node
 void SerializablePairPotential::deserialize(toml::value node)
 {
-    if (!node["range"].is_uninitialized())
+    if (node.contains("range"))
         range_ = node["range"].as_floating();
-    if (!node["delta"].is_uninitialized())
+    if (node.contains("delta"))
         delta_ = node["delta"].as_floating();
-    if (!node["includeCoulomb"].is_uninitialized())
+    if (node.contains("includeCoulomb"))
         atomTypeChargeSource_ = node["includeCoulomb"].as_boolean();
-    if (!node["coulombTruncation"].is_uninitialized())
+    if (node.contains("coulombTruncation"))
         coulombTruncationScheme_ =
             PairPotential::coulombTruncationSchemes().enumeration(std::string(node["coulombTruncation"].as_string()));
-    if (!node["shortRangeTruncation"].is_uninitialized())
+    if (node.contains("shortRangeTruncation"))
         shortRangeTruncationScheme_ =
             PairPotential::shortRangeTruncationSchemes().enumeration(std::string(node["shortRangeTruncation"].as_string()));
 
