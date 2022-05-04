@@ -45,6 +45,7 @@ set(gui_MOC_HDRS
     selectconfigurationdialog.h
     selectelementdialog.h
     selectgenericitemdialog.h
+    selectrestartfiledialog.h
     selectspeciesdialog.h
     # Editors
     modulecontrolwidget.h
@@ -101,6 +102,7 @@ set(gui_UIS
     selectconfigurationdialog.ui
     selectelementdialog.ui
     selectgenericitemdialog.ui
+    selectrestartfiledialog.ui
     selectspeciesdialog.ui
     # Editors
     modulecontrolwidget.ui
@@ -179,6 +181,7 @@ set(gui_SRCS
     selectconfigurationdialog_funcs.cpp
     selectelementdialog_funcs.cpp
     selectgenericitemdialog_funcs.cpp
+    selectrestartfiledialog_funcs.cpp
     selectspeciesdialog_funcs.cpp
     # Editors
     modulecontrolwidget_funcs.cpp
