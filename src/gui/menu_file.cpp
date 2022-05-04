@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/gui.h"
+#include "gui/selectrestartfiledialog.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
@@ -160,6 +161,21 @@ void DissolveWindow::recentFileSelected()
 
         fullUpdate();
     }
+}
+
+void DissolveWindow::on_FileLoadRestartFileAction_triggered(bool checked)
+{
+    // Warn the user that we're about to clear everything...
+    if (!clearModuleData())
+        return;
+
+    SelectRestartFileDialog selectRestartFileDialog(this);
+    auto restartFile =
+        selectRestartFileDialog.selectRestartFileName(QString::fromStdString(std::string(dissolve_.inputFilename())));
+    if (!restartFile.isEmpty())
+        loadRestartFile(restartFile.toStdString());
+
+    fullUpdate();
 }
 
 void DissolveWindow::on_FileCloseAction_triggered(bool checked)

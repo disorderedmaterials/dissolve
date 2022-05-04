@@ -49,10 +49,6 @@ class DissolveWindow : public QMainWindow
     // Dissolve reference
     Dissolve &dissolve_;
 
-    private:
-    // Prepare the simulation and run for a set count
-    void setupIteration(int count);
-
     public:
     // Return reference to Dissolve
     Dissolve &dissolve();
@@ -146,11 +142,11 @@ class DissolveWindow : public QMainWindow
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenAction_triggered(bool checked);
     void recentFileSelected();
+    void on_FileLoadRestartFileAction_triggered(bool checked);
     void on_FileCloseAction_triggered(bool checked);
     void on_FileSaveAction_triggered(bool checked);
     void on_FileSaveAsAction_triggered(bool checked);
     void on_FileQuitAction_triggered(bool checked);
-
     // Simulation
     void on_SimulationCheckAction_triggered(bool checked);
     void on_SimulationRunAction_triggered(bool checked);
@@ -226,6 +222,12 @@ class DissolveWindow : public QMainWindow
     bool modified_;
     // Whether window is currently refreshing
     bool refreshing_;
+
+    private:
+    // Clear all module data
+    bool clearModuleData(bool queryUser = true);
+    // Prepare the simulation and run for a set count
+    void setupIteration(int count);
 
     private slots:
     void on_MainTabs_currentChanged(int index);

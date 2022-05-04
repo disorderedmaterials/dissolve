@@ -12,12 +12,15 @@ SelectRestartFileDialog::SelectRestartFileDialog(QWidget *parent) : QDialog(pare
     fileModel_.setFilter(QDir::Files);
     fileModel_.setNameFilters(QStringList() << "*.restart");
     fileModel_.setNameFilterDisables(false);
+    connect(&fileModel_, SIGNAL(directoryLoaded(const QString &)), this, SLOT(pathLoadingComplete(const QString &)));
 
     ui_.RestartFilesTable->setModel(&fileModel_);
     ui_.RestartFilesTable->setColumnHidden(2, true);
 
     connect(ui_.RestartFilesTable, SIGNAL(doubleClicked(const QModelIndex &)), this,
             SLOT(itemDoubleClicked(const QModelIndex &)));
+    connect(ui_.RestartFilesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(itemSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 /*
@@ -31,6 +34,9 @@ void SelectRestartFileDialog::on_ShowBackupFilesCheck_clicked(bool checked)
                                                 << "*.restart.prev");
     else
         fileModel_.setNameFilters(QStringList() << "*.restart");
+
+    ui_.RestartFilesTable->setCurrentIndex(QModelIndex());
+    ui_.RestartFilesTable->resizeColumnsToContents();
 }
 
 void SelectRestartFileDialog::on_CancelButton_clicked(bool checked) { reject(); }
@@ -38,6 +44,13 @@ void SelectRestartFileDialog::on_CancelButton_clicked(bool checked) { reject(); 
 void SelectRestartFileDialog::on_SelectButton_clicked(bool checked) { accept(); }
 
 void SelectRestartFileDialog::itemDoubleClicked(const QModelIndex &index) { accept(); }
+
+void SelectRestartFileDialog::itemSelectionChanged(const QItemSelection &currentSelection, const QItemSelection &oldSelection)
+{
+    ui_.SelectButton->setDisabled(currentSelection.indexes().isEmpty());
+}
+
+void SelectRestartFileDialog::pathLoadingComplete(const QString &path) { ui_.RestartFilesTable->resizeColumnsToContents(); }
 
 /*
  * Dialog
@@ -109,4 +122,25 @@ QString SelectRestartFileDialog::getRestartFileName(const QString &inputFileName
     }
 
     return {};
+}
+
+// Select existing restart file to load, based on supplied input file name
+QString SelectRestartFileDialog::selectRestartFileName(const QString &inputFileName)
+{
+    // Get file information for the input file
+    QFileInfo inputFileInfo(inputFileName);
+
+    // Update the file model and table to focus on the input file's directory
+    auto pathRootIndex = fileModel_.setRootPath(inputFileInfo.path());
+    ui_.RestartFilesTable->setRootIndex(pathRootIndex);
+
+    // Execute the dialog and get a suitable restart file name to load
+    show();
+    ui_.RestartFilesTable->resizeColumnsToContents();
+    ui_.RestartFilesTable->setCurrentIndex(fileModel_.index(0, 0, pathRootIndex));
+    auto result = exec();
+    if (result == QDialog::Accepted)
+        return fileModel_.filePath(fileModel_.index(ui_.RestartFilesTable->currentIndex().row(), 0, pathRootIndex));
+    else
+        return {};
 }

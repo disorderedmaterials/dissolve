@@ -124,6 +124,7 @@
     <addaction name="separator"/>
     <addaction name="FileOpenAction"/>
     <addaction name="FileOpenRecentMenu"/>
+    <addaction name="FileLoadRestartFileAction"/>
     <addaction name="separator"/>
     <addaction name="FileCloseAction"/>
     <addaction name="separator"/>
@@ -848,6 +849,11 @@
   <action name="SimulationSetRestartFileFrequencyAction">
    <property name="text">
     <string>Set Restart File Fre&amp;quency...</string>
+   </property>
+  </action>
+  <action name="FileLoadRestartFileAction">
+   <property name="text">
+    <string>Load &amp;Restart File...</string>
    </property>
   </action>
  </widget>

@@ -27,10 +27,12 @@ class SelectRestartFileDialog : public QDialog
     Ui::SelectRestartFileDialog ui_;
 
     private slots:
+    void itemDoubleClicked(const QModelIndex &index);
+    void itemSelectionChanged(const QItemSelection &currentSelection, const QItemSelection &oldSelection);
+    void pathLoadingComplete(const QString &path);
     void on_ShowBackupFilesCheck_clicked(bool checked);
     void on_CancelButton_clicked(bool checked);
     void on_SelectButton_clicked(bool checked);
-    void itemDoubleClicked(const QModelIndex &index);
 
     /*
      * Dialog
@@ -42,4 +44,6 @@ class SelectRestartFileDialog : public QDialog
     public:
     // Return restart file to load, based on supplied input file name
     QString getRestartFileName(const QString &inputFileName);
+    // Select existing restart file to load, based on supplied input file name
+    QString selectRestartFileName(const QString &inputFileName);
 };
