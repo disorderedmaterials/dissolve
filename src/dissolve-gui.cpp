@@ -41,9 +41,6 @@ int main(int args, char **argv)
     DissolveWindow dissolveWindow(dissolve);
     dissolveWindow.show();
 
-    // Create recent files menu
-    dissolveWindow.createRecentMenu();
-
     // Print GPL license information
     Messenger::print("Dissolve-GUI {} version {}, Copyright (C) 2022 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());

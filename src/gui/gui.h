@@ -104,25 +104,6 @@ class DissolveWindow : public QMainWindow
     std::vector<ReferencePoint> referencePoints_;
 
     /*
-     * Recent Files
-     */
-    private:
-    // Convenience list of recent file menu actions
-    QList<QAction *> recentFileActionList_;
-    // Maximum number of recent files to retain
-    const int recentFileLimit_;
-
-    public slots:
-    // Manage opening of recent files
-    void openRecent();
-    // Fill open recent with placeholders
-    void createRecentMenu();
-    // Add current file to recent files
-    void addRecentFile(const QString &filePath);
-    // Update Recent files menu
-    void updateRecentActionList();
-
-    /*
      * Update Functions
      */
     public slots:
@@ -143,19 +124,33 @@ class DissolveWindow : public QMainWindow
      * Main Menu
      */
     private:
+    // Convenience list of recent file menu actions
+    QList<QAction *> recentFileActionList_;
+    // Maximum number of recent files to retain
+    const int recentFileLimit_;
+
+    private:
     // Check whether current input needs to be saved and, if so, if it saved successfully
     bool checkSaveCurrentInput();
     // Clear all data and start new simulation afresh
     void startNew();
+    // Initialise recent file menu with placeholder actions
+    void setUpRecentFileMenu();
+    // Add specified file to recent files list
+    void addRecentFile(const QString &filePath);
+    // Update recent file menu
+    void updateRecentFileMenu();
 
     public slots:
     // File
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenAction_triggered(bool checked);
+    void recentFileSelected();
     void on_FileCloseAction_triggered(bool checked);
     void on_FileSaveAction_triggered(bool checked);
     void on_FileSaveAsAction_triggered(bool checked);
     void on_FileQuitAction_triggered(bool checked);
+
     // Simulation
     void on_SimulationCheckAction_triggered(bool checked);
     void on_SimulationRunAction_triggered(bool checked);

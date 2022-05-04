@@ -4,6 +4,7 @@
 #include "gui/gui.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSettings>
 
 // Check whether current input needs to be saved and, if so, if it saved successfully
 bool DissolveWindow::checkSaveCurrentInput()
@@ -67,6 +68,64 @@ void DissolveWindow::startNew()
     fullUpdate();
 }
 
+/*
+ * Open Recent Functions
+ */
+
+// Set up recent file menu
+void DissolveWindow::setUpRecentFileMenu()
+{
+    QFont font = ui_.SessionMenu->font();
+    ui_.FileOpenRecentMenu->setFont(font);
+
+    for (auto i = 0; i < recentFileLimit_; ++i)
+    {
+        auto *recentFileAction = new QAction(this);
+        recentFileAction->setVisible(false);
+        QObject::connect(recentFileAction, SIGNAL(triggered(bool)), this, SLOT(recentFileSelected()));
+        ui_.FileOpenRecentMenu->addAction(recentFileAction);
+        recentFileActionList_.append(recentFileAction);
+    }
+
+    updateRecentFileMenu();
+}
+
+// Add specified file to recent files list
+void DissolveWindow::addRecentFile(const QString &filePath)
+{
+    // Add new entry to recent files
+    QSettings settings;
+    QStringList recentFilePaths = settings.value("recentFiles").toStringList();
+    recentFilePaths.removeAll(filePath);
+    recentFilePaths.prepend(filePath);
+    if (recentFilePaths.size() > recentFileLimit_)
+        recentFilePaths.erase(recentFilePaths.begin() + recentFileLimit_, recentFilePaths.end());
+    settings.setValue("recentFiles", recentFilePaths);
+
+    updateRecentFileMenu();
+}
+
+// Update recent files menu
+void DissolveWindow::updateRecentFileMenu()
+{
+    QSettings settings;
+    QStringList recentFilePaths = settings.value("recentFiles").toStringList();
+
+    // Fill recent menu
+    for (auto i = 0; i < recentFileLimit_; ++i)
+    {
+        if (i < recentFilePaths.size())
+        {
+            auto fileInfo = QFileInfo(recentFilePaths.at(i));
+            recentFileActionList_.at(i)->setText(fileInfo.fileName() + "    (" + fileInfo.absoluteDir().absolutePath() + ")");
+            recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
+            recentFileActionList_.at(i)->setVisible(true);
+        }
+        else
+            recentFileActionList_.at(i)->setVisible(false);
+    }
+}
+
 void DissolveWindow::on_FileNewAction_triggered(bool checked)
 {
     if (!checkSaveCurrentInput())
@@ -89,6 +148,21 @@ void DissolveWindow::on_FileOpenAction_triggered(bool checked)
     loadInputFile(qPrintable(inputFile));
 
     fullUpdate();
+}
+
+void DissolveWindow::recentFileSelected()
+{
+    if (!checkSaveCurrentInput())
+        return;
+
+    auto *action = qobject_cast<QAction *>(sender());
+    if (action)
+    {
+        std::string filePath = action->data().toString().toUtf8().constData();
+        loadInputFile(filePath);
+
+        fullUpdate();
+    }
 }
 
 void DissolveWindow::on_FileCloseAction_triggered(bool checked)
@@ -141,8 +215,6 @@ void DissolveWindow::on_FileSaveAction_triggered(bool checked)
 
     modified_ = false;
 
-    updateRecentActionList();
-
     updateStatusBar();
 
     updateWindowTitle();
@@ -172,8 +244,6 @@ void DissolveWindow::on_FileSaveAsAction_triggered(bool checked)
     QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
 
     addRecentFile(newFile);
-
-    updateRecentActionList();
 
     updateStatusBar();
 

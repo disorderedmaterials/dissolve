@@ -16,7 +16,6 @@
 #include <QFontDatabase>
 #include <QMdiSubWindow>
 #include <QMessageBox>
-#include <QSettings>
 #include <iostream>
 
 DissolveWindow::DissolveWindow(Dissolve &dissolve)
@@ -54,6 +53,9 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
     statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
+
+    // Create recent files menu
+    setUpRecentFileMenu();
 
     updateWindowTitle();
     updateStatusBar();
@@ -234,74 +236,6 @@ bool DissolveWindow::loadRestartFile(std::string_view restartFile)
 }
 
 /*
- * Open Recent Functions
- */
-void DissolveWindow::addRecentFile(const QString &filePath)
-{
-    // Add new entry to recent files
-    QSettings settings;
-    QStringList recentFilePaths = settings.value("recentFiles").toStringList();
-    recentFilePaths.removeAll(filePath);
-    recentFilePaths.prepend(filePath);
-    if (recentFilePaths.size() > recentFileLimit_)
-        recentFilePaths.erase(recentFilePaths.begin() + recentFileLimit_, recentFilePaths.end());
-    settings.setValue("recentFiles", recentFilePaths);
-    updateRecentActionList();
-}
-
-void DissolveWindow::openRecent()
-{
-    if (!checkSaveCurrentInput())
-        return;
-
-    auto *action = qobject_cast<QAction *>(sender());
-    if (action)
-    {
-        std::string filePath = action->data().toString().toUtf8().constData();
-        loadInputFile(filePath);
-
-        fullUpdate();
-    }
-}
-
-void DissolveWindow::createRecentMenu()
-{
-    QFont font = ui_.SessionMenu->font();
-    ui_.FileOpenRecentMenu->setFont(font);
-
-    for (auto i = 0; i < recentFileLimit_; ++i)
-    {
-        auto *recentFileAction = new QAction(this);
-        recentFileAction->setVisible(false);
-        QObject::connect(recentFileAction, SIGNAL(triggered(bool)), this, SLOT(openRecent()));
-        ui_.FileOpenRecentMenu->addAction(recentFileAction);
-        recentFileActionList_.append(recentFileAction);
-    }
-
-    updateRecentActionList();
-}
-
-void DissolveWindow::updateRecentActionList()
-{
-    QSettings settings;
-    QStringList recentFilePaths = settings.value("recentFiles").toStringList();
-
-    // Fill recent menu
-    for (auto i = 0; i < recentFileLimit_; ++i)
-    {
-        if (i < recentFilePaths.size())
-        {
-            auto fileInfo = QFileInfo(recentFilePaths.at(i));
-            recentFileActionList_.at(i)->setText(fileInfo.fileName() + "    (" + fileInfo.absoluteDir().absolutePath() + ")");
-            recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
-            recentFileActionList_.at(i)->setVisible(true);
-        }
-        else
-            recentFileActionList_.at(i)->setVisible(false);
-    }
-}
-
-/*
  * Update Functions
  */
 
@@ -417,7 +351,7 @@ void DissolveWindow::fullUpdate()
 
     ui_.MainTabs->reconcileTabs(this);
     ui_.MainTabs->updateAllTabs();
-    updateRecentActionList();
+
     updateWindowTitle();
     updateStatusBar();
     updateMenus();
