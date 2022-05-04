@@ -112,46 +112,6 @@ void DataWidget::on_ViewTypeCombo_currentIndexChanged(int index)
     dataViewer()->postRedisplay();
 }
 
-void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
-{
-    //    if (refreshLock_.isLocked())
-    //        return;
-    //
-    //    // If the button has just been checked, request the target view
-    //    if (checked)
-    //    {
-    //        // Construct a list of targets as a QStringList
-    //        QStringList destinations;
-    //        auto currentItem = -1, count = 0;
-    //        for (auto &[viewer, gizmo] : targets)
-    //        {
-    //            destinations << gizmo->uniqueName();
-    //            if (&viewer->view() == dataViewer()->view().linkedView())
-    //                currentItem = count;
-    //            ++count;
-    //        }
-    //
-    //        bool ok;
-    //        QString viewName = QInputDialog::getItem(this, "Set View Link", "Select the view to link to...", destinations,
-    //                                                 currentItem, false, &ok);
-    //        if (!ok)
-    //        {
-    //            ui_.ViewLinkedViewButton->setChecked(false);
-    //            return;
-    //        }
-    //
-    //        // The destination view from the
-    //        auto viewIndex = destinations.indexOf(viewName);
-    //        DataViewer *viewParent = targets[viewIndex].first;
-    //        if (!viewParent)
-    //            return;
-    //
-    //        dataViewer()->linkView(viewParent);
-    //    }
-    //    else
-    //        dataViewer()->unlinkView();
-}
-
 void DataWidget::on_ViewToggleDataButton_clicked(bool checked)
 {
     if (refreshLock_.isLocked())
@@ -283,7 +243,6 @@ void DataWidget::updateToolbar()
     ui_.GraphFollowXLengthSpin->setEnabled(vt == View::FlatXYView);
     // View
     ui_.ViewTypeCombo->setCurrentIndex(dataViewer()->view().viewType());
-    ui_.ViewLinkedViewButton->setChecked(dataViewer()->view().linkedView());
     ui_.ViewAxesVisibleButton->setChecked(dataViewer()->axesVisible());
 }
 

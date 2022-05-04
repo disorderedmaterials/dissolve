@@ -65,10 +65,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Return the View definition
     View &view();
     const View &view() const;
-    // Link this viewer to the one specified
-    void linkView(BaseViewer *viewToLinkTo);
-    // Unlink this viewer from the one specified
-    void unlinkView();
 
     /*
      * Renderable Data
