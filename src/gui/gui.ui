@@ -841,7 +841,7 @@
   </action>
   <action name="LayerCreateCorrelationsRDFXRayAction">
    <property name="text">
-     <string>RDF and &amp;X-ray S(Q)</string>
+    <string>RDF and &amp;X-ray S(Q)</string>
    </property>
   </action>
  </widget>
