@@ -155,7 +155,7 @@ bool Dissolve::loadInput(std::string_view filename)
     {
         if (toml_testing_flag)
         {
-            std::ofstream output("C:/ProjectDissolve/dissolve/build/bin/output.toml");
+            std::ofstream output("output.toml");
             toml::basic_value<toml::discard_comments, std::map, std::vector> root;
             toml::basic_value<toml::discard_comments, std::map, std::vector> masterNode;
             if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
@@ -217,8 +217,8 @@ bool Dissolve::loadInput(std::string_view filename)
 
         if constexpr(toml_testing_flag)
         {
-            toml::value file = toml::parse("C:/ProjectDissolve/Dissolve/build/bin/output.toml");
-            std::ofstream output("C:/ProjectDissolve/Dissolve/build/bin/output-d.toml");
+            toml::value file = toml::parse("output.toml");
+            std::ofstream output("output-d.toml");
 
             if (file.is_uninitialized())
                 std::cout << "Couldn't find the file";
