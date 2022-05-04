@@ -6,7 +6,6 @@
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/layertab.h"
-#include "gui/workspacetab.h"
 #include "main/dissolve.h"
 #include "main/version.h"
 #include <QCloseEvent>

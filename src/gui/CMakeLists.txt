@@ -54,7 +54,6 @@ set(gui_MOC_HDRS
     layertab.h
     messagestab.h
     speciestab.h
-    workspacetab.h
     # Main UI
     gui.h
     outputhandler.hui
@@ -110,7 +109,6 @@ set(gui_UIS
     layertab.ui
     messagestab.ui
     speciestab.ui
-    workspacetab.ui
     # Main UI
     gui.ui
 )
@@ -194,7 +192,6 @@ set(gui_SRCS
     speciestab_geometry.cpp
     speciestab_isotopologues.cpp
     speciestab_sites.cpp
-    workspacetab_funcs.cpp
     maintab.h
     # Main UI
     gui_funcs.cpp

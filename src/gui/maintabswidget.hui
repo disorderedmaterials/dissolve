@@ -8,7 +8,6 @@
 #include "gui/layertab.h"
 #include "gui/messagestab.h"
 #include "gui/speciestab.h"
-#include "gui/workspacetab.h"
 #include <QPointer>
 #include <QTabWidget>
 #include <memory>
@@ -55,8 +54,6 @@ class MainTabsWidget : public QTabWidget
     std::vector<QPointer<ConfigurationTab>> configurationTabs_;
     // List of processing layer tabs
     std::vector<QPointer<LayerTab>> processingLayerTabs_;
-    // List of Workspace tabs
-    std::vector<QPointer<WorkspaceTab>> workspaceTabs_;
 
     public:
     // Return reference list of all current tabs
@@ -75,8 +72,6 @@ class MainTabsWidget : public QTabWidget
     QPointer<ConfigurationTab> configurationTab(QWidget *page);
     // Find LayerTab containing specified page widget
     QPointer<LayerTab> processingLayerTab(QWidget *page);
-    // Find WorkspaceTab containing specified page widget
-    QPointer<WorkspaceTab> workspaceTab(QWidget *page);
     // Find tab with title specified
     MainTab *findTab(const QString title);
     // Find tab displaying specified page
@@ -94,8 +89,6 @@ class MainTabsWidget : public QTabWidget
     void reconcileTabs(DissolveWindow *dissolveWindow);
     // Remove tab containing the specified page widget
     void removeByPage(QWidget *page);
-    // Add on a new workspace tab
-    MainTab *addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title);
 
     /*
      * Display
