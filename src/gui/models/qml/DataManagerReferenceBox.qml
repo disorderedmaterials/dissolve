@@ -54,7 +54,7 @@ GroupBox {
 	    implicitWidth: refLabel.width + 5
 	    implicitHeight: refLabel.height + 5
 	    border.width: 1;
-	    color: "white"
+	    color: palette.base
 	    Label {
 		id: refLabel
 		text: display
@@ -71,7 +71,11 @@ GroupBox {
 	    }
 	    Connections {
 		target: selModel
-		function onSelectionChanged(selected, deselected) { refItem.color = selModel.isSelected(ref.index(row, 0)) ? "cyan" : "white";}
+		function onSelectionChanged(selected, deselected) {
+		    var status = selModel.isSelected(ref.index(row, 0))
+		    refItem.color = status ? palette.highlight : palette.base;
+		    refLabel.color = status ? palette.highlightedText : palette.text;
+		}
 
 	    }
 	}
