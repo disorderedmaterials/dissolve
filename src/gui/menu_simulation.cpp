@@ -66,6 +66,17 @@ void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked) { setup
 
 void DissolveWindow::on_SimulationStopAction_triggered(bool checked) { emit(stopIterating()); }
 
+void DissolveWindow::on_SimulationSetRestartFileFrequencyAction_triggered(bool checked)
+{
+    auto ok{false};
+    auto newFrequency =
+        QInputDialog::getInt(this, "Set Restart File Frequency", "Enter the new frequency at which to write the restart file",
+                             dissolve_.restartFileFrequency(), 0, 10000000, 5, &ok);
+    if (!ok)
+        return;
+    dissolve_.setRestartFileFrequency(newFrequency);
+}
+
 void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
 {
     // Get filename for restart point
