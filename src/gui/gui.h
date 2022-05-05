@@ -157,6 +157,7 @@ class DissolveWindow : public QMainWindow
     void on_SimulationSetRestartFileFrequencyAction_triggered(bool checked);
     void on_SimulationSaveRestartPointAction_triggered(bool checked);
     void on_SimulationDataManagerAction_triggered(bool checked);
+    void on_SimulationClearAdditionalPotentialsAction_triggered(bool checked);
     void on_SimulationClearModuleDataAction_triggered(bool checked);
     // Species
     void on_SpeciesCreateAtomicAction_triggered(bool checked);
