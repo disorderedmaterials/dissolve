@@ -369,12 +369,8 @@ class Species
     // Write Species definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
-<<<<<<< HEAD
     // This method generates a 'species.name' TOML node from the object's members
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
     // This method populates the object's members with values read from a 'species.name' TOML node
     void deserialize(toml::value node, CoreData &coreData);
-=======
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
->>>>>>> develop
 };

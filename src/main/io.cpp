@@ -243,7 +243,7 @@ bool Dissolve::loadInput(std::string_view filename)
                 output << std::setw(40) << root;
             }
         }
-        catch (const std::runtime_error& e)
+        catch (const std::runtime_error &e)
         {
             Messenger::error(e.what());
         }

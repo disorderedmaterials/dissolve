@@ -251,61 +251,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         species["torsion"] = torsions;
     }
 
-<<<<<<< HEAD
-// Return coordinates sets
-const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { return coordinateSets_; }
-
-// This method generates a 'species.name' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serialize()
-{
-    toml::basic_value<toml::discard_comments, std::map, std::vector> species;
-    if (forcefield_ != nullptr)
-        species["forcefield"] = forcefield_->name().data();
-
-    if (atoms_.size() > 0)
-    {
-        toml::array atoms;
-        for (auto &atom : atoms_)
-            atoms.push_back(atom.serialize());
-        species["atom"] = atoms;
-    }
-
-    if (bonds_.size() > 0)
-    {
-        toml::array bonds;
-        for (auto &bond : bonds_)
-            bonds.push_back(bond.serialize());
-        species["bond"] = bonds;
-    }
-
-    if (angles_.size() > 0)
-    {
-        toml::array angles;
-        for (auto &angle : angles_)
-            angles.push_back(angle.serialize());
-        species["angle"] = angles;
-    }
-
-    if (impropers_.size() > 0)
-    {
-        toml::array impropers;
-        for (auto &improper : impropers_)
-            impropers.push_back(improper.serialize());
-        species["improper"] = impropers;
-    }
-
-    if (torsions_.size() > 0)
-    {
-        toml::array torsions;
-        for (auto &torsion : torsions_)
-            torsions.push_back(torsion.serialize());
-        species["torsion"] = torsions;
-    }
-
-    if (isotopologues_.size() > 0)
-=======
     if (!isotopologues_.empty())
->>>>>>> develop
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> isotopologues;
         for (auto &isotopologue : isotopologues_)
@@ -313,11 +259,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
         species["isotopologues"] = isotopologues;
     }
 
-<<<<<<< HEAD
-    if (sites_.size() > 0)
-=======
     if (!sites_.empty())
->>>>>>> develop
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> sites;
         for (auto &site : sites_)
@@ -327,7 +269,6 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
 
     return species;
 }
-<<<<<<< HEAD
 // This method populates the object's members with values read from a 'species.name' TOML node
 void Species::deserialize(toml::value node, CoreData &coreData)
 {
@@ -379,5 +320,3 @@ void Species::deserialize(toml::value node, CoreData &coreData)
                     .deserialize(tomlTorsion, coreData);
     }
 }
-=======
->>>>>>> develop
