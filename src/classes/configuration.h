@@ -180,6 +180,8 @@ class Configuration
                            double pairPotentialRange);
     // Create Box definition from axes matrix, and initialise cell array
     void createBoxAndCells(const Matrix3 axes, double cellSize, double pairPotentialRange);
+    // Update cell array, and reassign atoms to cells
+    void updateCells(double cellSize, double pairPotentialRange);
     // Return Box
     const Box *box() const;
     // Scale Box lengths (and associated Cells) by specified factors

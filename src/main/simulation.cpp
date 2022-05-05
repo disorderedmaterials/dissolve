@@ -47,10 +47,26 @@ bool Dissolve::prepare()
     for (const auto &at : atomTypes())
         at->setIndex(count++);
 
+    // Store / update last-used pair potential cutoff
+    // If lastPairPotentialCutoff is nullopt, store the current value and move on leaving the cutoff to use as nullopt.
+    static std::optional<double> lastPairPotentialRange;
+    std::optional<double> newPairPotentialRange;
+    if (!lastPairPotentialRange)
+        lastPairPotentialRange = pairPotentialRange_;
+    else if (lastPairPotentialRange != pairPotentialRange_)
+    {
+        lastPairPotentialRange = pairPotentialRange_;
+        newPairPotentialRange = pairPotentialRange_;
+    }
+
     // Check Configurations
     std::set<const Species *> globalUsedSpecies;
     for (auto &cfg : configurations())
     {
+        // Regenerate cell array if the pair potential range has changed
+        if (newPairPotentialRange)
+            cfg->updateCells(7.0, newPairPotentialRange.value());
+
         // Check Box extent against pair potential range
         auto maxPPRange = cfg->box()->inscribedSphereRadius();
         if (pairPotentialRange_ > maxPPRange)
