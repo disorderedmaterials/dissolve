@@ -496,7 +496,7 @@ bool Dissolve::loadRestart(std::string_view filename)
                 error = true;
                 break;
             }
-            else if (!cfg->read(parser, species(), pairPotentialRange_))
+            else if (!cfg->deserialise(parser, species(), pairPotentialRange_))
                 error = true;
         }
         else if (DissolveSys::sameString(parser.argsv(0), "Timing"))

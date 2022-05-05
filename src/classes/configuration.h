@@ -230,7 +230,8 @@ class Configuration
     public:
     // Write through specified LineParser
     bool serialise(LineParser &parser) const;
-    // Read through specified LineParser
-    bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
+    // Read from specified LineParser
+    bool deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
+                     double pairPotentialRange);
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };
