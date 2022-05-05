@@ -95,21 +95,37 @@
     <file>fonts/FreeSerif.ttf</file>
   </qresource>
   <qresource prefix="modules">
-    <file>icons/modules_export.svg</file>
+    <file>icons/modules_calculateangle.svg</file>
+    <file>icons/modules_exportcoordinates.svg</file>
+    <file>icons/modules_exportpairpotentials.svg</file>
+    <file>icons/modules_exporttrajectory.svg</file>
+    <file>icons/modules_importtrajectory.svg</file>
+    <file>icons/modules_sq.svg</file>
+    <file>icons/modules_bragg.svg</file>
+    <file>icons/modules_calculateavgmol.svg</file>
+    <file>icons/modules_accumulate.svg</file>
+    <file>icons/modules_calculateaxisangle.svg</file>
+    <file>icons/modules_calculatedangle.svg</file>
+    <file>icons/modules_calculaterdf.svg</file>
+    <file>icons/modules_calculatesdf.svg</file>
     <file>icons/modules_molshake.svg</file>
     <file>icons/modules_checks.svg</file>
+    <file>icons/modules_calculatecn.svg</file>
+    <file>icons/modules_analyse.svg</file>
+    <file>icons/modules_forces.svg</file>
+    <file>icons/modules_benchmark.svg</file>
+    <file>icons/modules_checkspecies.svg</file>
     <file>icons/modules_epsr.svg</file>
     <file>icons/modules_energy.svg</file>
     <file>icons/modules_md.svg</file>
+    <file>icons/modules_xraysq.svg</file>
     <file>icons/modules_atomshake.svg</file>
     <file>icons/modules_calibrate.svg</file>
     <file>icons/modules_datatest.svg</file>
     <file>icons/modules_rdf.svg</file>
     <file>icons/modules_intrashake.svg</file>
     <file>icons/modules_neutronsq.svg</file>
-    <file>icons/modules_calculaterdf.svg</file>
-    <file>icons/modules_generic.svg</file>
-    <file>icons/modules_import.svg</file>
+    <file>icons/modules_geometryoptimisation.svg</file>
   </qresource>
   <qresource prefix="images">
     <file>images/squares.jpg</file>

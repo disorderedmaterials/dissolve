@@ -94,7 +94,7 @@ Module *ModuleRegistry::produce(std::string moduleType) const
 }
 
 // Return categorised map of modules
-const std::vector<std::pair<std::string, std::vector<ModuleRegistry::ModuleInfoData>>> &ModuleRegistry::categories() const
+const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &ModuleRegistry::categories() const
 {
     return categories_;
 }
@@ -116,7 +116,7 @@ const ModuleRegistry &ModuleRegistry::instance()
  */
 
 // Return category map
-const std::vector<std::pair<std::string, std::vector<ModuleRegistry::ModuleInfoData>>> &ModuleRegistry::categoryMap()
+const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &ModuleRegistry::categoryMap()
 {
     return instance().categories();
 }
