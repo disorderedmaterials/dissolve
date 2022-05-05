@@ -129,11 +129,7 @@ add_library(
   xrayweights.h
 )
 
-<<<<<<< HEAD
 target_include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
-=======
-include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
->>>>>>> develop
 if(CONAN)
   target_link_libraries(classes PUBLIC base CONAN_PKG::toml11 ${THREADING_LINK_LIBS})
 else(CONAN)
