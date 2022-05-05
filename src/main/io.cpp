@@ -522,7 +522,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             error = true;
         }
 
-        // Error encounterd?
+        // Error encountered?
         if (error)
             break;
     }

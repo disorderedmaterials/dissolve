@@ -57,7 +57,7 @@ bool Dissolve::prepare()
             return Messenger::error("PairPotential range ({}) is longer than the shortest non-minimum image distance ({}).\n",
                                     pairPotentialRange_, maxPPRange);
 
-        // Accumulate the total species usage counts for the next check
+        // Update species usage for the next check
         for (auto &[sp, pop] : cfg->speciesPopulations())
             globalUsedSpecies.emplace(sp);
     }
