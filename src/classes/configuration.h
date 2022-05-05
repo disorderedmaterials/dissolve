@@ -232,9 +232,5 @@ class Configuration
     bool serialise(LineParser &parser) const;
     // Read through specified LineParser
     bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
-<<<<<<< HEAD
-
-=======
->>>>>>> develop
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

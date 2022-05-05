@@ -142,10 +142,6 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 
 // Return configuration temperature
 double Configuration::temperature() const { return temperature_; }
-<<<<<<< HEAD
-
-=======
->>>>>>> develop
 toml::basic_value<toml::discard_comments, std::map, std::vector> Configuration::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> configuration;
