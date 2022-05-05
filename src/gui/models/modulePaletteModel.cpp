@@ -14,7 +14,7 @@
 int ModulePaletteModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
-        return ModuleRegistry::categoryMap()[parent.row()].second.size();
+        return std::next(ModuleRegistry::categoryMap().begin(), parent.row())->second.size();
     return ModuleRegistry::categoryMap().size();
 }
 
@@ -54,7 +54,7 @@ QVariant ModulePaletteModel::data(const QModelIndex &index, int role) const
         if (index.column() != 1)
             return {};
 
-        auto [moduleType, brief] = ModuleRegistry::categoryMap()[index.parent().row()].second[index.row()];
+        auto [moduleType, brief] = std::next(ModuleRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
         if (role == Qt::DisplayRole)
             return QString::fromStdString(moduleType);
         else if (role == Qt::ToolTipRole)
@@ -64,7 +64,7 @@ QVariant ModulePaletteModel::data(const QModelIndex &index, int role) const
                 (QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(moduleType).toLower()))));
     }
     else if (role == Qt::DisplayRole && index.column() == 0)
-        return QString::fromStdString(ModuleRegistry::categoryMap()[index.row()].first);
+        return QString::fromStdString(std::next(ModuleRegistry::categoryMap().begin(), index.row())->first);
     return {};
 }
 
@@ -111,7 +111,7 @@ QMimeData *ModulePaletteModel::mimeData(const QModelIndexList &indexes) const
 
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
     auto index = indexes.front();
-    auto [moduleType, brief] = ModuleRegistry::categoryMap()[index.parent().row()].second[index.row()];
+    auto [moduleType, brief] = std::next(ModuleRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
     stream << QString::fromStdString(moduleType);
     mimeData->setData("application/dissolve.module.create", encodedData);
 
