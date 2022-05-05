@@ -38,7 +38,7 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
 }
 
 // This method generates a 'pairPotentials' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePairPotential::serialize()
+toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePairPotential::serialise()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentials;
     pairPotentials["range"] = range_;
@@ -47,12 +47,12 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePai
     pairPotentials["coulombTruncation"] = PairPotential::coulombTruncationSchemes().keyword(coulombTruncationScheme_);
     pairPotentials["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(shortRangeTruncationScheme_);
     for (auto &atomType : atomTypes_)
-        pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialize();
+        pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialise();
     return pairPotentials;
 }
 
 // This method populates the object's members with values read from a 'pairPotentials' TOML node
-void SerializablePairPotential::deserialize(toml::value node)
+void SerializablePairPotential::deserialise(toml::value node)
 {
     if (node.contains("range"))
         range_ = node["range"].as_floating();
@@ -71,6 +71,6 @@ void SerializablePairPotential::deserialize(toml::value node)
     {
         toml::value atomTypesNode = node["atomTypes"];
         for (auto &[name, data] : atomTypesNode.as_table())
-            atomTypes_.emplace_back(std::make_unique<AtomType>(name))->deserialize(data);
+            atomTypes_.emplace_back(std::make_unique<AtomType>(name))->deserialise(data);
     }
 }

@@ -95,8 +95,8 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
     return true;
 }
 
-// This method generates a 'pairPotentials' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::serialize()
+// This method generates an 'atomTypes' TOML node from the object's members
+toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::serialise()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> atomType;
 
@@ -116,8 +116,8 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::seria
 
     return atomType;
 }
-// This method populates the object's members with values read from a 'pairPotentials' TOML node
-void AtomType::deserialize(toml::value node)
+// This method populates the object's members with values read from an 'atomTypes' TOML node
+void AtomType::deserialise(toml::value node)
 {
     if (node.contains("z"))
         Z_ = Elements::element(std::string(node["z"].as_string()));

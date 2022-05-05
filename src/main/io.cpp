@@ -200,7 +200,7 @@ bool Dissolve::loadInput(std::string_view filename)
                 root["species"] = speciesNode;
             }
 
-            root["pairPotentials"] = serializablePairPotential_.serialize();
+            root["pairPotentials"] = serializablePairPotential_.serialise();
 
             if (!configurations().empty())
             {
@@ -215,7 +215,7 @@ bool Dissolve::loadInput(std::string_view filename)
         Messenger::print("Finished reading input file.\n");
         setInputFilename(filename);
 
-        if constexpr(toml_testing_flag)
+        if constexpr (toml_testing_flag)
         {
             toml::value file = toml::parse("output.toml");
             std::ofstream output("output-d.toml");
@@ -227,11 +227,11 @@ bool Dissolve::loadInput(std::string_view filename)
             {
                 toml::value pairPotentialsNode = toml::find(file, "pairPotentials");
                 if (!pairPotentialsNode.is_uninitialized())
-                    serializablePairPotential_.deserialize(pairPotentialsNode);
+                    serializablePairPotential_.deserialise(pairPotentialsNode);
             }
 
             toml::basic_value<toml::discard_comments, std::map, std::vector> root;
-            root["pairPotentials"] = serializablePairPotential_.serialize();
+            root["pairPotentials"] = serializablePairPotential_.serialise();
             output << std::setw(40) << root;
         }
     }
