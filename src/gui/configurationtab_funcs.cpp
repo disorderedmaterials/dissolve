@@ -18,7 +18,7 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-      procedureModel_(cfg->generator()), activeWidget_(nullptr)
+      procedureModel_(cfg->generator())
 {
     ui_.setupUi(this);
 
@@ -149,16 +149,16 @@ void ConfigurationTab::updateControls()
     ui_.ViewerWidget->postRedisplay();
 }
 
-// Disable sensitive controls within tab
-void ConfigurationTab::disableSensitiveControls()
+// Prevent editing within tab
+void ConfigurationTab::preventEditing()
 {
     ui_.GeneratorGroup->setEnabled(false);
     ui_.TemperatureGroup->setEnabled(false);
     ui_.SizeFactorGroup->setEnabled(false);
 }
 
-// Enable sensitive controls within tab
-void ConfigurationTab::enableSensitiveControls()
+// Allow editing within tab
+void ConfigurationTab::allowEditing()
 {
     ui_.GeneratorGroup->setEnabled(true);
     ui_.TemperatureGroup->setEnabled(true);
@@ -182,7 +182,7 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 
     if (ret == QMessageBox::Yes)
     {
-        configuration_->initialiseContent(dissolve_.worldPool(), dissolve_.pairPotentialRange(), true);
+        configuration_->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
         updateControls();
     }
 }
@@ -226,22 +226,5 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 
 void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
 {
-    QVariant var = procedureModel_.data(index, Qt::UserRole);
-    auto data = var.value<std::shared_ptr<ProcedureNode>>();
-
-    if (data != nullptr)
-    {
-        KeywordsWidget *widget = new KeywordsWidget(this);
-        connect(widget, SIGNAL(keywordChanged(int)), dissolveWindow_, SLOT(setModified()));
-        widget->setUp(data->keywords(), dissolve_.coreData());
-        if (!activeWidget_)
-            ui_.ProcedureLayout->addWidget(widget);
-        else
-        {
-            auto temp = activeWidget_;
-            ui_.ProcedureLayout->replaceWidget(activeWidget_, widget);
-            delete temp;
-        }
-        activeWidget_ = widget;
-    }
+    ui_.ProcedureStack->updateProcedureWidget(dissolve_, dissolveWindow_, procedureModel_, index);
 }

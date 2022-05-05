@@ -70,11 +70,11 @@ class Configuration
     // Return the current generator
     Procedure &generator();
     // Create the Configuration according to its generator Procedure
-    bool generate(const ProcessPool &procPool, double pairPotentialRange);
+    bool generate(const ProcedureContext &procedureContext);
     // Return import coordinates file / format
     CoordinateImportFileFormat &inputCoordinates();
     // Initialise (generate or load) the basic contents of the Configuration
-    bool initialiseContent(const ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent = false);
+    bool initialiseContent(const ProcedureContext &procedureContext, bool emptyCurrentContent = false);
     // Set configuration temperature
     void setTemperature(double t);
     // Return configuration temperature
@@ -232,6 +232,9 @@ class Configuration
     bool serialise(LineParser &parser) const;
     // Read through specified LineParser
     bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

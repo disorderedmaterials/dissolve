@@ -6,6 +6,7 @@
 #include "module/module.h"
 
 // Forward Declarations
+class PotentialMap;
 class Species;
 
 // Molecular Dynamics Module
@@ -56,6 +57,12 @@ class MDModule : public Module
     int capForces(double maxForceSq, std::vector<Vec3<double>> &f);
     // Determine timestep based on maximal force component
     double determineTimeStep(const std::vector<Vec3<double>> &f);
+
+    public:
+    // Evolve Species coordinates, returning new coordinates
+    static std::vector<Vec3<double>> evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
+                                            double temperature, int nSteps, double deltaT,
+                                            const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities);
 
     /*
      * Processing

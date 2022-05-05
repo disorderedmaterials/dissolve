@@ -34,8 +34,8 @@ class ModuleWidget : public QWidget
     };
     // Update controls within widget
     virtual void updateControls(const Flags<UpdateFlags> &updateFlags = {});
-    // Disable sensitive controls within widget
-    virtual void disableSensitiveControls();
-    // Enable sensitive controls within widget
-    virtual void enableSensitiveControls();
+    // Disable editing within widget
+    virtual void preventEditing();
+    // Allow editing within widget
+    virtual void allowEditing();
 };

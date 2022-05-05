@@ -181,7 +181,7 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
 }
 
 // Calculate total forces within the specified Species
-void ForcesModule::totalForces(const ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
+void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f)
 {
     // Zero force array
@@ -228,17 +228,78 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Species *sp, const P
 
     // Loop over bonds
     for (const auto &b : sp->bonds())
-        kernel.forces(b, f);
+        kernel.forces(b, b.i()->r(), b.j()->r(), f);
 
     // Loop over angles
     for (const auto &a : sp->angles())
-        kernel.forces(a, f);
+        kernel.forces(a, a.i()->r(), a.j()->r(), a.k()->r(), f);
 
     // Loop over torsions
     for (const auto &t : sp->torsions())
-        kernel.forces(t, f);
+        kernel.forces(t, t.i()->r(), t.j()->r(), t.k()->r(), t.l()->r(), f);
 
     // Loop over impropers
     for (const auto &imp : sp->impropers())
-        kernel.forces(imp, f);
+        kernel.forces(imp, imp.i()->r(), imp.j()->r(), imp.k()->r(), imp.l()->r(), f);
+}
+
+// Calculate total forces within the specified Species,
+void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap,
+                               const std::vector<Vec3<double>> &r, std::vector<Vec3<double>> &f)
+{
+    assert(sp->nAtoms() == r.size());
+
+    // Zero force array
+    std::fill(f.begin(), f.end(), Vec3<double>());
+
+    double scale, rij, magjisq;
+    const auto cutoffSq = potentialMap.range() * potentialMap.range();
+    Vec3<double> vecij;
+    // NOTE PR #334 : use for_each_pair
+    for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
+    {
+        auto &i = sp->atom(indexI);
+
+        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        {
+            auto &j = sp->atom(indexJ);
+
+            // Get intramolecular scaling of atom pair
+            scale = i.scaling(&j);
+            if (scale < 1.0e-3)
+                continue;
+
+            // Determine final forces
+            vecij = r[indexJ] - r[indexI];
+            magjisq = vecij.magnitudeSq();
+            if (magjisq > cutoffSq)
+                continue;
+            rij = sqrt(magjisq);
+            vecij /= rij;
+
+            vecij *= potentialMap.force(&i, &j, rij) * scale;
+            f[indexI] += vecij;
+            f[indexJ] -= vecij;
+        }
+    }
+
+    // Create a ForceKernel with a dummy CellArray - we only want it for the intramolecular force routines
+    CellArray dummyCellArray;
+    ForceKernel kernel(procPool, sp->box(), dummyCellArray, potentialMap);
+
+    // Loop over bonds
+    for (const auto &b : sp->bonds())
+        kernel.forces(b, r[b.i()->index()], r[b.j()->index()], f);
+
+    // Loop over angles
+    for (const auto &a : sp->angles())
+        kernel.forces(a, r[a.i()->index()], r[a.j()->index()], r[a.k()->index()], f);
+
+    // Loop over torsions
+    for (const auto &t : sp->torsions())
+        kernel.forces(t, r[t.i()->index()], r[t.j()->index()], r[t.k()->index()], r[t.l()->index()], f);
+
+    // Loop over impropers
+    for (const auto &imp : sp->impropers())
+        kernel.forces(imp, r[imp.i()->index()], r[imp.j()->index()], r[imp.k()->index()], r[imp.l()->index()], f);
 }

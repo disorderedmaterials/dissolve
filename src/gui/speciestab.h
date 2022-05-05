@@ -49,10 +49,10 @@ class SpeciesTab : public QWidget, public MainTab
     public slots:
     // Update controls in tab
     void updateControls() override;
-    // Disable sensitive controls within tab
-    void disableSensitiveControls() override;
-    // Enable sensitive controls within tab
-    void enableSensitiveControls() override;
+    // Prevent editing within tab
+    void preventEditing() override;
+    // Allow editing within tab
+    void allowEditing() override;
 
     /*
      * MainTab Reimplementations

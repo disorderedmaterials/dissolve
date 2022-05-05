@@ -73,10 +73,10 @@ class Gizmo
     public:
     // Update controls within widget
     virtual void updateControls() = 0;
-    // Disable sensitive controls within widget
-    virtual void disableSensitiveControls() = 0;
-    // Enable sensitive controls within widget
-    virtual void enableSensitiveControls() = 0;
+    // Prevent editing within widget
+    virtual void preventEditing() = 0;
+    // Allow editing within widget
+    virtual void allowEditing() = 0;
 
     /*
      * Data Handling

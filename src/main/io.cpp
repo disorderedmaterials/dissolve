@@ -55,8 +55,12 @@ bool Dissolve::loadInput(LineParser &parser)
                     break;
                 }
 
+                // Need to update pair potentials in case they're needed in the generator
+                generatePairPotentials();
+                potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
+
                 // Prepare the Configuration
-                if (!cfg->initialiseContent(worldPool(), pairPotentialRange_))
+                if (!cfg->initialiseContent({worldPool_, potentialMap_}))
                     error = true;
                 break;
             case (BlockKeywords::LayerBlockKeyword):
@@ -197,18 +201,7 @@ bool Dissolve::loadInput(std::string_view filename)
                 root["species"] = speciesNode;
             }
 
-            toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentialsNode;
-            pairPotentialsNode["range"] = pairPotentialRange_;
-            pairPotentialsNode["delta"] = pairPotentialDelta_;
-            pairPotentialsNode["includeCoulomb"] = atomTypeChargeSource_;
-            pairPotentialsNode["coulombTruncation"] =
-                PairPotential::coulombTruncationSchemes().keyword(PairPotential::coulombTruncationScheme());
-            pairPotentialsNode["shortRangeTruncation"] =
-                PairPotential::shortRangeTruncationSchemes().keyword(PairPotential::shortRangeTruncationScheme());
-            if (!atomTypes().empty())
-                for (auto &atomType : atomTypes())
-                    pairPotentialsNode[atomType->name().data()] = atomType->serialize();
-            root["pairPotentials"] = pairPotentialsNode;
+            root["pairPotentials"] = serializablePairPotential_.serialize();
 
             if (!configurations().empty())
             {
@@ -217,7 +210,6 @@ bool Dissolve::loadInput(std::string_view filename)
                     configurationsNode[configuration->name().data()] = configuration->serialize();
                 root["configurations"] = configurationsNode;
             }
-
             output << std::setw(40) << root;
         }
 

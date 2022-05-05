@@ -51,6 +51,7 @@ add_library(
   regionaldistributor.cpp
   scaledenergykernel.cpp
   scatteringmatrix.cpp
+  serializablepairpotential.cpp
   site.cpp
   sitereference.cpp
   sitestack.cpp
@@ -111,6 +112,7 @@ add_library(
   regionaldistributor.h
   scaledenergykernel.h
   scatteringmatrix.h
+  serializablepairpotential.h
   site.h
   sitereference.h
   sitestack.h
@@ -127,7 +129,11 @@ add_library(
   xrayweights.h
 )
 
+<<<<<<< HEAD
 target_include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+=======
+include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+>>>>>>> develop
 if(CONAN)
   target_link_libraries(classes PUBLIC base CONAN_PKG::toml11 ${THREADING_LINK_LIBS})
 else(CONAN)

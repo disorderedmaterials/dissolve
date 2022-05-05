@@ -42,10 +42,10 @@ class Integrator1DGizmo : public QWidget, public Gizmo
     public:
     // Update controls within widget
     void updateControls();
-    // Disable sensitive controls within widget
-    void disableSensitiveControls();
-    // Enable sensitive controls within widget
-    void enableSensitiveControls();
+    // Prevent editing within widget
+    void preventEditing();
+    // Allow editing within widget
+    void allowEditing();
 
     /*
      * Data

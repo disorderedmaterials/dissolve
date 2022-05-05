@@ -109,21 +109,21 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
     // Select: Site 'A'
     selectA_ = std::make_shared<SelectProcedureNode>();
     selectA_->setName("A");
-    std::shared_ptr<SequenceProcedureNode> forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);
 
     // -- Select: Site 'B'
     selectB_ = std::make_shared<SelectProcedureNode>();
     selectB_->setName("B");
     selectB_->keywords().set("SameMoleculeAsSite", selectA_);
-    std::shared_ptr<SequenceProcedureNode> forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachA->addNode(selectB_);
 
     // -- -- Select: Site 'C'
     selectC_ = std::make_shared<SelectProcedureNode>();
     selectC_->setName("C");
     selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
-    std::shared_ptr<SequenceProcedureNode> forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
     forEachB->addNode(selectC_);
 
     // -- -- -- Calculate: 'rBC'
@@ -136,7 +136,7 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
 
     // -- -- -- Collect2D:  'Distance-Angle(B...C vs A-B...C)'
     collectDAngle_ = std::make_shared<Collect2DProcedureNode>(calcDistance, calcAngle, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-    std::shared_ptr<SequenceProcedureNode> subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
+    auto subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
     forEachC->addNode(collectDAngle_);
 
     // -- -- -- -- Collect1D:  'RDF(BC)'
@@ -153,7 +153,7 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
     processDistance_->keywords().set("LabelValue", std::string("g(r)"));
     processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
-    std::shared_ptr<SequenceProcedureNode> rdfNormalisation = processDistance_->addNormalisationBranch();
+    auto rdfNormalisation = processDistance_->addNormalisationBranch();
     rdfNormalisation->addNode(
         std::make_shared<OperateSitePopulationNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode>>>(
             {selectA_, selectB_}));
@@ -167,7 +167,7 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
     processAngle_->setName("Angle(ABC)");
     processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
     processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
-    std::shared_ptr<SequenceProcedureNode> angleNormalisation = processAngle_->addNormalisationBranch();
+    auto angleNormalisation = processAngle_->addNormalisationBranch();
     angleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(x)"));
     angleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
     analyser_.addRootSequenceNode(processAngle_);
@@ -178,7 +178,7 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
     processDAngle_->keywords().set("LabelValue", std::string("g(r)"));
     processDAngle_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
     processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
-    std::shared_ptr<SequenceProcedureNode> dAngleNormalisation = processDAngle_->addNormalisationBranch();
+    auto dAngleNormalisation = processDAngle_->addNormalisationBranch();
     dAngleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)"));
     dAngleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
     analyser_.addRootSequenceNode(processDAngle_);

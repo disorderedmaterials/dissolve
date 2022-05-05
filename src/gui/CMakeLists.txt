@@ -16,6 +16,7 @@ set(gui_MOC_HDRS
     sitewidget.h
     specieseditor.h
     specieswidget.h
+    procedurecontrolstack.h
     configurationviewer.hui
     dataviewer.hui
     siteviewer.hui
@@ -44,10 +45,10 @@ set(gui_MOC_HDRS
     selectconfigurationdialog.h
     selectelementdialog.h
     selectgenericitemdialog.h
+    selectrestartfiledialog.h
     selectspeciesdialog.h
     # Editors
     modulecontrolwidget.h
-    procedureeditor.h
     # Main Tabs
     configurationtab.h
     forcefieldtab.h
@@ -101,10 +102,10 @@ set(gui_UIS
     selectconfigurationdialog.ui
     selectelementdialog.ui
     selectgenericitemdialog.ui
+    selectrestartfiledialog.ui
     selectspeciesdialog.ui
     # Editors
     modulecontrolwidget.ui
-    procedureeditor.ui
     # Main Tabs
     configurationtab.ui
     forcefieldtab.ui
@@ -162,6 +163,7 @@ set(gui_SRCS
     selectforcefieldwidget_funcs.cpp
     selectspecieswidget_funcs.cpp
     wizard_funcs.cpp
+    procedurecontrolstack.cpp
     # Dialogs
     addforcefieldtermsdialog_funcs.cpp
     copyspeciestermsdialog_funcs.cpp
@@ -179,10 +181,10 @@ set(gui_SRCS
     selectconfigurationdialog_funcs.cpp
     selectelementdialog_funcs.cpp
     selectgenericitemdialog_funcs.cpp
+    selectrestartfiledialog_funcs.cpp
     selectspeciesdialog_funcs.cpp
     # Editors
     modulecontrolwidget_funcs.cpp
-    procedureeditor_funcs.cpp
     # Main Tabs
     configurationtab_funcs.cpp
     forcefieldtab_funcs.cpp

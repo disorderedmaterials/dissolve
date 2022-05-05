@@ -423,9 +423,9 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesBond &bond, const At
 }
 
 // Calculate SpeciesBond forces
-void ForceKernel::forces(const SpeciesBond &bond, ForceVector &f) const
+void ForceKernel::forces(const SpeciesBond &bond, const Vec3<double> &ri, const Vec3<double> &rj, ForceVector &f) const
 {
-    auto vecji = box_->minimumVector(bond.i()->r(), bond.j()->r());
+    auto vecji = box_->minimumVector(ri, rj);
 
     // Get distance and normalise vector ready for force calculation
     const auto distance = vecji.magAndNormalise();
@@ -494,9 +494,10 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesAngle &angle, const 
 }
 
 // Calculate SpeciesAngle forces
-void ForceKernel::forces(const SpeciesAngle &angle, ForceVector &f) const
+void ForceKernel::forces(const SpeciesAngle &angle, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
+                         ForceVector &f) const
 {
-    auto angleParameters = calculateAngleParameters(angle.i()->r() - angle.j()->r(), angle.k()->r() - angle.j()->r());
+    auto angleParameters = calculateAngleParameters(ri - rj, rk - rj);
     const auto force = angle.force(angleParameters.theta_);
     angleParameters.dfi_dtheta_ *= force;
     angleParameters.dfk_dtheta_ *= force;
@@ -595,11 +596,12 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesTorsion &torsion, co
 }
 
 // Calculate SpeciesTorsion forces
-void ForceKernel::forces(const SpeciesTorsion &torsion, ForceVector &f) const
+void ForceKernel::forces(const SpeciesTorsion &torsion, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
+                         const Vec3<double> &rl, ForceVector &f) const
 {
-    auto vecji = box_->minimumVector(torsion.i()->r(), torsion.j()->r());
-    auto vecjk = box_->minimumVector(torsion.k()->r(), torsion.j()->r());
-    auto veckl = box_->minimumVector(torsion.l()->r(), torsion.k()->r());
+    auto vecji = box_->minimumVector(ri, rj);
+    auto vecjk = box_->minimumVector(rk, rj);
+    auto veckl = box_->minimumVector(rl, rk);
 
     auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
@@ -652,11 +654,12 @@ void ForceKernel::forces(const Atom &onlyThis, const SpeciesImproper &imp, const
 }
 
 // Calculate SpeciesImproper forces
-void ForceKernel::forces(const SpeciesImproper &imp, ForceVector &f) const
+void ForceKernel::forces(const SpeciesImproper &imp, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
+                         const Vec3<double> &rl, ForceVector &f) const
 {
-    auto vecji = box_->minimumVector(imp.i()->r(), imp.j()->r());
-    auto vecjk = box_->minimumVector(imp.k()->r(), imp.j()->r());
-    auto veckl = box_->minimumVector(imp.l()->r(), imp.k()->r());
+    auto vecji = box_->minimumVector(ri, rj);
+    auto vecjk = box_->minimumVector(rk, rj);
+    auto veckl = box_->minimumVector(rl, rk);
 
     auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = imp.force(torsionParameters.phi_ * DEGRAD);

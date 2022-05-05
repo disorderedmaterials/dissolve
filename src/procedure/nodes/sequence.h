@@ -60,7 +60,7 @@ class SequenceProcedureNode : public ProcedureNode
     // Clear all data
     void clear();
     // Add (own) node into sequence
-    void addNode(NodeRef node);
+    void addNode(NodeRef nodeToAdd);
     // Return sequential node list
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence

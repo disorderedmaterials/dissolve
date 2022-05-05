@@ -40,7 +40,7 @@ TEST(ProcedureModelTest, Basic)
     auto child = model.index(0, 0);
     EXPECT_EQ(model.columnCount(child), 1);
     EXPECT_EQ(model.rowCount(child), 1);
-    EXPECT_EQ(model.data(child, Qt::DisplayRole).toString().toStdString(), "Collect1D");
+    EXPECT_EQ(model.data(child, Qt::DisplayRole).toString().toStdString(), "Collect1D (Collect1D01)");
     EXPECT_EQ(model.data(child, Qt::UserRole).value<NodeRef>(), collect);
 
     EXPECT_EQ(model.parent(child), QModelIndex());

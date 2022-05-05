@@ -60,11 +60,11 @@ void GraphGizmo::updateControls()
     refreshing_ = false;
 }
 
-// Disable sensitive controls within widget
-void GraphGizmo::disableSensitiveControls() {}
+// Prevent editing within widget
+void GraphGizmo::preventEditing() {}
 
-// Enable sensitive controls within widget
-void GraphGizmo::enableSensitiveControls() {}
+// Allow editing within widget
+void GraphGizmo::allowEditing() {}
 
 /*
  * Data Handling

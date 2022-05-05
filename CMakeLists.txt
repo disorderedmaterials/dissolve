@@ -35,6 +35,8 @@ else(CONAN)
   find_package(CLI11 REQUIRED)
   find_package(toml11 REQUIRED)
   find_package(pugixml REQUIRED)
+  include_directories(${AntlrRuntime_INCLUDE_DIRS})
+  link_directories(${AntlrRuntime_LINK_DIRS})
 endif(CONAN)
 
 add_compile_definitions(FMT_HEADER_ONLY)

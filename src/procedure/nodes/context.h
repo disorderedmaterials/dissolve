@@ -9,13 +9,16 @@
 // Forward Declarations
 class Configuration;
 class GenericList;
+class PotentialMap;
 class ProcessPool;
 
 // Node Operating Data
 class ProcedureContext
 {
     public:
-    ProcedureContext(const ProcessPool &procPool, Configuration *cfg = nullptr);
+    explicit ProcedureContext(const ProcessPool &procPool);
+    ProcedureContext(const ProcessPool &procPool, Configuration *cfg);
+    ProcedureContext(const ProcessPool &procPool, const PotentialMap &potentialMap);
 
     private:
     // Available process pool
@@ -26,6 +29,8 @@ class ProcedureContext
     std::string dataPrefix_;
     // Target list for generated data
     OptionalReferenceWrapper<GenericList> dataList_;
+    // Potential map
+    OptionalReferenceWrapper<const PotentialMap> potentialMap_;
 
     public:
     // Return available process pool
@@ -40,4 +45,8 @@ class ProcedureContext
     std::string_view dataPrefix() const;
     // Return target list for generated data
     GenericList &dataList() const;
+    // Set potential map
+    void setPotentialMap(const PotentialMap &potentialMap);
+    // Return potential map
+    const PotentialMap &potentialMap() const;
 };
