@@ -128,7 +128,7 @@ void AtomType::deserialise(toml::value node)
 
     if (node.contains("parameters"))
     {
-        std::vector<std::string> parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+        auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
         std::vector<double> values;
         std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
                        [&node](const auto parameter) { return node["parameters"][parameter].as_floating(); });
