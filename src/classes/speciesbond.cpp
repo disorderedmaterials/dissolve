@@ -334,6 +334,7 @@ double SpeciesBond::force(double distance) const
                                          BondFunctions::forms().keyword(bondForm))));
 }
 
+// This method generates a 'bond' TOML node from the object's members
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> bond;
@@ -361,17 +362,23 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
 
     return bond;
 }
-void SpeciesBond::deserialize(toml::value node)
+// This method populates the object's members with values read from a 'bond' TOML node
+void SpeciesBond::deserialize(toml::value node, CoreData &coreData)
 {
-    if (!node["form"].is_uninitialized())
+    if (node.contains("form"))
     {
         std::string form = node["form"].as_string();
         if (form.find("@") != std::string::npos)
-            form = "wololo"; // set master
+        {
+            auto master = coreData.getMasterBond(form);
+            if (!master)
+                throw std::runtime_error("Master Bond not found.");
+            setMasterTerm(&master->get());
+        }
         else
             setInteractionForm(BondFunctions::forms().enumeration(form));
     }
-    if (!node["parameters"].is_uninitialized())
+    if (node.contains("parameters"))
     {
         std::vector<std::string> parameters = BondFunctions::parameters(interactionForm());
         std::vector<double> values;

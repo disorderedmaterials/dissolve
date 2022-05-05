@@ -361,6 +361,7 @@ double SpeciesAngle::force(double angleInDegrees) const
                                          AngleFunctions::forms().keyword(angleForm))));
 }
 
+// This method generates an 'angle' TOML node from the object's members
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> angle;
@@ -390,17 +391,23 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::s
 
     return angle;
 }
-void SpeciesAngle::deserialize(toml::value node)
+// This method populates the object's members with values read from an 'angle' TOML node
+void SpeciesAngle::deserialize(toml::value node, CoreData &coreData)
 {
-    if (!node["form"].is_uninitialized())
+    if (node.contains("form"))
     {
         std::string form = node["form"].as_string();
         if (form.find("@") != std::string::npos)
-            form = "wololo"; // set master
+        {
+            auto master = coreData.getMasterAngle(form);
+            if (!master)
+                throw std::runtime_error("Master Angle not found.");
+            setMasterTerm(&master->get());
+        }
         else
             setInteractionForm(AngleFunctions::forms().enumeration(form));
     }
-    if (!node["parameters"].is_uninitialized())
+    if (node.contains("parameters"))
     {
         std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
         std::vector<double> values;

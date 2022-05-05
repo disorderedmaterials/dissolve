@@ -226,6 +226,7 @@ int Species::nCoordinateSets() const { return coordinateSets_.size(); }
 // Return coordinates sets
 const std::vector<std::vector<Vec3<double>>> &Species::coordinateSets() const { return coordinateSets_; }
 
+// This method generates a 'species.name' TOML node from the object's members
 toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> species;
@@ -290,7 +291,8 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Species::serial
 
     return species;
 }
-void Species::deserialize(toml::value node)
+// This method populates the object's members with values read from a 'species.name' TOML node
+void Species::deserialize(toml::value node, CoreData &coreData)
 {
     std::vector tomlAtoms = toml::find(node, "atom").as_array();
     for (auto tomlAtom : tomlAtoms)
@@ -302,7 +304,7 @@ void Species::deserialize(toml::value node)
         for (auto tomlBond : tomlBonds)
             if (!tomlBond["i"].is_uninitialized() && !tomlBond["j"].is_uninitialized())
                 bonds_.emplace_back(&atoms_[tomlBond["i"].as_integer() - 1], &atoms_[tomlBond["j"].as_integer() - 1])
-                    .deserialize(tomlBond);
+                    .deserialize(tomlBond, coreData);
     }
 
     if (node.contains("angle"))
@@ -313,7 +315,7 @@ void Species::deserialize(toml::value node)
                 angles_
                     .emplace_back(&atoms_[tomlAngle["i"].as_integer() - 1], &atoms_[tomlAngle["j"].as_integer() - 1],
                                   &atoms_[tomlAngle["k"].as_integer() - 1])
-                    .deserialize(tomlAngle);
+                    .deserialize(tomlAngle, coreData);
     }
 
     if (node.contains("improper"))
@@ -325,7 +327,7 @@ void Species::deserialize(toml::value node)
                 impropers_
                     .emplace_back(&atoms_[tomlImproper["i"].as_integer() - 1], &atoms_[tomlImproper["j"].as_integer() - 1],
                                   &atoms_[tomlImproper["k"].as_integer() - 1], &atoms_[tomlImproper["l"].as_integer() - 1])
-                    .deserialize(tomlImproper);
+                    .deserialize(tomlImproper, coreData);
     }
 
     if (node.contains("torsion"))
@@ -337,6 +339,6 @@ void Species::deserialize(toml::value node)
                 torsions_
                     .emplace_back(&atoms_[tomlTorsion["i"].as_integer() - 1], &atoms_[tomlTorsion["j"].as_integer() - 1],
                                   &atoms_[tomlTorsion["k"].as_integer() - 1], &atoms_[tomlTorsion["l"].as_integer() - 1])
-                    .deserialize(tomlTorsion);
+                    .deserialize(tomlTorsion, coreData);
     }
 }

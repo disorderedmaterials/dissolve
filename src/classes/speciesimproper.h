@@ -87,8 +87,10 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 
+    // This method generates an 'improper' TOML node from the object's members
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
-    void deserialize(toml::value node);
+    // This method populates the object's members with values read from an 'improper' TOML node
+    void deserialize(toml::value node, CoreData &coreData);
 };
 
 // MasterImproper Definition

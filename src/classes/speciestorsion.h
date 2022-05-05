@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "classes/coredata.h"
 #include "classes/speciesintra.h"
 
 #include <map>
@@ -114,8 +115,10 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 
+    // This method generates a 'torsion' TOML node from the object's members
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
-    void deserialize(toml::value node);
+    // This method populates the object's members with values read from a 'torsion' TOML node
+    void deserialize(toml::value node, CoreData &coreData);
 };
 
 // MasterTorsion Definition

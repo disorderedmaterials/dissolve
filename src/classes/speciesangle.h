@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "classes/coredata.h"
 #include "classes/speciesintra.h"
 
 #include <map>
@@ -99,8 +100,10 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 
+    // This method generates an 'angle' TOML node from the object's members
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
-    void deserialize(toml::value nodes);
+    // This method populates the object's members with values read from an 'angle' TOML node
+    void deserialize(toml::value nodes, CoreData &coreData);
 };
 
 // MasterAngle Definition

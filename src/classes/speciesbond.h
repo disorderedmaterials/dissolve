@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "classes/coredata.h"
 #include "classes/speciesintra.h"
 
 #include <map>
@@ -125,8 +126,10 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     // Return force multiplier for specified distance
     double force(double distance) const;
 
+    // This method generates a 'bond' TOML node from the object's members
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
-    void deserialize(toml::value node);
+    // This method populates the object's members with values read from a 'bond' TOML node
+    void deserialize(toml::value node, CoreData &coreData);
 };
 
 // MasterBond Definition

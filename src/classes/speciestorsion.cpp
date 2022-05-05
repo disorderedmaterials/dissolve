@@ -593,6 +593,7 @@ double SpeciesTorsion::force(double angleInDegrees) const
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
 
+// This method generates a 'torsion' TOML node from the object's members
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> torsion;
@@ -624,13 +625,19 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
 
     return torsion;
 }
-void SpeciesTorsion::deserialize(toml::value node)
+// This method populates the object's members with values read from a 'torsion' TOML node
+void SpeciesTorsion::deserialize(toml::value node, CoreData &coreData)
 {
     if (!node["form"].is_uninitialized())
     {
         std::string form = node["form"].as_string();
         if (form.find("@") != std::string::npos)
-            form = "wololo"; // set master
+        {
+            auto master = coreData.getMasterTorsion(form);
+            if (!master)
+                throw std::runtime_error("Master Torsion not found.");
+            setMasterTerm(&master->get());
+        }
         else
             setInteractionForm(TorsionFunctions::forms().enumeration(form));
     }

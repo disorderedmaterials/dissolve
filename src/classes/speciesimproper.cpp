@@ -224,6 +224,7 @@ double SpeciesImproper::force(double angleInDegrees) const
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
 
+// This method generates an 'improper' TOML node from the object's members
 toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper::serialize()
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> improper;
@@ -255,13 +256,19 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
 
     return improper;
 }
-void SpeciesImproper::deserialize(toml::value node)
+// This method populates the object's members with values read from an 'improper' TOML node
+void SpeciesImproper::deserialize(toml::value node, CoreData &coreData)
 {
     if (!node["form"].is_uninitialized())
     {
         std::string form = node["form"].as_string();
         if (form.find("@") != std::string::npos)
-            form = "wololo"; // set master
+        {
+            auto master = coreData.getMasterImproper(form);
+            if (!master)
+                throw std::runtime_error("Master Improper not found.");
+            setMasterTerm(&master->get());
+        }
         else
             setInteractionForm(TorsionFunctions::forms().enumeration(form));
     }

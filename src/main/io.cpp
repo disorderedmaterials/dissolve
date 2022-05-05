@@ -151,7 +151,7 @@ bool Dissolve::loadInput(std::string_view filename)
     {
         if (toml_testing_flag)
         {
-            std::ofstream output("C:/ProjectDissolve/dissolve/build/bin/output.toml");
+            std::ofstream output("output.toml");
             toml::basic_value<toml::discard_comments, std::map, std::vector> root;
 
             if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
@@ -227,26 +227,33 @@ bool Dissolve::loadInput(std::string_view filename)
 
     if (toml_testing_flag)
     {
-        toml::value file = toml::parse("C:/ProjectDissolve/Dissolve/build/bin/output.toml");
-        std::ofstream output("C:/ProjectDissolve/dissolve/build/bin/output-d.toml");
-
-        if (file.is_uninitialized())
-            std::cout << "Couldn't find the file";
-        if (file.contains("species"))
+        try
         {
-            toml::value speciesNode = toml::find(file, "species");
-            for (auto &[name, data] : speciesNode.as_table())
-                species().emplace_back(std::make_unique<Species>(name))->deserialize(data);
+            toml::value file = toml::parse("output.toml");
+            std::ofstream output("output-d.toml");
+
+            if (file.is_uninitialized())
+                std::cout << "Couldn't find the file";
+            if (file.contains("species"))
+            {
+                toml::value speciesNode = toml::find(file, "species");
+                for (auto &[name, data] : speciesNode.as_table())
+                    species().emplace_back(std::make_unique<Species>(name))->deserialize(data, coreData_);
+            }
+
+            if (!species().empty())
+            {
+                toml::basic_value<toml::discard_comments, std::map, std::vector> root;
+                toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
+                for (auto &species : species())
+                    speciesNode[species->name().data()] = species->serialize();
+                root["species"] = speciesNode;
+                output << std::setw(40) << root;
+            }
         }
-
-        if (!species().empty())
+        catch (const std::runtime_error& e)
         {
-            toml::basic_value<toml::discard_comments, std::map, std::vector> root;
-            toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
-            for (auto &species : species())
-                speciesNode[species->name().data()] = species->serialize();
-            root["species"] = speciesNode;
-            output << std::setw(40) << root;
+            Messenger::error(e.what());
         }
     }
 
