@@ -108,7 +108,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::seria
     if (!values.empty())
     {
         toml::basic_value<toml::discard_comments, std::map, std::vector> atomTypeParameters;
-        std::vector<std::string> parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+        auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
         for (auto &&[parameter, value] : zip(parameters, values))
             atomTypeParameters[parameter] = value;
         atomType["parameters"] = atomTypeParameters;
