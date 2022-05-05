@@ -124,6 +124,7 @@
     <addaction name="separator"/>
     <addaction name="FileOpenAction"/>
     <addaction name="FileOpenRecentMenu"/>
+    <addaction name="FileLoadRestartFileAction"/>
     <addaction name="separator"/>
     <addaction name="FileCloseAction"/>
     <addaction name="separator"/>
@@ -162,6 +163,7 @@
     <addaction name="SimulationStepFiveAction"/>
     <addaction name="SimulationStepAction"/>
     <addaction name="separator"/>
+    <addaction name="SimulationSetRestartFileFrequencyAction"/>
     <addaction name="SimulationSaveRestartPointAction"/>
     <addaction name="SimulationDataManagerAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
@@ -842,6 +844,16 @@
   <action name="LayerCreateCorrelationsRDFXRayAction">
    <property name="text">
     <string>RDF and &amp;X-ray S(Q)</string>
+   </property>
+  </action>
+  <action name="SimulationSetRestartFileFrequencyAction">
+   <property name="text">
+    <string>Set Restart File Fre&amp;quency...</string>
+   </property>
+  </action>
+  <action name="FileLoadRestartFileAction">
+   <property name="text">
+    <string>Load &amp;Restart File...</string>
    </property>
   </action>
  </widget>
