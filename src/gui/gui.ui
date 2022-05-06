@@ -166,6 +166,7 @@
     <addaction name="SimulationSetRestartFileFrequencyAction"/>
     <addaction name="SimulationSaveRestartPointAction"/>
     <addaction name="SimulationDataManagerAction"/>
+    <addaction name="SimulationClearAdditionalPotentialsAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
    </widget>
    <widget class="QMenu" name="HelpMenu">
@@ -854,6 +855,11 @@
   <action name="FileLoadRestartFileAction">
    <property name="text">
     <string>Load &amp;Restart File...</string>
+   </property>
+  </action>
+  <action name="SimulationClearAdditionalPotentialsAction">
+   <property name="text">
+    <string>Clear Additional Potentials</string>
    </property>
   </action>
  </widget>
