@@ -137,7 +137,6 @@
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>
     <file>icons/tabs_configuration.svg</file>
-    <file>icons/tabs_workspace.svg</file>
     <file>icons/tabs_species.svg</file>
     <file>icons/tabs_modulelayer_disabled.svg</file>
     <file>icons/tabs_messages.svg</file>
@@ -156,6 +155,7 @@
     <file>icons/general_filter.svg</file>
     <file>icons/general_false.svg</file>
     <file>icons/general_true.svg</file>
+    <file>icons/general_output.svg</file>
     <file>icons/general_warn.svg</file>
     <file>icons/general_unknown.svg</file>
     <file>icons/general_options.svg</file>
