@@ -48,7 +48,7 @@ stages:
             displayName: 'Publish OSX Artifacts'
       - job: 'windows'
         displayName: 'Windows, Threads, CLI/GUI'
-        timeoutInMinutes: 120
+        timeoutInMinutes: 150
         pool:
           vmImage: 'windows-2022'
         steps:
