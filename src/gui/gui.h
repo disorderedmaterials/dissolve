@@ -48,10 +48,6 @@ class DissolveWindow : public QMainWindow
     // Dissolve reference
     Dissolve &dissolve_;
 
-    private:
-    // Prepare the simulation and run for a set count
-    void setupIteration(int count);
-
     public:
     // Return reference to Dissolve
     Dissolve &dissolve();
@@ -90,9 +86,10 @@ class DissolveWindow : public QMainWindow
      * File
      */
     public:
-    // Open specified input file
-    bool openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile = std::nullopt,
-                       bool ignoreRestartFile = false);
+    // Load specified input file, and optionally handle restart file choice as well
+    bool loadInputFile(std::string_view inputFile, bool handleRestartFile = false);
+    // Load specified restart file
+    bool loadRestartFile(std::string_view restartFile);
 
     /*
      * Reference Points
@@ -100,25 +97,6 @@ class DissolveWindow : public QMainWindow
     private:
     // List of ReferencePoints currently loaded
     std::vector<ReferencePoint> referencePoints_;
-
-    /*
-     * Recent Files
-     */
-    private:
-    // Convenience list of recent file menu actions
-    QList<QAction *> recentFileActionList_;
-    // Maximum number of recent files to retain
-    const int recentFileLimit_;
-
-    public slots:
-    // Manage opening of recent files
-    void openRecent();
-    // Fill open recent with placeholders
-    void createRecentMenu();
-    // Add current file to recent files
-    void addRecentFile(const QString &filePath);
-    // Update Recent files menu
-    void updateRecentActionList();
 
     /*
      * Update Functions
@@ -141,15 +119,29 @@ class DissolveWindow : public QMainWindow
      * Main Menu
      */
     private:
+    // Convenience list of recent file menu actions
+    QList<QAction *> recentFileActionList_;
+    // Maximum number of recent files to retain
+    const int recentFileLimit_;
+
+    private:
     // Check whether current input needs to be saved and, if so, if it saved successfully
     bool checkSaveCurrentInput();
     // Clear all data and start new simulation afresh
     void startNew();
+    // Initialise recent file menu with placeholder actions
+    void setUpRecentFileMenu();
+    // Add specified file to recent files list
+    void addRecentFile(const QString &filePath);
+    // Update recent file menu
+    void updateRecentFileMenu();
 
     public slots:
     // File
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenAction_triggered(bool checked);
+    void recentFileSelected();
+    void on_FileLoadRestartFileAction_triggered(bool checked);
     void on_FileCloseAction_triggered(bool checked);
     void on_FileSaveAction_triggered(bool checked);
     void on_FileSaveAsAction_triggered(bool checked);
@@ -161,8 +153,10 @@ class DissolveWindow : public QMainWindow
     void on_SimulationStepAction_triggered(bool checked);
     void on_SimulationStepFiveAction_triggered(bool checked);
     void on_SimulationStopAction_triggered(bool checked);
+    void on_SimulationSetRestartFileFrequencyAction_triggered(bool checked);
     void on_SimulationSaveRestartPointAction_triggered(bool checked);
     void on_SimulationDataManagerAction_triggered(bool checked);
+    void on_SimulationClearAdditionalPotentialsAction_triggered(bool checked);
     void on_SimulationClearModuleDataAction_triggered(bool checked);
     // Species
     void on_SpeciesCreateAtomicAction_triggered(bool checked);
@@ -222,6 +216,12 @@ class DissolveWindow : public QMainWindow
     bool modified_;
     // Whether window is currently refreshing
     bool refreshing_;
+
+    private:
+    // Clear all module data
+    bool clearModuleData(bool queryUser = true);
+    // Prepare the simulation and run for a set count
+    void setupIteration(int count);
 
     private slots:
     void on_MainTabs_currentChanged(int index);

@@ -151,6 +151,8 @@ class Dissolve
     bool regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
     bool generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving = nullptr);
+    // Revert potentials to reference state, clearing additional potentials
+    void revertPairPotentials();
 
     /*
      * Configurations

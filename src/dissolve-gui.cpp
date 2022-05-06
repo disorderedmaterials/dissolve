@@ -41,9 +41,6 @@ int main(int args, char **argv)
     DissolveWindow dissolveWindow(dissolve);
     dissolveWindow.show();
 
-    // Create recent files menu
-    dissolveWindow.createRecentMenu();
-
     // Print GPL license information
     Messenger::print("Dissolve-GUI {} version {}, Copyright (C) 2022 Team Dissolve and contributors.\n", Version::appType(),
                      Version::info());
@@ -52,25 +49,37 @@ int main(int args, char **argv)
     Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
     Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
+    // Flag to track our success in loading the input file and restart file
+    auto loadSuccessful = true;
+
+    // Set restart file frequency
+    dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
+
     // If an input file was specified, load it here
     if (options.inputFile())
+        loadSuccessful = dissolveWindow.loadInputFile(options.inputFile().value());
+
+    // Load restart file if input file load was specified and loaded successfully
+    if (options.inputFile() && loadSuccessful)
     {
-        if (dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename(),
-                                         options.ignoreRestartFile()))
+        if (options.ignoreRestartFile())
+            Messenger::print("Restart file (if it exists) will be ignored.\n");
+        else
         {
-            // Set restart file frequency
-            dissolve.setRestartFileFrequency(options.noRestartFile() ? 0 : options.restartFileFrequency());
+            std::string actualRestartFile{
+                options.restartFilename().value_or(fmt::format("{}.restart", options.inputFile().value()))};
+            loadSuccessful = dissolveWindow.loadRestartFile(actualRestartFile);
+        }
 
-            // Iterate before launching the GUI?
-            if (options.nIterations() > 0)
-            {
-                // Prepare for run
-                if (!dissolve.prepare())
-                    return 1;
+        // Iterate before launching the GUI?
+        if (loadSuccessful && options.nIterations() > 0)
+        {
+            // Prepare for run
+            if (!dissolve.prepare())
+                return 1;
 
-                // Run main simulation
-                dissolve.iterate(options.nIterations());
-            }
+            // Run main simulation
+            dissolve.iterate(options.nIterations());
         }
     }
 

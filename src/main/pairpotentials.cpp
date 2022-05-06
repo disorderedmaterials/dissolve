@@ -159,3 +159,17 @@ bool Dissolve::generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvol
 
     return true;
 }
+
+// Revert potentials to reference state, clearing additional potentials
+void Dissolve::revertPairPotentials()
+{
+    for (auto &pp : pairPotentials_)
+    {
+        pp->resetUAdditional();
+
+        // Clear entry in processing module data if it exists
+        auto itemName = fmt::format("Potential_{}-{}_Additional", pp->atomTypeNameI(), pp->atomTypeNameJ());
+        if (processingModuleData_.contains(itemName, "Dissolve"))
+            processingModuleData_.remove(itemName, "Dissolve");
+    }
+}
