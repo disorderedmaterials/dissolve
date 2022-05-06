@@ -120,18 +120,6 @@
   background-repeat: no-repeat;
   background-size: 17px;
 }
-.gui-button.gui-button-add::before {
-  background-image: url(/img/general_add.svg);
-}
-.gui-button.gui-button-options::before {
-  background-image: url(/img/general_options.svg);
-}
-.gui-button.gui-button-output::before {
-  background-image: url(/img/tabs_workspace.svg);
-}
-.gui-button.gui-button-palette::before {
-  background-image: url(/img/general_palette.svg);
-}
 
 .gui-button::after {
   content: '';

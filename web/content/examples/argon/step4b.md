@@ -50,7 +50,7 @@ The {{< gui-module "NeutronSQ" >}} module itself looks after any related experim
 {{< action type="groups" >}}Select the {{< gui-module "NeutronSQ" >}} module and open the **Reference Data** settings group{{< /action >}}
 {{< action type="edit" >}}For the **Reference** keyword open the file `yarnell.sq`, and set the format of the data to `xy`{{< /action >}}
 
-The data, along with its Fourier transform, can now be seen in the module's {{< gui-button text="Output" type="output" >}} page. You may notice that the data have been normalised to the average squared value of the atomic scattering and oscillate around 1.0 - we will need to tell Dissolve to convert the data back to absolute units and make it oscillate around zero.
+The data, along with its Fourier transform, can now be seen in the module's {{< gui-button text="Output" icon="general_output" >}} page. You may notice that the data have been normalised to the average squared value of the atomic scattering and oscillate around 1.0 - we will need to tell Dissolve to convert the data back to absolute units and make it oscillate around zero.
 
 {{< action type="groups" >}}Select the {{< gui-module "NeutronSQ" >}} module and open the **Reference Data** settings group (go back to the {{< gui-button text="Options" type="options" >}} page if you need to){{< /action >}}
 {{< action type="edit" text="Set the **ReferenceNormalisation** style to `AverageSquared`" />}}

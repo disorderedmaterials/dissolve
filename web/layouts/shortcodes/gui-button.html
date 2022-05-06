@@ -1,1 +1,1 @@
-<span class='gui-button{{ if .Get "type"  }} gui-button-{{ .Get "type" }}{{ end }}'>{{ with .Get "text" }}{{ . | markdownify }}{{ end }}</span>
+{{ if .Get "icon" }}{{ $icon := .Get "icon" }} <style> .gui-button-{{ $icon }}::before { background-image: url(/img/{{ $icon }}.svg); background-size: cover; } </style>{{ end }}<span class='gui-button {{ if .Get "icon"  }} gui-button-{{ .Get "icon" }}{{ end }}'>{{ with .Get "text" }}{{ . | markdownify }}{{ end }}</span>
