@@ -15,6 +15,10 @@
 
 // Forward Declarations
 class Module;
+class MasterBond;
+class MasterAngle;
+class MasterTorsion;
+class MasterImproper;
 
 // Core Data Container
 class CoreData
