@@ -168,7 +168,7 @@
      @include gui-module($module);
    }
 }
-$modules: ("atomshake", "calculatecn", "calculaterdf", "energy", "epsr", "forces", "md", "molshake", "neutronsq", "rdf", "sq", "xraysq");
+$modules: ("accumulate", "analyse", "atomshake", "benchmark", "bragg", "calculateangle", "calculateavgmol", "calculateaxisangle", "calculatecn", "calculatedangle", "calculaterdf", "calculatesdf", "calibrate", "checkspecies", "checks", "datatest", "energy", "epsr", "exportcoordinates", "exportpairpotentials", "exporttrajectory", "forces", "geometryoptimisation", "importtrajectory", "intrashake", "md", "molshake", "neutronsq", "rdf", "sq", "xraysq");
 @include generate-gui-module();
 
 // Node
