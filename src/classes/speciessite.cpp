@@ -10,8 +10,8 @@
 #include <numeric>
 
 SpeciesSite::SpeciesSite(const Species *parent) : parent_(parent), originMassWeighted_(false) {}
-
-/*
+SpeciesSite::SpeciesSite(const Species *parent, std::string name) : parent_(parent), originMassWeighted_(false), name_(name) {}
+    /*
  * Basic Information
  */
 
@@ -453,4 +453,31 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesSite::se
 
     site["originMassWeighted"] = originMassWeighted_;
     return site;
+}
+
+void SpeciesSite::deserialize(toml::value node)
+{
+    if (node.contains("originAtoms"))
+    {
+        std::vector originAtoms = node["originAtoms"].as_array();
+        for (auto originAtom : originAtoms)
+            addOriginAtom(originAtom.as_integer());
+    }
+
+    if (node.contains("xAxisAtoms"))
+    {
+        std::vector xAxisAtoms = node["xAxisAtoms"].as_array();
+        for (auto xAxisAtom : xAxisAtoms)
+            addXAxisAtom(xAxisAtom.as_integer());
+    }
+
+    if (node.contains("yAxisAtoms"))
+    {
+        std::vector yAxisAtoms = node["yAxisAtoms"].as_array();
+        for (auto yAxisAtom : yAxisAtoms)
+            addYAxisAtom(yAxisAtom.as_integer());
+    }
+
+    if (node.contains("originMassWeighted"))
+        originMassWeighted_ = node["originMassWeighted"].as_boolean();
 }

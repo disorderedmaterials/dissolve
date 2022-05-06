@@ -2,11 +2,13 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/isotopologue.h"
+#include "classes/coredata.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
 
 Isotopologue::Isotopologue() {}
+Isotopologue::Isotopologue(std::string name) : name_(name) {}
 
 /*
  * Basic Information
@@ -88,4 +90,12 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Isotopologue::s
     for (auto &&[type, isotope] : isotopes_)
         isotopologue[type->name().data()] = Sears91::A(isotope);
     return isotopologue;
+}
+void Isotopologue::deserialize(toml::value node, CoreData &coreData) { 
+    for (auto &[atomTypeName, a] : node.as_table())
+    {
+        std::shared_ptr<AtomType> atomType = coreData.findAtomType(atomTypeName);
+        Sears91::Isotope isotope = Sears91::isotope(atomType->Z(), a.as_integer());
+        isotopes_.emplace_back(std::make_tuple(atomType, isotope));
+    }
 }

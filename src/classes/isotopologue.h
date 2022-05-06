@@ -14,6 +14,7 @@
 // Forward Declarations
 class AtomType;
 class Species;
+class CoreData;
 
 /*
  * Isotopologue Definition
@@ -22,6 +23,7 @@ class Isotopologue
 {
     public:
     Isotopologue();
+    Isotopologue(std::string name);
     ~Isotopologue() = default;
 
     /*
@@ -63,4 +65,5 @@ class Isotopologue
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    void deserialize(toml::value node, CoreData &coreData);
 };

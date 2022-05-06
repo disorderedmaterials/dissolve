@@ -319,4 +319,18 @@ void Species::deserialize(toml::value node, CoreData &coreData)
                                   &atoms_[tomlTorsion["k"].as_integer() - 1], &atoms_[tomlTorsion["l"].as_integer() - 1])
                     .deserialize(tomlTorsion, coreData);
     }
+
+    if (node.contains("isotopologues"))
+    {
+        toml::value tomlIsotopologues = toml::find(node, "isotopologues");
+        for (auto &[name, data] : tomlIsotopologues.as_table())
+            isotopologues_.emplace_back(std::make_unique<Isotopologue>(name))->deserialize(data, coreData);
+    }
+
+    if (node.contains("sites"))
+    {
+        toml::value tomlSites = toml::find(node, "sites");
+        for (auto &[name, data] : tomlSites.as_table())
+            sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialize(data);
+    }
 }

@@ -22,6 +22,7 @@ class SpeciesSite
 {
     public:
     explicit SpeciesSite(const Species *parent);
+    SpeciesSite(const Species *parent, std::string name);
     ~SpeciesSite() = default;
 
     /*
@@ -127,4 +128,5 @@ class SpeciesSite
     bool write(LineParser &parser, std::string_view prefix);
 
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    void deserialize(toml::value node);
 };
