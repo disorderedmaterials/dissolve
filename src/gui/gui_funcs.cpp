@@ -7,7 +7,6 @@
 #include "gui/gui.h"
 #include "gui/layertab.h"
 #include "gui/selectrestartfiledialog.h"
-#include "gui/workspacetab.h"
 #include "main/dissolve.h"
 #include "main/version.h"
 #include <QCloseEvent>
@@ -329,7 +328,6 @@ void DissolveWindow::updateMenus()
     ui_.SpeciesMenu->setEnabled(allowEditing);
     ui_.ConfigurationMenu->setEnabled(allowEditing);
     ui_.LayerMenu->setEnabled(allowEditing);
-    ui_.WorkspaceMenu->setEnabled(allowEditing);
 
     auto activeTab = ui_.MainTabs->currentTab();
     if (!activeTab)
