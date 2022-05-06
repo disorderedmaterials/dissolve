@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/speciesimproper.h"
+#include "classes/coredata.h"
 #include "classes/speciesatom.h"
 #include "classes/speciestorsion.h"
 

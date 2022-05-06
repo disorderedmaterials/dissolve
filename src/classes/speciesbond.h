@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "classes/coredata.h"
 #include "classes/speciesintra.h"
 
 #include <map>
@@ -14,6 +13,7 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
+class CoreData;
 
 // Bond functional forms
 class BondFunctions

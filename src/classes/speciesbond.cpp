@@ -3,6 +3,7 @@
 
 #include "classes/speciesbond.h"
 #include "base/sysfunc.h"
+#include "classes/coredata.h"
 #include "classes/speciesatom.h"
 #include "data/atomicmasses.h"
 #include <map>
