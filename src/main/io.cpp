@@ -153,7 +153,7 @@ bool Dissolve::loadInput(std::string_view filename)
     auto result = loadInput(parser);
     if (result)
     {
-        if (toml_testing_flag)
+        if constexpr (toml_testing_flag)
         {
             std::ofstream output("output.toml");
             toml::basic_value<toml::discard_comments, std::map, std::vector> root;
