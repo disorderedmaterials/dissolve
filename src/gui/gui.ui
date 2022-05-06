@@ -415,46 +415,6 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="WorkspaceCreateEmptyAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/tabs/icons/tabs_workspace.svg</normaloff>:/tabs/icons/tabs_workspace.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Create New</string>
-   </property>
-  </action>
-  <action name="WorkspaceCurrentAction">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Current Workspace</string>
-   </property>
-   <property name="font">
-    <font>
-     <italic>true</italic>
-    </font>
-   </property>
-  </action>
-  <action name="WorkspaceAddWidgetGeneralAction">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>General</string>
-   </property>
-   <property name="font">
-    <font>
-     <italic>true</italic>
-    </font>
-   </property>
-  </action>
-  <action name="WorkspaceAddWidgetPairPotential">
-   <property name="text">
-    <string>Pair Potential</string>
-   </property>
-  </action>
   <action name="FileSaveAsAction">
    <property name="text">
     <string>Save &amp;As...</string>
@@ -745,14 +705,6 @@
   <action name="SpeciesCreateDrawAction">
    <property name="text">
     <string>&amp;Draw...</string>
-   </property>
-  </action>
-  <action name="WorkspaceRenameCurrentGizmoAction">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Rename Current Gizmo</string>
    </property>
   </action>
   <action name="LayerCreateEvolveBasicAtomicAction">
