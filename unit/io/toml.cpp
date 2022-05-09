@@ -11,19 +11,19 @@ TEST(TOMLTest, Parse)
 {
     if constexpr (Dissolve::toml_testing_flag)
     {
-	std::vector<std::string> inputs = {"inputs/benzene.txt", "inputs/water.txt"};
+        std::vector<std::string> inputs = {"inputs/benzene.txt", "inputs/water.txt"};
 
-	for (auto &input : inputs)
-	{
-	    CoreData coreData, coreData2;
-	    Dissolve initial(coreData);
-	    initial.loadInput(input);
-	    auto toml = initial.serialise();
-	    Dissolve repeat(coreData2);
-	    repeat.deserialise(toml);
-	    auto toml2 = repeat.serialise();
-	    EXPECT_EQ(toml["pairPotentials"]["delta"], toml2["pairPotentials"]["delta"]);
-	}
+        for (auto &input : inputs)
+        {
+            CoreData coreData, coreData2;
+            Dissolve initial(coreData);
+            initial.loadInput(input);
+            auto toml = initial.serialise();
+            Dissolve repeat(coreData2);
+            repeat.deserialise(toml);
+            auto toml2 = repeat.serialise();
+            EXPECT_EQ(toml["pairPotentials"]["delta"], toml2["pairPotentials"]["delta"]);
+        }
     }
 }
 
