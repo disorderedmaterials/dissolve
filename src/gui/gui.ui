@@ -310,7 +310,7 @@
      </property>
      <property name="icon">
       <iconset resource="main.qrc">
-       <normaloff>:/tabs/icons/tabs_modulelayer.svg</normaloff>:/tabs/icons/tabs_modulelayer.svg</iconset>
+       <normaloff>:/tabs/icons/tabs_layer.svg</normaloff>:/tabs/icons/tabs_layer.svg</iconset>
      </property>
      <widget class="QMenu" name="LayerCreateEvolutionMenu">
       <property name="font">
