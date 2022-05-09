@@ -25,7 +25,6 @@ ConfigurationKeywordWidget::ConfigurationKeywordWidget(QWidget *parent, Configur
  * Widgets
  */
 
-// Value changed
 void ConfigurationKeywordWidget::on_ConfigurationCombo_currentIndexChanged(int index)
 {
     if (refreshing_)
@@ -38,6 +37,14 @@ void ConfigurationKeywordWidget::on_ConfigurationCombo_currentIndexChanged(int i
         keyword_->data() = ui_.ConfigurationCombo->currentData(Qt::UserRole).value<Configuration *>();
 
     emit(keywordDataChanged(keyword_->editSignals()));
+}
+
+void ConfigurationKeywordWidget::on_ClearButton_clicked(bool checked)
+{
+    if (ui_.ConfigurationCombo->currentIndex() == -1 && !keyword_->data())
+        return;
+
+    ui_.ConfigurationCombo->setCurrentIndex(-1);
 }
 
 /*
