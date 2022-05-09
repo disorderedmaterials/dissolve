@@ -142,6 +142,66 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
     return result;
 }
 
+toml::basic_value<toml::discard_comments> Dissolve::serialise()
+{
+    toml::basic_value<toml::discard_comments, std::map, std::vector> root;
+    if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
+        !coreData_.masterImpropers().empty())
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> masterNode;
+        if (!coreData_.masterBonds().empty())
+        {
+            toml::basic_value<toml::discard_comments, std::map, std::vector> bonds;
+            for (auto &bond : coreData_.masterBonds())
+                bonds[bond->name().data()] = bond->serialize();
+            masterNode["bonds"] = bonds;
+        }
+        if (!coreData_.masterAngles().empty())
+        {
+            toml::basic_value<toml::discard_comments, std::map, std::vector> angles;
+            for (auto &angle : coreData_.masterAngles())
+                angles[angle->name().data()] = angle->serialize();
+            masterNode["angles"] = angles;
+        }
+        if (!coreData_.masterTorsions().empty())
+        {
+            toml::basic_value<toml::discard_comments, std::map, std::vector> torsions;
+            for (auto &torsion : coreData_.masterTorsions())
+                torsions[torsion->name().data()] = torsion->serialize();
+            masterNode["torsions"] = torsions;
+        }
+        if (!coreData_.masterImpropers().empty())
+        {
+            toml::basic_value<toml::discard_comments, std::map, std::vector> impropers;
+            for (auto &improper : coreData_.masterImpropers())
+                impropers[improper->name().data()] = improper->serialize();
+            masterNode["impropers"] = impropers;
+        }
+        root["master"] = masterNode;
+    }
+
+    if (!species().empty())
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
+        for (auto &species : species())
+            speciesNode[species->name().data()] = species->serialize();
+        root["species"] = speciesNode;
+    }
+
+    root["pairPotentials"] = serializablePairPotential_.serialize();
+
+    if (!configurations().empty())
+    {
+        toml::basic_value<toml::discard_comments, std::map, std::vector> configurationsNode;
+        for (auto &configuration : configurations())
+            configurationsNode[configuration->name().data()] = configuration->serialize();
+        root["configurations"] = configurationsNode;
+    }
+    return root;
+}
+
+void Dissolve::deserialise(toml::basic_value<toml::discard_comments> node) { return; }
+
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)
 {
@@ -153,65 +213,6 @@ bool Dissolve::loadInput(std::string_view filename)
     auto result = loadInput(parser);
     if (result)
     {
-        if (toml_testing_flag)
-        {
-            std::ofstream output("C:/ProjectDissolve/dissolve/build/bin/output.toml");
-            toml::basic_value<toml::discard_comments, std::map, std::vector> root;
-            toml::basic_value<toml::discard_comments, std::map, std::vector> masterNode;
-            if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
-                !coreData_.masterImpropers().empty())
-            {
-                if (!coreData_.masterBonds().empty())
-                {
-                    toml::basic_value<toml::discard_comments, std::map, std::vector> bonds;
-                    for (auto &bond : coreData_.masterBonds())
-                        bonds[bond->name().data()] = bond->serialize();
-                    masterNode["bonds"] = bonds;
-                }
-                if (!coreData_.masterAngles().empty())
-                {
-                    toml::basic_value<toml::discard_comments, std::map, std::vector> angles;
-                    for (auto &angle : coreData_.masterAngles())
-                        angles[angle->name().data()] = angle->serialize();
-                    masterNode["angles"] = angles;
-                }
-                if (!coreData_.masterTorsions().empty())
-                {
-                    toml::basic_value<toml::discard_comments, std::map, std::vector> torsions;
-                    for (auto &torsion : coreData_.masterTorsions())
-                        torsions[torsion->name().data()] = torsion->serialize();
-                    masterNode["torsions"] = torsions;
-                }
-                if (!coreData_.masterImpropers().empty())
-                {
-                    toml::basic_value<toml::discard_comments, std::map, std::vector> impropers;
-                    for (auto &improper : coreData_.masterImpropers())
-                        impropers[improper->name().data()] = improper->serialize();
-                    masterNode["impropers"] = impropers;
-                }
-                root["master"] = masterNode;
-            }
-
-            if (!species().empty())
-            {
-                toml::basic_value<toml::discard_comments, std::map, std::vector> speciesNode;
-                for (auto &species : species())
-                    speciesNode[species->name().data()] = species->serialize();
-                root["species"] = speciesNode;
-            }
-
-            root["pairPotentials"] = serializablePairPotential_.serialize();
-
-            if (!configurations().empty())
-            {
-                toml::basic_value<toml::discard_comments, std::map, std::vector> configurationsNode;
-                for (auto &configuration : configurations())
-                    configurationsNode[configuration->name().data()] = configuration->serialize();
-                root["configurations"] = configurationsNode;
-            }
-            output << std::setw(40) << root;
-        }
-
         Messenger::print("Finished reading input file.\n");
         setInputFilename(filename);
     }
