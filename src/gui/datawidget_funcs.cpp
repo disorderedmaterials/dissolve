@@ -270,7 +270,7 @@ void DataWidget::updateStatusBar()
             text = QString("z = {%1}, y = {%2}").arg(rLocal.z).arg(rLocal.y);
             break;
         default:
-            text = QString("x = {%1}, y = {%2}, z = {%3}").arg(rLocal.x, rLocal.y, rLocal.z);
+            text = QString("x = {%1}, y = {%2}, z = {%3}").arg(rLocal.x).arg(rLocal.y).arg(rLocal.z);
             break;
     }
 
