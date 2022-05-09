@@ -23,7 +23,6 @@ TEST(TOMLTest, Parse)
 	    repeat.deserialise(toml);
 	    auto toml2 = repeat.serialise();
 	    EXPECT_EQ(toml["pairPotentials"]["delta"], toml2["pairPotentials"]["delta"]);
-	    EXPECT_EQ(toml, toml2);
 	}
     }
 }
