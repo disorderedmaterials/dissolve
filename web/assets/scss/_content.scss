@@ -77,19 +77,10 @@
   width: 15px;
   height: 15px;
   left: 7px;
-  top: 0px;
+  top: 1px;
   position: absolute;
   background-repeat: no-repeat;
   background-size: 18px;
-}
-.gui-tab.gui-tab-Forcefield::before {
-  background-image: url(/img/tabs_ff.svg);
-}
-.gui-tab.gui-tab-Layer::before {
-  background-image: url(/img/tabs_modulelayer.svg);
-}
-.gui-tab.gui-tab-Species::before {
-  background-image: url(/img/tabs_species.svg);
 }
 
 .gui-tab::after {
