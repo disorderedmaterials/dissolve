@@ -20,6 +20,7 @@ bool DissolveWindow::clearModuleData(bool queryUser)
     {
         // Invalidate all renderables before we clear the data
         Renderable::invalidateAll();
+        Renderable::setSourceDataAccessEnabled(false);
 
         // Clear main processing data
         dissolve_.processingModuleData().clear();
@@ -29,6 +30,8 @@ bool DissolveWindow::clearModuleData(bool queryUser)
 
         // Regenerate pair potentials
         dissolve_.regeneratePairPotentials();
+
+        Renderable::setSourceDataAccessEnabled(true);
 
         fullUpdate();
     }
