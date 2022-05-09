@@ -206,8 +206,8 @@ class Configuration
      * Upkeep
      */
     public:
-    // Update Cell contents
-    void updateCellContents();
+    // Update Cell contents, optionally clearing all atom locations first
+    void updateCellContents(bool clearExistingLocations = false);
     // Update Cell location of specified Atom
     void updateCellLocation(Atom *i);
     // Update Cell location of specified Molecule

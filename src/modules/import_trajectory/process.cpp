@@ -42,6 +42,7 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
         parser.tellg();
 
     // Handle the unit cell if one was provided
+    auto clearExistingAtoms = false;
     if (unitCell)
     {
         // Check that the unit cell has changed by an appreciable amount....
@@ -51,14 +52,12 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
             targetConfiguration_->createBoxAndCells(unitCell.value(), targetConfiguration_->requestedCellDivisionLength(),
                                                     dissolve.pairPotentialRange());
 
-            // Remove all atoms from cells
-            for (auto &i : targetConfiguration_->atoms())
-                i.setCell(nullptr);
+            clearExistingAtoms = true;
         }
     }
 
     // Make sure that the configuration contents are up-to-date w.r.t. cell locations etc.
-    targetConfiguration_->updateCellContents();
+    targetConfiguration_->updateCellContents(clearExistingAtoms);
 
     return true;
 }

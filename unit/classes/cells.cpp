@@ -88,13 +88,9 @@ TEST(CellsTest, Basic)
         // Initialise an EnergyKernel with the specified cutoff
         EnergyKernel energyKernel(dissolve.worldPool(), cfg->box(), cfg->cells(), dissolve.potentialMap(), rCut);
 
-        // Remove atoms from cells
-        for (auto &i : cfg->atoms())
-            i.setCell(nullptr);
-
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve.pairPotentialRange());
-        cfg->updateCellContents();
+        cfg->updateCellContents(true);
 
         // Calculate total Cell-based energy
         EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->cells(), false, ProcessPool::PoolStrategy), 1.0e-4);
