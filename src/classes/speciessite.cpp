@@ -424,7 +424,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     return true;
 }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesSite::serialize()
+TomlTable SpeciesSite::serialise() const
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> site;
     if (!originAtoms_.empty())
