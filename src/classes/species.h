@@ -22,7 +22,6 @@
 #include <map>
 #include <vector>
 
-
 // Forward Declarations
 class Forcefield;
 

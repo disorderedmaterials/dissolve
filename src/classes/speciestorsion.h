@@ -41,7 +41,7 @@ class TorsionFunctions
 };
 
 // SpeciesTorsion Definition
-class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions> , public Serialisable
+class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>, public Serialisable
 {
     public:
     SpeciesTorsion();
