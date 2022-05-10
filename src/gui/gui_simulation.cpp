@@ -69,12 +69,13 @@ void DissolveWindow::setupIteration(int count)
 // Disable editing
 void DissolveWindow::preventEditing()
 {
-    // Disable necessary simulation menu items
+    // Disable necessary menu items
+    ui_.FileLoadRestartPointAction->setEnabled(false);
+    ui_.FileSaveRestartPointAction->setEnabled(false);
     ui_.SimulationRunAction->setEnabled(false);
     ui_.SimulationStopAction->setEnabled(true);
     ui_.SimulationStepAction->setEnabled(false);
     ui_.SimulationStepFiveAction->setEnabled(false);
-    ui_.SimulationSaveRestartPointAction->setEnabled(false);
     ui_.SimulationDataManagerAction->setEnabled(false);
 
     // Disable necessary menus
@@ -89,12 +90,13 @@ void DissolveWindow::preventEditing()
 // Allow editing
 void DissolveWindow::allowEditing()
 {
-    // Enable necessary simulation menu items
+    // Enable necessary menu items
+    ui_.FileLoadRestartPointAction->setEnabled(true);
+    ui_.FileSaveRestartPointAction->setEnabled(true);
     ui_.SimulationRunAction->setEnabled(true);
     ui_.SimulationStopAction->setEnabled(false);
     ui_.SimulationStepAction->setEnabled(true);
     ui_.SimulationStepFiveAction->setEnabled(true);
-    ui_.SimulationSaveRestartPointAction->setEnabled(true);
     ui_.SimulationDataManagerAction->setEnabled(true);
 
     // Enable necessary menus

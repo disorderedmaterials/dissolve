@@ -124,7 +124,9 @@
     <addaction name="separator"/>
     <addaction name="FileOpenAction"/>
     <addaction name="FileOpenRecentMenu"/>
-    <addaction name="FileLoadRestartFileAction"/>
+    <addaction name="separator"/>
+    <addaction name="FileLoadRestartPointAction"/>
+    <addaction name="FileSaveRestartPointAction"/>
     <addaction name="separator"/>
     <addaction name="FileCloseAction"/>
     <addaction name="separator"/>
@@ -152,7 +154,6 @@
     <addaction name="SimulationStepAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRestartFileFrequencyAction"/>
-    <addaction name="SimulationSaveRestartPointAction"/>
     <addaction name="SimulationDataManagerAction"/>
     <addaction name="SimulationClearAdditionalPotentialsAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
@@ -674,7 +675,7 @@
     <string>&amp;Data Manager...</string>
    </property>
   </action>
-  <action name="SimulationSaveRestartPointAction">
+  <action name="FileSaveRestartPointAction">
    <property name="text">
     <string>Save Restart &amp;Point...</string>
    </property>
@@ -791,9 +792,9 @@
     <string>Set Restart File Fre&amp;quency...</string>
    </property>
   </action>
-  <action name="FileLoadRestartFileAction">
+  <action name="FileLoadRestartPointAction">
    <property name="text">
-    <string>Load &amp;Restart File...</string>
+    <string>Load &amp;Restart Point...</string>
    </property>
   </action>
   <action name="SimulationClearAdditionalPotentialsAction">

@@ -47,20 +47,6 @@ void DissolveWindow::on_SimulationSetRestartFileFrequencyAction_triggered(bool c
     dissolve_.setRestartFileFrequency(newFrequency);
 }
 
-void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
-{
-    // Get filename for restart point
-    QString filename =
-        QFileDialog::getSaveFileName(this, "Select Output File", QDir::currentPath(), "Restart Files (*.restart)");
-    if (filename.isEmpty())
-        return;
-
-    if (dissolve_.saveRestart(qPrintable(filename)))
-        statusBar()->showMessage(QString("Saved restart point to '%1'.").arg(filename), 3000);
-    else
-        statusBar()->showMessage(QString("ERROR: Failed to save restart point to '%1'.").arg(filename), 3000);
-}
-
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
 {
     DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_, dissolve_.processingModuleData());
