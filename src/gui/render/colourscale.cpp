@@ -123,9 +123,9 @@ QColor ColourScale::colour(double value) const
         return QColor(0, 0, 0);
 
     // Is supplied value less than the value at the first point?
-    if (value < points_.front().value())
+    if (value <= points_.front().value())
         return points_.front().colour();
-    else if (value > points_.back().value())
+    else if (value >= points_.back().value())
         return points_.back().colour();
 
     // Find the correct delta to use
