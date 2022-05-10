@@ -37,7 +37,7 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
     return shortRangeTruncationScheme_;
 }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePairPotential::serialize()
+TomlTable SerializablePairPotential::serialise() const
 {
     toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentials;
     pairPotentials["range"] = range_;

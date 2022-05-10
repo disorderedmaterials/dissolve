@@ -143,8 +143,7 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
 }
 
 // Add items in a vector to a node under a name
-template <typename T>
-void addVectorToNode(std::vector<T> &vector, std::string name, toml::basic_value<toml::discard_comments, std::map> &node)
+template <typename T> void addVectorToNode(std::vector<T> &vector, std::string name, TomlTable &node)
 {
     if (vector.empty())
         return;
@@ -170,7 +169,7 @@ toml::basic_value<toml::discard_comments> Dissolve::serialise()
 
     addVectorToNode<>(species(), "species", root);
 
-    root["pairPotentials"] = serializablePairPotential_.serialize();
+    root["pairPotentials"] = serializablePairPotential_.serialise();
 
     addVectorToNode<>(configurations(), "configurations", root);
 
