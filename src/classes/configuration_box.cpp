@@ -52,7 +52,7 @@ void Configuration::createBoxAndCells(const Matrix3 axes, double cellSize, doubl
 void Configuration::updateCells(double cellSize, double pairPotentialRange)
 {
     cells_.generate(box_.get(), cellSize, pairPotentialRange);
-    updateCellContents();
+    updateCellContents(true);
 }
 
 // Return Box

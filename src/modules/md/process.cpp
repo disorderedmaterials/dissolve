@@ -12,6 +12,15 @@
 #include "modules/md/md.h"
 #include "templates/algorithms.h"
 
+// Run set-up stage
+bool MDModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+{
+    if (actionSignals.isSet(KeywordBase::ClearModuleData))
+        dissolve.processingModuleData().removeWithPrefix(uniqueName());
+
+    return true;
+}
+
 // Run main processing
 bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {

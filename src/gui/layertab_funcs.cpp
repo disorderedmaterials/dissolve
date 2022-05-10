@@ -144,9 +144,9 @@ void LayerTab::on_EnabledButton_clicked(bool checked)
 
     moduleLayer_->setEnabled(checked);
     if (checked)
-        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer.svg"));
     else
-        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
+        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
 
     updateModuleList();
 

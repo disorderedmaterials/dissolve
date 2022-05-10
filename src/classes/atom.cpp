@@ -35,10 +35,11 @@ void Atom::setMasterTypeIndex(int id) { masterTypeIndex_ = id; }
 
 // Return master AtomType index
 int Atom::masterTypeIndex() const { return masterTypeIndex_; }
-// Sets the index of the object within the parent DynamicArray
+
+// Sets the index of the object within the parent array
 void Atom::setArrayIndex(int index) { arrayIndex_ = index; }
 
-// Gets the index of the object within the parent DynamicArray
+// Gets the index of the object within the parent array
 int Atom::arrayIndex() const { return arrayIndex_; }
 
 /*

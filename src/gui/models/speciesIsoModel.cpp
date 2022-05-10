@@ -61,9 +61,9 @@ QVariant SpeciesIsoModel::data(const QModelIndex &index, int role) const
                     return QString::fromStdString(std::string(atomType->name()));
                 case 2:
                     if (Sears91::A(isotope) == 0)
-                        return QString("Natural (bc = %1)").arg(Sears91::boundCoherent(isotope));
+                        return QString("Natural (bc = %1 fm)").arg(Sears91::boundCoherent(isotope));
                     else
-                        return QString("%1 (bc = %2)").arg(Sears91::A(isotope)).arg(Sears91::boundCoherent(isotope));
+                        return QString("%1 (bc = %2 fm)").arg(Sears91::A(isotope)).arg(Sears91::boundCoherent(isotope));
                 default:
                     return {};
             }

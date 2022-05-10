@@ -141,7 +141,8 @@ class DissolveWindow : public QMainWindow
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenAction_triggered(bool checked);
     void recentFileSelected();
-    void on_FileLoadRestartFileAction_triggered(bool checked);
+    void on_FileLoadRestartPointAction_triggered(bool checked);
+    void on_FileSaveRestartPointAction_triggered(bool checked);
     void on_FileCloseAction_triggered(bool checked);
     void on_FileSaveAction_triggered(bool checked);
     void on_FileSaveAsAction_triggered(bool checked);
@@ -154,7 +155,6 @@ class DissolveWindow : public QMainWindow
     void on_SimulationStepFiveAction_triggered(bool checked);
     void on_SimulationStopAction_triggered(bool checked);
     void on_SimulationSetRestartFileFrequencyAction_triggered(bool checked);
-    void on_SimulationSaveRestartPointAction_triggered(bool checked);
     void on_SimulationDataManagerAction_triggered(bool checked);
     void on_SimulationClearAdditionalPotentialsAction_triggered(bool checked);
     void on_SimulationClearModuleDataAction_triggered(bool checked);

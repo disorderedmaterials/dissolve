@@ -124,7 +124,9 @@
     <addaction name="separator"/>
     <addaction name="FileOpenAction"/>
     <addaction name="FileOpenRecentMenu"/>
-    <addaction name="FileLoadRestartFileAction"/>
+    <addaction name="separator"/>
+    <addaction name="FileLoadRestartPointAction"/>
+    <addaction name="FileSaveRestartPointAction"/>
     <addaction name="separator"/>
     <addaction name="FileCloseAction"/>
     <addaction name="separator"/>
@@ -152,7 +154,6 @@
     <addaction name="SimulationStepAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRestartFileFrequencyAction"/>
-    <addaction name="SimulationSaveRestartPointAction"/>
     <addaction name="SimulationDataManagerAction"/>
     <addaction name="SimulationClearAdditionalPotentialsAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
@@ -310,7 +311,7 @@
      </property>
      <property name="icon">
       <iconset resource="main.qrc">
-       <normaloff>:/tabs/icons/tabs_modulelayer.svg</normaloff>:/tabs/icons/tabs_modulelayer.svg</iconset>
+       <normaloff>:/tabs/icons/tabs_layer.svg</normaloff>:/tabs/icons/tabs_layer.svg</iconset>
      </property>
      <widget class="QMenu" name="LayerCreateEvolutionMenu">
       <property name="font">
@@ -413,46 +414,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
-   </property>
-  </action>
-  <action name="WorkspaceCreateEmptyAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/tabs/icons/tabs_workspace.svg</normaloff>:/tabs/icons/tabs_workspace.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Create New</string>
-   </property>
-  </action>
-  <action name="WorkspaceCurrentAction">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Current Workspace</string>
-   </property>
-   <property name="font">
-    <font>
-     <italic>true</italic>
-    </font>
-   </property>
-  </action>
-  <action name="WorkspaceAddWidgetGeneralAction">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>General</string>
-   </property>
-   <property name="font">
-    <font>
-     <italic>true</italic>
-    </font>
-   </property>
-  </action>
-  <action name="WorkspaceAddWidgetPairPotential">
-   <property name="text">
-    <string>Pair Potential</string>
    </property>
   </action>
   <action name="FileSaveAsAction">
@@ -714,7 +675,7 @@
     <string>&amp;Data Manager...</string>
    </property>
   </action>
-  <action name="SimulationSaveRestartPointAction">
+  <action name="FileSaveRestartPointAction">
    <property name="text">
     <string>Save Restart &amp;Point...</string>
    </property>
@@ -745,14 +706,6 @@
   <action name="SpeciesCreateDrawAction">
    <property name="text">
     <string>&amp;Draw...</string>
-   </property>
-  </action>
-  <action name="WorkspaceRenameCurrentGizmoAction">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Rename Current Gizmo</string>
    </property>
   </action>
   <action name="LayerCreateEvolveBasicAtomicAction">
@@ -839,9 +792,9 @@
     <string>Set Restart File Fre&amp;quency...</string>
    </property>
   </action>
-  <action name="FileLoadRestartFileAction">
+  <action name="FileLoadRestartPointAction">
    <property name="text">
-    <string>Load &amp;Restart File...</string>
+    <string>Load &amp;Restart Point...</string>
    </property>
   </action>
   <action name="SimulationClearAdditionalPotentialsAction">

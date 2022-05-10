@@ -24,7 +24,6 @@ ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, ModuleKeywordBase *key
  * Widgets
  */
 
-// Value changed
 void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
 {
     if (refreshing_)
@@ -37,6 +36,14 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
         keyword_->setData(ui_.ModuleCombo->currentData(Qt::UserRole).value<Module *>());
 
     emit(keywordDataChanged(keyword_->editSignals()));
+}
+
+void ModuleKeywordWidget::on_ClearButton_clicked(bool checked)
+{
+    if (ui_.ModuleCombo->currentIndex() == -1 && !keyword_->module())
+        return;
+
+    ui_.ModuleCombo->setCurrentIndex(-1);
 }
 
 /*

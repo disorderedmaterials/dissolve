@@ -296,10 +296,15 @@ void DissolveWindow::updateStatusBar()
         statusLabel_->setText("Running (ESC to stop)");
         statusIndicator_->setPixmap(QPixmap(":/control/icons/control_play.svg"));
     }
-    else
+    else if (ui_.MainStack->currentIndex() == 1)
     {
         statusLabel_->setText("Idle");
         statusIndicator_->setPixmap(QPixmap(":/general/icons/general_true.svg"));
+    }
+    else
+    {
+        statusLabel_->setText("No simulation loaded");
+        statusIndicator_->setPixmap(QPixmap(":/dissolve/icons/dissolve.png"));
     }
 
     // Set restart file info
@@ -323,8 +328,8 @@ void DissolveWindow::updateMenus()
 
     // Enable / disable other menu items as appropriate
     for (auto *action : ui_.SimulationMenu->actions())
-        action->setEnabled(action == ui_.SimulationStopAction == !allowEditing);
-    ui_.SimulationMenu->setEnabled(allowEditing);
+        action->setEnabled((action == ui_.SimulationStopAction) == !allowEditing);
+    ui_.SimulationMenu->setEnabled(hasSimulation);
     ui_.SpeciesMenu->setEnabled(allowEditing);
     ui_.ConfigurationMenu->setEnabled(allowEditing);
     ui_.LayerMenu->setEnabled(allowEditing);

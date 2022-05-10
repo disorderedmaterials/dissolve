@@ -4,6 +4,7 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
+#include <numeric>
 
 // Recursively add atoms along any path from the specified one, ignoring the bond(s) provided
 void Species::getIndicesRecursive(std::vector<int> &indices, int index, OptionalReferenceWrapper<SpeciesBond> exclude,
@@ -301,21 +302,11 @@ int Species::simplifyAtomTypes()
 // Return total charge of species from local/atomtype atomic charges
 double Species::totalCharge(bool useAtomTypes) const
 {
-    double totalQ = 0.0;
     if (useAtomTypes)
-        for (const auto &i : atoms_)
-        {
-            if (!i.atomType())
-            {
-                Messenger::warn(
-                    "No atom type assigned to atom index {} in species '{}', so can't calculate correct total charge.\n",
-                    i.userIndex(), name_);
-                continue;
-            }
-            totalQ += i.atomType()->charge();
-        }
+        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i) {
+            return acc + (i.atomType() ? i.atomType()->charge() : 0.0);
+        });
     else
-        for (const auto &i : atoms_)
-            totalQ += i.charge();
-    return totalQ;
+        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
+                               [](const auto acc, const auto &i) { return acc + i.charge(); });
 }

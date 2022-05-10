@@ -46,6 +46,14 @@ void NodeKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QMode
     emit(keywordDataChanged(keyword_->editSignals()));
 }
 
+void NodeKeywordWidget::on_ClearButton_clicked(bool checked)
+{
+    if (ui_.NodeCombo->currentIndex() == -1 && !keyword_->baseNode())
+        return;
+
+    ui_.NodeCombo->setCurrentIndex(-1);
+}
+
 /*
  * Update
  */

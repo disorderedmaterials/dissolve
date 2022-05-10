@@ -283,9 +283,9 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
             if (layer->isEnabled())
-                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_layer.svg"));
             else
-                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
+                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
         }
 
         ++currentTabIndex;
