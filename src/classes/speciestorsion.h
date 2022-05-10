@@ -4,10 +4,10 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "base/toml.h"
 #include "classes/speciesintra.h"
 
 #include <map>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Forward Declarations
@@ -41,7 +41,7 @@ class TorsionFunctions
 };
 
 // SpeciesTorsion Definition
-class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
+class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions> , public Serialisable
 {
     public:
     SpeciesTorsion();
@@ -114,7 +114,8 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Express as a tree node
+    TomlTable serialise() const override;
 };
 
 // MasterTorsion Definition

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/toml.h"
 #include "classes/atomtypemix.h"
 #include "classes/box.h"
 #include "classes/cellarray.h"
@@ -21,13 +22,12 @@
 #include <map>
 #include <vector>
 
-#include <toml11/toml.hpp>
 
 // Forward Declarations
 class Forcefield;
 
 // Species Definition
-class Species
+class Species : public Serialisable
 {
     public:
     Species();
@@ -368,5 +368,6 @@ class Species
     // Write Species definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Express as a tree node
+    TomlTable serialise() const override;
 };

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/toml.h"
 #include "base/version.h"
 #include "classes/atom.h"
 #include "classes/atomtypemix.h"
@@ -22,7 +23,6 @@
 #include <memory>
 
 #include <map>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Forward Declarations
@@ -33,7 +33,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration
+class Configuration : public Serialisable
 {
     public:
     Configuration();
@@ -235,5 +235,6 @@ class Configuration
     // Read from specified LineParser
     bool deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
                      double pairPotentialRange);
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Express as a tree node
+    TomlTable serialise() const override;
 };

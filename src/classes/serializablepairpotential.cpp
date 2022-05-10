@@ -37,9 +37,10 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
     return shortRangeTruncationScheme_;
 }
 
+// Express as a tree node
 TomlTable SerializablePairPotential::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentials;
+    TomlTable pairPotentials;
     pairPotentials["range"] = range_;
     pairPotentials["delta"] = delta_;
     pairPotentials["includeCoulomb"] = atomTypeChargeSource_;
@@ -47,6 +48,6 @@ TomlTable SerializablePairPotential::serialise() const
     pairPotentials["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(shortRangeTruncationScheme_);
     if (!atomTypes_.empty())
         for (auto &atomType : atomTypes_)
-            pairPotentials[atomType->name().data()] = atomType->serialize();
+            pairPotentials[atomType->name().data()] = atomType->serialise();
     return pairPotentials;
 }

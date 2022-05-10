@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include "base/toml.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
 #include <map>
 #include <memory>
-#include <toml11/toml.hpp>
 #include <tuple>
 #include <vector>
 
@@ -18,7 +18,7 @@ class Species;
 /*
  * Isotopologue Definition
  */
-class Isotopologue
+class Isotopologue : public Serialisable
 {
     public:
     Isotopologue();
@@ -62,5 +62,6 @@ class Isotopologue
     // Return AtomType/Isotope pairs list
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Express as a tree node
+    TomlTable serialise() const override;
 };

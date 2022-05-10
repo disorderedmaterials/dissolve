@@ -224,9 +224,10 @@ double SpeciesImproper::force(double angleInDegrees) const
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper::serialize()
+// Express as a tree node
+TomlTable SpeciesImproper::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> improper;
+    TomlTable improper;
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -246,7 +247,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
     std::vector<double> values = SpeciesImproper::interactionPotential().parameters();
     if (!values.empty())
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        TomlTable parametersNode;
         int index = 0;
         for (auto &value : values)
             parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;
