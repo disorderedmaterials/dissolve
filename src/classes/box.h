@@ -4,10 +4,10 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "base/serialiser.h"
 #include "math/matrix3.h"
 
 #include <map>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Forward Declarations
@@ -16,7 +16,7 @@ class Data1D;
 class ProcessPool;
 
 // Basic Box Definition
-class Box
+class Box : public Serialisable
 {
     public:
     // Box Type Enum
@@ -181,7 +181,8 @@ class Box
     // Determine axis scale factors to give requested volume, with scaling ratios provided
     Vec3<double> scaleFactors(double requestedVolume, Vec3<bool> scalableAxes = {true, true, true}) const;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Express as a tree node
+    SerialisedData serialise() const override;
 };
 
 // Single Image Box Definition

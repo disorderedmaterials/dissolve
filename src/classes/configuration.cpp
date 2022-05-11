@@ -142,9 +142,11 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 
 // Return configuration temperature
 double Configuration::temperature() const { return temperature_; }
-toml::basic_value<toml::discard_comments, std::map, std::vector> Configuration::serialize()
+
+// Express as a tree node
+SerialisedData Configuration::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> configuration;
+    SerialisedData configuration;
 
     if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
         configuration["cellDivisionLength"] = requestedCellDivisionLength_;
@@ -153,8 +155,8 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> Configuration::
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> generator;
-    generator["box"] = box_->serialize();
+    SerialisedData generator;
+    generator["box"] = box_->serialise();
     configuration["generator"] = generator;
 
     return configuration;

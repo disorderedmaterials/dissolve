@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "pairpotential.h"
 
 #include <map>
@@ -11,9 +12,7 @@
 #include <string>
 #include <vector>
 
-#include <toml11/toml.hpp>
-
-class SerializablePairPotential
+class SerializablePairPotential : public Serialisable
 {
     private:
     double &range_;
@@ -44,8 +43,8 @@ class SerializablePairPotential
     PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme();
     const PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme() const;
 
-    // This method generates a 'pairPotentials' TOML node from the object's members
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialise();
-    // This method populates the object's members with values read from a 'pairPotentials' TOML node
+    // Express as a tree node
+    SerialisedData serialise() const override;
+    // Read values from a tree node
     void deserialise(toml::value node);
 };

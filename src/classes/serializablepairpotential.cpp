@@ -37,10 +37,10 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
     return shortRangeTruncationScheme_;
 }
 
-// This method generates a 'pairPotentials' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> SerializablePairPotential::serialise()
+// Express as a tree node
+SerialisedData SerializablePairPotential::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> pairPotentials;
+    SerialisedData pairPotentials;
     pairPotentials["range"] = range_;
     pairPotentials["delta"] = delta_;
     pairPotentials["includeCoulomb"] = atomTypeChargeSource_;

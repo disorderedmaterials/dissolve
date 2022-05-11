@@ -4,11 +4,11 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "base/serialiser.h"
 #include "base/version.h"
 #include "templates/vector3.h"
 
 #include <map>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Forward Declarations
@@ -18,7 +18,7 @@ class Species;
 class SpeciesAtom;
 
 // Species Site Definition
-class SpeciesSite
+class SpeciesSite : public Serialisable
 {
     public:
     explicit SpeciesSite(const Species *parent);
@@ -126,5 +126,5 @@ class SpeciesSite
     // Write site definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    SerialisedData serialise() const override;
 };

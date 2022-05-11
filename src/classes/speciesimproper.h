@@ -4,11 +4,11 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "base/serialiser.h"
 #include "classes/speciesintra.h"
 #include "classes/speciestorsion.h"
 
 #include <map>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Forward Declarations
@@ -16,7 +16,7 @@ class SpeciesAtom;
 class Species;
 
 // SpeciesImproper Definition
-class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
+class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>, public Serialisable
 {
     public:
     SpeciesImproper();
@@ -87,7 +87,8 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Express as a tree node
+    SerialisedData serialise() const override;
 };
 
 // MasterImproper Definition

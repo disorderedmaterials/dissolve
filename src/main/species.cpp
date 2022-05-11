@@ -34,6 +34,9 @@ int Dissolve::nSpecies() const { return coreData_.nSpecies(); }
 // Return Species list
 std::vector<std::unique_ptr<Species>> &Dissolve::species() { return coreData_.species(); }
 
+// Return Species list
+const std::vector<std::unique_ptr<Species>> &Dissolve::species() const { return coreData_.species(); }
+
 // Search for Species by name
 Species *Dissolve::findSpecies(std::string_view name) const { return coreData_.findSpecies(name); }
 

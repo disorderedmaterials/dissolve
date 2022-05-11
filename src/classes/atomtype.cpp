@@ -95,10 +95,10 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
     return true;
 }
 
-// This method generates an 'atomTypes' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::serialise()
+// Express as a tree node
+SerialisedData AtomType::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> atomType;
+    SerialisedData atomType;
 
     atomType["z"] = Elements::symbol(Z_).data();
     atomType["charge"] = charge_;
@@ -107,7 +107,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> AtomType::seria
     std::vector<double> values = interactionPotential().parameters();
     if (!values.empty())
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> atomTypeParameters;
+        SerialisedData atomTypeParameters;
         auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
         for (auto &&[parameter, value] : zip(parameters, values))
             atomTypeParameters[parameter] = value;

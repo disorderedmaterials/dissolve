@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
@@ -11,7 +12,6 @@
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
-#include <toml11/toml.hpp>
 
 // Forward Declarations
 class Atom;
@@ -21,7 +21,7 @@ class Isotopologue;
 class Molecule;
 
 // Dissolve Main Class
-class Dissolve
+class Dissolve : public Serialisable
 {
     public:
     Dissolve(CoreData &coreData);
@@ -74,6 +74,8 @@ class Dissolve
     int nSpecies() const;
     // Return Species list
     std::vector<std::unique_ptr<Species>> &species();
+    // Return Species list
+    const std::vector<std::unique_ptr<Species>> &species() const;
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
     // Copy AtomType, creating a new one if necessary
@@ -262,14 +264,14 @@ class Dissolve
     public:
     // Load input file
     bool loadInput(std::string_view filename);
-    // Load input file from TOML
-    void deserialise(toml::basic_value<toml::discard_comments> node);
+    // Read values from a tree node
+    void deserialise(SerialisedData node) override;
     // Load input from supplied string
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
-    // Save input file as TOML
-    toml::basic_value<toml::discard_comments> serialise();
+    // Express as a tree node
+    SerialisedData serialise() const override;
     // Load restart file
     bool loadRestart(std::string_view filename);
     // Load restart file as reference point
