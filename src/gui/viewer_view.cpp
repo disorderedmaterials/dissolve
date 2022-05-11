@@ -31,35 +31,3 @@ void BaseViewer::removeDependentViewer(BaseViewer *viewer)
     auto it = std::find(dependentViewers_.begin(), dependentViewers_.end(), viewer);
     dependentViewers_.erase(it);
 }
-
-// Link this viewer to the one specified
-void BaseViewer::linkView(BaseViewer *viewToLinkTo)
-{
-    // Check if a link is already set...
-    if (linkedViewer_)
-    {
-        // Perform consistency check on linked view...
-        if ((&linkedViewer_->view()) != view_.linkedView())
-            Messenger::warn("Mangled view links present...\n");
-
-        linkedViewer_->removeDependentViewer(this);
-    }
-
-    linkedViewer_ = viewToLinkTo;
-    linkedViewer_->addDependentViewer(this);
-    view_.setLinkedView(&linkedViewer_->view());
-}
-
-// Unlink this viewer from the one specified
-void BaseViewer::unlinkView()
-{
-    if (!linkedViewer_)
-    {
-        Messenger::warn("No linked viewer set, so can't unlink.\n");
-        return;
-    }
-
-    linkedViewer_->removeDependentViewer(this);
-    linkedViewer_ = nullptr;
-    view_.setLinkedView(nullptr);
-}

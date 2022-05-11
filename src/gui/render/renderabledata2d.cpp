@@ -249,6 +249,7 @@ void RenderableData2D::constructLine(const std::vector<double> &displayXAbscissa
     else
     {
         ColourDefinition colourDef = colourDefinition;
+
         // Setting gradient start and end value based on minimum and maximum data points
         colourDef.setHSVGradientStartValue(positiveValuesMin_);
         colourDef.setHSVGradientEndValue(positiveValuesMax_);

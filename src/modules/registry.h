@@ -34,7 +34,7 @@ class ModuleRegistry
     // Producers for all module types
     std::map<std::string, ModuleRegistryData> producers_;
     // Categorised map of modules
-    std::vector<std::pair<std::string, std::vector<ModuleRegistry::ModuleInfoData>>> categories_;
+    std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> categories_;
 
     private:
     // Register producer for module
@@ -45,20 +45,14 @@ class ModuleRegistry
             throw(std::runtime_error(fmt::format("A module producer for type '{}' already exists.\n", moduleType)));
 
         producers_.emplace(moduleType, ModuleRegistryData([]() { return new M(); }, brief));
+
         if (!category.empty())
-        {
-            auto it =
-                std::find_if(categories_.begin(), categories_.end(), [category](const auto &c) { return c.first == category; });
-            if (it != categories_.end())
-                it->second.emplace_back(ModuleInfoData(moduleType, brief));
-            else
-                categories_.emplace_back(category, std::vector<ModuleInfoData>{{moduleType, brief}});
-        }
+            categories_[category].emplace_back(ModuleInfoData(moduleType, brief));
     }
     // Produce module of specified type
     Module *produce(std::string moduleType) const;
     // Return categorised map of modules
-    const std::vector<std::pair<std::string, std::vector<ModuleRegistry::ModuleInfoData>>> &categories() const;
+    const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &categories() const;
 
     /*
      * Instance
@@ -72,7 +66,7 @@ class ModuleRegistry
      */
     public:
     // Return category map
-    static const std::vector<std::pair<std::string, std::vector<ModuleRegistry::ModuleInfoData>>> &categoryMap();
+    static const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &categoryMap();
     // Create new item via template
     static std::unique_ptr<Module> create(std::string_view moduleType);
     // Create a Module instance for the named Module type, and add it to the specified layer

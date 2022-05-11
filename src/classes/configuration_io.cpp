@@ -62,9 +62,9 @@ bool Configuration::serialise(LineParser &parser) const
     return true;
 }
 
-// Read through specified LineParser
-bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
-                         double pairPotentialRange)
+// Read from specified LineParser
+bool Configuration::deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
+                                double pairPotentialRange)
 {
     // Clear current contents of Configuration
     empty();

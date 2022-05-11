@@ -6,9 +6,6 @@
 
 # Meta-Objects
 set(gui_MOC_HDRS
-    # Gizmos
-    graphgizmo.h
-    integrator1dgizmo.h
     # Viewers
     configurationviewerwidget.h
     datawidget.h
@@ -34,7 +31,6 @@ set(gui_MOC_HDRS
     datamanagerdialog.h
     editspeciesdialog.h
     getconfigurationnamedialog.h
-    getgizmonamedialog.h
     getmodulelayernamedialog.h
     getspeciesnamedialog.h
     gettabnamedialog.h
@@ -45,6 +41,7 @@ set(gui_MOC_HDRS
     selectconfigurationdialog.h
     selectelementdialog.h
     selectgenericitemdialog.h
+    selectrestartfiledialog.h
     selectspeciesdialog.h
     # Editors
     modulecontrolwidget.h
@@ -54,7 +51,6 @@ set(gui_MOC_HDRS
     layertab.h
     messagestab.h
     speciestab.h
-    workspacetab.h
     # Main UI
     gui.h
     outputhandler.hui
@@ -67,9 +63,6 @@ qt6_wrap_cpp(gui_MOC_SRCS ${gui_MOC_HDRS})
 
 # User Interface Files
 set(gui_UIS
-    # Gizmos
-    graphgizmo.ui
-    integrator1dgizmo.ui
     # Viewers
     configurationviewerwidget.ui
     datawidget.ui
@@ -90,7 +83,6 @@ set(gui_UIS
     datamanagerdialog.ui
     editspeciesdialog.ui
     getconfigurationnamedialog.ui
-    getgizmonamedialog.ui
     getmodulelayernamedialog.ui
     getspeciesnamedialog.ui
     gettabnamedialog.ui
@@ -101,6 +93,7 @@ set(gui_UIS
     selectconfigurationdialog.ui
     selectelementdialog.ui
     selectgenericitemdialog.ui
+    selectrestartfiledialog.ui
     selectspeciesdialog.ui
     # Editors
     modulecontrolwidget.ui
@@ -110,7 +103,6 @@ set(gui_UIS
     layertab.ui
     messagestab.ui
     speciestab.ui
-    workspacetab.ui
     # Main UI
     gui.ui
 )
@@ -118,11 +110,6 @@ qt6_wrap_ui(gui_UIS_H ${gui_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 set(gui_SRCS
-    # Gizmos
-    gizmo.cpp
-    graphgizmo_funcs.cpp
-    integrator1dgizmo_funcs.cpp
-    gizmo.h
     # Viewers
     configurationviewer_funcs.cpp
     configurationviewer_input.cpp
@@ -168,7 +155,6 @@ set(gui_SRCS
     datamanagerdialog_funcs.cpp
     editspeciesdialog_funcs.cpp
     getconfigurationnamedialog_funcs.cpp
-    getgizmonamedialog_funcs.cpp
     getmodulelayernamedialog_funcs.cpp
     getspeciesnamedialog_funcs.cpp
     gettabnamedialog_funcs.cpp
@@ -179,6 +165,7 @@ set(gui_SRCS
     selectconfigurationdialog_funcs.cpp
     selectelementdialog_funcs.cpp
     selectgenericitemdialog_funcs.cpp
+    selectrestartfiledialog_funcs.cpp
     selectspeciesdialog_funcs.cpp
     # Editors
     modulecontrolwidget_funcs.cpp
@@ -194,7 +181,6 @@ set(gui_SRCS
     speciestab_geometry.cpp
     speciestab_isotopologues.cpp
     speciestab_sites.cpp
-    workspacetab_funcs.cpp
     maintab.h
     # Main UI
     gui_funcs.cpp
@@ -205,7 +191,6 @@ set(gui_SRCS
     menu_layer.cpp
     menu_simulation.cpp
     menu_species.cpp
-    menu_workspace.cpp
     outputhandler_funcs.cpp
     stockcolours.cpp
     thread_funcs.cpp

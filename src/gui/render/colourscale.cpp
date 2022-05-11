@@ -43,7 +43,7 @@ void ColourScale::addPoint(double value, QColor colour)
      * If larger than the one at the end, then append it to the end of the list.
      * If neither of these, find the first existing value which is larger, and add it before that one.
      */
-    if ((points_.size() == 0) || (value > points_.back().value()))
+    if (points_.empty() || (value > points_.back().value()))
         points_.emplace_back(value, colour);
     else
     {
@@ -119,13 +119,13 @@ void ColourScale::removePoint(int position)
 QColor ColourScale::colour(double value) const
 {
     // Check for no points being defined
-    if (points_.empty() == 0)
+    if (points_.empty())
         return QColor(0, 0, 0);
 
     // Is supplied value less than the value at the first point?
-    if (value < points_.front().value())
+    if (value <= points_.front().value())
         return points_.front().colour();
-    else if (value > points_.back().value())
+    else if (value >= points_.back().value())
         return points_.back().colour();
 
     // Find the correct delta to use

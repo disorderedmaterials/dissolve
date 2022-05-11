@@ -34,8 +34,8 @@ class SpeciesKeywordWidget : public QWidget, public KeywordWidgetBase
     SpeciesModel speciesModel_;
 
     private slots:
-    // Value changed
     void on_SpeciesCombo_currentIndexChanged(int index);
+    void on_ClearButton_clicked(bool checked);
 
     signals:
     // Keyword data changed

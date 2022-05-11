@@ -3,7 +3,6 @@
 
 #include "base/messenger.h"
 #include "gui/dataviewer.hui"
-#include "gui/gizmo.h"
 #include "gui/render/renderabledata1d.h"
 #include "gui/render/renderabledata2d.h"
 #include "gui/render/renderabledata3d.h"
@@ -44,7 +43,6 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
 {
     QMenu menu;
     QAction *action;
-    std::vector<std::pair<QAction *, Gizmo *>> copyToActions;
     QFont italicFont(menu.font());
     italicFont.setItalic(true);
 
@@ -61,23 +59,6 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
     QAction *saveAsAction = menu.addAction("&Save as...");
     saveAsAction->setEnabled(renderable->type() >= Renderable::Data1DRenderable &&
                              renderable->type() <= Renderable::Data3DRenderable);
-
-    // -- Copy To...
-    QMenu *copyToMenu = menu.addMenu("&Copy to...");
-    copyToMenu->setFont(menu.font());
-    // Get list of viable destinations that will accept our data
-    std::vector<Gizmo *> destinations =
-        Gizmo::allThatAccept(QString::fromStdString(std::string(Renderable::renderableTypes().keyword(renderable->type()))));
-    if (destinations.empty())
-        copyToMenu->setEnabled(false);
-    else
-    {
-        for (Gizmo *destination : destinations)
-        {
-            action = copyToMenu->addAction(destination->uniqueName());
-            copyToActions.emplace_back(action, destination);
-        }
-    }
 
     // -- Remove Renderable
     QAction *removeAction = nullptr;
@@ -133,16 +114,6 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                         exportFormat.exportData(r3d->source()->get());
                 }
             }
-        }
-        else if (std::find_if(copyToActions.begin(), copyToActions.end(),
-                              [selectedAction](const auto act) { return act.first == selectedAction; }) != copyToActions.end())
-        {
-            auto it = std::find_if(copyToActions.begin(), copyToActions.end(),
-                                   [selectedAction](const auto act) { return act.first == selectedAction; });
-            if (it == copyToActions.end())
-                return;
-            it->second->sendData(QString::fromStdString(std::string(Renderable::renderableTypes().keyword(renderable->type()))),
-                                 renderable->tag(), renderable->name());
         }
         else if (selectedAction == removeAction)
             removeRenderable(renderable);

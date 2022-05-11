@@ -48,6 +48,13 @@ void Configuration::createBoxAndCells(const Matrix3 axes, double cellSize, doubl
     cells_.generate(box_.get(), cellSize, pairPotentialRange);
 }
 
+// Update cell array, and reassign atoms to cells
+void Configuration::updateCells(double cellSize, double pairPotentialRange)
+{
+    cells_.generate(box_.get(), cellSize, pairPotentialRange);
+    updateCellContents(true);
+}
+
 // Return Box
 const Box *Configuration::box() const { return box_.get(); }
 

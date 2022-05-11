@@ -180,6 +180,8 @@ class Configuration
                            double pairPotentialRange);
     // Create Box definition from axes matrix, and initialise cell array
     void createBoxAndCells(const Matrix3 axes, double cellSize, double pairPotentialRange);
+    // Update cell array, and reassign atoms to cells
+    void updateCells(double cellSize, double pairPotentialRange);
     // Return Box
     const Box *box() const;
     // Scale Box lengths (and associated Cells) by specified factors
@@ -204,8 +206,8 @@ class Configuration
      * Upkeep
      */
     public:
-    // Update Cell contents
-    void updateCellContents();
+    // Update Cell contents, optionally clearing all atom locations first
+    void updateCellContents(bool clearExistingLocations = false);
     // Update Cell location of specified Atom
     void updateCellLocation(Atom *i);
     // Update Cell location of specified Molecule
@@ -230,7 +232,8 @@ class Configuration
     public:
     // Write through specified LineParser
     bool serialise(LineParser &parser) const;
-    // Read through specified LineParser
-    bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
+    // Read from specified LineParser
+    bool deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
+                     double pairPotentialRange);
     toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
 };

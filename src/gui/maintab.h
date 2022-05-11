@@ -30,8 +30,7 @@ class MainTab
         Forcefield,
         Layer,
         Messages,
-        Species,
-        Workspace
+        Species
     };
     // Return enum options for TabType
     static EnumOptions<MainTab::TabType> tabTypes();

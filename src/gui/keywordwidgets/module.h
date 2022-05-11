@@ -36,8 +36,8 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
     ModuleModel moduleModel_;
 
     private slots:
-    // Value changed
     void on_ModuleCombo_currentIndexChanged(int index);
+    void on_ClearButton_clicked(bool checked);
 
     signals:
     // Keyword data changed

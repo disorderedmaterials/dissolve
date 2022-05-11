@@ -11,6 +11,7 @@
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
+#include <toml11/toml.hpp>
 
 // Forward Declarations
 class Atom;
@@ -30,7 +31,6 @@ class Dissolve
      * Core
      */
     private:
-    static constexpr bool toml_testing_flag = false;
     // Reference to CoreData
     CoreData &coreData_;
     SerializablePairPotential serializablePairPotential_;
@@ -41,6 +41,7 @@ class Dissolve
     const CoreData &coreData() const;
     // Clear all data
     void clear();
+    static constexpr bool toml_testing_flag = false;
 
     /*
      * Atom Types
@@ -151,6 +152,8 @@ class Dissolve
     bool regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
     bool generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving = nullptr);
+    // Revert potentials to reference state, clearing additional potentials
+    void revertPairPotentials();
 
     /*
      * Configurations
@@ -259,10 +262,14 @@ class Dissolve
     public:
     // Load input file
     bool loadInput(std::string_view filename);
+    // Load input file from TOML
+    void deserialise(toml::basic_value<toml::discard_comments> node);
     // Load input from supplied string
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
+    // Save input file as TOML
+    toml::basic_value<toml::discard_comments> serialise();
     // Load restart file
     bool loadRestart(std::string_view filename);
     // Load restart file as reference point

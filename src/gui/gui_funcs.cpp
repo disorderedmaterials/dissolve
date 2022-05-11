@@ -6,7 +6,7 @@
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/layertab.h"
-#include "gui/workspacetab.h"
+#include "gui/selectrestartfiledialog.h"
 #include "main/dissolve.h"
 #include "main/version.h"
 #include <QCloseEvent>
@@ -16,7 +16,6 @@
 #include <QFontDatabase>
 #include <QMdiSubWindow>
 #include <QMessageBox>
-#include <QSettings>
 #include <iostream>
 
 DissolveWindow::DissolveWindow(Dissolve &dissolve)
@@ -54,6 +53,9 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
     statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
+
+    // Create recent files menu
+    setUpRecentFileMenu();
 
     updateWindowTitle();
     updateStatusBar();
@@ -152,9 +154,8 @@ QLabel *DissolveWindow::addStatusBarIcon(QString resource, bool permanent)
  * File
  */
 
-// Open specified input file from the CLI
-bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std::string_view> restartFile,
-                                   bool ignoreRestartFile)
+// Load specified input file, and optionally handle restart file choice as well
+bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestartFile)
 {
     // Clear any current tabs
     refreshing_ = true;
@@ -200,103 +201,55 @@ bool DissolveWindow::openLocalFile(std::string_view inputFile, std::optional<std
     else
         return Messenger::error("Input file does not exist.\n");
 
-    // Load restart file if it exists
-    Messenger::banner("Parse Restart File");
-    if (ignoreRestartFile)
-        Messenger::print("Restart file (if it exists) will be ignored.\n");
-    else
-    {
-        std::string actualRestartFile{restartFile.value_or(fmt::format("{}.restart", dissolve_.inputFilename()))};
-
-        if (DissolveSys::fileExists(actualRestartFile))
-        {
-            Messenger::print("Restart file '{}' exists and will be loaded.\n", actualRestartFile);
-            if (!dissolve_.loadRestart(actualRestartFile))
-                QMessageBox::warning(this, "Restart file contained errors.",
-                                     "The restart file failed to load correctly.\nSee the messages for more details.",
-                                     QMessageBox::Ok, QMessageBox::Ok);
-
-            // Reset the restart filename to be the standard one
-            dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
-        }
-        else
-            Messenger::print("Restart file '{}' does not exist.\n", actualRestartFile);
-    }
-
     modified_ = false;
     dissolveIterating_ = false;
 
     Messenger::banner("Setting Up Processing Modules");
 
-    return dissolve_.setUpProcessingLayerModules();
-}
+    if (!dissolve_.setUpProcessingLayerModules())
+        return false;
 
-/*
- * Open Recent Functions
- */
-void DissolveWindow::addRecentFile(const QString &filePath)
-{
-    // Add new entry to recent files
-    QSettings settings;
-    QStringList recentFilePaths = settings.value("recentFiles").toStringList();
-    recentFilePaths.removeAll(filePath);
-    recentFilePaths.prepend(filePath);
-    if (recentFilePaths.size() > recentFileLimit_)
-        recentFilePaths.erase(recentFilePaths.begin() + recentFileLimit_, recentFilePaths.end());
-    settings.setValue("recentFiles", recentFilePaths);
-    updateRecentActionList();
-}
-
-void DissolveWindow::openRecent()
-{
-    if (!checkSaveCurrentInput())
-        return;
-
-    auto *action = qobject_cast<QAction *>(sender());
-    if (action)
+    // Handle restart file loading?
+    if (handleRestartFile)
     {
-        std::string filePath = action->data().toString().toUtf8().constData();
-        openLocalFile(filePath);
+        fullUpdate();
+
+        // Load / handle restart file
+        SelectRestartFileDialog selectRestartFileDialog(this);
+        auto restartFile = selectRestartFileDialog.getRestartFileName(inputFileInfo.filePath());
+        if (!restartFile.isEmpty())
+            loadRestartFile(restartFile.toStdString());
 
         fullUpdate();
     }
+
+    return true;
 }
 
-void DissolveWindow::createRecentMenu()
+// Load specified restart file
+bool DissolveWindow::loadRestartFile(std::string_view restartFile)
 {
-    QFont font = ui_.SessionMenu->font();
-    ui_.FileOpenRecentMenu->setFont(font);
+    Messenger::banner("Parse Restart File");
 
-    for (auto i = 0; i < recentFileLimit_; ++i)
+    auto loadSuccess = true;
+
+    if (DissolveSys::fileExists(restartFile))
     {
-        auto *recentFileAction = new QAction(this);
-        recentFileAction->setVisible(false);
-        QObject::connect(recentFileAction, SIGNAL(triggered(bool)), this, SLOT(openRecent()));
-        ui_.FileOpenRecentMenu->addAction(recentFileAction);
-        recentFileActionList_.append(recentFileAction);
+        Messenger::print("Restart file '{}' exists and will be loaded.\n", restartFile);
+        loadSuccess = dissolve_.loadRestart(restartFile);
+
+        // Reset the restart filename to be the standard one
+        dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
     }
+    else
+        Messenger::print("Restart file '{}' does not exist.\n", restartFile);
 
-    updateRecentActionList();
-}
+    if (!loadSuccess)
+        QMessageBox::warning(this, "Restart file contained errors.",
+                             "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok,
+                             QMessageBox::Ok);
 
-void DissolveWindow::updateRecentActionList()
-{
-    QSettings settings;
-    QStringList recentFilePaths = settings.value("recentFiles").toStringList();
-
-    // Fill recent menu
-    for (auto i = 0; i < recentFileLimit_; ++i)
-    {
-        if (i < recentFilePaths.size())
-        {
-            auto fileInfo = QFileInfo(recentFilePaths.at(i));
-            recentFileActionList_.at(i)->setText(fileInfo.fileName() + "    (" + fileInfo.absoluteDir().absolutePath() + ")");
-            recentFileActionList_.at(i)->setData(recentFilePaths.at(i));
-            recentFileActionList_.at(i)->setVisible(true);
-        }
-        else
-            recentFileActionList_.at(i)->setVisible(false);
-    }
+    return loadSuccess;
 }
 
 /*
@@ -343,10 +296,15 @@ void DissolveWindow::updateStatusBar()
         statusLabel_->setText("Running (ESC to stop)");
         statusIndicator_->setPixmap(QPixmap(":/control/icons/control_play.svg"));
     }
-    else
+    else if (ui_.MainStack->currentIndex() == 1)
     {
         statusLabel_->setText("Idle");
         statusIndicator_->setPixmap(QPixmap(":/general/icons/general_true.svg"));
+    }
+    else
+    {
+        statusLabel_->setText("No simulation loaded");
+        statusIndicator_->setPixmap(QPixmap(":/dissolve/icons/dissolve.png"));
     }
 
     // Set restart file info
@@ -370,11 +328,11 @@ void DissolveWindow::updateMenus()
 
     // Enable / disable other menu items as appropriate
     for (auto *action : ui_.SimulationMenu->actions())
-        action->setEnabled(action == ui_.SimulationStopAction == !allowEditing);
+        action->setEnabled((action == ui_.SimulationStopAction) == !allowEditing);
+    ui_.SimulationMenu->setEnabled(hasSimulation);
     ui_.SpeciesMenu->setEnabled(allowEditing);
     ui_.ConfigurationMenu->setEnabled(allowEditing);
     ui_.LayerMenu->setEnabled(allowEditing);
-    ui_.WorkspaceMenu->setEnabled(allowEditing);
 
     auto activeTab = ui_.MainTabs->currentTab();
     if (!activeTab)
@@ -415,7 +373,7 @@ void DissolveWindow::fullUpdate()
 
     ui_.MainTabs->reconcileTabs(this);
     ui_.MainTabs->updateAllTabs();
-    updateRecentActionList();
+
     updateWindowTitle();
     updateStatusBar();
     updateMenus();

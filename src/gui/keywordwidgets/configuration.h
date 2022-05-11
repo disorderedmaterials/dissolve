@@ -34,8 +34,8 @@ class ConfigurationKeywordWidget : public QWidget, public KeywordWidgetBase
     ConfigurationModel configurationModel_;
 
     private slots:
-    // Value changed
     void on_ConfigurationCombo_currentIndexChanged(int index);
+    void on_ClearButton_clicked(bool checked);
 
     signals:
     // Keyword data changed

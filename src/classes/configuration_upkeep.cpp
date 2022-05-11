@@ -8,8 +8,15 @@
 #include "main/dissolve.h"
 
 // Update Cell contents
-void Configuration::updateCellContents()
+void Configuration::updateCellContents(bool clearExistingLocations)
 {
+    if (clearExistingLocations)
+    {
+        for (auto &i : atoms_)
+            i.setCell(nullptr);
+        cells_.clearAtoms();
+    }
+
     for (auto &i : atoms_)
         updateCellLocation(&i);
 }

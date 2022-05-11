@@ -41,7 +41,7 @@ class EPSRModule : public Module
     // Expansion function type to use for potential fits
     EPSRModule::ExpansionFunctionType expansionFunction_{EPSRModule::PoissonExpansionFunction};
     // Confidence factor
-    double feedback_{0.8};
+    double feedback_{0.9};
     // EPSR 'inpa' file from which to read deltaFQ fit coefficients from
     std::string inpaFilename_;
     // Maximum Q value over which to generate potentials from total scattering data

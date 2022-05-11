@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/datawidget.h"
-#include "gui/graphgizmo.h"
 #include "gui/helpers/treewidgetupdater.h"
 #include "gui/render/view.h"
 #include <QButtonGroup>
@@ -111,60 +110,6 @@ void DataWidget::on_ViewTypeCombo_currentIndexChanged(int index)
     dataViewer()->view().setViewType((View::ViewType)index);
 
     dataViewer()->postRedisplay();
-}
-
-void DataWidget::on_ViewLinkedViewButton_clicked(bool checked)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    // If the button has just been checked, request the target view
-    if (checked)
-    {
-        // Get possible target GraphGizmos, and construct list of associated DataViewers
-        std::vector<GraphGizmo *> graphGizmos = Gizmo::findAll<GraphGizmo>("Graph");
-        std::vector<std::pair<DataViewer *, GraphGizmo *>> targets;
-        for (GraphGizmo *gizmo : graphGizmos)
-            targets.emplace_back(gizmo->dataViewer(), gizmo);
-        targets.erase(
-            std::remove_if(targets.begin(), targets.end(), [v = dataViewer()](const auto pair) { return v == pair.first; }),
-            targets.end());
-        if (targets.empty())
-        {
-            ui_.ViewLinkedViewButton->setChecked(false);
-            return;
-        }
-
-        // Construct a list of targets as a QStringList
-        QStringList destinations;
-        auto currentItem = -1, count = 0;
-        for (auto &[viewer, gizmo] : targets)
-        {
-            destinations << gizmo->uniqueName();
-            if (&viewer->view() == dataViewer()->view().linkedView())
-                currentItem = count;
-            ++count;
-        }
-
-        bool ok;
-        QString viewName = QInputDialog::getItem(this, "Set View Link", "Select the view to link to...", destinations,
-                                                 currentItem, false, &ok);
-        if (!ok)
-        {
-            ui_.ViewLinkedViewButton->setChecked(false);
-            return;
-        }
-
-        // The destination view from the
-        auto viewIndex = destinations.indexOf(viewName);
-        DataViewer *viewParent = targets[viewIndex].first;
-        if (!viewParent)
-            return;
-
-        dataViewer()->linkView(viewParent);
-    }
-    else
-        dataViewer()->unlinkView();
 }
 
 void DataWidget::on_ViewToggleDataButton_clicked(bool checked)
@@ -298,7 +243,6 @@ void DataWidget::updateToolbar()
     ui_.GraphFollowXLengthSpin->setEnabled(vt == View::FlatXYView);
     // View
     ui_.ViewTypeCombo->setCurrentIndex(dataViewer()->view().viewType());
-    ui_.ViewLinkedViewButton->setChecked(dataViewer()->view().linkedView());
     ui_.ViewAxesVisibleButton->setChecked(dataViewer()->axesVisible());
 }
 
@@ -326,7 +270,7 @@ void DataWidget::updateStatusBar()
             text = QString("z = {%1}, y = {%2}").arg(rLocal.z).arg(rLocal.y);
             break;
         default:
-            text = QString("x = {%1}, y = {%2}, z = {%3}").arg(rLocal.x, rLocal.y, rLocal.z);
+            text = QString("x = {%1}, y = {%2}, z = {%3}").arg(rLocal.x).arg(rLocal.y).arg(rLocal.z);
             break;
     }
 
