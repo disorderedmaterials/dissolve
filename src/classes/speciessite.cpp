@@ -425,9 +425,9 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 }
 
 // Express as a tree node
-TomlTable SpeciesSite::serialise() const
+SerialisedData SpeciesSite::serialise() const
 {
-    TomlTable site;
+    SerialisedData site;
     Serialisable::fromVector(originAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
     Serialisable::fromVector(xAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
     Serialisable::fromVector(yAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });

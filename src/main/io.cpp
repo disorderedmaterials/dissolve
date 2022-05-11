@@ -10,7 +10,6 @@
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
-#include <toml11/toml.hpp>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -143,13 +142,13 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
 }
 
 // Express as a tree node
-TomlTable Dissolve::serialise() const
+SerialisedData Dissolve::serialise() const
 {
-    TomlTable root;
+    SerialisedData root;
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
     {
-        TomlTable masterNode;
+        SerialisedData masterNode;
         Serialisable::fromVectorToTable<>(coreData_.masterBonds(), "bonds", masterNode);
         Serialisable::fromVectorToTable<>(coreData_.masterAngles(), "angles", masterNode);
         Serialisable::fromVectorToTable<>(coreData_.masterTorsions(), "torsions", masterNode);
@@ -167,7 +166,7 @@ TomlTable Dissolve::serialise() const
 }
 
 // Read values from a tree node
-void Dissolve::deserialise(TomlTable node) { return; }
+void Dissolve::deserialise(SerialisedData node) { return; }
 
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)

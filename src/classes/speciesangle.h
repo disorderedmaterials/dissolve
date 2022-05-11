@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "classes/speciesintra.h"
 
 #include <map>
@@ -100,7 +100,7 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>, public S
     double force(double angleInDegrees) const;
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };
 
 // MasterAngle Definition

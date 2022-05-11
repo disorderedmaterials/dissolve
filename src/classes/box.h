@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "math/matrix3.h"
 
 #include <map>
@@ -182,7 +182,7 @@ class Box : public Serialisable
     Vec3<double> scaleFactors(double requestedVolume, Vec3<bool> scalableAxes = {true, true, true}) const;
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };
 
 // Single Image Box Definition

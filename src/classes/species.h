@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "classes/atomtypemix.h"
 #include "classes/box.h"
 #include "classes/cellarray.h"
@@ -368,5 +368,5 @@ class Species : public Serialisable
     bool write(LineParser &parser, std::string_view prefix);
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };

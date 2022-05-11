@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "base/version.h"
 #include "classes/atom.h"
 #include "classes/atomtypemix.h"
@@ -236,5 +236,5 @@ class Configuration : public Serialisable
     bool deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
                      double pairPotentialRange);
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };

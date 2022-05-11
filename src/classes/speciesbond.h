@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "classes/speciesintra.h"
 
 #include <map>
@@ -126,7 +126,7 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>, public Seri
     double force(double distance) const;
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };
 
 // MasterBond Definition

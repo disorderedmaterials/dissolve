@@ -205,9 +205,9 @@ void Species::print() const
 int Species::version() const { return version_; }
 
 // Express as a tree node
-TomlTable Species::serialise() const
+SerialisedData Species::serialise() const
 {
-    TomlTable species;
+    SerialisedData species;
     if (forcefield_ != nullptr)
         species["forcefield"] = forcefield_->name().data();
 

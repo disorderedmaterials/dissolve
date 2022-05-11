@@ -335,9 +335,9 @@ double SpeciesBond::force(double distance) const
 }
 
 // Express as a tree node
-TomlTable SpeciesBond::serialise() const
+SerialisedData SpeciesBond::serialise() const
 {
-    TomlTable bond;
+    SerialisedData bond;
     if (i_ != nullptr)
         bond["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -353,7 +353,7 @@ TomlTable SpeciesBond::serialise() const
     std::vector<double> values = SpeciesBond::interactionPotential().parameters();
     if (!values.empty())
     {
-        TomlTable parametersNode;
+        SerialisedData parametersNode;
         std::vector<std::string> parameters = BondFunctions::parameters(interactionForm());
         for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
             parametersNode[parameters[parameterIndex]] = values[parameterIndex];

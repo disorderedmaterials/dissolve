@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "classes/interactionpotential.h"
 #include "data/elements.h"
 
@@ -84,5 +84,5 @@ class AtomType : public Serialisable
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };

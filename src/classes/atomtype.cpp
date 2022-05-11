@@ -95,9 +95,9 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
 }
 
 // Express as a tree node
-TomlTable AtomType::serialise() const
+SerialisedData AtomType::serialise() const
 {
-    TomlTable atomType;
+    SerialisedData atomType;
 
     atomType["z"] = Elements::symbol(Z_).data();
     atomType["charge"] = charge_;
@@ -106,8 +106,8 @@ TomlTable AtomType::serialise() const
     std::vector<double> values = interactionPotential().parameters();
     if (!values.empty())
     {
-        TomlTable atomTypeParameters;
-        std::vector<std::string> parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+        SerialisedData atomTypeParameters;
+        auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
         for (auto &&[parameter, value] : zip(parameters, values))
             atomTypeParameters[parameter] = value;
         atomType["parameters"] = atomTypeParameters;

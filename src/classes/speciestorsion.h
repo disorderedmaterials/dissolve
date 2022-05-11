@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "classes/speciesintra.h"
 
 #include <map>
@@ -115,7 +115,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>, pu
     double force(double angleInDegrees) const;
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };
 
 // MasterTorsion Definition

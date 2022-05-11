@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "base/version.h"
 #include "templates/vector3.h"
 
@@ -126,5 +126,5 @@ class SpeciesSite : public Serialisable
     // Write site definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };

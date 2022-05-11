@@ -144,9 +144,9 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 double Configuration::temperature() const { return temperature_; }
 
 // Express as a tree node
-TomlTable Configuration::serialise() const
+SerialisedData Configuration::serialise() const
 {
-    TomlTable configuration;
+    SerialisedData configuration;
 
     if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
         configuration["cellDivisionLength"] = requestedCellDivisionLength_;
@@ -155,7 +155,7 @@ TomlTable Configuration::serialise() const
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
-    TomlTable generator;
+    SerialisedData generator;
     generator["box"] = box_->serialise();
     configuration["generator"] = generator;
 

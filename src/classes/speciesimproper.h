@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "classes/speciesintra.h"
 #include "classes/speciestorsion.h"
 
@@ -88,7 +88,7 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>, 
     double force(double angleInDegrees) const;
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };
 
 // MasterImproper Definition

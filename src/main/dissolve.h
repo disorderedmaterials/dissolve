@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
@@ -265,13 +265,13 @@ class Dissolve : public Serialisable
     // Load input file
     bool loadInput(std::string_view filename);
     // Read values from a tree node
-    void deserialise(TomlTable node) override;
+    void deserialise(SerialisedData node) override;
     // Load input from supplied string
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
     // Load restart file
     bool loadRestart(std::string_view filename);
     // Load restart file as reference point

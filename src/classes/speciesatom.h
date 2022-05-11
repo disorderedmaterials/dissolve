@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "data/elements.h"
 #include "templates/optionalref.h"
 #include "templates/vector3.h"
@@ -189,5 +189,5 @@ class SpeciesAtom : public Serialisable
     static int guessOxidationState(const SpeciesAtom *i);
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };

@@ -362,9 +362,9 @@ double SpeciesAngle::force(double angleInDegrees) const
 }
 
 // Express as a tree node
-TomlTable SpeciesAngle::serialise() const
+SerialisedData SpeciesAngle::serialise() const
 {
-    TomlTable angle;
+    SerialisedData angle;
     if (i_ != nullptr)
         angle["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -382,7 +382,7 @@ TomlTable SpeciesAngle::serialise() const
     std::vector<double> values = SpeciesAngle::interactionPotential().parameters();
     if (!values.empty())
     {
-        TomlTable parametersNode;
+        SerialisedData parametersNode;
         std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
         for (auto &&[parameter, value] : zip(parameters, values))
             parametersNode[parameter] = value;

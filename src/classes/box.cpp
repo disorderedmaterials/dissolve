@@ -388,9 +388,9 @@ Vec3<double> Box::scaleFactors(double requestedVolume, Vec3<bool> scalableAxes) 
 }
 
 // Express as a tree node
-TomlTable Box::serialise() const
+SerialisedData Box::serialise() const
 {
-    TomlTable box;
+    SerialisedData box;
     box["lengths"] = toml::array{a_, b_, c_};
     box["angles"] = toml::array{alpha_, beta_, gamma_};
     box["nonPeriodic"] = toml::array{!periodic_.x, !periodic_.y, !periodic_.z};

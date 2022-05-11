@@ -225,9 +225,9 @@ double SpeciesImproper::force(double angleInDegrees) const
 }
 
 // Express as a tree node
-TomlTable SpeciesImproper::serialise() const
+SerialisedData SpeciesImproper::serialise() const
 {
-    TomlTable improper;
+    SerialisedData improper;
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -247,7 +247,7 @@ TomlTable SpeciesImproper::serialise() const
     std::vector<double> values = SpeciesImproper::interactionPotential().parameters();
     if (!values.empty())
     {
-        TomlTable parametersNode;
+        SerialisedData parametersNode;
         int index = 0;
         for (auto &value : values)
             parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;

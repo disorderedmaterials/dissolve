@@ -594,9 +594,9 @@ double SpeciesTorsion::force(double angleInDegrees) const
 }
 
 // Express as a tree node
-TomlTable SpeciesTorsion::serialise() const
+SerialisedData SpeciesTorsion::serialise() const
 {
-    TomlTable torsion;
+    SerialisedData torsion;
     if (i_ != nullptr)
         torsion["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -616,7 +616,7 @@ TomlTable SpeciesTorsion::serialise() const
     std::vector<double> values = SpeciesTorsion::interactionPotential().parameters();
     if (!values.empty())
     {
-        TomlTable parametersNode;
+        SerialisedData parametersNode;
         int index = 0;
         for (auto &value : values)
             parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;

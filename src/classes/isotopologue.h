@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "data/elements.h"
 #include "data/isotopes.h"
 #include <map>
@@ -63,5 +63,5 @@ class Isotopologue : public Serialisable
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
 
     // Express as a tree node
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };

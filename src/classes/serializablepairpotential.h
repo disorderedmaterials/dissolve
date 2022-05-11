@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "base/toml.h"
+#include "base/serialiser.h"
 #include "pairpotential.h"
 
 #include <map>
@@ -43,5 +43,5 @@ class SerializablePairPotential : public Serialisable
     PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme();
     const PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme() const;
 
-    TomlTable serialise() const override;
+    SerialisedData serialise() const override;
 };
