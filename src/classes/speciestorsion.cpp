@@ -593,9 +593,10 @@ double SpeciesTorsion::force(double angleInDegrees) const
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion::serialize()
+// Express as a tree node
+SerialisedValue SpeciesTorsion::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> torsion;
+    SerialisedValue torsion;
     if (i_ != nullptr)
         torsion["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -615,7 +616,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
     std::vector<double> values = SpeciesTorsion::interactionPotential().parameters();
     if (!values.empty())
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        SerialisedValue parametersNode;
         int index = 0;
         for (auto &value : values)
             parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;

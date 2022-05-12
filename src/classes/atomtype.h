@@ -4,11 +4,11 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "base/serialiser.h"
 #include "classes/interactionpotential.h"
 #include "data/elements.h"
 
 #include <map>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Short-range functional forms
@@ -32,7 +32,7 @@ class ShortRangeFunctions
 };
 
 // AtomType Definition
-class AtomType
+class AtomType : public Serialisable
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);
@@ -83,5 +83,6 @@ class AtomType
     // Return whether our parameters are the same as those provided
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Express as a tree node
+    SerialisedValue serialise() const override;
 };

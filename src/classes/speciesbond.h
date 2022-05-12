@@ -4,10 +4,10 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "base/serialiser.h"
 #include "classes/speciesintra.h"
 
 #include <map>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Forward Declarations
@@ -35,7 +35,7 @@ class BondFunctions
 };
 
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
+class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>, public Serialisable
 {
     public:
     SpeciesBond();
@@ -125,7 +125,8 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     // Return force multiplier for specified distance
     double force(double distance) const;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Express as a tree node
+    SerialisedValue serialise() const override;
 };
 
 // MasterBond Definition

@@ -10,7 +10,6 @@
 #include "main/keywords.h"
 #include "main/version.h"
 #include <cstring>
-#include <toml11/toml.hpp>
 
 // Load input file through supplied parser
 bool Dissolve::loadInput(LineParser &parser)
@@ -142,42 +141,32 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
     return result;
 }
 
-// Add items in a vector to a node under a name
-template <typename T>
-void addVectorToNode(std::vector<T> &vector, std::string name, toml::basic_value<toml::discard_comments, std::map> &node)
+// Express as a tree node
+SerialisedValue Dissolve::serialise() const
 {
-    if (vector.empty())
-        return;
-    toml::basic_value<toml::discard_comments, std::map, std::vector> group;
-    for (auto &item : vector)
-        group[item->name().data()] = item->serialize();
-    node[name] = group;
-};
-
-toml::basic_value<toml::discard_comments> Dissolve::serialise()
-{
-    toml::basic_value<toml::discard_comments, std::map, std::vector> root;
+    SerialisedValue root;
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> masterNode;
-        addVectorToNode<>(coreData_.masterBonds(), "bonds", masterNode);
-        addVectorToNode<>(coreData_.masterAngles(), "angles", masterNode);
-        addVectorToNode<>(coreData_.masterTorsions(), "torsions", masterNode);
-        addVectorToNode<>(coreData_.masterImpropers(), "impropers", masterNode);
+        SerialisedValue masterNode;
+        Serialisable::fromVectorToTable<>(coreData_.masterBonds(), "bonds", masterNode);
+        Serialisable::fromVectorToTable<>(coreData_.masterAngles(), "angles", masterNode);
+        Serialisable::fromVectorToTable<>(coreData_.masterTorsions(), "torsions", masterNode);
+        Serialisable::fromVectorToTable<>(coreData_.masterImpropers(), "impropers", masterNode);
         root["master"] = masterNode;
     }
 
-    addVectorToNode<>(species(), "species", root);
+    Serialisable::fromVectorToTable<>(species(), "species", root);
 
-    root["pairPotentials"] = serializablePairPotential_.serialize();
+    root["pairPotentials"] = serializablePairPotential_.serialise();
 
-    addVectorToNode<>(configurations(), "configurations", root);
+    Serialisable::fromVectorToTable<>(configurations(), "configurations", root);
 
     return root;
 }
 
-void Dissolve::deserialise(toml::basic_value<toml::discard_comments> node) { return; }
+// Read values from a tree node
+void Dissolve::deserialise(SerialisedValue node) { return; }
 
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)

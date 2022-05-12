@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "pairpotential.h"
 
 #include <map>
@@ -11,9 +12,7 @@
 #include <string>
 #include <vector>
 
-#include <toml11/toml.hpp>
-
-class SerializablePairPotential
+class SerializablePairPotential : public Serialisable
 {
     private:
     double &range_;
@@ -44,5 +43,5 @@ class SerializablePairPotential
     PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme();
     const PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme() const;
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    SerialisedValue serialise() const override;
 };
