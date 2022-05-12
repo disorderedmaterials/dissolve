@@ -83,6 +83,9 @@ int main(int args, char **argv)
         }
     }
 
+    // Set device pixel ratio
+    BaseViewer::setDevicePixelRatio(dissolveWindow.devicePixelRatio());
+
     // Update the main window and exec the app
     dissolveWindow.fullUpdate();
 

@@ -12,6 +12,9 @@
 #include <QProgressDialog>
 #include <algorithm>
 
+// Device pixel ratio
+double BaseViewer::devicePixelRatio_{1.0};
+
 // Initialise context widget (when created by Qt)
 void BaseViewer::initializeGL()
 {
@@ -103,8 +106,8 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
     view().recalculateView();
 
     // Set-up the GL viewport
-    glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset, view_.viewportMatrix()[2],
-               view_.viewportMatrix()[3]);
+    glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset,
+               view_.viewportMatrix()[2] * devicePixelRatio_, view_.viewportMatrix()[3] * devicePixelRatio_);
 
     // Apply our View's projection matrix
     glMatrixMode(GL_PROJECTION);
@@ -522,3 +525,6 @@ void BaseViewer::copyViewToClipboard(bool checked)
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setImage(pixmap.toImage());
 }
+
+// Set device pixel ratio
+void BaseViewer::setDevicePixelRatio(double ratio) { devicePixelRatio_ = ratio; }
