@@ -9,7 +9,7 @@
 #include <vector>
 
 // The type we use for the nodes of our serialisation tree
-using SerialisedData = toml::basic_value<toml::discard_comments, std::map, std::vector>;
+using SerialisedData = toml::value;
 
 // An interface for classes that can be serialised into an input file
 class Serialisable
