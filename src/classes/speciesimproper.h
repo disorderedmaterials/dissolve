@@ -88,7 +88,7 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>, 
     double force(double angleInDegrees) const;
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };
 
 // MasterImproper Definition

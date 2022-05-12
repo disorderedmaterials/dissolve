@@ -84,5 +84,5 @@ class AtomType : public Serialisable
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };

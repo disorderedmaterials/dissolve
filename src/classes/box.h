@@ -182,7 +182,7 @@ class Box : public Serialisable
     Vec3<double> scaleFactors(double requestedVolume, Vec3<bool> scalableAxes = {true, true, true}) const;
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };
 
 // Single Image Box Definition

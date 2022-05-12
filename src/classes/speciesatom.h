@@ -189,5 +189,5 @@ class SpeciesAtom : public Serialisable
     static int guessOxidationState(const SpeciesAtom *i);
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };

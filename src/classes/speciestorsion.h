@@ -115,7 +115,7 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>, pu
     double force(double angleInDegrees) const;
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };
 
 // MasterTorsion Definition

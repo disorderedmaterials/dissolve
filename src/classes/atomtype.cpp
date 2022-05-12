@@ -95,9 +95,9 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
 }
 
 // Express as a tree node
-SerialisedData AtomType::serialise() const
+SerialisedValue AtomType::serialise() const
 {
-    SerialisedData atomType;
+    SerialisedValue atomType;
 
     atomType["z"] = Elements::symbol(Z_).data();
     atomType["charge"] = charge_;
@@ -106,7 +106,7 @@ SerialisedData AtomType::serialise() const
     std::vector<double> values = interactionPotential().parameters();
     if (!values.empty())
     {
-        SerialisedData atomTypeParameters;
+        SerialisedValue atomTypeParameters;
         auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
         for (auto &&[parameter, value] : zip(parameters, values))
             atomTypeParameters[parameter] = value;

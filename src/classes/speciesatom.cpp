@@ -458,9 +458,9 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
 }
 
 // Express as a tree node
-SerialisedData SpeciesAtom::serialise() const
+SerialisedValue SpeciesAtom::serialise() const
 {
-    SerialisedData atom;
+    SerialisedValue atom;
     atom["index"] = userIndex();
     atom["z"] = Elements::symbol(Z_).data();
     atom["r"] = toml::array{r_.x, r_.y, r_.z};

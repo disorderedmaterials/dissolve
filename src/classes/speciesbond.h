@@ -126,7 +126,7 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>, public Seri
     double force(double distance) const;
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };
 
 // MasterBond Definition

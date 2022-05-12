@@ -43,5 +43,5 @@ class SerializablePairPotential : public Serialisable
     PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme();
     const PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme() const;
 
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };

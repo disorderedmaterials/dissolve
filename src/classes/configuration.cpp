@@ -144,9 +144,9 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 double Configuration::temperature() const { return temperature_; }
 
 // Express as a tree node
-SerialisedData Configuration::serialise() const
+SerialisedValue Configuration::serialise() const
 {
-    SerialisedData configuration;
+    SerialisedValue configuration;
 
     if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
         configuration["cellDivisionLength"] = requestedCellDivisionLength_;
@@ -155,7 +155,7 @@ SerialisedData Configuration::serialise() const
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
-    SerialisedData generator;
+    SerialisedValue generator;
     generator["box"] = box_->serialise();
     configuration["generator"] = generator;
 
