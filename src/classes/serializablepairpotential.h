@@ -44,7 +44,7 @@ class SerializablePairPotential : public Serialisable
     const PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme() const;
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
     // Read values from a tree node
-    void deserialise(toml::value node);
+    void deserialise(SerialisedValue node);
 };

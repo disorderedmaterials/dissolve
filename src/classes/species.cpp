@@ -205,9 +205,9 @@ void Species::print() const
 int Species::version() const { return version_; }
 
 // Express as a tree node
-SerialisedData Species::serialise() const
+SerialisedValue Species::serialise() const
 {
-    SerialisedData species;
+    SerialisedValue species;
     if (forcefield_ != nullptr)
         species["forcefield"] = forcefield_->name().data();
 

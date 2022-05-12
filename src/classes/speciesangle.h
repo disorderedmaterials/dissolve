@@ -100,7 +100,7 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>, public S
     double force(double angleInDegrees) const;
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };
 
 // MasterAngle Definition

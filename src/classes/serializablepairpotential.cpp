@@ -38,9 +38,9 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
 }
 
 // Express as a tree node
-SerialisedData SerializablePairPotential::serialise() const
+SerialisedValue SerializablePairPotential::serialise() const
 {
-    SerialisedData pairPotentials;
+    SerialisedValue pairPotentials;
     pairPotentials["range"] = range_;
     pairPotentials["delta"] = delta_;
     pairPotentials["includeCoulomb"] = atomTypeChargeSource_;

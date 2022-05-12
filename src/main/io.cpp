@@ -142,13 +142,13 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
 }
 
 // Express as a tree node
-SerialisedData Dissolve::serialise() const
+SerialisedValue Dissolve::serialise() const
 {
-    SerialisedData root;
+    SerialisedValue root;
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
     {
-        SerialisedData masterNode;
+        SerialisedValue masterNode;
         Serialisable::fromVectorToTable<>(coreData_.masterBonds(), "bonds", masterNode);
         Serialisable::fromVectorToTable<>(coreData_.masterAngles(), "angles", masterNode);
         Serialisable::fromVectorToTable<>(coreData_.masterTorsions(), "torsions", masterNode);
@@ -166,7 +166,7 @@ SerialisedData Dissolve::serialise() const
 }
 
 // Read values from a tree node
-void Dissolve::deserialise(SerialisedData node) { return; }
+void Dissolve::deserialise(SerialisedValue node) { return; }
 
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)

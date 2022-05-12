@@ -83,9 +83,9 @@ Sears91::Isotope Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) con
 const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isotopologue::isotopes() const { return isotopes_; }
 
 // Express as a tree node
-SerialisedData Isotopologue::serialise() const
+SerialisedValue Isotopologue::serialise() const
 {
-    SerialisedData isotopologue;
+    SerialisedValue isotopologue;
     for (auto &&[type, isotope] : isotopes_)
         isotopologue[type->name().data()] = Sears91::A(isotope);
     return isotopologue;

@@ -368,5 +368,5 @@ class Species : public Serialisable
     bool write(LineParser &parser, std::string_view prefix);
 
     // Express as a tree node
-    SerialisedData serialise() const override;
+    SerialisedValue serialise() const override;
 };
