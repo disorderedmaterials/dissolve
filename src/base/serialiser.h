@@ -64,4 +64,20 @@ class Serialisable
             result.push_back(toSerial(item));
         node[name] = result;
     }
+
+    // Act over each value in a node table, if the key exists
+    template <typename Lambda> static void toMap(SerialisedValue &node, std::string key, Lambda action)
+    {
+        if (node.contains(key))
+            for (auto &[key, value] : node[key].as_table())
+                action(key, value);
+    }
+
+    // Act over each value in a node table, if the key exists
+    template <typename Lambda> static void toVector(SerialisedValue &node, std::string key, Lambda action)
+    {
+        if (node.contains(key))
+            for (auto &item : node[key].as_array())
+                action(item);
+    }
 };
