@@ -265,7 +265,7 @@ class Dissolve : public Serialisable
     // Load input file
     bool loadInput(std::string_view filename);
     // Read values from a tree node
-    void deserialise(SerialisedValue node) override;
+    void deserialise(SerialisedValue &node) override;
     // Load input from supplied string
     bool loadInputFromString(std::string_view inputString);
     // Save input file

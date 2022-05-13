@@ -52,7 +52,7 @@ SerialisedValue SerializablePairPotential::serialise() const
 }
 
 // This method populates the object's members with values read from a 'pairPotentials' TOML node
-void SerializablePairPotential::deserialise(toml::value node)
+void SerializablePairPotential::deserialise(SerialisedValue &node)
 {
     if (node.contains("range"))
         range_ = node["range"].as_floating();

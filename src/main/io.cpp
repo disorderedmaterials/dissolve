@@ -166,7 +166,7 @@ SerialisedValue Dissolve::serialise() const
 }
 
 // Read values from a tree node
-void Dissolve::deserialise(SerialisedValue node)
+void Dissolve::deserialise(SerialisedValue &node)
 {
     if (node.contains("pairPotentials"))
     {
