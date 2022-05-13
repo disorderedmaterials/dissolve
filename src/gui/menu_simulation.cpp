@@ -6,6 +6,7 @@
 #include "main/dissolve.h"
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMessageBox>
 
 void DissolveWindow::on_SimulationCheckAction_triggered(bool checked)
 {
@@ -46,24 +47,25 @@ void DissolveWindow::on_SimulationSetRestartFileFrequencyAction_triggered(bool c
     dissolve_.setRestartFileFrequency(newFrequency);
 }
 
-void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
-{
-    // Get filename for restart point
-    QString filename =
-        QFileDialog::getSaveFileName(this, "Select Output File", QDir::currentPath(), "Restart Files (*.restart)");
-    if (filename.isEmpty())
-        return;
-
-    if (dissolve_.saveRestart(qPrintable(filename)))
-        statusBar()->showMessage(QString("Saved restart point to '%1'.").arg(filename), 3000);
-    else
-        statusBar()->showMessage(QString("ERROR: Failed to save restart point to '%1'.").arg(filename), 3000);
-}
-
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
 {
     DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_, dissolve_.processingModuleData());
     dataManagerDialog.exec();
+}
+
+void DissolveWindow::on_SimulationClearAdditionalPotentialsAction_triggered(bool checked)
+{
+    if (QMessageBox::warning(this, "Clear Additional Potentials",
+                             "This will reset any generate additional (empirical) potentials, and reset the pair potentials to "
+                             "the reference parameters.\n\n"
+                             "This cannot be undone! Proceed?",
+                             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
+                             QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
+    {
+        dissolve_.revertPairPotentials();
+
+        fullUpdate();
+    }
 }
 
 void DissolveWindow::on_SimulationClearModuleDataAction_triggered(bool checked) { clearModuleData(); }

@@ -478,41 +478,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="ViewLinkedViewButton">
-           <property name="minimumSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Set / remove view link to another graph</string>
-           </property>
-           <property name="text">
-            <string>FA</string>
-           </property>
-           <property name="icon">
-            <iconset resource="main.qrc">
-             <normaloff>:/viewer/icons/viewer_link.svg</normaloff>:/viewer/icons/viewer_link.svg</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QToolButton" name="ViewToggleDataButton">
            <property name="minimumSize">
             <size>
@@ -849,7 +814,7 @@
  </customwidgets>
  <resources>
   <include location="main.qrc"/>
-  <include location="../main.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

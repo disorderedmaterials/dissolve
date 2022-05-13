@@ -27,6 +27,13 @@ Vec3<double> CellArray::realCellSize() const { return realCellSize_; }
 // Return cell extents out from given central cell
 Vec3<int> CellArray::extents() const { return extents_; }
 
+// Clear all atom pointers from cells
+void CellArray::clearAtoms()
+{
+    for (auto &cell : cells_)
+        cell.clearAtoms();
+}
+
 // Retrieve Cell with (wrapped) grid reference specified
 const Cell *CellArray::cell(int x, int y, int z) const
 {

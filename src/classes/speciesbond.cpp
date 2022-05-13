@@ -335,10 +335,10 @@ double SpeciesBond::force(double distance) const
                                          BondFunctions::forms().keyword(bondForm))));
 }
 
-// This method generates a 'bond' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::serialize()
+// Express as a tree node
+SerialisedValue SpeciesBond::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> bond;
+    SerialisedValue bond;
     if (i_ != nullptr)
         bond["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -354,7 +354,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
     std::vector<double> values = SpeciesBond::interactionPotential().parameters();
     if (!values.empty())
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        SerialisedValue parametersNode;
         std::vector<std::string> parameters = BondFunctions::parameters(interactionForm());
         for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
             parametersNode[parameters[parameterIndex]] = values[parameterIndex];
@@ -364,7 +364,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesBond::se
     return bond;
 }
 // This method populates the object's members with values read from a 'bond' TOML node
-void SpeciesBond::deserialize(toml::value node, CoreData &coreData)
+void SpeciesBond::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     if (node.contains("form"))
     {

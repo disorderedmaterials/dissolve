@@ -25,7 +25,6 @@ MainTabsWidget::MainTabsWidget(QWidget *parent) : QTabWidget(parent)
 MainTabsWidget::~MainTabsWidget()
 {
     // Need to clear tabs in the right order, as data in one can depend on another
-    workspaceTabs_.clear();
     processingLayerTabs_.clear();
     configurationTabs_.clear();
     speciesTabs_.clear();
@@ -119,16 +118,6 @@ QPointer<LayerTab> MainTabsWidget::processingLayerTab(QWidget *page)
     return nullptr;
 }
 
-// Find WorkspaceTab containing specified page widget
-QPointer<WorkspaceTab> MainTabsWidget::workspaceTab(QWidget *page)
-{
-    for (auto tab : workspaceTabs_)
-        if (tab->page() == page)
-            return tab;
-
-    return nullptr;
-}
-
 // Find tab with title specified
 MainTab *MainTabsWidget::findTab(const QString title)
 {
@@ -173,7 +162,6 @@ void MainTabsWidget::clearTabs()
     closeButtons_.clear();
 
     // Removal of the tab and widget will be handled by the class destructors
-    workspaceTabs_.clear();
     processingLayerTabs_.clear();
     configurationTabs_.clear();
     speciesTabs_.clear();
@@ -295,9 +283,9 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
             if (layer->isEnabled())
-                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
+                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_layer.svg"));
             else
-                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_modulelayer_disabled.svg"));
+                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
         }
 
         ++currentTabIndex;
@@ -331,29 +319,6 @@ void MainTabsWidget::removeByPage(QWidget *page)
         default:
             break;
     }
-}
-
-// Add on a new workspace tab
-MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title)
-{
-    // Check that a tab with this title doesn't already exist
-    auto tab = findTab(title);
-    if (!tab)
-    {
-        auto workTab = workspaceTabs_.emplace_back(new WorkspaceTab(dissolveWindow, dissolveWindow->dissolve(), this, title));
-        allTabs_.push_back(workTab.data());
-
-        // Add the new tab directly in to our tabs - it will not be managed in reconcileTabs().
-        addTab(workTab.data(), title);
-        addTabCloseButton(workTab.data());
-        setTabIcon(workTab->page(), QIcon(":/tabs/icons/tabs_workspace.svg"));
-
-        return workTab.data();
-    }
-    else
-        Messenger::printVerbose("Tab '{}' already exists, so returning that instead...\n", qPrintable(title));
-
-    return tab;
 }
 
 /*

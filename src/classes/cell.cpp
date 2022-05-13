@@ -75,6 +75,13 @@ void Cell::removeAtom(Atom *atom)
     atomIndices_.erase(itIndex);
 }
 
+// Clear all atoms from cell
+void Cell::clearAtoms()
+{
+    atoms_.clear();
+    atomIndices_.clear();
+}
+
 // Update array pointers after update
 void Cell::updateAtoms(std::vector<Atom> &source)
 {

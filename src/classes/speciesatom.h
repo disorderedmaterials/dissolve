@@ -4,12 +4,12 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "base/serialiser.h"
 #include "data/elements.h"
 #include "templates/optionalref.h"
 #include "templates/vector3.h"
 #include <map>
 #include <memory>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Forward Declarations
@@ -20,7 +20,7 @@ class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom
+class SpeciesAtom : public Serialisable
 {
     public:
     SpeciesAtom() = default;
@@ -188,6 +188,8 @@ class SpeciesAtom
     // Guess and return oxidation state for the specified SpeciesAtom
     static int guessOxidationState(const SpeciesAtom *i);
 
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
-    void deserialize(toml::value node);
+    // Express as a tree node
+    SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(SerialisedValue &node) override;
 };

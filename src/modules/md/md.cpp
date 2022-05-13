@@ -31,8 +31,10 @@ MDModule::MDModule() : Module("MD")
     keywords_.add<BoolKeyword>("Control", "RandomVelocities",
                                "Whether random velocities should always be assigned before beginning MD simulation",
                                randomVelocities_);
-    keywords_.add<SpeciesVectorKeyword>("Control", "RestrictToSpecies", "Restrict the calculation to the specified Species",
-                                        restrictToSpecies_);
+    keywords_
+        .add<SpeciesVectorKeyword>("Control", "RestrictToSpecies", "Restrict the calculation to the specified Species",
+                                   restrictToSpecies_)
+        ->setEditSignals({KeywordBase::KeywordSignal::ClearModuleData});
     keywords_.add<BoolKeyword>(
         "Control", "IntraOnly",
         "Only forces arising from intramolecular terms (including pair potential contributions) will be calculated",

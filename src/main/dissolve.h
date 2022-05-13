@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
@@ -20,7 +21,7 @@ class Isotopologue;
 class Molecule;
 
 // Dissolve Main Class
-class Dissolve
+class Dissolve : public Serialisable
 {
     public:
     Dissolve(CoreData &coreData);
@@ -30,7 +31,6 @@ class Dissolve
      * Core
      */
     private:
-    static constexpr bool toml_testing_flag = true;
     // Reference to CoreData
     CoreData &coreData_;
     SerializablePairPotential serializablePairPotential_;
@@ -41,6 +41,7 @@ class Dissolve
     const CoreData &coreData() const;
     // Clear all data
     void clear();
+    static constexpr bool toml_testing_flag = false;
 
     /*
      * Atom Types
@@ -73,6 +74,8 @@ class Dissolve
     int nSpecies() const;
     // Return Species list
     std::vector<std::unique_ptr<Species>> &species();
+    // Return Species list
+    const std::vector<std::unique_ptr<Species>> &species() const;
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
     // Copy AtomType, creating a new one if necessary
@@ -151,6 +154,8 @@ class Dissolve
     bool regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
     bool generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving = nullptr);
+    // Revert potentials to reference state, clearing additional potentials
+    void revertPairPotentials();
 
     /*
      * Configurations
@@ -259,10 +264,14 @@ class Dissolve
     public:
     // Load input file
     bool loadInput(std::string_view filename);
+    // Read values from a tree node
+    void deserialise(SerialisedValue &node) override;
     // Load input from supplied string
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
+    // Express as a tree node
+    SerialisedValue serialise() const override;
     // Load restart file
     bool loadRestart(std::string_view filename);
     // Load restart file as reference point

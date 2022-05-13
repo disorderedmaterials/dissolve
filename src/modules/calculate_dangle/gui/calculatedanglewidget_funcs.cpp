@@ -78,8 +78,11 @@ void CalculateDAngleModuleWidget::updateControls(const Flags<ModuleWidget::Updat
 
     // Calculated distance-angle map
     if (dAngleGraph_->renderables().empty())
-        dAngleGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle(A-BC)", module_->uniqueName()),
-                                                         "B...C vs A-B...C");
+    {
+        auto x = dAngleGraph_->createRenderable<RenderableData2D>(
+            fmt::format("{}//Process2D//DAngle(A-BC)", module_->uniqueName()), "B...C vs A-B...C");
+        x->colour().setStyle(ColourDefinition::HSVGradientStyle);
+    }
 
     // Validate renderables if they need it
     rdfGraph_->validateRenderables(dissolve_.processingModuleData());

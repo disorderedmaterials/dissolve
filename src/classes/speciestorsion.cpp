@@ -594,10 +594,10 @@ double SpeciesTorsion::force(double angleInDegrees) const
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
 
-// This method generates a 'torsion' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion::serialize()
+// Express as a tree node
+SerialisedValue SpeciesTorsion::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> torsion;
+    SerialisedValue torsion;
     if (i_ != nullptr)
         torsion["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -617,7 +617,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
     std::vector<double> values = SpeciesTorsion::interactionPotential().parameters();
     if (!values.empty())
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        SerialisedValue parametersNode;
         int index = 0;
         for (auto &value : values)
             parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;
@@ -627,7 +627,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesTorsion:
     return torsion;
 }
 // This method populates the object's members with values read from a 'torsion' TOML node
-void SpeciesTorsion::deserialize(toml::value node, CoreData &coreData)
+void SpeciesTorsion::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     if (!node["form"].is_uninitialized())
     {

@@ -67,4 +67,6 @@ class Cell
     void addAtom(Atom *atom);
     // Remove Atom from Cell
     void removeAtom(Atom *atom);
+    // Clear all atoms from cell
+    void clearAtoms();
 };

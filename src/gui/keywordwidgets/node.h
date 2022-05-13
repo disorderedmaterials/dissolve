@@ -37,6 +37,7 @@ class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
 
     private slots:
     void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void on_ClearButton_clicked(bool checked);
 
     signals:
     // Keyword data changed

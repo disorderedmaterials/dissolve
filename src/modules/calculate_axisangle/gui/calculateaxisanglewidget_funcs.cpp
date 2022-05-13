@@ -83,8 +83,11 @@ void CalculateAxisAngleModuleWidget::updateControls(const Flags<ModuleWidget::Up
 
         // Calculated distance-angle map
         if (dAngleGraph_->renderables().empty())
-            dAngleGraph_->createRenderable<RenderableData2D>(
+        {
+            auto x = dAngleGraph_->createRenderable<RenderableData2D>(
                 fmt::format("{}//Process2D//DAxisAngle", module_->uniqueName(), cfg->niceName()), "A...B vs Axis Angle");
+            x->colour().setStyle(ColourDefinition::HSVGradientStyle);
+        }
     }
 
     // Validate renderables if they need it

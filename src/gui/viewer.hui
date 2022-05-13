@@ -65,10 +65,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Return the View definition
     View &view();
     const View &view() const;
-    // Link this viewer to the one specified
-    void linkView(BaseViewer *viewToLinkTo);
-    // Unlink this viewer from the one specified
-    void unlinkView();
 
     /*
      * Renderable Data
@@ -210,6 +206,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     QOffscreenSurface offscreenSurface_;
     // Current offscreen buffer
     QOpenGLFramebufferObject *offscreenBuffer_;
+    // Device pixel ratio
+    static double devicePixelRatio_;
 
     private:
     // Initialise context widget (when created by Qt)
@@ -254,6 +252,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     QPixmap generateImage(int imageWidth, int imageHeight);
     // Copy current view to clipboard as an image
     void copyViewToClipboard(bool checked);
+    // Set device pixel ratio
+    static void setDevicePixelRatio(double ratio);
 
     /*
      * Mouse / Keyboard Input

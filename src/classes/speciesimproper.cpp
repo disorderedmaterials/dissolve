@@ -225,10 +225,10 @@ double SpeciesImproper::force(double angleInDegrees) const
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
 
-// This method generates an 'improper' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper::serialize()
+// Express as a tree node
+SerialisedValue SpeciesImproper::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> improper;
+    SerialisedValue improper;
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -248,7 +248,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
     std::vector<double> values = SpeciesImproper::interactionPotential().parameters();
     if (!values.empty())
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        SerialisedValue parametersNode;
         int index = 0;
         for (auto &value : values)
             parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;
@@ -258,7 +258,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesImproper
     return improper;
 }
 // This method populates the object's members with values read from an 'improper' TOML node
-void SpeciesImproper::deserialize(toml::value node, CoreData &coreData)
+void SpeciesImproper::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     if (!node["form"].is_uninitialized())
     {

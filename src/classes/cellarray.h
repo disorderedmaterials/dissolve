@@ -41,6 +41,8 @@ class CellArray
     Vec3<double> realCellSize() const;
     // Return cell extents out from given central cell
     Vec3<int> extents() const;
+    // Clear all atom pointers from cells
+    void clearAtoms();
     // Retrieve Cell with (wrapped) grid reference specified
     const Cell *cell(int x, int y, int z) const;
     // Retrieve Cell with id specified

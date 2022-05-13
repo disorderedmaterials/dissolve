@@ -163,7 +163,7 @@ void DissolveWindow::recentFileSelected()
     }
 }
 
-void DissolveWindow::on_FileLoadRestartFileAction_triggered(bool checked)
+void DissolveWindow::on_FileLoadRestartPointAction_triggered(bool checked)
 {
     // Warn the user that we're about to clear everything...
     if (!clearModuleData())
@@ -176,6 +176,20 @@ void DissolveWindow::on_FileLoadRestartFileAction_triggered(bool checked)
         loadRestartFile(restartFile.toStdString());
 
     fullUpdate();
+}
+
+void DissolveWindow::on_FileSaveRestartPointAction_triggered(bool checked)
+{
+    // Get filename for restart point
+    QString filename =
+        QFileDialog::getSaveFileName(this, "Select Restart File", QDir::currentPath(), "Restart Files (*.restart)");
+    if (filename.isEmpty())
+        return;
+
+    if (dissolve_.saveRestart(qPrintable(filename)))
+        statusBar()->showMessage(QString("Saved restart point to '%1'.").arg(filename), 3000);
+    else
+        statusBar()->showMessage(QString("ERROR: Failed to save restart point to '%1'.").arg(filename), 3000);
 }
 
 void DissolveWindow::on_FileCloseAction_triggered(bool checked)

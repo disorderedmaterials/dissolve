@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "base/version.h"
 #include "classes/atom.h"
 #include "classes/atomtypemix.h"
@@ -22,7 +23,6 @@
 #include <memory>
 
 #include <map>
-#include <toml11/toml.hpp>
 #include <vector>
 
 // Forward Declarations
@@ -33,7 +33,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration
+class Configuration : public Serialisable
 {
     public:
     Configuration();
@@ -180,6 +180,8 @@ class Configuration
                            double pairPotentialRange);
     // Create Box definition from axes matrix, and initialise cell array
     void createBoxAndCells(const Matrix3 axes, double cellSize, double pairPotentialRange);
+    // Update cell array, and reassign atoms to cells
+    void updateCells(double cellSize, double pairPotentialRange);
     // Return Box
     const Box *box() const;
     // Scale Box lengths (and associated Cells) by specified factors
@@ -204,8 +206,8 @@ class Configuration
      * Upkeep
      */
     public:
-    // Update Cell contents
-    void updateCellContents();
+    // Update Cell contents, optionally clearing all atom locations first
+    void updateCellContents(bool clearExistingLocations = false);
     // Update Cell location of specified Atom
     void updateCellLocation(Atom *i);
     // Update Cell location of specified Molecule
@@ -232,5 +234,9 @@ class Configuration
     bool serialise(LineParser &parser) const;
     // Read through specified LineParser
     bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
-    toml::basic_value<toml::discard_comments, std::map, std::vector> serialize();
+    // Read from specified LineParser
+    bool deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
+                     double pairPotentialRange);
+    // Express as a tree node
+    SerialisedValue serialise() const override;
 };

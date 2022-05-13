@@ -457,9 +457,10 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
     return (nSameElement == i->nBonds() ? 0 : -osBound);
 }
 
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAtom::serialize()
+// Express as a tree node
+SerialisedValue SpeciesAtom::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> atom;
+    SerialisedValue atom;
     atom["index"] = userIndex();
     atom["z"] = Elements::symbol(Z_).data();
     atom["r"] = toml::array{r_.x, r_.y, r_.z};
@@ -467,7 +468,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAtom::se
     atom["type"] = atomType_->name().data();
     return atom;
 }
-void SpeciesAtom::deserialize(toml::value node)
+void SpeciesAtom::deserialise(SerialisedValue &node)
 {
     if (!node["index"].is_uninitialized())
         index_ = node["index"].as_integer() - 1;

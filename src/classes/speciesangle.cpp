@@ -362,10 +362,10 @@ double SpeciesAngle::force(double angleInDegrees) const
                                          AngleFunctions::forms().keyword(angleForm))));
 }
 
-// This method generates an 'angle' TOML node from the object's members
-toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::serialize()
+// Express as a tree node
+SerialisedValue SpeciesAngle::serialise() const
 {
-    toml::basic_value<toml::discard_comments, std::map, std::vector> angle;
+    SerialisedValue angle;
     if (i_ != nullptr)
         angle["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -383,7 +383,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::s
     std::vector<double> values = SpeciesAngle::interactionPotential().parameters();
     if (!values.empty())
     {
-        toml::basic_value<toml::discard_comments, std::map, std::vector> parametersNode;
+        SerialisedValue parametersNode;
         std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
         for (auto &&[parameter, value] : zip(parameters, values))
             parametersNode[parameter] = value;
@@ -393,7 +393,7 @@ toml::basic_value<toml::discard_comments, std::map, std::vector> SpeciesAngle::s
     return angle;
 }
 // This method populates the object's members with values read from an 'angle' TOML node
-void SpeciesAngle::deserialize(toml::value node, CoreData &coreData)
+void SpeciesAngle::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     if (node.contains("form"))
     {

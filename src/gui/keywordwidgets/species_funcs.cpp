@@ -29,7 +29,6 @@ SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, SpeciesKeyword *keyw
  * Widgets
  */
 
-// Value changed
 void SpeciesKeywordWidget::on_SpeciesCombo_currentIndexChanged(int index)
 {
     if (refreshing_)
@@ -42,6 +41,14 @@ void SpeciesKeywordWidget::on_SpeciesCombo_currentIndexChanged(int index)
         keyword_->data() = ui_.SpeciesCombo->currentData(Qt::UserRole).value<const Species *>();
 
     emit(keywordDataChanged(keyword_->editSignals()));
+}
+
+void SpeciesKeywordWidget::on_ClearButton_clicked(bool checked)
+{
+    if (ui_.SpeciesCombo->currentIndex() == -1 && !keyword_->data())
+        return;
+
+    ui_.SpeciesCombo->setCurrentIndex(-1);
 }
 
 /*

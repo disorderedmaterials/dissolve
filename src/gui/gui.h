@@ -20,7 +20,6 @@ class Species;
 class SpeciesTab;
 class ModuleLayer;
 class LayerTab;
-class WorkspaceTab;
 
 class DissolveWindow : public QMainWindow
 {
@@ -142,7 +141,8 @@ class DissolveWindow : public QMainWindow
     void on_FileNewAction_triggered(bool checked);
     void on_FileOpenAction_triggered(bool checked);
     void recentFileSelected();
-    void on_FileLoadRestartFileAction_triggered(bool checked);
+    void on_FileLoadRestartPointAction_triggered(bool checked);
+    void on_FileSaveRestartPointAction_triggered(bool checked);
     void on_FileCloseAction_triggered(bool checked);
     void on_FileSaveAction_triggered(bool checked);
     void on_FileSaveAsAction_triggered(bool checked);
@@ -155,8 +155,8 @@ class DissolveWindow : public QMainWindow
     void on_SimulationStepFiveAction_triggered(bool checked);
     void on_SimulationStopAction_triggered(bool checked);
     void on_SimulationSetRestartFileFrequencyAction_triggered(bool checked);
-    void on_SimulationSaveRestartPointAction_triggered(bool checked);
     void on_SimulationDataManagerAction_triggered(bool checked);
+    void on_SimulationClearAdditionalPotentialsAction_triggered(bool checked);
     void on_SimulationClearModuleDataAction_triggered(bool checked);
     // Species
     void on_SpeciesCreateAtomicAction_triggered(bool checked);
@@ -200,15 +200,9 @@ class DissolveWindow : public QMainWindow
     void on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked);
     void on_LayerRenameAction_triggered(bool checked);
     void on_LayerDeleteAction_triggered(bool checked);
-    // Workspace
-    void on_WorkspaceCreateEmptyAction_triggered(bool checked);
-    void on_WorkspaceRenameCurrentGizmoAction_triggered(bool checked);
     // Help
     void on_HelpOnlineManualAction_triggered(bool checked);
     void on_HelpOnlineTutorialsAction_triggered(bool checked);
-
-    public slots:
-    void currentWorkspaceGizmoChanged(QMdiSubWindow *gizmoWindow);
 
     /*
      * Simulation
