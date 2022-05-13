@@ -166,7 +166,15 @@ SerialisedValue Dissolve::serialise() const
 }
 
 // Read values from a tree node
-void Dissolve::deserialise(SerialisedValue node) { return; }
+void Dissolve::deserialise(SerialisedValue node)
+{
+    if (node.contains("pairPotentials"))
+    {
+        auto &pairPotentialsNode = toml::find(node, "pairPotentials");
+        if (!pairPotentialsNode.is_uninitialized())
+            serializablePairPotential_.deserialise(pairPotentialsNode);
+    }
+}
 
 // Load input from supplied file
 bool Dissolve::loadInput(std::string_view filename)
@@ -181,26 +189,6 @@ bool Dissolve::loadInput(std::string_view filename)
     {
         Messenger::print("Finished reading input file.\n");
         setInputFilename(filename);
-
-        if constexpr (toml_testing_flag)
-        {
-            toml::value file = toml::parse("output.toml");
-            std::ofstream output("output-d.toml");
-
-            if (file.is_uninitialized())
-                std::cout << "Couldn't find the file";
-
-            if (file.contains("pairPotentials"))
-            {
-                toml::value pairPotentialsNode = toml::find(file, "pairPotentials");
-                if (!pairPotentialsNode.is_uninitialized())
-                    serializablePairPotential_.deserialise(pairPotentialsNode);
-            }
-
-            toml::basic_value<toml::discard_comments, std::map, std::vector> root;
-            root["pairPotentials"] = serializablePairPotential_.serialise();
-            output << std::setw(40) << root;
-        }
     }
 
     return result;
