@@ -36,17 +36,22 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
      *           Site  ...
      *           ExcludeSameMolecule  'A'
      *           ForEach
-     *             Calculate  'rBC'
-     *               Distance  'B'  'C'
-     *             EndCalculate
-     *             Calculate  'axisAngle
-     *               AxisAngle  'A'  'axis'  'B'  'axis'
-     *             EndCalculate
+     *             CalculateDistance  'rBC'
+     *               I  'B'
+     *               J  'C'
+     *             EndCalculateDistance
+     *             CalculateAxisAngle  'axisAngle'
+     *               I  'A'
+     *               AxisI  Z
+     *               J  'B'
+     *               AxisJ  Z
+     *               Symmetric  True
+     *             EndCalculatAxisAngle
      *             Collect2D  'DAngle(A-BC)'
      *               QuantityX  'rBC'
      *               QuantityY  'aABC'
      *               RangeX  0.0  10.0  0.05
-     *               RangeY  0.0  180.0  1.0
+     *               RangeY  0.0  180.0  3.0
      *               SubCollect
      *                 Collect1D  'RDF(BC)'
      *                   QuantityX  'rBC'
@@ -54,7 +59,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
      *                 EndCollect
      *                 Collect1D  'ANGLE(ABC)'
      *                   QuantityX  'aABC'
-     *                   RangeX  0.0  180.0  1.0
+     *                   RangeX  0.0  180.0  3.0
      *                 EndCollect
      *               EndSubCollect
      *             EndCollect2D
@@ -98,12 +103,14 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     forEachB->addNode(calcDistance);
 
     // -- -- Calculate: 'axisAngle'
-    auto calcAngle =
+    calculateAxisAngle_ =
         std::make_shared<CalculateAxisAngleProcedureNode>(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
-    forEachB->addNode(calcAngle);
+    calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
+    forEachB->addNode(calculateAxisAngle_);
 
     // -- -- Collect2D:  'rAB vs axisAngle)'
-    collectDAngle_ = std::make_shared<Collect2DProcedureNode>(calcDistance, calcAngle, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
+    collectDAngle_ =
+        std::make_shared<Collect2DProcedureNode>(calcDistance, calculateAxisAngle_, 0.0, 10.0, 0.05, 0.0, 180.0, 3.0);
     auto subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
     forEachB->addNode(collectDAngle_);
 
@@ -112,7 +119,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     subCollection->addNode(collectDistance_);
 
     // -- -- -- Collect1D:  'ANGLE(axis-axis)'
-    collectAngle_ = std::make_shared<Collect1DProcedureNode>(calcAngle, 0.0, 180.0, 1.0);
+    collectAngle_ = std::make_shared<Collect1DProcedureNode>(calculateAxisAngle_, 0.0, 180.0, 3.0);
     subCollection->addNode(collectAngle_);
 
     // Process1D: 'RDF(AB)'
@@ -165,15 +172,18 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Add site(s) which represent 'A' in the interaction A-B...C",
                                             selectA_->speciesSites(), selectA_->axesRequired());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisA", "Axis to use from site A", calcAngle->axis(0),
-                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisA", "Axis to use from site A",
+                                                              calculateAxisAngle_->axis(0), OrientedSite::siteAxis());
     keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Add site(s) which represent 'B' in the interaction A-B...C",
                                             selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisB", "Axis to use from site B", calcAngle->axis(1),
-                                                              OrientedSite::siteAxis());
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisB", "Axis to use from site B",
+                                                              calculateAxisAngle_->axis(1), OrientedSite::siteAxis());
     keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
                                "Whether to exclude correlations between B and C sites on the same molecule",
                                excludeSameMolecule_);
+    keywords_.add<BoolKeyword>("Control", "Symmetric",
+                               "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)",
+                               symmetric_);
 
     // Export
     keywords_.add<FileAndFormatKeyword>("Export", "ExportRDF",
