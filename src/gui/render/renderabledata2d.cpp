@@ -205,7 +205,7 @@ void RenderableData2D::constructLine(const std::vector<double> &displayXAbscissa
     auto y = displayYAbscissa;
     axes.transformY(y);
     auto nY = y.size();
-    if (nY < 2)
+    if (nY == 0)
         return;
 
     // Get some values from axes so we can calculate colours properly
