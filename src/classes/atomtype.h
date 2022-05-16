@@ -36,6 +36,7 @@ class AtomType : public Serialisable
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);
+    AtomType(std::string name);
     ~AtomType() = default;
 
     /*
@@ -85,4 +86,6 @@ class AtomType : public Serialisable
 
     // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(SerialisedValue node);
 };

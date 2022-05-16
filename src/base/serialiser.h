@@ -18,7 +18,7 @@ class Serialisable
     // Express as a tree node
     virtual SerialisedValue serialise() const = 0;
     // Read values from a tree node
-    virtual void deserialise(SerialisedValue node) { return; }
+    virtual void deserialise(SerialisedValue &node) { return; }
     // A helper function to add elements of a vector to a node under the named heading
     template <typename T>
     static void fromVectorToTable(const std::vector<std::shared_ptr<T>> &vector, std::string name, SerialisedValue &node)

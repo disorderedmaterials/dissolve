@@ -43,6 +43,7 @@ std::optional<int> ShortRangeFunctions::parameterIndex(Form form, std::string_vi
 }
 
 AtomType::AtomType(Elements::Element Z) : Z_(Z), interactionPotential_(ShortRangeFunctions::Form::None) {}
+AtomType::AtomType(std::string name) : interactionPotential_(ShortRangeFunctions::Form::None), name_(name) {}
 
 /*
  * Character
@@ -114,4 +115,23 @@ SerialisedValue AtomType::serialise() const
     }
 
     return atomType;
+}
+// This method populates the object's members with values read from an 'atomTypes' TOML node
+void AtomType::deserialise(toml::value node)
+{
+    if (node.contains("z"))
+        Z_ = Elements::element(std::string(node["z"].as_string()));
+    if (node.contains("charge"))
+        charge_ = node["charge"].as_floating();
+    if (node.contains("form"))
+        interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node["form"].as_string())));
+
+    if (node.contains("parameters"))
+    {
+        auto &parameters = ShortRangeFunctions::parameters(interactionPotential_.form());
+        std::vector<double> values;
+        std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                       [&node](const auto parameter) { return node["parameters"][parameter].as_floating(); });
+        interactionPotential_.setFormAndParameters(interactionPotential_.form(), values);
+    }
 }
