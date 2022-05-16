@@ -14,10 +14,6 @@ NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, NodeKeywordBase *keyword, 
 
     refreshing_ = true;
 
-    // Connect signals / slots
-    connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
-            SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
-
     // Get allowed nodes, set model for combo box, and set current index
     allowedNodes_ = keyword_->allowedNodes();
     nodeModel_.setData(allowedNodes_);
@@ -36,12 +32,16 @@ NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, NodeKeywordBase *keyword, 
  * Widgets
  */
 
-void NodeKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+void NodeKeywordWidget::on_NodeCombo_currentIndexChanged(int index)
 {
     if (refreshing_)
         return;
 
-    keyword_->setData(allowedNodes_[ui_.NodeCombo->currentIndex()]);
+    // Get data from the selected item
+    if (index == -1)
+        keyword_->setData(nullptr);
+    else
+        keyword_->setData(allowedNodes_[ui_.NodeCombo->currentIndex()]);
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
