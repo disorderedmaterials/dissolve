@@ -110,16 +110,18 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
 
     // -- -- Collect2D:  'rAB vs axisAngle)'
     collectDAngle_ =
-        std::make_shared<Collect2DProcedureNode>(calcDistance, calculateAxisAngle_, 0.0, 10.0, 0.05, 0.0, 180.0, 3.0);
+        std::make_shared<Collect2DProcedureNode>(calcDistance, calculateAxisAngle_, distanceRange_.x, distanceRange_.y,
+                                                 distanceRange_.z, angleRange_.x, angleRange_.y, angleRange_.z);
     auto subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
     forEachB->addNode(collectDAngle_);
 
     // -- -- -- Collect1D:  'RDF(AB)'
-    collectDistance_ = std::make_shared<Collect1DProcedureNode>(calcDistance, 0.0, 10.0, 0.05);
+    collectDistance_ =
+        std::make_shared<Collect1DProcedureNode>(calcDistance, distanceRange_.x, distanceRange_.y, distanceRange_.z);
     subCollection->addNode(collectDistance_);
 
     // -- -- -- Collect1D:  'ANGLE(axis-axis)'
-    collectAngle_ = std::make_shared<Collect1DProcedureNode>(calculateAxisAngle_, 0.0, 180.0, 3.0);
+    collectAngle_ = std::make_shared<Collect1DProcedureNode>(calculateAxisAngle_, angleRange_.x, angleRange_.y, angleRange_.z);
     subCollection->addNode(collectAngle_);
 
     // Process1D: 'RDF(AB)'
