@@ -265,7 +265,12 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
         for (auto &m : moduleLayer_->modules())
             m->setEnabled(m.get() == module);
     else if (action == clearData)
+    {
+        Renderable::invalidateAll();
+        Renderable::setSourceDataAccessEnabled(false);
         dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+        Renderable::setSourceDataAccessEnabled(true);
+    }
     else if (action == deleteModule)
     {
         // Remove the module's data, the module control widget, then the module itself
