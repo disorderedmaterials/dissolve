@@ -47,7 +47,7 @@ CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, 
     dAngleView.axes().setRange(0, 0.0, 5.0);
     dAngleView.axes().setTitle(1, "Angle, \\sym{degree}");
     dAngleView.axes().setRange(1, 0.0, 180.0);
-    dAngleView.axes().setTitle(2, "Normalised Population");
+    dAngleView.axes().setTitle(2, "g(r)");
     dAngleView.axes().setRange(2, 0.0, 0.01);
     dAngleView.setAutoFollowType(View::AllAutoFollow);
 

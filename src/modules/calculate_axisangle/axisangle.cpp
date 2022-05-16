@@ -72,12 +72,17 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
      * Process2D  DAngle
      *   Normalisation
      *     OperateEquationNormalise
-     *       Equation  value/sin(y)
+     *       Equation  value/sin(y)/sin(yDelta)
      *     EndOperateEquationNormalise
-     *     OperateNormalise
-     *       Value  1.0
+     *     OperateSitePopulationNormalise
+     *       Site  'A'
      *     EndOperateNormalise
-     *   EndNormalistaion
+     *     OperateNumberDensityNormalise
+     *       Site  'B'
+     *     EndOperateNumberDensityNormalise
+     *     OperateSphericalShellNormalise
+     *     EndOperateSphericalShellNormalise
+     *   EndNormalisation
      *   LabelValue  'g(r)'
      *   LabelX  'r, Angstroms'
      *   LabelY  'theta, Degrees'
@@ -153,11 +158,18 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     // Process2D: 'DAngle'
     processDAngle_ = std::make_shared<Process2DProcedureNode>(collectDAngle_);
     processDAngle_->setName("DAxisAngle");
-    processDAngle_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
+    processDAngle_->keywords().set("LabelX", std::string("\\it{r}, \\symbol{Angstrom}"));
     processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
+    processDAngle_->keywords().set("LabelValue", std::string("g(r)"));
     auto dAngleNormalisation = processDAngle_->addNormalisationBranch();
-    dAngleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)"));
-    dAngleNormalisation->addNode(std::make_shared<OperateNormaliseProcedureNode>(1.0));
+    dAngleNormalisation->addNode(std::make_shared<OperateExpressionProcedureNode>("value/sin(y)/sin(yDelta)"));
+    dAngleNormalisation->addNode(
+        std::make_shared<OperateSitePopulationNormaliseProcedureNode>(std::vector<std::shared_ptr<const SelectProcedureNode>>(
+            {std::dynamic_pointer_cast<const SelectProcedureNode>(selectA_)})));
+    dAngleNormalisation->addNode(
+        std::make_shared<OperateNumberDensityNormaliseProcedureNode, std::vector<std::shared_ptr<const SelectProcedureNode>>>(
+            {selectB_}));
+    dAngleNormalisation->addNode(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
     analyser_.addRootSequenceNode(processDAngle_);
 
     /*
