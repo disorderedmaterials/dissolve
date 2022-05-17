@@ -225,18 +225,18 @@ SerialisedValue Species::serialise() const
 // This method populates the object's members with values read from a 'species.name' TOML node
 void Species::deserialise(SerialisedValue &node, CoreData &coreData)
 {
-    std::vector tomlAtoms = toml::find(node, "atom").as_array();
+    std::vector tomlAtoms = toml::find(node, "atoms").as_array();
     for (auto tomlAtom : tomlAtoms)
         atoms_.emplace_back().deserialise(tomlAtom);
 
-    Serialisable::toVector(node, "bond",
+    Serialisable::toVector(node, "bonds",
                            [this, &coreData](SerialisedValue &bond)
                            {
                                if (!bond["i"].is_uninitialized() && !bond["j"].is_uninitialized())
                                    bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
                                        .deserialise(bond, coreData);
                            });
-    Serialisable::toVector(node, "angle",
+    Serialisable::toVector(node, "angles",
                            [this, &coreData](SerialisedValue &angle)
                            {
                                if (!angle["i"].is_uninitialized() && !angle["j"].is_uninitialized() &&
@@ -246,7 +246,7 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
                                                      &atoms_[angle["k"].as_integer() - 1])
                                        .deserialise(angle, coreData);
                            });
-    Serialisable::toVector(node, "improper",
+    Serialisable::toVector(node, "impropers",
                            [this, &coreData](SerialisedValue &improper)
                            {
                                if (!improper["i"].is_uninitialized() && !improper["j"].is_uninitialized() &&
@@ -257,7 +257,7 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
                                            &atoms_[improper["k"].as_integer() - 1], &atoms_[improper["l"].as_integer() - 1])
                                        .deserialise(improper, coreData);
                            });
-    Serialisable::toVector(node, "torsion",
+    Serialisable::toVector(node, "torsions",
                            [this, &coreData](SerialisedValue &torsion)
                            {
                                if (!torsion["i"].is_uninitialized() && !torsion["j"].is_uninitialized() &&

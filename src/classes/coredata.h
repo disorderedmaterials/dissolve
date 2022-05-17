@@ -5,6 +5,7 @@
 
 #include "base/version.h"
 #include "classes/configuration.h"
+#include "classes/masters.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "templates/optionalref.h"
@@ -67,14 +68,8 @@ class CoreData
      * Master Intramolecular Terms
      */
     private:
-    // Master Bond parameters for Species
-    std::vector<std::shared_ptr<MasterBond>> masterBonds_;
-    // Master Angles parameters for Species
-    std::vector<std::shared_ptr<MasterAngle>> masterAngles_;
-    // Master Torsions parameters for Species
-    std::vector<std::shared_ptr<MasterTorsion>> masterTorsions_;
-    // Master Improper parameters for Species
-    std::vector<std::shared_ptr<MasterImproper>> masterImpropers_;
+    // Master terms
+    Masters masters_;
 
     public:
     // Add new master Bond parameters
