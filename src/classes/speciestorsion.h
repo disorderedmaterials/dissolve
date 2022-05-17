@@ -139,4 +139,5 @@ class MasterTorsion : public SpeciesTorsion
     void setName(std::string_view name) override { name_ = name; }
     // Return identifying name
     std::string_view name() const override { return name_; };
+    void deserialise(SerialisedValue &node) override;
 };

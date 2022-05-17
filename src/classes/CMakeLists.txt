@@ -39,6 +39,7 @@ add_library(
   isotopologueset.cpp
   isotopologueweight.cpp
   kvector.cpp
+  masters.cpp
   molecule.cpp
   moleculedistributor.cpp
   neutronweights.cpp

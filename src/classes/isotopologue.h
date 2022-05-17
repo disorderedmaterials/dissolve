@@ -14,6 +14,7 @@
 // Forward Declarations
 class AtomType;
 class Species;
+class CoreData;
 
 /*
  * Isotopologue Definition
@@ -64,4 +65,5 @@ class Isotopologue : public Serialisable
 
     // Express as a tree node
     SerialisedValue serialise() const override;
+    void deserialise(SerialisedValue &node, CoreData &coreData);
 };

@@ -371,13 +371,31 @@ void SpeciesBond::deserialise(SerialisedValue &node, CoreData &coreData)
         std::string form = node["form"].as_string();
         if (form.find("@") != std::string::npos)
         {
-            auto master = coreData.getMasterBond(form);
+            auto master = coreData.getMasterBond(form.substr(1));
             if (!master)
                 throw std::runtime_error("Master Bond not found.");
             setMasterTerm(&master->get());
         }
         else
             setInteractionForm(BondFunctions::forms().enumeration(form));
+    }
+    if (node.contains("parameters"))
+    {
+        std::vector<std::string> parameters = BondFunctions::parameters(interactionForm());
+        std::vector<double> values;
+        std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                       [&node](const auto param) { return node["parameters"][param].as_floating(); });
+        setInteractionFormAndParameters(interactionForm(), values);
+    }
+}
+
+// This method populates the object's members with values read from a 'bond' TOML node
+void MasterBond::deserialise(SerialisedValue &node)
+{
+    if (node.contains("form"))
+    {
+        std::string form = node["form"].as_string();
+        setInteractionForm(BondFunctions::forms().enumeration(form));
     }
     if (node.contains("parameters"))
     {

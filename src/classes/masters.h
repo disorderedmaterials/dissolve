@@ -21,5 +21,6 @@ class Masters : public Serialisable
     std::vector<std::shared_ptr<MasterTorsion>> masterTorsions;
     // Master Improper parameters for Species
     std::vector<std::shared_ptr<MasterImproper>> masterImpropers;
-    SerialisedValue serialise() const override { return {}; };
+    SerialisedValue serialise() const override;
+    void deserialise(SerialisedValue &node) override;
 };

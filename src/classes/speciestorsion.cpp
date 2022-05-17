@@ -651,3 +651,21 @@ void SpeciesTorsion::deserialise(SerialisedValue &node, CoreData &coreData)
         setInteractionFormAndParameters(interactionForm(), values);
     }
 }
+
+// This method populates the object's members with values read from a 'bond' TOML node
+void MasterTorsion::deserialise(SerialisedValue &node)
+{
+    if (node.contains("form"))
+    {
+        std::string form = node["form"].as_string();
+        setInteractionForm(TorsionFunctions::forms().enumeration(form));
+    }
+    if (node.contains("parameters"))
+    {
+        std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
+        std::vector<double> values;
+        std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                       [&node](const auto param) { return node["parameters"][param].as_floating(); });
+        setInteractionFormAndParameters(interactionForm(), values);
+    }
+}

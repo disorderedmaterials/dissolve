@@ -3,6 +3,7 @@
 
 #include "classes/isotopologue.h"
 #include "classes/atomtype.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
 
@@ -89,4 +90,13 @@ SerialisedValue Isotopologue::serialise() const
     for (auto &&[type, isotope] : isotopes_)
         isotopologue[type->name().data()] = Sears91::A(isotope);
     return isotopologue;
+}
+
+void Isotopologue::deserialise(SerialisedValue &node, CoreData &coreData)
+{
+    for (auto &[name, value] : node.as_table())
+    {
+        auto at = coreData.findAtomType(name);
+        setAtomTypeIsotope(at, Sears91::isotope(at->Z(), value.as_integer()));
+    }
 }

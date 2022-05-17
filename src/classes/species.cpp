@@ -268,4 +268,12 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
                                            &atoms_[torsion["k"].as_integer() - 1], &atoms_[torsion["l"].as_integer() - 1])
                                        .deserialise(torsion, coreData);
                            });
+
+    if (node.contains("isotopologues"))
+        for (SerialisedValue &child : node["isotopologues"].as_array())
+            isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(child, coreData);
+
+    // Serialisable::toVector(node, "isotopologues",
+    //                        [this, &coreData](SerialisedValue &iso)
+    //                        { isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(iso, coreData); });
 }

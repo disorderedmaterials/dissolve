@@ -49,6 +49,12 @@ class Serialisable
         fromVector(vector, name, node, [](const auto &item) { return item->serialise(); });
     }
     // A helper function to add the elements of a vector to a node under a name
+    template <typename T>
+    static void fromVector(const std::vector<std::shared_ptr<T>> &vector, std::string name, SerialisedValue &node)
+    {
+        fromVector(vector, name, node, [](const auto &item) { return item->serialise(); });
+    }
+    // A helper function to add the elements of a vector to a node under a name
     template <typename T> static void fromVector(const std::vector<T> &vector, std::string name, SerialisedValue &node)
     {
         fromVector(vector, name, node, [](const auto &item) { return item.serialise(); });
