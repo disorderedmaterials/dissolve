@@ -22,7 +22,11 @@ class OperateExpressionProcedureNode : public OperateProcedureNodeBase
     // Vector of variables accessible by the transform equation
     std::vector<std::shared_ptr<ExpressionVariable>> variables_;
     // Variables accessible by the transform equation
-    std::shared_ptr<ExpressionVariable> x_, y_, z_, value_;
+    std::shared_ptr<ExpressionVariable> x_, y_, z_, xDelta_, yDelta_, zDelta_, value_;
+
+    private:
+    // Zero all variables
+    void zeroVariables();
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)
