@@ -94,14 +94,26 @@ class SelectProcedureNode : public ProcedureNode
     int nSelections_;
     // Cumulative number of sites ever selected
     int nCumulativeSites_;
+    // Total number of sites available per selection
+    int nAvailableSites_;
 
     public:
+    // Selection Populations
+    enum class SelectionPopulation
+    {
+        Average,
+        Available
+    };
+    // Return EnumOptions for SelectionPopulation
+    static EnumOptions<SelectionPopulation> selectionPopulations();
     // Return the number of available sites in the current stack, if any
     int nSitesInStack() const;
     // Return the average number of sites selected
     double nAverageSites() const;
     // Return the cumulative number of sites ever selected
     int nCumulativeSites() const;
+    // Return total number of sites available per selection
+    int nAvailableSites() const;
     // Return current site
     const Site *currentSite() const;
 

@@ -4,15 +4,15 @@
 #pragma once
 
 #include "procedure/nodes/operatebase.h"
-
-// Forward Declarations
-class SelectProcedureNode;
+#include "procedure/nodes/select.h"
 
 // Operate Number Density Normalise Node
 class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBase
 {
     public:
-    OperateNumberDensityNormaliseProcedureNode(std::vector<std::shared_ptr<const SelectProcedureNode>> nodes = {});
+    OperateNumberDensityNormaliseProcedureNode(
+        std::vector<std::shared_ptr<const SelectProcedureNode>> nodes = {},
+        SelectProcedureNode::SelectionPopulation populationTarget = SelectProcedureNode::SelectionPopulation::Available);
     ~OperateNumberDensityNormaliseProcedureNode() override = default;
 
     /*
@@ -21,6 +21,8 @@ class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBa
     private:
     // Select nodes containing sites for normalisation
     std::vector<std::shared_ptr<const SelectProcedureNode>> normalisationSites_;
+    // Target population to normalise against
+    SelectProcedureNode::SelectionPopulation targetPopulation_{SelectProcedureNode::SelectionPopulation::Average};
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)
