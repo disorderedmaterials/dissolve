@@ -310,3 +310,16 @@ double Species::totalCharge(bool useAtomTypes) const
         return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
                                [](const auto acc, const auto &i) { return acc + i.charge(); });
 }
+
+// Apply random noise to atoms
+void Species::randomiseCoordinates(double maxDisplacement)
+{
+    Vec3<double> deltaR;
+
+    for (auto &i : atoms_)
+    {
+        deltaR.randomUnit();
+        deltaR *= maxDisplacement;
+        i.translateCoordinates(deltaR);
+    }
+}
