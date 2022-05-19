@@ -166,6 +166,7 @@
     <file>icons/general_clock.svg</file>
     <file>icons/general_heartbeat.svg</file>
     <file>icons/general_local.svg</file>
+    <file>icons/general_copy.svg</file>
     <file>icons/general_movemodule.svg</file>
     <file>icons/general_restartfile.svg</file>
     <file>icons/general_font.svg</file>

@@ -18,7 +18,7 @@
 #include <QListWidgetItem>
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
-    : MainTab(dissolveWindow, dissolve, parent, title, this), pairs_(dissolve.pairPotentials())
+    : MainTab(dissolveWindow, dissolve, parent, title, this), pairPotentialModel_(dissolve.pairPotentials())
 {
     ui_.setupUi(this);
 
@@ -80,9 +80,11 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.AtomTypesTable->horizontalHeader()->setFont(font());
     ui_.AtomTypesTable->horizontalHeader()->setVisible(true);
-    ui_.AtomTypesTable->setModel(&atoms_);
-    connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+    ui_.AtomTypesTable->setModel(&atomTypesModel_);
+    connect(&atomTypesModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(atomTypeDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
+    connect(ui_.AtomTypesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(atomTypeSelectionChanged(const QItemSelection &, const QItemSelection &)));
     /*
      * Pair Potentials
      */
@@ -100,14 +102,14 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
     ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
     ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
-    ui_.PairPotentialsTable->setModel(&pairs_);
+    ui_.PairPotentialsTable->setModel(&pairPotentialModel_);
 
     DataViewer *viewer = ui_.PairPotentialsPlotWidget->dataViewer();
     viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
     viewer->view().axes().setTitle(1, "U, kj/mol");
     viewer->view().axes().setRange(1, -100.0, 100.0);
 
-    connect(&pairs_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
+    connect(&pairPotentialModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(pairPotentialDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
     connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
             this, SLOT(pairPotentialTableRowChanged(const QModelIndex &, const QModelIndex &)));
@@ -134,7 +136,7 @@ void ForcefieldTab::updatePairPotentials()
     Messenger::mute();
 
     dissolve_.generatePairPotentials();
-    pairs_.reset();
+    pairPotentialModel_.reset();
     ui_.PairPotentialsTable->resizeColumnsToContents();
 
     // Reinstate output
@@ -156,7 +158,7 @@ void ForcefieldTab::updateControls()
     ui_.MasterImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
-    atoms_.setData(dissolve_.atomTypes());
+    atomTypesModel_.setData(dissolve_.atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
@@ -199,6 +201,36 @@ void ForcefieldTab::atomTypeDataModified()
         updatePairPotentials();
 }
 
+void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
+{
+    auto index = ui_.AtomTypesTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    // Get selected atomtype
+    auto at = atomTypesModel_.rawData(index);
+    if (!at)
+        return;
+
+    // Generate a unique name before we duplicate
+    auto newName = dissolve_.coreData().uniqueAtomTypeName(at->name());
+    auto newAt = dissolve_.addAtomType(at->Z());
+    newAt->setName(newName);
+    newAt->setCharge(at->charge());
+    newAt->interactionPotential().setFormAndParameters(at->interactionPotential().form(),
+                                                       at->interactionPotential().parameters());
+
+    Locker refreshLocker(refreshLock_);
+
+    atomTypesModel_.setData(dissolve_.atomTypes());
+    ui_.AtomTypesTable->resizeColumnsToContents();
+
+    // Re-set the current index
+    ui_.AtomTypesTable->setCurrentIndex(index);
+
+    dissolveWindow_->setModified();
+}
+
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
     // First, need to get target element for the new AtomType
@@ -208,17 +240,22 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     if (!ok)
         return;
 
-    std::shared_ptr<AtomType> at = dissolve_.addAtomType(Z);
+    auto at = dissolve_.addAtomType(Z);
 
     Locker refreshLocker(refreshLock_);
 
-    atoms_.setData(dissolve_.atomTypes());
+    atomTypesModel_.setData(dissolve_.atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+
+void ForcefieldTab::atomTypeSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.AtomTypeDuplicateButton->setEnabled(!current.empty());
+}
 
 void ForcefieldTab::atomTypeDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
 {
@@ -338,7 +375,7 @@ void ForcefieldTab::pairPotentialTableRowChanged(const QModelIndex &current, con
 {
     ui_.PairPotentialsPlotWidget->clearRenderableData();
 
-    auto *pp = pairs_.data(current, Qt::UserRole).value<const PairPotential *>();
+    auto *pp = pairPotentialModel_.data(current, Qt::UserRole).value<const PairPotential *>();
     if (!pp)
         return;
 
