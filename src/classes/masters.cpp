@@ -6,7 +6,10 @@
 SerialisedValue Masters::serialise() const
 {
     SerialisedValue node;
-    Serialisable::fromVector<>(masterBonds, "bonds", node);
+    Serialisable::fromVectorToTable<>(masterBonds, "bonds", node);
+    Serialisable::fromVectorToTable<>(masterAngles, "angles", node);
+    Serialisable::fromVectorToTable<>(masterTorsions, "torsions", node);
+    Serialisable::fromVectorToTable<>(masterImpropers, "impropers", node);
     return node;
 }
 

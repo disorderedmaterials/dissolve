@@ -11,7 +11,7 @@
 
 SpeciesSite::SpeciesSite(const Species *parent) : parent_(parent), originMassWeighted_(false) {}
 SpeciesSite::SpeciesSite(const Species *parent, std::string name) : parent_(parent), originMassWeighted_(false), name_(name) {}
-    /*
+/*
  * Basic Information
  */
 
@@ -435,7 +435,7 @@ SerialisedValue SpeciesSite::serialise() const
     return site;
 }
 
-void SpeciesSite::deserialize(toml::value node)
+void SpeciesSite::deserialise(SerialisedValue &node)
 {
     if (node.contains("originAtoms"))
     {

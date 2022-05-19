@@ -129,7 +129,7 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>, public Seri
     // Express as a tree node
     SerialisedValue serialise() const override;
     // Read values from a tree node
-    void deserialise(SerialisedValue &node, CoreData &coreData);
+    void deserialise(SerialisedValue &node, CoreData &coreData, Species &species);
 };
 
 // MasterBond Definition

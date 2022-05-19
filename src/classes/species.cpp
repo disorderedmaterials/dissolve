@@ -227,15 +227,15 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     std::vector tomlAtoms = toml::find(node, "atoms").as_array();
     for (auto tomlAtom : tomlAtoms)
+        atoms_.emplace_back().deserialise(tomlAtom);
 
-        Serialisable::toVector(
-            node, "bonds",
-            [this, &coreData](SerialisedValue &bond)
-            {
-                if (!bond["i"].is_uninitialized() && !bond["j"].is_uninitialized())
-                    bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
-                        .deserialise(bond, coreData);
-            });
+    Serialisable::toVector(node, "bonds",
+                           [this, &coreData](SerialisedValue &bond)
+                           {
+                               if (!bond["i"].is_uninitialized() && !bond["j"].is_uninitialized())
+                                   bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
+                                       .deserialise(bond, coreData, *this);
+                           });
     Serialisable::toVector(node, "angles",
                            [this, &coreData](SerialisedValue &angle)
                            {
@@ -268,10 +268,6 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
                                            &atoms_[torsion["k"].as_integer() - 1], &atoms_[torsion["l"].as_integer() - 1])
                                        .deserialise(torsion, coreData);
                            });
-
-    if (node.contains("isotopologues"))
-        for (auto &[name, data] : node["isotopologues"].as_array())
-            isotopologues_.emplace_back(std::make_unique<Isotopologue>(name))->deserialise(data, coreData);
 
     Serialisable::toVector(node, "isotopologues",
                            [this, &coreData](SerialisedValue &iso)
