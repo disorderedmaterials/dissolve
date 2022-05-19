@@ -28,8 +28,8 @@ class ForcefieldTab : public QWidget, public MainTab
     // Main form declaration
     Ui::ForcefieldTab ui_;
     // Models
-    AtomTypeModel atoms_;
-    PairPotentialModel pairs_;
+    AtomTypeModel atomTypesModel_;
+    PairPotentialModel pairPotentialModel_;
 
     /*
      * MainTab Reimplementations
