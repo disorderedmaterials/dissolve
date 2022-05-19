@@ -22,9 +22,8 @@ TEST(TOMLTest, Parse)
             Dissolve repeat(coreData2);
             repeat.deserialise(toml);
             auto toml2 = repeat.serialise();
-            EXPECT_EQ(toml["pairPotentials"], toml2["pairPotentials"]);
-            EXPECT_EQ(toml["master"], toml2["master"]);
-            EXPECT_EQ(toml["species"]["Water"], toml2["species"]["Water"]);
+
+            EXPECT_EQ(toml, toml2);
         }
     }
 }

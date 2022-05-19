@@ -629,7 +629,7 @@ SerialisedValue SpeciesTorsion::serialise() const
 // This method populates the object's members with values read from a 'torsion' TOML node
 void SpeciesTorsion::deserialise(SerialisedValue &node, CoreData &coreData)
 {
-    if (!node["form"].is_uninitialized())
+    if (node.contains("form"))
     {
         std::string form = node["form"].as_string();
         if (form.find("@") != std::string::npos)
@@ -642,7 +642,7 @@ void SpeciesTorsion::deserialise(SerialisedValue &node, CoreData &coreData)
         else
             setInteractionForm(TorsionFunctions::forms().enumeration(form));
     }
-    if (!node["parameters"].is_uninitialized())
+    if (node.contains("parameters"))
     {
         std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
         std::vector<double> values;
