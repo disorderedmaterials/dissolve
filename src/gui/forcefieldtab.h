@@ -71,8 +71,10 @@ class ForcefieldTab : public QWidget, public MainTab
 
     private slots:
     // Atom Types
+    void on_AtomTypeDuplicateButton_clicked(bool checked);
     void on_AtomTypeAddButton_clicked(bool checked);
     void on_AtomTypeRemoveButton_clicked(bool checked);
+    void atomTypeSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void atomTypeDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
     // Pair Potentials
     void on_PairPotentialRangeSpin_valueChanged(double value);

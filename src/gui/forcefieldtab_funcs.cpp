@@ -83,6 +83,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ui_.AtomTypesTable->setModel(&atoms_);
     connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(atomTypeDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
+    connect(ui_.AtomTypesTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(atomTypeSelectionChanged(const QItemSelection &, const QItemSelection &)));
     /*
      * Pair Potentials
      */
@@ -199,6 +201,36 @@ void ForcefieldTab::atomTypeDataModified()
         updatePairPotentials();
 }
 
+void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
+{
+    auto index = ui_.AtomTypesTable->currentIndex();
+    if (!index.isValid())
+        return;
+
+    // Get selected atomtype
+    auto at = atoms_.rawData(index);
+    if (!at)
+        return;
+
+    // Generate a unique name before we duplicate
+    auto newName = dissolve_.coreData().uniqueAtomTypeName(at->name());
+    auto newAt = dissolve_.addAtomType(at->Z());
+    newAt->setName(newName);
+    newAt->setCharge(at->charge());
+    newAt->interactionPotential().setFormAndParameters(at->interactionPotential().form(),
+                                                       at->interactionPotential().parameters());
+
+    Locker refreshLocker(refreshLock_);
+
+    atoms_.setData(dissolve_.atomTypes());
+    ui_.AtomTypesTable->resizeColumnsToContents();
+
+    // Re-set the current index
+    ui_.AtomTypesTable->setCurrentIndex(index);
+
+    dissolveWindow_->setModified();
+}
+
 void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
     // First, need to get target element for the new AtomType
@@ -219,6 +251,11 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 }
 
 void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+
+void ForcefieldTab::atomTypeSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
+{
+    ui_.AtomTypeDuplicateButton->setEnabled(!current.empty());
+}
 
 void ForcefieldTab::atomTypeDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &)
 {
