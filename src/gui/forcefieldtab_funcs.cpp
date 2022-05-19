@@ -240,7 +240,7 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     if (!ok)
         return;
 
-    std::shared_ptr<AtomType> at = dissolve_.addAtomType(Z);
+    auto at = dissolve_.addAtomType(Z);
 
     Locker refreshLocker(refreshLock_);
 
