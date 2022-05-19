@@ -40,6 +40,9 @@ in pkgs.stdenv.mkDerivation {
     ${pkgs.p7zip}/bin/7z x ${qttools} -o$out
     ${pkgs.p7zip}/bin/7z x ${qtwayland} -o$out
   '';
+  buildPhase = ''
+    strip --remove-section=.note.ABI-tag $out/6.2.2/gcc_64/lib/libQt6Core.so
+  '';
   installPhase = ''
     mkdir $out/lib
     ln -s ${pkgs.libmysqlclient}/lib/mysql/libmysqlclient.so $out/lib/libmysqlclient.so.21
