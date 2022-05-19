@@ -233,6 +233,10 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
     if (!sp->checkSetUp())
         return;
 
+    // Apply a small randomisation to the Species so we can overcome edge cases in initial geometries (e.g. all atoms in one
+    // plane)
+    sp->randomiseCoordinates(0.0001);
+
     // Create a temporary potential map
     dissolve.regeneratePairPotentials();
     GeometryOptimisationModule optimiser;
