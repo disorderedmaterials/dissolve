@@ -5,6 +5,7 @@
 
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include "base/serialiser.h"
 #include "classes/interactionpotential.h"
 #include "templates/algorithms.h"
 #include <string>
@@ -154,4 +155,29 @@ template <class Intra, class Functions> class SpeciesIntra
     virtual void setName(std::string_view name) { throw(std::runtime_error("Can't set the name of a base SpeciesIntra.\n")); }
     // Return identifying name (if a master term)
     virtual std::string_view name() const { return ""; };
+    // Load form from tree node
+    template <typename Lambda> void deserialiseForm(SerialisedValue &node, Lambda lambda)
+    {
+        if (node.contains("form"))
+        {
+            std::string form = node["form"].as_string();
+            if (form.find("@") != std::string::npos)
+            {
+                auto master = lambda(form);
+                if (!master)
+                    throw std::runtime_error("Master Torsion not found.");
+                setMasterTerm(&master->get());
+            }
+            else
+                setInteractionForm(Functions::forms().enumeration(form));
+        }
+        if (node.contains("parameters"))
+        {
+            std::vector<std::string> parameters = Functions::parameters(interactionForm());
+            std::vector<double> values;
+            for (auto parameter : parameters)
+                values.push_back(node["parameters"][parameter].as_floating());
+            setInteractionFormAndParameters(interactionForm(), values);
+        }
+    }
 };

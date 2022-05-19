@@ -395,27 +395,7 @@ SerialisedValue SpeciesAngle::serialise() const
 // This method populates the object's members with values read from an 'angle' TOML node
 void SpeciesAngle::deserialise(SerialisedValue &node, CoreData &coreData)
 {
-    if (node.contains("form"))
-    {
-        std::string form = node["form"].as_string();
-        if (form.find("@") != std::string::npos)
-        {
-            auto master = coreData.getMasterAngle(form);
-            if (!master)
-                throw std::runtime_error("Master Angle not found.");
-            setMasterTerm(&master->get());
-        }
-        else
-            setInteractionForm(AngleFunctions::forms().enumeration(form));
-    }
-    if (node.contains("parameters"))
-    {
-        std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
-        std::vector<double> values;
-        for (auto parameter : parameters)
-            values.push_back(node["parameters"][parameter].as_floating());
-        setInteractionFormAndParameters(interactionForm(), values);
-    }
+    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterAngle(form); });
 }
 
 // This method populates the object's members with values read from a 'bond' TOML node

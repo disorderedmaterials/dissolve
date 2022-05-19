@@ -234,7 +234,7 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
                            {
                                if (!bond["i"].is_uninitialized() && !bond["j"].is_uninitialized())
                                    bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
-                                       .deserialise(bond, coreData, *this);
+                                       .deserialise(bond, coreData);
                            });
     Serialisable::toVector(node, "angles",
                            [this, &coreData](SerialisedValue &angle)

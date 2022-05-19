@@ -260,27 +260,7 @@ SerialisedValue SpeciesImproper::serialise() const
 // This method populates the object's members with values read from an 'improper' TOML node
 void SpeciesImproper::deserialise(SerialisedValue &node, CoreData &coreData)
 {
-    if (!node["form"].is_uninitialized())
-    {
-        std::string form = node["form"].as_string();
-        if (form.find("@") != std::string::npos)
-        {
-            auto master = coreData.getMasterImproper(form);
-            if (!master)
-                throw std::runtime_error("Master Improper not found.");
-            setMasterTerm(&master->get());
-        }
-        else
-            setInteractionForm(TorsionFunctions::forms().enumeration(form));
-    }
-    if (!node["parameters"].is_uninitialized())
-    {
-        std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
-        std::vector<double> values;
-        for (auto parameter : parameters)
-            values.push_back(node["parameters"][parameter].as_floating());
-        setInteractionFormAndParameters(interactionForm(), values);
-    }
+    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterImproper(form); });
 }
 
 // This method populates the object's members with values read from a 'bond' TOML node
