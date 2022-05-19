@@ -8,6 +8,7 @@
 #include "data/isotopes.h"
 
 Isotopologue::Isotopologue() {}
+Isotopologue::Isotopologue(std::string name) : name_(name) {}
 
 /*
  * Basic Information

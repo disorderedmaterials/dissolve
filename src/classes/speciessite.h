@@ -22,6 +22,7 @@ class SpeciesSite : public Serialisable
 {
     public:
     explicit SpeciesSite(const Species *parent);
+    SpeciesSite(const Species *parent, std::string name);
     ~SpeciesSite() = default;
 
     /*
@@ -127,4 +128,5 @@ class SpeciesSite : public Serialisable
     bool write(LineParser &parser, std::string_view prefix);
 
     SerialisedValue serialise() const override;
+    void deserialise(SerialisedValue &node) override;
 };
