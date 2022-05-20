@@ -31,6 +31,11 @@ class Procedure
     void clear();
     // Add (own) specified node to root sequence
     void addRootSequenceNode(NodeRef node);
+    // Create new node
+    template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&... args)
+    {
+        return rootSequence_->create<N>(name, args...);
+    }
     // Return root sequence
     const SequenceProcedureNode &rootSequence() const;
     // Return the block termination keyword for the Procedure

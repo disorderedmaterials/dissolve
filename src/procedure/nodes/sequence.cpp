@@ -51,15 +51,15 @@ void SequenceProcedureNode::addNode(NodeRef nodeToAdd)
     assert(nodeToAdd);
 
     if (!nodeToAdd->isContextRelevant(context_))
-        Messenger::error("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", nodeToAdd->name(),
-                         ProcedureNode::nodeTypes().keyword(nodeToAdd->type()),
-                         ProcedureNode::nodeContexts().keyword(context_));
+        throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n",
+                                             nodeToAdd->name(), ProcedureNode::nodeTypes().keyword(nodeToAdd->type()),
+                                             ProcedureNode::nodeContexts().keyword(context_))));
 
     // If the node hasn't been given a name, generate a unique one for it now based on its type
     if (nodeToAdd->name().empty())
     {
         auto n = 1;
-        while (node(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n)))
+        while (nodeExists(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n)))
             ++n;
         nodeToAdd->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n));
     }
