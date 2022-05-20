@@ -27,8 +27,6 @@ std::vector<std::shared_ptr<AddProcedureNode>> createRelativeMix(const std::vect
     auto count = 0;
     for (auto *sp : mixSpecies)
     {
-        std::shared_ptr<AddProcedureNode> add;
-
         // Set the population equation, creating a new ratio parameter if we need one
         std::string popString;
         if (count == 0)
@@ -43,23 +41,16 @@ std::vector<std::shared_ptr<AddProcedureNode>> createRelativeMix(const std::vect
         // Set up coordinate set, but only if we have a suitable species
         if (sp->nAtoms() > 1)
         {
-            auto coordSets = std::make_shared<CoordinateSetsProcedureNode>(sp);
-            coordSets->setName(fmt::format("{}_Sets", sp->name()));
-            generator.addRootSequenceNode(coordSets);
+            auto coordSets = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("{}_Sets", sp->name()), sp);
 
             // Create the Add node
-            add = std::make_shared<AddProcedureNode>(coordSets.get(), NodeValue(popString, paramsNode->parameters()),
-                                                     NodeValue("rho", paramsNode->parameters()));
+            addNodes.emplace_back(generator.createRootNode<AddProcedureNode>(sp->name(), coordSets.get(),
+                                                                             NodeValue(popString, paramsNode->parameters()),
+                                                                             NodeValue("rho", paramsNode->parameters())));
         }
         else
-            add = std::make_shared<AddProcedureNode>(sp, NodeValue(popString, paramsNode->parameters()),
-                                                     NodeValue("rho", paramsNode->parameters()));
-
-        // Add the node to the generator
-        add->setName(sp->name());
-        generator.addRootSequenceNode(add);
-
-        addNodes.emplace_back(add);
+            addNodes.emplace_back(generator.createRootNode<AddProcedureNode>(
+                sp->name(), sp, NodeValue(popString, paramsNode->parameters()), NodeValue("rho", paramsNode->parameters())));
 
         ++count;
     }
@@ -92,27 +83,22 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
-    auto paramsNode = std::make_shared<ParametersProcedureNode>();
+    auto paramsNode = generator.createRootNode<ParametersProcedureNode>({});
     paramsNode->addParameter("rho", 0.1);
-    generator.addRootSequenceNode(paramsNode);
-    generator.addRootSequenceNode(std::make_shared<BoxProcedureNode>());
+
+    generator.createRootNode<BoxProcedureNode>({});
+
     for (const auto *sp : mixSpecies)
     {
-        std::shared_ptr<AddProcedureNode> add;
-
         // Set up coordinate set, but only if we have a suitable species
         if (sp->nAtoms() > 1)
         {
-            auto coordSets = std::make_shared<CoordinateSetsProcedureNode>(sp);
-            coordSets->setName(fmt::format("{}_Sets", sp->name()));
-            generator.addRootSequenceNode(coordSets);
-            add = std::make_shared<AddProcedureNode>(coordSets.get(), 100, NodeValue("rho", paramsNode->parameters()));
+            auto coordSets = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("{}_Sets", sp->name()), sp);
+            generator.createRootNode<AddProcedureNode>(sp->name(), coordSets.get(), 100,
+                                                       NodeValue("rho", paramsNode->parameters()));
         }
         else
-            add = std::make_shared<AddProcedureNode>(sp, 100, NodeValue("rho", paramsNode->parameters()));
-
-        generator.addRootSequenceNode(add);
-        add->setName(sp->name());
+            generator.createRootNode<AddProcedureNode>(sp->name(), sp, 100, NodeValue("rho", paramsNode->parameters()));
     }
 
     // Run the generator
@@ -135,11 +121,10 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
-    auto paramsNode = std::make_shared<ParametersProcedureNode>();
+    auto paramsNode = generator.createRootNode<ParametersProcedureNode>({});
     paramsNode->addParameter("populationA", 100);
     paramsNode->addParameter("rho", 0.1);
-    generator.addRootSequenceNode(paramsNode);
-    generator.addRootSequenceNode(std::make_shared<BoxProcedureNode>());
+    generator.createRootNode<BoxProcedureNode>({});
 
     // Create a relative mix from the selected components
     createRelativeMix(mixSpecies, generator, paramsNode);
@@ -164,11 +149,10 @@ void DissolveWindow::on_ConfigurationCreateEmptyFrameworkAction_triggered(bool c
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
-    auto node = std::make_shared<AddProcedureNode>(framework, 1);
-    node->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
-    node->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
-    node->keywords().set("Rotate", false);
-    generator.addRootSequenceNode(node);
+    auto frameworkNode = generator.createRootNode<AddProcedureNode>("Framework", framework, 1);
+    frameworkNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
+    frameworkNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+    frameworkNode->keywords().set("Rotate", false);
 
     // Run the generator
     newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
@@ -195,21 +179,18 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
-    auto node = std::make_shared<AddProcedureNode>(framework, 1);
-    node->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
-    node->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
-    node->keywords().set("Rotate", false);
-    generator.addRootSequenceNode(node);
+    auto frameworkNode = generator.createRootNode<AddProcedureNode>("Framework", framework, 1);
+    frameworkNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
+    frameworkNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+    frameworkNode->keywords().set("Rotate", false);
 
     // Add a parameters node
-    auto paramsNode = std::make_shared<ParametersProcedureNode>();
+    auto paramsNode = generator.createRootNode<ParametersProcedureNode>({});
     paramsNode->addParameter("populationA", 100);
-    generator.addRootSequenceNode(paramsNode);
 
     // Add a GeneralRegion node
-    auto regionNode = std::make_shared<GeneralRegionProcedureNode>();
+    auto regionNode = generator.createRootNode<GeneralRegionProcedureNode>({});
     regionNode->keywords().set("Tolerance", 5.0);
-    generator.addRootSequenceNode(regionNode);
 
     // Create a relative mix from the selected components
     auto addNodes = createRelativeMix(adsorbates, generator, paramsNode);
