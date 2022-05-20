@@ -239,8 +239,6 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
         if (siteStack == nullptr)
             return false;
 
-        nAvailableSites_ += siteStack->nSites();
-
         for (auto n = 0; n < siteStack->nSites(); ++n)
         {
             const auto &site = siteStack->site(n);
@@ -257,6 +255,8 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
             // Check Site exclusions
             if (std::find(excludedSites_.begin(), excludedSites_.end(), &site) != excludedSites_.end())
                 continue;
+
+            ++nAvailableSites_;
 
             // Check distance from reference site (if defined)
             if (distanceRef)
@@ -322,6 +322,9 @@ bool SelectProcedureNode::finalise(const ProcedureContext &procedureContext)
                      sites_.size());
     Messenger::print("Select - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
                      nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
+    Messenger::print("Select - Site '{}': Average number of sites available per selection = {:.2f}.\n", name(),
+                     nSelections_ == 0 ? 0 : double(nAvailableSites_) / nSelections_);
+
     Messenger::print("Select - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
 
     return true;
