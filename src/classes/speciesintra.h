@@ -196,4 +196,25 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             setInteractionFormAndParameters(interactionForm(), values);
         }
     }
+    SerialisedValue serialise() const override
+    {
+        SerialisedValue result;
+
+        if (masterTerm_ != nullptr)
+            result["form"] = "@" + std::string(masterTerm_->name());
+        else
+            result["form"] = Functions::forms().keyword(interactionForm());
+
+        std::vector<double> values = interactionPotential().parameters();
+        if (!values.empty())
+        {
+            SerialisedValue parametersNode;
+            std::vector<std::string> parameters = Functions::parameters(interactionForm());
+            for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
+                parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+            result["parameters"] = parametersNode;
+        }
+
+        return result;
+    }
 };

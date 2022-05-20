@@ -597,7 +597,7 @@ double SpeciesTorsion::force(double angleInDegrees) const
 // Express as a tree node
 SerialisedValue SpeciesTorsion::serialise() const
 {
-    SerialisedValue torsion;
+    SerialisedValue torsion = SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise();
     if (i_ != nullptr)
         torsion["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -606,23 +606,6 @@ SerialisedValue SpeciesTorsion::serialise() const
         torsion["k"] = k_->userIndex();
     if (l_ != nullptr)
         torsion["l"] = l_->userIndex();
-
-    std::string form = "@";
-    if (masterTerm_ != nullptr)
-        form += masterTerm_->name();
-    else
-        form = TorsionFunctions::forms().keyword(interactionForm());
-    torsion["form"] = form;
-
-    std::vector<double> values = SpeciesTorsion::interactionPotential().parameters();
-    if (!values.empty())
-    {
-        SerialisedValue parametersNode;
-        int index = 0;
-        for (auto &value : values)
-            parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;
-        torsion["parameters"] = parametersNode;
-    }
 
     return torsion;
 }

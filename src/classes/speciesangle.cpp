@@ -365,30 +365,13 @@ double SpeciesAngle::force(double angleInDegrees) const
 // Express as a tree node
 SerialisedValue SpeciesAngle::serialise() const
 {
-    SerialisedValue angle;
+    SerialisedValue angle = SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise();
     if (i_ != nullptr)
         angle["i"] = i_->userIndex();
     if (j_ != nullptr)
         angle["j"] = j_->userIndex();
     if (k_ != nullptr)
         angle["k"] = k_->userIndex();
-
-    std::string form = "@";
-    if (masterTerm_ != nullptr)
-        form += masterTerm_->name();
-    else
-        form = AngleFunctions::forms().keyword(interactionForm());
-    angle["form"] = form;
-
-    std::vector<double> values = SpeciesAngle::interactionPotential().parameters();
-    if (!values.empty())
-    {
-        SerialisedValue parametersNode;
-        std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
-        for (auto &&[parameter, value] : zip(parameters, values))
-            parametersNode[parameter] = value;
-        angle["parameters"] = parametersNode;
-    }
 
     return angle;
 }

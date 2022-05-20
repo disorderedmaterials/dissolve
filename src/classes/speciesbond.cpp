@@ -338,28 +338,11 @@ double SpeciesBond::force(double distance) const
 // Express as a tree node
 SerialisedValue SpeciesBond::serialise() const
 {
-    SerialisedValue bond;
+    SerialisedValue bond = SpeciesIntra<SpeciesBond, BondFunctions>::serialise();
     if (i_ != nullptr)
         bond["i"] = i_->userIndex();
     if (j_ != nullptr)
         bond["j"] = j_->userIndex();
-
-    std::string form = "@";
-    if (masterTerm_ != nullptr)
-        form += masterTerm_->name();
-    else
-        form = BondFunctions::forms().keyword(interactionForm());
-    bond["form"] = form;
-
-    std::vector<double> values = SpeciesBond::interactionPotential().parameters();
-    if (!values.empty())
-    {
-        SerialisedValue parametersNode;
-        std::vector<std::string> parameters = BondFunctions::parameters(interactionForm());
-        for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
-            parametersNode[parameters[parameterIndex]] = values[parameterIndex];
-        bond["parameters"] = parametersNode;
-    }
 
     return bond;
 }

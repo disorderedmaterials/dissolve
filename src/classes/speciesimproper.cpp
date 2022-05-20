@@ -228,7 +228,7 @@ double SpeciesImproper::force(double angleInDegrees) const
 // Express as a tree node
 SerialisedValue SpeciesImproper::serialise() const
 {
-    SerialisedValue improper;
+    SerialisedValue improper = SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise();
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -237,23 +237,6 @@ SerialisedValue SpeciesImproper::serialise() const
         improper["k"] = k_->userIndex();
     if (l_ != nullptr)
         improper["l"] = l_->userIndex();
-
-    std::string form = "@";
-    if (masterTerm_ != nullptr)
-        form += masterTerm_->name();
-    else
-        form = TorsionFunctions::forms().keyword(interactionForm());
-    improper["form"] = form;
-
-    std::vector<double> values = SpeciesImproper::interactionPotential().parameters();
-    if (!values.empty())
-    {
-        SerialisedValue parametersNode;
-        int index = 0;
-        for (auto &value : values)
-            parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;
-        improper["parameters"] = parametersNode;
-    }
 
     return improper;
 }
