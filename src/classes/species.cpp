@@ -230,32 +230,26 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
         atoms_.emplace_back().deserialise(tomlAtom);
 
     Serialisable::toVector(node, "bonds", [this, &coreData](SerialisedValue &bond) {
-        if (!bond["i"].is_uninitialized() && !bond["j"].is_uninitialized())
-            bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
-                .deserialise(bond, coreData);
+        bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
+            .deserialise(bond, coreData);
     });
     Serialisable::toVector(node, "angles", [this, &coreData](SerialisedValue &angle) {
-        if (!angle["i"].is_uninitialized() && !angle["j"].is_uninitialized() && !angle["k"].is_uninitialized())
-            angles_
-                .emplace_back(&atoms_[angle["i"].as_integer() - 1], &atoms_[angle["j"].as_integer() - 1],
-                              &atoms_[angle["k"].as_integer() - 1])
-                .deserialise(angle, coreData);
+        angles_
+            .emplace_back(&atoms_[angle["i"].as_integer() - 1], &atoms_[angle["j"].as_integer() - 1],
+                          &atoms_[angle["k"].as_integer() - 1])
+            .deserialise(angle, coreData);
     });
     Serialisable::toVector(node, "impropers", [this, &coreData](SerialisedValue &improper) {
-        if (!improper["i"].is_uninitialized() && !improper["j"].is_uninitialized() && !improper["k"].is_uninitialized() &&
-            !improper["l"].is_uninitialized())
-            impropers_
-                .emplace_back(&atoms_[improper["i"].as_integer() - 1], &atoms_[improper["j"].as_integer() - 1],
-                              &atoms_[improper["k"].as_integer() - 1], &atoms_[improper["l"].as_integer() - 1])
-                .deserialise(improper, coreData);
+        impropers_
+            .emplace_back(&atoms_[improper["i"].as_integer() - 1], &atoms_[improper["j"].as_integer() - 1],
+                          &atoms_[improper["k"].as_integer() - 1], &atoms_[improper["l"].as_integer() - 1])
+            .deserialise(improper, coreData);
     });
     Serialisable::toVector(node, "torsions", [this, &coreData](SerialisedValue &torsion) {
-        if (!torsion["i"].is_uninitialized() && !torsion["j"].is_uninitialized() && !torsion["k"].is_uninitialized() &&
-            !torsion["l"].is_uninitialized())
-            torsions_
-                .emplace_back(&atoms_[torsion["i"].as_integer() - 1], &atoms_[torsion["j"].as_integer() - 1],
-                              &atoms_[torsion["k"].as_integer() - 1], &atoms_[torsion["l"].as_integer() - 1])
-                .deserialise(torsion, coreData);
+        torsions_
+            .emplace_back(&atoms_[torsion["i"].as_integer() - 1], &atoms_[torsion["j"].as_integer() - 1],
+                          &atoms_[torsion["k"].as_integer() - 1], &atoms_[torsion["l"].as_integer() - 1])
+            .deserialise(torsion, coreData);
     });
 
     Serialisable::toVector(node, "isotopologues", [this, &coreData](SerialisedValue &iso) {
