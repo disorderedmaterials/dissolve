@@ -123,6 +123,8 @@ class Species : public Serialisable
     int simplifyAtomTypes();
     // Return total charge of species from local/atomtype atomic charges
     double totalCharge(bool useAtomTypes) const;
+    // Apply random noise to atoms
+    void randomiseCoordinates(double maxDisplacement);
 
     /*
      * Intramolecular Data
