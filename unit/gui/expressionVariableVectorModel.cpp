@@ -16,8 +16,7 @@ TEST(ExpressionVariableVectorModelTest, Basic)
 
     // Create a simple procedure with a parameters node
     Procedure procedure(ProcedureNode::AnalysisContext);
-    auto parameters = std::make_shared<ParametersProcedureNode>();
-    procedure.addRootSequenceNode(parameters);
+    auto parameters = procedure.createRootNode<ParametersProcedureNode>({});
     parameters->addParameter("Alpha", 1.2345);
     parameters->addParameter("Beta", 99);
     parameters->addParameter("Gamma", -10);
