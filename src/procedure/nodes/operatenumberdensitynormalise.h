@@ -22,7 +22,7 @@ class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBa
     // Select nodes containing sites for normalisation
     std::vector<std::shared_ptr<const SelectProcedureNode>> normalisationSites_;
     // Target population to normalise against
-    SelectProcedureNode::SelectionPopulation targetPopulation_{SelectProcedureNode::SelectionPopulation::Average};
+    SelectProcedureNode::SelectionPopulation targetPopulation_;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)
