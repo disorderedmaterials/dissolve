@@ -37,7 +37,7 @@ class AngleFunctions
 };
 
 // SpeciesAngle Definition
-class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>, public Serialisable
+class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 {
     public:
     SpeciesAngle();
@@ -111,6 +111,7 @@ class MasterAngle : public SpeciesAngle
 {
     public:
     explicit MasterAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
+    using SpeciesIntra<SpeciesAngle, AngleFunctions>::deserialise;
 
     /*
      * Identifying Name
@@ -124,5 +125,4 @@ class MasterAngle : public SpeciesAngle
     void setName(std::string_view name) override { name_ = name; }
     // Return identifying name
     std::string_view name() const override { return name_; };
-    void deserialise(SerialisedValue &node) override;
 };

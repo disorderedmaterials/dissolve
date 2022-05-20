@@ -262,21 +262,3 @@ void SpeciesImproper::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterImproper(form); });
 }
-
-// This method populates the object's members with values read from a 'bond' TOML node
-void MasterImproper::deserialise(SerialisedValue &node)
-{
-    if (node.contains("form"))
-    {
-        std::string form = node["form"].as_string();
-        setInteractionForm(TorsionFunctions::forms().enumeration(form));
-    }
-    if (node.contains("parameters"))
-    {
-        std::vector<std::string> parameters = TorsionFunctions::parameters(interactionForm());
-        std::vector<double> values;
-        std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
-                       [&node](const auto param) { return node["parameters"][param].as_floating(); });
-        setInteractionFormAndParameters(interactionForm(), values);
-    }
-}

@@ -36,7 +36,7 @@ class BondFunctions
 };
 
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>, public Serialisable
+class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
@@ -137,7 +137,7 @@ class MasterBond : public SpeciesBond
 {
     public:
     explicit MasterBond(std::string_view name) : SpeciesBond(), name_{name} {};
-
+    using SpeciesIntra<SpeciesBond, BondFunctions>::deserialise;
     /*
      * Identifying Name
      */
@@ -150,5 +150,4 @@ class MasterBond : public SpeciesBond
     void setName(std::string_view name) override { name_ = name; }
     // Return identifying name
     std::string_view name() const override { return name_; };
-    void deserialise(SerialisedValue &node) override;
 };

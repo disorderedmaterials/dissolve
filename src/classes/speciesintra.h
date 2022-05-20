@@ -16,7 +16,7 @@ class SpeciesAtom;
 class Species;
 
 // Base class for intramolecular interactions within Species
-template <class Intra, class Functions> class SpeciesIntra
+template <class Intra, class Functions> class SpeciesIntra : public Serialisable
 {
     public:
     explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form){};
@@ -177,6 +177,22 @@ template <class Intra, class Functions> class SpeciesIntra
             std::vector<double> values;
             for (auto parameter : parameters)
                 values.push_back(node["parameters"][parameter].as_floating());
+            setInteractionFormAndParameters(interactionForm(), values);
+        }
+    }
+    void deserialise(SerialisedValue &node) override
+    {
+        if (node.contains("form"))
+        {
+            std::string form = node["form"].as_string();
+            setInteractionForm(Functions::forms().enumeration(form));
+        }
+        if (node.contains("parameters"))
+        {
+            std::vector<std::string> parameters = Functions::parameters(interactionForm());
+            std::vector<double> values;
+            std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
+                           [&node](const auto param) { return node["parameters"][param].as_floating(); });
             setInteractionFormAndParameters(interactionForm(), values);
         }
     }

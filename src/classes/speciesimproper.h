@@ -16,7 +16,7 @@ class SpeciesAtom;
 class Species;
 
 // SpeciesImproper Definition
-class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>, public Serialisable
+class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
 {
     public:
     SpeciesImproper();
@@ -98,6 +98,7 @@ class MasterImproper : public SpeciesImproper
 {
     public:
     explicit MasterImproper(std::string_view name) : SpeciesImproper(), name_{name} {};
+    using SpeciesIntra<SpeciesImproper, TorsionFunctions>::deserialise;
 
     /*
      * Identifying Name
@@ -111,5 +112,4 @@ class MasterImproper : public SpeciesImproper
     void setName(std::string_view name) override { name_ = name; }
     // Return identifying name
     std::string_view name() const override { return name_; };
-    void deserialise(SerialisedValue &node) override;
 };

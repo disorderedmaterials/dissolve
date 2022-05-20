@@ -42,7 +42,7 @@ class TorsionFunctions
 };
 
 // SpeciesTorsion Definition
-class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>, public Serialisable
+class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 {
     public:
     SpeciesTorsion();
@@ -126,6 +126,7 @@ class MasterTorsion : public SpeciesTorsion
 {
     public:
     explicit MasterTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
+    using SpeciesIntra<SpeciesTorsion, TorsionFunctions>::deserialise;
 
     /*
      * Identifying Name
@@ -139,5 +140,4 @@ class MasterTorsion : public SpeciesTorsion
     void setName(std::string_view name) override { name_ = name; }
     // Return identifying name
     std::string_view name() const override { return name_; };
-    void deserialise(SerialisedValue &node) override;
 };
