@@ -437,26 +437,9 @@ SerialisedValue SpeciesSite::serialise() const
 
 void SpeciesSite::deserialise(SerialisedValue &node)
 {
-    if (node.contains("originAtoms"))
-    {
-        std::vector originAtoms = node["originAtoms"].as_array();
-        for (auto originAtom : originAtoms)
-            addOriginAtom(originAtom.as_integer());
-    }
-
-    if (node.contains("xAxisAtoms"))
-    {
-        std::vector xAxisAtoms = node["xAxisAtoms"].as_array();
-        for (auto xAxisAtom : xAxisAtoms)
-            addXAxisAtom(xAxisAtom.as_integer());
-    }
-
-    if (node.contains("yAxisAtoms"))
-    {
-        std::vector yAxisAtoms = node["yAxisAtoms"].as_array();
-        for (auto yAxisAtom : yAxisAtoms)
-            addYAxisAtom(yAxisAtom.as_integer());
-    }
+    toVector(node, "originAtoms", [this](const auto &originAtom) { addOriginAtom(originAtom.as_integer()); });
+    toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addXAxisAtom(xAxisAtom.as_integer()); });
+    toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addYAxisAtom(yAxisAtom.as_integer()); });
 
     if (node.contains("originMassWeighted"))
         originMassWeighted_ = node["originMassWeighted"].as_boolean();
