@@ -11,7 +11,7 @@ TEST(TOMLTest, Parse)
 {
     if constexpr (Dissolve::toml_testing_flag)
     {
-        std::vector<std::string> inputs = {"inputs/benzene.txt", "inputs/water.txt"};
+        std::vector<std::string> inputs = {"inputs/benzene.txt", "inputs/water.txt", "inputs/py5-ntf2.txt"};
 
         for (auto &input : inputs)
         {
