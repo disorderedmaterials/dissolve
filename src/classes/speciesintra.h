@@ -180,6 +180,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             setInteractionFormAndParameters(interactionForm(), values);
         }
     }
+    // Deserialise the form and parameters
     void deserialise(SerialisedValue &node) override
     {
         if (node.contains("form"))
@@ -196,6 +197,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             setInteractionFormAndParameters(interactionForm(), values);
         }
     }
+    // Serialise the form and parameters
     SerialisedValue serialise() const override
     {
         SerialisedValue result;
