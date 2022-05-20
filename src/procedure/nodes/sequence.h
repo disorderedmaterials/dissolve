@@ -56,11 +56,13 @@ class SequenceProcedureNode : public ProcedureNode
         void next();
     };
 
+    private:
+    // Add (own) node into sequence
+    void addNode(NodeRef nodeToAdd);
+
     public:
     // Clear all data
     void clear();
-    // Add (own) node into sequence
-    void addNode(NodeRef nodeToAdd);
     // Create new node
     template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&... args)
     {

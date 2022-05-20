@@ -29,8 +29,6 @@ class Procedure
     public:
     // Clear all data
     void clear();
-    // Add (own) specified node to root sequence
-    void addRootSequenceNode(NodeRef node);
     // Create new node
     template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&... args)
     {
