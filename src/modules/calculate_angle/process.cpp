@@ -32,17 +32,17 @@ bool CalculateAngleModule::process(Dissolve &dissolve, const ProcessPool &procPo
     collectDAngleBC_->keywords().set("RangeX", rangeBC_);
     collectDAngleBC_->keywords().set("RangeY", angleRange_);
     if (excludeSameMoleculeAB_)
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
     else
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
+        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
     if (excludeSameMoleculeBC_)
-        selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectB_});
+        selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectB_});
     else
-        selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
+        selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
     if (excludeSameSiteAC_)
-        selectC_->keywords().set("ExcludeSameSite", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+        selectC_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
     else
-        selectC_->keywords().set("ExcludeSameSite", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
+        selectC_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

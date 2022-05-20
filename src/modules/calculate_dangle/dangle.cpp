@@ -35,7 +35,7 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
 
         // -- -- Select: Site 'C'
         selectC_ = forEachB->create<SelectProcedureNode>("C");
-        selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+        selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
         auto forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
 
         // -- -- -- Calculate: 'rBC'
@@ -62,9 +62,9 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
 
         auto rdfNormalisation = processDistance_->addNormalisationBranch();
         rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_, selectB_});
-        rdfNormalisation->create<OperateNumberDensityNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>{selectC_});
+            {}, ConstNodeVector<SelectProcedureNode>{selectA_, selectB_});
+        rdfNormalisation->create<OperateNumberDensityNormaliseProcedureNode>({},
+                                                                             ConstNodeVector<SelectProcedureNode>{selectC_});
         rdfNormalisation->create<OperateSphericalShellNormaliseProcedureNode>({});
 
         // Process1D: 'ANGLE(ABC)'

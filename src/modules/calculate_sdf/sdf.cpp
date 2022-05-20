@@ -24,8 +24,8 @@ CalculateSDFModule::CalculateSDFModule() : Module("CalculateSDF"), analyser_(Pro
 
         // -- Select: Site 'B'
         selectB_ = forEachA->create<SelectProcedureNode>("B");
-        selectB_->keywords().set("ExcludeSameSite", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+        selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
+        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
         auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
 
         // -- -- Calculate: 'v(B->A)'
@@ -42,8 +42,8 @@ CalculateSDFModule::CalculateSDFModule() : Module("CalculateSDF"), analyser_(Pro
         processPosition_->keywords().set("LabelY", std::string("y, \\symbol{Angstrom}"));
         processPosition_->keywords().set("LabelZ", std::string("z, \\symbol{Angstrom}"));
         auto sdfNormalisation = processPosition_->addNormalisationBranch();
-        sdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>({selectA_}));
+        sdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>({},
+                                                                              ConstNodeVector<SelectProcedureNode>({selectA_}));
         sdfNormalisation->create<OperateGridNormaliseProcedureNode>({});
     }
     catch (...)

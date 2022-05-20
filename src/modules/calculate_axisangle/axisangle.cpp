@@ -30,7 +30,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
 
         // -- Select: Site 'B'
         selectB_ = forEachA->create<SelectProcedureNode>("B", std::vector<const SpeciesSite *>{}, true);
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
         auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
 
         // -- -- Calculate: 'rAB'
@@ -61,10 +61,10 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
         processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
         auto rdfNormalisation = processDistance_->addNormalisationBranch();
-        rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
-        rdfNormalisation->create<OperateNumberDensityNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>{selectB_});
+        rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>({},
+                                                                              ConstNodeVector<SelectProcedureNode>{selectA_});
+        rdfNormalisation->create<OperateNumberDensityNormaliseProcedureNode>({},
+                                                                             ConstNodeVector<SelectProcedureNode>{selectB_});
         rdfNormalisation->create<OperateSphericalShellNormaliseProcedureNode>({});
 
         // Process1D: 'ANGLE(axis)'
@@ -83,9 +83,9 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
         auto dAngleNormalisation = processDAngle_->addNormalisationBranch();
         dAngleNormalisation->create<OperateExpressionProcedureNode>({}, "value/sin(y)/sin(yDelta)");
         dAngleNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>({selectA_}));
-        dAngleNormalisation->create<OperateNumberDensityNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>{selectB_});
+            {}, ConstNodeVector<SelectProcedureNode>({selectA_}));
+        dAngleNormalisation->create<OperateNumberDensityNormaliseProcedureNode>({},
+                                                                                ConstNodeVector<SelectProcedureNode>{selectB_});
         dAngleNormalisation->create<OperateSphericalShellNormaliseProcedureNode>({});
     }
     catch (...)

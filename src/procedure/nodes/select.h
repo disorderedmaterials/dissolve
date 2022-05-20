@@ -54,11 +54,11 @@ class SelectProcedureNode : public ProcedureNode
      */
     private:
     // Other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-    std::vector<std::shared_ptr<const SelectProcedureNode>> sameMoleculeExclusions_;
+    ConstNodeVector<SelectProcedureNode> sameMoleculeExclusions_;
     // Molecules currently excluded from selection
     std::vector<std::shared_ptr<const Molecule>> excludedMolecules_;
     // Other sites (nodes) which will exclude one of our sites if it is the same site
-    std::vector<std::shared_ptr<const SelectProcedureNode>> sameSiteExclusions_;
+    ConstNodeVector<SelectProcedureNode> sameSiteExclusions_;
     // Sites currently excluded from selection
     std::set<const Site *> excludedSites_;
     // Molecule (from site) in which the site must exist
@@ -70,9 +70,9 @@ class SelectProcedureNode : public ProcedureNode
 
     public:
     // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-    void setSameMoleculeExclusions(std::vector<std::shared_ptr<const SelectProcedureNode>> exclusions);
+    void setSameMoleculeExclusions(ConstNodeVector<SelectProcedureNode> exclusions);
     // Set other sites (nodes) which will exclude one of our sites if it is the same site
-    void setSameSiteExclusions(std::vector<std::shared_ptr<const SelectProcedureNode>> exclusions);
+    void setSameSiteExclusions(ConstNodeVector<SelectProcedureNode> exclusions);
     // Return list of Molecules currently excluded from selection
     const std::vector<std::shared_ptr<const Molecule>> &excludedMolecules() const;
     // Return Molecule (from site) in which the site must exist

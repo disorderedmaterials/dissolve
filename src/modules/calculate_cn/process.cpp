@@ -20,7 +20,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Set the target Collect1D and normalisation nodes in the Process1D
     process1D_->keywords().set("SourceData", sourceRDF_->collectDistanceNode());
-    siteNormaliser_->keywords().set("Site", std::vector<std::shared_ptr<const SelectProcedureNode>>{sourceRDF_->selectANode()});
+    siteNormaliser_->keywords().set("Site", ConstNodeVector<SelectProcedureNode>{sourceRDF_->selectANode()});
 
     // Execute the analysis on the Configuration targeted by the RDF module
     ProcedureContext context(procPool, sourceRDF_->keywords().get<Configuration *>("Configuration"));

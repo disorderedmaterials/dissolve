@@ -4,7 +4,10 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 class ProcedureNode;
 using NodeRef = std::shared_ptr<ProcedureNode>;
 using ConstNodeRef = std::shared_ptr<const ProcedureNode>;
+
+template <class N> using ConstNodeVector = std::vector<std::shared_ptr<const N>>;

@@ -87,13 +87,13 @@ std::vector<ConstNodeRef> SelectProcedureNode::children() const { return {forEac
  */
 
 // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
-void SelectProcedureNode::setSameMoleculeExclusions(std::vector<std::shared_ptr<const SelectProcedureNode>> exclusions)
+void SelectProcedureNode::setSameMoleculeExclusions(ConstNodeVector<SelectProcedureNode> exclusions)
 {
     sameMoleculeExclusions_ = std::move(exclusions);
 }
 
 // Set other sites (nodes) which will exclude one of our sites if it is the same site
-void SelectProcedureNode::setSameSiteExclusions(std::vector<std::shared_ptr<const SelectProcedureNode>> exclusions)
+void SelectProcedureNode::setSameSiteExclusions(ConstNodeVector<SelectProcedureNode> exclusions)
 {
     sameSiteExclusions_ = std::move(exclusions);
 }

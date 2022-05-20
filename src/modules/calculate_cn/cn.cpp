@@ -20,8 +20,8 @@ CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(Proced
         process1D_ = analyser_.createRootNode<Process1DProcedureNode>("HistogramNorm");
         process1D_->keywords().set("CurrentDataOnly", true);
         auto rdfNormalisation = process1D_->addNormalisationBranch();
-        siteNormaliser_ = rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>());
+        siteNormaliser_ =
+            rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>());
 
         // Sum1D
         sum1D_ = analyser_.createRootNode<Sum1DProcedureNode>("CN", process1D_);

@@ -25,8 +25,8 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
 
         // -- Select: Site 'B'
         selectB_ = forEachA->create<SelectProcedureNode>("B");
-        selectB_->keywords().set("ExcludeSameSite", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+        selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
+        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
         auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
 
         // -- -- Calculate: 'rAB'
@@ -41,10 +41,10 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
         processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
         auto rdfNormalisation = processDistance_->addNormalisationBranch();
-        rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>({selectA_}));
-        rdfNormalisation->create<OperateNumberDensityNormaliseProcedureNode>(
-            {}, std::vector<std::shared_ptr<const SelectProcedureNode>>({selectB_}));
+        rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>({},
+                                                                              ConstNodeVector<SelectProcedureNode>({selectA_}));
+        rdfNormalisation->create<OperateNumberDensityNormaliseProcedureNode>({},
+                                                                             ConstNodeVector<SelectProcedureNode>({selectB_}));
         rdfNormalisation->create<OperateSphericalShellNormaliseProcedureNode>({});
     }
     catch (...)
