@@ -57,7 +57,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, Calculat
     dAngleABView.axes().setRange(0, 0.0, 5.0);
     dAngleABView.axes().setTitle(1, "Angle, \\sym{degree}");
     dAngleABView.axes().setRange(1, 0.0, 180.0);
-    dAngleABView.axes().setTitle(2, "Normalised Population");
+    dAngleABView.axes().setTitle(2, "g\\sub{AB}(r)");
     dAngleABView.axes().setRange(2, 0.0, 0.01);
     dAngleABView.setAutoFollowType(View::AllAutoFollow);
 
@@ -70,7 +70,7 @@ CalculateAngleModuleWidget::CalculateAngleModuleWidget(QWidget *parent, Calculat
     dAngleBCView.axes().setRange(0, 0.0, 5.0);
     dAngleBCView.axes().setTitle(1, "Angle, \\sym{degree}");
     dAngleBCView.axes().setRange(1, 0.0, 180.0);
-    dAngleBCView.axes().setTitle(2, "Normalised Population");
+    dAngleBCView.axes().setTitle(2, "g\\sub{BC}(r)");
     dAngleBCView.axes().setRange(2, 0.0, 0.01);
     dAngleBCView.setAutoFollowType(View::AllAutoFollow);
 
@@ -122,7 +122,7 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *modul
 
     // Calculated A...B RDF
     auto rdfAB = rdfABGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//Process1D//RDF(AB)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
+        fmt::format("{}//Process1D//RDF(AB)", module_->uniqueName(), cfg->niceName()), "A...B g(r)");
     rdfAB->setColour(StockColours::BlueStockColour);
 
     // Calculated B...C RDF

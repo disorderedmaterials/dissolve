@@ -25,6 +25,8 @@ class CalculateAxisAngleProcedureNode : public CalculateProcedureNodeBase
     private:
     // Axes to use for sites
     OrientedSite::SiteAxis axes_[2];
+    // Whether the angle should be considered symmetric about 90 (i.e. 0 == 180)
+    bool symmetric_{false};
 
     public:
     // Return axis specified

@@ -7,6 +7,7 @@
 #include "procedure/procedure.h"
 
 // Forward Declarations
+class CalculateAxisAngleProcedureNode;
 class Collect1DProcedureNode;
 class Collect2DProcedureNode;
 class Process1DProcedureNode;
@@ -30,15 +31,19 @@ class CalculateAxisAngleModule : public Module
     // Whether to exclude correlations between B and C sites on the same molecule
     bool excludeSameMolecule_{false};
     // Range (min, max, binwidth) of distance axis
-    Vec3<double> distanceRange_{0.0, 10.0, 0.05};
+    Vec3<double> distanceRange_{0.0, 10.0, 0.1};
     // Range (min, max, binwidth) of angle axis
-    Vec3<double> angleRange_{0.0, 180.0, 1.0};
+    Vec3<double> angleRange_{0.0, 180.0, 10.0};
+    // Whether the angular range should be considered symmetric about 90
+    bool symmetric_{false};
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
     std::shared_ptr<SelectProcedureNode> selectA_;
     // SelectNode for site B
     std::shared_ptr<SelectProcedureNode> selectB_;
+    // CalculateAxisAngle node
+    std::shared_ptr<CalculateAxisAngleProcedureNode> calculateAxisAngle_;
     // Collect1DNode for A-B RDF
     std::shared_ptr<Collect1DProcedureNode> collectDistance_;
     // Collect1DNode for A-B angle histogram

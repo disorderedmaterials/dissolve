@@ -36,7 +36,7 @@ class NodeKeywordWidget : public QWidget, public KeywordWidgetBase
     ProcedureNodeModel nodeModel_;
 
     private slots:
-    void modelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void on_NodeCombo_currentIndexChanged(int index);
     void on_ClearButton_clicked(bool checked);
 
     signals:

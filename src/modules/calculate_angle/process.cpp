@@ -6,6 +6,7 @@
 #include "modules/calculate_angle/angle.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
+#include "procedure/nodes/collect3d.h"
 #include "procedure/nodes/select.h"
 
 // Run main processing
@@ -16,10 +17,13 @@ bool CalculateAngleModule::process(Dissolve &dissolve, const ProcessPool &procPo
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    selectA_->setDistanceReferenceSite(selectB_);
-    selectA_->setInclusiveDistanceRange({rangeAB_.x, rangeAB_.y});
+    selectB_->setDistanceReferenceSite(selectA_);
+    selectB_->setInclusiveDistanceRange({rangeAB_.x, rangeAB_.y});
     selectC_->setDistanceReferenceSite(selectB_);
     selectC_->setInclusiveDistanceRange({rangeBC_.x, rangeBC_.y});
+    collectDDA_->keywords().set("RangeX", rangeAB_);
+    collectDDA_->keywords().set("RangeY", rangeBC_);
+    collectDDA_->keywords().set("RangeZ", angleRange_);
     collectAB_->keywords().set("RangeX", rangeAB_);
     collectBC_->keywords().set("RangeX", rangeBC_);
     collectABC_->keywords().set("RangeX", angleRange_);
@@ -28,9 +32,9 @@ bool CalculateAngleModule::process(Dissolve &dissolve, const ProcessPool &procPo
     collectDAngleBC_->keywords().set("RangeX", rangeBC_);
     collectDAngleBC_->keywords().set("RangeY", angleRange_);
     if (excludeSameMoleculeAB_)
-        selectA_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectB_});
+        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
     else
-        selectA_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
+        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
     if (excludeSameMoleculeBC_)
         selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectB_});
     else

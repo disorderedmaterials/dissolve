@@ -25,6 +25,9 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(std::shared_ptr
                                                               OrientedSite::siteAxis());
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisJ", "Axis to use from site J", axes_[1],
                                                               OrientedSite::siteAxis());
+    keywords_.add<BoolKeyword>("Control", "Symmetric",
+                               "Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90",
+                               symmetric_);
 }
 
 /*
@@ -68,8 +71,11 @@ bool CalculateAxisAngleProcedureNode::execute(const ProcedureContext &procedureC
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
 
-    value_ = Box::angleInDegrees(sites_[0]->currentSite()->axes().columnAsVec3(axes_[0]),
-                                 sites_[1]->currentSite()->axes().columnAsVec3(axes_[1]));
+    value_.x = Box::angleInDegrees(sites_[0]->currentSite()->axes().columnAsVec3(axes_[0]),
+                                   sites_[1]->currentSite()->axes().columnAsVec3(axes_[1]));
+
+    if (symmetric_ && value_.x > 90.0)
+        value_.x = 180.0 - value_.x;
 
     return true;
 }

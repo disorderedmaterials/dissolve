@@ -54,6 +54,7 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     currentSiteIndex_ = -1;
     nCumulativeSites_ = 0;
     nSelections_ = 0;
+    nAvailableSites_ = 0;
     sameMolecule_ = nullptr;
     distanceReferenceSite_ = nullptr;
 }
@@ -132,6 +133,14 @@ void SelectProcedureNode::setInclusiveDistanceRange(Range range) { inclusiveDist
  * Selected Sites
  */
 
+// Return EnumOptions for SelectionPopulation
+EnumOptions<SelectProcedureNode::SelectionPopulation> SelectProcedureNode::selectionPopulations()
+{
+    return EnumOptions<SelectProcedureNode::SelectionPopulation>(
+        "AveragingScheme", {{SelectProcedureNode::SelectionPopulation::Average, "Average"},
+                            {SelectProcedureNode::SelectionPopulation::Available, "Available"}});
+}
+
 // Return the number of available sites in the current stack, if any
 int SelectProcedureNode::nSitesInStack() const { return sites_.size(); }
 
@@ -140,6 +149,9 @@ double SelectProcedureNode::nAverageSites() const { return double(nCumulativeSit
 
 // Return the cumulative number of sites ever selected
 int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
+
+// Return total number of sites available per selection
+int SelectProcedureNode::nAvailableSites() const { return double(nAvailableSites_) / nSelections_; }
 
 // Return current site
 const Site *SelectProcedureNode::currentSite() const
@@ -180,6 +192,7 @@ bool SelectProcedureNode::prepare(const ProcedureContext &procedureContext)
     // Prep some variables
     nSelections_ = 0;
     nCumulativeSites_ = 0;
+    nAvailableSites_ = 0;
 
     // If one exists, prepare the ForEach branch nodes
     if (forEachBranch_ && (!forEachBranch_->prepare(procedureContext)))
@@ -242,6 +255,8 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
             // Check Site exclusions
             if (std::find(excludedSites_.begin(), excludedSites_.end(), &site) != excludedSites_.end())
                 continue;
+
+            ++nAvailableSites_;
 
             // Check distance from reference site (if defined)
             if (distanceRef)
@@ -307,6 +322,9 @@ bool SelectProcedureNode::finalise(const ProcedureContext &procedureContext)
                      sites_.size());
     Messenger::print("Select - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
                      nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
+    Messenger::print("Select - Site '{}': Average number of sites available per selection = {:.2f}.\n", name(),
+                     nSelections_ == 0 ? 0 : double(nAvailableSites_) / nSelections_);
+
     Messenger::print("Select - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
 
     return true;

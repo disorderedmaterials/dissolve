@@ -11,9 +11,11 @@
 // Clear all items (except those that are marked protected)
 void GenericList::clear()
 {
-    for (auto &[key, value] : items_)
-        if (!(std::get<GenericItem::Flags>(value) & GenericItem::ProtectedFlag))
-            items_.erase(key);
+    for (auto it = items_.begin(); it != items_.end();)
+        if (!(std::get<GenericItem::Flags>(it->second) & GenericItem::ProtectedFlag))
+            items_.erase(it++);
+        else
+            ++it;
 }
 
 // Clear all items, including protected items
@@ -52,9 +54,11 @@ void GenericList::remove(std::string_view name, std::string_view prefix)
 void GenericList::removeWithPrefix(std::string_view prefix)
 {
     auto delimitedPrefix = fmt::format("{}//", prefix);
-    for (auto it = items_.begin(); it != items_.end(); ++it)
+    for (auto it = items_.begin(); it != items_.end();)
         if (DissolveSys::startsWith(it->first, delimitedPrefix))
-            items_.erase(it);
+            items_.erase(it++);
+        else
+            ++it;
 }
 
 // Rename item

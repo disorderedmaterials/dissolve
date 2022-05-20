@@ -4,6 +4,7 @@
 #include "base/sysfunc.h"
 #include "main/dissolve.h"
 #include "modules/calculate_axisangle/axisangle.h"
+#include "procedure/nodes/calculateaxisangle.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
 #include "procedure/nodes/select.h"
@@ -16,6 +17,7 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, const ProcessPool &pr
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
+    calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
     collectDistance_->keywords().set("RangeX", distanceRange_);
     collectAngle_->keywords().set("RangeX", angleRange_);
     collectDAngle_->keywords().set("RangeX", distanceRange_);
