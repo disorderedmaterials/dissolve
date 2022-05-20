@@ -193,22 +193,6 @@ bool Dissolve::loadInput(std::string_view filename)
         setInputFilename(filename);
     }
 
-    if (toml_testing_flag)
-    {
-        try
-        {
-            toml::value file = toml::parse("output.toml");
-            std::ofstream output("output-d.toml");
-
-            if (file.is_uninitialized())
-                std::cout << "Couldn't find the file";
-        }
-        catch (const std::runtime_error &e)
-        {
-            Messenger::error(e.what());
-        }
-    }
-
     return result;
 }
 
