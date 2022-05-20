@@ -155,6 +155,18 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     virtual void setName(std::string_view name) { throw(std::runtime_error("Can't set the name of a base SpeciesIntra.\n")); }
     // Return identifying name (if a master term)
     virtual std::string_view name() const { return ""; };
+    // Load parameters from tree node
+    void deserialiseParameters(SerialisedValue &node)
+    {
+        if (node.contains("parameters"))
+        {
+            std::vector<std::string> parameters = Functions::parameters(interactionForm());
+            std::vector<double> values;
+            for (auto parameter : parameters)
+                values.push_back(node["parameters"][parameter].as_floating());
+            setInteractionFormAndParameters(interactionForm(), values);
+        }
+    }
     // Load form from tree node
     template <typename Lambda> void deserialiseForm(SerialisedValue &node, Lambda lambda)
     {
@@ -171,14 +183,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             else
                 setInteractionForm(Functions::forms().enumeration(form));
         }
-        if (node.contains("parameters"))
-        {
-            std::vector<std::string> parameters = Functions::parameters(interactionForm());
-            std::vector<double> values;
-            for (auto parameter : parameters)
-                values.push_back(node["parameters"][parameter].as_floating());
-            setInteractionFormAndParameters(interactionForm(), values);
-        }
+        deserialiseParameters(node);
     }
     // Deserialise the form and parameters
     void deserialise(SerialisedValue &node) override
@@ -188,14 +193,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             std::string form = node["form"].as_string();
             setInteractionForm(Functions::forms().enumeration(form));
         }
-        if (node.contains("parameters"))
-        {
-            std::vector<std::string> parameters = Functions::parameters(interactionForm());
-            std::vector<double> values;
-            std::transform(parameters.begin(), parameters.end(), std::back_inserter(values),
-                           [&node](const auto param) { return node["parameters"][param].as_floating(); });
-            setInteractionFormAndParameters(interactionForm(), values);
-        }
+        deserialiseParameters(node);
     }
     // Serialise the form and parameters
     SerialisedValue serialise() const override
