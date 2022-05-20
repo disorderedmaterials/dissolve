@@ -470,20 +470,16 @@ SerialisedValue SpeciesAtom::serialise() const
 }
 void SpeciesAtom::deserialise(SerialisedValue &node)
 {
-    if (!node["index"].is_uninitialized())
-        index_ = node["index"].as_integer() - 1;
-    if (!node["z"].is_uninitialized())
-        Z_ = Elements::element(std::string(node["z"].as_string()));
+    index_ = node["index"].as_integer() - 1;
+    Z_ = Elements::element(std::string(node["z"].as_string()));
 
-    if (!node["r"].is_uninitialized())
-    {
-        std::vector r = node["r"].as_array();
-        r_ = Vec3<double>(r[0].as_floating(), r[1].as_floating(), r[2].as_floating());
-    }
-    if (!node["charge"].is_uninitialized())
+    std::vector r = node["r"].as_array();
+    r_ = Vec3<double>(r[0].as_floating(), r[1].as_floating(), r[2].as_floating());
+
+    if (node.contains("charge"))
         charge_ = node["charge"].as_floating();
 
-    if (!node["type"].is_uninitialized() && Z_ != Elements::Unknown)
+    if (node.contains("type") && Z_ != Elements::Unknown)
     {
         atomType_ = std::make_shared<AtomType>(AtomType(Z_));
         atomType_->setName(std::string(node["type"].as_string()));
