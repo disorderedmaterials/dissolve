@@ -214,7 +214,7 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
       LabelX  'Angle, \\sym{degree}'
     EndProcess1D
 
-    Process2D  'DAngle(X-HO)'
+    Process2D  'RDF-Angle'
       SourceData  'DAngle(X-HO)'
       Normalisation
         OperateNormalise
@@ -257,7 +257,7 @@ EndModule
 
 Module DataTest
   Frequency  95
-  #Data2D  'DAngle(X-H...O)//Process2D//DAngle(A-BC)'  cartesian  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.surf'
+  #Data2D  'DAngle(X-H...O)//Process2D//RDF-Angle'  cartesian  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.surf'
 #    XRange  0.0  5.0  0.01
 #    YRange  0.0  180  1.0
   #EndData2D
