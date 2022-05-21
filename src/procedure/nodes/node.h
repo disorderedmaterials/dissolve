@@ -109,7 +109,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     virtual bool isContextRelevant(NodeContext context);
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
-    // Set node name (and nice name)
+    // Set node name
     void setName(std::string_view name);
     // Return node name
     std::string_view name() const;

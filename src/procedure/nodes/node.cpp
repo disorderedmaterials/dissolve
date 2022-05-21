@@ -92,7 +92,7 @@ bool ProcedureNode::isContextRelevant(NodeContext context) { return false; }
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }
 
-// Set node name (and nice name)
+// Set node name
 void ProcedureNode::setName(std::string_view name) { name_ = DissolveSys::niceName(name); }
 
 // Return node name

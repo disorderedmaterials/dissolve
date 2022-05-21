@@ -4,7 +4,7 @@
 #include "procedure/nodes/sequence.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "procedure/nodes/nodes.h"
+#include "procedure/nodes/registry.h"
 
 SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef parentNode,
                                              std::string_view blockTerminationKeyword)
@@ -50,12 +50,16 @@ void SequenceProcedureNode::addNode(NodeRef nodeToAdd)
 {
     assert(nodeToAdd);
 
+    // Set us as its scope
+    nodeToAdd->setScope(std::dynamic_pointer_cast<SequenceProcedureNode>(shared_from_this()));
+
+    // Check context
     if (!nodeToAdd->isContextRelevant(context_))
         throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n",
                                              nodeToAdd->name(), ProcedureNode::nodeTypes().keyword(nodeToAdd->type()),
                                              ProcedureNode::nodeContexts().keyword(context_))));
 
-    // If the node hasn't been given a name, generate a unique one for it now based on its type
+    // If the node hasn't been given a name, generate a unique one for it now based on its type. Otherwise, check for a clash
     if (nodeToAdd->name().empty())
     {
         auto n = 1;
@@ -63,6 +67,9 @@ void SequenceProcedureNode::addNode(NodeRef nodeToAdd)
             ++n;
         nodeToAdd->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n));
     }
+    else if (nodeExists(nodeToAdd->name()))
+        throw(std::runtime_error(fmt::format(
+            "Can't have duplicate node names in the same procedure - node '{}' already exists.\n", nodeToAdd->name())));
 
     sequence_.push_back(nodeToAdd);
 }
@@ -414,110 +421,11 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
         }
 
         // Not a control keyword, so must be a node type
-        NodeRef newNode = nullptr;
         if (!ProcedureNode::nodeTypes().isValid(parser.argsv(0)))
             return Messenger::error("Unrecognised node type '{}' found.\n", parser.argsv(0));
-        ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argsv(0));
-        switch (nt)
-        {
-            case (ProcedureNode::NodeType::Add):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<AddProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Box):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<BoxProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::CalculateAngle):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CalculateAngleProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::CalculateDistance):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CalculateDistanceProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::CalculateVector):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CalculateVectorProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Collect1D):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Collect1DProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Collect2D):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Collect2DProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Collect3D):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Collect3DProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::CoordinateSets):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CoordinateSetsProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::CylindricalRegion):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<CylindricalRegionProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Fit1D):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Fit1DProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::GeneralRegion):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<GeneralRegionProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::OperateDivide):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateDivideProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::OperateExpression):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateExpressionProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::OperateMultiply):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateMultiplyProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::OperateNormalise):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateNormaliseProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::OperateNumberDensityNormalise):
-                newNode =
-                    std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateNumberDensityNormaliseProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::OperateSitePopulationNormalise):
-                newNode =
-                    std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateSitePopulationNormaliseProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::OperateSphericalShellNormalise):
-                newNode =
-                    std::static_pointer_cast<ProcedureNode>(std::make_shared<OperateSphericalShellNormaliseProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Parameters):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<ParametersProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Pick):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<PickProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::PickProximity):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<PickProximityProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::PickRegion):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<PickRegionProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Process1D):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Process1DProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Process2D):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Process2DProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Process3D):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<Process3DProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Remove):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<RemoveProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Select):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<SelectProcedureNode>());
-                break;
-            case (ProcedureNode::NodeType::Sequence):
-                /* This should never be called */
-                newNode = std::make_shared<SequenceProcedureNode>(ProcedureNode::NoContext, procedure(), shared_from_this());
-                break;
-            case (ProcedureNode::NodeType::Transmute):
-                newNode = std::static_pointer_cast<ProcedureNode>(std::make_shared<TransmuteProcedureNode>());
-                break;
-            default:
-                throw(std::runtime_error(
-                    fmt::format("Epic Developer Fail - Don't know how to create a node of type '{}'.\n", parser.argsv(0))));
-        }
+
+        // Create a new node of the specified type
+        auto newNode = ProcedureNodeRegistry::create(ProcedureNode::nodeTypes().enumeration(parser.argsv(0)));
 
         // Set the name of the node if it is required / provided
         if (newNode->mustBeNamed() && !parser.hasArg(1))
@@ -534,15 +442,8 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
                 return Messenger::error("A node named '{}' is already in scope.\n", newNode->name());
         }
 
-        // Is the new node permitted in our context?
-        if (!newNode->isContextRelevant(context_))
-            return Messenger::error("'{}' node not allowed / relevant in '{}' context.\n",
-                                    ProcedureNode::nodeTypes().keyword(newNode->type()),
-                                    ProcedureNode::nodeContexts().keyword(context_));
-
-        // Add the new node to our list, and set ourself as its scope
-        sequence_.push_back(newNode);
-        newNode->setScope(std::dynamic_pointer_cast<SequenceProcedureNode>(shared_from_this()));
+        // Add the node
+        addNode(newNode);
 
         // Read the new node
         if (!newNode->deserialise(parser, coreData))

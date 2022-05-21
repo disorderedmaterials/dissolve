@@ -37,6 +37,7 @@ add_library(
   process2d.cpp
   process3d.cpp
   regionbase.cpp
+  registry.cpp
   remove.cpp
   select.cpp
   sequence.cpp
@@ -80,6 +81,7 @@ add_library(
   process2d.h
   process3d.h
   regionbase.h
+  registry.h
   remove.h
   transmute.h
   select.h

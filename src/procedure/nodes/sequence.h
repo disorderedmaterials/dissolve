@@ -72,14 +72,13 @@ class SequenceProcedureNode : public ProcedureNode
         // Set its name
         node->setName(name);
 
-        // Set us as its scope
-        node->setScope(std::dynamic_pointer_cast<SequenceProcedureNode>(shared_from_this()));
-
         // Add node to our sequence, checking context / naming
         addNode(node);
 
         return node;
     }
+    // Create new node by enumerated type
+    std::shared_ptr<ProcedureNode> create(ProcedureNode::NodeType nodeType, std::string_view name);
     // Return sequential node list
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence
