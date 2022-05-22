@@ -25,4 +25,4 @@ A target module containing partial set data must be provided, along with the typ
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Export`|`true|false`|`false`|Whether to save accumulated partials to disk after calculation. A separate file is written for each individual atomic partial between types $i$ and $j$, as well as the summed total.|
+|`Export`|`bool`|`false`|Whether to save accumulated partials to disk after calculation. A separate file is written for each individual atomic partial between types $i$ and $j$, as well as the summed total.|

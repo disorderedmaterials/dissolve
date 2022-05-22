@@ -63,4 +63,4 @@ Intensity information from a [`Bragg module`]({{< ref "bragg" >}}) calculation c
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Export`|`true|false`|`false`|Whether to save partials to disk after calculation. A separate file is written for each individual atomic partial between types $i$ and $j$, as well as the summed total.|
+|`Export`|`bool`|`false`|Whether to save partials to disk after calculation. A separate file is written for each individual atomic partial between types $i$ and $j$, as well as the summed total.|

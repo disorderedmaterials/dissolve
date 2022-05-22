@@ -29,4 +29,4 @@ The `OperateNormalise` node calculates the sum (or absolute sum) of the supplied
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Value`|`constant`|`1.0`|Constant value to normalise to.|
-|`Absolute`|`true|false`|`false`|Whether to use the absolute sum of values rather than the direct sum.|
+|`Absolute`|`bool`|`false`|Whether to use the absolute sum of values rather than the direct sum.|

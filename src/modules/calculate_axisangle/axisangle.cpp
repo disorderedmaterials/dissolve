@@ -102,15 +102,18 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Control
-    keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, binwidth) of distance axis", distanceRange_,
+    keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, binwidth) of distance binning",
+                                     distanceRange_, Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt,
+                                     Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle axis", angleRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Add site(s) which represent 'A' in the interaction A-B...C",
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA",
+                                            "Specify site(s) which represent 'A' in the interaction A-B...C",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisA", "Axis to use from site A",
                                                               calculateAxisAngle_->axis(0), OrientedSite::siteAxis());
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Add site(s) which represent 'B' in the interaction A-B...C",
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB",
+                                            "Specify site(s) which represent 'B' in the interaction A-B...C",
                                             selectB_->speciesSites(), selectB_->axesRequired());
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisB", "Axis to use from site B",
                                                               calculateAxisAngle_->axis(1), OrientedSite::siteAxis());

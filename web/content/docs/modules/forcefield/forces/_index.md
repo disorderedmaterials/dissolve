@@ -40,10 +40,10 @@ Dissolve implements several functional forms for each of the distinct intra- and
 ### Test
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`Test`|`true|false`|`false`|Test parallel force routines against basic serial versions and supplied reference values (if provided)|
-|`TestAnalytic`|`true|false`|`false`|Use analytic interatomic energies rather than (production) tabulated potentials for tests|
-|`TestInter`|`true|false`|`true`|Include interatomic forces in test|
-|`TestIntra`|`true|false`|`true`|Include intramolecular forces in test|
+|`Test`|`bool`|`false`|Test parallel force routines against basic serial versions and supplied reference values (if provided)|
+|`TestAnalytic`|`bool`|`false`|Use analytic interatomic energies rather than (production) tabulated potentials for tests|
+|`TestInter`|`bool`|`true`|Include interatomic forces in test|
+|`TestIntra`|`bool`|`true`|Include intramolecular forces in test|
 |`TestReference`|[`ForcesFileAndFormat`]({{< ref "forcesformat" >}})|--|Reference forces to test calculated forces against|
 |`TestThreshold`|`double`|`0.1`|Threshold of force (%) at which test comparison will fail|
 

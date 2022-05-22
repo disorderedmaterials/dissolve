@@ -6,7 +6,7 @@ description: Define and perform a custom analysis routine
 
 ## Overview
 
-The `Analyse` module allows a custom analysis procedure to be defined, allowing almost any quantity to be calculated from a given configuration.
+The `Analyse` module allows a custom analysis [procedure]({{< ref "procedures" >}}) to be defined, allowing almost any quantity to be calculated from a given configuration.
 
 ## Keywords
 

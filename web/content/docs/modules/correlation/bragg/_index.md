@@ -41,4 +41,4 @@ The Bragg module does not handle broadening of the calculated reflections into "
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`SaveReflections`|`true|false`|`false`|Whether to save Bragg reflection data to disk after calculation. A separate file containing Q values and raw intensities is written for each individual atomic partial between types $i$ and $j$.|
+|`SaveReflections`|`bool`|`false`|Whether to save Bragg reflection data to disk after calculation. A separate file containing Q values and raw intensities is written for each individual atomic partial between types $i$ and $j$.|

@@ -53,8 +53,8 @@ The `StabilityThreshold` value is multiplied by the mean of the last N points (g
 ### Test
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`Test`|`true|false`|`false`|Test parallel energy routines against basic serial versions and supplied reference values|
-|`TestAnalytic`|`true|false`|`false`|Use analytic interatomic energies rather than (production) tabulated potentials for tests|
+|`Test`|`bool`|`false`|Test parallel energy routines against basic serial versions and supplied reference values|
+|`TestAnalytic`|`bool`|`false`|Use analytic interatomic energies rather than (production) tabulated potentials for tests|
 |`TestReferenceInter`|`double`|`0.0`|Reference value for interatomic energy against which to test calculated value|
 |`TestReferenceIntra`|`double`|`0.0`|Reference value for intramolecular energy against which to test calculated value|
 |`TestThreshold`|`double`|`0.1`|Threshold of energy at which test comparison will fail|
@@ -62,4 +62,4 @@ The `StabilityThreshold` value is multiplied by the mean of the last N points (g
 ### Export
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`Save`|`true|false`|`false`|Save calculated energies to disk, one file per targetted configuration|
+|`Save`|`bool`|`false`|Save calculated energies to disk, one file per targetted configuration|
