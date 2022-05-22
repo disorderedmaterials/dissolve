@@ -5,8 +5,7 @@ weight: 3
 type: docs
 ---
 
-70 - 90 minutes
-{: .label .label-blue }
+{{< label color="blue" icon="fa-clock" text="80 minutes" >}}
 
 ## Summary
 

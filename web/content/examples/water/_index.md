@@ -5,7 +5,7 @@ type: docs
 weight: 2
 ---
 
-{{< label color="blue" text="60 - 75 minutes" >}}
+{{< label color="blue" icon="fa-clock" text="60 minutes" >}}
 
 ## Summary
 
