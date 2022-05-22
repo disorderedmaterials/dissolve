@@ -7,9 +7,11 @@
 #include "procedure/procedure.h"
 
 // Forward Declarations
+class CalculateAngleProcedureNode;
 class Collect1DProcedureNode;
 class Collect2DProcedureNode;
 class Collect3DProcedureNode;
+class OperateExpressionProcedureNode;
 class Process1DProcedureNode;
 class Process2DProcedureNode;
 class Process3DProcedureNode;
@@ -41,6 +43,8 @@ class CalculateAngleModule : public Module
     Vec3<double> rangeBC_{0.0, 10.0, 0.05};
     // Range (min, max, binwidth) of angle axis
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
+    // Whether the angular range should be considered symmetric about 90
+    bool symmetric_{false};
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
@@ -49,6 +53,8 @@ class CalculateAngleModule : public Module
     std::shared_ptr<SelectProcedureNode> selectB_;
     // SelectNode for site C
     std::shared_ptr<SelectProcedureNode> selectC_;
+    // CalculateAngle node for A-B-C angle
+    std::shared_ptr<CalculateAngleProcedureNode> calculateAngle_;
     // Collect1DNode for A-B RDF
     std::shared_ptr<Collect1DProcedureNode> collectAB_;
     // Collect1DNode for B-C RDF
@@ -71,6 +77,8 @@ class CalculateAngleModule : public Module
     std::shared_ptr<Process2DProcedureNode> processDAngleAB_;
     // Process2DNode for A-(B-C) distance-angle data
     std::shared_ptr<Process2DProcedureNode> processDAngleBC_;
+    // Normalisation expressions for (A-B)-C and A-(B-C) maps
+    std::shared_ptr<OperateExpressionProcedureNode> dAngleABNormalisationExpression_, dAngleBCNormalisationExpression_;
     // Process3DNode for A-B vs B-C vs A-B-C distance-distance-angle data
     std::shared_ptr<Process3DProcedureNode> processDDA_;
 
