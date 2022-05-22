@@ -81,7 +81,8 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
         processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
         processDAngle_->keywords().set("LabelValue", std::string("g(r)"));
         auto dAngleNormalisation = processDAngle_->addNormalisationBranch();
-        dAngleNormalisation->create<OperateExpressionProcedureNode>({}, "value/sin(y)/sin(yDelta)");
+        dAngleNormalisationExpression_ = dAngleNormalisation->create<OperateExpressionProcedureNode>(
+            {}, fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
         dAngleNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
             {}, ConstNodeVector<SelectProcedureNode>({selectA_}));
         dAngleNormalisation->create<OperateNumberDensityNormaliseProcedureNode>({},

@@ -7,6 +7,7 @@
 #include "procedure/nodes/calculateaxisangle.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
+#include "procedure/nodes/operateexpression.h"
 #include "procedure/nodes/select.h"
 
 // Run main processing
@@ -18,6 +19,7 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, const ProcessPool &pr
 
     // Ensure any parameters in our nodes are set correctly
     calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
+    dAngleNormalisationExpression_->setExpression(fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
     collectDistance_->keywords().set("RangeX", distanceRange_);
     collectAngle_->keywords().set("RangeX", angleRange_);
     collectDAngle_->keywords().set("RangeX", distanceRange_);
