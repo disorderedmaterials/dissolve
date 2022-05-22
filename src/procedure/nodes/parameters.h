@@ -34,7 +34,7 @@ class ParametersProcedureNode : public ProcedureNode
 
     public:
     // Add new parameter
-    void addParameter(std::string_view name, ExpressionValue initialValue);
+    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, ExpressionValue initialValue);
     // Return the named parameter (if it exists)
     std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
                                                      std::shared_ptr<ExpressionVariable> excludeParameter) override;
