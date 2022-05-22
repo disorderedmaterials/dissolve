@@ -18,6 +18,13 @@ class CalculateAngleProcedureNode : public CalculateProcedureNodeBase
     ~CalculateAngleProcedureNode() override = default;
 
     /*
+     * Data
+     */
+    private:
+    // Whether the angle should be considered symmetric about 90 (i.e. 0 == 180)
+    bool symmetric_{false};
+
+    /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)
      */
     public:
