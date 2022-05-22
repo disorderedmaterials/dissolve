@@ -4,8 +4,10 @@
 #include "base/sysfunc.h"
 #include "main/dissolve.h"
 #include "modules/calculate_dangle/dangle.h"
+#include "procedure/nodes/calculateangle.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
+#include "procedure/nodes/operateexpression.h"
 #include "procedure/nodes/select.h"
 
 // Run main processing
@@ -16,6 +18,8 @@ bool CalculateDAngleModule::process(Dissolve &dissolve, const ProcessPool &procP
         return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
+    calculateAngle_->keywords().set("Symmetric", symmetric_);
+    dAngleNormalisationExpression_->setExpression(fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
     collectDistance_->keywords().set("RangeX", distanceRange_);
     collectAngle_->keywords().set("RangeX", angleRange_);
     collectDAngle_->keywords().set("RangeX", distanceRange_);
