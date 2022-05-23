@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "gui/helpers/comboboxcontroller.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/node.h"
 
@@ -17,9 +16,9 @@ NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, NodeKeywordBase *keyword, 
     // Get allowed nodes, set model for combo box, and set current index
     allowedNodes_ = keyword_->allowedNodes();
     nodeModel_.setData(allowedNodes_);
-    auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
-    if (it != allowedNodes_.end())
-        ui_.NodeCombo->setCurrentIndex(it - allowedNodes_.begin());
+    auto it = std::find_if(allowedNodes_.begin(), allowedNodes_.end(),
+                           [&](const auto &node) { return node.get() == keyword_->baseNode().get(); });
+    ui_.NodeCombo->setCurrentIndex(it == allowedNodes_.end() ? -1 : it - allowedNodes_.begin());
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -59,4 +58,12 @@ void NodeKeywordWidget::on_ClearButton_clicked(bool checked)
  */
 
 // Update value displayed in widget
-void NodeKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
+void NodeKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    refreshing_ = true;
+
+    auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
+    ui_.NodeCombo->setCurrentIndex(it == allowedNodes_.end() ? -1 : it - allowedNodes_.begin());
+
+    refreshing_ = false;
+}

@@ -182,8 +182,15 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 
     if (ret == QMessageBox::Yes)
     {
+        // Clear the messages
+        dissolveWindow_->clearMessages();
+
+        // Initialise the content
         configuration_->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
+
+        // Update
         updateControls();
+        dissolveWindow_->updateStatusBar();
     }
 }
 

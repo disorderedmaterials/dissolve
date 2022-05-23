@@ -31,8 +31,10 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual ConstNodeRef baseNode() = 0;
     // Set node
     virtual bool setNode(ConstNodeRef node) = 0;
-    // Set index
-    virtual void setIndex(int i) = 0;
+    // Set integer
+    virtual void setInteger(int i) = 0;
+    // Return integer
+    virtual int integer() const = 0;
 };
 
 // Keyword managing ProcedureNode and integer index
@@ -81,8 +83,10 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
 
         return true;
     }
-    // Set index
-    virtual void setIndex(int i) { data_.second = i; }
+    // Set integer
+    virtual void setInteger(int i) override { data_.second = i; }
+    // Return integer
+    virtual int integer() const override { return data_.second; }
 
     /*
      * Arguments
@@ -100,7 +104,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
                                     KeywordBase::name());
 
         if (parser.hasArg(startArg + 1))
-            setIndex(parser.argi(startArg + 1));
+            setInteger(parser.argi(startArg + 1));
 
         return setNode(node);
     }

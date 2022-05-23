@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "gui/helpers/comboboxcontroller.h"
 #include "modules/rdf/gui/ui_rdfwidget.h"
 #include "modules/widget.h"
 

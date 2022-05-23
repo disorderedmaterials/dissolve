@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "gui/helpers/comboboxcontroller.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/nodeandinteger.h"
 
@@ -23,8 +22,7 @@ NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, NodeAn
     allowedNodes_ = keyword_->allowedNodes();
     nodeModel_.setData(allowedNodes_);
     auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
-    if (it != allowedNodes_.end())
-        ui_.NodeCombo->setCurrentIndex(it - allowedNodes_.begin());
+    ui_.NodeCombo->setCurrentIndex(it == allowedNodes_.end() ? -1 : it - allowedNodes_.begin());
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -43,7 +41,7 @@ void NodeAndIntegerKeywordWidget::on_IntegerSpin_valueChanged(int value)
     if (refreshing_)
         return;
 
-    keyword_->setIndex(value);
+    keyword_->setInteger(value);
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
@@ -63,4 +61,14 @@ void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
  */
 
 // Update value displayed in widget
-void NodeAndIntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
+void NodeAndIntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    refreshing_ = true;
+
+    auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
+    ui_.NodeCombo->setCurrentIndex(it == allowedNodes_.end() ? -1 : it - allowedNodes_.begin());
+
+    ui_.IntegerSpin->setValue(keyword_->integer());
+
+    refreshing_ = false;
+}
