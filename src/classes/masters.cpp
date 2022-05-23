@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "classes/masters.h"
+#include "classes/coredata.h"
 
-SerialisedValue Masters::serialise() const
+SerialisedValue CoreData::Masters::serialise() const
 {
     SerialisedValue node;
     Serialisable::fromVectorToTable<>(bonds, "bonds", node);
@@ -13,7 +13,7 @@ SerialisedValue Masters::serialise() const
     return node;
 }
 
-void Masters::deserialise(SerialisedValue &node)
+void CoreData::Masters::deserialise(SerialisedValue &node)
 {
     Serialisable::toMap(node, "bonds", [this](const std::string &name, SerialisedValue &bond) {
         bonds.emplace_back(std::make_unique<MasterBond>(name))->deserialise(bond);

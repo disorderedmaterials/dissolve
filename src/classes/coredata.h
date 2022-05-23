@@ -5,7 +5,6 @@
 
 #include "base/version.h"
 #include "classes/configuration.h"
-#include "classes/masters.h"
 #include "classes/species.h"
 #include "data/elements.h"
 #include "templates/optionalref.h"
@@ -68,6 +67,21 @@ class CoreData
      * Master Intramolecular Terms
      */
     private:
+    class Masters : public Serialisable
+    {
+        public:
+        Masters() = default;
+        // Master Bond parameters for Species
+        std::vector<std::shared_ptr<MasterBond>> bonds;
+        // Master Angles parameters for Species
+        std::vector<std::shared_ptr<MasterAngle>> angles;
+        // Master Torsions parameters for Species
+        std::vector<std::shared_ptr<MasterTorsion>> torsions;
+        // Master Improper parameters for Species
+        std::vector<std::shared_ptr<MasterImproper>> impropers;
+        SerialisedValue serialise() const override;
+        void deserialise(SerialisedValue &node) override;
+    };
     // Master terms
     Masters masters_;
 
