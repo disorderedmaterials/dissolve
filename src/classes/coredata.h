@@ -69,19 +69,19 @@ class CoreData
     private:
     class Masters : public Serialisable
     {
-	public:
-	// Master Bond parameters for Species
-	std::vector<std::shared_ptr<MasterBond>> bonds;
-	// Master Angles parameters for Species
-	std::vector<std::shared_ptr<MasterAngle>> angles;
-	// Master Torsions parameters for Species
-	std::vector<std::shared_ptr<MasterTorsion>> torsions;
-	// Master Improper parameters for Species
-	std::vector<std::shared_ptr<MasterImproper>> impropers;
+        public:
+        // Master Bond parameters for Species
+        std::vector<std::shared_ptr<MasterBond>> bonds;
+        // Master Angles parameters for Species
+        std::vector<std::shared_ptr<MasterAngle>> angles;
+        // Master Torsions parameters for Species
+        std::vector<std::shared_ptr<MasterTorsion>> torsions;
+        // Master Improper parameters for Species
+        std::vector<std::shared_ptr<MasterImproper>> impropers;
 
-	// Serialisation
-	SerialisedValue serialise() const override;
-	void deserialise(SerialisedValue &node) override;
+        // Serialisation
+        SerialisedValue serialise() const override;
+        void deserialise(SerialisedValue &node) override;
     };
     // Master terms
     Masters masters_;
