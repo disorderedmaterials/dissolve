@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <algorithm>
+#include <fmt/core.h>
 #include <string_view>
 #include <vector>
 
@@ -67,6 +69,24 @@ class DissolveSys
     static std::vector<double> splitStringToDoubles(std::string_view str, std::string_view delim = ", ");
     // Double any of the supplied characters in the string
     static std::string doubleChars(const std::string_view s, const std::string_view charsToDouble);
+    // Return unique name for object
+    template <class Range, class NameFunction>
+    static std::string uniqueName(std::string baseName, const Range &objects, NameFunction nameFunction)
+    {
+        // Check for empty base name
+        if (baseName.empty())
+            baseName = "UnnamedObject";
+        std::string uniqueName{baseName};
+
+        // Iterate until we find an unused name
+        auto suffix = 0;
+        while (std::find_if(objects.begin(), objects.end(), [nameFunction, &uniqueName](const auto &object) {
+                   return DissolveSys::sameString(nameFunction(object), uniqueName);
+               }) != objects.end())
+            uniqueName = fmt::format("{}{:02d}", baseName, ++suffix);
+
+        return uniqueName;
+    }
 
     /*
      * Files
