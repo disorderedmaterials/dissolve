@@ -7,7 +7,6 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-Isotopologue::Isotopologue() {}
 Isotopologue::Isotopologue(std::string name) : name_(name) {}
 
 /*

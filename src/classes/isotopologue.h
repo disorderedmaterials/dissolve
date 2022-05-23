@@ -22,8 +22,7 @@ class CoreData;
 class Isotopologue : public Serialisable
 {
     public:
-    Isotopologue();
-    Isotopologue(std::string name);
+    Isotopologue(std::string name = "");
     ~Isotopologue() = default;
 
     /*
