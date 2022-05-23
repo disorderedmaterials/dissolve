@@ -3,7 +3,6 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
 #include "gui/helpers/comboboxupdater.h"
 #include "gui/render/renderabledata3d.h"
 #include "gui/render/renderablespecies.h"
