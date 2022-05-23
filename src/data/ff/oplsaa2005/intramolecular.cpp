@@ -2158,6 +2158,10 @@ OptionalReferenceWrapper<const ForcefieldImproperTerm>
 OPLSAA2005BaseForcefield::getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
                                           const ForcefieldAtomType &l) const
 {
-    static std::vector<ForcefieldImproperTerm> improperTerms = {};
+    static std::vector<ForcefieldImproperTerm> improperTerms = {
+        //	i	j	k	l	Form    Parameters
+        {"CM", "*", "*", "*", TorsionFunctions::Form::Cos3, {0.0, 30.0, 0.0}},
+        {"CA", "*", "*", "*", TorsionFunctions::Form::Cos3, {0.0, 2.2, 0.0}}};
+
     return Forcefield::termMatch_(improperTerms, i, j, k, l);
 }
