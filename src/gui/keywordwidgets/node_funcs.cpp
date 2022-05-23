@@ -59,4 +59,12 @@ void NodeKeywordWidget::on_ClearButton_clicked(bool checked)
  */
 
 // Update value displayed in widget
-void NodeKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
+void NodeKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    refreshing_ = true;
+
+    auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
+    ui_.NodeCombo->setCurrentIndex(it == allowedNodes_.end() ? -1 : it - allowedNodes_.begin());
+
+    refreshing_ = false;
+}

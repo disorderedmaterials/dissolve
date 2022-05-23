@@ -62,4 +62,14 @@ void NodeAndIntegerKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
  */
 
 // Update value displayed in widget
-void NodeAndIntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
+void NodeAndIntegerKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    refreshing_ = true;
+
+    auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
+    ui_.NodeCombo->setCurrentIndex(it == allowedNodes_.end() ? -1 : it - allowedNodes_.begin());
+
+    ui_.IntegerSpin->setValue(keyword_->integer());
+
+    refreshing_ = false;
+}
