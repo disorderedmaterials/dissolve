@@ -29,8 +29,7 @@ class Forcefield;
 class Species : public Serialisable
 {
     public:
-    Species();
-    Species(std::string name);
+    Species(std::string name = "Unnamed");
     ~Species() = default;
     // Clear Data
     void clear();
