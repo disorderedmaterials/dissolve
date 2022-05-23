@@ -205,7 +205,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         else
             result["form"] = Functions::forms().keyword(interactionForm());
 
-        std::vector<double> values = interactionPotential().parameters();
+        auto values = interactionPotential().parameters();
         if (!values.empty())
         {
             SerialisedValue parametersNode;
