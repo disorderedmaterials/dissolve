@@ -222,6 +222,7 @@ SerialisedValue Species::serialise() const
 
     return species;
 }
+
 // This method populates the object's members with values read from a 'species.name' TOML node
 void Species::deserialise(SerialisedValue &node, CoreData &coreData)
 {
