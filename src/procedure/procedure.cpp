@@ -21,13 +21,6 @@ Procedure::~Procedure() = default;
 // Clear all data
 void Procedure::clear() { rootSequence_->clear(); }
 
-// Add (own) specified node to root sequence
-void Procedure::addRootSequenceNode(NodeRef node)
-{
-    rootSequence_->addNode(node);
-    node->setScope(std::dynamic_pointer_cast<SequenceProcedureNode>(rootSequence_->shared_from_this()));
-}
-
 // Return root sequence
 const SequenceProcedureNode &Procedure::rootSequence() const { return *rootSequence_; }
 

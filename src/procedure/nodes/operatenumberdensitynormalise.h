@@ -11,7 +11,7 @@ class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBa
 {
     public:
     OperateNumberDensityNormaliseProcedureNode(
-        std::vector<std::shared_ptr<const SelectProcedureNode>> nodes = {},
+        ConstNodeVector<SelectProcedureNode> nodes = {},
         SelectProcedureNode::SelectionPopulation populationTarget = SelectProcedureNode::SelectionPopulation::Available);
     ~OperateNumberDensityNormaliseProcedureNode() override = default;
 
@@ -20,7 +20,7 @@ class OperateNumberDensityNormaliseProcedureNode : public OperateProcedureNodeBa
      */
     private:
     // Select nodes containing sites for normalisation
-    std::vector<std::shared_ptr<const SelectProcedureNode>> normalisationSites_;
+    ConstNodeVector<SelectProcedureNode> normalisationSites_;
     // Target population to normalise against
     SelectProcedureNode::SelectionPopulation targetPopulation_;
 

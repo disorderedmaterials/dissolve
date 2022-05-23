@@ -41,13 +41,11 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
 {
     public:
-    NodeVectorKeyword(std::vector<std::shared_ptr<const N>> &data, ProcedureNode *parentNode, ProcedureNode::NodeType nodeType,
-                      bool onlyInScope)
+    NodeVectorKeyword(ConstNodeVector<N> &data, ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)
         : NodeVectorKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
     {
     }
-    NodeVectorKeyword(std::vector<std::shared_ptr<const N>> &data, ProcedureNode *parentNode,
-                      ProcedureNode::NodeClass nodeClass, bool onlyInScope)
+    NodeVectorKeyword(ConstNodeVector<N> &data, ProcedureNode *parentNode, ProcedureNode::NodeClass nodeClass, bool onlyInScope)
         : NodeVectorKeywordBase(parentNode, nodeType, onlyInScope), data_(data)
     {
     }
@@ -58,12 +56,12 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
      */
     private:
     // Reference to vector of data
-    std::vector<std::shared_ptr<const N>> &data_;
+    ConstNodeVector<N> &data_;
 
     public:
     // Return reference to vector of data
-    std::vector<std::shared_ptr<const N>> &data() { return data_; }
-    const std::vector<std::shared_ptr<const N>> &data() const { return data_; }
+    ConstNodeVector<N> &data() { return data_; }
+    const ConstNodeVector<N> &data() const { return data_; }
     // Add node to vector
     bool addNode(ConstNodeRef node) override
     {

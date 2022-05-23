@@ -12,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedureNode(
-    std::vector<std::shared_ptr<const SelectProcedureNode>> nodes, SelectProcedureNode::SelectionPopulation populationTarget)
+    ConstNodeVector<SelectProcedureNode> nodes, SelectProcedureNode::SelectionPopulation populationTarget)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise),
       normalisationSites_(std::move(nodes)), targetPopulation_{populationTarget}
 {

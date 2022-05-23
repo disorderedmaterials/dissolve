@@ -10,7 +10,7 @@
 #include "procedure/nodes/select.h"
 
 OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(
-    std::vector<std::shared_ptr<const SelectProcedureNode>> sites)
+    ConstNodeVector<SelectProcedureNode> sites)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateSitePopulationNormalise), normalisationSites_(std::move(sites))
 {
     // Create keywords - store the pointers to the superclasses for later use

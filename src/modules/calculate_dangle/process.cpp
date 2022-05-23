@@ -21,9 +21,9 @@ bool CalculateDAngleModule::process(Dissolve &dissolve, const ProcessPool &procP
     collectDAngle_->keywords().set("RangeX", distanceRange_);
     collectDAngle_->keywords().set("RangeY", angleRange_);
     if (excludeSameMolecule_)
-        selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+        selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
     else
-        selectC_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
+        selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

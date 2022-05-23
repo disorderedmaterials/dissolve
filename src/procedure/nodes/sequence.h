@@ -56,11 +56,29 @@ class SequenceProcedureNode : public ProcedureNode
         void next();
     };
 
+    private:
+    // Add (own) node into sequence
+    void addNode(NodeRef nodeToAdd);
+
     public:
     // Clear all data
     void clear();
-    // Add (own) node into sequence
-    void addNode(NodeRef nodeToAdd);
+    // Create new node
+    template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&... args)
+    {
+        // Create the new node
+        auto node = std::make_shared<N>(args...);
+
+        // Set its name
+        node->setName(name);
+
+        // Add node to our sequence, checking context / naming
+        addNode(node);
+
+        return node;
+    }
+    // Create new node by enumerated type
+    std::shared_ptr<ProcedureNode> create(ProcedureNode::NodeType nodeType, std::string_view name);
     // Return sequential node list
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence

@@ -23,9 +23,9 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, const ProcessPool &pr
     collectDAngle_->keywords().set("RangeX", distanceRange_);
     collectDAngle_->keywords().set("RangeY", angleRange_);
     if (excludeSameMolecule_)
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{selectA_});
+        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
     else
-        selectB_->keywords().set("ExcludeSameMolecule", std::vector<std::shared_ptr<const SelectProcedureNode>>{});
+        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

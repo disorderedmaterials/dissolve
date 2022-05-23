@@ -20,24 +20,20 @@ TEST(ProcedureModelTest, Basic)
 
     // Create a simple procedure with a parameters node
     Procedure procedure(ProcedureNode::AnalysisContext);
-    auto selectA = std::make_shared<SelectProcedureNode>();
-    auto selectB = std::make_shared<SelectProcedureNode>();
-    selectA->setName("A");
-    selectB->setName("B");
-    auto calcAB = std::make_shared<CalculateDistanceProcedureNode>(selectA, selectB);
-    auto collect = std::make_shared<Collect1DProcedureNode>(calcAB);
-
+    auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
+    auto selectB = procedure.createRootNode<SelectProcedureNode>("B");
+    auto calcAB = procedure.createRootNode<CalculateDistanceProcedureNode>({}, selectA, selectB);
+    auto collect = procedure.createRootNode<Collect1DProcedureNode>({}, calcAB);
     collect->addSubCollectBranch(ProcedureNode::AnalysisContext);
-    procedure.addRootSequenceNode(collect);
 
     ProcedureModel model(procedure);
 
     // Check out model root
     EXPECT_EQ(model.columnCount(QModelIndex()), 1);
-    EXPECT_EQ(model.rowCount(QModelIndex()), 1);
+    EXPECT_EQ(model.rowCount(QModelIndex()), 4);
 
-    // Checkout out first child
-    auto child = model.index(0, 0);
+    // Check out first child
+    auto child = model.index(3, 0);
     EXPECT_EQ(model.columnCount(child), 1);
     EXPECT_EQ(model.rowCount(child), 1);
     EXPECT_EQ(model.data(child, Qt::DisplayRole).toString().toStdString(), "Collect1D (Collect1D01)");
