@@ -1,7 +1,21 @@
 ---
 title: CalculateAvgMol (Module)
 linkTitle: CalculateAvgMol
-description: Caculate the average atomic coordinates for a particular species
+description: Calculate the average atomic coordinates for a particular species
 ---
 
-{{< todo-label >}}
+
+## Overview
+
+The `CalculateAvgMol` module calculates the average geometry of a species using an oriented site on that species as a reference. The average geometry is accumulated over all molecules of that type in the configuration.
+
+Results of the average molecule calculation can be used as a display reference in the {{< gui-module "CalculateSDF" >}} module.
+
+## Keywords
+
+### Targets
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Configuration`|`Configuration`|`--`|{{< required-label >}}Specifies the configuration on which to operate.|
+|`Site`|`Site`|`--`|{{< required-label >}}Target site about which to calculate the average species geometry. Must be an oriented site.|

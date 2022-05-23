@@ -20,13 +20,13 @@ The `CalculateAxisAngle` module calculates the angle between two vectors $u$ and
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`AngleRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`180.0`<br/>`10.0`|Range (min, max, binwidth) of angle binning.|
+|`AngleRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`180.0`<br/>`10.0`|Range (min, max, bin width) of angle binning.|
 |`AxisA`|[`SiteAxis`]({{< ref "siteaxis" >}})|`XAxis`|Axis representing the vector on site A to use in forming the angle.|
 |`AxisB`|[`SiteAxis`]({{< ref "siteaxis" >}})|`XAxis`|Axis representing the vector on site B to use in forming the angle.|
-|`DistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, binwidth) of A-B distance binning.|
+|`DistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of A-B distance binning.|
 |`ExcludeSameMolecule`|`bool`|false`|Whether to exclude correlations between A and B sites on the same molecule.|
-|`SiteA`|`name ...`|--|Specify site(s) which represent the first site 'A'.|
-|`SiteB`|`name ...`|--|Specify site(s) which represent the second site 'B'.|
+|`SiteA`|`Site ...`|--|Specify site(s) which represent the first site 'A'.|
+|`SiteB`|`Site ...`|--|Specify site(s) which represent the second site 'B'.|
 |`Symmetric`|`bool`|`false`|Whether to consider the angle as symmetric about 90, mapping all angles to the 0-90 range.|
 
 ## Export

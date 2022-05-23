@@ -20,12 +20,12 @@ The `CalculateDAngle` module calculates the angle between two vectors $u$ and $v
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`AngleRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`180.0`<br/>`10.0`|Range (min, max, binwidth) of angle binning.|
-|`DistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, binwidth) of A-B distance binning.|
+|`AngleRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`180.0`<br/>`10.0`|Range (min, max, bin width) of angle binning.|
+|`DistanceRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of A-B distance binning.|
 |`ExcludeSameMolecule`|`bool`|false`|Whether to exclude correlations between B and C sites on the same molecule.|
-|`SiteA`|`name ...`|--|Specify site(s) which represent 'A' in the interaction A-B-C.|
-|`SiteB`|`name ...`|--|Specify site(s) which represent 'B' in the interaction A-B-C.|
-|`SiteC`|`name ...`|--|Specify site(s) which represent 'C' in the interaction A-B-C.|
+|`SiteA`|`Site ...`|--|Specify site(s) which represent 'A' in the interaction A-B-C.|
+|`SiteB`|`Site ...`|--|Specify site(s) which represent 'B' in the interaction A-B-C.|
+|`SiteC`|`Site ...`|--|Specify site(s) which represent 'C' in the interaction A-B-C.|
 |`Symmetric`|`bool`|`false`|Whether to consider the angle as symmetric about 90, mapping all angles to the 0-90 range.|
 
 ## Export
