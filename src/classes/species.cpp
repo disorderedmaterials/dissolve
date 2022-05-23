@@ -226,7 +226,7 @@ SerialisedValue Species::serialise() const
 // This method populates the object's members with values read from a 'species.name' TOML node
 void Species::deserialise(SerialisedValue &node, CoreData &coreData)
 {
-    std::vector tomlAtoms = toml::find(node, "atoms").as_array();
+    auto tomlAtoms = toml::find(node, "atoms").as_array();
     for (auto tomlAtom : tomlAtoms)
         atoms_.emplace_back().deserialise(tomlAtom);
 
