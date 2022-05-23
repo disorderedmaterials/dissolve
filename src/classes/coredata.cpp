@@ -116,9 +116,6 @@ void CoreData::clearAtomTypes() { atomTypes_.clear(); }
  * Master Intramolecular Terms
  */
 
-CoreData::Masters &CoreData::masters() { return masters_; }
-const CoreData::Masters &CoreData::masters() const { return masters_; }
-
 // Add new master Bond parameters
 MasterBond &CoreData::addMasterBond(std::string_view name)
 {

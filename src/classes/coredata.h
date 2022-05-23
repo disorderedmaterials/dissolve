@@ -87,10 +87,10 @@ class CoreData
     Masters masters_;
 
     public:
-    // Get master terms
-    Masters &masters();
-    // Get master terms
-    const Masters &masters() const;
+    // Express Master terms as tree node
+    SerialisedValue serialiseMaster() const;
+    // Read Master values from tree node
+    void deserialiseMaster(SerialisedValue &node);
     // Add new master Bond parameters
     MasterBond &addMasterBond(std::string_view name);
     // Return number of master Bond parameters in list

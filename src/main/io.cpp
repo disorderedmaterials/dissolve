@@ -147,7 +147,7 @@ SerialisedValue Dissolve::serialise() const
     SerialisedValue root;
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
-        root["master"] = coreData_.masters().serialise();
+        root["master"] = coreData_.serialiseMaster();
 
     Serialisable::fromVectorToTable<>(species(), "species", root);
 
@@ -171,7 +171,7 @@ void Dissolve::deserialise(SerialisedValue &node)
     {
         auto &mastersNode = toml::find(node, "master");
         if (!mastersNode.is_uninitialized())
-            coreData_.masters().deserialise(mastersNode);
+            coreData_.deserialiseMaster(mastersNode);
     }
     Serialisable::toMap(node, "species", [this](const std::string &name, SerialisedValue &data) {
         species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_);
