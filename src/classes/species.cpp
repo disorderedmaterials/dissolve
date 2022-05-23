@@ -227,7 +227,7 @@ SerialisedValue Species::serialise() const
 void Species::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     auto tomlAtoms = toml::find(node, "atoms").as_array();
-    for (auto tomlAtom : tomlAtoms)
+    for (auto &tomlAtom : tomlAtoms)
         atoms_.emplace_back().deserialise(tomlAtom);
 
     Serialisable::toVector(node, "bonds", [this, &coreData](SerialisedValue &bond) {
