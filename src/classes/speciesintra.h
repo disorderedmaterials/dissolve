@@ -201,7 +201,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         SerialisedValue result;
 
         if (masterTerm_ != nullptr)
-            result["form"] = "@" + std::string(masterTerm_->name());
+            result["form"] = fmt::format("@{}", masterTerm_->name());
         else
             result["form"] = Functions::forms().keyword(interactionForm());
 
