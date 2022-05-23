@@ -25,7 +25,8 @@ Isotopologue *Species::addIsotopologue(std::string_view baseName)
 {
     auto &iso = isotopologues_.emplace_back(std::make_unique<Isotopologue>());
     iso->setParent(this);
-    iso->setName(uniqueIsotopologueName(baseName));
+    iso->setName(
+        DissolveSys::uniqueName(baseName, isotopologues_, [&](const auto &i) { return iso == i ? std::string() : i->name(); }));
     iso->update();
 
     return iso.get();
@@ -60,29 +61,15 @@ bool Species::hasIsotopologue(const Isotopologue *iso) const
     return std::any_of(isotopologues_.begin(), isotopologues_.end(), [iso](auto &i) { return i.get() == iso; });
 }
 
-// Generate unique Isotopologue name with base name provided
-std::string Species::uniqueIsotopologueName(std::string_view base, const Isotopologue *exclude)
-{
-    std::string_view baseName = base.empty() ? "Unnamed" : base;
-    std::string uniqueName{baseName};
-
-    auto suffix = 0;
-    while (findIsotopologue(uniqueName, exclude))
-        uniqueName = fmt::format("{}{}", baseName, ++suffix);
-
-    return uniqueName;
-}
-
 // Search for Isotopologue by name
-const Isotopologue *Species::findIsotopologue(std::string_view name, const Isotopologue *exclude) const
+const Isotopologue *Species::findIsotopologue(std::string_view name) const
 {
     // Check for the natural Isotopologue
     if (DissolveSys::sameString("Natural", name))
         return naturalIsotopologue();
 
-    auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(), [exclude, name](auto &iso) {
-        return iso.get() != exclude && DissolveSys::sameString(name, iso->name());
-    });
+    auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
+                           [name](auto &iso) { return DissolveSys::sameString(name, iso->name()); });
     if (it != isotopologues_.end())
         return it->get();
 

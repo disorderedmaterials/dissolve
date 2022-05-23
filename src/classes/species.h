@@ -291,10 +291,8 @@ class Species : public Serialisable
     const std::vector<std::unique_ptr<Isotopologue>> &isotopologues() const;
     // Return whether the specified Isotopologue exists
     bool hasIsotopologue(const Isotopologue *iso) const;
-    // Generate unique Isotopologue name with base name provided
-    std::string uniqueIsotopologueName(std::string_view baseName, const Isotopologue *exclude = nullptr);
     // Search for Isotopologue by name
-    const Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr) const;
+    const Isotopologue *findIsotopologue(std::string_view name) const;
     // Return index of specified Isotopologue
     int indexOfIsotopologue(const Isotopologue *iso) const;
 

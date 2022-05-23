@@ -213,7 +213,7 @@ void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
         return;
 
     // Generate a unique name before we duplicate
-    auto newName = dissolve_.coreData().uniqueAtomTypeName(at->name());
+    auto newName = DissolveSys::uniqueName(at->name(), dissolve_.atomTypes(), [](const auto &at) { return at->name(); });
     auto newAt = dissolve_.addAtomType(at->Z());
     newAt->setName(newName);
     newAt->setCharge(at->charge());

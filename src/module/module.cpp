@@ -185,20 +185,3 @@ std::vector<Module *> Module::allOfType(std::vector<std::string> types)
                  [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
     return modules;
 }
-
-// Generate unique Module name with base name provided
-std::string Module::uniqueName(std::string_view name, Module *exclude)
-{
-    std::string newName{name};
-
-    // Find an unused name starting with the baseName provided
-    auto suffix = 0;
-    while (std::find_if(instances_.begin(), instances_.end(), [newName, exclude](const auto *m) {
-               return (m != exclude) && DissolveSys::sameString(m->uniqueName(), newName);
-           }) != instances_.end())
-    {
-        newName = fmt::format("{}{:02d}", name, ++suffix);
-    }
-
-    return newName;
-}
