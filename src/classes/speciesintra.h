@@ -5,6 +5,7 @@
 
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include "base/serialiser.h"
 #include "classes/interactionpotential.h"
 #include "templates/algorithms.h"
 #include <string>
@@ -15,7 +16,7 @@ class SpeciesAtom;
 class Species;
 
 // Base class for intramolecular interactions within Species
-template <class Intra, class Functions> class SpeciesIntra
+template <class Intra, class Functions> class SpeciesIntra : public Serialisable
 {
     public:
     explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form){};
@@ -154,4 +155,66 @@ template <class Intra, class Functions> class SpeciesIntra
     virtual void setName(std::string_view name) { throw(std::runtime_error("Can't set the name of a base SpeciesIntra.\n")); }
     // Return identifying name (if a master term)
     virtual std::string_view name() const { return ""; };
+    // Load parameters from tree node
+    void deserialiseParameters(SerialisedValue &node)
+    {
+        if (node.contains("parameters"))
+        {
+            std::vector<std::string> parameters = Functions::parameters(interactionForm());
+            std::vector<double> values;
+            for (auto parameter : parameters)
+                values.push_back(node["parameters"][parameter].as_floating());
+            setInteractionFormAndParameters(interactionForm(), values);
+        }
+    }
+    // Load form from tree node
+    template <typename Lambda> void deserialiseForm(SerialisedValue &node, Lambda lambda)
+    {
+        if (node.contains("form"))
+        {
+            std::string form = node["form"].as_string();
+            if (form.find("@") != std::string::npos)
+            {
+                auto master = lambda(form);
+                if (!master)
+                    throw std::runtime_error("Master Term not found.");
+                setMasterTerm(&master->get());
+            }
+            else
+                setInteractionForm(Functions::forms().enumeration(form));
+        }
+        deserialiseParameters(node);
+    }
+    // Deserialise the form and parameters
+    void deserialise(SerialisedValue &node) override
+    {
+        if (node.contains("form"))
+        {
+            std::string form = node["form"].as_string();
+            setInteractionForm(Functions::forms().enumeration(form));
+        }
+        deserialiseParameters(node);
+    }
+    // Serialise the form and parameters
+    SerialisedValue serialise() const override
+    {
+        SerialisedValue result;
+
+        if (masterTerm_ != nullptr)
+            result["form"] = fmt::format("@{}", masterTerm_->name());
+        else
+            result["form"] = Functions::forms().keyword(interactionForm());
+
+        auto values = interactionPotential().parameters();
+        if (!values.empty())
+        {
+            SerialisedValue parametersNode;
+            std::vector<std::string> parameters = Functions::parameters(interactionForm());
+            for (auto parameterIndex = 0; parameterIndex < values.size(); ++parameterIndex)
+                parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+            result["parameters"] = parametersNode;
+        }
+
+        return result;
+    }
 };

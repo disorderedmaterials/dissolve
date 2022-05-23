@@ -13,6 +13,7 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
+class CoreData;
 
 // Bond functional forms
 class BondFunctions
@@ -35,7 +36,7 @@ class BondFunctions
 };
 
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>, public Serialisable
+class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
 {
     public:
     SpeciesBond();
@@ -127,6 +128,8 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>, public Seri
 
     // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(SerialisedValue &node, CoreData &coreData);
 };
 
 // MasterBond Definition
@@ -134,7 +137,7 @@ class MasterBond : public SpeciesBond
 {
     public:
     explicit MasterBond(std::string_view name) : SpeciesBond(), name_{name} {};
-
+    using SpeciesIntra<SpeciesBond, BondFunctions>::deserialise;
     /*
      * Identifying Name
      */

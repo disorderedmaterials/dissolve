@@ -13,6 +13,7 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
+class CoreData;
 
 // Torsion functional forms
 class TorsionFunctions
@@ -41,7 +42,7 @@ class TorsionFunctions
 };
 
 // SpeciesTorsion Definition
-class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>, public Serialisable
+class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
 {
     public:
     SpeciesTorsion();
@@ -116,6 +117,8 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>, pu
 
     // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(SerialisedValue &node, CoreData &coreData);
 };
 
 // MasterTorsion Definition
@@ -123,6 +126,7 @@ class MasterTorsion : public SpeciesTorsion
 {
     public:
     explicit MasterTorsion(std::string_view name) : SpeciesTorsion(), name_{name} {};
+    using SpeciesIntra<SpeciesTorsion, TorsionFunctions>::deserialise;
 
     /*
      * Identifying Name

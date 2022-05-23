@@ -468,3 +468,20 @@ SerialisedValue SpeciesAtom::serialise() const
     atom["type"] = atomType_->name().data();
     return atom;
 }
+void SpeciesAtom::deserialise(SerialisedValue &node)
+{
+    index_ = node["index"].as_integer() - 1;
+    Z_ = Elements::element(std::string(node["z"].as_string()));
+
+    std::vector r = node["r"].as_array();
+    r_ = Vec3<double>(r[0].as_floating(), r[1].as_floating(), r[2].as_floating());
+
+    if (node.contains("charge"))
+        charge_ = node["charge"].as_floating();
+
+    if (node.contains("type") && Z_ != Elements::Unknown)
+    {
+        atomType_ = std::make_shared<AtomType>(AtomType(Z_));
+        atomType_->setName(std::string(node["type"].as_string()));
+    }
+}

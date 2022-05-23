@@ -147,14 +147,7 @@ SerialisedValue Dissolve::serialise() const
     SerialisedValue root;
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
         !coreData_.masterImpropers().empty())
-    {
-        SerialisedValue masterNode;
-        Serialisable::fromVectorToTable<>(coreData_.masterBonds(), "bonds", masterNode);
-        Serialisable::fromVectorToTable<>(coreData_.masterAngles(), "angles", masterNode);
-        Serialisable::fromVectorToTable<>(coreData_.masterTorsions(), "torsions", masterNode);
-        Serialisable::fromVectorToTable<>(coreData_.masterImpropers(), "impropers", masterNode);
-        root["master"] = masterNode;
-    }
+        root["master"] = coreData_.serialiseMaster();
 
     Serialisable::fromVectorToTable<>(species(), "species", root);
 
@@ -174,6 +167,15 @@ void Dissolve::deserialise(SerialisedValue &node)
         if (!pairPotentialsNode.is_uninitialized())
             serializablePairPotential_.deserialise(pairPotentialsNode);
     }
+    if (node.contains("master"))
+    {
+        auto &mastersNode = toml::find(node, "master");
+        if (!mastersNode.is_uninitialized())
+            coreData_.deserialiseMaster(mastersNode);
+    }
+    Serialisable::toMap(node, "species", [this](const std::string &name, SerialisedValue &data) {
+        species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_);
+    });
 }
 
 // Load input from supplied file

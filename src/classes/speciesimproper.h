@@ -16,7 +16,7 @@ class SpeciesAtom;
 class Species;
 
 // SpeciesImproper Definition
-class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>, public Serialisable
+class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>
 {
     public:
     SpeciesImproper();
@@ -89,6 +89,8 @@ class SpeciesImproper : public SpeciesIntra<SpeciesImproper, TorsionFunctions>, 
 
     // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(SerialisedValue &node, CoreData &coreData);
 };
 
 // MasterImproper Definition
@@ -96,6 +98,7 @@ class MasterImproper : public SpeciesImproper
 {
     public:
     explicit MasterImproper(std::string_view name) : SpeciesImproper(), name_{name} {};
+    using SpeciesIntra<SpeciesImproper, TorsionFunctions>::deserialise;
 
     /*
      * Identifying Name

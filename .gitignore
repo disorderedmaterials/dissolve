@@ -53,4 +53,6 @@ tests/epsr/H2OX-weighted-total.gr.broad
 tests/epsr/HDO-ReferenceData.q
 tests/epsr/HDO-ReferenceData.r
 
+# Visual Studio
 .vscode/
+.vs/

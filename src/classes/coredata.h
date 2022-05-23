@@ -15,6 +15,10 @@
 
 // Forward Declarations
 class Module;
+class MasterBond;
+class MasterAngle;
+class MasterTorsion;
+class MasterImproper;
 
 // Core Data Container
 class CoreData
@@ -61,16 +65,30 @@ class CoreData
      * Master Intramolecular Terms
      */
     private:
-    // Master Bond parameters for Species
-    std::vector<std::shared_ptr<MasterBond>> masterBonds_;
-    // Master Angles parameters for Species
-    std::vector<std::shared_ptr<MasterAngle>> masterAngles_;
-    // Master Torsions parameters for Species
-    std::vector<std::shared_ptr<MasterTorsion>> masterTorsions_;
-    // Master Improper parameters for Species
-    std::vector<std::shared_ptr<MasterImproper>> masterImpropers_;
+    class Masters : public Serialisable
+    {
+        public:
+        // Master Bond parameters for Species
+        std::vector<std::shared_ptr<MasterBond>> bonds;
+        // Master Angles parameters for Species
+        std::vector<std::shared_ptr<MasterAngle>> angles;
+        // Master Torsions parameters for Species
+        std::vector<std::shared_ptr<MasterTorsion>> torsions;
+        // Master Improper parameters for Species
+        std::vector<std::shared_ptr<MasterImproper>> impropers;
+
+        // Serialisation
+        SerialisedValue serialise() const override;
+        void deserialise(SerialisedValue &node) override;
+    };
+    // Master terms
+    Masters masters_;
 
     public:
+    // Express Master terms as tree node
+    SerialisedValue serialiseMaster() const;
+    // Read Master values from tree node
+    void deserialiseMaster(SerialisedValue &node);
     // Add new master Bond parameters
     MasterBond &addMasterBond(std::string_view name);
     // Return number of master Bond parameters in list

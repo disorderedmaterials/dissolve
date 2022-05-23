@@ -49,6 +49,12 @@ class Serialisable
         fromVector(vector, name, node, [](const auto &item) { return item->serialise(); });
     }
     // A helper function to add the elements of a vector to a node under a name
+    template <typename T>
+    static void fromVector(const std::vector<std::shared_ptr<T>> &vector, std::string name, SerialisedValue &node)
+    {
+        fromVector(vector, name, node, [](const auto &item) { return item->serialise(); });
+    }
+    // A helper function to add the elements of a vector to a node under a name
     template <typename T> static void fromVector(const std::vector<T> &vector, std::string name, SerialisedValue &node)
     {
         fromVector(vector, name, node, [](const auto &item) { return item.serialise(); });
@@ -63,5 +69,21 @@ class Serialisable
         for (auto &item : vector)
             result.push_back(toSerial(item));
         node[name] = result;
+    }
+
+    // Act over each value in a node table, if the key exists
+    template <typename Lambda> static void toMap(SerialisedValue &node, std::string key, Lambda action)
+    {
+        if (node.contains(key))
+            for (auto &[key, value] : node[key].as_table())
+                action(key, value);
+    }
+
+    // Act over each value in a node table, if the key exists
+    template <typename Lambda> static void toVector(SerialisedValue &node, std::string key, Lambda action)
+    {
+        if (node.contains(key))
+            for (auto &item : node[key].as_array())
+                action(item);
     }
 };

@@ -29,7 +29,7 @@ class Forcefield;
 class Species : public Serialisable
 {
     public:
-    Species();
+    Species(std::string name = "Unnamed");
     ~Species() = default;
     // Clear Data
     void clear();
@@ -374,4 +374,6 @@ class Species : public Serialisable
 
     // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(SerialisedValue &node, CoreData &coreData);
 };

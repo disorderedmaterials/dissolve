@@ -13,6 +13,7 @@
 // Forward Declarations
 class SpeciesAtom;
 class Species;
+class CoreData;
 
 // Angle functional forms
 class AngleFunctions
@@ -36,7 +37,7 @@ class AngleFunctions
 };
 
 // SpeciesAngle Definition
-class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>, public Serialisable
+class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>
 {
     public:
     SpeciesAngle();
@@ -101,6 +102,8 @@ class SpeciesAngle : public SpeciesIntra<SpeciesAngle, AngleFunctions>, public S
 
     // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(SerialisedValue &node, CoreData &coreData);
 };
 
 // MasterAngle Definition
@@ -108,6 +111,7 @@ class MasterAngle : public SpeciesAngle
 {
     public:
     explicit MasterAngle(std::string_view name) : SpeciesAngle(), name_{name} {};
+    using SpeciesIntra<SpeciesAngle, AngleFunctions>::deserialise;
 
     /*
      * Identifying Name

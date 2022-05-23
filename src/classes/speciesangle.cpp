@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/speciesangle.h"
+#include "classes/coredata.h"
 #include "classes/speciesatom.h"
 #include <map>
 
@@ -364,7 +365,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 // Express as a tree node
 SerialisedValue SpeciesAngle::serialise() const
 {
-    SerialisedValue angle;
+    auto angle = SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise();
     if (i_ != nullptr)
         angle["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -372,22 +373,10 @@ SerialisedValue SpeciesAngle::serialise() const
     if (k_ != nullptr)
         angle["k"] = k_->userIndex();
 
-    std::string form = "@";
-    if (masterTerm_ != nullptr)
-        form += masterTerm_->name();
-    else
-        form = AngleFunctions::forms().keyword(interactionForm());
-    angle["form"] = form;
-
-    std::vector<double> values = SpeciesAngle::interactionPotential().parameters();
-    if (!values.empty())
-    {
-        SerialisedValue parametersNode;
-        std::vector<std::string> parameters = AngleFunctions::parameters(interactionForm());
-        for (auto &&[parameter, value] : zip(parameters, values))
-            parametersNode[parameter] = value;
-        angle["parameters"] = parametersNode;
-    }
-
     return angle;
+}
+// This method populates the object's members with values read from an 'angle' TOML node
+void SpeciesAngle::deserialise(SerialisedValue &node, CoreData &coreData)
+{
+    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterAngle(form); });
 }

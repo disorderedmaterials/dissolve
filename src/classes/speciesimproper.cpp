@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/speciesimproper.h"
+#include "classes/coredata.h"
 #include "classes/speciesatom.h"
 #include "classes/speciestorsion.h"
 
@@ -227,7 +228,7 @@ double SpeciesImproper::force(double angleInDegrees) const
 // Express as a tree node
 SerialisedValue SpeciesImproper::serialise() const
 {
-    SerialisedValue improper;
+    auto improper = SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise();
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();
     if (j_ != nullptr)
@@ -237,22 +238,10 @@ SerialisedValue SpeciesImproper::serialise() const
     if (l_ != nullptr)
         improper["l"] = l_->userIndex();
 
-    std::string form = "@";
-    if (masterTerm_ != nullptr)
-        form += masterTerm_->name();
-    else
-        form = TorsionFunctions::forms().keyword(interactionForm());
-    improper["form"] = form;
-
-    std::vector<double> values = SpeciesImproper::interactionPotential().parameters();
-    if (!values.empty())
-    {
-        SerialisedValue parametersNode;
-        int index = 0;
-        for (auto &value : values)
-            parametersNode[TorsionFunctions::parameter(interactionForm(), index++)] = value;
-        improper["parameters"] = parametersNode;
-    }
-
     return improper;
+}
+// This method populates the object's members with values read from an 'improper' TOML node
+void SpeciesImproper::deserialise(SerialisedValue &node, CoreData &coreData)
+{
+    deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterImproper(form); });
 }

@@ -16,10 +16,10 @@ void CoreData::clear()
 {
     configurations_.clear();
     species_.clear();
-    masterBonds_.clear();
-    masterAngles_.clear();
-    masterTorsions_.clear();
-    masterImpropers_.clear();
+    masters_.bonds.clear();
+    masters_.angles.clear();
+    masters_.torsions.clear();
+    masters_.impropers.clear();
     atomTypes_.clear();
 }
 
@@ -112,15 +112,15 @@ MasterBond &CoreData::addMasterBond(std::string_view name)
         throw(std::runtime_error(
             fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
 
-    return *masterBonds_.emplace_back(std::make_shared<MasterBond>(name));
+    return *masters_.bonds.emplace_back(std::make_shared<MasterBond>(name));
 }
 
 // Return number of master Bond parameters in list
-int CoreData::nMasterBonds() const { return masterBonds_.size(); }
+int CoreData::nMasterBonds() const { return masters_.bonds.size(); }
 
 // Return list of master Bond parameters
-std::vector<std::shared_ptr<MasterBond>> &CoreData::masterBonds() { return masterBonds_; }
-const std::vector<std::shared_ptr<MasterBond>> &CoreData::masterBonds() const { return masterBonds_; }
+std::vector<std::shared_ptr<MasterBond>> &CoreData::masterBonds() { return masters_.bonds; }
+const std::vector<std::shared_ptr<MasterBond>> &CoreData::masterBonds() const { return masters_.bonds; }
 
 // Return whether named master Bond parameters exist
 OptionalReferenceWrapper<const MasterBond> CoreData::getMasterBond(std::string_view name) const
@@ -128,7 +128,7 @@ OptionalReferenceWrapper<const MasterBond> CoreData::getMasterBond(std::string_v
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto &b : masterBonds_)
+    for (auto &b : masters_.bonds)
         if (DissolveSys::sameString(trimmedName, b->name()))
             return *b;
     return {};
@@ -140,7 +140,7 @@ OptionalReferenceWrapper<MasterBond> CoreData::getMasterBond(std::string_view na
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto &b : masterBonds_)
+    for (auto &b : masters_.bonds)
         if (DissolveSys::sameString(trimmedName, b->name()))
             return *b;
     return {};
@@ -154,15 +154,15 @@ MasterAngle &CoreData::addMasterAngle(std::string_view name)
         throw(std::runtime_error(
             fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
-    return *masterAngles_.emplace_back(std::make_shared<MasterAngle>(name));
+    return *masters_.angles.emplace_back(std::make_shared<MasterAngle>(name));
 }
 
 // Return number of master Angle parameters in list
-int CoreData::nMasterAngles() const { return masterAngles_.size(); }
+int CoreData::nMasterAngles() const { return masters_.angles.size(); }
 
 // Return list of master Angle parameters
-std::vector<std::shared_ptr<MasterAngle>> &CoreData::masterAngles() { return masterAngles_; }
-const std::vector<std::shared_ptr<MasterAngle>> &CoreData::masterAngles() const { return masterAngles_; }
+std::vector<std::shared_ptr<MasterAngle>> &CoreData::masterAngles() { return masters_.angles; }
+const std::vector<std::shared_ptr<MasterAngle>> &CoreData::masterAngles() const { return masters_.angles; }
 
 // Return whether named master Angle parameters exist
 OptionalReferenceWrapper<MasterAngle> CoreData::getMasterAngle(std::string_view name)
@@ -170,7 +170,7 @@ OptionalReferenceWrapper<MasterAngle> CoreData::getMasterAngle(std::string_view 
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto &a : masterAngles_)
+    for (auto &a : masters_.angles)
         if (DissolveSys::sameString(trimmedName, a->name()))
             return *a;
     return {};
@@ -182,7 +182,7 @@ OptionalReferenceWrapper<const MasterAngle> CoreData::getMasterAngle(std::string
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto &a : masterAngles_)
+    for (auto &a : masters_.angles)
         if (DissolveSys::sameString(trimmedName, a->name()))
             return *a;
     return {};
@@ -196,15 +196,15 @@ MasterTorsion &CoreData::addMasterTorsion(std::string_view name)
         throw(std::runtime_error(fmt::format(
             "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
 
-    return *masterTorsions_.emplace_back(std::make_shared<MasterTorsion>(name));
+    return *masters_.torsions.emplace_back(std::make_shared<MasterTorsion>(name));
 }
 
 // Return number of master Torsion parameters in list
-int CoreData::nMasterTorsions() const { return masterTorsions_.size(); }
+int CoreData::nMasterTorsions() const { return masters_.torsions.size(); }
 
 // Return list of master Torsion parameters
-std::vector<std::shared_ptr<MasterTorsion>> &CoreData::masterTorsions() { return masterTorsions_; }
-const std::vector<std::shared_ptr<MasterTorsion>> &CoreData::masterTorsions() const { return masterTorsions_; }
+std::vector<std::shared_ptr<MasterTorsion>> &CoreData::masterTorsions() { return masters_.torsions; }
+const std::vector<std::shared_ptr<MasterTorsion>> &CoreData::masterTorsions() const { return masters_.torsions; }
 
 // Return whether named master Torsion parameters exist
 OptionalReferenceWrapper<const MasterTorsion> CoreData::getMasterTorsion(std::string_view name) const
@@ -212,7 +212,7 @@ OptionalReferenceWrapper<const MasterTorsion> CoreData::getMasterTorsion(std::st
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto &t : masterTorsions_)
+    for (auto &t : masters_.torsions)
         if (DissolveSys::sameString(trimmedName, t->name()))
             return *t;
     return {};
@@ -224,7 +224,7 @@ OptionalReferenceWrapper<MasterTorsion> CoreData::getMasterTorsion(std::string_v
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto &t : masterTorsions_)
+    for (auto &t : masters_.torsions)
         if (DissolveSys::sameString(trimmedName, t->name()))
             return *t;
     return {};
@@ -238,15 +238,15 @@ MasterImproper &CoreData::addMasterImproper(std::string_view name)
         throw(std::runtime_error(fmt::format(
             "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
 
-    return *masterImpropers_.emplace_back(std::make_shared<MasterImproper>(name));
+    return *masters_.impropers.emplace_back(std::make_shared<MasterImproper>(name));
 }
 
 // Return number of master Improper parameters in list
-int CoreData::nMasterImpropers() const { return masterImpropers_.size(); }
+int CoreData::nMasterImpropers() const { return masters_.impropers.size(); }
 
 // Return list of master Improper parameters
-std::vector<std::shared_ptr<MasterImproper>> &CoreData::masterImpropers() { return masterImpropers_; }
-const std::vector<std::shared_ptr<MasterImproper>> &CoreData::masterImpropers() const { return masterImpropers_; }
+std::vector<std::shared_ptr<MasterImproper>> &CoreData::masterImpropers() { return masters_.impropers; }
+const std::vector<std::shared_ptr<MasterImproper>> &CoreData::masterImpropers() const { return masters_.impropers; }
 
 // Return whether named master Improper parameters exist
 OptionalReferenceWrapper<const MasterImproper> CoreData::getMasterImproper(std::string_view name) const
@@ -254,7 +254,7 @@ OptionalReferenceWrapper<const MasterImproper> CoreData::getMasterImproper(std::
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto &i : masterImpropers_)
+    for (auto &i : masters_.impropers)
         if (DissolveSys::sameString(trimmedName, i->name()))
             return *i;
     return {};
@@ -266,7 +266,7 @@ OptionalReferenceWrapper<MasterImproper> CoreData::getMasterImproper(std::string
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto &i : masterImpropers_)
+    for (auto &i : masters_.impropers)
         if (DissolveSys::sameString(trimmedName, i->name()))
             return *i;
     return {};
@@ -275,10 +275,10 @@ OptionalReferenceWrapper<MasterImproper> CoreData::getMasterImproper(std::string
 // Clear all master terms
 void CoreData::clearMasterTerms()
 {
-    masterBonds_.clear();
-    masterAngles_.clear();
-    masterTorsions_.clear();
-    masterImpropers_.clear();
+    masters_.bonds.clear();
+    masters_.angles.clear();
+    masters_.torsions.clear();
+    masters_.impropers.clear();
 }
 
 /*
