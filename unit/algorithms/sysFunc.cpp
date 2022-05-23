@@ -7,7 +7,11 @@
 
 namespace UnitTest
 {
-
+struct NameObject
+{
+    NameObject(std::string newName) : name(std::move(newName)){};
+    std::string name;
+};
 TEST(SysFunc, StringManipulation)
 {
     // String matching
@@ -105,6 +109,19 @@ TEST(SysFunc, StringManipulation)
     v = DissolveSys::splitString("   arma   dillo is in    pieces         ", " ");
     EXPECT_EQ(v.size(), 5);
     EXPECT_TRUE(expected == v);
+
+    // Unique Naming
+    std::vector<NameObject> names;
+    EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique");
+    names.emplace_back("IAmUnique");
+    EXPECT_FALSE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique");
+    EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique01");
+    auto &exc = names.emplace_back("IAmUnique01");
+    EXPECT_FALSE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique01");
+    EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique02");
+    EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [&](const auto &obj) {
+                    return &exc == &obj ? std::string() : obj.name;
+                }) == "IAmUnique01");
 }
 
 } // namespace UnitTest
