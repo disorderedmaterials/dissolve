@@ -42,7 +42,7 @@ void NodeAndIntegerKeywordWidget::on_IntegerSpin_valueChanged(int value)
     if (refreshing_)
         return;
 
-    keyword_->setIndex(value);
+    keyword_->setInteger(value);
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
