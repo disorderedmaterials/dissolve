@@ -228,7 +228,7 @@ double SpeciesImproper::force(double angleInDegrees) const
 // Express as a tree node
 SerialisedValue SpeciesImproper::serialise() const
 {
-    SerialisedValue improper = SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise();
+    auto improper = SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise();
     if (i_ != nullptr)
         improper["i"] = i_->userIndex();
     if (j_ != nullptr)

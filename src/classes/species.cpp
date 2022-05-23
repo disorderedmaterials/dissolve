@@ -6,7 +6,7 @@
 #include "data/ff/ff.h"
 #include "data/isotopes.h"
 
-Species::Species() : Species(std::string("Natural")) {}
+Species::Species() : Species(std::string("Unnamed")) {}
 Species::Species(std::string name) : attachedAtomListsGenerated_(false), forcefield_(nullptr), name_(name)
 {
     box_ = std::make_unique<SingleImageBox>();
@@ -222,11 +222,12 @@ SerialisedValue Species::serialise() const
 
     return species;
 }
+
 // This method populates the object's members with values read from a 'species.name' TOML node
 void Species::deserialise(SerialisedValue &node, CoreData &coreData)
 {
-    std::vector tomlAtoms = toml::find(node, "atoms").as_array();
-    for (auto tomlAtom : tomlAtoms)
+    auto tomlAtoms = toml::find(node, "atoms").as_array();
+    for (auto &tomlAtom : tomlAtoms)
         atoms_.emplace_back().deserialise(tomlAtom);
 
     Serialisable::toVector(node, "bonds", [this, &coreData](SerialisedValue &bond) {

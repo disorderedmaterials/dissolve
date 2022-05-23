@@ -597,7 +597,7 @@ double SpeciesTorsion::force(double angleInDegrees) const
 // Express as a tree node
 SerialisedValue SpeciesTorsion::serialise() const
 {
-    SerialisedValue torsion = SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise();
+    auto torsion = SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise();
     if (i_ != nullptr)
         torsion["i"] = i_->userIndex();
     if (j_ != nullptr)

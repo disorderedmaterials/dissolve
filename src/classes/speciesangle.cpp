@@ -365,7 +365,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 // Express as a tree node
 SerialisedValue SpeciesAngle::serialise() const
 {
-    SerialisedValue angle = SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise();
+    auto angle = SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise();
     if (i_ != nullptr)
         angle["i"] = i_->userIndex();
     if (j_ != nullptr)

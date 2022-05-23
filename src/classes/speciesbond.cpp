@@ -338,7 +338,7 @@ double SpeciesBond::force(double distance) const
 // Express as a tree node
 SerialisedValue SpeciesBond::serialise() const
 {
-    SerialisedValue bond = SpeciesIntra<SpeciesBond, BondFunctions>::serialise();
+    auto bond = SpeciesIntra<SpeciesBond, BondFunctions>::serialise();
     if (i_ != nullptr)
         bond["i"] = i_->userIndex();
     if (j_ != nullptr)
