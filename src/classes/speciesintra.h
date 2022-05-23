@@ -210,7 +210,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         {
             SerialisedValue parametersNode;
             std::vector<std::string> parameters = Functions::parameters(interactionForm());
-            for (int parameterIndex = 0; parameterIndex < values.size(); parameterIndex++)
+            for (auto parameterIndex = 0; parameterIndex < values.size(); ++parameterIndex)
                 parametersNode[parameters[parameterIndex]] = values[parameterIndex];
             result["parameters"] = parametersNode;
         }
