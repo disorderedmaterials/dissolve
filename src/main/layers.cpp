@@ -51,20 +51,6 @@ bool Dissolve::ownProcessingLayer(ModuleLayer *layer)
 // Return number of defined processing layers
 int Dissolve::nProcessingLayers() const { return processingLayers_.size(); }
 
-// Generate unique processing layer name with base name provided
-std::string Dissolve::uniqueProcessingLayerName(std::string_view base) const
-{
-    std::string_view baseName = base.empty() ? "Unnamed" : base;
-    std::string uniqueName{baseName};
-
-    // Find an unused name starting with the baseName provided
-    auto suffix = 0;
-    while (findProcessingLayer(uniqueName))
-        uniqueName = fmt::format("{}{}", baseName, ++suffix);
-
-    return uniqueName;
-}
-
 // Return list of processing layers
 std::vector<std::unique_ptr<ModuleLayer>> &Dissolve::processingLayers() { return processingLayers_; }
 

@@ -200,8 +200,6 @@ class Dissolve : public Serialisable
     bool ownProcessingLayer(ModuleLayer *layer);
     // Return number of defined processing layers
     int nProcessingLayers() const;
-    // Generate unique processing layer name, with base name provided
-    std::string uniqueProcessingLayerName(std::string_view baseName) const;
     // Return list of processing layers
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     // Run the set-up stages of all modules in all layers

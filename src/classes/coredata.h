@@ -46,8 +46,6 @@ class CoreData
     const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
     // Return nth AtomType in list
     std::shared_ptr<AtomType> atomType(int n);
-    // Generate unique AtomType name with base name provided
-    std::string uniqueAtomTypeName(std::string_view base) const;
     // Search for AtomType by name
     std::shared_ptr<AtomType> findAtomType(std::string_view name) const;
     // Bump AtomTypes version
@@ -133,8 +131,6 @@ class CoreData
     // Return core Species list
     std::vector<std::unique_ptr<Species>> &species();
     const std::vector<std::unique_ptr<Species>> &species() const;
-    // Generate unique Species name with base name provided
-    std::string uniqueSpeciesName(std::string_view baseName) const;
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
 
@@ -157,8 +153,6 @@ class CoreData
     const std::vector<std::unique_ptr<Configuration>> &configurations() const;
     // Return nth Configuration in list
     Configuration *configuration(int n);
-    // Generate unique Configuration name with base name provided
-    std::string uniqueConfigurationName(std::string_view base) const;
     // Search for Configuration by name
     Configuration *findConfiguration(std::string_view name) const;
 

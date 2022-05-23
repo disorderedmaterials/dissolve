@@ -34,7 +34,8 @@ std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
     atomTypes_.push_back(newAtomType);
 
     // Create a suitable unique name
-    newAtomType->setName(uniqueAtomTypeName(Elements::symbol(Z)));
+    newAtomType->setName(DissolveSys::uniqueName(
+        Elements::symbol(Z), atomTypes_, [&](const auto &at) { return newAtomType == at ? std::string() : at->name(); }));
 
     // Set data
     newAtomType->setZ(Z);
@@ -62,19 +63,6 @@ const std::vector<std::shared_ptr<AtomType>> &CoreData::atomTypes() const { retu
 
 // Return nth AtomType in list
 std::shared_ptr<AtomType> CoreData::atomType(int n) { return atomTypes_[n]; }
-
-// Generate unique AtomType name with base name provided
-std::string CoreData::uniqueAtomTypeName(std::string_view base) const
-{
-    std::string uniqueName{base};
-
-    // Find an unused name starting with the baseName provided
-    auto suffix = 0;
-    while (findAtomType(uniqueName))
-        uniqueName = fmt::format("{}{}", base, ++suffix);
-
-    return uniqueName;
-}
 
 // Search for AtomType by name
 std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
@@ -303,7 +291,8 @@ Species *CoreData::addSpecies()
     auto &newSpecies = species_.emplace_back(std::make_unique<Species>());
 
     // Create a suitable unique name
-    newSpecies->setName(uniqueSpeciesName("NewSpecies"));
+    newSpecies->setName(DissolveSys::uniqueName("NewSpecies", species_,
+                                                [&](const auto &sp) { return newSpecies == sp ? std::string() : sp->name(); }));
 
     return newSpecies.get();
 }
@@ -322,20 +311,6 @@ int CoreData::nSpecies() const { return species_.size(); }
 std::vector<std::unique_ptr<Species>> &CoreData::species() { return species_; }
 
 const std::vector<std::unique_ptr<Species>> &CoreData::species() const { return species_; }
-
-// Generate unique Species name with base name provided
-std::string CoreData::uniqueSpeciesName(std::string_view base) const
-{
-    std::string_view baseName = base.empty() ? "Unnamed" : base;
-    std::string uniqueName{baseName};
-
-    // Find an unused name starting with the baseName provided
-    auto suffix = 0;
-    while (findSpecies(uniqueName))
-        uniqueName = fmt::format("{}{}", baseName, ++suffix);
-
-    return uniqueName;
-}
 
 // Search for Species by name
 Species *CoreData::findSpecies(std::string_view name) const
@@ -362,7 +337,9 @@ Configuration *CoreData::addConfiguration()
     auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
 
     // Create a suitable unique name
-    newConfiguration->setName(uniqueConfigurationName("NewConfiguration"));
+    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_, [&](const auto &cfg) {
+        return newConfiguration == cfg ? std::string() : cfg->name();
+    }));
 
     return newConfiguration.get();
 }
@@ -385,24 +362,6 @@ const std::vector<std::unique_ptr<Configuration>> &CoreData::configurations() co
 
 // Return nth Configuration in list
 Configuration *CoreData::configuration(int n) { return configurations_[n].get(); }
-
-// Generate unique Configuration name with base name provided
-std::string CoreData::uniqueConfigurationName(std::string_view base) const
-{
-    std::string baseName = base.empty() ? "Unnamed" : std::string(base);
-    std::string uniqueName = baseName;
-    auto suffix = 0;
-
-    // Find an unused name starting with the baseName provided
-    while (findConfiguration(uniqueName))
-    {
-        // Increase suffix value and regenerate uniqueName from baseName
-        ++suffix;
-        uniqueName = fmt::format("{}{}", baseName, suffix);
-    }
-
-    return uniqueName;
-}
 
 // Search for Configuration by name
 Configuration *CoreData::findConfiguration(std::string_view name) const

@@ -125,7 +125,9 @@ const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &Module
 std::unique_ptr<Module> ModuleRegistry::create(std::string_view moduleType)
 {
     auto m = std::unique_ptr<Module>(instance().produce(std::string(moduleType)));
-    m->setUniqueName(Module::uniqueName(m->type(), m.get()));
+    m->setUniqueName(DissolveSys::uniqueName(m->type(), Module::instances(), [&](const auto &inst) {
+        return inst == m.get() ? std::string() : inst->uniqueName();
+    }));
     return m;
 }
 

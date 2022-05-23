@@ -129,7 +129,9 @@ Species *Dissolve::copySpecies(const Species *species)
 {
     // Create our new Species
     Species *newSpecies = addSpecies();
-    newSpecies->setName(coreData_.uniqueSpeciesName(species->name()));
+    newSpecies->setName(DissolveSys::uniqueName(species->name(), coreData_.species(), [&](const auto &sp) {
+        return newSpecies == sp.get() ? std::string() : sp->name();
+    }));
 
     // Copy Box definition if one exists
     if (species->box()->type() != Box::BoxType::NonPeriodic)
@@ -172,11 +174,11 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate impropers
-    for (auto &t : species->impropers())
+    for (const auto &improper : species->impropers())
     {
         // Create the improper in the new Species
-        auto &newImproper = newSpecies->addImproper(t.indexI(), t.indexJ(), t.indexK(), t.indexL());
-        copySpeciesImproper(t, newImproper);
+        auto &newImproper = newSpecies->addImproper(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
+        copySpeciesImproper(improper, newImproper);
     }
 
     return newSpecies;

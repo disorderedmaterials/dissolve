@@ -213,7 +213,7 @@ void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
         return;
 
     // Generate a unique name before we duplicate
-    auto newName = dissolve_.coreData().uniqueAtomTypeName(at->name());
+    auto newName = DissolveSys::uniqueName(at->name(), dissolve_.atomTypes(), [](const auto &at) { return at->name(); });
     auto newAt = dissolve_.addAtomType(at->Z());
     newAt->setName(newName);
     newAt->setCharge(at->charge());
@@ -409,11 +409,46 @@ void ForcefieldTab::masterImpropersDataChanged(const QModelIndex &, const QModel
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked)
+{
+    dissolve_.coreData().addMasterBond(
+        DissolveSys::uniqueName("NewTerm", dissolve_.coreData().masterBonds(), [](const auto &b) { return b->name(); }));
+    masterBondsTableModel_.setSourceData(dissolve_.coreData().masterBonds());
+    ui_.MasterBondsTable->resizeColumnsToContents();
+    dissolveWindow_->setModified();
+}
+
 void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+
+void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked)
+{
+    dissolve_.coreData().addMasterAngle(
+        DissolveSys::uniqueName("NewTerm", dissolve_.coreData().masterAngles(), [](const auto &a) { return a->name(); }));
+    masterAnglesTableModel_.setSourceData(dissolve_.coreData().masterAngles());
+    ui_.MasterAnglesTable->resizeColumnsToContents();
+    dissolveWindow_->setModified();
+}
+
 void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+
+void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked)
+{
+    dissolve_.coreData().addMasterTorsion(
+        DissolveSys::uniqueName("NewTerm", dissolve_.coreData().masterTorsions(), [](const auto &t) { return t->name(); }));
+    masterTorsionsTableModel_.setSourceData(dissolve_.coreData().masterTorsions());
+    ui_.MasterTorsionsTable->resizeColumnsToContents();
+    dissolveWindow_->setModified();
+}
+
 void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
-void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
+
+void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked)
+{
+    dissolve_.coreData().addMasterImproper(
+        DissolveSys::uniqueName("NewTerm", dissolve_.coreData().masterImpropers(), [](const auto &i) { return i->name(); }));
+    masterImpropersTableModel_.setSourceData(dissolve_.coreData().masterImpropers());
+    ui_.MasterImpropersTable->resizeColumnsToContents();
+    dissolveWindow_->setModified();
+}
+
 void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }

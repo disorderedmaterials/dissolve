@@ -25,7 +25,8 @@ void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Basic Atomic)"));
+    newLayer->setName(DissolveSys::uniqueName("Evolve (Basic Atomic)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -49,7 +50,8 @@ void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checke
 void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Atomic)"));
+    newLayer->setName(DissolveSys::uniqueName("Evolve (Atomic)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -78,7 +80,8 @@ void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (Standard)"));
+    newLayer->setName(DissolveSys::uniqueName("Evolve (Standard)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -107,7 +110,8 @@ void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("Evolve (EPSR)"));
+    newLayer->setName(DissolveSys::uniqueName("Evolve (EPSR)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -135,7 +139,9 @@ void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("Refine (EPSR)"));
+    newLayer->setName(DissolveSys::uniqueName("Refine (EPSR)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
+
     newLayer->setFrequency(5);
 
     // Add the EPSR module
@@ -155,7 +161,9 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF"));
+    newLayer->setName(DissolveSys::uniqueName("RDF", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
+
     newLayer->setFrequency(5);
 
     // Add the RDF module
@@ -172,7 +180,8 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Unweighted S(Q)"));
+    newLayer->setName(DissolveSys::uniqueName("RDF / Unweighted S(Q)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
 
     // Add the RDF module
@@ -192,7 +201,8 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggere
 void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q)"));
+    newLayer->setName(DissolveSys::uniqueName("RDF / Neutron S(Q)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
 
     // Add the RDF module
@@ -215,7 +225,8 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool c
 void DissolveWindow::on_LayerCreateCorrelationsRDFXRayAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / X-ray S(Q)"));
+    newLayer->setName(DissolveSys::uniqueName("RDF / X-ray S(Q)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
 
     // Add the RDF module
@@ -238,7 +249,8 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFXRayAction_triggered(bool chec
 void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("RDF / Neutron S(Q) / X-ray S(Q)"));
+    newLayer->setName(DissolveSys::uniqueName("RDF / Neutron S(Q) / X-ray S(Q)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
 
     // Add the RDF module
@@ -264,7 +276,8 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bo
 void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("Analyse RDF/CN"));
+    newLayer->setName(DissolveSys::uniqueName("Analyse RDF/CN", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
 
     auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
@@ -287,7 +300,8 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(dissolve_.uniqueProcessingLayerName("Analyse AvgMol/SDF"));
+    newLayer->setName(DissolveSys::uniqueName("Analyse AvgMol/SDF", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
 
     auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 

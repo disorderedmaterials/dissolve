@@ -135,6 +135,4 @@ class Module
 
         return results;
     }
-    // Generate unique name with base name provided
-    static std::string uniqueName(std::string_view name, Module *exclude = nullptr);
 };

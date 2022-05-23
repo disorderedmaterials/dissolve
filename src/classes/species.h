@@ -225,6 +225,11 @@ class Species : public Serialisable
     void generateAttachedAtomLists();
     // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
     void detachFromMasterTerms();
+    // Detach links to specified master term, copying parameters to local SpeciesIntra
+    void detachFromMasterTerm(MasterBond *master);
+    void detachFromMasterTerm(MasterAngle *master);
+    void detachFromMasterTerm(MasterTorsion *master);
+    void detachFromMasterTerm(MasterImproper *master);
     // Reduce intramolecular terms to master terms
     void reduceToMasterTerms(CoreData &coreData, bool selectionOnly = false);
 
@@ -286,10 +291,8 @@ class Species : public Serialisable
     const std::vector<std::unique_ptr<Isotopologue>> &isotopologues() const;
     // Return whether the specified Isotopologue exists
     bool hasIsotopologue(const Isotopologue *iso) const;
-    // Generate unique Isotopologue name with base name provided
-    std::string uniqueIsotopologueName(std::string_view baseName, const Isotopologue *exclude = nullptr);
     // Search for Isotopologue by name
-    const Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr) const;
+    const Isotopologue *findIsotopologue(std::string_view name) const;
     // Return index of specified Isotopologue
     int indexOfIsotopologue(const Isotopologue *iso) const;
 
