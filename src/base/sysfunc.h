@@ -71,19 +71,18 @@ class DissolveSys
     static std::string doubleChars(const std::string_view s, const std::string_view charsToDouble);
     // Return unique name for object
     template <class Range, class NameFunction>
-    static std::string uniqueName(std::string baseName, const Range &objects, NameFunction nameFunction)
+    static std::string uniqueName(std::string_view baseName, const Range &objects, NameFunction nameFunction)
     {
-        // Check for empty base name
-        if (baseName.empty())
-            baseName = "UnnamedObject";
-        std::string uniqueName{baseName};
+        // Ensure our base string is valid and set the starting unique name
+        std::string base = baseName.empty() ? "UnnamedObject" : std::string(baseName);
+        std::string uniqueName{base};
 
         // Iterate until we find an unused name
         auto suffix = 0;
         while (std::find_if(objects.begin(), objects.end(), [nameFunction, &uniqueName](const auto &object) {
-                   return DissolveSys::sameString(nameFunction(object), uniqueName);
+                   return !nameFunction(object).empty() && DissolveSys::sameString(nameFunction(object), uniqueName);
                }) != objects.end())
-            uniqueName = fmt::format("{}{:02d}", baseName, ++suffix);
+            uniqueName = fmt::format("{}{:02d}", base, ++suffix);
 
         return uniqueName;
     }
