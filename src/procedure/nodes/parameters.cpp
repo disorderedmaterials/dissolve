@@ -28,9 +28,9 @@ bool ParametersProcedureNode::mustBeNamed() const { return false; }
  */
 
 // Add new parameter
-void ParametersProcedureNode::addParameter(std::string_view name, ExpressionValue initialValue)
+std::shared_ptr<ExpressionVariable> ParametersProcedureNode::addParameter(std::string_view name, ExpressionValue initialValue)
 {
-    parameters_.push_back(std::make_shared<ExpressionVariable>(name, initialValue));
+    return parameters_.emplace_back(std::make_shared<ExpressionVariable>(name, initialValue));
 }
 
 // Return the named parameter (if it exists)

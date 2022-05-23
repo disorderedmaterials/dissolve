@@ -28,6 +28,10 @@ class OperateExpressionProcedureNode : public OperateProcedureNodeBase
     // Zero all variables
     void zeroVariables();
 
+    public:
+    // Set the expression
+    bool setExpression(std::string_view expressionText);
+
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)
      */

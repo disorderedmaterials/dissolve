@@ -33,6 +33,12 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view 
     keywords_.add<ExpressionKeyword>("Control", "Expression", "Expression to apply to values", expression_, variables_);
 }
 
+// Set the expression
+bool OperateExpressionProcedureNode::setExpression(std::string_view expressionText)
+{
+    return expression_.create(expressionText, variables_);
+}
+
 // Zero all variables
 void OperateExpressionProcedureNode::zeroVariables()
 {

@@ -2,11 +2,10 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "procedure/nodes/calculateangle.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
+#include "keywords/bool.h"
 #include "procedure/nodes/select.h"
 
 CalculateAngleProcedureNode::CalculateAngleProcedureNode(std::shared_ptr<SelectProcedureNode> site0,
@@ -20,6 +19,9 @@ CalculateAngleProcedureNode::CalculateAngleProcedureNode(std::shared_ptr<SelectP
                                                     this, ProcedureNode::NodeType::Select, true);
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "K", "Site that represents 'k' in the angle i-j-k", sites_[2],
                                                     this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<BoolKeyword>("Control", "Symmetric",
+                               "Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90",
+                               symmetric_);
 }
 
 /*
@@ -46,6 +48,9 @@ bool CalculateAngleProcedureNode::execute(const ProcedureContext &procedureConte
     // Determine the value of the observable
     value_.x = procedureContext.configuration()->box()->angleInDegrees(
         sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(), sites_[2]->currentSite()->origin());
+
+    if (symmetric_ && value_.x > 90.0)
+        value_.x = 180.0 - value_.x;
 
     return true;
 }

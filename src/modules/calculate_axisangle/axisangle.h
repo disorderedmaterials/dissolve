@@ -10,6 +10,7 @@
 class CalculateAxisAngleProcedureNode;
 class Collect1DProcedureNode;
 class Collect2DProcedureNode;
+class OperateExpressionProcedureNode;
 class Process1DProcedureNode;
 class Process2DProcedureNode;
 class SelectProcedureNode;
@@ -56,6 +57,8 @@ class CalculateAxisAngleModule : public Module
     std::shared_ptr<Process1DProcedureNode> processAngle_;
     // Process2DNode for distance-angle data
     std::shared_ptr<Process2DProcedureNode> processDAngle_;
+    // Normalisation expression for distance-angle map
+    std::shared_ptr<OperateExpressionProcedureNode> dAngleNormalisationExpression_;
 
     /*
      * Processing

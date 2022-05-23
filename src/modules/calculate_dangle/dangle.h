@@ -7,8 +7,10 @@
 #include "procedure/procedure.h"
 
 // Forward Declarations
+class CalculateAngleProcedureNode;
 class Collect1DProcedureNode;
 class Collect2DProcedureNode;
+class OperateExpressionProcedureNode;
 class Process1DProcedureNode;
 class Process2DProcedureNode;
 class SelectProcedureNode;
@@ -33,6 +35,8 @@ class CalculateDAngleModule : public Module
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
     // Range (min, max, binwidth) of angle axis
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
+    // Whether the angular range should be considered symmetric about 90
+    bool symmetric_{false};
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
@@ -41,6 +45,8 @@ class CalculateDAngleModule : public Module
     std::shared_ptr<SelectProcedureNode> selectB_;
     // SelectNode for site C
     std::shared_ptr<SelectProcedureNode> selectC_;
+    // CalculateAngle node
+    std::shared_ptr<CalculateAngleProcedureNode> calculateAngle_;
     // Collect1DNode for B-C RDF
     std::shared_ptr<Collect1DProcedureNode> collectDistance_;
     // Collect1DNode for A-B-C angle histogram
@@ -53,6 +59,8 @@ class CalculateDAngleModule : public Module
     std::shared_ptr<Process1DProcedureNode> processAngle_;
     // Process2DNode for distance-angle data
     std::shared_ptr<Process2DProcedureNode> processDAngle_;
+    // Normalisation expression for distance-angle map
+    std::shared_ptr<OperateExpressionProcedureNode> dAngleNormalisationExpression_;
 
     /*
      * Processing
