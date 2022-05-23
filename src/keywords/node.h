@@ -58,7 +58,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
     std::shared_ptr<const N> &data() { return data_; }
     std::shared_ptr<const N> &data() const { return data_; }
     // Return base node
-    ConstNodeRef baseNode() { return parentNode_; }
+    ConstNodeRef baseNode() override { return data_; }
     // Set data
     bool setData(ConstNodeRef node) override
     {
