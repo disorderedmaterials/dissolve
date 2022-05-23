@@ -177,7 +177,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             {
                 auto master = lambda(form);
                 if (!master)
-                    throw std::runtime_error("Master Torsion not found.");
+                    throw std::runtime_error("Master Term not found.");
                 setMasterTerm(&master->get());
             }
             else
