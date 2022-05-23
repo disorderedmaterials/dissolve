@@ -17,9 +17,9 @@ NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, NodeKeywordBase *keyword, 
     // Get allowed nodes, set model for combo box, and set current index
     allowedNodes_ = keyword_->allowedNodes();
     nodeModel_.setData(allowedNodes_);
-    auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
-    if (it != allowedNodes_.end())
-        ui_.NodeCombo->setCurrentIndex(it - allowedNodes_.begin());
+    auto it = std::find_if(allowedNodes_.begin(), allowedNodes_.end(),
+                           [&](const auto &node) { return node.get() == keyword_->baseNode().get(); });
+    ui_.NodeCombo->setCurrentIndex(it == allowedNodes_.end() ? -1 : it - allowedNodes_.begin());
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)

@@ -23,8 +23,7 @@ NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, NodeAn
     allowedNodes_ = keyword_->allowedNodes();
     nodeModel_.setData(allowedNodes_);
     auto it = std::find(allowedNodes_.begin(), allowedNodes_.end(), keyword_->baseNode());
-    if (it != allowedNodes_.end())
-        ui_.NodeCombo->setCurrentIndex(it - allowedNodes_.begin());
+    ui_.NodeCombo->setCurrentIndex(it == allowedNodes_.end() ? -1 : it - allowedNodes_.begin());
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
