@@ -8,9 +8,15 @@ description: Export configuration coordinates
 
 The `ExportCoordinates` module writes the coordinate data from a target configuration to a named file, overwriting any existing file (unless the filename is suffixed with the current iteration number with the `TagWithIteration` option).
 
-## Configuration
+## Keywords
 
-### Control Keywords
+### Targets
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
+
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

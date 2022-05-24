@@ -3,7 +3,7 @@ parameters:
     default: false
     type: boolean
   - name: hugo_version
-    default: '0.79.0'
+    default: '0.98.0'
   - name: web_dir_root
     default: 'github.com/disorderedmaterials/dissolve/edit/develop/web'
   - name: last_hash_url
@@ -20,6 +20,10 @@ steps:
       wget https://github.com/gohugoio/hugo/releases/download/v${{ parameters.hugo_version }}/hugo_extended_${{ parameters.hugo_version }}_Linux-64bit.deb -O '$(Pipeline.Workspace)/hugo.deb'
       sudo dpkg -i $(Pipeline.Workspace)/hugo*.deb
     displayName: 'Download & Install Hugo (Extended Version)'
+  - bash: |
+      set -ex
+      cp -v src/gui/icons/*.svg web/static/img
+    displayName: 'Copy Icons'
   - bash: |
       set -ex
       cd web

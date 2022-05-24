@@ -22,7 +22,7 @@ The `DynamicSite` node generates a list of sites (suitable for use in a [`Select
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

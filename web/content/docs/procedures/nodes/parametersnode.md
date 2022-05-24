@@ -22,7 +22,7 @@ The `Parameters` node stores named values, with each value being one of two expl
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

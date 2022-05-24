@@ -22,7 +22,7 @@ The `GeneralRegion` node assesses the current contents of a configuration and lo
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

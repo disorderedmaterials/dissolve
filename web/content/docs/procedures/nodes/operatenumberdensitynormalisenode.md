@@ -24,7 +24,7 @@ The `OperateNumberDensityNormalise` node simply divides the values (not the axes
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

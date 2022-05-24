@@ -15,9 +15,8 @@ To achieve this we need to define one or more 'sites' on our water molecule. Sit
 
 Sites are defined within species and basically represent instructions for calculating a reference point (and possibly axes) for any molecule of that type in the simulation. Sites can be found on the relevant species tab:
 
-{{< step text="Pause the simulation with **Esc**" >}}
-{{< action type="tabs" text="**Water** species tab" >}}
-{{< step text="Open the **Analysis Sites** section" >}}
+{{< action type="key" text="Pause the simulation with **Esc**" />}}
+{{< action type="tabs" >}}Open the {{< gui-tab text="Water" type="Species" >}} and go to the **Analysis Sites** section {{< /action >}}
 
 You'll see in this section a list of defined sites (currently none) for your water species, along with a viewer of the species on the right which can be used to interactively select atoms for the site origin, or to define axes. It also illustrates the position and, if defined, the axes for the site.
 
@@ -25,5 +24,6 @@ You'll see in this section a list of defined sites (currently none) for your wat
 
 The following subsections will describe how to set up several flavours of analysis in separate layers. Feel free to add all of them, or just a selection, to your simulation before moving on to [Step 10](../step10/) and starting it up again to see the results.
 
+* * *
 {{< button pos="left" text="Previous Step" path="step8/">}}
 {{< button pos="right" text="Next Step" path="step9a/">}}

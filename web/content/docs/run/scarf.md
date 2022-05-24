@@ -14,13 +14,8 @@ To see the available versions, run:
 ```
 bob@scarf:~> module avail dissolve
 
-------------------- /apps/modulefiles --------------------
-   contrib/dissolve/0.7.5
-   contrib/dissolve/0.8.0
-
---------------- /apps/contrib/modulefiles ----------------
-   dissolve/0.7.5
-   dissolve/0.8.0
+--------------- /apps20/contrib/modulefiles ----------------
+contrib/dissolve/0.8.9   contrib/dissolve/0.9.0
 ```
 
 To source one ready for use in a script run:
@@ -68,7 +63,7 @@ mpirun dissolve-mpi input.txt -n 100
 
  This script requests eight processors (`-n 8` in the `#SBATCH` section) all on the same physical node (`--tasks-per-node=8`) - highly recommended for performance reasons. This is a good place to start, but can be increased (or reduced) as necessary.
 
-### Multithreaded (v0.8.X)
+### Multithreaded (v0.8.X, v0.9.X)
 
 ```
 #!/bin/bash
@@ -85,7 +80,7 @@ mpirun dissolve-mpi input.txt -n 100
 
 # Load necessary modules
 module load foss
-module load contrib/dissolve/0.8.0
+module load contrib/dissolve/0.9.0
 
 # Change to directory containing simulation
 cd ~/path/to/simulation

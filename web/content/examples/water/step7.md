@@ -11,40 +11,39 @@ Let's briefly recap what we've done so far:
 2. Equilibrated the system and made an initial structural comparison with experimental data
 2. Adjusted the intramolecular geometry of the water molecule in order to better match the experimental data
 
-Our agreement with experiment is OK, but it is possible to make it even better by modifying the _inter_-atomic interaction parameters contained in the atom types. However, generally this is not to be attempted by hand in all but the simplest of cases, as the effects of adjusting the interatomic are seldom as obvious as those for _intra_-molecular parameters. Also, for even a modestly-complicated system the number of adjustable parameters is simply too large to tackle with manual fitting.
+Our agreement with experiment is relatively good, but it is possible to make it even better by modifying the _inter_-atomic interaction parameters contained in the atom types. However, generally this is not to be attempted by hand in all but the simplest of cases, as the effects of adjusting the interatomic are seldom as obvious as those for _intra_-molecular parameters. Also, for even a modestly-complicated system the number of adjustable parameters is simply too large to tackle with manual fitting.
 
-Here we'll employ the [`EPSR`]({{< ref "epsr" >}}) module in order to adjust the interatomic potentials automatically to give better agreement with the experimental reference data.
+Here we'll employ the {{< gui-module "EPSR" >}} module in order to adjust the interatomic potentials automatically to give better agreement with the experimental reference data.
 
-{{< action type="menu" text="Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR" >}}
+{{< action type="menu" text="Layer &#8680; Create &#8680; Refinement &#8680; Standard EPSR" />}}
 
-Our new layer contains only the [`EPSR`]({{< ref "epsr" >}}) module, and which Dissolve has set up with sensible targets and defaults. Double-click the [`EPSR`]({{< ref "epsr" >}}) module to open it up as a tab - we'll need to explore the various graphs as we proceed, but for now let's check the set-up of the module. Brief descriptions of the important parameters are given below - for more in-depth explanations see the [`EPSR`]({{< ref "epsr" >}}) module page.
+Our new layer contains only the {{< gui-module "EPSR" >}} module, and which Dissolve has set up with sensible targets and defaults. We'll explore the various graphs as we proceed, but for now let's check the set-up of the module. Brief descriptions of the important parameters are given below - for more in-depth explanations see the {{< gui-module "EPSR" >}} module page.
 
-{{< action type="tabs" text="**Refine (EPSR)** tab" >}}
-{{< action type="mouse" text="Double-click on the `EPSR` module to open it up in a new tab" >}}
-{{< action type="groups" text=" Open the **Calculation** settings group" >}}
-{{< step text=" An initial value for **EReq** has been set (3.0) - this determines the magnitude or \"strength\" of the generated interatomic potentials" >}}
-{{< step text="The **Feedback** factor is 0.8 - this states that we are 80% confident in the experimental data, and that the calculated partial structure factors should make up 20% of the estimated partials" >}}
-{{< step text="The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>)and **QMin** (0.5 &#8491;<sup>-1</sup>)" >}}
-{{< step text=" The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the `EPSR` module to use. All of the `NeutronSQ` modules have been selected automatically" >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab text="Refine (EPSR)" type="Layer" >}} tab{{< /action >}}
+{{< action type="groups">}}Open the **Control** settings group of the {{< gui-module "EPSR" >}} module {{< /action >}}
+{{< step text=" An initial value for **EReq** has been set (3.0) - this determines the magnitude or \"strength\" of the generated interatomic potentials" />}}
+{{< step text="The **Feedback** factor is 0.8 - this states that we are 80% confident in the experimental data, and that the calculated partial structure factors should make up 20% of the estimated partials" />}}
+{{< step text="The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>) and **QMin** (0.5 &#8491;<sup>-1</sup>)" />}}
 
+The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the `EPSR` module to use. You'll see that Dissolve has added all of the available {{< gui-module "NeutronSQ" >}} modules have been selected automatically.
 
-All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different tabs in the [`EPSR`]({{< ref "epsr" >}}) module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
+All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different {{< gui-button text="Output" icon="general_output" >}} tabs in the {{< gui-module "EPSR" >}} module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
 
 ### 1. F(Q)
 
-Basic comparison between reference experimental data (solid lines) defined in [`NeutronSQ`]({{< ref "neutronsq" >}}) module **Target**s and those simulated by Dissolve (dashed lines), including the difference functions (dotted lines).
+Basic comparison between reference experimental data (solid lines) defined as **Target**s and those simulated by Dissolve (dashed lines), including the difference functions (dotted lines).
 
-{{< cimage src="../epsrmodule-fq.png" caption="Experimental, calculated, and difference functions for data targeted by the EPSR module" >}}
+{{< cimage src="../epsrmodule-fq.png" caption="Experimental reference F(Q), calculated F(Q), and difference functions for data targeted by the EPSR module" >}}
 
-### 2. F(Q) Delta/Fit
+### 2. Delta F(Q)
 
-Delta functions between experiment and simulation are repeated here in negated form, and shown along with the fits to the functions achieved by the Poisson / Gaussian sums.
+Delta functions between experiment and simulation are replicated here along with the fits to the functions achieved by the Poisson / Gaussian sums. Note that the difference functions here have been multiplied by -1.
 
 {{< cimage src="../epsrmodule-fqdelta.png" caption="Delta functions (negated) and the Poisson/Gaussian fits to those functions" >}}
 
 ### 3. Estimated S(Q)
 
-Estimated (**not** experimental) partial structure factors (solid lines) derived from combining experimental F(Q) and the calculated partial S(Q) (shown as dashed lines).
+Estimated partial structure factors (solid lines) derived from combining experimental F(Q) and the calculated partial S(Q) (shown as dashed lines).
 
 {{< cimage src="../epsrmodule-sq.png" caption="Estimated partial structure factors" >}}
 
@@ -56,28 +55,29 @@ Note that the estimated g(r) from the combination of the experimental and simula
 
 {{< cimage src="../epsrmodule-gr.png" caption="Estimated partial radial distribution functions" >}}
 
-### 5. Total G(r)
+### 5. G(r)
 
-Neutron weighted total G(r) from Fourier transform of the reference data (solid line) and Fourier transform of the simulated dat (dashed line). The reason for displaying the latter rather than the G(r) calculated directly in _r_-space is to provide for a consistent comparison between simulation and experiment given the necessity of performing Fourier transforms (truncation errors are worse in _Q_-space data, so transforming to _Q_ to _r_ demands more judicious use of window functions in the transform).
+Neutron-weighted total G(r) from Fourier transform of the reference F(Q) (solid line) and the Fourier transform of the simulated F(Q) (dashed line). As mentioned earlier, the reason for displaying the latter rather than the directly-calculated G(r) is to provide for a consistent comparison between simulation and experiment given the necessity of performing Fourier transforms (truncation errors are worse in _Q_-space data, so transforming to _Q_ to _r_ demands more judicious use of window functions in the transform).
 
 {{< cimage src="../epsrmodule-gr.png" caption="Total radial distribution functions from Fourier transform of reference and simulated F(Q) data" >}}
 
-### 6. &phi;(r)
+### 6. Potentials
 
-&phi;(r) represent the empirical potentials generated from the difference data, one per pair potential.
+&phi;(r) represent the empirical potentials generated from the difference data, one per pair potential. These are applied on top of the reference potential.
 
 {{< cimage src="../epsrmodule-phir.png" caption="Empirical potentials for each atom type pair (i.e. each distinct pair potential)" >}}
 
-### 7. R-factor
+### 7. R-Factors
 
-The upper panel shows the evolution of the current potential magnitude (whose limit is guided by the value of **EReq**). In the lower panel, for each experimental dataset the "goodness of agreement" with simulation is represented by the r-factor, and the total (average) r-factor across all datasets.
+For each experimental dataset the "goodness of agreement" with simulation is represented by the r-factor, along with the total (average) r-factor over all datasets.
 
 {{< cimage src="../epsrmodule-rfactor.png" caption="R-factors for experimental (reference) datasets" >}}
 
-### 8. Debug
+### 8. EReq
 
-Safe to say that you can probably ignore this one!
+Here you can see the evolution of the current potential magnitude (whose limit is guided by the value of **EReq**).
 
 
+* * *
 {{< button pos="left" text="Previous Step" path="step6/">}}
 {{< button pos="right" text="Next Step" path="step8/">}}

@@ -1,4 +1,7 @@
-// Navbar
+/*
+ * Navbar
+ */
+
 .td-navbar .navbar-brand {
     svg {
         margin: 5px 10px;
@@ -10,7 +13,10 @@
   background-color: #17132a;
 }
 
-// Labels
+/*
+ * Labels
+ */
+
 .label {
     border-radius: 5px;
     display: inline-block;
@@ -50,8 +56,140 @@
     padding: 1px 10px 1px 10px;
 }
 
-// Left-aligned button
-.btn.left { 
+/*
+ * GUI Element Indicators
+ */
+
+// Tab
+.gui-tab {
+   border-radius: 2px;
+   border: 1px solid #aebfcd;
+   background-color: #eeefed;
+   padding: 1px 10px 1px 30px;
+   font-size: 85%;
+   margin: 5px 0 5px 0;
+   position: relative;
+   line-height: 1.0;
+}
+
+.gui-tab::before {
+  content: '';
+  width: 15px;
+  height: 15px;
+  left: 7px;
+  top: 1px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 18px;
+}
+
+.gui-tab::after {
+  content: '';
+}
+
+// Button
+.gui-button {
+   display: inline-block;
+   border-radius: 5px;
+   border: 1px solid #aebfcd;
+   background-color: #edefed;
+   padding: 3px 25px 1px 25px;
+   font-size: 85%;
+   font-weight: bold;
+   position: relative;
+   margin: 2px 0 2px 0;
+   line-height: 1.0;
+}
+
+.gui-button::before {
+  content: ' ';
+  width: 15px;
+  height: 15px;
+  left: 7px;
+  top: 0px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 17px;
+}
+
+.gui-button::after {
+  content: '';
+}
+
+// Module
+.gui-module {
+   padding: 0px 0px 0px 1.2em;
+   position: relative;
+}
+
+.gui-module::before {
+  content: '';
+  width: 1.1em;
+  height: 1.1em;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 1.1em;
+}
+
+.gui-module::after {
+  content: '';
+}
+
+@mixin gui-module($module) {
+  .gui-module.gui-module-#{$module}::before{
+       background-image: url(/img/modules_#{$module}.svg);
+  }
+}
+@mixin generate-gui-module(){
+   @each $module in $modules{
+     @include gui-module($module);
+   }
+}
+$modules: ("accumulate", "analyse", "atomshake", "benchmark", "bragg", "calculateangle", "calculateavgmol", "calculateaxisangle", "calculatecn", "calculatedangle", "calculaterdf", "calculatesdf", "calibrate", "checkspecies", "checks", "datatest", "energy", "epsr", "exportcoordinates", "exportpairpotentials", "exporttrajectory", "forces", "geometryoptimisation", "importtrajectory", "intrashake", "md", "molshake", "neutronsq", "rdf", "sq", "xraysq");
+@include generate-gui-module();
+
+// Node
+.gui-node {
+   padding: 0px 0px 0px 1.2em;
+   position: relative;
+}
+
+.gui-node::before {
+  content: '';
+  width: 1.1em;
+  height: 1.1em;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 1.1em;
+}
+
+.gui-node::after {
+  content: '';
+}
+
+@mixin gui-node($node) {
+  .gui-node.gui-node-#{$node}::before{
+       background-image: url(/img/nodes_#{$node}.svg);
+  }
+}
+@mixin generate-gui-node(){
+   @each $node in $nodes{
+     @include gui-node($node);
+   }
+}
+$nodes: ("add", "aliases", "box", "calculateangle", "calculateaxisangle", "calculatebase", "calculatedistance", "calculatevector", "collect1d", "collect2d", "collect3d", "context", "coordinatesets", "cylindricalregion", "dynamicsite", "fit1d", "generalregion", "integrate1d", "node", "nodereference", "nodes", "operatebase", "operatedivide", "operateexpression", "operategridnormalise", "operatemultiply", "operatenormalise", "operatenumberdensitynormalise", "operatesitepopulationnormalise", "operatesphericalshellnormalise", "parameters", "pickbase", "pick", "pickproximity", "pickregion", "process1d", "process2d", "process3d", "regionbase", "remove", "select", "sequence", "sum1d", "transmute");
+@include generate-gui-node();
+
+/*
+ * Buttons
+ */
+
+// Left-aligned navigation button
+.btn.left {
     border-radius: 5px;
     width: inherit;
     margin: 5px auto 5px 0;
@@ -60,7 +198,7 @@
     padding: auto;
 }
 
-// Right-aligned button
+// Right-aligned navigation button
 .btn.right {
     border-radius: 5px;
     width: inherit;
@@ -87,7 +225,7 @@ blockquote {
   padding-top: 15px;
   padding-bottom: 1px;
   padding-right: 10px;
-  border-left: 8px solid #ddd ;
+  border-left: 8px solid #ddd;
   line-height: 1.6;
   position: relative;
   background: #f9f9f9;
@@ -124,7 +262,7 @@ blockquote.tip {
   border-left: 8px solid #78C0A8;
 }
 blockquote.tip::before {
-  background-image: url(/img/blocktip.svg);
+  background-image: url(/img/block_tip.svg);
 }
 
 // Warning
@@ -132,7 +270,7 @@ blockquote.warn {
   border-left: 8px solid #fb9a49;
 }
 blockquote.warn::before {
-  background-image: url(/img/blockwarn.svg);
+  background-image: url(/img/block_warn.svg);
 }
 
 // Question
@@ -140,7 +278,7 @@ blockquote.question {
   border-left: 8px solid #329819;
 }
 blockquote.question::before {
-  background-image: url(/img/blockquestion.svg);
+  background-image: url(/img/block_question.svg);
 }
 
 // Action (Quote-style)
@@ -152,25 +290,22 @@ blockquote.actionquote {
 blockquote.action {
   width: 85%;
   margin-bottom: 10px;
-  line-height: 1.0;
   border-left: 8px solid #478cc6;
 }
 blockquote.iconaction {
   width: 85%;
   margin-bottom: 10px;
-  line-height: 1.0;
   border-left: 8px solid #6947c6;
 }
 blockquote.step {
   width: 85%;
   margin-bottom: 10px;
-  line-height: 1.0;
   border-left: 16px solid #aebfcd;
 }
 blockquote.step::before {
   left: 5px;
   top: 10px;
-  background-image: url(/img/action-general.svg);
+  background-image: url(/img/action_general.svg);
 }
 
 // Action (Dissolve)
@@ -179,21 +314,21 @@ blockquote.action-menu {
   border-left: 8px solid #478cc6;
 }
 blockquote.action-dissolve::before {
-  background-image: url(/img/action-dissolve.png);
+  background-image: url(/img/action_dissolve.svg);
 }
 
 // Action (Tabs)
 blockquote.action-tabs::before {
   left: 8px;
   top: 8px;
-  background-image: url(/img/action-tabs.svg);
+  background-image: url(/img/action_tabs.svg);
 }
 
 // Action (Groups)
 blockquote.action-groups::before {
   left: 8px;
   top: 8px;
-  background-image: url(/img/action-groups.svg);
+  background-image: url(/img/action_groups.svg);
 }
 
 // Action (Menu)
@@ -202,14 +337,14 @@ blockquote.action-menu {
 }
 blockquote.action-menu::before {
   left: 8px;
-  background-image: url(/img/action-menu.svg);
+  background-image: url(/img/action_menu.svg);
 }
 
 // Action (Mouse)
 blockquote.action-mouse::before {
   left: 10px;
   top: 8px;
-  background-image: url(/img/action-mouse.svg);
+  background-image: url(/img/action_mouse.svg);
 }
 
 // Action (Key)
@@ -219,19 +354,19 @@ blockquote.action-key {
 blockquote.action-key::before {
   left: 10px;
   top: 8px;
-  background-image: url(/img/action-key.svg);
+  background-image: url(/img/action_key.svg);
 }
 
 // Action (Edit)
 blockquote.action-edit::before {
-  background-image: url(/img/action-edit.svg);
+  background-image: url(/img/action_edit.svg);
 }
 
 // Action (Settings)
 blockquote.action-settings {
 }
 blockquote.action-settings::before {
-  background-image: url(/img/action-settings.svg);
+  background-image: url(/img/action_settings.svg);
 }
 
 // Tables

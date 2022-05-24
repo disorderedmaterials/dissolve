@@ -24,7 +24,7 @@ The `OperateDivide` node simply divides the values (not the axes) of the supplie
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

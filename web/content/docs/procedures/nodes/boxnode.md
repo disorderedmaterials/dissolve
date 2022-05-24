@@ -22,10 +22,10 @@ The sole purpose of the `Box` node is to set the geometry of the unit cell (box)
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Angles`|`alpha`<br/>`beta`<br/>`gamma`|`90.0`<br/>`90.0`<br/>`90.0`|Box angles $\alpha$, $\beta$, and $\gamma$.|
 |`Lengths`|`lx`<br/>`ly`<br/>`lz`|`1.0`<br/>`1.0`<br/>`1.0`|Box lengths. These may be absolute or relative lengths.|
-|`NonPeriodic`|`true|false`|`false`|Whether the box is non-periodic.|
+|`NonPeriodic`|`bool`|`false`|Whether the box is non-periodic.|

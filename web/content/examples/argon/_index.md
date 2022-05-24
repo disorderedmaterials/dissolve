@@ -1,9 +1,11 @@
 ---
-title: Liquid Argon
+title: Beginner's Guide - Argon
+description: Step-by-step set up of a simple simulation, recommended for first-time users of the code
 type: docs
+weight: 1
 ---
 
-{{< label color="blue" icon="fa-clock" text="20 minute read" >}}
+{{< label color="blue" icon="fa-clock" text="20 minutes" >}}
 
 ## Summary
 
@@ -11,17 +13,13 @@ Liquid argon isn't a particularly exciting system, but it has been measured expe
 
 ## Preparation
 
-Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already.
-
-
-{{< action type="dissolve" text="Open the Dissolve GUI" >}}
-{{< step text="Choose **Empty Simulation** from the _Create_ section" >}} 
-{{< action type="menu" text="Save As..." >}}
-{{< step text="Save your own input file under a sensible name in the `argon` directory of the example data" >}}
-
-Alternatively, download the data files listed below and save them to a location of your choice.
+Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} and unpack it if you haven't done so already.  Alternatively, download the data files listed below and save them to a location of your choice.
 
 - Neutron data file: [yarnell.sq](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/argon/data/yarnell.sq)
+
+{{< action type="menu" text="File &#8680; New" />}}
+{{< action type="menu" text="File &#8680; Save As..." />}}
+{{< step text="Save your input file under a sensible name in same directory as the example data" />}}
 
 
 {{< button pos="left" text="Let's begin!" path="step1">}}

@@ -24,7 +24,7 @@ The `OperateExpression` node multiplies the values (not the axes) of the supplie
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

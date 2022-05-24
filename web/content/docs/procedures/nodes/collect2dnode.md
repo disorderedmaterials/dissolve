@@ -28,7 +28,7 @@ The `Collect*` nodes all have a branch (accessed through the hidden `SubCollect`
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

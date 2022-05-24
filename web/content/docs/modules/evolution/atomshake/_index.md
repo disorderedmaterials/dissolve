@@ -32,9 +32,15 @@ $$ \delta_{new} = \delta_{old} \frac{\alpha_{actual}}{\alpha} $$
 
 If it occurs that no moves are accepted, the step size is multiplied by a factor of 0.8 instead of using the above equation. Following adjustment of the step size it is clamped such that $\delta_{min} \le \delta_{new} \le \delta_{max}$.
 
-## Configuration
+## Keywords
 
-### Control Keywords
+### Targets
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Configuration`|`Configuration`|`--`|{{< required-label >}}Target configuration on which to operate.|
+
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

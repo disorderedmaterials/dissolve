@@ -142,17 +142,17 @@ CalculateAngleModule::CalculateAngleModule() : Module("CalculateAngle"), analyse
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Control
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeAB", "Range (min, max, binwidth) of A-B distance axis", rangeAB_,
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeAB", "Range (min, max, binwidth) of A-B distance binning", rangeAB_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeBC", "Range (min, max, binwidth) of B-C distance axis", rangeBC_,
+    keywords_.add<Vec3DoubleKeyword>("Control", "RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle axis", angleRange_,
+    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Add site(s) which represent 'A' in the interaction A-B-C",
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C",
                                             selectA_->speciesSites(), selectA_->axesRequired());
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Add site(s) which represent 'B' in the interaction A-B-C",
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C",
                                             selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteC", "Add site(s) which represent 'C' in the interaction A-B-C",
+    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C",
                                             selectC_->speciesSites(), selectC_->axesRequired());
     keywords_.add<BoolKeyword>("Control", "ExcludeSameMoleculeAB",
                                "Whether to exclude correlations between A and B sites on the same molecule",

@@ -31,7 +31,7 @@ When resizing the box, the default is to scale equally in all directions A, B, a
 
 ## Configuration
 
-### Control Keywords
+### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
@@ -40,8 +40,8 @@ When resizing the box, the default is to scale equally in all directions A, B, a
 |`Population`|[`expr`]({{< ref "expressions" >}})|`0`|Population of the target species to add.|
 |`Positioning`|[`PositioningType`]({{< ref "positioningtype" >}})|`Random`|Positioning type for individual molecules.|
 |`Region`|`name`|--|Region node controlling the location of inserted species into the configuration.|
-|`Rotate`|`true|false`|`true`|Whether to randomly rotate molecules on insertion.|
-|`ScaleA`|`true|false`|`true`|Whether to scale the A cell axis when changing the cell volume.|
-|`ScaleB`|`true|false`|`true`|Whether to scale the B cell axis when changing the cell volume.|
-|`ScaleC`|`true|false`|`true`|Whether to scale the C cell axis when changing the cell volume.|
+|`Rotate`|`bool`|`true`|Whether to randomly rotate molecules on insertion.|
+|`ScaleA`|`bool`|`true`|Whether to scale the A cell axis when changing the cell volume.|
+|`ScaleB`|`bool`|`true`|Whether to scale the B cell axis when changing the cell volume.|
+|`ScaleC`|`bool`|`true`|Whether to scale the C cell axis when changing the cell volume.|
 |`Species`|`name`|--|{{< required-label >}} Target species to add.|
