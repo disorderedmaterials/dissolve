@@ -169,5 +169,14 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, const std:
     if (!GenericItemDeserialiser::deserialise(data, parser, coreData))
         return Messenger::error(fmt::format("Deserialisation of item '{}' failed.\n", name));
 
+    // Check for legacy objects - we don't re-serialise them
+    if (GenericItemDeserialiser::isLegacyObject(data))
+    {
+        Messenger::warn("Legacy data '{}' will not be captured in written restart files.\n", itemClass);
+        auto &itemFlags = std::get<GenericItem::Flags>(items_[std::string(name)]);
+        if (itemFlags & GenericItem::InRestartFileFlag)
+            itemFlags -= GenericItem::InRestartFileFlag;
+    }
+
     return true;
 }

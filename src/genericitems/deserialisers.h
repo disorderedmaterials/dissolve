@@ -30,7 +30,7 @@ class GenericItemDeserialiser
     // Deserialisation function type
     using DeserialiseFunction = std::function<bool(std::any &a, LineParser &parser, const CoreData &coreData)>;
     // Deserialisers for all data types
-    std::unordered_map<std::type_index, DeserialiseFunction> deserialisers_;
+    std::unordered_map<std::type_index, DeserialiseFunction> deserialisers_, legacyDeserialisers_;
 
     private:
     template <class T> static bool simpleDeserialise(std::any &a, LineParser &parser, const CoreData &coreData)
@@ -55,6 +55,11 @@ class GenericItemDeserialiser
     }
     // Register deserialiser for specific class
     template <class T> void registerDeserialiser(DeserialiseFunction func) { deserialisers_[typeid(T)] = std::move(func); }
+    // Register legacy deserialiser for specific class
+    template <class T> void registerLegacyDeserialiser(DeserialiseFunction func)
+    {
+        legacyDeserialisers_[typeid(T)] = std::move(func);
+    }
     // Deserialise object of specified type
     bool deserialiseObject(std::any &a, LineParser &parser, const CoreData &coreData) const;
     // Deserialise templated object
@@ -73,6 +78,11 @@ class GenericItemDeserialiser
         object = std::move(std::any_cast<T>(a));
 
         return true;
+    }
+    // Return whether the supplied object has a legacy deserialiser
+    bool hasLegacyDeserialiser(std::any &object) const
+    {
+        return legacyDeserialisers_.find(object.type()) != legacyDeserialisers_.end();
     }
 
     /*
@@ -98,4 +108,6 @@ class GenericItemDeserialiser
     }
     // Deserialise supplied object
     static bool deserialise(std::any &a, LineParser &parser, const CoreData &coreData);
+    // Return whether supplied object is a legacy object
+    static bool isLegacyObject(std::any &object);
 };

@@ -3,11 +3,13 @@
 
 #include "genericitems/deserialisers.h"
 #include "base/lineparser.h"
+#include "classes/atomtypedata.h"
 #include "classes/braggreflection.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/partialsetaccumulator.h"
 #include "classes/xrayweights.h"
+#include "genericitems/legacy.h"
 #include "math/data1d.h"
 #include "math/data2d.h"
 #include "math/data3d.h"
@@ -162,6 +164,9 @@ GenericItemDeserialiser::GenericItemDeserialiser()
 
     // Containers of Custom Classes
     registerDeserialiser<std::vector<BraggReflection>>(vectorDeserialise<BraggReflection>);
+
+    // Legacy Classes
+    registerLegacyDeserialiser<LegacyAtomTypeListItem>(simpleDeserialiseCore<LegacyAtomTypeListItem>);
 }
 
 /*
@@ -174,6 +179,8 @@ bool GenericItemDeserialiser::deserialiseObject(std::any &a, LineParser &parser,
     // Find a suitable deserialiser and call it
     auto it = deserialisers_.find(a.type());
     if (it == deserialisers_.end())
+        it = legacyDeserialisers_.find(a.type());
+    if (it == legacyDeserialisers_.end())
         throw(std::runtime_error(fmt::format(
             "Item of type '{}' cannot be deserialised as no suitable deserialiser has been registered.\n", a.type().name())));
 
@@ -197,3 +204,6 @@ bool GenericItemDeserialiser::deserialise(std::any &a, LineParser &parser, const
 {
     return instance().deserialiseObject(a, parser, coreData);
 }
+
+// Return whether supplied object is a legacy object
+bool GenericItemDeserialiser::isLegacyObject(std::any &object) { return instance().hasLegacyDeserialiser(object); }
