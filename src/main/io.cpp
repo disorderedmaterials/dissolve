@@ -375,7 +375,7 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &module : layer->modules())
         {
             if (!parser.writeLineF("\n  {}  {}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
-                                   module->type(), module->uniqueName()))
+                                   module->type(), module->name()))
                 return false;
 
             // Write frequency and disabled keywords
@@ -622,7 +622,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     for (const auto *module : Module::instances())
     {
         for (auto &keyword : module->keywords().restartables())
-            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), keyword->name())))
+            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->name(), keyword->name())))
                 return false;
     }
 
@@ -642,7 +642,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Module timing information
     for (const auto *module : Module::instances())
     {
-        if (!parser.writeLineF("Timing  {}\n", module->uniqueName()))
+        if (!parser.writeLineF("Timing  {}\n", module->name()))
             return false;
         if (!module->processTimes().serialise(parser))
             return false;

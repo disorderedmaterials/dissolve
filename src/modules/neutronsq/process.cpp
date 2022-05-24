@@ -33,14 +33,14 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
         // Load the data
         Data1D referenceData;
         if (!referenceFQ_.importData(referenceData, &procPool))
-            return Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", uniqueName_, referenceFQ_.filename());
+            return Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", name_, referenceFQ_.filename());
 
         // Get dependent modules
         if (!sourceSQ_)
-            return Messenger::error("[SETUP {}] A source SQ module must be provided.\n", uniqueName_);
+            return Messenger::error("[SETUP {}] A source SQ module must be provided.\n", name_);
         auto *rdfModule = sourceSQ_->sourceRDF();
         if (!rdfModule)
-            return Messenger::error("[SETUP {}] A source RDF module (in the SQ module) must be provided.\n", uniqueName_);
+            return Messenger::error("[SETUP {}] A source RDF module (in the SQ module) must be provided.\n", name_);
 
         // Remove normalisation_ factor from data
         if (referenceNormalisation_ != StructureFactors::NoNormalisation)
@@ -53,14 +53,14 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
             if (referenceNormalisation_ == StructureFactors::AverageOfSquaresNormalisation)
             {
                 referenceData *= weights.boundCoherentAverageOfSquares();
-                Messenger::print("[SETUP {}] Removed <b>**2 normalisation from reference data ('{}'), factor = {}.\n",
-                                 uniqueName_, uniqueName(), weights.boundCoherentAverageOfSquares());
+                Messenger::print("[SETUP {}] Removed <b>**2 normalisation from reference data ('{}'), factor = {}.\n", name_,
+                                 name(), weights.boundCoherentAverageOfSquares());
             }
             else if (referenceNormalisation_ == StructureFactors::SquareOfAverageNormalisation)
             {
                 referenceData *= weights.boundCoherentSquareOfAverage();
-                Messenger::print("[SETUP {}] Removed <b**2> normalisation from reference data ('{}'), factor = {}.\n",
-                                 uniqueName_, uniqueName(), weights.boundCoherentSquareOfAverage());
+                Messenger::print("[SETUP {}] Removed <b**2> normalisation from reference data ('{}'), factor = {}.\n", name_,
+                                 name(), weights.boundCoherentSquareOfAverage());
             }
         }
 
@@ -69,27 +69,26 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
         auto ftQMax = referenceFTQMax_.value_or(referenceData.xAxis().back() + 1.0);
         if (referenceWindowFunction_ == WindowFunction::Form::None)
             Messenger::print("[SETUP {}] No window function will be applied in Fourier transform of reference data to g(r).",
-                             uniqueName_);
+                             name_);
         else
-            Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of reference data is {}.",
-                             uniqueName_, WindowFunction::forms().keyword(referenceWindowFunction_));
+            Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of reference data is {}.", name_,
+                             WindowFunction::forms().keyword(referenceWindowFunction_));
 
         // Store the reference data in processing
-        referenceData.setTag(uniqueName());
-        auto &storedData =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
+        referenceData.setTag(name());
+        auto &storedData = dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(), GenericItem::ProtectedFlag);
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
-        referenceData.setTag(uniqueName());
+        referenceData.setTag(name());
         auto &storedDataFT =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
+            dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", name(), GenericItem::ProtectedFlag);
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
         auto rho = rdfModule->effectiveDensity();
         Messenger::print(
-            "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n",
-            uniqueName_, rho);
+            "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", name_,
+            rho);
         Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
                         WindowFunction(referenceWindowFunction_));
 
@@ -98,10 +97,10 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
         {
             if (procPool.isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", uniqueName()));
+                Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", name()));
                 if (!exportFormat.exportData(storedData))
                     return procPool.decideFalse();
-                Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", uniqueName()));
+                Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", name()));
                 if (!exportFormatFT.exportData(storedDataFT))
                     return procPool.decideFalse();
                 procPool.decideTrue();
@@ -131,7 +130,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
     // Print argument/parameter summary
-    Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->uniqueName());
+    Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
     if (referenceWindowFunction_ == WindowFunction::Form::None)
         Messenger::print("No window function will be applied when calculating representative g(r) from S(Q).");
     else
@@ -156,20 +155,20 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     // Get unweighted S(Q) from the specified SQMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->uniqueName()))
-        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->uniqueName());
-    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->uniqueName());
+    if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->name()))
+        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
+    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Calculate and store weights
     auto &weights =
-        dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", name_, GenericItem::InRestartFileFlag);
     calculateWeights(rdfModule, weights);
     Messenger::print("Isotopologue and isotope composition:\n\n");
     weights.print();
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
     auto [weightedSQ, wSQstatus] =
-        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", name_, GenericItem::InRestartFileFlag);
     if (wSQstatus == GenericItem::ItemStatus::Created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
@@ -177,7 +176,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation_);
 
     // Save data if requested
-    if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
+    if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
         return false;
 
     /*
@@ -185,13 +184,13 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     // Get summed unweighted g(r) from the RDFMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
+    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->name()))
         return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
-    const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
+    const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
 
     // Create/retrieve PartialSet for summed weighted g(r)
     auto [weightedGR, wGRstatus] =
-        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedGR.atomTypeMix());
 
@@ -199,12 +198,12 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation_);
 
     // Save data if requested
-    if (saveGR_ && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "WeightedGR", "gr", "r, Angstroms"))))
+    if (saveGR_ && (!MPIRunMaster(procPool, weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))))
         return false;
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
-        dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", name_, GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
@@ -213,7 +212,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         // Take FT max Q limit from reference data
         auto &referenceData =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
+            dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(), GenericItem::ProtectedFlag);
         ftQMax = referenceData.xAxis().back();
     }
     else
@@ -229,7 +228,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", uniqueName_));
+            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", name_));
             if (exportFormat.exportData(repGR))
                 procPool.decideTrue();
             else

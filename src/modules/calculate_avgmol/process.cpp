@@ -54,7 +54,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, const ProcessPool &procP
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Grab Box pointer
     const auto *box = targetConfiguration_->box();
@@ -75,9 +75,9 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, const ProcessPool &procP
     const auto *stack = targetConfiguration_->siteStack(targetSite_);
 
     // Retrieve data arrays
-    auto &sampledX = dissolve.processingModuleData().retrieve<SampledVector>("X", uniqueName());
-    auto &sampledY = dissolve.processingModuleData().retrieve<SampledVector>("Y", uniqueName());
-    auto &sampledZ = dissolve.processingModuleData().retrieve<SampledVector>("Z", uniqueName());
+    auto &sampledX = dissolve.processingModuleData().retrieve<SampledVector>("X", name());
+    auto &sampledY = dissolve.processingModuleData().retrieve<SampledVector>("Y", name());
+    auto &sampledZ = dissolve.processingModuleData().retrieve<SampledVector>("Z", name());
 
     // Loop over sites
     std::vector<double> rx(targetSpecies_->nAtoms()), ry(targetSpecies_->nAtoms()), rz(targetSpecies_->nAtoms());

@@ -94,7 +94,7 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, const CoreDa
 bool ProcedureNodeReference::write(LineParser &parser, std::string_view prefix)
 {
     if (analyseModuleParent_)
-        return parser.writeLineF("{}  '{}'  '{}'\n", prefix, node_->name(), analyseModuleParent_->uniqueName());
+        return parser.writeLineF("{}  '{}'  '{}'\n", prefix, node_->name(), analyseModuleParent_->name());
     else
         return parser.writeLineF("{}  '{}'\n", prefix, node_->name());
 }

@@ -19,7 +19,7 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.empty())
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", name());
 
     // Print argument/parameter summary
     if (useHalfCellRange_)
@@ -82,7 +82,7 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         bool alreadyUpToDate;
         calculateGR(dissolve.processingModuleData(), procPool, cfg, partialsMethod_, rdfRange, binWidth_, alreadyUpToDate);
         auto &originalgr =
-            dissolve.processingModuleData().retrieve<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), uniqueName_);
+            dissolve.processingModuleData().retrieve<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), name_);
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
         if ((averagingLength_ > 1) && (!alreadyUpToDate))
@@ -91,7 +91,7 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             std::string currentFingerprint{originalgr.fingerprint()};
 
             Averaging::average<PartialSet>(dissolve.processingModuleData(), fmt::format("{}//OriginalGR", cfg->niceName()),
-                                           uniqueName_, averagingLength_, averagingScheme_);
+                                           name_, averagingLength_, averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
             originalgr.setFingerprint(currentFingerprint);
@@ -110,21 +110,21 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
         auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(
-            fmt::format("{}//UnweightedGR", cfg->niceName()), uniqueName_, GenericItem::InRestartFileFlag);
+            fmt::format("{}//UnweightedGR", cfg->niceName()), name_, GenericItem::InRestartFileFlag);
         calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening_, nSmooths_);
 
         // Save data if requested
-        if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(uniqueName_, "UnweightedGR", "gr", "r, Angstroms"))))
+        if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms"))))
             return false;
     }
 
     // Create/retrieve PartialSet for summed unweighted g(r)
     auto &summedUnweightedGR =
-        dissolve.processingModuleData().realise<PartialSet>("UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<PartialSet>("UnweightedGR", name_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, uniqueName(), uniqueName(),
-                                    targetConfigurations_, summedUnweightedGR))
+    if (!RDFModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, name(), name(), targetConfigurations_,
+                                    summedUnweightedGR))
         return false;
 
     return true;

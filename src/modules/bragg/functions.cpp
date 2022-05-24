@@ -22,7 +22,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
                                       bool &alreadyUpToDate)
 {
     // Check to see if the arrays are up-to-date
-    auto braggDataVersion = moduleData.valueOr<int>("Version", uniqueName_, -1);
+    auto braggDataVersion = moduleData.valueOr<int>("Version", name_, -1);
     alreadyUpToDate = braggDataVersion == cfg->contentsVersion();
     if (alreadyUpToDate)
         return true;
@@ -30,14 +30,14 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     // Realise the arrays from the Configuration
     auto &braggKVectors = moduleData.realise<std::vector<KVector>>("KVectors", cfg->niceName());
     auto &braggReflections =
-        moduleData.realise<std::vector<BraggReflection>>("Reflections", uniqueName(), GenericItem::InRestartFileFlag);
-    auto &braggAtomVectorXCos = moduleData.realise<Array2D<double>>("AtomVectorXCos", uniqueName());
-    auto &braggAtomVectorYCos = moduleData.realise<Array2D<double>>("AtomVectorYCos", uniqueName());
-    auto &braggAtomVectorZCos = moduleData.realise<Array2D<double>>("AtomVectorZCos", uniqueName());
-    auto &braggAtomVectorXSin = moduleData.realise<Array2D<double>>("AtomVectorXSin", uniqueName());
-    auto &braggAtomVectorYSin = moduleData.realise<Array2D<double>>("AtomVectorYSin", uniqueName());
-    auto &braggAtomVectorZSin = moduleData.realise<Array2D<double>>("AtomVectorZSin", uniqueName());
-    auto &braggMaximumHKL = moduleData.realise<Vec3<int>>("MaximumHKL", uniqueName());
+        moduleData.realise<std::vector<BraggReflection>>("Reflections", name(), GenericItem::InRestartFileFlag);
+    auto &braggAtomVectorXCos = moduleData.realise<Array2D<double>>("AtomVectorXCos", name());
+    auto &braggAtomVectorYCos = moduleData.realise<Array2D<double>>("AtomVectorYCos", name());
+    auto &braggAtomVectorZCos = moduleData.realise<Array2D<double>>("AtomVectorZCos", name());
+    auto &braggAtomVectorXSin = moduleData.realise<Array2D<double>>("AtomVectorXSin", name());
+    auto &braggAtomVectorYSin = moduleData.realise<Array2D<double>>("AtomVectorYSin", name());
+    auto &braggAtomVectorZSin = moduleData.realise<Array2D<double>>("AtomVectorZSin", name());
+    auto &braggMaximumHKL = moduleData.realise<Vec3<int>>("MaximumHKL", name());
 
     // Grab some useful values
     const auto *box = cfg->box();
@@ -292,7 +292,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, const ProcessPool
     std::for_each(braggReflections.begin(), braggReflections.end(), [divisor](auto &reflxn) { reflxn *= divisor; });
 
     // Store the new version of the data
-    moduleData.realise<int>("Version", uniqueName_) = cfg->contentsVersion();
+    moduleData.realise<int>("Version", name_) = cfg->contentsVersion();
 
     return true;
 }
@@ -302,13 +302,12 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, const Process
                                           const double qMin, const double qDelta, const double qMax)
 {
     // Retrieve BraggReflection data from the Configuration's module data
-    const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", uniqueName());
+    const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", name());
     const auto nReflections = braggReflections.size();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
     const auto nTypes = cfg->nAtomTypes();
-    auto braggPartialsObject =
-        moduleData.realiseIf<Array2D<Data1D>>("OriginalBragg", uniqueName(), GenericItem::InRestartFileFlag);
+    auto braggPartialsObject = moduleData.realiseIf<Array2D<Data1D>>("OriginalBragg", name(), GenericItem::InRestartFileFlag);
     auto &braggPartials = braggPartialsObject.first;
     if (braggPartialsObject.second == GenericItem::ItemStatus::Created)
     {
@@ -328,7 +327,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, const Process
         std::fill(braggPartials.begin(), braggPartials.end(), temp);
     }
 
-    auto &braggTotal = moduleData.realise<Data1D>("OriginalBragg//Total", uniqueName(), GenericItem::InRestartFileFlag);
+    auto &braggTotal = moduleData.realise<Data1D>("OriginalBragg//Total", name(), GenericItem::InRestartFileFlag);
     braggTotal.clear();
 
     // Zero Bragg partials
@@ -370,7 +369,7 @@ bool BraggModule::reBinReflections(GenericList &moduleData, const ProcessPool &p
                                    Array2D<Data1D> &braggPartials)
 {
     // Retrieve BraggReflection data
-    const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", uniqueName());
+    const auto &braggReflections = moduleData.value<std::vector<BraggReflection>>("Reflections", name());
     const auto nReflections = braggReflections.size();
 
     const auto nTypes = cfg->nAtomTypes();

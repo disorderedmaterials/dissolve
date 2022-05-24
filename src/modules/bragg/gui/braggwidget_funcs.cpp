@@ -47,7 +47,7 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
     // Check / update summed atom types data
     if (!reflectionAtomTypesData_)
         reflectionAtomTypesData_ =
-            dissolve_.processingModuleData().valueIf<const AtomTypeMix>("SummedAtomTypes", module_->uniqueName());
+            dissolve_.processingModuleData().valueIf<const AtomTypeMix>("SummedAtomTypes", module_->name());
 
     // Need to recreate renderables if requested as the updateType
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
@@ -56,7 +56,7 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
 
         if (ui_.TotalsButton->isChecked())
         {
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//Total", module_->uniqueName()), "Total",
+            graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//Total", module_->name()), "Total",
                                                        "Totals");
         }
         else if (ui_.PartialsButton->isChecked())
@@ -70,7 +70,7 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
                     const AtomTypeData &at2 = reflectionAtomTypesData_->get()[second];
                     const std::string id = fmt::format("{}-{}", at1.atomTypeName(), at2.atomTypeName());
 
-                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//{}", module_->uniqueName(), id),
+                    graph_->createRenderable<RenderableData1D>(fmt::format("{}//OriginalBragg//{}", module_->name(), id),
                                                                fmt::format("{}", id), "Full");
                 };
             }
@@ -86,7 +86,7 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
     if (ui_.ReflectionsButton->isChecked())
     {
         auto optReflxns =
-            dissolve_.processingModuleData().valueIf<const std::vector<BraggReflection>>("Reflections", module_->uniqueName());
+            dissolve_.processingModuleData().valueIf<const std::vector<BraggReflection>>("Reflections", module_->name());
         if (!optReflxns)
         {
             reflectionData_ = std::nullopt;
@@ -94,11 +94,10 @@ void BraggModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
             braggModel_.setReflections(std::nullopt);
         }
         else if (!reflectionData_ || (&reflectionData_->get() != &optReflxns->get()) ||
-                 (reflectionDataDisplayVersion_ !=
-                  dissolve_.processingModuleData().version("Reflections", module_->uniqueName())))
+                 (reflectionDataDisplayVersion_ != dissolve_.processingModuleData().version("Reflections", module_->name())))
         {
             braggModel_.setReflections(optReflxns);
-            reflectionDataDisplayVersion_ = dissolve_.processingModuleData().version("Reflections", module_->uniqueName());
+            reflectionDataDisplayVersion_ = dissolve_.processingModuleData().version("Reflections", module_->name());
 
             // Retrieve the atom types list so we know which reflections correspond to which pairs
             if (reflectionAtomTypesData_)

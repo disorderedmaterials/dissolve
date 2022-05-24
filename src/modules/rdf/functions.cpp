@@ -296,7 +296,7 @@ bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &proc
                             bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
-    auto originalGRObject = processingData.realiseIf<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), uniqueName_,
+    auto originalGRObject = processingData.realiseIf<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), name_,
                                                                  GenericItem::InRestartFileFlag);
     auto &originalgr = originalGRObject.first;
     if (originalGRObject.second == GenericItem::ItemStatus::Created)

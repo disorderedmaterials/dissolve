@@ -34,7 +34,7 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin_,
                      qMax_, qDelta_);
-    Messenger::print("SQ: Source RDFs will be taken from module '{}'.\n", sourceRDF_->uniqueName());
+    Messenger::print("SQ: Source RDFs will be taken from module '{}'.\n", sourceRDF_->name());
     if (windowFunction_ == WindowFunction::Form::None)
         Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
@@ -52,7 +52,7 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          Functions::function1D().keyword(qBroadening_.type()), qBroadening_.parameterSummary());
     if (sourceBragg_)
     {
-        Messenger::print("SQ: Bragg scattering from module '{}' will be included.\n", sourceBragg_->uniqueName());
+        Messenger::print("SQ: Bragg scattering from module '{}' will be included.\n", sourceBragg_->name());
         if (braggQBroadening_.type() == Functions::Function1D::None)
             Messenger::print("SQ: No additional broadening will be applied to calculated Bragg S(Q).");
         else
@@ -67,16 +67,16 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     // Get unweighted g(r) from the source RDF module
-    if (!dissolve.processingModuleData().contains("UnweightedGR", sourceRDF_->uniqueName()))
-        return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceRDF_->uniqueName());
-    const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", sourceRDF_->uniqueName());
+    if (!dissolve.processingModuleData().contains("UnweightedGR", sourceRDF_->name()))
+        return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceRDF_->name());
+    const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", sourceRDF_->name());
 
     // Get effective atomic density of underlying g(r)
     const auto rho = sourceRDF_->effectiveDensity();
 
     // Does a PartialSet already exist for this Configuration?
     auto uSQObject =
-        dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realiseIf<PartialSet>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
     auto &unweightedsq = uSQObject.first;
     if (uSQObject.second == GenericItem::ItemStatus::Created)
         unweightedsq.setUpPartials(unweightedgr.atomTypeMix());
@@ -84,9 +84,8 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
             unweightedsq.fingerprint(),
-            fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceRDF_->uniqueName()),
-                        sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->uniqueName())
-                                     : -1)))
+            fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceRDF_->name()),
+                        sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1)))
     {
         Messenger::print("SQ: Unweighted partial S(Q) are up-to-date.\n");
         return true;
@@ -101,20 +100,20 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (sourceBragg_)
     {
         // Check if reflection data is present
-        if (!dissolve.processingModuleData().contains("Reflections", sourceBragg_->uniqueName()))
+        if (!dissolve.processingModuleData().contains("Reflections", sourceBragg_->name()))
             return Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
                                     "could not be located.\n",
-                                    sourceBragg_->uniqueName());
+                                    sourceBragg_->name());
         const auto &braggReflections =
-            dissolve.processingModuleData().value<std::vector<BraggReflection>>("Reflections", sourceBragg_->uniqueName());
+            dissolve.processingModuleData().value<std::vector<BraggReflection>>("Reflections", sourceBragg_->name());
         const auto nReflections = braggReflections.size();
         const auto braggQMax = braggReflections.at(nReflections - 1).q();
         Messenger::print("Found reflections data for module '{}' (nReflections = {}, Q(last) = {} "
                          "Angstroms**-1).\n",
-                         sourceBragg_->uniqueName(), nReflections, braggQMax);
+                         sourceBragg_->name(), nReflections, braggQMax);
         const auto &braggAtomTypes =
-            dissolve.processingModuleData().value<AtomTypeMix>("SummedAtomTypes", sourceBragg_->uniqueName());
-        const auto &v0 = dissolve.processingModuleData().value<double>("V0", sourceBragg_->uniqueName());
+            dissolve.processingModuleData().value<AtomTypeMix>("SummedAtomTypes", sourceBragg_->name());
+        const auto &v0 = dissolve.processingModuleData().value<double>("V0", sourceBragg_->name());
 
         // Prepare a temporary object for the Bragg partials
         Array2D<Data1D> braggPartials;
@@ -195,7 +194,7 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Store the current fingerprint, since we must ensure we retain it in the averaged data.
         std::string currentFingerprint{unweightedsq.fingerprint()};
 
-        Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, averagingLength_,
+        Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", name_, averagingLength_,
                                        averagingScheme_);
 
         // Re-set the object names and fingerprints of the partials
@@ -204,11 +203,11 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Set fingerprint
     unweightedsq.setFingerprint(
-        fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceRDF_->uniqueName()),
-                    sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->uniqueName()) : -1));
+        fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceRDF_->name()),
+                    sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1));
 
     // Save data if requested
-    if (save_ && !MPIRunMaster(procPool, unweightedsq.save(uniqueName_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
+    if (save_ && !MPIRunMaster(procPool, unweightedsq.save(name_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
         return false;
 
     return true;

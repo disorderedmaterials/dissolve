@@ -75,17 +75,17 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             for (auto *targetModule : module_->targets())
             {
                 // Reference data
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", targetModule->uniqueName()),
-                                                           fmt::format("{} (Exp)", targetModule->uniqueName()), "Exp");
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", targetModule->name()),
+                                                           fmt::format("{} (Exp)", targetModule->name()), "Exp");
 
                 // Calculated F(Q)
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", targetModule->uniqueName()),
-                                                           fmt::format("{} (Calc)", targetModule->uniqueName()), "Calc");
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", targetModule->name()),
+                                                           fmt::format("{} (Calc)", targetModule->name()), "Calc");
 
                 // F(Q) diff w.r.t. reference
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//Difference//{}", module_->uniqueName(), targetModule->uniqueName()),
-                    fmt::format("{} (Delta)", targetModule->uniqueName()), "Delta");
+                    fmt::format("{}//Difference//{}", module_->name(), targetModule->name()),
+                    fmt::format("{} (Delta)", targetModule->name()), "Delta");
             }
         }
         else if (ui_.DeltaFQButton->isChecked())
@@ -94,12 +94,12 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             for (auto *targetModule : module_->targets())
             {
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//DeltaFQ//{}", module_->uniqueName(), targetModule->uniqueName()),
-                    fmt::format("{} (Delta)", targetModule->uniqueName()), "Delta");
+                    fmt::format("{}//DeltaFQ//{}", module_->name(), targetModule->name()),
+                    fmt::format("{} (Delta)", targetModule->name()), "Delta");
 
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//DeltaFQFit//{}", module_->uniqueName(), targetModule->uniqueName()),
-                    fmt::format("{} (Fit)", targetModule->uniqueName()), "Fit");
+                    fmt::format("{}//DeltaFQFit//{}", module_->name(), targetModule->name()),
+                    fmt::format("{} (Fit)", targetModule->name()), "Fit");
             }
         }
         else if (ui_.EstimatedSQButton->isChecked())
@@ -112,15 +112,15 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 // Unweighted estimated partial
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedSQ//{}", module_->uniqueName(), id),
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedSQ//{}", module_->name(), id),
                                                            fmt::format("{} (Estimated)", id), "Estimated");
 
                 // Calculated / summed partial
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}", module_->uniqueName(), id),
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//{}", module_->name(), id),
                                                            fmt::format("{} (Calc)", id), "Calc");
 
                 // Deltas
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//DeltaSQ//{}", module_->uniqueName(), id),
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//DeltaSQ//{}", module_->name(), id),
                                                            fmt::format("{} (Delta)", id), "Delta");
             }
         }
@@ -135,14 +135,14 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 if (!optSQModule)
                     Messenger::error("Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will "
                                      "be unavailable.",
-                                     module_->uniqueName());
+                                     module_->name());
                 else
                 {
                     auto optRDFModule =
                         optSQModule.value().get()->keywords().get<const RDFModule *, ModuleKeyword<const RDFModule>>(
                             "SourceRDFs");
                     if (optRDFModule)
-                        rdfModuleName = optRDFModule.value().get()->uniqueName();
+                        rdfModuleName = optRDFModule.value().get()->name();
                     else
                         rdfModuleName = "UNKNOWN_RDF_MODULE";
                 }
@@ -157,7 +157,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 // Experimentally-determined unweighted partial
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedGR//{}", module_->uniqueName(), id),
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//EstimatedGR//{}", module_->name(), id),
                                                            fmt::format("{} (Estimated)", id), "Estimated");
 
                 // Calculated / summed partials, taken from the RDF module referenced by the first module target
@@ -170,13 +170,13 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             for (auto *targetModule : module_->targets())
             {
                 // Reference F(r) (from direct FT of input data)
-                graph_->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", targetModule->uniqueName()),
-                                                           fmt::format("{} (Exp)", targetModule->uniqueName()), "Exp");
+                graph_->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", targetModule->name()),
+                                                           fmt::format("{} (Exp)", targetModule->name()), "Exp");
 
                 // Simulated F(r) (from FT of the calculated F(Q))
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//SimulatedFR//{}", module_->uniqueName(), targetModule->uniqueName()),
-                    fmt::format("{} (Calc)", targetModule->uniqueName()), "Calc");
+                    fmt::format("{}//SimulatedFR//{}", module_->name(), targetModule->name()),
+                    fmt::format("{} (Calc)", targetModule->name()), "Calc");
             }
         }
         else if (ui_.PotentialsButton->isChecked())
@@ -197,26 +197,25 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             graph_->groupManager().removeVerticalShifts();
 
             // Add total R-factor followed by those for each target
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//RFactor", module_->uniqueName()), "Total", "Total")
+            graph_->createRenderable<RenderableData1D>(fmt::format("{}//RFactor", module_->name()), "Total", "Total")
                 ->lineStyle()
                 .setStipple(LineStipple::HalfDashStipple);
 
             for (auto *targetModule : module_->targets())
                 graph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//RFactor//{}", module_->uniqueName(), targetModule->uniqueName()),
-                    targetModule->uniqueName(), "RFactor");
+                    fmt::format("{}//RFactor//{}", module_->name(), targetModule->name()), targetModule->name(), "RFactor");
         }
         else if (ui_.EReqButton->isChecked())
         {
             // Add phi magnitude data
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//EPMag", module_->uniqueName()), "EReq", "EReq");
+            graph_->createRenderable<RenderableData1D>(fmt::format("{}//EPMag", module_->name()), "EReq", "EReq");
         }
     }
 
     // Set information labels
-    auto eReqArray = dissolve_.processingModuleData().valueIf<Data1D>("EPMag", module_->uniqueName());
+    auto eReqArray = dissolve_.processingModuleData().valueIf<Data1D>("EPMag", module_->name());
     ui_.EReqValueLabel->setText(eReqArray ? QString::number(eReqArray->get().values().back()) : "--");
-    auto rFactorArray = dissolve_.processingModuleData().valueIf<Data1D>("RFactor", module_->uniqueName());
+    auto rFactorArray = dissolve_.processingModuleData().valueIf<Data1D>("RFactor", module_->name());
     ui_.RFactorValueLabel->setText(rFactorArray ? QString::number(rFactorArray->get().values().back()) : "--");
 
     // Validate renderables if they need it

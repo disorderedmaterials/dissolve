@@ -33,7 +33,7 @@ bool EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     auto strategy = procPool.bestStrategy();
 
@@ -332,27 +332,27 @@ bool EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Store current energies in the Configuration in case somebody else needs them
         auto &interData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("{}//Inter", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("{}//Inter", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
         interData.addPoint(dissolve.iteration(), interEnergy);
         auto &intraData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("{}//Intra", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("{}//Intra", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
         intraData.addPoint(dissolve.iteration(), intraEnergy);
         auto &bondData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("{}//Bond", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("{}//Bond", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
         bondData.addPoint(dissolve.iteration(), bondEnergy);
         auto &angleData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("{}//Angle", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("{}//Angle", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
         angleData.addPoint(dissolve.iteration(), angleEnergy);
         auto &torsionData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("{}//Torsions", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("{}//Torsions", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
         torsionData.addPoint(dissolve.iteration(), torsionEnergy);
         auto &improperData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("{}//Impropers", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("{}//Impropers", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
         improperData.addPoint(dissolve.iteration(), improperEnergy);
 
         // Append to arrays of total energies
         auto &totalEnergyArray = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("{}//Total", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("{}//Total", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
         totalEnergyArray.addPoint(dissolve.iteration(), interEnergy + intraEnergy);
 
         // Determine stability of energy

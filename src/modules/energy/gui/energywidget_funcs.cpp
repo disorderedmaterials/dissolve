@@ -59,7 +59,7 @@ void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
         // Clear any existing renderables
         energyGraph_->clearRenderables();
 
-        auto prefix = fmt::format("{}//{}", module_->uniqueName(), cfg->niceName());
+        auto prefix = fmt::format("{}//{}", module_->name(), cfg->niceName());
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Total", prefix), "Total", "Totals");
         energyGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Inter", prefix), "Inter", "Totals")
             ->setColour(StockColours::RedStockColour);

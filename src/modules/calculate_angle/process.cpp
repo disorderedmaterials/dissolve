@@ -16,7 +16,7 @@ bool CalculateAngleModule::process(Dissolve &dissolve, const ProcessPool &procPo
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Ensure any parameters in our nodes are set correctly
     selectB_->setDistanceReferenceSite(selectA_);
@@ -51,7 +51,7 @@ bool CalculateAngleModule::process(Dissolve &dissolve, const ProcessPool &procPo
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), uniqueName());
+    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
         return Messenger::error("CalculateAngle experienced problems with its analysis.\n");
 

@@ -69,15 +69,15 @@ void XRaySQModuleWidget::createPartialSetRenderables(std::string_view targetPref
             continue;
 
         // Full partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id),
+        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
                                                    fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->uniqueName(), targetPrefix, id),
+        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
                                                    fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->uniqueName(), targetPrefix, id),
+        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
                                                    fmt::format("{} (Unbound)", id), "Unbound");
     }
 }
@@ -99,48 +99,48 @@ void XRaySQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &
 
         if (ui_.TotalFQButton->isChecked())
         {
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", module_->uniqueName()),
-                                                       "Calculated", "Calculated");
+            graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedSQ//Total", module_->name()), "Calculated",
+                                                       "Calculated");
             auto boundTotal = graph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//WeightedSQ//BoundTotal", module_->uniqueName()), "Bound F(Q)", "Calculated");
+                fmt::format("{}//WeightedSQ//BoundTotal", module_->name()), "Bound F(Q)", "Calculated");
             boundTotal->setColour(StockColours::GreenStockColour);
             boundTotal->lineStyle().setStipple(LineStipple::DotStipple);
             auto unboundTotal = graph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//WeightedSQ//UnboundTotal", module_->uniqueName()), "Unbound F(Q)", "Calculated");
+                fmt::format("{}//WeightedSQ//UnboundTotal", module_->name()), "Unbound F(Q)", "Calculated");
             unboundTotal->setColour(StockColours::GreenStockColour);
             unboundTotal->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
             // Add on reference F(Q) data if present
             if (referenceFileAndFormat.hasFilename())
                 graph_
-                    ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", module_->uniqueName()),
-                                                         "Reference F(Q)", "Reference")
+                    ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceData", module_->name()), "Reference F(Q)",
+                                                         "Reference")
                     ->setColour(StockColours::RedStockColour);
         }
         else if (ui_.PartialSQButton->isChecked())
         {
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedSQ", module_->uniqueName());
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedSQ", module_->name());
             createPartialSetRenderables("WeightedSQ");
         }
         else if (ui_.TotalGRButton->isChecked())
         {
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedGR//Total", module_->uniqueName()),
-                                                       "Calculated", "Calculated");
-            auto repGR = graph_->createRenderable<RenderableData1D>(
-                fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()), "Via FT", "Calculated");
+            graph_->createRenderable<RenderableData1D>(fmt::format("{}//WeightedGR//Total", module_->name()), "Calculated",
+                                                       "Calculated");
+            auto repGR = graph_->createRenderable<RenderableData1D>(fmt::format("{}//RepresentativeTotalGR", module_->name()),
+                                                                    "Via FT", "Calculated");
             repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
             repGR->setColour(StockColours::GreenStockColour);
 
             // Add on reference G(r) (from FT of F(Q)) if present
             if (referenceFileAndFormat.hasFilename())
                 graph_
-                    ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", module_->uniqueName()),
+                    ->createRenderable<RenderableData1D>(fmt::format("{}//ReferenceDataFT", module_->name()),
                                                          "Reference G(r) (via FT)", "Reference")
                     ->setColour(StockColours::RedStockColour);
         }
         else if (ui_.PartialGRButton->isChecked())
         {
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedGR", module_->uniqueName());
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("WeightedGR", module_->name());
             createPartialSetRenderables("WeightedGR");
         }
     }

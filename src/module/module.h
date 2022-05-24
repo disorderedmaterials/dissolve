@@ -28,16 +28,16 @@ class Module
     protected:
     // Type name of module
     const std::string typeName_;
-    // Unique name of Module
-    std::string uniqueName_;
+    // Name of Module
+    std::string name_;
 
     public:
     // Return type of Module
     const std::string_view type() const;
-    // Set unique name of Module
-    void setUniqueName(std::string_view uniqueName);
-    // Return unique name of Module
-    std::string_view uniqueName() const;
+    // Set name of Module
+    void setName(std::string_view name);
+    // Return name of Module
+    std::string_view name() const;
 
     /*
      * Keywords

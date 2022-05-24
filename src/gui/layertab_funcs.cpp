@@ -268,13 +268,13 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
     {
         Renderable::invalidateAll();
         Renderable::setSourceDataAccessEnabled(false);
-        dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+        dissolve_.processingModuleData().removeWithPrefix(module->name());
         Renderable::setSourceDataAccessEnabled(true);
     }
     else if (action == deleteModule)
     {
         // Remove the module's data, the module control widget, then the module itself
-        dissolve_.processingModuleData().removeWithPrefix(module->uniqueName());
+        dissolve_.processingModuleData().removeWithPrefix(module->name());
         removeControlWidget(module);
         moduleLayerModel_.removeRows(index.row(), 1, QModelIndex());
     }

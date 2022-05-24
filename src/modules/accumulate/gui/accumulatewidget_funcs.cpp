@@ -59,17 +59,16 @@ void AccumulateModuleWidget::createPartialSetRenderables(std::string_view target
         auto id = DissolveSys::beforeChar(full.tag(), '/');
 
         // Full partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->uniqueName(), targetPrefix, full.tag()),
+        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->name(), targetPrefix, full.tag()),
                                                    fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
-        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->uniqueName(), targetPrefix, bound.tag()),
+        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->name(), targetPrefix, bound.tag()),
                                                    fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        graph_->createRenderable<RenderableData1D>(
-            fmt::format("{}//{}//{}", module_->uniqueName(), targetPrefix, unbound.tag()), fmt::format("{} (Unbound)", id),
-            "Unbound");
+        graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->name(), targetPrefix, unbound.tag()),
+                                                   fmt::format("{} (Unbound)", id), "Unbound");
     }
 }
 
@@ -92,12 +91,11 @@ void AccumulateModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
 
         if (ui_.PartialsButton->isChecked())
         {
-            targetPartials_ =
-                dissolve_.processingModuleData().valueIf<PartialSetAccumulator>("Accumulation", module_->uniqueName());
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSetAccumulator>("Accumulation", module_->name());
             createPartialSetRenderables("Accumulation");
         }
         else
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//Accumulation//Total", module_->uniqueName()), "Total",
+            graph_->createRenderable<RenderableData1D>(fmt::format("{}//Accumulation//Total", module_->name()), "Total",
                                                        "Calc");
     }
 

@@ -35,16 +35,16 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
         Data1D referenceData;
         if (!referenceFQ_.importData(referenceData, &procPool))
         {
-            Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", uniqueName_, referenceFQ_.filename());
+            Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", name_, referenceFQ_.filename());
             return false;
         }
 
         // Get dependent modules
         if (!sourceSQ_)
-            return Messenger::error("[SETUP {}] A source SQ module must be provided.\n", uniqueName_);
+            return Messenger::error("[SETUP {}] A source SQ module must be provided.\n", name_);
         auto *rdfModule = sourceSQ_->sourceRDF();
         if (!rdfModule)
-            return Messenger::error("[SETUP {}] A source RDF module (in the SQ module) must be provided.\n", uniqueName_);
+            return Messenger::error("[SETUP {}] A source RDF module (in the SQ module) must be provided.\n", name_);
 
         // Remove normalisation factor from data
         if (referenceNormalisation_ != StructureFactors::NoNormalisation)
@@ -73,27 +73,26 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
         auto ftQMax = referenceFTQMax_.value_or(referenceData.xAxis().back() + 1.0);
         if (referenceWindowFunction_ == WindowFunction::Form::None)
             Messenger::print("[SETUP {}] No window function will be applied in Fourier transform of reference data to g(r).",
-                             uniqueName_);
+                             name_);
         else
-            Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of reference data is {}.",
-                             uniqueName_, WindowFunction::forms().keyword(referenceWindowFunction_));
+            Messenger::print("[SETUP {}] Window function to be applied in Fourier transform of reference data is {}.", name_,
+                             WindowFunction::forms().keyword(referenceWindowFunction_));
 
         // Store the reference data in processing
-        referenceData.setTag(uniqueName());
-        auto &storedData =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
+        referenceData.setTag(name());
+        auto &storedData = dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(), GenericItem::ProtectedFlag);
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
-        referenceData.setTag(uniqueName());
+        referenceData.setTag(name());
         auto &storedDataFT =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
+            dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", name(), GenericItem::ProtectedFlag);
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
         auto rho = rdfModule->effectiveDensity();
         Messenger::print(
-            "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n",
-            uniqueName_, rho);
+            "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", name_,
+            rho);
         Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
                         WindowFunction(referenceWindowFunction_));
 
@@ -102,10 +101,10 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
         {
             if (procPool.isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", uniqueName()));
+                Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", name()));
                 if (!exportFormat.exportData(storedData))
                     return procPool.decideFalse();
-                Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", uniqueName()));
+                Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", name()));
                 if (!exportFormatFT.exportData(storedDataFT))
                     return procPool.decideFalse();
                 procPool.decideTrue();
@@ -135,7 +134,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
     // Print argument/parameter summary
-    Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->uniqueName());
+    Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
     if (normalisation_ == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
@@ -163,20 +162,19 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     // Get unweighted S(Q) from the specified SQMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->uniqueName()))
-        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->uniqueName());
-    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->uniqueName());
+    if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->name()))
+        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
+    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Construct weights matrix
-    auto &weights =
-        dissolve.processingModuleData().realise<XRayWeights>("FullWeights", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &weights = dissolve.processingModuleData().realise<XRayWeights>("FullWeights", name_, GenericItem::InRestartFileFlag);
     calculateWeights(rdfModule, weights, formFactors_);
     Messenger::print("Weights matrix:\n\n");
     weights.print();
 
     // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
     auto [weightedSQ, wSQtatus] =
-        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", name_, GenericItem::InRestartFileFlag);
     if (wSQtatus == GenericItem::ItemStatus::Created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
@@ -184,7 +182,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation_);
 
     // Save data if requested
-    if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
+    if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
         return false;
     if (saveFormFactors_)
     {
@@ -197,7 +195,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     {
                         Data1D atomicData = unweightedSQ.partial(i, i);
                         atomicData.values() = weights.formFactor(i, atomicData.xAxis());
-                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", uniqueName(), at1.atomTypeName()));
+                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", name(), at1.atomTypeName()));
                         if (!exportFormat.exportData(atomicData))
                             return procPool.decideFalse();
                         procPool.decideTrue();
@@ -211,7 +209,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     Data1D ffData = unweightedSQ.partial(i, j);
                     ffData.values() = weights.weight(i, j, ffData.xAxis());
                     Data1DExportFileFormat exportFormat(
-                        fmt::format("{}-{}-{}.form", uniqueName(), at1.atomTypeName(), at2.atomTypeName()));
+                        fmt::format("{}-{}-{}.form", name(), at1.atomTypeName(), at2.atomTypeName()));
                     if (!exportFormat.exportData(ffData))
                         return procPool.decideFalse();
                     procPool.decideTrue();
@@ -231,13 +229,13 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     // Get summed unweighted g(r) from the specified RDFMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
+    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->name()))
         return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
-    const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
+    const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
 
     // Create/retrieve PartialSet for summed weighted g(r)
     auto [weightedGR, wGRstatus] =
-        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realiseIf<PartialSet>("WeightedGR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedSQ.atomTypeMix());
 
@@ -246,7 +244,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
-        dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", name_, GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
@@ -255,7 +253,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         // Take FT max Q limit from reference data
         auto &referenceData =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
+            dissolve.processingModuleData().realise<Data1D>("ReferenceData", name(), GenericItem::ProtectedFlag);
         ftQMax = referenceData.xAxis().back();
     }
     else
@@ -271,7 +269,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", uniqueName_));
+            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", name_));
             if (exportFormat.exportData(repGR))
                 procPool.decideTrue();
             else

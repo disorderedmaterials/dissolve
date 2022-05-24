@@ -15,10 +15,10 @@ bool ForcesModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 {
     if (referenceForces_.hasFilename())
     {
-        Messenger::print("[SETUP {}] Reading test reference forces.\n", uniqueName_);
+        Messenger::print("[SETUP {}] Reading test reference forces.\n", name_);
 
         // Realise and read the force array
-        auto &f = dissolve.processingModuleData().realise<std::vector<Vec3<double>>>("ReferenceForces", uniqueName());
+        auto &f = dissolve.processingModuleData().realise<std::vector<Vec3<double>>>("ReferenceForces", name());
 
         // Read in the forces
         if (!referenceForces_.importData(f, &procPool))
@@ -33,7 +33,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Retrieve control parameters
     const auto saveData = exportedForces_.hasFilename();
@@ -390,10 +390,10 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         Vec3<double> totalRatio;
         sumError = 0.0;
         GenericList &processingData = dissolve.processingModuleData();
-        if (processingData.contains("ReferenceForces", uniqueName()))
+        if (processingData.contains("ReferenceForces", name()))
         {
             // Grab reference force array and check size
-            const auto &fRef = processingData.value<std::vector<Vec3<double>>>("ReferenceForces", uniqueName());
+            const auto &fRef = processingData.value<std::vector<Vec3<double>>>("ReferenceForces", name());
             if (fRef.size() != targetConfiguration_->nAtoms())
                 return Messenger::error("Number of force components in ReferenceForces is {}, but the "
                                         "Configuration '{}' contains {} atoms.\n",
@@ -494,7 +494,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Realise the force vector
         auto &f = dissolve.processingModuleData().realise<std::vector<Vec3<double>>>(
-            fmt::format("{}//Forces", targetConfiguration_->niceName()), uniqueName());
+            fmt::format("{}//Forces", targetConfiguration_->niceName()), name());
         f.resize(targetConfiguration_->nAtoms());
 
         // Calculate forces
