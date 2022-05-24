@@ -134,7 +134,7 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, const std:
 
     // Find its deserialiser and call it
     if (!GenericItemDeserialiser::deserialise(data, parser, coreData))
-        return Messenger::error(fmt::format("Deerialisation of item '{}' failed.\n", name));
+        return Messenger::error(fmt::format("Deserialisation of item '{}' failed.\n", name));
 
     return true;
 }
