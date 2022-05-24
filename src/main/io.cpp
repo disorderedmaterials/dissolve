@@ -411,6 +411,12 @@ bool Dissolve::loadRestart(std::string_view filename)
     if (!parser.openInput(restartFilename_))
         return false;
 
+    // Peek the first line and see if can determine a version
+    if (parser.readNextLine(LineParser::KeepComments) != LineParser::Success)
+        return false;
+    GenericList::setBaseDataVersionFromString(parser.line());
+    parser.rewind();
+
     // Variables
     Configuration *cfg;
     Module *module;
@@ -528,6 +534,12 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
     LineParser parser(&worldPool());
     if (!parser.openInput(filename))
         return false;
+
+    // Peek the first line and see if can determine a version
+    if (parser.readNextLine(LineParser::KeepComments) != LineParser::Success)
+        return false;
+    GenericList::setBaseDataVersionFromString(parser.line());
+    parser.rewind();
 
     // Variables
     std::string newName;
