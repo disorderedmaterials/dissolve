@@ -4,9 +4,13 @@
 #include "genericitems/list.h"
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
+#include "main/version.h"
 #include <cassert>
 #include <fmt/format.h>
 #include <typeindex>
+
+// Static Singletons
+GenericList::DeserialisableDataVersion GenericList::baseDataVersion_(GenericList::DeserialisableDataVersion::Current);
 
 // Clear all items (except those that are marked protected)
 void GenericList::clear()
@@ -101,6 +105,35 @@ void GenericList::pruneWithSuffix(std::string_view suffix)
 /*
  * Serialisation
  */
+
+// Return EnumOptions for DataVersion
+EnumOptions<GenericList::DeserialisableDataVersion> GenericList::deserialisableDataVersions()
+{
+    return EnumOptions<GenericList::DeserialisableDataVersion>(
+        "AveragingScheme", {{GenericList::DeserialisableDataVersion::Version089, "v0.8.9"},
+                            {GenericList::DeserialisableDataVersion::Current, fmt::format("v{}", Version::semantic())}});
+}
+
+// Set current data version being deserialised by detecting it from the supplied string
+void GenericList::setBaseDataVersionFromString(std::string_view s)
+{
+    // Search the supplied string for any of our defined DeserialisableDataVersion enumeration keywords
+    for (auto n = 0; n < deserialisableDataVersions().nOptions(); ++n)
+    {
+        if (s.find(deserialisableDataVersions().keywordByIndex(n)) != std::string::npos)
+        {
+            Messenger::print("Detected data version as {}.\n", deserialisableDataVersions().keywordByIndex(n));
+            baseDataVersion_ = deserialisableDataVersions().enumerationByIndex(n);
+            return;
+        }
+    }
+
+    Messenger::print("Unable to auto-detect data version - assuming current ({}).\n", Version::semantic());
+    baseDataVersion_ = DeserialisableDataVersion::Current;
+}
+
+// Return current data version being deserialised
+GenericList::DeserialisableDataVersion GenericList::baseDataVersion() { return baseDataVersion_; }
 
 // Serialise all objects via the specified LineParser
 bool GenericList::serialiseAll(LineParser &parser, std::string_view headerPrefix) const
