@@ -435,12 +435,11 @@ SerialisedValue SpeciesSite::serialise() const
     return site;
 }
 
-void SpeciesSite::deserialise(SerialisedValue &node)
+void SpeciesSite::deserialise(const SerialisedValue &node)
 {
     toVector(node, "originAtoms", [this](const auto &originAtom) { addOriginAtom(originAtom.as_integer()); });
     toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addXAxisAtom(xAxisAtom.as_integer()); });
     toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addYAxisAtom(yAxisAtom.as_integer()); });
 
-    if (node.contains("originMassWeighted"))
-        originMassWeighted_ = node["originMassWeighted"].as_boolean();
+    originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
 }

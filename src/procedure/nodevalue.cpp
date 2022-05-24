@@ -131,3 +131,16 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
             return fmt::format("{}", expression_.expressionString());
     }
 }
+
+SerialisedValue NodeValue::serialise() const
+{
+    switch (type_)
+    {
+        case IntegerNodeValue:
+            return valueI_;
+        case DoubleNodeValue:
+            return valueD_;
+        case ExpressionNodeValue:
+            return expression_.expressionString();
+    }
+}

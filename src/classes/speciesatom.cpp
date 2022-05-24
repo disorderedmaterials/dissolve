@@ -468,20 +468,20 @@ SerialisedValue SpeciesAtom::serialise() const
     atom["type"] = atomType_->name().data();
     return atom;
 }
-void SpeciesAtom::deserialise(SerialisedValue &node)
+void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
-    index_ = node["index"].as_integer() - 1;
-    Z_ = Elements::element(std::string(node["z"].as_string()));
 
-    std::vector r = node["r"].as_array();
-    r_ = Vec3<double>(r[0].as_floating(), r[1].as_floating(), r[2].as_floating());
+    index_ = toml::find<int>(node, "index") - 1;
+    Z_ = Elements::element(toml::find<std::string>(node, "z"));
 
-    if (node.contains("charge"))
-        charge_ = node["charge"].as_floating();
+    auto r = toml::find<std::vector<int>>(node, "r");
+    r_ = Vec3<double>(r[0], r[1], r[2]);
+
+    charge_ = toml::find_or<double>(node, "charge", 0);
 
     if (node.contains("type") && Z_ != Elements::Unknown)
     {
         atomType_ = std::make_shared<AtomType>(AtomType(Z_));
-        atomType_->setName(std::string(node["type"].as_string()));
+        atomType_->setName(toml::find<std::string>(node, "type"));
     }
 }

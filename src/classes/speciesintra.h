@@ -156,23 +156,20 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     // Return identifying name (if a master term)
     virtual std::string_view name() const { return ""; };
     // Load parameters from tree node
-    void deserialiseParameters(SerialisedValue &node)
+    void deserialiseParameters(const SerialisedValue &node)
     {
         if (node.contains("parameters"))
         {
             std::vector<std::string> parameters = Functions::parameters(interactionForm());
-            std::vector<double> values;
-            for (auto parameter : parameters)
-                values.push_back(node["parameters"][parameter].as_floating());
-            setInteractionFormAndParameters(interactionForm(), values);
+            setInteractionFormAndParameters(interactionForm(), toml::find<std::vector<double>>(node, "parameters"));
         }
     }
     // Load form from tree node
-    template <typename Lambda> void deserialiseForm(SerialisedValue &node, Lambda lambda)
+    template <typename Lambda> void deserialiseForm(const SerialisedValue &node, Lambda lambda)
     {
         if (node.contains("form"))
         {
-            std::string form = node["form"].as_string();
+            std::string form = toml::find<std::string>(node, "form");
             if (form.find("@") != std::string::npos)
             {
                 auto master = lambda(form);
@@ -186,11 +183,11 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         deserialiseParameters(node);
     }
     // Deserialise the form and parameters
-    void deserialise(SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node) override
     {
         if (node.contains("form"))
         {
-            std::string form = node["form"].as_string();
+            auto form = toml::find<std::string>(node, "form");
             setInteractionForm(Functions::forms().enumeration(form));
         }
         deserialiseParameters(node);

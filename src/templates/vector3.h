@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "math/constants.h"
 #include "math/mathfunc.h"
 #include <cmath>
@@ -10,7 +11,7 @@
 #include <stdexcept>
 
 // 3D vector
-template <class T> class Vec3
+template <class T> class Vec3 : public Serialisable
 {
     public:
     Vec3<T>() : x(T()), y(T()), z(T()){};
@@ -409,5 +410,20 @@ template <class T> class Vec3
         T temp = get(a);
         set(a, get(b));
         set(b, temp);
+    }
+
+    SerialisedValue serialise() const override
+    {
+        toml::array result;
+        result.push_back(x);
+        result.push_back(y);
+        result.push_back(z);
+        return result;
+    }
+    void deserialise(const SerialisedValue &node) override
+    {
+        x = toml::get<T>(node[0]);
+        y = toml::get<T>(node[1]);
+        z = toml::get<T>(node[2]);
     }
 };

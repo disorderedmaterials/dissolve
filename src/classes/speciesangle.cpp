@@ -376,7 +376,7 @@ SerialisedValue SpeciesAngle::serialise() const
     return angle;
 }
 // This method populates the object's members with values read from an 'angle' TOML node
-void SpeciesAngle::deserialise(SerialisedValue &node, CoreData &coreData)
+void SpeciesAngle::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterAngle(form); });
 }

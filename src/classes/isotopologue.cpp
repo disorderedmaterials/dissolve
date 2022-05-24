@@ -92,7 +92,7 @@ SerialisedValue Isotopologue::serialise() const
     return isotopologue;
 }
 
-void Isotopologue::deserialise(SerialisedValue &node, CoreData &coreData)
+void Isotopologue::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     for (auto &[name, value] : node.as_table())
     {
