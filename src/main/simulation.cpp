@@ -273,7 +273,7 @@ bool Dissolve::iterate(int nIterations)
                 if (!module->runThisIteration(layerExecutionCount))
                     continue;
 
-                Messenger::heading("{} ({})", module->type(), module->uniqueName());
+                Messenger::heading("{} ({})", module->type(), module->name());
 
                 if (!module->executeProcessing(*this, worldPool()))
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->type());
@@ -412,7 +412,7 @@ void Dissolve::printTiming()
     auto maxLength = 0;
     for (const auto *module : Module::instances())
     {
-        const auto length = module->uniqueName().size();
+        const auto length = module->name().size();
         if (length > maxLength)
             maxLength = length;
     }
@@ -427,7 +427,7 @@ void Dissolve::printTiming()
         {
             SampledDouble timingInfo = module->processTimes();
             Messenger::print("      --> {:>20}  {:<{}}  {:7.2g} s/iter  ({} iterations)", module->type(),
-                             fmt::format("({})", module->uniqueName()), maxLength, timingInfo.value(), timingInfo.count());
+                             fmt::format("({})", module->name()), maxLength, timingInfo.value(), timingInfo.count());
         }
 
         Messenger::print("\n");

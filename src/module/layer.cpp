@@ -80,7 +80,7 @@ Module *ModuleLayer::append(std::string_view moduleType, const std::vector<std::
 Module *ModuleLayer::find(std::string_view uniqueName) const
 {
     auto it = std::find_if(modules_.begin(), modules_.end(),
-                           [uniqueName](const auto &m) { return DissolveSys::sameString(m->uniqueName(), uniqueName); });
+                           [uniqueName](const auto &m) { return DissolveSys::sameString(m->name(), uniqueName); });
     if (it != modules_.end())
         return it->get();
 

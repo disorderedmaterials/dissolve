@@ -14,7 +14,7 @@ bool CalculateSDFModule::process(Dissolve &dissolve, const ProcessPool &procPool
 {
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Ensure any parameters in our nodes are set correctly
     collectVector_->keywords().set("RangeX", rangeX_);
@@ -27,7 +27,7 @@ bool CalculateSDFModule::process(Dissolve &dissolve, const ProcessPool &procPool
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), uniqueName());
+    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
         return Messenger::error("CalculateSDF experienced problems with its analysis.\n");
 

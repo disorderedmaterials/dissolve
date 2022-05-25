@@ -61,7 +61,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
             if (module->type() != moduleType())
                 return Messenger::error("Module '{}' given to keyword {} is of the wrong type ({}) - only a module of "
                                         "type '{}' can be accepted.\n",
-                                        module->uniqueName(), KeywordBase::name(), module->type(), moduleType());
+                                        module->name(), KeywordBase::name(), module->type(), moduleType());
 
             data_ = dynamic_cast<const M *>(module);
             assert(data_);
@@ -91,7 +91,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
         if (data_ == nullptr)
             return true;
 
-        if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), data_->uniqueName()))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), data_->name()))
             return false;
 
         return true;

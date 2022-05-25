@@ -18,7 +18,7 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, const ProcessPool &
 
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Initialise working arrays for coordinates and forces
     rRef_.resize(targetConfiguration_->nAtoms(), Vec3<double>());

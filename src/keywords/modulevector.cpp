@@ -68,7 +68,7 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
 bool ModuleVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (auto *module : data_)
-        if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, module->uniqueName()))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, module->name()))
             return false;
 
     return true;

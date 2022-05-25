@@ -70,17 +70,16 @@ void SQModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
             continue;
 
         // Full partial
-        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id),
+        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
                                                      fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
-        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->uniqueName(), targetPrefix, id),
+        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
                                                      fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        sqGraph_->createRenderable<RenderableData1D>(
-            fmt::format("{}//{}//{}//Unbound", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Unbound)", id),
-            "Unbound");
+        sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                     fmt::format("{} (Unbound)", id), "Unbound");
     }
 }
 
@@ -97,11 +96,11 @@ void SQModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upda
 
         if (ui_.PartialsButton->isChecked())
         {
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("UnweightedSQ", module_->uniqueName());
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("UnweightedSQ", module_->name());
             createPartialSetRenderables("UnweightedSQ");
         }
         else
-            sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//Total", module_->uniqueName()), "Total",
+            sqGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedSQ//Total", module_->name()), "Total",
                                                          "Calc");
     }
 

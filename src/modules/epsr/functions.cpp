@@ -13,11 +13,11 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWra
 {
     // Find the relevant data if we were not provided them
     if (!optCalculatedSQ)
-        optCalculatedSQ = processingData.valueIf<Array2D<Data1D>>("UnweightedSQ", uniqueName_);
+        optCalculatedSQ = processingData.valueIf<Array2D<Data1D>>("UnweightedSQ", name_);
     if (!optCalculatedSQ)
         return;
     if (!optEstimatedSQ)
-        optEstimatedSQ = processingData.valueIf<Array2D<Data1D>>("EstimatedSQ", uniqueName_);
+        optEstimatedSQ = processingData.valueIf<Array2D<Data1D>>("EstimatedSQ", name_);
     if (!optEstimatedSQ)
         return;
 
@@ -26,7 +26,7 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWra
     assert(calculatedSQ.nRows() == estimatedSQ.nRows() && calculatedSQ.nColumns() == estimatedSQ.nColumns());
 
     // Realise the DeltaSQ array
-    auto [deltaSQ, status] = processingData.realiseIf<Array2D<Data1D>>("DeltaSQ", uniqueName_, GenericItem::ItemFlag::NoFlags);
+    auto [deltaSQ, status] = processingData.realiseIf<Array2D<Data1D>>("DeltaSQ", name_, GenericItem::ItemFlag::NoFlags);
     if (status == GenericItem::ItemStatus::Created)
         deltaSQ.initialise(calculatedSQ.nRows(), calculatedSQ.nRows(), true);
 
@@ -43,8 +43,8 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWra
 Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes,
                                                                 std::optional<int> ncoeffp)
 {
-    auto &coefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
-        "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &coefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>("PotentialCoefficients", name_,
+                                                                                               GenericItem::InRestartFileFlag);
 
     auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||

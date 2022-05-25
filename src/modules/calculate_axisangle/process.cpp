@@ -15,7 +15,7 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, const ProcessPool &pr
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Ensure any parameters in our nodes are set correctly
     calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
@@ -31,7 +31,7 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, const ProcessPool &pr
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), uniqueName());
+    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
         return Messenger::error("CalculateAxisAngle experienced problems with its analysis.\n");
 

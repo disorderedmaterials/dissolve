@@ -49,7 +49,7 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
     }
     catch (...)
     {
-        Messenger::error("Failed to create analysis procedure for module '{}'\n", uniqueName_);
+        Messenger::error("Failed to create analysis procedure for module '{}'\n", name_);
     }
 
     /*

@@ -43,14 +43,14 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
         if (!sqModule)
             return Messenger::error(
                 "[SETUP {}] Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
-                uniqueName_, module->uniqueName());
+                name_, module->name());
 
         auto *rdfModule = sqModule->sourceRDF();
         if (!rdfModule)
             return Messenger::error(
                 "[SETUP {}] Target '{}'s S(Q) module doesn't reference an RDFModule, it can't be used as a target "
                 "for the EPSR module.",
-                uniqueName_, module->uniqueName());
+                name_, module->name());
 
         // Check for number of targets, or different target if there's only 1
         auto rdfConfigs = rdfModule->keywords().get<std::vector<Configuration *>>("Configurations");
@@ -58,12 +58,12 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
             return Messenger::error(
                 "[SETUP {}] RDF module '{}' targets multiple configurations, which is not permitted when using "
                 "its data in the EPSR module.",
-                uniqueName_, rdfModule->uniqueName());
+                name_, rdfModule->name());
 
         if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfConfigs.front()))
             return Messenger::error("[SETUP {}] RDF module '{}' targets a configuration which is different from another target "
                                     "module, and which is not permitted when using its data in the EPSR module.",
-                                    uniqueName_, rdfModule->uniqueName());
+                                    name_, rdfModule->name());
         else
             targetConfiguration_ = rdfConfigs.front();
 
@@ -73,11 +73,11 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
     // If a pcof file was provided, read in the parameters from it here
     if (!pCofFilename_.empty())
     {
-        Messenger::print("[SETUP {}] Reading potential coefficients from '{}'...\n", uniqueName_, pCofFilename_);
+        Messenger::print("[SETUP {}] Reading potential coefficients from '{}'...\n", name_, pCofFilename_);
 
         // Read in the coefficients / setup from the supplied file
         if (!readPCof(dissolve, procPool, pCofFilename_))
-            return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", uniqueName_);
+            return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", name_);
 
         // Set up the additional potentials - reconstruct them from the current coefficients
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
@@ -95,11 +95,11 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
     // If an inpa file was provided, read in the parameters from it here
     if (!inpaFilename_.empty())
     {
-        Messenger::print("[SETUP {}] Reading fit coefficients from '{}'...\n", uniqueName_, inpaFilename_);
+        Messenger::print("[SETUP {}] Reading fit coefficients from '{}'...\n", name_, inpaFilename_);
 
         // Read in the coefficients / setup from the supplied file
         if (!readFitCoefficients(dissolve, procPool, inpaFilename_))
-            return Messenger::error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", uniqueName_);
+            return Messenger::error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", name_);
     }
 
     // Try to calculate the deltaSQ array
@@ -187,7 +187,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Create storage for our summed UnweightedSQ
     auto &calculatedUnweightedSQ =
-        dissolve.processingModuleData().realise<Array2D<Data1D>>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
     calculatedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
     dissolve::for_each_pair(ParallelPolicies::par, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) {
@@ -196,7 +196,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Realise storage for generated S(Q), and initialise a scattering matrix
     auto &estimatedSQ =
-        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
     ScatteringMatrix scatteringMatrix;
     scatteringMatrix.initialise(dissolve.atomTypes(), estimatedSQ);
 
@@ -209,9 +209,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
          */
 
         // Retrieve the weighted S(Q)/F(Q)
-        if (!dissolve.processingModuleData().contains("WeightedSQ", module->uniqueName()))
-            return Messenger::error("Weighted partials data not found for target '{}'.\n", module->uniqueName());
-        const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName());
+        if (!dissolve.processingModuleData().contains("WeightedSQ", module->name()))
+            return Messenger::error("Weighted partials data not found for target '{}'.\n", module->name());
+        const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->name());
 
         // Get source SQModule in order to have access to the unweighted S(Q)
         auto optSQModule = module->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");
@@ -221,22 +221,21 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         if (!sqModule)
             return Messenger::error(
                 "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
-                module->uniqueName());
+                module->name());
 
         // Retrieve the unweighted S(Q)/F(Q)
-        if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
-            return Messenger::error("Unweighted partials data not found for target '{}'.\n", sqModule->uniqueName());
-        const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName());
+        if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->name()))
+            return Messenger::error("Unweighted partials data not found for target '{}'.\n", sqModule->name());
+        const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->name());
 
         // Retrieve the ReferenceData
-        if (!dissolve.processingModuleData().contains("ReferenceData", module->uniqueName()))
-            return Messenger::error("Reference data not found for target '{}'.\n", module->uniqueName());
-        const auto &originalReferenceData =
-            dissolve.processingModuleData().value<Data1D>("ReferenceData", module->uniqueName());
+        if (!dissolve.processingModuleData().contains("ReferenceData", module->name()))
+            return Messenger::error("Reference data not found for target '{}'.\n", module->name());
+        const auto &originalReferenceData = dissolve.processingModuleData().value<Data1D>("ReferenceData", module->name());
 
         // Realise the r-factor array and make sure its object name is set
-        auto &errors = dissolve.processingModuleData().realise<Data1D>(fmt::format("RFactor//{}", module->uniqueName()),
-                                                                       uniqueName_, GenericItem::InRestartFileFlag);
+        auto &errors = dissolve.processingModuleData().realise<Data1D>(fmt::format("RFactor//{}", module->name()), name_,
+                                                                       GenericItem::InRestartFileFlag);
 
         /*
          * Calculate difference functions and current percentage errors in calculated vs reference target data.
@@ -244,8 +243,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
          */
 
         // Get difference data container and form the difference between the reference and calculated data
-        auto &differenceData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("Difference//{}", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
+        auto &differenceData = dissolve.processingModuleData().realise<Data1D>(fmt::format("Difference//{}", module->name()),
+                                                                               name(), GenericItem::InRestartFileFlag);
         differenceData = originalReferenceData;
         Interpolator::addInterpolated(differenceData, weightedSQ.total(), -1.0);
 
@@ -255,17 +254,17 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto rFactor = Error::rFactor(tempRefData, weightedSQ.total(), true);
         rFacTot += rFactor;
         errors.addPoint(dissolve.iteration(), rFactor);
-        Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->uniqueName(), rFactor);
+        Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactor);
 
         /*
          * Generate difference function for fitting, spanning (maximally) only the range requested
          */
 
         // Get difference and fit function objects
-        auto &deltaFQ = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQ//{}", module->uniqueName()),
-                                                                        uniqueName_, GenericItem::InRestartFileFlag);
-        auto &deltaFQFit = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQFit//{}", module->uniqueName()),
-                                                                           uniqueName_, GenericItem::InRestartFileFlag);
+        auto &deltaFQ = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQ//{}", module->name()), name_,
+                                                                        GenericItem::InRestartFileFlag);
+        auto &deltaFQFit = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQFit//{}", module->name()), name_,
+                                                                           GenericItem::InRestartFileFlag);
 
         // Copy the original difference data and trim to the allowed range
         deltaFQ = differenceData;
@@ -274,7 +273,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
         auto [fitCoefficients, status] = dissolve.processingModuleData().realiseIf<std::vector<double>>(
-            fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+            fmt::format("FitCoefficients_{}", module->name()), name_, GenericItem::InRestartFileFlag);
 
         auto fitError = 0.0;
         auto nIterations = nPItSs_.value_or(0);
@@ -292,7 +291,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_.value());
+                                    fitCoefficients.size(), module->name(), nCoeffP_.value());
                     fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01);
                 }
                 else
@@ -318,7 +317,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.size(), module->uniqueName(), nCoeffP_.value());
+                                    fitCoefficients.size(), module->name(), nCoeffP_.value());
                     fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_,
                                                                   nIterations, 0.01);
                 }
@@ -339,8 +338,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
          */
 
         // Retrieve the storage object
-        auto &simulatedFR = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("SimulatedFR//{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+        auto &simulatedFR = dissolve.processingModuleData().realise<Data1D>(fmt::format("SimulatedFR//{}", module->name()),
+                                                                            name_, GenericItem::InRestartFileFlag);
 
         // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
         simulatedFR = weightedSQ.total();
@@ -354,7 +353,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         if (module->type() == "NeutronSQ")
         {
-            const auto &weights = dissolve.processingModuleData().value<NeutronWeights>("FullWeights", module->uniqueName());
+            const auto &weights = dissolve.processingModuleData().value<NeutronWeights>("FullWeights", module->name());
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = originalReferenceData;
@@ -369,11 +368,11 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
             if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback_))
-                return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->uniqueName());
+                return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else if (module->type() == "XRaySQ")
         {
-            auto &weights = dissolve.processingModuleData().retrieve<XRayWeights>("FullWeights", module->uniqueName());
+            auto &weights = dissolve.processingModuleData().retrieve<XRayWeights>("FullWeights", module->name());
 
             // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency in
             // terms of magnitude with any neutron data. If the calculated data have not been normalised, or were normalised to
@@ -405,7 +404,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Interpolator::addInterpolated(normalisedRef, boundTotal, -1.0);
 
             if (!scatteringMatrix.addReferenceData(normalisedRef, weights, feedback_))
-                return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->uniqueName());
+                return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else
             return Messenger::error("Don't know how to add data from a module of type '{}' to the scattering matrix.",
@@ -435,7 +434,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         {
             if (procPool.isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-Diff.q", module->uniqueName()));
+                Data1DExportFileFormat exportFormat(fmt::format("{}-Diff.q", module->name()));
                 if (exportFormat.exportData(differenceData))
                     procPool.decideTrue();
                 else
@@ -446,7 +445,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             if (procPool.isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-DiffFit.q", module->uniqueName()));
+                Data1DExportFileFormat exportFormat(fmt::format("{}-DiffFit.q", module->name()));
                 if (exportFormat.exportData(deltaFQFit))
                     procPool.decideTrue();
                 else
@@ -459,7 +458,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         {
             if (procPool.isMaster())
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-SimulatedFR.r", module->uniqueName()));
+                Data1DExportFileFormat exportFormat(fmt::format("{}-SimulatedFR.r", module->name()));
                 if (exportFormat.exportData(simulatedFR))
                     procPool.decideTrue();
                 else
@@ -475,7 +474,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         if (test_)
         {
-            testDataName = fmt::format("WeightedFR-{}-total", module->uniqueName());
+            testDataName = fmt::format("WeightedFR-{}-total", module->name());
             if (testReferenceData_.containsData(testDataName))
             {
                 auto optRefData = testReferenceData_.data(testDataName);
@@ -493,8 +492,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Finalise and store the total r-factor
     rFacTot /= targets_.size();
-    auto &totalRFactor =
-        dissolve.processingModuleData().realise<Data1D>("RFactor", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &totalRFactor = dissolve.processingModuleData().realise<Data1D>("RFactor", name_, GenericItem::InRestartFileFlag);
     totalRFactor.addPoint(dissolve.iteration(), rFacTot);
     Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
 
@@ -541,7 +539,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         {
             for (auto &sq : estimatedSQ)
             {
-                Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", uniqueName_, sq.tag()));
+                Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", name_, sq.tag()));
                 if (!exportFormat.exportData(sq))
                     return procPool.decideFalse();
             }
@@ -577,7 +575,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     auto &estimatedGR =
-        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", name_, GenericItem::InRestartFileFlag);
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) {
@@ -601,7 +599,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         // For this Module, retrieve the coefficients of the fit performed above.
         const auto &fitCoefficients = dissolve.processingModuleData().value<std::vector<double>>(
-            fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_);
+            fmt::format("FitCoefficients_{}", module->name()), name_);
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
         dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
@@ -719,7 +717,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                         PairPotential *pp = dissolve.pairPotential(at1, at2);
 
                                         Data1DExportFileFormat exportFormat(
-                                            fmt::format("{}-EP-{}-{}.txt", uniqueName_, at1->name(), at2->name()));
+                                            fmt::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
                                         if (!exportFormat.exportData(pp->uAdditional()))
                                             return procPool.decideFalse();
                                         return std::nullopt;
@@ -742,7 +740,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     auto &potCoeff = coefficients[{i, j}];
 
                     LineParser fileParser;
-                    if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", uniqueName_, at1->name(), at2->name())))
+                    if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", name_, at1->name(), at2->name())))
                         return procPool.decideFalse();
                     for (auto n : potCoeff)
                         if (!fileParser.writeLineF("{}\n", n))
@@ -758,7 +756,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     }
 
     // Realise the phiMag array and make sure its object name is set
-    auto &phiArray = dissolve.processingModuleData().realise<Data1D>("EPMag", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &phiArray = dissolve.processingModuleData().realise<Data1D>("EPMag", name_, GenericItem::InRestartFileFlag);
     phiArray.addPoint(dissolve.iteration(), energabs);
 
     return true;

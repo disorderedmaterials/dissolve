@@ -24,7 +24,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Execute the analysis on the Configuration targeted by the RDF module
     ProcedureContext context(procPool, sourceRDF_->keywords().get<Configuration *>("Configuration"));
-    context.setDataListAndPrefix(dissolve.processingModuleData(), fmt::format("{}//Analyser", uniqueName()));
+    context.setDataListAndPrefix(dissolve.processingModuleData(), fmt::format("{}//Analyser", name()));
     if (!analyser_.execute(context))
         return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 

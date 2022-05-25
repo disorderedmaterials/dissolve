@@ -17,7 +17,7 @@ bool ExportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
 
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Only the pool master saves the data
     if (procPool.isMaster())

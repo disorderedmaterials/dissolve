@@ -85,7 +85,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                         break;
                     }
                     else
-                        module->setUniqueName(niceName);
+                        module->setName(niceName);
                 }
 
                 // Parse rest of Module block

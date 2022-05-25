@@ -74,17 +74,16 @@ void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
             continue;
 
         // Full partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->uniqueName(), targetPrefix, id),
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Full", module_->name(), targetPrefix, id),
                                                       fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->uniqueName(), targetPrefix, id),
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Bound", module_->name(), targetPrefix, id),
                                                       fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        rdfGraph_->createRenderable<RenderableData1D>(
-            fmt::format("{}//{}//{}//Unbound", module_->uniqueName(), targetPrefix, id), fmt::format("{} (Unbound)", id),
-            "Unbound");
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}//Unbound", module_->name(), targetPrefix, id),
+                                                      fmt::format("{} (Unbound)", id), "Unbound");
     }
 }
 
@@ -107,20 +106,19 @@ void RDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upd
 
         if (ui_.SummedPartialsButton->isChecked())
         {
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("UnweightedGR", module_->uniqueName());
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>("UnweightedGR", module_->name());
             createPartialSetRenderables("UnweightedGR");
         }
         else if (ui_.ConfigurationPartialsButton->isChecked())
         {
             auto targetPrefix = fmt::format("{}//UnweightedGR", (*optConfig)->niceName());
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>(targetPrefix, module_->uniqueName());
+            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSet>(targetPrefix, module_->name());
             createPartialSetRenderables(targetPrefix);
         }
         else
             for (auto *cfg : cfgs)
                 rdfGraph_->createRenderable<RenderableData1D>(
-                    fmt::format("{}//{}//UnweightedGR//Total", module_->uniqueName(), cfg->niceName()), cfg->niceName(),
-                    "Total");
+                    fmt::format("{}//{}//UnweightedGR//Total", module_->name(), cfg->niceName()), cfg->niceName(), "Total");
     }
 
     // Validate renderables if they need it

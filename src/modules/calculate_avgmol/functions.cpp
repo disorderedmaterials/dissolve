@@ -15,9 +15,9 @@ void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
     auto requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 
     // Retrieve / create the three data arrays, and size accordingly
-    auto &x = dissolve.processingModuleData().realise<SampledVector>("X", uniqueName(), GenericItem::InRestartFileFlag);
-    auto &y = dissolve.processingModuleData().realise<SampledVector>("Y", uniqueName(), GenericItem::InRestartFileFlag);
-    auto &z = dissolve.processingModuleData().realise<SampledVector>("Z", uniqueName(), GenericItem::InRestartFileFlag);
+    auto &x = dissolve.processingModuleData().realise<SampledVector>("X", name(), GenericItem::InRestartFileFlag);
+    auto &y = dissolve.processingModuleData().realise<SampledVector>("Y", name(), GenericItem::InRestartFileFlag);
+    auto &z = dissolve.processingModuleData().realise<SampledVector>("Z", name(), GenericItem::InRestartFileFlag);
 
     if (requiredSize > 0)
     {
@@ -54,9 +54,9 @@ void CalculateAvgMolModule::updateSpecies(const SampledVector &x, const SampledV
 void CalculateAvgMolModule::updateSpecies(const GenericList &moduleData)
 {
     // Retrieve data arrays
-    auto &x = moduleData.value<SampledVector>("X", uniqueName());
-    auto &y = moduleData.value<SampledVector>("Y", uniqueName());
-    auto &z = moduleData.value<SampledVector>("Z", uniqueName());
+    auto &x = moduleData.value<SampledVector>("X", name());
+    auto &y = moduleData.value<SampledVector>("Y", name());
+    auto &z = moduleData.value<SampledVector>("Z", name());
 
     // Update our Species
     updateSpecies(x, y, z);

@@ -20,11 +20,11 @@ Module::~Module() { instances_.erase(std::remove(instances_.begin(), instances_.
 // Return type of Module
 const std::string_view Module::type() const { return typeName_; }
 
-// Set unique name of Module
-void Module::setUniqueName(std::string_view uniqueName) { uniqueName_ = uniqueName; }
+// Set name of Module
+void Module::setName(std::string_view uniqueName) { name_ = uniqueName; }
 
 // Return unique name of Module
-std::string_view Module::uniqueName() const { return uniqueName_; }
+std::string_view Module::name() const { return name_; }
 
 /*
  * Keywords
@@ -165,7 +165,7 @@ const std::vector<Module *> &Module::instances() { return instances_; }
 Module *Module::find(std::string_view uniqueName)
 {
     auto it = std::find_if(instances_.begin(), instances_.end(),
-                           [uniqueName](const auto *m) { return DissolveSys::sameString(m->uniqueName(), uniqueName); });
+                           [uniqueName](const auto *m) { return DissolveSys::sameString(m->name(), uniqueName); });
     if (it != instances_.end())
         return *it;
 

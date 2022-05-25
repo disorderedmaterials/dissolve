@@ -88,7 +88,7 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
     Locker refreshLocker(refreshLock_);
 
     // Ensure module name is up to date
-    ui_.ModuleNameLabel->setText(QString("%1 (%2)").arg(QString::fromStdString(std::string(module_->uniqueName())),
+    ui_.ModuleNameLabel->setText(QString("%1 (%2)").arg(QString::fromStdString(std::string(module_->name())),
                                                         QString::fromStdString(std::string(module_->type()))));
 
     // Set 'enabled' button status

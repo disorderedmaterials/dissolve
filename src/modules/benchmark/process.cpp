@@ -16,7 +16,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Get options
     Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", nRepeats_, nRepeats_ == 1 ? "run" : "runs");
@@ -39,7 +39,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "Generator"),
+        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "Generator"),
                           "Configuration generator", timing, save_);
     }
 
@@ -64,7 +64,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "RDFCells"),
+        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFCells"),
                           "RDF (Cells) to half-cell limit", timing, save_);
     }
 
@@ -89,7 +89,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "RDFSimple"),
+        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RDFSimple"),
                           "RDF (Simple) to half-cell limit", timing, save_);
     }
 
@@ -107,7 +107,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "IntraEnergy"),
+        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "IntraEnergy"),
                           "Intramolecular energy", timing, save_);
     }
 
@@ -125,7 +125,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "InterEnergy"),
+        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "InterEnergy"),
                           "Interatomic energy", timing, save_);
     }
 
@@ -163,7 +163,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Messenger::unMute();
             timing += timer.split();
         }
-        printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), targetConfiguration_->niceName(), "RegionalDist"),
+        printTimingResult(fmt::format("{}_{}_{}.txt", name(), targetConfiguration_->niceName(), "RegionalDist"),
                           "Distributor (regional)", timing, save_);
     }
 
