@@ -474,7 +474,7 @@ void SpeciesAtom::deserialise(const SerialisedValue &node)
     index_ = toml::find<int>(node, "index") - 1;
     Z_ = Elements::element(toml::find<std::string>(node, "z"));
 
-    auto r = toml::find<std::vector<int>>(node, "r");
+    auto r = toml::find<std::vector<double>>(node, "r");
     r_ = Vec3<double>(r[0], r[1], r[2]);
 
     charge_ = toml::find_or<double>(node, "charge", 0);

@@ -346,6 +346,7 @@ SerialisedValue SpeciesBond::serialise() const
 
     return bond;
 }
+
 // This method populates the object's members with values read from a 'bond' TOML node
 void SpeciesBond::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
