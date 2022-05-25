@@ -63,11 +63,18 @@ void ImportCIFDialog::applyCIFBonding(Species *sp)
     auto pairs = PairIterator(sp->nAtoms());
     for (auto pair : pairs)
     {
+        // Grab indices and atom references
         auto [indexI, indexJ] = pair;
         if (indexI == indexJ)
             return;
         auto &i = sp->atom(indexI);
         auto &j = sp->atom(indexJ);
+
+        // Prevent metallic bonding?
+        if (ui_.BondingPreventMetallicCheck->isChecked() && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
+            continue;
+
+        // Retrieve distance
         auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
         if (!r)
             continue;
@@ -343,7 +350,7 @@ bool ImportCIFDialog::createStructuralSpecies()
 
     // Bonding
     if (ui_.CalculateBondingRadio->isChecked())
-        sp->addMissingBonds();
+        sp->addMissingBonds(1.1, ui_.BondingPreventMetallicCheck->isChecked());
     else
         applyCIFBonding(sp);
 
@@ -404,6 +411,12 @@ void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
 }
 
 void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
+{
+    if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
+        createStructuralSpecies();
+}
+
+void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
 {
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
         createStructuralSpecies();

@@ -111,6 +111,7 @@ class ImportCIFDialog : public WizardDialog
     void on_NormalOverlapToleranceRadio_clicked(bool checked);
     void on_LooseOverlapToleranceRadio_clicked(bool checked);
     void on_CalculateBondingRadio_clicked(bool checked);
+    void on_BondingPreventMetallicCheck_clicked(bool checked);
     void on_BondFromCIFRadio_clicked(bool checked);
     void on_MoietyRemovalGroup_clicked(bool checked);
     void on_MoietyRemovalEdit_textEdited(const QString &text);

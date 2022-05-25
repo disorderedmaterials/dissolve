@@ -163,7 +163,7 @@ class Species : public Serialisable
     OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
     OptionalReferenceWrapper<const SpeciesBond> getBond(int i, int j) const;
     // Add missing bonds
-    void addMissingBonds(double tolerance = 1.1);
+    void addMissingBonds(double tolerance = 1.1, bool preventMetallic = false);
     // Remove bonds crossing periodic boundaries
     void removePeriodicBonds();
     // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
