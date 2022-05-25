@@ -34,7 +34,7 @@ class Species : public Serialisable
     // Clear Data
     void clear();
     // Copy basic information (atoms and intramolecular terms)
-    void copyBasic(const Species *source);
+    void copyBasic(const Species *source, bool copyAtomTypes = false);
 
     /*
      * Basic Information

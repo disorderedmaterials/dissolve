@@ -29,14 +29,14 @@ void Species::clear()
 }
 
 // Copy basic information (atoms and intramolecular terms)
-void Species::copyBasic(const Species *source)
+void Species::copyBasic(const Species *source, bool copyAtomTypes)
 {
     clear();
 
     name_ = source->name_;
 
     for (auto &i : source->atoms_)
-        addAtom(i.Z(), i.r(), i.charge());
+        addAtom(i.Z(), i.r(), i.charge(), copyAtomTypes ? i.atomType() : nullptr);
 
     for (auto &bond : source->bonds_)
         addBond(bond.indexI(), bond.indexJ());
