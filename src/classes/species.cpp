@@ -6,7 +6,7 @@
 #include "data/ff/ff.h"
 #include "data/isotopes.h"
 
-Species::Species(std::string name) : attachedAtomListsGenerated_(false), forcefield_(nullptr), name_(name)
+Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false), forcefield_(nullptr)
 {
     box_ = std::make_unique<SingleImageBox>();
 
