@@ -3,8 +3,8 @@
 
 #define MyAppName "Dissolve-GUI"
 #define MyAppVersion "0.9.0"
-#define MyAppPublisher "Tristan Youngs"
-#define MyAppURL "https://www.projectaten.com/"
+#define MyAppPublisher "Team Dissolve"
+#define MyAppURL "https://www.projectdissolve.com/"
 #define MyAppExeName "Dissolve-GUI.exe"
 
 ; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
