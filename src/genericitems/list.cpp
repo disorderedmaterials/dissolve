@@ -4,9 +4,13 @@
 #include "genericitems/list.h"
 #include "genericitems/deserialisers.h"
 #include "genericitems/serialisers.h"
+#include "main/version.h"
 #include <cassert>
 #include <fmt/format.h>
 #include <typeindex>
+
+// Static Singletons
+GenericList::DeserialisableDataVersion GenericList::baseDataVersion_(GenericList::DeserialisableDataVersion::Current);
 
 // Clear all items (except those that are marked protected)
 void GenericList::clear()
@@ -102,6 +106,35 @@ void GenericList::pruneWithSuffix(std::string_view suffix)
  * Serialisation
  */
 
+// Return EnumOptions for DataVersion
+EnumOptions<GenericList::DeserialisableDataVersion> GenericList::deserialisableDataVersions()
+{
+    return EnumOptions<GenericList::DeserialisableDataVersion>(
+        "AveragingScheme", {{GenericList::DeserialisableDataVersion::Version089, "v0.8.9"},
+                            {GenericList::DeserialisableDataVersion::Current, fmt::format("v{}", Version::semantic())}});
+}
+
+// Set current data version being deserialised by detecting it from the supplied string
+void GenericList::setBaseDataVersionFromString(std::string_view s)
+{
+    // Search the supplied string for any of our defined DeserialisableDataVersion enumeration keywords
+    for (auto n = 0; n < deserialisableDataVersions().nOptions(); ++n)
+    {
+        if (s.find(deserialisableDataVersions().keywordByIndex(n)) != std::string::npos)
+        {
+            Messenger::print("Detected data version as {}.\n", deserialisableDataVersions().keywordByIndex(n));
+            baseDataVersion_ = deserialisableDataVersions().enumerationByIndex(n);
+            return;
+        }
+    }
+
+    Messenger::print("Unable to auto-detect data version - assuming current ({}).\n", Version::semantic());
+    baseDataVersion_ = DeserialisableDataVersion::Current;
+}
+
+// Return current data version being deserialised
+GenericList::DeserialisableDataVersion GenericList::baseDataVersion() { return baseDataVersion_; }
+
 // Serialise all objects via the specified LineParser
 bool GenericList::serialiseAll(LineParser &parser, std::string_view headerPrefix) const
 {
@@ -126,15 +159,24 @@ bool GenericList::serialiseAll(LineParser &parser, std::string_view headerPrefix
 
 // Deserialise an object from the LineParser into our map
 bool GenericList::deserialise(LineParser &parser, CoreData &coreData, const std::string &name, const std::string &itemClass,
-                              int version, int flags)
+                              int dataVersion, int flags)
 {
     // Create the item
-    items_[std::string(name)] = GenericItem::Type(GenericItemProducer::create(itemClass), itemClass, version, flags);
+    items_[std::string(name)] = GenericItem::Type(GenericItemProducer::create(itemClass), itemClass, dataVersion, flags);
     auto &data = std::get<GenericItem::AnyObject>(items_[std::string(name)]);
 
     // Find its deserialiser and call it
     if (!GenericItemDeserialiser::deserialise(data, parser, coreData))
-        return Messenger::error(fmt::format("Deerialisation of item '{}' failed.\n", name));
+        return Messenger::error(fmt::format("Deserialisation of item '{}' failed.\n", name));
+
+    // Check for legacy objects - we don't re-serialise them
+    if (GenericItemDeserialiser::isLegacyObject(data))
+    {
+        Messenger::warn("Legacy data '{}' will not be captured in written restart files.\n", itemClass);
+        auto &itemFlags = std::get<GenericItem::Flags>(items_[std::string(name)]);
+        if (itemFlags & GenericItem::InRestartFileFlag)
+            itemFlags -= GenericItem::InRestartFileFlag;
+    }
 
     return true;
 }

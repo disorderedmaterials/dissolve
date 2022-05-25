@@ -552,10 +552,19 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     // Read totals
     if (!total_.deserialise(parser))
         return false;
-    if (!boundTotal_.deserialise(parser))
-        return false;
-    if (!unboundTotal_.deserialise(parser))
-        return false;
+    if (GenericList::baseDataVersion() == GenericList::DeserialisableDataVersion::Version089)
+    {
+        // Writing of bound & unbound totals introduced in 0.9.0
+        boundTotal_.initialise(total_);
+        unboundTotal_.initialise(total_);
+    }
+    else
+    {
+        if (!boundTotal_.deserialise(parser))
+            return false;
+        if (!unboundTotal_.deserialise(parser))
+            return false;
+    }
 
     // Read empty bound flags
     if (!GenericItemDeserialiser::deserialise<Array2D<char>>(emptyBoundPartials_, parser))
