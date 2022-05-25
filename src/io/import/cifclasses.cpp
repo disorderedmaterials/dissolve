@@ -54,6 +54,12 @@ void CIFAtomGroup::addAtom(const CIFSymmetryAtom &i) { atoms_.emplace_back(i); }
 // Return atoms in the group
 const std::vector<CIFSymmetryAtom> &CIFAtomGroup::atoms() const { return atoms_; }
 
+// Set whether the group is active (included in unit cell generation)
+void CIFAtomGroup::setActive(bool b) { active_ = b; }
+
+// Return whether the group is active (included in unit cell generation)
+bool CIFAtomGroup::active() const { return active_; }
+
 /*
  * CIF Assembly
  */
@@ -64,6 +70,7 @@ CIFAssembly::CIFAssembly(std::string_view name) : name_{name} {}
 std::string_view CIFAssembly::name() const { return name_; }
 
 // Return all groups
+std::vector<CIFAtomGroup> &CIFAssembly::groups() { return groups_; }
 const std::vector<CIFAtomGroup> &CIFAssembly::groups() const { return groups_; }
 
 // Get (add or retrieve) named group
@@ -79,24 +86,3 @@ CIFAtomGroup &CIFAssembly::getGroup(std::string_view groupName)
 
 // Return the number of defined groups
 int CIFAssembly::nGroups() const { return groups_.size(); }
-
-// Set the active group
-void CIFAssembly::setActiveGroup(const CIFAtomGroup &group)
-{
-    assert(std::find_if(groups_.begin(), groups_.end(), [&group](const auto &g) { return &group == &g; }) != groups_.end());
-    activeGroup_ = group;
-}
-
-// Return the active group
-const CIFAtomGroup &CIFAssembly::activeGroup() const
-{
-    assert(!groups_.empty());
-    return activeGroup_.value_or(groups_.front());
-}
-
-// Return whether the specified group is the active one
-bool CIFAssembly::isActiveGroup(const CIFAtomGroup &group) const
-{
-    assert(std::find_if(groups_.begin(), groups_.end(), [&group](const auto &g) { return &group == &g; }) != groups_.end());
-    return &group == &activeGroup();
-}

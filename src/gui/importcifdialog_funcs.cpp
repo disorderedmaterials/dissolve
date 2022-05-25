@@ -313,14 +313,14 @@ bool ImportCIFDialog::createStructuralSpecies()
 
     // Create temporary atom types corresponding to the unique atom labels
     for (auto &a : cifImporter_.assemblies())
-    {
-        for (auto &i : a.activeGroup().atoms())
-            if (!temporaryCoreData_.findAtomType(i.label()))
-            {
-                auto at = temporaryCoreData_.addAtomType(i.Z());
-                at->setName(i.label());
-            }
-    }
+        for (auto &g : a.groups())
+            if (g.active())
+                for (auto &i : g.atoms())
+                    if (!temporaryCoreData_.findAtomType(i.label()))
+                    {
+                        auto at = temporaryCoreData_.addAtomType(i.Z());
+                        at->setName(i.label());
+                    }
 
     // Generate a single species containing the entire crystal
     crystalSpecies_ = temporaryCoreData_.addSpecies();
@@ -340,22 +340,25 @@ bool ImportCIFDialog::createStructuralSpecies()
     auto tolerance = ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5;
     for (auto &generator : symmetryGenerators)
         for (auto &a : cifImporter_.assemblies())
-            for (auto &unique : a.activeGroup().atoms())
-            {
-                // Generate folded atomic position in real space
-                auto r = generator.transform(unique.rFrac());
-                box->toReal(r);
-                r = box->fold(r);
+            for (auto &g : a.groups())
+                if (g.active())
+                    for (auto &unique : g.atoms())
+                    {
+                        // Generate folded atomic position in real space
+                        auto r = generator.transform(unique.rFrac());
+                        box->toReal(r);
+                        r = box->fold(r);
 
-                // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
-                if (std::any_of(crystalSpecies_->atoms().begin(), crystalSpecies_->atoms().end(),
+                        // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
+                        if (std::any_of(
+                                crystalSpecies_->atoms().begin(), crystalSpecies_->atoms().end(),
                                 [&r, box, tolerance](const auto &j) { return box->minimumDistance(r, j.r()) < tolerance; }))
-                    continue;
+                            continue;
 
-                // Create the new atom
-                auto i = crystalSpecies_->addAtom(unique.Z(), r);
-                crystalSpecies_->atom(i).setAtomType(temporaryCoreData_.findAtomType(unique.label()));
-            }
+                        // Create the new atom
+                        auto i = crystalSpecies_->addAtom(unique.Z(), r);
+                        crystalSpecies_->atom(i).setAtomType(temporaryCoreData_.findAtomType(unique.label()));
+                    }
 
     // Bonding
     if (ui_.CalculateBondingRadio->isChecked())
