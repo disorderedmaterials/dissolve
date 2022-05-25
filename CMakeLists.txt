@@ -3,8 +3,8 @@ project(Dissolve)
 
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Team Dissolve")
-set(VERSION_MAJOR "0")
-set(VERSION_MINOR "9")
+set(VERSION_MAJOR "1")
+set(VERSION_MINOR "0")
 set(VERSION_PATCH "0")
 
 if(NOT CMAKE_BUILD_TYPE)

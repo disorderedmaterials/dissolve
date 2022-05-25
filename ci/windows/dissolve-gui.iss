@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dissolve-GUI"
-#define MyAppVersion "0.9.0"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "Tristan Youngs"
 #define MyAppURL "https://www.projectaten.com/"
 #define MyAppExeName "Dissolve-GUI.exe"
@@ -30,7 +30,7 @@ DefaultDirName={commonpf}\Dissolve-GUI
 DefaultGroupName={#MyAppName}
 LicenseFile=..\..\LICENSE.txt
 OutputDir=..\..\
-OutputBaseFilename=Dissolve-GUI-0.9.0-Win64
+OutputBaseFilename=Dissolve-GUI-1.0.0-Win64
 SetupIconFile=Dissolve.ico
 Compression=lzma
 SolidCompression=yes
