@@ -66,7 +66,7 @@ void ImportCIFDialog::applyCIFBonding(Species *sp)
         // Grab indices and atom references
         auto [indexI, indexJ] = pair;
         if (indexI == indexJ)
-            return;
+            continue;
         auto &i = sp->atom(indexI);
         auto &j = sp->atom(indexJ);
 
