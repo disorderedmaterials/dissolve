@@ -661,6 +661,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="MoietyRemoveWaterCheck">
+            <property name="toolTip">
+             <string>Remove any water molecules or coordinated oxygens without hydrogens</string>
+            </property>
+            <property name="text">
+             <string>Water and coordinated oxygen</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QGroupBox" name="MoietyRemoveByNETAGroup">
             <property name="toolTip">
              <string>Remove atoms or fragments based on a NETA description</string>
@@ -698,7 +708,7 @@
                   <string>NETA definition matching specific atoms whose encompassing moiety should be removed</string>
                  </property>
                  <property name="text">
-                  <string>?O,nbonds=0|?O,nbonds=2,nh=2</string>
+                  <string>?O,nbonds=2,nh=2</string>
                  </property>
                 </widget>
                </item>
@@ -747,7 +757,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>302</height>
+              <height>276</height>
              </size>
             </property>
            </spacer>

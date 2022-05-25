@@ -443,12 +443,28 @@ bool ImportCIFDialog::createCleanedSpecies()
     // Atomics
     if (ui_.MoietyRemoveAtomicsCheck->isChecked())
     {
-        // Select all atoms that are in moieties where one of its atoms matches our NETA definition
         std::vector<int> indicesToRemove;
         for (const auto &i : cleanedSpecies_->atoms())
             if (i.nBonds() == 0)
                 indicesToRemove.push_back(i.index());
         Messenger::print("Atomic removal deleted {} atoms.\n", indicesToRemove.size());
+
+        // Remove selected atoms
+        cleanedSpecies_->removeAtoms(indicesToRemove);
+    }
+
+    // Water or coordinated oxygens
+    if (ui_.MoietyRemoveWaterCheck->isChecked())
+    {
+        NETADefinition waterVacuum("?O,nbonds=1,nh<=1|?O,nbonds>=2,-H(nbonds=1,-O)");
+        if (!waterVacuum.isValid())
+            return Messenger::error("NETA definition for water removal is invalid.\n");
+
+        std::vector<int> indicesToRemove;
+        for (const auto &i : cleanedSpecies_->atoms())
+            if (waterVacuum.matches(&i))
+                indicesToRemove.push_back(i.index());
+        Messenger::print("Water removal deleted {} atoms.\n", indicesToRemove.size());
 
         // Remove selected atoms
         cleanedSpecies_->removeAtoms(indicesToRemove);
@@ -499,6 +515,8 @@ bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
 }
 
 void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked) { createCleanedSpecies(); }
+
+void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked) { createCleanedSpecies(); }
 
 void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked) { createCleanedSpecies(); }
 

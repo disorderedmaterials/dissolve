@@ -130,6 +130,7 @@ class ImportCIFDialog : public WizardDialog
     // Generate structural species from CIF data
     bool createCleanedSpecies();
     void on_MoietyRemoveAtomicsCheck_clicked(bool checked);
+    void on_MoietyRemoveWaterCheck_clicked(bool checked);
     void on_MoietyRemoveByNETAGroup_clicked(bool checked);
     void on_MoietyNETARemovalEdit_textEdited(const QString &text);
     void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
