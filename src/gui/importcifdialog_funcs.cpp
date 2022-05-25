@@ -135,9 +135,11 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             ui_.BondFromCIFRadio->setChecked(cifImporter_.hasBondDistances());
             if (!createStructuralSpecies())
                 return false;
+            ui_.AssemblyView->expandAll();
             break;
         case (ImportCIFDialog::StructurePage):
-            createCleanedSpecies();
+            if (!createCleanedSpecies())
+                return false;
             break;
         case (ImportCIFDialog::CleanedPage):
             createSupercellSpecies();
