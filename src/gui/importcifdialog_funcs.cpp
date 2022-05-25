@@ -23,7 +23,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::SelectCIFFilePage, "Choose CIF File");
     registerPage(ImportCIFDialog::SelectSpacegroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
-    registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::SupercellPage);
+    registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::CleanedPage);
+    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::SupercellPage);
     registerPage(ImportCIFDialog::SupercellPage, "Create Supercell", ImportCIFDialog::OutputSpeciesPage);
     registerPage(ImportCIFDialog::OutputSpeciesPage, "Species Partitioning");
 
@@ -42,11 +43,13 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
             ui_.AssemblyView, SLOT(expandAll()));
 
     // Update moiety NETA
-    createMoietyRemovalNETA(ui_.MoietyRemovalEdit->text().toStdString());
+    createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 
     // Create preview configurations
     structureConfiguration_ = temporaryCoreData_.addConfiguration();
     structureConfiguration_->setName("Crystal");
+    cleanedConfiguration_ = temporaryCoreData_.addConfiguration();
+    cleanedConfiguration_->setName("Crystal (Cleaned)");
     supercellConfiguration_ = temporaryCoreData_.addConfiguration();
     supercellConfiguration_->setName("Supercell");
     partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
@@ -134,6 +137,9 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
                 return false;
             break;
         case (ImportCIFDialog::StructurePage):
+            createCleanedSpecies();
+            break;
+        case (ImportCIFDialog::CleanedPage):
             createSupercellSpecies();
             break;
         case (ImportCIFDialog::SupercellPage):
@@ -163,6 +169,7 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
     {
         case (ImportCIFDialog::CIFInfoPage):
             structureConfiguration_->empty();
+            cleanedConfiguration_->empty();
             supercellConfiguration_->empty();
             partitioningConfiguration_->empty();
             temporaryCoreData_.species().clear();
@@ -301,6 +308,8 @@ bool ImportCIFDialog::createStructuralSpecies()
 
     temporaryCoreData_.species().clear();
     temporaryCoreData_.atomTypes().clear();
+    crystalSpecies_ = nullptr;
+    cleanedSpecies_ = nullptr;
 
     // Create temporary atom types corresponding to the unique atom labels
     for (auto &a : cifImporter_.assemblies())
@@ -314,8 +323,8 @@ bool ImportCIFDialog::createStructuralSpecies()
     }
 
     // Generate a single species containing the entire crystal
-    auto *sp = temporaryCoreData_.addSpecies();
-    sp->setName("Crystal");
+    crystalSpecies_ = temporaryCoreData_.addSpecies();
+    crystalSpecies_->setName("Crystal");
     // -- Set unit cell
     auto cellLengths = cifImporter_.getCellLengths();
     if (!cellLengths)
@@ -323,8 +332,8 @@ bool ImportCIFDialog::createStructuralSpecies()
     auto cellAngles = cifImporter_.getCellAngles();
     if (!cellAngles)
         return false;
-    sp->createBox(cellLengths.value(), cellAngles.value());
-    auto *box = sp->box();
+    crystalSpecies_->createBox(cellLengths.value(), cellAngles.value());
+    auto *box = crystalSpecies_->box();
     structureConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 7.0, 1.0);
     // -- Generate atoms
     auto symmetryGenerators = cifImporter_.spaceGroup().symmetryOperators();
@@ -339,63 +348,29 @@ bool ImportCIFDialog::createStructuralSpecies()
                 r = box->fold(r);
 
                 // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
-                if (std::any_of(sp->atoms().begin(), sp->atoms().end(),
+                if (std::any_of(crystalSpecies_->atoms().begin(), crystalSpecies_->atoms().end(),
                                 [&r, box, tolerance](const auto &j) { return box->minimumDistance(r, j.r()) < tolerance; }))
                     continue;
 
                 // Create the new atom
-                auto i = sp->addAtom(unique.Z(), r);
-                sp->atom(i).setAtomType(temporaryCoreData_.findAtomType(unique.label()));
+                auto i = crystalSpecies_->addAtom(unique.Z(), r);
+                crystalSpecies_->atom(i).setAtomType(temporaryCoreData_.findAtomType(unique.label()));
             }
 
     // Bonding
     if (ui_.CalculateBondingRadio->isChecked())
-        sp->addMissingBonds(1.1, ui_.BondingPreventMetallicCheck->isChecked());
+        crystalSpecies_->addMissingBonds(1.1, ui_.BondingPreventMetallicCheck->isChecked());
     else
-        applyCIFBonding(sp);
-
-    // Moiety Removal
-    if (ui_.MoietyRemovalGroup->isChecked() && moietyNETA_.isValid())
-    {
-        // Select all atoms that are in moieties where one of its atoms matches our NETA definition
-        std::vector<int> indicesToRemove;
-        for (auto &i : sp->atoms())
-            if (moietyNETA_.matches(&i))
-            {
-                // Select all atoms that are part of the same moiety?
-                if (ui_.MoietyRemoveFragmentsCheck->isChecked())
-                {
-                    sp->clearAtomSelection();
-                    auto selection = sp->fragment(i.index());
-                    std::copy(selection.begin(), selection.end(), std::back_inserter(indicesToRemove));
-                }
-                else
-                    indicesToRemove.push_back(i.index());
-            }
-        Messenger::print("Moiety removal deleted {} atoms.\n", indicesToRemove.size());
-
-        // Remove selected atoms
-        sp->removeAtoms(indicesToRemove);
-    }
+        applyCIFBonding(crystalSpecies_);
 
     // Add the structural species to the configuration
     AtomChangeToken lock(*structureConfiguration_);
-    structureConfiguration_->addMolecule(lock, sp);
+    structureConfiguration_->addMolecule(lock, crystalSpecies_);
     structureConfiguration_->updateCellContents();
 
     ui_.StructureViewer->setConfiguration(structureConfiguration_);
 
     return true;
-}
-
-// Create / check NETA definition for moiety removal
-bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
-{
-    auto result = moietyNETA_.create(definition);
-
-    ui_.MoietyRemovalIndicator->setOK(result);
-
-    return result;
 }
 
 void ImportCIFDialog::on_NormalOverlapToleranceRadio_clicked(bool checked)
@@ -428,19 +403,111 @@ void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
         createStructuralSpecies();
 }
 
-void ImportCIFDialog::on_MoietyRemovalGroup_clicked(bool checked) { createStructuralSpecies(); }
+/*
+ * Cleaned Page
+ */
 
-void ImportCIFDialog::on_MoietyRemovalEdit_textEdited(const QString &text)
+// Generate cleaned species from CIF data
+bool ImportCIFDialog::createCleanedSpecies()
+{
+    ui_.CleanedViewer->setConfiguration(nullptr);
+    partitioningConfiguration_->empty();
+    supercellConfiguration_->empty();
+    cleanedConfiguration_->empty();
+
+    // Remove the cleaned crystal species
+    if (cleanedSpecies_)
+        temporaryCoreData_.removeSpecies(cleanedSpecies_);
+
+    // Copy the crystal species
+    cleanedSpecies_ = temporaryCoreData_.addSpecies();
+    cleanedSpecies_->setName("Crystal (Cleaned)");
+    if (!crystalSpecies_)
+        return Messenger::error("Crystal reference species doesn't exist.\n");
+    cleanedSpecies_->copyBasic(crystalSpecies_, true);
+    // -- Set unit cell
+    auto cellLengths = cifImporter_.getCellLengths();
+    if (!cellLengths)
+        return false;
+    auto cellAngles = cifImporter_.getCellAngles();
+    if (!cellAngles)
+        return false;
+    cleanedSpecies_->createBox(cellLengths.value(), cellAngles.value());
+    cleanedConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 7.0, 1.0);
+
+    // Atomics
+    if (ui_.MoietyRemoveAtomicsCheck->isChecked())
+    {
+        // Select all atoms that are in moieties where one of its atoms matches our NETA definition
+        std::vector<int> indicesToRemove;
+        for (const auto &i : cleanedSpecies_->atoms())
+            if (i.nBonds() == 0)
+                indicesToRemove.push_back(i.index());
+        Messenger::print("Atomic removal deleted {} atoms.\n", indicesToRemove.size());
+
+        // Remove selected atoms
+        cleanedSpecies_->removeAtoms(indicesToRemove);
+    }
+
+    // Custom NETA Removal
+    if (ui_.MoietyRemoveByNETAGroup->isChecked() && moietyNETA_.isValid())
+    {
+        // Select all atoms that are in moieties where one of its atoms matches our NETA definition
+        std::vector<int> indicesToRemove;
+        for (auto &i : cleanedSpecies_->atoms())
+            if (moietyNETA_.matches(&i))
+            {
+                // Select all atoms that are part of the same moiety?
+                if (ui_.MoietyNETARemoveFragmentsCheck->isChecked())
+                {
+                    cleanedSpecies_->clearAtomSelection();
+                    auto selection = cleanedSpecies_->fragment(i.index());
+                    std::copy(selection.begin(), selection.end(), std::back_inserter(indicesToRemove));
+                }
+                else
+                    indicesToRemove.push_back(i.index());
+            }
+        Messenger::print("Moiety removal deleted {} atoms.\n", indicesToRemove.size());
+
+        // Remove selected atoms
+        cleanedSpecies_->removeAtoms(indicesToRemove);
+    }
+
+    // Add the structural species to the configuration
+    AtomChangeToken lock(*cleanedConfiguration_);
+    cleanedConfiguration_->addMolecule(lock, cleanedSpecies_);
+    cleanedConfiguration_->updateCellContents();
+
+    ui_.CleanedViewer->setConfiguration(cleanedConfiguration_);
+
+    return true;
+}
+
+// Create / check NETA definition for moiety removal
+bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
+{
+    auto result = moietyNETA_.create(definition);
+
+    ui_.MoietyNETARemovalIndicator->setOK(result);
+
+    return result;
+}
+
+void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked) { createCleanedSpecies(); }
+
+void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked) { createCleanedSpecies(); }
+
+void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 {
     createMoietyRemovalNETA(text.toStdString());
     if (moietyNETA_.isValid())
-        createStructuralSpecies();
+        createCleanedSpecies();
 }
 
-void ImportCIFDialog::on_MoietyRemoveFragmentsCheck_clicked(bool checked)
+void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 {
     if (moietyNETA_.isValid())
-        createStructuralSpecies();
+        createCleanedSpecies();
 }
 
 /*
@@ -464,23 +531,22 @@ bool ImportCIFDialog::createSupercellSpecies()
     // Set the repeat vector
     Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
 
-    // Get the Crystal species and set a new Supercell box
-    const auto *crystal = temporaryCoreData_.findSpecies("Crystal");
-    if (!crystal)
-        return Messenger::error("Crystal reference species doesn't exist.\n");
-    auto supercellLengths = crystal->box()->axisLengths();
+    // Add the cleaned crystal species and set a new Supercell box
+    if (!cleanedSpecies_)
+        return Messenger::error("Cleaned crystal reference species doesn't exist.\n");
+    auto supercellLengths = cleanedSpecies_->box()->axisLengths();
     supercellLengths.multiply(repeat.x, repeat.y, repeat.z);
-    supercell->createBox(supercellLengths, crystal->box()->axisAngles(), false);
-    supercellConfiguration_->createBoxAndCells(supercellLengths, crystal->box()->axisAngles(), false, 7.0, 1.0);
+    supercell->createBox(supercellLengths, cleanedSpecies_->box()->axisAngles(), false);
+    supercellConfiguration_->createBoxAndCells(supercellLengths, cleanedSpecies_->box()->axisAngles(), false, 7.0, 1.0);
 
     // Copy atoms from the Crystal species - we'll do the bonding afterwards
-    supercell->atoms().reserve(repeat.x * repeat.y * repeat.z * crystal->nAtoms());
+    supercell->atoms().reserve(repeat.x * repeat.y * repeat.z * cleanedSpecies_->nAtoms());
     for (auto ix = 0; ix < repeat.x; ++ix)
         for (auto iy = 0; iy < repeat.y; ++iy)
             for (auto iz = 0; iz < repeat.z; ++iz)
             {
-                Vec3<double> deltaR = crystal->box()->axes() * Vec3<double>(ix, iy, iz);
-                for (const auto &i : crystal->atoms())
+                Vec3<double> deltaR = cleanedSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
+                for (const auto &i : cleanedSpecies_->atoms())
                     supercell->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
             }
 
