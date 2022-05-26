@@ -24,6 +24,7 @@ stages:
       - template: templates/build-linux-releases.yml
       - job: "test_linux_mpi"
         displayName: "Testing MPI, CLI"
+        condition: eq( 1, 0)
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -36,6 +37,7 @@ stages:
       - job: "test_linux_gui"
         displayName: "Testing GUI"
         timeoutInMinutes: 90
+        condition: eq( 1, 0)
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -47,6 +49,7 @@ stages:
               package: "checks.x86_64-linux.dissolve"
       - job: "test_linux_threadless"
         displayName: "Testing Threadless"
+        condition: eq( 1, 0)
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -75,6 +78,7 @@ stages:
       - job: "windows"
         displayName: "Windows, Threads, CLI/GUI"
         timeoutInMinutes: 150
+        condition: eq( 1, 0)
         pool:
           vmImage: "windows-2022"
         steps:
