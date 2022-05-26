@@ -31,6 +31,7 @@ As its name suggests, the {{< gui-module "CalculateDAngle" >}} module calculates
 {{< action type="edit" text="Change the maximum value of the **DistanceRange** to 5.0 &#8491;" />}}
 {{< action type="mouse" text="Press the button for **SiteA** and choose the `O` site" />}}
 {{< action type="mouse" text="For **SiteB** select both the `H1` and `H2` sites" />}}
+{{< action type="mouse" text="For **SiteC** choose the `O` site" />}}
 {{< action type="mouse" text="Enable the **ExcludeSameMolecule** to ignore interactions where site C is on the same molecule as A and B." />}}
 
 * * *

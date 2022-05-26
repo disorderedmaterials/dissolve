@@ -93,12 +93,15 @@
    border-radius: 5px;
    border: 1px solid #aebfcd;
    background-color: #edefed;
-   padding: 3px 25px 1px 25px;
+   padding: 3px 10px 1px 25px;
    font-size: 85%;
    font-weight: bold;
    position: relative;
    margin: 2px 0 2px 0;
    line-height: 1.0;
+}
+.gui-button.gui-button-noicon {
+   padding: 3px 10px 1px 10px;
 }
 
 .gui-button::before {

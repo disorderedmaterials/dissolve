@@ -47,8 +47,8 @@ Since we are calculating the RDF of a site around itself, the **ExcludeSameMolec
 Now the {{< gui-module "CalculateCN" >}} module:
 
 {{< action type="mouse" >}}Select the {{< gui-module "CalculateCN" >}} module to display its options{{< /action >}}
-{{< action type="groups" text="Open the **Target / Ranges** settings group" />}}
-{{< step text=" Set the maximum for **RangeA** to 3.4 &#8491;" />}}
+{{< action type="groups" text="Open the **Ranges** settings group" />}}
+{{< action type="edit" text=" Set the maximum for **RangeA** to 3.4 &#8491;" />}}
 
 The {{< gui-module "CalculateCN" >}} module calculates up to three separate coordination numbers over different distance regions of the target RDF, but we will focus on the first coordination shell in this example. The target RDF is taken from a {{< gui-module "CalculateRDF" >}} module, specified by the **SourceRDF** keyword (this will have been set automatically to the {{< gui-module "CalculateRDF" >}} module in the current layer).
 

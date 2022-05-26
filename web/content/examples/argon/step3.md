@@ -14,7 +14,7 @@ Dissolve provides several standard configuration generators for common-use cases
 {{< step >}}A random mix can contain any number of species - we only have one (our argon atom) so highlight it in the list press {{< gui-button text="Select" >}}{{< /step >}}
 
 
-You will now see that the **Generator** section has been populated with several steps, and a new configuration of atomic coordinates has been created based on these steps.  We'll go through these one-by-one in the order they appear. To see the settings for any step, click the cog icon in its bottom-right corner.
+You will now see that the **Generator** section has been populated with several steps, and a new configuration of atomic coordinates has been created based on these steps.  We'll go through these one-by-one in the order they appear. To see the settings for any step, click on it to show its options in the panel immediately below the list of steps.
 
 | Node | Purpose |
 |------|---------|
