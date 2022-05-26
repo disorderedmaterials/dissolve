@@ -21,8 +21,7 @@ stages:
   - stage: "build"
     displayName: "Build"
     jobs:
-      - template: templates/build-linux-releases.yml
-        condition: eq( 1, 0)
+      # - template: templates/build-linux-releases.yml
       - job: "test_linux_mpi"
         displayName: "Testing MPI, CLI"
         condition: eq( 1, 0)
