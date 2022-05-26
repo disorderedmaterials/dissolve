@@ -173,9 +173,9 @@ void Dissolve::deserialise(const SerialisedValue &node)
         if (!mastersNode.is_uninitialized())
             coreData_.deserialiseMaster(mastersNode);
     }
-    Serialisable::toMap(node, "species",
-                        [this](const std::string &name, const SerialisedValue &data)
-                        { species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
+    Serialisable::toMap(node, "species", [this](const std::string &name, const SerialisedValue &data) {
+        species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_);
+    });
 }
 
 // Load input from supplied file
