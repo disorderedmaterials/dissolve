@@ -9,7 +9,7 @@ steps:
       pip3 install dmgbuild biplist
       wget https://raw.githubusercontent.com/disorderedmaterials/scripts/master/prep-dmg
       chmod u+x ./prep-dmg
-      sudo apt-get install jq
+      brew install jq
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
