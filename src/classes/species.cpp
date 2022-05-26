@@ -264,9 +264,9 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
                                    .deserialise(torsion, coreData);
                            });
 
-    Serialisable::toMap(node, "isotopologues",
-                        [this, &coreData](std::string name, const SerialisedValue &iso)
-                        { isotopologues_.emplace_back(std::make_unique<Isotopologue>(name))->deserialise(iso, coreData); });
+    Serialisable::toVector(node, "isotopologues",
+                           [this, &coreData](const SerialisedValue &iso)
+                           { isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(iso, coreData); });
     Serialisable::toVector(node, "sites",
                            [this, &coreData](const SerialisedValue &site)
                            { sites_.emplace_back(std::make_unique<SpeciesSite>(this))->deserialise(site); });

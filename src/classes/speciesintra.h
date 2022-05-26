@@ -160,8 +160,12 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     {
         if (node.contains("parameters"))
         {
-            std::vector<std::string> parameters = Functions::parameters(interactionForm());
-            setInteractionFormAndParameters(interactionForm(), toml::find<std::vector<double>>(node, "parameters"));
+            auto names = Functions::parameters(interactionForm());
+            auto map = toml::find<std::map<std::string, double>>(node, "parameters");
+            std::vector<double> values;
+            std::transform(names.begin(), names.end(), std::back_inserter(values),
+                           [&map](const auto &name) { return map[name]; });
+            setInteractionFormAndParameters(interactionForm(), values);
         }
     }
     // Load form from tree node
