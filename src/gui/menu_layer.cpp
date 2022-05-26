@@ -107,6 +107,34 @@ void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
     ui_.MainTabs->setCurrentTab(newLayer);
 }
 
+void DissolveWindow::on_LayerCreateEvolveMDAction_triggered(bool checked)
+{
+    auto *newLayer = dissolve_.addProcessingLayer();
+    newLayer->setName(DissolveSys::uniqueName("Evolve (MD)", dissolve_.processingLayers(),
+                                              [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
+
+    Module *module;
+    auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
+
+    // Add MD
+    module = ModuleRegistry::create("MD", newLayer);
+    module->keywords().set("Configuration", firstCfg);
+    module->keywords().set("NSteps", 500);
+    module->keywords().set("OnlyWhenEnergyStable", false);
+    module->setFrequency(1);
+
+    // Add energy calculation
+    module = ModuleRegistry::create("Energy", newLayer);
+    module->keywords().set("Configuration", firstCfg);
+
+    // Run set-up stages for modules
+    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+
+    setModified();
+    fullUpdate();
+    ui_.MainTabs->setCurrentTab(newLayer);
+}
+
 void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();

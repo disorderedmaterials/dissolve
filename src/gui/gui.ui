@@ -325,6 +325,7 @@
       <addaction name="LayerCreateEvolveBasicAtomicAction"/>
       <addaction name="LayerCreateEvolveAtomicAction"/>
       <addaction name="LayerCreateEvolveMolecularAction"/>
+      <addaction name="LayerCreateEvolveMDAction"/>
       <addaction name="LayerCreateEvolveEPSRAction"/>
      </widget>
      <widget class="QMenu" name="LayerCreateRefinementMenu">
@@ -800,6 +801,11 @@
   <action name="SimulationClearAdditionalPotentialsAction">
    <property name="text">
     <string>Clear Additional Potentials</string>
+   </property>
+  </action>
+  <action name="LayerCreateEvolveMDAction">
+   <property name="text">
+    <string>M&amp;D (MD only)</string>
    </property>
   </action>
  </widget>
