@@ -17,7 +17,8 @@ steps:
 
       # Move ANTLR to where macqtdeploy can find it
       ANTLR_PATH=$HOME/.conan/data/antlr4-cppruntime/${{ parameters.antlrver }}/_/_/package
-      ANTLR_PATH=$ANTLR_PATH/`conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="antlr4-cppruntime/${{ parameters.antlrver }}) | .id'`/lib
+      ANTLR_HASH=conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="antlr4-cppruntime/${{ parameters.antlrver }}") | .id'
+      ANTLR_PATH=$ANTLR_PATH/$ANTLR_HASH/lib
       cp $ANTLR_PATH/libantlr4-runtime.${{ parameters.antlrver }}.dylib /usr/lib/
 
       # Get program version
