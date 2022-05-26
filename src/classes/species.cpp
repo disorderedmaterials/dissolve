@@ -225,9 +225,7 @@ SerialisedValue Species::serialise() const
 // Read values from a tree node
 void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    auto tomlAtoms = toml::find<toml::array>(node, "atoms");
-    for (auto &tomlAtom : tomlAtoms)
-        atoms_.emplace_back().deserialise(tomlAtom);
+    atoms_ = toml::find<std::vector<SpeciesAtom>>(node, "atoms");
 
     Serialisable::toVector(
         node, "bonds",

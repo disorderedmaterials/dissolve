@@ -463,7 +463,7 @@ SerialisedValue SpeciesAtom::serialise() const
     SerialisedValue atom;
     atom["index"] = userIndex();
     atom["z"] = Elements::symbol(Z_).data();
-    atom["r"] = toml::array{r_.x, r_.y, r_.z};
+    atom["r"] = r_;
     atom["charge"] = charge_;
     atom["type"] = atomType_->name().data();
     return atom;
@@ -474,8 +474,7 @@ void SpeciesAtom::deserialise(const SerialisedValue &node)
     index_ = toml::find<int>(node, "index") - 1;
     Z_ = Elements::element(toml::find<std::string>(node, "z"));
 
-    auto r = toml::find<std::vector<double>>(node, "r");
-    r_ = Vec3<double>(r[0], r[1], r[2]);
+    r_ = toml::find<Vec3<double>>(node, "r");
 
     charge_ = toml::find_or<double>(node, "charge", 0);
 
