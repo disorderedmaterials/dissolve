@@ -1,16 +1,25 @@
 parameters:
   - name: qtver
     default: 6.2.2
+  - name: antlrver
+    default: 4.9.3
 
 steps:
   - bash: |
       pip3 install dmgbuild biplist
       wget https://raw.githubusercontent.com/disorderedmaterials/scripts/master/prep-dmg
       chmod u+x ./prep-dmg
+      sudo apt-get install jq
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
       Qt6_ROOT=/tmp/qt/${{ parameters.qtver }}/macos/
+
+      # Move ANTLR to where macqtdeploy can find it
+      ANTLR_PATH = $HOME/.conan/data/antlr4-cppruntime/${{ parameters.antlrver }}/_/_/package
+      ANTLR_PATH = $ANTLR_PATH/`conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="antlr4-cppruntime/${{ parameters.antlrver }}) | .id'`/lib
+      cp $ANTLR_PATH/libantlr4-runtime.${{ parameters.antlrver }}.dylib /usr/lib/
+
       # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
       ./prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
