@@ -19,7 +19,7 @@ steps:
       ANTLR_PATH=$HOME/.conan/data/antlr4-cppruntime/${{ parameters.antlrver }}/_/_/package
       ANTLR_HASH=$(conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="antlr4-cppruntime/${{ parameters.antlrver }}") | .id')
       ANTLR_PATH=$ANTLR_PATH/$ANTLR_HASH/lib
-      cp $ANTLR_PATH/libantlr4-runtime.${{ parameters.antlrver }}.dylib /usr/lib/
+      sudo cp $ANTLR_PATH/libantlr4-runtime.${{ parameters.antlrver }}.dylib /usr/lib/
 
       # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
