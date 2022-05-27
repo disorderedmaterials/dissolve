@@ -116,7 +116,8 @@ void IsotopologueSetKeywordWidget::currentItemChanged()
 // Update value displayed in widget
 void IsotopologueSetKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
-    updateWidgetValues(coreData_);
+    if (mutationFlags.isSet(DissolveSignals::DataMutations::IsotopologuesMutated))
+        updateSummaryText();
 }
 
 // Update widget values data based on keyword data

@@ -29,7 +29,7 @@ void SpeciesTab::isotopologuesChanged(const QModelIndex &, const QModelIndex &, 
 {
     updateIsotopologuesTab();
 
-    dissolveWindow_->setModified();
+    dissolveWindow_->setModified(DissolveSignals::DataMutations::IsotopologuesMutated);
 }
 
 void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
@@ -52,6 +52,7 @@ void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
 
     // Notify all keywords that our Isotopologue is about to be removed
     KeywordStore::objectNoLongerValid<Isotopologue>(iso);
+    dissolveWindow_->setModified(DissolveSignals::DataMutations::IsotopologuesMutated);
 
     // Finally, remove the Isotopologue from the Species
     isos_.removeIso(item);
