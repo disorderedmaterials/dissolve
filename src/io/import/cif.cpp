@@ -125,20 +125,21 @@ bool CIFImport::read(std::string filename)
         // Add the atom to an assembly - there are three possibilities regarding (disorder) grouping:
         //   1) A group is defined, but no assembly - add the atom to the 'Disorder' assembly
         //   2) An assembly and a group are defined - add it to that
-        //   3) No group or assembly are defined - add the atom to the 'Global' assembly under the 'All' group
+        //   3) No group or assembly are defined - add the atom to the 'Global' assembly under a 'Default' group
         auto assemblyName = atomDisorderAssembly.empty() ? "." : atomDisorderAssembly[n];
         auto groupName = atomDisorderGroup.empty() ? "." : atomDisorderGroup[n];
-        if (groupName != "." && assemblyName == ".")
+        if (assemblyName == "." && groupName != ".")
             assemblyName = "Disorder";
-        else if (groupName == "." && assemblyName == ".")
-        {
+        else if (assemblyName == "." && groupName == ".")
             assemblyName = "Global";
-            groupName = "All";
-        }
+
+        if (groupName == ".")
+            groupName = "Default";
 
         // Get the assembly and group that we're adding the atom to
         auto &assembly = getAssembly(assemblyName);
         auto &group = assembly.getGroup(groupName);
+        group.setActive(groupName == "Default" || groupName == "1");
         group.addAtom({label, Z, rFrac, occ});
     }
 

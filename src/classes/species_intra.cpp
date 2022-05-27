@@ -96,7 +96,7 @@ OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j) { return ge
 OptionalReferenceWrapper<const SpeciesBond> Species::getBond(int i, int j) const { return getBond(&atom(i), &atom(j)); }
 
 // Add missing bonds
-void Species::addMissingBonds(double tolerance)
+void Species::addMissingBonds(double tolerance, bool preventMetallic)
 {
     double r, radiusI;
     for (auto indexI = 0; indexI < nAtoms() - 1; ++indexI)
@@ -108,6 +108,10 @@ void Species::addMissingBonds(double tolerance)
         {
             // Get SpeciesAtom 'j'
             auto &j = atom(indexJ);
+
+            // If the two atoms are both metal ions and preventMetallic = true, continue
+            if (preventMetallic && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
+                continue;
 
             // If the two atoms are already bound, continue
             if (i.getBond(&j))

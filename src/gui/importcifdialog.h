@@ -55,6 +55,7 @@ class ImportCIFDialog : public WizardDialog
         SelectSpacegroupPage, /* Select space group page */
         CIFInfoPage,          /* Basic CIF info page to check parsing */
         StructurePage,        /* Structure page */
+        CleanedPage,          /* Cleaned structure page */
         SupercellPage,        /* Options to create supercell */
         OutputSpeciesPage     /* Output Species page */
     };
@@ -96,8 +97,28 @@ class ImportCIFDialog : public WizardDialog
      * Structure Page
      */
     private:
+    // Generated crystal species
+    Species *crystalSpecies_{nullptr};
     // Structure preview Configuration
     Configuration *structureConfiguration_;
+
+    private slots:
+    // Generate structural species from CIF data
+    bool createStructuralSpecies();
+    void on_NormalOverlapToleranceRadio_clicked(bool checked);
+    void on_LooseOverlapToleranceRadio_clicked(bool checked);
+    void on_CalculateBondingRadio_clicked(bool checked);
+    void on_BondingPreventMetallicCheck_clicked(bool checked);
+    void on_BondFromCIFRadio_clicked(bool checked);
+
+    /*
+     * CleanUp Page
+     */
+    private:
+    // Generated cleaned species
+    Species *cleanedSpecies_{nullptr};
+    // Cleaned Configuration
+    Configuration *cleanedConfiguration_;
     // NETA for moiety removal
     NETADefinition moietyNETA_;
 
@@ -107,14 +128,12 @@ class ImportCIFDialog : public WizardDialog
 
     private slots:
     // Generate structural species from CIF data
-    bool createStructuralSpecies();
-    void on_NormalOverlapToleranceRadio_clicked(bool checked);
-    void on_LooseOverlapToleranceRadio_clicked(bool checked);
-    void on_CalculateBondingRadio_clicked(bool checked);
-    void on_BondFromCIFRadio_clicked(bool checked);
-    void on_MoietyRemovalGroup_clicked(bool checked);
-    void on_MoietyRemovalEdit_textEdited(const QString &text);
-    void on_MoietyRemoveFragmentsCheck_clicked(bool checked);
+    bool createCleanedSpecies();
+    void on_MoietyRemoveAtomicsCheck_clicked(bool checked);
+    void on_MoietyRemoveWaterCheck_clicked(bool checked);
+    void on_MoietyRemoveByNETAGroup_clicked(bool checked);
+    void on_MoietyNETARemovalEdit_textEdited(const QString &text);
+    void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
 
     /*
      * Supercell Page
