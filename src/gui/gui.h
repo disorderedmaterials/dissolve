@@ -189,6 +189,7 @@ class DissolveWindow : public QMainWindow
     void on_LayerCreateEvolveBasicAtomicAction_triggered(bool checked);
     void on_LayerCreateEvolveAtomicAction_triggered(bool checked);
     void on_LayerCreateEvolveMolecularAction_triggered(bool checked);
+    void on_LayerCreateEvolveMDAction_triggered(bool checked);
     void on_LayerCreateEvolveEPSRAction_triggered(bool checked);
     void on_LayerCreateRefineEPSRAction_triggered(bool checked);
     void on_LayerCreateCorrelationsRDFAction_triggered(bool checked);
