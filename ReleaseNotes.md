@@ -19,8 +19,8 @@ The `AddSpecies` procedure node used in configuration generators has been rename
 ```
 Generator
   AddSpecies
-	Species  'Water'
-	...
+    Species  'Water'
+    ...
   EndAddSpecies
   ...
 ```
@@ -28,8 +28,8 @@ to read:
 ```
 Generator
   Add
-	Species  'Water'
-	...
+    Species  'Water'
+    ...
   EndAdd
   ...
 ```
