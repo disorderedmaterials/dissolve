@@ -7,8 +7,9 @@
 
 namespace Version
 {
-
-// Return current version information
+// Return semantic version number
+std::string_view semantic();
+// Return current version information, including short hash if defined
 std::string_view info();
 // Return repo url
 std::string_view repoUrl();

@@ -20,7 +20,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                         bool moduleInConfiguration)
 {
     Messenger::print("\nParsing {} block '{}' ({})...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
-                     module->uniqueName(), module->type());
+                     module->name(), module->type());
 
     auto blockDone = false, error = false;
 

@@ -16,7 +16,7 @@
 bool MDModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (actionSignals.isSet(KeywordBase::ClearModuleData))
-        dissolve.processingModuleData().removeWithPrefix(uniqueName());
+        dissolve.processingModuleData().removeWithPrefix(name());
 
     return true;
 }
@@ -26,7 +26,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
@@ -117,7 +117,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Read in or assign random velocities
     auto [velocities, status] = dissolve.processingModuleData().realiseIf<std::vector<Vec3<double>>>(
-        fmt::format("{}//Velocities", targetConfiguration_->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
+        fmt::format("{}//Velocities", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
     if ((status == GenericItem::ItemStatus::Created || randomVelocities_) && !intramolecularForcesOnly_)
     {
         Messenger::print("Random initial velocities will be assigned.\n");

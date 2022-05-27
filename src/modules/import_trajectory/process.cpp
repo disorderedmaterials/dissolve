@@ -12,7 +12,7 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
 {
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     Messenger::print("Import: Reading trajectory file frame from '{}' into Configuration '{}'...\n",
                      trajectoryFormat_.filename(), targetConfiguration_->name());
@@ -24,10 +24,10 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
 
     // Does a seek position exist in the processing module info?
     std::string streamPosName = fmt::format("TrajectoryPosition_{}", targetConfiguration_->niceName());
-    if (dissolve.processingModuleData().contains(streamPosName, uniqueName()))
+    if (dissolve.processingModuleData().contains(streamPosName, name()))
     {
         // Retrieve the streampos and go to it in the file
-        std::streampos trajPos = dissolve.processingModuleData().retrieve<std::streampos>(streamPosName, uniqueName());
+        std::streampos trajPos = dissolve.processingModuleData().retrieve<std::streampos>(streamPosName, name());
         parser.seekg(trajPos);
     }
 
@@ -38,7 +38,7 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
     targetConfiguration_->incrementContentsVersion();
 
     // Set the trajectory file position in the restart file
-    dissolve.processingModuleData().realise<std::streampos>(streamPosName, uniqueName(), GenericItem::InRestartFileFlag) =
+    dissolve.processingModuleData().realise<std::streampos>(streamPosName, name(), GenericItem::InRestartFileFlag) =
         parser.tellg();
 
     // Handle the unit cell if one was provided

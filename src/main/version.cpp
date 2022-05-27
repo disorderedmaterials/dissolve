@@ -10,7 +10,14 @@
 
 namespace Version
 {
+// Return semantic version number
+std::string_view semantic()
+{
+    static std::string versionString = fmt::format("{}", DISSOLVEVERSION);
+    return versionString;
+}
 
+// Return current version information, including short hash if defined
 std::string_view info()
 {
     static std::string versionString;

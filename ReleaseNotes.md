@@ -1,4 +1,4 @@
-Version 0.9 is a major release adding  a significant amount of new functionality and bugfixes.
+Version 0.9 is a major release adding a significant amount of new functionality and bugfixes.
 
 ## Major Changes
 
@@ -10,15 +10,17 @@ Many other small improvements to the GUI have also been made, covering aesthetic
 
 ### Input File Compatibility
 
-Input files from 0.8.X are 99% compatible with 0.9, with two small edits required:
+Input files from 0.8.X are 99% compatible with 0.9, but require a few small edits:
 
-1) The `AddSpecies` node has been renamed to just `Add`. So, any configuration generators should be modified from:
+#### AddSpecies Nodes
+
+The `AddSpecies` procedure node used in configuration generators has been renamed to just `Add`. So, any configuration generators should be modified from:
 
 ```
 Generator
   AddSpecies
-    Species  'Water'
-    ...
+	Species  'Water'
+	...
   EndAddSpecies
   ...
 ```
@@ -26,13 +28,15 @@ to read:
 ```
 Generator
   Add
-    Species  'Water'
-    ...
+	Species  'Water'
+	...
   EndAdd
   ...
 ```
 
-2) The `RDF` module has a `Configurations` keyword rather than a `Configuration` keyword. This is to distinguish between modules that acept only a single configuration target and those that accept many (of which the only example is currently `RDF`). `RDF` modules in the input file should be changed from:
+#### RDF Module Configuration Targets
+
+The `RDF` module has a `Configurations` (plural) keyword rather than a `Configuration`(singular) keyword. This is to distinguish between modules that acept only a single configuration target and those that accept many (of which the only example is currently `RDF`). `RDF` modules in the input file should be changed from:
 
 ```
 Module  RDF  'RDF01'
@@ -42,31 +46,40 @@ Module  RDF  'RDF01'
 ```
 to read:
 ```
-```
 Module  RDF  'RDF01'
   Frequency  1
   Configurations  'Bulk'
   ...
 ```
 
+#### Functional Form Parameter Checking
+
+More strict checking on the number of parameters given to forcefield functions is now made. Previous versions of Dissolve wrote extraneous parameters (all zero) to some of these lines, which will lead to errors such as this when opening the input file:
+```
+*** ERROR 'ShortRangeType' keyword 'LJ' requires exactly 2 arguments, but 4 were provided.
+```
+
+The additional parameters referenced can simply be removed, for example:
+```
+Parameters  HD  H  1.342000e-01  LJ  1.255200e-01  2.500000e+00  0.000000e+00  0.000000e+00
+```
+should be changed to:
+```
+Parameters  HD  H  1.342000e-01  LJ  1.255200e-01  2.500000e+00
+```
+
+#### Simulation Block
+
+The `Simulation` block has been removed as it was no longer used (random seed setting is now performed by the command-line option `--seed`).  The block and its content can be safely deleted.
+
 ### Restart File Compatibility
 
-Restart files from the 0.8.X version are not immediately compatible with 0.9, but can be made compatible with some minor editing by hand. Essentially, the breaking change is that `AtomTypeList` data is no longer saved to the restart file (rather it is recalculated on-the-fly when required). So, any `AtomTypeList` entries in the restart file simply need to be deleted. An example of such an entry is as follows:
-
-```
-Processing  RDF01//SummedAtomTypes  AtomTypeList  17  1
-3  # nItems
-CT2 10000 0.2631578947368421 0.0 0
-CT3 2000 0.05263157894736842 0.0 0
-HC 26000 0.6842105263157895 0.0 0
-```
-
-The entry comprises a header line, followed by the number of items _N_ to expect, followed by _N_ lines of data, so _N_+2 lines in total. All of these lines up to the next header line can safely be deleted.
+From version 0.9.0 Dissolve will try to detect the version of the restart file being read in, and adjust its strategy accordingly.  As such, restart files from the 0.8.X versions can be seamlessly loaded into the 0.9.0 version. The corresponding input file will still need some adjustment as detailed above.
 
 ## Other Significant Changes
 - Singularity images of all versions of Dissolve are now available.
 - Major code cleanup and modernisation throughout, with only a few legacy custom classes now remaining.
-- Editing of forcefield terms is now parameter-based.
+- Forcefield parameter editing and input/output has been extended to "name=value" to ensure clarity on which parameters are being given which values.
 - Improved consistency of EPSR module.
 - Detection of "invalid" system charges, and display of total atomtype- and atom-derived charges on species tabs.
 - Generation of coordinate sets for species being added to configurations, giving better starting population of molecules.

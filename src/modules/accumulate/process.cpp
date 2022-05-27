@@ -31,7 +31,7 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         return Messenger::error("No target module set.\n");
 
     // Print summary of parameters
-    Messenger::print("Accumulate: Source module is '{}'.\n", targetModule->uniqueName());
+    Messenger::print("Accumulate: Source module is '{}'.\n", targetModule->name());
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");
@@ -47,17 +47,17 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                 targetPartialSet().keyword(targetPartialSet_), targetModule->type());
 
     // Find the target data
-    auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->uniqueName());
+    auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
     if (!targetSet)
     {
         Messenger::print("Target PartialSet data '{}' in module '{}' does not yet exist.\n",
-                         targetPartialSet().keyword(targetPartialSet_), targetModule->uniqueName());
+                         targetPartialSet().keyword(targetPartialSet_), targetModule->name());
         return true;
     }
 
     // Realise the accumulated partial set
     auto &accumulated = dissolve.processingModuleData().realise<PartialSetAccumulator>(
-        "Accumulation", uniqueName(), GenericItem::ItemFlag::InRestartFileFlag);
+        "Accumulation", name(), GenericItem::ItemFlag::InRestartFileFlag);
 
     accumulated += *targetSet;
 
@@ -66,8 +66,8 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Save data if requested
     std::vector<std::string> suffixes = {"gr", "sq", "gr"};
     std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
-    if (save_ && (!MPIRunMaster(
-                     procPool, accumulated.save(uniqueName_, dataName, suffixes[targetPartialSet_], units[targetPartialSet_]))))
+    if (save_ &&
+        (!MPIRunMaster(procPool, accumulated.save(name_, dataName, suffixes[targetPartialSet_], units[targetPartialSet_]))))
         return false;
 
     return true;

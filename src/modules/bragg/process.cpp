@@ -13,7 +13,7 @@
 bool BraggModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (actionSignals.isSet(KeywordBase::ClearModuleData))
-        dissolve.processingModuleData().realise<std::vector<KVector>>("KVectors", uniqueName()).clear();
+        dissolve.processingModuleData().realise<std::vector<KVector>>("KVectors", name()).clear();
     return true;
 }
 
@@ -29,7 +29,7 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
@@ -46,12 +46,12 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Realise an AtomTypeList containing the sum of atom types over all target configurations (currently only one)
     auto &combinedAtomTypes =
-        dissolve.processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", name_, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     combinedAtomTypes.add(targetConfiguration_->atomTypes());
 
     // Store unit cell information
-    auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", name_, GenericItem::InRestartFileFlag);
     unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Finalise combined AtomTypes matrix
@@ -72,7 +72,7 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Perform averaging of reflections data if requested
     if (averagingLength_ > 1)
-        Averaging::vectorAverage<std::vector<BraggReflection>>(dissolve.processingModuleData(), "Reflections", uniqueName(),
+        Averaging::vectorAverage<std::vector<BraggReflection>>(dissolve.processingModuleData(), "Reflections", name(),
                                                                averagingLength_, averagingScheme_);
 
     // Form partial and total reflection functions
@@ -90,7 +90,7 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Retrieve BraggReflection data from the Configuration's module data
         const auto &braggReflections =
-            dissolve.processingModuleData().value<const std::vector<BraggReflection>>("Reflections", uniqueName());
+            dissolve.processingModuleData().value<const std::vector<BraggReflection>>("Reflections", name());
 
         auto nErrors = 0;
         while (!reflectionParser.eofOrBlank())
@@ -142,11 +142,11 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         // Retrieve BraggReflection data from the Configuration's module data
         const auto &braggReflections =
-            dissolve.processingModuleData().value<const std::vector<BraggReflection>>("Reflections", uniqueName());
+            dissolve.processingModuleData().value<const std::vector<BraggReflection>>("Reflections", name());
 
         // Open a file and save the basic reflection data
         LineParser braggParser(&procPool);
-        if (!braggParser.openOutput(fmt::format("{}-Reflections.txt", uniqueName_)))
+        if (!braggParser.openOutput(fmt::format("{}-Reflections.txt", name_)))
             return false;
         braggParser.writeLineF("#   ID      Q     h k l     mult    Intensity(0,0)\n");
         auto count = 0;
@@ -164,8 +164,7 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             types.begin(), types.end(),
             [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool> {
                 LineParser intensityParser(&procPool);
-                if (!intensityParser.openOutput(
-                        fmt::format("{}-{}-{}.txt", uniqueName_, atd1.atomTypeName(), atd2.atomTypeName())))
+                if (!intensityParser.openOutput(fmt::format("{}-{}-{}.txt", name_, atd1.atomTypeName(), atd2.atomTypeName())))
                     return false;
                 intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                 for (const auto &reflxn : braggReflections)

@@ -1,11 +1,13 @@
 add_library(
   genericitems
   deserialisers.cpp
+  legacy.cpp
   list.cpp
   producers.cpp
   searchers.cpp
   serialisers.cpp
   deserialisers.h
+  legacy.h
   list.h
   producers.h
   serialisers.h

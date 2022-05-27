@@ -375,7 +375,7 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &module : layer->modules())
         {
             if (!parser.writeLineF("\n  {}  {}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
-                                   module->type(), module->uniqueName()))
+                                   module->type(), module->name()))
                 return false;
 
             // Write frequency and disabled keywords
@@ -410,6 +410,12 @@ bool Dissolve::loadRestart(std::string_view filename)
     LineParser parser(&worldPool());
     if (!parser.openInput(restartFilename_))
         return false;
+
+    // Peek the first line and see if can determine a version
+    if (parser.readNextLine(LineParser::KeepComments) != LineParser::Success)
+        return false;
+    GenericList::setBaseDataVersionFromString(parser.line());
+    parser.rewind();
 
     // Variables
     Configuration *cfg;
@@ -529,6 +535,12 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
     if (!parser.openInput(filename))
         return false;
 
+    // Peek the first line and see if can determine a version
+    if (parser.readNextLine(LineParser::KeepComments) != LineParser::Success)
+        return false;
+    GenericList::setBaseDataVersionFromString(parser.line());
+    parser.rewind();
+
     // Variables
     std::string newName;
     auto error = false, skipCurrentItem = false;
@@ -622,7 +634,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     for (const auto *module : Module::instances())
     {
         for (auto &keyword : module->keywords().restartables())
-            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->uniqueName(), keyword->name())))
+            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->name(), keyword->name())))
                 return false;
     }
 
@@ -642,7 +654,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Module timing information
     for (const auto *module : Module::instances())
     {
-        if (!parser.writeLineF("Timing  {}\n", module->uniqueName()))
+        if (!parser.writeLineF("Timing  {}\n", module->name()))
             return false;
         if (!module->processTimes().serialise(parser))
             return false;

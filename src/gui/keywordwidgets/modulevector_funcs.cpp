@@ -81,6 +81,6 @@ void ModuleVectorKeywordWidget::updateSummaryText()
     if (keyword_->data().empty())
         setSummaryText("<None>");
     else
-        setSummaryText(QString::fromStdString(
-            joinStrings(keyword_->data(), ", ", [](const auto &module) { return module->uniqueName(); })));
+        setSummaryText(
+            QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &module) { return module->name(); })));
 }

@@ -121,7 +121,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::
 
     // Retrieve and zero the current potential coefficients file
     auto &potentialCoefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
-        "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+        "PotentialCoefficients", name_, GenericItem::InRestartFileFlag);
     potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     for (auto &n : potentialCoefficients)
     {
@@ -196,7 +196,7 @@ bool EPSRModule::readFitCoefficients(Dissolve &dissolve, const ProcessPool &proc
         // Data file index
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("Failed to read initial parameters from inpa file.\n");
-        Messenger::print("Reading fit coefficients for data file {} ({})...\n", parser.argi(0), target->uniqueName());
+        Messenger::print("Reading fit coefficients for data file {} ({})...\n", parser.argi(0), target->name());
 
         // Number of coefficients, stepsize in r, sigma2
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -210,7 +210,7 @@ bool EPSRModule::readFitCoefficients(Dissolve &dissolve, const ProcessPool &proc
             return Messenger::error("Number of potential coefficients ({}) does not match ncoeffp ({}).\n", parser.nArgs(),
                                     nCoeff);
         auto &fitCoefficients = dissolve.processingModuleData().realise<std::vector<double>>(
-            fmt::format("FitCoefficients_{}", target->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+            fmt::format("FitCoefficients_{}", target->name()), name_, GenericItem::InRestartFileFlag);
         fitCoefficients.resize(nCoeff);
         for (auto i = 0; i < nCoeff; ++i)
             fitCoefficients[i] = parser.argd(i);

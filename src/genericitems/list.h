@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumoptions.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "genericitems/item.h"
@@ -176,11 +177,29 @@ class GenericList
      * Serialisation
      */
     public:
+    // Data Versions
+    enum class DeserialisableDataVersion
+    {
+        Version089,
+        Current
+    };
+    // Return EnumOptions for DataVersion
+    static EnumOptions<DeserialisableDataVersion> deserialisableDataVersions();
+
+    private:
+    // Current data version being deserialised
+    static DeserialisableDataVersion baseDataVersion_;
+
+    public:
+    // Set current data version being deserialised by detecting it from the supplied string
+    static void setBaseDataVersionFromString(std::string_view s);
+    // Return current data version being deserialised
+    static DeserialisableDataVersion baseDataVersion();
     // Serialise all objects via the specified LineParser
     bool serialiseAll(LineParser &parser, std::string_view headerPrefix) const;
     // Deserialise an object from the LineParser into our map
     bool deserialise(LineParser &parser, CoreData &coreData, const std::string &name, const std::string &itemClass,
-                     int version = 0, int flags = 0);
+                     int dataVersion = 0, int flags = 0);
 
     /*
      * Searchers

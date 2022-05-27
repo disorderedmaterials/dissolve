@@ -39,7 +39,7 @@ void CalculateRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
         auto *cfg = module_->keywords().get<Configuration *>("Configuration");
         if (cfg)
             rdfGraph_
-                ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->uniqueName(), cfg->niceName()),
+                ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->name(), cfg->niceName()),
                                                      fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
                 ->setColour(StockColours::BlueStockColour);
     }

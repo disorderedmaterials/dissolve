@@ -50,14 +50,14 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole)
     {
         if (module->isDisabled())
-            return QString::fromStdString(fmt::format("{} (disabled)", module->uniqueName()));
+            return QString::fromStdString(fmt::format("{} (disabled)", module->name()));
         else if (!moduleLayer_->isEnabled())
-            return QString::fromStdString(fmt::format("{} (disabled via layer)", module->uniqueName()));
+            return QString::fromStdString(fmt::format("{} (disabled via layer)", module->name()));
         else
-            return QString::fromStdString(std::string(module->uniqueName()));
+            return QString::fromStdString(std::string(module->name()));
     }
     else if (role == Qt::EditRole)
-        return QString::fromStdString(std::string(module->uniqueName()));
+        return QString::fromStdString(std::string(module->name()));
     else if (role == Qt::UserRole)
         return QVariant::fromValue(module);
     else if (role == Qt::DecorationRole)
@@ -73,15 +73,14 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         auto *module = rawData(index);
 
         // Check for identical old/new names
-        if (value.toString() == QString::fromStdString(std::string(module->uniqueName())))
+        if (value.toString() == QString::fromStdString(std::string(module->name())))
             return false;
 
         // Ensure uniqueness of new name
-        auto oldName = QString::fromStdString(std::string(module->uniqueName()));
-        auto newName = DissolveSys::uniqueName(value.toString().toStdString(), Module::instances(), [&](const auto &inst) {
-            return inst == module ? std::string() : inst->uniqueName();
-        });
-        module->setUniqueName(newName);
+        auto oldName = QString::fromStdString(std::string(module->name()));
+        auto newName = DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()), Module::instances(),
+                                               [&](const auto &inst) { return inst == module ? std::string() : inst->name(); });
+        module->setName(newName);
 
         emit(dataChanged(index, index));
         emit(moduleNameChanged(index, oldName, QString::fromStdString(newName)));
@@ -94,7 +93,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
         // Find it in the list, taking care to avoid any nullptr vector data (i.e. where we're moving it to)
         auto moduleToMove = value.toString().toStdString();
         auto it = std::find_if(moduleLayer_->modules().begin(), moduleLayer_->modules().end(),
-                               [moduleToMove](const auto &m) { return m && moduleToMove == m->uniqueName(); });
+                               [moduleToMove](const auto &m) { return m && moduleToMove == m->name(); });
         if (it == moduleLayer_->modules().end())
             return false;
         moduleLayer_->modules()[index.row()] = std::move(*it);
@@ -159,7 +158,7 @@ QMimeData *ModuleLayerModel::mimeData(const QModelIndexList &indexes) const
     QByteArray encodedData;
 
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
-    stream << QString::fromStdString(std::string(moduleLayer_->modules()[indexes.front().row()]->uniqueName()));
+    stream << QString::fromStdString(std::string(moduleLayer_->modules()[indexes.front().row()]->name()));
     mimeData->setData("application/dissolve.module.move", encodedData);
 
     return mimeData;

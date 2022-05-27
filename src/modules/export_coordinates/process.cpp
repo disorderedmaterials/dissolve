@@ -19,7 +19,7 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &pro
 
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Only the pool master saves the data
     if (procPool.isMaster())

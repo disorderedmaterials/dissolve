@@ -8,6 +8,7 @@
 #include "classes/partialset.h"
 #include "classes/partialsetaccumulator.h"
 #include "classes/xrayweights.h"
+#include "genericitems/legacy.h"
 #include "math/data1d.h"
 #include "math/data2d.h"
 #include "math/data3d.h"
@@ -52,6 +53,9 @@ GenericItemProducer::GenericItemProducer()
     // Containers of Custom Classes
     registerProducer<std::vector<BraggReflection>>("std::vector<BraggReflection>");
     registerProducer<std::vector<KVector>>("std::vector<KVector>");
+
+    // Legacy Classes
+    registerProducer<LegacyAtomTypeListItem>("AtomTypeList");
 }
 
 /*

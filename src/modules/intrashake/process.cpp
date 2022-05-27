@@ -19,7 +19,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", name());
 
     // Retrieve control parameters
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());

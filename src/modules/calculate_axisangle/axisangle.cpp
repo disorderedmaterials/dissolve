@@ -91,7 +91,7 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
     }
     catch (...)
     {
-        Messenger::error("Failed to create analysis procedure for module '{}'\n", uniqueName_);
+        Messenger::error("Failed to create analysis procedure for module '{}'\n", name_);
     }
 
     /*

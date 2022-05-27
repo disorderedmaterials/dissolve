@@ -37,15 +37,15 @@ void CalculateCNModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
 {
     // Update CN labels
     ui_.RegionAResultFrame->setText(
-        dissolve_.processingModuleData().valueOr("Analyser//Sum1D//CN//A", module_->uniqueName(), SampledDouble()));
+        dissolve_.processingModuleData().valueOr("Analyser//Sum1D//CN//A", module_->name(), SampledDouble()));
     auto rangeBOn = module_->isRangeBEnabled();
     ui_.RegionBResultFrame->setText(
-        rangeBOn ? dissolve_.processingModuleData().valueOr("Analyser//Sum1D//CN//B", module_->uniqueName(), SampledDouble())
+        rangeBOn ? dissolve_.processingModuleData().valueOr("Analyser//Sum1D//CN//B", module_->name(), SampledDouble())
                  : SampledDouble());
     ui_.RegionBResultFrame->setEnabled(rangeBOn);
     auto rangeCOn = module_->isRangeCEnabled();
     ui_.RegionCResultFrame->setText(
-        rangeCOn ? dissolve_.processingModuleData().valueOr("Analyser//Sum1D//CN//C", module_->uniqueName(), SampledDouble())
+        rangeCOn ? dissolve_.processingModuleData().valueOr("Analyser//Sum1D//CN//C", module_->name(), SampledDouble())
                  : SampledDouble());
     ui_.RegionCResultFrame->setEnabled(rangeCOn);
 
@@ -60,7 +60,7 @@ void CalculateCNModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFla
             return;
 
         const auto *rdfModule = optRDFModule->get();
-        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", rdfModule->uniqueName()), "RDF");
+        rdfGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", rdfModule->name()), "RDF");
     }
 
     // Validate renderables if they need it
