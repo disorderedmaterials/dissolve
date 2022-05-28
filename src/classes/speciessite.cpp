@@ -10,7 +10,7 @@
 #include <numeric>
 
 SpeciesSite::SpeciesSite(const Species *parent) : parent_(parent), originMassWeighted_(false) {}
-SpeciesSite::SpeciesSite(const Species *parent, std::string name) : parent_(parent), name_(name), originMassWeighted_(false) {}
+SpeciesSite::SpeciesSite(const Species *parent, std::string name) : name_(name), parent_(parent), originMassWeighted_(false) {}
 /*
  * Basic Information
  */
