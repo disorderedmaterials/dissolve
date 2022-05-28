@@ -132,7 +132,7 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
     std::string text;
     auto nNatural = 0;
     for (const auto &topes : keyword_->data().isotopologues())
-        // Check if this is completely "natural" specification
+        // Check if this is a completely "natural" specification
         if (std::count_if(topes.mix().begin(), topes.mix().end(), [&topes](const auto &part) {
                 return part.isotopologue() == topes.species()->naturalIsotopologue();
             }) == topes.nIsotopologues())
