@@ -171,6 +171,15 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
     emit(dataModified());
 }
 
+// Prepare widget for deletion
+void ModuleControlWidget::prepareForDeletion()
+{
+    // Nullify the module - this will flag to the update functions that they shouldn't proceed
+    module_ = nullptr;
+
+    deleteLater();
+}
+
 // Target keyword data changed
 void ModuleControlWidget::localKeywordChanged(int signalMask)
 {
@@ -195,8 +204,8 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
 // Global data mutated
 void ModuleControlWidget::globalDataMutated(int mutationFlags)
 {
-    // If we have no valid parent, don't try to update keyword data
-    if (!parent())
+    // If we have no valid module, don't try to update keyword data
+    if (!module_)
         return;
 
     Flags<DissolveSignals::DataMutations> dataMutations(mutationFlags);
