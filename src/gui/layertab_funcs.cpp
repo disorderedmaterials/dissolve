@@ -120,8 +120,7 @@ void LayerTab::removeControlWidget(const Module *module)
             if (ui_.ModuleControlsStack->currentIndex() == n)
                 ui_.ModuleControlsStack->setCurrentIndex((n + 1) < ui_.ModuleControlsStack->count() ? n + 1 : n - 1);
             ui_.ModuleControlsStack->removeWidget(w);
-            w->setParent(nullptr);
-            w->deleteLater();
+            w->prepareForDeletion();
             return;
         }
     }
@@ -296,12 +295,12 @@ void LayerTab::on_AvailableModulesTree_doubleClicked(const QModelIndex &index)
 // Remove all module control widgets
 void LayerTab::removeModuleControlWidgets()
 {
-    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
+    // Remove all stack pages but the first (which corresponds to the "No Module Selected" widget)
+    while (ui_.ModuleControlsStack->count() > 1)
     {
-        auto *w = ui_.ModuleControlsStack->widget(n);
+        auto *w = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(1));
         ui_.ModuleControlsStack->removeWidget(w);
-        w->setParent(nullptr);
-        w->deleteLater();
+        w->prepareForDeletion();
     }
 }
 

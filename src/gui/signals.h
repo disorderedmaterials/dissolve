@@ -9,6 +9,8 @@ namespace DissolveSignals
 enum DataMutations
 {
     ConfigurationsMutated,
-    ModulesMutated
+    IsotopologuesMutated,
+    ModulesMutated,
+    SpeciesMutated
 };
 }; // namespace DissolveSignals
