@@ -24,8 +24,7 @@ steps:
       ANTLR_PATH=$ANTLR_PATH/$ANTLR_HASH/lib/libantlr4-runtime.${{ parameters.antlrver }}.dylib
 
       #Handle ANTLR
-      csrutil disable
-      cp $ANTLR_PATH /usr/lib
+      cp $ANTLR_PATH /usr/local/lib/
       install_name_tool -change $ANTLR_PATH @executable_path/../Frameworks/libantlr4-runtime.${{ parameters.antlrver }}.dylib ./build/dissolve-gui
 
       ./prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
