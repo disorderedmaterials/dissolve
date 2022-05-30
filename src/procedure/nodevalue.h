@@ -3,11 +3,12 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "expression/expression.h"
 #include "templates/optionalref.h"
 
 // Node Value
-class NodeValue
+class NodeValue : public Serialisable
 {
     public:
     NodeValue();
@@ -61,4 +62,13 @@ class NodeValue
     double asDouble();
     // Return value represented as a string
     std::string asString(bool addQuotesIfRequired = false) const;
+
+    /*
+     * Serialisable
+     */
+    public:
+    // Express as a tree node
+    SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(const SerialisedValue &node) override;
 };

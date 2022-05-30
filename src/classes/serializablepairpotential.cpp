@@ -52,25 +52,22 @@ SerialisedValue SerializablePairPotential::serialise() const
 }
 
 // This method populates the object's members with values read from a 'pairPotentials' TOML node
-void SerializablePairPotential::deserialise(SerialisedValue &node)
+void SerializablePairPotential::deserialise(const SerialisedValue &node)
 {
     if (node.contains("range"))
-        range_ = node["range"].as_floating();
+        range_ = toml::find<double>(node, "range");
     if (node.contains("delta"))
-        delta_ = node["delta"].as_floating();
+        delta_ = toml::find<double>(node, "delta");
     if (node.contains("includeCoulomb"))
-        atomTypeChargeSource_ = node["includeCoulomb"].as_boolean();
+        atomTypeChargeSource_ = toml::find<bool>(node, "includeCoulomb");
     if (node.contains("coulombTruncation"))
-        coulombTruncationScheme_ =
-            PairPotential::coulombTruncationSchemes().enumeration(std::string(node["coulombTruncation"].as_string()));
+        coulombTruncationScheme_ = PairPotential::coulombTruncationSchemes().enumeration(
+            std::string(toml::find<std::string>(node, "coulombTruncation")));
     if (node.contains("shortRangeTruncation"))
-        shortRangeTruncationScheme_ =
-            PairPotential::shortRangeTruncationSchemes().enumeration(std::string(node["shortRangeTruncation"].as_string()));
+        shortRangeTruncationScheme_ = PairPotential::shortRangeTruncationSchemes().enumeration(
+            std::string(toml::find<std::string>(node, "shortRangeTruncation")));
 
     if (node.contains("atomTypes"))
-    {
-        toml::value atomTypesNode = node["atomTypes"];
-        for (auto &[name, data] : atomTypesNode.as_table())
+        for (auto &[name, data] : toml::find(node, "atomTypes").as_table())
             atomTypes_.emplace_back(std::make_unique<AtomType>(name))->deserialise(data);
-    }
 }

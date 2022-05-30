@@ -241,7 +241,7 @@ SerialisedValue SpeciesImproper::serialise() const
     return improper;
 }
 // This method populates the object's members with values read from an 'improper' TOML node
-void SpeciesImproper::deserialise(SerialisedValue &node, CoreData &coreData)
+void SpeciesImproper::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterImproper(form); });
 }

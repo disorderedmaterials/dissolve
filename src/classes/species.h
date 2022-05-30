@@ -375,5 +375,5 @@ class Species : public Serialisable
     // Express as a tree node
     SerialisedValue serialise() const override;
     // Read values from a tree node
-    void deserialise(SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node, CoreData &coreData);
 };

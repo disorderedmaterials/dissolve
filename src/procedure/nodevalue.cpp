@@ -131,3 +131,42 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
             return fmt::format("{}", expression_.expressionString());
     }
 }
+
+SerialisedValue NodeValue::serialise() const
+{
+    switch (type_)
+    {
+        case IntegerNodeValue:
+            return valueI_;
+        case DoubleNodeValue:
+            return valueD_;
+        case ExpressionNodeValue:
+            return expression_.expressionString();
+    }
+}
+
+void NodeValue::deserialise(const SerialisedValue &node)
+{
+    toml::visit(
+        [this](auto &arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, int>)
+            {
+                type_ = IntegerNodeValue;
+                valueI_ = arg;
+            }
+            else if constexpr (std::is_same_v<T, double>)
+            {
+                type_ = DoubleNodeValue;
+                valueD_ = arg;
+            }
+            else if constexpr (std::is_same_v<T, std::string>)
+            {
+                type_ = ExpressionNodeValue;
+                // FIXME: This needs to be handled properly when we
+                // start serialising expressions.
+                expression_.create(arg, {});
+            }
+        },
+        node);
+}
