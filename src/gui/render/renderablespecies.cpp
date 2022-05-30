@@ -190,9 +190,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
 
             // Is the atom selected?
             if (i.isSelected())
-            {
                 selectionAssembly_.add(selectedAtomPrimitive_, A, colourBlack);
-            }
         }
 
         // Draw bonds
@@ -202,7 +200,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
             if (periodic)
                 speciesAssembly_.createCylinderBond(
                     bondPrimitive_, bond.i()->r(), bond.j()->r(), source_->box()->minimumVector(bond.i()->r(), bond.j()->r()),
-                    ElementColours::colour(bond.i()->Z()), ElementColours::colour(bond.j()->Z()), true, spheresBondRadius_);
+                    ElementColours::colour(bond.j()->Z()), ElementColours::colour(bond.i()->Z()), true, spheresBondRadius_);
             else
                 speciesAssembly_.createCylinderBond(bondPrimitive_, bond.i()->r(), bond.j()->r(), bond.j()->r() - bond.i()->r(),
                                                     ElementColours::colour(bond.i()->Z()),
