@@ -174,7 +174,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         if (node.contains("form"))
         {
             auto form = toml::find<std::string>(node, "form");
-            if (form.find("@") != std::string::npos)
+            if (form.find("@") == 0)
             {
                 auto master = lambda(form);
                 if (!master)
