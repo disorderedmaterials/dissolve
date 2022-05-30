@@ -441,6 +441,5 @@ void SpeciesSite::deserialise(SerialisedValue &node)
     toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addXAxisAtom(xAxisAtom.as_integer()); });
     toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addYAxisAtom(yAxisAtom.as_integer()); });
 
-    if (node.contains("originMassWeighted"))
-        originMassWeighted_ = node["originMassWeighted"].as_boolean();
+    getIfPresent(node, "originMassWeighted", originMassWeighted_);
 }

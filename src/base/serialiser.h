@@ -86,4 +86,12 @@ class Serialisable
             for (auto &item : node[key].as_array())
                 action(item);
     }
+
+    template <typename T> static bool getIfPresent(SerialisedValue &node, std::string key, T &target)
+    {
+        if (!node.contains(key))
+            return false;
+        target = toml::find<T>(node, key);
+        return true;
+    }
 };
