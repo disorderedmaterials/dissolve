@@ -63,6 +63,10 @@ class NodeValue : public Serialisable
     // Return value represented as a string
     std::string asString(bool addQuotesIfRequired = false) const;
 
+    /*
+     * Serialisable
+     */
+    public:
     // Express as a tree node
     SerialisedValue serialise() const override;
     // Read values from a tree node
