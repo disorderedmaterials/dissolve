@@ -79,7 +79,7 @@ class CoreData
 
         // Serialisation
         SerialisedValue serialise() const override;
-        void deserialise(SerialisedValue &node) override;
+        void deserialise(const SerialisedValue &node) override;
     };
     // Master terms
     Masters masters_;
@@ -88,7 +88,7 @@ class CoreData
     // Express Master terms as tree node
     SerialisedValue serialiseMaster() const;
     // Read Master values from tree node
-    void deserialiseMaster(SerialisedValue &node);
+    void deserialiseMaster(const SerialisedValue &node);
     // Add new master Bond parameters
     MasterBond &addMasterBond(std::string_view name);
     // Return number of master Bond parameters in list

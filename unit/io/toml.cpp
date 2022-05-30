@@ -20,7 +20,7 @@ TEST(TOMLTest, Parse)
             initial.loadInput(input);
             auto toml = initial.serialise();
             Dissolve repeat(coreData2);
-            repeat.deserialise(toml);
+            EXPECT_NO_THROW(repeat.deserialise(toml));
             auto toml2 = repeat.serialise();
 
             EXPECT_EQ(toml, toml2);

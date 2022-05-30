@@ -610,7 +610,7 @@ SerialisedValue SpeciesTorsion::serialise() const
     return torsion;
 }
 // This method populates the object's members with values read from a 'torsion' TOML node
-void SpeciesTorsion::deserialise(SerialisedValue &node, CoreData &coreData)
+void SpeciesTorsion::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterTorsion(form); });
 }

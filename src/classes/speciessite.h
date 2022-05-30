@@ -128,5 +128,5 @@ class SpeciesSite : public Serialisable
     bool write(LineParser &parser, std::string_view prefix);
 
     SerialisedValue serialise() const override;
-    void deserialise(SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node) override;
 };

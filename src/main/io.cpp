@@ -159,7 +159,7 @@ SerialisedValue Dissolve::serialise() const
 }
 
 // Read values from a tree node
-void Dissolve::deserialise(SerialisedValue &node)
+void Dissolve::deserialise(const SerialisedValue &node)
 {
     if (node.contains("pairPotentials"))
     {
@@ -173,7 +173,7 @@ void Dissolve::deserialise(SerialisedValue &node)
         if (!mastersNode.is_uninitialized())
             coreData_.deserialiseMaster(mastersNode);
     }
-    Serialisable::toMap(node, "species", [this](const std::string &name, SerialisedValue &data) {
+    Serialisable::toMap(node, "species", [this](const std::string &name, const SerialisedValue &data) {
         species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_);
     });
 }

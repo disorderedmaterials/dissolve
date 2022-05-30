@@ -46,5 +46,5 @@ class SerializablePairPotential : public Serialisable
     // Express as a tree node
     SerialisedValue serialise() const override;
     // Read values from a tree node
-    void deserialise(SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node) override;
 };
