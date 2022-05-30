@@ -182,4 +182,12 @@ template <> struct from<Elements::Element>
 {
     static Elements::Element from_toml(const toml::value &node) { return Elements::element(toml::get<std::string>(node)); }
 };
+
+template <> struct into<Elements::Element>
+{
+    static toml::basic_value<toml::preserve_comments> into_toml(const Elements::Element &e)
+    {
+	return Elements::symbol(e).data();
+    }
+};
 } // namespace toml

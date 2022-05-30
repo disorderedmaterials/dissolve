@@ -44,8 +44,8 @@ SerialisedValue SerializablePairPotential::serialise() const
     pairPotentials["range"] = range_;
     pairPotentials["delta"] = delta_;
     pairPotentials["includeCoulomb"] = atomTypeChargeSource_;
-    pairPotentials["coulombTruncation"] = PairPotential::coulombTruncationSchemes().keyword(coulombTruncationScheme_);
-    pairPotentials["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(shortRangeTruncationScheme_);
+    pairPotentials["coulombTruncation"] = coulombTruncationScheme_;
+    pairPotentials["shortRangeTruncation"] = shortRangeTruncationScheme_;
     for (auto &atomType : atomTypes_)
         pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialise();
     return pairPotentials;

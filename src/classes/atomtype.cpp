@@ -100,7 +100,7 @@ SerialisedValue AtomType::serialise() const
 {
     SerialisedValue atomType;
 
-    atomType["z"] = Elements::symbol(Z_).data();
+    atomType["z"] = Z_;
     atomType["charge"] = charge_;
     atomType["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
 

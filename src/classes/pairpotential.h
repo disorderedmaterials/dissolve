@@ -206,6 +206,8 @@ class PairPotential
 
 namespace toml
 {
+
+// CoulombTruncationScheme
 template <> struct from<PairPotential::CoulombTruncationScheme>
 {
     static PairPotential::CoulombTruncationScheme from_toml(const toml::value &node)
@@ -213,11 +215,27 @@ template <> struct from<PairPotential::CoulombTruncationScheme>
         return PairPotential::coulombTruncationSchemes().enumeration(toml::get<std::string>(node));
     }
 };
+template <> struct into<PairPotential::CoulombTruncationScheme>
+{
+    static toml::basic_value<toml::preserve_comments> into_toml(const PairPotential::CoulombTruncationScheme &s)
+    {
+        return PairPotential::coulombTruncationSchemes().keyword(s);
+    }
+};
+
+// CoulombTruncationScheme
 template <> struct from<PairPotential::ShortRangeTruncationScheme>
 {
     static PairPotential::ShortRangeTruncationScheme from_toml(const toml::value &node)
     {
         return PairPotential::shortRangeTruncationSchemes().enumeration(toml::get<std::string>(node));
+    }
+};
+template <> struct into<PairPotential::ShortRangeTruncationScheme>
+{
+    static toml::basic_value<toml::preserve_comments> into_toml(const PairPotential::ShortRangeTruncationScheme &s)
+    {
+        return PairPotential::shortRangeTruncationSchemes().keyword(s);
     }
 };
 } // namespace toml
