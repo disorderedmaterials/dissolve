@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include <string>
 
 namespace Elements
@@ -174,3 +175,11 @@ std::string_view symbol(Element Z);
 int group(Element Z);
 
 }; // namespace Elements
+
+namespace toml
+{
+template <> struct from<Elements::Element>
+{
+    static Elements::Element from_toml(const toml::value &node) { return Elements::element(toml::get<std::string>(node)); }
+};
+} // namespace toml
