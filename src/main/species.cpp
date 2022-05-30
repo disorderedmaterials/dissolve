@@ -18,8 +18,7 @@ Species *Dissolve::addSpecies()
 // Remove the specified Species from the list
 void Dissolve::removeSpecies(Species *sp)
 {
-    if (!sp)
-        return;
+    assert(sp);
 
     // Remove references to the Species itself
     removeReferencesTo(sp);

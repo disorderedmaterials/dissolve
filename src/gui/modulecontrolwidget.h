@@ -71,6 +71,10 @@ class ModuleControlWidget : public QWidget
     void on_EnabledButton_clicked(bool checked);
     void on_FrequencySpin_valueChanged(int value);
 
+    public:
+    // Prepare widget for deletion
+    void prepareForDeletion();
+
     public slots:
     // Local keyword data changed
     void localKeywordChanged(int signalMask);
