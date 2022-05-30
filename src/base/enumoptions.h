@@ -8,6 +8,7 @@
 #include "base/enumoption.h"
 #include "base/enumoptionsbase.h"
 #include "base/messenger.h"
+#include "base/serialiser.h"
 #include "base/sysfunc.h"
 #include <cassert>
 
@@ -259,4 +260,11 @@ template <class E> class EnumOptions : public EnumOptionsBase
 
         return false;
     }
+
+    /*
+     * Serialisation Code
+     * Does NOT link directly into the Serialisable Class
+     */
+    E deserialise(const SerialisedValue &node) { return enumeration(toml::get<std::string>(node)); }
+    SerialisedValue serialise(E value) const { return keyword(value); }
 };
