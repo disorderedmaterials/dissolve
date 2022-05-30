@@ -11,6 +11,9 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+set_property(GLOBAL PROPERTY JOB_POOLS two_jobs=2 four_jobs=4 ten_jobs=10)
+
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

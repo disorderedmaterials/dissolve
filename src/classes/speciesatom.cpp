@@ -6,7 +6,6 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "classes/speciesbond.h"
-#include "data/elements.h"
 #include <algorithm>
 
 SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }
@@ -470,9 +469,8 @@ SerialisedValue SpeciesAtom::serialise() const
 }
 void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
-
     index_ = toml::find<int>(node, "index") - 1;
-    Z_ = Elements::element(toml::find<std::string>(node, "z"));
+    Z_ = toml::find<Elements::Element>(node, "z");
 
     r_ = toml::find<Vec3<double>>(node, "r");
 
