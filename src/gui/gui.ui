@@ -125,13 +125,13 @@
     <addaction name="FileOpenAction"/>
     <addaction name="FileOpenRecentMenu"/>
     <addaction name="separator"/>
+    <addaction name="FileSaveAction"/>
+    <addaction name="FileSaveAsAction"/>
+    <addaction name="separator"/>
     <addaction name="FileLoadRestartPointAction"/>
     <addaction name="FileSaveRestartPointAction"/>
     <addaction name="separator"/>
     <addaction name="FileCloseAction"/>
-    <addaction name="separator"/>
-    <addaction name="FileSaveAction"/>
-    <addaction name="FileSaveAsAction"/>
     <addaction name="separator"/>
     <addaction name="FileQuitAction"/>
    </widget>
