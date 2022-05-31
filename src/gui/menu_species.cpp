@@ -137,6 +137,9 @@ void DissolveWindow::on_SpeciesImportLigParGenAction_triggered(bool checked)
         // Fully update GUI
         setModified();
         fullUpdate();
+
+        // Select the new species
+        ui_.MainTabs->setCurrentTab(dissolve_.species().back().get());
     }
 }
 
@@ -149,6 +152,9 @@ void DissolveWindow::on_SpeciesImportFromCIFAction_triggered(bool checked)
         // Fully update GUI
         setModified();
         fullUpdate();
+
+        // Select the new species
+        ui_.MainTabs->setCurrentTab(dissolve_.species().back().get());
     }
 }
 
