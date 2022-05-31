@@ -12,8 +12,8 @@
 #include <set>
 
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp)
-    : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_), targetSpecies_(sp),
-      intramolecularTermsAssigned_(false)
+    : WizardDialog(parent), atomTypeModel_(dissolve.coreData()), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_),
+      targetSpecies_(sp), intramolecularTermsAssigned_(false)
 {
     ui_.setupUi(this);
 
