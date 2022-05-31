@@ -28,7 +28,7 @@ steps:
       # Move TBB to where macqtdeploy can find it
       TBB_PATH=$HOME/.conan/data/tbb/${{ parameters.tbbver }}/_/_/package
       TBB_HASH=$(conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="tbb/${{ parameters.tbbver }}") | .id')
-      TBB_PATH=$TBB_PATH/$TBB_HASH/lib/libtbb.${{ parameters.tbbver }}.dylib
+      TBB_PATH=$TBB_PATH/$TBB_HASH/lib/libtbb.dylib
 
       #Handle ANTLR
       cp $ANTLR_PATH /usr/local/lib/
