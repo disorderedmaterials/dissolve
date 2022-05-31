@@ -26,7 +26,7 @@ steps:
       #Handle ANTLR
       cp $ANTLR_PATH /usr/local/lib/
 
-      ./prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
+      ./prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
 
     displayName: 'Prepare DMG Dirs'
   - bash: |
