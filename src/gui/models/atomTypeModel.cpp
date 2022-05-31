@@ -4,6 +4,7 @@
 #include "gui/models/atomTypeModel.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
+#include "classes/coredata.h"
 #include "templates/algorithms.h"
 
 AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData) {}
@@ -123,7 +124,13 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
         {
             // Name
             case (0):
-                atomType->setName(value.toString().toStdString());
+                // Ensure uniqueness of name if we have a reference CoreData
+                if (coreData_)
+                    atomType->setName(DissolveSys::uniqueName(
+                        value.toString().toStdString(), coreData_->get().atomTypes(),
+                        [&atomType](const auto &at) { return atomType == at ? std::string() : at->name(); }));
+                else
+                    atomType->setName(value.toString().toStdString());
                 break;
             // Element
             case (1):
@@ -156,13 +163,18 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
 
 Qt::ItemFlags AtomTypeModel::flags(const QModelIndex &index) const
 {
+    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     if (index.column() == 0)
-        return checkedItems_ ? Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable
-                             : Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() == 1)
-        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    else
-        return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+    {
+        if (coreData_)
+            flags |= Qt::ItemIsEditable;
+        if (checkedItems_)
+            flags |= Qt::ItemIsUserCheckable;
+    }
+    else if (index.column() != 1)
+        flags |= Qt::ItemIsEditable;
+
+    return flags;
 }
 
 QVariant AtomTypeModel::headerData(int section, Qt::Orientation orientation, int role) const
