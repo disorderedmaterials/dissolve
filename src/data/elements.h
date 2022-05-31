@@ -187,7 +187,7 @@ template <> struct into<Elements::Element>
 {
     static toml::basic_value<toml::preserve_comments> into_toml(const Elements::Element &e)
     {
-	return Elements::symbol(e).data();
+        return Elements::symbol(e).data();
     }
 };
 } // namespace toml
