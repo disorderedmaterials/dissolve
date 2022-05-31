@@ -127,6 +127,10 @@ Qt::ItemFlags SpeciesIsoModel::flags(const QModelIndex &index) const
 
 bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    if (role != Qt::EditRole && role != Qt::UserRole)
+        return false;
+
+    // Root Isotopologue?
     if (!index.parent().isValid())
     {
         auto iso = species_.isotopologue(index.row());
@@ -136,15 +140,19 @@ bool SpeciesIsoModel::setData(const QModelIndex &index, const QVariant &value, i
         return true;
     }
 
-    if (role != Qt::UserRole)
-        return false;
+    // Isotope data
     if (index.column() != 2)
         return false;
+
     auto *isotopologue = species_.isotopologue(index.parent().row());
     auto [atomType, isotope] = isotopologue->isotopes()[index.row()];
     auto newIso = value.value<Sears91::Isotope>();
-    if (Sears91::Z(isotope) != Sears91::Z(newIso))
+
+    // Check that requested isotope is compatible with the atomtype's element
+    if (Sears91::Z(newIso) != atomType->Z())
         return false;
+
+    // All good, so set the data
     isotopologue->setAtomTypeIsotope(atomType, newIso);
     emit(dataChanged(index, index));
     return true;
