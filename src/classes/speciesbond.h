@@ -23,7 +23,8 @@ class BondFunctions
     {
         None,
         Harmonic,
-        EPSR
+        EPSR,
+        Morse
     };
     // Return enum options for form
     static EnumOptions<Form> forms();

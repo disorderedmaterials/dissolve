@@ -78,11 +78,11 @@ class Forcefield_UFF : public Forcefield
 
     protected:
     // Assign / generate bond term parameters
-    bool assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const override;
+    bool assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const override;
     // Assign / generate angle term parameters
-    bool assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const override;
+    bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const override;
     // Assign / generate torsion term parameters
-    bool assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const override;
+    bool assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion, bool determineTypes) const override;
     // Assign / generate improper term parameters
     bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
                                       SpeciesAtom *l, bool determineTypes) const override;
