@@ -32,6 +32,65 @@ void SpeciesTab::isotopologuesChanged(const QModelIndex &, const QModelIndex &, 
     dissolveWindow_->setModified(DissolveSignals::DataMutations::IsotopologuesMutated);
 }
 
+void SpeciesTab::on_IsotopologuesTree_customContextMenuRequested(const QPoint &pos)
+{
+    auto index = ui_.IsotopologuesTree->indexAt(pos);
+    if (!index.isValid() || index.parent().isValid())
+        return;
+    auto iso = isos_.data(index, Qt::UserRole).value<Isotopologue *>();
+    assert(iso);
+
+    QMenu menu;
+    menu.setFont(font());
+    menu.setEnabled(!dissolveWindow_->dissolveIterating());
+
+    // Construct the context menu
+    auto *setHydrogensMenu = menu.addMenu("Set hydrogens to...");
+    setHydrogensMenu->setFont(font());
+    auto *setHNatural = setHydrogensMenu->addAction("Natural abundance");
+    auto *setHProtiated = setHydrogensMenu->addAction("Protiated");
+    auto *setHDeuteriated = setHydrogensMenu->addAction("Deuteriated");
+    menu.addSeparator();
+    auto *duplicate = menu.addAction("Duplicate");
+    duplicate->setIcon(QIcon(":/general/icons/general_copy.svg"));
+
+    auto *action = menu.exec(ui_.IsotopologuesTree->mapToGlobal(pos));
+    if (action == setHNatural || action == setHProtiated || action == setHDeuteriated)
+    {
+        auto changesMade = false;
+        auto targetTope = action == setHNatural ? Sears91::H_Natural : (action == setHProtiated ? Sears91::H_1 : Sears91::H_2);
+        for (auto &[atomType, tope] : iso->isotopes())
+            if (atomType->Z() == Elements::H && tope != targetTope)
+            {
+                tope = targetTope;
+                changesMade = true;
+            }
+
+        if (changesMade)
+        {
+            updateIsotopologuesTab();
+
+            dissolveWindow_->setModified(DissolveSignals::DataMutations::IsotopologuesMutated);
+        }
+    }
+    else if (action == duplicate)
+    {
+        auto newIndex = isos_.addIso();
+        ui_.IsotopologuesTree->expand(newIndex);
+
+        // Set a unique name for the new isotopologue
+        auto newIso = isos_.data(newIndex, Qt::UserRole).value<Isotopologue *>();
+        isos_.setData(newIndex, QString::fromStdString(DissolveSys::uniqueName(
+                                    iso->name(), species_->isotopologues(), [newIso](const auto &oldIso) {
+                                        return newIso == oldIso.get() ? std::string() : oldIso->name();
+                                    })));
+
+        auto row = 0;
+        for (const auto &[atomType, tope] : iso->isotopes())
+            isos_.setData(isos_.index(row++, 2, newIndex), QVariant::fromValue<Sears91::Isotope>(tope));
+    }
+}
+
 void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
 {
     auto newIndex = isos_.addIso();
