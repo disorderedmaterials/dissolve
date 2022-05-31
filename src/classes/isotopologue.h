@@ -61,6 +61,7 @@ class Isotopologue : public Serialisable
     // Return Isotope for specified AtomType
     Sears91::Isotope atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
+    std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes();
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
 
     // Express as a tree node
