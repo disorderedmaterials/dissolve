@@ -461,7 +461,7 @@ SerialisedValue SpeciesAtom::serialise() const
 {
     SerialisedValue atom;
     atom["index"] = userIndex();
-    atom["z"] = Elements::symbol(Z_).data();
+    atom["z"] = Z_;
     atom["r"] = r_;
     atom["charge"] = charge_;
     atom["type"] = atomType_->name().data();
