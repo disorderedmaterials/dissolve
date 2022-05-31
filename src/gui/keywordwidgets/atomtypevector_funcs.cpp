@@ -14,7 +14,7 @@
 
 AtomTypeVectorKeywordWidget::AtomTypeVectorKeywordWidget(QWidget *parent, AtomTypeVectorKeyword *keyword,
                                                          const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword), atomTypeModel_(coreData)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());

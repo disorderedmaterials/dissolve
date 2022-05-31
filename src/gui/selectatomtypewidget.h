@@ -40,7 +40,8 @@ class SelectAtomTypeWidget : public QWidget
     // Clear filter element
     void clearFilterElement();
     // Set target AtomType data
-    void setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes);
+    void setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                      OptionalReferenceWrapper<const CoreData> coreData = std::nullopt);
     // Reset widget
     void reset();
 

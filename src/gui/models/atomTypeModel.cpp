@@ -6,9 +6,15 @@
 #include "classes/atomtype.h"
 #include "templates/algorithms.h"
 
+AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData) {}
+
 // Set source AtomType data
-void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
+void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                            OptionalReferenceWrapper<const CoreData> coreData)
 {
+    if (coreData)
+        coreData_ = coreData;
+
     beginResetModel();
     atomTypes_ = atomTypes;
     endResetModel();
