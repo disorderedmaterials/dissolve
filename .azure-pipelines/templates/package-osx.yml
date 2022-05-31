@@ -3,6 +3,8 @@ parameters:
     default: 6.2.2
   - name: antlrver
     default: 4.9.3
+  - name: tbbver
+    default: 2020.3
 
 steps:
   - bash: |
@@ -23,8 +25,14 @@ steps:
       ANTLR_HASH=$(conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="antlr4-cppruntime/${{ parameters.antlrver }}") | .id')
       ANTLR_PATH=$ANTLR_PATH/$ANTLR_HASH/lib/libantlr4-runtime.${{ parameters.antlrver }}.dylib
 
+      # Move TBB to where macqtdeploy can find it
+      TBB_PATH=$HOME/.conan/data/tbb/${{ parameters.tbbver }}/_/_/package
+      TBB_HASH=$(conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="tbb/${{ parameters.tbbver }}") | .id')
+      TBB_PATH=$TBB_PATH/$TBB_HASH/lib/libtbb.${{ parameters.tbbver }}.dylib
+
       #Handle ANTLR
       cp $ANTLR_PATH /usr/local/lib/
+      cp $TBB_PATH /usr/local/lib/
 
       ./prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
 
