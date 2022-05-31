@@ -67,15 +67,13 @@ bool Forcefield_Zhao2010::setUp()
     addTorsionTerm("C3", "C2", "C3", "H", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
     addTorsionTerm("O", "C1", "C2", "C3", TorsionFunctions::Form::Cosine, {10.46, 2, 0.0, -1.0});
     // -- Missing in original
-    //    addTorsionTerm("H", "C3", "C3", "H", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
     addTorsionTerm("H", "C2", "C3", "C2", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
     // -- Required in model, but assumed to be explicitly not applied (see notes above)
     addTorsionTerm("O", "Cu", "O", "C1", TorsionFunctions::Form::None, {});
 
     addImproperTerm("C2", "C1", "C3", "C3", TorsionFunctions::Form::Cosine, {41.84, 2, 0.0, -1.0});
     addImproperTerm("C1", "C2", "O", "O", TorsionFunctions::Form::Cosine, {41.84, 2, 0.0, -1.0});
-    // -- Corrected
-    addImproperTerm("C3", "H", "C2", "C3", TorsionFunctions::Form::Cosine, {1.5481, 2, 0.0, -1.0});
+    addImproperTerm("C3", "H", "C2", "C2", TorsionFunctions::Form::Cosine, {1.5481, 2, 0.0, -1.0});
 
     return true;
 }
