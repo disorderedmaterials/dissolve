@@ -7,10 +7,10 @@
 #include "templates/algorithms.h"
 
 // Set source AtomType data
-void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &species)
+void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
 {
     beginResetModel();
-    atomTypes_ = species;
+    atomTypes_ = atomTypes;
     endResetModel();
 }
 
