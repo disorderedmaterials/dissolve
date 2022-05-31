@@ -18,7 +18,8 @@
 #include <QListWidgetItem>
 
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
-    : MainTab(dissolveWindow, dissolve, parent, title, this), pairPotentialModel_(dissolve.pairPotentials())
+    : MainTab(dissolveWindow, dissolve, parent, title, this), atomTypesModel_(dissolve.coreData()),
+      pairPotentialModel_(dissolve.pairPotentials())
 {
     ui_.setupUi(this);
 
