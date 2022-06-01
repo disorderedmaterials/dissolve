@@ -111,6 +111,7 @@ class SpeciesTab : public QWidget, public MainTab
     private slots:
     void isotopologuesSelectionChanged(const QItemSelection &, const QItemSelection &);
     void isotopologuesChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &);
+    void on_IsotopologuesTree_customContextMenuRequested(const QPoint &pos);
     void on_IsotopologueAddButton_clicked(bool checked);
     void on_IsotopologueRemoveButton_clicked(bool checked);
     void on_IsotopologueGenerateButton_clicked(bool checked);
