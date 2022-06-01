@@ -29,33 +29,37 @@ PairPotential *PairPotentialModel::rawData(const QModelIndex index) { return pai
 
 QVariant PairPotentialModel::data(const QModelIndex &index, int role) const
 {
+    auto *pp = rawData(index);
+    if (!pp)
+        return {};
+
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
         switch (index.column())
         {
             // Name
             case (0):
-                return QString::fromStdString(std::string(rawData(index)->atomTypeNameI()));
+                return QString::fromStdString(std::string(pp->atomTypeNameI()));
             // Element
             case (1):
-                return QString::fromStdString(std::string(rawData(index)->atomTypeNameJ()));
-            // Charge
+                return QString::fromStdString(std::string(pp->atomTypeNameJ()));
+            // Form
             case (2):
-                return QString::fromStdString(
-                    ShortRangeFunctions::forms().keyword(rawData(index)->interactionPotential().form()));
-            // Short Range Parameters
+                return QString::fromStdString(ShortRangeFunctions::forms().keyword(pp->interactionPotential().form()));
+            // Charges
             case (3):
-                return QString::number(rawData(index)->chargeI());
+                return pp->includeAtomTypeCharges() ? QString::number(pp->chargeI()) : QString();
             case (4):
-                return QString::number(rawData(index)->chargeJ());
+                return pp->includeAtomTypeCharges() ? QString::number(pp->chargeJ()) : QString();
+            // Short Range Parameters
             case (5):
-                return QString::fromStdString(rawData(index)->interactionPotential().parametersAsString());
+                return QString::fromStdString(pp->interactionPotential().parametersAsString());
             default:
                 return {};
         }
     }
     else if (role == Qt::UserRole)
-        return QVariant::fromValue(rawData(index));
+        return QVariant::fromValue(pp);
 
     return {};
 }
