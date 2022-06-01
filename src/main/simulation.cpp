@@ -63,6 +63,10 @@ bool Dissolve::prepare()
     std::set<const Species *> globalUsedSpecies;
     for (auto &cfg : configurations())
     {
+        // If the configuration is empty, initialise it now
+        if (cfg->nMolecules() == 0 && !cfg->initialiseContent({worldPool_, potentialMap_}))
+            return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
+
         // Regenerate cell array if the pair potential range has changed
         if (newPairPotentialRange)
             cfg->updateCells(7.0, *newPairPotentialRange);
