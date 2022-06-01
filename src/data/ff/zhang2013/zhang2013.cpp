@@ -56,30 +56,30 @@ bool Forcefield_Zhang2013::setUp()
     addAngleTerm("Zn", "N", "C1", AngleFunctions::Form::Harmonic, {418.4, 127.50});
     addAngleTerm("Zn", "N", "C2", AngleFunctions::Form::Harmonic, {292.88, 128.00});
     addAngleTerm("N", "Zn", "N", AngleFunctions::Form::Harmonic, {87.864, 109.47});
-    addTorsionTerm("C2", "N", "C1", "N", TorsionFunctions::Form::Cosine, {20.0832, 180.0, 2, 1.0});
-    addTorsionTerm("C2", "N", "C1", "C3", TorsionFunctions::Form::Cosine, {17.3636, 180.0, 2, 1.0});
-    addTorsionTerm("C1", "N", "C2", "C2", TorsionFunctions::Form::Cosine, {20.0832, 180.0, 2, 1.0});
-    addTorsionTerm("C1", "N", "C2", "H2", TorsionFunctions::Form::Cosine, {20.0832, 180.0, 2, 1.0});
-    addTorsionTerm("N", "C2", "C2", "N", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
-    addTorsionTerm("N", "C2", "C2", "H2", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
-    addTorsionTerm("H2", "C2", "C2", "H2", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
-    addTorsionTerm("Zn", "N", "C1", "N", TorsionFunctions::Form::Cosine, {0.4184, 180.0, 2, 1.0});
-    addTorsionTerm("Zn", "N", "C1", "C3", TorsionFunctions::Form::Cosine, {0.4184, 180.0, 2, 1.0});
-    addTorsionTerm("Zn", "N", "C2", "C2", TorsionFunctions::Form::Cosine, {0.4184, 180.0, 2, 1.0});
-    addTorsionTerm("N", "Zn", "N", "C1", TorsionFunctions::Form::Cosine, {0.728016, 0.0, 3, 1.0});
-    addTorsionTerm("N", "Zn", "N", "C2", TorsionFunctions::Form::Cosine, {0.728016, 0.0, 3, 1.0});
+    addTorsionTerm("C2", "N", "C1", "N", TorsionFunctions::Form::Cosine, {20.0832, 2.0, 180.0, 1.0});
+    addTorsionTerm("C2", "N", "C1", "C3", TorsionFunctions::Form::Cosine, {17.3636, 2.0, 180.0, 1.0});
+    addTorsionTerm("C1", "N", "C2", "C2", TorsionFunctions::Form::Cosine, {20.0832, 2.0, 180.0, 1.0});
+    addTorsionTerm("C1", "N", "C2", "H2", TorsionFunctions::Form::Cosine, {20.0832, 2.0, 180.0, 1.0});
+    addTorsionTerm("N", "C2", "C2", "N", TorsionFunctions::Form::Cosine, {16.736, 2.0, 180.0, 1.0});
+    addTorsionTerm("N", "C2", "C2", "H2", TorsionFunctions::Form::Cosine, {16.736, 2.0, 180.0, 1.0});
+    addTorsionTerm("H2", "C2", "C2", "H2", TorsionFunctions::Form::Cosine, {16.736, 2.0, 180.0, 1.0});
+    addTorsionTerm("Zn", "N", "C1", "N", TorsionFunctions::Form::Cosine, {0.4184, 2.0, 180.0, 1.0});
+    addTorsionTerm("Zn", "N", "C1", "C3", TorsionFunctions::Form::Cosine, {0.4184, 2.0, 180.0, 1.0});
+    addTorsionTerm("Zn", "N", "C2", "C2", TorsionFunctions::Form::Cosine, {0.4184, 2.0, 180.0, 1.0});
+    addTorsionTerm("N", "Zn", "N", "C1", TorsionFunctions::Form::Cosine, {0.728016, 3.0, 0.0, 1.0});
+    addTorsionTerm("N", "Zn", "N", "C2", TorsionFunctions::Form::Cosine, {0.728016, 3.0, 0.0, 1.0});
     addTorsionTerm("H2", "C2", "N", "Zn", TorsionFunctions::Form::None, {});
     addTorsionTerm("H1", "C3", "C1", "N", TorsionFunctions::Form::None, {});
-    addImproperTerm("C1", "C3", "N", "N", TorsionFunctions::Form::Cosine, {4.6024, 180.0, 2, 1.0});
-    addImproperTerm("C2", "C2", "H2", "N", TorsionFunctions::Form::Cosine, {4.6024, 180.0, 2, 1.0});
+    addImproperTerm("C1", "C3", "N", "N", TorsionFunctions::Form::Cosine, {4.6024, 2.0, 180.0, 1.0});
+    addImproperTerm("C2", "C2", "H2", "N", TorsionFunctions::Form::Cosine, {4.6024, 2.0, 180.0, 1.0});
     // -- Hydrogen Capping - J. Phys. Chem. C *118*, 20727 (2014)
     addBondTerm("H3", "N", BondFunctions::Form::Harmonic, {3631.712, 1.01});
     addAngleTerm("H3", "N", "C1", AngleFunctions::Form::Harmonic, {585.76, 125.8});
     addAngleTerm("H3", "N", "C2", AngleFunctions::Form::Harmonic, {585.76, 125.8});
-    addTorsionTerm("H3", "N", "C1", "N", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
-    addTorsionTerm("H3", "N", "C1", "C3", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
-    addTorsionTerm("H3", "N", "C2", "C2", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
-    addTorsionTerm("H3", "N", "C2", "H2", TorsionFunctions::Form::Cosine, {16.736, 180.0, 2, 1.0});
+    addTorsionTerm("H3", "N", "C1", "N", TorsionFunctions::Form::Cosine, {16.736, 2, 180.0, 1.0});
+    addTorsionTerm("H3", "N", "C1", "C3", TorsionFunctions::Form::Cosine, {16.736, 2, 180.0, 1.0});
+    addTorsionTerm("H3", "N", "C2", "C2", TorsionFunctions::Form::Cosine, {16.736, 2, 180.0, 1.0});
+    addTorsionTerm("H3", "N", "C2", "H2", TorsionFunctions::Form::Cosine, {16.736, 2, 180.0, 1.0});
 
     return true;
 }
