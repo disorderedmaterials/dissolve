@@ -172,8 +172,8 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
     }
 
     // Set charges
-    chargeI_ = atomTypeI_->charge();
-    chargeJ_ = atomTypeJ_->charge();
+    chargeI_ = includeAtomTypeCharges_ ? atomTypeI_->charge() : 0.0;
+    chargeJ_ = includeAtomTypeCharges_ ? atomTypeJ_->charge() : 0.0;
 
     return true;
 }
