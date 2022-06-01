@@ -148,13 +148,15 @@
     <addaction name="separator"/>
     <addaction name="SimulationRunAction"/>
     <addaction name="SimulationRunForAction"/>
+    <addaction name="SimulationStepAction"/>
+    <addaction name="SimulationStepFiveAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationStopAction"/>
-    <addaction name="SimulationStepFiveAction"/>
-    <addaction name="SimulationStepAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRestartFileFrequencyAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationDataManagerAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationClearAdditionalPotentialsAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
    </widget>
