@@ -167,11 +167,6 @@ bool Dissolve::prepare()
     if (!regeneratePairPotentials())
         return false;
 
-    // Create PairPotential matrix
-    Messenger::print("Creating PairPotential matrix ({}x{})...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
-    if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_))
-        return false;
-
     // Generate attached atom lists if IntraShake modules are present and enabled
     auto intraShakeModules = Module::allOfType("IntraShake");
     if (!intraShakeModules.empty())

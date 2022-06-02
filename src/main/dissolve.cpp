@@ -48,7 +48,6 @@ void Dissolve::clear()
     atomTypeChargeSource_ = true;
     pairPotentials_.clear();
     potentialMap_.clear();
-    pairPotentialAtomTypeVersion_ = -1;
 
     // Simulation
     Messenger::printVerbose("Clearing Simulation...\n");

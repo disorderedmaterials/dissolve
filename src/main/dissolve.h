@@ -106,8 +106,6 @@ class Dissolve : public Serialisable
     bool atomTypeChargeSource_;
     // Simulation PairPotentials
     std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
-    // Version of AtomTypes at which PairPotentials were last generated
-    int pairPotentialAtomTypeVersion_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
 
@@ -152,8 +150,6 @@ class Dissolve : public Serialisable
     const PotentialMap &potentialMap() const;
     // Clear and regenerate all PairPotentials, replacing those currently defined
     bool regeneratePairPotentials();
-    // Generate all necessary PairPotentials, adding missing terms where necessary
-    bool generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving = nullptr);
     // Revert potentials to reference state, clearing additional potentials
     void revertPairPotentials();
 
