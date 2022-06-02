@@ -59,6 +59,10 @@ bool Dissolve::prepare()
         newPairPotentialRange = pairPotentialRange_;
     }
 
+    // Make sure pair potentials are up-to-date
+    if (!regeneratePairPotentials())
+        return false;
+
     // Check Configurations
     std::set<const Species *> globalUsedSpecies;
     for (auto &cfg : configurations())
