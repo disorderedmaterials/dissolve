@@ -66,6 +66,8 @@ class MainTabsWidget : public QTabWidget
     ModuleLayer *currentLayer() const;
     // Return MessagesTab
     MessagesTab *messagesTab();
+    // Return the ForcefieldTab
+    ForcefieldTab *forcefieldTab();
     // Find SpeciesTab containing specified page widget
     QPointer<SpeciesTab> speciesTab(QWidget *page);
     // Find ConfigurationTab containing specified page widget
