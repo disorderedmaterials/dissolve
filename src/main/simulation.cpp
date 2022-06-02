@@ -90,11 +90,11 @@ bool Dissolve::prepare()
     // Check pair potential style - first, determine which styles might be valid for use
     // -- Configuration charges must always be zero
     auto neutralConfigsWithPPCharges = std::all_of(configurations().begin(), configurations().end(),
-                                                   [](const auto &cfg) { return cfg->totalCharge(true) < 1.0e-5; });
+                                                   [](const auto &cfg) { return fabs(cfg->totalCharge(true)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on atom types    : {}\n",
                             DissolveSys::btoa(neutralConfigsWithPPCharges));
     auto neutralConfigsWithSpeciesCharges = std::all_of(configurations().begin(), configurations().end(),
-                                                        [](const auto &cfg) { return cfg->totalCharge(false) < 1.0e-5; });
+                                                        [](const auto &cfg) { return fabs(cfg->totalCharge(false)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on species atoms : {}\n",
                             DissolveSys::btoa(neutralConfigsWithSpeciesCharges));
 
