@@ -50,11 +50,11 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole)
     {
         if (module->isDisabled())
-            return QString::fromStdString(fmt::format("{} (disabled)", module->name()));
+            return QString::fromStdString(fmt::format("{} [{}] (disabled)", module->name(), module->frequency()));
         else if (!moduleLayer_->isEnabled())
-            return QString::fromStdString(fmt::format("{} (disabled via layer)", module->name()));
+            return QString::fromStdString(fmt::format("{} [{}] (disabled via layer)", module->name(), module->frequency()));
         else
-            return QString::fromStdString(std::string(module->name()));
+            return QString::fromStdString(fmt::format("{} [{}]", module->name(), module->frequency()));
     }
     else if (role == Qt::EditRole)
         return QString::fromStdString(std::string(module->name()));
