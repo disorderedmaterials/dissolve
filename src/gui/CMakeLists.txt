@@ -54,7 +54,6 @@ set(gui_MOC_HDRS
     # Main UI
     gui.h
     outputhandler.hui
-    tmdiarea.hui
     thread.hui
     maintabsbar.hui
     maintabswidget.hui
@@ -194,7 +193,6 @@ set(gui_SRCS
     outputhandler_funcs.cpp
     stockcolours.cpp
     thread_funcs.cpp
-    tmdiarea_funcs.cpp
     stockcolours.h
 )
 
