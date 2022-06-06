@@ -8,13 +8,10 @@
 #include "modules/widget.h"
 
 // Forward Declarations
-class ConfigurationVectorKeyword;
-class ConfigurationVectorKeywordWidget;
 class Dissolve;
 class DissolveWindow;
 class Module;
 class ModuleWidget;
-class ModuleBlock;
 
 // Module Control Widget
 class ModuleControlWidget : public QWidget
@@ -41,7 +38,7 @@ class ModuleControlWidget : public QWidget
 
     public:
     // Return target Module for the widget
-    Module *module() const;
+    Module *module();
 
     /*
      * Update
@@ -68,8 +65,6 @@ class ModuleControlWidget : public QWidget
     private slots:
     void on_ModuleControlsButton_clicked(bool checked);
     void on_ModuleOutputButton_clicked(bool checked);
-    void on_EnabledButton_clicked(bool checked);
-    void on_FrequencySpin_valueChanged(int value);
 
     public:
     // Prepare widget for deletion

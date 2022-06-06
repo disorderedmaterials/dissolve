@@ -16,6 +16,7 @@ MainTabsWidget::MainTabsWidget(QWidget *parent) : QTabWidget(parent)
     mainTabsBar_ = new MainTabsBar(this);
     setTabBar(mainTabsBar_);
     connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
+    connect(mainTabsBar_, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(contextMenuRequested(const QPoint &)));
 
     // Always show scroll buttons when there are many tabs
     setUsesScrollButtons(true);
@@ -264,7 +265,13 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         {
             // If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise delete it.
             if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer.get())
+            {
+                if (layer->isEnabled())
+                    setTabIcon(processingLayerTabs_[currentTabIndex]->page(), QIcon(":/tabs/icons/tabs_layer.svg"));
+                else
+                    setTabIcon(processingLayerTabs_[currentTabIndex]->page(), QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
                 break;
+            }
             else
             {
                 allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), processingLayerTabs_[currentTabIndex]));
@@ -415,6 +422,9 @@ void MainTabsWidget::preventEditing()
     // Disable tab close buttons
     for (auto &[button, page] : closeButtons_)
         button->setDisabled(true);
+
+    // Prevent the context menu from being raised
+    mainTabsBar_->setContextMenuPolicy(Qt::NoContextMenu);
 }
 
 // Allow editing in all tabs
@@ -426,6 +436,9 @@ void MainTabsWidget::allowEditing()
     // Enable tab close buttons
     for (auto &[button, page] : closeButtons_)
         button->setEnabled(true);
+
+    // Re-enable the context menu from being raised
+    mainTabsBar_->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 /*
@@ -479,6 +492,67 @@ QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
 /*
  * Widget Functions
  */
+
+// Context menu requested
+void MainTabsWidget::contextMenuRequested(const QPoint &pos)
+{
+    auto tabIndex = mainTabsBar_->tabAt(pos);
+    if (tabIndex == -1)
+        return;
+    auto *tab = allTabs_[tabIndex];
+    auto *layerTab = tab->type() == MainTab::TabType::Layer ? dynamic_cast<LayerTab *>(tab) : nullptr;
+
+    QMenu menu;
+    menu.setFont(font());
+
+    // Construct the context menu
+    auto *enableThisLayer = menu.addAction("&Enable this");
+    auto *enableLayersToTheLeft = menu.addAction("Enable layers to the left");
+    auto *enableLayersToTheRight = menu.addAction("Enable layers to the right");
+    auto *disableThisLayer = menu.addAction("&Disable this");
+    auto *disableLayersToTheLeft = menu.addAction("Disable layers to the left");
+    auto *disableLayersToTheRight = menu.addAction("Disable layers to the right");
+    enableThisLayer->setEnabled(layerTab && !layerTab->moduleLayer()->isEnabled());
+    disableThisLayer->setEnabled(layerTab && layerTab->moduleLayer()->isEnabled());
+
+    auto *action = menu.exec(mapToGlobal(pos));
+    auto updateRequired = true;
+    if (action == nullptr)
+        return;
+    else if (action == enableThisLayer)
+        layerTab->moduleLayer()->setEnabled(true);
+    else if (action == enableLayersToTheLeft || action == disableLayersToTheLeft)
+    {
+        auto enable = action == enableLayersToTheLeft;
+        auto currentIt = std::find(processingLayerTabs_.begin(), processingLayerTabs_.end(), layerTab);
+        for (auto it = processingLayerTabs_.begin(); it != currentIt; ++it)
+            if (enable == ((*it)->moduleLayer()->isEnabled()))
+                continue;
+            else
+            {
+                updateRequired = true;
+                ((*it)->moduleLayer()->setEnabled(enable));
+            }
+    }
+    else if (action == enableLayersToTheRight || action == disableLayersToTheRight)
+    {
+        auto enable = action == enableLayersToTheRight;
+        auto currentIt = std::find(processingLayerTabs_.begin(), processingLayerTabs_.end(), layerTab);
+        for (auto it = std::next(currentIt); it != processingLayerTabs_.end(); ++it)
+            if (enable == ((*it)->moduleLayer()->isEnabled()))
+                continue;
+            else
+            {
+                updateRequired = true;
+                ((*it)->moduleLayer()->setEnabled(enable));
+            }
+    }
+    else if (action == disableThisLayer)
+        layerTab->moduleLayer()->setEnabled(false);
+
+    if (updateRequired)
+        emit(dataModified());
+}
 
 // Tab close button clicked
 void MainTabsWidget::tabCloseButtonClicked(bool checked)

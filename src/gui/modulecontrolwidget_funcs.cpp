@@ -23,10 +23,6 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
     connect(dissolveWindow, SIGNAL(dataMutated(int)), this, SLOT(globalDataMutated(int)));
 
-    // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
-    // will exist in a QScrollArea)
-    ui_.FrequencySpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.FrequencySpin));
-
     // Set the icon label
     ui_.ModuleIconLabel->setPixmap(
         QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module_->type())).toLower())));
@@ -76,7 +72,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
 }
 
 // Return target Module for the widget
-Module *ModuleControlWidget::module() const { return module_; }
+Module *ModuleControlWidget::module() { return module_; }
 
 /*
  * Update
@@ -87,16 +83,10 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
 {
     Locker refreshLocker(refreshLock_);
 
-    // Ensure module name is up to date
+    // Ensure module name and icon status are up to date
     ui_.ModuleNameLabel->setText(QString("%1 (%2)").arg(QString::fromStdString(std::string(module_->name())),
                                                         QString::fromStdString(std::string(module_->type()))));
-
-    // Set 'enabled' button status
-    ui_.EnabledButton->setChecked(module_->isEnabled());
     ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
-
-    // Set frequency spin
-    ui_.FrequencySpin->setValue(module_->frequency());
 
     // Update tqrget keywords
     for (auto w : targetKeywordWidgets_)
@@ -113,8 +103,6 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
 // Disable editing
 void ModuleControlWidget::preventEditing()
 {
-    ui_.FrequencySpin->setEnabled(false);
-    ui_.EnabledButton->setEnabled(false);
     ui_.TargetsGroup->setEnabled(false);
     ui_.ModuleKeywordsWidget->setEnabled(false);
     if (moduleWidget_)
@@ -124,8 +112,6 @@ void ModuleControlWidget::preventEditing()
 // Allow editing
 void ModuleControlWidget::allowEditing()
 {
-    ui_.FrequencySpin->setEnabled(true);
-    ui_.EnabledButton->setEnabled(true);
     ui_.TargetsGroup->setEnabled(true);
     ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
@@ -146,29 +132,6 @@ void ModuleControlWidget::on_ModuleOutputButton_clicked(bool checked)
 {
     if (checked)
         ui_.ModuleControlsStack->setCurrentIndex(1);
-}
-
-void ModuleControlWidget::on_EnabledButton_clicked(bool checked)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    module_->setEnabled(checked);
-
-    ui_.ModuleIconLabel->setEnabled(checked);
-
-    emit(statusChanged());
-    emit(dataModified());
-}
-
-void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    module_->setFrequency(value);
-
-    emit(dataModified());
 }
 
 // Prepare widget for deletion
