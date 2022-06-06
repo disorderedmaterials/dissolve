@@ -14,6 +14,8 @@ void DissolveWindow::on_SimulationCheckAction_triggered(bool checked)
 
     dissolve_.prepare();
 
+    ui_.MainTabs->forcefieldTab()->resetPairPotentialModel();
+
     fullUpdate();
 }
 

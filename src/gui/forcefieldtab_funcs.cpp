@@ -112,8 +112,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
 
     connect(&pairPotentialModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(pairPotentialDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
-    connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
-            this, SLOT(pairPotentialTableRowChanged(const QModelIndex &, const QModelIndex &)));
+    connect(ui_.PairPotentialsTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(pairPotentialSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 /*
@@ -136,12 +136,24 @@ void ForcefieldTab::updatePairPotentials()
     // Mute output
     Messenger::mute();
 
-    dissolve_.generatePairPotentials();
-    pairPotentialModel_.reset();
-    ui_.PairPotentialsTable->resizeColumnsToContents();
+    dissolve_.regeneratePairPotentials();
+
+    resetPairPotentialModel();
 
     // Reinstate output
     Messenger::unMute();
+}
+
+// Reset pair potential model
+void ForcefieldTab::resetPairPotentialModel()
+{
+    auto selectedIndices = ui_.PairPotentialsTable->selectionModel()->selection().indexes();
+
+    pairPotentialModel_.reset();
+    ui_.PairPotentialsTable->resizeColumnsToContents();
+
+    for (auto &index : selectedIndices)
+        ui_.PairPotentialsTable->selectionModel()->select(index, QItemSelectionModel::Select);
 }
 
 // Update controls in tab
@@ -372,11 +384,14 @@ void ForcefieldTab::pairPotentialDataChanged(const QModelIndex &current, const Q
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous)
+void ForcefieldTab::pairPotentialSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
     ui_.PairPotentialsPlotWidget->clearRenderableData();
 
-    auto *pp = pairPotentialModel_.data(current, Qt::UserRole).value<const PairPotential *>();
+    if (current.isEmpty())
+        return;
+
+    auto *pp = pairPotentialModel_.data(current.indexes().front(), Qt::UserRole).value<const PairPotential *>();
     if (!pp)
         return;
 

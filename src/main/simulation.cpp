@@ -59,10 +59,18 @@ bool Dissolve::prepare()
         newPairPotentialRange = pairPotentialRange_;
     }
 
+    // Make sure pair potentials are up-to-date
+    if (!regeneratePairPotentials())
+        return false;
+
     // Check Configurations
     std::set<const Species *> globalUsedSpecies;
     for (auto &cfg : configurations())
     {
+        // If the configuration is empty, initialise it now
+        if (cfg->nMolecules() == 0 && !cfg->initialiseContent({worldPool_, potentialMap_}))
+            return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
+
         // Regenerate cell array if the pair potential range has changed
         if (newPairPotentialRange)
             cfg->updateCells(7.0, *newPairPotentialRange);
@@ -86,11 +94,11 @@ bool Dissolve::prepare()
     // Check pair potential style - first, determine which styles might be valid for use
     // -- Configuration charges must always be zero
     auto neutralConfigsWithPPCharges = std::all_of(configurations().begin(), configurations().end(),
-                                                   [](const auto &cfg) { return cfg->totalCharge(true) < 1.0e-5; });
+                                                   [](const auto &cfg) { return fabs(cfg->totalCharge(true)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on atom types    : {}\n",
                             DissolveSys::btoa(neutralConfigsWithPPCharges));
     auto neutralConfigsWithSpeciesCharges = std::all_of(configurations().begin(), configurations().end(),
-                                                        [](const auto &cfg) { return cfg->totalCharge(false) < 1.0e-5; });
+                                                        [](const auto &cfg) { return fabs(cfg->totalCharge(false)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on species atoms : {}\n",
                             DissolveSys::btoa(neutralConfigsWithSpeciesCharges));
 
@@ -161,11 +169,6 @@ bool Dissolve::prepare()
 
     // Make sure pair potentials are up-to-date
     if (!regeneratePairPotentials())
-        return false;
-
-    // Create PairPotential matrix
-    Messenger::print("Creating PairPotential matrix ({}x{})...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
-    if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_))
         return false;
 
     // Generate attached atom lists if IntraShake modules are present and enabled

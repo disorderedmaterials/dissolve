@@ -89,6 +89,9 @@ ModuleLayer *MainTabsWidget::currentLayer() const
 // Return MessagesTab
 MessagesTab *MainTabsWidget::messagesTab() { return messagesTab_.data(); }
 
+// Return the ForcefieldTab
+ForcefieldTab *MainTabsWidget::forcefieldTab() { return forcefieldTab_.data(); }
+
 // Find SpeciesTab containing specified page widget
 QPointer<SpeciesTab> MainTabsWidget::speciesTab(QWidget *page)
 {

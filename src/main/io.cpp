@@ -53,14 +53,6 @@ bool Dissolve::loadInput(LineParser &parser)
                     error = true;
                     break;
                 }
-
-                // Need to update pair potentials in case they're needed in the generator
-                generatePairPotentials();
-                potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
-
-                // Prepare the Configuration
-                if (!cfg->initialiseContent({worldPool_, potentialMap_}))
-                    error = true;
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...
