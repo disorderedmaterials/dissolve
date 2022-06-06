@@ -101,63 +101,32 @@ const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
 // Clear and regenerate all PairPotentials, replacing those currently defined
 bool Dissolve::regeneratePairPotentials()
 {
+    Messenger::print("Regenerating pair potentials...\n");
     potentialMap_.clear();
     pairPotentials_.clear();
-    pairPotentialAtomTypeVersion_ = -1;
 
-    return generatePairPotentials();
-}
+    // Create a pair potential for each unique atom type pair
+    for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                        [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool> {
+                            Messenger::printVerbose("Adding new PairPotential for interaction between '{}' and '{}'...\n",
+                                                    at1->name(), at2->name());
+                            auto *pot = addPairPotential(at1, at2);
 
-// Generate all necessary PairPotentials, adding missing terms where necessary
-bool Dissolve::generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving)
-{
-    // Check current AtomTypes version against the last one we generated at
-    if (pairPotentialAtomTypeVersion_ == coreData_.atomTypesVersion())
-    {
-        Messenger::printVerbose("PairPotentials are up to date with AtomTypes, so nothing to do.\n");
-        return true;
-    }
+                            // Tabulate the basic potential
+                            if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_))
+                                return false;
 
-    // Loop over all atomtype pairs and update / add pair potentials as necessary
-    for (auto at1 = coreData_.atomTypes().begin(); at1 != coreData_.atomTypes().end(); ++at1)
-    {
-        for (auto at2 = at1; at2 != coreData_.atomTypes().end(); ++at2)
-        {
-            // If an AtomType was supplied, only generate the pair potential if one of its AtomTypes matches
-            if (onlyInvolving && (*at1 != onlyInvolving) && (*at2 != onlyInvolving))
-                continue;
+                            // Retrieve additional potential from the processing module data, if present
+                            auto itemName =
+                                fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+                            if (processingModuleData_.contains(itemName, "Dissolve"))
+                                pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
 
-            // Does a PairPotential for this AtomType pair already exist?
-            auto *pot = pairPotential(*at1, *at2);
-            if (pot)
-            {
-                Messenger::print("Updating existing PairPotential for interaction between '{}' and '{}'...\n", (*at1)->name(),
-                                 (*at2)->name());
-                if (!pot->setUp(*at1, *at2))
-                    return false;
-            }
-            else
-            {
-                Messenger::print("Adding new PairPotential for interaction between '{}' and '{}'...\n", (*at1)->name(),
-                                 (*at2)->name());
-                pot = addPairPotential(*at1, *at2);
-            }
+                            return EarlyReturn<bool>::Continue;
+                        });
 
-            // Check the implied short-range form of the potential
-            if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_))
-                return false;
-
-            // Retrieve additional potential from the processing module data, if present
-            std::string itemName = fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
-            if (!processingModuleData_.contains(itemName, "Dissolve"))
-                continue;
-            pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
-        }
-    }
-
-    pairPotentialAtomTypeVersion_ = coreData_.atomTypesVersion();
-
-    return true;
+    // Update the potential map
+    return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
 }
 
 // Revert potentials to reference state, clearing additional potentials
