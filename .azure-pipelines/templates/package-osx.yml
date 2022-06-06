@@ -9,7 +9,7 @@ parameters:
 steps:
   - bash: |
       pip3 install dmgbuild biplist
-      wget https://raw.githubusercontent.com/rprospero/scripts/macdeployqt-paths/prep-dmg
+      wget https://raw.githubusercontent.com/disorderedmaterials/scripts/master/prep-dmg
       chmod u+x ./prep-dmg
       brew install jq
     displayName: 'Install Prerequisites'
