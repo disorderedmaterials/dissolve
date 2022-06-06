@@ -94,8 +94,6 @@ class Dissolve : public Serialisable
     private:
     // Maximum distance for tabulated PairPotentials
     double pairPotentialRange_;
-    // Maximum squared distance for tabulated PairPotentials
-    double pairPotentialRangeSquared_;
     // Delta to use in tabulation
     double pairPotentialDelta_;
     // Whether to automatically determine charge source
@@ -114,8 +112,6 @@ class Dissolve : public Serialisable
     void setPairPotentialRange(double range);
     // Return maximum distance for tabulated PairPotentials
     double pairPotentialRange() const;
-    // Return maximum squared distance for tabulated PairPotentials
-    double pairPotentialRangeSquared() const;
     // Set delta to use in tabulations
     void setPairPotentialDelta(double delta);
     // Return delta to use in tabulations

@@ -42,7 +42,6 @@ void Dissolve::clear()
     Messenger::printVerbose("Clearing Pair Potentials...\n");
     pairPotentialDelta_ = 0.005;
     pairPotentialRange_ = 15.0;
-    pairPotentialRangeSquared_ = pairPotentialRange_ * pairPotentialRange_;
     automaticChargeSource_ = true;
     forceChargeSource_ = false;
     atomTypeChargeSource_ = true;
