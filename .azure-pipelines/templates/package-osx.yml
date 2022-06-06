@@ -34,8 +34,8 @@ steps:
       cp $ANTLR_PATH /usr/local/lib/
       cp $TBB_PATH /usr/local/lib/
 
-      install_name_tool -add_path @executable_path/../Frameworks/ build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
-      install_name_tool -add_path /usr/local/lib build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      install_name_tool -add_rpath "/usr/local/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
 
       ./prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
 
