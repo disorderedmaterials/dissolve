@@ -333,3 +333,26 @@ void DissolveWindow::on_SpeciesSetChargesInSelectionAction_triggered(bool checke
 
     fullUpdate();
 }
+
+void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    auto ok = false;
+    static auto scaleFactor = 1.0;
+    auto newScaleFactor = QInputDialog::getDouble(this, "Scale atom charges", "Enter the scale factor to apply to all atoms",
+                                                  scaleFactor, -100.0, 100.0, 5, &ok);
+    if (!ok)
+        return;
+
+    scaleFactor = newScaleFactor;
+    for (auto &i : species->atoms())
+        i.setCharge(scaleFactor * i.charge());
+
+    setModified();
+
+    fullUpdate();
+}

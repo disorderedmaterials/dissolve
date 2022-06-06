@@ -148,13 +148,15 @@
     <addaction name="separator"/>
     <addaction name="SimulationRunAction"/>
     <addaction name="SimulationRunForAction"/>
+    <addaction name="SimulationStepAction"/>
+    <addaction name="SimulationStepFiveAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationStopAction"/>
-    <addaction name="SimulationStepFiveAction"/>
-    <addaction name="SimulationStepAction"/>
     <addaction name="separator"/>
     <addaction name="SimulationSetRestartFileFrequencyAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationDataManagerAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationClearAdditionalPotentialsAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
    </widget>
@@ -233,6 +235,7 @@
     <addaction name="separator"/>
     <addaction name="SpeciesSetAtomTypesInSelectionAction"/>
     <addaction name="SpeciesSetChargesInSelectionAction"/>
+    <addaction name="SpeciesScaleChargesAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRegenerateIntraFromConnectivityAction"/>
    </widget>
@@ -806,6 +809,11 @@
   <action name="LayerCreateEvolveMDAction">
    <property name="text">
     <string>M&amp;D (MD only)</string>
+   </property>
+  </action>
+  <action name="SpeciesScaleChargesAction">
+   <property name="text">
+    <string>Sc&amp;ale Charges...</string>
    </property>
   </action>
  </widget>

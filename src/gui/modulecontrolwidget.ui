@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
+    <width>833</width>
     <height>433</height>
    </rect>
   </property>
@@ -168,7 +168,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="main.qrc">:/modules/icons/modules_import.svg</pixmap>
+            <pixmap>:/modules/icons/modules_import.svg</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -209,89 +209,6 @@
             </size>
            </property>
           </spacer>
-         </item>
-         <item>
-          <widget class="QToolButton" name="EnabledButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>40</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Whether the module is enabled</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="main.qrc">
-             <normaloff>:/general/icons/slider-off.svg</normaloff>
-             <normalon>:/general/icons/slider-on.svg</normalon>:/general/icons/slider-off.svg</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>30</width>
-             <height>36</height>
-            </size>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="FrequencyIconLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="main.qrc">:/general/icons/general_frequency.svg</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="FrequencySpin">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>9999</number>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -412,7 +329,7 @@
  </customwidgets>
  <resources>
   <include location="main.qrc"/>
-  <include location="../main.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

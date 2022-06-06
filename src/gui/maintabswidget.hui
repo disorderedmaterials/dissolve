@@ -135,6 +135,8 @@ class MainTabsWidget : public QTabWidget
     std::vector<std::tuple<QToolButton *, QWidget *>> closeButtons_;
 
     private slots:
+    // Context menu requested
+    void contextMenuRequested(const QPoint &pos);
     // Tab close button clicked
     void tabCloseButtonClicked(bool);
     // Tab bar double-clicked
