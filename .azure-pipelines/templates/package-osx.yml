@@ -1,19 +1,44 @@
 parameters:
   - name: qtver
     default: 6.2.2
+  - name: antlrver
+    default: 4.9.3
+  - name: tbbver
+    default: 2020.3
 
 steps:
   - bash: |
       pip3 install dmgbuild biplist
       wget https://raw.githubusercontent.com/disorderedmaterials/scripts/master/prep-dmg
       chmod u+x ./prep-dmg
+      brew install jq
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
       Qt6_ROOT=/tmp/qt/${{ parameters.qtver }}/macos/
+
       # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-      ./prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
+
+      # Move ANTLR to where macqtdeploy can find it
+      ANTLR_PATH=$HOME/.conan/data/antlr4-cppruntime/${{ parameters.antlrver }}/_/_/package
+      ANTLR_HASH=$(conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="antlr4-cppruntime/${{ parameters.antlrver }}") | .id')
+      ANTLR_PATH=$ANTLR_PATH/$ANTLR_HASH/lib/libantlr4-runtime.${{ parameters.antlrver }}.dylib
+
+      # Move TBB to where macqtdeploy can find it
+      TBB_PATH=$HOME/.conan/data/tbb/${{ parameters.tbbver }}/_/_/package
+      TBB_HASH=$(conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="tbb/${{ parameters.tbbver }}") | .id')
+      TBB_PATH=$TBB_PATH/$TBB_HASH/lib/libtbb.dylib
+
+      #Handle ANTLR
+      cp $ANTLR_PATH /usr/local/lib/
+      cp $TBB_PATH /usr/local/lib/
+
+      install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+      install_name_tool -add_rpath "/usr/local/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
+
+      ./prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt6_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist -L /usr/local/lib
+
     displayName: 'Prepare DMG Dirs'
   - bash: |
       set -ex
