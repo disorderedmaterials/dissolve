@@ -12,6 +12,7 @@
 #define FreetypeDir GetEnv('FREETYPE_DIR')
 #define FTGLDir GetEnv('FTGL_DIR')
 #define QtDir GetEnv('Qt6_DIR')
+#define DeployDir GetEnv('DeployDir')
 ;#define MinGWDir GetEnv('MINGW_DIR')
 
 [Setup]
@@ -62,6 +63,10 @@ Source: "{#QtDir}\plugins\imageformats\*.dll"; DestDir: "{app}\bin\imageformats"
 ;Source: "C:\Windows\System32\D3DCompiler_43.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Windows 10
 Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+; Conan Dependencies
+Source: "{#DeployDir}\tbb\lib\tbb.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\tbb\lib\tbbmalloc.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\tbb\lib\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; IconFilename: "{app}\bin\Dissolve.ico"; Filename: "{app}\bin\{#MyAppExeName}"; WorkingDir: "{app}"
