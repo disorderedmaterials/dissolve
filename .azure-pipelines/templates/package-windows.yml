@@ -20,7 +20,7 @@ steps:
       cd deploy
       conan install .. -g deploy
       cd tbb
-      cd lib
+      cd bin
       dir
       cd ..
       cd ..
