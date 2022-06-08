@@ -28,4 +28,4 @@ The `OperateSitePopulationNormalise` node simply divides the values (not the axe
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Site`|`name`<br/>[`name...`]|--|{{< required-label >}} One or more `name`d [`SelectNode`s]({{< ref "selectnode" >}}) from which the site populations are used as divisors on the data. If more than one [`SelectNode`s]({{< ref "selectnode" >}}) is given, the divisions are made sequentially.|
+|`Site`|`name`<br/>[`name...`]|--|{{< required-label >}} One or more `name`d {{< gui-node "Select" >}} nodes from which the site populations are used as divisors on the data. If more than one {{< gui-node "Select" >}} nodes is given, the divisions are made sequentially.|

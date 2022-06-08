@@ -18,19 +18,19 @@ You will now see that the **Generator** section has been populated with several 
 
 | Node | Purpose |
 |------|---------|
-| [`Parameters`]({{< ref "parametersnode" >}}) | Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one value called "rho" which defines the density of the configuration. Note that "rho" is just a number and has no associated units - these are specified in the [`Add`]({{< ref "addnode" >}}) node. |
-| [`Box`]({{< ref "boxnode" >}})   | Defines side lengths and angles for the periodic box. Note that _relative_ lengths can be given, and the box expanded automatically (when adding species, for instance) to achieve some specific density. |
-| [`Add`]({{< ref "addnode" >}}) | Adds a number of copies of the specified species to the configuration. The **BoxAction** option controls how/if the box volume should be scaled to give the density specified once the species has been added, and is most useful when supplying relative box lengths. If set to `None` the box would remain at its current size (defaulting to 1.0 &#8491;<sup>3</sup>) but the full population of molecules will still be added. |
+| {{< gui-node "Parameters" >}}| Defines one or more numerical parameters that can be referenced by other nodes in the generator. We have only one value called "rho" which defines the density of the configuration. Note that "rho" is just a number and has no associated units - these are specified in the {{< gui-node "Add" >}} node. |
+| {{< gui-node "Box" >}}  | Defines side lengths and angles for the periodic box. Note that _relative_ lengths can be given, and the box expanded automatically (when adding species, for instance) to achieve some specific density. |
+| {{< gui-node "Add" >}}| Adds a number of copies of the specified species to the configuration. The **BoxAction** option controls how/if the box volume should be scaled to give the density specified once the species has been added, and is most useful when supplying relative box lengths. If set to `None` the box would remain at its current size (defaulting to 1.0 &#8491;<sup>3</sup>) but the full population of molecules will still be added. |
 
-In the [`Add`]({{< ref "addnode" >}}) node note how we have referenced the "rho" parameter for the density.
+In the {{< gui-node "Add" >}} node note how we have referenced the "rho" parameter for the density.
 
-{{< tip text="Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid.">}}
+{{< tip >}}Many numerical options can be given in the form of equations referencing variables such as those set in a {{< gui-node "Parameters" >}} node. A green tick indicates if the equation is valid.{{< /tip >}}
 
 Let's change the settings of our configuration's generator to give us a suitable system.
 
-{{< action type="settings" text="Open the settings for the `Parameters` node" />}}
+{{< action type="settings" >}}Click on the {{< gui-node "Parameters" >}} node to show its options{{< /action >}}
 {{< step text="Change the value of the \"rho\" variable to 0.0213 (which is our target density in units of atoms/A3)" />}}
-{{< action type="settings" text="Open the settings for the `Add` node" />}}
+{{< action type="settings" >}}Click on the {{< gui-node "Parameters" >}} node to show its options{{< /action >}}
 {{< step text="Check that the units for the **Density** are set to `atoms/A3`" />}}
 {{< step text="Increase the **Population** to 1000" />}}
 
