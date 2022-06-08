@@ -552,7 +552,7 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     // Read totals
     if (!total_.deserialise(parser))
         return false;
-    if (GenericList::baseDataVersion() == GenericList::DeserialisableDataVersion::Version089)
+    if (GenericList::baseDataVersion() == GenericList::DeserialisableDataVersion::Version08X)
     {
         // Writing of bound & unbound totals introduced in 0.9.0
         boundTotal_.initialise(total_);

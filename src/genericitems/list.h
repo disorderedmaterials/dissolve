@@ -180,7 +180,7 @@ class GenericList
     // Data Versions
     enum class DeserialisableDataVersion
     {
-        Version089,
+        Version08X,
         Current
     };
     // Return EnumOptions for DataVersion
