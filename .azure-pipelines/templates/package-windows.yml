@@ -20,7 +20,9 @@ steps:
       cd deploy
       conan install .. -g deploy
       cd tbb
+      cd lib
       dir
+      cd ..
       cd ..
       cd ..
       $env:DEPLOY_DIR = $(Get-Location).path + "\deploy"
