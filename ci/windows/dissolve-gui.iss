@@ -12,7 +12,7 @@
 #define FreetypeDir GetEnv('FREETYPE_DIR')
 #define FTGLDir GetEnv('FTGL_DIR')
 #define QtDir GetEnv('Qt6_DIR')
-#define DeployDir GetEnv('DeployDir')
+#define DeployDir GetEnv('DEPLOY_DIR')
 ;#define MinGWDir GetEnv('MINGW_DIR')
 
 [Setup]
