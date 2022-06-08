@@ -110,7 +110,7 @@ void GenericList::pruneWithSuffix(std::string_view suffix)
 EnumOptions<GenericList::DeserialisableDataVersion> GenericList::deserialisableDataVersions()
 {
     return EnumOptions<GenericList::DeserialisableDataVersion>(
-        "AveragingScheme", {{GenericList::DeserialisableDataVersion::Version089, "v0.8.9"},
+        "AveragingScheme", {{GenericList::DeserialisableDataVersion::Version08X, "v0.8."},
                             {GenericList::DeserialisableDataVersion::Current, fmt::format("v{}", Version::semantic())}});
 }
 

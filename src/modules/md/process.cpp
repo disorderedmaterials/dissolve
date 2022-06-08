@@ -118,8 +118,15 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Read in or assign random velocities
     auto [velocities, status] = dissolve.processingModuleData().realiseIf<std::vector<Vec3<double>>>(
         fmt::format("{}//Velocities", targetConfiguration_->niceName()), name(), GenericItem::InRestartFileFlag);
-    if ((status == GenericItem::ItemStatus::Created || randomVelocities_) && !intramolecularForcesOnly_)
+    if ((status == GenericItem::ItemStatus::Created || randomVelocities_ ||
+         velocities.size() != targetConfiguration_->nAtoms()) &&
+        !intramolecularForcesOnly_)
     {
+        // Show warning message on array size mismatch
+        if (velocities.size() != targetConfiguration_->nAtoms())
+            Messenger::warn(
+                "Size of existing velocities array doesn't match the current configuration size - they will be ignored.");
+
         Messenger::print("Random initial velocities will be assigned.\n");
         velocities.resize(targetConfiguration_->nAtoms(), Vec3<double>());
         for (auto &&[v, iFree] : zip(velocities, free))
@@ -134,6 +141,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     else if (intramolecularForcesOnly_)
     {
         Messenger::print("Only intramolecular forces will be calculated, so velocities will be zeroes.\n");
+        velocities.resize(targetConfiguration_->nAtoms(), Vec3<double>());
         std::fill(velocities.begin(), velocities.end(), Vec3<double>());
     }
     else

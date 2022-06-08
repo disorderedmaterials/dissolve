@@ -647,7 +647,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="GeneratorRegenerateButton">
+         <widget class="QPushButton" name="GenerateButton">
           <property name="text">
            <string>Generate</string>
           </property>
@@ -660,7 +660,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QListView" name="ProcedureWidget" native="true">
+       <widget class="QListView" name="ProcedureWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -669,40 +669,40 @@
         </property>
        </widget>
       </item>
-     <item>
-      <widget class="QGroupBox" name="ProcedureGroup">
-       <layout class="QHBoxLayout" name="ProcedureLayout">
-	 <property name="spacing">
-	   <number>4</number>
-	 </property>
-	 <property name="leftMargin">
-	   <number>4</number>
-	 </property>
-	 <property name="topMargin">
-	   <number>4</number>
-	 </property>
-	 <property name="rightMargin">
-	   <number>4</number>
-	 </property>
-	 <property name="bottomMargin">
-	   <number>4</number>
-	 </property>
-	 <item>
-	 <widget class="ProcedureControlStack" name="ProcedureStack">
-	   <property name="sizePolicy">
-	     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-	       <horstretch>1</horstretch>
-	       <verstretch>0</verstretch>
-	     </sizepolicy>
-	   </property>
-	   <property name="currentIndex">
-	     <number>0</number>
-	   </property>
-	 </widget>
-	 </item>
-       </layout>
-      </widget>
-     </item>
+      <item>
+       <widget class="QGroupBox" name="ProcedureGroup">
+        <layout class="QHBoxLayout" name="ProcedureLayout">
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="ProcedureControlStack" name="ProcedureStack" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="currentIndex" stdset="0">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

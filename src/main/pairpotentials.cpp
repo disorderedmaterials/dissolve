@@ -7,17 +7,10 @@
 #include "main/dissolve.h"
 
 // Set maximum distance for tabulated PairPotentials
-void Dissolve::setPairPotentialRange(double range)
-{
-    pairPotentialRange_ = range;
-    pairPotentialRangeSquared_ = range * range;
-}
+void Dissolve::setPairPotentialRange(double range) { pairPotentialRange_ = range; }
 
 // Return maximum distance for tabulated PairPotentials
 double Dissolve::pairPotentialRange() const { return pairPotentialRange_; }
-
-// Return maximum squared distance for tabulated PairPotentials
-double Dissolve::pairPotentialRangeSquared() const { return pairPotentialRangeSquared_; }
 
 // Set delta to use in tabulations
 void Dissolve::setPairPotentialDelta(double delta) { pairPotentialDelta_ = delta; }
