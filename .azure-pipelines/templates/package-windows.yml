@@ -19,7 +19,9 @@ steps:
       mkdir deploy
       cd deploy
       conan install .. -g deploy
+      cd tbb
       dir
+      cd ..
       cd ..
       $env:DEPLOY_DIR = $(Get-Location).path + "\deploy"
       # Run Inno Setup Compiler
