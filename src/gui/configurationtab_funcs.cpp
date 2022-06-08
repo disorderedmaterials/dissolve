@@ -185,6 +185,9 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
         // Clear the messages
         dissolveWindow_->clearMessages();
 
+        // Make sure the potential map is up to date
+        dissolve_.regeneratePairPotentials();
+
         // Initialise the content
         configuration_->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
 
