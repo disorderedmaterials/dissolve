@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     flake-utils.url = "github:numtide/flake-utils";
     flake-utils.inputs.nixpkgs.follows = "nixpkgs";
@@ -11,11 +11,10 @@
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
-  outputs = { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli}:
+  outputs =
+    { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
     let
-      toml = pkgs: ((import ./nix/toml11.nix) {
-        inherit pkgs;
-      });
+      toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
       exe-name = mpi: gui:
         if mpi then
           "dissolve-mpi"
@@ -59,7 +58,7 @@
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));
-          pkgs.gcc9Stdenv.mkDerivation ({
+          pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
             src =
@@ -139,7 +138,7 @@
 
         defaultPackage = self.packages.${system}.dissolve-gui;
 
-        devShell = pkgs.gcc9Stdenv.mkDerivation {
+        devShell = pkgs.stdenv.mkDerivation {
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
             ++ (with pkgs; [
@@ -160,6 +159,9 @@
                 src = weggli;
               })
             ]);
+          AntlrRuntime_INCLUDE_DIRS =
+            "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
+          AntlrRuntime_LINK_DIRS = "${pkgs.antlr4.runtime.cpp}/lib";
           CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
