@@ -11,10 +11,6 @@ parameters:
 
 steps:
   - checkout: self
-    submodules: true
-  - bash: |
-      git submodule update --init --recursive --depth 1
-    displayName: 'Init Submodules'
   - bash: |
       set -ex
       wget https://github.com/gohugoio/hugo/releases/download/v${{ parameters.hugo_version }}/hugo_extended_${{ parameters.hugo_version }}_Linux-64bit.deb -O '$(Pipeline.Workspace)/hugo.deb'
