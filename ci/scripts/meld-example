@@ -7,35 +7,35 @@ CREATE_PDF="FALSE"
 
 usage()
 {
-	echo "Usage: $0 [-d example root directory] [-p]"
-	exit 1
+  echo "Usage: $0 [-d example root directory] [-p]"
+  exit 1
 }
 
 # Parse options
-while getopts ":dp" opt
+while getopts "d:p" opt
 do
-	case "${opt}" in
-		d)
-			EXAMPLE_DIR=${OPTARG}
-			echo "Example directory is: '${EXAMPLE_DIR}'"
-			;;
-	  p)
-	    CREATE_PDF="TRUE"
-	    echo "PDF version will be created."
-	    ;;
-		\?)
-			usage
-			;;
-		*)
-			usage
-			;;
-	esac
+  case "${opt}" in
+    d)
+      EXAMPLE_DIR=${OPTARG}
+      echo "Example directory is: '${EXAMPLE_DIR}'"
+      ;;
+    p)
+      CREATE_PDF="TRUE"
+      echo "PDF version will be created."
+      ;;
+    \?)
+      usage
+      ;;
+    *)
+      usage
+      ;;
+  esac
 done
 
 if [ "x$EXAMPLE_DIR" = "x" ]
 then
-	echo "Error: Example directory must be provided."
-	exit 1
+  echo "Error: Example directory must be provided."
+  exit 1
 fi
 if [ ! -d "${EXAMPLE_DIR}" ]
 then
