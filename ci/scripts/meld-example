@@ -3,7 +3,6 @@
 # Meld example pages into monolithic one-page markdown file
 
 EXAMPLE_DIR=""
-CREATE_PDF="FALSE"
 
 usage()
 {
@@ -12,16 +11,12 @@ usage()
 }
 
 # Parse options
-while getopts "d:p" opt
+while getopts "d:" opt
 do
   case "${opt}" in
     d)
       EXAMPLE_DIR=${OPTARG}
       echo "Example directory is: '${EXAMPLE_DIR}'"
-      ;;
-    p)
-      CREATE_PDF="TRUE"
-      echo "PDF version will be created."
       ;;
     \?)
       usage
@@ -32,7 +27,7 @@ do
   esac
 done
 
-if [ "x$EXAMPLE_DIR" = "x" ]
+if [ "x${EXAMPLE_DIR}" = "x" ]
 then
   echo "Error: Example directory must be provided."
   exit 1

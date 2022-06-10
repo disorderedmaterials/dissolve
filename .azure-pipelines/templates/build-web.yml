@@ -22,6 +22,12 @@ steps:
     displayName: 'Download & Install Hugo (Extended Version)'
   - bash: |
       set -ex
+      sudo apt install pandoc
+      sudo apt install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-xetex
+    condition: eq(1,0)
+    displayName: 'Install pandoc / xetex'
+  - bash: |
+      set -ex
       cp -v src/gui/icons/*.svg web/static/img
     displayName: 'Copy Icons'
   - bash: |
@@ -48,6 +54,18 @@ steps:
       sudo npm install -g link-checker
       link-checker --disable-external web/public
     displayName: 'Check Links'
+  - bash: |
+      set -ex
+      cd web/public/examples/
+      for example in $(find . -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      do
+        echo "Creating pdf for example \"${example}\"..."
+        cd ${example}/single/
+        pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index.html -o ../${example}.pdf
+        cd ../../
+      done
+    condition: eq(1,0)
+    displayName: 'Create PDFs'
   - task: DownloadSecureFile@1
     name: privateKey
     inputs:
