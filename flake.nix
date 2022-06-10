@@ -46,6 +46,12 @@
           libGL.dev
           libglvnd
           libglvnd.dev
+          qt6.qtbase
+          qt6.qtcharts
+          qt6.qtdeclarative
+          qt6.qtsvg
+          qt6.qttools
+          qt6.qtwayland
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
@@ -54,7 +60,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         nixGL = import nixGL-src { inherit pkgs; };
-        QTDIR = "${import ./nix/qt6.nix { inherit pkgs; }}/6.2.2/gcc_64";
+        mkDerivation = pkgs.qt6Packages.callPackage ({ mkDerivation }: mkDerivation);
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));
@@ -69,7 +75,7 @@
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
-            nativeBuildInputs = [ pkgs.wrapGAppsHook ];
+            nativeBuildInputs = [ pkgs.wrapGAppsHook pkgs.qt6Packages.wrapQtAppsHook];
 
             TBB_DIR = "${pkgs.tbb}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
@@ -99,15 +105,7 @@
               # license = licenses.unlicense;
               maintainers = [ maintainers.rprospero ];
             };
-          } // (if gui then {
-            inherit QTDIR;
-            Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
-            Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
-            Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
-            Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
-
-          } else
-            { }))
+          } )
           // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
         mkSingularity = { mpi ? false, gui ? false, threading ? true }:
           outdated.legacyPackages.${system}.singularity-tools.buildImage {
@@ -165,12 +163,6 @@
           CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
-          inherit QTDIR;
-          Qt6_DIR = "${QTDIR}/lib/cmake/Qt6";
-          Qt6CoreTools_DIR = "${QTDIR}/lib/cmake/Qt6CoreTools";
-          Qt6GuiTools_DIR = "${QTDIR}/lib/cmake/Qt6GuiTools";
-          Qt6WidgetsTools_DIR = "${QTDIR}/lib/cmake/Qt6WidgetsTools";
-          PATH = "${QTDIR}/bin";
           THREADING_LINK_LIBS = "${pkgs.tbb}/lib/libtbb.so";
         };
 
