@@ -94,7 +94,7 @@ jobs:
         condition: eq('${{ parameters.continuous }}', true)
         env:
           GITHUB_TOKEN: $(REPO_SECRET)
-        displayName: 'Create Release (GitHub)'
+        displayName: 'Create Continuous Release (GitHub)'
       - bash: |
           set -ex
           ./ci/scripts/list-releases -r disorderedmaterials/dissolve -u -v $(Build.SourceBranchName)
@@ -105,7 +105,7 @@ jobs:
       - template: install-nix.yml
       - template: push-harbor.yml
         parameters:
-          ${{ if eq('${{ parameters.continuous }}', true) }}:
+          ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
             tag: "continuous"
-          ${{ if eq('${{ parameters.continuous }}', false) }}:
+          ${{ if not(eq(variables['Build.SourceBranchName'], 'develop')) }}:
             tag: "latest"
