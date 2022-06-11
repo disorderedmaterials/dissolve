@@ -161,7 +161,12 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
 
     // Handle specific flags for the module widget
     if (moduleWidget_)
-        moduleWidget_->updateControls(Flags<ModuleWidget::UpdateFlags>(signalMask));
+    {
+        Flags<ModuleWidget::UpdateFlags> updateFlags;
+        if (keywordSignals.isSet(KeywordBase::KeywordSignal::RecreateRenderables))
+            updateFlags.setFlag(ModuleWidget::RecreateRenderablesFlag);
+        moduleWidget_->updateControls(updateFlags);
+    }
 }
 
 // Global data mutated
