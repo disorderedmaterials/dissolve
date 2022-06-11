@@ -28,4 +28,4 @@ The `OperateNumberDensityNormalise` node simply divides the values (not the axes
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Site`|`name`<br/>[`name...`]|--|{{< required-label >}} One or more `name`d [`SelectNode`s]({{< ref "selectnode" >}}) from which the site populations, along with the configuration box volume, are used to calculate number densities in atoms/A<sup>3</sup>, and which are then used as divisors on the data. If more than one [`SelectNode`s]({{< ref "selectnode" >}}) is given, the divisions are made sequentially.|
+|`Site`|`name`<br/>[`name...`]|--|{{< required-label >}} One or more `name`d {{< gui-node "Select" >}} nodes from which the site populations, along with the configuration box volume, are used to calculate number densities in atoms/A<sup>3</sup>, and which are then used as divisors on the data. If more than one {{< gui-node "Select" >}} nodes is given, the divisions are made sequentially.|

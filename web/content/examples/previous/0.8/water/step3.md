@@ -33,7 +33,7 @@ We have neutron-weighted experimental data, so we need a layer to calculate RDFs
 First we need to set the instrumental broadening in the {{< gui-module "SQ" >}} module:
 
 {{< action type="mouse" text="Click on the `SQ` module (`SQ01`) to display its options" />}}
-{{< step text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of 0.02" />}}
+{{< step text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of `0.02`" />}}
 
 This broadening is a known parameter of the SANDALS instrument on which the experimental data were collected.
 

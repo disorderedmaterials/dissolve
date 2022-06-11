@@ -15,7 +15,7 @@ As noted in the introduction we have neutron-weighted experimental data, so we n
 We need to set the instrumental broadening in the {{< gui-module "SQ" >}} module first:
 
 {{< action type="mouse">}}Click on the {{< gui-module "SQ" >}} module to select it{{< /action >}}
-{{< action type="edit" text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of 0.02" />}}
+{{< action type="edit" text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of `0.02`" />}}
 
 Now let's set up the three {{< gui-module "NeutronSQ" >}} modules to calculate what we want:
 
@@ -24,7 +24,7 @@ Now let's set up the three {{< gui-module "NeutronSQ" >}} modules to calculate w
 {{< action type="mouse">}}Click on the first {{< gui-module "NeutronSQ" >}} module to select it{{< /action >}}
 {{< action type="edit" text="Double-click on its name and change it to `C6H6`" />}}
 {{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< step text="For the **Reference** keyword select the file `C6H6.mint01` and set the format of the data to `mint`" />}}
+{{< action type="edit" text="For the **Reference** keyword select the file `C6H6.mint01` and set the format of the data to `mint`" />}}
 
 
 ### C<sub>6</sub>D<sub>6</sub>
@@ -35,7 +35,7 @@ Now let's set up the three {{< gui-module "NeutronSQ" >}} modules to calculate w
 {{< action type="mouse">}}Press the {{< gui-button icon="general_add" text="Species" >}} button to add the natural isotopologue for the first species present{{< /action >}}
 {{< action type="edit" text="Change the isotopologue from `Natural` to `C6D6`" />}}
 {{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< step text="For the **Reference** keyword select the file `C6D6.mint01` and set the format of the data to `mint`" />}}
+{{< action type="edit" text="For the **Reference** keyword select the file `C6D6.mint01` and set the format of the data to `mint`" />}}
 
 ### 50:50 Mix
 
@@ -48,7 +48,7 @@ Now let's set up the three {{< gui-module "NeutronSQ" >}} modules to calculate w
 {{< tip text="The isotopologue mixture you've just defined has equal parts (weight = 1.0) of the `Natural` and `C6D6` benzene isotopologues. You can use whatever ratios make sense - Dissolve will always normalise the total weight back to 1.0 internally." />}}
 
 {{< action type="settings" text="Open the **Reference Data** settings group" />}}
-{{< step text="For the **Reference** keyword select the file `5050.mint01` and set the format of the data to `mint`" />}}
+{{< action type="edit" text="For the **Reference** keyword select the file `5050.mint01` and set the format of the data to `mint`" />}}
 
 All that remains is to add our EPSR refinement layer:
 

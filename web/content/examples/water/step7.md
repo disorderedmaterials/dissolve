@@ -22,7 +22,7 @@ Our new layer contains only the {{< gui-module "EPSR" >}} module, and which Diss
 {{< action type="tabs" >}}Go to the {{< gui-tab text="Refine (EPSR)" type="Layer" >}} tab{{< /action >}}
 {{< action type="groups">}}Open the **Control** settings group of the {{< gui-module "EPSR" >}} module {{< /action >}}
 {{< step text=" An initial value for **EReq** has been set (3.0) - this determines the magnitude or \"strength\" of the generated interatomic potentials" />}}
-{{< step text="The **Feedback** factor is 0.8 - this states that we are 80% confident in the experimental data, and that the calculated partial structure factors should make up 20% of the estimated partials" />}}
+{{< step text="The **Feedback** factor is 0.9 - this states that we are 90% confident in the experimental data, and that the calculated partial structure factors should make up 10% of the estimated partials" />}}
 {{< step text="The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>) and **QMin** (0.5 &#8491;<sup>-1</sup>)" />}}
 
 The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the `EPSR` module to use. You'll see that Dissolve has added all of the available {{< gui-module "NeutronSQ" >}} modules have been selected automatically.

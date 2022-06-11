@@ -14,7 +14,7 @@ description: Calculate angle between three sites
 
 ## Overview
 
-The `CalculateAngle` node calculates the angle, in degrees, between three provided sites $i$, $j$, and $k$, which are referenced from [`Select`]({{< ref "selectnode" >}}) nodes.
+The `CalculateAngle` node calculates the angle, in degrees, between three provided sites $i$, $j$, and $k$, which are referenced from {{< gui-node "Select" >}} nodes.
 
 ## Description
 
@@ -28,6 +28,6 @@ The `CalculateAngle` node calculates the angle, in degrees, between three provid
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|`name`|--|Site that represents $i$ in the angle $i$-$j$-$k$, taken from the `name`d [`Select`]({{< ref "selectnode" >}}) node.|
-|`J`|`name`|--|Site that represents $j$ in the angle $i$-$j$-$k$, taken from the `name`d [`Select`]({{< ref "selectnode" >}}) node.|
-|`K`|`name`|--|Site that represents $k$ in the angle $i$-$j$-$k$, taken from the `name`d [`Select`]({{< ref "selectnode" >}}) node.|
+|`I`|`name`|--|Site that represents $i$ in the angle $i$-$j$-$k$, taken from the `name`d {{< gui-node "Select" >}} node.|
+|`J`|`name`|--|Site that represents $j$ in the angle $i$-$j$-$k$, taken from the `name`d {{< gui-node "Select" >}} node.|
+|`K`|`name`|--|Site that represents $k$ in the angle $i$-$j$-$k$, taken from the `name`d {{< gui-node "Select" >}} node.|

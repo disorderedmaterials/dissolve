@@ -14,11 +14,11 @@ description: Generate a list of sites based on atom type or element
 
 ## Overview
 
-The `DynamicSite` dynamically constructs a list of simplistic sites for use within a [`Select`]({{< ref "selectnode" >}}) node.
+The `DynamicSite` dynamically constructs a list of simplistic sites for use within a {{< gui-node "Select" >}} node.
 
 ## Description
 
-The `DynamicSite` node generates a list of sites (suitable for use in a [`Select`]({{< ref "selectnode" >}}) node) based only on assigned atom type or element. It is not species/molecule specific.
+The `DynamicSite` node generates a list of sites (suitable for use in a {{< gui-node "Select" >}} node) based only on assigned atom type or element. It is not species/molecule specific.
 
 ## Configuration
 

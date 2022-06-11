@@ -14,7 +14,7 @@ description: Calculate a vector between two sites
 
 ## Overview
 
-The `CalculateVector` node calculates the vector between two provided sites $i$ and $j$, which are referenced from [`Select`]({{< ref "selectnode" >}}) nodes.
+The `CalculateVector` node calculates the vector between two provided sites $i$ and $j$, which are referenced from {{< gui-node "Select" >}} nodes.
 
 ## Description
 
@@ -28,6 +28,6 @@ The `CalculateVector` node calculates the vector between two provided sites $i$ 
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|`name`|--|Site that represents $i$ in the distance $i$-$j$, taken from the `name`d [`Select`]({{< ref "selectnode" >}}) node.|
-|`J`|`name`|--|Site that represents $j$ in the distance $i$-$j$, taken from the `name`d [`Select`]({{< ref "selectnode" >}}) node.|
+|`I`|`name`|--|Site that represents $i$ in the distance $i$-$j$, taken from the `name`d {{< gui-node "Select" >}} node.|
+|`J`|`name`|--|Site that represents $j$ in the distance $i$-$j$, taken from the `name`d {{< gui-node "Select" >}} node.|
 |`RotateIntoFrame`|`bool`|`false`|Whether to rotate the calculated vector into the local frame defined on $i$. If `true`, and the site $i$ has a set of axes defined, the vector is rotated into the frame of those axes.|

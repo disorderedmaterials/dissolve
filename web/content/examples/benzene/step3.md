@@ -19,7 +19,7 @@ If you're watching the box in the configuration tab you'll notice that it intial
 When the size factor has reduced the inter-molecular energy of the simulation will fluctuate a little, but should oscillate around some equilibrium value, at which point you can proceed. You can check this from the graphs of the {{< gui-module "Energy" >}} module:
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Evolve (Standard)" >}} layer tab{{< /action >}}
-{{< action type="mouse">}}Select the {{< gui-module "Energy" >}} module and go to it's {{< gui-button icon="general_output" text="Output">}} tab{{< /action >}}
+{{< action type="mouse">}}Select the {{< gui-module "Energy" >}} module and go to its {{< gui-button icon="general_output" text="Output">}} tab{{< /action >}}
 
 Once this has been achieved, we can make a snapshot of the current simulation and store this equilibrated point as a backup. The restart file written by Dissolve as it runs stores all the information necessary to continue a stopped simulation, but there is no going back to a previous point in the simulation (e.g. to undo a bad analysis choice, or to reference earlier data) unless we have a suitable restart point to go back to. At any time we can write a new restart file from the GUI, independent of the standard restart file, and which we can keep to load in at a later date.
 

@@ -44,7 +44,7 @@ Time to get rid of that data...
 We need to refine the simulation before we calculate our properties again, so we need to temporarily turn off our analysis layer:
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Analysis" >}} layer{{< /action >}}
-{{< step text="Disable the layer by clicking the ![](/img/slider-on.png) button in _Layer Control_ at the top-left of the tab so it displays ![](/img/slider-off.png)" />}}
+{{< step >}}Disable the layer by clicking the {{< gui-icon "slider-on" >}} button in _Layer Control_ at the top-left of the tab so it displays {{< gui-icon "slider-off" >}}{{< /step >}}
 
 
 * * *

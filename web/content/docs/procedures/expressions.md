@@ -5,7 +5,7 @@ description: Mathematical expression parsing
 
 ## Overview
 
-Many node keywords accept mathematical expressions as input, rather than plain numerical values, allowing more complicated values to be calculated. This includes being able to reference named variables declared in, for instance, a [`Parameters`]({{< ref "parametersnode" >}}) node.
+Many node keywords accept mathematical expressions as input, rather than plain numerical values, allowing more complicated values to be calculated. This includes being able to reference named variables declared in, for instance, a {{< gui-node "Parameters" >}} node.
 
 ## Type Conversion
 

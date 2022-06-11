@@ -1,0 +1,506 @@
+# Input file written by Dissolve v1.0.0 at 16:53:35 on 08-06-2022.
+
+#==============================================================================#
+#                                 Master Terms                                 #
+#==============================================================================#
+
+Master
+  Bond  'C1-H1'  Harmonic  k=2845 eq=1.09
+  Bond  'C1-NA'  Harmonic  k=2820 eq=1.466
+  Bond  'C1-CE'  Harmonic  k=2242 eq=1.529
+  Bond  'CR-NA'  Harmonic  k=3992 eq=1.315
+  Bond  'CW-NA'  Harmonic  k=3574 eq=1.378
+  Bond  'CR-HCR'  Harmonic  k=2845 eq=1.08
+  Bond  'CW-CW'  Harmonic  k=4352 eq=1.341
+  Bond  'CW-HCW'  Harmonic  k=2845 eq=1.08
+  Bond  'CE-HC'  Harmonic  k=2845 eq=1.09
+  Bond  'CTA-HCA'  Harmonic  k=2845 eq=1.09
+  Bond  'CO2-O2'  Harmonic  k=5489 eq=1.25
+  Bond  'CO2-CTA'  Harmonic  k=2653 eq=1.522
+  Angle  'H1-C1-NA'  Harmonic  k=313.8 eq=110.7
+  Angle  'C1-NA-CR'  Harmonic  k=585.8 eq=126.4
+  Angle  'C1-NA-CW'  Harmonic  k=585.8 eq=125.6
+  Angle  'CE-C1-NA'  Harmonic  k=488.3 eq=112.7
+  Angle  'CE-C1-H1'  Harmonic  k=313.8 eq=110.7
+  Angle  'C1-CE-HC'  Harmonic  k=313.8 eq=110.7
+  Angle  'H1-C1-H1'  Harmonic  k=276.1 eq=107.8
+  Angle  'NA-CR-NA'  Harmonic  k=585.8 eq=109.8
+  Angle  'HCR-CR-NA'  Harmonic  k=292.9 eq=125.1
+  Angle  'CR-NA-CW'  Harmonic  k=585.8 eq=108
+  Angle  'CW-CW-NA'  Harmonic  k=585.8 eq=107.1
+  Angle  'HCW-CW-NA'  Harmonic  k=292.9 eq=122
+  Angle  'CW-CW-HCW'  Harmonic  k=292.9 eq=130.9
+  Angle  'HC-CE-HC'  Harmonic  k=276.1 eq=107.8
+  Angle  'CTA-CO2-O2'  Harmonic  k=585.8 eq=117
+  Angle  'CO2-CTA-HCA'  Harmonic  k=292.9 eq=109.5
+  Torsion  'CR-NA-C1-H1'  Cos4  k1=0 k2=0 k3=0 k4=0
+  Torsion  'CW-NA-C1-H1'  Cos4  k1=0 k2=0 k3=0.519 k4=0
+  Torsion  'CE-C1-NA-CR'  Cos4  k1=-5.2691 k2=0 k3=0 k4=0
+  Torsion  'CE-C1-NA-CW'  Cos4  k1=-7.1535 k2=6.1064 k3=0.7939 k4=0
+  Torsion  'H1-C1-CE-HC'  Cos4  k1=0 k2=0 k3=1.2552 k4=0
+  Torsion  'HC-CE-C1-NA'  Cos4  k1=0 k2=0 k3=0.367 k4=0
+  Torsion  'C1-NA-CR-NA'  Cos4  k1=0 k2=19.46 k3=0 k4=0
+  Torsion  'C1-NA-CR-HCR'  Cos4  k1=0 k2=19.46 k3=0 k4=0
+  Torsion  'CW-NA-CR-NA'  Cos4  k1=0 k2=19.46 k3=0 k4=0
+  Torsion  'CW-NA-CR-HCR'  Cos4  k1=0 k2=19.46 k3=0 k4=0
+  Torsion  'C1-NA-CW-CW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
+  Torsion  'C1-NA-CW-HCW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
+  Torsion  'CR-NA-CW-CW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
+  Torsion  'CR-NA-CW-HCW'  Cos4  k1=0 k2=12.552 k3=0 k4=0
+  Torsion  'NA-CW-CW-NA'  Cos4  k1=0 k2=44.98 k3=0 k4=0
+  Torsion  'HCW-CW-CW-NA'  Cos4  k1=0 k2=44.98 k3=0 k4=0
+  Torsion  'HCW-CW-CW-HCW'  Cos4  k1=0 k2=44.98 k3=0 k4=0
+  Torsion  'HCA-CTA-CO2-O2'  Cos4  k1=0 k2=0 k3=0 k4=0
+  Improper  'NA-C1-CR-CW'  Cos4  k1=0 k2=8.368 k3=0 k4=0
+  Improper  'CR-HCR-NA-NA'  Cos4  k1=0 k2=9.2048 k3=0 k4=0
+  Improper  'CW-CW-HCW-NA'  Cos4  k1=0 k2=9.2048 k3=0 k4=0
+  Improper  'CO2-CTA-O2-O2'  Cos4  k1=0 k2=87.864 k3=0 k4=0
+EndMaster
+
+#==============================================================================#
+#                                   Species                                    #
+#==============================================================================#
+
+Species '1-ethyl-3-methylimidazolium'
+  # Atoms
+  NAtoms  19
+  Atom    1  H    -3.628043e-01  6.732334e-01  2.390748e+00  'H1'  1.105000e-01
+  Atom    2  C    3.201394e-01  -5.791965e-02  1.958293e+00  'C1'  -1.445000e-01
+  Atom    3  N    5.684587e-02  -1.918778e-01  5.224727e-01  'NA'  1.275000e-01
+  Atom    4  C    -1.027411e+00  1.985833e-01  -1.107406e-01  'CR'  -9.350000e-02
+  Atom    5  N    -9.008411e-01  -3.702021e-02  -1.398182e+00  'NA'  1.275000e-01
+  Atom    6  C    3.372966e-01  -6.048025e-01  -1.607212e+00  'CW'  -1.105000e-01
+  Atom    7  C    9.379712e-01  -6.922119e-01  -4.116577e-01  'CW'  -1.105000e-01
+  Atom    8  H    1.911700e+00  -1.069250e+00  -1.354484e-01  'HCW'  1.785000e-01
+  Atom    9  H    6.780383e-01  -8.878351e-01  -2.592291e+00  'HCW'  1.785000e-01
+  Atom   10  C    -1.889156e+00  2.626661e-01  -2.438506e+00  'C1'  -1.445000e-01
+  Atom   11  H    -1.459714e+00  9.032852e-01  -3.208819e+00  'H1'  1.105000e-01
+  Atom   12  H    -2.240148e+00  -6.514349e-01  -2.917284e+00  'H1'  1.105000e-01
+  Atom   13  H    -2.753359e+00  7.761413e-01  -2.017047e+00  'H1'  1.105000e-01
+  Atom   14  H    -1.889705e+00  6.515490e-01  3.558665e-01  'HCR'  1.785000e-01
+  Atom   15  C    1.766040e+00  3.542008e-01  2.236339e+00  'CE'  -4.250000e-02
+  Atom   16  H    1.985751e+00  1.322617e+00  1.786711e+00  'HC'  5.100000e-02
+  Atom   17  H    2.465246e+00  -3.742331e-01  1.825918e+00  'HC'  5.100000e-02
+  Atom   18  H    1.949107e+00  4.317605e-01  3.308038e+00  'HC'  5.100000e-02
+  Atom   19  H    1.150019e-01  -1.007452e+00  2.452802e+00  'H1'  1.105000e-01
+
+  # Bonds
+  NBonds  19
+  Bond    1    2  @C1-H1
+  Bond    2    3  @C1-NA
+  Bond    2   15  @C1-CE
+  Bond    2   19  @C1-H1
+  Bond    3    4  @CR-NA
+  Bond    3    7  @CW-NA
+  Bond    4    5  @CR-NA
+  Bond    4   14  @CR-HCR
+  Bond    5    6  @CW-NA
+  Bond    5   10  @C1-NA
+  Bond    6    7  @CW-CW
+  Bond    6    9  @CW-HCW
+  Bond    7    8  @CW-HCW
+  Bond   10   11  @C1-H1
+  Bond   10   12  @C1-H1
+  Bond   10   13  @C1-H1
+  Bond   15   16  @CE-HC
+  Bond   15   17  @CE-HC
+  Bond   15   18  @CE-HC
+
+  # Angles
+  NAngles  33
+  Angle    1    2    3  @H1-C1-NA
+  Angle    2    3    4  @C1-NA-CR
+  Angle    2    3    7  @C1-NA-CW
+  Angle   15    2    3  @CE-C1-NA
+  Angle   19    2    3  @H1-C1-NA
+  Angle    1    2   15  @CE-C1-H1
+  Angle    2   15   16  @C1-CE-HC
+  Angle    2   15   17  @C1-CE-HC
+  Angle    2   15   18  @C1-CE-HC
+  Angle   19    2   15  @CE-C1-H1
+  Angle    1    2   19  @H1-C1-H1
+  Angle    3    4    5  @NA-CR-NA
+  Angle    3    4   14  @HCR-CR-NA
+  Angle    7    3    4  @CR-NA-CW
+  Angle    3    7    6  @CW-CW-NA
+  Angle    3    7    8  @HCW-CW-NA
+  Angle    4    5    6  @CR-NA-CW
+  Angle    4    5   10  @C1-NA-CR
+  Angle   14    4    5  @HCR-CR-NA
+  Angle    5    6    7  @CW-CW-NA
+  Angle    5    6    9  @HCW-CW-NA
+  Angle   10    5    6  @C1-NA-CW
+  Angle    5   10   11  @H1-C1-NA
+  Angle    5   10   12  @H1-C1-NA
+  Angle    5   10   13  @H1-C1-NA
+  Angle    6    7    8  @CW-CW-HCW
+  Angle    9    6    7  @CW-CW-HCW
+  Angle   12   10   11  @H1-C1-H1
+  Angle   13   10   11  @H1-C1-H1
+  Angle   13   10   12  @H1-C1-H1
+  Angle   17   15   16  @HC-CE-HC
+  Angle   18   15   16  @HC-CE-HC
+  Angle   18   15   17  @HC-CE-HC
+
+  # Torsions
+  NTorsions  41
+  Torsion    1    2    3    4  @CR-NA-C1-H1
+  Torsion    1    2    3    7  @CW-NA-C1-H1
+  Torsion   15    2    3    4  @CE-C1-NA-CR
+  Torsion   15    2    3    7  @CE-C1-NA-CW
+  Torsion   19    2    3    4  @CR-NA-C1-H1
+  Torsion   19    2    3    7  @CW-NA-C1-H1
+  Torsion    1    2   15   16  @H1-C1-CE-HC
+  Torsion    1    2   15   17  @H1-C1-CE-HC
+  Torsion    1    2   15   18  @H1-C1-CE-HC
+  Torsion    3    2   15   16  @HC-CE-C1-NA
+  Torsion    3    2   15   17  @HC-CE-C1-NA
+  Torsion    3    2   15   18  @HC-CE-C1-NA
+  Torsion   19    2   15   16  @H1-C1-CE-HC
+  Torsion   19    2   15   17  @H1-C1-CE-HC
+  Torsion   19    2   15   18  @H1-C1-CE-HC
+  Torsion    2    3    4    5  @C1-NA-CR-NA
+  Torsion    2    3    4   14  @C1-NA-CR-HCR
+  Torsion    7    3    4    5  @CW-NA-CR-NA
+  Torsion    7    3    4   14  @CW-NA-CR-HCR
+  Torsion    2    3    7    6  @C1-NA-CW-CW
+  Torsion    2    3    7    8  @C1-NA-CW-HCW
+  Torsion    4    3    7    6  @CR-NA-CW-CW
+  Torsion    4    3    7    8  @CR-NA-CW-HCW
+  Torsion    3    4    5    6  @CW-NA-CR-NA
+  Torsion    3    4    5   10  @C1-NA-CR-NA
+  Torsion   14    4    5    6  @CW-NA-CR-HCR
+  Torsion   14    4    5   10  @C1-NA-CR-HCR
+  Torsion    4    5    6    7  @CR-NA-CW-CW
+  Torsion    4    5    6    9  @CR-NA-CW-HCW
+  Torsion   10    5    6    7  @C1-NA-CW-CW
+  Torsion   10    5    6    9  @C1-NA-CW-HCW
+  Torsion    4    5   10   11  @CR-NA-C1-H1
+  Torsion    4    5   10   12  @CR-NA-C1-H1
+  Torsion    4    5   10   13  @CR-NA-C1-H1
+  Torsion    6    5   10   11  @CW-NA-C1-H1
+  Torsion    6    5   10   12  @CW-NA-C1-H1
+  Torsion    6    5   10   13  @CW-NA-C1-H1
+  Torsion    5    6    7    3  @NA-CW-CW-NA
+  Torsion    5    6    7    8  @HCW-CW-CW-NA
+  Torsion    9    6    7    3  @HCW-CW-CW-NA
+  Torsion    9    6    7    8  @HCW-CW-CW-HCW
+
+  # Impropers
+  NImpropers  5
+  Improper    3    2    4    7  @NA-C1-CR-CW
+  Improper    4    3    5   14  @CR-HCR-NA-NA
+  Improper    5    4    6   10  @NA-C1-CR-CW
+  Improper    6    5    7    9  @CW-CW-HCW-NA
+  Improper    7    3    6    8  @CW-CW-HCW-NA
+
+  # Isotopologues
+  Isotopologue  'H3D8'  H1=2  HC=2
+
+  # Sites
+  Site  'RingNN'
+    Origin  3  5
+    XAxis  3
+    YAxis  4
+  EndSite
+EndSpecies
+
+Species 'Acetate Anion'
+  # Atoms
+  NAtoms  7
+  Atom    1  H    9.085590e-01  1.128454e+00  2.534130e-01  'HCA'  5.100000e-02
+  Atom    2  H    -4.959180e-01  8.809070e-01  -9.431530e-01  'HCA'  5.100000e-02
+  Atom    3  H    1.014266e+00  -9.801500e-02  -9.922180e-01  'HCA'  5.100000e-02
+  Atom    4  O    4.079840e-01  -1.123133e+00  1.315883e+00  'O2'  -6.800000e-01
+  Atom    5  O    -1.573147e+00  -6.415200e-01  4.949280e-01  'O2'  -6.800000e-01
+  Atom    6  C    -3.536540e-01  -4.826980e-01  5.194300e-01  'CO2'  5.950000e-01
+  Atom    7  C    3.158470e-01  4.483340e-01  -3.583300e-01  'CTA'  -2.380000e-01
+
+  # Bonds
+  NBonds  6
+  Bond    1    7  @CTA-HCA
+  Bond    2    7  @CTA-HCA
+  Bond    3    7  @CTA-HCA
+  Bond    4    6  @CO2-O2
+  Bond    5    6  @CO2-O2
+  Bond    6    7  @CO2-CTA
+
+  # Angles
+  NAngles  5
+  Angle    5    6    7  @CTA-CO2-O2
+  Angle    6    7    1  @CO2-CTA-HCA
+  Angle    6    7    2  @CO2-CTA-HCA
+  Angle    6    7    3  @CO2-CTA-HCA
+  Angle    4    6    7  @CTA-CO2-O2
+
+  # Torsions
+  NTorsions  6
+  Torsion    5    6    7    1  @HCA-CTA-CO2-O2
+  Torsion    5    6    7    2  @HCA-CTA-CO2-O2
+  Torsion    5    6    7    3  @HCA-CTA-CO2-O2
+  Torsion    4    6    7    1  @HCA-CTA-CO2-O2
+  Torsion    4    6    7    2  @HCA-CTA-CO2-O2
+  Torsion    4    6    7    3  @HCA-CTA-CO2-O2
+
+  # Impropers
+  NImpropers  1
+  Improper    6    5    4    7  @CO2-CTA-O2-O2
+
+  # Isotopologues
+  Isotopologue  'D3'  HCA=2
+
+  # Sites
+  Site  'COM'
+    Origin  1  2  3  4  5  6  7
+    OriginMassWeighted  True
+  EndSite
+EndSpecies
+
+#==============================================================================#
+#                               Pair Potentials                                #
+#==============================================================================#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  H1  H  1.300000e-01  LJGeometric  epsilon=0.12552 sigma=2.5
+  Parameters  C1  C  -1.700000e-01  LJGeometric  epsilon=0.27614 sigma=3.5
+  Parameters  NA  N  1.500000e-01  LJGeometric  epsilon=0.71128 sigma=3.25
+  Parameters  CR  C  -1.100000e-01  LJGeometric  epsilon=0.29288 sigma=3.55
+  Parameters  CW  C  -1.300000e-01  LJGeometric  epsilon=0.29288 sigma=3.55
+  Parameters  HCW  H  2.100000e-01  LJGeometric  epsilon=0.12552 sigma=2.42
+  Parameters  HCR  H  2.100000e-01  LJGeometric  epsilon=0.12552 sigma=2.42
+  Parameters  CE  C  -5.000000e-02  LJGeometric  epsilon=0.27614 sigma=3.5
+  Parameters  HC  H  6.000000e-02  LJGeometric  epsilon=0.12552 sigma=2.5
+  Parameters  HCA  H  6.000000e-02  LJGeometric  epsilon=0.12552 sigma=2.5
+  Parameters  O2  O  -8.000000e-01  LJGeometric  epsilon=0.87864 sigma=2.96
+  Parameters  CO2  C  7.000000e-01  LJGeometric  epsilon=0.43932 sigma=3.75
+  Parameters  CTA  C  -2.800000e-01  LJGeometric  epsilon=0.27614 sigma=3.5
+  Range  12
+  Delta  0.005
+  ManualChargeSource  True
+  IncludeCoulomb  False
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+
+#==============================================================================#
+#                                Configurations                                #
+#==============================================================================#
+
+Configuration  'Bulk'
+
+  # Modules
+  Generator
+    Parameters  'Parameters01'
+      Parameter  rho  0.09985
+    EndParameters
+    Box  'Box01'
+      Angles  90  90  90
+      Lengths  1  1  1
+    EndBox
+    CoordinateSets  '1-ethyl-3-methylimidazolium_Sets'
+      DeltaT  '0.0005'
+      NSets  '100'
+      NSteps  '2000'
+      Source  MD
+      Species  '1-ethyl-3-methylimidazolium'
+    EndCoordinateSets
+    Add  '1-ethyl-3-methylimidazolium'
+      BoxAction  AddVolume
+      CoordinateSets  '1-ethyl-3-methylimidazolium_Sets'
+      Density  'rho'  atoms/A3
+      Population  '100'
+      Positioning  Random
+    EndAdd
+    CoordinateSets  'Acetate_Anion_Sets'
+      DeltaT  '0.0005'
+      NSets  '100'
+      NSteps  '2000'
+      Source  MD
+      Species  'Acetate Anion'
+    EndCoordinateSets
+    Add  'Acetate_Anion'
+      BoxAction  AddVolume
+      CoordinateSets  'Acetate_Anion_Sets'
+      Density  'rho'  atoms/A3
+      Population  '100'
+      Positioning  Random
+    EndAdd
+  EndGenerator
+
+  Temperature  323
+
+  SizeFactor  1
+EndConfiguration
+
+#==============================================================================#
+#                              Processing Layers                               #
+#==============================================================================#
+
+Layer  'Evolve (Standard)'
+  Frequency  1
+
+  Module  MolShake  'MolShake'
+    Frequency  1
+    Configuration  'Bulk'
+    RotationStepSize  5.1072484695979306
+    TranslationStepSize  0.13547039416516674
+  EndModule
+
+  Module  MD  'MD'
+    Frequency  5
+    Configuration  'Bulk'
+    NSteps  50
+  EndModule
+
+  Module  Energy  'Energy'
+    Frequency  1
+    Configuration  'Bulk'
+  EndModule
+EndLayer
+
+Layer  'RDF / Neutron S(Q)'
+  Frequency  5
+
+  Module  RDF  'RDF'
+    Frequency  1
+    AveragingScheme  Linear
+    Configurations  'Bulk'
+    IntraBroadening  'Gaussian'  0.18
+    Method  Auto
+  EndModule
+
+  Module  SQ  'SQ'
+    Frequency  1
+    AveragingScheme  Linear
+    BraggQBroadening  'GaussianC2'  0  0.02
+    QBroadening  'OmegaDependentGaussian'  0.02
+    SourceRDFs  'RDF'
+    WindowFunction  None
+  EndModule
+
+  Module  NeutronSQ  'H-H'
+    Frequency  1
+    Normalisation  None
+    Reference  mint  'data/SLS39546-H_H.mint01'
+    EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ'
+  EndModule
+
+  Module  NeutronSQ  'H-D3'
+    Frequency  1
+    Isotopologue  'Acetate Anion'  'D3'  1
+    Normalisation  None
+    Reference  mint  'data/SLS39548-H_D.mint01'
+    EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ'
+  EndModule
+
+  Module  NeutronSQ  'H3D8-H'
+    Frequency  1
+    Isotopologue  '1-ethyl-3-methylimidazolium'  'H3D8'  1
+    Normalisation  None
+    Reference  mint  'data/SLS39549-H3D8_H.mint01'
+    EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ'
+  EndModule
+
+  Module  NeutronSQ  'H3D8-D3'
+    Frequency  1
+    Isotopologue  '1-ethyl-3-methylimidazolium'  'H3D8'  1
+    Isotopologue  'Acetate Anion'  'D3'  1
+    Normalisation  None
+    Reference  mint  'data/SLS39550-H3D8_D.mint01'
+    EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ'
+  EndModule
+
+  Module  NeutronSQ  'H-50'
+    Frequency  1
+    Isotopologue  '1-ethyl-3-methylimidazolium'  'Natural'  1
+    Isotopologue  'Acetate Anion'  'Natural'  1
+    Isotopologue  'Acetate Anion'  'D3'  1
+    Normalisation  None
+    Reference  mint  'data/SLS39567-H_50.mint01'
+    EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ'
+  EndModule
+
+  Module  NeutronSQ  '50-50'
+    Frequency  1
+    Isotopologue  '1-ethyl-3-methylimidazolium'  'Natural'  1
+    Isotopologue  '1-ethyl-3-methylimidazolium'  'H3D8'  1
+    Isotopologue  'Acetate Anion'  'Natural'  1
+    Isotopologue  'Acetate Anion'  'D3'  1
+    Normalisation  None
+    Reference  mint  'data/SLS39568-50_50.mint01'
+    EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ'
+  EndModule
+EndLayer
+
+Layer  'Refine (EPSR)'
+  Frequency  5
+
+  Module  EPSR  'EPSR'
+    Frequency  1
+    EReq  17
+    ExpansionFunction  Poisson
+    InpAFile  ''
+    PCofFile  ''
+    Target  'H-H'
+    Target  'H-D3'
+    Target  'H3D8-H'
+    Target  'H3D8-D3'
+    Target  'H-50'
+    Target  '50-50'
+  EndModule
+EndLayer
+
+Layer  'Analyse RDF/CN'
+  Frequency  1
+
+  Module  CalculateRDF  'RDF-CA'
+    Frequency  1
+    Configuration  'Bulk'
+    DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
+    SiteA  '1-ethyl-3-methylimidazolium'  'RingNN'
+    SiteB  'Acetate Anion'  'COM'
+  EndModule
+
+  Module  CalculateCN  'CN-CA'
+    Frequency  1
+    RangeA  0.000000e+00  7.000000e+00
+    RangeB  3.000000e+00  6.000000e+00
+    RangeC  6.000000e+00  9.000000e+00
+    SourceRDF  'RDF-CA'
+  EndModule
+
+  Module  CalculateRDF  'RDF-CC'
+    Frequency  1
+    Configuration  'Bulk'
+    DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
+    SiteA  '1-ethyl-3-methylimidazolium'  'RingNN'
+    SiteB  '1-ethyl-3-methylimidazolium'  'RingNN'
+  EndModule
+
+  Module  CalculateRDF  'RDF-AA'
+    Frequency  1
+    Configuration  'Bulk'
+    DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
+    SiteA  'Acetate Anion'  'COM'
+    SiteB  'Acetate Anion'  'COM'
+  EndModule
+EndLayer
