@@ -4,3 +4,5 @@ resources/*
 static/img/*.svg
 static/img/*.png
 hugo
+package-lock.json
+node_modules/*

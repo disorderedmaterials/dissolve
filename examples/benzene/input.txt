@@ -1,17 +1,17 @@
-# Input file written by Dissolve v0.8.0 at 12:10:16 on 10-03-2021.
+# Input file written by Dissolve v1.0.0 at 14:22:33 on 10-06-2022.
 
 #==============================================================================#
 #                                 Master Terms                                 #
 #==============================================================================#
 
 Master
-  Bond  'CA-CA'  Harmonic  3924.590     1.400
-  Bond  'CA-HA'  Harmonic  3071.060     1.080
-  Angle  'CA-CA-CA'  Harmonic   527.184   120.000
-  Angle  'CA-CA-HA'  Harmonic   292.880   120.000
-  Torsion  'CA-CA-CA-CA'  Cos3     0.000    30.334     0.000
-  Torsion  'CA-CA-CA-HA'  Cos3     0.000    30.334     0.000
-  Torsion  'HA-CA-CA-HA'  Cos3     0.000    30.334     0.000
+  Bond  'CA-CA'  Harmonic  k=3924.59 eq=1.4
+  Bond  'CA-HA'  Harmonic  k=3071.06 eq=1.08
+  Angle  'CA-CA-CA'  Harmonic  k=527.184 eq=120
+  Angle  'CA-CA-HA'  Harmonic  k=292.88 eq=120
+  Torsion  'CA-CA-CA-CA'  Cos3  k1=0 k2=30.334 k3=0
+  Torsion  'CA-CA-CA-HA'  Cos3  k1=0 k2=30.334 k3=0
+  Torsion  'HA-CA-CA-HA'  Cos3  k1=0 k2=30.334 k3=0
 EndMaster
 
 #==============================================================================#
@@ -20,6 +20,7 @@ EndMaster
 
 Species 'Benzene'
   # Atoms
+  NAtoms  12
   Atom    1  C    -1.399000e+00  1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
   Atom    2  C    -5.610000e-01  1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
   Atom    3  C    8.390000e-01  1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
@@ -34,6 +35,7 @@ Species 'Benzene'
   Atom   12  H    -9.900000e-01  2.284000e+00  0.000000e+00  'HA'  1.150000e-01
 
   # Bonds
+  NBonds  12
   Bond    1    2  @CA-CA
   Bond    2    3  @CA-CA
   Bond    3    4  @CA-CA
@@ -48,6 +50,7 @@ Species 'Benzene'
   Bond    2   12  @CA-HA
 
   # Angles
+  NAngles  18
   Angle    1    2    3  @CA-CA-CA
   Angle    2    3    4  @CA-CA-CA
   Angle    3    4    5  @CA-CA-CA
@@ -68,6 +71,7 @@ Species 'Benzene'
   Angle   12    2    3  @CA-CA-HA
 
   # Torsions
+  NTorsions  24
   Torsion    1    2    3    4  @CA-CA-CA-CA
   Torsion    2    3    4    5  @CA-CA-CA-CA
   Torsion    3    4    5    6  @CA-CA-CA-CA
@@ -110,11 +114,10 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  CA  C  -1.150000e-01  LJGeometric  2.928800e-01  3.550000e+00
-  Parameters  HA  H  1.150000e-01  LJGeometric  1.255200e-01  2.420000e+00
-  Range  12.0
+  Parameters  CA  C  -1.150000e-01  LJGeometric  epsilon=0.29288 sigma=3.55
+  Parameters  HA  H  1.150000e-01  LJGeometric  epsilon=0.12552 sigma=2.42
+  Range  12
   Delta  0.005
-  IncludeCoulomb  True
   CoulombTruncation  Shifted
   ShortRangeTruncation  Shifted
 EndPairPotentials
@@ -127,30 +130,34 @@ Configuration  'Bulk'
 
   # Modules
   Generator
-    Parameters
-      Parameter  rho  8.760000e-01
+    Parameters  'Parameters01'
+      Parameter  rho  0.876
     EndParameters
-    Box
-      Lengths  1.000000e+00  1.000000e+00  1.000000e+00
-      Angles  9.000000e+01  9.000000e+01  9.000000e+01
+    Box  'Box01'
+      Angles  90  90  90
+      Lengths  1  1  1
       NonPeriodic  False
     EndBox
     CoordinateSets  'Benzene_Sets'
+      DeltaT  '0.0005'
+      NSets  '100'
+      NSteps  '2000'
+      Source  MD
       Species  'Benzene'
     EndCoordinateSets
-    Add
-      CoordinateSets  'Benzene_Sets'
-      Population  '200'
+    Add  'Add01'
       BoxAction  AddVolume
+      CoordinateSets  'Benzene_Sets'
       Density  'rho'  g/cm3
-      Rotate  True
+      Population  '200'
       Positioning  Random
+      Rotate  True
     EndAdd
   EndGenerator
 
-  Temperature  300.0
+  Temperature  300
 
-  SizeFactor  1.0
+  SizeFactor  1
 EndConfiguration
 
 #==============================================================================#
@@ -163,8 +170,8 @@ Layer  'Evolve (Standard)'
   Module  MolShake  'MolShake01'
     Frequency  1
     Configuration  'Bulk'
-    RotationStepSize   6.77636e+00
-    TranslationStepSize   1.36346e-01
+    RotationStepSize  6.77636
+    TranslationStepSize  0.136346
   EndModule
 
   Module  MD  'MD01'
@@ -185,13 +192,15 @@ Layer  'Analysis'
 
   Module  CalculateAxisAngle  'CalculateAxisAngle01'
     Frequency  1
-    Configuration  'Bulk'
     AngleRange  0.000000e+00  9.000000e+01  1.000000e+01
-    SiteA  'Benzene'  'COG'
     AxisA  ZAxis
-    SiteB  'Benzene'  'COG'
     AxisB  ZAxis
+    Configuration  'Bulk'
+    DistanceRange  0.000000e+00  1.000000e+01  1.000000e-01
     ExcludeSameMolecule  True
+    SiteA  'Benzene'  'COG'
+    SiteB  'Benzene'  'COG'
+    Symmetric  True
   EndModule
 EndLayer
 
@@ -200,38 +209,52 @@ Layer  'RDF / Neutron S(Q)'
 
   Module  RDF  'RDF01'
     Frequency  1
+    AveragingScheme  Linear
     Configurations  'Bulk'
-    IntraBroadening    Gaussian  1.800000e-01
+    IntraBroadening  'Gaussian'  0.18
+    Method  Auto
   EndModule
 
   Module  SQ  'SQ01'
     Frequency  1
-    SourceRDFs  'RDF01'
+    AveragingScheme  Linear
+    BraggQBroadening  'GaussianC2'  0  0.02
     QBroadening  'OmegaDependentGaussian'  0.02
+    SourceRDFs  'RDF01'
+    WindowFunction  None
   EndModule
 
   Module  NeutronSQ  'C6H6'
     Frequency  1
-    SourceSQs  'SQ01'
+    Normalisation  None
     Reference  mint  'data/C6H6.mint01'
     EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ01'
   EndModule
 
   Module  NeutronSQ  'C6D6'
     Frequency  1
-    SourceSQs  'SQ01'
-    Isotopologue  'Benzene'  'Deuterated'  1.0
+    Isotopologue  'Benzene'  'Deuterated'  1
+    Normalisation  None
     Reference  mint  'data/C6D6.mint01'
     EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ01'
   EndModule
 
   Module  NeutronSQ  '5050'
     Frequency  1
-    SourceSQs  'SQ01'
-    Isotopologue  'Benzene'  'Natural'  1.0
-    Isotopologue  'Benzene'  'Deuterated'  1.0
+    Isotopologue  'Benzene'  'Natural'  1
+    Isotopologue  'Benzene'  'Deuterated'  1
+    Normalisation  None
     Reference  mint  'data/5050.mint01'
     EndReference
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ01'
   EndModule
 EndLayer
 
@@ -241,7 +264,10 @@ Layer  'Refine (EPSR)'
 
   Module  EPSR  'EPSR01'
     Frequency  1
-    EReq   2.00000e+01
+    EReq  20
+    ExpansionFunction  Poisson
+    InpAFile  ''
+    PCofFile  ''
     Target  'C6H6'
     Target  'C6D6'
     Target  '5050'

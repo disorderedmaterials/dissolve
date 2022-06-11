@@ -26,8 +26,8 @@ Now for the reference data. Dissolve can perform some rudimentary operations on 
 
 {{< action type="mouse" >}}Click on the {{< gui-module "NeutronSQ" >}} module to display its options{{< /action >}}
 {{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< step text="For the **Reference** keyword select the file `SiO2_NIMROD.mint01` and set the format of the data to `mint`" />}}
-{{< step >}}Open the settings for the **Reference** datafile by clicking the {{< gui-button icon="general_options" text="Options" >}} button near to the file type selector, and in the **Manipulations** tab set _XMin_ to `0.1`.{{< /step >}}
+{{< action type="edit" text="For the **Reference** keyword select the file `SiO2_NIMROD.mint01` and set the format of the data to `mint`" />}}
+{{< step >}}Open the settings for the **Reference** datafile by clicking the {{< gui-button icon="general_options" text="Options" >}} button near to the file type selector, and in the **Manipulations** tab set _XMin_ to `0.1`{{< /step >}}
 
 
 * * *

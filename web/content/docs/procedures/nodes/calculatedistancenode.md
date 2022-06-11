@@ -14,7 +14,7 @@ description: Calculate distance between two sites
 
 ## Overview
 
-The `CalculateDistance` node calculates the distance, in Angstroms, between two provided sites $i$ and $j$, which are referenced from [`Select`]({{< ref "selectnode" >}}) nodes.
+The `CalculateDistance` node calculates the distance, in Angstroms, between two provided sites $i$ and $j$, which are referenced from {{< gui-node "Select" >}} nodes.
 
 ## Description
 
@@ -28,5 +28,5 @@ The `CalculateDistance` node calculates the distance, in Angstroms, between two 
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|`name`|--|Site that represents $i$ in the distance $i$-$j$, taken from the `name`d [`Select`]({{< ref "selectnode" >}}) node.|
-|`J`|`name`|--|Site that represents $j$ in the distance $i$-$j$, taken from the `name`d [`Select`]({{< ref "selectnode" >}}) node.|
+|`I`|`name`|--|Site that represents $i$ in the distance $i$-$j$, taken from the `name`d {{< gui-node "Select" >}} node.|
+|`J`|`name`|--|Site that represents $j$ in the distance $i$-$j$, taken from the `name`d {{< gui-node "Select" >}} node.|

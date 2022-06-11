@@ -51,7 +51,6 @@ Since some of the experimental data was measured on deuterated benzene, we'll ne
 {{< step text="Expand the entries for the 'NewIsotopologue' by clicking the [+] next to its name, or by clicking **Expand All**" />}}
 {{< step text="Change the isotope for the HA atom type from `Natural (bc = -3.739 fm)` to `2 (bc = 6.671)` by clicking on the isotopologue entry and chosing from the drop-down menu" />}}
 {{< step text="Change the name of the isotopologue to 'C6D6' (click on the name to do so)" />}}
-{{< step text="" />}}
 
 
 The other isotopologues we need are either generated automatically by Dissolve (i.e. the natural isotopologue for C<sub>6</sub>H<sub>6</sub>) or are created by mixing existing isotopologues (as will be the case for the 50:50 mix).

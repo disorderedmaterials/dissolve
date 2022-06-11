@@ -19,12 +19,12 @@ Note that the ordering of these three modules in the layer is important - calcul
 
 We will now need to set a few parameters in the {{< gui-module "NeutronSQ" >}} module, in particular informing it of the isotopic composition of our system and loading in reference data.
 
-{{< warn text="A `NeutronSQ` module calculates S(Q) and F(Q) for a single isotopic composition. Where there are multiple isotopic samples, you need to add a `NeutronSQ` for each distinct isotopic composition." >}}
+{{< warn >}}A {{< gui-module "NeutronSQ" >}} module calculates S(Q) and F(Q) for a single isotopic composition. Where there are multiple isotopic samples, you need to add a {{< gui-module "NeutronSQ" >}}for each distinct isotopic composition. {{< /warn >}}
 
 
 ### Set up Isotopes
 
-The {{< gui-module "NeutronSQ" >}} module will use isotopic natural abundances to calculate the neutron weights for all species unless we tell it otherwise. We'll first define the correct isotopologue for our argon species, and then tell {{< gui-module "NeutronSQ" >}} to use it. The experimental measurement was made using Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occuring mix (1.91 fm).
+The {{< gui-module "NeutronSQ" >}} module will use isotopic natural abundances to calculate the neutron weights for all species unless we tell it otherwise. We'll first define the correct isotopologue for our argon species, and then tell {{< gui-module "NeutronSQ" >}} to use it. The experimental measurement was made using Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occurring mix (1.91 fm).
 
 {{< action type="tabs" >}}Go to the {{< gui-tab type="species"  text="Ar" >}} species tab, **Isotopologues** section{{< /action >}}
 {{< action type="mouse">}}Click {{< gui-button text="Add" >}} to create a new isotopologue definition assigning the default (natural) isotope to each atom type present in the species{{< /action >}}
@@ -33,7 +33,7 @@ The {{< gui-module "NeutronSQ" >}} module will use isotopic natural abundances t
 
 Now we'll go to our calculation layer and set the isotopologue for our {{< gui-module "NeutronSQ" >}} module:
 
-{{< action type="tabs" >}}Go to the {{< gui-tab type="layer"  text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
 {{< action type="groups" >}}Select the {{< gui-module "NeutronSQ" >}} module and open the **Control** settings group{{< /action >}}
 {{< step >}}The **Isotopologues** keyword currently shows that all species will "Default to Natural" isotopologues{{< /step >}}
 {{< action type="mouse" >}}Click the button for the **Isotopologue** keyword to open its full options{{< /action >}}
@@ -52,8 +52,8 @@ The {{< gui-module "NeutronSQ" >}} module itself looks after any related experim
 
 The data, along with its Fourier transform, can now be seen in the module's {{< gui-button text="Output" icon="general_output" >}} page. You may notice that the data have been normalised to the average squared value of the atomic scattering and oscillate around 1.0 - we will need to tell Dissolve to convert the data back to absolute units and make it oscillate around zero.
 
-{{< action type="groups" >}}Select the {{< gui-module "NeutronSQ" >}} module and open the **Reference Data** settings group (go back to the {{< gui-button text="Options" type="options" >}} page if you need to){{< /action >}}
-{{< action type="edit" text="Set the **ReferenceNormalisation** style to `AverageSquared`" />}}
+{{< action type="groups" >}}Select the {{< gui-module "NeutronSQ" >}} module and open the **Reference Data** settings group (go back to the {{< gui-button text="Options" icon="general_options" >}} page if you need to){{< /action >}}
+{{< action type="edit" text="Set the **ReferenceNormalisation** style to `SquareOfAverage`" />}}
 {{< step text="This tells Dissolve that the data have been normalised, and allows Dissolve to remove that normalisation in order to get the data in the correct units" />}}
 {{< action type="settings" text="Open the options for the file import at the extreme right of the **ReferenceData** keyword" />}}
 {{< action type="groups" text="Open the **Manipulations** group" />}}

@@ -6,14 +6,14 @@ type: docs
 Time to create a suitable liquid configuration for our simulation using the predefined "simple random mix" generator:
 
 {{< action type="menu" text="Configuration &#8680; Create &#8680; Simple random mix" />}}
-{{< step text="Choose the benzene species and press **Select**" />}}
+{{< step >}}Choose the benzene species and press {{< gui-button text="Select" >}}{{< /step >}}
 {{< action type="edit" text="Double-click on the configuration tab's title and change its name to `Liquid`" />}}
 
 In the interests of speed, we'll use the default number of molecules (100) for the simulation, but we will need to set the correct density. We'll use chemical units of g/cm<sup>3</sup> to specify it:
 
 {{< action type="mouse">}} Select the {{< gui-node "Parameters" >}} node in the generator{{< /action >}}
 {{< action type="edit">}}Set the value of the \"rho\" variable to `0.876`. Note that this is \"just a number\" - units are given in the {{< gui-node "Add" >}} node when we reference this value{{< /action >}}
-{{< action type="mouse">}}Select the  the {{< gui-node "Add" >}} node in the generator{{< /action >}}
+{{< action type="mouse">}}Select the {{< gui-node "Add" >}} node in the generator{{< /action >}}
 {{< action type="edit" text="The **Density** keyword will already reference the parameter \"rho\", but the units will need to be changed to `g/cm3`" />}}
 {{< action type="mouse">}}Click {{< gui-button text="Generate" icon="general_repeat" >}} to recreate the configuration with our adjusted parameters{{< /action >}}
 
