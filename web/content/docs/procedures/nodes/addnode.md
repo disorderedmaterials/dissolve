@@ -36,6 +36,7 @@ When resizing the box, the default is to scale equally in all directions A, B, a
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`BoxAction`|[`BoxActionStyle`]({{< ref "boxactionstyle" >}})|`AddVolume`|Action to take on the Box geometry / volume on addition of the species|
+|`CoordinateSets`|{{< gui-node "CoordinateSets" >}}|--|{{< required-label >}} Target coordinate set source to use when adding, unless a `Species` has been given. Note that the two options are mutually exclusive, and setting both will result in an error.|
 |`Density`|[`expr`]({{< ref "expressions" >}})<br/>[`DensityUnit`]({{< ref "densityunit" >}})|`0.1 atoms/A3`|Density at which to add the target species. Note that the use of this value differs according to the selected `BoxAction` (see above).|
 |`Population`|[`expr`]({{< ref "expressions" >}})|`0`|Population of the target species to add.|
 |`Positioning`|[`PositioningType`]({{< ref "positioningtype" >}})|`Random`|Positioning type for individual molecules.|
@@ -44,4 +45,4 @@ When resizing the box, the default is to scale equally in all directions A, B, a
 |`ScaleA`|`bool`|`true`|Whether to scale the A cell axis when changing the cell volume.|
 |`ScaleB`|`bool`|`true`|Whether to scale the B cell axis when changing the cell volume.|
 |`ScaleC`|`bool`|`true`|Whether to scale the C cell axis when changing the cell volume.|
-|`Species`|`name`|--|{{< required-label >}} Target species to add.|
+|`Species`|`name`|--|{{< required-label >}} Target species to add, unless a `CoordinateSets` has been given. Using the `Species` option will result in identical copies of the molecule being added to the box. Note that the two options are mutually exclusive, and setting both will result in an error.|
