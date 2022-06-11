@@ -138,9 +138,8 @@ class Dissolve : public Serialisable
     const std::vector<std::unique_ptr<PairPotential>> &pairPotentials() const;
     // Return nth PairPotential in list
     PairPotential *pairPotential(int n);
-    // Return whether specified PairPotential is defined
+    // Return specified PairPotential (if defined)
     PairPotential *pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
-    // Return whether specified PairPotential is defined
     PairPotential *pairPotential(std::string_view at1, std::string_view at2) const;
     // Return map for PairPotentials
     const PotentialMap &potentialMap() const;
