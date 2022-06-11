@@ -72,4 +72,6 @@ class ExponentialSpin : public QAbstractSpinBox
     void stepBy(int steps) override;
     // Return whether stepping is currently available
     QAbstractSpinBox::StepEnabled stepEnabled() const override;
+    // Size Hint
+    QSize sizeHint() const override;
 };
