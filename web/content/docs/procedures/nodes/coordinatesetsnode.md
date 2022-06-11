@@ -29,6 +29,7 @@ The coordinate set population is only generated once (the first time the node is
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`DeltaT`|`double`|`5.0e-4`|Timestep to use in "MD" generation method.|
+|`File`|[TrajectoryFileAndFormat]({{< ref "trajectoryformat" >}})|--|File and format specifying coordinates to read in if `Source` == "File".|
 |`Force`|`bool`|`false`|Whether the generation of coordinate sets should proceed every time the node is executed. Otherwise, the population is generated on the first call only.|
 |`NSets`|`int`|`100`|Number of sets to generate.|
 |`NSteps`|`int`|`2000`|Number of steps between capture of sets in MD generation method.|
