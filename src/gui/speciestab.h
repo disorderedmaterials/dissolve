@@ -46,6 +46,10 @@ class SpeciesTab : public QWidget, public MainTab
     SpeciesIsoModel isos_;
     SpeciesSiteModel sites_;
 
+    private:
+    // Update density label
+    void updateDensityLabel();
+
     public slots:
     // Update controls in tab
     void updateControls() override;
@@ -79,6 +83,13 @@ class SpeciesTab : public QWidget, public MainTab
     public:
     // Return displayed Species
     Species *species() const;
+
+    /*
+     * Widget Functions - Structure
+     */
+    private slots:
+    // Current Box
+    void on_DensityUnitsCombo_currentIndexChanged(int index);
 
     /*
      * Widget Functions - Geometry
