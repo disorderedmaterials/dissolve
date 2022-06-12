@@ -13,11 +13,11 @@ We'll now describe the interactions for your argon species by taking the terms f
 
 {{< action type="menu" text="Species &#8680; Add Forcefield Terms..." />}}
 
-{{< step >}}From the available forcefields choose `OPLSAA2005/NobleGases` and click {{< gui-button text="Next" >}}{{< /step >}}
+{{< step >}}From the available forcefields choose `OPLSAA2005/NobleGases` and click {{< gui-button text="Next" icon="general_arrowright" >}}{{< /step >}}
 
-{{< step >}}Here we choose how to assign atom types to the species - the default option of _Determine atom types for all atoms_ uses connectivity descriptions in the forcefield to try and automatically choose which type to use. Leave this option selected and click {{< gui-button text="Next" >}}{{< /step >}}  
+{{< step >}}Here we choose how to assign atom types to the species - the default option of _Determine atom types for all atoms_ uses connectivity descriptions in the forcefield to try and automatically choose which type to use. Leave this option selected and click {{< gui-button text="Next" icon="general_arrowright" >}}{{< /step >}}  
 
-{{< step >}}There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Finish" >}} to complete the wizard{{< /step >}}
+{{< step >}}There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Finish" icon="general_true" >}} to complete the wizard{{< /step >}}
 
 {{< tip text="For more complicated (molecular) species the wizard also handles how _intra_-molecular terms are generated. You also may have to deal with potential naming conflicts with existing terms in the main simulation, which the _Add Forcefield Terms_ wizard will help you resolve." >}}
 
