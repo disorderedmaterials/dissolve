@@ -18,7 +18,7 @@ Of course we need a forcefield to describe our ionic liquid, and we'll focus on 
 
 Now we have a full description of our cation - if you look on the **Forcefield** section on the species tab you can see that Dissolve has calculated the total charge on the molecule from both atom types and species atoms. Both of these should be `+1`.
 
-{{< tip text="You'll notice that there is a warning icon next to the total species atom charge, and an error symbol next to the total atom type charge. TODO" />}}
+{{< tip text="You'll notice that there are warning icons next to the total species atom and atom type charges. These are there only to indicate that the total charge is non-zero - we know that our species are ions, so we ignore these warnings." />}}
 
 ### OAc Anion
 

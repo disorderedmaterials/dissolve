@@ -10,7 +10,7 @@ Time to tell our Cu-BTC how to move! There are lots of forcefields out there for
 {{< step >}} From the available forcefields choose `Zhao2010` and click {{< gui-button text="Next" >}}{{< /step >}}
 {{< tip text="You can filter forcefields by keywords in name and description by using the filter box at the top-right of the forcefield selection controls." />}}
 {{< step >}} We will use the default _Determine atom types for all atoms_ option to add atom types for every atom in the species, so click {{< gui-button text="Next" >}}{{< /step >}}
-{{< step >}} There will be no conflicts with existing atom types as there are no atom types already defined, so click {{< gui-button text="Next" >}}{{< /step >}}
+{{< step >}} Here you'll see that there are some conflicts with atom types assigned during the CIF import - we will simply overwrite them with those from the forcefield, so click {{< gui-button text="Next" >}}{{< /step >}}
 {{< step >}} For the intramolecular terms we want to assign them and reduce to master terms (the default settings) so click {{< gui-button text="Next" >}} to proceed{{< /step >}}
 {{< step >}} There will be no conflicts with existing master terms, so click {{< gui-button text="Finish" >}} to exit the wizard {{< /step >}}
 
