@@ -27,6 +27,10 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     species_ = species;
 
+    // Icons for charge warnings
+    ui_.TotalAtomChargeIndicator->setWarning();
+    ui_.TotalAtomTypeChargeIndicator->setWarning();
+
     // Populate density units combo
     ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
