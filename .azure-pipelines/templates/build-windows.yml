@@ -3,8 +3,13 @@ parameters:
     default: ''
   - name: qtver
     default: 6.2.2
-  - name: ftrepo
+  - name: ft_repo
     default: https://gitlab.freedesktop.org/freetype/freetype.git
+  - name: ft_archive
+    default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
+  - name: ft_use_repo
+    default: false
+    type: boolean
   - name: ftglrepo
     default: https://github.com/frankheckenbach/ftgl.git
   - name: threading
@@ -24,12 +29,26 @@ steps:
   - powershell: |
       $ErrorActionPreference = 'Stop'
       cd $(Build.BinariesDirectory)
-      git clone ${{ parameters.ftrepo }} freetype-latest
+      wget ${{ parameters.ft_archive }} -OutFile freetype.tgz
+      tar -zxvf freetype.tgz
+      rm freetype.tgz
+      mv freetype-* freetype-latest
+    condition: eq('${{ parameters.ft_use_repo }}', false)
+    displayName: 'FreeType (Download - Archive)'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      cd $(Build.BinariesDirectory)
+      git clone ${{ parameters.ft_repo }} freetype-latest
+    condition: eq('${{ parameters.ft_use_repo }}', true)
+    displayName: 'FreeType (Download - Repo)'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      cd $(Build.BinariesDirectory)
       mkdir freetype-build
       cd freetype-build
       cmake -G "Visual Studio 17 2022" -A "x64" ../freetype-latest -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install
       cmake --build . --target install --config Release
-    displayName: 'FreeType (Build / Install)'
+    displayName: 'FreeType (Build)'
   - powershell: |
       $ErrorActionPreference = 'Stop'
       cd $(Build.BinariesDirectory)

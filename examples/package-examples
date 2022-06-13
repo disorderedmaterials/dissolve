@@ -42,40 +42,7 @@ FILES=()
 #                     Set File Targets                      #
 #-----------------------------------------------------------#
 
-#----------#
-# Examples #
-#----------#
-
-# -- Argon
-FILES+=(argon/input.txt) 
-FILES+=(argon/data/yarnell.sq)
-
-# -- Benzene
-FILES+=(benzene/input.txt)
-FILES+=(benzene/data/C6H6.mint01)
-FILES+=(benzene/data/C6D6.mint01)
-FILES+=(benzene/data/5050.mint01)
-
-# -- Silica (Bulk)
-FILES+=(silica_bulk/input.txt)
-FILES+=(silica_bulk/data/SiO2_NIMROD.mint01)
-
-# -- Water
-FILES+=(water/input.txt)
-FILES+=(water/data/SLS18498-H2O.mint01)
-FILES+=(water/data/SLS18500-HDO5050.mint01)
-FILES+=(water/data/SLS18502-D2O.mint01)
-
-#------------#
-# Other Data #
-#------------#
-
-# -- Species Data
-FILES+=(species/*.txt)
-
-# -- Example Coordinates
-FILES+=(xyz/*.xyz)
-
+FILES=( $(find ./ -mindepth 2 -type f -not -regex '.*/_.*') )
 
 #-----------------------------------------------------------#
 #                    Assemble Files                         #

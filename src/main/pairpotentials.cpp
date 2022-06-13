@@ -62,30 +62,22 @@ const std::vector<std::unique_ptr<PairPotential>> &Dissolve::pairPotentials() co
 // Return nth PairPotential in list
 PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n].get(); }
 
-// Return whether specified PairPotential is defined
+// Return specified PairPotential (if defined)
 PairPotential *Dissolve::pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
 {
-    for (auto &pot : pairPotentials_)
-    {
-        if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2))
-            return pot.get();
-        if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1))
-            return pot.get();
-    }
-    return nullptr;
+    auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(), [at1, at2](const auto &pp) {
+        return (pp->atomTypeI() == at1 && pp->atomTypeJ() == at2) || (pp->atomTypeI() == at2 && pp->atomTypeJ() == at1);
+    });
+    return it != pairPotentials_.end() ? it->get() : nullptr;
 }
 
-// Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at2) const
 {
-    for (auto &pot : pairPotentials_)
-    {
-        if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2))
-            return pot.get();
-        if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1))
-            return pot.get();
-    }
-    return nullptr;
+    auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(), [at1, at2](const auto &pp) {
+        return (DissolveSys::sameString(pp->atomTypeNameI(), at1) && DissolveSys::sameString(pp->atomTypeNameJ(), at2)) ||
+               (DissolveSys::sameString(pp->atomTypeNameI(), at2) && DissolveSys::sameString(pp->atomTypeNameJ(), at1));
+    });
+    return it != pairPotentials_.end() ? it->get() : nullptr;
 }
 
 // Return map for PairPotentials

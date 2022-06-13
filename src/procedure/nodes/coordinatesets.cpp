@@ -9,6 +9,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "keywords/bool.h"
+#include "keywords/fileandformat.h"
 #include "keywords/node.h"
 #include "keywords/nodevalue.h"
 #include "keywords/species.h"
@@ -19,12 +20,14 @@ CoordinateSetsProcedureNode::CoordinateSetsProcedureNode(const Species *sp)
 {
     // Set up keywords
     keywords_.add<SpeciesKeyword>("Control", "Species", "Target species", species_);
+    keywords_.add<EnumOptionsKeyword<CoordinateSetsProcedureNode::CoordinateSetSource>>(
+        "Control", "Source", "Source of coordinate sets on addition of the species", source_, coordinateSetSources());
+    keywords_.add<FileAndFormatKeyword>("Control", "File", "File / format for coordinate sets to read in", fileSource_,
+                                        "EndFile");
     keywords_.add<NodeValueKeyword>("Control", "NSets", "Number of coordinate sets to generate", nSets_, this);
     keywords_.add<NodeValueKeyword>("Control", "NSteps", "Number of steps to run (between storing coordinate sets)", nSteps_,
                                     this);
     keywords_.add<NodeValueKeyword>("Control", "DeltaT", "Timestep in ps", deltaT_, this);
-    keywords_.add<EnumOptionsKeyword<CoordinateSetsProcedureNode::CoordinateSetSource>>(
-        "Control", "Source", "Source of coordinate sets on addition of the species", source_, coordinateSetSources());
     keywords_.add<BoolKeyword>("Control", "Force", "Force generation of coordinates, even if existing sets exist", force_);
 }
 
