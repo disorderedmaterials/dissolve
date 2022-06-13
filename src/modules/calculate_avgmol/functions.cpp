@@ -25,7 +25,7 @@ void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
             Messenger::print("Using existing coordinate arrays for average species.\n");
         else
         {
-            Messenger::printVerbose("Initialising arrays for average molecule: size = {}\n", requiredSize);
+            Messenger::print("Initialising arrays for average molecule: size = {}\n", requiredSize);
             x.initialise(requiredSize);
             y.initialise(requiredSize);
             z.initialise(requiredSize);

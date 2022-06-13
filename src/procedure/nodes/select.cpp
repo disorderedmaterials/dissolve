@@ -137,8 +137,8 @@ void SelectProcedureNode::setInclusiveDistanceRange(Range range) { inclusiveDist
 EnumOptions<SelectProcedureNode::SelectionPopulation> SelectProcedureNode::selectionPopulations()
 {
     return EnumOptions<SelectProcedureNode::SelectionPopulation>(
-        "AveragingScheme", {{SelectProcedureNode::SelectionPopulation::Average, "Average"},
-                            {SelectProcedureNode::SelectionPopulation::Available, "Available"}});
+        "SelectionPopulation", {{SelectProcedureNode::SelectionPopulation::Available, "Available"},
+                                {SelectProcedureNode::SelectionPopulation::Average, "Average"}});
 }
 
 // Return the number of available sites in the current stack, if any

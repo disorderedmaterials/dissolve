@@ -138,8 +138,13 @@ bool Dissolve::prepare()
         if (neutralConfigsWithPPCharges && atomTypesHaveValidAtomicCharges)
             Messenger::print("[MANUAL] Pair potentials will include Coulomb terms - charges will be taken from atom types.\n");
         else if (!neutralConfigsWithPPCharges)
-            return Messenger::error("Atom type charges in pair potentials requested, but at least one configuration is not "
-                                    "neutral with this approach.\n");
+        {
+            Messenger::error("Atom type charges in pair potentials requested, but at least one configuration is not "
+                             "neutral with this approach.\n");
+            for (const auto &cfg : configurations())
+                Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(true));
+            return false;
+        }
         else if (forceChargeSource_)
             Messenger::warn(
                 "Atom type charges in pair potentials requested, but some atom types have zero charge which is suspicious.\n");
@@ -156,8 +161,13 @@ bool Dissolve::prepare()
             Messenger::print(
                 "[MANUAL] Pair potentials will not include Coulomb terms - charges will be taken from species atoms.\n");
         else if (!neutralConfigsWithSpeciesCharges)
-            return Messenger::error("Ths use of species atom charges was requested, but at least one configuration is not "
-                                    "neutral with this approach.\n");
+        {
+            Messenger::error("Ths use of species atom charges was requested, but at least one configuration is not "
+                             "neutral with this approach.\n");
+            for (const auto &cfg : configurations())
+                Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(false));
+            return false;
+        }
         else if (forceChargeSource_)
             Messenger::warn("The use of species atom charges was requested, but some have zero charge which is suspicious.\n");
         else
