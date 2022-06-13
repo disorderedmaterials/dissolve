@@ -76,5 +76,5 @@ sed -e "/^weight:/d" -e "/^type:/d" -e "/^---$/d" -e "s/title:\(.*\)/{{< blocks\
 for step in "${STEPS[@]}"
 do
   echo "Filtering ${step}..."
-  sed -e "/^weight:/d" -e "/^type:/d" -e "/^---$/d" -e "s/title:\(.*\)/<hr\/>\n\n## \1\n/g" -e "/{{< button /d" ${step} >> single.md
+  sed -e "/^weight:/d" -e "/^type:/d" -e "/^---$/d" -e "s/title:\(.*\)/\n\n## \1\n/g" -e "/{{< button /d" ${step} >> single.md
 done

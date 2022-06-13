@@ -35,7 +35,7 @@ Finally, before we move on, we will have to reduce our pair potential range from
 {{< step text="Reduce the pair potential **Range** from 15 to 12 &#8491;" />}}
 
 
-{{< tip text="For a cubic box, you can't have a cutoff value greater than half the box length, as this means that a given atom will 'see' other atoms twice because of the periodic boundary conditions." >}}
+{{< tip text="For a cubic box, you can't have a cutoff value greater than half the box length, as this means that a given atom will 'see' other atoms twice because of the periodic boundary conditions." />}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step1/">}}

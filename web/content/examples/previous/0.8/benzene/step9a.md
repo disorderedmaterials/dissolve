@@ -32,7 +32,7 @@ Now we must load in our restart point containing the reference data, which we ca
 {{< step text=" A suffix to apply to the data will be suggested based on the filename, in this case 'reference', which is fine, so click _OK_" />}}
 {{< step text="Click _close_ to exit the _Data Manager_ dialog" />}}
 
-{{< tip text="Once a reference point has been added through the _Data Manager_ the filename and location are stored in the GUI state file, and the data will be reloaded the next time the state file gets read in. You can remove reference points from the _Data Manager_ if you no longer want them to be loaded in to the GUI the next time the input file is opened." >}}
+{{< tip text="Once a reference point has been added through the _Data Manager_ the filename and location are stored in the GUI state file, and the data will be reloaded the next time the state file gets read in. You can remove reference points from the _Data Manager_ if you no longer want them to be loaded in to the GUI the next time the input file is opened." />}}
 
 
 Our reference data is now available, so let's add the centre-of-geometry RDF from before we refined the simulation on to the graph:

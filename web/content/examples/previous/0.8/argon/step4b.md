@@ -18,7 +18,7 @@ The new layer contains the following modules:
 
 This time we will need to set a few parameters in the {{< gui-module "NeutronSQ" >}} module, in particular informing it of the isotopic composition of our system and loading in reference data.
 
-{{< warn text="A `NeutronSQ` module calculates S(Q) and F(Q) for a single isotopic composition. Where there are multiple isotopic samples, you need to add a `NeutronSQ` for each distinct isotopic composition." >}}
+{{< warn text="A `NeutronSQ` module calculates S(Q) and F(Q) for a single isotopic composition. Where there are multiple isotopic samples, you need to add a `NeutronSQ` for each distinct isotopic composition." />}}
 
 
 ### Set up Isotopes
@@ -39,7 +39,7 @@ Now we'll go to our calculation layer and set the isotopologue for our [`Neutron
 {{< step text="Press the **Auto** button to populate the list with the default isotopic selection for each species" />}}
 {{< step text="Change the isotopologue for the argon species from `Natural` to `Ar36`" />}}
 
-{{< tip text="The 'Natural' isotopologue for each species is defined internally by Dissolve, and is always available. It does not appear in the list of defined isotopologues on the species tab." >}}
+{{< tip text="The 'Natural' isotopologue for each species is defined internally by Dissolve, and is always available. It does not appear in the list of defined isotopologues on the species tab." />}}
 
 ### Import Reference Data
 

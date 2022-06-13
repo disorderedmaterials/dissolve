@@ -40,7 +40,7 @@ Now we'll go to our calculation layer and set the isotopologue for our {{< gui-m
 {{< step >}}Press the {{< gui-button text="Species" type="add" >}} button to populate the list with the default isotopic selection for each species{{< /step >}}
 {{< step text="Change the isotopologue for the argon species from `Natural` to `Ar36` (assuming that you changed the name earlier!)"/>}}
 
-{{< tip text="The 'Natural' isotopologue for each species is defined internally by Dissolve, and is always available. It does not appear in the list of defined isotopologues on the species tab." >}}
+{{< tip text="The 'Natural' isotopologue for each species is defined internally by Dissolve, and is always available. It does not appear in the list of defined isotopologues on the species tab." />}}
 
 ### Import Reference Data
 
