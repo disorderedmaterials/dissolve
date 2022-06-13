@@ -7,8 +7,8 @@ weight: 1
 Our first task is to import the CIF file - Dissolve has a wizard to help you do this, and which also allows some tidying of the imported coordinates, replication of the unit cell to create a supercell etc.
 
 {{< action type="menu" text="Species &#8680; Import &#8680; From CIF..." />}}
-{{< action type="mouse" >}}Select the relevant CIF file (7108574.cif) and then click {{< gui-button text="Next" >}}{{< /action >}}
-{{< step >}}Dissolve will parse the CIF and display some basic information from it such as the authors (Peikert, Hoffmann, and Froba), publication reference, and space group (Fm-3m). Click {{< gui-button text="Next" >}} when you're ready{{< /step >}}
+{{< action type="mouse" >}}Select the relevant CIF file (7108574.cif) and then click {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
+{{< step >}}Dissolve will parse the CIF and display some basic information from it such as the authors (Peikert, Hoffmann, and Froba), publication reference, and space group (Fm-3m). Click {{< gui-button text="Next" icon="general_arrowright" >}} when you're ready{{< /step >}}
 
 {{< tip text="If the space group can't be detected from the file, or Dissolve isn't sure which one to use, the wizard will show an additional page asking for clarification." />}}
 
@@ -26,7 +26,7 @@ Now, if you look closely at the crystal structure you'll see "extra" oxygen atom
 
 These are in fact from coordinated water molecules present when the crystal structure was determined - the water hydrogen atoms are not present in the CIF data. We will remove these oxygen atoms since we want a perfectly "dry" unit cell.
 
-{{< action type="mouse" >}}Click {{< gui-button text="Next" >}} in the wizard to move to the _Clean Structure_ page{{< /action >}}
+{{< action type="mouse" >}}Click {{< gui-button text="Next" icon="general_arrowright" >}} in the wizard to move to the _Clean Structure_ page{{< /action >}}
 
 The _Clean Structure_ page has several options for cleaning up various aspects of the structure we currently have, for example removing free atoms/ions. We want to use the option to remove water molecules, which will also remove terminal oxygen atoms based on the assumption that hydrogen positions were not available in the CIF. So:
 
@@ -34,9 +34,9 @@ The _Clean Structure_ page has several options for cleaning up various aspects o
 
 You should see those terminal oxygen atoms disappear from the structure, leaving us with a "pure" Cu-BTC framework. There are a couple of pages left in the wizard which allow us to create a supercell from the unit cell,
 
-{{< action type="mouse" >}}Click {{< gui-button text="Next" >}} in the wizard to move to the _Create Supercell_ page. For production simulations you will probably want to work on something bigger than the unit cell, but here we'll keep things limited in size{{< /action >}}
-{{< action type="mouse" >}}Click {{< gui-button text="Next" >}} to move to the final page of the wizard, the _Species Partitioning_ page. We have a couple of options here of what to actually generate in terms of the species. The default option _Periodic Framework_ creates a species encompassing the entire periodic (super) cell, which is what we want{{< /action >}}
-{{< action type="mouse" >}}Click {{< gui-button text="Finish" >}} to complete the wizard and generate the Cu-BTC species{{< /action >}}
+{{< action type="mouse" >}}Click {{< gui-button text="Next" icon="general_arrowright" >}} in the wizard to move to the _Create Supercell_ page. For production simulations you will probably want to work on something bigger than the unit cell, but here we'll keep things limited in size{{< /action >}}
+{{< action type="mouse" >}}Click {{< gui-button text="Next" icon="general_arrowright" >}} to move to the final page of the wizard, the _Species Partitioning_ page. We have a couple of options here of what to actually generate in terms of the species. The default option _Periodic Framework_ creates a species encompassing the entire periodic (super) cell, which is what we want{{< /action >}}
+{{< action type="mouse" >}}Click {{< gui-button text="Finish" icon="general_true" >}} to complete the wizard and generate the Cu-BTC species{{< /action >}}
 
 Our new species not only contains the atoms of the framework, but also the unit cell (or supercell) definition - later on we can use this as our configuration's box rather than defining it ourselves.
 

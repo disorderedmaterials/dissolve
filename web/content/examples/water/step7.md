@@ -59,7 +59,7 @@ Note that the estimated g(r) from the combination of the experimental and simula
 
 Neutron-weighted total G(r) from Fourier transform of the reference F(Q) (solid line) and the Fourier transform of the simulated F(Q) (dashed line). As mentioned earlier, the reason for displaying the latter rather than the directly-calculated G(r) is to provide for a consistent comparison between simulation and experiment given the necessity of performing Fourier transforms (truncation errors are worse in _Q_-space data, so transforming to _Q_ to _r_ demands more judicious use of window functions in the transform).
 
-{{< cimage src="../epsrmodule-gr.png" caption="Total radial distribution functions from Fourier transform of reference and simulated F(Q) data" >}}
+{{< cimage src="../epsrmodule-totalgr.png" caption="Total radial distribution functions from Fourier transform of reference and simulated F(Q) data" >}}
 
 ### 6. Potentials
 

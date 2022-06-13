@@ -20,10 +20,9 @@ We now need to set a few parameters in the generator in order to get the correct
 {{< action type="mouse" >}}Click {{< gui-button text="Generate" >}} to recreate the configuration with our adjusted parameters {{< /action >}}
 {{< step text="Dissolve will ask you at this point if you're sure you want to discard the current configuration - you can safely say 'Yes' here as we haven't started to run the simulation yet" />}}
 
+One thousand water molecules should have a cubic box size of just over 31 &#8491; side length. You will see in the {{< gui-node "Add" >}} node that its **Species** option is not set to anything, which seems counter-intuitive. Specifying a species here instructs the {{< gui-node "Add" >}} node that $N$ identical copies of the species should be added to the box. In most cases it is preferable to introduce some variety to the geometry of the molecules, and so the {{< gui-node "Add" >}} node can instead reference a {{< gui-node "CoordinateSets" >}} node as the source, and which contains sets of coordinates representing randomised, evolved, or read in (from a file) coordinates for the species.
 
-One thousand water molecules should have a cubic box size of just over 31 Angstroms side length.
-
-Finally, we'll tweak the temperature of the configuration.
+Before we proceed we'll tweak the temperature of the configuration.
 
 {{< action type="edit" text="Set the **Temperature** to 298 K" />}}
 

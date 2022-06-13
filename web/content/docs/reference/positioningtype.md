@@ -3,7 +3,7 @@ title: Positioning Type
 description: Positioning type for inserted species
 ---
 
-Positioning types for inserted species, as used by the {{< gui-node "Add" >}}procedure node.
+Positioning types for inserted species, as used by the {{< gui-node "Add" >}} procedure node.
 
 |Keyword|Description|
 |:-----:|-----------|
