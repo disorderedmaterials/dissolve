@@ -48,3 +48,41 @@ Tips and warnings are also highlighted where relevant:
 ### Associated Data Files
 
 Relevant data as well as fully-constructed input files (for reference) can be downloaded as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} from the [releases page](https://github.com/disorderedmaterials/dissolve/releases). Alternatively, you can download individual files from the main [GitHub repo](https://github.com/disorderedmaterials/dissolve/tree/develop/examples).
+
+## Starting Out
+
+The following examples represent fully-explained, detailed step-by-step instructions suitable for absolute beginners to Dissolve and/or total scattering analysis.
+
+{{< cardpane >}}
+  {{< card header="**Argon**" title="Beginner's Guide"
+          footer="[Get Started!](argon/)">}}
+  {{< cimage src="argon/icon.png" url="argon/" width="200px" height="200px" >}}
+  {{< /card >}}
+  {{< card header="**Bulk Silica**" title="Creating and refining an atomic glass"
+          footer="[Get Started!](silica/)">}}
+  {{< cimage src="silica/icon.png" url="silica/" width="200px" height="200px" >}}
+  {{< /card >}}
+  {{< card header="**Liquid Water**" title="Analysing a simple liquid"
+          footer="[Get Started!](water/)">}}
+  {{< cimage src="water/icon.png" url="water/" width="200px" height="200px" >}}
+  {{< /card >}}
+  {{< card header="**Benzene**" title="Investigations into the archetypal aromatic"
+          footer="[Get Started!](benzene/)">}}
+  {{< cimage src="benzene/icon.png" url="benzene/" width="200px" height="200px" >}}
+  {{< /card >}}
+{{< /cardpane >}}
+
+## Intermediate Examples
+
+Examples with less detailed instructions, suitable for users who have completed a few of the starting out examples. Some include follow-on exercises for the reader to challenge your use / knowledge of Dissolve.
+
+{{< cardpane >}}
+  {{< card header="**An Ionic Liquid**" title="The ionic liquid 1-ethyl-3-methylimidazolium acetate"
+          footer="[Get Started!](emim-oac/)">}}
+  {{< cimage src="emim-oac/icon.png" url="emim-oac/" width="200px" height="200px" >}}
+  {{< /card >}}
+  {{< card header="**Framework Systems**" title="Creating and simulating a periodic metal organic framework"
+          footer="[Get Started!](cu-btc/)">}}
+  {{< cimage src="cu-btc/icon.png" url="cu-btc/" width="200px" height="200px" >}}
+  {{< /card >}}
+{{< /cardpane >}}

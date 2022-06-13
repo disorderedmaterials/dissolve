@@ -34,7 +34,7 @@ linkTitle = "Packages"
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
-{{< releaselink target="GUI" urlSuffix="-Catalina.dmg" textSuffix="Catalina DMG" >}}
+{{< releaselink target="GUI" urlSuffix=".dmg" textSuffix="DMG" >}}
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fab fa-windows" title="Windows" %}}
@@ -79,7 +79,7 @@ linkTitle = "Packages"
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
-{{< continuouslink target="GUI" urlSuffix="-Catalina.dmg" textSuffix="Catalina DMG" >}}
+{{< continuouslink target="GUI" urlSuffix=".dmg" textSuffix="DMG" >}}
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fab fa-windows" title="Windows" textSuffix="Installer" %}}

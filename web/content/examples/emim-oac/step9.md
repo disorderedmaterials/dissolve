@@ -49,5 +49,5 @@ Start the simulation up once more:
 On the output page of the {{< gui-module "CalculateCN" >}} module you'll see both the calculated coordination number and the source RDF data from which it is calculated. The coordination number should average out at about 6.2 anions (within 7.0 &#8491; of a central cation), compared to 6.8 (EPSR) or 6.9 (pure molecular dynamics) in the [2010 paper](https://doi.org/10.1021/jp102180q).
 
 * * *
-{{< button pos="left" text="Previous Step" path="step7/">}}
-{{< button pos="right" text="Next Step" path="step8/">}}
+{{< button pos="left" text="Previous Step" path="step8/">}}
+{{< button pos="right" text="Exercises" path="exercises/">}}

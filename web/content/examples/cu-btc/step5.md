@@ -31,7 +31,7 @@ The following table does this for the first few peaks.
 It is prudent to adjust bond distances in the forcefield at this point in order to get better agreement. While this is possible to an extent for small molecular systems, for a periodic framework it is considerably more difficult, but we'll try anyway! Let's start with the Cu&ndash;O interaction occurring in the experimental at 1.92 &#8491;, and which our forcefield is over-estimating.
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="ff" text="Forcefield" >}} tab, **Master Terms** section{{< /action >}}
-{{< action type="edit">}}Find the `Cu-O` bond interaction and change the value of the _eq_ parameter from `1.96` to `1.94`{{< /action >}}
+{{< action type="edit">}}Find the `Cu-O` bond interaction and change the value of the _eq_ parameter from `1.969` to `1.94`{{< /action >}}
 
 We need to run the simulation long enough to allow the {{< gui-module "RDF" >}} module to re-average its data, which is accumulated over five datasets and collected every five iterations.
 
