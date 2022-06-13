@@ -40,7 +40,7 @@ There are three graphs on display here - the B&middot;&middot;&middot;C g(r) (to
 
 Open the [CalculateSDF]({{< ref "calculatesdf" >}}) module to see the spatial distribution function - we will need to set the central reference molecule to the average molecule we also requested, and adjust the cutoff to get a sensible surface.
 
-{{< tip text="Cutoffs for the surface display are given in terms of the number density per cubic &#8491; of the surrounding molecule / site in the simulation box. In the present example we have 1000 water molecules in a cubic box of side length 31.0723 &#8491;, so the number density of water molecules is **1000 &divide; 31.0723<sup>3</sup> = 0.033**. The cutoff we will set below therefore gives a surface that represents twice the bulk density of water molecules, i.e. a higher than normal probability of finding water molecules." >}}
+{{< tip text="Cutoffs for the surface display are given in terms of the number density per cubic &#8491; of the surrounding molecule / site in the simulation box. In the present example we have 1000 water molecules in a cubic box of side length 31.0723 &#8491;, so the number density of water molecules is **1000 &divide; 31.0723<sup>3</sup> = 0.033**. The cutoff we will set below therefore gives a surface that represents twice the bulk density of water molecules, i.e. a higher than normal probability of finding water molecules." />}}
 
 {{< action type="tabs" text="**Analyse AvgMol/SDF** tab" />}}
 {{< step text="Double-click the `CalculateSDF` module to open it in a new tab" />}}

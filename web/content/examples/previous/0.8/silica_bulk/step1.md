@@ -14,7 +14,7 @@ Somewhat obviously, we need two atomic species for this simulation - an oxygen, 
 
 {{< action type="edit" text="Change the _Charge_ of the oxygen atom type to `-1`, the _SR Form_ to `LJ`, and the _SR Parameters_ to `0.165, 3.5`" />}}
 
-{{< tip text="Atom types created in this way are named after the symbol of the relevant element." >}}
+{{< tip text="Atom types created in this way are named after the symbol of the relevant element." />}}
 	
 Now let's generate our atomic species, assign the relevant atom types, and create a basic site for each. First, the silicon:
 

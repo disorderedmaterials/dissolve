@@ -37,7 +37,7 @@ First we need to set the instrumental broadening in the {{< gui-module "SQ" >}} 
 
 This broadening is a known parameter of the SANDALS instrument on which the experimental data were collected.
 
-{{< tip text=" For generality, some of Dissolve's broadening functions refer to 'omega', which should be taken to mean the reciprocal space axis (in this case, 'Q')." >}}
+{{< tip text=" For generality, some of Dissolve's broadening functions refer to 'omega', which should be taken to mean the reciprocal space axis (in this case, 'Q')." />}}
 
 Next, we will set up our calculation of the weighted structure factors. Since a {{< gui-module "NeutronSQ" >}} module calculates the partial and total structure factors for a single isotopic composition, we will need to add two more since we have three reference datasets.
 
@@ -70,7 +70,7 @@ Note that each of the new modules has a unique name - it is a requirement that m
 
 The HDO sample is a little different in respect of the isotopologue specification. In order to get the 50:50 mix we will basically add two isotopologues for the water species - one H<sub>2</sub>O and one D<sub>2</sub>O. Each will have the same relative weighting of 1.0. Importantly, we must also tell the module that the `HW` atom type is exchangeable - otherwise, the [weighting of the intramolecular terms]({{< ref "neutronsq#weighting" >}}) will be incorrect as, in effect, we will simulate a mix of distinct H<sub>2</sub>O and D<sub>2</sub>O molecules, which in reality is not what was measured.
 
-{{< tip text="As a general rule, any alcoholic or amine hydrogen is exchangeable." >}}
+{{< tip text="As a general rule, any alcoholic or amine hydrogen is exchangeable." />}}
 
 {{< action type="mouse" text="Click on the third `NeutronSQ` module (`NeutronSQ03`) to display its options" />}}
 {{< action type="edit" text="Change its name from `NeutronSQ03` to `HDO`" />}}
