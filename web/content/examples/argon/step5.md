@@ -11,7 +11,7 @@ With our two processing layers set up we can start to run the simulation and mon
 {{< action type="menu" text="Simulation &#8680; Run" />}}
 {{< step text="You can also use `Ctrl-R` to start a simulation running" />}}
 
-{{< tip text="Note the counter towards the right-hand side of the status bar at the bottom of the main window which tracks the current iteration, and the status indicator to the far left of the status bar telling you what Dissolve is doing (and also note that pressing `Esc` stops the current simulation)." >}}
+{{< tip text="Note the counter towards the right-hand side of the status bar at the bottom of the main window which tracks the current iteration, and the status indicator to the far left of the status bar telling you what Dissolve is doing (and also note that pressing `Esc` stops the current simulation)." />}}
 
 While the simulation is running you cannot edit any input values, keywords etc., but you can investigate the simulation's progress and output as it happens. For example, you could go to the {{< gui-tab type="layer"  text="Standard Atomic (MC/MD)" >}} evolution layer and look at the {{< gui-button text="Output" icon="general_output" >}} page of the {{< gui-module "Energy" >}} module to see what the total energy of the configuration is doing.
 

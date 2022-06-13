@@ -5,7 +5,7 @@ description: How to build Dissolve on SCARF using gcc/FOSS
 
 Compilation using gcc/FOSS is, as of v0.7.3, the recommended way to build Dissolve on SCARF.
 
-{{< tip text="[Batch scripts](https://github.com/disorderedmaterials/dissolve/tree/develop/scripts) to build Dissolve on SCARF (or other SLURM-based clusters) are available in the `scripts/` directory." >}}
+{{< tip text="[Batch scripts](https://github.com/disorderedmaterials/dissolve/tree/develop/scripts) to build Dissolve on SCARF (or other SLURM-based clusters) are available in the `scripts/` directory." />}}
 
 ## 1. Request Interactive Resources
 

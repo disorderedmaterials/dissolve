@@ -16,4 +16,4 @@ Forcefield descriptions for species can be entered manually, but it is generally
 
 When wishing to simulate neutron-weighted correlation functions such as total structure factors (via the [NeutronSQ module]({{< ref "neutronsq" >}}) a species can contain a number of specifications of atomic isotopes (linked to the atom types assigned to the atoms) in order to build up _isotopologues_ - isotopically-labelled variants of the same species.
 
-{{< warn text="Once a species has been created its constituent atoms and bond connectivity are fixed and can no longer be edited. Atoms may have their coordinates adjusted, but bonding will remain unchanged." >}}
+{{< warn text="Once a species has been created its constituent atoms and bond connectivity are fixed and can no longer be edited. Atoms may have their coordinates adjusted, but bonding will remain unchanged." />}}
