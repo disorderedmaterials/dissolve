@@ -17,12 +17,12 @@ Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip
 
 - Cation Coordinates: [emim.xyz](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/species/emim.xyz)
 - Anion Coordinates: [oac.xyz](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/species/oac.xyz)
-- Fully Protiated IL Data: [`SLS39546-H_H.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39546-H_H.mint01)|
-- Cation-H / Anion-D<sub>3</sub> Data: [`SLS39548-H_D.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39548-H_D.mint01)|
-- Cation-D<sub>8</sub> / Anion-H Data: [`SLS39549-H3D8_H.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39549-H3D8_H.mint01)|
-- Cation-D<sub>8</sub> / Anion-D<sub>3</sub> Data: [`SLS39550-H3D8_D.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39550-H3D8_D.mint01)|
-- Cation-H / Anion-H:D<sub>3</sub> Data: [`SLS39567-H_50.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39567-H_50.mint01)|
-- Cation-H:D<sub>8</sub> / Anion-H:D<sub>3</sub> Data:[`SLS39568-50_50.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39568-50_50.mint01)|
+- Fully Protiated IL Data: [`SLS39546-H_H.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39546-H_H.mint01)
+- Cation-H / Anion-D<sub>3</sub> Data: [`SLS39548-H_D.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39548-H_D.mint01)
+- Cation-D<sub>8</sub> / Anion-H Data: [`SLS39549-H3D8_H.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39549-H3D8_H.mint01)
+- Cation-D<sub>8</sub> / Anion-D<sub>3</sub> Data: [`SLS39550-H3D8_D.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39550-H3D8_D.mint01)
+- Cation-H / Anion-H:D<sub>3</sub> Data: [`SLS39567-H_50.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39567-H_50.mint01)
+- Cation-H:D<sub>8</sub> / Anion-H:D<sub>3</sub> Data:[`SLS39568-50_50.mint01`](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/emim-oac/data/SLS39568-50_50.mint01)
 
 {{< action type="menu" text="File &#8680; New" />}}
 {{< action type="menu" text="File &#8680; Save As..." />}}
