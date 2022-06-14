@@ -1,0 +1,260 @@
+# Input file written by Dissolve v1.0.0 at 14:34:23 on 15-06-2022.
+
+#==============================================================================#
+#                                 Master Terms                                 #
+#==============================================================================#
+
+Master
+  Bond  'HW-OW'  Harmonic  k=4431.53 eq=1
+  Bond  'CT-CT3'  Harmonic  k=2242.62 eq=1.529
+  Bond  'CT-OH'  Harmonic  k=2677.76 eq=1.41
+  Bond  'CT-HC'  Harmonic  k=2845.12 eq=1.09
+  Bond  'CT3-HC'  Harmonic  k=2845.12 eq=1.09
+  Bond  'HO-OH'  Harmonic  k=4627.5 eq=0.945
+  Angle  'HW-OW-HW'  Harmonic  k=317.5656 eq=113.24
+  Angle  'CT3-CT-OH'  Harmonic  k=418.4 eq=109.5
+  Angle  'CT-CT3-HC'  Harmonic  k=313.8 eq=110.7
+  Angle  'CT3-CT-HC'  Harmonic  k=313.8 eq=110.7
+  Angle  'CT3-CT-CT3'  Harmonic  k=488.273 eq=112.7
+  Angle  'CT-OH-HO'  Harmonic  k=460.24 eq=108.5
+  Angle  'HC-CT-OH'  Harmonic  k=292.88 eq=109.5
+  Angle  'HC-CT3-HC'  Harmonic  k=276.144 eq=107.8
+  Torsion  'HC-CT3-CT-OH'  Cos3  k1=0 k2=0 k3=1.95811
+  Torsion  'HC-CT3-CT-HC'  Cos3  k1=0 k2=0 k3=1.2552
+  Torsion  'CT3-CT-CT3-HC'  Cos3  k1=0 k2=0 k3=1.2552
+  Torsion  'CT3-CT-OH-HO'  Cos3  k1=-1.4895 k2=-0.728016 k3=2.05853
+  Torsion  'HC-CT-OH-HO'  Cos3  k1=0 k2=0 k3=1.47444
+EndMaster
+
+#==============================================================================#
+#                                   Species                                    #
+#==============================================================================#
+
+Species '2-propanol'
+  # Atoms
+  NAtoms  12
+  Atom    1  C    3.220900e-02  -1.840180e-01  5.500440e-01  'CT'  2.050000e-01
+  Atom    2  C    7.808780e-01  -9.974420e-01  -5.870140e-01  'CT3'  -1.800000e-01
+  Atom    3  O    -1.234321e+00  -7.931190e-01  5.421050e-01  'OH'  -6.830000e-01
+  Atom    4  H    4.877350e-01  -2.333400e-01  1.539066e+00  'HC'  6.000000e-02
+  Atom    5  C    -2.590960e-01  1.297143e+00  2.321720e-01  'CT3'  -1.800000e-01
+  Atom    6  H    1.647540e+00  -4.254490e-01  -9.184070e-01  'HC'  6.000000e-02
+  Atom    7  H    1.062096e+00  -1.990739e+00  -2.371890e-01  'HC'  6.000000e-02
+  Atom    8  H    -6.772190e-01  1.454654e+00  -7.620430e-01  'HC'  6.000000e-02
+  Atom    9  H    -9.358130e-01  1.583055e+00  1.037411e+00  'HC'  6.000000e-02
+  Atom   10  H    6.664160e-01  1.868658e+00  3.021550e-01  'HC'  6.000000e-02
+  Atom   11  H    1.449700e-01  -1.049438e+00  -1.470766e+00  'HC'  6.000000e-02
+  Atom   12  H    -1.715395e+00  -5.299630e-01  -2.275330e-01  'HO'  4.180000e-01
+
+  # Bonds
+  NBonds  11
+  Bond    1    2  @CT-CT3
+  Bond    1    3  @CT-OH
+  Bond    1    4  @CT-HC
+  Bond    1    5  @CT-CT3
+  Bond    2    6  @CT3-HC
+  Bond    2    7  @CT3-HC
+  Bond    2   11  @CT3-HC
+  Bond    3   12  @HO-OH
+  Bond    5    8  @CT3-HC
+  Bond    5    9  @CT3-HC
+  Bond    5   10  @CT3-HC
+
+  # Angles
+  NAngles  19
+  Angle    3    1    2  @CT3-CT-OH
+  Angle    1    2    6  @CT-CT3-HC
+  Angle    1    2    7  @CT-CT3-HC
+  Angle    1    2   11  @CT-CT3-HC
+  Angle    4    1    2  @CT3-CT-HC
+  Angle    5    1    2  @CT3-CT-CT3
+  Angle    1    3   12  @CT-OH-HO
+  Angle    4    1    3  @HC-CT-OH
+  Angle    5    1    3  @CT3-CT-OH
+  Angle    5    1    4  @CT3-CT-HC
+  Angle    1    5    8  @CT-CT3-HC
+  Angle    1    5    9  @CT-CT3-HC
+  Angle    1    5   10  @CT-CT3-HC
+  Angle    7    2    6  @HC-CT3-HC
+  Angle   11    2    6  @HC-CT3-HC
+  Angle   11    2    7  @HC-CT3-HC
+  Angle    9    5    8  @HC-CT3-HC
+  Angle   10    5    8  @HC-CT3-HC
+  Angle   10    5    9  @HC-CT3-HC
+
+  # Torsions
+  NTorsions  21
+  Torsion    3    1    2    6  @HC-CT3-CT-OH
+  Torsion    3    1    2    7  @HC-CT3-CT-OH
+  Torsion    3    1    2   11  @HC-CT3-CT-OH
+  Torsion    4    1    2    6  @HC-CT3-CT-HC
+  Torsion    4    1    2    7  @HC-CT3-CT-HC
+  Torsion    4    1    2   11  @HC-CT3-CT-HC
+  Torsion    5    1    2    6  @CT3-CT-CT3-HC
+  Torsion    5    1    2    7  @CT3-CT-CT3-HC
+  Torsion    5    1    2   11  @CT3-CT-CT3-HC
+  Torsion    2    1    3   12  @CT3-CT-OH-HO
+  Torsion    4    1    3   12  @HC-CT-OH-HO
+  Torsion    5    1    3   12  @CT3-CT-OH-HO
+  Torsion    2    1    5    8  @CT3-CT-CT3-HC
+  Torsion    2    1    5    9  @CT3-CT-CT3-HC
+  Torsion    2    1    5   10  @CT3-CT-CT3-HC
+  Torsion    3    1    5    8  @HC-CT3-CT-OH
+  Torsion    3    1    5    9  @HC-CT3-CT-OH
+  Torsion    3    1    5   10  @HC-CT3-CT-OH
+  Torsion    4    1    5    8  @HC-CT3-CT-HC
+  Torsion    4    1    5    9  @HC-CT3-CT-HC
+  Torsion    4    1    5   10  @HC-CT3-CT-HC
+
+  # Sites
+  Site  'COM'
+    Origin  1  2  3  4  5  6  7  8  9  10  11  12
+  EndSite
+EndSpecies
+
+Species 'Water'
+  # Atoms
+  NAtoms  3
+  Atom    1  O    -7.245200e-02  9.288300e-02  4.196100e-01  'OW'  -8.200000e-01
+  Atom    2  H    6.153190e-01  5.006040e-01  -1.788360e-01  'HW'  4.100000e-01
+  Atom    3  H    -5.428670e-01  -5.934870e-01  -2.407740e-01  'HW'  4.100000e-01
+
+  # Bonds
+  NBonds  2
+  Bond    1    2  @HW-OW
+  Bond    1    3  @HW-OW
+
+  # Angles
+  NAngles  1
+  Angle    3    1    2  @HW-OW-HW
+
+  # Sites
+  Site  'COM'
+    Origin  1  2  3
+  EndSite
+EndSpecies
+
+#==============================================================================#
+#                               Pair Potentials                                #
+#==============================================================================#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  OW  O  -8.200000e-01  LJ  epsilon=0.6503 sigma=3.165492
+  Parameters  HW  H  4.100000e-01  LJ  epsilon=0 sigma=0
+  Parameters  CT  C  2.050000e-01  LJGeometric  epsilon=0.276144 sigma=3.5
+  Parameters  CT3  C  -1.800000e-01  LJGeometric  epsilon=0.276144 sigma=3.5
+  Parameters  OH  O  -6.830000e-01  LJGeometric  epsilon=0.71128 sigma=3.12
+  Parameters  HC  H  6.000000e-02  LJGeometric  epsilon=0.12552 sigma=2.5
+  Parameters  HO  H  4.180000e-01  LJGeometric  epsilon=0 sigma=0
+  Range  15
+  Delta  0.005
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+
+#==============================================================================#
+#                                Configurations                                #
+#==============================================================================#
+
+Configuration  'NewConfiguration'
+
+  # Modules
+  Generator
+    Parameters  'Parameters01'
+      Parameter  rho  0.1
+    EndParameters
+    Box  'Box01'
+      Angles  90  90  90
+      Lengths  48.608  48.608  48.608
+    EndBox
+    CoordinateSets  '2-propanol_Sets'
+      DeltaT  '0.0005'
+      NSets  '100'
+      NSteps  '2000'
+      Source  MD
+      Species  '2-propanol'
+    EndCoordinateSets
+    Add  '2-propanol'
+      BoxAction  None
+      CoordinateSets  '2-propanol_Sets'
+      Density  'rho'  atoms/A3
+      Population  '291'
+      Positioning  Random
+    EndAdd
+    CoordinateSets  'Water_Sets'
+      DeltaT  '0.0005'
+      NSets  '100'
+      NSteps  '2000'
+      Source  MD
+      Species  'Water'
+    EndCoordinateSets
+    Add  'Water'
+      BoxAction  None
+      CoordinateSets  'Water_Sets'
+      Density  'rho'  atoms/A3
+      Population  '2943'
+      Positioning  Random
+    EndAdd
+  EndGenerator
+
+  Temperature  300
+
+  SizeFactor  1
+EndConfiguration
+
+#==============================================================================#
+#                              Processing Layers                               #
+#==============================================================================#
+
+Layer  'Import'
+  Frequency  1
+
+  Module  ImportTrajectory  'ImportTrajectory'
+    Frequency  1
+    Configuration  'NewConfiguration'
+    Format  xyz  'data/9molpcnt-IPA-water.xyz'
+    EndFormat
+  EndModule
+EndLayer
+
+Layer  'RDF / Neutron S(Q)'
+  Frequency  1
+
+  Module  RDF  'RDF'
+    Frequency  1
+    AveragingScheme  Linear
+    Configurations  'NewConfiguration'
+    IntraBroadening  'Gaussian'  0.18
+    Method  Auto
+  EndModule
+
+  Module  SQ  'SQ'
+    Frequency  1
+    AveragingScheme  Linear
+    BraggQBroadening  'GaussianC2'  0  0.02
+    QBroadening  'None'  
+    SourceRDFs  'RDF'
+    WindowFunction  None
+  EndModule
+
+  Module  NeutronSQ  'NeutronSQ'
+    Frequency  1
+    Normalisation  None
+    ReferenceNormalisation  None
+    ReferenceWindowFunction  Lorch0
+    SourceSQs  'SQ'
+  EndModule
+EndLayer
+
+Layer  'Analyse'
+  Frequency  1
+
+  Module  CalculateRDF  'CalculateRDF'
+    Frequency  1
+    Configuration  'NewConfiguration'
+    DistanceRange  0.000000e+00  1.000000e+01  5.000000e-02
+    SiteA  '2-propanol'  'COM'
+    SiteB  'Water'  'COM'
+  EndModule
+EndLayer
