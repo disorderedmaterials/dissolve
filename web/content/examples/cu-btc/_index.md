@@ -1,7 +1,7 @@
 ---
 title: A Metal Organic Framework
 description: Setting up a metal organic framework system
-weight: 5
+weight: 11
 type: docs
 ---
 

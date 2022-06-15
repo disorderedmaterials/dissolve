@@ -1,0 +1,943 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:chemical="http://www.ch.ic.ac.uk/chemime/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id=""
+   version="1.1"
+   width="300"
+   height="300"
+   viewBox="0 0 300 300"
+   sodipodi:docname="icon.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:export-filename="/home/tris/src/dissolve/web/content/examples/ligpargen/icon.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <metadata
+     id="metadata88">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs86">
+    <filter
+       inkscape:label="Ink Bleed"
+       inkscape:menu="Protrusions"
+       inkscape:menu-tooltip="Inky splotches underneath the object"
+       style="color-interpolation-filters:sRGB;"
+       id="filter961">
+      <feGaussianBlur
+         result="result1"
+         in="SourceGraphic"
+         stdDeviation="1.3"
+         id="feGaussianBlur949" />
+      <feTurbulence
+         result="result0"
+         numOctaves="4"
+         baseFrequency="0.034"
+         id="feTurbulence951" />
+      <feDisplacementMap
+         result="result2"
+         scale="19.6"
+         yChannelSelector="G"
+         xChannelSelector="R"
+         in="result1"
+         in2="result0"
+         id="feDisplacementMap953" />
+      <feColorMatrix
+         values="2 0 0 0 0 0 2 0 0 0 0 0 2 0 0 0 0 0 0.7 0"
+         result="result3"
+         id="feColorMatrix955" />
+      <feGaussianBlur
+         result="result4"
+         in="SourceGraphic"
+         stdDeviation="1.1"
+         id="feGaussianBlur957" />
+      <feComposite
+         in="result4"
+         in2="result3"
+         id="feComposite959" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1136"
+     id="namedview84"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="1.9641477"
+     inkscape:cx="37.294262"
+     inkscape:cy="141.90857"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer=""
+     inkscape:document-rotation="0" />
+  <style
+     id="style2"> # {pointer-events:none; }  # .event  { pointer-events:all;}  </style>
+  <chemical:x-mdl-molfile>Cn1cnc2c1c(=O)n(C)c(=O)n2C\nJME\n\n  0  0  0  0  0  0  0  0  0  0999 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 14 15 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 C 4.5302 6.0868 0.0000 0\nM  V30 2 N 3.3177 5.3868 0.0000 0\nM  V30 3 C 2.0388 5.9562 0.0000 0\nM  V30 4 N 1.1019 4.9159 0.0000 0\nM  V30 5 C 1.8020 3.7034 0.0000 0\nM  V30 6 N 1.3694 2.3719 0.0000 0\nM  V30 7 C 0.0000 2.0808 0.0000 0\nM  V30 8 C 2.3061 1.3315 0.0000 0\nM  V30 9 O 1.8735 0.0000 0.0000 0\nM  V30 10 N 3.6756 1.6226 0.0000 0\nM  V30 11 C 4.6123 0.5821 0.0000 0\nM  V30 12 C 4.1082 2.9540 0.0000 0\nM  V30 13 O 5.4775 3.2451 0.0000 0\nM  V30 14 C 3.1714 3.9945 0.0000 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 2 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 6 8\nM  V30 8 2 8 9\nM  V30 9 1 8 10\nM  V30 10 1 10 11\nM  V30 11 1 10 12\nM  V30 12 2 12 13\nM  V30 13 1 12 14\nM  V30 14 1 2 14\nM  V30 15 2 5 14\nM  V30 END BOND\nM  V30 END CTAB\nM  END\n</chemical:x-mdl-molfile>
+  <g
+     id="g1250"
+     transform="matrix(2.0321274,0,0,2.0321274,-130.74677,-98.034645)">
+    <g
+       id="g967"
+       transform="translate(-61.205468,-28.067958)"
+       style="opacity:0.50231;filter:url(#filter961)">
+      <text
+         x="209.92"
+         text-anchor="middle"
+         y="113.82"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#3050f8"
+         id="text4">N</text>
+      <text
+         x="171.92999"
+         text-anchor="middle"
+         y="121.9"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#3050f8"
+         id="text6">N</text>
+      <text
+         x="176.52"
+         text-anchor="middle"
+         y="165.50999"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#3050f8"
+         id="text8">N</text>
+      <text
+         x="185.16"
+         text-anchor="middle"
+         y="206.17"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#ff0d0d"
+         id="text10">O</text>
+      <text
+         x="216.06"
+         text-anchor="middle"
+         y="178.35001"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#3050f8"
+         id="text12">N</text>
+      <text
+         x="246.94"
+         text-anchor="middle"
+         y="150.53999"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#ff0d0d"
+         id="text14">O</text>
+      <line
+         x1="188"
+         y1="100.06"
+         x2="177.99001"
+         y2="111.17"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line16" />
+      <line
+         x1="188.64999"
+         y1="104.71"
+         x2="180.66"
+         y2="113.58"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line18" />
+      <line
+         x1="191.19"
+         y1="177.8"
+         x2="185.72"
+         y2="194.61"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line20" />
+      <line
+         x1="194.61"
+         y1="178.91"
+         x2="189.14999"
+         y2="195.72"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line22" />
+      <line
+         x1="222.83"
+         y1="153.5"
+         x2="240.87"
+         y2="149.67"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line24" />
+      <line
+         x1="222.08"
+         y1="149.98"
+         x2="240.13"
+         y2="146.14999"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line26" />
+      <line
+         x1="183.94"
+         y1="138.67999"
+         x2="207.41"
+         y2="133.69"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line28" />
+      <line
+         x1="186.14"
+         y1="134.53"
+         x2="203.71001"
+         y2="130.8"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line30" />
+      <line
+         x1="230.71001"
+         y1="97.82"
+         x2="215.98"
+         y2="106.33"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line32" />
+      <line
+         x1="203.86"
+         y1="107.13"
+         x2="188"
+         y2="100.06"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line34" />
+      <line
+         x1="175.98"
+         y1="124.9"
+         x2="183.94"
+         y2="138.67999"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line36" />
+      <line
+         x1="183.94"
+         y1="138.67999"
+         x2="178.78999"
+         y2="154.50999"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line38" />
+      <line
+         x1="170.47"
+         y1="162.78999"
+         x2="153.05"
+         y2="166.5"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line40" />
+      <line
+         x1="182.58"
+         y1="168.23"
+         x2="192.58"
+         y2="179.34"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line42" />
+      <line
+         x1="192.58"
+         y1="179.34"
+         x2="210"
+         y2="175.64"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line44" />
+      <line
+         x1="222.11"
+         y1="181.08"
+         x2="232.11"
+         y2="192.19"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line46" />
+      <line
+         x1="218.33"
+         y1="167.35001"
+         x2="223.47"
+         y2="151.53"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line48" />
+      <line
+         x1="223.47"
+         y1="151.53"
+         x2="207.41"
+         y2="133.69"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line50" />
+      <line
+         x1="209.17999"
+         y1="116.82"
+         x2="207.41"
+         y2="133.69"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line52" />
+      <line
+         id=":Bond:2-3"
+         class="event"
+         x1="188"
+         y1="100.06"
+         x2="171.92999"
+         y2="117.9"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:7-8"
+         class="event"
+         x1="192.58"
+         y1="179.34"
+         x2="185.16"
+         y2="202.17"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:11-12"
+         class="event"
+         x1="223.47"
+         y1="151.53"
+         x2="246.94"
+         y2="146.53999"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:4-13"
+         class="event"
+         x1="183.94"
+         y1="138.67999"
+         x2="207.41"
+         y2="133.69"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:0-1"
+         class="event"
+         x1="230.71001"
+         y1="97.82"
+         x2="209.92"
+         y2="109.82"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:1-2"
+         class="event"
+         x1="209.92"
+         y1="109.82"
+         x2="188"
+         y2="100.06"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:3-4"
+         class="event"
+         x1="171.92999"
+         y1="117.9"
+         x2="183.94"
+         y2="138.67999"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:4-5"
+         class="event"
+         x1="183.94"
+         y1="138.67999"
+         x2="176.52"
+         y2="161.50999"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:5-6"
+         class="event"
+         x1="176.52"
+         y1="161.50999"
+         x2="153.05"
+         y2="166.5"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:5-7"
+         class="event"
+         x1="176.52"
+         y1="161.50999"
+         x2="192.58"
+         y2="179.34"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:7-9"
+         class="event"
+         x1="192.58"
+         y1="179.34"
+         x2="216.06"
+         y2="174.35001"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:9-10"
+         class="event"
+         x1="216.06"
+         y1="174.35001"
+         x2="232.11"
+         y2="192.19"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:9-11"
+         class="event"
+         x1="216.06"
+         y1="174.35001"
+         x2="223.47"
+         y2="151.53"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:11-13"
+         class="event"
+         x1="223.47"
+         y1="151.53"
+         x2="207.41"
+         y2="133.69"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:1-13"
+         class="event"
+         x1="209.92"
+         y1="109.82"
+         x2="207.41"
+         y2="133.69"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <circle
+         id=":Atom:0"
+         class="event"
+         cx="230.71001"
+         cy="97.82"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:1"
+         class="event"
+         cx="209.92"
+         cy="109.82"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:2"
+         class="event"
+         cx="188"
+         cy="100.06"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:3"
+         class="event"
+         cx="171.92999"
+         cy="117.9"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:4"
+         class="event"
+         cx="183.94"
+         cy="138.67999"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:5"
+         class="event"
+         cx="176.52"
+         cy="161.50999"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:6"
+         class="event"
+         cx="153.05"
+         cy="166.5"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:7"
+         class="event"
+         cx="192.58"
+         cy="179.34"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:8"
+         class="event"
+         cx="185.16"
+         cy="202.17"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:9"
+         class="event"
+         cx="216.06"
+         cy="174.35001"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:10"
+         class="event"
+         cx="232.11"
+         cy="192.19"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:11"
+         class="event"
+         cx="223.47"
+         cy="151.53"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:12"
+         class="event"
+         cx="246.94"
+         cy="146.53999"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:13"
+         class="event"
+         cx="207.41"
+         cy="133.69"
+         r="8"
+         fill-opacity="0" />
+    </g>
+    <g
+       id="g967-3"
+       transform="translate(-61.205468,-28.067958)">
+      <text
+         x="209.92"
+         text-anchor="middle"
+         y="113.82"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#3050f8"
+         id="text4-6">N</text>
+      <text
+         x="171.92999"
+         text-anchor="middle"
+         y="121.9"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#3050f8"
+         id="text6-7">N</text>
+      <text
+         x="176.52"
+         text-anchor="middle"
+         y="165.50999"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#3050f8"
+         id="text8-5">N</text>
+      <text
+         x="185.16"
+         text-anchor="middle"
+         y="206.17"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#ff0d0d"
+         id="text10-3">O</text>
+      <text
+         x="216.06"
+         text-anchor="middle"
+         y="178.35001"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#3050f8"
+         id="text12-5">N</text>
+      <text
+         x="246.94"
+         text-anchor="middle"
+         y="150.53999"
+         font-family="' Helvetica'"
+         font-size="14px"
+         fill="#ff0d0d"
+         id="text14-6">O</text>
+      <line
+         x1="188"
+         y1="100.06"
+         x2="177.99001"
+         y2="111.17"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line16-2" />
+      <line
+         x1="188.64999"
+         y1="104.71"
+         x2="180.66"
+         y2="113.58"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line18-9" />
+      <line
+         x1="191.19"
+         y1="177.8"
+         x2="185.72"
+         y2="194.61"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line20-1" />
+      <line
+         x1="194.61"
+         y1="178.91"
+         x2="189.14999"
+         y2="195.72"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line22-2" />
+      <line
+         x1="222.83"
+         y1="153.5"
+         x2="240.87"
+         y2="149.67"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line24-7" />
+      <line
+         x1="222.08"
+         y1="149.98"
+         x2="240.13"
+         y2="146.14999"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line26-0" />
+      <line
+         x1="183.94"
+         y1="138.67999"
+         x2="207.41"
+         y2="133.69"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line28-9" />
+      <line
+         x1="186.14"
+         y1="134.53"
+         x2="203.71001"
+         y2="130.8"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line30-3" />
+      <line
+         x1="230.71001"
+         y1="97.82"
+         x2="215.98"
+         y2="106.33"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line32-6" />
+      <line
+         x1="203.86"
+         y1="107.13"
+         x2="188"
+         y2="100.06"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line34-0" />
+      <line
+         x1="175.98"
+         y1="124.9"
+         x2="183.94"
+         y2="138.67999"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line36-6" />
+      <line
+         x1="183.94"
+         y1="138.67999"
+         x2="178.78999"
+         y2="154.50999"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line38-2" />
+      <line
+         x1="170.47"
+         y1="162.78999"
+         x2="153.05"
+         y2="166.5"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line40-6" />
+      <line
+         x1="182.58"
+         y1="168.23"
+         x2="192.58"
+         y2="179.34"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line42-1" />
+      <line
+         x1="192.58"
+         y1="179.34"
+         x2="210"
+         y2="175.64"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line44-8" />
+      <line
+         x1="222.11"
+         y1="181.08"
+         x2="232.11"
+         y2="192.19"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line46-7" />
+      <line
+         x1="218.33"
+         y1="167.35001"
+         x2="223.47"
+         y2="151.53"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line48-9" />
+      <line
+         x1="223.47"
+         y1="151.53"
+         x2="207.41"
+         y2="133.69"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line50-2" />
+      <line
+         x1="209.17999"
+         y1="116.82"
+         x2="207.41"
+         y2="133.69"
+         style="stroke:#000000;stroke-width:1.44"
+         id="line52-0" />
+      <line
+         id=":Bond:2-3-2"
+         class="event"
+         x1="188"
+         y1="100.06"
+         x2="171.92999"
+         y2="117.9"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:7-8-3"
+         class="event"
+         x1="192.58"
+         y1="179.34"
+         x2="185.16"
+         y2="202.17"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:11-12-7"
+         class="event"
+         x1="223.47"
+         y1="151.53"
+         x2="246.94"
+         y2="146.53999"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:4-13-5"
+         class="event"
+         x1="183.94"
+         y1="138.67999"
+         x2="207.41"
+         y2="133.69"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:0-1-9"
+         class="event"
+         x1="230.71001"
+         y1="97.82"
+         x2="209.92"
+         y2="109.82"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:1-2-2"
+         class="event"
+         x1="209.92"
+         y1="109.82"
+         x2="188"
+         y2="100.06"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:3-4-2"
+         class="event"
+         x1="171.92999"
+         y1="117.9"
+         x2="183.94"
+         y2="138.67999"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:4-5-8"
+         class="event"
+         x1="183.94"
+         y1="138.67999"
+         x2="176.52"
+         y2="161.50999"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:5-6-9"
+         class="event"
+         x1="176.52"
+         y1="161.50999"
+         x2="153.05"
+         y2="166.5"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:5-7-7"
+         class="event"
+         x1="176.52"
+         y1="161.50999"
+         x2="192.58"
+         y2="179.34"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:7-9-3"
+         class="event"
+         x1="192.58"
+         y1="179.34"
+         x2="216.06"
+         y2="174.35001"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:9-10-6"
+         class="event"
+         x1="216.06"
+         y1="174.35001"
+         x2="232.11"
+         y2="192.19"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:9-11-1"
+         class="event"
+         x1="216.06"
+         y1="174.35001"
+         x2="223.47"
+         y2="151.53"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:11-13-2"
+         class="event"
+         x1="223.47"
+         y1="151.53"
+         x2="207.41"
+         y2="133.69"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <line
+         id=":Bond:1-13-9"
+         class="event"
+         x1="209.92"
+         y1="109.82"
+         x2="207.41"
+         y2="133.69"
+         stroke-width="8"
+         stroke-opacity="0" />
+      <circle
+         id=":Atom:0-3"
+         class="event"
+         cx="230.71001"
+         cy="97.82"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:1-1"
+         class="event"
+         cx="209.92"
+         cy="109.82"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:2-9"
+         class="event"
+         cx="188"
+         cy="100.06"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:3-4"
+         class="event"
+         cx="171.92999"
+         cy="117.9"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:4-7"
+         class="event"
+         cx="183.94"
+         cy="138.67999"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:5-8"
+         class="event"
+         cx="176.52"
+         cy="161.50999"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:6-4"
+         class="event"
+         cx="153.05"
+         cy="166.5"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:7-5"
+         class="event"
+         cx="192.58"
+         cy="179.34"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:8-0"
+         class="event"
+         cx="185.16"
+         cy="202.17"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:9-3"
+         class="event"
+         cx="216.06"
+         cy="174.35001"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:10-6"
+         class="event"
+         cx="232.11"
+         cy="192.19"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:11-1"
+         class="event"
+         cx="223.47"
+         cy="151.53"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:12-0"
+         class="event"
+         cx="246.94"
+         cy="146.53999"
+         r="8"
+         fill-opacity="0" />
+      <circle
+         id=":Atom:13-6"
+         class="event"
+         cx="207.41"
+         cy="133.69"
+         r="8"
+         fill-opacity="0" />
+    </g>
+  </g>
+</svg>
