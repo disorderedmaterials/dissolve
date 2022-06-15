@@ -15,7 +15,11 @@ Version 0.9.1 is a patch release providing bugfixes, improvements, and some new 
 - Better UX on Forcefield tab.
 - Reorganised main menus.
 - Reorganise module control functions on layer tab.
+- Better reporting / handling of non-zero species and configurations.
+- Show periodic box information for species (if one exists).
 - Fixes to data notification within GUI.
+- Fix calculation of average species.
+- Fix crash en EPSR/Potentials tab when no pairpotentials are defined.
 - Fix cosine definitions in Zhang 2013 forcefield.
 - Fix bond colours in periodic species rendering.
 - Fix editing of atom type names.
