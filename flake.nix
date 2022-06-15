@@ -75,8 +75,6 @@
           inherit system;
         };
         nixGL = import nixGL-src { inherit pkgs; };
-        mkDerivation =
-          pkgs.qt6Packages.callPackage ({ mkDerivation }: mkDerivation);
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));
@@ -91,8 +89,10 @@
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
-            nativeBuildInputs =
-              [ pkgs.wrapGAppsHook pkgs.qt6Packages.wrapQtAppsHook ];
+            nativeBuildInputs = pkgs.lib.optionals gui [
+              pkgs.wrapGAppsHook
+              pkgs.qt6Packages.wrapQtAppsHook
+            ];
 
             TBB_DIR = "${pkgs.tbb}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
