@@ -1,7 +1,7 @@
 ---
 title: Ionic Liquid (EMIM-OAc)
 description: The ionic liquid 1-ethyl-3-imidazolium acetate
-weight: 6
+weight: 10
 type: docs
 ---
 

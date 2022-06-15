@@ -2,7 +2,7 @@
 title: LigParGen Forcefields
 description: Importing data from the LigParGen service
 type: docs
-weight: 2
+weight: 100
 ---
 
 {{< label color="blue" icon="fa-clock" text="15 minutes" >}}
