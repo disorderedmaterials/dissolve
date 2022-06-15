@@ -71,7 +71,7 @@
 
       let
         pkgs = import nixpkgs {
-          overlays = [ qtoverlay ];
+          overlays = self.overlays.${system};
           inherit system;
         };
         nixGL = import nixGL-src { inherit pkgs; };
