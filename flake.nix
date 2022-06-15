@@ -14,6 +14,18 @@
   outputs =
     { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
     let
+
+      qtoverlay = final: prev: {
+        qt6 = prev.qt6.overrideScope' (qfinal: qprev: {
+          qtbase = qprev.qtbase.overrideAttrs (oldAttrs: {
+            postFixup = ''
+              strip --remove-section=.note.ABI-tag $out/lib/libQt6Core.so
+            '';
+
+          });
+        });
+      };
+
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
       exe-name = mpi: gui:
         if mpi then
@@ -58,9 +70,13 @@
     in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
 
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          overlays = [ qtoverlay ];
+          inherit system;
+        };
         nixGL = import nixGL-src { inherit pkgs; };
-        mkDerivation = pkgs.qt6Packages.callPackage ({ mkDerivation }: mkDerivation);
+        mkDerivation =
+          pkgs.qt6Packages.callPackage ({ mkDerivation }: mkDerivation);
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
           assert (!(gui && mpi));
@@ -75,7 +91,8 @@
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
-            nativeBuildInputs = [ pkgs.wrapGAppsHook pkgs.qt6Packages.wrapQtAppsHook];
+            nativeBuildInputs =
+              [ pkgs.wrapGAppsHook pkgs.qt6Packages.wrapQtAppsHook ];
 
             TBB_DIR = "${pkgs.tbb}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
@@ -105,12 +122,11 @@
               # license = licenses.unlicense;
               maintainers = [ maintainers.rprospero ];
             };
-          } )
-          // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
+          }) // (if checks then { QT_QPA_PLATFORM = "offscreen"; } else { });
         mkSingularity = { mpi ? false, gui ? false, threading ? true }:
           outdated.legacyPackages.${system}.singularity-tools.buildImage {
             name = "${exe-name mpi gui}-${version}";
-            diskSize = 1024 * 25;
+            diskSize = 1024 * 50;
             contents = [ (dissolve { inherit mpi gui threading; }) ];
             runScript = if gui then
               "${nixGL.nixGLIntel}/bin/nixGLIntel ${
@@ -122,6 +138,7 @@
               }";
           };
       in {
+        overlays = [ qtoverlay ];
         checks.dissolve = dissolve { checks = true; };
         checks.dissolve-mpi = dissolve {
           mpi = true;
