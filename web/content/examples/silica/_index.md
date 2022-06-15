@@ -1,6 +1,7 @@
 ---
 title: Bulk Silica
 type: docs
+weight: 2
 ---
 
 {{< label color="blue" icon="fa-clock" text="30 minutes" >}}

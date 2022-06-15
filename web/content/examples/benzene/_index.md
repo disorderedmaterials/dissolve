@@ -1,7 +1,7 @@
 ---
 title: A Simple Aromatic
 description: Structure of liquid benzene from isotopic neutron data
-weight: 3
+weight: 4
 type: docs
 ---
 

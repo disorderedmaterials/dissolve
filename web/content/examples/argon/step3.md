@@ -29,10 +29,10 @@ In the {{< gui-node "Add" >}} node note how we have referenced the "rho" paramet
 Let's change the settings of our configuration's generator to give us a suitable system.
 
 {{< action type="settings" >}}Click on the {{< gui-node "Parameters" >}} node to show its options{{< /action >}}
-{{< step text="Change the value of the \"rho\" variable to 0.0213 (which is our target density in units of atoms/A3)" />}}
+{{< action type="edit" text="Change the value of the \"rho\" variable to `0.0213` (which is our target density in units of atoms/A3)" />}}
 {{< action type="settings" >}}Click on the {{< gui-node "Parameters" >}} node to show its options{{< /action >}}
 {{< step text="Check that the units for the **Density** are set to `atoms/A3`" />}}
-{{< step text="Increase the **Population** to 1000" />}}
+{{< action type="edit" text="Increase the **Population** to `1000`" />}}
 
 Finally, we need to set the correct temperature for the configuration.
 
