@@ -25,7 +25,7 @@ A new editor window opens in which we can draw the rough geometry and connectivi
 
 Time to make it a little prettier!  We'll assign a standard forcefield to it, and optimise the geometry:
 
-{{< tip text="You can filter forcefields by keywords in name and description by using the filter box at the top-right of the forcefield selection controls.">}}
+{{< tip text="You can filter forcefields by keywords in name and description by using the filter box at the top-right of the forcefield selection controls." />}}
 
 {{< action type="menu" text="Species &#8680; Add Forcefield Terms" />}}
 {{< step text="From the available forcefields choose `OPLSAA2005/Aromatics` and click **Next**" />}}
