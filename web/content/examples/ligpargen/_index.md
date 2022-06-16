@@ -23,4 +23,4 @@ If, for some reason, the LigParGen service is offline we provide some test data 
 {{< action type="menu" text="File &#8680; Save As..." />}}
 {{< step text="Save your input file under a sensible name in same directory as the example data" />}}
 
-{{< button pos="left" text="Let's begin!" path="step1/">}} -->
+{{< button pos="left" text="Let's begin!" path="step1/">}}
