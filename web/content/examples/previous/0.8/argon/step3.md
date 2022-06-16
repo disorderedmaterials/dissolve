@@ -24,7 +24,7 @@ You will now see that the **Generator** section has been populated with several 
 
 In the {{< gui-node "Add" >}} node note how we have reference the `rho` parameter for the density.
 
-{{< tip text="Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid.">}}
+{{< tip text="Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid." />}}
 
 Let's change the settings of our configuration's generator to give us a suitable system.
 
@@ -40,7 +40,7 @@ Finally, we need to set the correct temperature for the configuration.
 
 Because we've changed some settings, we need to hit the **Regenerate** button to recreate our initial configuration.
 
-{{< tip text="You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the **Clear Module Data** option in the **Simulation** menu.">}}
+{{< tip text="Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid." />}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step2/">}}

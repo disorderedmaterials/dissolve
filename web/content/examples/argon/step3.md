@@ -40,7 +40,7 @@ Finally, we need to set the correct temperature for the configuration.
 
 Because we've changed some settings, we need to hit the **Regenerate** button to recreate our initial configuration.
 
-{{< tip text="You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the **Clear Module Data** option in the **Simulation** menu.">}}
+{{< tip text="You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the **Clear Module Data** option in the **Simulation** menu." />}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step2/">}}

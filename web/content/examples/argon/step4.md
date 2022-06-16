@@ -11,7 +11,7 @@ We'll split our simulation up into two layers:
 1. An 'evolution' layer which moves the contents of our configuration around and calculates the total energy of the system
 2. A 'calculation' layer which periodically calculates the radial distribution function and neutron-weighted structure factor
 
-{{< tip text="You can have as many layers in a simulation as you need - whatever makes the most sense in what you're trying to do.">}}
+{{< tip text="You can have as many layers in a simulation as you need - whatever makes the most sense in what you're trying to do." />}}
 
 
 * * *

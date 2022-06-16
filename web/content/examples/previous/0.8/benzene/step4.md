@@ -29,7 +29,7 @@ Now we must tell the module which sites to use for its calculation:
 {{< step text="Set the **AxisA** and **AxisB** to `ZAxis`" />}}
 {{< step text="Enable the **ExcludeSameMolecule** to prevent the unwanted self-correlation spike at 0 in the resulting RDF" />}}
 
-{{< tip text="It would also be nice here to calculate the spatial density function (the three-dimensional distribution of molecules around a reference point) and compare it, but this takes more iterations than a (sane) example will allow.">}}
+{{< tip text="It would also be nice here to calculate the spatial density function (the three-dimensional distribution of molecules around a reference point) and compare it, but this takes more iterations than a (sane) example will allow." />}}
 
 
 * * *
