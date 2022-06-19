@@ -20,7 +20,7 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 {{< action type="mouse">}}Drag a {{< gui-module "CalculateAxisAngle" >}} module up to the module list{{< /action >}}
 {{< action type="mouse">}}Select the new {{< gui-module "CalculateAxisAngle" >}} module to show its options{{< /action >}}
 {{< action type="groups" text="Open the **Control** settings group" />}}
-{{< action type="edit" text="For the **DistanceRange** change the _Bin Width_ to `10` respectively" />}}
+{{< action type="edit" text="For the **DistanceRange** change the _Bin Width_ to `0.1`" />}}
 {{< action type="edit" text="For the **AngleRange** change the _Max_ to `90`"/>}}
 {{< action type="edit" text="Enable the **Symmetric** option"/>}}
 {{< step text="This will account for the planar symmetry of the benzene ring, and map any calculated angles in the range 90 - 180&deg; back in to 0 - 90&deg;" />}}
