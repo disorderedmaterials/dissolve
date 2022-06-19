@@ -6,11 +6,9 @@ weight: 1
 
 Now that the wizard has completed you'll see that the process has yielded a species with a full forcefield assignment, ready to do your simulated bidding. That was easy, wasn't it?
 
-Some things to consider / think about when using this approach:
+We need to talk a little bit about atomic charges here. While the underlying OPLS-AA parameter set has charges associated to individual atom types, the output of LigParGen provides atomic charges located on individual species atoms. So, you will may have to tell Dissolve that it should take charges from _Species Atoms_ on the {{< gui-tab type="ff" text="Forcefield" >}} tab. You may also have to force that choice, depending on the other species you have in your simulation. Additionally those charges, when truncated to fit in a finite number of decimal places, often result in a small positive or negative charge on the species (of the order of 1.0e-4 e). You will have to ensure that your species overall charge is zero, otherwise it's likely that you'll end up with a configuration with a non-zero charge, and that also isn't allowed.
 
-- Many simulators (including myself) have a lot of faith in the underlying parameter set (OPLS-AA) used by LigParGen, so it should give usable results for a great many molecules. However, you may find systems that do not work, so don't treat it as a guarantee.
-- Charges are assigned to species atoms, not atom types, so you may need to ensure that this particular source of charges is selected / forced in the {{< gui-tab type="ff" text="Forcefield" >}}.
-- If you use LigParGen, please cite it as it's a fantastic resource. The necessary references are produced below for convenience.
+If you use LigParGen, please cite it as it's a fantastic resource. The necessary references [1-3] are produced below for convenience. Many simulators (including myself) have a lot of faith in the underlying parameter set (OPLS-AA) used by LigParGen, so it should give usable results for a great many molecules. However, you may find systems that do not work, so don't treat it as a guarantee.
 
 References:
 1. "Potential energy functions for atomic-level simulations of water and organic and biomolecular systems.", W. L. Jorgensen and J. Tirado-Rives, _Proc. Nat. Acad. Sci. USA_ **102**, 6665-6670 (2005).
