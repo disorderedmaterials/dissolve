@@ -44,7 +44,7 @@ std::vector<std::shared_ptr<AddProcedureNode>> createRelativeMix(const std::vect
             auto coordSets = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("{}_Sets", sp->name()), sp);
 
             // Create the Add node
-            addNodes.emplace_back(generator.createRootNode<AddProcedureNode>(sp->name(), coordSets.get(),
+            addNodes.emplace_back(generator.createRootNode<AddProcedureNode>(sp->name(), coordSets,
                                                                              NodeValue(popString, paramsNode->parameters()),
                                                                              NodeValue("rho", paramsNode->parameters())));
         }
@@ -94,8 +94,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
         if (sp->nAtoms() > 1)
         {
             auto coordSets = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("{}_Sets", sp->name()), sp);
-            generator.createRootNode<AddProcedureNode>(sp->name(), coordSets.get(), 100,
-                                                       NodeValue("rho", paramsNode->parameters()));
+            generator.createRootNode<AddProcedureNode>(sp->name(), coordSets, 100, NodeValue("rho", paramsNode->parameters()));
         }
         else
             generator.createRootNode<AddProcedureNode>(sp->name(), sp, 100, NodeValue("rho", paramsNode->parameters()));

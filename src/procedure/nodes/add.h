@@ -18,7 +18,7 @@ class AddProcedureNode : public ProcedureNode
     public:
     explicit AddProcedureNode(const Species *sp = nullptr, const NodeValue &population = 0, const NodeValue &density = 0.1,
                               Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
-    explicit AddProcedureNode(const CoordinateSetsProcedureNode *sets, const NodeValue &population = 0,
+    explicit AddProcedureNode(std::shared_ptr<const CoordinateSetsProcedureNode> sets, const NodeValue &population = 0,
                               const NodeValue &density = 0.1, Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
     ~AddProcedureNode() override = default;
 
