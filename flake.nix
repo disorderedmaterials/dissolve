@@ -60,7 +60,6 @@
           libglvnd.dev
           qt6.qtbase
           qt6.qtcharts
-          qt6.qtdeclarative
           qt6.qtsvg
           qt6.qttools
           qt6.qtwayland
