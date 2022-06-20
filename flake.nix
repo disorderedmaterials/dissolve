@@ -58,11 +58,6 @@
           libGL.dev
           libglvnd
           libglvnd.dev
-          qt6.qtbase
-          qt6.qtcharts
-          qt6.qtsvg
-          qt6.qttools
-          qt6.qtwayland
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
