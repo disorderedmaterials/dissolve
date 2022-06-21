@@ -253,14 +253,7 @@
               [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
           };
 
-          # Qt packages to push to cachix
-          qtbase = pkgs.qt6.qtbase;
-          qtcharts = pkgs.qt6.qtcharts;
-          qtdeclarative = pkgs.qt6.qtdeclarative;
-          qtsvg = pkgs.qt6.qtsvg;
-          qttools = pkgs.qt6.qttools;
-          qtwayland = pkgs.qt6.qtwayland;
-
+          qtdeclarative = pkgs.qt6.qtdeclarative.dev;
         };
       });
 }
