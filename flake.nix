@@ -61,7 +61,7 @@
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
-    in flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
+    in flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
 
       let
         pkgs = import nixpkgs {
@@ -135,7 +135,7 @@
               }";
           };
       in {
-        overlays = [ qtoverlay ];
+        overlays = nixpkgs.lib.optional (system == "x86_64-linux") qtoverlay;
         checks.dissolve = dissolve { checks = true; };
         checks.dissolve-mpi = dissolve {
           mpi = true;
