@@ -242,20 +242,23 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
     const auto *box = cfg->box();
     cfg->atoms().reserve(cfg->atoms().size() + population_ * (speciesA_->nAtoms() + speciesB_->nAtoms()));
 
-    int old_size = cfg->molecules.size();
-    // Add molecules
+    // Add all molecule pairs
+    const auto currentSize = cfg->molecules().size();
     {
         AtomChangeToken lock(*cfg);
         for (auto n = 0; n < population_; ++n)
         {
-            molA = cfg->addMolecule(lock, speciesA_);
-            molB = cfg->addMolecule(lock, speciesB_);
+            cfg->addMolecule(lock, speciesA_);
+            cfg->addMolecule(lock, speciesB_);
         }
     }
-    for (auto n = old_size; n < cfg->molecules().size(); n += 2) {
+
+    // Position all molecule pairs
+    for (auto n = currentSize; n < cfg->molecules().size(); n += 2)
+    {
         auto &molA = cfg->molecules()[n];
-        auto &molB = cfg->molecules()[n+1];
-        
+        auto &molB = cfg->molecules()[n + 1];
+
         // Set / generate position of pair
         switch (positioningType_)
         {
