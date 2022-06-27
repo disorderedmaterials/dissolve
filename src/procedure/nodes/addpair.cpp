@@ -241,22 +241,21 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
     Matrix3 transform;
     const auto *box = cfg->box();
     cfg->atoms().reserve(cfg->atoms().size() + population_ * (speciesA_->nAtoms() + speciesB_->nAtoms()));
-    for (auto n = 0; n < population_; ++n)
-    {
-        // Add the Molecule - use coordinate set if one is available
-        std::shared_ptr<Molecule> molA, molB;
-        {
-            // The atom pointers need to be updated before
-            // setCentreOfGeometry is called, or else there can be a
-            // segfault due to pointer invalidation.  It would be nice if
-            // we could have a single lock for the whole loop, but that
-            // will require some thought.
-            AtomChangeToken lock(*cfg);
 
+    int old_size = cfg->molecules.size();
+    // Add molecules
+    {
+        AtomChangeToken lock(*cfg);
+        for (auto n = 0; n < population_; ++n)
+        {
             molA = cfg->addMolecule(lock, speciesA_);
             molB = cfg->addMolecule(lock, speciesB_);
         }
-
+    }
+    for (auto n = old_size; n < cfg->molecules().size(); n += 2) {
+        auto &molA = cfg->molecules()[n];
+        auto &molB = cfg->molecules()[n+1];
+        
         // Set / generate position of pair
         switch (positioningType_)
         {
