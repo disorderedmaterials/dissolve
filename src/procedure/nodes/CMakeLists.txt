@@ -1,6 +1,7 @@
 add_library(
   procedurenodes
   add.cpp
+  addpair.cpp
   box.cpp
   calculateangle.cpp
   calculateaxisangle.cpp
@@ -44,6 +45,7 @@ add_library(
   sum1d.cpp
   transmute.cpp
   add.h
+  addpair.h
   box.h
   calculateangle.h
   calculateaxisangle.h

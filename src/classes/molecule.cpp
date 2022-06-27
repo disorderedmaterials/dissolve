@@ -169,6 +169,17 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
         i->setCoordinates(transformationMatrix * (i->r() - cog) + cog);
 }
 
+// Transform molecule with supplied matrix about specified origin
+void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin)
+{
+    // Unfold
+    unFold(box);
+
+    // Apply transform
+    for (auto &i : atoms())
+        i->setCoordinates(transformationMatrix * (i->r() - origin) + origin);
+}
+
 // Transform selected atoms with supplied matrix, around specified origin
 void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin,
                          const std::vector<int> &targetAtoms)

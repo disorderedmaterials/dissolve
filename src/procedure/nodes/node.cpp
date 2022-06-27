@@ -26,6 +26,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
     return EnumOptions<ProcedureNode::NodeType>(
         "NodeType", {{ProcedureNode::NodeType::Add, "Add"},
+                     {ProcedureNode::NodeType::AddPair, "AddPair"},
                      {ProcedureNode::NodeType::Box, "Box"},
                      {ProcedureNode::NodeType::CalculateAngle, "CalculateAngle"},
                      {ProcedureNode::NodeType::CalculateAxisAngle, "CalculateAxisAngle"},
