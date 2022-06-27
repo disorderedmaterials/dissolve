@@ -39,6 +39,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     enum class NodeType
     {
         Add,
+        AddPair,
         Box,
         CalculateAngle,
         CalculateAxisAngle,
