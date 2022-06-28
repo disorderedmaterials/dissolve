@@ -1,7 +1,7 @@
 ---
 title: Compilation
 description: Building Dissolve from scratch
-weight: 3
+weight: 4
 ---
 
 {{< tip text="Pre-built binaries for most desktop systems are available in the [packages](/packages/) section - don't compile Dissolve if you don't have to!" />}}
