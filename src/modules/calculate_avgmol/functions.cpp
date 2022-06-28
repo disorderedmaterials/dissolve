@@ -53,6 +53,10 @@ void CalculateAvgMolModule::updateSpecies(const SampledVector &x, const SampledV
 // Update average Species with coordinates from processing data
 void CalculateAvgMolModule::updateSpecies(const GenericList &moduleData)
 {
+    // Check for presence of data arrays
+    if (!moduleData.contains("X", name()) || !moduleData.contains("Y", name()) || !moduleData.contains("Z", name()))
+        return;
+
     // Retrieve data arrays
     auto &x = moduleData.value<SampledVector>("X", name());
     auto &y = moduleData.value<SampledVector>("Y", name());
