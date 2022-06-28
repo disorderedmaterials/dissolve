@@ -26,6 +26,10 @@ steps:
       cd ..
       ANTLR_PATH=$HOME/deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib
       TBB_PATH=$HOME/deploy/tbb/lib/libtbb.dylib
+      ls $HOME
+      ls $HOME/deploy
+      ls $HOME/deploy/antlr4-cppruntime/
+      ls $HOME/deploy/antlr4-cppruntime/lib/
 
       #Handle ANTLR
       cp $ANTLR_PATH /usr/local/lib/
