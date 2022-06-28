@@ -1,7 +1,7 @@
 ---
 title: Compilation
 description: Building Dissolve from scratch
-weight: 3
+weight: 4
 ---
 
 {{< tip text="Pre-built binaries for most desktop systems are available in the [packages](/packages/) section - don't compile Dissolve if you don't have to!" />}}
@@ -32,7 +32,7 @@ Dissolve uses the [`Conan`](https://conan.io/) package manager to satisfy extern
 
 Version 0.7.X of Dissolve uses MPI for parallelism, so a suitable MPI implementation providing `mpic++` is required - MPI-based parallelism is enabled by passing `-DPARALLEL:bool=true` to `cmake`. It is *not* recommended to build version 0.8 with MPI enabled, since MPI+threading is only experimental in this version.
 
-### Multithreading (for version 0.8.X)
+### Multithreading (for version 0.8.X onwards)
 
 As of version 0.8 the default is for Dissolve to be built with multithreading enabled - this applies to both the command-line and GUI versions. If you really want a truly serial code, pass `-DMULTI_THREADING:bool=false` to `cmake`.
 
@@ -40,7 +40,7 @@ As of version 0.8 the default is for Dissolve to be built with multithreading en
 
 The GUI requires several external graphical libraries and toolkits:
 
-- Qt5 (Widgets, Core, OpenGL) v5.10 or higher (including development libraries/headers)
+- Qt6 (Widgets, Core, OpenGL) v6.2 or higher (including development libraries/headers)
 - FTGL (including development libraries/headers)
 - Freetype2 (including development libraries/headers)
 
@@ -78,15 +78,9 @@ This will download and locally install necessary external packages locally to th
 
 ### Install ANTLR4
 
-ANTLR4 comprises two distinct parts - a generator tool, written in Java, used at build time to generate code implementing various parser/lexer structures, and a runtime library. The Java component is commonly-available on all operating systems, either as a vendor-provided package or as a straight download from the [ANTLR website](https://www.antlr.org). The runtime library is available for some, but not all operating systems, e.g. for several Linux flavours, and via Homebrew for OSX. However, don't panic if your system does not have suitable binary packages available, as the runtime library can be built as an external project as part of the main build.
+ANTLR4 comprises two distinct parts - a generator tool, written in Java, used at build time to generate code implementing various parser/lexer structures, and a runtime library. The Java component is commonly-available on all operating systems, either as a vendor-provided package or as a straight download from the [ANTLR website](https://www.antlr.org). The runtime library is available for most platforms via conan, and is installed automatically in the previous step.
 
-To build the runtime library as an external project, add the following option to your `cmake` command:
-
-```
--DBUILD_ANTLR_RUNTIME:bool=true
-```
-
-If you have the ANTLR4 tool and runtime library installed on your system, but they can't be located by `cmake`, try the `ANTLR_DIR` option:
+If you have the ANTLR4 tool and/or runtime library installed on your system, but they can't be located by `cmake`, try the `ANTLR_DIR` option:
 
 ```
 -DANTLR_DIR:path=/here/is/my/ANTLR4
@@ -114,7 +108,7 @@ Once configured correctly and with no errors, the target binary can be built sim
 make
 ```
 
-...or, if you installed it and configured `cmake` with `-G Ninja`:
+...or, if you installed `ninja` and ran `cmake` with `-G Ninja`:
 
 ```
 ninja
@@ -132,27 +126,11 @@ Example: `-DANTLR_EXECUTABLE:path=/path/to/antlr-4.8-complete.jar`
 
 Default: `not set`
 
-#### `ANTLRRUNTIME_DIR`
+#### `ANTLR_DIR`
 
-If the pre-installed ANTLR4 C++ runtime library and headers cannot be found easily by `cmake` (e.g. it is in a custom location) or you need to download and use a copy local to the build, the `ANTLRRUNTIME_DIR` can be used to specify an absolute path to the installation. The specified folder is expected to contain `lib` and `include` directories containing the relevant files.
+If the pre-installed ANTLR4 C++ runtime library and headers cannot be found easily by `cmake` (e.g. it is in a custom location) or you need to download and use a copy local to the build, the `ANTLR_DIR` can be used to specify an absolute path to the installation. The specified folder is expected to contain `lib` and `include` directories containing the relevant files.
 
-Example: `-DANTLRRUNTIME_DIR:path=/path/to/antlr-runtime/`
-
-Default: `not set`
-
-#### `BUILD_ANTLR_RUNTIME`
-
-Requests that the ANTLR4 C++ runtime library be downloaded and built as part of the main build process. If a precompiled package is not available for your particular system, this is the next best option.
-
-Usage: `-DBUILD_ANTLR_RUNTIME:bool=true`
-
-Default: `false`
-
-#### `BUILD_ANTLR_ZIPFILE`
-
-If building the ANTLR4 C++ runtime as an external project as part of the main build, the default behaviour is to automatically download the source code from [http://antlr.org](http://antlr.org). If a local copy of the source archive is to be used instead, it can be specified with the `BUILD_ANTLR_ZIPFILE` option in conjunction with `BUILD_ANTLR_RUNTIME`.
-
-Example: `-DBUILD_ANTLR_ZIPFILE:path=/path/to/antlr4-cpp-runtime-4.8-source.zip`
+Example: `-DANTLR_DIR:path=/path/to/antlr-runtime/`
 
 Default: `not set`
 
