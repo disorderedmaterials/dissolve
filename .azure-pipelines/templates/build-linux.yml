@@ -29,11 +29,11 @@ steps:
       mkdir -p .config/cachix
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       nix-env -iA nixos.jq
-      cachix use dissolve-nix
     displayName: 'Install Cachix'
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
+      cachix use dissolve-nix
       nix build -L .#${{ parameters.package }}
       nix build --json .#${{ parameters.package }} > archive.json
     displayName: 'Build'
