@@ -21,6 +21,7 @@ steps:
 
       # Move Conan dependencies to where macqtdeploy can find it
       mkdir deploy
+      cd deploy
       conan install .. -g deploy
       cd ..
       ls $HOME/deploy/antlr4-cppruntime/lib/
