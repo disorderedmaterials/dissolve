@@ -24,7 +24,6 @@ steps:
       cd deploy
       conan install .. -g deploy
       cd ..
-      ls $HOME/deploy/antlr4-cppruntime/lib/
       ANTLR_PATH=$HOME/deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib
       TBB_PATH=$HOME/deploy/tbb/lib/libtbb.dylib
 
