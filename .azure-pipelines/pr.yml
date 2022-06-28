@@ -23,6 +23,7 @@ stages:
     jobs:
       # - template: templates/build-linux-releases.yml
       - job: "test_linux_mpi"
+        condition: EQ('true', 'false')
         displayName: "Testing MPI, CLI"
         pool:
           vmImage: "ubuntu-latest"
