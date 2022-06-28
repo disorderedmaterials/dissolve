@@ -22,8 +22,12 @@ steps:
 
       # Move ANTLR to where macqtdeploy can find it
       ANTLR_PATH=$HOME/.conan/data/antlr4-cppruntime/${{ parameters.antlrver }}/_/_/package
+      ls $ANTLR_PATH
       ANTLR_HASH=$(conan info . -j | tail -n 1 | jq -r '.[] | select(.reference=="antlr4-cppruntime/${{ parameters.antlrver }}") | .id')
+      ls $ANTLR_HASH
       ANTLR_PATH=$ANTLR_PATH/$ANTLR_HASH/lib/libantlr4-runtime.${{ parameters.antlrver }}.dylib
+      ls $ANTLR_PATH/$ANTLR_HASH/
+      ls $ANTLR_PATH/$ANTLR_HASH/lib/
 
       # Move TBB to where macqtdeploy can find it
       TBB_PATH=$HOME/.conan/data/tbb/${{ parameters.tbbver }}/_/_/package
