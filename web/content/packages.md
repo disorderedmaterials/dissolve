@@ -31,6 +31,7 @@ linkTitle = "Packages"
 {{% blocks/feature icon="fab fa-linux" title="Linux" %}}
 {{< releaselink target="GUI" urlSuffix="" textSuffix="Binary" >}}
 {{< releaselink target="GUI" urlSuffix=".sif" textSuffix="Singularity Container" >}}
+<a href='{{< ref "singularity" >}}'>Singularity Usage Guide</a>
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
