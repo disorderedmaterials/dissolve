@@ -15,7 +15,7 @@ class DataViewer : public BaseViewer
 
     public:
     DataViewer(QWidget *parent);
-    ~DataViewer();
+    ~DataViewer() override;
 
     /*
      * Rendering (BaseViewer virtuals)
@@ -35,15 +35,15 @@ class DataViewer : public BaseViewer
     // Mouse moved
     void mouseMoved(int dx, int dy) override;
     // Mouse 'wheeled'
-    void mouseWheeled(int delta);
+    void mouseWheeled(int delta) override;
     // Mouse double clicked
-    void mouseDoubleClicked();
+    void mouseDoubleClicked() override;
     // Context menu requested
-    void contextMenuRequested(QPoint pos);
+    void contextMenuRequested(QPoint pos) override;
     // Key pressed
-    bool keyPressed(int key);
+    bool keyPressed(int key) override;
     // Key released
-    bool keyReleased(int key);
+    bool keyReleased(int key) override;
 
     signals:
     void currentCoordinateChanged();

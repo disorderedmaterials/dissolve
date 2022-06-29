@@ -88,7 +88,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     // Return whether specified node is currently in the vector
     bool isPresent(ConstNodeRef node) const override { return std::find(data_.begin(), data_.end(), node) != data_.end(); }
     // Return plain ProcedureNode vector
-    std::vector<ConstNodeRef> nodes() const
+    std::vector<ConstNodeRef> nodes() const override
     {
         std::vector<ConstNodeRef> result;
         std::copy(data_.begin(), data_.end(), std::back_inserter(result));

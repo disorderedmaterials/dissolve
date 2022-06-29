@@ -49,7 +49,7 @@ class RenderableData1D : public Renderable
 
     public:
     // Calculate min/max y value over specified x range (if possible in the underlying data)
-    bool yRangeOverX(double xMin, double xMax, double &yMin, double &yMax);
+    bool yRangeOverX(double xMin, double xMax, double &yMin, double &yMax) override;
 
     /*
      * Rendering Primitives
