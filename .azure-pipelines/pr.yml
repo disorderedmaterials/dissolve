@@ -21,9 +21,8 @@ stages:
   - stage: "build"
     displayName: "Build"
     jobs:
-      # - template: templates/build-linux-releases.yml
+      - template: templates/build-linux-releases.yml
       - job: "test_linux_mpi"
-        condition: EQ('true', 'false')
         displayName: "Testing MPI, CLI"
         pool:
           vmImage: "ubuntu-latest"
@@ -35,7 +34,6 @@ stages:
             parameters:
               package: "checks.x86_64-linux.dissolve-mpi"
       - job: "test_linux_gui"
-        condition: EQ('true', 'false')
         displayName: "Testing GUI"
         timeoutInMinutes: 90
         pool:
@@ -48,7 +46,6 @@ stages:
             parameters:
               package: "checks.x86_64-linux.dissolve"
       - job: "test_linux_threadless"
-        condition: EQ('true', 'false')
         displayName: "Testing Threadless"
         pool:
           vmImage: "ubuntu-latest"
@@ -76,7 +73,6 @@ stages:
               ArtifactName: "osx-artifacts"
             displayName: "Publish OSX Artifacts"
       - job: "windows"
-        condition: EQ('true', 'false')
         displayName: "Windows, Threads, CLI/GUI"
         timeoutInMinutes: 150
         pool:
