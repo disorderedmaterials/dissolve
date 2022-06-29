@@ -20,6 +20,7 @@ steps:
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
 
       # Move Conan dependencies to where macqtdeploy can find it
+      pwd
       mkdir deploy
       cd deploy
       conan install .. -g deploy
