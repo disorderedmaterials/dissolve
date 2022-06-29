@@ -42,4 +42,4 @@ Finally, you will probably need to let the container have read-only access to a 
 bob@linux:~> singularity run -B/etc:/etc:ro dissolve-gui-0.9.1.sif
 ```
 
-and which should now let the Dissolve GUI run properly.
+and which should now let the Dissolve GUI run properly. If the GUI runs correctly but displays odd characters or looks like it is missing a font entirely, add `-B/usr/share:/usr/share:ro` to the singularity command. You may need to adjust this depending on where fonts are stored on your system.
