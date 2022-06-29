@@ -20,17 +20,12 @@ steps:
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
 
       # Move Conan dependencies to where macqtdeploy can find it
-      pwd
       mkdir deploy
       cd deploy
       conan install .. -g deploy
       cd ..
       ANTLR_PATH=$PWD/deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib
       TBB_PATH=$PWD/deploy/tbb/lib/libtbb.dylib
-      ls $PWD
-      ls $PWD/deploy
-      ls $PWD/deploy/antlr4-cppruntime/
-      ls $PWD/deploy/antlr4-cppruntime/lib/
 
       #Handle ANTLR
       cp $ANTLR_PATH /usr/local/lib/
