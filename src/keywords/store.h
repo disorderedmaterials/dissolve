@@ -112,6 +112,7 @@ class KeywordStore
     /*
      * Set / Get
      */
+    public:
     // Set specified keyword with supplied data
     void set(std::string_view name, const bool value);
     void set(std::string_view name, const double value);
