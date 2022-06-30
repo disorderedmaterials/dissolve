@@ -170,7 +170,10 @@ template <typename K> K *getKeyword(std::map<std::string_view, KeywordBase *> &k
     auto it = keywords.find(name);
     if (it == keywords.end())
         throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    return static_cast<K *>(it->second);
+    K *result = dynamic_cast<K *>(it->second);
+    if (!result)
+        throw(std::runtime_error(fmt::format("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name())));
+    return result;
 }
 
 void KeywordStore::set(std::string_view name, const bool value) { getKeyword<BoolKeyword>(keywords_, name)->setData(value); }
