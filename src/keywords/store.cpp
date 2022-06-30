@@ -24,48 +24,49 @@ std::vector<KeywordBase *> KeywordStore::allKeywords_;
  * Keyword Map
  */
 
-KeywordTypeMap::KeywordTypeMap()
-{
-    // PODs
-    registerDirectMapping<bool, BoolKeyword>([](BoolKeyword *keyword, const double value) { return keyword->setData(value); });
-    // -- Double and int keywords must use the setData() function as they have validation
-    registerDirectMapping<double, DoubleKeyword>(
-        [](DoubleKeyword *keyword, const double value) { return keyword->setData(value); });
-    registerDirectMapping<int, IntegerKeyword>(
-        [](IntegerKeyword *keyword, const int value) { return keyword->setData(value); });
+// KeywordTypeMap::KeywordTypeMap()
+// {
+//     // PODs
+//     registerDirectMapping<bool, BoolKeyword>([](BoolKeyword *keyword, const double value) { return keyword->setData(value);
+//     });
+//     // -- Double and int keywords must use the setData() function as they have validation
+//     registerDirectMapping<double, DoubleKeyword>(
+//         [](DoubleKeyword *keyword, const double value) { return keyword->setData(value); });
+//     registerDirectMapping<int, IntegerKeyword>(
+//         [](IntegerKeyword *keyword, const int value) { return keyword->setData(value); });
 
-    // Custom classes
-    registerDirectMapping<std::shared_ptr<Collect1DProcedureNode>, NodeKeyword<Collect1DProcedureNode>>();
-    registerDirectMapping<std::vector<std::shared_ptr<const Collect1DProcedureNode>>,
-                          NodeVectorKeyword<Collect1DProcedureNode>>();
-    registerDirectMapping<std::shared_ptr<RegionProcedureNodeBase>, NodeKeyword<RegionProcedureNodeBase>>();
-    registerDirectMapping<std::shared_ptr<SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>();
-    registerDirectMapping<ConstNodeVector<SelectProcedureNode>, NodeVectorKeyword<SelectProcedureNode>>();
-    registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
-    registerDirectMapping<const Module *, ModuleKeywordBase>(
-        [](ModuleKeywordBase *keyword, const Module *module) { return keyword->setData(module); },
-        [](ModuleKeywordBase *keyword) { return keyword->module(); });
-    registerDirectMapping<Configuration *, ConfigurationKeyword>();
-    registerDirectMapping<std::vector<Configuration *>, ConfigurationVectorKeyword>();
-    registerDirectMapping<const Species *, SpeciesKeyword>();
+//     // Custom classes
+//     registerDirectMapping<std::shared_ptr<Collect1DProcedureNode>, NodeKeyword<Collect1DProcedureNode>>();
+//     registerDirectMapping<std::vector<std::shared_ptr<const Collect1DProcedureNode>>,
+//                           NodeVectorKeyword<Collect1DProcedureNode>>();
+//     registerDirectMapping<std::shared_ptr<RegionProcedureNodeBase>, NodeKeyword<RegionProcedureNodeBase>>();
+//     registerDirectMapping<std::shared_ptr<SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>();
+//     registerDirectMapping<ConstNodeVector<SelectProcedureNode>, NodeVectorKeyword<SelectProcedureNode>>();
+//     registerDirectMapping<std::vector<Module *>, ModuleVectorKeyword>();
+//     registerDirectMapping<const Module *, ModuleKeywordBase>(
+//         [](ModuleKeywordBase *keyword, const Module *module) { return keyword->setData(module); },
+//         [](ModuleKeywordBase *keyword) { return keyword->module(); });
+//     registerDirectMapping<Configuration *, ConfigurationKeyword>();
+//     registerDirectMapping<std::vector<Configuration *>, ConfigurationVectorKeyword>();
+//     registerDirectMapping<const Species *, SpeciesKeyword>();
 
-    // STL / Common Classes
-    registerDirectMapping<std::string, StringKeyword>();
-    registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>(
-        [](Vec3DoubleKeyword *keyword, const Vec3<double> value) { return keyword->setData(value); });
-}
+//     // STL / Common Classes
+//     registerDirectMapping<std::string, StringKeyword>();
+//     registerDirectMapping<Vec3<double>, Vec3DoubleKeyword>(
+//         [](Vec3DoubleKeyword *keyword, const Vec3<double> value) { return keyword->setData(value); });
+// }
 
-// Set keyword data
-bool KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
-{
-    // Find a suitable setter and call it
-    auto it = directMapSetter_.find(data.type());
-    if (it == directMapSetter_.end())
-        throw(std::runtime_error(fmt::format(
-            "Item of type '{}' cannot be set as no suitable type mapping has been registered.\n", data.type().name())));
+// // Set keyword data
+// bool KeywordTypeMap::set(KeywordBase *keyword, const std::any data) const
+// {
+//     // Find a suitable setter and call it
+//     auto it = directMapSetter_.find(data.type());
+//     if (it == directMapSetter_.end())
+//         throw(std::runtime_error(fmt::format(
+//             "Item of type '{}' cannot be set as no suitable type mapping has been registered.\n", data.type().name())));
 
-    return (it->second)(keyword, data);
-}
+//     return (it->second)(keyword, data);
+// }
 
 /*
  * Keyword Store
@@ -107,23 +108,24 @@ const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &Keyw
  */
 
 // Return the setter instance
-const KeywordTypeMap &KeywordStore::setters()
-{
-    static const KeywordTypeMap setters;
+// const KeywordTypeMap &KeywordStore::setters()
+// {
+//     static const KeywordTypeMap setters;
 
-    return setters;
-}
+//     return setters;
+// }
 
 // Set specified keyword with supplied data
-void KeywordStore::set(std::string_view name, const std::any value)
-{
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("No keyword named '{}' exists to set.\n", name)));
+// void KeywordStore::set(std::string_view name, const std::any value)
+// {
+//     auto it = keywords_.find(name);
+//     if (it == keywords_.end())
+//         throw(std::runtime_error(fmt::format("No keyword named '{}' exists to set.\n", name)));
 
-    // Attempt to set the keyword
-    setters().set(it->second, value);
-}
+//     // Attempt to set the keyword
+//     // setters().set(it->second, value);
+//     throw(std::runtime_error(fmt::format("No keyword named '{}' exists to set.\n", name)));
+// }
 
 /*
  * Read / Write
@@ -160,4 +162,96 @@ bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool o
             return false;
 
     return true;
+}
+
+void KeywordStore::set(std::string_view name, const bool value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<BoolKeyword *>(it->second)->setData(value);
+}
+void KeywordStore::set(std::string_view name, const double value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<DoubleKeyword *>(it->second)->setData(value);
+}
+void KeywordStore::set(std::string_view name, const int value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<IntegerKeyword *>(it->second)->setData(value);
+}
+void KeywordStore::set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<NodeKeyword<Collect1DProcedureNode> *>(it->second)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<NodeVectorKeyword<Collect1DProcedureNode> *>(it->second)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<NodeKeyword<RegionProcedureNodeBase> *>(it->second)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<NodeKeyword<SelectProcedureNode> *>(it->second)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<NodeVectorKeyword<SelectProcedureNode> *>(it->second)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const std::vector<Module *> value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<ModuleVectorKeyword *>(it->second)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const Module *value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<ModuleKeywordBase *>(it->second)->setData(value);
+}
+// void KeywordStore::set(std::string_view name, const Configuration *value)
+// {
+//     auto it = keywords_.find(name);
+//     if (it == keywords_.end())
+//         throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+//     static_cast<ConfigurationKeyword *>(it->second)->data() = value;
+// }
+void KeywordStore::set(std::string_view name, const std::vector<Configuration *> value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<ConfigurationVectorKeyword *>(it->second)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const Species *value)
+{
+    auto it = keywords_.find(name);
+    if (it == keywords_.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
+    static_cast<SpeciesKeyword *>(it->second)->data() = value;
 }
