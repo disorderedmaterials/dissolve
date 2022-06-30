@@ -418,8 +418,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto &types = unweightedSQ.atomTypeMix();
         dissolve::for_each_pair(
             ParallelPolicies::seq, types.begin(), types.end(),
-            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2)
-            {
+            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
                 auto globalI = atd1.atomType()->index();
                 auto globalJ = atd2.atomType()->index();
 
@@ -503,8 +502,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
     for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-                        {
+                        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                             // Copy and rename the data for clarity
                             auto data = calculatedUnweightedSQ[{i, j}];
                             data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
@@ -555,8 +553,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (test_)
     {
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-                            {
+                            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                                 testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
                                 auto optRefData = testReferenceData_.data(testDataName);
                                 if (optRefData)
@@ -581,8 +578,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", name_, GenericItem::InRestartFileFlag);
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2)
-                            {
+                            [&](int i, auto at1, int j, auto at2) {
                                 auto &expGR = estimatedGR[{i, j}];
                                 expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
 
@@ -607,8 +603,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
         dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                [&](int i, auto at1, int j, auto at2)
-                                {
+                                [&](int i, auto at1, int j, auto at2) {
                                     auto weight = scatteringMatrix.pairWeightInverse(0.0, at1, at2, dataIndex);
 
                                     /*
@@ -644,8 +639,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Sum fluctuation coefficients in to the potential coefficients
         auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, nCoeffP_);
         dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                [&](int i, auto at1, int j, auto at2)
-                                {
+                                [&](int i, auto at1, int j, auto at2) {
                                     auto &potCoeff = coefficients[{i, j}];
 
                                     // Zero potential before adding in fluctuation coefficients?
@@ -718,8 +712,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         if (procPool.isMaster())
         {
             dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
-                                    {
+                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
                                         // Grab pointer to the relevant pair potential
                                         PairPotential *pp = dissolve.pairPotential(at1, at2);
 
@@ -742,8 +735,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             dissolve::for_each_pair(
                 ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
-                {
+                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
                     // Grab reference to coefficients
                     auto &potCoeff = coefficients[{i, j}];
 

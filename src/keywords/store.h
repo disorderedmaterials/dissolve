@@ -28,14 +28,12 @@ class KeywordStore
     ~KeywordStore()
     {
         // Remove keywords in this store from the global reference
-        auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(),
-                                 [&](const auto *k)
-                                 {
-                                     for (auto &[name, keyword] : keywords_)
-                                         if (k == keyword)
-                                             return true;
-                                     return false;
-                                 });
+        auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(), [&](const auto *k) {
+            for (auto &[name, keyword] : keywords_)
+                if (k == keyword)
+                    return true;
+            return false;
+        });
         allKeywords_.erase(it, allKeywords_.end());
     }
 
@@ -55,7 +53,7 @@ class KeywordStore
     public:
     // Add keyword (no group)
     template <class K, typename... Args>
-    KeywordBase *addKeyword(std::string_view name, std::string_view description, Args &&...args)
+    KeywordBase *addKeyword(std::string_view name, std::string_view description, Args &&... args)
     {
         // Check for keyword of this name already
         if (keywords_.find(name) != keywords_.end())
@@ -72,7 +70,7 @@ class KeywordStore
         return k;
     }
     // Add target keyword
-    template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&...args)
+    template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&... args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
@@ -80,7 +78,7 @@ class KeywordStore
     }
     // Add keyword (displaying in named group)
     template <class K, typename... Args>
-    KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&...args)
+    KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&... args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
@@ -96,7 +94,7 @@ class KeywordStore
     // Add keyword (displaying in named group) and capture in restart file
     template <class K, typename... Args>
     KeywordBase *addRestartable(std::string_view displayGroup, std::string_view name, std::string_view description,
-                                Args &&...args)
+                                Args &&... args)
     {
         return restartables_.emplace_back(add<K>(displayGroup, name, description, args...));
     }
@@ -146,6 +144,19 @@ class KeywordStore
 
         k->data() = data;
     }
+
+    /*
+     *
+     * Getters for the Keyword Store.  This should eventually be
+     * replaced with a single get function.  The problem is two-fold.
+     * First, C++ doesn't allow for overloading on return-type, so we
+     * need a template that takes the return type as a parameter.  That
+     * template can then be specialised to the individual return types,
+     * with the generic implementation throwing an exception.  Now C++11
+     * doesn't allow template specialisation within a member function.
+     * C++14 added support for this, but GCC still does not support this
+     * as of GCC 12.
+     */
 
     // retrieve a Configuration by keyword name
     Configuration *getConfiguration(std::string_view name) const;
