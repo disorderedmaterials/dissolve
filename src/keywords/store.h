@@ -4,8 +4,6 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "keywords/bool.h"
-#include "keywords/configuration.h"
 #include "keywords/enumoptions.h"
 #include "templates/optionalref.h"
 #include <any>
@@ -19,6 +17,7 @@ class Collect1DProcedureNode;
 class RegionProcedureNodeBase;
 class SQModule;
 class RDFModule;
+class Configuration;
 
 // Keyword Store
 class KeywordStore

@@ -6,7 +6,6 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "keywords/configuration.h"
 #include "main/dissolve.h"
 #include "modules/intrashake/intrashake.h"
 #include <cstdio>
