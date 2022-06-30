@@ -17,6 +17,8 @@
 class SelectProcedureNode;
 class Collect1DProcedureNode;
 class RegionProcedureNodeBase;
+class SQModule;
+class RDFModule;
 
 // Keyword Store
 class KeywordStore
@@ -144,10 +146,18 @@ class KeywordStore
 
         k->data() = data;
     }
-    // Get specified keyword data, casting as necessary
+
+    // retrieve a Configuration by keyword name
     Configuration *getConfiguration(std::string_view name) const;
+    // retrieve a vector of Configurations by keyword name
     std::vector<Configuration *> getVectorConfiguration(std::string_view name) const;
+    // retrieve a Species by keyword name
     const Species *getSpecies(std::string_view name) const;
+    // retrieve a vector of Modules by keyword name
+    std::vector<Module *> getVectorModule(std::string_view name) const;
+    // retrieve an Integer by keyword name
+    int getInt(std::string_view name) const;
+
     // Get specified keyword data, casting as necessary
     template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name) const
     {

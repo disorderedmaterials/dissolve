@@ -92,7 +92,7 @@ void RDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upd
 {
     refreshing_ = true;
 
-    const auto cfgs = module_->keywords().get<std::vector<Configuration *>>("Configurations");
+    const auto cfgs = module_->keywords().getVectorConfiguration("Configurations");
 
     // Update partial set (Configuration) targets
     auto optConfig =
