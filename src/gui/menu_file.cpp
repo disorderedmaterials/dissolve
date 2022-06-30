@@ -57,6 +57,7 @@ void DissolveWindow::startNew()
 
     // Clear Dissolve itself
     dissolve_.clear();
+    clearMessages();
 
     dissolveIterating_ = false;
     modified_ = false;
