@@ -165,7 +165,7 @@ bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool o
 }
 
 // Local template for handling boilerplate of casting the keyword
-template <typename K> K *getKeyword(std::map<std::string_view, KeywordBase *> &keywords, std::string_view name)
+template <typename K> K *getKeyword(const std::map<std::string_view, KeywordBase *> &keywords, std::string_view name)
 {
     auto it = keywords.find(name);
     if (it == keywords.end())
@@ -229,4 +229,20 @@ void KeywordStore::set(std::string_view name, const std::string value)
 void KeywordStore::set(std::string_view name, const Vec3<double> value)
 {
     getKeyword<Vec3DoubleKeyword>(keywords_, name)->setData(value);
+}
+
+// retrieve a Configuration by keyword name
+Configuration *KeywordStore::getConfiguration(std::string_view name) const
+{
+    return getKeyword<ConfigurationKeyword>(keywords_, name)->data();
+}
+// retrieve a Species by keyword name
+const Species *KeywordStore::getSpecies(std::string_view name) const
+{
+    return getKeyword<SpeciesKeyword>(keywords_, name)->data();
+}
+// retrieve a vector of Configurations by keyword name
+std::vector<Configuration *> KeywordStore::getVectorConfiguration(std::string_view name) const
+{
+    return getKeyword<ConfigurationVectorKeyword>(keywords_, name)->data();
 }
