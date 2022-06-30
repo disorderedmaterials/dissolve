@@ -21,8 +21,8 @@ stages:
   - stage: "build"
     displayName: "Build"
     jobs:
-      - template: templates/build-linux-releases.yml
       - job: "test_linux_mpi"
+        condition: eq(1,0)
         displayName: "Testing MPI, CLI"
         pool:
           vmImage: "ubuntu-latest"
@@ -34,6 +34,7 @@ stages:
             parameters:
               package: "checks.x86_64-linux.dissolve-mpi"
       - job: "test_linux_gui"
+        condition: eq(1,0)
         displayName: "Testing GUI"
         timeoutInMinutes: 90
         pool:
@@ -46,6 +47,7 @@ stages:
             parameters:
               package: "checks.x86_64-linux.dissolve"
       - job: "test_linux_threadless"
+        condition: eq(1,0)
         displayName: "Testing Threadless"
         pool:
           vmImage: "ubuntu-latest"
@@ -57,6 +59,7 @@ stages:
             parameters:
               package: "checks.x86_64-linux.dissolve-threadless"
       - job: "osx"
+        condition: eq(1,0)
         displayName: "OSX, Threads, CLI/GUI"
         timeoutInMinutes: 120
         pool:

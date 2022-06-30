@@ -78,6 +78,6 @@ steps:
       cd build
       conan install .. --build missing
       cmake ../ -G "Visual Studio 17 2022" -A "x64" -DMULTI_THREADING:bool=${{ parameters.threading }} -DGUI:bool=true -DCMAKE_BUILD_TYPE:STRING="Release" ${{ parameters.extraflags }}
-      cmake --build . --config Release --target keywordwidgets
-      cmake --build . --config Release
+      cmake --build . --config Debug --target keywordwidgets
+      cmake --build . --config Debug
     displayName: 'Build'
