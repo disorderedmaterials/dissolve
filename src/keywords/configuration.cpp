@@ -34,12 +34,7 @@ bool ConfigurationKeyword::deserialise(LineParser &parser, int startArg, const C
 // Serialise data to specified LineParser
 bool ConfigurationKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    if (data_)
-    {
-        if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_->name()))
-            return false;
-    }
-    else if (!parser.writeLineF("{}{}  '?_?'\n", prefix, name()))
+    if (data_ && !parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_->name()))
         return false;
 
     return true;
