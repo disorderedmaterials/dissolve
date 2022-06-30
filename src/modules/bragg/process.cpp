@@ -13,7 +13,7 @@
 bool BraggModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (actionSignals.isSet(KeywordBase::ClearModuleData))
-        dissolve.processingModuleData().realise<std::vector<KVector>>("KVectors", name()).clear();
+        dissolve.processingModuleData().removeWithPrefix(name());
     return true;
 }
 
