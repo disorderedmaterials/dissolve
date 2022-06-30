@@ -164,94 +164,66 @@ bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool o
     return true;
 }
 
-void KeywordStore::set(std::string_view name, const bool value)
+// Local template for handling boilerplate of casting the keyword
+template <typename K> K *getKeyword(std::map<std::string_view, KeywordBase *> &keywords, std::string_view name)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
+    auto it = keywords.find(name);
+    if (it == keywords.end())
         throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<BoolKeyword *>(it->second)->setData(value);
+    return static_cast<K *>(it->second);
 }
+
+void KeywordStore::set(std::string_view name, const bool value) { getKeyword<BoolKeyword>(keywords_, name)->setData(value); }
 void KeywordStore::set(std::string_view name, const double value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<DoubleKeyword *>(it->second)->setData(value);
+    getKeyword<DoubleKeyword>(keywords_, name)->setData(value);
 }
-void KeywordStore::set(std::string_view name, const int value)
-{
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<IntegerKeyword *>(it->second)->setData(value);
-}
+void KeywordStore::set(std::string_view name, const int value) { getKeyword<IntegerKeyword>(keywords_, name)->setData(value); }
 void KeywordStore::set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<NodeKeyword<Collect1DProcedureNode> *>(it->second)->data() = value;
+    getKeyword<NodeKeyword<Collect1DProcedureNode>>(keywords_, name)->data() = value;
 }
 void KeywordStore::set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<NodeVectorKeyword<Collect1DProcedureNode> *>(it->second)->data() = value;
+    getKeyword<NodeVectorKeyword<Collect1DProcedureNode>>(keywords_, name)->data() = value;
 }
 void KeywordStore::set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<NodeKeyword<RegionProcedureNodeBase> *>(it->second)->data() = value;
+    getKeyword<NodeKeyword<RegionProcedureNodeBase>>(keywords_, name)->data() = value;
 }
 void KeywordStore::set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<NodeKeyword<SelectProcedureNode> *>(it->second)->data() = value;
+    getKeyword<NodeKeyword<SelectProcedureNode>>(keywords_, name)->data() = value;
 }
 void KeywordStore::set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<NodeVectorKeyword<SelectProcedureNode> *>(it->second)->data() = value;
+    getKeyword<NodeVectorKeyword<SelectProcedureNode>>(keywords_, name)->data() = value;
 }
 void KeywordStore::set(std::string_view name, const std::vector<Module *> value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<ModuleVectorKeyword *>(it->second)->data() = value;
+    getKeyword<ModuleVectorKeyword>(keywords_, name)->data() = value;
 }
 void KeywordStore::set(std::string_view name, const Module *value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<ModuleKeywordBase *>(it->second)->setData(value);
+    getKeyword<ModuleKeywordBase>(keywords_, name)->setData(value);
 }
-// void KeywordStore::set(std::string_view name, const Configuration *value)
-// {
-//     auto it = keywords_.find(name);
-//     if (it == keywords_.end())
-//         throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-//     static_cast<ConfigurationKeyword *>(it->second)->data() = value;
-// }
+void KeywordStore::set(std::string_view name, Configuration *value)
+{
+    getKeyword<ConfigurationKeyword>(keywords_, name)->data() = value;
+}
 void KeywordStore::set(std::string_view name, const std::vector<Configuration *> value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<ConfigurationVectorKeyword *>(it->second)->data() = value;
+    getKeyword<ConfigurationVectorKeyword>(keywords_, name)->data() = value;
 }
 void KeywordStore::set(std::string_view name, const Species *value)
 {
-    auto it = keywords_.find(name);
-    if (it == keywords_.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    static_cast<SpeciesKeyword *>(it->second)->data() = value;
+    getKeyword<SpeciesKeyword>(keywords_, name)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const std::string value)
+{
+    getKeyword<StringKeyword>(keywords_, name)->data() = value;
+}
+void KeywordStore::set(std::string_view name, const Vec3<double> value)
+{
+    getKeyword<Vec3DoubleKeyword>(keywords_, name)->setData(value);
 }

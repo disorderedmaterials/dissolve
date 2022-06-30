@@ -201,6 +201,8 @@ class KeywordStore
     void set(std::string_view name, const bool value);
     void set(std::string_view name, const double value);
     void set(std::string_view name, const int value);
+    void set(std::string_view name, const std::string value);
+    void set(std::string_view name, const Vec3<double> value);
     void set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
     void set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value);
     void set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
@@ -208,19 +210,9 @@ class KeywordStore
     void set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value);
     void set(std::string_view name, const std::vector<Module *> value);
     void set(std::string_view name, const Module *value);
-    void set(std::string_view name, const Configuration *value);
+    void set(std::string_view name, Configuration *value);
     void set(std::string_view name, const std::vector<Configuration *> value);
     void set(std::string_view name, const Species *value);
-    // Set specified keyword with supplied, template-guided data
-    template <class D> bool set(std::string_view name, const D value)
-    {
-        auto it = keywords_.find(name);
-        if (it == keywords_.end())
-            throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-
-        // return setters().set(it->second, value);
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    }
     // Set specified enumerated keyword
     template <class E> void setEnumeration(std::string_view name, E data)
     {
@@ -243,7 +235,8 @@ class KeywordStore
         if (it == keywords_.end())
             throw(std::runtime_error(fmt::format("Data for keyword '{}' cannot be retrieved as it doesn't exist..\n", name)));
 
-        throw(std::runtime_error(fmt::format("Data for keyword '{}' cannot be retrieved as it doesn't exist..\n", name)));
+        throw(std::runtime_error(
+            fmt::format("Data for keyword '{}' cannot be of unregistered type '{}'", name, typeid(D).name())));
     }
     // Get specified keyword data, casting as necessary
     template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name) const
