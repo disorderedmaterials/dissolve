@@ -92,8 +92,6 @@ QVariant SitesModel::data(const QModelIndex &index, int role) const
 {
     if (index.parent().isValid() && index.column() == 1)
     {
-        // Get the parent species
-        const auto &sp = species_->get()[index.parent().row()];
         if (role == Qt::DisplayRole)
             return QString::fromStdString(std::string(rawData(index)->name()));
         else if (role == Qt::CheckStateRole && checkedItems_)
