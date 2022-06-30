@@ -315,7 +315,7 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
 
     // Add a CalculateCN module
     auto *module = ModuleRegistry::create("CalculateCN", newLayer);
-    module->keywords().set<const Module *>("SourceRDF", calcRDFModule);
+    module->keywords().set("SourceRDF", calcRDFModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
