@@ -51,11 +51,8 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
             this, SLOT(masterTermSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set initial state of controls
-    if (!targetSpecies_->selectedAtoms().empty())
-    {
-        ui_.AtomTypesAssignSelectionRadio->setChecked(true);
-        ui_.IntramolecularTermsAssignSelectionRadio->setChecked(true);
-    }
+    ui_.AtomTypesAssignSelectionRadio->setEnabled(!targetSpecies_->selectedAtoms().empty());
+    ui_.IntramolecularTermsAssignSelectionRadio->setEnabled(!targetSpecies_->selectedAtoms().empty());
 
     // Register pages with the wizard
     registerPage(AddForcefieldTermsDialog::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsDialog::AtomTypesPage);
@@ -97,6 +94,10 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
             modifiedSpecies_->copyBasic(targetSpecies_);
             originalAtomTypeNames_.clear();
 
+            // Set selection status
+            for (auto &&[targetI, modifiedI] : zip(targetSpecies_->atoms(), modifiedSpecies_->atoms()))
+                modifiedI.setSelected(targetI.isSelected());
+
             // Determine atom types
             if (ui_.AtomTypesAssignAllRadio->isChecked())
             {
@@ -108,9 +109,6 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                                                       !ui_.KeepSpeciesAtomChargesCheck->isChecked());
                 if (!assignErrs.empty())
                     return alertAboutAtomTypeErrors(assignErrs);
-
-                for (auto &at : temporaryDissolve_.atomTypes())
-                    originalAtomTypeNames_.emplace_back(std::string(at->name()));
             }
             else if (ui_.AtomTypesAssignSelectionRadio->isChecked())
             {
@@ -127,6 +125,8 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                     return alertAboutAtomTypeErrors(assignErrs);
             }
 
+            for (auto &at : temporaryDissolve_.atomTypes())
+                originalAtomTypeNames_.emplace_back(std::string(at->name()));
             atomTypeModel_.setData(temporaryCoreData_.atomTypes());
             checkAtomTypeConflicts();
             break;
@@ -411,7 +411,7 @@ bool AddForcefieldTermsDialog::assignIntramolecularTerms(const Forcefield *ff)
 
         // Reduce to master terms?
         if (!ui_.NoMasterTermsCheck->isChecked())
-            modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_);
+            modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_, ui_.IntramolecularTermsAssignSelectionRadio->isChecked());
     }
 
     return true;
