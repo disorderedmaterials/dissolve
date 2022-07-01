@@ -128,7 +128,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         {
             // Get underlying RDF module
             std::string rdfModuleName = "UNKNOWN_RDF_MODULE";
-            const auto targets = module_->keywords().get<std::vector<Module *>>("Target");
+            const auto targets = module_->keywords().getVectorModule("Target");
             if (!targets.empty())
             {
                 auto optSQModule = targets[0]->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");

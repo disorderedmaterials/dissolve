@@ -197,7 +197,7 @@ void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(b
     {
         addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
         addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Region);
-        addNode->keywords().set<std::shared_ptr<RegionProcedureNodeBase>>("Region", regionNode);
+        addNode->keywords().set("Region", regionNode);
     }
 
     // Run the generator

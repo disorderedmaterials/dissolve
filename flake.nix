@@ -154,7 +154,7 @@
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
             ++ (with pkgs; [
-              (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages; })
+              (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages_7; })
               ccache
               ccls
               cmake-format

@@ -12,90 +12,12 @@
 #include <typeindex>
 #include <unordered_map>
 
-// Keyword TypeMap
-class KeywordTypeMap
-{
-    public:
-    KeywordTypeMap();
-    ~KeywordTypeMap() = default;
-
-    private:
-    // Function typedefs
-    using SetterFunction = std::function<bool(KeywordBase *keyword, const std::any data)>;
-    using GetterFunction = std::function<const std::any(KeywordBase *keyword)>;
-    // Setter function map
-    std::unordered_map<std::type_index, SetterFunction> directMapSetter_;
-    // Getter function maps
-    std::unordered_map<std::type_index, GetterFunction> directMapGetter_;
-    // Register direct setter for specific keyword / data type pair
-    template <class D, class K> void registerDirectMapping()
-    {
-        // Check for existing data
-        if (directMapSetter_.find(typeid(D)) != directMapSetter_.end())
-            throw(std::runtime_error(fmt::format("Duplicate mapping registered for type '{}'\n", typeid(D).name())));
-
-        directMapSetter_[typeid(D)] = [](KeywordBase *keyword, const std::any data) {
-            auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
-            k->data() = std::any_cast<D>(data);
-            return true;
-        };
-        directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
-            auto *k = dynamic_cast<K *>(keyword);
-            if (!k)
-                throw(std::runtime_error(
-                    fmt::format("Can't get data for keyword '{}' - mismatch between data ('{}') and keyword ('{}') types.\n",
-                                keyword->name(), typeid(D).name(), typeid(K).name())));
-            return k->data();
-        };
-    }
-    // Register direct setter for specific keyword / data type pair, with specific data setter on the keyword
-    template <class D, class K> void registerDirectMapping(std::function<bool(K *keyword, const D data)> setFunction)
-    {
-        directMapSetter_[typeid(D)] = [setFunction](KeywordBase *keyword, const std::any &data) {
-            auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
-            return setFunction(k, std::any_cast<D>(data));
-        };
-        directMapGetter_[typeid(D)] = [](KeywordBase *keyword) {
-            auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
-            return k->data();
-        };
-    }
-    // Register direct setter for specific keyword / data type pair, with specific data setter and getter on the keyword
-    template <class D, class K>
-    void registerDirectMapping(std::function<bool(K *keyword, const D data)> setFunction,
-                               std::function<const std::any(K *keyword)> getFunction)
-    {
-        directMapSetter_[typeid(D)] = [setFunction](KeywordBase *keyword, const std::any &data) {
-            auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
-            return setFunction(k, std::any_cast<D>(data));
-        };
-        directMapGetter_[typeid(D)] = [getFunction](KeywordBase *keyword) {
-            auto *k = dynamic_cast<K *>(keyword);
-            assert(k);
-            return getFunction(k);
-        };
-    }
-
-    public:
-    // Set keyword data
-    bool set(KeywordBase *keyword, const std::any data) const;
-    // Get keyword data
-    template <class D> D get(KeywordBase *keyword) const
-    {
-        // Find a suitable getter and call it
-        auto it = directMapGetter_.find(typeid(D));
-        if (it == directMapGetter_.end())
-            throw(std::runtime_error(fmt::format(
-                "Item of type '{}' cannot be returned as no suitable type mapping has been registered.\n", typeid(D).name())));
-
-        auto data = (it->second)(keyword);
-        return std::any_cast<D>(data);
-    }
-};
+class SelectProcedureNode;
+class Collect1DProcedureNode;
+class RegionProcedureNodeBase;
+class SQModule;
+class RDFModule;
+class Configuration;
 
 // Keyword Store
 class KeywordStore
@@ -190,22 +112,22 @@ class KeywordStore
     /*
      * Set / Get
      */
-    private:
-    // Return the setter instance
-    static const KeywordTypeMap &setters();
-
-    public:
     // Set specified keyword with supplied data
-    void set(std::string_view name, const std::any value);
-    // Set specified keyword with supplied, template-guided data
-    template <class D> bool set(std::string_view name, const D value)
-    {
-        auto it = keywords_.find(name);
-        if (it == keywords_.end())
-            throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-
-        return setters().set(it->second, value);
-    }
+    void set(std::string_view name, const bool value);
+    void set(std::string_view name, const double value);
+    void set(std::string_view name, const int value);
+    void set(std::string_view name, const std::string value);
+    void set(std::string_view name, const Vec3<double> value);
+    void set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
+    void set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value);
+    void set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
+    void set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value);
+    void set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value);
+    void set(std::string_view name, const std::vector<Module *> value);
+    void set(std::string_view name, const Module *value);
+    void set(std::string_view name, Configuration *value);
+    void set(std::string_view name, const std::vector<Configuration *> value);
+    void set(std::string_view name, const Species *value);
     // Set specified enumerated keyword
     template <class E> void setEnumeration(std::string_view name, E data)
     {
@@ -221,15 +143,30 @@ class KeywordStore
 
         k->data() = data;
     }
-    // Get specified keyword data, casting as necessary
-    template <class D> D get(std::string_view name) const
-    {
-        auto it = keywords_.find(name);
-        if (it == keywords_.end())
-            throw(std::runtime_error(fmt::format("Data for keyword '{}' cannot be retrieved as it doesn't exist..\n", name)));
 
-        return setters().get<D>(it->second);
-    }
+    /*
+     * Getters for the Keyword Store.  This should eventually be
+     * replaced with a single get function.  The problem is two-fold.
+     * First, C++ doesn't allow for overloading on return-type, so we
+     * need a template that takes the return type as a parameter.  That
+     * template can then be specialised to the individual return types,
+     * with the generic implementation throwing an exception.  Now C++11
+     * doesn't allow template specialisation within a member function.
+     * C++14 added support for this, but GCC still does not support this
+     * as of GCC 12.
+     */
+
+    // Retrieve a Configuration by keyword name
+    Configuration *getConfiguration(std::string_view name) const;
+    // Retrieve a vector of Configurations by keyword name
+    std::vector<Configuration *> getVectorConfiguration(std::string_view name) const;
+    // Retrieve a Species by keyword name
+    const Species *getSpecies(std::string_view name) const;
+    // Retrieve a vector of Modules by keyword name
+    std::vector<Module *> getVectorModule(std::string_view name) const;
+    // Retrieve an Integer by keyword name
+    int getInt(std::string_view name) const;
+
     // Get specified keyword data, casting as necessary
     template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name) const
     {

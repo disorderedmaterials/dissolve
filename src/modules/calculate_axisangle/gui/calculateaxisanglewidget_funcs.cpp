@@ -64,7 +64,7 @@ void CalculateAxisAngleModuleWidget::updateControls(const Flags<ModuleWidget::Up
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
         rdfGraph_->clearRenderables();
 
-    auto cfg = module_->keywords().get<Configuration *>("Configuration");
+    auto cfg = module_->keywords().getConfiguration("Configuration");
     if (cfg)
     {
         // Calculated A...B RDF

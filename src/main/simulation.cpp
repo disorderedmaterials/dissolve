@@ -188,7 +188,7 @@ bool Dissolve::prepare()
         Messenger::print("Generating attached atom lists for required species...");
         for (auto *module : intraShakeModules)
         {
-            auto *cfg = dynamic_cast<IntraShakeModule *>(module)->keywords().get<Configuration *>("Configuration");
+            auto *cfg = dynamic_cast<IntraShakeModule *>(module)->keywords().getConfiguration("Configuration");
             for (auto &sp : coreData_.species())
                 if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
                 {
