@@ -145,7 +145,6 @@ class KeywordStore
     }
 
     /*
-     *
      * Getters for the Keyword Store.  This should eventually be
      * replaced with a single get function.  The problem is two-fold.
      * First, C++ doesn't allow for overloading on return-type, so we
