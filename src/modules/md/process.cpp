@@ -4,22 +4,11 @@
 #include "base/lineparser.h"
 #include "base/randombuffer.h"
 #include "base/timer.h"
-#include "classes/box.h"
 #include "data/atomicmasses.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
 #include "modules/md/md.h"
-#include "templates/algorithms.h"
-
-// Run set-up stage
-bool MDModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
-{
-    if (actionSignals.isSet(KeywordBase::ClearModuleData))
-        dissolve.processingModuleData().removeWithPrefix(name());
-
-    return true;
-}
 
 // Run main processing
 bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
