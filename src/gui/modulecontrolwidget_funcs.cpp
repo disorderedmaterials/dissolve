@@ -154,19 +154,29 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
 
     // Determine flags
     Flags<KeywordBase::KeywordSignal> keywordSignals(signalMask);
+    Flags<ModuleWidget::UpdateFlags> widgetUpdateFlags;
 
-    // Call the module's setUp() function with it
+    // Handle specific flags for the module widget
+    if (keywordSignals.isSet(KeywordBase::KeywordSignal::RecreateRenderables))
+    {
+        widgetUpdateFlags.setFlag(ModuleWidget::RecreateRenderablesFlag);
+        keywordSignals -= KeywordBase::KeywordSignal::RecreateRenderables;
+    }
+
+    // Clear module data?
+    if (keywordSignals.isSet(KeywordBase::KeywordSignal::ClearModuleData))
+    {
+        dissolve_.processingModuleData().removeWithPrefix(module_->name());
+        keywordSignals -= KeywordBase::KeywordSignal::ClearModuleData;
+    }
+
+    // Call the module's setUp() function if any other flags are still set
     if (keywordSignals.anySet())
         module_->setUp(dissolve_, dissolve_.worldPool(), keywordSignals);
 
-    // Handle specific flags for the module widget
+    // Update the module widget
     if (moduleWidget_)
-    {
-        Flags<ModuleWidget::UpdateFlags> updateFlags;
-        if (keywordSignals.isSet(KeywordBase::KeywordSignal::RecreateRenderables))
-            updateFlags.setFlag(ModuleWidget::RecreateRenderablesFlag);
-        moduleWidget_->updateControls(updateFlags);
-    }
+        moduleWidget_->updateControls(widgetUpdateFlags);
 }
 
 // Global data mutated

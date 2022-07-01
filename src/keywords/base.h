@@ -87,7 +87,6 @@ class KeywordBase
     // Keyword Signals
     enum KeywordSignal
     {
-        ClearData,
         RecreateRenderables,
         ReloadExternalData,
         ClearModuleData
