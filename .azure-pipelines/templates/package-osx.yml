@@ -1,10 +1,6 @@
 parameters:
   - name: qtver
     default: 6.2.2
-  - name: antlrver
-    default: 4.9.3
-  - name: tbbver
-    default: 2020.3
 
 steps:
   - bash: |
@@ -24,12 +20,10 @@ steps:
       cd deploy
       conan install .. -g deploy
       cd ..
-      ANTLR_PATH=$PWD/deploy/antlr4-cppruntime/lib/libantlr4-runtime.dylib
-      TBB_PATH=$PWD/deploy/tbb/lib/libtbb.dylib
 
       #Handle ANTLR
-      cp $ANTLR_PATH /usr/local/lib/
-      cp $TBB_PATH /usr/local/lib/
+      cp $PWD/deploy/antlr4-cppruntime/lib/*.dylib /usr/local/lib/
+      cp $PWD/deploy/tbb/lib/*.dylib /usr/local/lib/
 
       install_name_tool -add_rpath "@executable_path/../Frameworks/" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui
       install_name_tool -add_rpath "/usr/local/lib" build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui

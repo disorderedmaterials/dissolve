@@ -123,7 +123,7 @@ bool AddProcedureNode::prepare(const ProcedureContext &procedureContext)
 bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     // Get target species
-    auto *sp = species_ ? species_ : coordinateSets_->keywords().get<const Species *>("Species");
+    auto *sp = species_ ? species_ : coordinateSets_->keywords().getSpecies("Species");
 
     // Can't add the Species if it has any missing core information
     if (!sp->checkSetUp())
