@@ -159,25 +159,25 @@ void KeywordStore::set(std::string_view name, const Vec3<double> value)
     getKeyword<Vec3DoubleKeyword>(keywords_, name)->setData(value);
 }
 
-// retrieve a Configuration by keyword name
+// Retrieve a Configuration by keyword name
 Configuration *KeywordStore::getConfiguration(std::string_view name) const
 {
     return getKeyword<ConfigurationKeyword>(keywords_, name)->data();
 }
-// retrieve a Species by keyword name
+// Retrieve a Species by keyword name
 const Species *KeywordStore::getSpecies(std::string_view name) const
 {
     return getKeyword<SpeciesKeyword>(keywords_, name)->data();
 }
-// retrieve a vector of Configurations by keyword name
+// Retrieve a vector of Configurations by keyword name
 std::vector<Configuration *> KeywordStore::getVectorConfiguration(std::string_view name) const
 {
     return getKeyword<ConfigurationVectorKeyword>(keywords_, name)->data();
 }
-// retrieve an Integer by keyword name
+// Retrieve an Integer by keyword name
 int KeywordStore::getInt(std::string_view name) const { return getKeyword<IntegerKeyword>(keywords_, name)->data(); }
 
-// retrieve a vector of Modules by keyword name
+// Retrieve a vector of Modules by keyword name
 std::vector<Module *> KeywordStore::getVectorModule(std::string_view name) const
 {
     return getKeyword<ModuleVectorKeyword>(keywords_, name)->data();
