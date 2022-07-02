@@ -433,7 +433,7 @@ int MasterTermTreeModel::rowCount(const QModelIndex &parent) const
         }
     }
     else
-        return 3;
+        return 4;
 }
 
 int MasterTermTreeModel::columnCount(const QModelIndex &parent) const { return 2; }
