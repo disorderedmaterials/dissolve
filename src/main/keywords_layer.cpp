@@ -45,7 +45,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
         switch (kwd)
         {
             case (LayerBlock::DisabledKeyword):
-                layer->setEnabled(false);
+                layer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
                 break;
             case (LayerBlock::EndLayerKeyword):
                 Messenger::print("Found end of {} block.\n",

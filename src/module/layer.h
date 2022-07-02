@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "templates/flags.h"
 #include <map>
 #include <memory>
 #include <string>
@@ -28,8 +29,6 @@ class ModuleLayer
     private:
     // Name of layer
     std::string name_{"Untitled Layer"};
-    // Whether the layer is enabled
-    bool enabled_{true};
     // Frequency, relative to the main iteration counter, at which to execute the layer
     int frequency_{1};
 
@@ -38,10 +37,6 @@ class ModuleLayer
     void setName(std::string_view name);
     // Return name of layer
     std::string_view name() const;
-    // Set whether the layer is enabled
-    void setEnabled(bool enabled);
-    // Return whether the layer is enabled
-    bool isEnabled() const;
     // Frequency, relative to the main iteration counter, at which to execute the layer
     void setFrequency(int frequency);
     // Return frequency, relative to the main iteration counter, at which to execute the layer
@@ -50,6 +45,26 @@ class ModuleLayer
     std::string frequencyDetails(int iteration) const;
     // Return whether the layer should execute this iteration
     bool runThisIteration(int iteration) const;
+
+    /*
+     * Run Control
+     */
+    public:
+    // Run Control Flags
+    enum RunControlFlag
+    {
+        Disabled,          /* Layer is disabled and will never run */
+        OnlyIfEnergyStable /* Only run if the energy of all relevant configurations is stable */
+    };
+
+    private:
+    // Flags controlling run status
+    Flags<RunControlFlag> runControlFlags_;
+
+    public:
+    // Return flags controlling run status
+    Flags<RunControlFlag> &runControlFlags();
+    Flags<RunControlFlag> runControlFlags() const;
 
     /*
      * Modules

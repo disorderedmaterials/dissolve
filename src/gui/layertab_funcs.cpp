@@ -141,11 +141,16 @@ void LayerTab::on_LayerEnabledButton_clicked(bool checked)
     if (refreshLock_.isLocked() || (!moduleLayer_))
         return;
 
-    moduleLayer_->setEnabled(checked);
     if (checked)
+    {
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer.svg"));
+        moduleLayer_->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+    }
     else
+    {
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+        moduleLayer_->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
+    }
 
     updateModuleList();
 
@@ -349,7 +354,7 @@ void LayerTab::updateControls()
 
     Locker refreshLocker(refreshLock_);
 
-    ui_.LayerEnabledButton->setChecked(moduleLayer_->isEnabled());
+    ui_.LayerEnabledButton->setChecked(!moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
     ui_.LayerFrequencySpin->setValue(moduleLayer_->frequency());
 
     auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());

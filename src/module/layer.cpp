@@ -17,12 +17,6 @@ void ModuleLayer::setName(std::string_view name) { name_ = name; }
 // Return name of layer
 std::string_view ModuleLayer::name() const { return name_; }
 
-// Set whether the layer is enabled
-void ModuleLayer::setEnabled(bool enabled) { enabled_ = enabled; }
-
-// Return whether the layer is enabled
-bool ModuleLayer::isEnabled() const { return enabled_; }
-
 // Frequency, relative to the main iteration counter, at which to execute the layer
 void ModuleLayer::setFrequency(int frequency) { frequency_ = frequency; }
 
@@ -35,7 +29,7 @@ std::string ModuleLayer::frequencyDetails(int iteration) const
     // Check edge cases
     if (frequency_ < 0)
         return "NEGATIVE?";
-    else if ((!enabled_) || (frequency_ == 0))
+    else if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled) || (frequency_ == 0))
         return "disabled";
     else if (frequency_ == 1)
         return "every time";
@@ -53,13 +47,21 @@ std::string ModuleLayer::frequencyDetails(int iteration) const
 // Return whether the layer should execute this iteration
 bool ModuleLayer::runThisIteration(int iteration) const
 {
-    if ((frequency_ < 1) || (!enabled_))
+    if ((frequency_ < 1) || runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
         return false;
     else if ((iteration % frequency_) == 0)
         return true;
     else
         return false;
 }
+
+/*
+ * Run Control
+ */
+
+// Return flags controlling run status
+Flags<ModuleLayer::RunControlFlag> &ModuleLayer::runControlFlags() { return runControlFlags_; }
+Flags<ModuleLayer::RunControlFlag> ModuleLayer::runControlFlags() const { return runControlFlags_; }
 
 /*
  * Modules
