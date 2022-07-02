@@ -68,10 +68,9 @@ void Dissolve::copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest)
     {
         auto master = coreData_.getMasterBond(source.masterTerm()->name());
         if (!master)
-        {
             master = coreData_.addMasterBond(source.masterTerm()->name());
-            master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-        }
+
+        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
         dest.setMasterTerm(&master->get());
     }
     else
@@ -83,10 +82,9 @@ void Dissolve::copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest)
     {
         auto master = coreData_.getMasterAngle(source.masterTerm()->name());
         if (!master)
-        {
             master = coreData_.addMasterAngle(source.masterTerm()->name());
-            master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-        }
+
+        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
         dest.setMasterTerm(&master->get());
     }
     else
@@ -98,10 +96,9 @@ void Dissolve::copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &
     {
         auto master = coreData_.getMasterTorsion(source.masterTerm()->name());
         if (!master)
-        {
             master = coreData_.addMasterTorsion(source.masterTerm()->name());
-            master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-        }
+
+        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
         dest.setMasterTerm(&master->get());
     }
     else
@@ -113,10 +110,9 @@ void Dissolve::copySpeciesImproper(const SpeciesImproper &source, SpeciesImprope
     {
         auto master = coreData_.getMasterImproper(source.masterTerm()->name());
         if (!master)
-        {
             master = coreData_.addMasterImproper(source.masterTerm()->name());
-            master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
-        }
+
+        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
         dest.setMasterTerm(&master->get());
     }
     else
