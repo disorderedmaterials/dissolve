@@ -44,6 +44,10 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
         return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
                                                                  : ":/general/icons/general_true.svg");
     });
+    masterTermModel_.setImproperIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
+                                                                  : ":/general/icons/general_true.svg");
+    });
     ui_.MasterTermsTree->setModel(&masterTermModel_);
     connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(masterTermDataChanged(const QModelIndex &, const QModelIndex &)));
