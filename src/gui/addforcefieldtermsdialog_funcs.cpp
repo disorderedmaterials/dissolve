@@ -429,32 +429,17 @@ bool AddForcefieldTermsDialog::assignIntramolecularTerms(const Forcefield *ff)
 void AddForcefieldTermsDialog::updateMasterTermsPage()
 {
     // Determine whether we have any naming conflicts
-    auto conflicts = false;
-    for (auto &intra : temporaryCoreData_.masterBonds())
-        if (dissolve_.coreData().getMasterBond(intra->name()))
-        {
-            conflicts = true;
-            break;
-        }
-    for (auto &intra : temporaryCoreData_.masterAngles())
-        if (dissolve_.coreData().getMasterAngle(intra->name()))
-        {
-            conflicts = true;
-            break;
-        }
-    for (auto &intra : temporaryCoreData_.masterTorsions())
-        if (dissolve_.coreData().getMasterTorsion(intra->name()))
-        {
-            conflicts = true;
-            break;
-        }
-    for (auto &intra : temporaryCoreData_.masterImpropers())
-        if (dissolve_.coreData().getMasterImproper(intra->name()))
-        {
-            conflicts = true;
-            break;
-        }
+    auto conflicts = std::any_of(temporaryCoreData_.masterBonds().begin(), temporaryCoreData_.masterBonds().end(),
+                                 [&](const auto &i) { return dissolve_.coreData().getMasterBond(i->name()); }) ||
+                     std::any_of(temporaryCoreData_.masterAngles().begin(), temporaryCoreData_.masterAngles().end(),
+                                 [&](const auto &i) { return dissolve_.coreData().getMasterAngle(i->name()); }) ||
+                     std::any_of(temporaryCoreData_.masterTorsions().begin(), temporaryCoreData_.masterTorsions().end(),
+                                 [&](const auto &i) { return dissolve_.coreData().getMasterTorsion(i->name()); }) ||
+                     std::any_of(temporaryCoreData_.masterImpropers().begin(), temporaryCoreData_.masterImpropers().end(),
+                                 [&](const auto &i) { return dissolve_.coreData().getMasterImproper(i->name()); });
+
     ui_.MasterTermsIndicator->setNotOK(conflicts);
+
     if (conflicts)
         ui_.MasterTermsIndicatorLabel->setText("One or more MasterTerms in the imported Species conflict with existing ones");
     else
