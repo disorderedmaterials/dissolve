@@ -441,9 +441,9 @@ void AddForcefieldTermsDialog::updateMasterTermsPage()
     ui_.MasterTermsIndicator->setNotOK(conflicts);
 
     if (conflicts)
-        ui_.MasterTermsIndicatorLabel->setText("One or more MasterTerms in the imported Species conflict with existing ones");
+        ui_.MasterTermsIndicatorLabel->setText("The names of one or more generated master terms conflict with existing ones");
     else
-        ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
+        ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the generated master terms");
 }
 
 void AddForcefieldTermsDialog::masterTermDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
