@@ -274,13 +274,17 @@ bool Dissolve::iterate(int nIterations)
          */
         for (auto &layer : processingLayers_)
         {
-            // Check if this layer is due to run
+            // Check if this layer is due to run this iteration
             if (!layer->runThisIteration(iteration_))
                 continue;
 
             Messenger::banner("Layer '{}'", layer->name());
             auto layerExecutionCount = iteration_ / layer->frequency();
-            
+
+            // Check run-control settings
+            if (!layer->canRun(processingModuleData_))
+                continue;
+
             for (auto &module : layer->modules())
             {
                 if (!module->runThisIteration(layerExecutionCount))

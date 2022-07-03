@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "module/module.h"
+#include "modules/energy/energy.h"
 #include "modules/registry.h"
 
 /*
@@ -62,6 +63,39 @@ bool ModuleLayer::runThisIteration(int iteration) const
 // Return flags controlling run status
 Flags<ModuleLayer::RunControlFlag> &ModuleLayer::runControlFlags() { return runControlFlags_; }
 Flags<ModuleLayer::RunControlFlag> ModuleLayer::runControlFlags() const { return runControlFlags_; }
+
+// Return whether all run control flags are satisfied and permit the layer to be run
+bool ModuleLayer::canRun(GenericList &processingModuleData) const
+{
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
+        return false;
+
+    auto cfgs = allTargetedConfigurations();
+
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::OnlyIfEnergyStable))
+    {
+        if (EnergyModule::nUnstable(processingModuleData, cfgs) != 0)
+        {
+            Messenger::print("One or more configurations have unstable energy, so the layer will not be run.\n");
+            return false;
+        }
+    }
+
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::OnlyIfSizeFactorsAreOne))
+    {
+        auto nScaled = std::count_if(cfgs.begin(), cfgs.end(),
+                                     [](const auto &cfg) { return fabs(cfg->appliedSizeFactor() - 1.0) < 1.0e-5; });
+
+        if (nScaled != 0)
+        {
+            Messenger::print("One or more configurations currently have scaled contents with size factors > 1.0, so the layer "
+                             "will not be run.\n");
+            return false;
+        }
+    }
+
+    return true;
+}
 
 /*
  * Modules

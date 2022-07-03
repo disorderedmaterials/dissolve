@@ -53,8 +53,9 @@ class ModuleLayer
     // Run Control Flags
     enum RunControlFlag
     {
-        Disabled,          /* Layer is disabled and will never run */
-        OnlyIfEnergyStable /* Only run if the energy of all relevant configurations is stable */
+        Disabled,               /* Layer is disabled and will never run */
+        OnlyIfEnergyStable,     /* Only run if the energy of all relevant configurations is stable */
+        OnlyIfSizeFactorsAreOne /* Only run if the size factors of all relevant configurations are 1.0 */
     };
 
     private:
@@ -65,6 +66,8 @@ class ModuleLayer
     // Return flags controlling run status
     Flags<RunControlFlag> &runControlFlags();
     Flags<RunControlFlag> runControlFlags() const;
+    // Return whether all run control flags are satisfied and permit the layer to be run
+    bool canRun(GenericList &processingModuleData) const;
 
     /*
      * Modules
