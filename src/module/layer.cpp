@@ -129,3 +129,27 @@ bool ModuleLayer::setUpAll(Dissolve &dissolve, const ProcessPool &procPool)
 
     return result;
 }
+
+// Return all configurations targeted by modules in the layer
+std::vector<Configuration *> ModuleLayer::allTargetedConfigurations() const
+{
+    std::vector<Configuration *> result;
+
+    for (auto &module : modules_)
+    {
+        if (module->keywords().find("Configuration"))
+        {
+            auto *cfg = module->keywords().getConfiguration("Configuration");
+            if (cfg)
+                result.push_back(cfg);
+        }
+
+        if (module->keywords().find("Configurations"))
+        {
+            auto cfgs = module->keywords().getVectorConfiguration("Configurations");
+            std::copy(cfgs.begin(), cfgs.end(), std::back_inserter(result));
+        }
+    }
+
+    return result;
+}

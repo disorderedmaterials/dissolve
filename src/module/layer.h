@@ -93,4 +93,6 @@ class ModuleLayer
     public:
     // Run set-up stages for all modules
     bool setUpAll(Dissolve &dissolve, const ProcessPool &procPool);
+    // Return all configurations targeted by modules in the layer
+    std::vector<Configuration *> allTargetedConfigurations() const;
 };
