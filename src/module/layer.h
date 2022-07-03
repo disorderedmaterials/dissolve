@@ -60,7 +60,7 @@ class ModuleLayer
 
     private:
     // Flags controlling run status
-    Flags<RunControlFlag> runControlFlags_;
+    Flags<RunControlFlag> runControlFlags_{OnlyIfSizeFactorsAreOne};
 
     public:
     // Return flags controlling run status

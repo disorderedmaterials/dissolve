@@ -27,6 +27,7 @@ void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checke
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(DissolveSys::uniqueName("Evolve (Basic Atomic)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
+    newLayer->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::OnlyIfSizeFactorsAreOne);
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -52,6 +53,7 @@ void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(DissolveSys::uniqueName("Evolve (Atomic)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
+    newLayer->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::OnlyIfSizeFactorsAreOne);
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -82,6 +84,7 @@ void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(DissolveSys::uniqueName("Evolve (Standard)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
+    newLayer->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::OnlyIfSizeFactorsAreOne);
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -112,6 +115,7 @@ void DissolveWindow::on_LayerCreateEvolveMDAction_triggered(bool checked)
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(DissolveSys::uniqueName("Evolve (MD)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
+    newLayer->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::OnlyIfSizeFactorsAreOne);
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -140,6 +144,7 @@ void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
     auto *newLayer = dissolve_.addProcessingLayer();
     newLayer->setName(DissolveSys::uniqueName("Evolve (EPSR)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
+    newLayer->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::OnlyIfSizeFactorsAreOne);
 
     Module *module;
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
@@ -171,6 +176,7 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
 
     newLayer->setFrequency(5);
+    newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::OnlyIfEnergyStable);
 
     // Add the EPSR module
     auto *epsr = dynamic_cast<EPSRModule *>(ModuleRegistry::create("EPSR", newLayer));
