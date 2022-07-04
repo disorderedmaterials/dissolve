@@ -1,6 +1,7 @@
 jobs:
   - job: "release_linux_mpi"
     displayName: "Release MPI, CLI"
+    timeoutInMinutes: 90
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -12,6 +13,7 @@ jobs:
           package: "dissolve-mpi"
   - job: "release_linux_gui"
     displayName: "Release GUI"
+    timeoutInMinutes: 90
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -23,6 +25,7 @@ jobs:
           package: "dissolve-gui"
   - job: "release_linux"
     displayName: "Release CLI"
+    timeoutInMinutes: 90
     pool:
       vmImage: "ubuntu-latest"
     steps:
@@ -34,6 +37,7 @@ jobs:
           package: "dissolve"
   - job: "release_linux_threadless"
     displayName: "Release Threadless"
+    timeoutInMinutes: 90
     pool:
       vmImage: "ubuntu-latest"
     steps:
