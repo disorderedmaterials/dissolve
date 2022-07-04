@@ -65,8 +65,8 @@ class MasterTermBondModel : public MasterTermModel
     public:
     MasterTermBondModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
     void setSourceData(std::vector<std::shared_ptr<MasterBond>> &bonds);
-    int nTerms() const;
-    QVariant getTermData(int index, MasterTermModelData::DataType type) const;
+    int nTerms() const override;
+    QVariant getTermData(int index, MasterTermModelData::DataType type) const override;
     bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
 };
 
@@ -79,8 +79,8 @@ class MasterTermAngleModel : public MasterTermModel
     public:
     MasterTermAngleModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
     void setSourceData(std::vector<std::shared_ptr<MasterAngle>> &angles);
-    int nTerms() const;
-    QVariant getTermData(int index, MasterTermModelData::DataType type) const;
+    int nTerms() const override;
+    QVariant getTermData(int index, MasterTermModelData::DataType type) const override;
     bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
 };
 
@@ -93,8 +93,8 @@ class MasterTermTorsionModel : public MasterTermModel
     public:
     MasterTermTorsionModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
     void setSourceData(std::vector<std::shared_ptr<MasterTorsion>> &torsions);
-    int nTerms() const;
-    QVariant getTermData(int index, MasterTermModelData::DataType type) const;
+    int nTerms() const override;
+    QVariant getTermData(int index, MasterTermModelData::DataType type) const override;
     bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
 };
 
@@ -107,8 +107,8 @@ class MasterTermImproperModel : public MasterTermModel
     public:
     MasterTermImproperModel(QObject *parent = nullptr) : MasterTermModel(parent) {}
     void setSourceData(std::vector<std::shared_ptr<MasterImproper>> &impropers);
-    int nTerms() const;
-    QVariant getTermData(int index, MasterTermModelData::DataType type) const;
+    int nTerms() const override;
+    QVariant getTermData(int index, MasterTermModelData::DataType type) const override;
     bool setTermData(int index, MasterTermModelData::DataType dataType, const QVariant &value) override;
 };
 

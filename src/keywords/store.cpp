@@ -3,7 +3,6 @@
 
 #include "keywords/store.h"
 #include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/configurationvector.h"
@@ -19,10 +18,6 @@
 
 // Static Singletons
 std::vector<KeywordBase *> KeywordStore::allKeywords_;
-
-/*
- * Keyword Store
- */
 
 // Find named keyword
 KeywordBase *KeywordStore::find(std::string_view name)
