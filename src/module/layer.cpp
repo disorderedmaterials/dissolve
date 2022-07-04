@@ -72,24 +72,23 @@ bool ModuleLayer::canRun(GenericList &processingModuleData) const
 
     auto cfgs = allTargetedConfigurations();
 
-    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::OnlyIfEnergyStable))
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::EnergyStability))
     {
         if (EnergyModule::nUnstable(processingModuleData, cfgs) != 0)
         {
-            Messenger::print("One or more configurations have unstable energy, so the layer will not be run.\n");
+            Messenger::print("One or more configurations have unstable energy, so the layer will not run.\n");
             return false;
         }
     }
 
-    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::OnlyIfSizeFactorsAreOne))
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
     {
-        auto nScaled = std::count_if(cfgs.begin(), cfgs.end(),
-                                     [](const auto &cfg) { return fabs(cfg->appliedSizeFactor() - 1.0) < 1.0e-5; });
-
-        if (nScaled != 0)
+        // Check that Configurations have unmodified size factor
+        if (std::any_of(cfgs.begin(), cfgs.end(), [](const auto *cfg) {
+                return std::abs(cfg->appliedSizeFactor() - 1.0) > 2 * std::numeric_limits<double>::epsilon();
+            }))
         {
-            Messenger::print("One or more configurations currently have scaled contents with size factors > 1.0, so the layer "
-                             "will not be run.\n");
+            Messenger::print("One or more configurations have an applied size factor, so the layer will not run.\n");
             return false;
         }
     }

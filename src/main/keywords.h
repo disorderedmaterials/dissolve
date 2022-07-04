@@ -68,10 +68,14 @@ namespace LayerBlock
 // Layer Block Keyword Enum
 enum LayerKeyword
 {
-    DisabledKeyword,  /* 'Disabled' - Specify that the layer is currently disabled */
-    EndLayerKeyword,  /* 'EndLayer' - Signals the end of the Layer block */
+    DisabledKeyword,               /* 'Disabled' - Specify that the layer is currently disabled */
+    EndLayerKeyword,               /* 'EndLayer' - Signals the end of the Layer block */
+    RequireEnergyStabilityKeyword, /* 'RequireEnergyStability' - Only run the layer if all relevant configurations have a stable
+                               energy */
     FrequencyKeyword, /* 'Frequency' - Frequency at which the layer is executed, relative to the main iteration counter */
-    ModuleKeyword     /* 'Module' - Begin a Module definition within this layer */
+    ModuleKeyword,    /* 'Module' - Begin a Module definition within this layer */
+    RequireNoSizeFactorsKeyword /* 'RequireNoSizeFactors' - Only run the layer if all relevant configurations have a stable
+                                   energy */
 };
 // Return enum option info for LayerKeyword
 EnumOptions<LayerBlock::LayerKeyword> keywords();

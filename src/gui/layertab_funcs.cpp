@@ -167,6 +167,26 @@ void LayerTab::on_LayerFrequencySpin_valueChanged(int value)
     dissolveWindow_->setModified();
 }
 
+void LayerTab::on_RunControlEnergyStabilityCheck_clicked(bool checked)
+{
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
+
+    moduleLayer_->runControlFlags().setState(ModuleLayer::RunControlFlag::EnergyStability, checked);
+
+    dissolveWindow_->setModified();
+}
+
+void LayerTab::on_RunControlSizeFactorsCheck_clicked(bool checked)
+{
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
+
+    moduleLayer_->runControlFlags().setState(ModuleLayer::RunControlFlag::SizeFactors, checked);
+
+    dissolveWindow_->setModified();
+}
+
 void LayerTab::on_ModuleEnabledButton_clicked(bool checked)
 {
     if (refreshLock_.isLocked() || (!moduleLayer_))
@@ -356,6 +376,10 @@ void LayerTab::updateControls()
 
     ui_.LayerEnabledButton->setChecked(!moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
     ui_.LayerFrequencySpin->setValue(moduleLayer_->frequency());
+
+    ui_.RunControlEnergyStabilityCheck->setChecked(
+        moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::EnergyStability));
+    ui_.RunControlSizeFactorsCheck->setChecked(moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::SizeFactors));
 
     auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
     if (mcw)

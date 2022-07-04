@@ -53,14 +53,14 @@ class ModuleLayer
     // Run Control Flags
     enum RunControlFlag
     {
-        Disabled,               /* Layer is disabled and will never run */
-        OnlyIfEnergyStable,     /* Only run if the energy of all relevant configurations is stable */
-        OnlyIfSizeFactorsAreOne /* Only run if the size factors of all relevant configurations are 1.0 */
+        Disabled,        /* Layer is disabled and will never run */
+        EnergyStability, /* Only run if the energy of all relevant configurations is stable */
+        SizeFactors      /* Only run if the size factors of all relevant configurations are 1.0 */
     };
 
     private:
     // Flags controlling run status
-    Flags<RunControlFlag> runControlFlags_{OnlyIfSizeFactorsAreOne};
+    Flags<RunControlFlag> runControlFlags_;
 
     public:
     // Return flags controlling run status

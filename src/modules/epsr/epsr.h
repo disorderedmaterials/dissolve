@@ -60,8 +60,6 @@ class EPSRModule : public Module
     std::optional<int> nCoeffP_;
     // Number of steps for refining the potential
     std::optional<int> nPItSs_{1000};
-    // Whether to only modify potentials if configuration energy(s) are stable
-    bool onlyWhenEnergyStable_{true};
     // Overwrite potentials each time rather than summing them
     bool overwritePotentials_{false};
     // EPSR pcof file from which to read starting coefficients from
