@@ -18,7 +18,7 @@ class SpeciesViewer : public BaseViewer
 
     public:
     explicit SpeciesViewer(QWidget *parent);
-    ~SpeciesViewer() = default;
+    ~SpeciesViewer() override = default;
 
     /*
      * Rendering (BaseViewer virtuals)
@@ -40,7 +40,7 @@ class SpeciesViewer : public BaseViewer
 
     protected slots:
     // Context menu requested
-    void contextMenuRequested(QPoint pos);
+    void contextMenuRequested(QPoint pos) override;
 
     /*
      * Interaction (BaseViewer virtuals)
