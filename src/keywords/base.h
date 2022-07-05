@@ -76,6 +76,7 @@ class KeywordBase
     enum class ParseResult
     {
         Unrecognised,
+        Deprecated,
         Failed,
         Success
     };
