@@ -121,13 +121,6 @@ void ForcesModule::pairPotentialForces(const ProcessPool &procPool, Configuratio
 void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
 {
-    /*
-     * Calculates the total forces within the supplied Configuration, arising from PairPotential interactions
-     * and intramolecular contributions.
-     *
-     * This is a serial routine (subroutines called from within are parallel).
-     */
-
     // Create a Timer
     Timer timer;
 
@@ -156,16 +149,6 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
                                const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
 {
-    /*
-     * Calculates the total forces acting on the supplied Molecules, arising from PairPotential interactions
-     * and intramolecular contributions from *all other atoms* in the Configuration.
-     *
-     * The supplied force arrays (fx, fy, and fz) should be initialised to the total number of atoms in the configuration,
-     * rather than the number of atoms in the targetIndices list.
-     *
-     * This is a serial routine (subroutines called from within are parallel).
-     */
-
     // Create a temporary
     std::vector<Vec3<double>> tempf(f.size(), Vec3<double>());
     std::fill(f.begin(), f.end(), Vec3<double>());
