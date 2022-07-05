@@ -275,11 +275,11 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 
         // Try to parse this line as a keyword
         KeywordBase::ParseResult result = keywords_.deserialise(parser, coreData);
-        if (result == KeywordBase::Failed)
+        if (result == KeywordBase::ParseResult::Failed)
             return Messenger::error("Failed to parse keyword '{}'.\n", parser.argsv(0));
-        else if (result == KeywordBase::Success)
+        else if (result == KeywordBase::ParseResult::Success)
             continue;
-        else if (result == KeywordBase::Unrecognised)
+        else if (result == KeywordBase::ParseResult::Unrecognised)
             return Messenger::error("Unrecognised keyword '{}' found while parsing {} node.\n", parser.argsv(0),
                                     nodeTypes().keyword(type_));
     }
