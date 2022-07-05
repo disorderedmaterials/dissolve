@@ -30,6 +30,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("MD: Cutoff distance is {}\n", rCut);
     Messenger::print("MD: Number of steps = {}\n", nSteps_);
+    Messenger::print("MD: Timestep type is '{}'\n", timestepType().keyword(timestepType_));
     if (onlyWhenEnergyStable_)
         Messenger::print("MD: Only perform MD if target Configuration energies are stable.\n");
     if (writeTraj)
@@ -46,10 +47,6 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         Messenger::print("MD: Summary will be written every {} step(s).\n", outputFrequency_);
     else
         Messenger::print("MD: Summary will not be written.\n");
-    if (variableTimestep_)
-        Messenger::print("MD: Variable timestep will be employed.");
-    else
-        Messenger::print("MD: Constant timestep of {:e} ps will be used.\n", deltaT_);
     if (!restrictToSpecies_.empty())
     {
         std::string speciesNames;
@@ -76,7 +73,8 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Create arrays
     std::vector<double> mass(targetConfiguration_->nAtoms(), 0.0);
-    std::vector<Vec3<double>> forces(targetConfiguration_->nAtoms()), accelerations(targetConfiguration_->nAtoms());
+    std::vector<Vec3<double>> fIntra(targetConfiguration_->nAtoms()), fInter(targetConfiguration_->nAtoms()),
+        accelerations(targetConfiguration_->nAtoms());
 
     // Variables
     auto nCapped = 0;
@@ -203,32 +201,41 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Start a timer
     Timer timer, commsTimer(false);
 
-    // Variable timestep requires forces to be available immediately
-    if (variableTimestep_)
+    // If we're not using a fixed timestep the forces need to be available immediately
+    if (timestepType_ != TimestepType::Fixed)
     {
         // Zero force arrays
-        std::fill(forces.begin(), forces.end(), Vec3<double>());
+        std::fill(fInter.begin(), fInter.end(), Vec3<double>());
+        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
 
         if (targetMolecules.empty())
-            intramolecularForcesOnly_
-                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), forces, commsTimer);
+            intramolecularForcesOnly_ ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_,
+                                                                             dissolve.potentialMap(), true, fInter, fIntra)
+                                      : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(),
+                                                                  fInter, fIntra, commsTimer);
         else
             intramolecularForcesOnly_
-                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces,
-                                                       targetMolecules)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), forces,
-                                            commsTimer);
+                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, fInter,
+                                                       fIntra, targetMolecules)
+                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), fInter,
+                                            fIntra, commsTimer);
 
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        std::transform(forces.begin(), forces.end(), forces.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
     }
 
     // Ready to do MD propagation of system
     for (auto step = 1; step <= nSteps_; ++step)
     {
         // Get timestep
-        auto dT = variableTimestep_ ? determineTimeStep(forces) : deltaT_;
+        auto optDT = determineTimeStep(fInter, fIntra);
+        if (!optDT)
+        {
+            Messenger::warn("A reasonable timestep could not be determined. Stopping evolution.\n");
+            break;
+        }
+        auto dT = *optDT;
         auto deltaTSq = dT * dT;
 
         // Velocity Verlet first stage (A)
@@ -249,23 +256,27 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         targetConfiguration_->updateCellContents();
 
         // Zero force arrays
-        std::fill(forces.begin(), forces.end(), Vec3<double>());
+        std::fill(fInter.begin(), fInter.end(), Vec3<double>());
+        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
             intramolecularForcesOnly_
-                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), forces);
+                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, fInter,
+                                                       fIntra)
+                : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), fInter, fIntra);
         else
             intramolecularForcesOnly_
-                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, forces,
-                                                       targetMolecules)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), forces);
-        std::transform(forces.begin(), forces.end(), forces.begin(), [](auto &f) { return f * 100.0; });
+                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, fInter,
+                                                       fIntra, targetMolecules)
+                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), fInter,
+                                            fIntra);
+        std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
 
         // Cap forces
         if (capForces_)
-            nCapped = capForces(maxForce, forces);
+            nCapped = capForces(maxForce, fInter, fIntra);
 
         // Velocity Verlet second stage (B) and velocity scaling
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -273,10 +284,10 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // B:  a(t+dt) = F(t+dt)/m
         // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
         ke = 0.0;
-        for (auto &&[f, v, a, m] : zip(forces, velocities, accelerations, mass))
+        for (auto &&[f1, f2, v, a, m] : zip(fInter, fIntra, velocities, accelerations, mass))
         {
             // Determine new accelerations
-            a = f / m;
+            a = (f1 + f2) / m;
 
             // ..and finally velocities again (by second half-step)
             v += a * 0.5 * dT;
@@ -355,10 +366,6 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          double(nCapped) / nSteps_);
     Messenger::print("{} steps performed ({} work, {} comms)\n", nSteps_, timer.totalTimeString(),
                      commsTimer.totalTimeString());
-
-    // Variable timestep?
-    if (variableTimestep_)
-        keywords_.set("DeltaT", deltaT_);
 
     // Increment configuration changeCount
     targetConfiguration_->incrementContentsVersion();
