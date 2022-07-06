@@ -189,7 +189,6 @@ Module  EPSR
   Target  'C6H6'
   Target  'C6D6'
   Target  '5050'
-  OnlyWhenEnergyStable  False
   Frequency  1
   NPItSs  10
   Feedback  0.9

@@ -40,6 +40,10 @@ template <class EnumClass> class Flags
     public:
     // Set specified flag
     void setFlag(EnumClass flag) { flags_.set(flag); }
+    // Unset specified flag
+    void removeFlag(EnumClass flag) { flags_.reset(flag); }
+    // Set state of flag
+    void setState(EnumClass flag, bool state) { state ? flags_.set(flag) : flags_.reset(flag); }
     // Set a pack of flags
     template <typename... Args> void setFlags(Args... flags) { (setFlag(flags), ...); }
     // Return whether any flags are set

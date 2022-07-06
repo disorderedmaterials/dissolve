@@ -141,11 +141,16 @@ void LayerTab::on_LayerEnabledButton_clicked(bool checked)
     if (refreshLock_.isLocked() || (!moduleLayer_))
         return;
 
-    moduleLayer_->setEnabled(checked);
     if (checked)
+    {
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer.svg"));
+        moduleLayer_->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+    }
     else
+    {
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+        moduleLayer_->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
+    }
 
     updateModuleList();
 
@@ -158,6 +163,26 @@ void LayerTab::on_LayerFrequencySpin_valueChanged(int value)
         return;
 
     moduleLayer_->setFrequency(value);
+
+    dissolveWindow_->setModified();
+}
+
+void LayerTab::on_RunControlEnergyStabilityCheck_clicked(bool checked)
+{
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
+
+    moduleLayer_->runControlFlags().setState(ModuleLayer::RunControlFlag::EnergyStability, checked);
+
+    dissolveWindow_->setModified();
+}
+
+void LayerTab::on_RunControlSizeFactorsCheck_clicked(bool checked)
+{
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
+
+    moduleLayer_->runControlFlags().setState(ModuleLayer::RunControlFlag::SizeFactors, checked);
 
     dissolveWindow_->setModified();
 }
@@ -349,8 +374,12 @@ void LayerTab::updateControls()
 
     Locker refreshLocker(refreshLock_);
 
-    ui_.LayerEnabledButton->setChecked(moduleLayer_->isEnabled());
+    ui_.LayerEnabledButton->setChecked(!moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
     ui_.LayerFrequencySpin->setValue(moduleLayer_->frequency());
+
+    ui_.RunControlEnergyStabilityCheck->setChecked(
+        moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::EnergyStability));
+    ui_.RunControlSizeFactorsCheck->setChecked(moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::SizeFactors));
 
     auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
     if (mcw)

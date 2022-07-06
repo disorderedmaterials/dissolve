@@ -361,7 +361,13 @@ bool Dissolve::saveInput(std::string_view filename)
         // Write frequency and disabled lines
         if (!parser.writeLineF("  Frequency  {}\n", layer->frequency()))
             return false;
-        if (!layer->isEnabled() && (!parser.writeLineF("  Disabled\n")))
+        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled) && (!parser.writeLineF("  Disabled\n")))
+            return false;
+        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::EnergyStability) &&
+            (!parser.writeLineF("  {}\n", LayerBlock::keywords().keyword(LayerBlock::RequireEnergyStabilityKeyword))))
+            return false;
+        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::SizeFactors) &&
+            (!parser.writeLineF("  {}\n", LayerBlock::keywords().keyword(LayerBlock::RequireNoSizeFactorsKeyword))))
             return false;
 
         for (auto &module : layer->modules())
