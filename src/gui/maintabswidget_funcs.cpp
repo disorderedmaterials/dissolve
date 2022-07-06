@@ -269,10 +269,10 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             // If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise delete it.
             if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer.get())
             {
-                if (layer->isEnabled())
-                    setTabIcon(processingLayerTabs_[currentTabIndex]->page(), QIcon(":/tabs/icons/tabs_layer.svg"));
-                else
-                    setTabIcon(processingLayerTabs_[currentTabIndex]->page(), QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+                setTabIcon(processingLayerTabs_[currentTabIndex]->page(),
+                           layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)
+                               ? QIcon(":/tabs/icons/tabs_layer_disabled.svg")
+                               : QIcon(":/tabs/icons/tabs_layer.svg"));
                 break;
             }
             else
@@ -292,10 +292,10 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             allTabs_.push_back(layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
-            if (layer->isEnabled())
-                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_layer.svg"));
-            else
-                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+            setTabIcon(processingLayerTabs_[currentTabIndex]->page(),
+                       layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)
+                           ? QIcon(":/tabs/icons/tabs_layer_disabled.svg")
+                           : QIcon(":/tabs/icons/tabs_layer.svg"));
         }
 
         ++currentTabIndex;
@@ -515,26 +515,31 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
     auto *disableThisLayer = menu.addAction("&Disable this");
     auto *disableLayersToTheLeft = menu.addAction("Disable layers to the left");
     auto *disableLayersToTheRight = menu.addAction("Disable layers to the right");
-    enableThisLayer->setEnabled(layerTab && !layerTab->moduleLayer()->isEnabled());
-    disableThisLayer->setEnabled(layerTab && layerTab->moduleLayer()->isEnabled());
+    enableThisLayer->setEnabled(layerTab &&
+                                layerTab->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
+    disableThisLayer->setEnabled(layerTab &&
+                                 !layerTab->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
 
     auto *action = menu.exec(mapToGlobal(pos));
     auto updateRequired = true;
     if (action == nullptr)
         return;
     else if (action == enableThisLayer)
-        layerTab->moduleLayer()->setEnabled(true);
+        layerTab->moduleLayer()->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
     else if (action == enableLayersToTheLeft || action == disableLayersToTheLeft)
     {
         auto enable = action == enableLayersToTheLeft;
         auto currentIt = std::find(processingLayerTabs_.begin(), processingLayerTabs_.end(), layerTab);
         for (auto it = processingLayerTabs_.begin(); it != currentIt; ++it)
-            if (enable == ((*it)->moduleLayer()->isEnabled()))
+            if (enable != ((*it)->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)))
                 continue;
             else
             {
                 updateRequired = true;
-                ((*it)->moduleLayer()->setEnabled(enable));
+                if (enable)
+                    (*it)->moduleLayer()->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+                else
+                    (*it)->moduleLayer()->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
             }
     }
     else if (action == enableLayersToTheRight || action == disableLayersToTheRight)
@@ -542,16 +547,19 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
         auto enable = action == enableLayersToTheRight;
         auto currentIt = std::find(processingLayerTabs_.begin(), processingLayerTabs_.end(), layerTab);
         for (auto it = std::next(currentIt); it != processingLayerTabs_.end(); ++it)
-            if (enable == ((*it)->moduleLayer()->isEnabled()))
+            if (enable != ((*it)->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)))
                 continue;
             else
             {
                 updateRequired = true;
-                ((*it)->moduleLayer()->setEnabled(enable));
+                if (enable)
+                    (*it)->moduleLayer()->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+                else
+                    (*it)->moduleLayer()->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
             }
     }
     else if (action == disableThisLayer)
-        layerTab->moduleLayer()->setEnabled(false);
+        layerTab->moduleLayer()->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
 
     if (updateRequired)
         emit(dataModified());

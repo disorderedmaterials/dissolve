@@ -18,11 +18,6 @@ EPSRModule::EPSRModule() : Module("EPSR")
                                              targets_, std::vector<std::string>{"NeutronSQ", "XRaySQ"});
 
     // Control
-    keywords_.add<BoolKeyword>(
-        "Control", "OnlyWhenEnergyStable",
-        "Assesses the energy of all involved Configurations, refining the potential only when all their total "
-        "energies are stable",
-        onlyWhenEnergyStable_);
     keywords_.add<DoubleKeyword>("Control", "EReq", "Limit of magnitude of additional potential for any one pair potential",
                                  eReq_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "Feedback", "Confidence factor", feedback_, 0.0, 1.0);

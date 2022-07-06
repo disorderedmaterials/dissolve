@@ -15,7 +15,9 @@ EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
                                                  {{LayerBlock::DisabledKeyword, "Disabled"},
                                                   {LayerBlock::EndLayerKeyword, "EndLayer"},
                                                   {LayerBlock::FrequencyKeyword, "Frequency", 1},
-                                                  {LayerBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond}});
+                                                  {LayerBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond},
+                                                  {LayerBlock::RequireEnergyStabilityKeyword, "RequireEnergyStability"},
+                                                  {LayerBlock::RequireNoSizeFactorsKeyword, "RequireNoSizeFactors"}});
 }
 
 // Parse Layer block
@@ -45,7 +47,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
         switch (kwd)
         {
             case (LayerBlock::DisabledKeyword):
-                layer->setEnabled(false);
+                layer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
                 break;
             case (LayerBlock::EndLayerKeyword):
                 Messenger::print("Found end of {} block.\n",
@@ -93,6 +95,12 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                     error = true;
                 if (error)
                     break;
+                break;
+            case (LayerBlock::RequireEnergyStabilityKeyword):
+                layer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::EnergyStability);
+                break;
+            case (LayerBlock::RequireNoSizeFactorsKeyword):
+                layer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
                 break;
             default:
                 Messenger::error("{} block keyword '{}' not accounted for.\n",

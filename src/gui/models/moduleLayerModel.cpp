@@ -51,7 +51,7 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
     {
         if (module->isDisabled())
             return QString::fromStdString(fmt::format("{} [{}] (disabled)", module->name(), module->frequency()));
-        else if (!moduleLayer_->isEnabled())
+        else if (moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
             return QString::fromStdString(fmt::format("{} [{}] (disabled via layer)", module->name(), module->frequency()));
         else
             return QString::fromStdString(fmt::format("{} [{}]", module->name(), module->frequency()));
