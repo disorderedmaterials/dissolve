@@ -112,7 +112,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         !intramolecularForcesOnly_)
     {
         // Show warning message on array size mismatch
-        if (velocities.size() != targetConfiguration_->nAtoms())
+        if (status != GenericItem::ItemStatus::Created && velocities.size() != targetConfiguration_->nAtoms())
             Messenger::warn(
                 "Size of existing velocities array doesn't match the current configuration size - they will be ignored.");
 
