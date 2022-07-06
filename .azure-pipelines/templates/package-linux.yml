@@ -41,6 +41,7 @@ stages:
             displayName: "Publish Linux GUI Singularity"
       - job: "linux_serial"
         displayName: "Ubuntu, Serial, CLI, Exe"
+        timeoutInMinutes: 120
         pool:
           vmImage: "ubuntu-latest"
         steps:
@@ -84,6 +85,7 @@ stages:
             displayName: "Publish Linux CLI Singularity"
       - job: "linux_mpi"
         displayName: "Ubuntu, MPI, CLI, Exe"
+        timeoutInMinutes: 120
         pool:
           vmImage: "ubuntu-latest"
         steps:
