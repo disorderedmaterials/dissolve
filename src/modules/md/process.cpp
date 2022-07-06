@@ -223,10 +223,18 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
         std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+
+        // If the strategy is Auto100 do a quick check on the timestep now
+        if (timestepType_ == TimestepType::Automatic100 && !determineTimeStep(fInter, fIntra))
+        {
+            Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
+            return true;
+        }
     }
 
     // Ready to do MD propagation of system
-    for (auto step = 1; step <= nSteps_; ++step)
+    auto step = 1;
+    for (step = 1; step <= nSteps_; ++step)
     {
         // Get timestep
         auto optDT = determineTimeStep(fInter, fIntra);
@@ -364,8 +372,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (capForces_)
         Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
                          double(nCapped) / nSteps_);
-    Messenger::print("{} steps performed ({} work, {} comms)\n", nSteps_, timer.totalTimeString(),
-                     commsTimer.totalTimeString());
+    Messenger::print("{} steps performed ({} work, {} comms)\n", step, timer.totalTimeString(), commsTimer.totalTimeString());
 
     // Increment configuration changeCount
     targetConfiguration_->incrementContentsVersion();
