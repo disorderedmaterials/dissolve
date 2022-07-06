@@ -21,33 +21,39 @@ dissolve::CombinableContainer<std::vector<Vec3<double>>> createCombinableForces(
 
 // Calculate internal molecule forces, optionally only over the supplied molecules
 void ForcesModule::internalMoleculeForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                          bool includePairPotentialTerms, std::vector<Vec3<double>> &f,
+                                          bool includePairPotentialTerms, std::vector<Vec3<double>> &fInter,
+                                          std::vector<Vec3<double>> &fIntra,
                                           OptionalReferenceWrapper<std::vector<const Molecule *>> targetMolecules)
 {
     // Create a ForceKernel
     ForceKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
 
     // Molecule Force Operator
-    auto combinableForces = createCombinableForces(f);
-    auto moleculeForceOperator = [&combinableForces, &kernel, includePairPotentialTerms](const auto &mol) {
-        auto &fLocal = combinableForces.local();
+    auto combinableForcesInter = createCombinableForces(fInter);
+    auto combinableForcesIntra = createCombinableForces(fIntra);
+    auto moleculeForceOperator = [&combinableForcesInter, &combinableForcesIntra, &kernel,
+                                  includePairPotentialTerms](const auto &mol) {
+        auto &fLocalInter = combinableForcesInter.local();
+        auto &fLocalIntra = combinableForcesIntra.local();
+
         // Loop over bonds
         for (const auto &bond : mol->species()->bonds())
-            kernel.forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), fLocal);
+            kernel.forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), fLocalIntra);
 
         // Loop over angles
         for (const auto &angle : mol->species()->angles())
-            kernel.forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), fLocal);
+            kernel.forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()),
+                          fLocalIntra);
 
         // Loop over torsions
         for (const auto &torsion : mol->species()->torsions())
             kernel.forces(torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
-                          *mol->atom(torsion.indexL()), fLocal);
+                          *mol->atom(torsion.indexL()), fLocalIntra);
 
         // Loop over impropers
         for (const auto &imp : mol->species()->impropers())
             kernel.forces(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()), *mol->atom(imp.indexK()),
-                          *mol->atom(imp.indexL()), fLocal);
+                          *mol->atom(imp.indexL()), fLocalIntra);
 
         // Pair potential interactions between atoms
         if (includePairPotentialTerms)
@@ -57,7 +63,7 @@ void ForcesModule::internalMoleculeForces(const ProcessPool &procPool, Configura
                                             return;
                                         auto scale = i->scaling(j);
                                         if (scale >= 1.0e-3)
-                                            kernel.forcesWithMim(*i, *j, fLocal, scale);
+                                            kernel.forcesWithMim(*i, *j, fLocalInter, scale);
                                     });
     };
 
@@ -75,7 +81,14 @@ void ForcesModule::internalMoleculeForces(const ProcessPool &procPool, Configura
         dissolve::for_each(ParallelPolicies::par, begin, end, moleculeForceOperator);
     }
 
-    combinableForces.finalize();
+    combinableForcesInter.finalize();
+    combinableForcesIntra.finalize();
+}
+void ForcesModule::internalMoleculeForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                                          bool includePairPotentialTerms, std::vector<Vec3<double>> &f,
+                                          OptionalReferenceWrapper<std::vector<const Molecule *>> targetMolecules)
+{
+    internalMoleculeForces(procPool, cfg, potentialMap, includePairPotentialTerms, f, f, targetMolecules);
 }
 
 // Calculate pair potential forces within the specified Configuration
@@ -119,37 +132,65 @@ void ForcesModule::pairPotentialForces(const ProcessPool &procPool, Configuratio
 
 // Calculate total forces within the supplied Configuration
 void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                               std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
+                               std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra,
+                               OptionalReferenceWrapper<Timer> commsTimer)
 {
     // Create a Timer
     Timer timer;
 
     // Zero force arrays
-    std::fill(f.begin(), f.end(), Vec3<double>());
+    std::fill(fInter.begin(), fInter.end(), Vec3<double>());
+    std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
 
     // Calculate pair potential forces between all atoms (including within molecules)
     timer.start();
-    pairPotentialForces(procPool, cfg, potentialMap, f);
+    pairPotentialForces(procPool, cfg, potentialMap, fInter);
     timer.stop();
     Messenger::printVerbose("Time to do pair potential forces was {}.\n", timer.totalTimeString());
 
     // Calculate internal molecule forces (excluding pair potential terms)
     timer.start();
-    internalMoleculeForces(procPool, cfg, potentialMap, false, f);
+    internalMoleculeForces(procPool, cfg, potentialMap, false, fIntra);
     timer.stop();
     Messenger::printVerbose("Time to do internal molecule forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
-    if (!procPool.allSum(f, ProcessPool::PoolProcessesCommunicator, commsTimer))
-        return;
+    procPool.allSum(fInter, ProcessPool::PoolProcessesCommunicator, commsTimer);
+    if (&fInter != &fIntra)
+        procPool.allSum(fInter, ProcessPool::PoolProcessesCommunicator, commsTimer);
+}
+void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                               std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
+{
+    totalForces(procPool, cfg, potentialMap, f, f, commsTimer);
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
 void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
                                const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
+                               std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra,
+                               OptionalReferenceWrapper<Timer> commsTimer)
+{
+    std::vector<Vec3<double>> tempFInter(fInter.size(), Vec3<double>()), tempFIntra(fIntra.size(), Vec3<double>());
+    std::fill(tempFInter.begin(), tempFInter.end(), Vec3<double>());
+    std::fill(tempFIntra.begin(), tempFIntra.end(), Vec3<double>());
+    totalForces(procPool, cfg, potentialMap, tempFInter, tempFIntra, commsTimer);
+
+    // Convert the Molecule array into an array of atoms
+    // TODO Calculating forces for whole molecule at once may be more efficient
+    // TODO Partitioning atoms of target molecules into cells and running a distributor may be more efficient
+    std::vector<int> indices;
+    for (const auto *mol : targetMolecules)
+        for (const auto &i : mol->atoms())
+        {
+            fInter[i->arrayIndex()] = tempFInter[i->arrayIndex()];
+            fIntra[i->arrayIndex()] = tempFIntra[i->arrayIndex()];
+        }
+}
+void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
+                               const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
 {
-    // Create a temporary
     std::vector<Vec3<double>> tempf(f.size(), Vec3<double>());
     std::fill(f.begin(), f.end(), Vec3<double>());
     totalForces(procPool, cfg, potentialMap, tempf, commsTimer);
