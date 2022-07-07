@@ -7,6 +7,16 @@
 #include "gui/wizard.hui"
 #include "main/dissolve.h"
 
+// Add Species Info
+struct AddSpeciesInfo
+{
+    Species *species_{nullptr};
+    int population_{0};
+    double ratio_{0};
+    bool rotate{true};
+    bool useCoordinateSets_{true};
+};
+
 // Add Configuration Dialog
 class AddConfigurationDialog : public WizardDialog
 {

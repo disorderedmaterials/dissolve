@@ -11,8 +11,11 @@ AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, Dissolve &dissol
 {
     ui_.setupUi(this);
 
+    // Set up sub-widgets
+    ui_.TargetSpeciesWidget->setSpecies(dissolve_.species());
+
     // Register pages with the wizard
-    registerPage(AddConfigurationDialog::SelectForcefieldPage, "Select Forcefield", AddConfigurationDialog::AnotherPage);
+    registerPage(AddConfigurationDialog::SelectForcefieldPage, "Target Species", AddConfigurationDialog::AnotherPage);
     initialise(this, ui_.MainStack, AddConfigurationDialog::SelectForcefieldPage);
 }
 
@@ -25,8 +28,9 @@ bool AddConfigurationDialog::progressionAllowed(int index) const
 {
     if (index == AddConfigurationDialog::SelectForcefieldPage)
     {
-        if (ui_.SpeciesWidget->nSelected() == 0 ||
-            std::count_if(ui_.SpeciesWidget->currentSpecies().begin(), ui_.SpeciesWidget->currentSpecies().end(),
+        // Must have at least one species, and not more than one periodic species
+        if (ui_.TargetSpeciesWidget->nSelected() == 0 ||
+            std::count_if(ui_.TargetSpeciesWidget->currentSpecies().begin(), ui_.TargetSpeciesWidget->currentSpecies().end(),
                           [](const auto *sp) { return sp->box()->type() != Box::BoxType::NonPeriodic; }) > 1)
             return false;
     }
