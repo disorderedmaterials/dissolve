@@ -248,35 +248,6 @@
     <property name="title">
      <string>&amp;Configuration</string>
     </property>
-    <widget class="QMenu" name="ConfigurationCreateMenu">
-     <property name="geometry">
-      <rect>
-       <x>990</x>
-       <y>290</y>
-       <width>213</width>
-       <height>172</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="title">
-      <string>&amp;Create</string>
-     </property>
-     <property name="icon">
-      <iconset resource="main.qrc">
-       <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
-     </property>
-     <addaction name="ConfigurationCreateEmptyAction"/>
-     <addaction name="separator"/>
-     <addaction name="ConfigurationCreateSimpleRandomMixAction"/>
-     <addaction name="ConfigurationCreateRelativeRandomMixAction"/>
-     <addaction name="separator"/>
-     <addaction name="ConfigurationCreateEmptyFrameworkAction"/>
-     <addaction name="ConfigurationCreateFrameworkAdsorbatesAction"/>
-    </widget>
     <widget class="QMenu" name="ConfigurationExportToMenu">
      <property name="font">
       <font>
@@ -288,7 +259,7 @@
      </property>
      <addaction name="ConfigurationExportToXYZAction"/>
     </widget>
-    <addaction name="ConfigurationCreateMenu"/>
+    <addaction name="ConfigurationCreateAction"/>
     <addaction name="ConfigurationRenameAction"/>
     <addaction name="ConfigurationDeleteAction"/>
     <addaction name="separator"/>
@@ -814,6 +785,15 @@
   <action name="SpeciesScaleChargesAction">
    <property name="text">
     <string>Sc&amp;ale Charges...</string>
+   </property>
+  </action>
+  <action name="ConfigurationCreateAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Create...</string>
    </property>
   </action>
  </widget>
