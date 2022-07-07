@@ -68,6 +68,8 @@ class Box : public Serialisable
     public:
     // Return Box type
     BoxType type() const;
+    // Determine Box type
+    static std::optional<BoxType> type(Vec3<double> lengths, Vec3<double> angles);
     // Return volume
     double volume() const;
     // Return axis lengths

@@ -88,6 +88,41 @@ EnumOptions<Box::BoxType> Box::boxTypes()
 // Return Box type
 Box::BoxType Box::type() const { return type_; }
 
+// Determine Box type
+std::optional<Box::BoxType> Box::type(Vec3<double> lengths, Vec3<double> angles)
+{
+    // Check lengths
+    if (lengths.min() < 1.0e-5 || angles.min() < 1.0)
+        return {};
+
+    // Determine any right angles
+    auto rightAlpha = (fabs(angles.x - 90.0) < 1.0e-5);
+    auto rightBeta = (fabs(angles.y - 90.0) < 1.0e-5);
+    auto rightGamma = (fabs(angles.z - 90.0) < 1.0e-5);
+    auto nRight = rightAlpha + rightBeta + rightGamma;
+
+    if (nRight == 3)
+    {
+        auto abSame = (fabs(lengths.x - lengths.y) < 1.0e-5);
+        auto acSame = (fabs(lengths.x - lengths.z) < 1.0e-5);
+        if (abSame && acSame)
+            return BoxType::Cubic;
+        else
+            return BoxType::Orthorhombic;
+    }
+    else if (nRight == 2)
+    {
+        if (!rightAlpha)
+            return BoxType::MonoclinicAlpha;
+        else if (!rightBeta)
+            return BoxType::MonoclinicBeta;
+        else
+            return BoxType::MonoclinicGamma;
+    }
+    else
+        return BoxType::Triclinic;
+}
+
 // Return volume
 double Box::volume() const { return volume_; }
 
@@ -282,32 +317,27 @@ double Box::torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecj
 // Generate a suitable Box given the supplied relative lengths, angles
 std::unique_ptr<Box> Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
-    // Determine box type from supplied lengths / angles
-    auto rightAlpha = (fabs(angles.x - 90.0) < 1.0e-5);
-    auto rightBeta = (fabs(angles.y - 90.0) < 1.0e-5);
-    auto rightGamma = (fabs(angles.z - 90.0) < 1.0e-5);
-    int nRight = rightAlpha + rightBeta + rightGamma;
+    auto boxType = type(lengths, angles);
+    if (!boxType)
+        throw(std::runtime_error("Suitable box type couldn't be determined, so no Box can be generated.\n"));
 
-    if (nRight == 3)
+    switch (*boxType)
     {
-        auto abSame = (fabs(lengths.x - lengths.y) < 1.0e-5);
-        auto acSame = (fabs(lengths.x - lengths.z) < 1.0e-5);
-        if (abSame && acSame)
+        case (BoxType::Cubic):
             return std::make_unique<CubicBox>(lengths.x);
-        else
+        case (BoxType::Orthorhombic):
             return std::make_unique<OrthorhombicBox>(lengths);
-    }
-    else if (nRight == 2)
-    {
-        if (!rightAlpha)
+        case (BoxType::MonoclinicAlpha):
             return std::make_unique<MonoclinicAlphaBox>(lengths, angles.x);
-        else if (!rightBeta)
+        case (BoxType::MonoclinicBeta):
             return std::make_unique<MonoclinicBetaBox>(lengths, angles.y);
-        else
+        case (BoxType::MonoclinicGamma):
             return std::make_unique<MonoclinicGammaBox>(lengths, angles.z);
+        case (BoxType::Triclinic):
+            return std::make_unique<TriclinicBox>(lengths, angles);
+        default:
+            throw(std::runtime_error(fmt::format("Unrecognised box type encountered - generation failed.\n")));
     }
-    else
-        return std::make_unique<TriclinicBox>(lengths, angles);
 }
 
 // Return radius of largest possible inscribed sphere for box
