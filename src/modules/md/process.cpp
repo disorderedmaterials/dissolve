@@ -225,7 +225,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
 
         // If the strategy is Auto100 do a quick check on the timestep now
-        if (timestepType_ == TimestepType::Automatic100 && !determineTimeStep(fInter, fIntra))
+        if (timestepType_ == TimestepType::Automatic && !determineTimeStep(fInter, fIntra))
         {
             Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
             return true;
