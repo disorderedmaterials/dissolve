@@ -95,9 +95,9 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
 
         // Can we parse the keyword?
         auto result = keywords_.deserialise(parser, coreData);
-        if (result == KeywordBase::Unrecognised)
+        if (result == KeywordBase::ParseResult::Unrecognised)
             return Messenger::error("Unrecognised option '{}' found in file and format block.\n", parser.argsv(0));
-        else if (result == KeywordBase::Failed)
+        else if (result == KeywordBase::ParseResult::Failed)
             return Messenger::error("Error reading option '{}'.\n", parser.argsv(0));
     }
 

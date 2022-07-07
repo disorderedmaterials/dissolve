@@ -63,7 +63,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
         {
             // Might be a keyword defined in the Module itself?
             auto result = module->keywords().deserialise(parser, dissolve->coreData());
-            if (result == KeywordBase::Unrecognised)
+            if (result == KeywordBase::ParseResult::Unrecognised)
             {
                 Messenger::error("Unrecognised {} block keyword '{}' found, and the Module '{}' contains no "
                                  "option with this name.\n",
@@ -73,7 +73,9 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                 module->printValidKeywords();
                 error = true;
             }
-            else if (result == KeywordBase::Failed)
+            else if (result == KeywordBase::ParseResult::Deprecated)
+                Messenger::warn("The '{}' keyword is deprecated and will be removed in a future version.\n", parser.argsv(0));
+            else if (result == KeywordBase::ParseResult::Failed)
                 error = true;
         }
 
