@@ -40,7 +40,7 @@
    <item>
     <widget class="QGroupBox" name="SpeciesGroup">
      <property name="title">
-      <string>Available Speciess</string>
+      <string>Available Species</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
