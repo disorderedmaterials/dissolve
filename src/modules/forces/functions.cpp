@@ -157,7 +157,7 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
     // Gather forces together over all processes
     procPool.allSum(fInter, ProcessPool::PoolProcessesCommunicator, commsTimer);
     if (&fInter != &fIntra)
-        procPool.allSum(fInter, ProcessPool::PoolProcessesCommunicator, commsTimer);
+        procPool.allSum(fIntra, ProcessPool::PoolProcessesCommunicator, commsTimer);
 }
 void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer)
