@@ -26,7 +26,7 @@ class MDModule : public Module
     {
         Fixed,
         Variable,
-        Automatic100
+        Automatic
     };
     // Return enum options for TimestepType
     static EnumOptions<TimestepType> timestepType();
@@ -41,7 +41,7 @@ class MDModule : public Module
     // Interatomic cutoff distance to employ
     std::optional<double> cutoffDistance_;
     // Timestep type to employ
-    TimestepType timestepType_{TimestepType::Automatic100};
+    TimestepType timestepType_{TimestepType::Automatic};
     // Fixed timestep (ps) to use in MD simulation
     double fixedTimestep_{5.0e-4};
     // Frequency at which to calculate total system energy (or 0 to inhibit)

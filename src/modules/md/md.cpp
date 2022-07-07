@@ -59,5 +59,5 @@ EnumOptions<MDModule::TimestepType> MDModule::timestepType()
 {
     return EnumOptions<MDModule::TimestepType>(
         "TimestepType",
-        {{TimestepType::Fixed, "Fixed"}, {TimestepType::Variable, "Variable"}, {TimestepType::Automatic100, "Auto100"}});
+        {{TimestepType::Fixed, "Fixed"}, {TimestepType::Variable, "Variable"}, {TimestepType::Automatic, "Auto"}});
 }

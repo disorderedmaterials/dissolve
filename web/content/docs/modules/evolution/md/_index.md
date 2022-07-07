@@ -57,5 +57,5 @@ $$ v_i\left(t + \Delta t, T\right) = v_i\left(t + \Delta t\right) \sqrt{\frac{T}
 |`OnlyWhenEnergyStable`|`bool`|`true`|Only run molecular dynamics on a configuration if the total energy of the configuration (as determined by an [`Energy`]({{< ref "energy" >}}) module is considered stable.|
 |`RandomVelocities`|`bool`|`false`|Whether to always assign random velocities when starting the molecular dynamics simulation. If `false` then random velocities are only generated if no other velocities exist.|
 |`RestrictToSpecies`|`Species ...`|`--`|Restrict force calculation to only molecules of the specified species. Molecules of other species types remain at their current positions (always have zero force acting on them).|
-|`Timestep`|[`TimestepType`]({{< ref "timesteptype" >}})|`Auto100`|Timestep type / strategy to use in the calculation.|
+|`Timestep`|[`TimestepType`]({{< ref "timesteptype" >}})|`Auto`|Timestep type / strategy to use in the calculation.|
 
