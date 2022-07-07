@@ -20,7 +20,7 @@ void SelectSpeciesDialog::on_SpeciesWidget_speciesSelectionChanged(bool isValid)
 void SelectSpeciesDialog::on_SpeciesWidget_speciesDoubleClicked()
 {
     // Check current selection size for validity
-    if (ui_.SpeciesWidget->currentSpecies().size() != 1)
+    if (ui_.SpeciesWidget->selection().size() != 1)
         return;
 
     accept();
@@ -39,7 +39,7 @@ const Species *SelectSpeciesDialog::selectSingleSpecies(const Flags<SpeciesFilte
     show();
 
     if (exec() == QDialog::Accepted)
-        return ui_.SpeciesWidget->currentSpecies().empty() ? nullptr : ui_.SpeciesWidget->currentSpecies().front();
+        return ui_.SpeciesWidget->nSelected() == 0 ? nullptr : ui_.SpeciesWidget->selection().front();
     else
         return nullptr;
 }
@@ -54,7 +54,7 @@ std::vector<const Species *> SelectSpeciesDialog::selectSpecies(const Flags<Spec
     show();
 
     if (exec() == QDialog::Accepted)
-        return ui_.SpeciesWidget->currentSpecies();
+        return ui_.SpeciesWidget->selection();
     else
         return {};
 }

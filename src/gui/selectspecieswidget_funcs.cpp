@@ -79,7 +79,7 @@ bool SelectSpeciesWidget::isSelectionValid() const
 int SelectSpeciesWidget::nSelected() const { return ui_.SpeciesList->selectionModel()->selectedIndexes().size(); }
 
 // Return the currently-selected Species
-std::vector<const Species *> SelectSpeciesWidget::currentSpecies() const
+std::vector<const Species *> SelectSpeciesWidget::selection() const
 {
     std::vector<const Species *> selection;
 

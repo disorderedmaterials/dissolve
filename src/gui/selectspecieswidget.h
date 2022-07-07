@@ -73,5 +73,5 @@ class SelectSpeciesWidget : public QWidget
     // Return number of species currently selected
     int nSelected() const;
     // Return the currently-selected Species
-    std::vector<const Species *> currentSpecies() const;
+    std::vector<const Species *> selection() const;
 };
