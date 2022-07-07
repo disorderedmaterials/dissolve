@@ -73,11 +73,12 @@ class KeywordBase
      */
     public:
     // Keyword Parse Result
-    enum ParseResult
+    enum class ParseResult
     {
-        Unrecognised = -1,
-        Failed = 0,
-        Success = 1
+        Unrecognised,
+        Deprecated,
+        Failed,
+        Success
     };
 
     /*

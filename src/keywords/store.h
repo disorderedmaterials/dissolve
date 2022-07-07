@@ -41,7 +41,7 @@ class KeywordStore
      */
     private:
     // Defined keywords
-    std::map<std::string_view, KeywordBase *> keywords_;
+    std::map<std::string_view, KeywordBase *> keywords_, deprecatedKeywords_;
     // Targets group
     std::vector<KeywordBase *> targetsGroup_;
     // Keyword group mappings
@@ -96,6 +96,16 @@ class KeywordStore
                                 Args &&... args)
     {
         return restartables_.emplace_back(add<K>(displayGroup, name, description, args...));
+    }
+    // Add deprecated keyword
+    template <class K, typename... Args>
+    KeywordBase *addDeprecated(std::string_view name, std::string_view description, Args &&... args)
+    {
+        auto *k = addKeyword<K>(name, description, args...);
+
+        deprecatedKeywords_.emplace(name, k);
+
+        return k;
     }
     // Find named keyword
     KeywordBase *find(std::string_view name);

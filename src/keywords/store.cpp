@@ -58,23 +58,28 @@ const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &Keyw
 KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const CoreData &coreData, int startArg)
 {
     // Do we recognise the first item (the 'keyword')?
-    auto it = keywords_.find(parser.argsv(startArg));
+    auto deprecated = false;
+    auto it = deprecatedKeywords_.find(parser.argsv(startArg));
+    if (it != deprecatedKeywords_.end())
+        deprecated = true;
+    else
+        it = keywords_.find(parser.argsv(startArg));
     if (it == keywords_.end())
-        return KeywordBase::Unrecognised;
+        return KeywordBase::ParseResult::Unrecognised;
     auto *keyword = it->second;
 
     // We recognised the keyword - check the number of arguments we have against the min / max for the keyword
     if (!keyword->validNArgs(parser.nArgs() - startArg - 1))
-        return KeywordBase::Failed;
+        return deprecated ? KeywordBase::ParseResult::Deprecated : KeywordBase::ParseResult::Failed;
 
     // All OK, so parse the keyword
     if (!keyword->deserialise(parser, startArg + 1, coreData))
     {
         Messenger::error("Failed to parse arguments for keyword '{}'.\n", keyword->name());
-        return KeywordBase::Failed;
+        return deprecated ? KeywordBase::ParseResult::Deprecated : KeywordBase::ParseResult::Failed;
     }
 
-    return KeywordBase::Success;
+    return deprecated ? KeywordBase::ParseResult::Deprecated : KeywordBase::ParseResult::Success;
 }
 
 // Write all keywords to specified LineParser

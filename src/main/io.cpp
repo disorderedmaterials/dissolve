@@ -442,13 +442,13 @@ bool Dissolve::loadRestart(std::string_view filename)
 
             // Does the Module have a keyword by this name?
             auto result = module->keywords().deserialise(parser, coreData_, 2);
-            if (result == KeywordBase::Unrecognised)
+            if (result == KeywordBase::ParseResult::Unrecognised)
             {
                 Messenger::error("Module '{}' has no keyword '{}'.\n", parser.argsv(2));
                 error = true;
                 break;
             }
-            else if (result == KeywordBase::Failed)
+            else if (result == KeywordBase::ParseResult::Failed)
             {
                 Messenger::error("Failed to read keyword data '{}' from restart file.\n", parser.argsv(2));
                 error = true;
