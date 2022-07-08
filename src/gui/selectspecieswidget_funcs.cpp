@@ -16,7 +16,7 @@ SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
     connect(ui_.SpeciesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(selectionChanged(const QItemSelection &, const QItemSelection &)));
 
-    reset(1);
+    reset(1, 1);
 
     refreshing_ = false;
 }

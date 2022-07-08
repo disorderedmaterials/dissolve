@@ -14,17 +14,17 @@ AddSpeciesInfo::AddSpeciesInfo(const Species *sp) : species_(sp) {}
 
 void AddSpeciesInfo::reset()
 {
-    population_ = 1;
-    ratio_ = 1.0;
+    requestedPopulation_ = 1.0;
+    actualPopulation_ = 0.0;
     useCoordinateSets_ = true;
     rotate_ = true;
 }
 
 const Species *AddSpeciesInfo::species() const { return species_; }
-void AddSpeciesInfo::setPopulation(int pop) { population_ = pop; }
-int AddSpeciesInfo::population() const { return population_; }
-void AddSpeciesInfo::setRatio(double r) { ratio_ = r; }
-double AddSpeciesInfo::ratio() const { return ratio_; };
+void AddSpeciesInfo::setRequestedPopulation(double pop) { requestedPopulation_ = pop; }
+double AddSpeciesInfo::requestedPopulation() const { return requestedPopulation_; }
+void AddSpeciesInfo::setActualPopulation(int pop) { actualPopulation_ = pop; }
+int AddSpeciesInfo::actualPopulation() const { return actualPopulation_; }
 void AddSpeciesInfo::setRotate(bool b) { rotate_ = b; }
 bool AddSpeciesInfo::rotate() const { return rotate_; }
 void AddSpeciesInfo::setUseCoordinateSets(bool b) { useCoordinateSets_ = b; }
@@ -66,10 +66,10 @@ QVariant AddSpeciesInfoModel::data(const QModelIndex &index, int role) const
         {
             case (AddSpeciesInfo::SpeciesPointer):
                 return QString::fromStdString(std::string(speciesInfo_[index.row()].species()->name()));
-            case (AddSpeciesInfo::Population):
-                return QString::number(speciesInfo_[index.row()].population());
-            case (AddSpeciesInfo::Ratio):
-                return QString::number(speciesInfo_[index.row()].ratio());
+            case (AddSpeciesInfo::RequestedPopulation):
+                return QString::number(speciesInfo_[index.row()].requestedPopulation());
+            case (AddSpeciesInfo::ActualPopulation):
+                return QString::number(speciesInfo_[index.row()].actualPopulation());
             case (AddSpeciesInfo::Rotate):
                 return speciesInfo_[index.row()].rotate();
             case (AddSpeciesInfo::UseCoordinateSets):
@@ -93,11 +93,11 @@ bool AddSpeciesInfoModel::setData(const QModelIndex &index, const QVariant &valu
 
     switch (index.column())
     {
-        case (AddSpeciesInfo::Population):
-            speciesInfo_[index.row()].setPopulation(value.toInt());
+        case (AddSpeciesInfo::RequestedPopulation):
+            speciesInfo_[index.row()].setRequestedPopulation(value.toDouble());
             break;
-        case (AddSpeciesInfo::Ratio):
-            speciesInfo_[index.row()].setRatio(value.toDouble());
+        case (AddSpeciesInfo::ActualPopulation):
+            speciesInfo_[index.row()].setActualPopulation(value.toDouble());
             break;
         case (AddSpeciesInfo::Rotate):
             speciesInfo_[index.row()].setRotate(value.toBool());
@@ -116,8 +116,12 @@ bool AddSpeciesInfoModel::setData(const QModelIndex &index, const QVariant &valu
 
 Qt::ItemFlags AddSpeciesInfoModel::flags(const QModelIndex &index) const
 {
-    return (index.column() == 0 ? Qt::ItemIsSelectable | Qt::ItemIsEnabled
-                                : Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+    if (index.column() == AddSpeciesInfo::SpeciesPointer)
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    else if (index.column() == AddSpeciesInfo::ActualPopulation)
+        return Qt::ItemIsSelectable;
+    else
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
 }
 
 QVariant AddSpeciesInfoModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -129,10 +133,10 @@ QVariant AddSpeciesInfoModel::headerData(int section, Qt::Orientation orientatio
     {
         case (AddSpeciesInfo::SpeciesPointer):
             return "Species";
-        case (AddSpeciesInfo::Population):
-            return "Population";
-        case (AddSpeciesInfo::Ratio):
-            return "Ratio";
+        case (AddSpeciesInfo::RequestedPopulation):
+            return "Population / Ratio";
+        case (AddSpeciesInfo::ActualPopulation):
+            return "Actual Population";
         case (AddSpeciesInfo::Rotate):
             return "Rotate?";
         case (AddSpeciesInfo::UseCoordinateSets):

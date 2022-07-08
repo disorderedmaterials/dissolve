@@ -20,10 +20,10 @@ class AddSpeciesInfo
     private:
     // Target Species
     const Species *species_{nullptr};
-    // Integer population (if defined)
-    int population_{0};
-    // Real ratio (if defined)
-    double ratio_{0};
+    // Requested population value
+    double requestedPopulation_{1.0};
+    // Actual population value
+    int actualPopulation_{0};
     // Whether to rotate on insertion
     bool rotate_{true};
     // Whether to use coordinates sets
@@ -32,10 +32,10 @@ class AddSpeciesInfo
     public:
     void reset();
     const Species *species() const;
-    void setPopulation(int pop);
-    int population() const;
-    void setRatio(double r);
-    double ratio() const;
+    void setRequestedPopulation(double pop);
+    double requestedPopulation() const;
+    void setActualPopulation(int pop);
+    int actualPopulation() const;
     void setRotate(bool b);
     bool rotate() const;
     void setUseCoordinateSets(bool b);
@@ -48,8 +48,8 @@ class AddSpeciesInfo
     enum DataColumns
     {
         SpeciesPointer,
-        Population,
-        Ratio,
+        RequestedPopulation,
+        ActualPopulation,
         Rotate,
         UseCoordinateSets,
         nDataColumns

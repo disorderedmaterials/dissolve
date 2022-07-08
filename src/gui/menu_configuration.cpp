@@ -67,7 +67,22 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
 {
     AddConfigurationDialog addConfigurationDialog(this, dissolve_);
 
-    addConfigurationDialog.exec();
+    if (addConfigurationDialog.exec() == QDialog::Accepted)
+    {
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+
+        auto newConfig = dissolve_.configurations().back().get();
+        ui_.MainTabs->setCurrentTab(newConfig);
+
+        // Make sure the potential map is up to date
+        dissolve_.regeneratePairPotentials();
+
+        // Initialise the content
+        newConfig->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
+        newConfig->updateCells(7.0, dissolve_.pairPotentialRange());
+    }
 }
 
 // void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)

@@ -3,19 +3,10 @@
 
 #pragma once
 
+#include "gui/models/addSpeciesInfoModel.h"
 #include "gui/ui_addconfigurationdialog.h"
 #include "gui/wizard.hui"
 #include "main/dissolve.h"
-
-// Add Species Info
-struct AddSpeciesInfo
-{
-    Species *species_{nullptr};
-    int population_{0};
-    double ratio_{0};
-    bool rotate{true};
-    bool useCoordinateSets_{true};
-};
 
 // Add Configuration Dialog
 class AddConfigurationDialog : public WizardDialog
@@ -29,6 +20,8 @@ class AddConfigurationDialog : public WizardDialog
     private:
     // Main form declaration
     Ui::AddConfigurationDialog ui_;
+    // Model for species info
+    AddSpeciesInfoModel addSpeciesInfoModel_;
 
     /*
      * Data
@@ -36,6 +29,14 @@ class AddConfigurationDialog : public WizardDialog
     private:
     // Main instance of Dissolve that we're using as a reference
     Dissolve &dissolve_;
+    // Framework species, if defined
+    const Species *frameworkSpecies_{nullptr};
+    // Mixture species, if any
+    std::vector<AddSpeciesInfo> mixSpecies_;
+
+    private:
+    // Determine default species info data
+    void setDefaultSpeciesInfoData();
 
     /*
      * Wizard
@@ -44,8 +45,10 @@ class AddConfigurationDialog : public WizardDialog
     // Pages Enum
     enum WizardPage
     {
-        SelectForcefieldPage, /* Select Forcefield to apply to Species */
-        AnotherPage
+        TargetSpeciesPage, /* Select target species to use in configuration */
+        ConfigurationTypePage,
+        BoxGeometryPage,
+        SpeciesInfoPage
     };
 
     protected:
@@ -61,9 +64,31 @@ class AddConfigurationDialog : public WizardDialog
     void finalise() override;
 
     /*
-     * Select Forcefield Page
+     * Target Species Page
      */
     private slots:
-    void on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid);
-    void on_ForcefieldWidget_forcefieldDoubleClicked();
+    void on_TargetSpeciesWidget_speciesSelectionChanged(bool isValid);
+
+    /*
+     * Box Geometry Page
+     */
+    private:
+    // Update detected box type from current values
+    void updateBoxType();
+
+    private slots:
+    void boxGeometryParameterChanged(double);
+
+    /*
+     * Species Info Page
+     */
+    private:
+    // Update resulting box info
+    void updateResultingBoxInfo();
+
+    private slots:
+    void on_SpeciesDensitySpin_valueChanged(double value);
+    void on_SpeciesDensityUnitsCombo_currentIndexChanged(int index);
+    void on_SpeciesMultiplierSpin_valueChanged(int value);
+    void speciesInfoDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
 };
