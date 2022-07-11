@@ -96,42 +96,38 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
 CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
 
 // Initialise (generate or load) the basic contents of the Configuration
-bool Configuration::initialiseContent(const ProcedureContext &procedureContext, bool emptyCurrentContent)
+bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
 {
-    // Clear existing content?
-    if (emptyCurrentContent)
-        empty();
+    // Clear existing content
+    empty();
 
     appliedSizeFactor_ = 1.0;
 
-    // If the Configuration is currently empty, run the generator Procedure and potentially load coordinates from file
+    // Run the generator Procedure and potentially load coordinates from file
+    // Run the generator procedure (we will need species / atom info to load any coordinates in)
+    if (!generate(procedureContext))
+        return false;
+
+    // If there are still no atoms, complain.
     if (nAtoms() == 0)
+        return false;
+
+    // If an input file was specified, try to load it
+    if (inputCoordinates_.hasFilename())
     {
-        // Run the generator procedure (we will need species / atom info to load any coordinates in)
-        if (!generate(procedureContext))
-            return false;
-
-        // If there are still no atoms, complain.
-        if (nAtoms() == 0)
-            return false;
-
-        // If an input file was specified, try to load it
-        if (inputCoordinates_.hasFilename())
+        if (DissolveSys::fileExists(inputCoordinates_))
         {
-            if (DissolveSys::fileExists(inputCoordinates_))
-            {
-                Messenger::print("Loading initial coordinates from file '{}'...\n", inputCoordinates_.filename());
-                if (!inputCoordinates_.importData(this, &procedureContext.processPool()))
-                    return false;
+            Messenger::print("Loading initial coordinates from file '{}'...\n", inputCoordinates_.filename());
+            if (!inputCoordinates_.importData(this, &procedureContext.processPool()))
+                return false;
 
-                // Need to update cell locations now, as we have new atom positions
-                updateCellContents();
-            }
-            else
-                return Messenger::error("Input coordinates file '{}' specified for Configuration '{}', but the "
-                                        "file doesn't exist.\n",
-                                        name(), inputCoordinates_.filename());
+            // Need to update cell locations now, as we have new atom positions
+            updateCellContents();
         }
+        else
+            return Messenger::error("Input coordinates file '{}' specified for Configuration '{}', but the "
+                                    "file doesn't exist.\n",
+                                    name(), inputCoordinates_.filename());
     }
 
     return true;

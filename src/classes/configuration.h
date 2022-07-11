@@ -74,7 +74,7 @@ class Configuration : public Serialisable
     // Return import coordinates file / format
     CoordinateImportFileFormat &inputCoordinates();
     // Initialise (generate or load) the basic contents of the Configuration
-    bool initialiseContent(const ProcedureContext &procedureContext, bool emptyCurrentContent = false);
+    bool initialiseContent(const ProcedureContext &procedureContext);
     // Set configuration temperature
     void setTemperature(double t);
     // Return configuration temperature
