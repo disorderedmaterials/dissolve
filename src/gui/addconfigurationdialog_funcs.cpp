@@ -210,24 +210,28 @@ void AddConfigurationDialog::finalise()
     paramsNode->addParameter("multiplier", ui_.SpeciesMultiplierSpin->value());
 
     // Add mixture species
+    auto rhoString = ui_.BoxGeometryUndefinedSizeRadio->isChecked() ? "rho" : "";
+    auto rhoUnits = ui_.SpeciesDensityUnitsCombo->currentIndex() == 0 ? Units::DensityUnits::AtomsPerAngstromUnits
+                                                                      : Units::DensityUnits::GramsPerCentimetreCubedUnits;
     for (const auto &spInfo : mixSpecies_)
     {
         // Set the population equation
-        auto popString = fmt::format("{}*multiplier", spInfo.actualPopulation());
+        auto popString = fmt::format("{}*multiplier", spInfo.requestedPopulation());
 
         // Add coordinate sets only for suitable species - atomics, those with lone molecule population, or "large" molecules
         // don't get a coordinate sets node
         const auto *sp = spInfo.species();
         std::shared_ptr<AddProcedureNode> addNode;
         if (!spInfo.useCoordinateSets() || sp->nAtoms() == 1 || spInfo.actualPopulation() == 1 || sp->nAtoms() > 250)
-            addNode =
-                generator.createRootNode<AddProcedureNode>(sp->name(), sp, NodeValue(popString, paramsNode->parameters()));
+            addNode = generator.createRootNode<AddProcedureNode>(sp->name(), sp, NodeValue(popString, paramsNode->parameters()),
+                                                                 NodeValue(rhoString, paramsNode->parameters()), rhoUnits);
         else
         {
             auto coordSets = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("{}_Sets", sp->name()), sp);
 
             addNode = generator.createRootNode<AddProcedureNode>(sp->name(), coordSets,
-                                                                 NodeValue(popString, paramsNode->parameters()));
+                                                                 NodeValue(popString, paramsNode->parameters()),
+                                                                 NodeValue(rhoString, paramsNode->parameters()), rhoUnits);
         }
 
         // Set other parameters for the Add node
@@ -238,8 +242,6 @@ void AddConfigurationDialog::finalise()
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Region);
             addNode->keywords().set("Region", regionNode);
         }
-        else if (ui_.BoxGeometryUndefinedSizeRadio->isChecked())
-            addNode->keywords().set("Density", NodeValue("rho", paramsNode->parameters()));
     }
 }
 
