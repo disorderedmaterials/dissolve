@@ -44,6 +44,10 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
         return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
                                                                  : ":/general/icons/general_true.svg");
     });
+    masterTermModel_.setImproperIconFunction([&](std::string_view name) {
+        return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
+                                                                  : ":/general/icons/general_true.svg");
+    });
     ui_.MasterTermsTree->setModel(&masterTermModel_);
     connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(masterTermDataChanged(const QModelIndex &, const QModelIndex &)));
@@ -51,11 +55,8 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
             this, SLOT(masterTermSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set initial state of controls
-    if (!targetSpecies_->selectedAtoms().empty())
-    {
-        ui_.AtomTypesAssignSelectionRadio->setChecked(true);
-        ui_.IntramolecularTermsAssignSelectionRadio->setChecked(true);
-    }
+    ui_.AtomTypesAssignSelectionRadio->setEnabled(!targetSpecies_->selectedAtoms().empty());
+    ui_.IntramolecularTermsAssignSelectionRadio->setEnabled(!targetSpecies_->selectedAtoms().empty());
 
     // Register pages with the wizard
     registerPage(AddForcefieldTermsDialog::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsDialog::AtomTypesPage);
@@ -97,6 +98,10 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
             modifiedSpecies_->copyBasic(targetSpecies_);
             originalAtomTypeNames_.clear();
 
+            // Set selection status
+            for (auto &&[targetI, modifiedI] : zip(targetSpecies_->atoms(), modifiedSpecies_->atoms()))
+                modifiedI.setSelected(targetI.isSelected());
+
             // Determine atom types
             if (ui_.AtomTypesAssignAllRadio->isChecked())
             {
@@ -108,9 +113,6 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                                                       !ui_.KeepSpeciesAtomChargesCheck->isChecked());
                 if (!assignErrs.empty())
                     return alertAboutAtomTypeErrors(assignErrs);
-
-                for (auto &at : temporaryDissolve_.atomTypes())
-                    originalAtomTypeNames_.emplace_back(std::string(at->name()));
             }
             else if (ui_.AtomTypesAssignSelectionRadio->isChecked())
             {
@@ -127,6 +129,8 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                     return alertAboutAtomTypeErrors(assignErrs);
             }
 
+            for (auto &at : temporaryDissolve_.atomTypes())
+                originalAtomTypeNames_.emplace_back(std::string(at->name()));
             atomTypeModel_.setData(temporaryCoreData_.atomTypes());
             checkAtomTypeConflicts();
             break;
@@ -411,7 +415,7 @@ bool AddForcefieldTermsDialog::assignIntramolecularTerms(const Forcefield *ff)
 
         // Reduce to master terms?
         if (!ui_.NoMasterTermsCheck->isChecked())
-            modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_);
+            modifiedSpecies_->reduceToMasterTerms(temporaryCoreData_, ui_.IntramolecularTermsAssignSelectionRadio->isChecked());
     }
 
     return true;
@@ -425,36 +429,21 @@ bool AddForcefieldTermsDialog::assignIntramolecularTerms(const Forcefield *ff)
 void AddForcefieldTermsDialog::updateMasterTermsPage()
 {
     // Determine whether we have any naming conflicts
-    auto conflicts = false;
-    for (auto &intra : temporaryCoreData_.masterBonds())
-        if (dissolve_.coreData().getMasterBond(intra->name()))
-        {
-            conflicts = true;
-            break;
-        }
-    for (auto &intra : temporaryCoreData_.masterAngles())
-        if (dissolve_.coreData().getMasterAngle(intra->name()))
-        {
-            conflicts = true;
-            break;
-        }
-    for (auto &intra : temporaryCoreData_.masterTorsions())
-        if (dissolve_.coreData().getMasterTorsion(intra->name()))
-        {
-            conflicts = true;
-            break;
-        }
-    for (auto &intra : temporaryCoreData_.masterImpropers())
-        if (dissolve_.coreData().getMasterImproper(intra->name()))
-        {
-            conflicts = true;
-            break;
-        }
+    auto conflicts = std::any_of(temporaryCoreData_.masterBonds().begin(), temporaryCoreData_.masterBonds().end(),
+                                 [&](const auto &i) { return dissolve_.coreData().getMasterBond(i->name()); }) ||
+                     std::any_of(temporaryCoreData_.masterAngles().begin(), temporaryCoreData_.masterAngles().end(),
+                                 [&](const auto &i) { return dissolve_.coreData().getMasterAngle(i->name()); }) ||
+                     std::any_of(temporaryCoreData_.masterTorsions().begin(), temporaryCoreData_.masterTorsions().end(),
+                                 [&](const auto &i) { return dissolve_.coreData().getMasterTorsion(i->name()); }) ||
+                     std::any_of(temporaryCoreData_.masterImpropers().begin(), temporaryCoreData_.masterImpropers().end(),
+                                 [&](const auto &i) { return dissolve_.coreData().getMasterImproper(i->name()); });
+
     ui_.MasterTermsIndicator->setNotOK(conflicts);
+
     if (conflicts)
-        ui_.MasterTermsIndicatorLabel->setText("One or more MasterTerms in the imported Species conflict with existing ones");
+        ui_.MasterTermsIndicatorLabel->setText("The names of one or more generated master terms conflict with existing ones");
     else
-        ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the imported MasterTerms");
+        ui_.MasterTermsIndicatorLabel->setText("There are no naming conflicts with the generated master terms");
 }
 
 void AddForcefieldTermsDialog::masterTermDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
