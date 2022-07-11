@@ -336,7 +336,7 @@ bool ImportCIFDialog::createStructuralSpecies()
         return false;
     crystalSpecies_->createBox(cellLengths.value(), cellAngles.value());
     auto *box = crystalSpecies_->box();
-    structureConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 7.0, 1.0);
+    structureConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
     // -- Generate atoms
     auto symmetryGenerators = cifImporter_.spaceGroup().symmetryOperators();
     auto tolerance = ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5;
@@ -438,7 +438,7 @@ bool ImportCIFDialog::createCleanedSpecies()
     if (!cellAngles)
         return false;
     cleanedSpecies_->createBox(cellLengths.value(), cellAngles.value());
-    cleanedConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 7.0, 1.0);
+    cleanedConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
 
     // Atomics
     if (ui_.MoietyRemoveAtomicsCheck->isChecked())
@@ -560,7 +560,7 @@ bool ImportCIFDialog::createSupercellSpecies()
     auto supercellLengths = cleanedSpecies_->box()->axisLengths();
     supercellLengths.multiply(repeat.x, repeat.y, repeat.z);
     supercell->createBox(supercellLengths, cleanedSpecies_->box()->axisAngles(), false);
-    supercellConfiguration_->createBoxAndCells(supercellLengths, cleanedSpecies_->box()->axisAngles(), false, 7.0, 1.0);
+    supercellConfiguration_->createBoxAndCells(supercellLengths, cleanedSpecies_->box()->axisAngles(), false, 1.0);
 
     // Copy atoms from the Crystal species - we'll do the bonding afterwards
     supercell->atoms().reserve(repeat.x * repeat.y * repeat.z * cleanedSpecies_->nAtoms());
@@ -618,7 +618,7 @@ bool ImportCIFDialog::createPartitionedSpecies()
     // Set up the basic configuration
     auto *sp = temporaryCoreData_.findSpecies("Supercell");
     assert(sp);
-    partitioningConfiguration_->createBoxAndCells(sp->box()->axisLengths(), sp->box()->axisAngles(), false, 7.0, 1.0);
+    partitioningConfiguration_->createBoxAndCells(sp->box()->axisLengths(), sp->box()->axisAngles(), false, 1.0);
 
     auto validSpecies = true;
 

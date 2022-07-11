@@ -34,24 +34,24 @@ void Configuration::createBox(const Matrix3 axes)
 }
 
 // Create Box definition with specified lengths and angles, and initialise cell array
-void Configuration::createBoxAndCells(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic, double cellSize,
+void Configuration::createBoxAndCells(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic,
                                       double pairPotentialRange)
 {
     createBox(lengths, angles, nonPeriodic);
-    cells_.generate(box_.get(), cellSize, pairPotentialRange);
+    cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
 }
 
 // Create Box definition from axes matrix, and initialise cell array
-void Configuration::createBoxAndCells(const Matrix3 axes, double cellSize, double pairPotentialRange)
+void Configuration::createBoxAndCells(const Matrix3 axes, double pairPotentialRange)
 {
     createBox(axes);
-    cells_.generate(box_.get(), cellSize, pairPotentialRange);
+    cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
 }
 
 // Update cell array, and reassign atoms to cells
-void Configuration::updateCells(double cellSize, double pairPotentialRange)
+void Configuration::updateCells(double pairPotentialRange)
 {
-    cells_.generate(box_.get(), cellSize, pairPotentialRange);
+    cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
     updateCellContents(true);
 }
 

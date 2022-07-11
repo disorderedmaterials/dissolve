@@ -81,7 +81,7 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
 
         // Initialise the content
         newConfig->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
-        newConfig->updateCells(7.0, dissolve_.pairPotentialRange());
+        newConfig->updateCells(dissolve_.pairPotentialRange());
     }
 }
 

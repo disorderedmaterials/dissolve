@@ -73,7 +73,7 @@ bool Dissolve::prepare()
 
         // Regenerate cell array if the pair potential range has changed
         if (newPairPotentialRange)
-            cfg->updateCells(7.0, *newPairPotentialRange);
+            cfg->updateCells(*newPairPotentialRange);
 
         // Check Box extent against pair potential range
         auto maxPPRange = cfg->box()->inscribedSphereRadius();
