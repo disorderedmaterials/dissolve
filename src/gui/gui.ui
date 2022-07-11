@@ -527,21 +527,6 @@
     <string>&amp;Atomic...</string>
    </property>
   </action>
-  <action name="ConfigurationCreateEmptyAction">
-   <property name="text">
-    <string>&amp;Empty</string>
-   </property>
-  </action>
-  <action name="ConfigurationCreateSimpleRandomMixAction">
-   <property name="text">
-    <string>&amp;Simple random mix</string>
-   </property>
-  </action>
-  <action name="ConfigurationCreateRelativeRandomMixAction">
-   <property name="text">
-    <string>&amp;Relative random mix</string>
-   </property>
-  </action>
   <action name="LayerCreateEmptyAction">
    <property name="icon">
     <iconset resource="main.qrc">
@@ -697,16 +682,6 @@
    </property>
    <property name="toolTip">
     <string>Regenerate angle and torsion lists from current connectivity</string>
-   </property>
-  </action>
-  <action name="ConfigurationCreateEmptyFrameworkAction">
-   <property name="text">
-    <string>&amp;Empty framework</string>
-   </property>
-  </action>
-  <action name="ConfigurationCreateFrameworkAdsorbatesAction">
-   <property name="text">
-    <string>&amp;Framework with adsorbates</string>
    </property>
   </action>
   <action name="SpeciesImportLigParGenAction">
