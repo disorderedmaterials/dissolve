@@ -45,6 +45,7 @@
           fmt_8.dev
           freetype
           inetutils # for rsh
+          ninja
           jre
           pkgconfig
           pugixml
@@ -98,6 +99,7 @@
               "-DAntlrRuntime_INCLUDE_DIRS=${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime"
               "-DAntlrRuntime_LINK_DIRS=${pkgs.antlr4.runtime.cpp}/lib"
               "-DCONAN=OFF"
+              "-G Ninja"
               ("-DMULTI_THREADING=" + (cmake-bool threading))
               ("-DPARALLEL=" + (cmake-bool mpi))
               ("-DGUI=" + (cmake-bool gui))
