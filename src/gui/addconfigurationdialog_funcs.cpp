@@ -197,9 +197,10 @@ void AddConfigurationDialog::finalise()
     {
         // No framework - add on a Box spec
         auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-        boxNode->keywords().set("Lengths", Vec3<double>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()));
-        boxNode->keywords().set("Angles",
-                                Vec3<double>(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
+        boxNode->keywords().set("Lengths",
+                                Vec3<NodeValue>(ui_.BoxASpin->value(), ui_.BoxBSpin->value(), ui_.BoxCSpin->value()));
+        boxNode->keywords().set(
+            "Angles", Vec3<NodeValue>(ui_.BoxAlphaSpin->value(), ui_.BoxBetaSpin->value(), ui_.BoxGammaSpin->value()));
     }
 
     // Create parameters node
