@@ -45,7 +45,7 @@ void Species::copyBasic(const Species *source, bool copyAtomTypes)
     for (auto &torsion : source->torsions_)
         addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
     for (auto &improper : source->impropers_)
-        addTorsion(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
+        addImproper(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
 }
 
 /*
