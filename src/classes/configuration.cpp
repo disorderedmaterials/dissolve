@@ -130,6 +130,9 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
                                     name(), inputCoordinates_.filename());
     }
 
+    // Create cell array
+    updateCells(procedureContext.potentialMap().range());
+
     return true;
 }
 
