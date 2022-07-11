@@ -1,28 +1,18 @@
-Version 0.9.1 is a patch release providing bugfixes, improvements, and some new functionality.
+Version 0.9.2 is a patch release providing significant number of bugfixes, improvements, and new functionality.
+
+The full release notes for 0.9.0 detailing major changes in this version can be found at https://github.com/disorderedmaterials/dissolve/releases/tag/0.9.0.
 
 ### Summary of Changes
-- Added option to create pure MD evolution layer.
-- Improved CIF wizard.
-- Imported species are now immediately shown.
-- Add Morse bond potentials.
-- Add Zhao 2010 Cu-BTC forcefield.
-- Add context menu to main tabs.
-- Allow charge scaling over whole species.
-- Allow duplication and H-manipulation of isotopologues.
-- Reject velocities array with bad size when initialising MD.
-- Be more selective about when to generate configurations.
-- Recognise all 0.8.X versions when parsing restart file.
-- Better UX on Forcefield tab.
-- Reorganised main menus.
-- Reorganise module control functions on layer tab.
-- Better reporting / handling of non-zero species and configurations.
-- Show periodic box information for species (if one exists).
-- Fixes to data notification within GUI.
-- Fix calculation of average species.
-- Fix crash en EPSR/Potentials tab when no pairpotentials are defined.
-- Fix cosine definitions in Zhang 2013 forcefield.
-- Fix bond colours in periodic species rendering.
-- Fix editing of atom type names.
-- Fix crash when deleting layer.
-- Fix crash when parsing empty ';' CIF blocks.
-- Fix OSX and Windows packaging.
+- New Feature: "Add Configuration Wizard" to streamline setting up new configurations.
+- New Feature: `AddPair` node to add pairs of species at the same relative coordinates.
+- New Feature: Layers can now be prevented from running if energies are not stable, or configuration size factors are currently being applied.
+- New Feature: The `MD` module now has a new timestep mode "Auto" which chooses a variable timestep based on interatomic forces rather than total force, and which reduces to the specified fixed timestep. This should be considered an experimental feature, but tests have shown good stability and better applicability to more systems than the existing options (fixed or variable timestep).
+- Fix: Requested system density was not quite achieved by `Add` nodes.
+- Fix: Angle adjustment in `IntraShake` module was broken.
+- Fix: Crash related to setting keyword data / `std::type_info` (OSX).
+- Fix: Exponential spin widgets no longer get squeezed to minimum horizontal space (OSX).
+- Fix: Crash when running after editing `Bragg` module parameters.
+- Fix: Crash when clearing data in a `CoordinateSets` node.
+- Fix: Missing improper conflict info in Add Forcefield Terms wizard.
+- Fix: Crash when assigning terms to selected atoms in Add Forcefield Terms wizard.
+- Fix: Master term parameters are now correctly overwritten when applying forcefield terms.
