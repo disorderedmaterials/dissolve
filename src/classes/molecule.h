@@ -44,6 +44,7 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     const std::vector<Atom *> &atoms() const;
     // Return nth Atom pointer
     Atom *atom(int n) const;
+    // Update atoms array from indices
     void updateAtoms(std::vector<Atom> &source);
     // Sets the index of the object within the parent DynamicArray
     void setArrayIndex(int index);
