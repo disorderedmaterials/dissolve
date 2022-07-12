@@ -13,6 +13,7 @@ add_library(
   collect3d.cpp
   context.cpp
   coordinatesets.cpp
+  copy.cpp
   cylindricalregion.cpp
   dynamicsite.cpp
   fit1d.cpp
@@ -57,6 +58,7 @@ add_library(
   collect3d.h
   context.h
   coordinatesets.h
+  copy.h
   cylindricalregion.h
   dynamicsite.h
   fit1d.h

@@ -36,6 +36,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Collect2D, "Collect2D"},
                      {ProcedureNode::NodeType::Collect3D, "Collect3D"},
                      {ProcedureNode::NodeType::CoordinateSets, "CoordinateSets"},
+                     {ProcedureNode::NodeType::Copy, "Copy"},
                      {ProcedureNode::NodeType::CylindricalRegion, "CylindricalRegion"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::Fit1D, "Fit1D"},

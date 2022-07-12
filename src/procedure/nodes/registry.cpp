@@ -21,6 +21,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<Collect3DProcedureNode>(ProcedureNode::NodeType::Collect3D, "Bin 3D quantity into a histogram", "Data");
     registerProducer<CoordinateSetsProcedureNode>(ProcedureNode::NodeType::CoordinateSets,
                                                   "Generate coordinate sets for a species", "Build");
+    registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
     registerProducer<CylindricalRegionProcedureNode>(ProcedureNode::NodeType::CylindricalRegion,
                                                      "Define a cylindrical region in a configuration", "Regions");
     registerProducer<Fit1DProcedureNode>(ProcedureNode::NodeType::Fit1D, "Fit a function to 1D data", "Fitting");
