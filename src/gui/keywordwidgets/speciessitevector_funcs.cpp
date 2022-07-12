@@ -25,9 +25,6 @@ SpeciesSiteVectorKeywordWidget::SpeciesSiteVectorKeywordWidget(QWidget *parent, 
     // Connect signals / slots
     connect(&sites_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
-
-    // Summary text on KeywordDropDown button
-    setSummaryText("<None>");
 }
 
 /*
