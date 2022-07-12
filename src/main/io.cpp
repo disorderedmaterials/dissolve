@@ -310,7 +310,7 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
 
         // Generator
-        if (!parser.writeLineF("\n  # Modules\n"))
+        if (!parser.writeLineF("\n  # Generator\n"))
             return false;
         if (!parser.writeLineF("  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword)))
             return false;
