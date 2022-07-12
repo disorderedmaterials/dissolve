@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include "classes/referencepoint.h"
 #include "genericitems/list.h"
-#include "gui/models/dataManagerReferencePointModel.h"
 #include "gui/models/dataManagerSimulationModel.h"
 #include "gui/ui_datamanagerdialog.h"
 #include <QDialog>
@@ -21,16 +19,12 @@ class DataManagerDialog : public QDialog
     Q_OBJECT
 
     public:
-    DataManagerDialog(QWidget *parent, Dissolve &dissolve, std::vector<ReferencePoint> &referencePoints, GenericList &items);
-    ~DataManagerDialog();
+    DataManagerDialog(QWidget *parent, Dissolve &dissolve, GenericList &items);
+    ~DataManagerDialog() = default;
 
     private:
     // Reference to Dissolve
     Dissolve &dissolve_;
-    // List of current ReferencePoints
-    std::vector<ReferencePoint> &referencePoints_;
-    // ReferencePoint Model
-    DataManagerReferencePointModel refModel_;
     // Simulation Model
     DataManagerSimulationModel simModel_;
     // Simulation Proxy
@@ -46,21 +40,10 @@ class DataManagerDialog : public QDialog
     private:
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QString filterText);
-    // Update ReferencePoint table row
-    void referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems);
-    // Return currently-selected ReferencePoint
-    ReferencePoint *currentReferencePoint() const;
     // Update controls
     void updateControls();
 
     private slots:
-    // Simulation Data
     void on_SimulationDataFilterEdit_textChanged(const QString &text);
-    // Reference Points
-    void on_ReferencePointRemoveButton_clicked(bool checked);
-    void on_ReferencePointCreateButton_clicked(bool checked);
-    void on_ReferencePointOpenButton_clicked(bool checked);
-
-    // Dialog
     void on_CloseButton_clicked(bool checked);
 };
