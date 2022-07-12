@@ -65,12 +65,6 @@ void SpeciesVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMu
 // Update widget values data based on keyword data
 void SpeciesVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
-// Update keyword data based on widget values
-void SpeciesVectorKeywordWidget::updateKeywordData()
-{
-    // Handled by model
-}
-
 // Update summary text
 void SpeciesVectorKeywordWidget::updateSummaryText()
 {

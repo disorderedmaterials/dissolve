@@ -69,12 +69,6 @@ void AtomTypeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataM
 // Update widget values data based on keyword data
 void AtomTypeVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
-// Update keyword data based on widget values
-void AtomTypeVectorKeywordWidget::updateKeywordData()
-{
-    // Handled by model
-}
-
 // Update summary text
 void AtomTypeVectorKeywordWidget::updateSummaryText()
 {

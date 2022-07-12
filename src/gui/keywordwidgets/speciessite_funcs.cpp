@@ -114,12 +114,6 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
     refreshing_ = false;
 }
 
-// Update keyword data based on widget values
-void SpeciesSiteKeywordWidget::updateKeywordData()
-{
-    // Not relevant - Handled via checkbox callbacks
-}
-
 // Update summary text
 void SpeciesSiteKeywordWidget::updateSummaryText()
 {

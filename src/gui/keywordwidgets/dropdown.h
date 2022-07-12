@@ -49,5 +49,5 @@ class KeywordDropDown : public QWidget
     // Update widget values data based on keyword data
     virtual void updateWidgetValues(const CoreData &coreData) = 0;
     // Update keyword data based on widget values
-    virtual void updateKeywordData() = 0;
+    virtual void updateKeywordData();
 };

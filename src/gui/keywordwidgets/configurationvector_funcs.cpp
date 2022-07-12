@@ -67,12 +67,6 @@ void ConfigurationVectorKeywordWidget::updateValue(const Flags<DissolveSignals::
 // Update widget values data based on keyword data
 void ConfigurationVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
-// Update keyword data based on widget values
-void ConfigurationVectorKeywordWidget::updateKeywordData()
-{
-    // Handled by model
-}
-
 // Update summary text
 void ConfigurationVectorKeywordWidget::updateSummaryText()
 {
