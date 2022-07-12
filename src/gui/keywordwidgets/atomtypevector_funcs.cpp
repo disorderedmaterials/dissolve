@@ -18,8 +18,11 @@ AtomTypeVectorKeywordWidget::AtomTypeVectorKeywordWidget(QWidget *parent, AtomTy
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
+
+    // Set up the model
     ui_.AtomTypeList->setModel(&atomTypeModel_);
     atomTypeModel_.setCheckStateData(keyword_->data());
+    resetModelData();
 
     // Connect signals / slots
     connect(&atomTypeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
@@ -44,6 +47,19 @@ void AtomTypeVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, c
  * Update
  */
 
+// Reset model data
+void AtomTypeVectorKeywordWidget::resetModelData()
+{
+    refreshing_ = true;
+
+    atomTypeModel_.setData(coreData_.atomTypes());
+    atomTypeModel_.setCheckStateData(keyword_->data());
+
+    updateSummaryText();
+
+    refreshing_ = false;
+}
+
 // Update value displayed in widget
 void AtomTypeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
@@ -51,17 +67,7 @@ void AtomTypeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataM
 }
 
 // Update widget values data based on keyword data
-void AtomTypeVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
-{
-    refreshing_ = true;
-
-    atomTypeModel_.setData(coreData.atomTypes());
-    atomTypeModel_.setCheckStateData(keyword_->data());
-
-    updateSummaryText();
-
-    refreshing_ = false;
-}
+void AtomTypeVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
 // Update keyword data based on widget values
 void AtomTypeVectorKeywordWidget::updateKeywordData()

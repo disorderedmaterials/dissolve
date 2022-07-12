@@ -50,8 +50,8 @@ class ModuleVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
      * Update
      */
     private:
-    // Check / update allowed modules and displayed data
-    void updateAllowedModules();
+    // Reset model data
+    void resetModelData();
 
     public:
     // Update value displayed in widget

@@ -17,8 +17,11 @@ ConfigurationVectorKeywordWidget::ConfigurationVectorKeywordWidget(QWidget *pare
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
+
+    // Set up the model
     ui_.ConfigurationList->setModel(&configurationModel_);
     configurationModel_.setCheckStateData(keyword_->data());
+    resetModelData();
 
     // Connect signals / slots
     connect(&configurationModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
@@ -43,6 +46,18 @@ void ConfigurationVectorKeywordWidget::modelDataChanged(const QModelIndex &topLe
  * Update
  */
 
+// Reset model data
+void ConfigurationVectorKeywordWidget::resetModelData()
+{
+    refreshing_ = true;
+
+    configurationModel_.setData(coreData_.configurations());
+
+    updateSummaryText();
+
+    refreshing_ = false;
+}
+
 // Update value displayed in widget
 void ConfigurationVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
@@ -50,17 +65,7 @@ void ConfigurationVectorKeywordWidget::updateValue(const Flags<DissolveSignals::
 }
 
 // Update widget values data based on keyword data
-void ConfigurationVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
-{
-    refreshing_ = true;
-
-    configurationModel_.setData(coreData.configurations());
-    configurationModel_.setCheckStateData(keyword_->data());
-
-    updateSummaryText();
-
-    refreshing_ = false;
-}
+void ConfigurationVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
 // Update keyword data based on widget values
 void ConfigurationVectorKeywordWidget::updateKeywordData()

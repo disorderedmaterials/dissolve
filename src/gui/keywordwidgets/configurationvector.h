@@ -47,6 +47,10 @@ class ConfigurationVectorKeywordWidget : public KeywordDropDown, public KeywordW
     /*
      * Update
      */
+    private:
+    // Reset model data
+    void resetModelData();
+
     public:
     // Update value displayed in widget
     void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;

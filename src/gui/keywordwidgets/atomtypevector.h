@@ -49,6 +49,10 @@ class AtomTypeVectorKeywordWidget : public KeywordDropDown, public KeywordWidget
     /*
      * Update
      */
+    private:
+    // Reset model data
+    void resetModelData();
+
     public:
     // Update value displayed in widget
     void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;

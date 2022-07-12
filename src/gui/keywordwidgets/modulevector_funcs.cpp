@@ -17,9 +17,10 @@ ModuleVectorKeywordWidget::ModuleVectorKeywordWidget(QWidget *parent, ModuleVect
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
 
-    moduleModel_.setCheckStateData(keyword_->data());
+    // Set up the model
     ui_.ModuleList->setModel(&moduleModel_);
-    updateAllowedModules();
+    moduleModel_.setCheckStateData(keyword_->data());
+    resetModelData();
 
     // Connect signals / slots
     connect(&moduleModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
@@ -47,14 +48,16 @@ void ModuleVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMod
  * Update
  */
 
-// Check / update allowed modules and displayed data
-void ModuleVectorKeywordWidget::updateAllowedModules()
+// Reset model data
+void ModuleVectorKeywordWidget::resetModelData()
 {
     refreshing_ = true;
 
     // Update allowed modules
     allowedModules_ = Module::allOfType(keyword_->moduleTypes());
     moduleModel_.setData(allowedModules_);
+
+    updateSummaryText();
 
     refreshing_ = false;
 }
@@ -63,17 +66,16 @@ void ModuleVectorKeywordWidget::updateAllowedModules()
 void ModuleVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
     if (mutationFlags.isSet(DissolveSignals::ModulesMutated))
-    {
-        updateAllowedModules();
-        updateSummaryText();
-    }
+        resetModelData();
 }
 
 // Update widget values data based on keyword data
-void ModuleVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) {}
+void ModuleVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
 // Update keyword data based on widget values
-void ModuleVectorKeywordWidget::updateKeywordData() {}
+void ModuleVectorKeywordWidget::updateKeywordData()
+{ // Handled by model
+}
 
 // Update summary text
 void ModuleVectorKeywordWidget::updateSummaryText()

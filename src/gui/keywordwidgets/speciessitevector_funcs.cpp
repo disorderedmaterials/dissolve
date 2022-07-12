@@ -14,11 +14,15 @@ SpeciesSiteVectorKeywordWidget::SpeciesSiteVectorKeywordWidget(QWidget *parent, 
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
 
+    // Set up the model
     sitesFilterProxy_.setSourceModel(&sites_);
     if (keyword->axesRequired())
         sitesFilterProxy_.setFlag(SitesFilterProxy::HasAxes);
     ui_.SitesTree->setModel(&sitesFilterProxy_);
     sites_.setCheckStateData(keyword_->data());
+    resetModelData();
+
+    // Connect signals / slots
     connect(&sites_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
 
@@ -44,6 +48,18 @@ void SpeciesSiteVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft
  * Update
  */
 
+// Reset model data
+void SpeciesSiteVectorKeywordWidget::resetModelData()
+{
+    refreshing_ = true;
+
+    sites_.setData(coreData_.species());
+    ui_.SitesTree->expandAll();
+    updateSummaryText();
+
+    refreshing_ = false;
+}
+
 // Update value displayed in widget
 void SpeciesSiteVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
@@ -51,21 +67,12 @@ void SpeciesSiteVectorKeywordWidget::updateValue(const Flags<DissolveSignals::Da
 }
 
 // Update widget values data based on keyword data
-void SpeciesSiteVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
-{
-    refreshing_ = true;
-
-    sites_.setData(coreData.species());
-    ui_.SitesTree->expandAll();
-    updateSummaryText();
-
-    refreshing_ = false;
-}
+void SpeciesSiteVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
 // Update keyword data based on widget values
 void SpeciesSiteVectorKeywordWidget::updateKeywordData()
 {
-    // Not relevant - Handled via checkbox callbacks
+    // Handled by model
 }
 
 // Update summary text

@@ -15,8 +15,11 @@ SpeciesVectorKeywordWidget::SpeciesVectorKeywordWidget(QWidget *parent, SpeciesV
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
+
+    // Set up the model
     ui_.SpeciesList->setModel(&speciesModel_);
     speciesModel_.setCheckStateData(keyword_->data());
+    resetModelData();
 
     // Connect signals / slots
     connect(&speciesModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
@@ -41,6 +44,18 @@ void SpeciesVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, co
  * Update
  */
 
+// Reset model data
+void SpeciesVectorKeywordWidget::resetModelData()
+{
+    refreshing_ = true;
+
+    speciesModel_.setData(coreData_.species());
+
+    updateSummaryText();
+
+    refreshing_ = false;
+}
+
 // Update value displayed in widget
 void SpeciesVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
@@ -48,17 +63,7 @@ void SpeciesVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMu
 }
 
 // Update widget values data based on keyword data
-void SpeciesVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
-{
-    refreshing_ = true;
-
-    speciesModel_.setData(coreData.species());
-    speciesModel_.setCheckStateData(keyword_->data());
-
-    updateSummaryText();
-
-    refreshing_ = false;
-}
+void SpeciesVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
 // Update keyword data based on widget values
 void SpeciesVectorKeywordWidget::updateKeywordData()
