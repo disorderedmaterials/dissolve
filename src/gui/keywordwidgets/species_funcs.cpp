@@ -12,11 +12,10 @@ SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, SpeciesKeyword *keyw
     ui_.setupUi(this);
 
     refreshing_ = true;
-    speciesModel_.setData(coreData.species());
+
+    // Set up the model
     ui_.SpeciesCombo->setModel(&speciesModel_);
-    auto it = std::find_if(coreData.species().begin(), coreData.species().end(),
-                           [keyword](const auto &sp) { return sp.get() == keyword->data(); });
-    ui_.SpeciesCombo->setCurrentIndex(it == coreData.species().end() ? -1 : it - coreData.species().begin());
+    resetModelData();
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
     // QScrollArea)
@@ -54,6 +53,20 @@ void SpeciesKeywordWidget::on_ClearButton_clicked(bool checked)
 /*
  * Update
  */
+
+// Reset model data
+void SpeciesKeywordWidget::resetModelData()
+{
+    refreshing_ = true;
+
+    speciesModel_.setData(coreData_.species());
+
+    auto it = std::find_if(coreData_.species().begin(), coreData_.species().end(),
+                           [&](const auto &sp) { return sp.get() == keyword_->data(); });
+    ui_.SpeciesCombo->setCurrentIndex(it == coreData_.species().end() ? -1 : it - coreData_.species().begin());
+
+    refreshing_ = false;
+}
 
 // Update value displayed in widget
 void SpeciesKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
