@@ -120,9 +120,6 @@ void IsotopologueSetKeywordWidget::updateValue(const Flags<DissolveSignals::Data
         updateSummaryText();
 }
 
-// Update widget values data based on keyword data
-void IsotopologueSetKeywordWidget::updateWidgetValues(const CoreData &coreData) {}
-
 // Update summary text
 void IsotopologueSetKeywordWidget::updateSummaryText()
 {

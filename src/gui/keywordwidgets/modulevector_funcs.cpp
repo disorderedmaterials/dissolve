@@ -69,9 +69,6 @@ void ModuleVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMut
         resetModelData();
 }
 
-// Update widget values data based on keyword data
-void ModuleVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
-
 // Update summary text
 void ModuleVectorKeywordWidget::updateSummaryText()
 {

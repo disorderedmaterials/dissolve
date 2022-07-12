@@ -26,10 +26,8 @@ Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyw
     for (auto *spin : spins_)
         spin->setSingleStep(0.01);
 
-    // Connect signals / slots
-    connect(ui_.FunctionCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(functionCombo_currentIndexChanged(int)));
-    for (auto *spin : spins_)
-        connect(spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
+    // Grab the target Function1D
+    auto &function = keyword_->data();
 
     // Get relevant function types to show in combo
     auto availableFunctions = Functions::matchingFunction1D(keyword_->functionProperties());
@@ -45,11 +43,33 @@ Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyw
         {
             ui_.FunctionCombo->addItem(QString::fromStdString(Functions::function1D().keyword(func)),
                                        QVariant::fromValue(func));
-            if (func == keyword_->data().type())
+            if (func == function.type())
                 ui_.FunctionCombo->setCurrentIndex(i);
             ++i;
         }
     }
+
+    // Widgets
+    ui_.FunctionCombo->setCurrentIndex(ui_.FunctionCombo->findData(QVariant::fromValue(function.type())));
+
+    const auto nParams = function.nParameters();
+    for (auto n = 0; n < MaxParams; ++n)
+    {
+        spins_[n]->setValue(nParams > n ? function.parameters()[n] : 0.0);
+        labels_[n]->setText(nParams > n ? QString::fromStdString(function.parameterName(n)) : "N/A");
+        spins_[n]->setVisible(nParams > n);
+        labels_[n]->setVisible(nParams > n);
+    }
+
+    // Update summary text
+    updateSummaryText();
+
+    refreshing_ = false;
+
+    // Connect signals / slots
+    connect(ui_.FunctionCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(functionCombo_currentIndexChanged(int)));
+    for (auto *spin : spins_)
+        connect(spin, SIGNAL(valueChanged(double)), this, SLOT(parameterSpin_valueChanged(double)));
 }
 
 /*
@@ -64,7 +84,7 @@ void Function1DKeywordWidget::functionCombo_currentIndexChanged(int index)
 
     updateKeywordData();
 
-    updateWidgetValues(coreData_);
+    updateSummaryText();
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
@@ -87,36 +107,7 @@ void Function1DKeywordWidget::parameterSpin_valueChanged(double value)
  */
 
 // Update value displayed in widget
-void Function1DKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
-{
-    updateWidgetValues(coreData_);
-}
-
-// Update widget values data based on keyword data
-void Function1DKeywordWidget::updateWidgetValues(const CoreData &coreData)
-{
-    refreshing_ = true;
-
-    // Grab the target Function1D
-    auto &function = keyword_->data();
-
-    // Widgets
-    ui_.FunctionCombo->setCurrentIndex(ui_.FunctionCombo->findData(QVariant::fromValue(function.type())));
-
-    const auto nParams = function.nParameters();
-    for (auto n = 0; n < MaxParams; ++n)
-    {
-        spins_[n]->setValue(nParams > n ? function.parameters()[n] : 0.0);
-        labels_[n]->setText(nParams > n ? QString::fromStdString(function.parameterName(n)) : "N/A");
-        spins_[n]->setVisible(nParams > n);
-        labels_[n]->setVisible(nParams > n);
-    }
-
-    // Update summary text
-    updateSummaryText();
-
-    refreshing_ = false;
-}
+void Function1DKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
 
 // Update keyword data based on widget values
 void Function1DKeywordWidget::updateKeywordData()

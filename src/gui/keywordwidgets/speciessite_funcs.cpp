@@ -19,7 +19,7 @@ SpeciesSiteKeywordWidget::SpeciesSiteKeywordWidget(QWidget *parent, SpeciesSiteK
     ui_.setupUi(dropWidget());
 
     // Set current information
-    updateWidgetValues(coreData_);
+    resetWidgets();
 }
 
 /*
@@ -53,11 +53,12 @@ void SpeciesSiteKeywordWidget::siteRadioButton_clicked(bool checked)
 // Update value displayed in widget
 void SpeciesSiteKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
-    updateWidgetValues(coreData_);
+    if (mutationFlags.isSet(DissolveSignals::SpeciesMutated))
+        resetWidgets();
 }
 
-// Update widget values data based on keyword data
-void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
+// Reset widgets
+void SpeciesSiteKeywordWidget::resetWidgets()
 {
     refreshing_ = true;
 
@@ -80,9 +81,7 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
 
         // Are there sites defined?
         if (sp->nSites() == 0)
-        {
             layout->addWidget(new QLabel("No sites defined."));
-        }
         else
         {
             // Loop over sites defined in this Species

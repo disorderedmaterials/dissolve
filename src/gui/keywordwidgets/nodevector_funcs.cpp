@@ -63,9 +63,6 @@ void NodeVectorKeywordWidget::resetModelData()
 // Update value displayed in widget
 void NodeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) { resetModelData(); }
 
-// Update widget values data based on keyword data
-void NodeVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
-
 // Update summary text
 void NodeVectorKeywordWidget::updateSummaryText()
 {

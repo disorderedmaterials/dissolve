@@ -61,11 +61,8 @@ void ConfigurationVectorKeywordWidget::resetModelData()
 // Update value displayed in widget
 void ConfigurationVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
-    updateWidgetValues(coreData_);
+    resetModelData();
 }
-
-// Update widget values data based on keyword data
-void ConfigurationVectorKeywordWidget::updateWidgetValues(const CoreData &coreData) { resetModelData(); }
 
 // Update summary text
 void ConfigurationVectorKeywordWidget::updateSummaryText()
