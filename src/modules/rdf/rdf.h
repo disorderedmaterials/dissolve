@@ -41,7 +41,7 @@ class RDFModule : public Module
     // Target configurations
     std::vector<Configuration *> targetConfigurations_;
     // Number of historical partial sets to combine into final partials
-    int averagingLength_{5};
+    std::optional<int> averagingLength_{5};
     // Weighting scheme to use when averaging partials
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Bin width (spacing in r) to use
@@ -51,7 +51,7 @@ class RDFModule : public Module
     // Type of broadening to apply to intramolecular g(r)
     Functions::Function1DWrapper intraBroadening_{Functions::Function1D::Gaussian, {0.18}};
     // Degree of smoothing to apply
-    int nSmooths_{0};
+    std::optional<int> nSmooths_;
     // Calculation method for partials
     RDFModule::PartialsMethod partialsMethod_{RDFModule::AutoMethod};
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true

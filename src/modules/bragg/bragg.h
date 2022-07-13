@@ -21,7 +21,7 @@ class BraggModule : public Module
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
     // Number of historical data sets to combine into final reflection data
-    int averagingLength_{5};
+    std::optional<int> averagingLength_{5};
     // Weighting scheme to use when averaging reflection data
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Bragg intensity scaling factor accounting for number of repeat units in Configuration

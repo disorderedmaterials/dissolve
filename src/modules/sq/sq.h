@@ -27,7 +27,7 @@ class SQModule : public Module
      */
     private:
     // Number of historical partial sets to combine into final partials
-    int averagingLength_{1};
+    std::optional<int> averagingLength_;
     // Weighting scheme to use when averaging partials
     Averaging::AveragingScheme averagingScheme_{Averaging::LinearAveraging};
     // Broadening function to apply to Bragg S(Q)

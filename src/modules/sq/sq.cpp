@@ -5,8 +5,8 @@
 #include "keywords/bool.h"
 #include "keywords/double.h"
 #include "keywords/function1d.h"
-#include "keywords/integer.h"
 #include "keywords/module.h"
+#include "keywords/optionalint.h"
 #include "modules/bragg/bragg.h"
 #include "modules/rdf/rdf.h"
 
@@ -24,8 +24,9 @@ SQModule::SQModule() : Module("SQ")
     keywords_.add<EnumOptionsKeyword<WindowFunction::Form>>(
         "Control", "WindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
         windowFunction_, WindowFunction::forms());
-    keywords_.add<IntegerKeyword>("Control", "Averaging", "Number of historical partial sets to combine into final partials",
-                                  averagingLength_, 1);
+    keywords_.add<OptionalIntegerKeyword>("Control", "Averaging",
+                                          "Number of historical partial sets to combine into final partials", averagingLength_,
+                                          1, std::nullopt, 1, "Off");
     keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("Control", "AveragingScheme",
                                                                   "Weighting scheme to use when averaging partials",
                                                                   averagingScheme_, Averaging::averagingSchemes());

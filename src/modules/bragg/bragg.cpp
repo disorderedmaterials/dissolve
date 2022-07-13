@@ -5,7 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
-#include "keywords/integer.h"
+#include "keywords/optionalint.h"
 #include "keywords/stdstring.h"
 #include "keywords/vec3integer.h"
 
@@ -15,8 +15,9 @@ BraggModule::BraggModule() : Module("Bragg")
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
     // Control
-    keywords_.add<IntegerKeyword>("Control", "Averaging",
-                                  "Number of historical data sets to combine into final reflection data", averagingLength_, 0);
+    keywords_.add<OptionalIntegerKeyword>("Control", "Averaging",
+                                          "Number of historical data sets to combine into final reflection data",
+                                          averagingLength_, 1, std::nullopt, 1, "Off");
     keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("Control", "AveragingScheme",
                                                                   "Weighting scheme to use when averaging reflection data",
                                                                   averagingScheme_, Averaging::averagingSchemes());

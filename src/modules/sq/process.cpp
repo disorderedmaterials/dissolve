@@ -40,11 +40,11 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     else
         Messenger::print("SQ: Window function to be applied in Fourier transforms is {}.",
                          WindowFunction::forms().keyword(windowFunction_));
-    if (averagingLength_ <= 1)
-        Messenger::print("SQ: No averaging of partials will be performed.\n");
-    else
-        Messenger::print("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
+    if (averagingLength_)
+        Messenger::print("SQ: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
                          Averaging::averagingSchemes().keyword(averagingScheme_));
+    else
+        Messenger::print("SQ: No averaging of partials will be performed.\n");
     if (qBroadening_.type() == Functions::Function1D::None)
         Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
     else
@@ -189,12 +189,12 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     }
 
     // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
-    if (averagingLength_ > 1)
+    if (averagingLength_)
     {
         // Store the current fingerprint, since we must ensure we retain it in the averaged data.
         std::string currentFingerprint{unweightedsq.fingerprint()};
 
-        Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", name_, averagingLength_,
+        Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", name_, averagingLength_.value(),
                                        averagingScheme_);
 
         // Re-set the object names and fingerprints of the partials

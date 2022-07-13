@@ -27,11 +27,11 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     else
         Messenger::print("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_);
     Messenger::print("RDF: Bin-width to use is {} Angstroms.\n", binWidth_);
-    if (averagingLength_ <= 1)
-        Messenger::print("RDF: No averaging of partials will be performed.\n");
-    else
-        Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_,
+    if (averagingLength_)
+        Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
                          Averaging::averagingSchemes().keyword(averagingScheme_));
+    else
+        Messenger::print("RDF: No averaging of partials will be performed.\n");
     if (intraBroadening_.type() == Functions::Function1D::None)
         Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
     else
@@ -40,8 +40,8 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
     Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("RDF: Save original (unbroadened) g(r) is {}.\n", DissolveSys::onOff(saveOriginal_));
-    Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is {} ({}).\n", nSmooths_,
-                     DissolveSys::onOff(nSmooths_ > 0));
+    if (nSmooths_)
+        Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is {}.\n", *nSmooths_);
     Messenger::print("\n");
 
     /*
@@ -77,13 +77,13 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             dissolve.processingModuleData().retrieve<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), name_);
 
         // Perform averagingLength_ of unweighted partials if requested, and if we're not already up-to-date
-        if ((averagingLength_ > 1) && (!alreadyUpToDate))
+        if ((averagingLength_.value_or(1) > 1) && (!alreadyUpToDate))
         {
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{originalgr.fingerprint()};
 
             Averaging::average<PartialSet>(dissolve.processingModuleData(), fmt::format("{}//OriginalGR", cfg->niceName()),
-                                           name_, averagingLength_, averagingScheme_);
+                                           name_, averagingLength_.value(), averagingScheme_);
 
             // Re-set the object names and fingerprints of the partials
             originalgr.setFingerprint(currentFingerprint);
@@ -103,7 +103,7 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
         auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(
             fmt::format("{}//UnweightedGR", cfg->niceName()), name_, GenericItem::InRestartFileFlag);
-        calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening_, nSmooths_);
+        calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening_, nSmooths_.value_or(0));
 
         // Save data if requested
         if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms"))))
