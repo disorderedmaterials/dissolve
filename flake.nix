@@ -90,6 +90,7 @@
             nativeBuildInputs = pkgs.lib.optionals gui [
               pkgs.wrapGAppsHook
               pkgs.qt6Packages.wrapQtAppsHook
+              pkgs.qt6Packages.qtsvg
             ];
 
             TBB_DIR = "${pkgs.tbb}";
