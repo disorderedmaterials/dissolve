@@ -4,10 +4,10 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
-#include "gui/widgets/exponentialspin.hui"
+#include "gui/widgets/integerspin.hui"
 #include "keywords/optionalint.h"
 
-class OptionalIntegerKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
+class OptionalIntegerKeywordWidget : public IntegerSpin, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT

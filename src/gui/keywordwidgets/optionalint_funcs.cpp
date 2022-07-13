@@ -6,10 +6,9 @@
 
 OptionalIntegerKeywordWidget::OptionalIntegerKeywordWidget(QWidget *parent, OptionalIntegerKeyword *keyword,
                                                            const CoreData &coreData)
-    : ExponentialSpin(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+    : IntegerSpin(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Set minimum and maximum values and step size
-    setDecimals(0);
     setMinimum(keyword_->minimumLimit());
     if (keyword_->maximumLimit())
         setMaximum(keyword_->maximumLimit().value());
