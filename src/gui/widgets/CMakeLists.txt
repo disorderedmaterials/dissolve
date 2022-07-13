@@ -9,6 +9,7 @@ set(widgets_MOC_HDRS
     elementselector.hui
     exponentialspin.hui
     gradientbar.hui
+    integerspin.hui
     mimetreewidget.hui
     superstackedwidget.hui
 )
@@ -25,6 +26,7 @@ set(widgets_SRCS
     elementselector_funcs.cpp
     exponentialspin_funcs.cpp
     gradientbar_funcs.cpp
+    integerspin_funcs.cpp
     mimestrings.cpp
     mimetreewidget_funcs.cpp
     mimetreewidgetitem.cpp
