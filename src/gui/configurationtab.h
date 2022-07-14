@@ -7,7 +7,6 @@
 #include "gui/maintab.h"
 #include "gui/models/enumOptionsModel.h"
 #include "gui/models/procedureModel.h"
-#include "gui/procedurecontrolstack.h"
 #include "gui/ui_configurationtab.h"
 #include <map>
 
