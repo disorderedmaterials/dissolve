@@ -33,6 +33,8 @@ class Vec3NodeValueKeyword : public KeywordBase
     public:
     // Return reference to data
     const Vec3<NodeValue> &data() const;
+    // Set data
+    bool setData(const Vec3<NodeValue> &v);
     // Set the specified value from supplied expression text
     bool setData(int index, std::string_view expressionText);
     // Return label type to display in GUI
