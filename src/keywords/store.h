@@ -111,6 +111,15 @@ class KeywordStore
     // Find named keyword
     KeywordBase *find(std::string_view name);
     const KeywordBase *find(std::string_view name) const;
+    // Find all keywords of specified type
+    template <class K> std::vector<K *> allOfType()
+    {
+        std::vector<K *> result;
+        for (auto &kwd : keywords_)
+            if (kwd.second->typeIndex() == typeid(K *))
+                result.push_back(dynamic_cast<K *>(kwd.second));
+        return result;
+    }
     // Return keywords
     const std::map<std::string_view, KeywordBase *> &keywords() const;
     // Return "Target" group keywords
