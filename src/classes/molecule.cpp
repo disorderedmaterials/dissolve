@@ -41,14 +41,17 @@ const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
 // Return nth Atom pointer
 Atom *Molecule::atom(int n) const { return atoms_[n]; }
 
+// Update atoms array from indices
 void Molecule::updateAtoms(std::vector<Atom> &source)
 {
     if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
         std::transform(atomIndices_.begin(), atomIndices_.end(), atoms_.begin(),
                        [&source](const auto idx) { return &source[idx]; });
 }
+
 // Sets the index of the object within the parent DynamicArray
 void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }
+
 // Gets the index of the object within the parent DynamicArray
 int Molecule::arrayIndex() const { return arrayIndex_; }
 

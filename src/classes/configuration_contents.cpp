@@ -115,6 +115,25 @@ Configuration::addMolecule(AtomChangeToken &lock, const Species *sp,
     return newMolecule;
 }
 
+// Copy molecule
+std::shared_ptr<Molecule> Configuration::copyMolecule(AtomChangeToken &lock, const std::shared_ptr<Molecule> &sourceMolecule)
+{
+    std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+    newMolecule->setArrayIndex(molecules_.size());
+    molecules_.push_back(newMolecule);
+    auto *sp = sourceMolecule->species();
+    newMolecule->setSpecies(sp);
+
+    // Update the relevant Species population
+    adjustSpeciesPopulation(sp, 1);
+
+    // Copy the source molecule's coordinates
+    for (const auto *atom : sourceMolecule->atoms())
+        addAtom(lock, atom->speciesAtom(), newMolecule, atom->r());
+
+    return newMolecule;
+}
+
 // Remove all Molecules of the target Species from the Configuration
 void Configuration::removeMolecules(const Species *sp)
 {

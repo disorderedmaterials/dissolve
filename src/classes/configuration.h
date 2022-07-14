@@ -126,6 +126,8 @@ class Configuration : public Serialisable
     std::shared_ptr<Molecule>
     addMolecule(AtomChangeToken &lock, const Species *sp,
                 OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates = std::nullopt);
+    // Copy molecule
+    std::shared_ptr<Molecule> copyMolecule(AtomChangeToken &lock, const std::shared_ptr<Molecule> &sourceMolecule);
     // Remove all Molecules of the target Species from the Configuration
     void removeMolecules(const Species *sp);
     // Remove specified Molecules from the Configuration
