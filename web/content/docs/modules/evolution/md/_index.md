@@ -51,13 +51,11 @@ $$ v_i\left(t + \Delta t, T\right) = v_i\left(t + \Delta t\right) \sqrt{\frac{T}
 |`CapForces`|`bool`|`false`|Whether to cap forces acting on atoms to a predefined limit, preventing potential explosions when bad contacts are present in the system. The value at which to cap forces is set by the `CapForcesAt` keyword.|
 |`CapForcesAt`|`force`|`1.0e7`|Value (in 10 J/mol) at which to cap forces if `CapForces` is enabled.|
 |`CutoffDistance`|`r`|--|Interatomic cutoff distance $r$ to use for energy and force calculation. The default is to use the global pair potential cutoff defined in the simulation. If necessary, a short cutoff value can be set during early equilibration runs to significantly speed up calculation times at the expense of realism.|
-|`DeltaT`|`dt`|`1.0e-4`|Timestep to use in the simulation (if `VariableTimestep` is set to `false`).|
+|`DeltaT`|`dt`|`5.0e-4`|Timestep to use in the simulation (if the timestep style utilises one).|
 |`IntraOnly`|`false`|`true`|Only calculate forces arising from internal molecule interactions (i.e. bonds, angles, torsion, impropers, and any allowed pair potential contributions) and ignore forces between molecules. This can be useful to force efficient exploration of intramolecular degrees of freedom at the expense of molecule-molecule interactions. If used, a subsequent relaxation with [`MolShake`]({{< ref "molshake" >}}) is highly recommended.|
 |`NSteps`|`n`|`50`|Number of shakes $n$ to attempt per atom|
 |`OnlyWhenEnergyStable`|`bool`|`true`|Only run molecular dynamics on a configuration if the total energy of the configuration (as determined by an [`Energy`]({{< ref "energy" >}}) module is considered stable.|
 |`RandomVelocities`|`bool`|`false`|Whether to always assign random velocities when starting the molecular dynamics simulation. If `false` then random velocities are only generated if no other velocities exist.|
 |`RestrictToSpecies`|`Species ...`|`--`|Restrict force calculation to only molecules of the specified species. Molecules of other species types remain at their current positions (always have zero force acting on them).|
-|`VariableTimestep`|`bool`|`false`|Whether to utilise a variable timestep in the simulation.[1] This option can be a used to run molecular dynamics even when potentially bad atomic overlaps are present, since the timestep is determined based on the maximal force in the system. However, it can result in too-small timesteps for production runs once configurations have equilibrated, at which point a fixed timestep (specified with `DeltaT`) is recommended.|
+|`Timestep`|[`TimestepType`]({{< ref "timesteptype" >}})|`Auto`|Timestep type / strategy to use in the calculation.|
 
-
-[1] "Variable timestep algorithm for molecular dynamics simulation of non-equilibrium processes", N. A. Marks and M. Robinson, _Nucl. Instrum. Meth. B_ **352**, 3 (2015), [10.1016/j.nimb.2014.11.094](https://doi.org/10.1016/j.nimb.2014.11.094)

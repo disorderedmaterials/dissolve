@@ -8,19 +8,20 @@
 #include "modules/md/md.h"
 
 // Cap forces in Configuration
-int MDModule::capForces(double maxForce, std::vector<Vec3<double>> &f)
+int MDModule::capForces(double maxForce, std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra)
 {
     double fMag;
     const auto maxForceSq = maxForce * maxForce;
     auto nCapped = 0;
-    for (auto &fxyz : f)
+    for (auto &&[inter, intra] : zip(fInter, fIntra))
     {
-        fMag = fxyz.magnitudeSq();
+        fMag = (inter + intra).magnitudeSq();
         if (fMag < maxForceSq)
             continue;
 
         fMag = maxForce / sqrt(fMag);
-        fxyz *= fMag;
+        inter *= fMag;
+        intra *= fMag;
 
         ++nCapped;
     }
@@ -28,12 +29,33 @@ int MDModule::capForces(double maxForce, std::vector<Vec3<double>> &f)
     return nCapped;
 }
 
-// Determine timestep based on maximal force component
-double MDModule::determineTimeStep(const std::vector<Vec3<double>> &f)
+// Determine timestep to use
+std::optional<double> MDModule::determineTimeStep(const std::vector<Vec3<double>> &fInter,
+                                                  const std::vector<Vec3<double>> &fIntra) const
 {
-    auto fMax = *std::max_element(f.begin(), f.end(), [](auto &left, auto &right) { return left.absMax() < right.absMax(); });
+    if (timestepType_ == TimestepType::Fixed)
+        return fixedTimestep_;
 
-    return 1.0 / fMax.absMax();
+    // Simple variable timestep
+    if (timestepType_ == TimestepType::Variable)
+    {
+        auto absFMax = 0.0;
+        for (auto &&[inter, intra] : zip(fInter, fIntra))
+            absFMax = std::max(absFMax, (inter + intra).absMax());
+
+        return 1.0 / absFMax;
+    }
+
+    // Automatic timestep determination, using maximal interatomic force to guide the timestep up to the current fixed timestep
+    // value
+    auto absFMaxInter =
+        std::max_element(fInter.begin(), fInter.end(), [](auto &left, auto &right) { return left.absMax() < right.absMax(); })
+            ->absMax();
+
+    auto deltaT = 100.0 / absFMaxInter;
+    if (deltaT < (fixedTimestep_ / 100.0))
+        return {};
+    return deltaT > fixedTimestep_ ? fixedTimestep_ : deltaT;
 }
 
 // Evolve Species coordinates, returning new coordinates

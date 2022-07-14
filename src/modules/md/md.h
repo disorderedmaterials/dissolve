@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumoptions.h"
 #include "module/module.h"
 
 // Forward Declarations
@@ -19,6 +20,17 @@ class MDModule : public Module
     /*
      * Definition
      */
+    public:
+    // Timestep Type
+    enum class TimestepType
+    {
+        Fixed,
+        Variable,
+        Automatic
+    };
+    // Return enum options for TimestepType
+    static EnumOptions<TimestepType> timestepType();
+
     private:
     // Target configurations
     Configuration *targetConfiguration_{nullptr};
@@ -28,8 +40,10 @@ class MDModule : public Module
     double capForcesAt_{1.0e7};
     // Interatomic cutoff distance to employ
     std::optional<double> cutoffDistance_;
-    // Timestep (ps) to use in MD simulation
-    double deltaT_{5.0e-4};
+    // Timestep type to employ
+    TimestepType timestepType_{TimestepType::Automatic};
+    // Fixed timestep (ps) to use in MD simulation
+    double fixedTimestep_{5.0e-4};
     // Frequency at which to calculate total system energy (or 0 to inhibit)
     int energyFrequency_{10};
     // Whether to restrict force calculation to intramolecular contributions only
@@ -46,17 +60,16 @@ class MDModule : public Module
     std::vector<const Species *> restrictToSpecies_;
     // Write frequency for trajectory file (or 0 to inhibit)
     int trajectoryFrequency_{0};
-    // Whether a variable timestep should be used, determined from the maximal force vector
-    bool variableTimestep_{false};
 
     /*
      * Functions
      */
     private:
     // Cap forces in Configuration
-    int capForces(double maxForceSq, std::vector<Vec3<double>> &f);
-    // Determine timestep based on maximal force component
-    double determineTimeStep(const std::vector<Vec3<double>> &f);
+    int capForces(double maxForceSq, std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra);
+    // Determine timestep to use
+    std::optional<double> determineTimeStep(const std::vector<Vec3<double>> &fInter,
+                                            const std::vector<Vec3<double>> &fIntra) const;
 
     public:
     // Evolve Species coordinates, returning new coordinates
