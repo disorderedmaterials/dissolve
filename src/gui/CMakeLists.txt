@@ -20,6 +20,9 @@ set(gui_MOC_HDRS
     speciesviewer.hui
     viewer.hui
     # Widgets and Wizards
+    modulecontrolwidget.h
+    nodecontrolwidget.h
+    procedurewidget.h
     selectatomtypewidget.h
     selectconfigurationwidget.h
     selectforcefieldwidget.h
@@ -43,8 +46,6 @@ set(gui_MOC_HDRS
     selectgenericitemdialog.h
     selectrestartfiledialog.h
     selectspeciesdialog.h
-    # Editors
-    modulecontrolwidget.h
     # Main Tabs
     configurationtab.h
     forcefieldtab.h
@@ -70,6 +71,9 @@ set(gui_UIS
     specieseditor.ui
     specieswidget.ui
     # Widgets and Wizards
+    modulecontrolwidget.ui
+    nodecontrolwidget.ui
+    procedurewidget.ui
     selectatomtypewidget.ui
     selectconfigurationwidget.ui
     selectforcefieldwidget.ui
@@ -94,8 +98,6 @@ set(gui_UIS
     selectgenericitemdialog.ui
     selectrestartfiledialog.ui
     selectspeciesdialog.ui
-    # Editors
-    modulecontrolwidget.ui
     # Main Tabs
     configurationtab.ui
     forcefieldtab.ui
@@ -142,6 +144,9 @@ set(gui_SRCS
     viewer_renderables.cpp
     viewer_view.cpp
     # Widgets and Wizards
+    modulecontrolwidget_funcs.cpp
+    nodecontrolwidget_funcs.cpp
+    procedurewidget_funcs.cpp
     selectatomtypewidget_funcs.cpp
     selectconfigurationwidget_funcs.cpp
     selectforcefieldwidget_funcs.cpp
@@ -166,8 +171,6 @@ set(gui_SRCS
     selectgenericitemdialog_funcs.cpp
     selectrestartfiledialog_funcs.cpp
     selectspeciesdialog_funcs.cpp
-    # Editors
-    modulecontrolwidget_funcs.cpp
     # Main Tabs
     configurationtab_funcs.cpp
     forcefieldtab_funcs.cpp
