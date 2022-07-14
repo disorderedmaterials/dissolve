@@ -24,6 +24,8 @@ class ProcedureModel : public QAbstractItemModel
     public:
     // Set source Procedure
     void setData(Procedure &procedure);
+    // Reset model data, forcing update
+    void reset();
 
     /*
      * QAbstractItemModel overrides

@@ -15,6 +15,13 @@ void ProcedureModel::setData(Procedure &procedure)
     endResetModel();
 }
 
+// Reset model data, forcing update
+void ProcedureModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 /*
  * QAbstractItemModel overrides
  */
