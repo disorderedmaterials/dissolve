@@ -78,7 +78,7 @@ bool CopyProcedureNode::execute(const ProcedureContext &procedureContext)
                 continue;
 
             // Copy the molecule
-            auto newMol = cfg->copyMolecule(lock, mol);
+            cfg->copyMolecule(lock, mol);
         }
     }
 
