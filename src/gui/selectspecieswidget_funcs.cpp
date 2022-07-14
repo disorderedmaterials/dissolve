@@ -16,8 +16,7 @@ SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
     connect(ui_.SpeciesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(selectionChanged(const QItemSelection &, const QItemSelection &)));
 
-    minimumSelectionSize_ = 1;
-    maximumSelectionSize_ = 1;
+    reset(1, 1);
 
     refreshing_ = false;
 }
@@ -79,7 +78,7 @@ bool SelectSpeciesWidget::isSelectionValid() const
 int SelectSpeciesWidget::nSelected() const { return ui_.SpeciesList->selectionModel()->selectedIndexes().size(); }
 
 // Return the currently-selected Species
-std::vector<const Species *> SelectSpeciesWidget::currentSpecies() const
+std::vector<const Species *> SelectSpeciesWidget::selection() const
 {
     std::vector<const Species *> selection;
 

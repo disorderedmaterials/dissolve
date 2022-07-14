@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
+#include "gui/addconfigurationdialog.h"
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/selectspeciesdialog.h"
@@ -62,150 +63,26 @@ std::vector<std::shared_ptr<AddProcedureNode>> createRelativeMix(const std::vect
  * Menu Functions
  */
 
-void DissolveWindow::on_ConfigurationCreateEmptyAction_triggered(bool checked)
+void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
 {
-    auto *newConfiguration = dissolve_.addConfiguration();
+    AddConfigurationDialog addConfigurationDialog(this, dissolve_);
 
-    setModified();
-    fullUpdate();
-    ui_.MainTabs->setCurrentTab(newConfiguration);
-}
-
-void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool checked)
-{
-    // Create a SpeciesSelectDialog and use it to get the Species to add to the mix
-    SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
-
-    auto mixSpecies = speciesSelectDialog.selectSpecies(SpeciesFilterProxy::FilterFlags::NoPeriodicBox);
-    if (mixSpecies.empty())
-        return;
-
-    // Create the Configuration and a suitable generator
-    auto *newConfiguration = dissolve_.addConfiguration();
-    auto &generator = newConfiguration->generator();
-    auto paramsNode = generator.createRootNode<ParametersProcedureNode>({});
-    paramsNode->addParameter("rho", 0.1);
-
-    generator.createRootNode<BoxProcedureNode>({});
-
-    for (const auto *sp : mixSpecies)
+    if (addConfigurationDialog.exec() == QDialog::Accepted)
     {
-        // Set up coordinate set, but only if we have a suitable species
-        if (sp->nAtoms() > 1)
-        {
-            auto coordSets = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("{}_Sets", sp->name()), sp);
-            generator.createRootNode<AddProcedureNode>(sp->name(), coordSets, 100, NodeValue("rho", paramsNode->parameters()));
-        }
-        else
-            generator.createRootNode<AddProcedureNode>(sp->name(), sp, 100, NodeValue("rho", paramsNode->parameters()));
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+
+        auto newConfig = dissolve_.configurations().back().get();
+        ui_.MainTabs->setCurrentTab(newConfig);
+
+        // Make sure the potential map is up to date
+        dissolve_.regeneratePairPotentials();
+
+        // Initialise the content
+        newConfig->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
+        newConfig->updateCells(7.0, dissolve_.pairPotentialRange());
     }
-
-    // Run the generator
-    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
-
-    setModified();
-    fullUpdate();
-    ui_.MainTabs->setCurrentTab(newConfiguration);
-}
-
-void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(bool checked)
-{
-    // Create a SpeciesSelectDialog and use it to get the Species to add to the mix
-    SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select species to mix");
-
-    auto mixSpecies = speciesSelectDialog.selectSpecies(SpeciesFilterProxy::FilterFlags::NoPeriodicBox);
-    if (mixSpecies.empty())
-        return;
-
-    // Create the Configuration and a suitable generator
-    auto *newConfiguration = dissolve_.addConfiguration();
-    auto &generator = newConfiguration->generator();
-    auto paramsNode = generator.createRootNode<ParametersProcedureNode>({});
-    paramsNode->addParameter("populationA", 100);
-    paramsNode->addParameter("rho", 0.1);
-    generator.createRootNode<BoxProcedureNode>({});
-
-    // Create a relative mix from the selected components
-    createRelativeMix(mixSpecies, generator, paramsNode);
-
-    // Run the generator
-    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
-
-    setModified();
-    fullUpdate();
-    ui_.MainTabs->setCurrentTab(newConfiguration);
-}
-
-void DissolveWindow::on_ConfigurationCreateEmptyFrameworkAction_triggered(bool checked)
-{
-    // Create a SpeciesSelectDialog and use it to get the framework Species
-    SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select framework species");
-
-    const auto *framework = speciesSelectDialog.selectSingleSpecies(SpeciesFilterProxy::HasPeriodicBox);
-    if (!framework)
-        return;
-
-    // Create the Configuration and a suitable generator
-    auto *newConfiguration = dissolve_.addConfiguration();
-    auto &generator = newConfiguration->generator();
-    auto frameworkNode = generator.createRootNode<AddProcedureNode>("Framework", framework, 1);
-    frameworkNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
-    frameworkNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
-    frameworkNode->keywords().set("Rotate", false);
-
-    // Run the generator
-    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
-
-    setModified();
-    fullUpdate();
-    ui_.MainTabs->setCurrentTab(newConfiguration);
-}
-
-void DissolveWindow::on_ConfigurationCreateFrameworkAdsorbatesAction_triggered(bool checked)
-{
-    // Create a SpeciesSelectDialog and use it to get the framework Species
-    SelectSpeciesDialog speciesSelectDialog(this, dissolve_.coreData(), "Select framework species");
-
-    const auto *framework = speciesSelectDialog.selectSingleSpecies(SpeciesFilterProxy::HasPeriodicBox);
-    if (!framework)
-        return;
-
-    // Now retrieve adsorbate species
-    const auto adsorbates = speciesSelectDialog.selectSpecies(SpeciesFilterProxy::NoPeriodicBox);
-    if (adsorbates.empty())
-        return;
-
-    // Create the Configuration and a suitable generator
-    auto *newConfiguration = dissolve_.addConfiguration();
-    auto &generator = newConfiguration->generator();
-    auto frameworkNode = generator.createRootNode<AddProcedureNode>("Framework", framework, 1);
-    frameworkNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::Set);
-    frameworkNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
-    frameworkNode->keywords().set("Rotate", false);
-
-    // Add a parameters node
-    auto paramsNode = generator.createRootNode<ParametersProcedureNode>({});
-    paramsNode->addParameter("populationA", 100);
-
-    // Add a GeneralRegion node
-    auto regionNode = generator.createRootNode<GeneralRegionProcedureNode>({});
-    regionNode->keywords().set("Tolerance", 5.0);
-
-    // Create a relative mix from the selected components
-    auto addNodes = createRelativeMix(adsorbates, generator, paramsNode);
-    for (auto &addNode : addNodes)
-    {
-        addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
-        addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Region);
-        addNode->keywords().set("Region", regionNode);
-    }
-
-    // Run the generator
-    newConfiguration->generate({dissolve_.worldPool(), dissolve_.potentialMap()});
-
-    setModified();
-    fullUpdate();
-    ui_.MainTabs->setCurrentTab(newConfiguration);
 }
 
 void DissolveWindow::on_ConfigurationRenameAction_triggered(bool checked)

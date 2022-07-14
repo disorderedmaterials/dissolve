@@ -5,6 +5,7 @@
 
 #include "keywords/base.h"
 #include "keywords/enumoptions.h"
+#include "procedure/nodevalue.h"
 #include "templates/optionalref.h"
 #include <any>
 #include <list>
@@ -129,6 +130,7 @@ class KeywordStore
     void set(std::string_view name, const int value);
     void set(std::string_view name, const std::string value);
     void set(std::string_view name, const Vec3<double> value);
+    void set(std::string_view name, const Vec3<NodeValue> value);
     void set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
     void set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value);
     void set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);

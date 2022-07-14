@@ -10,10 +10,12 @@
 #include "keywords/integer.h"
 #include "keywords/module.h"
 #include "keywords/modulevector.h"
+#include "keywords/nodevalue.h"
 #include "keywords/nodevector.h"
 #include "keywords/species.h"
 #include "keywords/stdstring.h"
 #include "keywords/vec3double.h"
+#include "keywords/vec3nodevalue.h"
 #include "procedure/nodes/nodes.h"
 
 // Static Singletons
@@ -157,6 +159,10 @@ void KeywordStore::set(std::string_view name, const std::string value)
 void KeywordStore::set(std::string_view name, const Vec3<double> value)
 {
     getKeyword<Vec3DoubleKeyword>(keywords_, name)->setData(value);
+}
+void KeywordStore::set(std::string_view name, const Vec3<NodeValue> value)
+{
+    getKeyword<Vec3NodeValueKeyword>(keywords_, name)->setData(value);
 }
 
 // Retrieve a Configuration by keyword name

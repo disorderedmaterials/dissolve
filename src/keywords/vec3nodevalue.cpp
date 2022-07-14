@@ -17,8 +17,12 @@ Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode 
 // Return reference to data
 const Vec3<NodeValue> &Vec3NodeValueKeyword::data() const { return data_; }
 
-// Return label type to display in GUI
-Vec3Labels::LabelType Vec3NodeValueKeyword::labelType() const { return labelType_; }
+// Set data
+bool Vec3NodeValueKeyword::setData(const Vec3<NodeValue> &v)
+{
+    data_ = v;
+    return true;
+}
 
 // Set the value from supplied expression text
 bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
@@ -28,6 +32,9 @@ bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
 
     return data_[index].set(expressionText, parentNode_->parametersInScope());
 }
+
+// Return label type to display in GUI
+Vec3Labels::LabelType Vec3NodeValueKeyword::labelType() const { return labelType_; }
 
 /*
  * Arguments

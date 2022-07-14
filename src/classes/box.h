@@ -39,7 +39,6 @@ class Box : public Serialisable
     /*
      * Basic Definition
      */
-    public:
     protected:
     // Box type
     BoxType type_;
@@ -67,10 +66,10 @@ class Box : public Serialisable
     double reciprocalVolume_;
 
     public:
-    // Finalise Box, storing volume and reciprocal and inverted axes
-    void finalise();
     // Return Box type
     BoxType type() const;
+    // Determine Box type
+    static std::optional<BoxType> type(Vec3<double> lengths, Vec3<double> angles);
     // Return volume
     double volume() const;
     // Return axis lengths

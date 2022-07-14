@@ -1,4 +1,5 @@
 set(models_MOC_HDRS
+    addSpeciesInfoModel.h
     atomTypeModel.h
     braggReflectionFilterProxy.h
     braggReflectionModel.h
@@ -38,6 +39,7 @@ set(models_MOC_HDRS
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
 
 set(models_SRCS
+    addSpeciesInfoModel.cpp
     atomTypeFilterProxy.cpp
     atomTypeModel.cpp
     braggReflectionFilterProxy.cpp
