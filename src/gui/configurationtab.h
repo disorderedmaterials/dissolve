@@ -13,7 +13,6 @@
 
 // Forward Declarations
 class Configuration;
-class SpeciesInfo;
 
 // Configuration Tab
 class ConfigurationTab : public QWidget, public MainTab
@@ -91,5 +90,4 @@ class ConfigurationTab : public QWidget, public MainTab
     void on_CoordinatesFileSelectButton_clicked(bool checked);
     // Size Factor Scaling
     void on_RequestedSizeFactorSpin_valueChanged(double value);
-    void updateProcedureWidget(const QModelIndex &);
 };
