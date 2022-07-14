@@ -53,7 +53,7 @@ void DissolveWindow::on_SimulationSetRestartFileFrequencyAction_triggered(bool c
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)
 {
-    DataManagerDialog dataManagerDialog(this, dissolve_, referencePoints_, dissolve_.processingModuleData());
+    DataManagerDialog dataManagerDialog(this, dissolve_, dissolve_.processingModuleData());
     dataManagerDialog.exec();
 }
 

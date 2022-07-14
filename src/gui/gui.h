@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "classes/referencepoint.h"
 #include "gui/maintab.h"
 #include "gui/outputhandler.hui"
 #include "gui/signals.h"
@@ -15,7 +14,6 @@ class Configuration;
 class ConfigurationTab;
 class Dissolve;
 class ForcefieldTab;
-class QMdiSubWindow;
 class Species;
 class SpeciesTab;
 class ModuleLayer;
@@ -90,13 +88,6 @@ class DissolveWindow : public QMainWindow
     bool loadInputFile(std::string_view inputFile, bool handleRestartFile = false);
     // Load specified restart file
     bool loadRestartFile(std::string_view restartFile);
-
-    /*
-     * Reference Points
-     */
-    private:
-    // List of ReferencePoints currently loaded
-    std::vector<ReferencePoint> referencePoints_;
 
     /*
      * Update Functions

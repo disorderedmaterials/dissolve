@@ -4,7 +4,6 @@ set(models_MOC_HDRS
     braggReflectionModel.h
     cifAssemblyModel.h
     configurationModel.h
-    dataManagerReferencePointModel.h
     dataManagerSimulationModel.h
     enumOptionsModel.h
     isotopologueSetModel.h
@@ -44,7 +43,6 @@ set(models_SRCS
     braggReflectionModel.cpp
     cifAssemblyModel.cpp
     configurationModel.cpp
-    dataManagerReferencePointModel.cpp
     dataManagerSimulationModel.cpp
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
@@ -81,7 +79,6 @@ qt_wrap_cpp(
   atomTypeFilterProxy.h
   atomTypeModel.h
   braggReflectionModel.h
-  dataManagerReferencePointModel.h
   dataManagerSimulationModel.h
   enumOptionsModel.h
   expressionVariableVectorModel.h
