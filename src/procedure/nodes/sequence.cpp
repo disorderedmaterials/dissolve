@@ -203,7 +203,7 @@ ConstNodeRef SequenceProcedureNode::nodeInScope(ConstNodeRef queryingNode, std::
                                                 std::optional<ProcedureNode::NodeType> optNodeType,
                                                 std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    // If one was give, start from the querying node and work backwards...
+    // If one was given, start from the querying node and work backwards...
     if (queryingNode)
     {
         auto range = QueryRange(queryingNode, sequence_);
@@ -239,7 +239,7 @@ std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef query
 {
     std::vector<ConstNodeRef> matches;
 
-    // If one was give, start from the querying node and work backwards...
+    // If one was given, start from the querying node and work backwards...
     if (queryingNode)
     {
         auto range = QueryRange(queryingNode, sequence_);
