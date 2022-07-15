@@ -14,7 +14,7 @@ class SequenceProcedureNode : public ProcedureNode
 {
     public:
     SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
-                          std::string_view blockTerminationKeyword = "");
+                          std::string_view blockKeyword);
     ~SequenceProcedureNode() override;
 
     /*
@@ -153,14 +153,12 @@ class SequenceProcedureNode : public ProcedureNode
      * Read / Write
      */
     private:
-    // Block termination keyword for current context when reading
-    std::string blockTerminationKeyword_;
+    // Block keyword for current context when reading
+    std::string blockKeyword_;
 
     public:
-    // Set block termination keyword for current context when reading
-    void setBlockTerminationKeyword(std::string_view endKeyword);
-    // Return block termination keyword for current context
-    std::string_view blockTerminationKeyword() const;
+    // Return block keyword for current context
+    std::string_view blockKeyword() const;
     // Read structure from specified LineParser
     bool deserialise(LineParser &parser, const CoreData &coreData) override;
     // Write structure to specified LineParser

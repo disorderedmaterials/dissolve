@@ -75,12 +75,12 @@ std::string Process2DProcedureNode::yAxisLabel() const { return labelY_; }
  * Branches
  */
 
-// Add and return subcollection sequence branch
+// Add and return normalisation sequence branch
 std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::addNormalisationBranch()
 {
     if (!normalisationBranch_)
-        normalisationBranch_ =
-            std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure(), shared_from_this());
+        normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure(),
+                                                                       shared_from_this(), "Normalisation");
 
     return normalisationBranch_;
 }

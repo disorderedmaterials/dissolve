@@ -7,13 +7,13 @@
 #include "procedure/nodes/registry.h"
 
 SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
-                                             std::string_view blockTerminationKeyword)
+                                             std::string_view blockKeyword)
     : ProcedureNode(ProcedureNode::NodeType::Sequence)
 {
     context_ = context;
     procedure_ = procedure;
     owner_ = std::move(owner);
-    blockTerminationKeyword_ = blockTerminationKeyword;
+    blockKeyword_ = blockKeyword;
 }
 
 SequenceProcedureNode::~SequenceProcedureNode() { clear(); }
@@ -392,15 +392,14 @@ bool SequenceProcedureNode::finalise(const ProcedureContext &procedureContext)
  * Read / Write
  */
 
-// Set block termination keyword for current context when reading
-void SequenceProcedureNode::setBlockTerminationKeyword(std::string_view endKeyword) { blockTerminationKeyword_ = endKeyword; }
-
-// Return block termination keyword for current context
-std::string_view SequenceProcedureNode::blockTerminationKeyword() const { return blockTerminationKeyword_; }
+// Return block keyword for current context
+std::string_view SequenceProcedureNode::blockKeyword() const { return blockKeyword_; }
 
 // Read structure from specified LineParser
 bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 {
+    const auto blockTerminationKeyword = fmt::format("End{}", blockKeyword_);
+
     // Read until we encounter the block-ending keyword, or we fail for some reason
     while (!parser.eofOrBlank())
     {
@@ -409,7 +408,7 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             return false;
 
         // Is the first argument the block termination keyword for the current context?
-        if (DissolveSys::sameString(parser.argsv(0), blockTerminationKeyword_))
+        if (DissolveSys::sameString(parser.argsv(0), blockTerminationKeyword))
             break;
 
         // Is the first argument on the current line a valid control keyword?
