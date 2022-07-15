@@ -21,31 +21,48 @@ TEST(ProcedureModelTest, Basic)
     // Create a simple procedure with a parameters node
     Procedure procedure(ProcedureNode::AnalysisContext);
     auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
-    auto selectB = procedure.createRootNode<SelectProcedureNode>("B");
+    auto forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto selectB = forEachA->create<SelectProcedureNode>("B");
+    auto forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto selectC = forEachB->create<SelectProcedureNode>("C");
     auto calcAB = procedure.createRootNode<CalculateDistanceProcedureNode>({}, selectA, selectB);
     auto collect = procedure.createRootNode<Collect1DProcedureNode>({}, calcAB);
-    collect->addSubCollectBranch(ProcedureNode::AnalysisContext);
 
     ProcedureModel model(procedure);
 
     // Check out model root
-    EXPECT_EQ(model.columnCount(QModelIndex()), 1);
-    EXPECT_EQ(model.rowCount(QModelIndex()), 4);
+    EXPECT_EQ(model.columnCount(QModelIndex()), 2);
+    EXPECT_EQ(model.rowCount(QModelIndex()), 3);
 
-    // Check out first child
-    auto child = model.index(3, 0);
-    EXPECT_EQ(model.columnCount(child), 1);
-    EXPECT_EQ(model.rowCount(child), 1);
-    EXPECT_EQ(model.data(child, Qt::DisplayRole).toString().toStdString(), "Collect1D (Collect1D01)");
-    EXPECT_EQ(model.data(child, Qt::UserRole).value<NodeRef>(), collect);
+    // Check out "SelectA" child in root sequence
+    auto selectAChild = model.index(0, 0);
+    EXPECT_EQ(model.columnCount(selectAChild), 2);
+    EXPECT_EQ(model.rowCount(selectAChild), 1);
+    EXPECT_EQ(model.data(selectAChild, Qt::DisplayRole).toString().toStdString(), "A (Select)");
+    EXPECT_EQ(model.data(selectAChild, Qt::UserRole).value<NodeRef>(), selectA);
 
-    EXPECT_EQ(model.parent(child), QModelIndex());
+    // Check out "SelectB" child in SelectA's ForEach branch (via column 1)
+    auto selectBChild = model.index(0, 1, selectAChild);
+    EXPECT_EQ(model.columnCount(selectBChild), 2);
+    EXPECT_EQ(model.rowCount(selectBChild), 1);
+    EXPECT_EQ(model.data(selectBChild, Qt::DisplayRole).toString().toStdString(), "Analysis (ForEach branch in Select)");
+    EXPECT_EQ(model.data(selectBChild, Qt::UserRole).value<NodeRef>(), selectB);
 
-    auto grandchild = model.index(0, 0, child);
-    EXPECT_NE(grandchild.internalPointer(), child.internalPointer());
-    EXPECT_NE(model.parent(grandchild), child);
-    EXPECT_EQ(model.rowCount(grandchild), 0);
-    EXPECT_EQ(model.data(grandchild, Qt::DisplayRole).toString().toStdString(), "Sequence");
+    // Check out "SelectC" child in SelectA's ForEach branch (via column 1)
+    auto selectCChild = model.index(0, 0, selectBChild);
+    EXPECT_EQ(model.columnCount(selectCChild), 2);
+    EXPECT_EQ(model.rowCount(selectCChild), 0);
+    EXPECT_EQ(model.data(selectCChild, Qt::DisplayRole).toString().toStdString(), "C (Select)");
+    EXPECT_EQ(model.data(selectCChild, Qt::UserRole).value<NodeRef>(), selectC);
+
+    // Check out "Collect1D" child in root sequence
+    auto collectChild = model.index(2, 0);
+    EXPECT_EQ(model.columnCount(collectChild), 2);
+    EXPECT_EQ(model.rowCount(collectChild), 0);
+    EXPECT_EQ(model.data(collectChild, Qt::DisplayRole).toString().toStdString(), "Collect1D01 (Collect1D)");
+    EXPECT_EQ(model.data(collectChild, Qt::UserRole).value<NodeRef>(), collect);
+
+    EXPECT_EQ(model.parent(collectChild).isValid(), QModelIndex().isValid());
 }
 
 } // namespace UnitTest
