@@ -61,5 +61,5 @@ class Procedure
     // Read procedure from specified LineParser
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write procedure to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix);
+    bool serialise(LineParser &parser, std::string_view prefix);
 };

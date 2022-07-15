@@ -96,4 +96,4 @@ bool Procedure::deserialise(LineParser &parser, const CoreData &coreData)
 }
 
 // Write structure to specified LineParser
-bool Procedure::write(LineParser &parser, std::string_view prefix) { return rootSequence_->write(parser, prefix); }
+bool Procedure::serialise(LineParser &parser, std::string_view prefix) { return rootSequence_->serialise(parser, prefix); }

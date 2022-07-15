@@ -456,14 +456,14 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
 }
 
 // Write structure to specified LineParser
-bool SequenceProcedureNode::write(LineParser &parser, std::string_view prefix)
+bool SequenceProcedureNode::serialise(LineParser &parser, std::string_view prefix)
 {
     // Block Start - should have already been written by the calling function, since we don't know the keyword we are linked
     // to
 
     // Loop over nodes in this sequence
     for (auto node : sequence_)
-        if (!node->write(parser, prefix))
+        if (!node->serialise(parser, prefix))
             return false;
 
     // Block End - will be written by the calling function, since we don't know the keyword we are linked to

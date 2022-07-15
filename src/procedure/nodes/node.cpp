@@ -286,7 +286,7 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 }
 
 // Write node data to specified LineParser
-bool ProcedureNode::write(LineParser &parser, std::string_view prefix)
+bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
 {
     // Block Start - node type and name (if specified)
     if (name_.empty())

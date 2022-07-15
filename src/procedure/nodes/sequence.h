@@ -162,5 +162,5 @@ class SequenceProcedureNode : public ProcedureNode
     // Read structure from specified LineParser
     bool deserialise(LineParser &parser, const CoreData &coreData) override;
     // Write structure to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix) override;
+    bool serialise(LineParser &parser, std::string_view prefix) override;
 };
