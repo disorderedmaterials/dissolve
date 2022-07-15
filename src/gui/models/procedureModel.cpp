@@ -69,8 +69,8 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
                     return QString::fromStdString(std::string(node->nodeTypes().keyword(node->type())));
                 else
                     return QString("%1 (%2)").arg(
-                        QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))),
-                        QString::fromStdString(std::string(node->name())));
+                        QString::fromStdString(std::string(node->name())),
+                        QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))));
             case (Qt::UserRole):
                 return QVariant::fromValue(node->shared_from_this());
             case (Qt::DecorationRole):
