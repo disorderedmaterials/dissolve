@@ -13,8 +13,8 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
     ui_.setupUi(this);
 
     // Set up the procedure model
-    ui_.NodesList->setModel(&procedureModel_);
-    connect(ui_.NodesList, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedNodeChanged(const QModelIndex &)));
+    ui_.NodesTree->setModel(&procedureModel_);
+    connect(ui_.NodesTree, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedNodeChanged(const QModelIndex &)));
 
     // Hide the available nodes tree by default
     ui_.AvailableNodesTree->setVisible(false);
@@ -27,6 +27,9 @@ void ProcedureWidget::setUp(DissolveWindow *dissolveWindow, Procedure &proc)
     dissolveWindow_ = dissolveWindow;
     procedure_ = proc;
     procedureModel_.setData(proc);
+    ui_.NodesTree->expandAll();
+    ui_.NodesTree->resizeColumnToContents(0);
+    ui_.NodesTree->resizeColumnToContents(1);
     updateControls();
 }
 
@@ -120,21 +123,21 @@ void ProcedureWidget::nodeNameChanged(const QModelIndex &index, const QString &o
         ncw->updateControls();
 }
 
-// Update the node list
-void ProcedureWidget::updateNodeList()
+// Update the node tree
+void ProcedureWidget::updateNodeTree()
 {
     // Refresh the node list
     std::optional<QModelIndex> selectedIndex;
-    if (!ui_.NodesList->selectionModel()->selection().indexes().empty())
-        selectedIndex = ui_.NodesList->selectionModel()->selection().indexes().front();
+    if (!ui_.NodesTree->selectionModel()->selection().indexes().empty())
+        selectedIndex = ui_.NodesTree->selectionModel()->selection().indexes().front();
     procedureModel_.reset();
     if (selectedIndex)
-        ui_.NodesList->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
+        ui_.NodesTree->selectionModel()->select(selectedIndex.value(), QItemSelectionModel::ClearAndSelect);
 }
 
-void ProcedureWidget::on_NodesList_customContextMenuRequested(const QPoint &pos)
+void ProcedureWidget::on_NodesTree_customContextMenuRequested(const QPoint &pos)
 {
-    auto index = ui_.NodesList->indexAt(pos);
+    auto index = ui_.NodesTree->indexAt(pos);
     if (!index.isValid())
         return;
     auto node = procedureModel_.data(index, Qt::UserRole).value<std::shared_ptr<ProcedureNode>>();
@@ -180,8 +183,8 @@ void ProcedureWidget::updateControls()
 // Prevent editing within tab
 void ProcedureWidget::preventEditing()
 {
-    ui_.NodesList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui_.NodesList->setDragDropMode(QAbstractItemView::NoDragDrop);
+    ui_.NodesTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui_.NodesTree->setDragDropMode(QAbstractItemView::NoDragDrop);
     ui_.AvailableNodesTree->setEnabled(false);
     for (auto n = 0; n < ui_.NodeControlsStack->count(); ++n)
     {
@@ -195,8 +198,8 @@ void ProcedureWidget::preventEditing()
 void ProcedureWidget::allowEditing()
 {
     ui_.AvailableNodesTree->setEnabled(true);
-    ui_.NodesList->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
-    ui_.NodesList->setDragDropMode(QAbstractItemView::DragDrop);
+    ui_.NodesTree->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    ui_.NodesTree->setDragDropMode(QAbstractItemView::DragDrop);
     for (auto n = 0; n < ui_.NodeControlsStack->count(); ++n)
     {
         auto *ncw = dynamic_cast<NodeControlWidget *>(ui_.NodeControlsStack->widget(n));

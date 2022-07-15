@@ -5,7 +5,7 @@
 
 #include "procedure/nodes/node.h"
 #include "templates/optionalref.h"
-#include <QAbstractTableModel>
+#include <QAbstractItemModel>
 #include <QModelIndex>
 
 #include <vector>
@@ -35,6 +35,7 @@ class ProcedureModel : public QAbstractItemModel
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex parent(const QModelIndex &index) const override;
+    bool hasChildren(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 };

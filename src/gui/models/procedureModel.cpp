@@ -31,20 +31,22 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
     if (!procedure_)
         return 0;
 
+    // If the index doesn't have a valid internal pointer we're probing the root of the model, so return the number of root
+    // sequence nodes
+    if (!parent.internalPointer())
+        return procedure_->get().rootSequence().nNodes();
+
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
+    if (node && node->branch())
+        return node->branch()->nNodes();
 
-    if (!node)
-        return procedure_->get().nodes().size();
-
-    return node->children().size();
+    return 0;
 }
 
 int ProcedureModel::columnCount(const QModelIndex &parent) const
 {
     if (!procedure_)
         return 0;
-
-    Q_UNUSED(parent);
 
     return 1;
 }
@@ -54,7 +56,11 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     if (!procedure_)
         return {};
 
+    // Cast the index internal pointer to a node
     auto node = static_cast<ProcedureNode *>(index.internalPointer());
+    if (!node)
+        return {};
+
     switch (role)
     {
         case Qt::DisplayRole:
@@ -91,11 +97,16 @@ QModelIndex ProcedureModel::index(int row, int column, const QModelIndex &parent
     if (!procedure_)
         return {};
 
-    auto node = static_cast<ProcedureNode *>(parent.internalPointer());
-    if (!node)
-        return createIndex(row, column, procedure_->get().nodes()[row].get());
+    // Check the parent's internal pointer - if null then it's a root sequence node
+    if (!parent.internalPointer())
+        return createIndex(row, column, procedure_->get().rootSequence().sequence()[row].get());
 
-    return createIndex(row, column, node->children()[row].get());
+    // Parent is another node, so it should have a branch/sequence that we can refer to
+    auto parentNode = static_cast<ProcedureNode *>(parent.internalPointer());
+    if (!parentNode || !parentNode->hasBranch())
+        return {};
+
+    return createIndex(row, column, parentNode->branch()->sequence()[row].get());
 }
 
 QModelIndex ProcedureModel::parent(const QModelIndex &index) const
@@ -103,19 +114,41 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
     if (!procedure_)
         return {};
 
-    auto source = static_cast<ProcedureNode *>(index.internalPointer())->parent();
-    if (!source)
+    auto node = static_cast<ProcedureNode *>(index.internalPointer());
+    if (!node)
         return {};
-    auto gp = source->parent();
-    if (gp)
+
+    // If there is no parent then we are an item in the root of the model (i.e. in the root sequence which has no owner)
+    auto nodeParent = node->parent();
+    if (!nodeParent)
+        return createIndex(-1, -1, nullptr);
+
+    // Otherwise we need to find the row index of the parent node in its sequence (i.e. its owner's branch)
+    // If the parent's parent is null then we retrieve a row index from the root procedure
+    auto nodeParentParent = nodeParent->parent();
+    if (!nodeParentParent)
     {
-        auto it = std::find(gp->children().begin(), gp->children().end(), source);
-        return createIndex(it - gp->children().begin(), 0, gp.get());
+        auto &proc = procedure_->get();
+        auto it = std::find(proc.nodes().begin(), proc.nodes().end(), nodeParent);
+        return createIndex(it - proc.nodes().begin(), 0, nodeParent.get());
     }
     else
     {
-        auto &proc = procedure_->get();
-        auto it = std::find(proc.nodes().begin(), proc.nodes().end(), source);
-        return createIndex(it - proc.nodes().begin(), 0, nullptr);
+        auto it = std::find(nodeParentParent->children().begin(), nodeParentParent->children().end(), nodeParent);
+        return createIndex(it - nodeParentParent->children().begin(), 0, nodeParent.get());
     }
+}
+
+bool ProcedureModel::hasChildren(const QModelIndex &parent) const
+{
+    if (!procedure_)
+        return false;
+
+    // If the internal pointer is null then we're questioning the root node, so return 'true'
+    if (!parent.internalPointer())
+        return true;
+
+    // Check the node for a branch
+    auto node = static_cast<ProcedureNode *>(parent.internalPointer());
+    return (node && node->hasBranch());
 }
