@@ -48,7 +48,7 @@ int ProcedureModel::columnCount(const QModelIndex &parent) const
     if (!procedure_)
         return 0;
 
-    return 1;
+    return 2;
 }
 
 QVariant ProcedureModel::data(const QModelIndex &index, int role) const
@@ -61,33 +61,50 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     if (!node)
         return {};
 
-    switch (role)
+    if (index.column() == 0)
+        switch (role)
+        {
+            case (Qt::DisplayRole):
+                if (node->name().empty())
+                    return QString::fromStdString(std::string(node->nodeTypes().keyword(node->type())));
+                else
+                    return QString("%1 (%2)").arg(
+                        QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))),
+                        QString::fromStdString(std::string(node->name())));
+            case (Qt::UserRole):
+                return QVariant::fromValue(node->shared_from_this());
+            case (Qt::DecorationRole):
+                return QIcon((QPixmap(
+                    QString(":/nodes/icons/nodes_%1.svg")
+                        .arg(
+                            QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))).toLower()))));
+            default:
+                return {};
+        }
+    else if (index.column() == 1 && role == Qt::DisplayRole)
     {
-        case Qt::DisplayRole:
-            if (node->name().empty())
-                return QString::fromStdString(std::string(node->nodeTypes().keyword(node->type())));
-            else
-                return QString("%1 (%2)").arg(
-                    QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))),
-                    QString::fromStdString(std::string(node->name())));
-        case Qt::UserRole:
-            return QVariant::fromValue(node->shared_from_this());
-        case Qt::DecorationRole:
-            return QIcon((QPixmap(
-                QString(":/nodes/icons/nodes_%1.svg")
-                    .arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))).toLower()))));
-        default:
-            return {};
+        if (node->scope()->owner())
+            return QString("%1 (%2 branch in %3)")
+                .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))),
+                     QString::fromStdString(std::string(node->scope()->blockKeyword())),
+                     QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->parent()->type()))));
+        else
+            return QString("%1 (in root sequence)")
+                .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))));
     }
+
+    return {};
 }
 
 QVariant ProcedureModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != Qt::DisplayRole)
+    if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
         return {};
 
-    if (orientation == Qt::Horizontal)
-        return "Name";
+    if (section == 0)
+        return "Node";
+    else if (section == 1)
+        return "Context";
 
     return {};
 }
@@ -151,4 +168,12 @@ bool ProcedureModel::hasChildren(const QModelIndex &parent) const
     // Check the node for a branch
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
     return (node && node->hasBranch());
+}
+
+Qt::ItemFlags ProcedureModel::flags(const QModelIndex &index) const
+{
+    if (index.column() == 0)
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+    return Qt::ItemIsSelectable;
 }
