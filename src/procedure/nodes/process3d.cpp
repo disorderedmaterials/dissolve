@@ -83,9 +83,8 @@ std::string Process3DProcedureNode::zAxisLabel() const { return labelZ_; }
 std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::addNormalisationBranch()
 {
     if (!normalisationBranch_)
-        normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure());
-
-    normalisationBranch_->setParent(shared_from_this());
+        normalisationBranch_ =
+            std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure(), shared_from_this());
 
     return normalisationBranch_;
 }

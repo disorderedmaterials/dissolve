@@ -6,13 +6,13 @@
 #include "base/sysfunc.h"
 #include "procedure/nodes/registry.h"
 
-SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef parentNode,
+SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
                                              std::string_view blockTerminationKeyword)
     : ProcedureNode(ProcedureNode::NodeType::Sequence)
 {
     context_ = context;
     procedure_ = procedure;
-    parentNode_ = parentNode;
+    owner_ = std::move(owner);
     blockTerminationKeyword_ = blockTerminationKeyword;
 }
 
@@ -142,6 +142,9 @@ SequenceProcedureNode::searchParameters(std::string_view name,
 // Return parent Procedure to which this sequence belongs
 const Procedure *SequenceProcedureNode::procedure() const { return procedure_; }
 
+// Return this sequences owner
+NodeRef SequenceProcedureNode::owner() const { return owner_; }
+
 // Return the context of the sequence
 ProcedureNode::NodeContext SequenceProcedureNode::sequenceContext() const { return context_; }
 
@@ -221,9 +224,9 @@ ConstNodeRef SequenceProcedureNode::nodeInScope(ConstNodeRef queryingNode, std::
         }
     }
 
-    // Not in our list. Recursively check our parent(s)
-    if (parentNode_)
-        return parentNode_->nodeInScope(name, excludeNode, optNodeType, optNodeClass);
+    // Not in our list. Recursively check our owner
+    if (owner_)
+        return owner_->nodeInScope(name, excludeNode, optNodeType, optNodeClass);
 
     // Not found
     return nullptr;
@@ -251,10 +254,10 @@ std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef query
         }
     }
 
-    // Not in our list. Recursively check our parent(s)
-    if (parentNode_)
+    // Not in our list. Recursively check our owner
+    if (owner_)
     {
-        auto parentMatches = parentNode_->nodesInScope(optNodeType, optNodeClass);
+        auto parentMatches = owner_->nodesInScope(optNodeType, optNodeClass);
         std::copy(parentMatches.begin(), parentMatches.end(), std::back_inserter(matches));
     }
 
@@ -267,8 +270,8 @@ ConstNodeRef SequenceProcedureNode::nodeExists(std::string_view name, NodeRef ex
                                                std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
-    if (parentNode_)
-        return parentNode_->scope()->nodeExists(name, excludeNode, optNodeType, optNodeClass);
+    if (owner_)
+        return owner_->scope()->nodeExists(name, excludeNode, optNodeType, optNodeClass);
 
     // No parent node, so we must be the topmost sequence - run the search from here
     return searchNodes(name, excludeNode, optNodeType, optNodeClass);
@@ -290,9 +293,9 @@ SequenceProcedureNode::parameterInScope(NodeRef queryingNode, std::string_view n
             return param;
     }
 
-    // Not in our list. Recursively check our parent(s)
-    if (parentNode_)
-        return parentNode_->parameterInScope(name, excludeParameter);
+    // Not in our list. Recursively check our owner
+    if (owner_)
+        return owner_->parameterInScope(name, excludeParameter);
 
     // Not found
     return nullptr;
@@ -303,8 +306,8 @@ std::shared_ptr<ExpressionVariable>
 SequenceProcedureNode::parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
-    if (parentNode_)
-        return parentNode_->scope()->parameterExists(name, excludeParameter);
+    if (owner_)
+        return owner_->scope()->parameterExists(name, excludeParameter);
 
     // No parent node, so we must be the topmost sequence - run the search from here
     return searchParameters(name, excludeParameter);
@@ -330,10 +333,10 @@ std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::paramete
         }
     }
 
-    // Recursively check our parent(s)
-    if (parentNode_)
+    // Recursively check our owner
+    if (owner_)
     {
-        auto optOtherParams = parentNode_->parameters();
+        auto optOtherParams = owner_->parameters();
         if (optOtherParams)
         {
             const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);

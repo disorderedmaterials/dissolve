@@ -13,7 +13,7 @@ class Procedure;
 class SequenceProcedureNode : public ProcedureNode
 {
     public:
-    SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef parentNode = nullptr,
+    SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
                           std::string_view blockTerminationKeyword = "");
     ~SequenceProcedureNode() override;
 
@@ -90,8 +90,8 @@ class SequenceProcedureNode : public ProcedureNode
     private:
     // Parent Procedure to which this sequence belongs
     const Procedure *procedure_;
-    // Parent ProcedureNode in which this sequence exists
-    NodeRef parentNode_;
+    // ProcedureNode which owns this sequence
+    NodeRef owner_;
     // Context of the sequence
     ProcedureNode::NodeContext context_;
 
@@ -107,6 +107,8 @@ class SequenceProcedureNode : public ProcedureNode
     public:
     // Return parent Procedure to which this sequence belongs
     const Procedure *procedure() const override;
+    // Return this sequences owner
+    NodeRef owner() const;
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present (and matches the type / class given)

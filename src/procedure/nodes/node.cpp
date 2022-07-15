@@ -74,7 +74,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 }
 
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, ProcedureNode::NodeClass classType)
-    : class_(classType), type_(nodeType), scope_(nullptr), parent_(nullptr)
+    : class_(classType), type_(nodeType), scope_(nullptr)
 {
 }
 
@@ -115,11 +115,8 @@ const KeywordStore &ProcedureNode::keywords() const { return keywords_; }
 // Set scope
 void ProcedureNode::setScope(std::shared_ptr<SequenceProcedureNode> scopeNode) { scope_ = scopeNode; }
 
-// Find the node which owns this node.
-NodeRef ProcedureNode::parent() const { return parent_; }
-
-// Update the parentage
-void ProcedureNode::setParent(NodeRef parent) { parent_ = parent; }
+// Return the parent non-sequence node which owns this node
+NodeRef ProcedureNode::parent() const { return scope_ ? scope_->owner() : NodeRef(); }
 
 // Find the nodes owned by this node
 std::vector<ConstNodeRef> ProcedureNode::children() const { return {}; }

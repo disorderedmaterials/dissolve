@@ -101,9 +101,7 @@ const Data3D &Collect3DProcedureNode::accumulatedData() const
 std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
 {
     if (!subCollectBranch_)
-        subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure());
-
-    subCollectBranch_->setParent(shared_from_this());
+        subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this());
 
     return subCollectBranch_;
 }
