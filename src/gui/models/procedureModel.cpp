@@ -81,17 +81,23 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
             default:
                 return {};
         }
-    else if (index.column() == 1 && role == Qt::DisplayRole)
-    {
-        if (node->scope()->owner())
-            return QString("%1 (%2 branch in %3)")
-                .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))),
-                     QString::fromStdString(std::string(node->scope()->blockKeyword())),
-                     QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->parent()->type()))));
-        else
-            return QString("%1 (in root sequence)")
-                .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))));
-    }
+    else if (index.column() == 1)
+        switch (role)
+        {
+            case (Qt::DisplayRole):
+                if (node->scope()->owner())
+                    return QString("%1 (%2 branch in %3)")
+                        .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))),
+                             QString::fromStdString(std::string(node->scope()->blockKeyword())),
+                             QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->parent()->type()))));
+                else
+                    return QString("%1 (in root sequence)")
+                        .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))));
+            case (Qt::UserRole):
+                return QVariant::fromValue(node->shared_from_this());
+            default:
+                return {};
+        }
 
     return {};
 }
@@ -170,10 +176,4 @@ bool ProcedureModel::hasChildren(const QModelIndex &parent) const
     return (node && node->hasBranch());
 }
 
-Qt::ItemFlags ProcedureModel::flags(const QModelIndex &index) const
-{
-    if (index.column() == 0)
-        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-
-    return Qt::ItemIsSelectable;
-}
+Qt::ItemFlags ProcedureModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
