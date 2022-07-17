@@ -15,6 +15,7 @@ set(models_MOC_HDRS
     nodePaletteModel.h
     pairPotentialModel.h
     procedureModel.h
+    procedureModelMimeData.h
     procedureNodeModel.h
     renderableGroupManagerModel.h
     sitesFilterProxy.h
@@ -58,6 +59,7 @@ set(models_SRCS
     nodePaletteModel.cpp
     pairPotentialModel.cpp
     procedureModel.cpp
+    procedureModelMimeData.cpp
     procedureNodeModel.cpp
     renderableGroupManagerModel.cpp
     sitesFilterProxy.cpp
