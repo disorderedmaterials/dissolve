@@ -35,7 +35,7 @@ class Procedure
         return rootSequence_->create<N>(name, args...);
     }
     // Return root sequence
-    const SequenceProcedureNode &rootSequence() const;
+    std::shared_ptr<SequenceProcedureNode> rootSequence();
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                       std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;

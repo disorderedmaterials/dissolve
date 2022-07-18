@@ -34,7 +34,7 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
     // If the index doesn't have a valid internal pointer we're probing the root of the model, so return the number of root
     // sequence nodes
     if (!parent.internalPointer())
-        return procedure_->get().rootSequence().nNodes();
+        return procedure_->get().rootSequence()->nNodes();
 
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
     if (node && node->branch())
@@ -122,7 +122,7 @@ QModelIndex ProcedureModel::index(int row, int column, const QModelIndex &parent
 
     // Check the parent's internal pointer - if null then it's a root sequence node
     if (!parent.internalPointer())
-        return createIndex(row, column, procedure_->get().rootSequence().sequence()[row].get());
+        return createIndex(row, column, procedure_->get().rootSequence()->sequence()[row].get());
 
     // Parent is another node, so it should have a branch/sequence that we can refer to
     auto parentNode = static_cast<ProcedureNode *>(parent.internalPointer());
@@ -151,9 +151,9 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
     auto nodeParentParent = nodeParent->parent();
     if (!nodeParentParent)
     {
-        auto &proc = procedure_->get();
-        auto it = std::find(proc.rootSequence().sequence().begin(), proc.rootSequence().sequence().end(), nodeParent);
-        return createIndex(it - proc.rootSequence().sequence().begin(), 0, nodeParent.get());
+        auto &rootSeq = procedure_->get().rootSequence()->sequence();
+        auto it = std::find(rootSeq.begin(), rootSeq.end(), nodeParent);
+        return createIndex(it - rootSeq.begin(), 0, nodeParent.get());
     }
     else
     {

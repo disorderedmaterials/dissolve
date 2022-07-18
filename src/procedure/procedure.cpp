@@ -22,7 +22,7 @@ Procedure::~Procedure() = default;
 void Procedure::clear() { rootSequence_->clear(); }
 
 // Return root sequence
-const SequenceProcedureNode &Procedure::rootSequence() const { return *rootSequence_; }
+std::shared_ptr<SequenceProcedureNode> Procedure::rootSequence() { return rootSequence_; }
 
 // Return named node if present (and matches the type / class given)
 ConstNodeRef Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
