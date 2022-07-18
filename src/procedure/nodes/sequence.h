@@ -34,13 +34,11 @@ class ProcedureNodeSequence
         void next();
     };
 
-    private:
-    // Add (own) node into sequence
-    void addNode(NodeRef nodeToAdd);
-
     public:
     // Clear all data
     void clear();
+    // Append specified node to the sequence, or optionally insert at index
+    void appendNode(NodeRef nodeToAdd, std::optional<int> insertAtIndex = std::nullopt);
     // Create new node
     template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&... args)
     {
@@ -51,12 +49,12 @@ class ProcedureNodeSequence
         node->setName(name);
 
         // Add node to our sequence, checking context / naming
-        addNode(node);
+        appendNode(node);
 
         return node;
     }
-    // Create new node by enumerated type
-    std::shared_ptr<ProcedureNode> create(ProcedureNode::NodeType nodeType, std::string_view name);
+    // Insert empty node at specified position
+    void insertEmpty(int index);
     // Return sequential node list
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence

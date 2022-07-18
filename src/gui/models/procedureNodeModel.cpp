@@ -3,7 +3,7 @@
 
 #include "gui/models/procedureNodeModel.h"
 
-// Set source Species data
+// Set source node data
 void ProcedureNodeModel::setData(const std::vector<ConstNodeRef> &nodes)
 {
     beginResetModel();

@@ -2,8 +2,12 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/models/procedureModel.h"
+#include "gui/models/procedureModelMimeData.h"
+#include "procedure/nodes/registry.h"
 #include "procedure/procedure.h"
+#include <QIODevice>
 #include <QIcon>
+#include <QMimeData>
 
 ProcedureModel::ProcedureModel(OptionalReferenceWrapper<Procedure> procedure) : procedure_(procedure) {}
 
@@ -20,6 +24,28 @@ void ProcedureModel::reset()
 {
     beginResetModel();
     endResetModel();
+}
+
+// Return raw data for supplied index
+ProcedureNode *ProcedureModel::rawData(const QModelIndex &index) const
+{
+    return static_cast<ProcedureNode *>(index.internalPointer());
+}
+
+// Return sequence scope for supplied index
+OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureModel::getScope(const QModelIndex &index) const
+{
+    // If the parent is invalid then we return the root sequence of the procedure. Otherwise, the index's branch.
+    if (index.isValid())
+    {
+        auto node = rawData(index);
+        if (node)
+            return node->branch();
+    }
+    else
+        return procedure_->get().rootSequence();
+
+    return {};
 }
 
 /*
@@ -57,7 +83,7 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
         return {};
 
     // Cast the index internal pointer to a node
-    auto node = static_cast<ProcedureNode *>(index.internalPointer());
+    auto node = rawData(index);
     if (!node)
         return {};
 
@@ -102,6 +128,67 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
     return {};
 }
 
+bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (!procedure_)
+        return false;
+
+    if (role == Qt::EditRole)
+    {
+        auto *node = static_cast<ProcedureNode *>(index.internalPointer());
+        if (!node)
+            return false;
+
+        // Check for identical old/new names
+        if (value.toString() == QString::fromStdString(std::string(node->name())))
+            return false;
+
+        // Ensure uniqueness of new name
+        auto oldName = QString::fromStdString(std::string(node->name()));
+        //
+        //        auto newName = DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()),
+        //        procedure_->get().node::instances(),
+        //                                               [&](const auto &inst) { return inst == module ? std::string() :
+        //                                               inst->name(); });
+        //        node->setName(newName);
+
+        emit(dataChanged(index, index));
+        //        emit(nodeNameChanged(index, oldName, QString::fromStdString(newName)));
+
+        return true;
+    }
+    else if (role == ProcedureModelAction::MoveInternal)
+    {
+        // Probably indicates a drop operation - the "value" is the name of the module to move into the specified index
+        // Find it in the list, taking care to avoid any nullptr vector data (i.e. where we're moving it to)
+        auto moduleToMove = value.toString().toStdString();
+        //        auto it = std::find_if(moduleLayer_->modules().begin(), moduleLayer_->modules().end(),
+        //                               [moduleToMove](const auto &m) { return m && moduleToMove == m->name(); });
+        //        if (it == moduleLayer_->modules().end())
+        //            return false;
+        //        moduleLayer_->modules()[index.row()] = std::move(*it);
+
+        emit dataChanged(index, index);
+
+        return true;
+    }
+    else if (role == ProcedureModelAction::CreateNew)
+    {
+        // Probably indicates a drop operation - the variant contains the shared_ptr of our new node
+        auto newNode = value.value<std::shared_ptr<ProcedureNode>>();
+        if (!newNode)
+            return false;
+
+        // Insertion of the node into the sequence will have been performed in dropMimeData() for convenience.
+        // All we need to do here is flag that the data have changed.
+        emit dataChanged(index, index);
+
+        return true;
+    }
+
+    return false;
+}
+
 QVariant ProcedureModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
@@ -137,7 +224,7 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
     if (!procedure_)
         return {};
 
-    auto node = static_cast<ProcedureNode *>(index.internalPointer());
+    auto node = rawData(index);
     if (!node)
         return {};
 
@@ -181,4 +268,142 @@ bool ProcedureModel::hasChildren(const QModelIndex &parent) const
     return (node && node->branch());
 }
 
-Qt::ItemFlags ProcedureModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
+Qt::ItemFlags ProcedureModel::flags(const QModelIndex &index) const
+{
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+}
+
+Qt::DropActions ProcedureModel::supportedDragActions() const { return Qt::MoveAction; }
+
+Qt::DropActions ProcedureModel::supportedDropActions() const { return Qt::MoveAction | Qt::CopyAction; }
+
+QStringList ProcedureModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/dissolve.procedure.existingNode";
+    types << "application/dissolve.procedure.newNode";
+    return types;
+}
+
+QMimeData *ProcedureModel::mimeData(const QModelIndexList &indexes) const
+{
+    auto *mimeData = new ProcedureModelMimeData(indexes.front());
+
+    return mimeData;
+}
+
+bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
+                                     const QModelIndex &parent) const
+{
+    Q_UNUSED(action);
+    Q_UNUSED(row);
+    Q_UNUSED(parent);
+
+    if (column > 1)
+        return false;
+
+    // Drag / drop node type from palette (create new item in model)
+    if (data->hasFormat("application/dissolve.procedure.newNode"))
+    {
+        // Cast up the provided data
+        auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
+        if (!mimeData || !mimeData->nodeType())
+            return false;
+
+        // Get the target scope
+        auto scope = getScope(parent);
+        if (!scope)
+            return false;
+
+        // Now check the suitability of the dragged node in the target scope context. The mimeData should contain the new node
+        // for us.
+        auto newNode = mimeData->node();
+        if (!newNode)
+            return false;
+        if (!newNode->isContextRelevant(scope->get().sequenceContext()))
+            return false;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    if (!canDropMimeData(data, action, row, column, parent))
+        return false;
+
+    if (action == Qt::IgnoreAction)
+        return true;
+    else if (action == Qt::MoveAction && data->hasFormat("application/dissolve.procedure.existingNode"))
+    {
+        //        // Move an existing node around the list
+        //        QByteArray encodedData = data->data("application/dissolve.node.move");
+        //        QDataStream stream(&encodedData, QIODevice::ReadOnly);
+        //        int row, column;
+        //        ProcedureNode *internalPointer;
+        //        stream >> row;
+        //        stream >> column;
+        //        stream >> internalPointer;
+        //
+        //        // Get the new index of the dragged node in the vector
+        //        auto insertAtRow = parent.isValid() ? parent.row() : row;
+        //        if (insertAtRow == -1)
+        //            insertAtRow = rowCount();
+        //
+        //        // Create a new row to store the data (the soon-to-be-empty row will be deleted automatically by the model)
+        //        insertRows(insertAtRow, 1, QModelIndex());
+        //        auto idx = index(insertAtRow, 0, QModelIndex());
+        //
+        //        // Move the specified node name to its new index
+        //        setData(idx, draggedModuleName, ProcedureModelAction::MoveInternal);
+
+        return false;
+    }
+    else if (action == Qt::CopyAction && data->hasFormat("application/dissolve.procedure.newNode"))
+    {
+        // Cast up the provided data
+        auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
+        if (!mimeData || !mimeData->node())
+            return false;
+
+        // Get the parent scope
+        auto scope = getScope(parent);
+        if (!scope)
+            return false;
+
+        // Determine the new index of the dragged node in the root sequence or scope
+        auto insertAtRow = row == -1 ? scope->get().nNodes() : row;
+
+        // Create a new row to store the data. Don't use insertRows() here since creating a null node in the vector at this
+        // point causes no end of issues.
+        beginInsertRows(parent, insertAtRow, insertAtRow);
+        scope->get().appendNode(mimeData->node(), insertAtRow);
+        endInsertRows();
+        auto idx = index(insertAtRow, 0, parent);
+
+        // Call setData() so we emit the right signals
+        return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::CreateNew);
+    }
+
+    return false;
+}
+
+bool ProcedureModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    if (!procedure_)
+        return false;
+
+    // Get the scope associated to the parent index
+    auto scope = getScope(parent);
+    if (!scope)
+        return false;
+
+    beginInsertRows(parent, row, row + count - 1);
+    for (auto i = 0; i < count; ++i)
+        scope->get().insertEmpty(row + i);
+    endInsertRows();
+
+    return true;
+}

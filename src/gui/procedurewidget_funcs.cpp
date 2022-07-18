@@ -16,9 +16,10 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
     ui_.NodesTree->setModel(&procedureModel_);
     connect(ui_.NodesTree, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedNodeChanged(const QModelIndex &)));
 
-    // Hide the available nodes tree by default
+    // Set up the available nodes tree
+    ui_.AvailableNodesTree->setModel(&nodePaletteModel_);
+    ui_.AvailableNodesTree->expandAll();
     ui_.AvailableNodesTree->setVisible(false);
-    ui_.ShowAvailableNodesButton->setVisible(false);
 }
 
 // Set up widget

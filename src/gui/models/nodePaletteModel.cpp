@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/models/nodePaletteModel.h"
+#include "gui/models/procedureModelMimeData.h"
 #include "procedure/nodes/registry.h"
 #include <QIODevice>
 #include <QIcon>
@@ -54,14 +55,16 @@ QVariant NodePaletteModel::data(const QModelIndex &index, int role) const
         if (index.column() != 1)
             return {};
 
-        auto [nodeType, brief] = std::next(ProcedureNodeRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
+        auto [nodeType, brief] =
+            std::next(ProcedureNodeRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
         if (role == Qt::DisplayRole)
             return QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType)));
         else if (role == Qt::ToolTipRole)
             return QString::fromStdString(brief);
         else if (role == Qt::DecorationRole)
-            return QIcon(
-                (QPixmap(QString(":/nodes/icons/nodes_%1.svg").arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType))).toLower()))));
+            return QIcon((QPixmap(
+                QString(":/nodes/icons/nodes_%1.svg")
+                    .arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType))).toLower()))));
     }
     else if (role == Qt::DisplayRole && index.column() == 0)
         return QString::fromStdString(std::next(ProcedureNodeRegistry::categoryMap().begin(), index.row())->first);
@@ -100,20 +103,15 @@ Qt::DropActions NodePaletteModel::supportedDragActions() const { return Qt::Copy
 QStringList NodePaletteModel::mimeTypes() const
 {
     QStringList types;
-    types << "application/dissolve.node.create";
+    types << "application/dissolve.procedure.newNode";
     return types;
 }
 
 QMimeData *NodePaletteModel::mimeData(const QModelIndexList &indexes) const
 {
-    auto *mimeData = new QMimeData;
-    QByteArray encodedData;
-
-    QDataStream stream(&encodedData, QIODevice::WriteOnly);
     auto index = indexes.front();
     auto [nodeType, brief] = std::next(ProcedureNodeRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
-    stream << QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType)));
-    mimeData->setData("application/dissolve.node.create", encodedData);
+    auto *mimeData = new ProcedureModelMimeData(nodeType);
 
     return mimeData;
 }

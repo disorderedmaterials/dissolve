@@ -22,36 +22,48 @@ ProcedureNodeSequence::~ProcedureNodeSequence() { clear(); }
 // Clear all data
 void ProcedureNodeSequence::clear() { sequence_.clear(); }
 
-// Add (own) node into sequence, checking the context
-void ProcedureNodeSequence::addNode(NodeRef nodeToAdd)
+// Append specified node to the sequence, or optionally insert at index
+void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAtIndex)
 {
-    assert(nodeToAdd);
+    assert(node);
 
     // Set us as its scope
-    nodeToAdd->setScope(*this);
+    node->setScope(*this);
 
     // Check context
-    if (!nodeToAdd->isContextRelevant(context_))
-        throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n",
-                                             nodeToAdd->name(), ProcedureNode::nodeTypes().keyword(nodeToAdd->type()),
+    if (!node->isContextRelevant(context_))
+        throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
+                                             ProcedureNode::nodeTypes().keyword(node->type()),
                                              ProcedureNode::nodeContexts().keyword(context_))));
 
     // If the node hasn't been given a name, generate a unique one for it now based on its type. Otherwise, check for a clash
-    if (nodeToAdd->name().empty())
+    if (node->name().empty())
     {
         auto n = 1;
-        while (nodeExists(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n)))
+        while (nodeExists(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(node->type()), n)))
             ++n;
-        nodeToAdd->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n));
+        node->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(node->type()), n));
     }
-    else if (nodeExists(nodeToAdd->name()))
-        throw(std::runtime_error(fmt::format(
-            "Can't have duplicate node names in the same procedure - node '{}' already exists.\n", nodeToAdd->name())));
+    else if (nodeExists(node->name()))
+        throw(std::runtime_error(
+            fmt::format("Can't have duplicate node names in the same procedure - node '{}' already exists.\n", node->name())));
 
-    sequence_.push_back(nodeToAdd);
+    if (insertAtIndex)
+        sequence_.insert(sequence_.begin() + *insertAtIndex, node);
+    else
+        sequence_.push_back(node);
 }
 
-// Return sSequential node list
+// Insert empty node at specified position
+void ProcedureNodeSequence::insertEmpty(int index)
+{
+    if (index >= sequence_.size())
+        sequence_.push_back(nullptr);
+    else
+        sequence_.insert(sequence_.begin() + index, nullptr);
+}
+
+// Return sequential node list
 const std::vector<NodeRef> &ProcedureNodeSequence::sequence() const { return sequence_; }
 
 // Return number of nodes in sequence
@@ -433,8 +445,8 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
                 return Messenger::error("A node named '{}' is already in scope.\n", newNode->name());
         }
 
-        // Add the node
-        addNode(newNode);
+        // Append the node to our sequence
+        appendNode(newNode);
 
         // Read the new node
         if (!newNode->deserialise(parser, coreData))

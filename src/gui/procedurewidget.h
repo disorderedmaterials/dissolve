@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "gui/models/nodePaletteModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_procedurewidget.h"
 
@@ -32,6 +33,8 @@ class ProcedureWidget : public QWidget
     OptionalReferenceWrapper<Procedure> procedure_;
     // Model for procedure
     ProcedureModel procedureModel_;
+    // Model for node palette
+    NodePaletteModel nodePaletteModel_;
 
     public:
     // Set up widget
