@@ -68,12 +68,13 @@ bool Dissolve::prepare()
     for (auto &cfg : configurations())
     {
         // If the configuration is empty, initialise it now
-        if (cfg->nMolecules() == 0 && !cfg->initialiseContent({worldPool_, potentialMap_}))
-            return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
-
-        // Regenerate cell array if the pair potential range has changed
-        if (newPairPotentialRange)
-            cfg->updateCells(7.0, *newPairPotentialRange);
+        if (cfg->nMolecules() == 0)
+        {
+            if (!cfg->initialiseContent({worldPool_, potentialMap_}))
+                return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
+        }
+        else if (newPairPotentialRange)
+            cfg->updateCells(*newPairPotentialRange);
 
         // Check Box extent against pair potential range
         auto maxPPRange = cfg->box()->inscribedSphereRadius();

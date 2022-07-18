@@ -59,7 +59,7 @@ TEST(CellsTest, Basic)
     // Setup Configuration
     auto *cfg = dissolve.addConfiguration();
     AtomChangeToken lock(*cfg);
-    cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, 7.0, dissolve.pairPotentialRange());
+    cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, dissolve.pairPotentialRange());
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
     cfg->addMolecule(lock, argon);
     for (auto n = 0; n < 267; ++n)
