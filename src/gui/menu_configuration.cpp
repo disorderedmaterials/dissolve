@@ -80,8 +80,7 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
         dissolve_.regeneratePairPotentials();
 
         // Initialise the content
-        newConfig->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
-        newConfig->updateCells(7.0, dissolve_.pairPotentialRange());
+        newConfig->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()});
     }
 }
 
