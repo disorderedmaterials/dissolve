@@ -36,11 +36,8 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     // Set target for ConfigurationViewer
     ui_.ViewerWidget->setConfiguration(configuration_);
 
-    // Set target for ProcedureEditor, and connect signals
-    ui_.ProcedureWidget->setModel(&procedureModel_);
-    connect(ui_.ProcedureWidget, SIGNAL(clicked(const QModelIndex &)), this, SLOT(updateProcedureWidget(const QModelIndex &)));
-    connect(ui_.ProcedureWidget, SIGNAL(activated(const QModelIndex &)), this,
-            SLOT(updateProcedureWidget(const QModelIndex &)));
+    // Set-up the generator procedure editor
+    ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator());
 }
 
 /*
@@ -233,9 +230,4 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
     configuration_->setRequestedSizeFactor(value);
 
     dissolveWindow_->setModified();
-}
-
-void ConfigurationTab::updateProcedureWidget(const QModelIndex &index)
-{
-    ui_.ProcedureStack->updateProcedureWidget(dissolve_, dissolveWindow_, procedureModel_, index);
 }

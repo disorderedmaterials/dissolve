@@ -14,16 +14,23 @@ class ProcedureModel : public QAbstractItemModel
 {
     Q_OBJECT
 
+    public:
+    ProcedureModel(OptionalReferenceWrapper<Procedure> procedure = std::nullopt);
+
     private:
     // Source ProcedureNode data
-    Procedure &procedure_;
-    std::vector<std::pair<std::string, KeywordBase *>> getKeywords_() const;
+    OptionalReferenceWrapper<Procedure> procedure_;
+
+    public:
+    // Set source Procedure
+    void setData(Procedure &procedure);
+    // Reset model data, forcing update
+    void reset();
 
     /*
      * QAbstractItemModel overrides
      */
     public:
-    ProcedureModel(Procedure &procedure);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

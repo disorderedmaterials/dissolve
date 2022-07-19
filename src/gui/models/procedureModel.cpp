@@ -5,23 +5,45 @@
 #include "procedure/procedure.h"
 #include <QIcon>
 
+ProcedureModel::ProcedureModel(OptionalReferenceWrapper<Procedure> procedure) : procedure_(procedure) {}
+
+// Set source Procedure
+void ProcedureModel::setData(Procedure &procedure)
+{
+    beginResetModel();
+    procedure_ = procedure;
+    endResetModel();
+}
+
+// Reset model data, forcing update
+void ProcedureModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 /*
  * QAbstractItemModel overrides
  */
-ProcedureModel::ProcedureModel(Procedure &procedure) : procedure_(procedure) {}
 
 int ProcedureModel::rowCount(const QModelIndex &parent) const
 {
+    if (!procedure_)
+        return 0;
+
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
 
     if (!node)
-        return procedure_.nodes().size();
+        return procedure_->get().nodes().size();
 
     return node->children().size();
 }
 
 int ProcedureModel::columnCount(const QModelIndex &parent) const
 {
+    if (!procedure_)
+        return 0;
+
     Q_UNUSED(parent);
 
     return 1;
@@ -29,6 +51,9 @@ int ProcedureModel::columnCount(const QModelIndex &parent) const
 
 QVariant ProcedureModel::data(const QModelIndex &index, int role) const
 {
+    if (!procedure_)
+        return {};
+
     auto node = static_cast<ProcedureNode *>(index.internalPointer());
     switch (role)
     {
@@ -63,19 +88,24 @@ QVariant ProcedureModel::headerData(int section, Qt::Orientation orientation, in
 
 QModelIndex ProcedureModel::index(int row, int column, const QModelIndex &parent) const
 {
+    if (!procedure_)
+        return {};
+
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
     if (!node)
-    {
-        return createIndex(row, column, procedure_.nodes()[row].get());
-    }
+        return createIndex(row, column, procedure_->get().nodes()[row].get());
+
     return createIndex(row, column, node->children()[row].get());
 }
 
 QModelIndex ProcedureModel::parent(const QModelIndex &index) const
 {
+    if (!procedure_)
+        return {};
+
     auto source = static_cast<ProcedureNode *>(index.internalPointer())->parent();
     if (!source)
-        return QModelIndex();
+        return {};
     auto gp = source->parent();
     if (gp)
     {
@@ -84,7 +114,8 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
     }
     else
     {
-        auto it = std::find(procedure_.nodes().begin(), procedure_.nodes().end(), source);
-        return createIndex(it - procedure_.nodes().begin(), 0, nullptr);
+        auto &proc = procedure_->get();
+        auto it = std::find(proc.nodes().begin(), proc.nodes().end(), source);
+        return createIndex(it - proc.nodes().begin(), 0, nullptr);
     }
 }
