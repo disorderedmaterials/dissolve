@@ -51,7 +51,7 @@ int Dissolve::nPairPotentials() const { return pairPotentials_.size(); }
 PairPotential *Dissolve::addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2)
 {
     auto &pp = pairPotentials_.emplace_back(std::make_unique<PairPotential>());
-    pp->setUp(std::move(at1), std::move(at2));
+    pp->setUp(std::move(at1), std::move(at2), atomTypeChargeSource_);
 
     return pp.get();
 }
@@ -91,24 +91,27 @@ bool Dissolve::regeneratePairPotentials()
     pairPotentials_.clear();
 
     // Create a pair potential for each unique atom type pair
-    for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
-                        [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool> {
-                            Messenger::printVerbose("Adding new PairPotential for interaction between '{}' and '{}'...\n",
-                                                    at1->name(), at2->name());
-                            auto *pot = addPairPotential(at1, at2);
+    auto success =
+        for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                            [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool> {
+                                Messenger::printVerbose("Adding new PairPotential for interaction between '{}' and '{}'...\n",
+                                                        at1->name(), at2->name());
+                                auto *pot = addPairPotential(at1, at2);
 
-                            // Tabulate the basic potential
-                            if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_))
-                                return false;
+                                // Tabulate the basic potential
+                                if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
+                                    return false;
 
-                            // Retrieve additional potential from the processing module data, if present
-                            auto itemName =
-                                fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
-                            if (processingModuleData_.contains(itemName, "Dissolve"))
-                                pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
+                                // Retrieve additional potential from the processing module data, if present
+                                auto itemName =
+                                    fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+                                if (processingModuleData_.contains(itemName, "Dissolve"))
+                                    pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
 
-                            return EarlyReturn<bool>::Continue;
-                        });
+                                return EarlyReturn<bool>::Continue;
+                            });
+    if (!success.value_or(true))
+        return false;
 
     // Update the potential map
     return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);

@@ -92,7 +92,7 @@ void PairPotential::setData1DNames()
 }
 
 // Set up PairPotential parameters from specified AtomTypes
-bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ)
+bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges)
 {
     // Check for NULL pointers
     if (typeI == nullptr)
@@ -102,6 +102,7 @@ bool PairPotential::setUp(const std::shared_ptr<AtomType> &typeI, const std::sha
 
     atomTypeI_ = typeI;
     atomTypeJ_ = typeJ;
+    includeAtomTypeCharges_ = includeCharges;
     interactionPotential_.setFormAndParameters(ShortRangeFunctions::Form::None, "");
     setData1DNames();
     auto &paramsI = atomTypeI_->interactionPotential().parameters();
@@ -370,7 +371,7 @@ void PairPotential::calculateDUFull()
 }
 
 // Generate energy and force tables
-bool PairPotential::tabulate(double maxR, double delta, bool includeAtomTypeCharges)
+bool PairPotential::tabulate(double maxR, double delta)
 {
     // Check that AtomType pointers were set at some pointer
     if ((atomTypeI_ == nullptr) || (atomTypeJ_ == nullptr))
@@ -383,7 +384,6 @@ bool PairPotential::tabulate(double maxR, double delta, bool includeAtomTypeChar
     delta_ = delta;
     rDelta_ = 1.0 / delta_;
     range_ = maxR;
-    includeAtomTypeCharges_ = includeAtomTypeCharges;
     nPoints_ = range_ / delta_;
 
     // Calculate energies and forces at the cutoff distance, for later use in truncation schemes

@@ -95,7 +95,7 @@ class PairPotential
 
     public:
     // Set up PairPotential parameters from specified AtomTypes
-    bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ);
+    bool setUp(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ, bool includeCharges);
     // Return interaction potential
     InteractionPotential<ShortRangeFunctions> &interactionPotential();
     const InteractionPotential<ShortRangeFunctions> &interactionPotential() const;
@@ -153,7 +153,7 @@ class PairPotential
 
     public:
     // Generate energy and force tables
-    bool tabulate(double maxR, double delta, bool includeAtomTypeCharges);
+    bool tabulate(double maxR, double delta);
     // Return number of tabulated points in potential
     int nPoints() const;
     // Return range of potential
