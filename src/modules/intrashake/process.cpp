@@ -42,8 +42,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          torsionStepSize_, torsionStepSizeMin_, torsionStepSizeMax_);
     Messenger::print("IntraShake: Target acceptance rate is {}.\n", targetAcceptanceRate_);
     if (termEnergyOnly_)
-        Messenger::print("IntraShake: Only term energy will be considered (interatomic contributions with the "
-                         "system will be excluded).\n");
+        Messenger::print("IntraShake: Only term energy will be considered (interactions with the rest of the"
+                         "system will be ignored).\n");
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
