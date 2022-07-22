@@ -293,7 +293,7 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
         }
     }
 
-    Messenger::print("[AddPair] New box density is {:e} cubic Angstroms ({} g/cm3).\n", cfg->atomicDensity(),
+    Messenger::print("[AddPair] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n", cfg->atomicDensity(),
                      cfg->chemicalDensity());
 
     return true;
