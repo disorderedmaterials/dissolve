@@ -189,7 +189,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         transform.createRotationAxis(v.x, v.y, v.z, randomBuffer.randomPlusMinusOne() * angleStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
-                        mol->transform(box, transform, angle.j()->r(), angle.attachedAtoms(terminus));
+                        mol->transform(box, transform, j->r(), angle.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateCellLocation(angle.attachedAtoms(terminus), indexOffset);
