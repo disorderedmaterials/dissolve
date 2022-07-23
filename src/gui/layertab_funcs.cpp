@@ -397,6 +397,7 @@ void LayerTab::preventEditing()
 {
     ui_.LayerEnabledButton->setEnabled(false);
     ui_.LayerFrequencySpin->setEnabled(false);
+    ui_.RunControlGroup->setEnabled(false);
     ui_.ModuleEnabledButton->setEnabled(false);
     ui_.ModuleFrequencySpin->setEnabled(false);
 
@@ -416,6 +417,7 @@ void LayerTab::allowEditing()
 {
     ui_.LayerEnabledButton->setEnabled(true);
     ui_.LayerFrequencySpin->setEnabled(true);
+    ui_.RunControlGroup->setEnabled(true);
     ui_.ModuleEnabledButton->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
     ui_.ModuleFrequencySpin->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
     ui_.AvailableModulesTree->setEnabled(true);
