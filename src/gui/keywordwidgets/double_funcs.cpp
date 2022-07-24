@@ -8,10 +8,10 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, DoubleKeyword *keyword
     : ExponentialSpin(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Set minimum and maximum values
-    if (keyword_->validationMin())
-        setMinimum(keyword_->validationMin().value());
-    if (keyword_->validationMax())
-        setMaximum(keyword_->validationMax().value());
+    if (keyword_->minimumLimit())
+        setMinimum(keyword_->minimumLimit().value());
+    if (keyword_->maximumLimit())
+        setMaximum(keyword_->maximumLimit().value());
 
     // Set current value
     setValue(keyword_->data());

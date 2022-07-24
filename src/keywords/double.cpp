@@ -29,11 +29,11 @@ bool DoubleKeyword::setData(double value)
 // Return data
 double DoubleKeyword::data() const { return data_; }
 
-// Return validation minimum limit
-std::optional<double> DoubleKeyword::validationMin() { return minimumLimit_; }
+// Return minimum limit
+std::optional<double> DoubleKeyword::minimumLimit() const { return minimumLimit_; }
 
-// Return validation maximum limit
-std::optional<double> DoubleKeyword::validationMax() { return maximumLimit_; }
+// Return maximum limit
+std::optional<double> DoubleKeyword::maximumLimit() const { return maximumLimit_; }
 
 /*
  * Arguments

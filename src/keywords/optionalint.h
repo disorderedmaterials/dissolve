@@ -20,9 +20,9 @@ class OptionalIntegerKeyword : public KeywordBase
     private:
     // Reference to target data
     std::optional<int> &data_;
-    // Minimum allowed value, below which equates to nullopt
+    // Minimum limit, at or below which equates to nullopt
     int minimumLimit_;
-    // Maximum limit to apply (if any)
+    // Optional maximum limit to apply
     std::optional<int> maximumLimit_;
     // Step size for widget
     int valueDelta_;
@@ -36,10 +36,10 @@ class OptionalIntegerKeyword : public KeywordBase
     bool setData(std::optional<int> value);
     // Return data
     std::optional<int> data() const;
-    // Return validation minimum limit
-    int validationMin() const;
-    // Return validation maximum limit
-    std::optional<int> validationMax() const;
+    // Return minimum limit
+    int minimumLimit() const;
+    // Return maximum limit
+    std::optional<int> maximumLimit() const;
     // Return step size for widget
     int valueDelta() const;
     // Return text to display in widget  when value is null

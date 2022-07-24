@@ -36,11 +36,11 @@ bool OptionalDoubleKeyword::setData(std::optional<double> value)
 // Return data
 std::optional<double> OptionalDoubleKeyword::data() const { return data_; }
 
-// Return validation minimum limit
-double OptionalDoubleKeyword::validationMin() const { return minimumLimit_; }
+// Return minimum limit
+double OptionalDoubleKeyword::minimumLimit() const { return minimumLimit_; }
 
-// Return validation maximum limit
-std::optional<double> OptionalDoubleKeyword::validationMax() const { return maximumLimit_; }
+// Return maximum limit
+std::optional<double> OptionalDoubleKeyword::maximumLimit() const { return maximumLimit_; }
 
 // Return step size for widget
 double OptionalDoubleKeyword::valueDelta() const { return valueDelta_; }

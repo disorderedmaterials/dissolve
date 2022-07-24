@@ -29,11 +29,11 @@ bool IntegerKeyword::setData(int value)
 // Return data
 int IntegerKeyword::data() const { return data_; }
 
-// Return validation minimum limit
-std::optional<int> IntegerKeyword::validationMin() { return minimumLimit_; }
+// Return minimum limit
+std::optional<int> IntegerKeyword::minimumLimit() const { return minimumLimit_; }
 
-// Return validation maximum limit
-std::optional<int> IntegerKeyword::validationMax() { return maximumLimit_; }
+// Return maximum limit
+std::optional<int> IntegerKeyword::maximumLimit() const { return maximumLimit_; }
 
 /*
  * Arguments

@@ -36,11 +36,11 @@ bool OptionalIntegerKeyword::setData(std::optional<int> value)
 // Return data
 std::optional<int> OptionalIntegerKeyword::data() const { return data_; }
 
-// Return validation minimum limit
-int OptionalIntegerKeyword::validationMin() const { return minimumLimit_; }
+// Return minimum limit
+int OptionalIntegerKeyword::minimumLimit() const { return minimumLimit_; }
 
-// Return validation maximum limit
-std::optional<int> OptionalIntegerKeyword::validationMax() const { return maximumLimit_; }
+// Return maximum limit
+std::optional<int> OptionalIntegerKeyword::maximumLimit() const { return maximumLimit_; }
 
 // Return step size for widget
 int OptionalIntegerKeyword::valueDelta() const { return valueDelta_; }

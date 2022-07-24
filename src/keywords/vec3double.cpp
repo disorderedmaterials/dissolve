@@ -37,11 +37,11 @@ bool Vec3DoubleKeyword::setData(Vec3<double> value)
 // Return data
 const Vec3<double> &Vec3DoubleKeyword::data() const { return data_; }
 
-// Return validation minimum limit
-std::optional<Vec3<double>> Vec3DoubleKeyword::validationMin() { return minimumLimit_; }
+// Return minimum limit
+std::optional<Vec3<double>> Vec3DoubleKeyword::minimumLimit() const { return minimumLimit_; }
 
-// Return validation maximum limit
-std::optional<Vec3<double>> Vec3DoubleKeyword::validationMax() { return maximumLimit_; }
+// Return maximum limit
+std::optional<Vec3<double>> Vec3DoubleKeyword::maximumLimit() const { return maximumLimit_; }
 
 /*
  * Label Type

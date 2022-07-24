@@ -20,7 +20,7 @@ class DoubleKeyword : public KeywordBase
     private:
     // Reference to target data
     double &data_;
-    // Validation limits to apply (if any)
+    // Optional limits to apply
     std::optional<double> minimumLimit_, maximumLimit_;
     // Whether the data has been set
     bool set_{false};
@@ -30,10 +30,10 @@ class DoubleKeyword : public KeywordBase
     bool setData(double value);
     // Return data
     double data() const;
-    // Return validation minimum limit
-    std::optional<double> validationMin();
-    // Return validation maximum limit
-    std::optional<double> validationMax();
+    // Return minimum limit
+    std::optional<double> minimumLimit() const;
+    // Return maximum limit
+    std::optional<double> maximumLimit() const;
 
     /*
      * Arguments

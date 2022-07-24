@@ -23,7 +23,7 @@ class Vec3IntegerKeyword : public KeywordBase
     private:
     // Reference to target data
     Vec3<int> &data_;
-    // Validation limits to apply (if any)
+    // Optional limits to apply
     std::optional<Vec3<int>> minimumLimit_, maximumLimit_;
 
     public:
@@ -31,10 +31,10 @@ class Vec3IntegerKeyword : public KeywordBase
     bool setData(Vec3<int> value);
     // Return data
     const Vec3<int> &data() const;
-    // Return validation minimum limit
-    std::optional<Vec3<int>> validationMin();
-    // Return validation maximum limit
-    std::optional<Vec3<int>> validationMax();
+    // Return minimum limit
+    std::optional<Vec3<int>> minimumLimit() const;
+    // Return maximum limit
+    std::optional<Vec3<int>> maximumLimit() const;
 
     /*
      * Label Type
