@@ -5,18 +5,14 @@
 #include "base/lineparser.h"
 
 Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), labelType_(labelType)
 {
-    labelType_ = labelType;
 }
 
 Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, std::optional<Vec3<double>> minValue,
                                      std::optional<Vec3<double>> maxValue, Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_(minValue), maximumLimit_(maxValue), labelType_(labelType)
 {
-    labelType_ = labelType;
-    minimumLimit_ = minValue;
-    maximumLimit_ = maxValue;
 }
 
 /*
