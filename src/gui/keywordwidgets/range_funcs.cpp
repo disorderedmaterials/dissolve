@@ -13,6 +13,18 @@ RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, RangeKeyword *keyword, c
 
     refreshing_ = true;
 
+    // Set minimum and maximum values
+    if (keyword_->minimumLimit())
+    {
+        ui_.Spin1->setMinimum(keyword_->minimumLimit().value());
+        ui_.Spin2->setMinimum(keyword_->minimumLimit().value());
+    }
+    if (keyword_->maximumLimit())
+    {
+        ui_.Spin1->setMaximum(keyword_->maximumLimit().value());
+        ui_.Spin2->setMaximum(keyword_->maximumLimit().value());
+    }
+
     // Set current values
     ui_.Spin1->setValue(keyword_->data().minimum());
     ui_.Spin2->setValue(keyword_->data().maximum());
@@ -39,9 +51,14 @@ void RangeKeywordWidget::on_Spin1_valueChanged(double value)
     if (refreshing_)
         return;
 
-    keyword_->data().setMinimum(value);
-
-    emit(keywordDataChanged(keyword_->editSignals()));
+    if (keyword_->setMinimum(value))
+        emit(keywordDataChanged(keyword_->editSignals()));
+    else
+    {
+        refreshing_ = true;
+        ui_.Spin1->setValue(keyword_->data().minimum());
+        refreshing_ = false;
+    }
 }
 
 // Spin box value changed
@@ -50,9 +67,14 @@ void RangeKeywordWidget::on_Spin2_valueChanged(double value)
     if (refreshing_)
         return;
 
-    keyword_->data().setMaximum(value);
-
-    emit(keywordDataChanged(keyword_->editSignals()));
+    if (keyword_->setMaximum(value))
+        emit(keywordDataChanged(keyword_->editSignals()));
+    else
+    {
+        refreshing_ = true;
+        ui_.Spin2->setValue(keyword_->data().maximum());
+        refreshing_ = false;
+    }
 }
 
 /*
