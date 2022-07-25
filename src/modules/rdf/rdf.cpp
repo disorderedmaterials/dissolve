@@ -45,6 +45,8 @@ RDFModule::RDFModule() : Module("RDF")
 
     // Export
     keywords_.add<BoolKeyword>("Export", "Save", "Whether to save partials and total functions to disk", save_);
+    keywords_.add<BoolKeyword>("Export", "SaveOriginal",
+                               "Whether to save original (unbroadened) partials and total functions to disk", saveOriginal_);
 }
 
 // Return enum option info for NormalisationType
