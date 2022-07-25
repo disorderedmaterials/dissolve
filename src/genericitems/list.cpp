@@ -162,21 +162,18 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, const std:
                               int dataVersion, int flags)
 {
     // Create the item
-    items_[std::string(name)] = GenericItem::Type(GenericItemProducer::create(itemClass), itemClass, dataVersion, flags);
-    auto &data = std::get<GenericItem::AnyObject>(items_[std::string(name)]);
+    auto newItem = GenericItem::Type(GenericItemProducer::create(itemClass), itemClass, dataVersion, flags);
+    auto &data = std::get<GenericItem::AnyObject>(newItem);
 
     // Find its deserialiser and call it
     if (!GenericItemDeserialiser::deserialise(data, parser, coreData))
         return Messenger::error(fmt::format("Deserialisation of item '{}' failed.\n", name));
 
-    // Check for legacy objects - we don't re-serialise them
+    // Check for legacy objects - we don't store them in the items_ map
     if (GenericItemDeserialiser::isLegacyObject(data))
-    {
-        Messenger::warn("Legacy data '{}' will not be captured in written restart files.\n", itemClass);
-        auto &itemFlags = std::get<GenericItem::Flags>(items_[std::string(name)]);
-        if (itemFlags & GenericItem::InRestartFileFlag)
-            itemFlags -= GenericItem::InRestartFileFlag;
-    }
+        Messenger::warn("Legacy data '{}' ({}) will not be captured in written restart files.\n", name, itemClass);
+    else
+        items_[std::string(name)] = newItem;
 
     return true;
 }
