@@ -39,6 +39,7 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          Functions::function1D().keyword(intraBroadening_.type()), intraBroadening_.parameterSummary());
     Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
     Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
+    Messenger::print("RDF: Save original (unbroadened) g(r) is {}.\n", DissolveSys::onOff(saveOriginal_));
     Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is {} ({}).\n", nSmooths_,
                      DissolveSys::onOff(nSmooths_ > 0));
     Messenger::print("\n");
@@ -106,6 +107,8 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Save data if requested
         if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms"))))
+            return false;
+        if (saveOriginal_ && (!MPIRunMaster(procPool, originalgr.save(name_, "OriginalGR", "gr", "r, Angstroms"))))
             return false;
     }
 

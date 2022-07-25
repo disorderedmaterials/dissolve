@@ -58,6 +58,8 @@ class RDFModule : public Module
     double requestedRange_{15.0};
     // Whether to save partials and total functions to disk
     bool save_{false};
+    // Whether to save original (unbroadened) partials and total functions to disk
+    bool saveOriginal_{false};
     // Whether to use the maximal RDF range possible that avoids periodic images
     bool useHalfCellRange_{true};
 
