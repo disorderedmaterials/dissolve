@@ -56,7 +56,7 @@ class ImportLigParGenDialog : public WizardDialog
         SelectFilesPage,
         PreviewSpeciesPage,
         PreviewTermsPage,
-        AtomTypesPage,
+        AtomTypesMasterTermsPage,
         ApplyForcefieldPage
     };
 
