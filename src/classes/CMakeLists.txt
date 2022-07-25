@@ -99,7 +99,6 @@ add_library(
   isotopologues.h
   isotopologueset.h
   isotopologueweight.h
-  kernelflags.h
   kvector.h
   molecule.h
   moleculedistributor.h
