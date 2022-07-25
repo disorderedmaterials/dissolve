@@ -123,9 +123,10 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
     if (!speciesB_->checkSetUp())
         return Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", speciesA_->name());
 
-    if (population_ > 0)
+    auto ipop = population_.asInteger();
+    if (ipop > 0)
         Messenger::print("[AddPair] Adding species pair '{}/{}' - population is {}.\n", speciesA_->name(), speciesB_->name(),
-                         population_.asInteger());
+                         ipop);
     else
     {
         Messenger::print("[AddPair] Population of species pair '{}/{}' is zero so it will not be added.\n", speciesA_->name(),
@@ -135,7 +136,7 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
 
     auto *cfg = procedureContext.configuration();
 
-    const auto nAtomsToAdd = population_ * (speciesA_->nAtoms() + speciesB_->nAtoms());
+    const auto nAtomsToAdd = ipop * (speciesA_->nAtoms() + speciesB_->nAtoms());
     auto [rho, rhoUnits] = density_;
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
@@ -154,7 +155,7 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
         if (rhoUnits == Units::AtomsPerAngstromUnits)
             requiredVolume = nAtomsToAdd / rho;
         else
-            requiredVolume = (((speciesA_->mass() + speciesB_->mass()) * population_) / AVOGADRO) / (rho / 1.0E24);
+            requiredVolume = (((speciesA_->mass() + speciesB_->mass()) * ipop) / AVOGADRO) / (rho / 1.0E24);
 
         Messenger::print("[AddPair] Density for new species is {} {}.\n", rho.asDouble(),
                          Units::densityUnits().keyword(rhoUnits));
@@ -196,7 +197,7 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
         if (rhoUnits == Units::AtomsPerAngstromUnits)
             requiredVolume = nAtomsToAdd / rho;
         else
-            requiredVolume = (((speciesA_->mass() + speciesB_->mass()) * population_) / AVOGADRO) / (rho / 1.0E24);
+            requiredVolume = (((speciesA_->mass() + speciesB_->mass()) * ipop) / AVOGADRO) / (rho / 1.0E24);
 
         Messenger::print("[AddPair] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
@@ -240,13 +241,13 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
     Vec3<double> r, cog, newCentre;
     Matrix3 transform;
     const auto *box = cfg->box();
-    cfg->atoms().reserve(cfg->atoms().size() + population_ * (speciesA_->nAtoms() + speciesB_->nAtoms()));
+    cfg->atoms().reserve(cfg->atoms().size() + ipop * (speciesA_->nAtoms() + speciesB_->nAtoms()));
 
     // Add all molecule pairs
     const auto currentSize = cfg->molecules().size();
     {
         AtomChangeToken lock(*cfg);
-        for (auto n = 0; n < population_; ++n)
+        for (auto n = 0; n < ipop; ++n)
         {
             cfg->addMolecule(lock, speciesA_);
             cfg->addMolecule(lock, speciesB_);
@@ -292,7 +293,7 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
         }
     }
 
-    Messenger::print("[AddPair] New box density is {:e} cubic Angstroms ({} g/cm3).\n", cfg->atomicDensity(),
+    Messenger::print("[AddPair] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n", cfg->atomicDensity(),
                      cfg->chemicalDensity());
 
     return true;
