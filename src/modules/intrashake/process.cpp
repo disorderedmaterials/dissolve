@@ -42,8 +42,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          torsionStepSize_, torsionStepSizeMin_, torsionStepSizeMax_);
     Messenger::print("IntraShake: Target acceptance rate is {}.\n", targetAcceptanceRate_);
     if (termEnergyOnly_)
-        Messenger::print("IntraShake: Only term energy will be considered (interatomic contributions with the "
-                         "system will be excluded).\n");
+        Messenger::print("IntraShake: Only term energy will be considered (interactions with the rest of the"
+                         "system will be ignored).\n");
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -189,7 +189,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         transform.createRotationAxis(v.x, v.y, v.z, randomBuffer.randomPlusMinusOne() * angleStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
-                        mol->transform(box, transform, angle.j()->r(), angle.attachedAtoms(terminus));
+                        mol->transform(box, transform, j->r(), angle.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateCellLocation(angle.attachedAtoms(terminus), indexOffset);
@@ -200,7 +200,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
                         // Trial the transformed Molecule
                         delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
+                        accept = delta < 0 || (randomBuffer.random() < exp(-delta * rRT));
 
                         // Accept new (current) positions of the Molecule's Atoms?
                         if (accept)
