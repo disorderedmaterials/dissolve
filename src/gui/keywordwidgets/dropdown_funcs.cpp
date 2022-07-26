@@ -54,3 +54,6 @@ void KeywordDropDown::setSummaryText(const QString s) { ui_.CallDropWidgetButton
 
 // Set icon on call button
 void KeywordDropDown::setSummaryIcon(QIcon icon) { ui_.CallDropWidgetButton->setIcon(icon); }
+
+// Update keyword data based on widget values
+void KeywordDropDown::updateKeywordData() {}

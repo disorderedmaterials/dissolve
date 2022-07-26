@@ -50,16 +50,12 @@ class ModuleVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
      * Update
      */
     private:
-    // Check / update allowed modules and displayed data
-    void updateAllowedModules();
+    // Reset model data
+    void resetModelData();
 
     public:
     // Update value displayed in widget
     void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
-    // Update widget values data based on keyword data
-    void updateWidgetValues(const CoreData &coreData) override;
-    // Update keyword data based on widget values
-    void updateKeywordData() override;
     // Update summary text
     void updateSummaryText();
 };
