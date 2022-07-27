@@ -15,10 +15,8 @@ bool CIFImport::parse(std::string filename, CIFImport::CIFTags &tags) const
     // Set up ANTLR input stream
     std::ifstream cifFile(std::string(filename), std::ios::in | std::ios::binary);
     if (!cifFile.is_open())
-    {
-        Messenger::error("Failed to open CIF file '{}.\n", filename);
-        return false;
-    }
+        return Messenger::error("Failed to open CIF file '{}.\n", filename);
+
     antlr4::ANTLRInputStream input(cifFile);
 
     // Create ANTLR lexer and set-up error listener
