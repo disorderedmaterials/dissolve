@@ -28,7 +28,7 @@
    <item>
     <widget class="QStackedWidget" name="MainStack">
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="ImportCIFSelectFilePage">
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -148,7 +148,7 @@
           <item>
            <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>The space group for this CIF could not be detected automatically - please choose the correct spacegroup from the list below.</string>
+             <string>The space group for this CIF could not be detected automatically - please choose the correct space group from the list below.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -156,69 +156,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="SpacegroupKeysGroup">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>1</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Relevant CIF Dictionary Keys</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_13">
-             <property name="spacing">
-              <number>4</number>
-             </property>
-             <property name="leftMargin">
-              <number>4</number>
-             </property>
-             <property name="topMargin">
-              <number>4</number>
-             </property>
-             <property name="rightMargin">
-              <number>4</number>
-             </property>
-             <property name="bottomMargin">
-              <number>4</number>
-             </property>
-             <item>
-              <widget class="QTableWidget" name="SpacegroupKeysTable">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="showDropIndicator" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <attribute name="horizontalHeaderVisible">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>Key</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Value</string>
-                </property>
-               </column>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="SpacegroupsGroup">
+           <widget class="QGroupBox" name="SpaceGroupsGroup">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -226,7 +164,7 @@
              </sizepolicy>
             </property>
             <property name="title">
-             <string>Spacegroups</string>
+             <string>Space Groups</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_14">
              <property name="spacing">
@@ -245,7 +183,7 @@
               <number>4</number>
              </property>
              <item>
-              <widget class="QListWidget" name="SpacegroupsList">
+              <widget class="QListWidget" name="SpaceGroupsList">
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
@@ -315,7 +253,7 @@
          <item row="5" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Spacegroup</string>
+            <string>Space Group</string>
            </property>
           </widget>
          </item>
