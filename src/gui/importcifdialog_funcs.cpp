@@ -340,7 +340,7 @@ bool ImportCIFDialog::createStructuralSpecies()
     // -- Generate atoms
     auto symmetryGenerators = cifImporter_.spaceGroup().symmetryOperators();
     auto tolerance = ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5;
-    for (auto &generator : symmetryGenerators)
+    for (const auto &generator : symmetryGenerators)
         for (auto &a : cifImporter_.assemblies())
             for (auto &g : a.groups())
                 if (g.active())
