@@ -347,7 +347,7 @@ bool ImportCIFDialog::createStructuralSpecies()
                     for (auto &unique : g.atoms())
                     {
                         // Generate folded atomic position in real space
-                        auto r = generator.transform(unique.rFrac());
+                        auto r = generator * unique.rFrac();
                         box->toReal(r);
                         r = box->fold(r);
 
