@@ -266,24 +266,6 @@ bool SpaceGroup::initialise(std::string hmName)
     if (!sgNameId_)
         return Messenger::error("Unable to find space group '{}'.", hmName);
 
-    //    // Check for hexagonal basis, and whether to force rhombohedral basis
-    //    if (strcmp(sgNameId_->Extension, "H") == 0)
-    //    {
-    //        if (!forceRhombohedral) Messenger::print("Warning: Space group has hexagonal basis.");
-    //        else
-    //        {
-    //            QString newName = sgNameId_->SgLabels;
-    //            newName += ":R";
-    //            sgNameId_ = FindTabSgNameEntry(qPrintable(newName), 'A');
-    //            if (sgNameId_ == NULL)
-    //            {
-    //                Messenger::print("Unable to find space group '%s' in rhombohedral basis.", qPrintable(name));
-    //                return false;
-    //            }
-    //            Messenger::print("Space group %s forced into rhombohedral basis.", sgNameId_->SgLabels);
-    //        }
-    //    }
-
     // Initialize the SgInfo structure
     InitSgInfo(&sgInfo_);
     sgInfo_.TabSgName = sgNameId_;
