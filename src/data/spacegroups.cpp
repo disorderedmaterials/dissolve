@@ -294,6 +294,8 @@ bool SpaceGroup::initialise(std::string hmName)
         return Messenger::error("SGInfo - {}.\n", SgError);
 
     CompleteSgInfo(&sgInfo_);
+    if (SgError)
+        return Messenger::error("SGInfo - {}.\n", SgError);
 
     return true;
 }
