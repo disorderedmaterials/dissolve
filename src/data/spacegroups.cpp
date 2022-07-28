@@ -344,37 +344,36 @@ int SpaceGroup::internationalTableIndex() const
 // Return vector of symmetry group operators for the space group
 std::vector<Matrix4> SpaceGroup::symmetryOperators() const
 {
-    auto nLoopInv = Sg_nLoopInv(&sgInfo_);
-
-    auto nTrV = sgInfo_.LatticeInfo->nTrVector;
-    auto TrV = sgInfo_.LatticeInfo->TrVector;
+    bool addInverse = sgInfo_.Centric == -1;
+    const auto realSTBF = double(STBF);
 
     std::vector<Matrix4> operators;
-    const double realSTBF = double(STBF);
+
+    // Loop over translation vectors associated to lattice
+    auto nTrV = sgInfo_.LatticeInfo->nTrVector;
+    auto TrV = sgInfo_.LatticeInfo->TrVector;
     for (auto iTrV = 0; iTrV < nTrV; iTrV++, TrV += 3)
     {
-        for (auto iLoopInv = 0; iLoopInv < nLoopInv; ++iLoopInv)
+        // Loop over Seitz matrices
+        const auto *seitzMatrices = sgInfo_.ListSeitzMx;
+        for (auto seitzIndex = 0; seitzIndex < sgInfo_.nList; ++seitzIndex, ++seitzMatrices)
         {
-            auto f = iLoopInv == 0 ? 1 : -1;
+            Matrix4 op;
 
-            const auto *seitzMatrices = sgInfo_.ListSeitzMx;
+            // Set rotation matrix
+            op.setRow(0, seitzMatrices->s.R[0], seitzMatrices->s.R[1], seitzMatrices->s.R[2]);
+            op.setRow(1, seitzMatrices->s.R[3], seitzMatrices->s.R[4], seitzMatrices->s.R[5]);
+            op.setRow(2, seitzMatrices->s.R[6], seitzMatrices->s.R[7], seitzMatrices->s.R[8]);
 
-            for (auto iList = 0; iList < sgInfo_.nList; ++iList, ++seitzMatrices)
-            {
-                Matrix4 op;
+            // Set translation vector
+            op.setTranslation((seitzMatrices->s.T[0] + TrV[0]) / realSTBF, (seitzMatrices->s.T[1] + TrV[1]) / realSTBF,
+                              (seitzMatrices->s.T[2] + TrV[2]) / realSTBF);
 
-                // Set rotation matrix
-                op.setRow(0, f * seitzMatrices->s.R[0], f * seitzMatrices->s.R[1], f * seitzMatrices->s.R[2]);
-                op.setRow(1, f * seitzMatrices->s.R[3], f * seitzMatrices->s.R[4], f * seitzMatrices->s.R[5]);
-                op.setRow(2, f * seitzMatrices->s.R[6], f * seitzMatrices->s.R[7], f * seitzMatrices->s.R[8]);
+            operators.push_back(op);
 
-                // Set translation vector
-                op[12] = iModPositive(f * seitzMatrices->s.T[0] + TrV[0], realSTBF) / realSTBF;
-                op[13] = iModPositive(f * seitzMatrices->s.T[1] + TrV[1], realSTBF) / realSTBF;
-                op[14] = iModPositive(f * seitzMatrices->s.T[2] + TrV[2], realSTBF) / realSTBF;
-
-                operators.push_back(op);
-            }
+            // Add inverse if required
+            if (addInverse)
+                operators.push_back(op * -1.0);
         }
     }
 
