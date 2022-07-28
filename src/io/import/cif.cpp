@@ -116,7 +116,9 @@ bool CIFImport::read(std::string filename)
     {
         // Get standard information
         auto label = n < atomSiteLabel.size() ? atomSiteLabel[n] : fmt::format("{}{}", atomSiteTypeSymbol[n], n);
-        auto Z = n < atomSiteTypeSymbol.size() ? Elements::element(atomSiteTypeSymbol[n]) : Elements::Unknown;
+        auto Z = n < atomSiteTypeSymbol.size()
+                     ? Elements::element(atomSiteTypeSymbol[n])
+                     : (n < atomSiteLabel.size() ? Elements::element(atomSiteLabel[n]) : Elements::Unknown);
         auto occ = n < atomSiteOccupancy.size() ? atomSiteOccupancy[n] : 1.0;
         Vec3<double> rFrac(atomSiteFractX[n], atomSiteFractY[n], atomSiteFractZ[n]);
 
