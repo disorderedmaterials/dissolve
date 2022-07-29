@@ -610,14 +610,6 @@ std::vector<Matrix4> symmetryOperators(SpaceGroupId sgid)
     sgInfo.ListRotMxInfo = new T_RotMxInfo[192];
     InitSgInfo(&sgInfo);
 
-    // Do a table lookup of the sg text (assume volume is 'A')
-    //    const T_TabSgName *sgNameId = FindTabSgNameEntry(symbo.c_str(), 'A');
-    //    if (!sgNameId)
-    //        return Messenger::error("Unable to find space group '{}'.", hmName);
-
-    // Initialize the SgInfo structure
-    //    sgInfo.TabSgName = sgNameId;
-
     // Translate the Hall symbol and generate the whole group
     ParseHallSymbol(symbols_[sgid].hallSymbol().c_str(), &sgInfo);
     if (SgError)
