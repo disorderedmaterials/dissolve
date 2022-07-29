@@ -21,7 +21,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
 
     // Register pages with the wizard
     registerPage(ImportCIFDialog::SelectCIFFilePage, "Choose CIF File");
-    registerPage(ImportCIFDialog::SelectSpacegroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
+    registerPage(ImportCIFDialog::SelectSpaceGroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
     registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::CleanedPage);
     registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::SupercellPage);
@@ -30,7 +30,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
 
     // Add spacegroup list
     for (auto n = 1; n < SpaceGroups::nSpaceGroupIds; ++n)
-        ui_.SpacegroupsList->addItem(
+        ui_.SpaceGroupsList->addItem(
             QString::fromStdString(std::string(SpaceGroups::formattedInformation((SpaceGroups::SpaceGroupId)n))));
 
     // Set assembly view model
@@ -100,8 +100,8 @@ bool ImportCIFDialog::progressionAllowed(int index) const
             if (ui_.InputFileEdit->text().isEmpty() || !QFile::exists(ui_.InputFileEdit->text()))
                 return false;
             break;
-        case (ImportCIFDialog::SelectSpacegroupPage):
-            return ui_.SpacegroupsList->currentRow() != -1;
+        case (ImportCIFDialog::SelectSpaceGroupPage):
+            return ui_.SpaceGroupsList->currentRow() != -1;
         case (ImportCIFDialog::OutputSpeciesPage):
             // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
             if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
@@ -126,8 +126,8 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             updateInfoPage();
             updateSpaceGroupPage();
             break;
-        case (ImportCIFDialog::SelectSpacegroupPage):
-            cifImporter_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpacegroupsList->currentRow() + 1));
+        case (ImportCIFDialog::SelectSpaceGroupPage):
+            cifImporter_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpaceGroupsList->currentRow() + 1));
             updateInfoPage();
             break;
         case (ImportCIFDialog::CIFInfoPage):
@@ -160,7 +160,7 @@ std::optional<int> ImportCIFDialog::determineNextPage(int currentIndex)
     // Only check for the first page
     if (currentIndex == ImportCIFDialog::SelectCIFFilePage)
         return cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
-                                                                      : ImportCIFDialog::SelectSpacegroupPage;
+                                                                      : ImportCIFDialog::SelectSpaceGroupPage;
     else
         return std::get<3>(getPage(currentIndex));
 }
@@ -235,32 +235,15 @@ void ImportCIFDialog::on_InputFileSelectButton_clicked(bool checked)
  * Select Space Group Page
  */
 
-void ImportCIFDialog::updateSpaceGroupPage()
-{
-    ui_.SpacegroupsList->setCurrentRow(-1);
+void ImportCIFDialog::updateSpaceGroupPage() { ui_.SpaceGroupsList->setCurrentRow(-1); }
 
-    // Add any relevant space group dictionary keys we might have
-    ui_.SpacegroupKeysTable->clearContents();
-    ui_.SpacegroupKeysTable->setRowCount(5);
-    auto row = 0;
-    for (auto key : {"_space_group_IT_number", "_space_group_name_Hall", "_space_group_name_H-M_alt",
-                     "_symmetry_space_group_name_Hall", "_symmetry_space_group_name_H-M"})
-    {
-        ui_.SpacegroupKeysTable->setItem(row, 0, new QTableWidgetItem(key));
-        auto value = cifImporter_.getTagString(key);
-        ui_.SpacegroupKeysTable->setItem(
-            row++, 1, new QTableWidgetItem(value.has_value() ? QString::fromStdString(value.value()) : "<Not Found>"));
-    }
-    ui_.SpacegroupKeysTable->resizeColumnsToContents();
-}
-
-void ImportCIFDialog::on_SpacegroupsList_currentRowChanged(int row)
+void ImportCIFDialog::on_SpaceGroupsList_currentRowChanged(int row)
 {
-    if (currentPage().has_value() && currentPage().value() == ImportCIFDialog::SelectSpacegroupPage)
+    if (currentPage().has_value() && currentPage().value() == ImportCIFDialog::SelectSpaceGroupPage)
         updateProgressionControls();
 }
 
-void ImportCIFDialog::on_SpacegroupsList_itemDoubleClicked(QListWidgetItem *item) { goToNextPage(); }
+void ImportCIFDialog::on_SpaceGroupsList_itemDoubleClicked(QListWidgetItem *item) { goToNextPage(); }
 
 /*
  * Basic CIF Info Page
