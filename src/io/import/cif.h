@@ -35,6 +35,8 @@ class CIFImport
     bool validFile(std::string filename) const;
     // Read CIF data from specified file
     bool read(std::string filename);
+    // Return if the specified tag exists
+    bool hasTag(std::string tag) const;
     // Return tag data string (if it exists) assuming a single datum (first in the vector)
     std::optional<std::string> getTagString(std::string tag) const;
     // Return tag data strings (if it exists)

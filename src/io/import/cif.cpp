@@ -158,6 +158,9 @@ bool CIFImport::read(std::string filename)
     return true;
 }
 
+// Return if the specified tag exists
+bool CIFImport::hasTag(std::string tag) const { return tags_.find(tag) != tags_.end(); }
+
 // Return tag data string (if it exists) assuming a single datum (first in the vector)
 std::optional<std::string> CIFImport::getTagString(std::string tag) const
 {
