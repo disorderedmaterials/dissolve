@@ -14,7 +14,7 @@
 #include <QMessageBox>
 
 AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), dissolve_(dissolve), addSpeciesInfoModel_(mixSpecies_)
+    : WizardDialog(parent), addSpeciesInfoModel_(mixSpecies_), dissolve_(dissolve)
 {
     ui_.setupUi(this);
 
