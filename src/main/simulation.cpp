@@ -233,7 +233,7 @@ bool Dissolve::iterate(int nIterations)
         {
             Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
-            if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
+            if (!layer->isEnabled())
                 continue;
 
             auto layerExecutionCount = iteration_ / layer->frequency();
@@ -391,7 +391,7 @@ std::optional<double> Dissolve::estimateRequiredTime(int nIterations)
 
     for (const auto &layer : processingLayers_)
     {
-        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
+        if (!layer->isEnabled())
             continue;
 
         // Determine how many times this layer will run in the provided number of iterations

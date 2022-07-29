@@ -269,10 +269,9 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             // If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise delete it.
             if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer.get())
             {
-                setTabIcon(processingLayerTabs_[currentTabIndex]->page(),
-                           layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)
-                               ? QIcon(":/tabs/icons/tabs_layer_disabled.svg")
-                               : QIcon(":/tabs/icons/tabs_layer.svg"));
+                setTabIcon(processingLayerTabs_[currentTabIndex]->page(), layer->isEnabled()
+                                                                              ? QIcon(":/tabs/icons/tabs_layer.svg")
+                                                                              : QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
                 break;
             }
             else
@@ -292,10 +291,9 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             allTabs_.push_back(layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
-            setTabIcon(processingLayerTabs_[currentTabIndex]->page(),
-                       layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)
-                           ? QIcon(":/tabs/icons/tabs_layer_disabled.svg")
-                           : QIcon(":/tabs/icons/tabs_layer.svg"));
+            setTabIcon(processingLayerTabs_[currentTabIndex]->page(), layer->isEnabled()
+                                                                          ? QIcon(":/tabs/icons/tabs_layer.svg")
+                                                                          : QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
         }
 
         ++currentTabIndex;

@@ -68,6 +68,8 @@ class ModuleLayer
     Flags<RunControlFlag> runControlFlags() const;
     // Return whether all run control flags are satisfied and permit the layer to be run
     bool canRun(GenericList &processingModuleData) const;
+    // Return whether the layer is currently enabled
+    bool isEnabled() const;
 
     /*
      * Modules
