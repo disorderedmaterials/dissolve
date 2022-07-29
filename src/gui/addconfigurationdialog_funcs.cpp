@@ -297,7 +297,7 @@ void AddConfigurationDialog::updateResultingBoxInfo()
     for (auto &spInfo : mixSpecies_)
     {
         // Determine population of species to add
-        int population = ui_.SpeciesMultiplierSpin->value() * spInfo.requestedPopulation();
+        int population = mult * spInfo.requestedPopulation();
         spInfo.setActualPopulation(population);
         auto nAtomsToAdd = population * spInfo.species()->nAtoms();
 
