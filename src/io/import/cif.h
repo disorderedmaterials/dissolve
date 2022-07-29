@@ -53,7 +53,7 @@ class CIFImport
      */
     private:
     // Space group
-    SpaceGroups::SpaceGroupId spaceGroup_;
+    SpaceGroups::SpaceGroupId spaceGroup_{SpaceGroups::NoSpaceGroup};
     // Atom assemblies
     std::vector<CIFAssembly> assemblies_;
     // Bond information

@@ -75,7 +75,6 @@ bool CIFImport::read(std::string filename)
     assemblies_.clear();
     bondingPairs_.clear();
     tags_.clear();
-    spaceGroup_ = SpaceGroups::NoSpaceGroup;
 
     if (!parse(filename, tags_))
         return Messenger::error("Failed to parse CIF file '{}'.\n", filename);
@@ -83,15 +82,18 @@ bool CIFImport::read(std::string filename)
     /*
      * Determine space group - the search order for tags is:
      *
-     *  1. Hall symbol
-     *  2. Hermann-Mauginn name
-     *  3. Space group index
+     * 1. Hall symbol
+     * 2. Hermann-Mauginn name
+     * 3. Space group index
      *
-     *  In the case of 2 or 3 we also try to search for the origin choice.
+     * In the case of 2 or 3 we also try to search for the origin choice.
+     *
+     * If a space group has already been set, don't try to overwrite it (it was probably forcibly set because the detection
+     * below fails).
      */
 
     // Check for Hall symbol
-    if (hasTag("_space_group_name_Hall"))
+    if (spaceGroup_ == SpaceGroups::NoSpaceGroup && hasTag("_space_group_name_Hall"))
         spaceGroup_ = SpaceGroups::findByHallSymbol(*getTagString("_space_group_name_Hall"));
     if (spaceGroup_ == SpaceGroups::NoSpaceGroup && hasTag("_symmetry_space_group_name_Hall"))
         spaceGroup_ = SpaceGroups::findByHallSymbol(*getTagString("_symmetry_space_group_name_Hall"));
@@ -120,9 +122,6 @@ bool CIFImport::read(std::string filename)
             spaceGroup_ =
                 SpaceGroups::findByInternationalTablesIndex(*getTagInt("_symmetry_Int_Tables_number"), sgCode.value_or(""));
     }
-
-    if (spaceGroup_ == SpaceGroups::NoSpaceGroup)
-        return Messenger::error("No suitable space group information found in CIF.\n");
 
     // Create symmetry-unique atoms list
     auto atomSiteLabel = getTagStrings("_atom_site_label");
