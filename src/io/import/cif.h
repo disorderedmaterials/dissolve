@@ -52,8 +52,8 @@ class CIFImport
      * Processed Data
      */
     private:
-    // Space group information
-    SpaceGroup spaceGroup_;
+    // Space group
+    SpaceGroups::SpaceGroupId spaceGroup_;
     // Atom assemblies
     std::vector<CIFAssembly> assemblies_;
     // Bond information
@@ -61,9 +61,9 @@ class CIFImport
 
     public:
     // Set space group from index
-    void setSpaceGroupFromIndex(int index);
-    // Return space group information
-    const SpaceGroup &spaceGroup() const;
+    void setSpaceGroup(SpaceGroups::SpaceGroupId sgid);
+    // Return space group
+    SpaceGroups::SpaceGroupId spaceGroup() const;
     // Return cell lengths
     std::optional<Vec3<double>> getCellLengths() const;
     // Return cell angles

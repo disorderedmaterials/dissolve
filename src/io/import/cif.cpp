@@ -75,24 +75,54 @@ bool CIFImport::read(std::string filename)
     assemblies_.clear();
     bondingPairs_.clear();
     tags_.clear();
+    spaceGroup_ = SpaceGroups::NoSpaceGroup;
 
     if (!parse(filename, tags_))
         return Messenger::error("Failed to parse CIF file '{}'.\n", filename);
 
-    // Set up space group
-    std::optional<std::string> sgName = getTagString("_space_group_name_H-M_alt");
-    if (!sgName)
-        sgName = getTagString("_symmetry_space_group_name_H-M");
-    if (!sgName)
+    /*
+     * Determine space group - the search order for tags is:
+     *
+     *  1. Hall symbol
+     *  2. Hermann-Mauginn name
+     *  3. Space group index
+     *
+     *  In the case of 2 or 3 we also try to search for the origin choice.
+     */
+
+    // Check for Hall symbol
+    if (hasTag("_space_group_name_Hall"))
+        spaceGroup_ = SpaceGroups::findByHallSymbol(*getTagString("_space_group_name_Hall"));
+    if (spaceGroup_ == SpaceGroups::NoSpaceGroup && hasTag("_symmetry_space_group_name_Hall"))
+        spaceGroup_ = SpaceGroups::findByHallSymbol(*getTagString("_symmetry_space_group_name_Hall"));
+
+    if (spaceGroup_ == SpaceGroups::NoSpaceGroup)
     {
-        auto sgID = getTagInt("_space_group_IT_number");
-        if (sgID)
-            sgName = SpaceGroup::name(sgID.value());
+        // Might need the coordinate system code...
+        auto sgCode = getTagString("_space_group.IT_coordinate_system_code");
+
+        // Find a HM name
+        if (hasTag("_space_group_name_H-M_alt"))
+            spaceGroup_ =
+                SpaceGroups::findByHermannMauginnSymbol(*getTagString("_space_group_name_H-M_alt"), sgCode.value_or(""));
+        if (spaceGroup_ == SpaceGroups::NoSpaceGroup && hasTag("_symmetry_space_group_name_H-M"))
+            spaceGroup_ =
+                SpaceGroups::findByHermannMauginnSymbol(*getTagString("_symmetry_space_group_name_H-M"), sgCode.value_or(""));
+
+        // Find a space group index?
+        if (spaceGroup_ == SpaceGroups::NoSpaceGroup && hasTag("_space_group_IT_number"))
+            spaceGroup_ =
+                SpaceGroups::findByInternationalTablesIndex(*getTagInt("_space_group_IT_number"), sgCode.value_or(""));
+        if (spaceGroup_ == SpaceGroups::NoSpaceGroup && hasTag("_space_group.IT_number"))
+            spaceGroup_ =
+                SpaceGroups::findByInternationalTablesIndex(*getTagInt("_space_group.IT_number"), sgCode.value_or(""));
+        if (spaceGroup_ == SpaceGroups::NoSpaceGroup && hasTag("_symmetry_Int_Tables_number"))
+            spaceGroup_ =
+                SpaceGroups::findByInternationalTablesIndex(*getTagInt("_symmetry_Int_Tables_number"), sgCode.value_or(""));
     }
 
-    if (!sgName)
+    if (spaceGroup_ == SpaceGroups::NoSpaceGroup)
         return Messenger::error("No suitable space group information found in CIF.\n");
-    spaceGroup_.initialise(sgName.value());
 
     // Create symmetry-unique atoms list
     auto atomSiteLabel = getTagStrings("_atom_site_label");
@@ -267,10 +297,10 @@ std::optional<int> CIFImport::getTagInt(std::string tag) const
  */
 
 // Set space group from index
-void CIFImport::setSpaceGroupFromIndex(int index) { spaceGroup_.initialise(std::string(SpaceGroup::name(index))); }
+void CIFImport::setSpaceGroup(SpaceGroups::SpaceGroupId sgid) { spaceGroup_ = sgid; }
 
 // Return space group information
-const SpaceGroup &CIFImport::spaceGroup() const { return spaceGroup_; }
+SpaceGroups::SpaceGroupId CIFImport::spaceGroup() const { return spaceGroup_; }
 
 // Return cell lengths
 std::optional<Vec3<double>> CIFImport::getCellLengths() const

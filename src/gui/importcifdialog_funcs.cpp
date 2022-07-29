@@ -29,9 +29,9 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::OutputSpeciesPage, "Species Partitioning");
 
     // Add spacegroup list
-    for (auto n = 1; n <= SpaceGroup::nSpaceGroups(); ++n)
+    for (auto n = 1; n < SpaceGroups::nSpaceGroupIds; ++n)
         ui_.SpacegroupsList->addItem(
-            QString("%1 %2").arg(QString::number(n), QString::fromStdString(std::string(SpaceGroup::name(n)))));
+            QString::fromStdString(std::string(SpaceGroups::formattedInformation((SpaceGroups::SpaceGroupId)n))));
 
     // Set assembly view model
     ui_.AssemblyView->setModel(&cifAssemblyModel_);
@@ -127,7 +127,7 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             updateSpaceGroupPage();
             break;
         case (ImportCIFDialog::SelectSpacegroupPage):
-            cifImporter_.setSpaceGroupFromIndex(ui_.SpacegroupsList->currentRow() + 1);
+            cifImporter_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpacegroupsList->currentRow() + 1));
             updateInfoPage();
             break;
         case (ImportCIFDialog::CIFInfoPage):
@@ -159,7 +159,8 @@ std::optional<int> ImportCIFDialog::determineNextPage(int currentIndex)
 {
     // Only check for the first page
     if (currentIndex == ImportCIFDialog::SelectCIFFilePage)
-        return cifImporter_.spaceGroup().isValid() ? ImportCIFDialog::CIFInfoPage : ImportCIFDialog::SelectSpacegroupPage;
+        return cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
+                                                                      : ImportCIFDialog::SelectSpacegroupPage;
     else
         return std::get<3>(getPage(currentIndex));
 }
@@ -287,11 +288,9 @@ void ImportCIFDialog::updateInfoPage()
         ui_.InfoAuthorsList->addItem(QString::fromStdString(author));
 
     // Spacegroup
-    if (cifImporter_.spaceGroup().isValid())
+    if (cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup)
         ui_.InfoSpacegroupLabel->setText(
-            QString("%1 (%2)")
-                .arg(QString::fromStdString(std::string(cifImporter_.spaceGroup().formattedName())))
-                .arg(cifImporter_.spaceGroup().internationalTableIndex()));
+            QString::fromStdString(std::string(SpaceGroups::formattedInformation(cifImporter_.spaceGroup()))));
     else
         ui_.InfoSpacegroupLabel->setText("<Unknown Space Group>");
 }
@@ -338,7 +337,7 @@ bool ImportCIFDialog::createStructuralSpecies()
     auto *box = crystalSpecies_->box();
     structureConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
     // -- Generate atoms
-    auto symmetryGenerators = cifImporter_.spaceGroup().symmetryOperators();
+    auto symmetryGenerators = SpaceGroups::symmetryOperators(cifImporter_.spaceGroup());
     auto tolerance = ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5;
     for (const auto &generator : symmetryGenerators)
         for (auto &a : cifImporter_.assemblies())
