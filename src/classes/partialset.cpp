@@ -247,11 +247,11 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
         return false;
 
     Messenger::printVerbose("Writing bound total file '{}'...\n", boundTotal_.tag());
-    if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(boundTotal_))
+    if (!Data1DExportFileFormat(fmt::format("{}-{}-bound.{}", prefix, tag, suffix)).exportData(boundTotal_))
         return false;
 
     Messenger::printVerbose("Writing unbound total file '{}'...\n", unboundTotal_.tag());
-    if (!Data1DExportFileFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix)).exportData(unboundTotal_))
+    if (!Data1DExportFileFormat(fmt::format("{}-{}-unbound.{}", prefix, tag, suffix)).exportData(unboundTotal_))
         return false;
 
     return true;
