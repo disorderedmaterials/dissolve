@@ -15,6 +15,7 @@ set(models_MOC_HDRS
     moduleLayerModel.h
     moduleModel.h
     modulePaletteModel.h
+    renderableGroupManagerModel.h
     sitesFilterProxy.h
     sitesModel.h
     speciesFilterProxy.h
@@ -56,6 +57,7 @@ set(models_SRCS
     pairPotentialModel.cpp
     procedureModel.cpp
     procedureNodeModel.cpp
+    renderableGroupManagerModel.cpp
     sitesFilterProxy.cpp
     sitesModel.cpp
     speciesAngleModel.cpp
