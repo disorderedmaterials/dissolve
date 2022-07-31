@@ -8,17 +8,14 @@ Time to create a configuration to represent the ionic liquid.
 
 ### Generate the Configuration
 
-{{< action type="menu" text="Configuration &#8680; Create &#8680; Simple random mix" />}}
-{{< action type="mouse">}}Highlight both species and click {{< gui-button text="Select" >}}{{< /action >}}
+{{< action type="menu" text="Configuration &#8680; Create..." />}}
+{{< action type="mouse" >}}Choose both species and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}Leave the configuration type as _Mixture_ and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}Leave the box style as _Fixed Geometry, Undefined Size_ and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
+{{< action type="edit" >}}Set the _Density_ to `0.09985` and the units to `atoms/A3`, and the _Multiplier_ to `100`. This gives us a box with side length of 29.6398 &#8491; which is quite small for an ionic liquid, but in the interests of time we'll leave it as that. Press {{< gui-button text="Finish" icon="general_true" >}} to complete the wizard.{{< /action >}}
 {{< action type="edit" text="Double-click on the configuration tab's title and change its name to `Bulk`" />}}
 
-Now we just need to set the correct density for the box:.
-
-{{< action type="mouse">}} Select the {{< gui-node "Parameters" >}} node in the generator{{< /action >}}
-{{< action type="edit">}}Set the value of the \"rho\" variable to `0.09985` which is the density of the ionic liquid (1.0854 g cm<sup>-3</sup>) in atoms &#8491;<sup>-3</sup>{{< /action >}}
-{{< action type="mouse">}}Click {{< gui-button text="Generate" icon="general_repeat" >}} to recreate the configuration with our adjusted parameters{{< /action >}}
-
-The default population of each molecule is `100` which is quite small for an ionic liquid, but in the interests of time we'll leave it as that. You'll notice that the cubic box length for 100 ion pairs at this density comes out at 29.6398 &#8491;, so we need to adjust our pair potential range which is currently set to 15 &#8491; and exceeds the half-cell width:
+We need to adjust our pair potential range which is currently set to 15 &#8491; and exceeds the half-cell width:
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="ff" text="Forcefield" >}} tab, **Atom Types / Pair Potentials** section{{< /action >}}
 {{< action type="edit" >}}In the _Pair Potentials_ controls, change the _Range_ to `12.0`{{< /action >}}
