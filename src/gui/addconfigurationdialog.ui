@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>626</width>
-    <height>361</height>
+    <height>369</height>
    </rect>
   </property>
   <property name="font">
@@ -43,7 +43,7 @@
    <item>
     <widget class="QStackedWidget" name="MainStack">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="TargetSpeciesPage">
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -589,7 +589,7 @@ Use specified geometry and size</string>
                  <item>
                   <widget class="QGroupBox" name="BoxAxisAnglesGroup">
                    <property name="title">
-                    <string>Axis Lengths</string>
+                    <string>Axis Angles</string>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_12">
                     <property name="spacing">
