@@ -5,7 +5,7 @@ description: Creates and sets up a Module
 
 ## Overview
 
-A `Module` block creates and completely defines a module, it's inputs and outputs, and all control parameters. Module blocks are defined within [layer blocks]({{< ref "layerblock" >}}).
+A `Module` block creates and completely defines a module, its inputs and outputs, and all control parameters. Module blocks are defined within [layer blocks]({{< ref "layerblock" >}}).
 
 The block keyword itself takes a single (required) argument (the [type of module]({{< ref "modules" >}}) to run) and an optional second argument specifying a unique name for the module, used to reference it from other modules in this or different layers.
 

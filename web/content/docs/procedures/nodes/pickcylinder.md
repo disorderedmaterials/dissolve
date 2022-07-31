@@ -18,7 +18,7 @@ The `Pick` node picks (selects) all molecules of a given species type from the c
 
 ## Description
 
-Any molecule is picked if the distance between it's centre of geometry and the closest point on the line defining the cylinder position is less than or equal to the radius of the cylinder.
+Any molecule is picked if the distance between its centre of geometry and the closest point on the line defining the cylinder position is less than or equal to the radius of the cylinder.
 
 The two points defining the line on which the cylinder exists are given by:
 

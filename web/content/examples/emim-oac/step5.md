@@ -42,7 +42,7 @@ Our reference datasets are listed in the following table - we'll refer to them i
 
 Note that there are no exchangeable hydrogen atoms in this system.
 
-The existing {{< gui-module "NeutronSQ" >}} represents sample 1 in the table since it will default to use the natural isotopologues for the cation and anion, so all that remains to do for that one is to set it's identifying name and the reference datafile:
+The existing {{< gui-module "NeutronSQ" >}} represents sample 1 in the table since it will default to use the natural isotopologues for the cation and anion, so all that remains to do for that one is to set its identifying name and the reference datafile:
 
 {{< action type="mouse">}}Click on the first {{< gui-module "NeutronSQ" >}} module to select it{{< /action >}}
 {{< action type="edit" text="Double-click on its name and change it to `H-H`" />}}
