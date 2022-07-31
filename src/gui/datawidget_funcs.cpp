@@ -16,6 +16,10 @@ DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
     QButtonGroup *interactionToolsGroup = new QButtonGroup;
     interactionToolsGroup->addButton(ui_.InteractionViewButton);
 
+    // Set data for group manager model
+    renderableGroupManagerModel_.setSourceData(ui_.DataView->groupManager());
+    ui_.DataTree->setModel(&renderableGroupManagerModel_);
+
     // Hide data group by default
     ui_.DataGroup->setVisible(false);
 
@@ -26,6 +30,8 @@ DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
     connect(ui_.DataView, SIGNAL(renderableAdded()), this, SLOT(updateDataTree()));
     connect(ui_.DataView, SIGNAL(renderableRemoved()), this, SLOT(updateDataTree()));
     connect(ui_.DataView, SIGNAL(renderableChanged()), this, SLOT(updateDataTree()));
+    connect(&renderableGroupManagerModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
+            this, SLOT(renderableGroupManagerDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
 
     // Make sure that our controls reflect the state of the underlying DataViewer
     updateToolbar();
@@ -134,85 +140,18 @@ void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { dataViewer
  * Update Functions
  */
 
-// Data tree top-level item update function
-void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup &data,
-                                                bool createItem)
-{
-    QTreeWidgetItem *item;
-    if (createItem)
-    {
-        item = new QTreeWidgetItem;
-        item->setData(0, Qt::UserRole, QVariant::fromValue(&data));
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
-        treeWidget->insertTopLevelItem(topLevelItemIndex, item);
-    }
-    else
-        item = treeWidget->topLevelItem(topLevelItemIndex);
-
-    // Set item data
-    item->setText(0, QString::fromStdString(std::string(data.name())));
-    item->setCheckState(0, data.isVisible() ? Qt::Checked : Qt::Unchecked);
-
-    // Update child item
-    TreeWidgetUpdater<DataWidget, Renderable> renderableUpdater(item, data.renderables(), this,
-                                                                &DataWidget::dataTreeItemUpdateFunction);
-}
-
-// Data tree item update function
-void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<Renderable> &data,
-                                            bool createItem)
-{
-    QTreeWidgetItem *item;
-    if (createItem)
-    {
-        item = new QTreeWidgetItem;
-        item->setData(0, Qt::UserRole, QVariant::fromValue(data));
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
-        parentItem->insertChild(childIndex, item);
-    }
-    else
-        item = parentItem->child(childIndex);
-
-    // Set item data
-    item->setText(0, QString::fromStdString(std::string(data->name())));
-    item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
-}
-
 // Data tree item changed
-void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem *item, int column)
+void DataWidget::renderableGroupManagerDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)
 {
-    if (refreshLock_.isLocked())
-        return;
-
-    // If this is a top-level item (parent() == nullptr) then retrieve the Renderable Group. If not, get the associated
-    // Renderable.
-    if (item->parent())
-    {
-        auto renderable = item->data(0, Qt::UserRole).value<std::shared_ptr<Renderable>>();
-        if (!renderable)
-            return;
-        renderable->setVisible(item->checkState(0) == Qt::Checked);
-    }
-    else
-    {
-        auto *group = item->data(0, Qt::UserRole).value<RenderableGroup *>();
-        if (!group)
-            return;
-        group->setVisible(item->checkState(0) == Qt::Checked);
-    }
-
-    // Refresh the data display
     dataViewer()->postRedisplay();
 }
 
 // Clear renderable data
 void DataWidget::clearRenderableData()
 {
-    // Clear our data tree first
-    ui_.DataTree->clear();
-
-    // Now clear the renderables
     dataViewer()->clearRenderables();
+
+    updateDataTree();
 }
 
 // Update toolbar
@@ -279,7 +218,5 @@ void DataWidget::updateStatusBar()
 void DataWidget::updateDataTree()
 {
     Locker refreshLock(refreshLock_);
-
-    TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(), this,
-                                                                   &DataWidget::dataTreeTopLevelUpdateFunction);
+    renderableGroupManagerModel_.setSourceData(ui_.DataView->groupManager());
 }
