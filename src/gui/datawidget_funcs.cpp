@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/datawidget.h"
-#include "gui/helpers/treewidgetupdater.h"
 #include "gui/render/view.h"
 #include <QButtonGroup>
 #include <QInputDialog>

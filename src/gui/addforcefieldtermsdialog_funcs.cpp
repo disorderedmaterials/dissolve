@@ -4,8 +4,6 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "gui/helpers/treewidgetupdater.h"
 #include "templates/algorithms.h"
 #include <QInputDialog>
 #include <QMessageBox>
