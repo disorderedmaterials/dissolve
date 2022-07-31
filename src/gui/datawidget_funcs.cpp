@@ -33,8 +33,6 @@ DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
     updateDataTree();
 }
 
-DataWidget::~DataWidget() {}
-
 // Return contained DataViewer
 DataViewer *DataWidget::dataViewer() { return ui_.DataView; }
 

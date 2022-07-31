@@ -14,7 +14,7 @@ class DataWidget : public QWidget
 
     public:
     DataWidget(QWidget *parent = 0);
-    ~DataWidget();
+    ~DataWidget() = default;
 
     private:
     // Main form declaration
