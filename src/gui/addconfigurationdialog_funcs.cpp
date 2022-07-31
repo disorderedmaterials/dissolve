@@ -242,6 +242,8 @@ void AddConfigurationDialog::finalise()
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Region);
             addNode->keywords().set("Region", regionNode);
         }
+        else if (ui_.BoxGeometryFixedSizeRadio->isChecked())
+            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
     }
 }
 
