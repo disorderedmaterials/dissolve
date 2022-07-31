@@ -1,6 +1,6 @@
 ![Dissolve's Logo](icon/logo.png)
 
-_Last Release: 0.9.3, Monday 25th July 2022_
+_Last Release: 0.9.4, Sunday 31st July 2022_
 
 _Development Build::_ [![Build Status](https://dev.azure.com/DisorderedMaterials/Dissolve/_apis/build/status/Continuous%20Build?branchName=develop)](https://dev.azure.com/DisorderedMaterials/Dissolve/_build/latest?definitionId=9&branchName=develop)
 
