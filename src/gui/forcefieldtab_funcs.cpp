@@ -11,7 +11,6 @@
 #include "gui/forcefieldtab.h"
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
-#include "gui/helpers/tablewidgetupdater.h"
 #include "gui/render/renderabledata1d.h"
 #include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
