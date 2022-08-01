@@ -5,20 +5,15 @@ weight: 4
 ---
 
 
-Time to create a suitable bulk water configuration for our simulation. We'll use the predefined "simple random mix" generator to get us going.
+Time to create a suitable bulk water configuration for our simulation.
 
-{{< action type="menu" text="Configuration &#8680; Create &#8680; Simple random mix" />}}
-{{< action type="mouse" >}}Choose the water species and press {{< gui-button text="Select" >}} {{< /action >}}
+{{< action type="menu" text="Configuration &#8680; Create..." />}}
+{{< action type="mouse" >}}Choose the water species and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}Leave the configuration type as _Mixture_ and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}Leave the box style as _Fixed Geometry, Undefined Size_ and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
+{{< action type="edit" >}}The _Density_ we need is `0.1` `atoms/A3` which just happens to be the default, and the standard _Multiplier_ of `1000` is good for us, so press {{< gui-button text="Finish" icon="general_true" >}} to complete the wizard.{{< /action >}}
+{{< action type="edit" text="Double-click on the configuration tab's title and change its name to `Bulk`" />}}
 
-We now need to set a few parameters in the generator in order to get the correct setup.
-
-{{< action type="settings" >}}Click on the {{< gui-node "Parameters" >}} node to show its options{{< /action >}}
-{{< step >}}Check that the value of the \"rho\" variable is 0.1. This is the default value of density set in all of the predefined configuration generators, and just so happens to correspond to the density (in atoms &#8491;<sup>-3</sup>) of liquid water at room temperature. The variable will be referenced in the {{< gui-node "Add" >}} node when setting the density of the water species{{< /step >}}
-{{< action type="settings" >}}Click on the {{< gui-node "Add" >}} node to show its options{{< /action >}}
-{{< step text="Make sure that the units for the **Density** are set to `atoms/A3` and that the value is set to `rho`" />}}
-{{< action type="edit" text="Increase the **Population** to 1000" />}}
-{{< action type="mouse" >}}Click {{< gui-button text="Generate" >}} to recreate the configuration with our adjusted parameters {{< /action >}}
-{{< step text="Dissolve will ask you at this point if you're sure you want to discard the current configuration - you can safely say 'Yes' here as we haven't started to run the simulation yet" />}}
 
 One thousand water molecules should have a cubic box size of just over 31 &#8491; side length. You will see in the {{< gui-node "Add" >}} node that its **Species** option is not set to anything, which seems counter-intuitive. Specifying a species here instructs the {{< gui-node "Add" >}} node that $N$ identical copies of the species should be added to the box. In most cases it is preferable to introduce some variety to the geometry of the molecules, and so the {{< gui-node "Add" >}} node can instead reference a {{< gui-node "CoordinateSets" >}} node as the source, and which contains sets of coordinates representing randomised, evolved, or read in (from a file) coordinates for the species.
 
