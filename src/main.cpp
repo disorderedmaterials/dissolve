@@ -9,6 +9,9 @@
 
 int main(int args, char **argv)
 {
+    // Initialise random seed before we do anything else - it might get re-initialised if a specific seed is provided
+    srand((unsigned)time(nullptr));
+
 #ifdef PARALLEL
     // Initialise parallel communication
     ProcessPool::initialiseMPI(&args, &argv);
@@ -27,8 +30,9 @@ int main(int args, char **argv)
         return 1;
 #endif
 
-    // Initialise random seed
-    srand(options.randomSeed().value_or((unsigned)time(nullptr)));
+    // Re-initialise random seed
+    if (options.randomSeed())
+        srand(*options.randomSeed());
 
     // Enable redirect if requested
     if (options.redirectionBasename())
