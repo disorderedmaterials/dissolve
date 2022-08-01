@@ -72,7 +72,7 @@ class EnergyKernel
     // Return molecular correction energy related to intramolecular terms involving supplied atom
     double correct(const Atom &i);
     // Return PairPotential energy of Molecule with world
-    double energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy);
+    double energy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy);
     // Return total interatomic PairPotential energy of the system
     double energy(const CellArray &cellArray, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy);
 
