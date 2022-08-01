@@ -115,7 +115,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             changeStore.add(mol);
 
             // Calculate reference energy for Molecule, including intramolecular terms
-            currentEnergy = kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+            currentEnergy = kernel.energy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
 
             // Loop over number of shakes per atom
             for (shake = 0; shake < nShakesPerMolecule_; ++shake)
@@ -158,7 +158,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 targetConfiguration_->updateCellLocation(mol);
 
                 // Calculate new energy
-                newEnergy = kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+                newEnergy = kernel.energy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
 
                 // Trial the transformed atom position
                 delta = newEnergy - currentEnergy;
