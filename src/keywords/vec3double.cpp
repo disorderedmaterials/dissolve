@@ -5,18 +5,14 @@
 #include "base/lineparser.h"
 
 Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), labelType_(labelType)
 {
-    labelType_ = labelType;
 }
 
 Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, std::optional<Vec3<double>> minValue,
                                      std::optional<Vec3<double>> maxValue, Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_(minValue), maximumLimit_(maxValue), labelType_(labelType)
 {
-    labelType_ = labelType;
-    minimumLimit_ = minValue;
-    maximumLimit_ = maxValue;
 }
 
 /*
@@ -41,11 +37,11 @@ bool Vec3DoubleKeyword::setData(Vec3<double> value)
 // Return data
 const Vec3<double> &Vec3DoubleKeyword::data() const { return data_; }
 
-// Return validation minimum limit
-std::optional<Vec3<double>> Vec3DoubleKeyword::validationMin() { return minimumLimit_; }
+// Return minimum limit
+std::optional<Vec3<double>> Vec3DoubleKeyword::minimumLimit() const { return minimumLimit_; }
 
-// Return validation maximum limit
-std::optional<Vec3<double>> Vec3DoubleKeyword::validationMax() { return maximumLimit_; }
+// Return maximum limit
+std::optional<Vec3<double>> Vec3DoubleKeyword::maximumLimit() const { return maximumLimit_; }
 
 /*
  * Label Type

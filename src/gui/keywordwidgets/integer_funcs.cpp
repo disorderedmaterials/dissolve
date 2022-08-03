@@ -8,8 +8,8 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, IntegerKeyword *keyw
     : QSpinBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Set minimum and maximum values
-    setRange(keyword_->validationMin() ? keyword_->validationMin().value() : -1e6,
-             keyword_->validationMax() ? keyword_->validationMax().value() : 1e6);
+    setRange(keyword_->minimumLimit() ? keyword_->minimumLimit().value() : -1e6,
+             keyword_->maximumLimit() ? keyword_->maximumLimit().value() : 1e6);
 
     // Set current value
     setValue(keyword_->data());

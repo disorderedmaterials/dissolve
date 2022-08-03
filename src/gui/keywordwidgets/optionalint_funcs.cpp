@@ -10,9 +10,9 @@ OptionalIntegerKeywordWidget::OptionalIntegerKeywordWidget(QWidget *parent, Opti
 {
     // Set minimum and maximum values and step size
     setDecimals(0);
-    setMinimum(keyword_->validationMin());
-    if (keyword_->validationMax())
-        setMaximum(keyword_->validationMax().value());
+    setMinimum(keyword_->minimumLimit());
+    if (keyword_->maximumLimit())
+        setMaximum(keyword_->maximumLimit().value());
     setSingleStep(keyword_->valueDelta());
 
     // Set null value text

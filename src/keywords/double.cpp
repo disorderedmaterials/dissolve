@@ -6,10 +6,8 @@
 #include "base/sysfunc.h"
 
 DoubleKeyword::DoubleKeyword(double &data, std::optional<double> minValue, std::optional<double> maxValue)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_(minValue), maximumLimit_(maxValue)
 {
-    minimumLimit_ = minValue;
-    maximumLimit_ = maxValue;
 }
 
 /*
@@ -31,11 +29,11 @@ bool DoubleKeyword::setData(double value)
 // Return data
 double DoubleKeyword::data() const { return data_; }
 
-// Return validation minimum limit
-std::optional<double> DoubleKeyword::validationMin() { return minimumLimit_; }
+// Return minimum limit
+std::optional<double> DoubleKeyword::minimumLimit() const { return minimumLimit_; }
 
-// Return validation maximum limit
-std::optional<double> DoubleKeyword::validationMax() { return maximumLimit_; }
+// Return maximum limit
+std::optional<double> DoubleKeyword::maximumLimit() const { return maximumLimit_; }
 
 /*
  * Arguments

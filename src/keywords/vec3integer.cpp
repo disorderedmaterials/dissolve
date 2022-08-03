@@ -6,11 +6,8 @@
 
 Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> &data, std::optional<Vec3<int>> minValue, std::optional<Vec3<int>> maxValue,
                                        Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_(minValue), maximumLimit_(maxValue), labelType_(labelType)
 {
-    labelType_ = labelType;
-    minimumLimit_ = minValue;
-    maximumLimit_ = maxValue;
 }
 
 /*
@@ -35,11 +32,11 @@ bool Vec3IntegerKeyword::setData(Vec3<int> value)
 // Return data
 const Vec3<int> &Vec3IntegerKeyword::data() const { return data_; }
 
-// Return validation minimum limit
-std::optional<Vec3<int>> Vec3IntegerKeyword::validationMin() { return minimumLimit_; }
+// Return minimum limit
+std::optional<Vec3<int>> Vec3IntegerKeyword::minimumLimit() const { return minimumLimit_; }
 
-// Return validation maximum limit
-std::optional<Vec3<int>> Vec3IntegerKeyword::validationMax() { return maximumLimit_; }
+// Return maximum limit
+std::optional<Vec3<int>> Vec3IntegerKeyword::maximumLimit() const { return maximumLimit_; }
 
 /*
  * Label Type

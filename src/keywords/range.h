@@ -12,6 +12,8 @@ class RangeKeyword : public KeywordBase
 {
     public:
     RangeKeyword(Range &data, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+    RangeKeyword(Range &data, std::optional<double> minimumLimit, std::optional<double> maximumLimit,
+                 Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
     ~RangeKeyword() override = default;
 
     /*
@@ -20,13 +22,24 @@ class RangeKeyword : public KeywordBase
     private:
     // Reference to data
     Range &data_;
+    // Optional limits to apply
+    std::optional<double> minimumLimit_, maximumLimit_;
     // Label type to display in GUI
     Vec3Labels::LabelType labelType_;
 
     public:
+    // Set data
+    bool setData(double rangeMin, double rangeMax);
+    // Set range minimum
+    bool setMinimum(double rangeMin);
+    // Set range maximum
+    bool setMaximum(double rangeMax);
     // Return reference to data
-    Range &data();
     const Range &data() const;
+    // Return minimum limit
+    std::optional<double> minimumLimit() const;
+    // Return maximum limit
+    std::optional<double> maximumLimit() const;
     // Label type to display in GUI
     Vec3Labels::LabelType labelType() const;
 

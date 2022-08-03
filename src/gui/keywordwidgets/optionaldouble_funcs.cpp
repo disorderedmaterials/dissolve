@@ -9,9 +9,9 @@ OptionalDoubleKeywordWidget::OptionalDoubleKeywordWidget(QWidget *parent, Option
     : ExponentialSpin(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Set minimum and maximum values and step size
-    setMinimum(keyword_->validationMin());
-    if (keyword_->validationMax())
-        setMaximum(keyword_->validationMax().value());
+    setMinimum(keyword_->minimumLimit());
+    if (keyword_->maximumLimit())
+        setMaximum(keyword_->maximumLimit().value());
     setSingleStep(keyword_->valueDelta());
 
     // Set null value text

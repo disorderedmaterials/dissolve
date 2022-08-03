@@ -1,0 +1,4 @@
+dissolve_unit_test(double.cpp)
+dissolve_unit_test(integer.cpp)
+dissolve_unit_test(optionalDouble.cpp)
+dissolve_unit_test(range.cpp)

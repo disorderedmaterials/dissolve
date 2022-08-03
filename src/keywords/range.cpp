@@ -9,13 +9,63 @@ RangeKeyword::RangeKeyword(Range &data, Vec3Labels::LabelType labelType)
 {
 }
 
+RangeKeyword::RangeKeyword(Range &data, std::optional<double> minimumLimit, std::optional<double> maximumLimit,
+                           Vec3Labels::LabelType labelType)
+    : KeywordBase(typeid(this)), data_(data), minimumLimit_(minimumLimit), maximumLimit_(maximumLimit), labelType_(labelType)
+{
+}
+
 /*
  * Data
  */
 
+// Set data
+bool RangeKeyword::setData(double rangeMin, double rangeMax)
+{
+    if (rangeMax < rangeMin)
+        std::swap(rangeMin, rangeMax);
+
+    if ((minimumLimit_ && rangeMin < minimumLimit_.value()) || (maximumLimit_ && rangeMax > maximumLimit_.value()))
+        return false;
+
+    data_.setMinimum(rangeMin);
+    data_.setMaximum(rangeMax);
+
+    return true;
+}
+
+// Set range minimum
+bool RangeKeyword::setMinimum(double rangeMin)
+{
+    if ((minimumLimit_ && rangeMin < minimumLimit_.value()) || (maximumLimit_ && rangeMin > maximumLimit_) ||
+        rangeMin > data_.maximum())
+        return false;
+
+    data_.setMinimum(rangeMin);
+
+    return true;
+}
+
+// Set range maximum
+bool RangeKeyword::setMaximum(double rangeMax)
+{
+    if ((minimumLimit_ && rangeMax < minimumLimit_.value()) || (maximumLimit_ && rangeMax > maximumLimit_) ||
+        rangeMax < data_.minimum())
+        return false;
+
+    data_.setMaximum(rangeMax);
+
+    return true;
+}
+
 // Return reference to data
-Range &RangeKeyword::data() { return data_; }
 const Range &RangeKeyword::data() const { return data_; }
+
+// Return minimum limit
+std::optional<double> RangeKeyword::minimumLimit() const { return minimumLimit_; }
+
+// Return maximum limit
+std::optional<double> RangeKeyword::maximumLimit() const { return maximumLimit_; }
 
 // Label type to display in GUI
 Vec3Labels::LabelType RangeKeyword::labelType() const { return labelType_; }
@@ -35,7 +85,22 @@ bool RangeKeyword::deserialise(LineParser &parser, int startArg, const CoreData 
 {
     if (parser.hasArg(startArg + 1))
     {
-        data_.set(parser.argd(startArg), parser.argd(startArg + 1));
+        auto rangeMin = parser.argd(startArg);
+        auto rangeMax = parser.argd(startArg + 1);
+        if (!setData(rangeMin, rangeMax))
+        {
+            if (minimumLimit_ && maximumLimit_)
+                Messenger::error("Range {} - {} is invalid for keyword. Range limits are {} - {}.\n", rangeMin, rangeMax,
+                                 minimumLimit_.value(), maximumLimit_.value());
+            else if (minimumLimit_)
+                Messenger::error("Range {} - {} is invalid for keyword. Range minimum limit is {}.\n", rangeMin, rangeMax,
+                                 minimumLimit_.value());
+            else
+                Messenger::error("Range {} - {} is invalid for keyword. Range maximum limit is {}.\n", rangeMin, rangeMax,
+                                 maximumLimit_.value());
+
+            return false;
+        }
 
         return true;
     }

@@ -19,7 +19,7 @@ class IntegerKeyword : public KeywordBase
     private:
     // Reference to target data
     int &data_;
-    // Validation limits to apply (if any)
+    // Optional limits to apply
     std::optional<int> minimumLimit_, maximumLimit_;
     // Whether the data has been set
     bool set_{false};
@@ -29,10 +29,10 @@ class IntegerKeyword : public KeywordBase
     bool setData(int value);
     // Return data
     int data() const;
-    // Return validation minimum limit
-    std::optional<int> validationMin();
-    // Return validation maximum limit
-    std::optional<int> validationMax();
+    // Return minimum limit
+    std::optional<int> minimumLimit() const;
+    // Return maximum limit
+    std::optional<int> maximumLimit() const;
 
     /*
      * Arguments
