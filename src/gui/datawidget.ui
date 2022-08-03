@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
+    <width>640</width>
     <height>352</height>
    </rect>
   </property>
@@ -678,7 +678,7 @@
           <number>4</number>
          </property>
          <item>
-          <widget class="QTreeWidget" name="DataTree">
+          <widget class="QTreeView" name="DataTree">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -688,14 +688,9 @@
            <attribute name="headerVisible">
             <bool>false</bool>
            </attribute>
-           <attribute name="headerStretchLastSection">
-            <bool>true</bool>
+           <attribute name="headerDefaultSectionSize">
+            <number>26</number>
            </attribute>
-           <column>
-            <property name="text">
-             <string notr="true">1</string>
-            </property>
-           </column>
           </widget>
          </item>
         </layout>

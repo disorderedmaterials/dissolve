@@ -2,11 +2,8 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "classes/atomchangetoken.h"
-#include "classes/atomtype.h"
 #include "classes/pair_iter.h"
 #include "classes/species.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "gui/helpers/treewidgetupdater.h"
 #include "gui/importcifdialog.h"
 #include <QDir>
 #include <QFile>

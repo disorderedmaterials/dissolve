@@ -42,26 +42,25 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
 void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderable> renderable)
 {
     QMenu menu;
-    QAction *action;
     QFont italicFont(menu.font());
     italicFont.setItalic(true);
 
     // Add header
-    action = menu.addAction(QString::fromStdString(std::string(queryObjectInfo())));
-    action->setEnabled(false);
-    action->setFont(italicFont);
+    auto *headerAction = menu.addAction(QString::fromStdString(std::string(queryObjectInfo())));
+    headerAction->setEnabled(false);
+    headerAction->setFont(italicFont);
     menu.addSeparator();
 
     // -- Hide Renderable
-    QAction *hideAction = menu.addAction("&Hide");
+    auto *hideAction = menu.addAction("&Hide");
 
     // -- Save As...
-    QAction *saveAsAction = menu.addAction("&Save as...");
+    auto *saveAsAction = menu.addAction("&Save as...");
     saveAsAction->setEnabled(renderable->type() >= Renderable::Data1DRenderable &&
                              renderable->type() <= Renderable::Data3DRenderable);
 
     // -- Remove Renderable
-    QAction *removeAction = nullptr;
+    QAction *removeAction{nullptr};
     if (hasFlag(DataViewer::UserCanRemoveDataFlag))
     {
         menu.addSeparator();
@@ -69,7 +68,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
     }
 
     // Execute the menu
-    QAction *selectedAction = menu.exec(mapToGlobal(pos));
+    auto *selectedAction = menu.exec(mapToGlobal(pos));
 
     // Act on the action!
     if (selectedAction)
@@ -82,7 +81,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
         else if (selectedAction == saveAsAction)
         {
             // Get save file name
-            QString filename =
+            auto filename =
                 QFileDialog::getSaveFileName(this, "Select Exported Data File", QDir::currentPath(), "All Files (*.*)");
             if (!filename.isEmpty())
             {

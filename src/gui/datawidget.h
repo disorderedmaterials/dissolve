@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/lock.h"
+#include "gui/models/renderableGroupManagerModel.h"
 #include "gui/ui_datawidget.h"
 
 // Data Widget
@@ -14,11 +15,13 @@ class DataWidget : public QWidget
 
     public:
     DataWidget(QWidget *parent = 0);
-    ~DataWidget();
+    ~DataWidget() = default;
 
     private:
     // Main form declaration
     Ui::DataWidget ui_;
+    // Model for renderable groups
+    RenderableGroupManagerModel renderableGroupManagerModel_;
     // Lock for widget refresh
     Lock refreshLock_;
 
@@ -46,16 +49,9 @@ class DataWidget : public QWidget
     /*
      * Update Functions
      */
-    private:
-    // Data tree top-level item update function
-    void dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup &data, bool createItem);
-    // Data tree item update function
-    void dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<Renderable> &data,
-                                    bool createItem);
-
     private slots:
     // Data tree item changed
-    void on_DataTree_itemChanged(QTreeWidgetItem *item, int column);
+    void renderableGroupManagerDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &);
 
     public slots:
     // Clear renderable data
