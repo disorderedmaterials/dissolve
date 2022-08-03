@@ -50,3 +50,4 @@ where $g_{ij}(r, \Delta r)$ is calculated for a spherical shell with inner radiu
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Save`|`bool`|`false`|Whether to save partials and total functions to disk. Separate files are written for each partial between atom types $i$ and $j$, as well as the total. Files are named after the configuration from which they were calculated.|
+|`SaveOriginal`|`bool`|`false`|Whether to save original (unbroadened) partials and total functions to disk. Separate files are written for each partial between atom types $i$ and $j$, as well as the total. Files are named after the configuration from which they were calculated.|

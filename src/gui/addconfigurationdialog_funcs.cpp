@@ -14,7 +14,7 @@
 #include <QMessageBox>
 
 AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), dissolve_(dissolve), addSpeciesInfoModel_(mixSpecies_)
+    : WizardDialog(parent), addSpeciesInfoModel_(mixSpecies_), dissolve_(dissolve)
 {
     ui_.setupUi(this);
 
@@ -242,6 +242,8 @@ void AddConfigurationDialog::finalise()
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Region);
             addNode->keywords().set("Region", regionNode);
         }
+        else if (ui_.BoxGeometryFixedSizeRadio->isChecked())
+            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
     }
 }
 
@@ -297,7 +299,7 @@ void AddConfigurationDialog::updateResultingBoxInfo()
     for (auto &spInfo : mixSpecies_)
     {
         // Determine population of species to add
-        int population = ui_.SpeciesMultiplierSpin->value() * spInfo.requestedPopulation();
+        int population = mult * spInfo.requestedPopulation();
         spInfo.setActualPopulation(population);
         auto nAtomsToAdd = population * spInfo.species()->nAtoms();
 

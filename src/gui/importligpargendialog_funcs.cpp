@@ -25,8 +25,9 @@ ImportLigParGenDialog::ImportLigParGenDialog(QWidget *parent, Dissolve &dissolve
     // Register pages with the wizard
     registerPage(ImportLigParGenDialog::SelectFilesPage, "Choose XML and/or XYZ Files");
     registerPage(ImportLigParGenDialog::PreviewSpeciesPage, "Imported Coordinates");
-    registerPage(ImportLigParGenDialog::PreviewTermsPage, "Imported Terms", ImportLigParGenDialog::AtomTypesPage);
-    registerPage(ImportLigParGenDialog::AtomTypesPage, "Atom Types", ImportLigParGenDialog::ApplyForcefieldPage);
+    registerPage(ImportLigParGenDialog::PreviewTermsPage, "Imported Terms", ImportLigParGenDialog::AtomTypesMasterTermsPage);
+    registerPage(ImportLigParGenDialog::AtomTypesMasterTermsPage, "Atom Types / Master Terms",
+                 ImportLigParGenDialog::ApplyForcefieldPage);
     registerPage(ImportLigParGenDialog::ApplyForcefieldPage, "Apply Forcefield?");
 
     // Init the wizard

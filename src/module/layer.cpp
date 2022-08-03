@@ -28,9 +28,7 @@ int ModuleLayer::frequency() const { return frequency_; }
 std::string ModuleLayer::frequencyDetails(int iteration) const
 {
     // Check edge cases
-    if (frequency_ < 0)
-        return "NEGATIVE?";
-    else if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled) || (frequency_ == 0))
+    if (!isEnabled())
         return "disabled";
     else if (frequency_ == 1)
         return "every time";
@@ -48,7 +46,7 @@ std::string ModuleLayer::frequencyDetails(int iteration) const
 // Return whether the layer should execute this iteration
 bool ModuleLayer::runThisIteration(int iteration) const
 {
-    if ((frequency_ < 1) || runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
+    if (!isEnabled())
         return false;
     else if ((iteration % frequency_) == 0)
         return true;
@@ -95,6 +93,9 @@ bool ModuleLayer::canRun(GenericList &processingModuleData) const
 
     return true;
 }
+
+// Return whether the layer is currently enabled
+bool ModuleLayer::isEnabled() const { return !runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled) && frequency_ > 0; }
 
 /*
  * Modules
