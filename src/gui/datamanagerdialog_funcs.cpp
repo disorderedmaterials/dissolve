@@ -2,7 +2,6 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "gui/datamanagerdialog.h"
-#include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
