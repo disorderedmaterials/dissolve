@@ -12,6 +12,7 @@ class Dissolve;
 class DissolveWindow;
 class Module;
 class ModuleWidget;
+class ProcedureWidget;
 
 // Module Control Widget
 class ModuleControlWidget : public QWidget
@@ -60,11 +61,16 @@ class ModuleControlWidget : public QWidget
     // Reference vector of "Target" keywords
     std::vector<KeywordWidgetBase *> targetKeywordWidgets_;
     // Additional controls widget for the Module (if any)
-    ModuleWidget *moduleWidget_;
+    ModuleWidget *moduleWidget_{nullptr};
+    // Procedure widget for the module (if any)
+    ProcedureWidget *procedureWidget_{nullptr};
+    // Stack indices for module and procedure widgets
+    int moduleWidgetStackIndex_{0}, procedureWidgetStackIndex_{0};
 
     private slots:
     void on_ModuleControlsButton_clicked(bool checked);
-    void on_ModuleOutputButton_clicked(bool checked);
+    void on_ModuleWidgetButton_clicked(bool checked);
+    void on_ProcedureWidgetButton_clicked(bool checked);
 
     public:
     // Prepare widget for deletion

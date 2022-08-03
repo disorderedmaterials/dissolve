@@ -6,6 +6,7 @@
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/producers.h"
 #include "gui/modulecontrolwidget.h"
+#include "keywords/procedure.h"
 #include "module/module.h"
 #include "modules/widget.h"
 #include "modules/widgetproducer.h"
@@ -57,14 +58,29 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     // Set up our keyword widget
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.coreData());
 
+    // Treat any ProcedureKeywords as special cases
+    auto procedures = module_->keywords().allOfType<ProcedureKeyword>();
+    if (procedures.empty())
+        ui_.ProcedureWidgetButton->setVisible(false);
+    else
+    {
+        procedureWidget_ = new ProcedureWidget();
+        procedureWidget_->setUp(dissolveWindow, procedures.front()->data());
+        ui_.ModuleControlsStack->addWidget(procedureWidget_);
+        procedureWidgetStackIndex_ = ui_.ModuleControlsStack->count() - 1;
+    }
+
     // Create any additional controls offered by the Module
     moduleWidget_ = ModuleWidgetProducer::create(module_, dissolve_);
     if (moduleWidget_ == nullptr)
+    {
         Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
+        ui_.ModuleWidgetButton->setVisible(false);
+    }
     else
     {
         ui_.ModuleControlsStack->addWidget(moduleWidget_);
-        ui_.ModuleOutputButton->setEnabled(true);
+        moduleWidgetStackIndex_ = ui_.ModuleControlsStack->count() - 1;
         moduleWidget_->updateControls(ModuleWidget::RecreateRenderablesFlag);
     }
 
@@ -128,10 +144,16 @@ void ModuleControlWidget::on_ModuleControlsButton_clicked(bool checked)
         ui_.ModuleControlsStack->setCurrentIndex(0);
 }
 
-void ModuleControlWidget::on_ModuleOutputButton_clicked(bool checked)
+void ModuleControlWidget::on_ModuleWidgetButton_clicked(bool checked)
 {
     if (checked)
-        ui_.ModuleControlsStack->setCurrentIndex(1);
+        ui_.ModuleControlsStack->setCurrentIndex(moduleWidgetStackIndex_);
+}
+
+void ModuleControlWidget::on_ProcedureWidgetButton_clicked(bool checked)
+{
+    if (checked)
+        ui_.ModuleControlsStack->setCurrentIndex(procedureWidgetStackIndex_);
 }
 
 // Prepare widget for deletion
