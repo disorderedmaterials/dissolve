@@ -64,6 +64,7 @@ void ProcedureNodeSequence::insertEmpty(int index)
 }
 
 // Return sequential node list
+std::vector<NodeRef> &ProcedureNodeSequence::sequence() { return sequence_; }
 const std::vector<NodeRef> &ProcedureNodeSequence::sequence() const { return sequence_; }
 
 // Return number of nodes in sequence

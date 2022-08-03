@@ -159,17 +159,9 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
     }
     else if (role == ProcedureModelAction::MoveInternal)
     {
-        // Probably indicates a drop operation - the "value" is the name of the module to move into the specified index
-        // Find it in the list, taking care to avoid any nullptr vector data (i.e. where we're moving it to)
-        auto moduleToMove = value.toString().toStdString();
-        //        auto it = std::find_if(moduleLayer_->modules().begin(), moduleLayer_->modules().end(),
-        //                               [moduleToMove](const auto &m) { return m && moduleToMove == m->name(); });
-        //        if (it == moduleLayer_->modules().end())
-        //            return false;
-        //        moduleLayer_->modules()[index.row()] = std::move(*it);
-
+        // Nothing to set here - everything has already been handled by dropMimeData().
+        // We just need to flag that the data have changed.
         emit dataChanged(index, index);
-
         return true;
     }
     else if (role == ProcedureModelAction::CreateNew)
@@ -302,6 +294,38 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
     if (column > 1)
         return false;
 
+    // Move node internally
+    if (data->hasFormat("application/dissolve.procedure.existingNode"))
+    {
+        // Cast up the provided data
+        auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
+        if (!mimeData)
+            return false;
+
+        // Retrieve the existing node index / node
+        auto optExistingIndex = mimeData->nodeIndex();
+        if (!optExistingIndex)
+            return false;
+        auto existingIndex = *optExistingIndex;
+        if (!existingIndex.isValid())
+            return false;
+        auto *existingNode = rawData(existingIndex);
+        if (!existingNode)
+            return false;
+
+        // If there is a valid parent then the target scope belongs to that node. If the new row and column index are -1 then we
+        // were dropped right on another node, so we add at the beginning of the target scope.
+        auto scope = parent.isValid() ? rawData(parent)->branch() : procedure_->get().rootSequence();
+        if (!scope)
+            return false;
+
+        // Now check the suitability of the existing node in the target scope context.
+        if (!existingNode->isContextRelevant(scope->get().sequenceContext()))
+            return false;
+
+        return true;
+    }
+
     // Drag / drop node type from palette (create new item in model)
     if (data->hasFormat("application/dissolve.procedure.newNode"))
     {
@@ -338,28 +362,49 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         return true;
     else if (action == Qt::MoveAction && data->hasFormat("application/dissolve.procedure.existingNode"))
     {
-        //        // Move an existing node around the list
-        //        QByteArray encodedData = data->data("application/dissolve.node.move");
-        //        QDataStream stream(&encodedData, QIODevice::ReadOnly);
-        //        int row, column;
-        //        ProcedureNode *internalPointer;
-        //        stream >> row;
-        //        stream >> column;
-        //        stream >> internalPointer;
-        //
-        //        // Get the new index of the dragged node in the vector
-        //        auto insertAtRow = parent.isValid() ? parent.row() : row;
-        //        if (insertAtRow == -1)
-        //            insertAtRow = rowCount();
-        //
-        //        // Create a new row to store the data (the soon-to-be-empty row will be deleted automatically by the model)
-        //        insertRows(insertAtRow, 1, QModelIndex());
-        //        auto idx = index(insertAtRow, 0, QModelIndex());
-        //
-        //        // Move the specified node name to its new index
-        //        setData(idx, draggedModuleName, ProcedureModelAction::MoveInternal);
+        printf("DROP MOVE\n");
+        // Cast up the provided data
+        auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
+        if (!mimeData)
+            return false;
 
-        return false;
+        // Retrieve the existing node index / node
+        auto optExistingIndex = mimeData->nodeIndex();
+        if (!optExistingIndex)
+            return false;
+        auto existingIndex = *optExistingIndex;
+        if (!existingIndex.isValid())
+            return false;
+        auto *existingNode = rawData(existingIndex);
+        if (!existingNode)
+            return false;
+
+        // Get the parent scope
+        auto optScope = getScope(parent);
+        if (!optScope)
+            return false;
+        auto &scope = optScope->get();
+        printf("Dropping - new scope contains %li nodes at present.\n", scope.nNodes());
+
+        // Determine the new index of the dragged node in the root sequence or scope
+        auto insertAtRow = row == -1 ? scope.nNodes() : row;
+
+        // Create a new row to store the data.
+        insertRows(insertAtRow, 1, parent);
+
+        // Find the current vector position of the existing node
+        auto &oldScope = existingNode->scope()->get();
+        auto oldNodeIt = std::find_if(oldScope.sequence().begin(), oldScope.sequence().end(),
+                                      [existingNode](const auto &node) { return node.get() == existingNode; });
+        if (oldNodeIt == oldScope.sequence().end())
+            return false;
+
+        // Move the node to its new home
+        scope.sequence()[insertAtRow] = std::move(oldScope.sequence()[oldNodeIt - oldScope.sequence().begin()]);
+
+        // Set the new data - we call this just to emit dataChanged() from the correct place.
+        auto idx = index(insertAtRow, 0, parent);
+        return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::MoveInternal);
     }
     else if (action == Qt::CopyAction && data->hasFormat("application/dissolve.procedure.newNode"))
     {
@@ -404,6 +449,22 @@ bool ProcedureModel::insertRows(int row, int count, const QModelIndex &parent)
     for (auto i = 0; i < count; ++i)
         scope->get().insertEmpty(row + i);
     endInsertRows();
+
+    return true;
+}
+
+bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    // Get scope from the parent
+    auto optScope = getScope(parent);
+    if (!optScope)
+        return false;
+    auto &scope = optScope->get();
+
+    beginRemoveRows(parent, row, row + count - 1);
+    for (auto i = 0; i < count; ++i)
+        scope.sequence().erase(scope.sequence().begin() + row);
+    endRemoveRows();
 
     return true;
 }

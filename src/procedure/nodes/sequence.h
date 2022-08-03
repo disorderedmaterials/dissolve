@@ -56,6 +56,7 @@ class ProcedureNodeSequence
     // Insert empty node at specified position
     void insertEmpty(int index);
     // Return sequential node list
+    std::vector<NodeRef> &sequence();
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence
     int nNodes() const;
