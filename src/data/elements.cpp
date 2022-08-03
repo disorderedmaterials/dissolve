@@ -104,7 +104,7 @@ Element element(std::string_view symbol)
             continue;
         else if (std::isalpha(c))
             cleaned += c;
-        else if (std::isdigit(c))
+        else if (std::isdigit(c) && nDigits == cleaned.size())
         {
             cleaned += c;
             ++nDigits;

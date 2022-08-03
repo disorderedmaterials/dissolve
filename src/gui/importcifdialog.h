@@ -52,7 +52,7 @@ class ImportCIFDialog : public WizardDialog
     enum WizardPage
     {
         SelectCIFFilePage,    /* Select CIF file page */
-        SelectSpacegroupPage, /* Select space group page */
+        SelectSpaceGroupPage, /* Select space group page */
         CIFInfoPage,          /* Basic CIF info page to check parsing */
         StructurePage,        /* Structure page */
         CleanedPage,          /* Cleaned structure page */
@@ -84,8 +84,8 @@ class ImportCIFDialog : public WizardDialog
      */
     private slots:
     void updateSpaceGroupPage();
-    void on_SpacegroupsList_currentRowChanged(int row);
-    void on_SpacegroupsList_itemDoubleClicked(QListWidgetItem *item);
+    void on_SpaceGroupsList_currentRowChanged(int row);
+    void on_SpaceGroupsList_itemDoubleClicked(QListWidgetItem *item);
 
     /*
      * CIF Info Page

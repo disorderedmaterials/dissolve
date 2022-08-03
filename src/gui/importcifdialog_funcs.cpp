@@ -21,7 +21,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
 
     // Register pages with the wizard
     registerPage(ImportCIFDialog::SelectCIFFilePage, "Choose CIF File");
-    registerPage(ImportCIFDialog::SelectSpacegroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
+    registerPage(ImportCIFDialog::SelectSpaceGroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
     registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::CleanedPage);
     registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::SupercellPage);
@@ -29,9 +29,9 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::OutputSpeciesPage, "Species Partitioning");
 
     // Add spacegroup list
-    for (auto n = 1; n <= SpaceGroup::nSpaceGroups(); ++n)
-        ui_.SpacegroupsList->addItem(
-            QString("%1 %2").arg(QString::number(n), QString::fromStdString(std::string(SpaceGroup::name(n)))));
+    for (auto n = 1; n < SpaceGroups::nSpaceGroupIds; ++n)
+        ui_.SpaceGroupsList->addItem(
+            QString::fromStdString(std::string(SpaceGroups::formattedInformation((SpaceGroups::SpaceGroupId)n))));
 
     // Set assembly view model
     ui_.AssemblyView->setModel(&cifAssemblyModel_);
@@ -100,8 +100,8 @@ bool ImportCIFDialog::progressionAllowed(int index) const
             if (ui_.InputFileEdit->text().isEmpty() || !QFile::exists(ui_.InputFileEdit->text()))
                 return false;
             break;
-        case (ImportCIFDialog::SelectSpacegroupPage):
-            return ui_.SpacegroupsList->currentRow() != -1;
+        case (ImportCIFDialog::SelectSpaceGroupPage):
+            return ui_.SpaceGroupsList->currentRow() != -1;
         case (ImportCIFDialog::OutputSpeciesPage):
             // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
             if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
@@ -126,8 +126,8 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             updateInfoPage();
             updateSpaceGroupPage();
             break;
-        case (ImportCIFDialog::SelectSpacegroupPage):
-            cifImporter_.setSpaceGroupFromIndex(ui_.SpacegroupsList->currentRow() + 1);
+        case (ImportCIFDialog::SelectSpaceGroupPage):
+            cifImporter_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpaceGroupsList->currentRow() + 1));
             updateInfoPage();
             break;
         case (ImportCIFDialog::CIFInfoPage):
@@ -159,7 +159,8 @@ std::optional<int> ImportCIFDialog::determineNextPage(int currentIndex)
 {
     // Only check for the first page
     if (currentIndex == ImportCIFDialog::SelectCIFFilePage)
-        return cifImporter_.spaceGroup().isValid() ? ImportCIFDialog::CIFInfoPage : ImportCIFDialog::SelectSpacegroupPage;
+        return cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
+                                                                      : ImportCIFDialog::SelectSpaceGroupPage;
     else
         return std::get<3>(getPage(currentIndex));
 }
@@ -234,32 +235,15 @@ void ImportCIFDialog::on_InputFileSelectButton_clicked(bool checked)
  * Select Space Group Page
  */
 
-void ImportCIFDialog::updateSpaceGroupPage()
-{
-    ui_.SpacegroupsList->setCurrentRow(-1);
+void ImportCIFDialog::updateSpaceGroupPage() { ui_.SpaceGroupsList->setCurrentRow(-1); }
 
-    // Add any relevant space group dictionary keys we might have
-    ui_.SpacegroupKeysTable->clearContents();
-    ui_.SpacegroupKeysTable->setRowCount(5);
-    auto row = 0;
-    for (auto key : {"_space_group_IT_number", "_space_group_name_Hall", "_space_group_name_H-M_alt",
-                     "_symmetry_space_group_name_Hall", "_symmetry_space_group_name_H-M"})
-    {
-        ui_.SpacegroupKeysTable->setItem(row, 0, new QTableWidgetItem(key));
-        auto value = cifImporter_.getTagString(key);
-        ui_.SpacegroupKeysTable->setItem(
-            row++, 1, new QTableWidgetItem(value.has_value() ? QString::fromStdString(value.value()) : "<Not Found>"));
-    }
-    ui_.SpacegroupKeysTable->resizeColumnsToContents();
-}
-
-void ImportCIFDialog::on_SpacegroupsList_currentRowChanged(int row)
+void ImportCIFDialog::on_SpaceGroupsList_currentRowChanged(int row)
 {
-    if (currentPage().has_value() && currentPage().value() == ImportCIFDialog::SelectSpacegroupPage)
+    if (currentPage().has_value() && currentPage().value() == ImportCIFDialog::SelectSpaceGroupPage)
         updateProgressionControls();
 }
 
-void ImportCIFDialog::on_SpacegroupsList_itemDoubleClicked(QListWidgetItem *item) { goToNextPage(); }
+void ImportCIFDialog::on_SpaceGroupsList_itemDoubleClicked(QListWidgetItem *item) { goToNextPage(); }
 
 /*
  * Basic CIF Info Page
@@ -287,11 +271,9 @@ void ImportCIFDialog::updateInfoPage()
         ui_.InfoAuthorsList->addItem(QString::fromStdString(author));
 
     // Spacegroup
-    if (cifImporter_.spaceGroup().isValid())
+    if (cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup)
         ui_.InfoSpacegroupLabel->setText(
-            QString("%1 (%2)")
-                .arg(QString::fromStdString(std::string(cifImporter_.spaceGroup().formattedName())))
-                .arg(cifImporter_.spaceGroup().internationalTableIndex()));
+            QString::fromStdString(std::string(SpaceGroups::formattedInformation(cifImporter_.spaceGroup()))));
     else
         ui_.InfoSpacegroupLabel->setText("<Unknown Space Group>");
 }
@@ -338,16 +320,16 @@ bool ImportCIFDialog::createStructuralSpecies()
     auto *box = crystalSpecies_->box();
     structureConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
     // -- Generate atoms
-    auto symmetryGenerators = cifImporter_.spaceGroup().symmetryOperators();
+    auto symmetryGenerators = SpaceGroups::symmetryOperators(cifImporter_.spaceGroup());
     auto tolerance = ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5;
-    for (auto &generator : symmetryGenerators)
+    for (const auto &generator : symmetryGenerators)
         for (auto &a : cifImporter_.assemblies())
             for (auto &g : a.groups())
                 if (g.active())
                     for (auto &unique : g.atoms())
                     {
                         // Generate folded atomic position in real space
-                        auto r = generator.transform(unique.rFrac());
+                        auto r = generator * unique.rFrac();
                         box->toReal(r);
                         r = box->fold(r);
 

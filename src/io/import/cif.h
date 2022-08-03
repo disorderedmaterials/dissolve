@@ -35,6 +35,8 @@ class CIFImport
     bool validFile(std::string filename) const;
     // Read CIF data from specified file
     bool read(std::string filename);
+    // Return if the specified tag exists
+    bool hasTag(std::string tag) const;
     // Return tag data string (if it exists) assuming a single datum (first in the vector)
     std::optional<std::string> getTagString(std::string tag) const;
     // Return tag data strings (if it exists)
@@ -50,8 +52,8 @@ class CIFImport
      * Processed Data
      */
     private:
-    // Space group information
-    SpaceGroup spaceGroup_;
+    // Space group
+    SpaceGroups::SpaceGroupId spaceGroup_{SpaceGroups::NoSpaceGroup};
     // Atom assemblies
     std::vector<CIFAssembly> assemblies_;
     // Bond information
@@ -59,9 +61,9 @@ class CIFImport
 
     public:
     // Set space group from index
-    void setSpaceGroupFromIndex(int index);
-    // Return space group information
-    const SpaceGroup &spaceGroup() const;
+    void setSpaceGroup(SpaceGroups::SpaceGroupId sgid);
+    // Return space group
+    SpaceGroups::SpaceGroupId spaceGroup() const;
     // Return cell lengths
     std::optional<Vec3<double>> getCellLengths() const;
     // Return cell angles
