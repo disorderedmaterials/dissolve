@@ -423,7 +423,7 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
         // Create a new row to store the data. Don't use insertRows() here since creating a null node in the vector at this
         // point causes no end of issues.
-        beginInsertRows(parent, insertAtRow, insertAtRow);
+        beginInsertRows(parent.isValid() ? parent : QModelIndex(), insertAtRow, insertAtRow);
         scope->get().appendNode(mimeData->node(), insertAtRow);
         endInsertRows();
         auto idx = index(insertAtRow, 0, parent);
