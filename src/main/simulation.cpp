@@ -28,17 +28,19 @@ bool Dissolve::prepare()
             return false;
 
     // Remove unused atom types
+    AtomTypeMix usedAtomTypes;
+    for (const auto &sp : species())
+        usedAtomTypes.add(sp->atomTypes());
+
     atomTypes().erase(std::remove_if(atomTypes().begin(), atomTypes().end(),
                                      [&](const auto &at) {
-                                         if (std::find_if(species().begin(), species().end(), [&at](const auto &sp) {
-                                                 return sp->atomTypes().contains(at);
-                                             }) == species().end())
+                                         if (usedAtomTypes.contains(at))
+                                             return false;
+                                         else
                                          {
                                              Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
                                              return true;
                                          }
-                                         else
-                                             return false;
                                      }),
                       atomTypes().end());
 
