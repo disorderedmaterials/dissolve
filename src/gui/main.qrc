@@ -130,13 +130,6 @@
     <file>icons/modules_neutronsq.svg</file>
     <file>icons/modules_geometryoptimisation.svg</file>
   </qresource>
-  <qresource prefix="images">
-    <file>images/squares.jpg</file>
-    <file>images/hexagons1.png</file>
-    <file>images/big.png</file>
-    <file>images/cornerhexagons.png</file>
-    <file>images/hexagons1.jpg</file>
-  </qresource>
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>
     <file>icons/tabs_configuration.svg</file>
