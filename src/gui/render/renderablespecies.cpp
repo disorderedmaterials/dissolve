@@ -206,14 +206,14 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
                                                     ElementColours::colour(bond.i()->Z()),
                                                     ElementColours::colour(bond.j()->Z()), false, spheresBondRadius_);
         }
+    }
 
-        // Add unit cell
-        if (source_->box()->type() != Box::BoxType::NonPeriodic)
-        {
-            A.setIdentity();
-            A = source_->box()->axes();
-            unitCellAssembly_.add(unitCellPrimitive_, A, colourBlack);
-        }
+    // Add unit cell
+    if (source_->box()->type() != Box::BoxType::NonPeriodic)
+    {
+        A.setIdentity();
+        A = source_->box()->axes();
+        unitCellAssembly_.add(unitCellPrimitive_, A, colourBlack);
     }
 }
 
