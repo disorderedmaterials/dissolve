@@ -158,12 +158,13 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
+        auto periodic = source_->box()->type() != Box::BoxType::NonPeriodic;
         for (const auto &bond : source_->bonds())
         {
             // Determine half delta i-j for bond
             const auto ri = bond.i()->r();
             const auto rj = bond.j()->r();
-            const auto dij = (rj - ri) * 0.5;
+            const auto dij = (periodic ? source_->box()->minimumVector(ri, rj) : (rj - ri)) * 0.5;
 
             // Draw bond halves
             lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
