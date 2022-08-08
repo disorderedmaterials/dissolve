@@ -63,7 +63,7 @@
   </qresource>
   <qresource prefix="dissolve">
     <file>icons/dissolve.png</file>
-    <file>icons/simple.png</file>
+    <file>icons/splash.png</file>
   </qresource>
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
