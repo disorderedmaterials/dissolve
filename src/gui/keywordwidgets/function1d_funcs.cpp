@@ -49,17 +49,8 @@ Function1DKeywordWidget::Function1DKeywordWidget(QWidget *parent, Function1DKeyw
         }
     }
 
-    // Widgets
-    ui_.FunctionCombo->setCurrentIndex(ui_.FunctionCombo->findData(QVariant::fromValue(function.type())));
-
-    const auto nParams = function.nParameters();
-    for (auto n = 0; n < MaxParams; ++n)
-    {
-        spins_[n]->setValue(nParams > n ? function.parameters()[n] : 0.0);
-        labels_[n]->setText(nParams > n ? QString::fromStdString(function.parameterName(n)) : "N/A");
-        spins_[n]->setVisible(nParams > n);
-        labels_[n]->setVisible(nParams > n);
-    }
+    // Update all widgets
+    updateWidgetsFromData();
 
     // Update summary text
     updateSummaryText();
@@ -86,6 +77,8 @@ void Function1DKeywordWidget::functionCombo_currentIndexChanged(int index)
 
     updateSummaryText();
 
+    updateWidgetsFromData();
+
     emit(keywordDataChanged(keyword_->editSignals()));
 }
 
@@ -106,8 +99,33 @@ void Function1DKeywordWidget::parameterSpin_valueChanged(double value)
  * Update
  */
 
+// Update widgets, including visibility of spins and labels
+void Function1DKeywordWidget::updateWidgetsFromData()
+{
+    refreshing_ = true;
+
+    // Grab the target Function1D
+    auto &function = keyword_->data();
+
+    ui_.FunctionCombo->setCurrentIndex(ui_.FunctionCombo->findData(QVariant::fromValue(function.type())));
+
+    const auto nParams = function.nParameters();
+    for (auto n = 0; n < MaxParams; ++n)
+    {
+        spins_[n]->setValue(nParams > n ? function.parameters()[n] : 0.0);
+        labels_[n]->setText(nParams > n ? QString::fromStdString(function.parameterName(n)) : "N/A");
+        spins_[n]->setVisible(nParams > n);
+        labels_[n]->setVisible(nParams > n);
+    }
+
+    refreshing_ = false;
+}
+
 // Update value displayed in widget
-void Function1DKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) {}
+void Function1DKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
+{
+    updateWidgetsFromData();
+}
 
 // Update keyword data based on widget values
 void Function1DKeywordWidget::updateKeywordData()
