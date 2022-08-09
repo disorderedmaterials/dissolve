@@ -568,6 +568,8 @@ class SpaceGroupSymbol
     std::string code_;
     // Hermann-Mauginn symbol
     std::string hermannMauginnSymbol_;
+    // Condensed Hermann-Mauginn symbol (no spaces)
+    std::string condensedHermannMauginnSymbol_;
     // Hall symbol
     std::string hallSymbol_;
 
@@ -580,6 +582,8 @@ class SpaceGroupSymbol
     const std::string &code() const;
     // Return Hermann-Mauginn symbol
     const std::string &hermannMauginnSymbol() const;
+    // Return condensed Hermann-Mauginn symbol (no spaces)
+    const std::string &condensedHermannMauginnSymbol() const;
     // Return Hall symbol
     const std::string &hallSymbol() const;
 };

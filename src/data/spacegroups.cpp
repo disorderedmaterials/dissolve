@@ -544,6 +544,11 @@ SpaceGroupSymbol::SpaceGroupSymbol(SpaceGroupId id, int sgNumber, std::string_vi
                                    std::string_view hallSymbol)
     : id_(id), internationalTableIndex_(sgNumber), code_(sgCode), hermannMauginnSymbol_(hmSymbol), hallSymbol_(hallSymbol)
 {
+    condensedHermannMauginnSymbol_ = hmSymbol;
+    condensedHermannMauginnSymbol_.erase(std::remove_if(condensedHermannMauginnSymbol_.begin(),
+                                                        condensedHermannMauginnSymbol_.end(),
+                                                        [](const auto c) { return c == ' '; }),
+                                         condensedHermannMauginnSymbol_.end());
 }
 
 // Return space Group ID
@@ -557,6 +562,9 @@ const std::string &SpaceGroupSymbol::code() const { return code_; }
 
 // Return Hermann-Mauginn symbol
 const std::string &SpaceGroupSymbol::hermannMauginnSymbol() const { return hermannMauginnSymbol_; }
+
+// Return condensed Hermann-Mauginn symbol (no spaces)
+const std::string &SpaceGroupSymbol::condensedHermannMauginnSymbol() const { return condensedHermannMauginnSymbol_; }
 
 // Return Hall symbol
 const std::string &SpaceGroupSymbol::hallSymbol() const { return hallSymbol_; }
@@ -572,15 +580,29 @@ SpaceGroupId findByHallSymbol(std::string_view hallSymbol)
 // Find space group from supplied Hermann-Mauginn symbol and (optional) code
 SpaceGroups::SpaceGroupId findByHermannMauginnSymbol(std::string_view hmSymbol, std::string_view code)
 {
-    // If the provided HM symbol contains a colon already, or the supplied code is empty, do a plain search
+    // Account for the fact that the HM symbol might not have spaces, and/or may contain brackets (e.g. Fm(-3)m) which ours
+    // don't.
+    std::string cleanedHMSymbol{hmSymbol};
+    cleanedHMSymbol.erase(std::remove_if(cleanedHMSymbol.begin(), cleanedHMSymbol.end(),
+                                         [](const auto c) { return c == ' ' || c == '(' || c == ')'; }),
+                          cleanedHMSymbol.end());
+
+    // If the provided HM symbol contains a colon already, or the supplied code is empty, do a plain search.
     auto it = hmSymbol.find(':') != std::string::npos
                   ? std::find_if(symbols_.begin(), symbols_.end(),
-                                 [hmSymbol](const auto &sg) { return sg.hermannMauginnSymbol() == hmSymbol; })
-                  : std::find_if(symbols_.begin(), symbols_.end(), [hmSymbol, code](const auto &sg) {
-                        return (sg.hermannMauginnSymbol().find(':') == std::string::npos
-                                    ? sg.hermannMauginnSymbol()
-                                    : DissolveSys::beforeChar(sg.hermannMauginnSymbol(), ':')) == hmSymbol &&
-                               (code.empty() || sg.code() == code);
+                                 [cleanedHMSymbol](const auto &sg) {
+                                     return sg.hermannMauginnSymbol() == cleanedHMSymbol ||
+                                            sg.condensedHermannMauginnSymbol() == cleanedHMSymbol;
+                                 })
+                  : std::find_if(symbols_.begin(), symbols_.end(), [cleanedHMSymbol, code](const auto &sg) {
+                        if (sg.hermannMauginnSymbol().find(':') == std::string::npos)
+                            return (sg.hermannMauginnSymbol() == cleanedHMSymbol ||
+                                    sg.condensedHermannMauginnSymbol() == cleanedHMSymbol) &&
+                                   (code.empty() || sg.code() == code);
+                        else
+                            return (DissolveSys::beforeChar(sg.hermannMauginnSymbol(), ':') == cleanedHMSymbol ||
+                                    DissolveSys::beforeChar(sg.condensedHermannMauginnSymbol(), ':') == cleanedHMSymbol) &&
+                                   (code.empty() || sg.code() == code);
                     });
 
     return it == symbols_.end() ? SpaceGroupId::NoSpaceGroup : it->id();
