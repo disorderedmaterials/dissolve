@@ -63,7 +63,7 @@
   </qresource>
   <qresource prefix="dissolve">
     <file>icons/dissolve.png</file>
-    <file>icons/simple.png</file>
+    <file>icons/splash.png</file>
   </qresource>
   <qresource prefix="viewer_toolbar">
     <file>icons/viewer_toolbar_interaction.svg</file>
@@ -129,13 +129,6 @@
     <file>icons/modules_intrashake.svg</file>
     <file>icons/modules_neutronsq.svg</file>
     <file>icons/modules_geometryoptimisation.svg</file>
-  </qresource>
-  <qresource prefix="images">
-    <file>images/squares.jpg</file>
-    <file>images/hexagons1.png</file>
-    <file>images/big.png</file>
-    <file>images/cornerhexagons.png</file>
-    <file>images/hexagons1.jpg</file>
   </qresource>
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>
