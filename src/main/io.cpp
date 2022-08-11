@@ -314,7 +314,7 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
         if (!parser.writeLineF("  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword)))
             return false;
-        if (!cfg->generator().write(parser, "    "))
+        if (!cfg->generator().serialise(parser, "    "))
             return false;
         if (!parser.writeLineF("  End{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword)))
             return false;

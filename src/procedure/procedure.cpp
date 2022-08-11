@@ -6,8 +6,8 @@
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
 
-Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword)
-    : rootSequence_(std::make_shared<SequenceProcedureNode>(context, this, nullptr, blockTerminationKeyword))
+Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockKeyword)
+    : rootSequence_(std::make_shared<SequenceProcedureNode>(context, this, nullptr, blockKeyword))
 {
     context_ = context;
 }
@@ -23,9 +23,6 @@ void Procedure::clear() { rootSequence_->clear(); }
 
 // Return root sequence
 const SequenceProcedureNode &Procedure::rootSequence() const { return *rootSequence_; }
-
-// Return the block termination keyword for the Procedure
-std::string_view Procedure::blockTerminationKeyword() const { return rootSequence_->blockTerminationKeyword(); }
 
 // Return named node if present (and matches the type / class given)
 ConstNodeRef Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
@@ -99,4 +96,4 @@ bool Procedure::deserialise(LineParser &parser, const CoreData &coreData)
 }
 
 // Write structure to specified LineParser
-bool Procedure::write(LineParser &parser, std::string_view prefix) { return rootSequence_->write(parser, prefix); }
+bool Procedure::serialise(LineParser &parser, std::string_view prefix) { return rootSequence_->serialise(parser, prefix); }

@@ -61,7 +61,7 @@ bool DynamicSiteNodesKeyword::deserialise(LineParser &parser, int startArg, cons
 bool DynamicSiteNodesKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (auto dynamicSite : data_)
-        if (!dynamicSite->write(parser, prefix))
+        if (!dynamicSite->serialise(parser, prefix))
             return false;
 
     return true;

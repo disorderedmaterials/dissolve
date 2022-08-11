@@ -173,7 +173,7 @@ std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::branch() { return fo
 std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context)
 {
     if (!forEachBranch_)
-        forEachBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this());
+        forEachBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this(), "ForEach");
 
     return forEachBranch_;
 }

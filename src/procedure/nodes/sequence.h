@@ -13,8 +13,8 @@ class Procedure;
 class SequenceProcedureNode : public ProcedureNode
 {
     public:
-    SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef parentNode = nullptr,
-                          std::string_view blockTerminationKeyword = "");
+    SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
+                          std::string_view blockKeyword);
     ~SequenceProcedureNode() override;
 
     /*
@@ -90,8 +90,8 @@ class SequenceProcedureNode : public ProcedureNode
     private:
     // Parent Procedure to which this sequence belongs
     const Procedure *procedure_;
-    // Parent ProcedureNode in which this sequence exists
-    NodeRef parentNode_;
+    // ProcedureNode which owns this sequence
+    NodeRef owner_;
     // Context of the sequence
     ProcedureNode::NodeContext context_;
 
@@ -107,6 +107,8 @@ class SequenceProcedureNode : public ProcedureNode
     public:
     // Return parent Procedure to which this sequence belongs
     const Procedure *procedure() const override;
+    // Return this sequences owner
+    NodeRef owner() const;
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present (and matches the type / class given)
@@ -151,16 +153,14 @@ class SequenceProcedureNode : public ProcedureNode
      * Read / Write
      */
     private:
-    // Block termination keyword for current context when reading
-    std::string blockTerminationKeyword_;
+    // Block keyword for current context when reading
+    std::string blockKeyword_;
 
     public:
-    // Set block termination keyword for current context when reading
-    void setBlockTerminationKeyword(std::string_view endKeyword);
-    // Return block termination keyword for current context
-    std::string_view blockTerminationKeyword() const;
+    // Return block keyword for current context
+    std::string_view blockKeyword() const;
     // Read structure from specified LineParser
     bool deserialise(LineParser &parser, const CoreData &coreData) override;
     // Write structure to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix) override;
+    bool serialise(LineParser &parser, std::string_view prefix) override;
 };

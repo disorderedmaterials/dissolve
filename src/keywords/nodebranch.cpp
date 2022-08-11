@@ -31,8 +31,7 @@ bool NodeBranchKeyword::deserialise(LineParser &parser, int startArg, const Core
                                 ProcedureNode::nodeTypes().keyword(parentNode_->type()));
 
     // Create and parse a new branch
-    data_ = std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_->scope()->procedure(), parentNode_,
-                                                    fmt::format("End{}", name()));
+    data_ = std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_->scope()->procedure(), parentNode_, name());
     if (!data_->deserialise(parser, coreData))
         return false;
 
@@ -50,7 +49,7 @@ bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordNa
         return false;
 
     // Write branch information
-    if (!data_->write(parser, fmt::format("{}  ", prefix)))
+    if (!data_->serialise(parser, fmt::format("{}  ", prefix)))
         return false;
 
     // Write end keyword based on the name
