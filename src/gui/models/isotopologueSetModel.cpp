@@ -13,6 +13,100 @@ void IsotopologueSetModel::setSourceData(IsotopologueSet &set)
     endResetModel();
 }
 
+std::vector<QModelIndex> IsotopologueSetModel::addMissingSpecies(const std::vector<std::unique_ptr<Species>> &species)
+{
+    if (!set_)
+        return {};
+
+    auto &set = set_->get();
+
+    auto nAdded = 0;
+    for (const auto &sp : species)
+    {
+        if (!set.contains(sp.get()))
+        {
+            beginInsertRows({}, set.nSpecies(), set.nSpecies());
+            set.add(sp->naturalIsotopologue(), 1.0);
+            endInsertRows();
+            ++nAdded;
+        }
+    }
+
+    std::vector<QModelIndex> newIndices;
+    for (auto n = set.nSpecies() - nAdded; n < set.nSpecies(); ++n)
+        newIndices.push_back(createIndex(n, 0));
+    if (!newIndices.empty())
+        emit(dataChanged(createIndex(set.nSpecies() - nAdded, 0), createIndex(set.nSpecies() - 1, 0)));
+    return newIndices;
+}
+
+void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)
+{
+    // Check index validity
+    if (!set_ || !index.isValid())
+        return;
+
+    auto &set = set_->get();
+    const auto topeIndex = index.parent().isValid() ? index.parent().row() : index.row();
+    auto &topes = set.isotopologues()[topeIndex];
+    const auto *sp = topes.species();
+
+    if (!topes.contains(sp->naturalIsotopologue()))
+    {
+        beginInsertRows(createIndex(topeIndex, 0), topes.nIsotopologues(), topes.nIsotopologues());
+        set.add(sp->naturalIsotopologue(), 1.0);
+        endInsertRows();
+    }
+    else
+    {
+        for (auto &tope : sp->isotopologues())
+        {
+            if (!topes.contains(tope.get()))
+            {
+                beginInsertRows(createIndex(topeIndex, 0), topes.nIsotopologues(), topes.nIsotopologues());
+                set.add(tope.get(), 1.0);
+                endInsertRows();
+                break;
+            }
+        }
+    }
+
+    emit(dataChanged(index, index));
+}
+
+void IsotopologueSetModel::removeIndex(const QModelIndex index)
+{
+    // Check index validity
+    if (!set_ || !index.isValid())
+        return;
+
+    auto &set = set_->get();
+
+    if (!index.parent().isValid())
+    {
+        // Root item (Isotopologues)
+        auto &topes = set.isotopologues()[index.row()];
+        beginRemoveRows({}, index.row(), index.row());
+        set.remove(topes.species());
+        endRemoveRows();
+    }
+    else
+    {
+        // Secondary item (IsotopologueWeight)
+        auto &topes = set.isotopologues()[index.parent().row()];
+        auto &mixItem = topes.mix()[index.row()];
+        beginRemoveRows(index.parent(), index.row(), index.row());
+        topes.remove(&mixItem);
+        endRemoveRows();
+    }
+
+    emit(dataChanged(index, index));
+}
+
+/*
+ * QAbstractItemModel overrides
+ */
+
 int IsotopologueSetModel::rowCount(const QModelIndex &parent) const
 {
     if (!set_)
@@ -163,98 +257,4 @@ bool IsotopologueSetModel::setData(const QModelIndex &index, const QVariant &val
     }
 
     return false;
-}
-
-std::vector<QModelIndex> IsotopologueSetModel::addMissingSpecies(const std::vector<std::unique_ptr<Species>> &species)
-{
-    if (!set_)
-        return {};
-
-    auto &set = set_->get();
-
-    auto nAdded = 0;
-    for (const auto &sp : species)
-    {
-        if (!set.contains(sp.get()))
-        {
-            beginInsertRows({}, set.nSpecies(), set.nSpecies());
-            set.add(sp->naturalIsotopologue(), 1.0);
-            endInsertRows();
-            ++nAdded;
-        }
-    }
-
-    if (nAdded > 0)
-    {
-        emit(dataChanged(createIndex(set.nSpecies() - nAdded, 0), createIndex(set.nSpecies() - 1, 0)));
-        std::vector<QModelIndex> newIndices;
-        for (auto n = set.nSpecies() - nAdded; n < set.nSpecies(); ++n)
-            newIndices.push_back(createIndex(n, 0));
-        return newIndices;
-    }
-
-    return {};
-}
-
-void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)
-{
-    // Check index validity
-    if (!set_ || !index.isValid())
-        return;
-
-    auto &set = set_->get();
-    const auto topeIndex = index.parent().isValid() ? index.parent().row() : index.row();
-    auto &topes = set.isotopologues()[topeIndex];
-    const auto *sp = topes.species();
-
-    if (!topes.contains(sp->naturalIsotopologue()))
-    {
-        beginInsertRows(createIndex(topeIndex, 0), topes.nIsotopologues(), topes.nIsotopologues());
-        set.add(sp->naturalIsotopologue(), 1.0);
-        endInsertRows();
-    }
-    else
-    {
-        for (auto &tope : sp->isotopologues())
-        {
-            if (!topes.contains(tope.get()))
-            {
-                beginInsertRows(createIndex(topeIndex, 0), topes.nIsotopologues(), topes.nIsotopologues());
-                set.add(tope.get(), 1.0);
-                endInsertRows();
-                break;
-            }
-        }
-    }
-
-    emit(dataChanged(index, index));
-}
-
-void IsotopologueSetModel::removeIndex(const QModelIndex index)
-{
-    // Check index validity
-    if (!set_ || !index.isValid())
-        return;
-
-    auto &set = set_->get();
-
-    if (!index.parent().isValid())
-    {
-        // Root item (Isotopologues)
-        auto &topes = set.isotopologues()[index.row()];
-        beginRemoveRows({}, index.row(), index.row());
-        set.remove(topes.species());
-        endRemoveRows();
-    }
-    else
-    {
-        // Secondary item (IsotopologueWeight)
-        auto &topes = set.isotopologues()[index.parent().row()];
-        auto &mixItem = topes.mix()[index.row()];
-        beginRemoveRows(index.parent(), index.row(), index.row());
-        topes.remove(&mixItem);
-        endRemoveRows();
-    }
-
-    emit(dataChanged(index, index));
 }

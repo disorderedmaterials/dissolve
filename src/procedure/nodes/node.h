@@ -134,14 +134,10 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     private:
     // Scope (SequenceNode) in which this node exists
     std::shared_ptr<SequenceProcedureNode> scope_;
-    // The owner of this node
-    NodeRef parent_;
 
     public:
-    // Find the node which owns this node.
+    // Return the parent non-sequence node which owns this node
     NodeRef parent() const;
-    // Update the parentage
-    void setParent(NodeRef parent);
     // Find the nodes owned by this node
     virtual std::vector<ConstNodeRef> children() const;
     // Set scope
@@ -212,5 +208,5 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     // Read node data from specified LineParser
     virtual bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write node data to specified LineParser
-    virtual bool write(LineParser &parser, std::string_view prefix);
+    virtual bool serialise(LineParser &parser, std::string_view prefix);
 };

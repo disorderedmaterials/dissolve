@@ -277,7 +277,7 @@ bool Fit1DProcedureNode::deserialise(LineParser &parser, const CoreData &coreDat
 }
 
 // Write structure to specified LineParser
-bool Fit1DProcedureNode::write(LineParser &parser, std::string_view prefix)
+bool Fit1DProcedureNode::serialise(LineParser &parser, std::string_view prefix)
 {
     // Block Start
     if (!parser.writeLineF("{}{}\n", prefix, ProcedureNode::nodeTypes().keyword(type_)))

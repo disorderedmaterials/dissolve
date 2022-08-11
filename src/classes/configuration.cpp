@@ -11,7 +11,7 @@
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 
-Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "EndGenerator")
+Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "Generator")
 {
     createBox({1.0, 1.0, 1.0}, {90, 90, 90}, false);
 }

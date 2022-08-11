@@ -43,7 +43,7 @@ bool ProcedureKeyword::serialise(LineParser &parser, std::string_view keywordNam
     std::string newPrefix = fmt::format("{}  ", prefix);
 
     // Write the node data
-    if (!data_.write(parser, newPrefix))
+    if (!data_.serialise(parser, newPrefix))
         return false;
 
     // Write the end keyword (based on our name)

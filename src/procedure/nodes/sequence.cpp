@@ -6,14 +6,14 @@
 #include "base/sysfunc.h"
 #include "procedure/nodes/registry.h"
 
-SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef parentNode,
-                                             std::string_view blockTerminationKeyword)
+SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
+                                             std::string_view blockKeyword)
     : ProcedureNode(ProcedureNode::NodeType::Sequence)
 {
     context_ = context;
     procedure_ = procedure;
-    parentNode_ = parentNode;
-    blockTerminationKeyword_ = blockTerminationKeyword;
+    owner_ = std::move(owner);
+    blockKeyword_ = blockKeyword;
 }
 
 SequenceProcedureNode::~SequenceProcedureNode() { clear(); }
@@ -142,6 +142,9 @@ SequenceProcedureNode::searchParameters(std::string_view name,
 // Return parent Procedure to which this sequence belongs
 const Procedure *SequenceProcedureNode::procedure() const { return procedure_; }
 
+// Return this sequences owner
+NodeRef SequenceProcedureNode::owner() const { return owner_; }
+
 // Return the context of the sequence
 ProcedureNode::NodeContext SequenceProcedureNode::sequenceContext() const { return context_; }
 
@@ -200,7 +203,7 @@ ConstNodeRef SequenceProcedureNode::nodeInScope(ConstNodeRef queryingNode, std::
                                                 std::optional<ProcedureNode::NodeType> optNodeType,
                                                 std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    // If one was give, start from the querying node and work backwards...
+    // If one was given, start from the querying node and work backwards...
     if (queryingNode)
     {
         auto range = QueryRange(queryingNode, sequence_);
@@ -221,9 +224,9 @@ ConstNodeRef SequenceProcedureNode::nodeInScope(ConstNodeRef queryingNode, std::
         }
     }
 
-    // Not in our list. Recursively check our parent(s)
-    if (parentNode_)
-        return parentNode_->nodeInScope(name, excludeNode, optNodeType, optNodeClass);
+    // Not in our list. Recursively check our owner
+    if (owner_)
+        return owner_->nodeInScope(name, excludeNode, optNodeType, optNodeClass);
 
     // Not found
     return nullptr;
@@ -236,7 +239,7 @@ std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef query
 {
     std::vector<ConstNodeRef> matches;
 
-    // If one was give, start from the querying node and work backwards...
+    // If one was given, start from the querying node and work backwards...
     if (queryingNode)
     {
         auto range = QueryRange(queryingNode, sequence_);
@@ -251,10 +254,10 @@ std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef query
         }
     }
 
-    // Not in our list. Recursively check our parent(s)
-    if (parentNode_)
+    // Not in our list. Recursively check our owner
+    if (owner_)
     {
-        auto parentMatches = parentNode_->nodesInScope(optNodeType, optNodeClass);
+        auto parentMatches = owner_->nodesInScope(optNodeType, optNodeClass);
         std::copy(parentMatches.begin(), parentMatches.end(), std::back_inserter(matches));
     }
 
@@ -267,8 +270,8 @@ ConstNodeRef SequenceProcedureNode::nodeExists(std::string_view name, NodeRef ex
                                                std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
-    if (parentNode_)
-        return parentNode_->scope()->nodeExists(name, excludeNode, optNodeType, optNodeClass);
+    if (owner_)
+        return owner_->scope()->nodeExists(name, excludeNode, optNodeType, optNodeClass);
 
     // No parent node, so we must be the topmost sequence - run the search from here
     return searchNodes(name, excludeNode, optNodeType, optNodeClass);
@@ -290,9 +293,9 @@ SequenceProcedureNode::parameterInScope(NodeRef queryingNode, std::string_view n
             return param;
     }
 
-    // Not in our list. Recursively check our parent(s)
-    if (parentNode_)
-        return parentNode_->parameterInScope(name, excludeParameter);
+    // Not in our list. Recursively check our owner
+    if (owner_)
+        return owner_->parameterInScope(name, excludeParameter);
 
     // Not found
     return nullptr;
@@ -303,8 +306,8 @@ std::shared_ptr<ExpressionVariable>
 SequenceProcedureNode::parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
-    if (parentNode_)
-        return parentNode_->scope()->parameterExists(name, excludeParameter);
+    if (owner_)
+        return owner_->scope()->parameterExists(name, excludeParameter);
 
     // No parent node, so we must be the topmost sequence - run the search from here
     return searchParameters(name, excludeParameter);
@@ -330,10 +333,10 @@ std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::paramete
         }
     }
 
-    // Recursively check our parent(s)
-    if (parentNode_)
+    // Recursively check our owner
+    if (owner_)
     {
-        auto optOtherParams = parentNode_->parameters();
+        auto optOtherParams = owner_->parameters();
         if (optOtherParams)
         {
             const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);
@@ -389,15 +392,14 @@ bool SequenceProcedureNode::finalise(const ProcedureContext &procedureContext)
  * Read / Write
  */
 
-// Set block termination keyword for current context when reading
-void SequenceProcedureNode::setBlockTerminationKeyword(std::string_view endKeyword) { blockTerminationKeyword_ = endKeyword; }
-
-// Return block termination keyword for current context
-std::string_view SequenceProcedureNode::blockTerminationKeyword() const { return blockTerminationKeyword_; }
+// Return block keyword for current context
+std::string_view SequenceProcedureNode::blockKeyword() const { return blockKeyword_; }
 
 // Read structure from specified LineParser
 bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 {
+    const auto blockTerminationKeyword = fmt::format("End{}", blockKeyword_);
+
     // Read until we encounter the block-ending keyword, or we fail for some reason
     while (!parser.eofOrBlank())
     {
@@ -406,7 +408,7 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
             return false;
 
         // Is the first argument the block termination keyword for the current context?
-        if (DissolveSys::sameString(parser.argsv(0), blockTerminationKeyword_))
+        if (DissolveSys::sameString(parser.argsv(0), blockTerminationKeyword))
             break;
 
         // Is the first argument on the current line a valid control keyword?
@@ -454,14 +456,14 @@ bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &core
 }
 
 // Write structure to specified LineParser
-bool SequenceProcedureNode::write(LineParser &parser, std::string_view prefix)
+bool SequenceProcedureNode::serialise(LineParser &parser, std::string_view prefix)
 {
     // Block Start - should have already been written by the calling function, since we don't know the keyword we are linked
     // to
 
     // Loop over nodes in this sequence
     for (auto node : sequence_)
-        if (!node->write(parser, prefix))
+        if (!node->serialise(parser, prefix))
             return false;
 
     // Block End - will be written by the calling function, since we don't know the keyword we are linked to

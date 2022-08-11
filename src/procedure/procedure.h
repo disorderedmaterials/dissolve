@@ -36,8 +36,6 @@ class Procedure
     }
     // Return root sequence
     const SequenceProcedureNode &rootSequence() const;
-    // Return the block termination keyword for the Procedure
-    std::string_view blockTerminationKeyword() const;
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                       std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
@@ -63,5 +61,5 @@ class Procedure
     // Read procedure from specified LineParser
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write procedure to specified LineParser
-    bool write(LineParser &parser, std::string_view prefix);
+    bool serialise(LineParser &parser, std::string_view prefix);
 };
