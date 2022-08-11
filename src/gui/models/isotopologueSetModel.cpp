@@ -32,16 +32,12 @@ std::vector<QModelIndex> IsotopologueSetModel::addMissingSpecies(const std::vect
         }
     }
 
-    if (nAdded > 0)
-    {
+    std::vector<QModelIndex> newIndices;
+    for (auto n = set.nSpecies() - nAdded; n < set.nSpecies(); ++n)
+        newIndices.push_back(createIndex(n, 0));
+    if (!newIndices.empty())
         emit(dataChanged(createIndex(set.nSpecies() - nAdded, 0), createIndex(set.nSpecies() - 1, 0)));
-        std::vector<QModelIndex> newIndices;
-        for (auto n = set.nSpecies() - nAdded; n < set.nSpecies(); ++n)
-            newIndices.push_back(createIndex(n, 0));
-        return newIndices;
-    }
-
-    return {};
+    return newIndices;
 }
 
 void IsotopologueSetModel::addIsotopologueWeight(const QModelIndex index)
