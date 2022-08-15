@@ -34,6 +34,7 @@ The `Process*` nodes all have a branch with the "Operate" context (accessed thro
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
+|`Instantaneous`|`bool`|`false`|Whether the processed data should reflect the accumulated histogram data (`false`) or the "instantaneous" data from the last iteration only (`true`).|
 |`SourceData`|`name`|--|{{< required-label >}} The `name` of a {{< gui-node "Collect1D" >}} node containing the histogram data to process.|
 |`LabelValue`|`label`|`"Y"`|Label for the value axis|
 |`LabelX`|`label`|`"X"`|Label for the x axis|

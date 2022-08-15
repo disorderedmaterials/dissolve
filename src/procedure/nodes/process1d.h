@@ -30,7 +30,7 @@ class Process1DProcedureNode : public ProcedureNode
      */
     private:
     // Whether to use only the current binned data of the histogram, rather than the accumulated average
-    bool currentDataOnly_{false};
+    bool instantaneous_{false};
     // Collect1D node that we are processing
     std::shared_ptr<const Collect1DProcedureNode> sourceData_;
     // Export file and format for processed data

@@ -18,7 +18,7 @@ CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(Proced
     {
         // Process1D - targets Collect1D in source RDF module
         process1D_ = analyser_.createRootNode<Process1DProcedureNode>("HistogramNorm");
-        process1D_->keywords().set("CurrentDataOnly", true);
+        process1D_->keywords().set("Instantaneous", true);
         auto rdfNormalisation = process1D_->addNormalisationBranch();
         siteNormaliser_ =
             rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>());

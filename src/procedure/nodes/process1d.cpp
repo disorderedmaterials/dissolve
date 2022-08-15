@@ -20,8 +20,8 @@ Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedur
                                                        "Collect1D node containing the histogram data to process", sourceData_,
                                                        this, ProcedureNode::NodeType::Collect1D, false);
     keywords_.add<BoolKeyword>(
-        "Control", "CurrentDataOnly",
-        "Whether to use only the current binned data of the histogram, rather than the accumulated average", currentDataOnly_);
+        "Control", "Instantaneous",
+        "Whether to use only the current binned data of the histogram, rather than the accumulated average", instantaneous_);
     keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
     keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
     keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
@@ -124,7 +124,7 @@ bool Process1DProcedureNode::finalise(const ProcedureContext &procedureContext)
     data.setTag(name());
 
     // Copy the averaged data from the associated Process1D node
-    if (currentDataOnly_)
+    if (instantaneous_)
         data = sourceData_->data();
     else
         data = sourceData_->accumulatedData();
