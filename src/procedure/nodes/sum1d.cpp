@@ -24,6 +24,7 @@ Sum1DProcedureNode::Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> t
     keywords_.add<BoolKeyword>("Control", "RangeCEnabled", "Whether the second summation region is enabled", rangeEnabled_[2]);
     keywords_.add<RangeKeyword>("Control", "RangeC", "X range for third summation region", range_[2],
                                 Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<BoolKeyword>("Control", "Instantaneous", "Calculate instantaneous sums rather than averages", instantaneous_);
 }
 
 /*
@@ -93,7 +94,10 @@ bool Sum1DProcedureNode::finalise(const ProcedureContext &procedureContext)
                 sum_[i] = procedureContext.dataList().realise<SampledDouble>(
                     fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), procedureContext.dataPrefix(),
                     GenericItem::InRestartFileFlag);
-            sum_[i]->get() += Integrator::sum(sourceData_->processedData(), range_[i]);
+            if (instantaneous_)
+                sum_[i]->get() = Integrator::sum(sourceData_->processedData(), range_[i]);
+            else
+                sum_[i]->get() += Integrator::sum(sourceData_->processedData(), range_[i]);
         }
 
     // Print info

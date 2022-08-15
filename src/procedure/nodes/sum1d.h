@@ -31,6 +31,8 @@ class Sum1DProcedureNode : public ProcedureNode
     private:
     // Process1D node that we are targetting
     std::shared_ptr<const Process1DProcedureNode> sourceData_{nullptr};
+    // Whether to calculate the instantaneous sum rather than forming an average
+    bool instantaneous_{false};
     // Ranges for sums
     Range range_[3] = {{0.0, 3.0}, {3.0, 6.0}, {6.0, 9.0}};
     // Flags for ranges
