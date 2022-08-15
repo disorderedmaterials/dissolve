@@ -47,6 +47,10 @@ CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(Proced
     keywords_.add<BoolKeyword>("Ranges", "RangeCEnabled", "Whether calculation of the third coordination number is enabled",
                                sum1D_->rangeEnabled(2));
     keywords_.add<RangeKeyword>("Ranges", "RangeC", "Distance range for third coordination number", sum1D_->range(2));
+    keywords_
+        .add<BoolKeyword>("Ranges", "Instantaneous", "Calculate instantaneous coordination numbers rather than an average",
+                          instantaneous_)
+        ->setEditSignals(KeywordBase::RunSetUp);
 
     // Test
     keywords_.add<OptionalDoubleKeyword>(

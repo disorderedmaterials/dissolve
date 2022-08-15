@@ -11,6 +11,15 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sum1d.h"
 
+// Run set-up stage
+bool CalculateCNModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+{
+    // Propagate the flag for instantaneous calculation of the CN
+    sum1D_->keywords().set("Instantaneous", instantaneous_);
+
+    return true;
+}
+
 // Run main processing
 bool CalculateCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
