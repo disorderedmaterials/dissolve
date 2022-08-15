@@ -37,6 +37,42 @@ bool CalculateCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (!analyser_.execute(context))
         return Messenger::error("CalculateCN experienced problems with its analysis.\n");
 
+    // Accumulate instantaneous coordination number data
+    if (instantaneous_)
+    {
+        auto &sumA = dissolve.processingModuleData().realise<Data1D>("SumA", name(), GenericItem::InRestartFileFlag);
+        sumA.addPoint(dissolve.iteration(), sum1D_->sum(0).value());
+        if (exportInstantaneous_)
+        {
+            Data1DExportFileFormat exportFormat(fmt::format("{}_SumA.txt", name()));
+            if (!exportFormat.exportData(sumA))
+                return Messenger::error("Failed to write instantaneous coordination number data for range A.\n");
+        }
+
+        if (isRangeBEnabled())
+        {
+            auto &sumB = dissolve.processingModuleData().realise<Data1D>("SumB", name(), GenericItem::InRestartFileFlag);
+            sumB.addPoint(dissolve.iteration(), sum1D_->sum(1).value());
+            if (exportInstantaneous_)
+            {
+                Data1DExportFileFormat exportFormat(fmt::format("{}_SumB.txt", name()));
+                if (!exportFormat.exportData(sumB))
+                    return Messenger::error("Failed to write instantaneous coordination number data for range B.\n");
+            }
+        }
+        if (isRangeCEnabled())
+        {
+            auto &sumC = dissolve.processingModuleData().realise<Data1D>("SumC", name(), GenericItem::InRestartFileFlag);
+            sumC.addPoint(dissolve.iteration(), sum1D_->sum(2).value());
+            if (exportInstantaneous_)
+            {
+                Data1DExportFileFormat exportFormat(fmt::format("{}_SumC.txt", name()));
+                if (!exportFormat.exportData(sumC))
+                    return Messenger::error("Failed to write instantaneous coordination number data for range C.\n");
+            }
+        }
+    }
+
     // Test?
     if (testRangeA_)
     {

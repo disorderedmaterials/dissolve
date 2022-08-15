@@ -33,6 +33,8 @@ class CalculateCNModule : public Module
     std::optional<double> testRangeC_;
     // Whether to calculate the instantaneous coordination numbers rather than forming an average
     bool instantaneous_{false};
+    // Whether to export instantaneous coordination numbers to disk
+    bool exportInstantaneous_{false};
     // Threshold difference at which test comparisons will fail
     double testThreshold_{0.1};
     // Analysis procedure to be run

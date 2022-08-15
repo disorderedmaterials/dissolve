@@ -52,6 +52,12 @@ CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(Proced
                           instantaneous_)
         ->setEditSignals(KeywordBase::RunSetUp);
 
+    // Export
+    keywords_.add<BoolKeyword>(
+        "Export", "ExportInstantaneous",
+        "Export instantaneous coordination numbers to disk (only if 'Instantaneous' option is enabled)\n",
+        exportInstantaneous_);
+
     // Test
     keywords_.add<OptionalDoubleKeyword>(
         "Test", "TestRangeA", "Reference coordination number for range A against which calculated value should be tested",
