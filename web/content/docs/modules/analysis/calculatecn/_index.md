@@ -20,11 +20,18 @@ The `CalculateCN` module calculates up to three coordination numbers from the ou
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
+|`Instantaneous`|`bool`|`false`|Whether to calculate only the instantaneous coordination numbers, rather than the running average.|
 |`RangeA`|`double`<br/>`double`|`0.0`<br/>`3.0`|Specifies the distance range over which to calculate the first coordination number.|
 |`RangeB`|`double`<br/>`double`|`3.0`<br/>`6.0`|Specifies the distance range over which to calculate the second coordination number.|
 |`RangeBEnabled`|`bool`|`false`|Whether calculation of the second coordination number is enabled.|
 |`RangeC`|`double`<br/>`double`|`6.0`<br/>`9.0`|Specifies the distance range over which to calculate the third coordination number.|
 |`RangeCEnabled`|`bool`|`false`|Whether calculation of the third coordination number is enabled.|
+
+### Export
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`ExportInstantaneous`|`bool`|`false`|Whether to export instantaneous coordination numbers to disk. Only valid if the `Instantaneous` option is enabled.|
 
 ### Test
 
