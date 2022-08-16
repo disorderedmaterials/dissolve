@@ -74,8 +74,6 @@ class MainTabsWidget : public QTabWidget
     QPointer<ConfigurationTab> configurationTab(QWidget *page);
     // Find LayerTab containing specified page widget
     QPointer<LayerTab> processingLayerTab(QWidget *page);
-    // Find tab with title specified
-    MainTab *findTab(const QString title);
     // Find tab displaying specified page
     MainTab *findTab(const QWidget *page);
 
@@ -96,8 +94,6 @@ class MainTabsWidget : public QTabWidget
     public:
     // Return current tab
     MainTab *currentTab() const;
-    // Make specified tab the current one
-    void setCurrentTab(const MainTab *tab);
     // Make specified Species tab the current one
     void setCurrentTab(Species *species);
     // Make specified Configuration tab the current one

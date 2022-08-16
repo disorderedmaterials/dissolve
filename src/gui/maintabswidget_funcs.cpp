@@ -122,13 +122,6 @@ QPointer<LayerTab> MainTabsWidget::processingLayerTab(QWidget *page)
     return nullptr;
 }
 
-// Find tab with title specified
-MainTab *MainTabsWidget::findTab(const QString title)
-{
-    auto result = std::find_if(allTabs_.begin(), allTabs_.end(), [&title](auto tab) { return tab->title() == title; });
-    return result == allTabs_.end() ? nullptr : *result;
-}
-
 // Find tab displaying specified page
 MainTab *MainTabsWidget::findTab(const QWidget *page)
 {
@@ -332,9 +325,6 @@ MainTab *MainTabsWidget::currentTab() const
 
     return *result;
 }
-
-// Make specified tab the current one
-void MainTabsWidget::setCurrentTab(const MainTab *tab) { setCurrentWidget(tab->page()); }
 
 // Make specified Species tab the current one
 void MainTabsWidget::setCurrentTab(Species *species)
