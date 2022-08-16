@@ -18,7 +18,7 @@ CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(Proced
     {
         // Process1D - targets Collect1D in source RDF module
         process1D_ = analyser_.createRootNode<Process1DProcedureNode>("HistogramNorm");
-        process1D_->keywords().set("CurrentDataOnly", true);
+        process1D_->keywords().set("Instantaneous", true);
         auto rdfNormalisation = process1D_->addNormalisationBranch();
         siteNormaliser_ =
             rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>());
@@ -47,6 +47,16 @@ CalculateCNModule::CalculateCNModule() : Module("CalculateCN"), analyser_(Proced
     keywords_.add<BoolKeyword>("Ranges", "RangeCEnabled", "Whether calculation of the third coordination number is enabled",
                                sum1D_->rangeEnabled(2));
     keywords_.add<RangeKeyword>("Ranges", "RangeC", "Distance range for third coordination number", sum1D_->range(2));
+    keywords_
+        .add<BoolKeyword>("Ranges", "Instantaneous", "Calculate instantaneous coordination numbers rather than an average",
+                          instantaneous_)
+        ->setEditSignals(KeywordBase::RunSetUp);
+
+    // Export
+    keywords_.add<BoolKeyword>(
+        "Export", "ExportInstantaneous",
+        "Export instantaneous coordination numbers to disk (only if 'Instantaneous' option is enabled)\n",
+        exportInstantaneous_);
 
     // Test
     keywords_.add<OptionalDoubleKeyword>(

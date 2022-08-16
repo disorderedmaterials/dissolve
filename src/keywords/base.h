@@ -90,7 +90,8 @@ class KeywordBase
     {
         RecreateRenderables,
         ReloadExternalData,
-        ClearModuleData
+        ClearModuleData,
+        RunSetUp
     };
 
     private:

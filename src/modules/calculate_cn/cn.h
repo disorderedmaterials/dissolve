@@ -31,6 +31,10 @@ class CalculateCNModule : public Module
     std::optional<double> testRangeB_;
     // Reference coordination number for range C against which calculated value should be tested
     std::optional<double> testRangeC_;
+    // Whether to calculate the instantaneous coordination numbers rather than forming an average
+    bool instantaneous_{false};
+    // Whether to export instantaneous coordination numbers to disk
+    bool exportInstantaneous_{false};
     // Threshold difference at which test comparisons will fail
     double testThreshold_{0.1};
     // Analysis procedure to be run
@@ -54,4 +58,8 @@ class CalculateCNModule : public Module
     private:
     // Run main processing
     bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
+
+    public:
+    // Run set-up stage
+    bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {}) override;
 };
