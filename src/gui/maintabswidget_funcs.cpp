@@ -136,25 +136,6 @@ MainTab *MainTabsWidget::findTab(const QWidget *page)
     return result == allTabs_.end() ? nullptr : *result;
 }
 
-// Generate unique tab name with base name provided
-const QString MainTabsWidget::uniqueTabName(const QString base)
-{
-    static QString uniqueName;
-    QString baseName = base;
-    uniqueName = baseName;
-    auto suffix = 0;
-
-    // Must always have a baseName
-    if (baseName.isEmpty())
-        baseName = "Unnamed";
-
-    // Find an unused name starting with the baseName provided
-    while (findTab(uniqueName))
-        uniqueName = QStringLiteral("%1%2").arg(baseName, ++suffix);
-
-    return uniqueName;
-}
-
 /*
  * Tab Management
  */
@@ -445,18 +426,6 @@ void MainTabsWidget::allowEditing()
 /*
  * Tab Styling
  */
-
-// Set text colour for tab with specified page widget
-void MainTabsWidget::setTabTextColour(QWidget *pageWidget, QColor colour)
-{
-    // Find the tab containing the specified page
-    auto tabIndex = indexOf(pageWidget);
-    if (tabIndex == -1)
-        return;
-
-    // Set the style via the tab bar
-    mainTabsBar_->setTabTextColor(tabIndex, colour);
-}
 
 // Set icon for tab with specified page widget
 void MainTabsWidget::setTabIcon(QWidget *pageWidget, QIcon icon)

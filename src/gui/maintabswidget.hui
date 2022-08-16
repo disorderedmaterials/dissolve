@@ -78,8 +78,6 @@ class MainTabsWidget : public QTabWidget
     MainTab *findTab(const QString title);
     // Find tab displaying specified page
     MainTab *findTab(const QWidget *page);
-    // Generate unique tab name with base name provided
-    const QString uniqueTabName(const QString base);
 
     /*
      * Tab Management
@@ -122,8 +120,6 @@ class MainTabsWidget : public QTabWidget
      * Tab Styling
      */
     public:
-    // Set text colour for tab with specified page widget
-    void setTabTextColour(QWidget *pageWidget, QColor colour);
     // Set icon for tab with specified page widget
     void setTabIcon(QWidget *pageWidget, QIcon icon);
     // Add close button to specified tab
