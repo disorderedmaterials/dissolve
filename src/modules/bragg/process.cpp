@@ -26,11 +26,11 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
                      qMin_, qMax_, qDelta_);
     Messenger::print("Bragg: Multiplicity is ({} {} {}).\n", multiplicity_.x, multiplicity_.y, multiplicity_.z);
-    if (averagingLength_ <= 1)
-        Messenger::print("Bragg: No averaging of reflections will be performed.\n");
-    else
-        Messenger::print("Bragg: Reflections will be averaged over {} sets (scheme = {}).\n", averagingLength_,
+    if (averagingLength_)
+        Messenger::print("Bragg: Reflections will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
                          Averaging::averagingSchemes().keyword(averagingScheme_));
+    else
+        Messenger::print("Bragg: No averaging of reflections will be performed.\n");
     Messenger::print("Multiplicity of unit cell in source configuration is [{} {} {}].\n", multiplicity_.x, multiplicity_.y,
                      multiplicity_.z);
     Messenger::print("\n");
@@ -62,9 +62,9 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     }
 
     // Perform averaging of reflections data if requested
-    if (averagingLength_ > 1)
+    if (averagingLength_)
         Averaging::vectorAverage<std::vector<BraggReflection>>(dissolve.processingModuleData(), "Reflections", name(),
-                                                               averagingLength_, averagingScheme_);
+                                                               averagingLength_.value(), averagingScheme_);
 
     // Form partial and total reflection functions
     formReflectionFunctions(dissolve.processingModuleData(), procPool, targetConfiguration_, qMin_, qDelta_, qMax_);

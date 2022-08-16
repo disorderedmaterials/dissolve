@@ -8,6 +8,7 @@
 #include "keywords/function1d.h"
 #include "keywords/integer.h"
 #include "keywords/module.h"
+#include "keywords/optionalint.h"
 
 RDFModule::RDFModule() : Module("RDF")
 {
@@ -21,8 +22,9 @@ RDFModule::RDFModule() : Module("RDF")
                                  requestedRange_, 1.0);
     keywords_.add<BoolKeyword>("Control", "UseHalfCellRange",
                                "Whether to use the maximal RDF range possible that avoids periodic images", useHalfCellRange_);
-    keywords_.add<IntegerKeyword>("Control", "Averaging", "Number of historical partial sets to combine into final partials",
-                                  averagingLength_, 0);
+    keywords_.add<OptionalIntegerKeyword>("Control", "Averaging",
+                                          "Number of historical partial sets to combine into final partials", averagingLength_,
+                                          1, std::nullopt, 1, "Off");
     keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("Control", "AveragingScheme",
                                                                   "Weighting scheme to use when averaging partials",
                                                                   averagingScheme_, Averaging::averagingSchemes());
@@ -31,11 +33,11 @@ RDFModule::RDFModule() : Module("RDF")
     keywords_.add<EnumOptionsKeyword<RDFModule::PartialsMethod>>("Control", "Method",
                                                                  "Calculation method for partial radial distribution functions",
                                                                  partialsMethod_, RDFModule::partialsMethods());
-    keywords_.add<IntegerKeyword>(
+    keywords_.add<OptionalIntegerKeyword>(
         "Control", "Smoothing",
         "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in "
         "the applied Spline smooth",
-        nSmooths_, 0, 100);
+        nSmooths_, 0, 100, 1, "Off");
 
     // Test
     keywords_.add<BoolKeyword>(
