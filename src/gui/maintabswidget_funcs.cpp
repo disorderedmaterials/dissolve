@@ -332,14 +332,12 @@ void MainTabsWidget::setCurrentTab(Species *species)
     if (!species)
         return;
 
-    for (auto &tab : speciesTabs_)
-        if (tab->species() == species)
-        {
-            setCurrentWidget(tab->page());
-            return;
-        }
-
-    Messenger::error("Can't display SpeciesTab for Species '{}' as it doesn't exist.\n", species->name());
+    auto it = std::find_if(speciesTabs_.begin(), speciesTabs_.end(),
+                           [species](const auto &tab) { return tab->species() == species; });
+    if (it != speciesTabs_.end())
+        setCurrentWidget((*it)->page());
+    else
+        Messenger::error("Can't display SpeciesTab for Species '{}' as it doesn't exist.\n", species->name());
 }
 
 // Make specified Configuration tab the current one
@@ -348,14 +346,12 @@ void MainTabsWidget::setCurrentTab(Configuration *cfg)
     if (!cfg)
         return;
 
-    for (auto tab : configurationTabs_)
-        if (tab->configuration() == cfg)
-        {
-            setCurrentWidget(tab->page());
-            return;
-        }
-
-    Messenger::error("Can't display ConfigurationTab for Configuration '{}' as it doesn't exist.\n", cfg->name());
+    auto it = std::find_if(configurationTabs_.begin(), configurationTabs_.end(),
+                           [cfg](const auto &tab) { return tab->configuration() == cfg; });
+    if (it != configurationTabs_.end())
+        setCurrentWidget((*it)->page());
+    else
+        Messenger::error("Can't display ConfigurationTab for Configuration '{}' as it doesn't exist.\n", cfg->name());
 }
 
 // Make specified processing layer tab the current one
@@ -364,14 +360,12 @@ void MainTabsWidget::setCurrentTab(ModuleLayer *layer)
     if (!layer)
         return;
 
-    for (auto tab : processingLayerTabs_)
-        if (tab->moduleLayer() == layer)
-        {
-            setCurrentWidget(tab->page());
-            return;
-        }
-
-    Messenger::error("Can't display LayerTab for processing layer '{}' as it doesn't exist.\n", layer->name());
+    auto it = std::find_if(processingLayerTabs_.begin(), processingLayerTabs_.end(),
+                           [layer](const auto &tab) { return tab->moduleLayer() == layer; });
+    if (it != processingLayerTabs_.end())
+        setCurrentWidget((*it)->page());
+    else
+        Messenger::error("Can't display LayerTab for processing layer '{}' as it doesn't exist.\n", layer->name());
 }
 
 /*
