@@ -395,8 +395,8 @@ void MainTabsWidget::preventEditing()
     for (auto &[button, page] : closeButtons_)
         button->setDisabled(true);
 
-    // Prevent the context menu from being raised
-    mainTabsBar_->setContextMenuPolicy(Qt::NoContextMenu);
+    // Block the tab bar signals to prevent editing and context menu
+    mainTabsBar_->blockSignals(true);
 }
 
 // Allow editing in all tabs
@@ -409,8 +409,8 @@ void MainTabsWidget::allowEditing()
     for (auto &[button, page] : closeButtons_)
         button->setEnabled(true);
 
-    // Re-enable the context menu from being raised
-    mainTabsBar_->setContextMenuPolicy(Qt::CustomContextMenu);
+    // Re-enable the tab bar signals
+    mainTabsBar_->blockSignals(false);
 }
 
 /*
