@@ -46,6 +46,10 @@ class Function1DKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
     /*
      * Update
      */
+    private:
+    // Update widgets, including visibility of spins and labels
+    void updateWidgetsFromData();
+
     public:
     // Update value displayed in widget
     void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
