@@ -137,8 +137,8 @@ class MainTabsWidget : public QTabWidget
     void contextMenuRequested(const QPoint &pos);
     // Tab close button clicked
     void tabCloseButtonClicked(bool);
-    // Tab bar double-clicked
-    void tabBarDoubleClicked(int index);
+    // Tab double-clicked
+    void tabDoubleClicked(int index);
 
     signals:
     void dataModified();

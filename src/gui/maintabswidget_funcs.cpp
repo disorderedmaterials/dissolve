@@ -15,7 +15,7 @@ MainTabsWidget::MainTabsWidget(QWidget *parent) : QTabWidget(parent)
     // Create our own tab bar
     mainTabsBar_ = new MainTabsBar(this);
     setTabBar(mainTabsBar_);
-    connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
+    connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabDoubleClicked(int)));
     connect(mainTabsBar_, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(contextMenuRequested(const QPoint &)));
 
     // Always show scroll buttons when there are many tabs
@@ -558,8 +558,8 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
     emit(tabClosed(page));
 }
 
-// Tab bar double-clicked
-void MainTabsWidget::tabBarDoubleClicked(int index)
+// Tab double-clicked
+void MainTabsWidget::tabDoubleClicked(int index)
 {
     if (index == -1)
         return;
