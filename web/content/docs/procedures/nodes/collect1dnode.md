@@ -20,7 +20,7 @@ The `Collect1D` node is used to accumulate a histogram of a one-dimensional quan
 
 Where the `Calculate*` nodes are responsible for calculating quantities, the `Collect*` nodes are responsible for accumulating averages, typically in histogram format.
 
-`Collect1D` accumulates a histogram of a target value taken from a `Calculate*` node, over a specified range and binwidth. No post-processing (e.g. normalisation) is performed by `Collect1D` - see the [`Process1D`]({{< ref "Process1dnode" >}}) for processing options.
+`Collect1D` accumulates a histogram of a target value taken from a `Calculate*` node, over a specified range and binwidth. No post-processing (e.g. normalisation) is performed by `Collect1D` - see the {{< gui-node "Process1D" >}}for processing options.
 
 ## Branching
 

@@ -31,7 +31,7 @@ CopySpeciesTermsDialog::CopySpeciesTermsDialog(QWidget *parent, Dissolve &dissol
 bool CopySpeciesTermsDialog::progressionAllowed(int index) const
 {
     if (index == CopySpeciesTermsDialog::SelectSpeciesPage)
-        return !ui_.SpeciesWidget->currentSpecies().empty();
+        return ui_.SpeciesWidget->nSelected() != 0;
 
     return true;
 }
@@ -111,9 +111,9 @@ void CopySpeciesTermsDialog::prepareCopy()
     angleTerms_.clear();
     torsionTerms_.clear();
 
-    if (ui_.SpeciesWidget->currentSpecies().empty())
+    if (ui_.SpeciesWidget->nSelected() == 0)
         return;
-    auto *sp = ui_.SpeciesWidget->currentSpecies().front();
+    auto *sp = ui_.SpeciesWidget->selection().front();
 
     // Assemble list of bonds terms to copy
     if (ui_.CopyBondsCheck->isChecked())

@@ -53,14 +53,6 @@ bool Dissolve::loadInput(LineParser &parser)
                     error = true;
                     break;
                 }
-
-                // Need to update pair potentials in case they're needed in the generator
-                generatePairPotentials();
-                potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
-
-                // Prepare the Configuration
-                if (!cfg->initialiseContent({worldPool_, potentialMap_}))
-                    error = true;
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...
@@ -369,7 +361,13 @@ bool Dissolve::saveInput(std::string_view filename)
         // Write frequency and disabled lines
         if (!parser.writeLineF("  Frequency  {}\n", layer->frequency()))
             return false;
-        if (!layer->isEnabled() && (!parser.writeLineF("  Disabled\n")))
+        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled) && (!parser.writeLineF("  Disabled\n")))
+            return false;
+        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::EnergyStability) &&
+            (!parser.writeLineF("  {}\n", LayerBlock::keywords().keyword(LayerBlock::RequireEnergyStabilityKeyword))))
+            return false;
+        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::SizeFactors) &&
+            (!parser.writeLineF("  {}\n", LayerBlock::keywords().keyword(LayerBlock::RequireNoSizeFactorsKeyword))))
             return false;
 
         for (auto &module : layer->modules())
@@ -444,13 +442,13 @@ bool Dissolve::loadRestart(std::string_view filename)
 
             // Does the Module have a keyword by this name?
             auto result = module->keywords().deserialise(parser, coreData_, 2);
-            if (result == KeywordBase::Unrecognised)
+            if (result == KeywordBase::ParseResult::Unrecognised)
             {
                 Messenger::error("Module '{}' has no keyword '{}'.\n", parser.argsv(2));
                 error = true;
                 break;
             }
-            else if (result == KeywordBase::Failed)
+            else if (result == KeywordBase::ParseResult::Failed)
             {
                 Messenger::error("Failed to read keyword data '{}' from restart file.\n", parser.argsv(2));
                 error = true;

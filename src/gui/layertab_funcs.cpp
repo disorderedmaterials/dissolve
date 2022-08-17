@@ -120,8 +120,7 @@ void LayerTab::removeControlWidget(const Module *module)
             if (ui_.ModuleControlsStack->currentIndex() == n)
                 ui_.ModuleControlsStack->setCurrentIndex((n + 1) < ui_.ModuleControlsStack->count() ? n + 1 : n - 1);
             ui_.ModuleControlsStack->removeWidget(w);
-            w->setParent(nullptr);
-            w->deleteLater();
+            w->prepareForDeletion();
             return;
         }
     }
@@ -137,23 +136,28 @@ void LayerTab::on_ShowAvailableModulesButton_clicked(bool checked)
                                                                                   : "Show Available Modules");
 }
 
-void LayerTab::on_EnabledButton_clicked(bool checked)
+void LayerTab::on_LayerEnabledButton_clicked(bool checked)
 {
     if (refreshLock_.isLocked() || (!moduleLayer_))
         return;
 
-    moduleLayer_->setEnabled(checked);
     if (checked)
+    {
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer.svg"));
+        moduleLayer_->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+    }
     else
+    {
         tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+        moduleLayer_->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
+    }
 
     updateModuleList();
 
     dissolveWindow_->setModified();
 }
 
-void LayerTab::on_FrequencySpin_valueChanged(int value)
+void LayerTab::on_LayerFrequencySpin_valueChanged(int value)
 {
     if (refreshLock_.isLocked() || (!moduleLayer_))
         return;
@@ -163,8 +167,55 @@ void LayerTab::on_FrequencySpin_valueChanged(int value)
     dissolveWindow_->setModified();
 }
 
+void LayerTab::on_RunControlEnergyStabilityCheck_clicked(bool checked)
+{
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
+
+    moduleLayer_->runControlFlags().setState(ModuleLayer::RunControlFlag::EnergyStability, checked);
+
+    dissolveWindow_->setModified();
+}
+
+void LayerTab::on_RunControlSizeFactorsCheck_clicked(bool checked)
+{
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
+
+    moduleLayer_->runControlFlags().setState(ModuleLayer::RunControlFlag::SizeFactors, checked);
+
+    dissolveWindow_->setModified();
+}
+
+void LayerTab::on_ModuleEnabledButton_clicked(bool checked)
+{
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
+
+    auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
+    if (mcw)
+        mcw->module()->setEnabled(checked);
+
+    updateModuleList();
+
+    dissolveWindow_->setModified();
+}
+
+void LayerTab::on_ModuleFrequencySpin_valueChanged(int value)
+{
+    if (refreshLock_.isLocked() || (!moduleLayer_))
+        return;
+
+    auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
+    if (mcw)
+        mcw->module()->setFrequency(value);
+
+    dissolveWindow_->setModified();
+}
+
 void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
+
     auto modelIndices = current.indexes();
 
     // If there is no selected index, show the default page on the stack
@@ -181,6 +232,12 @@ void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItem
         ui_.ModuleControlsStack->setCurrentIndex(0);
         return;
     }
+
+    Locker refreshLocker(refreshLock_);
+
+    // Update the module control widgets
+    ui_.ModuleEnabledButton->setChecked(module->isEnabled());
+    ui_.ModuleFrequencySpin->setValue(module->frequency());
 
     // See if our stack already contains a control widget for the module - if not, create one
     auto *mcw = getControlWidget(module, true);
@@ -296,12 +353,12 @@ void LayerTab::on_AvailableModulesTree_doubleClicked(const QModelIndex &index)
 // Remove all module control widgets
 void LayerTab::removeModuleControlWidgets()
 {
-    for (auto n = 1; n < ui_.ModuleControlsStack->count(); ++n)
+    // Remove all stack pages but the first (which corresponds to the "No Module Selected" widget)
+    while (ui_.ModuleControlsStack->count() > 1)
     {
-        auto *w = ui_.ModuleControlsStack->widget(n);
+        auto *w = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(1));
         ui_.ModuleControlsStack->removeWidget(w);
-        w->setParent(nullptr);
-        w->deleteLater();
+        w->prepareForDeletion();
     }
 }
 
@@ -317,19 +374,33 @@ void LayerTab::updateControls()
 
     Locker refreshLocker(refreshLock_);
 
-    ui_.EnabledButton->setChecked(moduleLayer_->isEnabled());
-    ui_.FrequencySpin->setValue(moduleLayer_->frequency());
+    ui_.LayerEnabledButton->setChecked(!moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
+    ui_.LayerFrequencySpin->setValue(moduleLayer_->frequency());
+
+    ui_.RunControlEnergyStabilityCheck->setChecked(
+        moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::EnergyStability));
+    ui_.RunControlSizeFactorsCheck->setChecked(moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::SizeFactors));
 
     auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
     if (mcw)
+    {
         mcw->updateControls();
+
+        // Update the module control widgets
+        ui_.ModuleEnabledButton->setChecked(mcw->module()->isEnabled());
+        ui_.ModuleFrequencySpin->setValue(mcw->module()->frequency());
+    }
 }
 
 // Prevent editing within tab
 void LayerTab::preventEditing()
 {
-    ui_.EnabledButton->setEnabled(false);
-    ui_.FrequencySpin->setEnabled(false);
+    ui_.LayerEnabledButton->setEnabled(false);
+    ui_.LayerFrequencySpin->setEnabled(false);
+    ui_.RunControlGroup->setEnabled(false);
+    ui_.ModuleEnabledButton->setEnabled(false);
+    ui_.ModuleFrequencySpin->setEnabled(false);
+
     ui_.ModulesList->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_.ModulesList->setDragDropMode(QAbstractItemView::NoDragDrop);
     ui_.AvailableModulesTree->setEnabled(false);
@@ -344,8 +415,11 @@ void LayerTab::preventEditing()
 // Allow editing within tab
 void LayerTab::allowEditing()
 {
-    ui_.EnabledButton->setEnabled(true);
-    ui_.FrequencySpin->setEnabled(true);
+    ui_.LayerEnabledButton->setEnabled(true);
+    ui_.LayerFrequencySpin->setEnabled(true);
+    ui_.RunControlGroup->setEnabled(true);
+    ui_.ModuleEnabledButton->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
+    ui_.ModuleFrequencySpin->setEnabled(ui_.ModuleControlsStack->currentIndex() != 0);
     ui_.AvailableModulesTree->setEnabled(true);
     ui_.ModulesList->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
     ui_.ModulesList->setDragDropMode(QAbstractItemView::DragDrop);

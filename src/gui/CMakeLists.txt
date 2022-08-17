@@ -26,6 +26,7 @@ set(gui_MOC_HDRS
     selectspecieswidget.h
     wizard.hui
     # Dialogs
+    addconfigurationdialog.h
     addforcefieldtermsdialog.h
     copyspeciestermsdialog.h
     datamanagerdialog.h
@@ -54,7 +55,6 @@ set(gui_MOC_HDRS
     # Main UI
     gui.h
     outputhandler.hui
-    tmdiarea.hui
     thread.hui
     maintabsbar.hui
     maintabswidget.hui
@@ -78,6 +78,7 @@ set(gui_UIS
     wizardfooter.ui
     wizardheader.ui
     # Dialogs
+    addconfigurationdialog.ui
     addforcefieldtermsdialog.ui
     copyspeciestermsdialog.ui
     datamanagerdialog.ui
@@ -150,6 +151,7 @@ set(gui_SRCS
     wizard_funcs.cpp
     procedurecontrolstack.cpp
     # Dialogs
+    addconfigurationdialog_funcs.cpp
     addforcefieldtermsdialog_funcs.cpp
     copyspeciestermsdialog_funcs.cpp
     datamanagerdialog_funcs.cpp
@@ -194,7 +196,6 @@ set(gui_SRCS
     outputhandler_funcs.cpp
     stockcolours.cpp
     thread_funcs.cpp
-    tmdiarea_funcs.cpp
     stockcolours.h
 )
 

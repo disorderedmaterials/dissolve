@@ -110,7 +110,7 @@ void GenericList::pruneWithSuffix(std::string_view suffix)
 EnumOptions<GenericList::DeserialisableDataVersion> GenericList::deserialisableDataVersions()
 {
     return EnumOptions<GenericList::DeserialisableDataVersion>(
-        "AveragingScheme", {{GenericList::DeserialisableDataVersion::Version089, "v0.8.9"},
+        "AveragingScheme", {{GenericList::DeserialisableDataVersion::Version08X, "v0.8."},
                             {GenericList::DeserialisableDataVersion::Current, fmt::format("v{}", Version::semantic())}});
 }
 
@@ -162,20 +162,18 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, const std:
                               int dataVersion, int flags)
 {
     // Create the item
-    items_[std::string(name)] = GenericItem::Type(GenericItemProducer::create(itemClass), itemClass, dataVersion, flags);
-    auto &data = std::get<GenericItem::AnyObject>(items_[std::string(name)]);
+    items_[name] = GenericItem::Type(GenericItemProducer::create(itemClass), itemClass, dataVersion, flags);
+    auto &data = std::get<GenericItem::AnyObject>(items_[name]);
 
     // Find its deserialiser and call it
     if (!GenericItemDeserialiser::deserialise(data, parser, coreData))
         return Messenger::error(fmt::format("Deserialisation of item '{}' failed.\n", name));
 
-    // Check for legacy objects - we don't re-serialise them
+    // Check for legacy objects - we don't store them in the items_ map
     if (GenericItemDeserialiser::isLegacyObject(data))
     {
-        Messenger::warn("Legacy data '{}' will not be captured in written restart files.\n", itemClass);
-        auto &itemFlags = std::get<GenericItem::Flags>(items_[std::string(name)]);
-        if (itemFlags & GenericItem::InRestartFileFlag)
-            itemFlags -= GenericItem::InRestartFileFlag;
+        Messenger::warn("Legacy data '{}' ({}) will not be captured in written restart files.\n", name, itemClass);
+        items_.erase(name);
     }
 
     return true;

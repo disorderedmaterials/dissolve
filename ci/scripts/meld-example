@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Meld example pages into monolithic one-page markdown file
+
+EXAMPLE_DIR=""
+
+usage()
+{
+  echo "Usage: $0 [-d example root directory] [-p]"
+  exit 1
+}
+
+# Parse options
+while getopts "d:" opt
+do
+  case "${opt}" in
+    d)
+      EXAMPLE_DIR=${OPTARG}
+      echo "Example directory is: '${EXAMPLE_DIR}'"
+      ;;
+    \?)
+      usage
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+if [ "x${EXAMPLE_DIR}" = "x" ]
+then
+  echo "Error: Example directory must be provided."
+  exit 1
+fi
+if [ ! -d "${EXAMPLE_DIR}" ]
+then
+  echo "Error: Example directory does not exist."
+  exit 1
+fi
+cd ${EXAMPLE_DIR}
+
+# Check for _index.md
+if [ ! -e "_index.md" ]
+then
+  echo "Error: Example directory does not contain _index.md."
+  exit 1
+fi
+echo "Found _index.md"
+
+# Check for steps
+STEPS=()
+for a in $(ls -1 step*md | sed "s/step\(.*\).md/\1/g" | sort -n)
+do
+  STEPS+=("step${a}.md")
+done
+if (( ${#STEPS[*]} == 0 ))
+then
+  echo "Error: Example directory does not contain any steps."
+  exit 1
+fi
+echo "Found ${#STEPS[*]} individual steps in the example file directory."
+
+# Assemble the monolithic file
+# We will process the files to:
+# - Remove frontmatter and convert title into a section heading
+# - Remove uses of {{< button ... >}} navigation constructs
+
+# Create the basic md file header
+{ echo "---"; echo "title: View Single Page Version"; echo "linkTitle: View Single Page Version"; echo "---"; } > single.md
+
+# Filter index file and append
+echo "Filtering _index.md..."
+sed -e "/^weight:/d" -e "/^type:/d" -e "/^---$/d" -e "s/title:\(.*\)/{{< blocks\/section color=\"white\" >}}\n# \1\n{{< \/blocks\/section >}}/g" -e "s/description:\(.*\)/{{< blocks\/section color=\"white\" >}}\n## \1\n{{< \/blocks\/section >}}/g" -e "/{{< button /d" _index.md >> single.md
+
+# Steps
+for step in "${STEPS[@]}"
+do
+  echo "Filtering ${step}..."
+  sed -e "/^weight:/d" -e "/^type:/d" -e "/^---$/d" -e "s/title:\(.*\)/\n\n## \1\n/g" -e "/{{< button /d" ${step} >> single.md
+done

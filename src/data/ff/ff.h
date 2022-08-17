@@ -159,11 +159,11 @@ class Forcefield
     // Assign suitable AtomType to the supplied atom
     bool assignAtomType(SpeciesAtom &i, CoreData &coreData, bool setSpeciesAtomCharges) const;
     // Assign / generate bond term parameters
-    virtual bool assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const;
+    virtual bool assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const;
     // Assign / generate angle term parameters
-    virtual bool assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const;
+    virtual bool assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const;
     // Assign / generate torsion term parameters
-    virtual bool assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const;
+    virtual bool assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion, bool determineTypes) const;
     // Assign / generate improper term parameters
     virtual bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
                                               SpeciesAtom *l, bool determineTypes) const;

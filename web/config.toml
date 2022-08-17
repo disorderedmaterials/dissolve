@@ -4,7 +4,7 @@ defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = false
 
 title = "Dissolve"
-theme = "docsy"
+theme = ["github.com/google/docsy", "github.com/google/docsy/dependencies"]
 
 enableGitInfo = true
 enableInlineShortcodes = true
@@ -52,9 +52,9 @@ latexDashes = true
 # General Parameters
 [params]
 copyright = "Copyright (c) 2022 Team Dissolve and contributors. Built using Hugo/Docsy."
-releaseVersion = "0.9.0"
-releaseDate = "24th May 2022"
-devVersion = "0.9.0"
+releaseVersion = "0.9.5"
+releaseDate = "1st August 2022"
+devVersion = "1.0.0"
 github_repo = "https://github.com/disorderedmaterials/dissolve"
 github_subdir = "web"
 github_branch = "develop"
@@ -76,3 +76,11 @@ navbar_logo = true
     url = "https://github.com/disorderedmaterials/dissolve"
     icon = "fab fa-github"
         desc = "Development takes place here!"
+
+# Modules
+[module]
+proxy = "direct"
+[[module.imports]]
+path = "github.com/google/docsy"
+[[module.imports]]
+path = "github.com/google/docsy/dependencies"

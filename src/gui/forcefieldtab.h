@@ -62,6 +62,10 @@ class ForcefieldTab : public QWidget, public MainTab
     // Allow editing within tab
     void allowEditing() override;
 
+    public:
+    // Reset pair potential model
+    void resetPairPotentialModel();
+
     /*
      * Signals / Slots
      */
@@ -88,7 +92,7 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
     void on_AutoUpdatePairPotentialsCheck_clicked(bool checked);
     void pairPotentialDataChanged(const QModelIndex &current, const QModelIndex &previous, const QVector<int> &);
-    void pairPotentialTableRowChanged(const QModelIndex &current, const QModelIndex &previous);
+    void pairPotentialSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     // Master Terms
     void masterBondsDataChanged(const QModelIndex &, const QModelIndex &);
     void masterAnglesDataChanged(const QModelIndex &, const QModelIndex &);

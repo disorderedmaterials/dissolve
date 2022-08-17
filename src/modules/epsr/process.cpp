@@ -53,7 +53,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
                 name_, module->name());
 
         // Check for number of targets, or different target if there's only 1
-        auto rdfConfigs = rdfModule->keywords().get<std::vector<Configuration *>>("Configurations");
+        auto rdfConfigs = rdfModule->keywords().getVectorConfiguration("Configurations");
         if (rdfConfigs.size() != 1)
             return Messenger::error(
                 "[SETUP {}] RDF module '{}' targets multiple configurations, which is not permitted when using "
@@ -134,9 +134,6 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     else
         Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials "
                          "will not be modified).\n");
-    if (onlyWhenEnergyStable_)
-        Messenger::print("EPSR: Potential refinement will only be performed if all related Configuration energies are "
-                         "stable.\n");
     Messenger::print("EPSR: Range for potential generation is {} < Q < {} Angstroms**-1.\n", qMin_, qMax_);
     Messenger::print("EPSR: Weighting factor used when applying fluctuation coefficients is {}\n", weighting_);
     if (saveDifferenceFunctions_)
@@ -161,20 +158,6 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     if (!targetConfiguration_)
         return Messenger::error("No target configuration is set.\n");
-
-    // Is the ctarget configuration's energy stable?
-    if (onlyWhenEnergyStable_)
-    {
-        auto stabilityResult = EnergyModule::checkStability(dissolve.processingModuleData(), targetConfiguration_);
-        if (stabilityResult == EnergyModule::NotAssessable)
-            return false;
-        else if (stabilityResult > 0)
-        {
-            Messenger::print("Configuration energy is not yet stable. No potential refinement will be "
-                             "performed this iteration.\n");
-            return true;
-        }
-    }
 
     /*
      * EPSR Main

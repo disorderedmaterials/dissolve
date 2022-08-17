@@ -42,8 +42,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          torsionStepSize_, torsionStepSizeMin_, torsionStepSizeMax_);
     Messenger::print("IntraShake: Target acceptance rate is {}.\n", targetAcceptanceRate_);
     if (termEnergyOnly_)
-        Messenger::print("IntraShake: Only term energy will be considered (interatomic contributions with the "
-                         "system will be excluded).\n");
+        Messenger::print("IntraShake: Only term energy will be considered (interactions with the rest of the"
+                         "system will be ignored).\n");
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -107,7 +107,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             changeStore.add(mol);
 
             // Calculate reference pairpotential energy for Molecule
-            ppEnergy = termEnergyOnly_ ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+            ppEnergy = termEnergyOnly_ ? 0.0 : kernel.energy(*mol, true, ProcessPool::subDivisionStrategy(strategy));
 
             // Loop over defined bonds
             if (adjustBonds_)
@@ -139,7 +139,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         targetConfiguration_->updateCellLocation(bond.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+                        newPPEnergy =
+                            termEnergyOnly_ ? 0.0 : kernel.energy(*mol, true, ProcessPool::subDivisionStrategy(strategy));
                         newIntraEnergy = bond.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(bond, *i, *j);
 
                         // Trial the transformed Molecule
@@ -189,18 +190,19 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         transform.createRotationAxis(v.x, v.y, v.z, randomBuffer.randomPlusMinusOne() * angleStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
-                        mol->transform(box, transform, angle.j()->r(), angle.attachedAtoms(terminus));
+                        mol->transform(box, transform, j->r(), angle.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
                         targetConfiguration_->updateCellLocation(angle.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+                        newPPEnergy =
+                            termEnergyOnly_ ? 0.0 : kernel.energy(*mol, true, ProcessPool::subDivisionStrategy(strategy));
                         newIntraEnergy = angle.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(angle, *i, *j, *k);
 
                         // Trial the transformed Molecule
                         delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
+                        accept = delta < 0 || (randomBuffer.random() < exp(-delta * rRT));
 
                         // Accept new (current) positions of the Molecule's Atoms?
                         if (accept)
@@ -252,7 +254,8 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         targetConfiguration_->updateCellLocation(torsion.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel.energy(*mol, ProcessPool::subDivisionStrategy(strategy));
+                        newPPEnergy =
+                            termEnergyOnly_ ? 0.0 : kernel.energy(*mol, true, ProcessPool::subDivisionStrategy(strategy));
                         newIntraEnergy =
                             torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
 

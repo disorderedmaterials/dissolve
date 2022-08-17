@@ -11,11 +11,11 @@ steps:
       set -ex
       # -- General
       brew update-reset
-      brew install ftgl
+      brew install ftgl ninja
       curl https://raw.githubusercontent.com/antlr/website-antlr4/gh-pages/download/antlr-4.9.3-complete.jar  --output antlr.jar
       # -- Qt
       sudo pip3 install conan aqtinstall
-      aqt install-qt --outputdir /tmp/qt mac desktop ${{ parameters.qtver }} -m qtcharts
+      aqt install-qt --outputdir /tmp/qt mac desktop ${{ parameters.qtver }}
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
@@ -27,6 +27,6 @@ steps:
       mkdir build
       cd build
       conan install .. --build missing
-      cmake -DGUI:bool=true -DMULTI_THREADING:bool=${{ parameters.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
-      make
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ parameters.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake --build . --config Release
     displayName: 'Build'

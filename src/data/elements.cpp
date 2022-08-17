@@ -104,7 +104,7 @@ Element element(std::string_view symbol)
             continue;
         else if (std::isalpha(c))
             cleaned += c;
-        else if (std::isdigit(c))
+        else if (std::isdigit(c) && nDigits == cleaned.size())
         {
             cleaned += c;
             ++nDigits;
@@ -138,5 +138,14 @@ std::string_view symbol(Element Z) { return elementData_[Z].symbol(); }
 
 // Return group for element with specified Z
 int group(Element Z) { return elementData_[Z].group(); }
+
+// Return whether the supplied element is metallic
+bool isMetallic(Element Z)
+{
+    const auto grp = group(Z);
+    return (grp == 1 && Z != Elements::H) || (grp >= 2 && grp <= 12) || (grp == 13 && Z != Elements::B) ||
+           (grp == 14 && Z >= Elements::Sn) || (grp == 15 && Z >= Elements::Bi) || (grp == 16 && Z >= Elements::Po) ||
+           (grp == 17 && Z >= Elements::Ts) || (grp == 18 && Z >= Elements::Og);
+}
 
 } // namespace Elements

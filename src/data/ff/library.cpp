@@ -21,8 +21,8 @@
 #include "data/ff/strader2002/dmso.h"
 #include "data/ff/uff/uff.h"
 #include "data/ff/uff/uff4mof.h"
-#include "data/ff/xml/base.h"
 #include "data/ff/zhang2013/zhang2013.h"
+#include "data/ff/zhao2010/zhao2010.h"
 #include <utility>
 
 // Static Members
@@ -79,6 +79,7 @@ void ForcefieldLibrary::registerForcefields()
     registerForcefield_(std::make_shared<Forcefield_UFF>());
     registerForcefield_(std::make_shared<Forcefield_UFF4MOF>());
     registerForcefield_(std::make_shared<Forcefield_Zhang2013>());
+    registerForcefield_(std::make_shared<Forcefield_Zhao2010>());
 }
 
 /*

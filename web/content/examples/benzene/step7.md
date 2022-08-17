@@ -14,7 +14,7 @@ You'll see here a graph of the individual r-factors for the three datasets, as w
 
 {{< cimage src="../ereq3.png" caption="Comparison of reference vs simulated structure factors at ereq=3.0" >}}
 
-The fits should be reqlly quite good, but you might observe some "ripples" in the simulated structure factors at lower $Q$ values, as is the case in the image above. These do not arise from structure in the system, but rather are high-frequency Fourier ripples caused by truncation of the partial radial distribution functions, made worse in the present case because our system isn't that large (100 molecules). We can remove some of that effect by introducing a window function into the Fourier transform when generating our structure factors:
+The fits should be really quite good, but you might observe some "ripples" in the simulated structure factors at lower $Q$ values, as is the case in the image above. These do not arise from structure in the system, but rather are high-frequency Fourier ripples caused by truncation of the partial radial distribution functions, made worse in the present case because our system isn't that large (100 molecules). We can remove some of that effect by introducing a window function into the Fourier transform when generating our structure factors:
 
 First, stop the simulation if it's running:
 {{< action type="key" text="Escape" />}}

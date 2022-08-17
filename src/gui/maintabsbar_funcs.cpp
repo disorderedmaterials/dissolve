@@ -3,4 +3,8 @@
 
 #include "gui/maintabsbar.hui"
 
-MainTabsBar::MainTabsBar(QWidget *parent) : QTabBar(parent) {}
+MainTabsBar::MainTabsBar(QWidget *parent) : QTabBar(parent)
+{
+    // Enable custom context menu
+    setContextMenuPolicy(Qt::CustomContextMenu);
+}

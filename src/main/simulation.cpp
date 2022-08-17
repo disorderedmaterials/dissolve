@@ -59,13 +59,22 @@ bool Dissolve::prepare()
         newPairPotentialRange = pairPotentialRange_;
     }
 
+    // Make sure pair potentials are up-to-date
+    if (!regeneratePairPotentials())
+        return false;
+
     // Check Configurations
     std::set<const Species *> globalUsedSpecies;
     for (auto &cfg : configurations())
     {
-        // Regenerate cell array if the pair potential range has changed
-        if (newPairPotentialRange)
-            cfg->updateCells(7.0, *newPairPotentialRange);
+        // If the configuration is empty, initialise it now
+        if (cfg->nMolecules() == 0)
+        {
+            if (!cfg->initialiseContent({worldPool_, potentialMap_}))
+                return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
+        }
+        else if (newPairPotentialRange)
+            cfg->updateCells(*newPairPotentialRange);
 
         // Check Box extent against pair potential range
         auto maxPPRange = cfg->box()->inscribedSphereRadius();
@@ -86,11 +95,11 @@ bool Dissolve::prepare()
     // Check pair potential style - first, determine which styles might be valid for use
     // -- Configuration charges must always be zero
     auto neutralConfigsWithPPCharges = std::all_of(configurations().begin(), configurations().end(),
-                                                   [](const auto &cfg) { return cfg->totalCharge(true) < 1.0e-5; });
+                                                   [](const auto &cfg) { return fabs(cfg->totalCharge(true)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on atom types    : {}\n",
                             DissolveSys::btoa(neutralConfigsWithPPCharges));
     auto neutralConfigsWithSpeciesCharges = std::all_of(configurations().begin(), configurations().end(),
-                                                        [](const auto &cfg) { return cfg->totalCharge(false) < 1.0e-5; });
+                                                        [](const auto &cfg) { return fabs(cfg->totalCharge(false)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on species atoms : {}\n",
                             DissolveSys::btoa(neutralConfigsWithSpeciesCharges));
 
@@ -130,8 +139,13 @@ bool Dissolve::prepare()
         if (neutralConfigsWithPPCharges && atomTypesHaveValidAtomicCharges)
             Messenger::print("[MANUAL] Pair potentials will include Coulomb terms - charges will be taken from atom types.\n");
         else if (!neutralConfigsWithPPCharges)
-            return Messenger::error("Atom type charges in pair potentials requested, but at least one configuration is not "
-                                    "neutral with this approach.\n");
+        {
+            Messenger::error("Atom type charges in pair potentials requested, but at least one configuration is not "
+                             "neutral with this approach.\n");
+            for (const auto &cfg : configurations())
+                Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(true));
+            return false;
+        }
         else if (forceChargeSource_)
             Messenger::warn(
                 "Atom type charges in pair potentials requested, but some atom types have zero charge which is suspicious.\n");
@@ -148,8 +162,13 @@ bool Dissolve::prepare()
             Messenger::print(
                 "[MANUAL] Pair potentials will not include Coulomb terms - charges will be taken from species atoms.\n");
         else if (!neutralConfigsWithSpeciesCharges)
-            return Messenger::error("Ths use of species atom charges was requested, but at least one configuration is not "
-                                    "neutral with this approach.\n");
+        {
+            Messenger::error("Ths use of species atom charges was requested, but at least one configuration is not "
+                             "neutral with this approach.\n");
+            for (const auto &cfg : configurations())
+                Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(false));
+            return false;
+        }
         else if (forceChargeSource_)
             Messenger::warn("The use of species atom charges was requested, but some have zero charge which is suspicious.\n");
         else
@@ -163,11 +182,6 @@ bool Dissolve::prepare()
     if (!regeneratePairPotentials())
         return false;
 
-    // Create PairPotential matrix
-    Messenger::print("Creating PairPotential matrix ({}x{})...\n", coreData_.nAtomTypes(), coreData_.nAtomTypes());
-    if (!potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_))
-        return false;
-
     // Generate attached atom lists if IntraShake modules are present and enabled
     auto intraShakeModules = Module::allOfType("IntraShake");
     if (!intraShakeModules.empty())
@@ -175,7 +189,7 @@ bool Dissolve::prepare()
         Messenger::print("Generating attached atom lists for required species...");
         for (auto *module : intraShakeModules)
         {
-            auto *cfg = dynamic_cast<IntraShakeModule *>(module)->keywords().get<Configuration *>("Configuration");
+            auto *cfg = dynamic_cast<IntraShakeModule *>(module)->keywords().getConfiguration("Configuration");
             for (auto &sp : coreData_.species())
                 if (cfg->containsSpecies(sp.get()) && !sp->attachedAtomListsGenerated())
                 {
@@ -219,7 +233,7 @@ bool Dissolve::iterate(int nIterations)
         {
             Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
-            if (!layer->isEnabled())
+            if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
                 continue;
 
             auto layerExecutionCount = iteration_ / layer->frequency();
@@ -261,12 +275,16 @@ bool Dissolve::iterate(int nIterations)
          */
         for (auto &layer : processingLayers_)
         {
-            // Check if this layer is due to run
+            // Check if this layer is due to run this iteration
             if (!layer->runThisIteration(iteration_))
                 continue;
 
             Messenger::banner("Layer '{}'", layer->name());
             auto layerExecutionCount = iteration_ / layer->frequency();
+
+            // Check run-control settings
+            if (!layer->canRun(processingModuleData_))
+                continue;
 
             for (auto &module : layer->modules())
             {
@@ -373,7 +391,7 @@ std::optional<double> Dissolve::estimateRequiredTime(int nIterations)
 
     for (const auto &layer : processingLayers_)
     {
-        if (!layer->isEnabled())
+        if (layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
             continue;
 
         // Determine how many times this layer will run in the provided number of iterations

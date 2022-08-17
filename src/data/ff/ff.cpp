@@ -348,7 +348,7 @@ void Forcefield::assignAtomType(const ForcefieldAtomType &ffa, SpeciesAtom &i, C
 }
 
 // Assign / generate bond term parameters
-bool Forcefield::assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const
+bool Forcefield::assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const
 {
     // Default implementation - search term lists in the forcefield
     auto *i = bond.i();
@@ -370,7 +370,7 @@ bool Forcefield::assignBondTermParameters(SpeciesBond &bond, bool determineTypes
 }
 
 // Assign / generate angle term parameters
-bool Forcefield::assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const
+bool Forcefield::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const
 {
     // Default implementation - search term lists in the forcefield
     auto *i = angle.i();
@@ -394,7 +394,7 @@ bool Forcefield::assignAngleTermParameters(SpeciesAngle &angle, bool determineTy
 }
 
 // Assign / generate torsion term parameters
-bool Forcefield::assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const
+bool Forcefield::assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion, bool determineTypes) const
 {
     // Default implementation - search term lists in the forcefield
     SpeciesAtom *i = torsion.i();
@@ -451,7 +451,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         if (selectionOnly && (!bond.isSelected()))
             continue;
 
-        if (!assignBondTermParameters(bond, determineTypes))
+        if (!assignBondTermParameters(sp, bond, determineTypes))
             return false;
     }
 
@@ -461,7 +461,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         if (selectionOnly && (!angle.isSelected()))
             continue;
 
-        if (!assignAngleTermParameters(angle, determineTypes))
+        if (!assignAngleTermParameters(sp, angle, determineTypes))
             return false;
     }
 
@@ -471,7 +471,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         if (selectionOnly && (!torsion.isSelected()))
             continue;
 
-        if (!assignTorsionTermParameters(torsion, determineTypes))
+        if (!assignTorsionTermParameters(sp, torsion, determineTypes))
             return false;
     }
 

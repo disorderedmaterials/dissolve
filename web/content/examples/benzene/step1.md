@@ -25,12 +25,12 @@ A new editor window opens in which we can draw the rough geometry and connectivi
 Time to make it a little prettier!  We'll assign a standard forcefield to it, and optimise the geometry:
 
 {{< action type="menu" text="Species &#8680; Add Forcefield Terms..." />}}
-{{< step >}} From the available forcefields choose `OPLSAA2005/Aromatics` and click {{< gui-button text="Next" >}}{{< /step >}}
+{{< step >}} From the available forcefields choose `OPLSAA2005/Aromatics` and click {{< gui-button text="Next" icon="general_arrowright" >}}{{< /step >}}
 {{< tip text="You can filter forcefields by keywords in name and description by using the filter box at the top-right of the forcefield selection controls." />}}
-{{< step >}} We will use the default _Determine atom types for all atoms_ option to add atom types for every atom in the species, so click {{< gui-button text="Next" >}}{{< /step >}}
-{{< step >}} There will be no conflicts with existing atom types as there are no atom types already defined, so click {{< gui-button text="Next" >}}{{< /step >}}
-{{< step >}} For the intramolecular terms we want to assign them and reduce to master terms (the default settings) so click {{< gui-button text="Next" >}} to proceed{{< /step >}}
-{{< step >}} There will be no conflicts with existing master terms, so click {{< gui-button text="Finish" >}} to exit the wizard {{< /step >}}
+{{< step >}} We will use the default _Determine atom types for all atoms_ option to add atom types for every atom in the species, so click {{< gui-button text="Next" icon="general_arrowright" >}}{{< /step >}}
+{{< step >}} There will be no conflicts with existing atom types as there are no atom types already defined, so click {{< gui-button text="Next" icon="general_arrowright" >}}{{< /step >}}
+{{< step >}} For the intramolecular terms we want to assign them and reduce to master terms (the default settings) so click {{< gui-button text="Next" icon="general_arrowright" >}} to proceed{{< /step >}}
+{{< step >}} There will be no conflicts with existing master terms, so click {{< gui-button text="Finish" icon="general_true" >}} to exit the wizard {{< /step >}}
 {{< iconaction type="viewer_medic" text="Click the \"medic\" icon in the species viewer toolbar to optimise the geometry of the molecule using the forcefield we've just applied" />}}
 
 

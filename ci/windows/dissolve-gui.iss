@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dissolve-GUI"
-#define MyAppVersion "0.9.0"
+#define MyAppVersion "0.9.5"
 #define MyAppPublisher "Team Dissolve"
 #define MyAppURL "https://www.projectdissolve.com/"
 #define MyAppExeName "Dissolve-GUI.exe"
@@ -12,6 +12,7 @@
 #define FreetypeDir GetEnv('FREETYPE_DIR')
 #define FTGLDir GetEnv('FTGL_DIR')
 #define QtDir GetEnv('Qt6_DIR')
+#define DeployDir GetEnv('DEPLOY_DIR')
 ;#define MinGWDir GetEnv('MINGW_DIR')
 
 [Setup]
@@ -30,7 +31,7 @@ DefaultDirName={commonpf}\Dissolve-GUI
 DefaultGroupName={#MyAppName}
 LicenseFile=..\..\LICENSE.txt
 OutputDir=..\..\
-OutputBaseFilename=Dissolve-GUI-0.9.0-Win64
+OutputBaseFilename=Dissolve-GUI-0.9.5-Win64
 SetupIconFile=Dissolve.ico
 Compression=lzma
 SolidCompression=yes
@@ -62,6 +63,10 @@ Source: "{#QtDir}\plugins\imageformats\*.dll"; DestDir: "{app}\bin\imageformats"
 ;Source: "C:\Windows\System32\D3DCompiler_43.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; Windows 10
 Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+; Conan Dependencies
+Source: "{#DeployDir}\tbb\bin\tbb.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\tbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\tbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; IconFilename: "{app}\bin\Dissolve.ico"; Filename: "{app}\bin\{#MyAppExeName}"; WorkingDir: "{app}"

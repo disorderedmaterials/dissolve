@@ -13,17 +13,17 @@ We'll now describe the interactions for your argon species by taking the terms f
 
 {{< action type="menu" text="Species &#8680; Add Forcefield Terms..." />}}
 
-{{< step >}}From the available forcefields choose `OPLSAA2005/NobleGases` and click {{< gui-button text="Next" >}}{{< /step >}}
+{{< step >}}From the available forcefields choose `OPLSAA2005/NobleGases` and click {{< gui-button text="Next" icon="general_arrowright" >}}{{< /step >}}
 
-{{< step >}}Here we choose how to assign atom types to the species - the default option of _Determine atom types for all atoms_ uses connectivity descriptions in the forcefield to try and automatically choose which type to use. Leave this option selected and click {{< gui-button text="Next" >}}{{< /step >}}  
+{{< step >}}Here we choose how to assign atom types to the species - the default option of _Determine atom types for all atoms_ uses connectivity descriptions in the forcefield to try and automatically choose which type to use. Leave this option selected and click {{< gui-button text="Next" icon="general_arrowright" >}}{{< /step >}}  
 
-{{< step >}}There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Finish" >}} to complete the wizard{{< /step >}}
+{{< step >}}There will be no conflicts between the proposed atom types and existing ones defined in the main simulation (since there aren't any) so click {{< gui-button text="Finish" icon="general_true" >}} to complete the wizard{{< /step >}}
 
-{{< tip text="For more complicated (molecular) species the wizard also handles how _intra_-molecular terms are generated. You also may have to deal with potential naming conflicts with existing terms in the main simulation, which the _Add Forcefield Terms_ wizard will help you resolve." >}}
+{{< tip text="For more complicated (molecular) species the wizard also handles how _intra_-molecular terms are generated. You also may have to deal with potential naming conflicts with existing terms in the main simulation, which the _Add Forcefield Terms_ wizard will help you resolve." />}}
 
-If you now return to the {{< gui-tab type="ff"  >}} tab you will see in the **Atom Types** section that we have an atom type for our argon atom which contains the necessary interaction parameters. The short range type (_SR Form_ in the table) specifies the functional form of the van der Waals interaction parameters for each atom type, which in our case is `LJGeometric` indicating that the parameters reflect a standard Lennard-Jones potential utilising [geometric combination rules]({{< ref "short-range" >}}). Those parameters (`epsilon` and `sigma`) are shown in the _SR Parameters_ column and describe how our argon atoms will interact with each other in the simulation.
+If you now return to the {{< gui-tab type="ff" text="Forcefield" >}} tab you will see in the **Atom Types** section that we have an atom type for our argon atom which contains the necessary interaction parameters. The short range type (_SR Form_ in the table) specifies the functional form of the van der Waals interaction parameters for each atom type, which in our case is `LJGeometric` indicating that the parameters reflect a standard Lennard-Jones potential utilising [geometric combination rules]({{< ref "short-range" >}}). Those parameters (`epsilon` and `sigma`) are shown in the _SR Parameters_ column and describe how our argon atoms will interact with each other in the simulation.
 
-{{< warn text="Atom types are strictly associated with a chemical element, and can only be applied to atoms of the same element." >}}
+{{< warn text="Atom types are strictly associated with a chemical element, and can only be applied to atoms of the same element." />}}
 
 By default, Dissolve will generate all the necessary pair potentials for the current set of atom types automatically - these are listed in the **Pair Potentials** section where you can also select individual potentials and visualise them in the associated plot.
 

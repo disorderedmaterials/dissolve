@@ -173,6 +173,8 @@ std::string_view name(Element Z);
 std::string_view symbol(Element Z);
 // Return group for element with specified Z
 int group(Element Z);
+// Return whether the supplied element is metallic
+bool isMetallic(Element Z);
 
 }; // namespace Elements
 

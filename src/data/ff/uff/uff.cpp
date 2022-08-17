@@ -334,7 +334,7 @@ double Forcefield_UFF::electronegativityCorrection(const ForcefieldAtomType &i, 
 }
 
 // Assign / generate bond term parameters
-bool Forcefield_UFF::assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const
+bool Forcefield_UFF::assignBondTermParameters(const Species *parent, SpeciesBond &bond, bool determineTypes) const
 {
     auto typeI = determineTypes ? determineAtomType(*bond.i()) : atomTypeByName(bond.i()->atomType()->name());
     auto typeJ = determineTypes ? determineAtomType(*bond.j()) : atomTypeByName(bond.j()->atomType()->name());
@@ -365,7 +365,7 @@ bool Forcefield_UFF::assignBondTermParameters(SpeciesBond &bond, bool determineT
 }
 
 // Assign / generate angle term parameters
-bool Forcefield_UFF::assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const
+bool Forcefield_UFF::assignAngleTermParameters(const Species *parent, SpeciesAngle &angle, bool determineTypes) const
 {
     auto typeI = determineTypes ? determineAtomType(*angle.i()) : atomTypeByName(angle.i()->atomType()->name());
     auto typeJ = determineTypes ? determineAtomType(*angle.j()) : atomTypeByName(angle.j()->atomType()->name());
@@ -432,7 +432,7 @@ bool Forcefield_UFF::assignAngleTermParameters(SpeciesAngle &angle, bool determi
 }
 
 // Assign / generate torsion term parameters
-bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const
+bool Forcefield_UFF::assignTorsionTermParameters(const Species *parent, SpeciesTorsion &torsion, bool determineTypes) const
 {
     auto typeI = determineTypes ? determineAtomType(*torsion.i()) : atomTypeByName(torsion.i()->atomType()->name());
     auto typeJ = determineTypes ? determineAtomType(*torsion.j()) : atomTypeByName(torsion.j()->atomType()->name());

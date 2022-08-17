@@ -57,6 +57,10 @@ class ForcesModule : public Module
     public:
     // Calculate internal molecule forces, optionally only over the supplied molecules
     static void internalMoleculeForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                                       bool includePairPotentialTerms, std::vector<Vec3<double>> &fInter,
+                                       std::vector<Vec3<double>> &fIntra,
+                                       OptionalReferenceWrapper<std::vector<const Molecule *>> targetMolecules = std::nullopt);
+    static void internalMoleculeForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                        bool includePairPotentialTerms, std::vector<Vec3<double>> &f,
                                        OptionalReferenceWrapper<std::vector<const Molecule *>> targetMolecules = std::nullopt);
     // Calculate pair potential forces within the specified Configuration
@@ -64,8 +68,15 @@ class ForcesModule : public Module
                                     std::vector<Vec3<double>> &f);
     // Calculate total forces within the specified Configuration
     static void totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                            std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra,
+                            OptionalReferenceWrapper<Timer> commsTimer = {});
+    static void totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                             std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer = {});
     // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
+    static void totalForces(const ProcessPool &procPool, Configuration *cfg,
+                            const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
+                            std::vector<Vec3<double>> &fInter, std::vector<Vec3<double>> &fIntra,
+                            OptionalReferenceWrapper<Timer> commsTimer = {});
     static void totalForces(const ProcessPool &procPool, Configuration *cfg,
                             const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
                             std::vector<Vec3<double>> &f, OptionalReferenceWrapper<Timer> commsTimer = {});

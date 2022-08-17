@@ -15,7 +15,7 @@ There is a hint in the structure factors for the H<sub>2</sub>O sample (particul
 
 Clearly we have a mismatch between the experimental (red) and simulated (green) peak positions at around 1 &#8491; (related to the O-H bond) and 1.7 &#8491; (related to the H-O-H angle). It is usually necessary to adjust the geometry of your species a little in order to be consistent with the experimentally-measured data, and in the present case we are lucky that we only have two parameters to adjust!
 
-{{< warn text="Here we are modifying the intramolecular terms based on comparison of the D<sub>2</sub>O data, but bear in mind that liquid water is amongst the systems most sensitive to isotopic substitution since all hydrogens are hydroxyl hydrogens, and subject to exchange as well as strong hydrogen bonding. As such, the differences in intramolecular geometry between H<sub>2</sub>O and D<sub>2</sub>O are measurable.<sup>[1]</sup>" >}}
+{{< warn text="Here we are modifying the intramolecular terms based on comparison of the D<sub>2</sub>O data, but bear in mind that liquid water is amongst the systems most sensitive to isotopic substitution since all hydrogens are hydroxyl hydrogens, and subject to exchange as well as strong hydrogen bonding. As such, the differences in intramolecular geometry between H<sub>2</sub>O and D<sub>2</sub>O are measurable.<sup>[1]</sup>" />}}
 
 Since we set up our simulation to use intramolecular master terms (via the **Add Forcefield Terms...** wizard) we can modify those to directly affect our water molecule's geometry. For the O&ndash;H bond it is quite straightforward to read of the true distance (0.976 &#8491;) from the reference g(r). The angle distance requires a touch more trigonometry but, given knowledge of the correct O&ndash;H distance, we can work out that the corresponding equilibrium angle we require is 107.134 &deg;.
 
@@ -27,7 +27,7 @@ First of all, let's stop the simulation from running:
 
 And now let's make the changes to our intramolecular terms:
 
-{{< action type="tabs" >}}Go to the {{< gui-tab text="Forcefield" type="Forcefield" >}} tab and find the **Master Terms** section{{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab text="Forcefield" type="ff" >}} tab and find the **Master Terms** section{{< /action >}}
 {{< action type="edit" text="Change the equlibrium bond length ('eq') of the `HW-OW` bond term from 1.0 to 0.976 &#8491;" />}}
 {{< action type="edit" text="Change the equilibrium angle ('eq') of the `HW-OW-HW` angle term from 113.24 to 107.134 &deg;" />}}
 

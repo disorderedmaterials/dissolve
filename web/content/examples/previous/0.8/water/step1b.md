@@ -12,7 +12,7 @@ We have three experimental datasets in this example - H<sub>2</sub>O, D<sub>2</s
 {{< step text="Change the isotope for the HW atom type from `Natural (bc = -3.739 fm)` to `2 (bc = 6.671)`" />}}
 {{< step text="Change the name of the isotopologue to 'Deuterated' (double-click on the name to do so)" />}}
 
-{{< tip text="Exchangeable atoms are not specified in isotopologue definitions, but instead are indicated when using the isotopologues in modules." >}}
+{{< tip text="Exchangeable atoms are not specified in isotopologue definitions, but instead are indicated when using the isotopologues in modules." />}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step1a">}}

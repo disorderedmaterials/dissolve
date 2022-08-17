@@ -91,7 +91,7 @@ bool Configuration::deserialise(LineParser &parser, const std::vector<std::uniqu
     const auto angles = parser.arg3d(0);
     AtomChangeToken lock(*this);
 
-    createBoxAndCells(lengths, angles, nonPeriodic, requestedCellDivisionLength_, pairPotentialRange);
+    createBoxAndCells(lengths, angles, nonPeriodic, pairPotentialRange);
 
     // Read total number of Molecules to expect
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

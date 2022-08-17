@@ -30,7 +30,7 @@ Finally, the box. We will still use relative lengths and tell Dissolve to scale 
 {{< action type="edit" text="Set the angle **&gamma;** to 120 degrees" />}}
 
 
-We're all set up, so click **Regenerate** to recreate the box using our new parameters. If you zoom the viewer out (mouse wheel) then you should then see a monoclinic box of silica!
+We're all set up, so click {{< gui-button icon="general_repeat" text="Generate" >}} to recreate the box using our new parameters. If you zoom the viewer out (mouse wheel) then you should then see a monoclinic box of silica!
 
 * * *
 {{< button pos="left" text="Previous Step" path="step2/">}}

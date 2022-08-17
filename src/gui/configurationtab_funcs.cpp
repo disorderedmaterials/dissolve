@@ -104,16 +104,12 @@ Configuration *ConfigurationTab::configuration() const { return configuration_; 
 void ConfigurationTab::updateDensityLabel()
 {
     if (!configuration_)
-    {
         ui_.DensityUnitsLabel->setText("N/A");
-        return;
-    }
-
-    if (ui_.DensityUnitsCombo->currentIndex() == 0)
-        ui_.DensityUnitsLabel->setText(QString::number(configuration_->atomicDensity()));
     else
-        ui_.DensityUnitsLabel->setText(QString::number(configuration_->chemicalDensity()));
+        ui_.DensityUnitsLabel->setText(QString::number(
+            ui_.DensityUnitsCombo->currentIndex() == 0 ? configuration_->atomicDensity() : configuration_->chemicalDensity()));
 }
+
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
@@ -169,29 +165,37 @@ void ConfigurationTab::allowEditing()
  * Signals / Slots
  */
 
-void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
+void ConfigurationTab::on_GenerateButton_clicked(bool checked)
 {
-    // Are we sure that's what we want to do?
-    QMessageBox queryBox;
-    queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.")
-                         .arg(QString::fromStdString(std::string(configuration_->name()))));
-    queryBox.setInformativeText("Proceed?");
-    queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    queryBox.setDefaultButton(QMessageBox::No);
-    auto ret = queryBox.exec();
+    auto proceed = true;
 
-    if (ret == QMessageBox::Yes)
+    // If the configuration already contains something, check first
+    if (configuration_->nAtoms() > 0)
     {
-        // Clear the messages
-        dissolveWindow_->clearMessages();
-
-        // Initialise the content
-        configuration_->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()}, true);
-
-        // Update
-        updateControls();
-        dissolveWindow_->updateStatusBar();
+        QMessageBox queryBox;
+        queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.")
+                             .arg(QString::fromStdString(std::string(configuration_->name()))));
+        queryBox.setInformativeText("Proceed?");
+        queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        queryBox.setDefaultButton(QMessageBox::No);
+        proceed = queryBox.exec() == QMessageBox::Yes;
     }
+
+    if (!proceed)
+        return;
+
+    // Clear the messages
+    dissolveWindow_->clearMessages();
+
+    // Make sure the potential map is up to date
+    dissolve_.regeneratePairPotentials();
+
+    // Initialise the content
+    configuration_->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()});
+
+    // Update
+    updateControls();
+    dissolveWindow_->updateStatusBar();
 }
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)

@@ -14,6 +14,8 @@ void DissolveWindow::on_SimulationCheckAction_triggered(bool checked)
 
     dissolve_.prepare();
 
+    ui_.MainTabs->forcefieldTab()->resetPairPotentialModel();
+
     fullUpdate();
 }
 
@@ -22,11 +24,13 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked) { setupItera
 void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
 {
     // Get the number of iterations to run
+    static auto nIterations = 10;
     bool ok;
-    int nIterations =
+    auto newNIterations =
         QInputDialog::getInt(this, "Iterate Simulation...", "Enter the number of iterations to run", 10, 1, 1000000, 10, &ok);
     if (!ok)
         return;
+    nIterations = newNIterations;
     setupIteration(nIterations);
 }
 

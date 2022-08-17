@@ -7,6 +7,8 @@
 ProcedureNodeRegistry::ProcedureNodeRegistry()
 {
     registerProducer<AddProcedureNode>(ProcedureNode::NodeType::Add, "Add molecules to a configuration", "Build");
+    registerProducer<AddPairProcedureNode>(ProcedureNode::NodeType::AddPair,
+                                           "Add a correlated molecule pair to a configuration", "Build");
     registerProducer<BoxProcedureNode>(ProcedureNode::NodeType::Box, "Define containing box for a configuration", "Build");
     registerProducer<CalculateAngleProcedureNode>(ProcedureNode::NodeType::CalculateAngle,
                                                   "Calculate angle between three sites", "Calculate");

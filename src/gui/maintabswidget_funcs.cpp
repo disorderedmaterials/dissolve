@@ -16,6 +16,7 @@ MainTabsWidget::MainTabsWidget(QWidget *parent) : QTabWidget(parent)
     mainTabsBar_ = new MainTabsBar(this);
     setTabBar(mainTabsBar_);
     connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
+    connect(mainTabsBar_, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(contextMenuRequested(const QPoint &)));
 
     // Always show scroll buttons when there are many tabs
     setUsesScrollButtons(true);
@@ -87,6 +88,9 @@ ModuleLayer *MainTabsWidget::currentLayer() const
 
 // Return MessagesTab
 MessagesTab *MainTabsWidget::messagesTab() { return messagesTab_.data(); }
+
+// Return the ForcefieldTab
+ForcefieldTab *MainTabsWidget::forcefieldTab() { return forcefieldTab_.data(); }
 
 // Find SpeciesTab containing specified page widget
 QPointer<SpeciesTab> MainTabsWidget::speciesTab(QWidget *page)
@@ -264,7 +268,13 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         {
             // If the existing tab is displaying the current ModuleLayer already, then we can move on. Otherwise delete it.
             if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer.get())
+            {
+                setTabIcon(processingLayerTabs_[currentTabIndex]->page(),
+                           layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)
+                               ? QIcon(":/tabs/icons/tabs_layer_disabled.svg")
+                               : QIcon(":/tabs/icons/tabs_layer.svg"));
                 break;
+            }
             else
             {
                 allTabs_.erase(std::remove(allTabs_.begin(), allTabs_.end(), processingLayerTabs_[currentTabIndex]));
@@ -282,10 +292,10 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
             allTabs_.push_back(layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
-            if (layer->isEnabled())
-                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_layer.svg"));
-            else
-                setTabIcon(layerTab->page(), QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+            setTabIcon(processingLayerTabs_[currentTabIndex]->page(),
+                       layer->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)
+                           ? QIcon(":/tabs/icons/tabs_layer_disabled.svg")
+                           : QIcon(":/tabs/icons/tabs_layer.svg"));
         }
 
         ++currentTabIndex;
@@ -415,6 +425,9 @@ void MainTabsWidget::preventEditing()
     // Disable tab close buttons
     for (auto &[button, page] : closeButtons_)
         button->setDisabled(true);
+
+    // Prevent the context menu from being raised
+    mainTabsBar_->setContextMenuPolicy(Qt::NoContextMenu);
 }
 
 // Allow editing in all tabs
@@ -426,6 +439,9 @@ void MainTabsWidget::allowEditing()
     // Enable tab close buttons
     for (auto &[button, page] : closeButtons_)
         button->setEnabled(true);
+
+    // Re-enable the context menu from being raised
+    mainTabsBar_->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 /*
@@ -479,6 +495,75 @@ QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
 /*
  * Widget Functions
  */
+
+// Context menu requested
+void MainTabsWidget::contextMenuRequested(const QPoint &pos)
+{
+    auto tabIndex = mainTabsBar_->tabAt(pos);
+    if (tabIndex == -1)
+        return;
+    auto *tab = allTabs_[tabIndex];
+    auto *layerTab = tab->type() == MainTab::TabType::Layer ? dynamic_cast<LayerTab *>(tab) : nullptr;
+
+    QMenu menu;
+    menu.setFont(font());
+
+    // Construct the context menu
+    auto *enableThisLayer = menu.addAction("&Enable this");
+    auto *enableLayersToTheLeft = menu.addAction("Enable layers to the left");
+    auto *enableLayersToTheRight = menu.addAction("Enable layers to the right");
+    auto *disableThisLayer = menu.addAction("&Disable this");
+    auto *disableLayersToTheLeft = menu.addAction("Disable layers to the left");
+    auto *disableLayersToTheRight = menu.addAction("Disable layers to the right");
+    enableThisLayer->setEnabled(layerTab &&
+                                layerTab->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
+    disableThisLayer->setEnabled(layerTab &&
+                                 !layerTab->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
+
+    auto *action = menu.exec(mapToGlobal(pos));
+    auto updateRequired = true;
+    if (action == nullptr)
+        return;
+    else if (action == enableThisLayer)
+        layerTab->moduleLayer()->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+    else if (action == enableLayersToTheLeft || action == disableLayersToTheLeft)
+    {
+        auto enable = action == enableLayersToTheLeft;
+        auto currentIt = std::find(processingLayerTabs_.begin(), processingLayerTabs_.end(), layerTab);
+        for (auto it = processingLayerTabs_.begin(); it != currentIt; ++it)
+            if (enable != ((*it)->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)))
+                continue;
+            else
+            {
+                updateRequired = true;
+                if (enable)
+                    (*it)->moduleLayer()->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+                else
+                    (*it)->moduleLayer()->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
+            }
+    }
+    else if (action == enableLayersToTheRight || action == disableLayersToTheRight)
+    {
+        auto enable = action == enableLayersToTheRight;
+        auto currentIt = std::find(processingLayerTabs_.begin(), processingLayerTabs_.end(), layerTab);
+        for (auto it = std::next(currentIt); it != processingLayerTabs_.end(); ++it)
+            if (enable != ((*it)->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled)))
+                continue;
+            else
+            {
+                updateRequired = true;
+                if (enable)
+                    (*it)->moduleLayer()->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+                else
+                    (*it)->moduleLayer()->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
+            }
+    }
+    else if (action == disableThisLayer)
+        layerTab->moduleLayer()->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
+
+    if (updateRequired)
+        emit(dataModified());
+}
 
 // Tab close button clicked
 void MainTabsWidget::tabCloseButtonClicked(bool checked)

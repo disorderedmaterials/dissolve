@@ -1,4 +1,0 @@
-[submodule "web/themes/docsy"]
-	path = web/themes/docsy
-	url = https://github.com/google/docsy.git
-	depth = 1

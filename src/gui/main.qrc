@@ -22,6 +22,7 @@
     <file>icons/nodes_collect3d.svg</file>
     <file>icons/nodes_context.svg</file>
     <file>icons/nodes_coordinatesets.svg</file>
+    <file>icons/nodes_addpair.svg</file>
     <file>icons/nodes_cylindricalregion.svg</file>
     <file>icons/nodes_dynamicsite.svg</file>
     <file>icons/nodes_fit1d.svg</file>
@@ -56,6 +57,8 @@
   </qresource>
   <qresource prefix="wizard">
     <file>icons/wizard_allatoms.svg</file>
+    <file>icons/wizard_frameworkmixture.svg</file>
+    <file>icons/wizard_multiplespecies.svg</file>
     <file>icons/wizard_selectedatoms.svg</file>
   </qresource>
   <qresource prefix="dissolve">

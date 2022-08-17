@@ -22,7 +22,7 @@ Our new layer contains only the {{< gui-module "EPSR" >}} module, and which Diss
 {{< action type="tabs" >}}Go to the {{< gui-tab text="Refine (EPSR)" type="Layer" >}} tab{{< /action >}}
 {{< action type="groups">}}Open the **Control** settings group of the {{< gui-module "EPSR" >}} module {{< /action >}}
 {{< step text=" An initial value for **EReq** has been set (3.0) - this determines the magnitude or \"strength\" of the generated interatomic potentials" />}}
-{{< step text="The **Feedback** factor is 0.8 - this states that we are 80% confident in the experimental data, and that the calculated partial structure factors should make up 20% of the estimated partials" />}}
+{{< step text="The **Feedback** factor is 0.9 - this states that we are 90% confident in the experimental data, and that the calculated partial structure factors should make up 10% of the estimated partials" />}}
 {{< step text="The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>) and **QMin** (0.5 &#8491;<sup>-1</sup>)" />}}
 
 The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the `EPSR` module to use. You'll see that Dissolve has added all of the available {{< gui-module "NeutronSQ" >}} modules have been selected automatically.
@@ -59,7 +59,7 @@ Note that the estimated g(r) from the combination of the experimental and simula
 
 Neutron-weighted total G(r) from Fourier transform of the reference F(Q) (solid line) and the Fourier transform of the simulated F(Q) (dashed line). As mentioned earlier, the reason for displaying the latter rather than the directly-calculated G(r) is to provide for a consistent comparison between simulation and experiment given the necessity of performing Fourier transforms (truncation errors are worse in _Q_-space data, so transforming to _Q_ to _r_ demands more judicious use of window functions in the transform).
 
-{{< cimage src="../epsrmodule-gr.png" caption="Total radial distribution functions from Fourier transform of reference and simulated F(Q) data" >}}
+{{< cimage src="../epsrmodule-totalgr.png" caption="Total radial distribution functions from Fourier transform of reference and simulated F(Q) data" >}}
 
 ### 6. Potentials
 

@@ -116,14 +116,9 @@ void IsotopologueSetKeywordWidget::currentItemChanged()
 // Update value displayed in widget
 void IsotopologueSetKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
-    updateWidgetValues(coreData_);
+    if (mutationFlags.isSet(DissolveSignals::DataMutations::IsotopologuesMutated))
+        updateSummaryText();
 }
-
-// Update widget values data based on keyword data
-void IsotopologueSetKeywordWidget::updateWidgetValues(const CoreData &coreData) {}
-
-// Update keyword data based on widget values
-void IsotopologueSetKeywordWidget::updateKeywordData() {}
 
 // Update summary text
 void IsotopologueSetKeywordWidget::updateSummaryText()
@@ -131,7 +126,7 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
     std::string text;
     auto nNatural = 0;
     for (const auto &topes : keyword_->data().isotopologues())
-        // Check if this is completely "natural" specification
+        // Check if this is a completely "natural" specification
         if (std::count_if(topes.mix().begin(), topes.mix().end(), [&topes](const auto &part) {
                 return part.isotopologue() == topes.species()->naturalIsotopologue();
             }) == topes.nIsotopologues())

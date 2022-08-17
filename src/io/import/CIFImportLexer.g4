@@ -57,7 +57,7 @@ Value:          	  '.'
  |                  UnquotedString
  |                  SingleQuotedString { setText(getText().substr(1, getText().length()-2)); }
  |                  DoubleQuotedString { setText(getText().substr(1, getText().length()-2)); }
- |                  SemiColonTextField { setText(getText().substr(getText().find_first_not_of(";\r\n "), getText().find_last_not_of(";\r\n ") - getText().find_first_not_of(";\r\n ") + 1)); }
+ |                  SemiColonTextField { setText(getText().find_first_not_of(";\r\n") != std::string::npos ? getText().substr(getText().find_first_not_of(";\r\n "), getText().find_last_not_of(";\r\n ") - getText().find_first_not_of(";\r\n ") + 1) : ""); }
  ;
 
 // Numerics

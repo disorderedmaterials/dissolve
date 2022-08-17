@@ -8,6 +8,7 @@
  */
 
 #include "procedure/nodes/add.h"
+#include "procedure/nodes/addpair.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/calculateangle.h"
 #include "procedure/nodes/calculatedistance.h"

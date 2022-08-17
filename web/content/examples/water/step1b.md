@@ -12,7 +12,7 @@ We have three experimental datasets in this example - H<sub>2</sub>O, D<sub>2</s
 {{< action type="mouse" >}} Change the isotope for the HW atom type from `Natural (bc = -3.739 fm)` to `2 (bc = 6.671 fm)`" {{< /action >}}
 {{< action type="edit" text="Change the name of the isotopologue to 'Deuterated' (double-click on the name to do so)" />}}
 
-{{< tip text="Users familiar with EPSR might expect to also set any exchangeable atoms here in the isotopologue definitions, but in Dissolve this is handled by specific settings in individual modules   instead are indicated when using the isotopologues in modules." >}}
+{{< tip text="Users familiar with EPSR might expect to also set any exchangeable atoms here in the isotopologue definitions, but in Dissolve this is handled by specific settings in individual modules." />}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step1a">}}

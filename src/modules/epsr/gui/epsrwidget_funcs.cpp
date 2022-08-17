@@ -128,7 +128,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         {
             // Get underlying RDF module
             std::string rdfModuleName = "UNKNOWN_RDF_MODULE";
-            const auto targets = module_->keywords().get<std::vector<Module *>>("Target");
+            const auto targets = module_->keywords().getVectorModule("Target");
             if (!targets.empty())
             {
                 auto optSQModule = targets[0]->keywords().get<const SQModule *, ModuleKeyword<const SQModule>>("SourceSQs");
@@ -189,7 +189,9 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 auto &at2 = dissolve_.atomTypes()[second];
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-                graph_->createRenderable<RenderableData1D, Data1D>(dissolve_.pairPotential(at1, at2)->uAdditional(), id, "Phi");
+                auto pp = dissolve_.pairPotential(at1, at2);
+                if (pp)
+                    graph_->createRenderable<RenderableData1D, Data1D>(pp->uAdditional(), id, "Phi");
             }
         }
         else if (ui_.RFactorButton->isChecked())

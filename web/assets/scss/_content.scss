@@ -93,12 +93,15 @@
    border-radius: 5px;
    border: 1px solid #aebfcd;
    background-color: #edefed;
-   padding: 3px 25px 1px 25px;
+   padding: 3px 10px 1px 25px;
    font-size: 85%;
    font-weight: bold;
    position: relative;
    margin: 2px 0 2px 0;
    line-height: 1.0;
+}
+.gui-button.gui-button-noicon {
+   padding: 3px 10px 1px 10px;
 }
 
 .gui-button::before {
@@ -114,6 +117,18 @@
 
 .gui-button::after {
   content: '';
+}
+
+// Icon
+.gui-icon {
+   display: inline-block;
+   margin: 0 0 2px 3px;
+   line-height: 17px;
+   height: 17px;
+   width: 25px;
+   vertical-align: middle;
+   background-repeat: no-repeat;
+   background-size: contain;
 }
 
 // Module

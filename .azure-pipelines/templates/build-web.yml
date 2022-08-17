@@ -11,10 +11,6 @@ parameters:
 
 steps:
   - checkout: self
-    submodules: true
-  - bash: |
-      git submodule update --init --recursive --depth 1
-    displayName: 'Init Submodules'
   - bash: |
       set -ex
       wget https://github.com/gohugoio/hugo/releases/download/v${{ parameters.hugo_version }}/hugo_extended_${{ parameters.hugo_version }}_Linux-64bit.deb -O '$(Pipeline.Workspace)/hugo.deb'
@@ -22,8 +18,21 @@ steps:
     displayName: 'Download & Install Hugo (Extended Version)'
   - bash: |
       set -ex
+      sudo apt install pandoc
+      sudo apt install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-xetex
+    condition: eq(1,0)
+    displayName: 'Install pandoc / xetex'
+  - bash: |
+      set -ex
       cp -v src/gui/icons/*.svg web/static/img
     displayName: 'Copy Icons'
+  - bash: |
+      set -ex
+      for example in $(find ./web/content/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      do
+        ci/scripts/meld-example -d ${example}
+      done
+    displayName: 'Meld Examples'
   - bash: |
       set -ex
       cd web
@@ -41,6 +50,18 @@ steps:
       sudo npm install -g link-checker
       link-checker --disable-external web/public
     displayName: 'Check Links'
+  - bash: |
+      set -ex
+      cd web/public/examples/
+      for example in $(find . -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      do
+        echo "Creating pdf for example \"${example}\"..."
+        cd ${example}/single/
+        pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index.html -o ../${example}.pdf
+        cd ../../
+      done
+    condition: eq(1,0)
+    displayName: 'Create PDFs'
   - task: DownloadSecureFile@1
     name: privateKey
     inputs:

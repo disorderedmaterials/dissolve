@@ -161,7 +161,6 @@ Layer  'Refine (EPSR)'
     EReq  1.0
     ExpansionFunction  Poisson
     Feedback  0.9
-    OnlyWhenEnergyStable  False
     OverwritePotentials  True
     InpAFile  '../_data/epsr25/water1000-neutron/water.EPSR.inpa'
     QMin  1.5

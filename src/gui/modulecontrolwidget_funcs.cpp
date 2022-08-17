@@ -23,10 +23,6 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
     connect(dissolveWindow, SIGNAL(dataMutated(int)), this, SLOT(globalDataMutated(int)));
 
-    // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
-    // will exist in a QScrollArea)
-    ui_.FrequencySpin->installEventFilter(new MouseWheelWidgetAdjustmentGuard(ui_.FrequencySpin));
-
     // Set the icon label
     ui_.ModuleIconLabel->setPixmap(
         QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module_->type())).toLower())));
@@ -76,7 +72,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
 }
 
 // Return target Module for the widget
-Module *ModuleControlWidget::module() const { return module_; }
+Module *ModuleControlWidget::module() { return module_; }
 
 /*
  * Update
@@ -87,16 +83,10 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
 {
     Locker refreshLocker(refreshLock_);
 
-    // Ensure module name is up to date
+    // Ensure module name and icon status are up to date
     ui_.ModuleNameLabel->setText(QString("%1 (%2)").arg(QString::fromStdString(std::string(module_->name())),
                                                         QString::fromStdString(std::string(module_->type()))));
-
-    // Set 'enabled' button status
-    ui_.EnabledButton->setChecked(module_->isEnabled());
     ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
-
-    // Set frequency spin
-    ui_.FrequencySpin->setValue(module_->frequency());
 
     // Update tqrget keywords
     for (auto w : targetKeywordWidgets_)
@@ -113,8 +103,6 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
 // Disable editing
 void ModuleControlWidget::preventEditing()
 {
-    ui_.FrequencySpin->setEnabled(false);
-    ui_.EnabledButton->setEnabled(false);
     ui_.TargetsGroup->setEnabled(false);
     ui_.ModuleKeywordsWidget->setEnabled(false);
     if (moduleWidget_)
@@ -124,8 +112,6 @@ void ModuleControlWidget::preventEditing()
 // Allow editing
 void ModuleControlWidget::allowEditing()
 {
-    ui_.FrequencySpin->setEnabled(true);
-    ui_.EnabledButton->setEnabled(true);
     ui_.TargetsGroup->setEnabled(true);
     ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
@@ -148,27 +134,13 @@ void ModuleControlWidget::on_ModuleOutputButton_clicked(bool checked)
         ui_.ModuleControlsStack->setCurrentIndex(1);
 }
 
-void ModuleControlWidget::on_EnabledButton_clicked(bool checked)
+// Prepare widget for deletion
+void ModuleControlWidget::prepareForDeletion()
 {
-    if (refreshLock_.isLocked())
-        return;
+    // Nullify the module - this will flag to the update functions that they shouldn't proceed
+    module_ = nullptr;
 
-    module_->setEnabled(checked);
-
-    ui_.ModuleIconLabel->setEnabled(checked);
-
-    emit(statusChanged());
-    emit(dataModified());
-}
-
-void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    module_->setFrequency(value);
-
-    emit(dataModified());
+    deleteLater();
 }
 
 // Target keyword data changed
@@ -182,21 +154,36 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
 
     // Determine flags
     Flags<KeywordBase::KeywordSignal> keywordSignals(signalMask);
+    Flags<ModuleWidget::UpdateFlags> widgetUpdateFlags;
 
-    // Call the module's setUp() function with it
+    // Handle specific flags for the module widget
+    if (keywordSignals.isSet(KeywordBase::KeywordSignal::RecreateRenderables))
+    {
+        widgetUpdateFlags.setFlag(ModuleWidget::RecreateRenderablesFlag);
+        keywordSignals -= KeywordBase::KeywordSignal::RecreateRenderables;
+    }
+
+    // Clear module data?
+    if (keywordSignals.isSet(KeywordBase::KeywordSignal::ClearModuleData))
+    {
+        dissolve_.processingModuleData().removeWithPrefix(module_->name());
+        keywordSignals -= KeywordBase::KeywordSignal::ClearModuleData;
+    }
+
+    // Call the module's setUp() function if any other flags are still set
     if (keywordSignals.anySet())
         module_->setUp(dissolve_, dissolve_.worldPool(), keywordSignals);
 
-    // Handle specific flags for the module widget
+    // Update the module widget
     if (moduleWidget_)
-        moduleWidget_->updateControls(Flags<ModuleWidget::UpdateFlags>(signalMask));
+        moduleWidget_->updateControls(widgetUpdateFlags);
 }
 
 // Global data mutated
 void ModuleControlWidget::globalDataMutated(int mutationFlags)
 {
-    // If we have no valid parent, don't try to update keyword data
-    if (!parent())
+    // If we have no valid module, don't try to update keyword data
+    if (!module_)
         return;
 
     Flags<DissolveSignals::DataMutations> dataMutations(mutationFlags);

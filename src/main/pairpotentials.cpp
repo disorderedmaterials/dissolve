@@ -7,17 +7,10 @@
 #include "main/dissolve.h"
 
 // Set maximum distance for tabulated PairPotentials
-void Dissolve::setPairPotentialRange(double range)
-{
-    pairPotentialRange_ = range;
-    pairPotentialRangeSquared_ = range * range;
-}
+void Dissolve::setPairPotentialRange(double range) { pairPotentialRange_ = range; }
 
 // Return maximum distance for tabulated PairPotentials
 double Dissolve::pairPotentialRange() const { return pairPotentialRange_; }
-
-// Return maximum squared distance for tabulated PairPotentials
-double Dissolve::pairPotentialRangeSquared() const { return pairPotentialRangeSquared_; }
 
 // Set delta to use in tabulations
 void Dissolve::setPairPotentialDelta(double delta) { pairPotentialDelta_ = delta; }
@@ -58,7 +51,7 @@ int Dissolve::nPairPotentials() const { return pairPotentials_.size(); }
 PairPotential *Dissolve::addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2)
 {
     auto &pp = pairPotentials_.emplace_back(std::make_unique<PairPotential>());
-    pp->setUp(std::move(at1), std::move(at2));
+    pp->setUp(std::move(at1), std::move(at2), atomTypeChargeSource_);
 
     return pp.get();
 }
@@ -69,30 +62,22 @@ const std::vector<std::unique_ptr<PairPotential>> &Dissolve::pairPotentials() co
 // Return nth PairPotential in list
 PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n].get(); }
 
-// Return whether specified PairPotential is defined
+// Return specified PairPotential (if defined)
 PairPotential *Dissolve::pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
 {
-    for (auto &pot : pairPotentials_)
-    {
-        if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2))
-            return pot.get();
-        if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1))
-            return pot.get();
-    }
-    return nullptr;
+    auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(), [at1, at2](const auto &pp) {
+        return (pp->atomTypeI() == at1 && pp->atomTypeJ() == at2) || (pp->atomTypeI() == at2 && pp->atomTypeJ() == at1);
+    });
+    return it != pairPotentials_.end() ? it->get() : nullptr;
 }
 
-// Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at2) const
 {
-    for (auto &pot : pairPotentials_)
-    {
-        if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2))
-            return pot.get();
-        if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1))
-            return pot.get();
-    }
-    return nullptr;
+    auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(), [at1, at2](const auto &pp) {
+        return (DissolveSys::sameString(pp->atomTypeNameI(), at1) && DissolveSys::sameString(pp->atomTypeNameJ(), at2)) ||
+               (DissolveSys::sameString(pp->atomTypeNameI(), at2) && DissolveSys::sameString(pp->atomTypeNameJ(), at1));
+    });
+    return it != pairPotentials_.end() ? it->get() : nullptr;
 }
 
 // Return map for PairPotentials
@@ -101,63 +86,35 @@ const PotentialMap &Dissolve::potentialMap() const { return potentialMap_; }
 // Clear and regenerate all PairPotentials, replacing those currently defined
 bool Dissolve::regeneratePairPotentials()
 {
+    Messenger::print("Regenerating pair potentials...\n");
     potentialMap_.clear();
     pairPotentials_.clear();
-    pairPotentialAtomTypeVersion_ = -1;
 
-    return generatePairPotentials();
-}
+    // Create a pair potential for each unique atom type pair
+    auto success =
+        for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                            [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool> {
+                                Messenger::printVerbose("Adding new PairPotential for interaction between '{}' and '{}'...\n",
+                                                        at1->name(), at2->name());
+                                auto *pot = addPairPotential(at1, at2);
 
-// Generate all necessary PairPotentials, adding missing terms where necessary
-bool Dissolve::generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving)
-{
-    // Check current AtomTypes version against the last one we generated at
-    if (pairPotentialAtomTypeVersion_ == coreData_.atomTypesVersion())
-    {
-        Messenger::printVerbose("PairPotentials are up to date with AtomTypes, so nothing to do.\n");
-        return true;
-    }
+                                // Tabulate the basic potential
+                                if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_))
+                                    return false;
 
-    // Loop over all atomtype pairs and update / add pair potentials as necessary
-    for (auto at1 = coreData_.atomTypes().begin(); at1 != coreData_.atomTypes().end(); ++at1)
-    {
-        for (auto at2 = at1; at2 != coreData_.atomTypes().end(); ++at2)
-        {
-            // If an AtomType was supplied, only generate the pair potential if one of its AtomTypes matches
-            if (onlyInvolving && (*at1 != onlyInvolving) && (*at2 != onlyInvolving))
-                continue;
+                                // Retrieve additional potential from the processing module data, if present
+                                auto itemName =
+                                    fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+                                if (processingModuleData_.contains(itemName, "Dissolve"))
+                                    pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
 
-            // Does a PairPotential for this AtomType pair already exist?
-            auto *pot = pairPotential(*at1, *at2);
-            if (pot)
-            {
-                Messenger::print("Updating existing PairPotential for interaction between '{}' and '{}'...\n", (*at1)->name(),
-                                 (*at2)->name());
-                if (!pot->setUp(*at1, *at2))
-                    return false;
-            }
-            else
-            {
-                Messenger::print("Adding new PairPotential for interaction between '{}' and '{}'...\n", (*at1)->name(),
-                                 (*at2)->name());
-                pot = addPairPotential(*at1, *at2);
-            }
+                                return EarlyReturn<bool>::Continue;
+                            });
+    if (!success.value_or(true))
+        return false;
 
-            // Check the implied short-range form of the potential
-            if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_))
-                return false;
-
-            // Retrieve additional potential from the processing module data, if present
-            std::string itemName = fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
-            if (!processingModuleData_.contains(itemName, "Dissolve"))
-                continue;
-            pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
-        }
-    }
-
-    pairPotentialAtomTypeVersion_ = coreData_.atomTypesVersion();
-
-    return true;
+    // Update the potential map
+    return potentialMap_.initialise(coreData_.atomTypes(), pairPotentials_, pairPotentialRange_);
 }
 
 // Revert potentials to reference state, clearing additional potentials

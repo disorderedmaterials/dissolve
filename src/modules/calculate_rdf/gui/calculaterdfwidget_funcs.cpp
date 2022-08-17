@@ -36,7 +36,7 @@ void CalculateRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFl
 
     if (rdfGraph_->renderables().empty())
     {
-        auto *cfg = module_->keywords().get<Configuration *>("Configuration");
+        auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             rdfGraph_
                 ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->name(), cfg->niceName()),

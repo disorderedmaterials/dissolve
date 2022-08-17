@@ -43,7 +43,7 @@ std::optional<int> ShortRangeFunctions::parameterIndex(Form form, std::string_vi
 }
 
 AtomType::AtomType(Elements::Element Z) : Z_(Z), interactionPotential_(ShortRangeFunctions::Form::None) {}
-AtomType::AtomType(std::string name) : interactionPotential_(ShortRangeFunctions::Form::None), name_(name) {}
+AtomType::AtomType(std::string name) : name_(name), interactionPotential_(ShortRangeFunctions::Form::None) {}
 
 /*
  * Character

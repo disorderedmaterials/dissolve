@@ -45,10 +45,10 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module, Di
 // Update controls within widget
 void EnergyModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
-    const auto *cfg = module_->keywords().get<Configuration *>("Configuration");
+    const auto *cfg = module_->keywords().getConfiguration("Configuration");
 
     // Set gradient and stability labels
-    auto stabilityWindow = module_->keywords().get<int>("StabilityWindow");
+    auto stabilityWindow = module_->keywords().getInt("StabilityWindow");
     ui_.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
 
     // Create / update renderables?

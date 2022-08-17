@@ -39,6 +39,7 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          Functions::function1D().keyword(intraBroadening_.type()), intraBroadening_.parameterSummary());
     Messenger::print("RDF: Calculation method is '{}'.\n", partialsMethods().keyword(partialsMethod_));
     Messenger::print("RDF: Save data is {}.\n", DissolveSys::onOff(save_));
+    Messenger::print("RDF: Save original (unbroadened) g(r) is {}.\n", DissolveSys::onOff(saveOriginal_));
     Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is {} ({}).\n", nSmooths_,
                      DissolveSys::onOff(nSmooths_ > 0));
     Messenger::print("\n");
@@ -48,15 +49,6 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      * multiple independent Configurations, we must loop over the specified targetConfigurations_ and calculate the partials
      * for each.
      */
-
-    // Check that Configurations have unmodified size factor
-    if (std::all_of(targetConfigurations_.begin(), targetConfigurations_.end(), [](const auto *cfg) {
-            return std::abs(cfg->appliedSizeFactor() - 1.0) > 2 * std::numeric_limits<double>::epsilon();
-        }))
-    {
-        Messenger::print("One or more configurations have an applied size factor, so RDF calculation will be skipped.\n");
-        return true;
-    }
 
     for (auto *cfg : targetConfigurations_)
     {
@@ -115,6 +107,8 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Save data if requested
         if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms"))))
+            return false;
+        if (saveOriginal_ && (!MPIRunMaster(procPool, originalgr.save(name_, "OriginalGR", "gr", "r, Angstroms"))))
             return false;
     }
 

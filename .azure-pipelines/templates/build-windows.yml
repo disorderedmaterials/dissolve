@@ -3,10 +3,17 @@ parameters:
     default: ''
   - name: qtver
     default: 6.2.2
-  - name: ftrepo
+  - name: ft_repo
     default: https://gitlab.freedesktop.org/freetype/freetype.git
+  - name: ft_archive
+    default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
+  - name: ft_use_repo
+    default: false
+    type: boolean
   - name: ftglrepo
     default: https://github.com/frankheckenbach/ftgl.git
+  - name: msvcpath
+    default: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise"
   - name: threading
     default: true
 
@@ -15,7 +22,7 @@ steps:
     inputs:
       versionSpec: '3.x'
   - script: |
-      choco install -y antlr4
+      choco install -y antlr4 ninja
     displayName: 'Install Prerequisites'
   - script: |
       python -m pip install aqtinstall
@@ -24,20 +31,40 @@ steps:
   - powershell: |
       $ErrorActionPreference = 'Stop'
       cd $(Build.BinariesDirectory)
-      git clone ${{ parameters.ftrepo }} freetype-latest
-      mkdir freetype-build
-      cd freetype-build
-      cmake -G "Visual Studio 17 2022" -A "x64" ../freetype-latest -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install
-      cmake --build . --target install --config Release
-    displayName: 'FreeType (Build / Install)'
+      wget ${{ parameters.ft_archive }} -OutFile freetype.tgz
+      tar -zxvf freetype.tgz
+      rm freetype.tgz
+      mv freetype-* freetype-latest
+    condition: eq('${{ parameters.ft_use_repo }}', false)
+    displayName: 'FreeType (Download - Archive)'
   - powershell: |
       $ErrorActionPreference = 'Stop'
+      cd $(Build.BinariesDirectory)
+      git clone ${{ parameters.ft_repo }} freetype-latest
+    condition: eq('${{ parameters.ft_use_repo }}', true)
+    displayName: 'FreeType (Download - Repo)'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      $Command = "`"" + "${{ parameters.msvcpath }}" + "\VC\Auxiliary\Build\vcvars64.bat" + "`""
+      cmd /c "$Command > nul 2>&1 && set" | . { process { if ($_ -match '^([^=]+)=(.*)') { [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2]) } } }
+
+      cd $(Build.BinariesDirectory)
+      mkdir freetype-build
+      cd freetype-build
+      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install
+      cmake --build . --target install --config Release
+    displayName: 'FreeType (Build)'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      $Command = "`"" + "${{ parameters.msvcpath }}" + "\VC\Auxiliary\Build\vcvars64.bat" + "`""
+      cmd /c "$Command > nul 2>&1 && set" | . { process { if ($_ -match '^([^=]+)=(.*)') { [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2]) } } }
+
       cd $(Build.BinariesDirectory)
       git clone ${{ parameters.ftglrepo }} ftgl-latest
       mkdir ftgl-build
       cd ftgl-build
       $env:FREETYPE_DIR = "$(Build.BinariesDirectory)\freetype-install"
-      cmake -G "Visual Studio 17 2022" -A "x64" ../ftgl-latest -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
+      cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
       cmake --build . --target install --config Release
     displayName: 'FTGL (Build / Install)'
   - powershell: |
@@ -48,17 +75,24 @@ steps:
     displayName: 'Install Conan' 
   - powershell: |
       $ErrorActionPreference = 'Stop'
+
       $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\msvc2019_64"
       $env:PATH += ";$env:Qt5_DIR" + "\bin"
       echo $env:Qt5_DIR
       $env:INCLUDE += "$(Build.BinariesDirectory)\freetype-latest;"
-      $env:LIB += "$(Build.BinariesDirectory)\freetype-install\lib;"
+      $env:LIB += "$(Build.BinariesDirectory)\freetype-install\lib;$(Build.BinariesDirectory)\freetype-install\bin;"
       $env:INCLUDE += "$(Build.BinariesDirectory)\ftgl-latest\src;"
       $env:LIB += "$(Build.BinariesDirectory)\ftgl-install\lib;"
+
+      $Command = "`"" + "${{ parameters.msvcpath }}" + "\VC\Auxiliary\Build\vcvars64.bat" + "`""
+      cmd /c "$Command > nul 2>&1 && set" | . { process { if ($_ -match '^([^=]+)=(.*)') { [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2]) } } }
+      $Command = "`"" + "${{ parameters.msvcpath }}" + "/Common7/Tools/vsdevcmd/core/winsdk.bat" + "`""
+      cmd /c "$Command > nul 2>&1 && set" | . { process { if ($_ -match '^([^=]+)=(.*)') { [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2]) } } }
+
       mkdir build
       cd build
       conan install .. --build missing
-      cmake ../ -G "Visual Studio 17 2022" -A "x64" -DMULTI_THREADING:bool=${{ parameters.threading }} -DGUI:bool=true -DCMAKE_BUILD_TYPE:STRING="Release" ${{ parameters.extraflags }}
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ parameters.threading }} -DGUI:bool=true ${{ parameters.extraflags }}
       cmake --build . --config Release --target keywordwidgets
       cmake --build . --config Release
     displayName: 'Build'

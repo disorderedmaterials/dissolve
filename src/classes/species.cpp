@@ -6,7 +6,7 @@
 #include "data/ff/ff.h"
 #include "data/isotopes.h"
 
-Species::Species(std::string name) : attachedAtomListsGenerated_(false), forcefield_(nullptr), name_(name)
+Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false), forcefield_(nullptr)
 {
     box_ = std::make_unique<SingleImageBox>();
 
@@ -29,14 +29,14 @@ void Species::clear()
 }
 
 // Copy basic information (atoms and intramolecular terms)
-void Species::copyBasic(const Species *source)
+void Species::copyBasic(const Species *source, bool copyAtomTypes)
 {
     clear();
 
     name_ = source->name_;
 
     for (auto &i : source->atoms_)
-        addAtom(i.Z(), i.r(), i.charge());
+        addAtom(i.Z(), i.r(), i.charge(), copyAtomTypes ? i.atomType() : nullptr);
 
     for (auto &bond : source->bonds_)
         addBond(bond.indexI(), bond.indexJ());
@@ -45,7 +45,7 @@ void Species::copyBasic(const Species *source)
     for (auto &torsion : source->torsions_)
         addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
     for (auto &improper : source->impropers_)
-        addTorsion(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
+        addImproper(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
 }
 
 /*

@@ -46,6 +46,10 @@ class SpeciesTab : public QWidget, public MainTab
     SpeciesIsoModel isos_;
     SpeciesSiteModel sites_;
 
+    private:
+    // Update density label
+    void updateDensityLabel();
+
     public slots:
     // Update controls in tab
     void updateControls() override;
@@ -81,6 +85,13 @@ class SpeciesTab : public QWidget, public MainTab
     Species *species() const;
 
     /*
+     * Widget Functions - Structure
+     */
+    private slots:
+    // Current Box
+    void on_DensityUnitsCombo_currentIndexChanged(int index);
+
+    /*
      * Widget Functions - Geometry
      */
     private:
@@ -111,6 +122,7 @@ class SpeciesTab : public QWidget, public MainTab
     private slots:
     void isotopologuesSelectionChanged(const QItemSelection &, const QItemSelection &);
     void isotopologuesChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &);
+    void on_IsotopologuesTree_customContextMenuRequested(const QPoint &pos);
     void on_IsotopologueAddButton_clicked(bool checked);
     void on_IsotopologueRemoveButton_clicked(bool checked);
     void on_IsotopologueGenerateButton_clicked(bool checked);

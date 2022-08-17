@@ -94,8 +94,6 @@ class Dissolve : public Serialisable
     private:
     // Maximum distance for tabulated PairPotentials
     double pairPotentialRange_;
-    // Maximum squared distance for tabulated PairPotentials
-    double pairPotentialRangeSquared_;
     // Delta to use in tabulation
     double pairPotentialDelta_;
     // Whether to automatically determine charge source
@@ -106,8 +104,6 @@ class Dissolve : public Serialisable
     bool atomTypeChargeSource_;
     // Simulation PairPotentials
     std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
-    // Version of AtomTypes at which PairPotentials were last generated
-    int pairPotentialAtomTypeVersion_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
 
@@ -116,8 +112,6 @@ class Dissolve : public Serialisable
     void setPairPotentialRange(double range);
     // Return maximum distance for tabulated PairPotentials
     double pairPotentialRange() const;
-    // Return maximum squared distance for tabulated PairPotentials
-    double pairPotentialRangeSquared() const;
     // Set delta to use in tabulations
     void setPairPotentialDelta(double delta);
     // Return delta to use in tabulations
@@ -144,16 +138,13 @@ class Dissolve : public Serialisable
     const std::vector<std::unique_ptr<PairPotential>> &pairPotentials() const;
     // Return nth PairPotential in list
     PairPotential *pairPotential(int n);
-    // Return whether specified PairPotential is defined
+    // Return specified PairPotential (if defined)
     PairPotential *pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const;
-    // Return whether specified PairPotential is defined
     PairPotential *pairPotential(std::string_view at1, std::string_view at2) const;
     // Return map for PairPotentials
     const PotentialMap &potentialMap() const;
     // Clear and regenerate all PairPotentials, replacing those currently defined
     bool regeneratePairPotentials();
-    // Generate all necessary PairPotentials, adding missing terms where necessary
-    bool generatePairPotentials(const std::shared_ptr<AtomType> &onlyInvolving = nullptr);
     // Revert potentials to reference state, clearing additional potentials
     void revertPairPotentials();
 

@@ -73,7 +73,7 @@ QVariant CIFAssemblyModel::data(const QModelIndex &index, int role) const
             }
         case Qt::CheckStateRole:
             if (index.column() == 1)
-                return &assembly.activeGroup() == &g ? Qt::Checked : Qt::Unchecked;
+                return g.active() ? Qt::Checked : Qt::Unchecked;
             else
                 return QVariant();
         case Qt::UserRole:
@@ -125,15 +125,7 @@ Qt::ItemFlags CIFAssemblyModel::flags(const QModelIndex &index) const
     if (!index.parent().isValid())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     else if (index.column() == 1)
-    {
-        // Allow checking the items if there is more than one group in this assembly
-        auto &assembly = assemblies_[index.parent().row()];
-        auto &group = assembly.groups()[index.row()];
-        if (assemblies_[index.parent().row()].nGroups() > 1 && !assembly.isActiveGroup(group))
-            return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
-        else
-            return Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
-    }
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
 
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
@@ -141,26 +133,17 @@ Qt::ItemFlags CIFAssemblyModel::flags(const QModelIndex &index) const
 bool CIFAssemblyModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     // Only editable data is the check state of groups (column 1)
-    if (!index.parent().isValid() || index.column() != 1)
+    if (!index.parent().isValid() || index.column() != 1 || role != Qt::CheckStateRole)
         return false;
 
     // Get assembly and check for number of groups > 1
     auto &assembly = assemblies_[index.parent().row()];
-    if (assembly.nGroups() == 1)
-        return false;
 
-    // Get group being modified
+    // Get group being modified and set the active flag
     auto &group = assembly.groups()[index.row()];
+    group.setActive(value.value<Qt::CheckState>() == Qt::Checked);
 
-    // Get checkstate (only need to act if it is set)
-    auto state = value.value<Qt::CheckState>();
-    if (state == Qt::Checked)
-    {
-        beginResetModel();
-        assembly.setActiveGroup(group);
-        endResetModel();
-        emit(dataChanged(index.parent().siblingAtRow(0), index.parent().siblingAtRow(assembly.nGroups() - 1)));
-    }
+    emit(dataChanged(index, index));
 
     return true;
 }

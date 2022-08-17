@@ -28,9 +28,10 @@ void SelectAtomTypeWidget::setFilterElement(Elements::Element Z) { atomTypeFilte
 void SelectAtomTypeWidget::clearFilterElement() { atomTypeFilterProxy_.clearFilterElement(); }
 
 // Set target AtomType data
-void SelectAtomTypeWidget::setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
+void SelectAtomTypeWidget::setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes,
+                                        OptionalReferenceWrapper<const CoreData> coreData)
 {
-    atomTypeModel_.setData(atomTypes);
+    atomTypeModel_.setData(atomTypes, coreData);
 }
 
 // Reset widget

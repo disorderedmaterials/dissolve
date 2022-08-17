@@ -49,8 +49,7 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
         if ((unitCell.value() - targetConfiguration_->box()->axes()).maxAbs() > 1.0e-8)
         {
             // Create new Box and cells for the configuration
-            targetConfiguration_->createBoxAndCells(unitCell.value(), targetConfiguration_->requestedCellDivisionLength(),
-                                                    dissolve.pairPotentialRange());
+            targetConfiguration_->createBoxAndCells(unitCell.value(), dissolve.pairPotentialRange());
 
             clearExistingAtoms = true;
         }

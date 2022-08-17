@@ -193,7 +193,7 @@ double EnergyKernel::energy(const Atom &i)
 }
 
 // Return PairPotential energy of Molecule with world
-double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy strategy)
+double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy)
 {
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
@@ -209,16 +209,26 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
 
             auto localEnergy = dissolve::transform_reduce(
                 ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
-                [&centralCellAtoms, this](const auto &neighbour) {
+                [&centralCellAtoms, includeIntraMolecular, this](const auto &neighbour) {
                     return std::accumulate(
                         centralCellAtoms.begin(), centralCellAtoms.end(), 0.0,
-                        [&neighbour, this](const auto acc, const auto &i) {
+                        [&neighbour, includeIntraMolecular, this](const auto acc, const auto &i) {
                             auto &ii = *i;
                             auto mimRequired = neighbour.requiresMIM_;
                             auto &nbrCellAtoms = neighbour.neighbour_.atoms();
                             return acc + std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
-                                                         [&ii, mimRequired, this](const auto innerAcc, const auto *j) {
+                                                         [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc,
+                                                                                                         const auto *j) {
                                                              auto &jj = *j;
+
+                                                             // Check for atoms in the same species
+                                                             if (includeIntraMolecular)
+                                                             {
+                                                                 if (&ii == &jj)
+                                                                     return innerAcc;
+                                                             }
+                                                             else if (ii.molecule().get() == jj.molecule().get())
+                                                                 return innerAcc;
 
                                                              // Calculate rSquared distance between atoms, and check it against
                                                              // the stored cutoff distance
@@ -228,11 +238,7 @@ double EnergyKernel::energy(const Molecule &mol, ProcessPool::DivisionStrategy s
                                                              if (rSq > cutoffDistanceSquared_)
                                                                  return innerAcc;
 
-                                                             // Check for atoms in the same species
-                                                             if (ii.molecule().get() != jj.molecule().get())
-                                                                 return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
-
-                                                             return innerAcc;
+                                                             return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
                                                          });
                         });
                 });

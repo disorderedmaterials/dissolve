@@ -55,7 +55,7 @@ stages:
             parameters:
               package: "checks.x86_64-linux.dissolve-mpi"
       - job: "test_linux_gui"
-        timeoutInMinutes: 90
+        timeoutInMinutes: 120
         displayName: "Testing GUI"
         pool:
           vmImage: "ubuntu-latest"
@@ -82,6 +82,6 @@ stages:
   # Create Release
   - stage: 'release'
     displayName: 'Create Release'
-    condition: not(endsWith(variables['Build.SourceBranch'], 'pre'))
+    condition: and(succeeded(), not(endsWith(variables['Build.SourceBranch'], 'pre')))
     jobs:
       - template: templates/create-release.yml

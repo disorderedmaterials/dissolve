@@ -71,6 +71,8 @@ class CIFAtomGroup
     std::string name_;
     // Atoms in the group
     std::vector<CIFSymmetryAtom> atoms_;
+    // Whether the group is active (included in unit cell generation)
+    bool active_{false};
 
     public:
     // Group name (from _atom_site_disorder_group)
@@ -79,6 +81,10 @@ class CIFAtomGroup
     void addAtom(const CIFSymmetryAtom &i);
     // Return atoms in the group
     const std::vector<CIFSymmetryAtom> &atoms() const;
+    // Set whether the group is active (included in unit cell generation)
+    void setActive(bool b);
+    // Return whether the group is active (included in unit cell generation)
+    bool active() const;
 };
 
 // CIF Assembly
@@ -93,22 +99,15 @@ class CIFAssembly
     std::string name_;
     // Available atom groups
     std::vector<CIFAtomGroup> groups_;
-    // Active group
-    OptionalReferenceWrapper<const CIFAtomGroup> activeGroup_;
 
     public:
     // Return name of the assembly (from _atom_site_disorder_assembly or 'Global')
     std::string_view name() const;
     // Return all groups
+    std::vector<CIFAtomGroup> &groups();
     const std::vector<CIFAtomGroup> &groups() const;
     // Get (add or retrieve) named group
     CIFAtomGroup &getGroup(std::string_view groupName);
     // Return the number of defined groups
     int nGroups() const;
-    // Set the active group
-    void setActiveGroup(const CIFAtomGroup &group);
-    // Return the active group
-    const CIFAtomGroup &activeGroup() const;
-    // Return whether the specified group is the active one
-    bool isActiveGroup(const CIFAtomGroup &group) const;
 };

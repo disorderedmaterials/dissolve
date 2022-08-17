@@ -13,17 +13,18 @@ NodeVectorKeywordWidget::NodeVectorKeywordWidget(QWidget *parent, NodeVectorKeyw
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
+
+    // Set up the model
     ui_.NodeList->setModel(&nodeModel_);
+    allowedNodes_ = keyword_->allowedNodes();
+    nodeModel_.setNodeSelectedFunction([&](ConstNodeRef node) { return keyword_->addNode(node); });
+    nodeModel_.setNodeDeselectedFunction([&](ConstNodeRef node) { return keyword_->removeNode(node); });
+    nodeModel_.setNodePresenceFunction([&](ConstNodeRef node) { return keyword_->isPresent(node); });
+    resetModelData();
 
     // Connect signals / slots
     connect(&nodeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
-
-    allowedNodes_ = keyword_->allowedNodes();
-    nodeModel_.setData(allowedNodes_);
-    nodeModel_.setNodeSelectedFunction([&](ConstNodeRef node) { return keyword_->addNode(node); });
-    nodeModel_.setNodeDeselectedFunction([&](ConstNodeRef node) { return keyword_->removeNode(node); });
-    nodeModel_.setNodePresenceFunction([&](ConstNodeRef node) { return keyword_->isPresent(node); });
 
     // Summary text on KeywordDropDown button
     setSummaryText("Edit...");
@@ -47,27 +48,20 @@ void NodeVectorKeywordWidget::modelDataChanged(const QModelIndex &topLeft, const
  * Update
  */
 
-// Update value displayed in widget
-void NodeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
-{
-    updateWidgetValues(coreData_);
-}
-
-// Update widget values data based on keyword data
-void NodeVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
+// Reset model data
+void NodeVectorKeywordWidget::resetModelData()
 {
     refreshing_ = true;
+
+    nodeModel_.setData(allowedNodes_);
 
     updateSummaryText();
 
     refreshing_ = false;
 }
 
-// Update keyword data based on widget values
-void NodeVectorKeywordWidget::updateKeywordData()
-{
-    // Not relevant - Handled via widget callbacks
-}
+// Update value displayed in widget
+void NodeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) { resetModelData(); }
 
 // Update summary text
 void NodeVectorKeywordWidget::updateSummaryText()

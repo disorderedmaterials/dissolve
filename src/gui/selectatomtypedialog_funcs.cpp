@@ -11,7 +11,7 @@ SelectAtomTypeDialog::SelectAtomTypeDialog(QWidget *parent, const CoreData &core
 
     setWindowTitle(dialogTitle);
 
-    ui_.AtomTypeWidget->setAtomTypes(coreData.atomTypes());
+    ui_.AtomTypeWidget->setAtomTypes(coreData.atomTypes(), coreData);
 }
 
 void SelectAtomTypeDialog::on_AtomTypeWidget_atomTypeSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }

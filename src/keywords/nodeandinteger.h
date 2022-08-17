@@ -67,7 +67,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     // Return base node data
     std::shared_ptr<const ProcedureNode> baseNode() override { return data_.first; }
     // Set node
-    virtual bool setNode(ConstNodeRef node)
+    bool setNode(ConstNodeRef node) override
     {
         if (node == nullptr)
             data_.first = nullptr;
@@ -84,9 +84,9 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
         return true;
     }
     // Set integer
-    virtual void setInteger(int i) override { data_.second = i; }
+    void setInteger(int i) override { data_.second = i; }
     // Return integer
-    virtual int integer() const override { return data_.second; }
+    int integer() const override { return data_.second; }
 
     /*
      * Arguments

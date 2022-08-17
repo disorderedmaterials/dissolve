@@ -27,6 +27,13 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     species_ = species;
 
+    // Icons for charge warnings
+    ui_.TotalAtomChargeIndicator->setWarning();
+    ui_.TotalAtomTypeChargeIndicator->setWarning();
+
+    // Populate density units combo
+    ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
+
     // Set item delegates
     // -- SpeciesAtomTable
     ui_.AtomTable->setItemDelegateForColumn(1, new CustomComboDelegate<SpeciesTab>(this, &SpeciesTab::validAtomTypeNames));
@@ -114,15 +121,45 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 }
 
 /*
+ * Widget Functions - Structure
+ */
+
+// Current Box
+void SpeciesTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
+
+/*
  * UI
  */
+
+// Update density label
+void SpeciesTab::updateDensityLabel()
+{
+    if (!species_ || species_->box()->type() == Box::BoxType::NonPeriodic)
+        ui_.DensityUnitsLabel->setText("N/A");
+    else
+        ui_.DensityUnitsLabel->setText(QString::number(
+            ui_.DensityUnitsCombo->currentIndex() == 0 ? species_->nAtoms() / species_->box()->volume()
+                                                       : (species_->mass() / AVOGADRO) / (species_->box()->volume() / 1.0E24)));
+}
 
 // Update controls in tab
 void SpeciesTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
-    // View / Generate Tab
+    // Structure Tab
+    ui_.BoxWidget->setVisible(species_->box()->type() != Box::BoxType::NonPeriodic);
+    if (species_->box()->type() != Box::BoxType::NonPeriodic)
+    {
+        const auto *box = species_->box();
+        ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
+        ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
+        ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
+        ui_.CurrentBoxCLabel->setText(QString::number(box->axisLengths().z));
+        ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
+        ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
+        ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
+    }
     ui_.ViewerWidget->postRedisplay();
 
     // Contents / Forcefield Tab

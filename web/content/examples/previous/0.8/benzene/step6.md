@@ -15,7 +15,7 @@ As noted in the introduction we have neutron-weighted experimental data, so we n
 We need to set the instrumental broadening in the {{< gui-module "SQ" >}} module first:
 
 {{< action type="mouse" text="Click on the `SQ` module to display its options" />}}
-{{< step text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of 0.02" />}}
+{{< step text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of `0.02`" />}}
 
 Now let's set up the three {{< gui-module "NeutronSQ" >}} modules to calculate what we want:
 

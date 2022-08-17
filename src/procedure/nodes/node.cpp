@@ -26,6 +26,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
     return EnumOptions<ProcedureNode::NodeType>(
         "NodeType", {{ProcedureNode::NodeType::Add, "Add"},
+                     {ProcedureNode::NodeType::AddPair, "AddPair"},
                      {ProcedureNode::NodeType::Box, "Box"},
                      {ProcedureNode::NodeType::CalculateAngle, "CalculateAngle"},
                      {ProcedureNode::NodeType::CalculateAxisAngle, "CalculateAxisAngle"},
@@ -274,13 +275,13 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 
         // Try to parse this line as a keyword
         KeywordBase::ParseResult result = keywords_.deserialise(parser, coreData);
-        if (result == KeywordBase::Failed)
-            return Messenger::error("Failed to parse keyword '{}'.\n", parser.argsv(0));
-        else if (result == KeywordBase::Success)
-            continue;
-        else if (result == KeywordBase::Unrecognised)
+        if (result == KeywordBase::ParseResult::Unrecognised)
             return Messenger::error("Unrecognised keyword '{}' found while parsing {} node.\n", parser.argsv(0),
                                     nodeTypes().keyword(type_));
+        else if (result == KeywordBase::ParseResult::Deprecated)
+            Messenger::warn("The '{}' keyword is deprecated and will be removed in a future version.\n", parser.argsv(0));
+        else if (result == KeywordBase::ParseResult::Failed)
+            return Messenger::error("Failed to parse keyword '{}'.\n", parser.argsv(0));
     }
 
     return true;

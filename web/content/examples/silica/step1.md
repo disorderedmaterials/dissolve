@@ -22,8 +22,8 @@ We'll now use the same process to create an oxygen atom type:
 
 {{< action type="mouse" >}}Click the {{< gui-button icon="general_add" text="Add" >}} button again, and choose oxygen from the periodic table {{< /action >}}
 
-{{< action type="edit" text="Change the \"SR Form\" to `LJ`" />}}
 {{< action type="edit" text="Change the \"Charge\" of the oxygen atom type to `-1`" />}}
+{{< action type="edit" text="Change the \"SR Form\" to `LJ`" />}}
 {{< action type="edit" text="Set the \"SR Parameters\" to `epsilon=0.165 sigma=3.5`" />}}
 
 You might ask where these values for the short-range interaction parameters come from, and why the charges don't reflect what you might expect to be "formal" oxidation state charges for the ions.  Well, those are both good questions, and the real answer is that there are going to be a variety of combinations of Lennard-Jones epsilon, sigma, and atomic charges that give reasonable structures for silica, and those listed here are good enough for a starting point for us.  There are no doubt other forcefields in the literature which suggest different parameters for an atomic/ionic representation of the system - you are free to try those if you wish!

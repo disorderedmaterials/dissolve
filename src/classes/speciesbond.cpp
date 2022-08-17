@@ -13,15 +13,18 @@ EnumOptions<BondFunctions::Form> BondFunctions::forms()
 {
     return EnumOptions<BondFunctions::Form>("BondFunction", {{BondFunctions::Form::None, "None"},
                                                              {BondFunctions::Form::Harmonic, "Harmonic", 2},
-                                                             {BondFunctions::Form::EPSR, "EPSR", 2}});
+                                                             {BondFunctions::Form::EPSR, "EPSR", 2},
+                                                             {BondFunctions::Form::Morse, "Morse", 3}});
 }
 
 // Return parameters for specified form
 const std::vector<std::string> &BondFunctions::parameters(Form form)
 {
-    static std::map<BondFunctions::Form, std::vector<std::string>> params_ = {{BondFunctions::Form::None, {}},
-                                                                              {BondFunctions::Form::Harmonic, {"k", "eq"}},
-                                                                              {BondFunctions::Form::EPSR, {"C/2", "eq"}}};
+    static std::map<BondFunctions::Form, std::vector<std::string>> params_ = {
+        {BondFunctions::Form::None, {}},
+        {BondFunctions::Form::Harmonic, {"k", "eq"}},
+        {BondFunctions::Form::EPSR, {"C/2", "eq"}},
+        {BondFunctions::Form::Morse, {"D", "alpha", "eq"}}};
     return params_[form];
 }
 
@@ -292,6 +295,17 @@ double SpeciesBond::energy(double distance) const
         auto massJ = AtomicMass::mass(j_->Z());
         return params[0] * delta * delta / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
     }
+    else if (bondForm == BondFunctions::Form::Morse)
+    {
+        /*
+         * Parameters:
+         * 0 : potential well depth (D)
+         * 1 : potential well width (alpha)
+         * 2 : equilibrium bond length
+         */
+        auto oneMinusE = 1.0 - exp(-params[1] * (distance - params[2]));
+        return params[0] * oneMinusE * oneMinusE;
+    }
 
     throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate energy.\n",
                                          BondFunctions::forms().keyword(bondForm))));
@@ -329,6 +343,17 @@ double SpeciesBond::force(double distance) const
         auto massI = AtomicMass::mass(i_->Z());
         auto massJ = AtomicMass::mass(j_->Z());
         return -2.0 * params[0] * (distance - params[1]) / (params[1] / sqrt((massI + massJ) / (massI * massJ)));
+    }
+    else if (bondForm == BondFunctions::Form::Morse)
+    {
+        /*
+         * Parameters:
+         * 0 : potential well depth (D)
+         * 1 : potential well width (alpha)
+         * 2 : equilibrium bond length
+         */
+        auto e = exp(-params[1] * (distance - params[2]));
+        return -2.0 * params[0] * params[1] * (1.0 - e) * e;
     }
 
     throw(std::runtime_error(fmt::format("Bond functional form '{}' not accounted for, so can't calculate force.\n",

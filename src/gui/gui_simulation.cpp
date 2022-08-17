@@ -179,7 +179,7 @@ void DissolveWindow::closeTab(QWidget *page)
         auto *sp = dynamic_cast<SpeciesTab *>(tab)->species();
         ui_.MainTabs->removeByPage(page);
         dissolve_.removeSpecies(sp);
-        setModified();
+        setModified({DissolveSignals::DataMutations::SpeciesMutated, DissolveSignals::DataMutations::IsotopologuesMutated});
     }
     else
         return;

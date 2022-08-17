@@ -25,15 +25,16 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPoo
             return Messenger::error("Target site has no parent species.\n");
         }
         else if (targetSite_->parent() != targetSpecies_)
-        {
             targetSpecies_ = targetSite_->parent();
+    }
 
-            // Copy basic atom and bond information from species
-            for (const auto &i : targetSpecies_->atoms())
-                averageSpecies_.addAtom(i.Z(), i.r());
-            for (const auto &bond : targetSpecies_->bonds())
-                averageSpecies_.addBond(bond.indexI(), bond.indexJ());
-        }
+    // Copy basic atom and bond information from species
+    if (targetSpecies_)
+    {
+        for (const auto &i : targetSpecies_->atoms())
+            averageSpecies_.addAtom(i.Z(), i.r());
+        for (const auto &bond : targetSpecies_->bonds())
+            averageSpecies_.addBond(bond.indexI(), bond.indexJ());
     }
 
     // Set name and object tag for average species

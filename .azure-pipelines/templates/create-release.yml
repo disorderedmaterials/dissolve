@@ -80,7 +80,7 @@ jobs:
       - bash: |
           set -ex
           VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-          ./update-release -r disorderedmaterials/dissolve -t ${VERSION} -n "${VERSION}" -f ReleaseNotes.md $(System.ArtifactsDirectory)/linux-*-artifacts/* $(System.ArtifactsDirectory)/singularity-*-artifacts/* $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+          ./update-release -r disorderedmaterials/dissolve -t ${VERSION} -n "${VERSION}" -f ReleaseNotes.md -e $(System.ArtifactsDirectory)/linux-*-artifacts/* $(System.ArtifactsDirectory)/singularity-*-artifacts/* $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
         condition: eq('${{ parameters.continuous }}', false)
         env:
           GITHUB_TOKEN: $(REPO_SECRET)
@@ -94,7 +94,14 @@ jobs:
         condition: eq('${{ parameters.continuous }}', true)
         env:
           GITHUB_TOKEN: $(REPO_SECRET)
-        displayName: 'Create Release (GitHub)'
+        displayName: 'Create Continuous Release (GitHub)'
+      - template: install-nix.yml
+      - template: push-harbor.yml
+        parameters:
+          ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+            tag: "continuous"
+          ${{ if not(eq(variables['Build.SourceBranchName'], 'develop')) }}:
+            tag: "latest"
       - bash: |
           set -ex
           ./ci/scripts/list-releases -r disorderedmaterials/dissolve -u -v $(Build.SourceBranchName)
@@ -102,10 +109,3 @@ jobs:
         env:
           GITHUB_TOKEN: $(REPO_SECRET)
         displayName: 'Update Web Release Info'
-      - template: install-nix.yml
-      - template: push-harbor.yml
-        parameters:
-          ${{ if eq('${{ parameters.continuous }}', true) }}:
-            tag: "continuous"
-          ${{ if eq('${{ parameters.continuous }}', false) }}:
-            tag: "latest"

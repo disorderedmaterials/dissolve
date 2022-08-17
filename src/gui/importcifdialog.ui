@@ -28,7 +28,7 @@
    <item>
     <widget class="QStackedWidget" name="MainStack">
      <property name="currentIndex">
-      <number>5</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="ImportCIFSelectFilePage">
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -148,7 +148,7 @@
           <item>
            <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>The space group for this CIF could not be detected automatically - please choose the correct spacegroup from the list below.</string>
+             <string>The space group for this CIF could not be detected automatically - please choose the correct space group from the list below.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -156,69 +156,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="SpacegroupKeysGroup">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>1</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Relevant CIF Dictionary Keys</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_13">
-             <property name="spacing">
-              <number>4</number>
-             </property>
-             <property name="leftMargin">
-              <number>4</number>
-             </property>
-             <property name="topMargin">
-              <number>4</number>
-             </property>
-             <property name="rightMargin">
-              <number>4</number>
-             </property>
-             <property name="bottomMargin">
-              <number>4</number>
-             </property>
-             <item>
-              <widget class="QTableWidget" name="SpacegroupKeysTable">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="showDropIndicator" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <attribute name="horizontalHeaderVisible">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>Key</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Value</string>
-                </property>
-               </column>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="SpacegroupsGroup">
+           <widget class="QGroupBox" name="SpaceGroupsGroup">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -226,7 +164,7 @@
              </sizepolicy>
             </property>
             <property name="title">
-             <string>Spacegroups</string>
+             <string>Space Groups</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_14">
              <property name="spacing">
@@ -245,7 +183,7 @@
               <number>4</number>
              </property>
              <item>
-              <widget class="QListWidget" name="SpacegroupsList">
+              <widget class="QListWidget" name="SpaceGroupsList">
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
@@ -315,7 +253,7 @@
          <item row="5" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Spacegroup</string>
+            <string>Space Group</string>
            </property>
           </widget>
          </item>
@@ -480,6 +418,9 @@
              </property>
              <item>
               <widget class="QRadioButton" name="CalculateBondingRadio">
+               <property name="toolTip">
+                <string>Determine chemical bonds using overlap of defined elemental radii</string>
+               </property>
                <property name="text">
                 <string>Calculate</string>
                </property>
@@ -492,6 +433,32 @@
               <widget class="QRadioButton" name="BondFromCIFRadio">
                <property name="text">
                 <string>Use CIF definitions (from _geom_bond_*)</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="BondingPreventMetallicCheck">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Don't add bonds between metallic elements</string>
+               </property>
+               <property name="text">
+                <string>Prevent metallic bonds</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -523,85 +490,6 @@
               <widget class="QTreeView" name="AssemblyView">
                <property name="toolTip">
                 <string>Any defined disorder assemblies and groups will be listed here, including a Global assembly containing other (well-defined) atoms in the structure.</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="MoietyRemovalGroup">
-            <property name="toolTip">
-             <string>Remove atoms or fragments based on a NETA description</string>
-            </property>
-            <property name="title">
-             <string>Moiety Removal</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_9">
-             <property name="spacing">
-              <number>4</number>
-             </property>
-             <property name="leftMargin">
-              <number>4</number>
-             </property>
-             <property name="topMargin">
-              <number>4</number>
-             </property>
-             <property name="rightMargin">
-              <number>4</number>
-             </property>
-             <property name="bottomMargin">
-              <number>4</number>
-             </property>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_9">
-               <item>
-                <widget class="QLineEdit" name="MoietyRemovalEdit">
-                 <property name="toolTip">
-                  <string>NETA definition matching specific atoms whose encompassing moiety should be removed</string>
-                 </property>
-                 <property name="text">
-                  <string>?O,nbonds=0|?O,nbonds=2,nh=2</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="CheckIndicator" name="MoietyRemovalIndicator">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="MoietyRemoveFragmentsCheck">
-               <property name="toolTip">
-                <string>If selected, fragments containing the matched atoms will be removed</string>
-               </property>
-               <property name="text">
-                <string>Remove bound fragments</string>
                </property>
               </widget>
              </item>
@@ -649,6 +537,210 @@
           </property>
           <item>
            <widget class="ConfigurationViewerWidget" name="StructureViewer" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="ImportCIFCleanedPage">
+      <layout class="QHBoxLayout" name="horizontalLayout_14">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="MoietyGroup">
+         <property name="title">
+          <string>Moiety Removal</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_17">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="MoietyRemoveAtomicsCheck">
+            <property name="toolTip">
+             <string>Remove any lone (i.e. unbound) atoms</string>
+            </property>
+            <property name="text">
+             <string>Unbound atoms</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="MoietyRemoveWaterCheck">
+            <property name="toolTip">
+             <string>Remove any water molecules or coordinated oxygens without hydrogens</string>
+            </property>
+            <property name="text">
+             <string>Water and coordinated oxygen</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="MoietyRemoveByNETAGroup">
+            <property name="toolTip">
+             <string>Remove atoms or fragments based on a NETA description</string>
+            </property>
+            <property name="title">
+             <string>Remove by NETA</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
+             <property name="topMargin">
+              <number>4</number>
+             </property>
+             <property name="rightMargin">
+              <number>4</number>
+             </property>
+             <property name="bottomMargin">
+              <number>4</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_9">
+               <item>
+                <widget class="QLineEdit" name="MoietyNETARemovalEdit">
+                 <property name="toolTip">
+                  <string>NETA definition matching specific atoms whose encompassing moiety should be removed</string>
+                 </property>
+                 <property name="text">
+                  <string>?O,nbonds=2,nh=2</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="CheckIndicator" name="MoietyNETARemovalIndicator">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="MoietyNETARemoveFragmentsCheck">
+               <property name="toolTip">
+                <string>If selected, fragments containing the matched atoms will be removed</string>
+               </property>
+               <property name="text">
+                <string>Remove bound fragments</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>276</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="CleanedViewFrame">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>3</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>300</width>
+           <height>300</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="ConfigurationViewerWidget" name="CleanedViewer" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>1</horstretch>

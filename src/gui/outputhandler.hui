@@ -33,7 +33,7 @@ class GUIOutputHandler : public QObject, public OutputHandler
      */
     public:
     // Print text
-    void outputText(std::string s);
+    void outputText(std::string s) override;
 
     signals:
     void printText(const QString &s);
