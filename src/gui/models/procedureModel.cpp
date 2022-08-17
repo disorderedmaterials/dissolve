@@ -35,15 +35,13 @@ ProcedureNode *ProcedureModel::rawData(const QModelIndex &index) const
 // Return sequence scope for supplied index
 OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureModel::getScope(const QModelIndex &index) const
 {
-    // If the parent is invalid then we return the root sequence of the procedure. Otherwise, the index's branch.
-    if (index.isValid())
-    {
-        auto node = rawData(index);
-        if (node)
-            return node->branch();
-    }
-    else
+    // If the index is invalid then we return the root sequence of the procedure. Otherwise, the index's branch.
+    if (!index.isValid())
         return procedure_->get().rootSequence();
+
+    auto node = rawData(index);
+    if (node)
+        return node->branch();
 
     return {};
 }
@@ -353,57 +351,64 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
     return false;
 }
 
-bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column,
+                                  const QModelIndex &newParent)
 {
-    if (!canDropMimeData(data, action, row, column, parent))
+    if (!canDropMimeData(data, action, row, column, newParent))
         return false;
 
     if (action == Qt::IgnoreAction)
         return true;
     else if (action == Qt::MoveAction && data->hasFormat("application/dissolve.procedure.existingNode"))
     {
-        printf("DROP MOVE\n");
         // Cast up the provided data
         auto mimeData = static_cast<const ProcedureModelMimeData *>(data);
         if (!mimeData)
             return false;
 
-        // Retrieve the existing node index / node
-        auto optExistingIndex = mimeData->nodeIndex();
-        if (!optExistingIndex)
+        // Retrieve the old node data
+        auto optOldIndex = mimeData->nodeIndex();
+        if (!optOldIndex)
             return false;
-        auto existingIndex = *optExistingIndex;
-        if (!existingIndex.isValid())
+        auto oldIndex = *optOldIndex;
+        if (!oldIndex.isValid())
             return false;
-        auto *existingNode = rawData(existingIndex);
-        if (!existingNode)
+        auto *oldNode = rawData(oldIndex);
+        if (!oldNode)
             return false;
+        auto existingParent = parent(oldIndex);
 
-        // Get the parent scope
-        auto optScope = getScope(parent);
-        if (!optScope)
-            return false;
-        auto &scope = optScope->get();
-        printf("Dropping - new scope contains %li nodes at present.\n", scope.nNodes());
-
-        // Determine the new index of the dragged node in the root sequence or scope
-        auto insertAtRow = row == -1 ? scope.nNodes() : row;
-
-        // Create a new row to store the data.
-        insertRows(insertAtRow, 1, parent);
-
-        // Find the current vector position of the existing node
-        auto &oldScope = existingNode->scope()->get();
+        // Get the current scope and position within that scope of the old node
+        auto &oldScope = oldNode->scope()->get();
         auto oldNodeIt = std::find_if(oldScope.sequence().begin(), oldScope.sequence().end(),
-                                      [existingNode](const auto &node) { return node.get() == existingNode; });
+                                      [oldNode](const auto &node) { return node.get() == oldNode; });
         if (oldNodeIt == oldScope.sequence().end())
             return false;
+        auto oldNodeRow = oldNodeIt - oldScope.sequence().begin();
+
+        // Get the new parent scope
+        auto optNewScope = getScope(newParent);
+        if (!optNewScope)
+            return false;
+        auto &newScope = optNewScope->get();
+
+        // Determine the new index of the dragged node in the root sequence or scope
+        auto insertAtRow = row == -1 ? newScope.nNodes() : row;
+
+        // Create a new row to store the data.
+        insertRows(insertAtRow, 1, newParent);
 
         // Move the node to its new home
-        scope.sequence()[insertAtRow] = std::move(oldScope.sequence()[oldNodeIt - oldScope.sequence().begin()]);
+        newScope.sequence()[insertAtRow] = std::move(oldScope.sequence()[oldNodeRow]);
+        oldNode->setScope(newScope);
+
+        // Remove the old row
+        beginRemoveRows(existingParent, oldNodeRow, oldNodeRow);
+        oldScope.sequence().erase(oldScope.sequence().begin() + oldNodeRow);
+        endRemoveRows();
 
         // Set the new data - we call this just to emit dataChanged() from the correct place.
-        auto idx = index(insertAtRow, 0, parent);
+        auto idx = index(insertAtRow, 0, newParent);
         return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::MoveInternal);
     }
     else if (action == Qt::CopyAction && data->hasFormat("application/dissolve.procedure.newNode"))
@@ -414,7 +419,7 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
             return false;
 
         // Get the parent scope
-        auto scope = getScope(parent);
+        auto scope = getScope(newParent);
         if (!scope)
             return false;
 
@@ -423,10 +428,10 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
         // Create a new row to store the data. Don't use insertRows() here since creating a null node in the vector at this
         // point causes no end of issues.
-        beginInsertRows(parent.isValid() ? parent : QModelIndex(), insertAtRow, insertAtRow);
+        beginInsertRows(newParent.isValid() ? newParent : QModelIndex(), insertAtRow, insertAtRow);
         scope->get().appendNode(mimeData->node(), insertAtRow);
         endInsertRows();
-        auto idx = index(insertAtRow, 0, parent);
+        auto idx = index(insertAtRow, 0, newParent);
 
         // Call setData() so we emit the right signals
         return setData(idx, QVariant::fromValue(mimeData->node()), ProcedureModelAction::CreateNew);
@@ -442,29 +447,11 @@ bool ProcedureModel::insertRows(int row, int count, const QModelIndex &parent)
 
     // Get the scope associated to the parent index
     auto scope = getScope(parent);
-    if (!scope)
-        return false;
 
     beginInsertRows(parent, row, row + count - 1);
     for (auto i = 0; i < count; ++i)
         scope->get().insertEmpty(row + i);
     endInsertRows();
-
-    return true;
-}
-
-bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
-{
-    // Get scope from the parent
-    auto optScope = getScope(parent);
-    if (!optScope)
-        return false;
-    auto &scope = optScope->get();
-
-    beginRemoveRows(parent, row, row + count - 1);
-    for (auto i = 0; i < count; ++i)
-        scope.sequence().erase(scope.sequence().begin() + row);
-    endRemoveRows();
 
     return true;
 }
