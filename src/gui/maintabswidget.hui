@@ -74,12 +74,8 @@ class MainTabsWidget : public QTabWidget
     QPointer<ConfigurationTab> configurationTab(QWidget *page);
     // Find LayerTab containing specified page widget
     QPointer<LayerTab> processingLayerTab(QWidget *page);
-    // Find tab with title specified
-    MainTab *findTab(const QString title);
     // Find tab displaying specified page
     MainTab *findTab(const QWidget *page);
-    // Generate unique tab name with base name provided
-    const QString uniqueTabName(const QString base);
 
     /*
      * Tab Management
@@ -98,8 +94,6 @@ class MainTabsWidget : public QTabWidget
     public:
     // Return current tab
     MainTab *currentTab() const;
-    // Make specified tab the current one
-    void setCurrentTab(const MainTab *tab);
     // Make specified Species tab the current one
     void setCurrentTab(Species *species);
     // Make specified Configuration tab the current one
@@ -122,8 +116,6 @@ class MainTabsWidget : public QTabWidget
      * Tab Styling
      */
     public:
-    // Set text colour for tab with specified page widget
-    void setTabTextColour(QWidget *pageWidget, QColor colour);
     // Set icon for tab with specified page widget
     void setTabIcon(QWidget *pageWidget, QIcon icon);
     // Add close button to specified tab
@@ -141,8 +133,8 @@ class MainTabsWidget : public QTabWidget
     void contextMenuRequested(const QPoint &pos);
     // Tab close button clicked
     void tabCloseButtonClicked(bool);
-    // Tab bar double-clicked
-    void tabBarDoubleClicked(int index);
+    // Tab double-clicked
+    void tabDoubleClicked(int index);
 
     signals:
     void dataModified();

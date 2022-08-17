@@ -15,7 +15,7 @@ MainTabsWidget::MainTabsWidget(QWidget *parent) : QTabWidget(parent)
     // Create our own tab bar
     mainTabsBar_ = new MainTabsBar(this);
     setTabBar(mainTabsBar_);
-    connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabBarDoubleClicked(int)));
+    connect(mainTabsBar_, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(tabDoubleClicked(int)));
     connect(mainTabsBar_, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(contextMenuRequested(const QPoint &)));
 
     // Always show scroll buttons when there are many tabs
@@ -122,37 +122,11 @@ QPointer<LayerTab> MainTabsWidget::processingLayerTab(QWidget *page)
     return nullptr;
 }
 
-// Find tab with title specified
-MainTab *MainTabsWidget::findTab(const QString title)
-{
-    auto result = std::find_if(allTabs_.begin(), allTabs_.end(), [&title](auto tab) { return tab->title() == title; });
-    return result == allTabs_.end() ? nullptr : *result;
-}
-
 // Find tab displaying specified page
 MainTab *MainTabsWidget::findTab(const QWidget *page)
 {
     auto result = std::find_if(allTabs_.begin(), allTabs_.end(), [page](auto tab) { return tab->page() == page; });
     return result == allTabs_.end() ? nullptr : *result;
-}
-
-// Generate unique tab name with base name provided
-const QString MainTabsWidget::uniqueTabName(const QString base)
-{
-    static QString uniqueName;
-    QString baseName = base;
-    uniqueName = baseName;
-    auto suffix = 0;
-
-    // Must always have a baseName
-    if (baseName.isEmpty())
-        baseName = "Unnamed";
-
-    // Find an unused name starting with the baseName provided
-    while (findTab(uniqueName))
-        uniqueName = QStringLiteral("%1%2").arg(baseName, ++suffix);
-
-    return uniqueName;
 }
 
 /*
@@ -352,23 +326,18 @@ MainTab *MainTabsWidget::currentTab() const
     return *result;
 }
 
-// Make specified tab the current one
-void MainTabsWidget::setCurrentTab(const MainTab *tab) { setCurrentWidget(tab->page()); }
-
 // Make specified Species tab the current one
 void MainTabsWidget::setCurrentTab(Species *species)
 {
     if (!species)
         return;
 
-    for (auto &tab : speciesTabs_)
-        if (tab->species() == species)
-        {
-            setCurrentWidget(tab->page());
-            return;
-        }
-
-    Messenger::error("Can't display SpeciesTab for Species '{}' as it doesn't exist.\n", species->name());
+    auto it = std::find_if(speciesTabs_.begin(), speciesTabs_.end(),
+                           [species](const auto &tab) { return tab->species() == species; });
+    if (it != speciesTabs_.end())
+        setCurrentWidget((*it)->page());
+    else
+        Messenger::error("Can't display SpeciesTab for Species '{}' as it doesn't exist.\n", species->name());
 }
 
 // Make specified Configuration tab the current one
@@ -377,14 +346,12 @@ void MainTabsWidget::setCurrentTab(Configuration *cfg)
     if (!cfg)
         return;
 
-    for (auto tab : configurationTabs_)
-        if (tab->configuration() == cfg)
-        {
-            setCurrentWidget(tab->page());
-            return;
-        }
-
-    Messenger::error("Can't display ConfigurationTab for Configuration '{}' as it doesn't exist.\n", cfg->name());
+    auto it = std::find_if(configurationTabs_.begin(), configurationTabs_.end(),
+                           [cfg](const auto &tab) { return tab->configuration() == cfg; });
+    if (it != configurationTabs_.end())
+        setCurrentWidget((*it)->page());
+    else
+        Messenger::error("Can't display ConfigurationTab for Configuration '{}' as it doesn't exist.\n", cfg->name());
 }
 
 // Make specified processing layer tab the current one
@@ -393,14 +360,12 @@ void MainTabsWidget::setCurrentTab(ModuleLayer *layer)
     if (!layer)
         return;
 
-    for (auto tab : processingLayerTabs_)
-        if (tab->moduleLayer() == layer)
-        {
-            setCurrentWidget(tab->page());
-            return;
-        }
-
-    Messenger::error("Can't display LayerTab for processing layer '{}' as it doesn't exist.\n", layer->name());
+    auto it = std::find_if(processingLayerTabs_.begin(), processingLayerTabs_.end(),
+                           [layer](const auto &tab) { return tab->moduleLayer() == layer; });
+    if (it != processingLayerTabs_.end())
+        setCurrentWidget((*it)->page());
+    else
+        Messenger::error("Can't display LayerTab for processing layer '{}' as it doesn't exist.\n", layer->name());
 }
 
 /*
@@ -424,8 +389,8 @@ void MainTabsWidget::preventEditing()
     for (auto &[button, page] : closeButtons_)
         button->setDisabled(true);
 
-    // Prevent the context menu from being raised
-    mainTabsBar_->setContextMenuPolicy(Qt::NoContextMenu);
+    // Block the tab bar signals to prevent editing and context menu
+    mainTabsBar_->blockSignals(true);
 }
 
 // Allow editing in all tabs
@@ -438,25 +403,13 @@ void MainTabsWidget::allowEditing()
     for (auto &[button, page] : closeButtons_)
         button->setEnabled(true);
 
-    // Re-enable the context menu from being raised
-    mainTabsBar_->setContextMenuPolicy(Qt::CustomContextMenu);
+    // Re-enable the tab bar signals
+    mainTabsBar_->blockSignals(false);
 }
 
 /*
  * Tab Styling
  */
-
-// Set text colour for tab with specified page widget
-void MainTabsWidget::setTabTextColour(QWidget *pageWidget, QColor colour)
-{
-    // Find the tab containing the specified page
-    auto tabIndex = indexOf(pageWidget);
-    if (tabIndex == -1)
-        return;
-
-    // Set the style via the tab bar
-    mainTabsBar_->setTabTextColor(tabIndex, colour);
-}
 
 // Set icon for tab with specified page widget
 void MainTabsWidget::setTabIcon(QWidget *pageWidget, QIcon icon)
@@ -589,8 +542,8 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
     emit(tabClosed(page));
 }
 
-// Tab bar double-clicked
-void MainTabsWidget::tabBarDoubleClicked(int index)
+// Tab double-clicked
+void MainTabsWidget::tabDoubleClicked(int index)
 {
     if (index == -1)
         return;
