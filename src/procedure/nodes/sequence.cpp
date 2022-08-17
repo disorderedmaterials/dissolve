@@ -5,6 +5,8 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "keywords/node.h"
+#include "keywords/nodeandinteger.h"
+#include "keywords/nodevector.h"
 #include "procedure/nodes/registry.h"
 
 ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
@@ -335,6 +337,36 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     }
 
     return parameters;
+}
+
+// Validate node-related keywords ensuring invalid (out-of-scope) data are un-set
+bool ProcedureNodeSequence::validateNodeKeywords()
+{
+    auto result = true;
+
+    for (auto &node : sequence_)
+    {
+        // NodeKeyword
+        for (auto &kwd : node->keywords().allOfType<NodeKeywordBase>())
+            if (!kwd->validate())
+                result = false;
+
+        // NodeAndIntegerKeywordKeyword
+        for (auto &kwd : node->keywords().allOfType<NodeAndIntegerKeywordBase>())
+            if (!kwd->validate())
+                result = false;
+
+        // NodeVectorKeyword
+        for (auto &kwd : node->keywords().allOfType<NodeVectorKeywordBase>())
+            if (!kwd->validate())
+                result = false;
+
+        // Check node branch if present
+        if (node->branch() && !node->branch()->get().validateNodeKeywords())
+            result = false;
+    }
+
+    return result;
 }
 
 // Check for node consistency

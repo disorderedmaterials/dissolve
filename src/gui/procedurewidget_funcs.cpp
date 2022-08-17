@@ -15,6 +15,8 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
     // Set up the procedure model
     ui_.NodesTree->setModel(&procedureModel_);
     connect(ui_.NodesTree, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedNodeChanged(const QModelIndex &)));
+    connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
+            SLOT(procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
 
     // Set up the available nodes tree
     ui_.AvailableNodesTree->setModel(&nodePaletteModel_);
@@ -108,9 +110,15 @@ void ProcedureWidget::on_ShowAvailableNodesButton_clicked(bool checked)
                                                                               : "Show Available Nodes");
 }
 
-void ProcedureWidget::layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
+void ProcedureWidget::procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
 {
-    //    dissolveWindow_->setModified({DissolveSignals::nodesMutated});
+    if (!procedure_)
+        return;
+
+    // Node order may have changed, or node may have been deleted, so validate related data
+    procedure_.value().get().rootSequence().validateNodeKeywords();
+
+    dissolveWindow_->setModified();
 }
 
 void ProcedureWidget::nodeNameChanged(const QModelIndex &index, const QString &oldName, const QString &newName)

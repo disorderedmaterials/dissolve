@@ -53,7 +53,7 @@ class ProcedureWidget : public QWidget
     void selectedNodeChanged(const QModelIndex &);
     void on_ShowAvailableNodesButton_clicked(bool checked);
     void nodeNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
-    void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
+    void procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     void updateNodeTree();
     void on_NodesTree_customContextMenuRequested(const QPoint &pos);
     void on_AvailableNodesTree_doubleClicked(const QModelIndex &index);

@@ -112,6 +112,8 @@ class ProcedureNodeSequence
     parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
     std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope(ConstNodeRef queryingNode);
+    // Validate node-related keywords ensuring invalid (out-of-scope) data are un-set
+    bool validateNodeKeywords();
     // Check for node consistency
     bool check() const;
 
