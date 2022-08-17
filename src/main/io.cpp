@@ -145,7 +145,7 @@ SerialisedValue Dissolve::serialise() const
 
     root["pairPotentials"] = serializablePairPotential_.serialise();
 
-    Serialisable::fromVectorToTable<>(configurations(), "configurations", root);
+    Serialisable::fromVectorToTable(configurations(), "configurations", root);
 
     return root;
 }
@@ -167,6 +167,12 @@ void Dissolve::deserialise(const SerialisedValue &node)
     }
     Serialisable::toMap(node, "species", [this](const std::string &name, const SerialisedValue &data) {
         species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_);
+    });
+
+    Serialisable::toMap(node, "configurations", [this](const std::string &name, const SerialisedValue &data) {
+        auto *cfg = addConfiguration();
+        cfg->setName(name);
+        cfg->deserialise(data);
     });
 }
 

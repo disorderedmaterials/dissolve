@@ -236,4 +236,6 @@ class Configuration : public Serialisable
                      double pairPotentialRange);
     // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(const SerialisedValue &node);
 };

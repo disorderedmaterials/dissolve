@@ -154,9 +154,16 @@ SerialisedValue Configuration::serialise() const
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
-    SerialisedValue generator;
-    generator["box"] = box_->serialise();
-    configuration["generator"] = generator;
+    // SerialisedValue generator;
+    // generator["box"] = box_->serialise();
+    // configuration["generator"] = generator;
 
     return configuration;
+}
+
+void Configuration::deserialise(const SerialisedValue &node)
+{
+    temperature_ = toml::find_or<double>(node, "temperature", defaultTemperature_);
+    requestedSizeFactor_ = toml::find_or<double>(node, "sizeFactor", defaultSizeFactor_);
+    requestedCellDivisionLength_ = toml::find_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
 }
