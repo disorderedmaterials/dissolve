@@ -69,7 +69,6 @@ SerialisedValue BoxProcedureNode::serialise() const
 
 void BoxProcedureNode::deserialise(const SerialisedValue &node)
 {
-    std::cout << "Vec3 " << toml::find<Vec3<NodeValue>>(node, "angles").x.asInteger() << std::endl;
     lengths_ = toml::find<Vec3<NodeValue>>(node, "lengths");
     angles_ = toml::find<Vec3<NodeValue>>(node, "angles");
     nonPeriodic_ = toml::find<bool>(node, "nonPeriodic");
