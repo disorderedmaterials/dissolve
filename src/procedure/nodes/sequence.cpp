@@ -488,7 +488,7 @@ SerialisedValue SequenceProcedureNode::serialise() const
     for (auto n : sequence_)
     {
         // node.push_back(n->serialise());
-        SerialisedValue inner;
+        SerialisedValue inner = n->serialise();
         inner["type"] = n->nodeTypes().serialise(n->type());
         node.push_back(inner);
     }

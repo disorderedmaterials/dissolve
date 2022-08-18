@@ -209,6 +209,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     virtual bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write node data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view prefix);
-    SerialisedValue serialise() const;
-    void deserialise(const SerialisedValue &node);
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node) override;
 };

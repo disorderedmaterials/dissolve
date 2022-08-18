@@ -334,3 +334,19 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
 
     return true;
 }
+
+SerialisedValue AddProcedureNode::serialise() const
+{
+    auto result = ProcedureNode::serialise();
+    result["scaleA"] = scaleA_;
+    result["scaleB"] = scaleB_;
+    result["scaleC"] = scaleC_;
+    return result;
+}
+
+void AddProcedureNode::deserialise(const SerialisedValue &node)
+{
+    scaleA_ = toml::find<bool>(node, "scaleA");
+    scaleB_ = toml::find<bool>(node, "scaleB");
+    scaleC_ = toml::find<bool>(node, "scaleC");
+}
