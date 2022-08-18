@@ -4,6 +4,7 @@
 #include "procedure/nodes/sequence.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "keywords/node.h"
 #include "procedure/nodes/registry.h"
 
 SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
@@ -345,6 +346,29 @@ std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::paramete
     }
 
     return parameters;
+}
+
+// Check for node consistency
+bool SequenceProcedureNode::check() const
+{
+    for (auto &node : sequence_)
+    {
+        // Check ownership
+        if (node->scope().get() != this)
+            return Messenger::error("Node '{}' failed parent check ({} is not this {})\n", node->name(),
+                                    fmt::ptr(node->parent().get()), fmt::ptr(this));
+
+        // Check context
+        if (!node->isContextRelevant(context_))
+            return Messenger::error("Node '{}' is not allowed in this context ({})\n", node->name(),
+                                    ProcedureNode::nodeContexts().keyword(context_));
+
+        // Check node branch if present
+        if (node->hasBranch() && !node->branch()->check())
+            return false;
+    }
+
+    return true;
 }
 
 /*

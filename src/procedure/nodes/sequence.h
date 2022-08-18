@@ -137,6 +137,8 @@ class SequenceProcedureNode : public ProcedureNode
     parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
     std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope(ConstNodeRef queryingNode);
+    // Check for node consistency
+    bool check() const;
 
     /*
      * Execute
