@@ -60,16 +60,19 @@ bool BoxProcedureNode::execute(const ProcedureContext &procedureContext)
 // Express as a tree node
 SerialisedValue BoxProcedureNode::serialise() const
 {
-    SerialisedValue box;
-    box["lengths"] = lengths_;
-    box["angles"] = angles_;
-    box["nonPeriodic"] = nonPeriodic_;
+    SerialisedValue box = ProcedureNode::serialise();
+    if (lengths_ != defaultLengths_)
+        box["lengths"] = lengths_;
+    if (angles_ != defaultAngles_)
+        box["angles"] = angles_;
+    if (nonPeriodic_ != defaultNonPeriodic_)
+        box["nonPeriodic"] = nonPeriodic_;
     return box;
 }
 
 void BoxProcedureNode::deserialise(const SerialisedValue &node)
 {
-    lengths_ = toml::find<Vec3<NodeValue>>(node, "lengths");
-    angles_ = toml::find<Vec3<NodeValue>>(node, "angles");
-    nonPeriodic_ = toml::find<bool>(node, "nonPeriodic");
+    lengths_ = toml::find_or<>(node, "lengths", defaultLengths_);
+    angles_ = toml::find_or<>(node, "angles", defaultAngles_);
+    nonPeriodic_ = toml::find_or<bool>(node, "nonPeriodic", defaultNonPeriodic_);
 }

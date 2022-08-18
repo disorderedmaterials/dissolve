@@ -95,7 +95,7 @@ bool NodeValue::isValid() const { return (type_ == ExpressionNodeValue ? express
  */
 
 // Return contained value as integer
-int NodeValue::asInteger()
+int NodeValue::asInteger() const
 {
     if (type_ == IntegerNodeValue)
         return valueI_;
@@ -106,7 +106,7 @@ int NodeValue::asInteger()
 }
 
 // Return contained value as double
-double NodeValue::asDouble()
+double NodeValue::asDouble() const
 {
     if (type_ == IntegerNodeValue)
         return (double)valueI_;
@@ -171,3 +171,23 @@ void NodeValue::deserialise(const SerialisedValue &node)
         },
         node);
 }
+
+bool NodeValue::operator==(const NodeValue &value) const
+{
+    if (type_ != value.type_)
+        return false;
+    switch (type_)
+    {
+        case IntegerNodeValue:
+            return valueI_ == value.asInteger();
+        case DoubleNodeValue:
+            return valueD_ == value.asDouble();
+        case ExpressionNodeValue:
+            // FIXME: This should eventually be handled properly
+            // eventually, but it isn't used at the moment.
+            return false;
+    }
+    return false;
+}
+
+bool NodeValue::operator!=(const NodeValue &value) const { return !(*this == value); }
