@@ -33,21 +33,15 @@ bool NodeKeywordUnderlay::onlyInScope() const { return onlyInScope_; }
 // Return vector of possible nodes allowed in the vector
 std::vector<ConstNodeRef> NodeKeywordUnderlay::allowedNodes() const
 {
-    // Get vector of available nodes of the correct type and in the relevant scope
-    std::vector<ConstNodeRef> nodes;
-    if (onlyInScope_)
-        nodes = parentNode_->nodesInScope(nodeType_, nodeClass_);
-    else if (parentNode_->procedure())
-        nodes = parentNode_->procedure()->nodes(nodeType_, nodeClass_);
-
-    return nodes;
+    assert(parentNode_);
+    return parentNode_->getNodes(onlyInScope_, nodeType_, nodeClass_);
 }
 
 // Find the named node, obeying scope
 ConstNodeRef NodeKeywordUnderlay::findNode(std::string_view name) const
 {
     assert(parentNode_);
-    return onlyInScope_ ? parentNode_->nodeInScope(name) : parentNode_->nodeExists(name);
+    return parentNode_->getNode(name, onlyInScope_);
 }
 
 // Return whether the node has valid class or type

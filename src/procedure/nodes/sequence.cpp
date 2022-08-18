@@ -226,7 +226,7 @@ ConstNodeRef SequenceProcedureNode::nodeInScope(ConstNodeRef queryingNode, std::
 
     // Not in our list. Recursively check our owner
     if (owner_)
-        return owner_->nodeInScope(name, excludeNode, optNodeType, optNodeClass);
+        return owner_->getNode(name, true, excludeNode, optNodeType, optNodeClass);
 
     // Not found
     return nullptr;
@@ -257,7 +257,7 @@ std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef query
     // Not in our list. Recursively check our owner
     if (owner_)
     {
-        auto parentMatches = owner_->nodesInScope(optNodeType, optNodeClass);
+        auto parentMatches = owner_->getNodes(true, optNodeType, optNodeClass);
         std::copy(parentMatches.begin(), parentMatches.end(), std::back_inserter(matches));
     }
 
