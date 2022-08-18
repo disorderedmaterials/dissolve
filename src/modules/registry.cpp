@@ -10,7 +10,6 @@
 #include "modules/calculate_angle/angle.h"
 #include "modules/calculate_avgmol/avgmol.h"
 #include "modules/calculate_axisangle/axisangle.h"
-#include "modules/calculate_cn/cn.h"
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_rdf/rdf.h"
 #include "modules/calculate_sdf/sdf.h"
@@ -46,8 +45,6 @@ ModuleRegistry::ModuleRegistry()
         "CalculateAvgMol", "Calculate average atomic positions of a species around an oriented site", "Analysis");
     registerProducer<CalculateAxisAngleModule>("CalculateAxisAngle", "Calculate distance/angle map between site axes",
                                                "Analysis");
-    registerProducer<CalculateCNModule>(
-        "CalculateCN", "Calculate coordination numbers from an existing radial distribution function", "Analysis");
     registerProducer<CalculateDAngleModule>("CalculateDAngle", "Calculate distance/angle maps", "Analysis");
     registerProducer<CalculateRDFModule>("CalculateRDF", "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<CalculateSDFModule>("CalculateSDF", "Calculate spatial density functions around oriented sites",
