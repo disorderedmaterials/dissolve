@@ -97,7 +97,7 @@ class SequenceProcedureNode : public ProcedureNode
 
     private:
     // Return named node if it exists anywhere in our sequence or below (and matches the type / class given)
-    NodeRef searchNodes(std::string_view name, NodeRef excludeNode = nullptr,
+    NodeRef searchNodes(std::string_view name, ConstNodeRef excludeNode = nullptr,
                         std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                         std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Search through the Procedure for the named parameter
@@ -126,11 +126,11 @@ class SequenceProcedureNode : public ProcedureNode
                                            std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                            std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-    ConstNodeRef nodeExists(std::string_view name, NodeRef excludeNode = nullptr,
+    ConstNodeRef nodeExists(std::string_view name, ConstNodeRef excludeNode = nullptr,
                             std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return the named parameter if it is currently in scope
-    std::shared_ptr<ExpressionVariable> parameterInScope(NodeRef queryingNode, std::string_view name,
+    std::shared_ptr<ExpressionVariable> parameterInScope(ConstNodeRef queryingNode, std::string_view name,
                                                          const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr);
     // Return whether the named parameter exists in this sequence or its children (branches)
     std::shared_ptr<ExpressionVariable>

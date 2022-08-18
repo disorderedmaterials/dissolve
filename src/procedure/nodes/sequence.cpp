@@ -85,7 +85,7 @@ int SequenceProcedureNode::nNodes() const { return sequence_.size(); }
  */
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
-NodeRef SequenceProcedureNode::searchNodes(std::string_view name, NodeRef excludeNode,
+NodeRef SequenceProcedureNode::searchNodes(std::string_view name, ConstNodeRef excludeNode,
                                            std::optional<ProcedureNode::NodeType> optNodeType,
                                            std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
@@ -265,7 +265,7 @@ std::vector<ConstNodeRef> SequenceProcedureNode::nodesInScope(ConstNodeRef query
 }
 
 // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-ConstNodeRef SequenceProcedureNode::nodeExists(std::string_view name, NodeRef excludeNode,
+ConstNodeRef SequenceProcedureNode::nodeExists(std::string_view name, ConstNodeRef excludeNode,
                                                std::optional<ProcedureNode::NodeType> optNodeType,
                                                std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
@@ -279,7 +279,7 @@ ConstNodeRef SequenceProcedureNode::nodeExists(std::string_view name, NodeRef ex
 
 // Return the named parameter if it is currently in scope
 std::shared_ptr<ExpressionVariable>
-SequenceProcedureNode::parameterInScope(NodeRef queryingNode, std::string_view name,
+SequenceProcedureNode::parameterInScope(ConstNodeRef queryingNode, std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter)
 {
     auto range = QueryRange(queryingNode, sequence_);
