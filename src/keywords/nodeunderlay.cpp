@@ -58,5 +58,9 @@ bool NodeKeywordUnderlay::validNode(const ProcedureNode *node, std::string_view 
                                 ProcedureNode::nodeTypes().keyword(node->type()), keywordName,
                                 ProcedureNode::nodeTypes().keyword(nodeType_.value()));
 
+    if (!parentNode_->getNode(node->name(), onlyInScope_, {}, nodeType_, nodeClass_))
+        return Messenger::error("Node '{}' does not exist (in scope), so the {} keyword cannot reference it.\n", node->name(),
+                                keywordName);
+
     return true;
 }
