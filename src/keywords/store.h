@@ -134,22 +134,22 @@ class KeywordStore
      */
     public:
     // Set specified keyword with supplied data
-    void set(std::string_view name, const bool value);
-    void set(std::string_view name, const double value);
-    void set(std::string_view name, const int value);
-    void set(std::string_view name, const std::string value);
-    void set(std::string_view name, const Vec3<double> value);
-    void set(std::string_view name, const Vec3<NodeValue> value);
-    void set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
-    void set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value);
-    void set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
-    void set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value);
-    void set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value);
-    void set(std::string_view name, const std::vector<Module *> value);
-    void set(std::string_view name, const Module *value);
-    void set(std::string_view name, Configuration *value);
-    void set(std::string_view name, const std::vector<Configuration *> value);
-    void set(std::string_view name, const Species *value);
+    bool set(std::string_view name, const bool value);
+    bool set(std::string_view name, const double value);
+    bool set(std::string_view name, const int value);
+    bool set(std::string_view name, const std::string value);
+    bool set(std::string_view name, const Vec3<double> value);
+    bool set(std::string_view name, const Vec3<NodeValue> value);
+    bool set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
+    bool set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value);
+    bool set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
+    bool set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value);
+    bool set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value);
+    bool set(std::string_view name, const std::vector<Module *> value);
+    bool set(std::string_view name, const Module *value);
+    bool set(std::string_view name, Configuration *value);
+    bool set(std::string_view name, const std::vector<Configuration *> value);
+    bool set(std::string_view name, const Species *value);
     // Set specified enumerated keyword
     template <class E> void setEnumeration(std::string_view name, E data)
     {

@@ -106,63 +106,76 @@ template <typename K> K *getKeyword(const std::map<std::string_view, KeywordBase
     return result;
 }
 
-void KeywordStore::set(std::string_view name, const bool value) { getKeyword<BoolKeyword>(keywords_, name)->setData(value); }
-void KeywordStore::set(std::string_view name, const double value)
+bool KeywordStore::set(std::string_view name, const bool value)
 {
-    getKeyword<DoubleKeyword>(keywords_, name)->setData(value);
+    getKeyword<BoolKeyword>(keywords_, name)->setData(value);
+    return true;
 }
-void KeywordStore::set(std::string_view name, const int value) { getKeyword<IntegerKeyword>(keywords_, name)->setData(value); }
-void KeywordStore::set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const double value)
 {
-    getKeyword<NodeKeyword<Collect1DProcedureNode>>(keywords_, name)->data() = value;
+    return getKeyword<DoubleKeyword>(keywords_, name)->setData(value);
 }
-void KeywordStore::set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value)
+bool KeywordStore::set(std::string_view name, const int value)
 {
-    getKeyword<NodeVectorKeyword<Collect1DProcedureNode>>(keywords_, name)->data() = value;
+    return getKeyword<IntegerKeyword>(keywords_, name)->setData(value);
 }
-void KeywordStore::set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value)
 {
-    getKeyword<NodeKeyword<RegionProcedureNodeBase>>(keywords_, name)->data() = value;
+    return getKeyword<NodeKeyword<Collect1DProcedureNode>>(keywords_, name)->setData(value);
 }
-void KeywordStore::set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value)
 {
-    getKeyword<NodeKeyword<SelectProcedureNode>>(keywords_, name)->data() = value;
+    return getKeyword<NodeVectorKeyword<Collect1DProcedureNode>>(keywords_, name)->setData(value);
 }
-void KeywordStore::set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value)
 {
-    getKeyword<NodeVectorKeyword<SelectProcedureNode>>(keywords_, name)->data() = value;
+    return getKeyword<NodeKeyword<RegionProcedureNodeBase>>(keywords_, name)->setData(value);
 }
-void KeywordStore::set(std::string_view name, const std::vector<Module *> value)
+bool KeywordStore::set(std::string_view name, const std::shared_ptr<SelectProcedureNode> value)
+{
+    return getKeyword<NodeKeyword<SelectProcedureNode>>(keywords_, name)->setData(value);
+}
+bool KeywordStore::set(std::string_view name, const ConstNodeVector<SelectProcedureNode> value)
+{
+    return getKeyword<NodeVectorKeyword<SelectProcedureNode>>(keywords_, name)->setData(value);
+}
+bool KeywordStore::set(std::string_view name, const std::vector<Module *> value)
 {
     getKeyword<ModuleVectorKeyword>(keywords_, name)->data() = value;
+    return true;
 }
-void KeywordStore::set(std::string_view name, const Module *value)
+bool KeywordStore::set(std::string_view name, const Module *value)
 {
     getKeyword<ModuleKeywordBase>(keywords_, name)->setData(value);
+    return true;
 }
-void KeywordStore::set(std::string_view name, Configuration *value)
+bool KeywordStore::set(std::string_view name, Configuration *value)
 {
     getKeyword<ConfigurationKeyword>(keywords_, name)->data() = value;
+    return true;
 }
-void KeywordStore::set(std::string_view name, const std::vector<Configuration *> value)
+bool KeywordStore::set(std::string_view name, const std::vector<Configuration *> value)
 {
     getKeyword<ConfigurationVectorKeyword>(keywords_, name)->data() = value;
+    return true;
 }
-void KeywordStore::set(std::string_view name, const Species *value)
+bool KeywordStore::set(std::string_view name, const Species *value)
 {
     getKeyword<SpeciesKeyword>(keywords_, name)->data() = value;
+    return true;
 }
-void KeywordStore::set(std::string_view name, const std::string value)
+bool KeywordStore::set(std::string_view name, const std::string value)
 {
     getKeyword<StringKeyword>(keywords_, name)->data() = value;
+    return true;
 }
-void KeywordStore::set(std::string_view name, const Vec3<double> value)
+bool KeywordStore::set(std::string_view name, const Vec3<double> value)
 {
-    getKeyword<Vec3DoubleKeyword>(keywords_, name)->setData(value);
+    return getKeyword<Vec3DoubleKeyword>(keywords_, name)->setData(value);
 }
-void KeywordStore::set(std::string_view name, const Vec3<NodeValue> value)
+bool KeywordStore::set(std::string_view name, const Vec3<NodeValue> value)
 {
-    getKeyword<Vec3NodeValueKeyword>(keywords_, name)->setData(value);
+    return getKeyword<Vec3NodeValueKeyword>(keywords_, name)->setData(value);
 }
 
 // Retrieve a Configuration by keyword name
