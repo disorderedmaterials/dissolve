@@ -502,7 +502,7 @@ void SequenceProcedureNode::deserialise(const SerialisedValue &node)
         std::cout << n << std::endl;
         auto type = nodeTypes().deserialise(n.as_table().at("type"));
         std::cout << nodeTypes().keyword(type) << std::endl;
-        addNode(nodeGenerator(type, node));
+        addNode(nodeGenerator(type, n));
     }
 
     return;
