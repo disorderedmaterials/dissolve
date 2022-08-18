@@ -312,3 +312,12 @@ bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
 
     return true;
 }
+
+SerialisedValue ProcedureNode::serialise() const
+{
+    SerialisedValue result;
+    result["type"] = nodeTypes().keyword(type_);
+    return result;
+}
+
+void ProcedureNode::deserialise(const SerialisedValue &node) { return; }

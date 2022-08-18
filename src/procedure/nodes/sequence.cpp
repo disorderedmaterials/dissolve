@@ -4,6 +4,7 @@
 #include "procedure/nodes/sequence.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "procedure/nodes/generator.h"
 #include "procedure/nodes/registry.h"
 
 SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
@@ -480,3 +481,29 @@ std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::
 std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::end() { return stop_; }
 bool SequenceProcedureNode::QueryRange::empty() { return start_ == stop_; }
 void SequenceProcedureNode::QueryRange::next() { start_++; }
+
+SerialisedValue SequenceProcedureNode::serialise() const
+{
+    toml::array node;
+    for (auto n : sequence_)
+    {
+        // node.push_back(n->serialise());
+        SerialisedValue inner;
+        inner["type"] = n->nodeTypes().serialise(n->type());
+        node.push_back(inner);
+    }
+    return node;
+}
+
+void SequenceProcedureNode::deserialise(const SerialisedValue &node)
+{
+    for (auto n : node.as_array())
+    {
+        std::cout << n << std::endl;
+        auto type = nodeTypes().deserialise(n.as_table().at("type"));
+        std::cout << nodeTypes().keyword(type) << std::endl;
+        addNode(nodeGenerator(type, node));
+    }
+
+    return;
+}

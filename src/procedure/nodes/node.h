@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
+#include "base/serialiser.h"
 #include "keywords/store.h"
 #include "procedure/nodes/aliases.h"
 #include "procedure/nodes/context.h"
@@ -21,7 +22,7 @@ class SequenceProcedureNode;
 class Site;
 
 // Procedure Node
-class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
+class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public Serialisable
 {
     public:
     // Node Classes
@@ -208,4 +209,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     virtual bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write node data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view prefix);
+    SerialisedValue serialise() const;
+    void deserialise(const SerialisedValue &node);
 };

@@ -163,7 +163,7 @@ SerialisedValue Configuration::serialise() const
 
 void Configuration::deserialise(const SerialisedValue &node)
 {
-    temperature_ = toml::find_or<double>(node, "temperature", defaultTemperature_);
+    setTemperature(toml::find_or<double>(node, "temperature", defaultTemperature_));
     requestedSizeFactor_ = toml::find_or<double>(node, "sizeFactor", defaultSizeFactor_);
     requestedCellDivisionLength_ = toml::find_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
     SerialisedValue mut = node;
