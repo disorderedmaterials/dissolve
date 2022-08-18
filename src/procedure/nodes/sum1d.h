@@ -47,10 +47,7 @@ class Sum1DProcedureNode : public ProcedureNode
     Range &range(int n);
     // Return reference to range enabled flag
     bool &rangeEnabled(int n);
-    // Return whether range B is enabled (from keyword data)
-    bool isRangeBEnabled() const;
-    // Return whether range C is enabled (from keyword data)
-    bool isRangeCEnabled() const;
+    bool rangeEnabled(int n) const;
 
     /*
      * Execute

@@ -5,7 +5,7 @@
 #include "procedure/nodes/sum1d.h"
 
 // Return whether range B is enabled
-bool CalculateCNModule::isRangeBEnabled() const { return (sum1D_ ? sum1D_->isRangeBEnabled() : false); }
+bool CalculateCNModule::isRangeBEnabled() const { return (sum1D_ ? sum1D_->rangeEnabled(1) : false); }
 
 // Return whether range C is enabled
-bool CalculateCNModule::isRangeCEnabled() const { return (sum1D_ ? sum1D_->isRangeCEnabled() : false); }
+bool CalculateCNModule::isRangeCEnabled() const { return (sum1D_ ? sum1D_->rangeEnabled(2) : false); }
