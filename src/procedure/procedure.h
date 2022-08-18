@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 
@@ -11,7 +12,7 @@ class Configuration;
 class LineParser;
 
 // Procedure
-class Procedure
+class Procedure : public Serialisable
 {
     public:
     Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword = "EndProcedure");
@@ -62,4 +63,6 @@ class Procedure
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write procedure to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix);
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node) override;
 };

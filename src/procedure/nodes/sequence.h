@@ -10,7 +10,7 @@
 class Procedure;
 
 // Sequence Node
-class SequenceProcedureNode : public ProcedureNode
+class SequenceProcedureNode : public ProcedureNode, public Serialisable
 {
     public:
     SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
@@ -163,4 +163,10 @@ class SequenceProcedureNode : public ProcedureNode
     bool deserialise(LineParser &parser, const CoreData &coreData) override;
     // Write structure to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix) override;
+    SerialisedValue serialise() const override { return 7; }
+    void deserialise(const SerialisedValue &node)
+    {
+        int i = node.as_integer();
+        assert(i == 7);
+    }
 };
