@@ -338,20 +338,53 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
 SerialisedValue AddProcedureNode::serialise() const
 {
     auto result = ProcedureNode::serialise();
-    if (!scaleA_)
+    if (scaleA_ != defaultScale_)
         result["scaleA"] = scaleA_;
-    if (!scaleB_)
+    if (scaleB_ != defaultScale_)
         result["scaleB"] = scaleB_;
-    if (!scaleC_)
+    if (scaleC_ != defaultScale_)
         result["scaleC"] = scaleC_;
+    if (!rotate_)
+        result["rotate"] = rotate_;
     result["species"] = species_->name();
+    if (positioningType_ != defaultPositioningType_)
+        result["positioning"] = positioningTypes().serialise(positioningType_);
+    if (boxAction_ != defaultBoxAction_)
+        result["boxAction"] = boxActionStyles().serialise(boxAction_);
+    if (population_ != 0)
+        result["population"] = population_.serialise();
+    if (density_.first != 0.1 || density_.second != Units::AtomsPerAngstromUnits)
+    {
+        SerialisedValue density;
+        density["magnitude"] = density_.first.serialise();
+        density["unit"] = Units::densityUnits().serialise(density_.second);
+    }
     return result;
 }
 
 void AddProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
-    scaleA_ = toml::find_or<bool>(node, "scaleA", true);
-    scaleB_ = toml::find_or<bool>(node, "scaleB", true);
-    scaleC_ = toml::find_or<bool>(node, "scaleC", true);
+    scaleA_ = toml::find_or<bool>(node, "scaleA", defaultScale_);
+    scaleB_ = toml::find_or<bool>(node, "scaleB", defaultScale_);
+    scaleC_ = toml::find_or<bool>(node, "scaleC", defaultScale_);
+    rotate_ = toml::find_or<bool>(node, "rotate", true);
     species_ = data.findSpecies(toml::find<std::string>(node, "species"));
+    population_ = toml::find_or<NodeValue>(node, "population", 0.0);
+
+    if (node.contains("positioning"))
+        positioningType_ = positioningTypes().deserialise(node.at("positioning"));
+    else
+        positioningType_ = defaultPositioningType_;
+
+    if (node.contains("boxAction"))
+        boxAction_ = boxActionStyles().deserialise(node.at("boxAction"));
+    else
+        boxAction_ = defaultBoxAction_;
+
+    if (node.contains("density"))
+    {
+        auto magnitude = toml::find<NodeValue>(node.at("density"), "magnitude");
+        auto unit = Units::densityUnits().deserialise(node.at("density").at("unit"));
+        density_ = {magnitude, unit};
+    }
 }
