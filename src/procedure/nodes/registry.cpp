@@ -24,7 +24,6 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
     registerProducer<CylindricalRegionProcedureNode>(ProcedureNode::NodeType::CylindricalRegion,
                                                      "Define a cylindrical region in a configuration", "Regions");
-    registerProducer<Fit1DProcedureNode>(ProcedureNode::NodeType::Fit1D, "Fit a function to 1D data", "Fitting");
     registerProducer<GeneralRegionProcedureNode>(ProcedureNode::NodeType::GeneralRegion,
                                                  "Define a general region in a configuration", "Regions");
     registerProducer<OperateDivideProcedureNode>(ProcedureNode::NodeType::OperateDivide, "Perform a division on data",

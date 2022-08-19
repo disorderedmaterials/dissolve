@@ -39,7 +39,6 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Copy, "Copy"},
                      {ProcedureNode::NodeType::CylindricalRegion, "CylindricalRegion"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
-                     {ProcedureNode::NodeType::Fit1D, "Fit1D"},
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
                      {ProcedureNode::NodeType::OperateDivide, "OperateDivide"},

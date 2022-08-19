@@ -16,7 +16,6 @@ add_library(
   copy.cpp
   cylindricalregion.cpp
   dynamicsite.cpp
-  fit1d.cpp
   generalregion.cpp
   integrate1d.cpp
   node.cpp
@@ -61,7 +60,6 @@ add_library(
   copy.h
   cylindricalregion.h
   dynamicsite.h
-  fit1d.h
   generalregion.h
   integrate1d.h
   node.h

@@ -52,7 +52,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Copy,
         CylindricalRegion,
         DynamicSite,
-        Fit1D,
         GeneralRegion,
         Integrate1D,
         OperateDivide,
