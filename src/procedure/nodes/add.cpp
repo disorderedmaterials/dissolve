@@ -14,6 +14,7 @@
 #include "keywords/nodevalueenumoptions.h"
 #include "keywords/species.h"
 #include "procedure/nodes/coordinatesets.h"
+#include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/regionbase.h"
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
@@ -346,7 +347,6 @@ SerialisedValue AddProcedureNode::serialise() const
         result["scaleC"] = scaleC_;
     if (!rotate_)
         result["rotate"] = rotate_;
-    result["species"] = species_->name();
     if (positioningType_ != defaultPositioningType_)
         result["positioning"] = positioningTypes().serialise(positioningType_);
     if (boxAction_ != defaultBoxAction_)
@@ -359,6 +359,16 @@ SerialisedValue AddProcedureNode::serialise() const
         density["magnitude"] = density_.first.serialise();
         density["unit"] = Units::densityUnits().serialise(density_.second);
     }
+    if (coordinateSets_)
+    {
+        result["coordinateSets"] = coordinateSets_->serialise();
+    }
+    else
+        result["species"] = species_->name();
+
+    if (region_)
+        result["region"] = region_->serialise();
+
     return result;
 }
 
@@ -368,8 +378,16 @@ void AddProcedureNode::deserialise(const SerialisedValue &node, const CoreData &
     scaleB_ = toml::find_or<bool>(node, "scaleB", defaultScale_);
     scaleC_ = toml::find_or<bool>(node, "scaleC", defaultScale_);
     rotate_ = toml::find_or<bool>(node, "rotate", true);
-    species_ = data.findSpecies(toml::find<std::string>(node, "species"));
     population_ = toml::find_or<NodeValue>(node, "population", 0.0);
+
+    if (node.contains("coordinateSets"))
+    {
+        auto temp = std::make_shared<CoordinateSetsProcedureNode>();
+        temp->deserialise(node.at("coordinateSets"), data);
+        coordinateSets_ = temp;
+    }
+    else
+        species_ = data.findSpecies(toml::find<std::string>(node, "species"));
 
     if (node.contains("positioning"))
         positioningType_ = positioningTypes().deserialise(node.at("positioning"));
@@ -386,5 +404,12 @@ void AddProcedureNode::deserialise(const SerialisedValue &node, const CoreData &
         auto magnitude = toml::find<NodeValue>(node.at("density"), "magnitude");
         auto unit = Units::densityUnits().deserialise(node.at("density").at("unit"));
         density_ = {magnitude, unit};
+    }
+    if (node.contains("region"))
+    {
+        // FIXME: I need to make a Region node factory that can return the correct type of region.
+        auto temp = std::make_shared<GeneralRegionProcedureNode>();
+        temp->deserialise(node.at("region"), data);
+        region_ = temp;
     }
 }
