@@ -24,9 +24,9 @@ void runParse(std::string input)
     }
 }
 
-TEST(TOMLTest, Parse_Inputs_Benzene) { runParse("inputs/benzene"); }
-TEST(TOMLTest, Parse_Inputs_Water) { runParse("inputs/water"); }
-TEST(TOMLTest, Parse_Inputs_Py5_Ntf2) { runParse("inputs/py5-ntf2"); }
-TEST(TOMLTest, Parse_Bragg_Intensities) { runParse("bragg/intensities"); }
+TEST(TOMLTest, Parse_Inputs_Benzene) { runParse("inputs/benzene.txt"); }
+TEST(TOMLTest, Parse_Inputs_Water) { runParse("inputs/water.txt"); }
+TEST(TOMLTest, Parse_Inputs_Py5_Ntf2) { runParse("inputs/py5-ntf2.txt"); }
+TEST(TOMLTest, Parse_Bragg_Intensities) { runParse("bragg/intensities.txt"); }
 
 } // namespace UnitTest
