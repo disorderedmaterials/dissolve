@@ -30,15 +30,15 @@ class BoxProcedureNode : public ProcedureNode
     // Box angles
     Vec3<NodeValue> angles_;
     // Default value for Box angles
-    const Vec3<NodeValue> defaultAngles_{90.0, 90.0, 90.0};
+    static const Vec3<NodeValue> defaultAngles_;
     // Box lengths
     Vec3<NodeValue> lengths_;
     // Default value for Box length
-    const Vec3<NodeValue> defaultLengths_{1.0, 1.0, 1.0};
+    static const Vec3<NodeValue> defaultLengths_;
     // Whether the box is non-periodic
     bool nonPeriodic_{false};
     // Default value for nonPeriodic
-    const bool defaultNonPeriodic_{false};
+    static constexpr bool defaultNonPeriodic_{false};
 
     /*
      * Execute
