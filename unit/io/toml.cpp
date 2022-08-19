@@ -7,26 +7,26 @@
 namespace UnitTest
 {
 
-TEST(TOMLTest, Parse)
+void runParse(std::string input)
 {
     if constexpr (Dissolve::toml_testing_flag)
     {
-        std::vector<std::string> inputs = {"inputs/benzene.txt", "inputs/water.txt", "inputs/py5-ntf2.txt",
-                                           "bragg/intensities.txt"};
 
-        for (auto &input : inputs)
-        {
-            CoreData coreData, coreData2;
-            Dissolve initial(coreData);
-            initial.loadInput(input);
-            auto toml = initial.serialise();
-            Dissolve repeat(coreData2);
-            EXPECT_NO_THROW(repeat.deserialise(toml));
-            auto toml2 = repeat.serialise();
+        CoreData coreData, coreData2;
+        Dissolve initial(coreData);
+        initial.loadInput(input);
+        auto toml = initial.serialise();
+        Dissolve repeat(coreData2);
+        EXPECT_NO_THROW(repeat.deserialise(toml));
+        auto toml2 = repeat.serialise();
 
-            EXPECT_EQ(toml, toml2);
-        }
+        EXPECT_EQ(toml, toml2);
     }
 }
+
+TEST(TOMLTest, Parse_Inputs_Benzene) { runParse("inputs/benzene"); }
+TEST(TOMLTest, Parse_Inputs_Water) { runParse("inputs/water"); }
+TEST(TOMLTest, Parse_Inputs_Py5_Ntf2) { runParse("inputs/py5-ntf2"); }
+TEST(TOMLTest, Parse_Bragg_Intensities) { runParse("bragg/intensities"); }
 
 } // namespace UnitTest
