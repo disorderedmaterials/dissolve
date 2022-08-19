@@ -69,7 +69,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     {
         assert(parentNode_);
 
-        if (!data_.first.set(expressionText, parentNode_->parametersInScope()))
+        if (!data_.first.set(expressionText, parentNode_->getParameters()))
             return false;
 
         return true;

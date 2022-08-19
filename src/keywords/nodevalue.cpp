@@ -22,7 +22,7 @@ const NodeValue &NodeValueKeyword::data() const { return data_; }
 bool NodeValueKeyword::setData(std::string_view expressionText)
 {
     // Get any variables currently in scope
-    auto vars = parentNode_->parametersInScope();
+    auto vars = parentNode_->getParameters();
 
     return data_.set(expressionText, vars);
 }

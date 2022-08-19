@@ -165,28 +165,19 @@ std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, std::optiona
                        : scope_->nodes(optNodeType, optNodeClass);
 }
 
-// Return the named parameter if it is currently in scope
-std::shared_ptr<ExpressionVariable> ProcedureNode::parameterInScope(std::string_view name,
-                                                                    std::shared_ptr<ExpressionVariable> excludeParameter)
+// Return the named parameter, in or out of scope
+std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view name, bool onlyInScope,
+                                                                std::shared_ptr<ExpressionVariable> excludeParameter) const
 {
     if (!scope_)
         return nullptr;
 
-    return scope_->parameterInScope(shared_from_this(), name, std::move(excludeParameter));
+    return onlyInScope ? scope_->parameterInScope(shared_from_this(), name, std::move(excludeParameter))
+                       : scope_->parameterExists(name, std::move(excludeParameter));
 }
 
-// Return the named parameter if it exists anywhere in the same Procedure
-std::shared_ptr<ExpressionVariable> ProcedureNode::parameterExists(std::string_view name,
-                                                                   std::shared_ptr<ExpressionVariable> excludeParameter) const
-{
-    if (!scope_)
-        return nullptr;
-
-    return scope_->parameterExists(name, std::move(excludeParameter));
-}
-
-// Create and return reference list of parameters in scope
-std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parametersInScope() const
+// Return all parameters in scope
+std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::getParameters() const
 {
     if (!scope_)
         return {};

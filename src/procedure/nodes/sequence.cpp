@@ -296,7 +296,7 @@ SequenceProcedureNode::parameterInScope(ConstNodeRef queryingNode, std::string_v
 
     // Not in our list. Recursively check our owner
     if (owner_)
-        return owner_->parameterInScope(name, excludeParameter);
+        return owner_->getParameter(name, true, excludeParameter);
 
     // Not found
     return nullptr;

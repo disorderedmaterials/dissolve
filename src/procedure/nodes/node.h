@@ -155,14 +155,11 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     // Return nodes, optionally matching the type / class given, in or out of scope
     std::vector<ConstNodeRef> getNodes(bool onlyInScope, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                        std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
-    // Return the named parameter if it is currently in scope
-    std::shared_ptr<ExpressionVariable> parameterInScope(std::string_view name,
-                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
-    // Return the named parameter if it exists anywhere in the same Procedure
-    std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
-                                                        std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
-    // Create and return reference list of parameters in scope
-    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope() const;
+    // Return the named parameter, in or out of scope
+    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name, bool onlyInScope,
+                                                     std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
+    // Return all parameters in scope
+    std::vector<std::shared_ptr<ExpressionVariable>> getParameters() const;
 
     /*
      * Branch
