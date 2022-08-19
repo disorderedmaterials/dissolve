@@ -27,6 +27,13 @@ bool NodeValueKeyword::setData(std::string_view expressionText)
     return data_.set(expressionText, vars);
 }
 
+// Set the value from NodeValue
+bool NodeValueKeyword::setData(const NodeValue &nodeValue)
+{
+    // We must re-set the data from the text value of the expression to safeguard against bringing in out-of-scope parameters
+    return setData(nodeValue.asString());
+}
+
 /*
  * Arguments
  */

@@ -169,6 +169,10 @@ bool KeywordStore::set(std::string_view name, const std::string value)
     getKeyword<StringKeyword>(keywords_, name)->data() = value;
     return true;
 }
+bool KeywordStore::set(std::string_view name, const NodeValue value)
+{
+    return getKeyword<NodeValueKeyword>(keywords_, name)->setData(value);
+}
 bool KeywordStore::set(std::string_view name, const Vec3<double> value)
 {
     return getKeyword<Vec3DoubleKeyword>(keywords_, name)->setData(value);

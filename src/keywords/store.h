@@ -138,6 +138,7 @@ class KeywordStore
     bool set(std::string_view name, const double value);
     bool set(std::string_view name, const int value);
     bool set(std::string_view name, const std::string value);
+    bool set(std::string_view name, const NodeValue value);
     bool set(std::string_view name, const Vec3<double> value);
     bool set(std::string_view name, const Vec3<NodeValue> value);
     bool set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
