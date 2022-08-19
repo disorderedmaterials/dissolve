@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 
 Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockKeyword)
-    : rootSequence_(std::make_shared<SequenceProcedureNode>(context, this, nullptr, blockKeyword))
+    : rootSequence_(std::make_shared<SequenceProcedureNode>(context, nullptr, blockKeyword))
 {
     context_ = context;
 }

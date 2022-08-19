@@ -124,15 +124,6 @@ std::vector<ConstNodeRef> ProcedureNode::children() const { return {}; }
 // Return scope (SequenceNode) in which this node exists
 std::shared_ptr<SequenceProcedureNode> ProcedureNode::scope() const { return scope_; }
 
-// Return Procedure in which this node exists
-const Procedure *ProcedureNode::procedure() const
-{
-    if (!scope_)
-        return nullptr;
-
-    return scope_->procedure();
-}
-
 // Return context of scope in which this node exists
 ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 {

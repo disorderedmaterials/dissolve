@@ -7,12 +7,10 @@
 #include "keywords/node.h"
 #include "procedure/nodes/registry.h"
 
-SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
-                                             std::string_view blockKeyword)
+SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, NodeRef owner, std::string_view blockKeyword)
     : ProcedureNode(ProcedureNode::NodeType::Sequence)
 {
     context_ = context;
-    procedure_ = procedure;
     owner_ = std::move(owner);
     blockKeyword_ = blockKeyword;
 }
@@ -139,9 +137,6 @@ SequenceProcedureNode::searchParameters(std::string_view name,
 
     return nullptr;
 }
-
-// Return parent Procedure to which this sequence belongs
-const Procedure *SequenceProcedureNode::procedure() const { return procedure_; }
 
 // Return this sequences owner
 NodeRef SequenceProcedureNode::owner() const { return owner_; }

@@ -144,8 +144,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     void setScope(std::shared_ptr<SequenceProcedureNode> scopeNode);
     // Return scope (SequenceNode) in which this node exists
     std::shared_ptr<SequenceProcedureNode> scope() const;
-    // Return Procedure in which this node exists
-    virtual const Procedure *procedure() const;
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node, optionally matching the type / class given, in or out of scope

@@ -6,15 +6,11 @@
 #include "expression/expression.h"
 #include "procedure/nodes/node.h"
 
-// Forward Declarations
-class Procedure;
-
 // Sequence Node
 class SequenceProcedureNode : public ProcedureNode
 {
     public:
-    SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
-                          std::string_view blockKeyword);
+    SequenceProcedureNode(ProcedureNode::NodeContext context, NodeRef owner, std::string_view blockKeyword);
     ~SequenceProcedureNode() override;
 
     /*
@@ -88,8 +84,6 @@ class SequenceProcedureNode : public ProcedureNode
      * Scope
      */
     private:
-    // Parent Procedure to which this sequence belongs
-    const Procedure *procedure_;
     // ProcedureNode which owns this sequence
     NodeRef owner_;
     // Context of the sequence
@@ -105,8 +99,6 @@ class SequenceProcedureNode : public ProcedureNode
     searchParameters(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
 
     public:
-    // Return parent Procedure to which this sequence belongs
-    const Procedure *procedure() const override;
     // Return this sequences owner
     NodeRef owner() const;
     // Return the context of the sequence

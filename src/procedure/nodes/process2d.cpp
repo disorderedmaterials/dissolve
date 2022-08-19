@@ -79,8 +79,8 @@ std::string Process2DProcedureNode::yAxisLabel() const { return labelY_; }
 std::shared_ptr<SequenceProcedureNode> Process2DProcedureNode::addNormalisationBranch()
 {
     if (!normalisationBranch_)
-        normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure(),
-                                                                       shared_from_this(), "Normalisation");
+        normalisationBranch_ =
+            std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, shared_from_this(), "Normalisation");
 
     return normalisationBranch_;
 }

@@ -31,7 +31,7 @@ bool NodeBranchKeyword::deserialise(LineParser &parser, int startArg, const Core
                                 ProcedureNode::nodeTypes().keyword(parentNode_->type()));
 
     // Create and parse a new branch
-    data_ = std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_->scope()->procedure(), parentNode_, name());
+    data_ = std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_, name());
     if (!data_->deserialise(parser, coreData))
         return false;
 
