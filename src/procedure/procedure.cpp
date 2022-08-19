@@ -100,8 +100,8 @@ bool Procedure::serialise(LineParser &parser, std::string_view prefix) { return 
 
 SerialisedValue Procedure::serialise() const { return rootSequence_->serialise(); }
 
-void Procedure::deserialise(const SerialisedValue &node)
+void Procedure::deserialise(const SerialisedValue &node, const CoreData &data)
 {
-    rootSequence_->deserialise(node);
+    rootSequence_->deserialise(node, data);
     return;
 }

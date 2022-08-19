@@ -64,7 +64,7 @@ class SequenceProcedureNode : public ProcedureNode
     // Clear all data
     void clear();
     // Create new node
-    template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&... args)
+    template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&...args)
     {
         // Create the new node
         auto node = std::make_shared<N>(args...);
@@ -164,5 +164,5 @@ class SequenceProcedureNode : public ProcedureNode
     // Write structure to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix) override;
     SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

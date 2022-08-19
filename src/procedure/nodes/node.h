@@ -22,7 +22,7 @@ class SequenceProcedureNode;
 class Site;
 
 // Procedure Node
-class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public Serialisable
+class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
 {
     public:
     // Node Classes
@@ -209,6 +209,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     virtual bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write node data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view prefix);
-    SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node) override;
+    virtual SerialisedValue serialise() const;
+    virtual void deserialise(const SerialisedValue &node, const CoreData &data);
 };

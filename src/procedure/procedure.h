@@ -12,7 +12,7 @@ class Configuration;
 class LineParser;
 
 // Procedure
-class Procedure : public Serialisable
+class Procedure
 {
     public:
     Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword = "EndProcedure");
@@ -31,7 +31,7 @@ class Procedure : public Serialisable
     // Clear all data
     void clear();
     // Create new node
-    template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&... args)
+    template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&...args)
     {
         return rootSequence_->create<N>(name, args...);
     }
@@ -63,6 +63,6 @@ class Procedure : public Serialisable
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write procedure to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix);
-    SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node) override;
+    SerialisedValue serialise() const;
+    void deserialise(const SerialisedValue &node, const CoreData &data);
 };

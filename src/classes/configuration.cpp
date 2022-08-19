@@ -161,11 +161,11 @@ SerialisedValue Configuration::serialise() const
     return configuration;
 }
 
-void Configuration::deserialise(const SerialisedValue &node)
+void Configuration::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     setTemperature(toml::find_or<double>(node, "temperature", defaultTemperature_));
     requestedSizeFactor_ = toml::find_or<double>(node, "sizeFactor", defaultSizeFactor_);
     requestedCellDivisionLength_ = toml::find_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
     SerialisedValue mut = node;
-    generator_.deserialise(mut["generator"]);
+    generator_.deserialise(mut["generator"], data);
 }

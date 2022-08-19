@@ -338,15 +338,20 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
 SerialisedValue AddProcedureNode::serialise() const
 {
     auto result = ProcedureNode::serialise();
-    result["scaleA"] = scaleA_;
-    result["scaleB"] = scaleB_;
-    result["scaleC"] = scaleC_;
+    if (!scaleA_)
+        result["scaleA"] = scaleA_;
+    if (!scaleB_)
+        result["scaleB"] = scaleB_;
+    if (!scaleC_)
+        result["scaleC"] = scaleC_;
+    result["species"] = species_->name();
     return result;
 }
 
-void AddProcedureNode::deserialise(const SerialisedValue &node)
+void AddProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
-    scaleA_ = toml::find<bool>(node, "scaleA");
-    scaleB_ = toml::find<bool>(node, "scaleB");
-    scaleC_ = toml::find<bool>(node, "scaleC");
+    scaleA_ = toml::find_or<bool>(node, "scaleA", true);
+    scaleB_ = toml::find_or<bool>(node, "scaleB", true);
+    scaleC_ = toml::find_or<bool>(node, "scaleC", true);
+    species_ = data.findSpecies(toml::find<std::string>(node, "species"));
 }

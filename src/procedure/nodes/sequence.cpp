@@ -495,12 +495,12 @@ SerialisedValue SequenceProcedureNode::serialise() const
     return node;
 }
 
-void SequenceProcedureNode::deserialise(const SerialisedValue &node)
+void SequenceProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     for (auto n : node.as_array())
     {
         auto type = nodeTypes().deserialise(n.as_table().at("type"));
-        addNode(nodeGenerator(type, n));
+        addNode(nodeGenerator(type, n, data));
     }
 
     return;

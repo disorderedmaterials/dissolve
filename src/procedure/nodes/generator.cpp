@@ -2,7 +2,7 @@
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
 
-NodeRef nodeGenerator(ProcedureNode::NodeType type, const SerialisedValue &node)
+NodeRef nodeGenerator(ProcedureNode::NodeType type, const SerialisedValue &node, const CoreData &data)
 {
     NodeRef result;
     switch (type)
@@ -14,6 +14,6 @@ NodeRef nodeGenerator(ProcedureNode::NodeType type, const SerialisedValue &node)
 	    result = std::make_shared<BoxProcedureNode>();
 	    break;
     }
-    result->deserialise(node);
+    result->deserialise(node, data);
     return result;
 }

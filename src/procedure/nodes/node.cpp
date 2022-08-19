@@ -320,4 +320,4 @@ SerialisedValue ProcedureNode::serialise() const
     return result;
 }
 
-void ProcedureNode::deserialise(const SerialisedValue &node) { return; }
+void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data) { return; }

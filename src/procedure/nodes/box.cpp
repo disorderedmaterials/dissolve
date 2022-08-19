@@ -70,7 +70,7 @@ SerialisedValue BoxProcedureNode::serialise() const
     return box;
 }
 
-void BoxProcedureNode::deserialise(const SerialisedValue &node)
+void BoxProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     lengths_ = toml::find_or<>(node, "lengths", defaultLengths_);
     angles_ = toml::find_or<>(node, "angles", defaultAngles_);
