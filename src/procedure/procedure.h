@@ -31,7 +31,7 @@ class Procedure
     // Clear all data
     void clear();
     // Create new node
-    template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&...args)
+    template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&... args)
     {
         return rootSequence_->create<N>(name, args...);
     }

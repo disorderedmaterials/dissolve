@@ -7,12 +7,12 @@ NodeRef nodeGenerator(ProcedureNode::NodeType type, const SerialisedValue &node,
     NodeRef result;
     switch (type)
     {
-	case ProcedureNode::NodeType::Add:
-	    result = std::make_shared<AddProcedureNode>();
-	    break;
-	case ProcedureNode::NodeType::Box:
-	    result = std::make_shared<BoxProcedureNode>();
-	    break;
+        case ProcedureNode::NodeType::Add:
+            result = std::make_shared<AddProcedureNode>();
+            break;
+        case ProcedureNode::NodeType::Box:
+            result = std::make_shared<BoxProcedureNode>();
+            break;
     }
     result->deserialise(node, data);
     return result;
