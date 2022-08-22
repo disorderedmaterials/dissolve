@@ -81,9 +81,6 @@ std::string Process1DProcedureNode::xAxisLabel() const { return labelX_; }
 // Return the branch from this node (if it has one)
 OptionalReferenceWrapper<ProcedureNodeSequence> Process1DProcedureNode::branch() { return normalisationBranch_; }
 
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> Process1DProcedureNode::children() const { return {normalisationBranch_}; }
-
 /*
  * Execute
  */

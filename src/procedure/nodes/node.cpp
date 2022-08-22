@@ -117,9 +117,6 @@ void ProcedureNode::setScope(ProcedureNodeSequence &scopeNode) { scope_ = scopeN
 // Return the parent non-sequence node which owns this node
 NodeRef ProcedureNode::parent() const { return scope_ ? (*scope_).get().owner() : NodeRef(); }
 
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> ProcedureNode::children() const { return {}; }
-
 // Return scope (SequenceNode) in which this node exists
 OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::scope() const { return scope_; }
 

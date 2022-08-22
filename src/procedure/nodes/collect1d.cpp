@@ -64,9 +64,6 @@ const Data1D &Collect1DProcedureNode::accumulatedData() const
 // Return the branch from this node (if it has one)
 OptionalReferenceWrapper<ProcedureNodeSequence> Collect1DProcedureNode::branch() { return subCollectBranch_; }
 
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> Collect1DProcedureNode::children() const { return {subCollectBranch_}; }
-
 /*
  * Execute
  */

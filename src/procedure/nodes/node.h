@@ -137,8 +137,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     public:
     // Return the parent non-sequence node which owns this node
     NodeRef parent() const;
-    // Find the nodes owned by this node
-    virtual std::vector<ConstNodeRef> children() const;
     // Set scope
     void setScope(ProcedureNodeSequence &scopeNode);
     // Return scope (SequenceNode) in which this node exists

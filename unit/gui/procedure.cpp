@@ -21,9 +21,9 @@ TEST(ProcedureModelTest, Basic)
     // Create a simple procedure with a parameters node
     Procedure procedure(ProcedureNode::AnalysisContext);
     auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
-    auto forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
-    auto selectB = forEach.create<SelectProcedureNode>("B");
-    auto forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachA = selectA->branch()->get();
+    auto selectB = forEachA.create<SelectProcedureNode>("B");
+    auto forEachB = selectB->branch()->get();
     auto selectC = forEachB.create<SelectProcedureNode>("C");
     auto calcAB = procedure.createRootNode<CalculateDistanceProcedureNode>({}, selectA, selectB);
     auto collect = procedure.createRootNode<Collect1DProcedureNode>({}, calcAB);

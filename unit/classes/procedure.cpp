@@ -41,12 +41,12 @@ TEST(ProcedureTest, Scope)
 
     // Select A
     auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
-    auto forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto forEachA = selectA->branch()->get();
     EXPECT_TRUE(procedure.rootSequence().check());
 
     // Select B
-    auto selectB = forEach.create<SelectProcedureNode>("B");
-    auto forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
+    auto selectB = forEachA.create<SelectProcedureNode>("B");
+    auto forEachB = selectB->branch()->get();
     EXPECT_TRUE(procedure.rootSequence().check());
 
     // Valid node keyword argument (in scope)

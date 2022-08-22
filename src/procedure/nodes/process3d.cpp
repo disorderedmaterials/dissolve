@@ -81,9 +81,6 @@ std::string Process3DProcedureNode::zAxisLabel() const { return labelZ_; }
 // Return the branch from this node (if it has one)
 OptionalReferenceWrapper<ProcedureNodeSequence> Process3DProcedureNode::branch() { return normalisationBranch_; }
 
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> Process3DProcedureNode::children() const { return {normalisationBranch_}; }
-
 /*
  * Execute
  */

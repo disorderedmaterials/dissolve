@@ -157,9 +157,11 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
     }
     else
     {
-        auto children = nodeParentParent->children();
-        auto it = std::find(children.begin(), children.end(), nodeParent);
-        return createIndex(it - children.begin(), 0, nodeParent.get());
+        auto branch = nodeParentParent->branch();
+        assert(branch);
+        const auto &sequence = branch->get().sequence();
+        auto it = std::find(sequence.begin(), sequence.end(), nodeParent);
+        return createIndex(it - sequence.begin(), 0, nodeParent.get());
     }
 }
 

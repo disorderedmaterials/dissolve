@@ -58,8 +58,6 @@ class Collect2DProcedureNode : public ProcedureNode
     public:
     // Return the branch from this node (if it has one)
     OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
-    // Find the nodes owned by this node
-    std::vector<ConstNodeRef> children() const override;
 
     /*
      * Execute

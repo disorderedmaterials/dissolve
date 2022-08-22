@@ -77,9 +77,6 @@ std::string Process2DProcedureNode::yAxisLabel() const { return labelY_; }
 // Return the branch from this node (if it has one)
 OptionalReferenceWrapper<ProcedureNodeSequence> Process2DProcedureNode::branch() { return normalisationBranch_; }
 
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> Process2DProcedureNode::children() const { return {normalisationBranch_}; }
-
 /*
  * Execute
  */

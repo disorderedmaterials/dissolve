@@ -66,8 +66,6 @@ class Process1DProcedureNode : public ProcedureNode
     public:
     // Return the branch from this node (if it has one)
     OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
-    // Return nodes that belong to this node
-    std::vector<ConstNodeRef> children() const override;
 
     /*
      * Execute

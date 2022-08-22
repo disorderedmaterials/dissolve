@@ -163,8 +163,6 @@ const Site *SelectProcedureNode::currentSite() const
 // Return the branch from this node (if it has one)
 OptionalReferenceWrapper<ProcedureNodeSequence> SelectProcedureNode::branch() { return forEachBranch_; }
 
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> SelectProcedureNode::children() const { return {forEachBranch_}; }
 /*
  * Execute
  */
