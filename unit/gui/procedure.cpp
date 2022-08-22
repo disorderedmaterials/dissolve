@@ -27,6 +27,7 @@ TEST(ProcedureModelTest, Basic)
     auto selectC = forEachB.create<SelectProcedureNode>("C");
     auto calcAB = procedure.createRootNode<CalculateDistanceProcedureNode>({}, selectA, selectB);
     auto collect = procedure.createRootNode<Collect1DProcedureNode>({}, calcAB);
+    EXPECT_TRUE(procedure.rootSequence().check());
 
     ProcedureModel model(procedure);
 
