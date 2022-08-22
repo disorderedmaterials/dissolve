@@ -10,7 +10,8 @@
 class ProcedureNodeSequence
 {
     public:
-    ProcedureNodeSequence(ProcedureNode::NodeContext context, NodeRef owner, std::string_view blockKeyword);
+    ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
+                          std::string_view blockKeyword);
     ~ProcedureNodeSequence();
 
     /*
@@ -68,7 +69,7 @@ class ProcedureNodeSequence
      */
     private:
     // ProcedureNode which owns this sequence
-    NodeRef owner_;
+    OptionalReferenceWrapper<ProcedureNode> owner_;
     // Context of the sequence
     ProcedureNode::NodeContext context_;
 
@@ -83,7 +84,7 @@ class ProcedureNodeSequence
 
     public:
     // Return this sequences owner
-    NodeRef owner() const;
+    OptionalReferenceWrapper<ProcedureNode> owner() const;
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present (and matches the type / class given)

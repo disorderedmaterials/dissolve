@@ -7,8 +7,9 @@
 #include "keywords/node.h"
 #include "procedure/nodes/registry.h"
 
-ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, NodeRef owner, std::string_view blockKeyword)
-    : context_(context), owner_(std::move(owner)), blockKeyword_(blockKeyword)
+ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
+                                             std::string_view blockKeyword)
+    : context_(context), owner_(owner), blockKeyword_(blockKeyword)
 {
 }
 
@@ -118,8 +119,8 @@ ProcedureNodeSequence::searchParameters(std::string_view name,
     return nullptr;
 }
 
-// Return this sequences owner
-NodeRef ProcedureNodeSequence::owner() const { return owner_; }
+// Return this sequence's owner
+OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { return owner_; }
 
 // Return the context of the sequence
 ProcedureNode::NodeContext ProcedureNodeSequence::sequenceContext() const { return context_; }
@@ -202,7 +203,7 @@ ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::
 
     // Not in our list. Recursively check our owner
     if (owner_)
-        return owner_->getNode(name, true, excludeNode, optNodeType, optNodeClass);
+        return owner_->get().getNode(name, true, excludeNode, optNodeType, optNodeClass);
 
     // Not found
     return nullptr;
@@ -233,7 +234,7 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodesInScope(ConstNodeRef query
     // Not in our list. Recursively check our owner
     if (owner_)
     {
-        auto parentMatches = owner_->getNodes(true, optNodeType, optNodeClass);
+        auto parentMatches = owner_->get().getNodes(true, optNodeType, optNodeClass);
         std::copy(parentMatches.begin(), parentMatches.end(), std::back_inserter(matches));
     }
 
@@ -247,7 +248,7 @@ ConstNodeRef ProcedureNodeSequence::nodeExists(std::string_view name, ConstNodeR
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (owner_)
-        return owner_->scope()->get().nodeExists(name, excludeNode, optNodeType, optNodeClass);
+        return owner_->get().scope()->get().nodeExists(name, excludeNode, optNodeType, optNodeClass);
 
     // No parent node, so we must be the topmost sequence - run the search from here
     return searchNodes(name, excludeNode, optNodeType, optNodeClass);
@@ -271,7 +272,7 @@ ProcedureNodeSequence::parameterInScope(ConstNodeRef queryingNode, std::string_v
 
     // Not in our list. Recursively check our owner
     if (owner_)
-        return owner_->getParameter(name, true, excludeParameter);
+        return owner_->get().getParameter(name, true, excludeParameter);
 
     // Not found
     return nullptr;
@@ -283,7 +284,7 @@ ProcedureNodeSequence::parameterExists(std::string_view name, const std::shared_
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (owner_)
-        return owner_->scope()->get().parameterExists(name, excludeParameter);
+        return owner_->get().scope()->get().parameterExists(name, excludeParameter);
 
     // No parent node, so we must be the topmost sequence - run the search from here
     return searchParameters(name, excludeParameter);
@@ -312,7 +313,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     // Recursively check our owner
     if (owner_)
     {
-        auto optOtherParams = owner_->parameters();
+        auto optOtherParams = owner_->get().parameters();
         if (optOtherParams)
         {
             const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);
@@ -331,7 +332,7 @@ bool ProcedureNodeSequence::check() const
         // Check ownership
         if (&node->scope()->get() != this)
             return Messenger::error("Node '{}' failed parent check ({} is not this {})\n", node->name(),
-                                    fmt::ptr(node->parent().get()), fmt::ptr(this));
+                                    fmt::ptr(node->parent()), fmt::ptr(this));
 
         // Check context
         if (!node->isContextRelevant(context_))

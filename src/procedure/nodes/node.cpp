@@ -114,10 +114,13 @@ const KeywordStore &ProcedureNode::keywords() const { return keywords_; }
 // Set scope
 void ProcedureNode::setScope(ProcedureNodeSequence &scopeNode) { scope_ = scopeNode; }
 
-// Return the parent non-sequence node which owns this node
-NodeRef ProcedureNode::parent() const { return scope_ ? (*scope_).get().owner() : NodeRef(); }
+// Return the parent node which owns this node
+ProcedureNode *ProcedureNode::parent() const
+{
+    return scope_ && (*scope_).get().owner() ? &((*scope_).get().owner()->get()) : nullptr;
+}
 
-// Return scope (SequenceNode) in which this node exists
+// Return scope (ProcedureNodeSequence) in which this node exists
 OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::scope() const { return scope_; }
 
 // Return context of scope in which this node exists

@@ -16,7 +16,7 @@
 Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
                                                ProcedureNode::NodeContext normalisationContext)
     : ProcedureNode(ProcedureNode::NodeType::Process1D), sourceData_(target),
-      normalisationBranch_(normalisationContext, shared_from_this(), "Normalisation")
+      normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
     keywords_.add<NodeKeyword<Collect1DProcedureNode>>("Control", "SourceData",
                                                        "Collect1D node containing the histogram data to process", sourceData_,

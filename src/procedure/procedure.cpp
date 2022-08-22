@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 
 Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockKeyword)
-    : rootSequence_(context, nullptr, blockKeyword)
+    : rootSequence_(context, {}, blockKeyword)
 {
     context_ = context;
 }

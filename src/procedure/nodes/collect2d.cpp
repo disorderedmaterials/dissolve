@@ -16,7 +16,7 @@ Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedur
                                                double xBinWidth, double yMin, double yMax, double yBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect2D), xObservable_{xObservable, 0},
       yObservable_{yObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth},
-      subCollectBranch_(subCollectContext, shared_from_this(), "SubCollect")
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
         "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,

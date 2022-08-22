@@ -21,7 +21,7 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
     : ProcedureNode(ProcedureNode::NodeType::Collect3D), xObservable_{xObservable, 0}, yObservable_{yObservable, 0},
       zObservable_{zObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax,
                                                                                                             zBinWidth},
-      subCollectBranch_(subCollectContext, shared_from_this(), "SubCollect")
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
         "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,
@@ -48,7 +48,7 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
     : ProcedureNode(ProcedureNode::NodeType::Collect3D), xObservable_{xyzObservable, 0}, yObservable_{xyzObservable, 1},
       zObservable_{xyzObservable, 2}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax,
                                                                                                               zBinWidth},
-      subCollectBranch_(subCollectContext, shared_from_this(), "SubCollect")
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
         "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,

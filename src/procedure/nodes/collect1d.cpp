@@ -16,7 +16,7 @@ Collect1DProcedureNode::Collect1DProcedureNode(std::shared_ptr<CalculateProcedur
                                                ProcedureNode::NodeContext subCollectContext, double rMin, double rMax,
                                                double binWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect1D), xObservable_{observable, 0}, rangeX_{rMin, rMax, binWidth},
-      subCollectBranch_(subCollectContext, shared_from_this(), "SubCollect")
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("Control", "QuantityX", "Calculated observable to collect",
                                                                      xObservable_, this, ProcedureNode::NodeClass::Calculate,

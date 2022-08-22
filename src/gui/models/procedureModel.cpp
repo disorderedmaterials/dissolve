@@ -152,16 +152,18 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
     if (!nodeParentParent)
     {
         auto &rootSeq = procedure_->get().rootSequence().sequence();
-        auto it = std::find(rootSeq.begin(), rootSeq.end(), nodeParent);
-        return createIndex(it - rootSeq.begin(), 0, nodeParent.get());
+        auto it =
+            std::find_if(rootSeq.begin(), rootSeq.end(), [nodeParent](const auto &node) { return node.get() == nodeParent; });
+        return createIndex(it - rootSeq.begin(), 0, nodeParent);
     }
     else
     {
         auto branch = nodeParentParent->branch();
         assert(branch);
         const auto &sequence = branch->get().sequence();
-        auto it = std::find(sequence.begin(), sequence.end(), nodeParent);
-        return createIndex(it - sequence.begin(), 0, nodeParent.get());
+        auto it =
+            std::find_if(sequence.begin(), sequence.end(), [nodeParent](const auto &node) { return node.get() == nodeParent; });
+        return createIndex(it - sequence.begin(), 0, nodeParent);
     }
 }
 

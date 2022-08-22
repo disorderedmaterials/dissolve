@@ -135,11 +135,11 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     OptionalReferenceWrapper<ProcedureNodeSequence> scope_;
 
     public:
-    // Return the parent non-sequence node which owns this node
-    NodeRef parent() const;
+    // Return the parent node which owns this node
+    ProcedureNode *parent() const;
     // Set scope
     void setScope(ProcedureNodeSequence &scopeNode);
-    // Return scope (SequenceNode) in which this node exists
+    // Return scope (ProcedureNodeSequence) in which this node exists
     OptionalReferenceWrapper<ProcedureNodeSequence> scope() const;
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;

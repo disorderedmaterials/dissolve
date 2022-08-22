@@ -19,7 +19,7 @@
 SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, ProcedureNode::NodeContext forEachContext,
                                          bool axesRequired)
     : ProcedureNode(ProcedureNode::NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired),
-      forEachBranch_(forEachContext, shared_from_this(), "ForEach")
+      forEachBranch_(forEachContext, *this, "ForEach")
 {
     inclusiveDistanceRange_.set(0.0, 5.0);
 
