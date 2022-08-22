@@ -22,9 +22,9 @@ TEST(ProcedureModelTest, Basic)
     Procedure procedure(ProcedureNode::AnalysisContext);
     auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
     auto forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
-    auto selectB = forEachA->create<SelectProcedureNode>("B");
+    auto selectB = forEach.create<SelectProcedureNode>("B");
     auto forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
-    auto selectC = forEachB->create<SelectProcedureNode>("C");
+    auto selectC = forEachB.create<SelectProcedureNode>("C");
     auto calcAB = procedure.createRootNode<CalculateDistanceProcedureNode>({}, selectA, selectB);
     auto collect = procedure.createRootNode<Collect1DProcedureNode>({}, calcAB);
 

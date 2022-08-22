@@ -5,17 +5,18 @@
 
 #include "math/histogram1d.h"
 #include "procedure/nodes/node.h"
+#include "procedure/nodes/sequence.h"
 
 // Forward Declarations
 class CalculateProcedureNodeBase;
-class SequenceProcedureNode;
 class LineParser;
 
 // Procedure Node - Collect1D
 class Collect1DProcedureNode : public ProcedureNode
 {
     public:
-    Collect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable = nullptr, double rMin = 0.0,
+    Collect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable = nullptr,
+                           ProcedureNode::NodeContext subCollectContext = ProcedureNode::AnalysisContext, double rMin = 0.0,
                            double rMax = 10.0, double binWidth = 0.05);
     ~Collect1DProcedureNode() override = default;
 
@@ -47,16 +48,12 @@ class Collect1DProcedureNode : public ProcedureNode
      * Branches
      */
     private:
-    // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    std::shared_ptr<SequenceProcedureNode> subCollectBranch_{nullptr};
+    // Branch for subcollection, run if the target quantity is successfully binned
+    ProcedureNodeSequence subCollectBranch_;
 
     public:
-    // Add and return subcollection sequence branch
-    std::shared_ptr<SequenceProcedureNode> addSubCollectBranch(ProcedureNode::NodeContext context);
-    // Return whether this node has a branch
-    bool hasBranch() const override;
-    // Return SequenceNode for the branch (if it exists)
-    std::shared_ptr<SequenceProcedureNode> branch() override;
+    // Return the branch from this node (if it has one)
+    OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
     // Find the nodes owned by this node
     std::vector<ConstNodeRef> children() const override;
 

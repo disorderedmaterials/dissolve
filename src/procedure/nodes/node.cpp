@@ -73,7 +73,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 }
 
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, ProcedureNode::NodeClass classType)
-    : class_(classType), type_(nodeType), scope_(nullptr)
+    : class_(classType), type_(nodeType)
 {
 }
 
@@ -112,16 +112,16 @@ const KeywordStore &ProcedureNode::keywords() const { return keywords_; }
  */
 
 // Set scope
-void ProcedureNode::setScope(std::shared_ptr<SequenceProcedureNode> scopeNode) { scope_ = scopeNode; }
+void ProcedureNode::setScope(ProcedureNodeSequence &scopeNode) { scope_ = scopeNode; }
 
 // Return the parent non-sequence node which owns this node
-NodeRef ProcedureNode::parent() const { return scope_ ? scope_->owner() : NodeRef(); }
+NodeRef ProcedureNode::parent() const { return scope_ ? (*scope_).get().owner() : NodeRef(); }
 
 // Find the nodes owned by this node
 std::vector<ConstNodeRef> ProcedureNode::children() const { return {}; }
 
 // Return scope (SequenceNode) in which this node exists
-std::shared_ptr<SequenceProcedureNode> ProcedureNode::scope() const { return scope_; }
+OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::scope() const { return scope_; }
 
 // Return context of scope in which this node exists
 ProcedureNode::NodeContext ProcedureNode::scopeContext() const
@@ -129,7 +129,7 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
     if (!scope_)
         return ProcedureNode::NoContext;
 
-    return scope_->sequenceContext();
+    return (*scope_).get().sequenceContext();
 }
 
 // Return named node, optionally matching the type / class given, in or out of scope
@@ -139,9 +139,10 @@ ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, Con
 {
     if (!scope_)
         return nullptr;
+    auto scope = (*scope_).get();
 
-    return onlyInScope ? scope_->nodeInScope(shared_from_this(), name, excludeNode, optNodeType, optNodeClass)
-                       : scope_->nodeExists(name, excludeNode, optNodeType, optNodeClass);
+    return onlyInScope ? scope.nodeInScope(shared_from_this(), name, excludeNode, optNodeType, optNodeClass)
+                       : scope.nodeExists(name, excludeNode, optNodeType, optNodeClass);
 }
 
 // Return nodes, optionally matching the type / class given, in or out of scope
@@ -150,9 +151,10 @@ std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, std::optiona
 {
     if (!scope_)
         return {};
+    auto scope = (*scope_).get();
 
-    return onlyInScope ? scope_->nodesInScope(shared_from_this(), optNodeType, optNodeClass)
-                       : scope_->nodes(optNodeType, optNodeClass);
+    return onlyInScope ? scope.nodesInScope(shared_from_this(), optNodeType, optNodeClass)
+                       : scope.nodes(optNodeType, optNodeClass);
 }
 
 // Return the named parameter, in or out of scope
@@ -161,9 +163,10 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view
 {
     if (!scope_)
         return nullptr;
+    auto scope = (*scope_).get();
 
-    return onlyInScope ? scope_->parameterInScope(shared_from_this(), name, std::move(excludeParameter))
-                       : scope_->parameterExists(name, std::move(excludeParameter));
+    return onlyInScope ? scope.parameterInScope(shared_from_this(), name, std::move(excludeParameter))
+                       : scope.parameterExists(name, std::move(excludeParameter));
 }
 
 // Return all parameters in scope
@@ -172,18 +175,15 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::getParameters() 
     if (!scope_)
         return {};
 
-    return scope_->parametersInScope(shared_from_this());
+    return (*scope_).get().parametersInScope(shared_from_this());
 }
 
 /*
  * Branch
  */
 
-// Return whether this node has a branch
-bool ProcedureNode::hasBranch() const { return false; }
-
-// Return SequenceNode for the branch (if it exists)
-std::shared_ptr<SequenceProcedureNode> ProcedureNode::branch() { return nullptr; }
+// Return the branch from this node (if it has one)
+OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::branch() { return {}; }
 
 /*
  * Parameters

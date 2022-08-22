@@ -5,10 +5,10 @@
 
 #include "math/histogram3d.h"
 #include "procedure/nodes/node.h"
+#include "procedure/nodes/sequence.h"
 
 // Forward Declarations
 class CalculateProcedureNodeBase;
-class SequenceProcedureNode;
 class LineParser;
 
 // Procedure Node - Collect3D
@@ -17,12 +17,16 @@ class Collect3DProcedureNode : public ProcedureNode
     public:
     explicit Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable = nullptr,
                                     std::shared_ptr<CalculateProcedureNodeBase> yObservable = nullptr,
-                                    std::shared_ptr<CalculateProcedureNodeBase> zObservable = nullptr, double xMin = 0.0,
-                                    double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0,
-                                    double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
-    explicit Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable, double xMin = 0.0,
-                                    double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0,
-                                    double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0, double zBinWidth = 0.05);
+                                    std::shared_ptr<CalculateProcedureNodeBase> zObservable = nullptr,
+                                    ProcedureNode::NodeContext subCollectContext = ProcedureNode::AnalysisContext,
+                                    double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0,
+                                    double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0,
+                                    double zBinWidth = 0.05);
+    explicit Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable,
+                                    ProcedureNode::NodeContext subCollectContext = ProcedureNode::AnalysisContext,
+                                    double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0,
+                                    double yMax = 10.0, double yBinWidth = 0.05, double zMin = 0.0, double zMax = 10.0,
+                                    double zBinWidth = 0.05);
     ~Collect3DProcedureNode() override = default;
 
     /*
@@ -59,16 +63,12 @@ class Collect3DProcedureNode : public ProcedureNode
      * Branches
      */
     private:
-    // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    std::shared_ptr<SequenceProcedureNode> subCollectBranch_{nullptr};
+    // Branch for subcollection, run if the target quantity is successfully binned
+    ProcedureNodeSequence subCollectBranch_;
 
     public:
-    // Add and return subcollection sequence branch
-    std::shared_ptr<SequenceProcedureNode> addSubCollectBranch(ProcedureNode::NodeContext context);
-    // Return whether this node has a branch
-    bool hasBranch() const override;
-    // Return SequenceNode for the branch (if it exists)
-    std::shared_ptr<SequenceProcedureNode> branch() override;
+    // Return the branch from this node (if it has one)
+    OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
     // Find the nodes owned by this node
     std::vector<ConstNodeRef> children() const override;
 

@@ -15,21 +15,21 @@ TEST(ProcedureTest, Context)
 
     // Select A
     auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
-    auto forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
-    EXPECT_TRUE(procedure.rootSequence()->check());
+    auto &forEachA = selectA->branch()->get();
+    EXPECT_TRUE(procedure.rootSequence().check());
 
     // Select B
-    auto selectB = forEachA->create<SelectProcedureNode>("B");
-    auto forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
-    EXPECT_TRUE(procedure.rootSequence()->check());
+    auto selectB = forEachA.create<SelectProcedureNode>("B");
+    auto &forEachB = selectB->branch()->get();
+    EXPECT_TRUE(procedure.rootSequence().check());
 
     // Wrong context type (in root node)
     EXPECT_THROW(procedure.createRootNode<BoxProcedureNode>("Box"), std::runtime_error);
-    EXPECT_TRUE(procedure.rootSequence()->check());
+    EXPECT_TRUE(procedure.rootSequence().check());
 
     // Wrong context type (in sequence branch)
-    EXPECT_THROW(forEachB->create<BoxProcedureNode>("Box"), std::runtime_error);
-    EXPECT_TRUE(procedure.rootSequence()->check());
+    EXPECT_THROW(forEachB.create<BoxProcedureNode>("Box"), std::runtime_error);
+    EXPECT_TRUE(procedure.rootSequence().check());
 
     // Node with same name as an existing one
     EXPECT_THROW(procedure.createRootNode<BoxProcedureNode>("A"), std::runtime_error);
@@ -42,12 +42,12 @@ TEST(ProcedureTest, Scope)
     // Select A
     auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
     auto forEachA = selectA->addForEachBranch(ProcedureNode::AnalysisContext);
-    EXPECT_TRUE(procedure.rootSequence()->check());
+    EXPECT_TRUE(procedure.rootSequence().check());
 
     // Select B
-    auto selectB = forEachA->create<SelectProcedureNode>("B");
+    auto selectB = forEach.create<SelectProcedureNode>("B");
     auto forEachB = selectB->addForEachBranch(ProcedureNode::AnalysisContext);
-    EXPECT_TRUE(procedure.rootSequence()->check());
+    EXPECT_TRUE(procedure.rootSequence().check());
 
     // Valid node keyword argument (in scope)
     EXPECT_TRUE(selectB->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA}));
@@ -83,7 +83,7 @@ TEST(ProcedureTest, Parameters)
     // Add (Big Things)
     auto bigHole = procedure.createRootNode<AddProcedureNode>("BigHole");
 
-    EXPECT_TRUE(procedure.rootSequence()->check());
+    EXPECT_TRUE(procedure.rootSequence().check());
 
     // Check number of available parameters to each Add node
     auto smallVars = smallHole->getParameters();

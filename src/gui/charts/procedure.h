@@ -6,6 +6,7 @@
 #include "gui/charts/chart.hui"
 #include "gui/charts/proceduremetrics.h"
 #include "procedure/nodes/aliases.h"
+#include "procedure/nodes/sequence.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -13,7 +14,6 @@ class CoreData;
 class Procedure;
 class ProcedureChartNodeBlock;
 class ProcedureNode;
-class SequenceProcedureNode;
 
 // Procedure Chart - Manages display of a sequence of nodes in a Procedure
 class ProcedureChart : public ChartBase
@@ -52,7 +52,7 @@ class ProcedureChart : public ChartBase
 
     private:
     // Create / own chart block widgets for the specified sequence
-    void updateContentBlocks(std::shared_ptr<const SequenceProcedureNode> sequenceNode,
+    void updateContentBlocks(const ProcedureNodeSequence &sequenceNode,
                              std::vector<ProcedureChartNodeBlock *> &oldSequenceWidgets, int &indentLevel);
     // Find ProcedureChartNodeBlock displaying specified ProcedureNode anywhere in the heirarchy of nodes
     ProcedureChartNodeBlock *nodeBlock(NodeRef node);

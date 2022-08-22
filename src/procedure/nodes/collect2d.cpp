@@ -11,10 +11,12 @@
 #include "procedure/nodes/sequence.h"
 
 Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable,
-                                               std::shared_ptr<CalculateProcedureNodeBase> yObservable, double xMin,
-                                               double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth)
+                                               std::shared_ptr<CalculateProcedureNodeBase> yObservable,
+                                               ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
+                                               double xBinWidth, double yMin, double yMax, double yBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect2D), xObservable_{xObservable, 0},
-      yObservable_{yObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}
+      yObservable_{yObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth},
+      subCollectBranch_(subCollectContext, shared_from_this(), "SubCollect")
 {
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
         "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,
@@ -28,9 +30,6 @@ Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedur
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
                                             subCollectBranch_, this, ProcedureNode::AnalysisContext);
-
-    // Initialise branch
-    subCollectBranch_ = nullptr;
 }
 
 /*
@@ -59,23 +58,11 @@ const Data2D &Collect2DProcedureNode::accumulatedData() const
  * Branches
  */
 
-// Add and return subcollection sequence branch
-std::shared_ptr<SequenceProcedureNode> Collect2DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
-{
-    if (!subCollectBranch_)
-        subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, shared_from_this(), "SubCollect");
-
-    return subCollectBranch_;
-}
-
-// Return whether this node has a branch
-bool Collect2DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
-
-// Return SequenceNode for the branch (if it exists)
-std::shared_ptr<SequenceProcedureNode> Collect2DProcedureNode::branch() { return subCollectBranch_; }
+// Return the branch from this node (if it has one)
+OptionalReferenceWrapper<ProcedureNodeSequence> Collect2DProcedureNode::branch() { return subCollectBranch_; }
 
 // Find the nodes owned by this node
-std::vector<ConstNodeRef> Collect2DProcedureNode::children() const { return {subCollectBranch_}; }
+std::vector<ConstNodeRef> Collect2DProcedureNode::children() const { return {&subCollectBranch_}; }
 
 /*
  * Execute
@@ -109,7 +96,7 @@ bool Collect2DProcedureNode::prepare(const ProcedureContext &procedureContext)
         return Messenger::error("No valid y quantity set in '{}'.\n", name());
 
     // Prepare any branches
-    if (subCollectBranch_ && (!subCollectBranch_->prepare(procedureContext)))
+    if (!subCollectBranch_.prepare(procedureContext))
         return false;
 
     return true;
@@ -124,8 +111,8 @@ bool Collect2DProcedureNode::execute(const ProcedureContext &procedureContext)
     assert(xObs && yObs && histogram_);
 
     // Bin the current value of the observable
-    if (histogram_->get().bin(xObs->value(xIndex), yObs->value(yIndex)) && subCollectBranch_)
-        return subCollectBranch_->execute(procedureContext);
+    if (histogram_->get().bin(xObs->value(xIndex), yObs->value(yIndex)))
+        return subCollectBranch_.execute(procedureContext);
 
     return true;
 }
@@ -139,7 +126,7 @@ bool Collect2DProcedureNode::finalise(const ProcedureContext &procedureContext)
     histogram_->get().accumulate();
 
     // Finalise any branches
-    if (subCollectBranch_ && (!subCollectBranch_->finalise(procedureContext)))
+    if (!subCollectBranch_.finalise(procedureContext))
         return false;
 
     return true;

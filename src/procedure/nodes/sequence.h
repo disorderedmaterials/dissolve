@@ -6,31 +6,12 @@
 #include "expression/expression.h"
 #include "procedure/nodes/node.h"
 
-// Sequence Node
-class SequenceProcedureNode : public ProcedureNode
+// ProcedureNode Sequence
+class ProcedureNodeSequence
 {
     public:
-    SequenceProcedureNode(ProcedureNode::NodeContext context, NodeRef owner, std::string_view blockKeyword);
-    ~SequenceProcedureNode() override;
-
-    /*
-     * Identity
-     */
-    public:
-    // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context) override;
-
-    /*
-     * Node Keywords
-     */
-    public:
-    // Node Keywords
-    enum SequenceNodeKeyword
-    {
-        nSequenceNodeKeywords
-    };
-    // Return enum option info for SequenceNodeKeyword
-    static EnumOptions<SequenceNodeKeyword> sequenceNodeKeywords();
+    ProcedureNodeSequence(ProcedureNode::NodeContext context, NodeRef owner, std::string_view blockKeyword);
+    ~ProcedureNodeSequence();
 
     /*
      * Node Contents
@@ -79,6 +60,8 @@ class SequenceProcedureNode : public ProcedureNode
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence
     int nNodes() const;
+    // Return whether the sequence is empty
+    bool empty() const;
 
     /*
      * Scope
@@ -137,11 +120,11 @@ class SequenceProcedureNode : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(const ProcedureContext &procedureContext) override;
+    bool prepare(const ProcedureContext &procedureContext);
     // Execute node
-    bool execute(const ProcedureContext &procedureContext) override;
+    bool execute(const ProcedureContext &procedureContext);
     // Finalise any necessary data after execution
-    bool finalise(const ProcedureContext &procedureContext) override;
+    bool finalise(const ProcedureContext &procedureContext);
 
     /*
      * Read / Write
@@ -154,7 +137,7 @@ class SequenceProcedureNode : public ProcedureNode
     // Return block keyword for current context
     std::string_view blockKeyword() const;
     // Read structure from specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData) override;
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write structure to specified LineParser
-    bool serialise(LineParser &parser, std::string_view prefix) override;
+    bool serialise(LineParser &parser, std::string_view prefix);
 };

@@ -26,69 +26,70 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
     {
         // Select: Site 'A'
         selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");
-        auto forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+        auto &forEachA = selectA_->branch()->get();
 
         // -- Select: Site 'B'
-        selectB_ = forEachA->create<SelectProcedureNode>("B");
+        selectB_ = forEachA.create<SelectProcedureNode>("B");
         selectB_->keywords().set("SameMoleculeAsSite", selectA_);
-        auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+        auto &forEachB = selectB_->branch()->get();
 
         // -- -- Select: Site 'C'
-        selectC_ = forEachB->create<SelectProcedureNode>("C");
+        selectC_ = forEachB.create<SelectProcedureNode>("C");
         selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-        auto forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
+        auto &forEachC = selectC_->branch()->get();
 
         // -- -- -- Calculate: 'rBC'
-        auto calcDistance = forEachC->create<CalculateDistanceProcedureNode>({}, selectB_, selectC_);
+        auto calcDistance = forEachC.create<CalculateDistanceProcedureNode>({}, selectB_, selectC_);
 
         // -- -- -- Calculate: 'aABC'
-        calculateAngle_ = forEachC->create<CalculateAngleProcedureNode>({}, selectA_, selectB_, selectC_);
+        calculateAngle_ = forEachC.create<CalculateAngleProcedureNode>({}, selectA_, selectB_, selectC_);
         calculateAngle_->keywords().set("Symmetric", symmetric_);
 
         // -- -- -- Collect2D:  'Distance-Angle(B...C vs A-B...C)'
-        collectDAngle_ =
-            forEachC->create<Collect2DProcedureNode>({}, calcDistance, calculateAngle_, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-        auto subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
+        collectDAngle_ = forEachC.create<Collect2DProcedureNode>(
+            {}, calcDistance, calculateAngle_, ProcedureNode::AnalysisContext, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
+        auto &subCollection = collectDAngle_->branch()->get();
 
         // -- -- -- -- Collect1D:  'RDF(BC)'
-        collectDistance_ = subCollection->create<Collect1DProcedureNode>({}, calcDistance, 0.0, 10.0, 0.05);
+        collectDistance_ =
+            subCollection.create<Collect1DProcedureNode>({}, calcDistance, ProcedureNode::AnalysisContext, 0.0, 10.0, 0.05);
 
         // -- -- -- -- Collect1D:  'ANGLE(ABC)'
-        collectAngle_ = subCollection->create<Collect1DProcedureNode>({}, calculateAngle_, 0.0, 180.0, 1.0);
+        collectAngle_ =
+            subCollection.create<Collect1DProcedureNode>({}, calculateAngle_, ProcedureNode::AnalysisContext, 0.0, 180.0, 1.0);
 
         // Process1D: 'RDF(BC)'
         processDistance_ = analyser_.createRootNode<Process1DProcedureNode>("RDF(BC)", collectDistance_);
         processDistance_->keywords().set("LabelValue", std::string("g(r)"));
         processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
-        auto rdfNormalisation = processDistance_->addNormalisationBranch();
-        rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
+        auto &rdfNormalisation = processDistance_->branch()->get();
+        rdfNormalisation.create<OperateSitePopulationNormaliseProcedureNode>(
             {}, ConstNodeVector<SelectProcedureNode>{selectA_, selectB_});
-        rdfNormalisation->create<OperateNumberDensityNormaliseProcedureNode>({},
-                                                                             ConstNodeVector<SelectProcedureNode>{selectC_});
-        rdfNormalisation->create<OperateSphericalShellNormaliseProcedureNode>({});
+        rdfNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>{selectC_});
+        rdfNormalisation.create<OperateSphericalShellNormaliseProcedureNode>({});
 
         // Process1D: 'ANGLE(ABC)'
         processAngle_ = analyser_.createRootNode<Process1DProcedureNode>("Angle(ABC)", collectAngle_);
         processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
         processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
-        auto angleNormalisation = processAngle_->addNormalisationBranch();
-        angleNormalisation->create<OperateExpressionProcedureNode>({}, "value/sin(x)");
-        angleNormalisation->create<OperateNormaliseProcedureNode>({}, 1.0);
+        auto &angleNormalisation = processAngle_->branch()->get();
+        angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(x)");
+        angleNormalisation.create<OperateNormaliseProcedureNode>({}, 1.0);
 
         // Process2D: 'DAngle'
         processDAngle_ = analyser_.createRootNode<Process2DProcedureNode>("DAngle(A-BC)", collectDAngle_);
         processDAngle_->keywords().set("LabelValue", std::string("g(r)"));
         processDAngle_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
         processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
-        auto dAngleNormalisation = processDAngle_->addNormalisationBranch();
-        dAngleNormalisationExpression_ = dAngleNormalisation->create<OperateExpressionProcedureNode>(
+        auto &dAngleNormalisation = processDAngle_->branch()->get();
+        dAngleNormalisationExpression_ = dAngleNormalisation.create<OperateExpressionProcedureNode>(
             {}, fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
-        dAngleNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
+        dAngleNormalisation.create<OperateSitePopulationNormaliseProcedureNode>(
             {}, ConstNodeVector<SelectProcedureNode>({selectA_}));
-        dAngleNormalisation->create<OperateNumberDensityNormaliseProcedureNode>({},
-                                                                                ConstNodeVector<SelectProcedureNode>{selectB_});
-        dAngleNormalisation->create<OperateSphericalShellNormaliseProcedureNode>({});
+        dAngleNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({},
+                                                                               ConstNodeVector<SelectProcedureNode>{selectB_});
+        dAngleNormalisation.create<OperateSphericalShellNormaliseProcedureNode>({});
     }
     catch (...)
     {

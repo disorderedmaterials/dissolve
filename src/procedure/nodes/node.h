@@ -16,8 +16,8 @@ class ExpressionVariable;
 class GenericList;
 class LineParser;
 class Procedure;
+class ProcedureNodeSequence;
 class ProcessPool;
-class SequenceProcedureNode;
 class Site;
 
 // Procedure Node
@@ -132,7 +132,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
      */
     private:
     // Scope (SequenceNode) in which this node exists
-    std::shared_ptr<SequenceProcedureNode> scope_;
+    OptionalReferenceWrapper<ProcedureNodeSequence> scope_;
 
     public:
     // Return the parent non-sequence node which owns this node
@@ -140,9 +140,9 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     // Find the nodes owned by this node
     virtual std::vector<ConstNodeRef> children() const;
     // Set scope
-    void setScope(std::shared_ptr<SequenceProcedureNode> scopeNode);
+    void setScope(ProcedureNodeSequence &scopeNode);
     // Return scope (SequenceNode) in which this node exists
-    std::shared_ptr<SequenceProcedureNode> scope() const;
+    OptionalReferenceWrapper<ProcedureNodeSequence> scope() const;
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node, optionally matching the type / class given, in or out of scope
@@ -162,10 +162,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
      * Branch
      */
     public:
-    // Return whether this node has a branch
-    virtual bool hasBranch() const;
-    // Return SequenceNode for the branch (if it exists)
-    virtual std::shared_ptr<SequenceProcedureNode> branch();
+    // Return the branch from this node (if it has one)
+    virtual OptionalReferenceWrapper<ProcedureNodeSequence> branch();
 
     /*
      * Parameters

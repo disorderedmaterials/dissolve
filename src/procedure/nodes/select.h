@@ -5,12 +5,12 @@
 
 #include "math/range.h"
 #include "procedure/nodes/node.h"
+#include "procedure/nodes/sequence.h"
 #include <memory>
 #include <set>
 
 // Forward Declarations
 class DynamicSiteProcedureNode;
-class SequenceProcedureNode;
 class Element;
 class Molecule;
 class SiteStack;
@@ -21,7 +21,9 @@ class SpeciesSite;
 class SelectProcedureNode : public ProcedureNode
 {
     public:
-    explicit SelectProcedureNode(std::vector<const SpeciesSite *> sites = {}, bool axesRequired = false);
+    explicit SelectProcedureNode(std::vector<const SpeciesSite *> sites = {},
+                                 ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext,
+                                 bool axesRequired = false);
 
     /*
      * Identity
@@ -121,16 +123,12 @@ class SelectProcedureNode : public ProcedureNode
      * Branch
      */
     private:
-    // Branch for ForEach (if defined)
-    std::shared_ptr<SequenceProcedureNode> forEachBranch_;
+    // Branch for ForEach
+    ProcedureNodeSequence forEachBranch_;
 
     public:
-    // Return whether this node has a branch
-    bool hasBranch() const override;
-    // Return SequenceNode for the branch (if it exists)
-    std::shared_ptr<SequenceProcedureNode> branch() override;
-    // Add and return ForEach sequence
-    std::shared_ptr<SequenceProcedureNode> addForEachBranch(ProcedureNode::NodeContext context);
+    // Return the branch from this node (if it has one)
+    OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
 
     /*
      * Execute

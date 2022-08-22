@@ -5,6 +5,7 @@
 
 #include "io/export/data1d.h"
 #include "procedure/nodes/node.h"
+#include "procedure/nodes/sequence.h"
 
 // Forward Declarations
 class Collect1DProcedureNode;
@@ -15,7 +16,8 @@ class LineParser;
 class Process1DProcedureNode : public ProcedureNode
 {
     public:
-    Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target = nullptr);
+    Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target = nullptr,
+                           ProcedureNode::NodeContext normalisationContext = ProcedureNode::OperateContext);
     ~Process1DProcedureNode() override = default;
 
     /*
@@ -58,17 +60,13 @@ class Process1DProcedureNode : public ProcedureNode
      * Branches
      */
     private:
-    // Branch for normalisation of data (if defined)
-    std::shared_ptr<SequenceProcedureNode> normalisationBranch_;
+    // Branch for normalisation of data
+    ProcedureNodeSequence normalisationBranch_;
 
     public:
-    // Add and return normalisation sequence branch
-    std::shared_ptr<SequenceProcedureNode> addNormalisationBranch();
-    // Return whether this node has a branch
-    bool hasBranch() const override;
-    // Return SequenceNode for the branch (if it exists)
-    std::shared_ptr<SequenceProcedureNode> branch() override;
-    // Return nodes that belond to this node
+    // Return the branch from this node (if it has one)
+    OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
+    // Return nodes that belong to this node
     std::vector<ConstNodeRef> children() const override;
 
     /*
