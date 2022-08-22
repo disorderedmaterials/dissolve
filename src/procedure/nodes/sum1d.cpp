@@ -59,15 +59,9 @@ Range &Sum1DProcedureNode::range(int n)
 // Return reference to range enabled flag
 bool &Sum1DProcedureNode::rangeEnabled(int n)
 {
-    assert(n >= 1 && n < 3);
+    assert(n >= 0 && n < 3);
     return rangeEnabled_[n];
 }
-
-// Return whether range B is enabled (from keyword data)
-bool Sum1DProcedureNode::isRangeBEnabled() const { return rangeEnabled_[1]; }
-
-// Return whether range C is enabled (from keyword data)
-bool Sum1DProcedureNode::isRangeCEnabled() const { return rangeEnabled_[2]; }
 
 /*
  * Execute

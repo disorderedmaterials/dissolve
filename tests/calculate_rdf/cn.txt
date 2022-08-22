@@ -238,6 +238,9 @@ Module  CalculateRDF  'RDF(COM-COM)'
   SiteB  Water  'COM'
   ExcludeSameMolecule  On
   DistanceRange  0.0  20.0  0.05
+  RangeA  0.0  3.3
+  RangeB  3.3  5.6
+  RangeBEnabled  True
 EndModule
 
 # Center-of-mass radial distribution function, with analyser
@@ -281,18 +284,10 @@ Module  Analyse  'RDF(COM-COM)-Analyser'
   EndAnalyser
 EndModule
 
-Module CalculateCN  'CN(COM-COM)'
-  SourceRDF  'RDF(COM-COM)'
-  RangeA  0.0  3.3
-  RangeB  3.3  5.6
-  RangeBEnabled  True
-  Frequency  1
-EndModule
-
 Module DataTest
   Frequency  95
-  SampledDouble  'CN(COM-COM)//Analyser//Sum1D//CN//A'   4.32359551
-  SampledDouble  'CN(COM-COM)//Analyser//Sum1D//CN//B'  19.413049
+  SampledDouble  'RDF(COM-COM)//Sum1D//CN//A'   4.32359551
+  SampledDouble  'RDF(COM-COM)//Sum1D//CN//B'  19.413049
   Threshold  0.025
 EndModule
 

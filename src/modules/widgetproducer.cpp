@@ -18,8 +18,6 @@
 #include "modules/calculate_avgmol/gui/calculateavgmolwidget.h"
 #include "modules/calculate_axisangle/axisangle.h"
 #include "modules/calculate_axisangle/gui/calculateaxisanglewidget.h"
-#include "modules/calculate_cn/cn.h"
-#include "modules/calculate_cn/gui/calculatecnwidget.h"
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_dangle/gui/calculatedanglewidget.h"
 #include "modules/calculate_rdf/gui/calculaterdfwidget.h"
@@ -58,7 +56,6 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<CalculateAngleModule, CalculateAngleModuleWidget>();
     registerProducer<CalculateAvgMolModule, CalculateAvgMolModuleWidget>();
     registerProducer<CalculateAxisAngleModule, CalculateAxisAngleModuleWidget>();
-    registerProducer<CalculateCNModule, CalculateCNModuleWidget>();
     registerProducer<CalculateDAngleModule, CalculateDAngleModuleWidget>();
     registerProducer<CalculateRDFModule, CalculateRDFModuleWidget>();
     registerProducer<CalculateSDFModule, CalculateSDFModuleWidget>();
