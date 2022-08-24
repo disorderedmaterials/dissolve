@@ -30,6 +30,16 @@ class NodeKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual ConstNodeRef baseNode() = 0;
     // Set base node data
     virtual bool setData(ConstNodeRef node) = 0;
+    // Validate current data, returning false if invalid data had to be pruned
+    bool validate() override
+    {
+        if (validNode(baseNode().get(), name()))
+            return true;
+
+        setData(nullptr);
+
+        return false;
+    }
 };
 
 // Keyword managing ProcedureNode

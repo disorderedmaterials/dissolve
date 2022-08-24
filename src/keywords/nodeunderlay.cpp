@@ -47,6 +47,10 @@ ConstNodeRef NodeKeywordUnderlay::findNode(std::string_view name) const
 // Return whether the node has valid class or type
 bool NodeKeywordUnderlay::validNode(const ProcedureNode *node, std::string_view keywordName) const
 {
+    // A null node is valid
+    if (!node)
+        return true;
+
     // Check class (if specified) then type (if specified)
     if (nodeClass_ && node->nodeClass() != nodeClass_.value())
         return Messenger::error("Node '{}' is of class {}, but the {} keyword requires a node of class {}.\n", node->name(),

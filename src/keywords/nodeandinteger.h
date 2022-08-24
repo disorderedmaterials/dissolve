@@ -35,6 +35,16 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual void setInteger(int i) = 0;
     // Return integer
     virtual int integer() const = 0;
+    // Validate current data, returning false if invalid data had to be pruned
+    bool validate() override
+    {
+        if (validNode(baseNode().get(), name()))
+            return true;
+
+        setNode(nullptr);
+
+        return false;
+    }
 };
 
 // Keyword managing ProcedureNode and integer index
