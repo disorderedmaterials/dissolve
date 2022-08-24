@@ -376,15 +376,8 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         auto *oldNode = rawData(oldIndex);
         if (!oldNode)
             return false;
-        auto existingParent = parent(oldIndex);
-
-        // Get the current scope and position within that scope of the old node
+        auto oldParent = parent(oldIndex);
         auto &oldScope = oldNode->scope()->get();
-        auto oldNodeIt = std::find_if(oldScope.sequence().begin(), oldScope.sequence().end(),
-                                      [oldNode](const auto &node) { return node.get() == oldNode; });
-        if (oldNodeIt == oldScope.sequence().end())
-            return false;
-        auto oldNodeRow = oldNodeIt - oldScope.sequence().begin();
 
         // Get the new parent scope
         auto optNewScope = getScope(newParent);
@@ -398,12 +391,19 @@ bool ProcedureModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         // Create a new row to store the data.
         insertRows(insertAtRow, 1, newParent);
 
+        // Determine the (current) position of the old node - do this here in case we just inserted a row before it
+        auto oldNodeIt = std::find_if(oldScope.sequence().begin(), oldScope.sequence().end(),
+                                      [oldNode](const auto &node) { return node.get() == oldNode; });
+        if (oldNodeIt == oldScope.sequence().end())
+            return false;
+        auto oldNodeRow = oldNodeIt - oldScope.sequence().begin();
+
         // Move the node to its new home
         newScope.sequence()[insertAtRow] = std::move(oldScope.sequence()[oldNodeRow]);
         oldNode->setScope(newScope);
 
         // Remove the old row
-        beginRemoveRows(existingParent, oldNodeRow, oldNodeRow);
+        beginRemoveRows(oldParent, oldNodeRow, oldNodeRow);
         oldScope.sequence().erase(oldScope.sequence().begin() + oldNodeRow);
         endRemoveRows();
 
