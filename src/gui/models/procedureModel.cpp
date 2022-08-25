@@ -137,21 +137,25 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
         if (!node)
             return false;
 
+        // Get a ConstNodeRef to the target node
+        auto nodeRef = procedure_->get().node(node->name());
+
+        auto oldName = std::string{node->name()}, newName = value.toString().toStdString();
+
         // Check for identical old/new names
-        if (value.toString() == QString::fromStdString(std::string(node->name())))
+        if (DissolveSys::sameString(newName, oldName))
             return false;
 
         // Ensure uniqueness of new name
-        auto oldName = QString::fromStdString(std::string(node->name()));
-        //
-        //        auto newName = DissolveSys::uniqueName(DissolveSys::niceName(value.toString().toStdString()),
-        //        procedure_->get().node::instances(),
-        //                                               [&](const auto &inst) { return inst == module ? std::string() :
-        //                                               inst->name(); });
-        //        node->setName(newName);
+        auto uniqueName = newName;
+        auto suffix = 0;
+        while (procedure_->get().node(uniqueName, nodeRef))
+            uniqueName = fmt::format("{}{:02d}", newName, ++suffix);
+
+        node->setName(uniqueName);
 
         emit(dataChanged(index, index));
-        //        emit(nodeNameChanged(index, oldName, QString::fromStdString(newName)));
+        emit(nodeNameChanged(index, QString::fromStdString(oldName), QString::fromStdString(newName)));
 
         return true;
     }
@@ -260,7 +264,9 @@ bool ProcedureModel::hasChildren(const QModelIndex &parent) const
 
 Qt::ItemFlags ProcedureModel::flags(const QModelIndex &index) const
 {
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+    return index.column() == 0
+               ? Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled
+               : Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
 Qt::DropActions ProcedureModel::supportedDragActions() const { return Qt::MoveAction; }
