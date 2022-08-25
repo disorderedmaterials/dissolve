@@ -2,6 +2,7 @@
 // Copyright (c) 2022 Team Dissolve and contributors
 
 #include "procedure/procedure.h"
+#include "keywords/node.h"
 #include "procedure/nodes/nodes.h"
 #include <gtest/gtest.h>
 #include <string>
@@ -49,23 +50,48 @@ TEST(ProcedureTest, Scope)
     auto forEachB = selectB->branch()->get();
     EXPECT_TRUE(procedure.rootSequence().check());
 
+    // Select C
+    auto selectC = procedure.createRootNode<SelectProcedureNode>("C");
+
+    // Node external to procedure
+    auto selectExternal = std::make_shared<SelectProcedureNode>();
+    selectExternal->setName("X");
+
     // Valid node keyword argument (in scope)
     EXPECT_TRUE(selectB->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA}));
+    EXPECT_TRUE(selectC->keywords().set("ReferenceSite", selectA));
 
     // Invalid node arguments (out of scope)
-    auto selectC = std::make_shared<SelectProcedureNode>();
-    selectC->setName("C");
     // -- Out of scope (node appears subsequently in sequence)
     EXPECT_FALSE(selectA->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectB}));
+    // -- Out of scope (node is in a branch in a previous node)
+    EXPECT_FALSE(selectC->keywords().set("ReferenceSite", selectB));
     // -- Out of scope (not in same procedure)
-    EXPECT_FALSE(selectB->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectC}));
+    EXPECT_FALSE(selectB->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectExternal}));
+
+    // Check removal of bad node references
+    // -- Confirm current keyword data
+    auto keywordNode = selectC->keywords()
+                           .get<std::shared_ptr<const SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>("ReferenceSite")
+                           .value()
+                           .get();
+    EXPECT_EQ(keywordNode, selectA);
+    // -- Move 'C' so it is before 'A'
+    std::swap(procedure.rootSequence().sequence()[0], procedure.rootSequence().sequence()[1]);
+    // -- Validate procedure and re-check keyword data
+    procedure.rootSequence().validateNodeKeywords();
+    keywordNode = selectC->keywords()
+                      .get<std::shared_ptr<const SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>("ReferenceSite")
+                      .value()
+                      .get();
+    EXPECT_EQ(keywordNode, nullptr);
 }
 
 TEST(ProcedureTest, Parameters)
 {
     Procedure procedure(ProcedureNode::GenerationContext);
 
-    // Parameters (Small Thnigs)
+    // Parameters (Small Things)
     auto smallThings = procedure.createRootNode<ParametersProcedureNode>("Small");
     smallThings->addParameter("Egg", 1);
     smallThings->addParameter("Marble", -5);
