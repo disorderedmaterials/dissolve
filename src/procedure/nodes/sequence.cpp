@@ -141,12 +141,13 @@ OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { r
 ProcedureNode::NodeContext ProcedureNodeSequence::sequenceContext() const { return context_; }
 
 // Return named node if present in this sequence, and which matches the (optional) type given
-ConstNodeRef ProcedureNodeSequence::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+ConstNodeRef ProcedureNodeSequence::node(std::string_view name, ConstNodeRef excludeNode,
+                                         std::optional<ProcedureNode::NodeType> optNodeType,
                                          std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     for (auto node : sequence_)
     {
-        if (DissolveSys::sameString(node->name(), name))
+        if (node != excludeNode && DissolveSys::sameString(node->name(), name))
         {
             // Check type / class
             if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
@@ -157,7 +158,7 @@ ConstNodeRef ProcedureNodeSequence::node(std::string_view name, std::optional<Pr
         // If the node has a branch, recurse in to that
         if (node->branch())
         {
-            auto branchNode = node->branch()->get().node(name, optNodeType, optNodeClass);
+            auto branchNode = node->branch()->get().node(name, excludeNode, optNodeType, optNodeClass);
             if (branchNode)
                 return branchNode;
         }

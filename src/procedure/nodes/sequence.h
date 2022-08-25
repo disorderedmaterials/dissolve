@@ -87,7 +87,8 @@ class ProcedureNodeSequence
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present (and matches the type / class given)
-    ConstNodeRef node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+    ConstNodeRef node(std::string_view name, ConstNodeRef excludeNode = nullptr,
+                      std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                       std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return list of nodes (of specified type / class) present in the Procedure
     std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
