@@ -33,12 +33,8 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     Messenger::print("MolShake: Step size for rotation adjustments is {:.5f} degrees (allowed range is {} <= delta <= {}).\n",
                      rotationStepSize_, rotationStepSizeMin_, rotationStepSizeMax_);
     if (!restrictToSpecies_.empty())
-    {
-        std::string speciesNames;
-        for (auto *sp : restrictToSpecies_)
-            speciesNames += fmt::format("  {}", sp->name());
-        Messenger::print("MolShake: Calculation will be restricted to species:{}\n", speciesNames);
-    }
+        Messenger::print("MolShake: Calculation will be restricted to species:\n",
+                         joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
