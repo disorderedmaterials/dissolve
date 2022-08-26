@@ -389,8 +389,7 @@ void MainTabsWidget::preventEditing()
     for (auto &[button, page] : closeButtons_)
         button->setDisabled(true);
 
-    // Block the tab bar signals to prevent editing and context menu
-    mainTabsBar_->blockSignals(true);
+    editingEnabled_ = false;
 }
 
 // Allow editing in all tabs
@@ -403,8 +402,7 @@ void MainTabsWidget::allowEditing()
     for (auto &[button, page] : closeButtons_)
         button->setEnabled(true);
 
-    // Re-enable the tab bar signals
-    mainTabsBar_->blockSignals(false);
+    editingEnabled_ = true;
 }
 
 /*
@@ -450,6 +448,9 @@ QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
 // Context menu requested
 void MainTabsWidget::contextMenuRequested(const QPoint &pos)
 {
+    if (!editingEnabled_)
+        return;
+
     auto tabIndex = mainTabsBar_->tabAt(pos);
     if (tabIndex == -1)
         return;
@@ -519,6 +520,9 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
 // Tab close button clicked
 void MainTabsWidget::tabCloseButtonClicked(bool checked)
 {
+    if (!editingEnabled_)
+        return;
+
     // Find the close button that sent the signal in our buttons reflist
     auto *toolButton = dynamic_cast<QToolButton *>(sender());
     if (!toolButton)
@@ -545,7 +549,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
 // Tab double-clicked
 void MainTabsWidget::tabDoubleClicked(int index)
 {
-    if (index == -1)
+    if (index == -1 || !editingEnabled_)
         return;
 
     // Get the relevant widget (as a MainTab)
