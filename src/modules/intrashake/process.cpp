@@ -281,7 +281,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
                         // Trial the transformed Molecule
                         delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
+                        accept = delta < 0 || (randomBuffer.random() < exp(-delta * rRT));
 
                         // Accept new (current) positions of the Molecule's Atoms?
                         if (accept)
