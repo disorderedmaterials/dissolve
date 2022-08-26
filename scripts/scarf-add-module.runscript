@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Load necessary modules and run Dissolve XXXVERSIONXXX
+
+module load foss
+
+XXXPATHXXX/dissolve-XXXVERSIONXXX "$@"

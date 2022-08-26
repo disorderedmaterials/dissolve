@@ -1,0 +1,15 @@
+#%Module3.0#####################################################################
+##
+## Dissolve modulefile
+##
+proc ModulesHelp { } {
+
+        puts stderr "\tProvides Dissolve vXXXVERSIONXXX"
+}
+
+module-whatis   "Dissolve"
+
+set             root              XXXPATHXXX
+prepend-path     PATH             $root/bin
+
+source "/apps20/modulefiles/scarf-rhel7/modulefiles_include.tcl"

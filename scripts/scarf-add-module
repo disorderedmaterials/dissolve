@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# Straightforward script to create and install a release in the appropriate place on SCARF
+#
+
+set -e
+
+# Require a single argument - the path to the binary to install
+if [ $# -eq 0 ]; then
+  echo "Error: Please supply the path to the binary to install."
+  echo "       e.g.   scarf-add-module  ./build-12345/bin/dissolve"
+  exit 1
+fi
+
+DISSOLVE_BINARY=$1
+
+# Set Up
+MODULES_DIR=/apps20/contrib/dissolve
+MODULEFILES_DIR=/apps20/contrib/modulefiles/contrib/dissolve
+
+# Get the program version
+DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" ../src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
+echo "Detected code version is ${DISSOLVE_VERSION}"
+if [[ ! ${DISSOLVE_VERSION} =~ ([0-9]+.[0-9]+.[0-9]+) ]]
+then
+  echo "Error: Mangled version detected."
+  exit 1
+fi
+
+# Clear any existing data for the same version
+if [[ -e ${MODULES_DIR}/${DISSOLVE_VERSION} ]]
+then
+  echo "... Removing existing module directory (${MODULES_DIR}/${DISSOLVE_VERSION}) ..."
+  rm -rfv ${MODULES_DIR}/${DISSOLVE_VERSION}
+fi
+if [[ -e ${MODULEFILES_DIR}/${DISSOLVE_VERSION} ]]
+then
+  echo "... Removing existing module file (${MODULEFILES_DIR}/${DISSOLVE_VERSION}) ..."
+  rm -rfv ${MODULEFILES_DIR}/${DISSOLVE_VERSION}
+fi
+
+# Create new module directory structure
+mkdir -p ${MODULES_DIR}/${DISSOLVE_VERSION}/bin
+
+# Copy over the binary, renaming it as we go
+cp ${DISSOLVE_BINARY} ${MODULES_DIR}/${DISSOLVE_VERSION}/dissolve-${DISSOLVE_VERSION}
+sed -e "s:XXXVERSIONXXX:${DISSOLVE_VERSION}:g" -e "s:XXXPATHXXX:${MODULES_DIR}/${DISSOLVE_VERSION}:g" scarf-add-module.runscript > ${MODULES_DIR}/${DISSOLVE_VERSION}/bin/dissolve
+chmod u+x ${MODULES_DIR}/${DISSOLVE_VERSION}/bin/dissolve
+
+# Create the new module file
+sed -e "s:XXXVERSIONXXX:${DISSOLVE_VERSION}:g" -e "s:XXXPATHXXX:${MODULES_DIR}/${DISSOLVE_VERSION}:g" scarf-add-module.modulefile > ${MODULEFILES_DIR}/${DISSOLVE_VERSION}
+
+echo "Done."
+
