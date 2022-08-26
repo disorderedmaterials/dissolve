@@ -44,6 +44,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (termEnergyOnly_)
         Messenger::print("IntraShake: Only term energy will be considered (interactions with the rest of the"
                          "system will be ignored).\n");
+    if (!restrictToSpecies_.empty())
+        Messenger::print("IntraShake: Calculation will be restricted to species:\n",
+                         joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
+
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -58,6 +62,20 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Initialise the random number buffer
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
+
+    // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
+    if (!restrictToSpecies_.empty())
+    {
+        std::vector<int> targetIndices;
+        auto id = 0;
+        for (const auto &mol : targetConfiguration_->molecules())
+        {
+            if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
+                targetIndices.push_back(id);
+            ++id;
+        }
+        distributor.setTargetMolecules(targetIndices);
+    }
 
     // Ensure that the Species used in the present Configuration have attached atom lists
     for (auto &spPop : targetConfiguration_->speciesPopulations())
