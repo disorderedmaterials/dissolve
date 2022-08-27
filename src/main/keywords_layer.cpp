@@ -58,11 +58,14 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                 layer->setFrequency(parser.argi(1));
                 break;
             case (LayerBlock::ModuleKeyword):
-                // The argument following the keyword is the module name, so try to create an instance of that
-                // Module
-                module = ModuleRegistry::create(parser.argsv(1), layer);
-                if (!module)
+                // The argument following the keyword is the module type, so try to create an instance of that type
+                try
                 {
+                    module = ModuleRegistry::create(parser.argsv(1), layer);
+                }
+                catch (...)
+                {
+                    Messenger::error("Module type '{}' does not exist.\n", parser.argsv(1));
                     error = true;
                     break;
                 }
