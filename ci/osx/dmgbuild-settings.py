@@ -139,19 +139,3 @@ list_column_sort_directions = {
     'comments': 'ascending',
     }
 
-license = {
-     'default-language': 'en_US',
-     'licenses': {
-         'en_GB': 'LICENSE.txt' },
-     'buttons': {
-         'en_US': (
-             b'English',
-             b'Agree',
-             b'Disagree',
-             b'Print',
-             b'Save',
-             b'If you agree with the terms of this license, press "Agree" to '
-             b'install the software.  If you do not agree, press "Disagree".'
-         ),
-     },
- }
