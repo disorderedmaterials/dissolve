@@ -192,12 +192,8 @@ Layer  'Analyse RDF/CN'
     SiteA  'Water'  'COM'
     SiteB  'Water'  'COM'
     ExcludeSameMolecule  True
-  EndModule
-
-  Module  CalculateCN  'CalculateCN01'
-    Frequency  1
-    SourceRDF  'CalculateRDF01'
     RangeA  0.000000e+00  3.400000e+00
+    RangeAEnabled  True
   EndModule
 EndLayer
 

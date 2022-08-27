@@ -478,14 +478,8 @@ Layer  'Analyse RDF/CN'
     DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
     SiteA  '1-ethyl-3-methylimidazolium'  'RingNN'
     SiteB  'Acetate Anion'  'COM'
-  EndModule
-
-  Module  CalculateCN  'CN-CA'
-    Frequency  1
     RangeA  0.000000e+00  7.000000e+00
-    RangeB  3.000000e+00  6.000000e+00
-    RangeC  6.000000e+00  9.000000e+00
-    SourceRDF  'RDF-CA'
+    RangeAEnabled  True
   EndModule
 
   Module  CalculateRDF  'RDF-CC'
