@@ -104,6 +104,10 @@ class MainTabsWidget : public QTabWidget
     /*
      * Update
      */
+    private:
+    // Whether editing is currently enabled
+    bool editingEnabled_{true};
+
     public:
     // Update all tabs
     void updateAllTabs();
