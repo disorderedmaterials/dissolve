@@ -48,12 +48,8 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     else
         Messenger::print("MD: Summary will not be written.\n");
     if (!restrictToSpecies_.empty())
-    {
-        std::string speciesNames;
-        for (auto *sp : restrictToSpecies_)
-            speciesNames += fmt::format("  {}", sp->name());
-        Messenger::print("MD: Calculation will be restricted to species:{}\n", speciesNames);
-    }
+        Messenger::print("MD: Calculation will be restricted to species:\n",
+                         joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     Messenger::print("\n");
 
     if (onlyWhenEnergyStable_)

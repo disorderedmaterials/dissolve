@@ -7,6 +7,7 @@
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/optionaldouble.h"
+#include "keywords/speciesvector.h"
 
 IntraShakeModule::IntraShakeModule() : Module("IntraShake")
 {
@@ -24,6 +25,8 @@ IntraShakeModule::IntraShakeModule() : Module("IntraShake")
     keywords_.add<BoolKeyword>("Control", "TermEnergyOnly",
                                "Whether only the energy of the intramolecular term is calculated and assessed",
                                termEnergyOnly_);
+    keywords_.add<SpeciesVectorKeyword>("Control", "RestrictToSpecies", "Restrict the calculation to the specified Species",
+                                        restrictToSpecies_);
 
     // Bonds
     keywords_.add<BoolKeyword>("Control", "AdjustBonds", "Whether bonds in molecules should be shaken", adjustBonds_);
