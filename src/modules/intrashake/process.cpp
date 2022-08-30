@@ -242,6 +242,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             if (adjustTorsions_)
                 for (const auto &torsion : mol->species()->torsions())
                 {
+                    // Refuse to change a torsion which is in a cycle
+                    if (torsion.inCycle())
+                        continue;
+
                     // Get Atom pointers
                     i = mol->atom(torsion.indexI());
                     j = mol->atom(torsion.indexJ());
@@ -249,8 +253,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     l = mol->atom(torsion.indexL());
 
                     // Store current energy of this intramolecular term
-                    intraEnergy =
-                        torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
+                    intraEnergy = kernel.energy(torsion, *i, *j, *k, *l);
 
                     // Select random terminus
                     terminus = randomBuffer.random() > 0.5 ? 1 : 0;
@@ -274,8 +277,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         // Calculate new energy
                         newPPEnergy =
                             termEnergyOnly_ ? 0.0 : kernel.energy(*mol, true, ProcessPool::subDivisionStrategy(strategy));
-                        newIntraEnergy =
-                            torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
+                        newIntraEnergy = kernel.energy(torsion, *i, *j, *k, *l);
 
                         // Trial the transformed Molecule
                         delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
