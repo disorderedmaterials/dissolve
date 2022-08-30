@@ -32,6 +32,8 @@ class NodeValueKeyword : public KeywordBase
     const NodeValue &data() const;
     // Set the value from supplied expression text
     bool setData(std::string_view expressionText);
+    // Set the value from NodeValue
+    bool setData(const NodeValue &nodeValue);
 
     /*
      * Arguments

@@ -38,7 +38,7 @@ int ProcedureModel::rowCount(const QModelIndex &parent) const
 
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
     if (node && node->branch())
-        return node->branch()->nNodes();
+        return node->branch()->get().nNodes();
 
     return 0;
 }
@@ -85,10 +85,10 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
         switch (role)
         {
             case (Qt::DisplayRole):
-                if (node->scope()->owner())
+                if (node->scope()->get().owner())
                     return QString("%1 (%2 branch in %3)")
                         .arg(QString::fromStdString(std::string(ProcedureNode::nodeContexts().keyword(node->scopeContext()))),
-                             QString::fromStdString(std::string(node->scope()->blockKeyword())),
+                             QString::fromStdString(std::string(node->scope()->get().blockKeyword())),
                              QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->parent()->type()))));
                 else
                     return QString("%1 (in root sequence)")
@@ -126,10 +126,10 @@ QModelIndex ProcedureModel::index(int row, int column, const QModelIndex &parent
 
     // Parent is another node, so it should have a branch/sequence that we can refer to
     auto parentNode = static_cast<ProcedureNode *>(parent.internalPointer());
-    if (!parentNode || !parentNode->hasBranch())
+    if (!parentNode || !parentNode->branch())
         return {};
 
-    return createIndex(row, column, parentNode->branch()->sequence()[row].get());
+    return createIndex(row, column, parentNode->branch()->get().sequence()[row].get());
 }
 
 QModelIndex ProcedureModel::parent(const QModelIndex &index) const
@@ -151,15 +151,19 @@ QModelIndex ProcedureModel::parent(const QModelIndex &index) const
     auto nodeParentParent = nodeParent->parent();
     if (!nodeParentParent)
     {
-        auto &proc = procedure_->get();
-        auto it = std::find(proc.rootSequence().sequence().begin(), proc.rootSequence().sequence().end(), nodeParent);
-        return createIndex(it - proc.rootSequence().sequence().begin(), 0, nodeParent.get());
+        auto &rootSeq = procedure_->get().rootSequence().sequence();
+        auto it =
+            std::find_if(rootSeq.begin(), rootSeq.end(), [nodeParent](const auto &node) { return node.get() == nodeParent; });
+        return createIndex(it - rootSeq.begin(), 0, nodeParent);
     }
     else
     {
-        auto children = nodeParentParent->children();
-        auto it = std::find(children.begin(), children.end(), nodeParent);
-        return createIndex(it - children.begin(), 0, nodeParent.get());
+        auto branch = nodeParentParent->branch();
+        assert(branch);
+        const auto &sequence = branch->get().sequence();
+        auto it =
+            std::find_if(sequence.begin(), sequence.end(), [nodeParent](const auto &node) { return node.get() == nodeParent; });
+        return createIndex(it - sequence.begin(), 0, nodeParent);
     }
 }
 
@@ -174,7 +178,7 @@ bool ProcedureModel::hasChildren(const QModelIndex &parent) const
 
     // Check the node for a branch
     auto node = static_cast<ProcedureNode *>(parent.internalPointer());
-    return (node && node->hasBranch());
+    return (node && node->branch());
 }
 
 Qt::ItemFlags ProcedureModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }

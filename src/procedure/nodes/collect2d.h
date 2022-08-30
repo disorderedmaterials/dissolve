@@ -5,10 +5,10 @@
 
 #include "math/histogram2d.h"
 #include "procedure/nodes/node.h"
+#include "procedure/nodes/sequence.h"
 
 // Forward Declarations
 class CalculateProcedureNodeBase;
-class SequenceProcedureNode;
 class LineParser;
 
 // Procedure Node - Collect2D
@@ -16,9 +16,10 @@ class Collect2DProcedureNode : public ProcedureNode
 {
     public:
     explicit Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable = nullptr,
-                                    std::shared_ptr<CalculateProcedureNodeBase> yObservable = nullptr, double xMin = 0.0,
-                                    double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0, double yMax = 10.0,
-                                    double yBinWidth = 0.05);
+                                    std::shared_ptr<CalculateProcedureNodeBase> yObservable = nullptr,
+                                    ProcedureNode::NodeContext subCollectContext = ProcedureNode::AnalysisContext,
+                                    double xMin = 0.0, double xMax = 10.0, double xBinWidth = 0.05, double yMin = 0.0,
+                                    double yMax = 10.0, double yBinWidth = 0.05);
     ~Collect2DProcedureNode() override = default;
 
     /*
@@ -51,18 +52,12 @@ class Collect2DProcedureNode : public ProcedureNode
      * Branches
      */
     private:
-    // Branch for subcollection (if defined), run if the target quantity is successfully binned
-    std::shared_ptr<SequenceProcedureNode> subCollectBranch_{nullptr};
+    // Branch for subcollection, run if the target quantity is successfully binned
+    ProcedureNodeSequence subCollectBranch_;
 
     public:
-    // Add and return subcollection sequence branch
-    std::shared_ptr<SequenceProcedureNode> addSubCollectBranch(ProcedureNode::NodeContext context);
-    // Return whether this node has a branch
-    bool hasBranch() const override;
-    // Return SequenceNode for the branch (if it exists)
-    std::shared_ptr<SequenceProcedureNode> branch() override;
-    // Find the nodes owned by this node
-    std::vector<ConstNodeRef> children() const override;
+    // Return the branch from this node (if it has one)
+    OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
 
     /*
      * Execute

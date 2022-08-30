@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 
 Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockKeyword)
-    : rootSequence_(std::make_shared<SequenceProcedureNode>(context, this, nullptr, blockKeyword))
+    : rootSequence_(context, {}, blockKeyword)
 {
     context_ = context;
 }
@@ -19,23 +19,23 @@ Procedure::~Procedure() = default;
  */
 
 // Clear all data
-void Procedure::clear() { rootSequence_->clear(); }
+void Procedure::clear() { rootSequence_.clear(); }
 
 // Return root sequence
-const SequenceProcedureNode &Procedure::rootSequence() const { return *rootSequence_; }
+ProcedureNodeSequence &Procedure::rootSequence() { return rootSequence_; }
 
 // Return named node if present (and matches the type / class given)
 ConstNodeRef Procedure::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
                              std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    return rootSequence_->node(name, optNodeType, optNodeClass);
+    return rootSequence_.node(name, optNodeType, optNodeClass);
 }
 
 // Return all nodes (matching the type / class given)
 std::vector<ConstNodeRef> Procedure::nodes(std::optional<ProcedureNode::NodeType> optNodeType,
                                            std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    return rootSequence_->nodes(optNodeType, optNodeClass);
+    return rootSequence_.nodes(optNodeType, optNodeClass);
 }
 
 /*
@@ -69,15 +69,15 @@ bool Procedure::execute(const ProcedureContext &context)
     }
 
     // Prepare the nodes
-    if (!rootSequence_->prepare(context))
+    if (!rootSequence_.prepare(context))
         return Messenger::error("Failed to prepare procedure for execution.\n");
 
     // Execute the root sequence
-    if (!rootSequence_->execute(context))
+    if (!rootSequence_.execute(context))
         return Messenger::error("Failed to execute procedure.\n");
 
     // Finalise any nodes that need it
-    if (!rootSequence_->finalise(context))
+    if (!rootSequence_.finalise(context))
         return Messenger::error("Failed to finalise procedure after execution.\n");
 
     return true;
@@ -92,8 +92,8 @@ bool Procedure::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
-    return rootSequence_->deserialise(parser, coreData);
+    return rootSequence_.deserialise(parser, coreData);
 }
 
 // Write structure to specified LineParser
-bool Procedure::serialise(LineParser &parser, std::string_view prefix) { return rootSequence_->serialise(parser, prefix); }
+bool Procedure::serialise(LineParser &parser, std::string_view prefix) { return rootSequence_.serialise(parser, prefix); }

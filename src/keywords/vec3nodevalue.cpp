@@ -30,7 +30,7 @@ bool Vec3NodeValueKeyword::setData(int index, std::string_view expressionText)
     assert(index >= 0 && index < 3);
     assert(parentNode_);
 
-    return data_[index].set(expressionText, parentNode_->parametersInScope());
+    return data_[index].set(expressionText, parentNode_->getParameters());
 }
 
 // Return label type to display in GUI
@@ -55,7 +55,7 @@ bool Vec3NodeValueKeyword::deserialise(LineParser &parser, int startArg, const C
     if (parser.hasArg(startArg + 2))
     {
         // Get any variables currently in scope
-        auto vars = parentNode_->parametersInScope();
+        auto vars = parentNode_->getParameters();
 
         if (!data_.x.set(parser.argsv(startArg), vars))
             return false;

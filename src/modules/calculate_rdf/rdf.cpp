@@ -25,37 +25,37 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
     {
         // Select: Site 'A'
         selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");
-        auto forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+        auto &forEachA = selectA_->branch()->get();
 
         // -- Select: Site 'B'
-        selectB_ = forEachA->create<SelectProcedureNode>("B");
+        selectB_ = forEachA.create<SelectProcedureNode>("B");
         selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-        auto forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+        auto &forEachB = selectB_->branch()->get();
 
         // -- -- Calculate: 'rAB'
-        auto calcDistance = forEachB->create<CalculateDistanceProcedureNode>({}, selectA_, selectB_);
+        auto calcDistance = forEachB.create<CalculateDistanceProcedureNode>({}, selectA_, selectB_);
 
         // -- -- Collect1D: 'RDF'
-        collectDistance_ = forEachB->create<Collect1DProcedureNode>("Histo-AB", calcDistance);
+        collectDistance_ = forEachB.create<Collect1DProcedureNode>("Histo-AB", calcDistance);
 
         // Process1D: RDF
         processDistance_ = analyser_.createRootNode<Process1DProcedureNode>("RDF", collectDistance_);
         processDistance_->keywords().set("LabelValue", std::string("g(r)"));
         processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
         // -- Normalisation Branch
-        auto rdfNormalisation = processDistance_->addNormalisationBranch();
-        rdfNormalisation->create<OperateSitePopulationNormaliseProcedureNode>({},
-                                                                              ConstNodeVector<SelectProcedureNode>({selectA_}));
-        rdfNormalisation->create<OperateNumberDensityNormaliseProcedureNode>({},
-                                                                             ConstNodeVector<SelectProcedureNode>({selectB_}));
-        rdfNormalisation->create<OperateSphericalShellNormaliseProcedureNode>({});
+        auto &rdfNormalisation = processDistance_->branch()->get();
+        rdfNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({},
+                                                                             ConstNodeVector<SelectProcedureNode>({selectA_}));
+        rdfNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({},
+                                                                            ConstNodeVector<SelectProcedureNode>({selectB_}));
+        rdfNormalisation.create<OperateSphericalShellNormaliseProcedureNode>({});
 
         // Process1D: CN
         processCN_ = analyser_.createRootNode<Process1DProcedureNode>("HistogramNorm", collectDistance_);
         processCN_->keywords().set("Instantaneous", true);
-        auto cnNormalisation = processCN_->addNormalisationBranch();
-        cnNormaliser_ = cnNormalisation->create<OperateSitePopulationNormaliseProcedureNode>(
+        auto &cnNormalisation = processCN_->branch()->get();
+        cnNormaliser_ = cnNormalisation.create<OperateSitePopulationNormaliseProcedureNode>(
             {}, ConstNodeVector<SelectProcedureNode>({selectA_}));
 
         // Sum1D

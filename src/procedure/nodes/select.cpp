@@ -16,8 +16,10 @@
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 
-SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, bool axesRequired)
-    : ProcedureNode(ProcedureNode::NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired)
+SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, ProcedureNode::NodeContext forEachContext,
+                                         bool axesRequired)
+    : ProcedureNode(ProcedureNode::NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired),
+      forEachBranch_(forEachContext, *this, "ForEach")
 {
     inclusiveDistanceRange_.set(0.0, 5.0);
 
@@ -49,8 +51,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     keywords_.addKeyword<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_, this,
                                             ProcedureNode::AnalysisContext);
 
-    forEachBranch_ = nullptr;
-
     currentSiteIndex_ = -1;
     nCumulativeSites_ = 0;
     nSelections_ = 0;
@@ -78,9 +78,6 @@ std::vector<const SpeciesSite *> &SelectProcedureNode::speciesSites() { return s
 
 // Return whether sites must have a defined orientation
 bool SelectProcedureNode::axesRequired() { return axesRequired_; }
-
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> SelectProcedureNode::children() const { return {forEachBranch_}; }
 
 /*
  * Selection Control
@@ -163,20 +160,8 @@ const Site *SelectProcedureNode::currentSite() const
  * Branch
  */
 
-// Return whether this node has a branch
-bool SelectProcedureNode::hasBranch() const { return (forEachBranch_ != nullptr); }
-
-// Return SequenceNode for the branch (if it exists)
-std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::branch() { return forEachBranch_; }
-
-// Add and return ForEach sequence
-std::shared_ptr<SequenceProcedureNode> SelectProcedureNode::addForEachBranch(ProcedureNode::NodeContext context)
-{
-    if (!forEachBranch_)
-        forEachBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this(), "ForEach");
-
-    return forEachBranch_;
-}
+// Return the branch from this node (if it has one)
+OptionalReferenceWrapper<ProcedureNodeSequence> SelectProcedureNode::branch() { return forEachBranch_; }
 
 /*
  * Execute
@@ -195,7 +180,7 @@ bool SelectProcedureNode::prepare(const ProcedureContext &procedureContext)
     nAvailableSites_ = 0;
 
     // If one exists, prepare the ForEach branch nodes
-    if (forEachBranch_ && (!forEachBranch_->prepare(procedureContext)))
+    if (!forEachBranch_.prepare(procedureContext))
         return false;
 
     // Prepare any dynamic site nodes
@@ -290,14 +275,14 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
     ++nSelections_;
 
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
-    if (forEachBranch_)
+    if (!forEachBranch_.empty())
     {
         for (currentSiteIndex_ = 0; currentSiteIndex_ < sites_.size(); ++currentSiteIndex_)
         {
             ++nCumulativeSites_;
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
-            if (!forEachBranch_->execute(procedureContext))
+            if (!forEachBranch_.execute(procedureContext))
                 return false;
         }
     }
@@ -309,7 +294,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
 bool SelectProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
     // If one exists, finalise the ForEach branch nodes
-    if (forEachBranch_ && (!forEachBranch_->finalise(procedureContext)))
+    if (!forEachBranch_.finalise(procedureContext))
         return false;
 
     // Finalise any dynamic site nodes

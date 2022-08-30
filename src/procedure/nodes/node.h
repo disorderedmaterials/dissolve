@@ -16,8 +16,8 @@ class ExpressionVariable;
 class GenericList;
 class LineParser;
 class Procedure;
+class ProcedureNodeSequence;
 class ProcessPool;
-class SequenceProcedureNode;
 class Site;
 
 // Procedure Node
@@ -52,7 +52,6 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Copy,
         CylindricalRegion,
         DynamicSite,
-        Fit1D,
         GeneralRegion,
         Integrate1D,
         OperateDivide,
@@ -133,52 +132,36 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
      */
     private:
     // Scope (SequenceNode) in which this node exists
-    std::shared_ptr<SequenceProcedureNode> scope_;
+    OptionalReferenceWrapper<ProcedureNodeSequence> scope_;
 
     public:
-    // Return the parent non-sequence node which owns this node
-    NodeRef parent() const;
-    // Find the nodes owned by this node
-    virtual std::vector<ConstNodeRef> children() const;
+    // Return the parent node which owns this node
+    ProcedureNode *parent() const;
     // Set scope
-    void setScope(std::shared_ptr<SequenceProcedureNode> scopeNode);
-    // Return scope (SequenceNode) in which this node exists
-    std::shared_ptr<SequenceProcedureNode> scope() const;
-    // Return Procedure in which this node exists
-    virtual const Procedure *procedure() const;
+    void setScope(ProcedureNodeSequence &scopeNode);
+    // Return scope (ProcedureNodeSequence) in which this node exists
+    OptionalReferenceWrapper<ProcedureNodeSequence> scope() const;
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
-    // Return named node if it is currently in scope (and matches the type / class given)
-    ConstNodeRef nodeInScope(std::string_view name, ConstNodeRef excludeNode = nullptr,
-                             std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
-    // Return list of nodes in this node's scope (and matches the type / class given)
-    std::vector<ConstNodeRef> nodesInScope(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                           std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
-    // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-    ConstNodeRef nodeExists(std::string_view name, NodeRef excludeNode = nullptr,
-                            std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                            std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
-    // Return list of nodes (of specified type / class) present in the Procedure
-    std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
-                                    std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
-    // Return the named parameter if it is currently in scope
-    std::shared_ptr<ExpressionVariable> parameterInScope(std::string_view name,
-                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
-    // Return the named parameter if it exists anywhere in the same Procedure
-    std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
-                                                        std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
-    // Create and return reference list of parameters in scope
-    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope() const;
+    // Return named node, optionally matching the type / class given, in or out of scope
+    ConstNodeRef getNode(std::string_view name, bool onlyInScope, ConstNodeRef excludeNode = nullptr,
+                         std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                         std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return nodes, optionally matching the type / class given, in or out of scope
+    std::vector<ConstNodeRef> getNodes(bool onlyInScope, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+                                       std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
+    // Return the named parameter, in or out of scope
+    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name, bool onlyInScope,
+                                                     std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
+    // Return all parameters in scope
+    std::vector<std::shared_ptr<ExpressionVariable>> getParameters() const;
 
     /*
      * Branch
      */
     public:
-    // Return whether this node has a branch
-    virtual bool hasBranch() const;
-    // Return SequenceNode for the branch (if it exists)
-    virtual std::shared_ptr<SequenceProcedureNode> branch();
+    // Return the branch from this node (if it has one)
+    virtual OptionalReferenceWrapper<ProcedureNodeSequence> branch();
 
     /*
      * Parameters

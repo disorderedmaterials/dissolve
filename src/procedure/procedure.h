@@ -24,7 +24,7 @@ class Procedure
     // Context for the main Procedure
     ProcedureNode::NodeContext context_;
     // Sequence node from which the Procedure starts
-    std::shared_ptr<SequenceProcedureNode> rootSequence_;
+    ProcedureNodeSequence rootSequence_;
 
     public:
     // Clear all data
@@ -32,10 +32,10 @@ class Procedure
     // Create new node
     template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&... args)
     {
-        return rootSequence_->create<N>(name, args...);
+        return rootSequence_.create<N>(name, args...);
     }
     // Return root sequence
-    const SequenceProcedureNode &rootSequence() const;
+    ProcedureNodeSequence &rootSequence();
     // Return named node if present (and matches the type / class given)
     ConstNodeRef node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                       std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;

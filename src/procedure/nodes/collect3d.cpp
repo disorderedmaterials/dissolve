@@ -14,12 +14,14 @@
 
 Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable,
                                                std::shared_ptr<CalculateProcedureNodeBase> yObservable,
-                                               std::shared_ptr<CalculateProcedureNodeBase> zObservable, double xMin,
-                                               double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth,
-                                               double zMin, double zMax, double zBinWidth)
+                                               std::shared_ptr<CalculateProcedureNodeBase> zObservable,
+                                               ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
+                                               double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
+                                               double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D), xObservable_{xObservable, 0}, yObservable_{yObservable, 0},
       zObservable_{zObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax,
-                                                                                                            zBinWidth}
+                                                                                                            zBinWidth},
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
         "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,
@@ -38,16 +40,15 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
                                             subCollectBranch_, this, ProcedureNode::AnalysisContext);
-
-    // Initialise branch
-    subCollectBranch_ = nullptr;
 }
-Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable, double xMin,
-                                               double xMax, double xBinWidth, double yMin, double yMax, double yBinWidth,
-                                               double zMin, double zMax, double zBinWidth)
+Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable,
+                                               ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
+                                               double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
+                                               double zMax, double zBinWidth)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D), xObservable_{xyzObservable, 0}, yObservable_{xyzObservable, 1},
       zObservable_{xyzObservable, 2}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax,
-                                                                                                              zBinWidth}
+                                                                                                              zBinWidth},
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
         "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,
@@ -66,9 +67,6 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
                                             subCollectBranch_, this, ProcedureNode::AnalysisContext);
-
-    // Initialise branch
-    subCollectBranch_ = nullptr;
 }
 
 /*
@@ -97,23 +95,8 @@ const Data3D &Collect3DProcedureNode::accumulatedData() const
  * Branches
  */
 
-// Add and return subcollection sequence branch
-std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::addSubCollectBranch(ProcedureNode::NodeContext context)
-{
-    if (!subCollectBranch_)
-        subCollectBranch_ = std::make_shared<SequenceProcedureNode>(context, procedure(), shared_from_this(), "SubCollect");
-
-    return subCollectBranch_;
-}
-
-// Return whether this node has a branch
-bool Collect3DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
-
-// Return SequenceNode for the branch (if it exists)
-std::shared_ptr<SequenceProcedureNode> Collect3DProcedureNode::branch() { return subCollectBranch_; }
-
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> Collect3DProcedureNode::children() const { return {subCollectBranch_}; }
+// Return the branch from this node (if it has one)
+OptionalReferenceWrapper<ProcedureNodeSequence> Collect3DProcedureNode::branch() { return subCollectBranch_; }
 
 /*
  * Execute
@@ -149,7 +132,7 @@ bool Collect3DProcedureNode::prepare(const ProcedureContext &procedureContext)
         return Messenger::error("No valid z quantity set in '{}'.\n", name());
 
     // Prepare any branches
-    if (subCollectBranch_ && (!subCollectBranch_->prepare(procedureContext)))
+    if (!subCollectBranch_.prepare(procedureContext))
         return false;
 
     return true;
@@ -165,8 +148,8 @@ bool Collect3DProcedureNode::execute(const ProcedureContext &procedureContext)
     assert(xObs && yObs && zObs && histogram_);
 
     // Bin the current value of the observable
-    if (histogram_->get().bin(xObs->value(xIndex), yObs->value(yIndex), zObs->value(zIndex)) && subCollectBranch_)
-        return subCollectBranch_->execute(procedureContext);
+    if (histogram_->get().bin(xObs->value(xIndex), yObs->value(yIndex), zObs->value(zIndex)))
+        return subCollectBranch_.execute(procedureContext);
 
     return true;
 }
@@ -180,7 +163,7 @@ bool Collect3DProcedureNode::finalise(const ProcedureContext &procedureContext)
     histogram_->get().accumulate();
 
     // Finalise any branches
-    if (subCollectBranch_ && (!subCollectBranch_->finalise(procedureContext)))
+    if (!subCollectBranch_.finalise(procedureContext))
         return false;
 
     return true;

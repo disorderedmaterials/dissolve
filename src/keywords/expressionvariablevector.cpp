@@ -42,7 +42,7 @@ bool ExpressionVariableVectorKeyword::deserialise(LineParser &parser, int startA
         return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableVector data.\n");
 
     // First argument is the name of the parameter to create - does it already exist in the node's current scope?
-    auto parameter = parentNode_->parameterInScope(parser.argsv(startArg));
+    auto parameter = parentNode_->getParameter(parser.argsv(startArg), true);
     if (parameter)
         return Messenger::error("A parameter with the name '{}' is already in scope, and cannot be redefined.\n",
                                 parser.argsv(startArg));

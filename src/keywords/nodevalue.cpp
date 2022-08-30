@@ -22,9 +22,16 @@ const NodeValue &NodeValueKeyword::data() const { return data_; }
 bool NodeValueKeyword::setData(std::string_view expressionText)
 {
     // Get any variables currently in scope
-    auto vars = parentNode_->parametersInScope();
+    auto vars = parentNode_->getParameters();
 
     return data_.set(expressionText, vars);
+}
+
+// Set the value from NodeValue
+bool NodeValueKeyword::setData(const NodeValue &nodeValue)
+{
+    // We must re-set the data from the text value of the expression to safeguard against bringing in out-of-scope parameters
+    return setData(nodeValue.asString());
 }
 
 /*

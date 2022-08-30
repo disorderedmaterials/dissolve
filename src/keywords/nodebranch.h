@@ -5,17 +5,16 @@
 
 #include "keywords/base.h"
 #include "procedure/nodes/node.h"
+#include "procedure/nodes/sequence.h"
 
 // Forward Declarations
 class NodeValue;
-class SequenceProcedureNode;
 
 // Keyword managing node sequence
 class NodeBranchKeyword : public KeywordBase
 {
     public:
-    NodeBranchKeyword(std::shared_ptr<SequenceProcedureNode> &data, ProcedureNode *parentNode,
-                      ProcedureNode::NodeContext branchContext);
+    NodeBranchKeyword(ProcedureNodeSequence &data, ProcedureNode *parentNode, ProcedureNode::NodeContext branchContext);
     ~NodeBranchKeyword() override = default;
 
     /*
@@ -23,7 +22,7 @@ class NodeBranchKeyword : public KeywordBase
      */
     private:
     // Reference to data
-    std::shared_ptr<SequenceProcedureNode> &data_;
+    ProcedureNodeSequence &data_;
     // Parent ProcedureNode
     NodeRef parentNode_;
     // Context for the target branch

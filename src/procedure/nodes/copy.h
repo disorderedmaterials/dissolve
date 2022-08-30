@@ -9,7 +9,6 @@
 
 // Forward Declarations
 class DynamicSiteProcedureNode;
-class SequenceProcedureNode;
 class Element;
 class Molecule;
 class SiteStack;

@@ -62,6 +62,14 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     // Return reference to vector of data
     ConstNodeVector<N> &data() { return data_; }
     const ConstNodeVector<N> &data() const { return data_; }
+    // Set vector data
+    bool setData(const ConstNodeVector<N> &v)
+    {
+        for (auto &node : v)
+            if (!addNode(node))
+                return false;
+        return true;
+    }
     // Add node to vector
     bool addNode(ConstNodeRef node) override
     {
@@ -69,6 +77,10 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         assert(castNode);
         if (std::find(data_.begin(), data_.end(), castNode) != data_.end())
             return false;
+
+        if (!validNode(castNode.get(), name()))
+            return false;
+
         data_.emplace_back(castNode);
 
         return true;

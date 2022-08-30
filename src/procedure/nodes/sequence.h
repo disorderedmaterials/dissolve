@@ -6,35 +6,13 @@
 #include "expression/expression.h"
 #include "procedure/nodes/node.h"
 
-// Forward Declarations
-class Procedure;
-
-// Sequence Node
-class SequenceProcedureNode : public ProcedureNode
+// ProcedureNode Sequence
+class ProcedureNodeSequence
 {
     public:
-    SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
+    ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
                           std::string_view blockKeyword);
-    ~SequenceProcedureNode() override;
-
-    /*
-     * Identity
-     */
-    public:
-    // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context) override;
-
-    /*
-     * Node Keywords
-     */
-    public:
-    // Node Keywords
-    enum SequenceNodeKeyword
-    {
-        nSequenceNodeKeywords
-    };
-    // Return enum option info for SequenceNodeKeyword
-    static EnumOptions<SequenceNodeKeyword> sequenceNodeKeywords();
+    ~ProcedureNodeSequence();
 
     /*
      * Node Contents
@@ -83,21 +61,21 @@ class SequenceProcedureNode : public ProcedureNode
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence
     int nNodes() const;
+    // Return whether the sequence is empty
+    bool empty() const;
 
     /*
      * Scope
      */
     private:
-    // Parent Procedure to which this sequence belongs
-    const Procedure *procedure_;
     // ProcedureNode which owns this sequence
-    NodeRef owner_;
+    OptionalReferenceWrapper<ProcedureNode> owner_;
     // Context of the sequence
     ProcedureNode::NodeContext context_;
 
     private:
     // Return named node if it exists anywhere in our sequence or below (and matches the type / class given)
-    NodeRef searchNodes(std::string_view name, NodeRef excludeNode = nullptr,
+    NodeRef searchNodes(std::string_view name, ConstNodeRef excludeNode = nullptr,
                         std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                         std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Search through the Procedure for the named parameter
@@ -105,10 +83,8 @@ class SequenceProcedureNode : public ProcedureNode
     searchParameters(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
 
     public:
-    // Return parent Procedure to which this sequence belongs
-    const Procedure *procedure() const override;
     // Return this sequences owner
-    NodeRef owner() const;
+    OptionalReferenceWrapper<ProcedureNode> owner() const;
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present (and matches the type / class given)
@@ -126,28 +102,30 @@ class SequenceProcedureNode : public ProcedureNode
                                            std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                            std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return named node if it exists anywhere in the same Procedure (and matches the type / class given)
-    ConstNodeRef nodeExists(std::string_view name, NodeRef excludeNode = nullptr,
+    ConstNodeRef nodeExists(std::string_view name, ConstNodeRef excludeNode = nullptr,
                             std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                             std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return the named parameter if it is currently in scope
-    std::shared_ptr<ExpressionVariable> parameterInScope(NodeRef queryingNode, std::string_view name,
+    std::shared_ptr<ExpressionVariable> parameterInScope(ConstNodeRef queryingNode, std::string_view name,
                                                          const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr);
     // Return whether the named parameter exists in this sequence or its children (branches)
     std::shared_ptr<ExpressionVariable>
     parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
     std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope(ConstNodeRef queryingNode);
+    // Check for node consistency
+    bool check() const;
 
     /*
      * Execute
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(const ProcedureContext &procedureContext) override;
+    bool prepare(const ProcedureContext &procedureContext);
     // Execute node
-    bool execute(const ProcedureContext &procedureContext) override;
+    bool execute(const ProcedureContext &procedureContext);
     // Finalise any necessary data after execution
-    bool finalise(const ProcedureContext &procedureContext) override;
+    bool finalise(const ProcedureContext &procedureContext);
 
     /*
      * Read / Write
@@ -160,7 +138,7 @@ class SequenceProcedureNode : public ProcedureNode
     // Return block keyword for current context
     std::string_view blockKeyword() const;
     // Read structure from specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData) override;
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write structure to specified LineParser
-    bool serialise(LineParser &parser, std::string_view prefix) override;
+    bool serialise(LineParser &parser, std::string_view prefix);
 };

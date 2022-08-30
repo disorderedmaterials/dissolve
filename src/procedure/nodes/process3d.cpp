@@ -11,8 +11,10 @@
 #include "procedure/nodes/operatebase.h"
 #include "procedure/nodes/select.h"
 
-Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedureNode> target)
-    : ProcedureNode(ProcedureNode::NodeType::Process3D), sourceData_(target)
+Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedureNode> target,
+                                               ProcedureNode::NodeContext normalisationContext)
+    : ProcedureNode(ProcedureNode::NodeType::Process3D), sourceData_(target),
+      normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
     keywords_.add<NodeKeyword<Collect3DProcedureNode>>("Control", "SourceData",
                                                        "Collect2D node containing the histogram data to process", sourceData_,
@@ -25,9 +27,6 @@ Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedur
                                         exportFileAndFormat_, "EndExport");
     keywords_.addKeyword<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
                                             normalisationBranch_, this, ProcedureNode::OperateContext);
-
-    // Initialise branch
-    normalisationBranch_ = nullptr;
 
     // Initialise data pointer
     processedData_ = nullptr;
@@ -79,24 +78,8 @@ std::string Process3DProcedureNode::zAxisLabel() const { return labelZ_; }
  * Branches
  */
 
-// Add and return normalisation sequence branch
-std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::addNormalisationBranch()
-{
-    if (!normalisationBranch_)
-        normalisationBranch_ = std::make_shared<SequenceProcedureNode>(ProcedureNode::OperateContext, procedure(),
-                                                                       shared_from_this(), "Normalisation");
-
-    return normalisationBranch_;
-}
-
-// Return whether this node has a branch
-bool Process3DProcedureNode::hasBranch() const { return (normalisationBranch_ != nullptr); }
-
-// Return SequenceNode for the branch (if it exists)
-std::shared_ptr<SequenceProcedureNode> Process3DProcedureNode::branch() { return normalisationBranch_; }
-
-// Find the nodes owned by this node
-std::vector<ConstNodeRef> Process3DProcedureNode::children() const { return {normalisationBranch_}; }
+// Return the branch from this node (if it has one)
+OptionalReferenceWrapper<ProcedureNodeSequence> Process3DProcedureNode::branch() { return normalisationBranch_; }
 
 /*
  * Execute
@@ -108,8 +91,7 @@ bool Process3DProcedureNode::prepare(const ProcedureContext &procedureContext)
     if (!sourceData_)
         return Messenger::error("No source Collect3D node set in '{}'.\n", name());
 
-    if (normalisationBranch_)
-        normalisationBranch_->prepare(procedureContext);
+    normalisationBranch_.prepare(procedureContext);
 
     return true;
 }
@@ -127,22 +109,19 @@ bool Process3DProcedureNode::finalise(const ProcedureContext &procedureContext)
     data = sourceData_->accumulatedData();
 
     // Run normalisation on the data
-    if (normalisationBranch_)
+    // Set data targets in the normalisation nodes
+    for (auto &node : normalisationBranch_.sequence())
     {
-        // Set data targets in the normalisation nodes  TODO Will not work for sub-branches, if they are ever required
-        for (auto node : normalisationBranch_->sequence())
-        {
-            if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
-                continue;
+        if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
+            continue;
 
-            // Cast the node
-            auto operateNode = std::dynamic_pointer_cast<OperateProcedureNodeBase>(node);
-            operateNode->setTarget(processedData_);
-        }
-
-        if (!normalisationBranch_->execute(procedureContext))
-            return false;
+        // Cast the node
+        auto operateNode = std::dynamic_pointer_cast<OperateProcedureNodeBase>(node);
+        operateNode->setTarget(processedData_);
     }
+
+    if (!normalisationBranch_.execute(procedureContext))
+        return false;
 
     // Save data?
     if (exportFileAndFormat_.hasFilename())
