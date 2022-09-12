@@ -41,7 +41,7 @@ void KeywordsWidget::setUp(const KeywordStore &keywords, const CoreData &coreDat
             auto [widget, base] = KeywordWidgetProducer::create(keyword, coreData);
             if (!widget || !base)
             {
-                Messenger::printVerbose("No widget created for keyword '{}'.\n", keyword->name());
+                fmt::print("No widget created for keyword '{}'.\n", keyword->name());
                 continue;
             }
 

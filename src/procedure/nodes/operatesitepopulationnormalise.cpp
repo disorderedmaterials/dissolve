@@ -13,7 +13,6 @@ OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProce
     ConstNodeVector<SelectProcedureNode> sites)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateSitePopulationNormalise), normalisationSites_(std::move(sites))
 {
-    // Create keywords - store the pointers to the superclasses for later use
     keywords_.add<NodeVectorKeyword<SelectProcedureNode>>("Control", "Site",
                                                           "Site(s) by which to normalise data based on their population",
                                                           normalisationSites_, this, ProcedureNode::NodeType::Select, false);
