@@ -69,6 +69,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<NodeAndIntegerKeywordBase, NodeAndIntegerKeywordWidget>();
     registerProducer<NodeValueEnumOptionsBaseKeyword, NodeValueEnumOptionsKeywordWidget>();
     registerProducer<NodeValueKeyword, NodeValueKeywordWidget>();
+    registerProducer<NodeVectorKeywordBase, NodeVectorKeywordWidget>();
     registerProducer<OptionalDoubleKeyword, OptionalDoubleKeywordWidget>();
     registerProducer<OptionalIntegerKeyword, OptionalIntegerKeywordWidget>();
     registerProducer<RangeKeyword, RangeKeywordWidget>();
@@ -92,7 +93,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<IntegerDoubleVectorKeyword>();
     registerNullProducer<IntegerStringVectorKeyword>();
     registerNullProducer<NodeBranchKeyword>();
-    registerNullProducer<NodeVectorKeywordBase>();
     registerNullProducer<ProcedureKeyword>();
     registerNullProducer<StringDoubleVectorKeyword>();
     registerNullProducer<StringPairVectorKeyword>();
