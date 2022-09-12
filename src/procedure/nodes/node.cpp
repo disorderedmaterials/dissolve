@@ -151,10 +151,16 @@ std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, std::optiona
 {
     if (!scope_)
         return {};
-    auto scope = (*scope_).get();
 
-    return onlyInScope ? scope.nodesInScope(shared_from_this(), optNodeType, optNodeClass)
-                       : scope.nodes(optNodeType, optNodeClass);
+    if (onlyInScope)
+        return (*scope_).get().nodesInScope(shared_from_this(), optNodeType, optNodeClass);
+
+    // Find the topmost (root) scope and search from there.
+    auto optScope = scope_;
+    while (optScope->get().owner() && optScope->get().owner()->get().scope())
+        optScope = optScope->get().owner()->get().scope();
+
+    return optScope->get().nodes(optNodeType, optNodeClass);
 }
 
 // Return the named parameter, in or out of scope
