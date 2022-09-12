@@ -84,7 +84,7 @@ NodeRef ProcedureNodeSequence::searchNodes(std::string_view name, ConstNodeRef e
                                            std::optional<ProcedureNode::NodeType> optNodeType,
                                            std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
     {
         // Does this node match the supplied name?
         if (node != excludeNode)
@@ -115,7 +115,7 @@ std::shared_ptr<ExpressionVariable>
 ProcedureNodeSequence::searchParameters(std::string_view name,
                                         const std::shared_ptr<ExpressionVariable> &excludeParameter) const
 {
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
     {
         // Does this node have a parameter by this name?
         auto result = node->getParameter(name, excludeParameter);
@@ -145,7 +145,7 @@ ConstNodeRef ProcedureNodeSequence::node(std::string_view name, ConstNodeRef exc
                                          std::optional<ProcedureNode::NodeType> optNodeType,
                                          std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
     {
         if (node != excludeNode && DissolveSys::sameString(node->name(), name))
         {
@@ -173,7 +173,7 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodes(std::optional<ProcedureNo
 {
     std::vector<ConstNodeRef> matches;
 
-    for (auto node : sequence_)
+    for (const auto &node : sequence_)
     {
         // Check type / class
         if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
@@ -202,7 +202,7 @@ ConstNodeRef ProcedureNodeSequence::nodeInScope(ConstNodeRef queryingNode, std::
         auto range = QueryRange(queryingNode, sequence_);
         assert(!range.empty());
 
-        for (auto node : range)
+        for (const auto &node : range)
         {
             if (node == excludeNode)
                 continue;
@@ -238,7 +238,7 @@ std::vector<ConstNodeRef> ProcedureNodeSequence::nodesInScope(ConstNodeRef query
         auto range = QueryRange(queryingNode, sequence_);
         assert(!range.empty());
 
-        for (auto node : range)
+        for (const auto &node : range)
         {
             // Check type / class
             if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||

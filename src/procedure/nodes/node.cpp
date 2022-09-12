@@ -139,7 +139,7 @@ ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, Con
 {
     if (!scope_)
         return nullptr;
-    auto scope = (*scope_).get();
+    const auto &scope = (*scope_).get();
 
     return onlyInScope ? scope.nodeInScope(shared_from_this(), name, excludeNode, optNodeType, optNodeClass)
                        : scope.nodeExists(name, excludeNode, optNodeType, optNodeClass);
@@ -163,7 +163,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view
 {
     if (!scope_)
         return nullptr;
-    auto scope = (*scope_).get();
+    auto &scope = (*scope_).get();
 
     return onlyInScope ? scope.parameterInScope(shared_from_this(), name, std::move(excludeParameter))
                        : scope.parameterExists(name, std::move(excludeParameter));
