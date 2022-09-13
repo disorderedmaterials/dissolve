@@ -51,6 +51,9 @@ class ProcedureWidget : public QWidget
 
     private slots:
     void selectedNodeChanged(const QModelIndex &);
+    void on_ExpandAllButton_clicked(bool checked);
+    void on_CollapseAllButton_clicked(bool checked);
+    void on_ShowContextButton_clicked(bool checked);
     void on_ShowAvailableNodesButton_clicked(bool checked);
     void nodeNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
     void procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
