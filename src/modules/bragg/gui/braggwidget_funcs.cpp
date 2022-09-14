@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
 #include "classes/kvector.h"
 #include "gui/dataviewer.hui"
 #include "gui/render/renderabledata1d.h"
-#include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/bragg/bragg.h"
 #include "modules/bragg/gui/braggwidget.h"

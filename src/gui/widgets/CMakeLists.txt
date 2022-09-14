@@ -10,7 +10,6 @@ set(widgets_MOC_HDRS
     exponentialspin.hui
     gradientbar.hui
     integerspin.hui
-    mimetreewidget.hui
     superstackedwidget.hui
 )
 qt6_wrap_cpp(widgets_MOC_SRCS ${widgets_MOC_HDRS})
@@ -27,14 +26,9 @@ set(widgets_SRCS
     exponentialspin_funcs.cpp
     gradientbar_funcs.cpp
     integerspin_funcs.cpp
-    mimestrings.cpp
-    mimetreewidget_funcs.cpp
-    mimetreewidgetitem.cpp
     nocontrols_funcs.cpp
     sampleddoublelabel_funcs.cpp
     superstackedwidget_funcs.cpp
-    mimestrings.h
-    mimetreewidgetitem.h
 )
 
 # Target 'gui'

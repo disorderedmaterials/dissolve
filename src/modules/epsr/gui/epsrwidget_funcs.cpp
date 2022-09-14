@@ -4,7 +4,6 @@
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
 #include "gui/render/renderabledata1d.h"
-#include "gui/widgets/mimetreewidgetitem.h"
 #include "keywords/module.h"
 #include "main/dissolve.h"
 #include "module/group.h"

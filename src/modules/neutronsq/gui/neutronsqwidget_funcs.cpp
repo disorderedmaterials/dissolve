@@ -5,7 +5,6 @@
 #include "classes/isotopedata.h"
 #include "gui/dataviewer.hui"
 #include "gui/render/renderabledata1d.h"
-#include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/neutronsq/gui/neutronsqwidget.h"
 #include "modules/neutronsq/neutronsq.h"
