@@ -473,11 +473,14 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
                                  !layerTab->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
 
     auto *action = menu.exec(mapToGlobal(pos));
-    auto updateRequired = true;
+    auto updateRequired = false;
     if (action == nullptr)
         return;
     else if (action == enableThisLayer)
+    {
         layerTab->moduleLayer()->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
+        updateRequired = true;
+    }
     else if (action == enableLayersToTheLeft || action == disableLayersToTheLeft)
     {
         auto enable = action == enableLayersToTheLeft;
@@ -511,7 +514,11 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
             }
     }
     else if (action == disableThisLayer)
+    {
         layerTab->moduleLayer()->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
+        layerTab->updateControls();
+        updateRequired = true;
+    }
 
     if (updateRequired)
         emit(dataModified());
