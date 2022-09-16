@@ -1,17 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "base/lineparser.h"
 #include "base/units.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/species.h"
 #include "gui/configurationtab.h"
 #include "gui/getconfigurationnamedialog.h"
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
 #include "gui/keywordwidgets/producers.h"
-#include "gui/keywordwidgets/widget.hui"
 #include "main/dissolve.h"
 #include <QMessageBox>
 
