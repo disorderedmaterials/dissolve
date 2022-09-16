@@ -109,7 +109,7 @@ class SpeciesTab : public QWidget, public MainTab
     public slots:
     // Update total charges
     void updateTotalCharges();
-    // Update Geometry tablss
+    // Update Geometry tables
     void updateGeometryTables();
 
     /*
