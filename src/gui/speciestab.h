@@ -115,10 +115,6 @@ class SpeciesTab : public QWidget, public MainTab
     /*
      * Widget Functions - Isotopologues
      */
-    private:
-    // Return currently-selected Isotopologue
-    Isotopologue *currentIsotopologue();
-
     private slots:
     void isotopologuesSelectionChanged(const QItemSelection &, const QItemSelection &);
     void isotopologuesChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &);
