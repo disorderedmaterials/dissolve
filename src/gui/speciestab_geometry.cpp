@@ -36,15 +36,21 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
 // Atom table item changed
 void SpeciesTab::atomTableDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
+    Flags<DissolveSignals::DataMutations> flags;
+
     // Update the charge information?
     if (topLeft.column() == 5 || bottomRight.column() == 5)
         updateTotalCharges();
 
     // Atom type changed?
     if (topLeft.column() == 1 || bottomRight.column() == 1)
+    {
         species_->updateIsotopologues();
+        updateIsotopologuesTab();
+        flags += DissolveSignals::DataMutations::IsotopologuesMutated;
+    }
 
-    dissolveWindow_->setModified();
+    dissolveWindow_->setModified(flags);
 }
 
 // Update atom table selection
