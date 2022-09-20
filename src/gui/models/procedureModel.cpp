@@ -133,7 +133,7 @@ bool ProcedureModel::setData(const QModelIndex &index, const QVariant &value, in
 
     if (role == Qt::EditRole)
     {
-        auto *node = static_cast<ProcedureNode *>(index.internalPointer());
+        auto *node = rawData(index);
         if (!node)
             return false;
 
