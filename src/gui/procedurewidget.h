@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "gui/models/nodePaletteModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_procedurewidget.h"
 
@@ -32,6 +33,8 @@ class ProcedureWidget : public QWidget
     OptionalReferenceWrapper<Procedure> procedure_;
     // Model for procedure
     ProcedureModel procedureModel_;
+    // Model for node palette
+    NodePaletteModel nodePaletteModel_;
 
     public:
     // Set up widget
@@ -50,7 +53,7 @@ class ProcedureWidget : public QWidget
     void selectedNodeChanged(const QModelIndex &);
     void on_ShowAvailableNodesButton_clicked(bool checked);
     void nodeNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
-    void layerDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
+    void procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
     void updateNodeTree();
     void on_NodesTree_customContextMenuRequested(const QPoint &pos);
     void on_AvailableNodesTree_doubleClicked(const QModelIndex &index);

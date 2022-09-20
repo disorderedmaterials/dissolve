@@ -34,13 +34,11 @@ class ProcedureNodeSequence
         void next();
     };
 
-    private:
-    // Add (own) node into sequence
-    void addNode(NodeRef nodeToAdd);
-
     public:
     // Clear all data
     void clear();
+    // Append specified node to the sequence, or optionally insert at index
+    void appendNode(NodeRef nodeToAdd, std::optional<int> insertAtIndex = std::nullopt);
     // Create new node
     template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&... args)
     {
@@ -51,13 +49,14 @@ class ProcedureNodeSequence
         node->setName(name);
 
         // Add node to our sequence, checking context / naming
-        addNode(node);
+        appendNode(node);
 
         return node;
     }
-    // Create new node by enumerated type
-    std::shared_ptr<ProcedureNode> create(ProcedureNode::NodeType nodeType, std::string_view name);
+    // Insert empty node at specified position
+    void insertEmpty(int index);
     // Return sequential node list
+    std::vector<NodeRef> &sequence();
     const std::vector<NodeRef> &sequence() const;
     // Return number of nodes in sequence
     int nNodes() const;
@@ -88,7 +87,8 @@ class ProcedureNodeSequence
     // Return the context of the sequence
     ProcedureNode::NodeContext sequenceContext() const;
     // Return named node if present (and matches the type / class given)
-    ConstNodeRef node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
+    ConstNodeRef node(std::string_view name, ConstNodeRef excludeNode = nullptr,
+                      std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                       std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
     // Return list of nodes (of specified type / class) present in the Procedure
     std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
@@ -113,6 +113,8 @@ class ProcedureNodeSequence
     parameterExists(std::string_view name, const std::shared_ptr<ExpressionVariable> &excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
     std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope(ConstNodeRef queryingNode);
+    // Validate node-related keywords ensuring invalid (out-of-scope) data are un-set
+    bool validateNodeKeywords();
     // Check for node consistency
     bool check() const;
 

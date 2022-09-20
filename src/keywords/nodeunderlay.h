@@ -41,4 +41,6 @@ class NodeKeywordUnderlay
     ConstNodeRef findNode(std::string_view name) const;
     // Return whether the supplied node has valid class or type
     bool validNode(const ProcedureNode *node, std::string_view keywordName) const;
+    // Validate current data, returning false if invalid data had to be pruned
+    virtual bool validate() = 0;
 };

@@ -35,6 +35,16 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
     virtual bool isPresent(ConstNodeRef node) const = 0;
     // Return plain ProcedureNode vector
     virtual std::vector<ConstNodeRef> nodes() const = 0;
+    // Validate current data, returning false if invalid data had to be pruned
+    bool validate() override
+    {
+        auto oldData = nodes();
+        for (auto &oldNode : oldData)
+            if (!validNode(oldNode.get(), name()))
+                removeNode(oldNode);
+
+        return oldData.size() == nodes().size();
+    }
 };
 
 // Keyword managing vector of ProcedureNode

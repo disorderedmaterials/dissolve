@@ -5,6 +5,8 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "keywords/node.h"
+#include "keywords/nodeandinteger.h"
+#include "keywords/nodevector.h"
 #include "procedure/nodes/registry.h"
 
 ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
@@ -22,36 +24,49 @@ ProcedureNodeSequence::~ProcedureNodeSequence() { clear(); }
 // Clear all data
 void ProcedureNodeSequence::clear() { sequence_.clear(); }
 
-// Add (own) node into sequence, checking the context
-void ProcedureNodeSequence::addNode(NodeRef nodeToAdd)
+// Append specified node to the sequence, or optionally insert at index
+void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAtIndex)
 {
-    assert(nodeToAdd);
+    assert(node);
 
     // Set us as its scope
-    nodeToAdd->setScope(*this);
+    node->setScope(*this);
 
     // Check context
-    if (!nodeToAdd->isContextRelevant(context_))
-        throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n",
-                                             nodeToAdd->name(), ProcedureNode::nodeTypes().keyword(nodeToAdd->type()),
+    if (!node->isContextRelevant(context_))
+        throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
+                                             ProcedureNode::nodeTypes().keyword(node->type()),
                                              ProcedureNode::nodeContexts().keyword(context_))));
 
     // If the node hasn't been given a name, generate a unique one for it now based on its type. Otherwise, check for a clash
-    if (nodeToAdd->name().empty())
+    if (node->name().empty())
     {
         auto n = 1;
-        while (nodeExists(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n)))
+        while (nodeExists(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(node->type()), n)))
             ++n;
-        nodeToAdd->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(nodeToAdd->type()), n));
+        node->setName(fmt::format("{}{:02d}", ProcedureNode::nodeTypes().keyword(node->type()), n));
     }
-    else if (nodeExists(nodeToAdd->name()))
-        throw(std::runtime_error(fmt::format(
-            "Can't have duplicate node names in the same procedure - node '{}' already exists.\n", nodeToAdd->name())));
+    else if (nodeExists(node->name()))
+        throw(std::runtime_error(
+            fmt::format("Can't have duplicate node names in the same procedure - node '{}' already exists.\n", node->name())));
 
-    sequence_.push_back(nodeToAdd);
+    if (insertAtIndex)
+        sequence_.insert(sequence_.begin() + *insertAtIndex, node);
+    else
+        sequence_.push_back(node);
 }
 
-// Return sSequential node list
+// Insert empty node at specified position
+void ProcedureNodeSequence::insertEmpty(int index)
+{
+    if (index >= sequence_.size())
+        sequence_.push_back(nullptr);
+    else
+        sequence_.insert(sequence_.begin() + index, nullptr);
+}
+
+// Return sequential node list
+std::vector<NodeRef> &ProcedureNodeSequence::sequence() { return sequence_; }
 const std::vector<NodeRef> &ProcedureNodeSequence::sequence() const { return sequence_; }
 
 // Return number of nodes in sequence
@@ -126,12 +141,13 @@ OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { r
 ProcedureNode::NodeContext ProcedureNodeSequence::sequenceContext() const { return context_; }
 
 // Return named node if present in this sequence, and which matches the (optional) type given
-ConstNodeRef ProcedureNodeSequence::node(std::string_view name, std::optional<ProcedureNode::NodeType> optNodeType,
+ConstNodeRef ProcedureNodeSequence::node(std::string_view name, ConstNodeRef excludeNode,
+                                         std::optional<ProcedureNode::NodeType> optNodeType,
                                          std::optional<ProcedureNode::NodeClass> optNodeClass) const
 {
     for (auto node : sequence_)
     {
-        if (DissolveSys::sameString(node->name(), name))
+        if (node != excludeNode && DissolveSys::sameString(node->name(), name))
         {
             // Check type / class
             if ((!optNodeType && !optNodeClass) || (optNodeType && optNodeType.value() == node->type()) ||
@@ -142,7 +158,7 @@ ConstNodeRef ProcedureNodeSequence::node(std::string_view name, std::optional<Pr
         // If the node has a branch, recurse in to that
         if (node->branch())
         {
-            auto branchNode = node->branch()->get().node(name, optNodeType, optNodeClass);
+            auto branchNode = node->branch()->get().node(name, excludeNode, optNodeType, optNodeClass);
             if (branchNode)
                 return branchNode;
         }
@@ -324,6 +340,36 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     return parameters;
 }
 
+// Validate node-related keywords ensuring invalid (out-of-scope) data are un-set
+bool ProcedureNodeSequence::validateNodeKeywords()
+{
+    auto result = true;
+
+    for (auto &node : sequence_)
+    {
+        // NodeKeyword
+        for (auto &kwd : node->keywords().allOfType<NodeKeywordBase>())
+            if (!kwd->validate())
+                result = false;
+
+        // NodeAndIntegerKeywordKeyword
+        for (auto &kwd : node->keywords().allOfType<NodeAndIntegerKeywordBase>())
+            if (!kwd->validate())
+                result = false;
+
+        // NodeVectorKeyword
+        for (auto &kwd : node->keywords().allOfType<NodeVectorKeywordBase>())
+            if (!kwd->validate())
+                result = false;
+
+        // Check node branch if present
+        if (node->branch() && !node->branch()->get().validateNodeKeywords())
+            result = false;
+    }
+
+    return result;
+}
+
 // Check for node consistency
 bool ProcedureNodeSequence::check() const
 {
@@ -433,8 +479,8 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
                 return Messenger::error("A node named '{}' is already in scope.\n", newNode->name());
         }
 
-        // Add the node
-        addNode(newNode);
+        // Append the node to our sequence
+        appendNode(newNode);
 
         // Read the new node
         if (!newNode->deserialise(parser, coreData))
