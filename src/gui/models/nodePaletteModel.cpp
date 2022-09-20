@@ -57,14 +57,19 @@ QVariant NodePaletteModel::data(const QModelIndex &index, int role) const
 
         auto [nodeType, brief] =
             std::next(ProcedureNodeRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
-        if (role == Qt::DisplayRole)
-            return QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType)));
-        else if (role == Qt::ToolTipRole)
-            return QString::fromStdString(brief);
-        else if (role == Qt::DecorationRole)
-            return QIcon((QPixmap(
-                QString(":/nodes/icons/nodes_%1.svg")
-                    .arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType))).toLower()))));
+        switch (role)
+        {
+            case (Qt::DisplayRole):
+                return QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType)));
+            case (Qt::ToolTipRole):
+                return QString::fromStdString(brief);
+            case (Qt::DecorationRole):
+                return QIcon((QPixmap(
+                    QString(":/nodes/icons/nodes_%1.svg")
+                        .arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(nodeType))).toLower()))));
+            default:
+                return {};
+        }
     }
     else if (role == Qt::DisplayRole && index.column() == 0)
         return QString::fromStdString(std::next(ProcedureNodeRegistry::categoryMap().begin(), index.row())->first);
