@@ -13,7 +13,7 @@ SpeciesSiteModel::SpeciesSiteModel(OptionalReferenceWrapper<std::vector<std::uni
 }
 
 // Set source SpeciesSite data
-void SpeciesSiteModel::setData(std::vector<std::unique_ptr<SpeciesSite>> &sites)
+void SpeciesSiteModel::setData(OptionalReferenceWrapper<std::vector<std::unique_ptr<SpeciesSite>>> sites)
 {
     beginResetModel();
     sites_ = sites;
@@ -21,7 +21,7 @@ void SpeciesSiteModel::setData(std::vector<std::unique_ptr<SpeciesSite>> &sites)
 }
 
 // Set vector containing checked items
-void SpeciesSiteModel::setCheckStateData(std::vector<const SpeciesSite *> &checkedItemsVector)
+void SpeciesSiteModel::setCheckStateData(OptionalReferenceWrapper<std::vector<const SpeciesSite *>> checkedItemsVector)
 {
     beginResetModel();
     checkedItems_ = checkedItemsVector;
