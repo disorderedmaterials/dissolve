@@ -11,6 +11,7 @@ enum DataMutations
     ConfigurationsMutated,
     IsotopologuesMutated,
     ModulesMutated,
-    SpeciesMutated
+    SpeciesMutated,
+    SpeciesSiteMutated
 };
 }; // namespace DissolveSignals

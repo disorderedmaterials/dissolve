@@ -78,7 +78,7 @@ void SpeciesSiteKeywordWidget::siteCombo_currentIndexChanged(int index)
 // Update value displayed in widget
 void SpeciesSiteKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
-    if (mutationFlags.isSet(DissolveSignals::SpeciesMutated))
+    if (mutationFlags.isSet(DissolveSignals::SpeciesMutated) || mutationFlags.isSet(DissolveSignals::SpeciesSiteMutated))
         resetWidgets();
 }
 
@@ -101,15 +101,13 @@ void SpeciesSiteKeywordWidget::updateAvailableSites(int speciesIndex)
 {
     refreshing_ = true;
 
-    // Set filter proxy
-    siteFilterProxy_.setFlags(keyword_->axesRequired() ? SpeciesSiteFilterProxy::IsOriented : SpeciesSiteFilterProxy::None);
-
     if (speciesIndex == -1)
         siteModel_.setData(std::nullopt);
     else
     {
         auto &sites = coreData_.species()[speciesIndex]->sites();
         siteModel_.setData(sites);
+        siteFilterProxy_.setFlags(keyword_->axesRequired() ? SpeciesSiteFilterProxy::IsOriented : SpeciesSiteFilterProxy::None);
         if (keyword_->data())
             ui_.SiteCombo->setCurrentIndex(
                 std::find_if(sites.begin(), sites.end(), [&](const auto &site) { return site.get() == keyword_->data(); }) -

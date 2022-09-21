@@ -49,7 +49,7 @@ void SpeciesTab::on_SiteAddButton_clicked(bool checked)
 
     sites_.setData(species_->sites());
 
-    dissolveWindow_->setModified();
+    dissolveWindow_->setModified(DissolveSignals::SpeciesSiteMutated);
 
     dissolveWindow_->fullUpdate();
 }
@@ -65,11 +65,12 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
     dissolveWindow_->dissolve().removeReferencesTo(site);
     ui_.SiteViewerWidget->setSite(nullptr);
 
-    // Remove the site proper, and update the sites tab
+    // Remove the site proper
+    dissolve_.removeReferencesTo(site);
     species_->removeSite(site);
     sites_.setData(species_->sites());
 
-    dissolveWindow_->setModified();
+    dissolveWindow_->setModified(DissolveSignals::SpeciesSiteMutated);
 
     dissolveWindow_->fullUpdate();
 }
