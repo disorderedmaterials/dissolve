@@ -136,54 +136,54 @@ void median(Data1D &data, int length)
 }
 
 // Perform moving average smoothing
-void movingAverage(Data1D &data, int avgSize)
+void movingAverage(Data1D &data, const int length)
 {
+    // Ensure average length (representing number of points averaged on one side of a given point) is positive non-zero
+    if (length < 1)
+        return;
+
     // Grab y array
     auto &y = data.values();
 
-    // Make sure avgSize is odd
-    if (avgSize % 2 == 0)
-        --avgSize;
-
     std::vector<double> newY(data.nValues());
     std::fill(newY.begin(), newY.end(), 0.0);
-    int n, m, i = avgSize / 2;
+    auto avgSize = length * 2 + 1;
 
     // Left-most region of data
-    for (n = 0; n < i; ++n)
+    for (auto n = 0; n < length; ++n)
     {
-        for (m = 0; m <= n + i; ++m)
+        for (auto m = 0; m <= n + length; ++m)
             newY[n] += y[m];
-        newY[n] /= (i + 1 + n);
+        newY[n] /= (length + 1 + n);
     }
 
     // Central region (full average width available)
-    for (n = i; n < data.nValues() - i; ++n)
+    for (auto n = length; n < data.nValues() - length; ++n)
     {
-        for (m = n - i; m <= n + i; ++m)
+        for (auto m = n - length; m <= n + length; ++m)
             newY[n] += y[m];
         newY[n] /= avgSize;
     }
 
     // Right-most region of data
-    for (n = data.nValues() - i; n < data.nValues(); ++n)
+    for (auto n = data.nValues() - length; n < data.nValues(); ++n)
     {
-        for (m = n - i; m < data.nValues(); ++m)
+        for (auto m = n - length; m < data.nValues(); ++m)
             newY[n] += y[m];
-        newY[n] /= (data.nValues() - n + i + 1);
+        newY[n] /= (data.nValues() - n + length + 1);
     }
 
     y = newY;
 }
 
 // Perform moving average smoothing, normalising area after smooth
-void normalisedMovingAverage(Data1D &data, int avgSize)
+void normalisedMovingAverage(Data1D &data, int length)
 {
     // Calculate the original integral
     auto originalIntegral = Integrator::absTrapezoid(data);
 
     // Perform the smoothing
-    movingAverage(data, avgSize);
+    movingAverage(data, length);
 
     // Calculate the new integral
     auto newIntegral = Integrator::absTrapezoid(data);
