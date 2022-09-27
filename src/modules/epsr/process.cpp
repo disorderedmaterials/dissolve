@@ -136,6 +136,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          "will not be modified).\n");
     Messenger::print("EPSR: Range for potential generation is {} < Q < {} Angstroms**-1.\n", qMin_, qMax_);
     Messenger::print("EPSR: Weighting factor used when applying fluctuation coefficients is {}\n", weighting_);
+    if (fluctuationSmoothing_)
+        Messenger::print("EPSR: Fluctuation coefficients will be smoothed (average length = 2N+1, N = {})",
+                         *fluctuationSmoothing_);
     if (saveDifferenceFunctions_)
         Messenger::print("EPSR: Difference functions will be saved.\n");
     if (saveEmpiricalPotentials_)
@@ -629,9 +632,23 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                     if (overwritePotentials_)
                                         std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
-                                    // Add in fluctuation coefficients
-                                    for (auto n = 0; n < nCoeffP_; ++n)
-                                        potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
+                                    // Add in fluctuation coefficients, smoothing beforehand if requested
+                                    if (fluctuationSmoothing_)
+                                    {
+                                        // Perform smoothing of the fluctuation coefficients before we sum them into the
+                                        // potential (the un-smoothed coefficients are stored)
+                                        Data1D smoothedCoefficients;
+                                        for (auto n = 0; n < nCoeffP_; ++n)
+                                            smoothedCoefficients.addPoint(n, fluctuationCoefficients[{i, j, n}]);
+                                        Filters::normalisedMovingAverage(smoothedCoefficients, *fluctuationSmoothing_);
+
+                                        // Add in fluctuation coefficients
+                                        for (auto n = 0; n < nCoeffP_; ++n)
+                                            potCoeff[n] += weighting_ * smoothedCoefficients.value(n);
+                                    }
+                                    else
+                                        for (auto n = 0; n < nCoeffP_; ++n)
+                                            potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
 
                                     // Set first term to zero (following EPSR)
                                     potCoeff[0] = 0.0;
