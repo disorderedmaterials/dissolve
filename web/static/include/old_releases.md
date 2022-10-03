@@ -1,3 +1,4 @@
+- [Version 0.9.7, released 26 August 2022](https://github.com/disorderedmaterials/dissolve/releases/tag/0.9.7)
 - [Version 0.9.6, released 11 August 2022](https://github.com/disorderedmaterials/dissolve/releases/tag/0.9.6)
 - [Version 0.9.5, released 1 August 2022](https://github.com/disorderedmaterials/dissolve/releases/tag/0.9.5)
 - [Version 0.9.4, released 31 July 2022](https://github.com/disorderedmaterials/dissolve/releases/tag/0.9.4)
