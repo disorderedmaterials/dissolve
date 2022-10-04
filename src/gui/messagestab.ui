@@ -105,19 +105,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="MessagesDecreaseFontSizeButton">
+      <widget class="QToolButton" name="MessagesDecreaseFontSizeButton">
        <property name="minimumSize">
         <size>
          <width>24</width>
          <height>24</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Decrease font size</string>
+       </property>
        <property name="text">
         <string>Decrease Font Size</string>
        </property>
        <property name="icon">
         <iconset resource="main.qrc">
-         <normaloff>:/general/icons/general_arrowdown.svg</normaloff>:/general/icons/general_arrowdown.svg</iconset>
+         <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -128,19 +131,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="MessagesIncreaseFontSizeButton">
+      <widget class="QToolButton" name="MessagesIncreaseFontSizeButton">
        <property name="minimumSize">
         <size>
          <width>24</width>
          <height>24</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Increase font size</string>
+       </property>
        <property name="text">
         <string>Increase Font Size</string>
        </property>
        <property name="icon">
         <iconset resource="main.qrc">
-         <normaloff>:/general/icons/general_arrowup.svg</normaloff>:/general/icons/general_arrowup.svg</iconset>
+         <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
        </property>
        <property name="iconSize">
         <size>

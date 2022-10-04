@@ -82,7 +82,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
         {
             // Get save file name
             auto filename =
-                QFileDialog::getSaveFileName(this, "Select Exported Data File", QDir::currentPath(), "All Files (*.*)");
+                QFileDialog::getSaveFileName(this, "Select Exported Data File", QDir::currentPath(), "All Files (*)");
             if (!filename.isEmpty())
             {
                 if (renderable->type() == Renderable::Data1DRenderable)

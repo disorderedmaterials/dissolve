@@ -72,6 +72,8 @@ class EPSRModule : public Module
     double rMaxPT_{-1.0};
     // Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)
     double rMinPT_{-1.0};
+    // Degree of smoothing to apply to fluctuation coefficients before summation into potential
+    std::optional<int> fluctuationSmoothing_{1};
     // Whether to save difference function and fit
     bool saveDifferenceFunctions_{false};
     // Whether to save empirical potentials

@@ -5,21 +5,6 @@
 #include "gui/speciestab.h"
 
 /*
- * Private Functions
- */
-
-// Return currently-selected Isotopologue
-Isotopologue *SpeciesTab::currentIsotopologue()
-{
-    // Get current item from tree, and check the parent item
-    auto model = ui_.IsotopologuesTree->selectionModel();
-    if (!model->hasSelection())
-        return nullptr;
-    auto item = model->currentIndex();
-    return isos_.data(item.parent().isValid() ? item.parent() : item, Qt::UserRole).value<Isotopologue *>();
-}
-
-/*
  * Private Slots
  */
 

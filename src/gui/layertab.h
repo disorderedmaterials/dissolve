@@ -83,7 +83,7 @@ class LayerTab : public QWidget, public MainTab
     /*
      * Update
      */
-    protected:
+    public:
     // Update controls in tab
     void updateControls() override;
     // Prevent editing within tab

@@ -72,13 +72,13 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
     {
         // Input File
         filename =
-            QFileDialog::getOpenFileName(this, tr("Select Input File"), fileInfo.absoluteFilePath(), tr("All Files (*.*)"));
+            QFileDialog::getOpenFileName(this, tr("Select Input File"), fileInfo.absoluteFilePath(), tr("All Files (*)"));
     }
     else
     {
         // Output File
         filename =
-            QFileDialog::getSaveFileName(this, tr("Select Output File"), fileInfo.absoluteFilePath(), tr("All Files (*.*)"));
+            QFileDialog::getSaveFileName(this, tr("Select Output File"), fileInfo.absoluteFilePath(), tr("All Files (*)"));
     }
 
     if (!filename.isEmpty())

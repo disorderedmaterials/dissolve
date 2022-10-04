@@ -457,7 +457,7 @@ bool RDFModule::calculateUnweightedGR(const ProcessPool &procPool, Configuration
     auto &types = unweightedgr.atomTypeMix();
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
                             [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-                                Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, false, true);
+                                Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, true, true);
                             });
 
     // Add broadened bound partials back in to full partials

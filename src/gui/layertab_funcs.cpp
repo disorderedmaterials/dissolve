@@ -215,7 +215,6 @@ void LayerTab::on_ModuleFrequencySpin_valueChanged(int value)
 
 void LayerTab::moduleSelectionChanged(const QItemSelection &current, const QItemSelection &previous)
 {
-
     auto modelIndices = current.indexes();
 
     // If there is no selected index, show the default page on the stack
@@ -380,6 +379,8 @@ void LayerTab::updateControls()
     ui_.RunControlEnergyStabilityCheck->setChecked(
         moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::EnergyStability));
     ui_.RunControlSizeFactorsCheck->setChecked(moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::SizeFactors));
+
+    updateModuleList();
 
     auto *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->currentWidget());
     if (mcw)
