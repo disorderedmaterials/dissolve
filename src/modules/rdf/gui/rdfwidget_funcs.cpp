@@ -5,7 +5,6 @@
 #include "gui/dataviewer.hui"
 #include "gui/helpers/comboboxcontroller.h"
 #include "gui/render/renderabledata1d.h"
-#include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/rdf/gui/rdfwidget.h"
 #include "modules/rdf/rdf.h"

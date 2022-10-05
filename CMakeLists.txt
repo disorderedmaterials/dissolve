@@ -310,7 +310,6 @@ if(GUI)
            widgets
            keywordwidgets
            delegates
-           charts
            models
            gui
            ${NO_WHOLE_ARCHIVE_FLAG}
