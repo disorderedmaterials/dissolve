@@ -186,7 +186,7 @@ void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
     ui_.MainTabs->removeByPage(spTab->page());
     dissolve_.removeSpecies(spTab->species());
 
-    setModified();
+    setModified({DissolveSignals::DataMutations::SpeciesMutated, DissolveSignals::DataMutations::IsotopologuesMutated});
     fullUpdate();
 }
 

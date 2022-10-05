@@ -60,7 +60,8 @@ void SpeciesSiteVectorKeywordWidget::resetModelData()
 // Update value displayed in widget
 void SpeciesSiteVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
-    resetModelData();
+    if (mutationFlags.isSet(DissolveSignals::SpeciesMutated) || mutationFlags.isSet(DissolveSignals::SpeciesSiteMutated))
+        resetModelData();
 }
 
 // Update summary text

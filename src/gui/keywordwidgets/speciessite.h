@@ -6,6 +6,9 @@
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/ui_speciessite.h"
+#include "gui/models/speciesModel.h"
+#include "gui/models/speciesSiteFilterProxy.h"
+#include "gui/models/speciesSiteModel.h"
 #include "keywords/speciessite.h"
 #include <QWidget>
 
@@ -33,9 +36,15 @@ class SpeciesSiteKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
     private:
     // Main form declaration
     Ui::SpeciesSiteWidget ui_;
+    // Model for species
+    SpeciesModel speciesModel_;
+    // Sites model and filter proxy
+    SpeciesSiteModel siteModel_;
+    SpeciesSiteFilterProxy siteFilterProxy_;
 
     private slots:
-    void siteRadioButton_clicked(bool checked);
+    void clearDataButton_clicked(bool checked);
+    void siteCombo_currentIndexChanged(int index);
 
     signals:
     // Keyword data changed
@@ -44,6 +53,11 @@ class SpeciesSiteKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
     /*
      * Update
      */
+    private slots:
+    // Update combo boxes
+    void updateAvailableSpecies();
+    void updateAvailableSites(int speciesIndex = -1);
+
     private:
     // Reset widgets
     void resetWidgets();

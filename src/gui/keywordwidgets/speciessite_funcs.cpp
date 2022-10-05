@@ -18,6 +18,15 @@ SpeciesSiteKeywordWidget::SpeciesSiteKeywordWidget(QWidget *parent, SpeciesSiteK
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
 
+    // Connect signals / slots
+    connect(ui_.ClearButton, SIGNAL(clicked(bool)), this, SLOT(clearDataButton_clicked(bool)));
+    connect(ui_.SpeciesCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAvailableSites(int)));
+    connect(ui_.SiteCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(siteCombo_currentIndexChanged(int)));
+
+    ui_.SpeciesCombo->setModel(&speciesModel_);
+    siteFilterProxy_.setSourceModel(&siteModel_);
+    ui_.SiteCombo->setModel(&siteFilterProxy_);
+
     // Set current information
     resetWidgets();
 }
@@ -25,25 +34,41 @@ SpeciesSiteKeywordWidget::SpeciesSiteKeywordWidget(QWidget *parent, SpeciesSiteK
 /*
  * Widgets
  */
-void SpeciesSiteKeywordWidget::siteRadioButton_clicked(bool checked)
+
+void SpeciesSiteKeywordWidget::clearDataButton_clicked(bool checked)
 {
     if (refreshing_)
         return;
 
-    QRadioButton *radioButton = qobject_cast<QRadioButton *>(sender());
-    if (!radioButton)
-        return;
+    keyword_->data() = nullptr;
 
-    // Retrieve the SpeciesSite from the radioButton
-    SpeciesSite *site = VariantPointer<SpeciesSite>(radioButton->property("SpeciesSite"));
-    if (!site)
-        return;
-
-    keyword_->data() = site;
+    resetWidgets();
 
     updateSummaryText();
 
     emit(keywordDataChanged(keyword_->editSignals()));
+}
+
+void SpeciesSiteKeywordWidget::siteCombo_currentIndexChanged(int index)
+{
+    if (refreshing_)
+        return;
+
+    // Get the current site, which might be filtered via our proxy.
+    auto filteredModelIndex = siteFilterProxy_.index(index, 0);
+    if (filteredModelIndex.isValid())
+    {
+        auto siteIndex = siteFilterProxy_.mapToSource(filteredModelIndex);
+        auto *site = siteModel_.data(siteIndex, Qt::UserRole).value<const SpeciesSite *>();
+        if (site)
+        {
+            keyword_->data() = site;
+
+            updateSummaryText();
+
+            emit(keywordDataChanged(keyword_->editSignals()));
+        }
+    }
 }
 
 /*
@@ -53,64 +78,54 @@ void SpeciesSiteKeywordWidget::siteRadioButton_clicked(bool checked)
 // Update value displayed in widget
 void SpeciesSiteKeywordWidget::updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags)
 {
-    if (mutationFlags.isSet(DissolveSignals::SpeciesMutated))
+    if (mutationFlags.isSet(DissolveSignals::SpeciesMutated) || mutationFlags.isSet(DissolveSignals::SpeciesSiteMutated))
         resetWidgets();
+}
+
+void SpeciesSiteKeywordWidget::updateAvailableSpecies()
+{
+    refreshing_ = true;
+
+    speciesModel_.setData(coreData_.species());
+    if (keyword_->data())
+        ui_.SpeciesCombo->setCurrentIndex(std::find_if(coreData_.species().begin(), coreData_.species().end(),
+                                                       [&](const auto &sp) { return sp.get() == keyword_->data()->parent(); }) -
+                                          coreData_.species().begin());
+    else
+        ui_.SpeciesCombo->setCurrentIndex(-1);
+
+    refreshing_ = false;
+}
+
+void SpeciesSiteKeywordWidget::updateAvailableSites(int speciesIndex)
+{
+    refreshing_ = true;
+
+    if (speciesIndex == -1)
+        siteModel_.setData(std::nullopt);
+    else
+    {
+        auto &sites = coreData_.species()[speciesIndex]->sites();
+        siteModel_.setData(sites);
+        siteFilterProxy_.setFlags(keyword_->axesRequired() ? SpeciesSiteFilterProxy::IsOriented : SpeciesSiteFilterProxy::None);
+        if (keyword_->data())
+            ui_.SiteCombo->setCurrentIndex(
+                std::find_if(sites.begin(), sites.end(), [&](const auto &site) { return site.get() == keyword_->data(); }) -
+                sites.begin());
+        else
+            ui_.SiteCombo->setCurrentIndex(-1);
+    }
+
+    refreshing_ = false;
 }
 
 // Reset widgets
 void SpeciesSiteKeywordWidget::resetWidgets()
 {
-    refreshing_ = true;
-
-    // Clear all tabs from our tab widget
-    ui_.SpeciesTabs->clear();
-
-    // Create button group for the radio buttons
-    auto *buttonGroup = new QButtonGroup(this);
-
-    // Add new tabs in, one for each defined Species, and each containing checkboxes for each available site
-    for (const auto &sp : coreData_.species())
-    {
-        // Create the widget to hold our checkboxes for this Species
-        auto *widget = new QWidget();
-        auto *layout = new QVBoxLayout;
-        layout->setContentsMargins(4, 4, 4, 4);
-        layout->setSpacing(4);
-        widget->setLayout(layout);
-        widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
-        // Are there sites defined?
-        if (sp->nSites() == 0)
-            layout->addWidget(new QLabel("No sites defined."));
-        else
-        {
-            // Loop over sites defined in this Species
-            for (auto &site : sp->sites())
-            {
-                auto *radioButton = new QRadioButton(QString::fromStdString(std::string(site->name())));
-                if (keyword_->data() == site.get())
-                    radioButton->setChecked(true);
-                connect(radioButton, SIGNAL(clicked(bool)), this, SLOT(siteRadioButton_clicked(bool)));
-                radioButton->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(site.get()));
-                layout->addWidget(radioButton);
-                buttonGroup->addButton(radioButton);
-
-                // If this keyword demands oriented sites, disable the radio button if the site has no axes
-                if (keyword_->axesRequired() && (!site->hasAxes()))
-                    radioButton->setDisabled(true);
-            }
-
-            // Add on a vertical spacer to take up any extra space at the foot of the widget
-            layout->addSpacing(0);
-        }
-
-        // Create the page in the tabs
-        ui_.SpeciesTabs->addTab(widget, QString::fromStdString(std::string(sp->name())));
-    }
+    updateAvailableSpecies();
+    updateAvailableSites(ui_.SpeciesCombo->currentIndex());
 
     updateSummaryText();
-
-    refreshing_ = false;
 }
 
 // Update summary text

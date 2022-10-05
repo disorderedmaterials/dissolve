@@ -28,9 +28,9 @@ class SpeciesSiteModel : public QAbstractListModel
 
     public:
     // Set source SpeciesSite data
-    void setData(std::vector<std::unique_ptr<SpeciesSite>> &sites);
+    void setData(OptionalReferenceWrapper<std::vector<std::unique_ptr<SpeciesSite>>> sites);
     // Set vector containing checked items
-    void setCheckStateData(std::vector<const SpeciesSite *> &checkedItemsVector);
+    void setCheckStateData(OptionalReferenceWrapper<std::vector<const SpeciesSite *>> checkedItemsVector);
 
     /*
      * QAbstractItemModel overrides
