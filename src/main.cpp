@@ -119,7 +119,7 @@ int main(int args, char **argv)
             Messenger::print("Restart file '{}' does not exist.\n", restartFile);
     }
 
-    // If were just checking the input and restart files, exit now
+    // If we're just checking the input and restart files, exit now
     if (!options.nIterations())
     {
         ProcessPool::finalise();
