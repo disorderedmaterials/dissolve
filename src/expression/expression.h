@@ -22,8 +22,6 @@ class Expression
      * Data
      */
     private:
-    // Original generating string
-    std::string expressionString_;
     // Root node for the expression
     std::shared_ptr<ExpressionNode> rootNode_;
 
@@ -36,10 +34,8 @@ class Expression
     bool
     create(std::string_view expressionString,
            OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables = std::nullopt);
-    // Return original generating string
-    std::string_view expressionString() const;
-    // Set generating string from current nodes
-    void setExpressionStringFromNodes();
+    // Return expression string
+    std::string expressionString() const;
     // Return root node for the expression
     std::shared_ptr<ExpressionNode> rootNode();
 

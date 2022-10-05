@@ -23,8 +23,6 @@ void Expression::operator=(const Expression &source)
 {
     clearNodes();
 
-    expressionString_ = source.expressionString_;
-
     if (source.rootNode_)
         rootNode_ = source.rootNode_->duplicate();
 }
@@ -50,18 +48,15 @@ bool Expression::create(std::string_view expressionString,
                         OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables)
 {
     clearNodes();
-
-    expressionString_ = expressionString;
-
     // If the string is empty, can return now
-    if (expressionString_.empty())
+    if (expressionString.empty())
         return true;
 
     rootNode_ = std::make_shared<ExpressionRootNode>();
 
     // Create string stream and set up ANTLR input stream
     std::stringstream stream;
-    stream << expressionString_;
+    stream << expressionString;
     antlr4::ANTLRInputStream input(stream);
 
     // Create ANTLR lexer and set-up error listener
@@ -110,11 +105,8 @@ bool Expression::create(std::string_view expressionString,
     return true;
 }
 
-// Return original generating string
-std::string_view Expression::expressionString() const { return expressionString_; }
-
-// Set generating string from current nodes
-void Expression::setExpressionStringFromNodes() { expressionString_ = rootNode_ ? rootNode_->asString() : ""; }
+// Return expression string
+std::string Expression::expressionString() const { return rootNode_ ? rootNode_->asString() : ""; }
 
 // Return root node for the expression
 std::shared_ptr<ExpressionNode> Expression::rootNode() { return rootNode_; }
@@ -137,7 +129,7 @@ int Expression::asInteger() const
 {
     auto result = evaluate();
     if (!result)
-        throw(std::runtime_error(fmt::format("Failed to evaluate expression '{}'.", expressionString_)));
+        throw(std::runtime_error(fmt::format("Failed to evaluate expression '{}'.", expressionString())));
 
     return (*result).asInteger();
 }
@@ -147,7 +139,7 @@ double Expression::asDouble() const
 {
     auto result = evaluate();
     if (!result)
-        throw(std::runtime_error(fmt::format("Failed to evaluate expression '{}'.", expressionString_)));
+        throw(std::runtime_error(fmt::format("Failed to evaluate expression '{}'.", expressionString())));
 
     return (*result).asDouble();
 }

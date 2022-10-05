@@ -139,7 +139,7 @@ ConstNodeRef ProcedureNode::getNode(std::string_view name, bool onlyInScope, Con
 {
     if (!scope_)
         return nullptr;
-    auto scope = (*scope_).get();
+    const auto &scope = (*scope_).get();
 
     return onlyInScope ? scope.nodeInScope(shared_from_this(), name, excludeNode, optNodeType, optNodeClass)
                        : scope.nodeExists(name, excludeNode, optNodeType, optNodeClass);
@@ -151,10 +151,16 @@ std::vector<ConstNodeRef> ProcedureNode::getNodes(bool onlyInScope, std::optiona
 {
     if (!scope_)
         return {};
-    auto scope = (*scope_).get();
 
-    return onlyInScope ? scope.nodesInScope(shared_from_this(), optNodeType, optNodeClass)
-                       : scope.nodes(optNodeType, optNodeClass);
+    if (onlyInScope)
+        return (*scope_).get().nodesInScope(shared_from_this(), optNodeType, optNodeClass);
+
+    // Find the topmost (root) scope and search from there.
+    auto optScope = scope_;
+    while (optScope->get().owner() && optScope->get().owner()->get().scope())
+        optScope = optScope->get().owner()->get().scope();
+
+    return optScope->get().nodes(optNodeType, optNodeClass);
 }
 
 // Return the named parameter, in or out of scope
@@ -163,7 +169,7 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view
 {
     if (!scope_)
         return nullptr;
-    auto scope = (*scope_).get();
+    auto &scope = (*scope_).get();
 
     return onlyInScope ? scope.parameterInScope(shared_from_this(), name, std::move(excludeParameter))
                        : scope.parameterExists(name, std::move(excludeParameter));

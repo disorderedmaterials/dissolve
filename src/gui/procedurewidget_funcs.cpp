@@ -33,6 +33,7 @@ void ProcedureWidget::setUp(DissolveWindow *dissolveWindow, Procedure &proc)
     ui_.NodesTree->expandAll();
     ui_.NodesTree->resizeColumnToContents(0);
     ui_.NodesTree->resizeColumnToContents(1);
+    ui_.NodesTree->hideColumn(1);
     updateControls();
 }
 
@@ -98,6 +99,18 @@ void ProcedureWidget::selectedNodeChanged(const QModelIndex &index)
     }
     else
         ncw->updateControls();
+}
+
+void ProcedureWidget::on_ExpandAllButton_clicked(bool checked) { ui_.NodesTree->expandAll(); }
+
+void ProcedureWidget::on_CollapseAllButton_clicked(bool checked) { ui_.NodesTree->collapseAll(); }
+
+void ProcedureWidget::on_ShowContextButton_clicked(bool checked)
+{
+    if (checked)
+        ui_.NodesTree->showColumn(1);
+    else
+        ui_.NodesTree->hideColumn(1);
 }
 
 void ProcedureWidget::on_ShowAvailableNodesButton_clicked(bool checked)

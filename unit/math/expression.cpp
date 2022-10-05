@@ -56,7 +56,6 @@ class ExpressionTest : public ::testing::Test
             return;
 
         // Regenerate expression string from nodes and re-test
-        expression.setExpressionStringFromNodes();
         EXPECT_EQ(expr, expression.expressionString());
         checkExpr(expression.expressionString(), val, shouldFail);
     }
