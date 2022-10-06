@@ -46,7 +46,11 @@ node: bondCountNode
 | geometryNode
 | hydrogenCountNode
 | ringNode
+| subSequence
 ;
+
+// Bracketed node sub-sequence
+subSequence: Not? OpenParenthesis Sequence=nodeSequence CloseParenthesis;
 
 // Ring-Specific Nodes
 ringOnlyNode: presenceNode;

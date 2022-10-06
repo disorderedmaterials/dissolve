@@ -221,6 +221,26 @@ antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
     return std::dynamic_pointer_cast<NETANode>(ringNode);
 }
 
+antlrcpp::Any NETAVisitor::visitSubSequence(NETAParser::SubSequenceContext *context)
+{
+    auto baseNode = std::make_shared<NETANode>(neta_);
+
+    // Reverse logic?
+    if (context->Not())
+        baseNode->setReverseLogic();
+
+    // Bracketed node sequence?
+    if (context->Sequence)
+    {
+        contextStack_.emplace_back(baseNode);
+        auto nodes = visit(context->Sequence);
+        baseNode->setNodes(nodes.as<NETANode::NETASequence>());
+        contextStack_.pop_back();
+    }
+
+    return std::dynamic_pointer_cast<NETANode>(baseNode);
+}
+
 antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *context)
 {
     if (context->Element())
