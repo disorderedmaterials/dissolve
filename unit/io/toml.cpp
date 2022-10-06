@@ -44,11 +44,57 @@ TEST(TOMLTest, Parse_AvgMol_Bendy) { runParse("calculate_avgmol/bendy.txt"); }
 TEST(TOMLTest, Parse_AvgMol_Water) { runParse("calculate_avgmol/water.txt"); }
 TEST(TOMLTest, Parse_Dangle) { runParse("calculate_dangle/dangle.txt"); }
 
+TEST(TOMLTest, Parse_Calculate_CN) { runParse("calculate_cn/cn.txt"); }
 TEST(TOMLTest, Parse_Calculate_RDF_npt) { runParse("calculate_rdf/npt.txt"); }
 TEST(TOMLTest, Parse_Calculate_RDF_rdf) { runParse("calculate_rdf/rdf.txt"); }
 TEST(TOMLTest, Parse_Calculate_SDF) { runParse("calculate_sdf/sdf.txt"); }
 TEST(TOMLTest, Parse_Correlations) { runParse("correlations/sq.txt"); }
 
+TEST(TOMLTest, Parse_EnergyForce1_water3000_coul) { runParse("energyforce1/water3000-coul.txt"); }
+TEST(TOMLTest, Parse_EnergyForce1_water3000_elec) { runParse("energyforce1/water3000-elec.txt"); }
+TEST(TOMLTest, Parse_EnergyForce1_water3000_full) { runParse("energyforce1/water3000-full.txt"); }
+TEST(TOMLTest, Parse_EnergyForce1_water3000_intra) { runParse("energyforce1/water3000-intra.txt"); }
+TEST(TOMLTest, Parse_EnergyForce1_water3000_vdw) { runParse("energyforce1/water3000-vdw.txt"); }
+
+TEST(TOMLTest, Parse_EnergyForce2_full) { runParse("energyforce2/full.txt"); }
+TEST(TOMLTest, Parse_EnergyForce2_one) { runParse("energyforce2/one.txt"); }
+TEST(TOMLTest, Parse_EnergyForce2_torsions) { runParse("energyforce2/torsions.txt"); }
+TEST(TOMLTest, Parse_EnergyForce2_two) { runParse("energyforce2/two.txt"); }
+
+TEST(TOMLTest, Parse_EnergyForce3_poe) { runParse("energyforce3/poe.txt"); }
+TEST(TOMLTest, Parse_EnergyForce3_py4oh_ntf2) { runParse("energyforce3/py4oh-ntf2.txt"); }
+TEST(TOMLTest, Parse_EnergyForce3_py5_ntf2) { runParse("energyforce3/py5-ntf2.txt"); }
+
+TEST(TOMLTest, Parse_EnergyForce4_py4oh_ntf2) { runParse("energyforce4/py4oh-ntf2.txt"); }
+TEST(TOMLTest, Parse_EnergyForce4_py5_ntf2) { runParse("energyforce4/py5-ntf2.txt"); }
+
+TEST(TOMLTest, Parse_EPSR_estimatedsq) { runParse("epsr/benzene.txt"); }
+TEST(TOMLTest, Parse_EPSR_read_pcof) { runParse("epsr/pcof.txt"); }
+TEST(TOMLTest, Parse_EPSR_neutron_xray) { runParse("epsr/water-neutron-xray.txt"); }
+TEST(TOMLTest, Parse_EPSR_poisson) { runParse("epsr/water-poisson.txt"); }
+
+TEST(TOMLTest, Parse_Exchangeable_mix) { runParse("exchangeable/watermeth.txt"); }
+
+TEST(TOMLTest, Parse_ForceField_ff1) { runParse("ff/kulmala2010.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff2) { runParse("ff/ludwig-py5.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff3) { runParse("ff/oplsaa2005-alcohols.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff4) { runParse("ff/oplsaa2005-alkanes.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff5) { runParse("ff/oplsaa2005-aromatics.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff6) { runParse("ff/pcl2019-anions.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff7) { runParse("ff/pcl2019-cations.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff8) { runParse("ff/spcfw.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff9) { runParse("ff/uff-nmethylformamide.txt"); }
+TEST(TOMLTest, Parse_ForceField_ff10) { runParse("ff/uff4mof-mof5.txt"); }
+
+TEST(TOMLTest, Parse_MD_md1) { runParse("md/benzene.txt"); }
+TEST(TOMLTest, Parse_MolShake_molshake1) { runParse("molshake/benzene.txt"); }
+
+TEST(TOMLTest, Parse_RDF_rdf_cells) { runParse("rdfmethod/cells.txt"); }
+TEST(TOMLTest, Parse_RDF_rdf_simple) { runParse("rdfmethod/simple.txt"); }
+
 TEST(TOMLTest, Parse_Restart_Benzene) { runParse("restart/benzene.txt"); }
+TEST(TOMLTest, Parse_Restart_rdf) { runParse("restart/rdf.txt"); }
+
+TEST(TOMLTest, Parse_xray_water) { runParse("xray/water.txt"); }
 
 } // namespace UnitTest
