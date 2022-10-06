@@ -125,6 +125,8 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     // Prune rings for duplicates
     rings.erase(std::unique(rings.begin(), rings.end()), rings.end());
 
+    std::vector<const SpeciesAtom *> matchedRingAtoms;
+
     // Loop over rings
     auto nMatches = 0, totalScore = 0;
     int nodeScore = NETANode::NoMatch;
@@ -153,7 +155,12 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
         if (ringScore == NETANode::NoMatch)
             continue;
 
+        // Increment match counter and add matched atoms to our unique list
         ++nMatches;
+        std::copy_if(ring.atoms().begin(), ring.atoms().end(), std::back_inserter(matchedRingAtoms),
+                     [&matchedRingAtoms](const auto *i) {
+                         return std::find(matchedRingAtoms.begin(), matchedRingAtoms.end(), i) == matchedRingAtoms.end();
+                     });
 
         // Increase the total score - ringScore (contained atoms) + 1 (for the ring) + 1 (for the size, if specified)
         totalScore += ringScore + 1;
@@ -166,10 +173,12 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     }
 
     // Did we find the required number of ring matches?
-    if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
-        return reverseLogic_ ? 1 : NETANode::NoMatch;
-    else
-        ++totalScore;
+    if (reverseLogic_ == compareValues(nMatches, repeatCountOperator_, repeatCount_))
+        return NETANode::NoMatch;
 
-    return reverseLogic_ ? NETANode::NoMatch : totalScore;
+    // Copy matched ring atoms to the main matched path
+    std::copy_if(matchedRingAtoms.begin(), matchedRingAtoms.end(), std::back_inserter(matchPath),
+                 [&matchPath](const auto *i) { return std::find(matchPath.begin(), matchPath.end(), i) == matchPath.end(); });
+
+    return totalScore;
 }
