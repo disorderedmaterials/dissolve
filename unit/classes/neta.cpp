@@ -116,7 +116,8 @@ class NETATest : public ::testing::Test
         for (const auto &i : sp.atoms())
         {
             auto score = neta.score(&i);
-            fmt::print("NETA score for atom {} is {}.\n", i.index(), score);
+            if (score != -1)
+                fmt::print("-- NETA score for atom {} is {}.\n", i.index(), score);
             if (std::find(matchingIndices.begin(), matchingIndices.end(), i.index()) != matchingIndices.end())
                 EXPECT_NE(score, NETANode::NoMatch);
             else
@@ -135,6 +136,8 @@ TEST_F(NETATest, Syntax)
     EXPECT_TRUE(neta.create("-H,-C,-O"));
     // Or'd Connectivity
     EXPECT_TRUE(neta.create("-[Sc,Ti,V,Cr,Mn,Fe,Co,Ni,Cu]"));
+    // Brackets
+    EXPECT_TRUE(neta.create("(-H,(-C,(-O)))"));
     // Nested Connectivity
     EXPECT_TRUE(neta.create("-H(-He(-Li(-Be(-B(-C)))))"));
     // Modifiers
@@ -145,6 +148,8 @@ TEST_F(NETATest, Syntax)
     EXPECT_TRUE(neta.create("-H|-C|ring()"));
     // Or'd Node Sequence
     EXPECT_TRUE(neta.create("-H|-C(nh=4),ring()|-Zn"));
+    // Or'd Node Sequence with brackets
+    EXPECT_TRUE(neta.create("-H|(-C(nh=4),ring()|(-Zn))"));
     // Or'd Node Sequence in bracketed part
     EXPECT_TRUE(neta.create("-V(-H|-C(nh=4),ring()|-Zn)"));
     // Error - Dot not Comma
@@ -198,17 +203,24 @@ TEST_F(NETATest, Matching)
     EXPECT_TRUE(neta.create("ring(size=6), ring(size=4)"));
     testNETA("Atom at junction of four and six-membered ring", rings_, neta, {0, 1});
 
-    EXPECT_TRUE(neta.create("ring(size=6), ring(size=4), -N"));
+    EXPECT_TRUE(neta.create("-N, ring(size=6), ring(size=4)"));
     testNETA("Atom at junction of four and six-membered ring, adjacent to nitrogen", rings_, neta, {1});
 
     EXPECT_TRUE(neta.create("-N,ring(n=0)"));
     testNETA("Atom adjacent to nitrogen, but not in a ring ", rings_, neta, {12});
 
-    EXPECT_TRUE(neta.create("ring(size=6), ring(size=4), -N|-N,ring(n=0)"));
+    EXPECT_TRUE(neta.create("-N,ring(n=0) | -N,ring(size=6), ring(size=4)"));
     testNETA("Either of the previous atoms", rings_, neta, {1, 12});
 
     EXPECT_TRUE(neta.create("-C(nh=3),nbonds=1"));
     testNETA("Hydrogen atoms present in CH3 group", rings_, neta, {13, 14, 15});
+
+    EXPECT_TRUE(neta.create("?C,!ring(size=6)"));
+    testNETA("Any carbon except one in a 6-membered ring", rings_, neta, {11, 12});
+
+    EXPECT_TRUE(neta.create("?C,!(nh=2 | -C(-N))"));
+    testNETA("Any carbon except one with two hydrogens or which is two bonds away from a nitrogen", rings_, neta,
+             {1, 3, 4, 5, 12});
 }
 
 TEST_F(NETATest, Creation)
