@@ -59,13 +59,13 @@ NETADefinition *NETANode::parent() const { return parent_; }
 // Add element target to node
 bool NETANode::addElementTarget(Elements::Element Z)
 {
-    return Messenger::error("NETA {} does not accept element targets.\n", nodeTypes().keyword(nodeType_));
+    return Messenger::error("NETA {} node does not accept element targets.\n", nodeTypes().keyword(nodeType_));
 }
 
 // Add forcefield type target to node
 bool NETANode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 {
-    return Messenger::error("NETA {} does not accept forcefield atomtype targets.\n", nodeTypes().keyword(nodeType_));
+    return Messenger::error("NETA {} node does not accept forcefield atomtype targets.\n", nodeTypes().keyword(nodeType_));
 }
 
 /*
