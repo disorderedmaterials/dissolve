@@ -29,32 +29,32 @@ bool Forcefield_PCL2019_Cations::setUp()
     addAtomType(Elements::H, 11, "HC", "-C(!-[N,P])", "Hydrogen on other carbon in R group", 0.06, "HC");
     addAtomType(Elements::H, 12, "H1", "-C(-[N,P]|-C(ring(size=5,N,C,N,C,C)))", "Hydrogen on first carbon in R group", 0.13,
                 "HC");
-    addAtomType(Elements::N, 13, "NA", "nbonds=3,nh=0,ring(size=5,N,C,N,C,C),-C(nh=1,n=2)",
+    addAtomType(Elements::N, 13, "NA", "nbonds=3,nh=0,-C(nh=1,n=2),ring(size=5,N,C,N,C,C)",
                 "Nitrogen in dialkylimidazolium with alkyl group attached", 0.15, "NA");
     // alkylimidazolium JPCB 110 (2006) 19586
-    addAtomType(Elements::N, 14, "NAH", "nbonds=3,ring(size=5,N,C,N,C,C),-C(nh=1,n=2),-H",
+    addAtomType(Elements::N, 14, "NAH", "nbonds=3,-C(nh=1,n=2),-H,ring(size=5,N,C,N,C,C)",
                 "Alkylimidazolium nitrogen with hydrogen attached", -0.21, "NA");
     addAtomType(Elements::C, 15, "CRH", "nbonds=3,-H,-&13,-&14", "Alkylimidazolium C2 ring carbon ", 0.00, "CR");
     addAtomType(Elements::C, 16, "CWH", "nbonds=3,-H,-&14,-C,ring(size=5)", "Alkylimidazolium C4 carbon", -0.03, "CWH");
     addAtomType(Elements::H, 17, "HNA", "-&14", "Hydrogen on alkylimidazolium ring nitrogen", 0.37, "HNA");
     // dialkylmethylmidazolium JPCB 112 (2008) 5039
-    addAtomType(Elements::C, 18, "CRM", "nbonds=3,ring(size=5,N,C,N,C,C),-C(nh=3),-N(-C(nh>=2),n=2)",
+    addAtomType(Elements::C, 18, "CRM", "nbonds=3,-C(nh=3),-N(-C(nh>=2),n=2),ring(size=5,N,C,N,C,C)",
                 "Dialkylmethylimidazolium C2 ring carbon", 0.19, "CR");
-    addAtomType(Elements::N, 19, "NAM", "nbonds=3,ring(size=5,N,C,N,C,C),-&18,-C(nh=1),-C",
+    addAtomType(Elements::N, 19, "NAM", "nbonds=3,-&18,-C(nh=1),-C,ring(size=5,N,C,N,C,C)",
                 "Dialkylmethylimidazolium ring nitrogen", 0.04, "NA");
     addAtomType(Elements::C, 20, "CCR", "nbonds=4,nh=3,-&18", "Dialkylmethylimidazolium methyl carbon on C2", -0.26, "CT");
     // aromatic OPLS-AA
-    addAtomType(Elements::C, 21, "CA", "nbonds=3,ring(size=6),nh=1,-C,-[C,N]", "Aromatic carbon in 6-membered ring", -0.115,
+    addAtomType(Elements::C, 21, "CA", "nbonds=3,nh=1,-C,-[C,N],ring(size=6)", "Aromatic carbon in 6-membered ring", -0.115,
                 "CA");
     addAtomType(Elements::H, 22, "HA", "-&21", "Hydrogen on aromatic carbon in 6-membered ring", 0.115, "HA");
     // toluene JACS 118 (1996) 11217; JCC 25 (2004) 1322
-    addAtomType(Elements::C, 23, "CAP", "nbonds=3,nh=1,ring(size=6,C(n=6)),-C(-C(-C(-C(!ring()))))", "Toluene para carbon",
+    addAtomType(Elements::C, 23, "CAP", "nbonds=3,nh=1,-C(-C(-C(-C(!ring())))),ring(size=6,C(n=6))", "Toluene para carbon",
                 -0.154, "CA");
-    addAtomType(Elements::C, 24, "CAM", "nbonds=3,nh=1,ring(size=6,C(n=6)),-C(-C(-C(!ring())))", "Toluene meta carbon", -0.145,
+    addAtomType(Elements::C, 24, "CAM", "nbonds=3,nh=1,-C(-C(-C(!ring()))),ring(size=6,C(n=6))", "Toluene meta carbon", -0.145,
                 "CA");
-    addAtomType(Elements::C, 25, "CAO", "nbonds=3,nh=1,ring(size=6,C(n=6)),-C(-C(!ring()))", "Toluene ortho carbon", -0.147,
+    addAtomType(Elements::C, 25, "CAO", "nbonds=3,nh=1,-C(-C(!ring())),ring(size=6,C(n=6))", "Toluene ortho carbon", -0.147,
                 "CA");
-    addAtomType(Elements::C, 26, "CAT", "nbonds=3,ring(size=6,C(n=6)),-&25(n=2),-C", "Toluene carbon with methyl group", -0.081,
+    addAtomType(Elements::C, 26, "CAT", "nbonds=3,-&25(n=2),-C,ring(size=6,C(n=6))", "Toluene carbon with methyl group", -0.081,
                 "CA");
     // CTT   CT  Elements::C  0.197  lj    3.50   0.27614
     addAtomType(Elements::H, 27, "HAT", "-[&23,&24,&25]", "Aromatic hydrogen on toluene", 0.148, "HA");
@@ -63,16 +63,16 @@ bool Forcefield_PCL2019_Cations::setUp()
     addAtomType(Elements::C, 29, "C1T", "nbonds=4,nh=2,-&26,-N(ring(size=5))", "Benzylimidazolium bridging carbon", 0.039,
                 "CT");
     // pyridinium JPCB 110 (2006) 19586
-    addAtomType(Elements::C, 30, "CAPO", "nbonds=3,nh=1,ring(size=6,C(n=5),N),!ring(size=10),-N(-C(!ring()))",
+    addAtomType(Elements::C, 30, "CAPO", "nbonds=3,nh=1,!ring(size=10),-N(-C(!ring())),ring(size=6,C(n=5),N)",
                 "Ortho carbon in pyridinium", 0.00, "CA");
-    addAtomType(Elements::C, 31, "CAPM", "nbonds=3,nh=1,ring(size=6,C(n=5),N),!ring(size=10),-C(-N(-C(!ring())))",
+    addAtomType(Elements::C, 31, "CAPM", "nbonds=3,nh=1,!ring(size=10),-C(-N(-C(!ring()))),ring(size=6,C(n=5),N)",
                 "Meta carbon in pyridinium", -0.07, "CA");
-    addAtomType(Elements::C, 32, "CAPP", "nbonds=3,nh=1,ring(size=6,C(n=5),N),!ring(size=10),-C(-C(-N(-C(!ring()))))",
+    addAtomType(Elements::C, 32, "CAPP", "nbonds=3,nh=1,!ring(size=10),-C(-C(-N(-C(!ring())))),ring(size=6,C(n=5),N)",
                 "Para carbon in pyridinium", 0.02, "CA");
-    addAtomType(Elements::N, 33, "NAP", "nbonds=3,ring(size=6,C(n=5),N),-C(!ring())", "Pyridinium nitrogen", 0.15, "NA");
+    addAtomType(Elements::N, 33, "NAP", "nbonds=3,-C(!ring()),ring(size=6,C(n=5),N)", "Pyridinium nitrogen", 0.15, "NA");
     addAtomType(Elements::H, 34, "HAP", "-C(ring(size=6,C(n=5),N))", "Hydrogen on pyridinium ring carbon", 0.15, "HA");
     // isoquinolinium
-    addAtomType(Elements::N, 35, "NAQ", "ring(size=6,N,C(n=5)),ring(size=10,N,C(n=9)),-C(!ring())", "Isoquinolinium nitrogen",
+    addAtomType(Elements::N, 35, "NAQ", "-C(!ring()),ring(size=6,N,C(n=5)),ring(size=10,N,C(n=9))", "Isoquinolinium nitrogen",
                 0.305, "NA");
     addAtomType(Elements::C, 36, "CAQ", "ring(size=6,N,C(n=5)),ring(size=6,C(n=6))", "Isoquinolinium fused carbon", 0.185,
                 "CA");
