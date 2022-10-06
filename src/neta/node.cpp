@@ -153,6 +153,7 @@ int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const Specie
 {
     auto totalScore = 0;
     auto newMatchPath = matchPath;
+    newMatchPath.push_back(i);
 
     // Loop over nodes in sequence
     for (const auto &node : sequence)
