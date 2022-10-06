@@ -13,7 +13,8 @@
 // Return enum options for NodeTypes
 EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
 {
-    return EnumOptions<NETANode::NodeType>("NodeTypes", {{NodeType::BondCount, "BondCount"},
+    return EnumOptions<NETANode::NodeType>("NodeTypes", {{NodeType::Base, "Base"},
+                                                         {NodeType::BondCount, "BondCount"},
                                                          {NodeType::Character, "Character"},
                                                          {NodeType::Connection, "Connection"},
                                                          {NodeType::Geometry, "Geometry"},
@@ -148,20 +149,24 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 
 // Evaluate the provided sequence and return a score
 int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i,
-                            std::vector<const SpeciesAtom *> &atomData)
+                            std::vector<const SpeciesAtom *> &matchPath)
 {
     auto totalScore = 0;
+    auto newMatchPath = matchPath;
 
     // Loop over nodes in sequence
     for (const auto &node : sequence)
     {
         // Get the score from the node, returning early if NoMatch is encountered
-        auto nodeScore = node->score(i, atomData);
+        auto nodeScore = node->score(i, newMatchPath);
         if (nodeScore == NETANode::NoMatch)
             return NETANode::NoMatch;
 
         totalScore += nodeScore;
     }
+
+    // Set the new match path
+    matchPath = newMatchPath;
 
     return totalScore;
 }
@@ -170,4 +175,9 @@ int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const Specie
 void NETANode::setReverseLogic() { reverseLogic_ = true; }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const { return 0; }
+int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
+{
+    auto branchScore = sequenceScore(nodes_, i, matchPath);
+
+    return reverseLogic_ ? (branchScore == NETANode::NoMatch ? 1 : NETANode::NoMatch) : branchScore;
+}
