@@ -42,13 +42,13 @@ bool Forcefield_Ludwig_Py4OH::setUp()
     addAtomType(Elements::H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1759, "ha");
     addAtomType(Elements::H, 7, "ha_p", "nbonds=1,-&4", "Hydrogen bound to carbon in aromatic ring, para", 0.1275, "ha");
     addAtomType(Elements::C, 8, "ct_1", "nbonds=4,nh=2,-&1,-C", "Alkane Carbon of Tail, adjacent to N", -0.1509, "ct");
-    addAtomType(Elements::C, 9, "ct_2", "nbonds=4,nh=2,-&8,-C", "Alkane Carbon of Tail,nextnext=N", 0.0160, "ct");
-    addAtomType(Elements::C, 10, "ct_3", "nbonds=4,nh=2,-C(-H(n=2),-O)", "Alkane Carbon of Tail,nextnext=O", 0.0780, "ct");
-    addAtomType(Elements::C, 11, "ct_4", "nbonds=4,nh=2,-C(-H(n=2),-C),-O", "Alkane Carbon of Tail, adjacent to O", 0.2911,
+    addAtomType(Elements::C, 9, "ct_2", "nbonds=4,nh=2,-&8,-C", "Alkane Carbon of Tail, two away from N", 0.0160, "ct");
+    addAtomType(Elements::C, 10, "ct_3", "nbonds=4,nh=2,-C(-H(n=2),-O)", "Alkane Carbon of Tail, adjacent to O", 0.0780, "ct");
+    addAtomType(Elements::C, 11, "ct_4", "nbonds=4,nh=2,-C(-H(n=2),-C),-O", "Alkane Carbon of Tail, two away from O", 0.2911,
                 "ct");
     addAtomType(Elements::H, 12, "hc_1", "nbonds=1,-&8", "Hydrogen of Tail, adjacent to N", 0.1015, "hc");
-    addAtomType(Elements::H, 13, "hc_2", "nbonds=1,-&9", "Hydrogen of Tail, nextnext=N", 0.0043, "hc");
-    addAtomType(Elements::H, 14, "hc_3", "nbonds=1,-&10", "Hydrogen of Tail, nextnext=O", 0.0316, "hc");
+    addAtomType(Elements::H, 13, "hc_2", "nbonds=1,-&9", "Hydrogen of Tail, two away from N", 0.0043, "hc");
+    addAtomType(Elements::H, 14, "hc_3", "nbonds=1,-&10", "Hydrogen of Tail, two away from O", 0.0316, "hc");
     addAtomType(Elements::H, 15, "hc_4", "nbonds=1,-&11", "Hydrogen of Tail, adjacent to O", -0.0205, "hc");
     addAtomType(Elements::O, 16, "oh", "nbonds=2,-H,-&11", "Oxygen of Hydroxyl Group", -0.6916, "oh");
     addAtomType(Elements::H, 17, "ho", "nbonds=1,-&16", "Hydrogen of Hydroxyl Group", 0.4370, "ho");
