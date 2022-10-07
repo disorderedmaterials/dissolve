@@ -54,4 +54,6 @@ class NETADefinition
     int score(const SpeciesAtom *i) const;
     // Return whether the supplied atom matches the definition
     bool matches(const SpeciesAtom *i) const;
+    // Return the path of matched atoms, including the target atom, if the definition matches
+    std::vector<const SpeciesAtom *> matchedPath(const SpeciesAtom *i) const;
 };

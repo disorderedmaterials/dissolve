@@ -124,6 +124,20 @@ class NETATest : public ::testing::Test
                 EXPECT_EQ(score, NETANode::NoMatch);
         }
     }
+    // Test NETA description on specific atom in molecule, expecting the match path to contain the supplied atom indices
+    void testNETAMatchPath(std::string_view title, const Species &sp, const NETADefinition &neta, int targetAtomIndex,
+                           const std::vector<int> &matchingIndices)
+    {
+        fmt::print("Path Test: {}, atom {}...\n", title, targetAtomIndex);
+        fmt::print("-- Species '{}', expected matched atom path : {}\n", sp.name(), matchingIndices);
+
+        auto path = neta.matchedPath(&sp.atom(targetAtomIndex));
+        fmt::print("-- Actual matched atom path : {}\n", joinStrings(path, " ", [](const auto *i) { return i->index(); }));
+        EXPECT_EQ(path.size(), matchingIndices.size());
+
+        for (auto *i : path)
+            EXPECT_TRUE(std::find(matchingIndices.begin(), matchingIndices.end(), i->index()) != matchingIndices.end());
+    }
 };
 
 TEST_F(NETATest, Syntax)
@@ -316,6 +330,17 @@ TEST_F(NETATest, Geometry)
 
     neta.create("geometry=oct");
     testNETA("Geometry = octahedral", geometric_, neta, {15});
+}
+
+TEST_F(NETATest, FragmentMatching)
+{
+    NETADefinition neta;
+
+    EXPECT_TRUE(neta.create("?C,-H(n=3)"));
+    testNETAMatchPath("Methyl group C(0)", ethane_, neta, 0, {0, 2, 3, 4});
+
+    EXPECT_TRUE(neta.create("?C,-C(-H(n=3))"));
+    testNETAMatchPath("C(1) methyl plus C(0)", ethane_, neta, 0, {0, 1, 5, 6, 7});
 }
 
 } // namespace UnitTest

@@ -159,3 +159,13 @@ int NETADefinition::score(const SpeciesAtom *i) const
 
 // Return whether the supplied atom matches the definition
 bool NETADefinition::matches(const SpeciesAtom *i) const { return score(i) != NETANode::NoMatch; }
+
+// Return the path of matched atoms, including the target atom, if the definition matches
+std::vector<const SpeciesAtom *> NETADefinition::matchedPath(const SpeciesAtom *i) const
+{
+    std::vector<const SpeciesAtom *> matchPath;
+    if (rootNode_->score(i, matchPath) == NETANode::NoMatch)
+        return {};
+
+    return matchPath;
+}
