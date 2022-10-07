@@ -4,7 +4,9 @@
 #include "neta/ring.h"
 #include "classes/speciesatom.h"
 #include "data/ff/atomtype.h"
+#include "neta/ringatom.h"
 #include <algorithm>
+#include <numeric>
 
 NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::NodeType::Ring)
 {
@@ -125,60 +127,97 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     // Prune rings for duplicates
     rings.erase(std::unique(rings.begin(), rings.end()), rings.end());
 
-    std::vector<const SpeciesAtom *> matchedRingAtoms;
+    std::map<const SpeciesRing *, std::pair<int, std::vector<const SpeciesAtom *>>> matchedRings;
 
     // Loop over rings
-    auto nMatches = 0, totalScore = 0;
-    int nodeScore = NETANode::NoMatch;
     for (const auto &ring : rings)
     {
         // Check through atoms in the ring - either in order or not - to see if the ring matches
-        // Disordered search - try to match the branch definition against this ring, in any order (provide a copy of all
-        // atoms in the ring at once)
 
-        auto ringScore = 0;
+        // Disordered search - try to match defined nodes on any of the ring atoms
         auto ringAtoms = ring.atoms();
+        std::map<const SpeciesAtom *, std::pair<int, std::vector<const SpeciesAtom *>>> matchedRingAtoms;
+        auto totalAttemptedMatches = 0;
         for (const auto &node : nodes_)
         {
-            nodeScore = node->score(nullptr, ringAtoms);
-            if (nodeScore == NETANode::NoMatch)
-            {
-                ringScore = NETANode::NoMatch;
-                break;
-            }
+            auto ringAtomNode = std::dynamic_pointer_cast<NETARingAtomNode>(node);
+            int nodeScore = NETANode::NoMatch;
+            auto nMatches = 0;
 
-            // Match found
-            ringScore += nodeScore;
+            // Loop over remaining ring atoms searching for matches
+            do
+            {
+                ++totalAttemptedMatches;
+                for (auto jIt = ringAtoms.begin(); jIt != ringAtoms.end(); ++jIt)
+                {
+                    std::vector<const SpeciesAtom *> jMatchPath;
+
+                    nodeScore = ringAtomNode->matches(*jIt, jMatchPath);
+                    if (nodeScore == NETANode::NoMatch)
+                        continue;
+
+                    // Match found, so store its info and remove it from the list
+                    matchedRingAtoms[*jIt] = {nodeScore, jMatchPath};
+                    ringAtoms.erase(jIt);
+                    ++nMatches;
+                    break;
+                }
+
+                // Check score and repeat count
+                if (nodeScore == NETANode::NoMatch || ringAtomNode->validRepeatCount(nMatches))
+                    break;
+            } while (!ringAtoms.empty());
+
+            // Did we satisfy the repeat count?
+            if (!ringAtomNode->validRepeatCount(nMatches))
+                nodeScore = NETANode::NoMatch;
+
+            // Matched this node?
+            if (nodeScore == NETANode::NoMatch)
+                break;
         }
 
-        // If we didn't find a match for the ring, continue to the next one
-        if (ringScore == NETANode::NoMatch)
+        // If we didn't match all the specified nodes, continue the search
+        if (totalAttemptedMatches != matchedRingAtoms.size())
             continue;
 
-        // Increment match counter and add matched atoms to our unique list
-        ++nMatches;
-        std::copy_if(ring.atoms().begin(), ring.atoms().end(), std::back_inserter(matchedRingAtoms),
-                     [&matchedRingAtoms](const auto *i) {
-                         return std::find(matchedRingAtoms.begin(), matchedRingAtoms.end(), i) == matchedRingAtoms.end();
-                     });
-
-        // Increase the total score - ringScore (contained atoms) + 1 (for the ring) + 1 (for the size, if specified)
-        totalScore += ringScore + 1;
-        if (sizeValue_ != -1)
-            ++totalScore;
+        // Store the ring information - total score and all matched atoms
+        matchedRings[&ring] = {std::accumulate(matchedRingAtoms.begin(), matchedRingAtoms.end(), 0,
+                                               [](const auto &acc, const auto &jInfo) { return acc + jInfo.second.first; }),
+                               {}};
+        auto &totalRingMatch = matchedRings[&ring].second;
+        for (auto &jInfo : matchedRingAtoms)
+        {
+            auto *j = jInfo.first;
+            auto &&[jScore, jMatchPath] = jInfo.second;
+            std::copy_if(jMatchPath.begin(), jMatchPath.end(), std::back_inserter(totalRingMatch),
+                         [&totalRingMatch](const auto *i) {
+                             return std::find(totalRingMatch.begin(), totalRingMatch.end(), i) == totalRingMatch.end();
+                         });
+        }
 
         // Don't match more than we need to - check the repeatCount
-        if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
+        if (compareValues(matchedRings.size(), repeatCountOperator_, repeatCount_))
             break;
     }
 
     // Did we find the required number of ring matches?
-    if (reverseLogic_ == compareValues(nMatches, repeatCountOperator_, repeatCount_))
+    if (reverseLogic_ == compareValues(matchedRings.size(), repeatCountOperator_, repeatCount_))
         return NETANode::NoMatch;
 
-    // Copy matched ring atoms to the main matched path
-    std::copy_if(matchedRingAtoms.begin(), matchedRingAtoms.end(), std::back_inserter(matchPath),
-                 [&matchPath](const auto *i) { return std::find(matchPath.begin(), matchPath.end(), i) == matchPath.end(); });
+    // Generate total score and add matched atoms to the path
+    auto totalScore = 0;
+    for (auto &ring : matchedRings)
+    {
+        auto &&[ringScore, ringMatchPath] = ring.second;
+
+        totalScore += ringScore;
+
+        // Track atoms matched in the neighbour branch
+        std::copy_if(ringMatchPath.begin(), ringMatchPath.end(), std::back_inserter(matchPath), [&matchPath](const auto *j) {
+            return std::find(matchPath.begin(), matchPath.end(), j) == matchPath.end();
+        });
+    }
 
     return totalScore;
 }

@@ -27,8 +27,8 @@ class NETANode
         Geometry,
         HydrogenCount,
         Or,
-        Presence,
         Ring,
+        RingAtom,
         Root
     };
     // Return enum options for Node Types

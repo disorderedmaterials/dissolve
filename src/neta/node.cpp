@@ -7,8 +7,8 @@
 #include "neta/character.h"
 #include "neta/connection.h"
 #include "neta/or.h"
-#include "neta/presence.h"
 #include "neta/ring.h"
+#include "neta/ringatom.h"
 
 // Return enum options for NodeTypes
 EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
@@ -20,8 +20,8 @@ EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
                                                          {NodeType::Geometry, "Geometry"},
                                                          {NodeType::HydrogenCount, "HydrogenCount"},
                                                          {NodeType::Or, "Or"},
-                                                         {NodeType::Presence, "Presence"},
                                                          {NodeType::Ring, "Ring"},
+                                                         {NodeType::RingAtom, "RingAtom"},
                                                          {NodeType::Root, "Root"}});
 }
 

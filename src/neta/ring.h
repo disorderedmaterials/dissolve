@@ -11,6 +11,7 @@
 class Element;
 class ForcefieldAtomType;
 class NETADefinition;
+class NETARingAtomNode;
 
 // NETA Ring Node
 class NETARingNode : public NETANode

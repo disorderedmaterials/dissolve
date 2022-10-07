@@ -9,8 +9,8 @@
 #include "neta/geometry.h"
 #include "neta/hydrogencount.h"
 #include "neta/or.h"
-#include "neta/presence.h"
 #include "neta/ring.h"
+#include "neta/ringatom.h"
 #include "templates/optionalref.h"
 
 /*
@@ -178,27 +178,27 @@ antlrcpp::Any NETAVisitor::visitHydrogenCountNode(NETAParser::HydrogenCountNodeC
     return std::dynamic_pointer_cast<NETANode>(hydrogenCountNode);
 }
 
-antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *context)
+antlrcpp::Any NETAVisitor::visitRingAtomNode(NETAParser::RingAtomNodeContext *context)
 {
-    auto presenceNode = std::make_shared<NETAPresenceNode>(neta_);
+    auto ringAtomNode = std::make_shared<NETARingAtomNode>(neta_);
 
     // Set target elements / types
-    visitTargetList(context->Targets, presenceNode.get());
+    visitTargetList(context->Targets, ringAtomNode.get());
 
     // Reverse logic?
     if (context->Not())
-        presenceNode->setReverseLogic();
+        ringAtomNode->setReverseLogic();
 
     // Bracketed node sequence?
     if (context->Sequence)
     {
-        contextStack_.emplace_back(presenceNode);
+        contextStack_.emplace_back(ringAtomNode);
         auto nodes = visit(context->Sequence);
-        presenceNode->setNodes(nodes.as<NETANode::NETASequence>());
+        ringAtomNode->setNodes(nodes.as<NETANode::NETASequence>());
         contextStack_.pop_back();
     }
 
-    return std::dynamic_pointer_cast<NETANode>(presenceNode);
+    return std::dynamic_pointer_cast<NETANode>(ringAtomNode);
 }
 
 antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)

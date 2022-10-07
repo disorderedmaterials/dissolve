@@ -37,7 +37,7 @@ nodeSequence:    (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag) (
 ;
 
 // Ring Node Sequence
-ringSequence: ((Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=flag) (Comma (Nodes+=ringOnlyNode|Modifiers+=modifier|Options+=option|Flags+=flag))*)*;
+ringSequence: ((Nodes+=ringAtomNode|Modifiers+=modifier|Options+=option|Flags+=flag) (Comma (Nodes+=ringAtomNode|Modifiers+=modifier|Options+=option|Flags+=flag))*)*;
 
 // Common Nodes
 node: bondCountNode
@@ -51,9 +51,6 @@ node: bondCountNode
 
 // Bracketed node sub-sequence
 subSequence: Not? OpenParenthesis Sequence=nodeSequence CloseParenthesis;
-
-// Ring-Specific Nodes
-ringOnlyNode: presenceNode;
 
 // Bond Count Node
 bondCountNode: BondCountKeyword comparisonOperator Integer;
@@ -72,13 +69,13 @@ geometryNode: GeometryKeyword EqualityOperator geometry=Keyword;
 // Hydrogen Count Node
 hydrogenCountNode: HydrogenCountKeyword comparisonOperator Integer;
 
-// Presence Node
-presenceNode: Not? Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis
-| Not? Targets=targetList
-;
-
 // Ring Node
 ringNode: Not? RingKeyword OpenParenthesis Sequence=ringSequence CloseParenthesis;
+
+// Ring Atom Node
+ringAtomNode: Not? Targets=targetList OpenParenthesis Sequence=nodeSequence CloseParenthesis
+| Not? Targets=targetList
+;
 
 // Target List
 elementOrType: Element

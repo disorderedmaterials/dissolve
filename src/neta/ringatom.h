@@ -13,13 +13,13 @@ class Element;
 class ForcefieldAtomType;
 class NETADefinition;
 
-// NETA Presence Node
-class NETAPresenceNode : public NETANode
+// NETA Ring Atom Node
+class NETARingAtomNode : public NETANode
 {
     public:
-    NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements = {},
+    NETARingAtomNode(NETADefinition *parent, std::vector<Elements::Element> targetElements = {},
                      std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
-    ~NETAPresenceNode() override = default;
+    ~NETARingAtomNode() override = default;
 
     /*
      * Atom Targets
@@ -52,16 +52,20 @@ class NETAPresenceNode : public NETANode
         Repeat /* 'n' - Specifies the number of matches required (default = 1) */
     };
     // Return enum options for NETACharacterModifiers
-    static EnumOptions<NETAPresenceNode::NETACharacterModifier> modifiers();
+    static EnumOptions<NETARingAtomNode::NETACharacterModifier> modifiers();
     // Return whether the specified modifier is valid for this node
     bool isValidModifier(std::string_view s) const override;
     // Set value and comparator for specified modifier
     bool setModifier(std::string_view modifier, ComparisonOperator op, int value) override;
+    // Test repeat count value and modifier
+    bool validRepeatCount(int value) const;
 
     /*
      * Scoring
      */
     public:
+    // Return whether we match the specified atom
+    int matches(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &availableAtoms) const override;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const override;
 };
