@@ -341,6 +341,33 @@ TEST_F(NETATest, FragmentMatching)
 
     EXPECT_TRUE(neta.create("?C,-C(-H(n=3))"));
     testNETAMatchPath("C(1) methyl plus C(0)", ethane_, neta, 0, {0, 1, 5, 6, 7});
+
+    EXPECT_TRUE(neta.create("ring(size=4,C,C,C,N)"));
+    testNETA("Any atom in a four-membered ring (explicit ring definition)", rings_, neta, {0, 1, 10, 11});
+
+    EXPECT_TRUE(neta.create("ring(size=4,C(n=3),N)"));
+    testNETA("Any atom in a four-membered ring (shortest ring definition)", rings_, neta, {0, 1, 10, 11});
+
+    EXPECT_TRUE(neta.create("ring(size=4,C,C(n=2),N)"));
+    testNETA("Any atom in a four-membered ring (unnecessary ring definition)", rings_, neta, {0, 1, 10, 11});
+
+    EXPECT_TRUE(neta.create("ring(size=4,N)"));
+    testNETA("Any atom in a four-membered ring (only one atom specified)", rings_, neta, {0, 1, 10, 11});
+
+    EXPECT_TRUE(neta.create("ring(size=4,C(n=2))"));
+    testNETA("Any atom in a four-membered ring (only one atom specified)", rings_, neta, {0, 1, 10, 11});
+
+    EXPECT_TRUE(neta.create("ring(size=8,C(n=4),N,C(n=3))"));
+    testNETA("Any atom in an eight-membered ring (split definition)", rings_, neta, {0, 1, 2, 3, 4, 5, 10, 11});
+
+    EXPECT_TRUE(neta.create("ring(size=4,N(n=2),C(n=2))"));
+    testNETA("No atoms - too many of atom type requested", rings_, neta, {});
+
+    EXPECT_TRUE(neta.create("ring(size=8,C(n=4),N,C(n=4))"));
+    testNETA("No atoms - too many for ring (9 vs 8)", rings_, neta, {});
+
+    EXPECT_TRUE(neta.create("ring(size=6,C(n=8))"));
+    testNETA("No atoms - too many for ring (8 vs 6)", rings_, neta, {});
 }
 
 } // namespace UnitTest
