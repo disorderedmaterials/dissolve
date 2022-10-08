@@ -12,7 +12,6 @@ NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::
 {
     repeatCount_ = 1;
     repeatCountOperator_ = NETANode::ComparisonOperator::GreaterThanEqualTo;
-    sizeValue_ = -1;
     sizeValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 }
 
@@ -109,18 +108,18 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     // Generate array of rings of specified size that the atom 'i' is present in
     std::vector<SpeciesRing> rings;
     std::vector<const SpeciesAtom *> ringPath;
-    if (sizeValue_ == -1)
+    if (!sizeValue_)
         findRings(i, rings, ringPath, 3, 6);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::EqualTo)
-        findRings(i, rings, ringPath, sizeValue_, sizeValue_);
+        findRings(i, rings, ringPath, *sizeValue_, *sizeValue_);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::LessThan)
-        findRings(i, rings, ringPath, 3, sizeValue_ - 1);
+        findRings(i, rings, ringPath, 3, *sizeValue_ - 1);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::LessThanEqualTo)
-        findRings(i, rings, ringPath, 3, sizeValue_);
+        findRings(i, rings, ringPath, 3, *sizeValue_);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::GreaterThan)
-        findRings(i, rings, ringPath, sizeValue_ + 1, 99);
+        findRings(i, rings, ringPath, *sizeValue_ + 1, 99);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::GreaterThanEqualTo)
-        findRings(i, rings, ringPath, sizeValue_, 99);
+        findRings(i, rings, ringPath, *sizeValue_, 99);
     else
         findRings(i, rings, ringPath, 3, 99);
 
