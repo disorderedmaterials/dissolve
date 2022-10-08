@@ -5,8 +5,8 @@
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
 
-NETAHydrogenCountNode::NETAHydrogenCountNode(NETADefinition *parent)
-    : NETANode(parent, NETANode::NodeType::HydrogenCount), value_(-1), operator_(NETANode::ComparisonOperator::EqualTo)
+NETAHydrogenCountNode::NETAHydrogenCountNode(NETADefinition *parent, NETANode::ComparisonOperator op, std::optional<int> value)
+    : NETANode(parent, NETANode::NodeType::HydrogenCount), value_(value), operator_(op)
 {
 }
 
@@ -28,9 +28,12 @@ void NETAHydrogenCountNode::set(ComparisonOperator op, int value)
 // Evaluate the node and return its score
 int NETAHydrogenCountNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
+    if (!value_)
+        return NETANode::NoMatch;
+
     // Count number of hydrogens attached to this atom
     auto nH = std::count_if(i->bonds().begin(), i->bonds().end(),
                             [i](const SpeciesBond &bond) { return bond.partner(i)->Z() == Elements::H; });
 
-    return compareValues(nH, operator_, value_) ? 1 : NETANode::NoMatch;
+    return compareValues(nH, operator_, *value_) ? 1 : NETANode::NoMatch;
 }

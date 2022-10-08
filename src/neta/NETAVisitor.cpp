@@ -163,15 +163,13 @@ antlrcpp::Any NETAVisitor::visitGeometryNode(NETAParser::GeometryNodeContext *co
 
 antlrcpp::Any NETAVisitor::visitHydrogenCountNode(NETAParser::HydrogenCountNodeContext *context)
 {
-    auto hydrogenCountNode = std::make_shared<NETAHydrogenCountNode>(neta_);
-
     // Check comparison operator
     if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
             fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
     NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
 
-    hydrogenCountNode->set(op, std::stoi(context->Integer()->getText()));
+    auto hydrogenCountNode = std::make_shared<NETAHydrogenCountNode>(neta_, op, std::stoi(context->Integer()->getText()));
 
     return std::dynamic_pointer_cast<NETANode>(hydrogenCountNode);
 }
