@@ -94,15 +94,13 @@ antlrcpp::Any NETAVisitor::visitRingSequence(NETAParser::RingSequenceContext *co
 
 antlrcpp::Any NETAVisitor::visitBondCountNode(NETAParser::BondCountNodeContext *context)
 {
-    auto bondCountNode = std::make_shared<NETABondCountNode>(neta_);
-
     // Check comparison operator
     if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
             fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
-    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
+    auto op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
 
-    bondCountNode->set(op, std::stoi(context->Integer()->getText()));
+    auto bondCountNode = std::make_shared<NETABondCountNode>(neta_, op, std::stoi(context->Integer()->getText()));
 
     return std::dynamic_pointer_cast<NETANode>(bondCountNode);
 }

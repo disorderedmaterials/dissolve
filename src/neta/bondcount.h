@@ -12,7 +12,8 @@ class NETADefinition;
 class NETABondCountNode : public NETANode
 {
     public:
-    NETABondCountNode(NETADefinition *parent);
+    explicit NETABondCountNode(NETADefinition *parent, NETANode::ComparisonOperator op = NETANode::ComparisonOperator::EqualTo,
+                               std::optional<int> value = std::nullopt);
     ~NETABondCountNode() override = default;
 
     /*
@@ -20,7 +21,7 @@ class NETABondCountNode : public NETANode
      */
     private:
     // Number of bonds value
-    int value_;
+    std::optional<int> value_;
     // Number of bonds value comparison operator
     NETANode::ComparisonOperator operator_;
 
