@@ -28,13 +28,13 @@ NETADefinition::NETADefinition(const SpeciesAtom *i, int maxDepth) : rootNode_(n
  */
 
 // Return root node pointer
-std::shared_ptr<NETARootNode> NETADefinition::rootNode() { return rootNode_; }
+std::shared_ptr<NETANode> NETADefinition::rootNode() { return rootNode_; }
 
 // Create definition from stored definition string
 bool NETADefinition::create(const Forcefield *associatedFF)
 {
     // Create a new root node, overwriting the old one
-    rootNode_ = std::make_shared<NETARootNode>(this);
+    rootNode_ = std::make_shared<NETANode>(this);
     valid_ = false;
 
     // Create string stream and set up ANTLR input stream
