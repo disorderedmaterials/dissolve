@@ -1,8 +1,8 @@
-Version 0.9.8 is a patch release which improves the EPSR module.
+Version 0.9.9 is a patch release which fixes a trio of issues.
 
 The full release notes for 0.9.0 detailing major changes in this version can be found at https://github.com/disorderedmaterials/dissolve/releases/tag/0.9.0.
 
 ### Summary of Changes
-- New Feature: Add (optional, default on) moving average smoothing to fluctuation coefficients in `EPSR` module.
-- Fix: Crash when pair potentials tab got updated while being viewed.
-- Fix: Allow omega-dependent (r-dependent) broadening functions to be applied as `IntraBroadening` in the `RDF` module.
+- Fix: Adjusting torsions in the `IntraShake` module would destroy parts of molecules attached to rings.
+- Fix: Specifying multiple targets in the `Accumulate` module now accumulates separate data for each module (not just the first).
+- Fix: Fourier transform of reference structure factor data into G(r) was broken in some situations due to the presence of empty configurations.
