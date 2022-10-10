@@ -100,8 +100,11 @@ void ConfigurationTab::updateDensityLabel()
     if (!configuration_)
         ui_.DensityUnitsLabel->setText("N/A");
     else
-        ui_.DensityUnitsLabel->setText(QString::number(
-            ui_.DensityUnitsCombo->currentIndex() == 0 ? configuration_->atomicDensity() : configuration_->chemicalDensity()));
+    {
+        auto rho =
+            ui_.DensityUnitsCombo->currentIndex() == 0 ? configuration_->atomicDensity() : configuration_->chemicalDensity();
+        ui_.DensityUnitsLabel->setText(rho ? QString::number(*rho) : "--");
+    }
 }
 
 // Update controls in tab
