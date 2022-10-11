@@ -41,6 +41,7 @@ linkTitle = "Packages"
 {{% blocks/feature icon="fab fa-windows" title="Windows" %}}
 {{< releaselink target="GUI" urlSuffix="-Win64.exe" textSuffix="Installer" >}}
 {{< releaselink target="GUI" urlSuffix="-Win64.zip" textSuffix="Zip Archive" >}}
+<a href='{{< ref "windows" >}}'>Windows Usage Guide</a>
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fa fa-archive" title="Example Data" %}}
