@@ -4,6 +4,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "data/ff/ff.h"
+#include "data/ff/library.h"
 #include "data/isotopes.h"
 
 Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false), forcefield_(nullptr)
@@ -226,6 +227,8 @@ SerialisedValue Species::serialise() const
 void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     atoms_ = toml::find<std::vector<SpeciesAtom>>(node, "atoms");
+    if (node.contains("forcefield"))
+        forcefield_ = ForcefieldLibrary::forcefield(toml::find<std::string>(node, "forcefield"));
 
     Serialisable::toVector(node, "bonds", [this, &coreData](const SerialisedValue &bond) {
         bonds_.emplace_back(&atoms_.at(toml::find<int>(bond, "i") - 1), &atoms_.at(toml::find<int>(bond, "j") - 1))
