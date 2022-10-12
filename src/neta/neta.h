@@ -5,7 +5,6 @@
 
 #include "base/enumoptions.h"
 #include "neta/connection.h"
-#include "neta/root.h"
 
 // Forward Declarations
 class Forcefield;
@@ -24,7 +23,7 @@ class NETADefinition
      */
     private:
     // Root node of the definition
-    std::shared_ptr<NETARootNode> rootNode_;
+    std::shared_ptr<NETANode> rootNode_;
     // Original definition string
     std::string definitionString_;
     // Whether the current definition is valid
@@ -32,7 +31,7 @@ class NETADefinition
 
     public:
     // Return root node pointer
-    std::shared_ptr<NETARootNode> rootNode();
+    std::shared_ptr<NETANode> rootNode();
     // Create definition from stored string
     bool create(const Forcefield *associatedFF = nullptr);
     // Set definition string and create definition
@@ -54,4 +53,6 @@ class NETADefinition
     int score(const SpeciesAtom *i) const;
     // Return whether the supplied atom matches the definition
     bool matches(const SpeciesAtom *i) const;
+    // Return the path of matched atoms, including the target atom, if the definition matches
+    std::vector<const SpeciesAtom *> matchedPath(const SpeciesAtom *i) const;
 };

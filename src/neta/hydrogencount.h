@@ -12,7 +12,8 @@ class NETADefinition;
 class NETAHydrogenCountNode : public NETANode
 {
     public:
-    NETAHydrogenCountNode(NETADefinition *parent);
+    NETAHydrogenCountNode(NETADefinition *parent, NETANode::ComparisonOperator op = NETANode::ComparisonOperator::EqualTo,
+                          std::optional<int> value = std::nullopt);
     ~NETAHydrogenCountNode() override = default;
 
     /*
@@ -20,12 +21,12 @@ class NETAHydrogenCountNode : public NETANode
      */
     private:
     // Number of hydrogens value
-    int value_;
+    std::optional<int> value_;
     // Number of hydrogens value comparison operator
     NETANode::ComparisonOperator operator_;
 
     public:
-    // Set bond count requirements
+    // Set hydrogen count requirements
     void set(ComparisonOperator op, int value);
 
     /*

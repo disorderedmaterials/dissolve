@@ -11,6 +11,7 @@
 class Element;
 class ForcefieldAtomType;
 class NETADefinition;
+class NETARingAtomNode;
 
 // NETA Ring Node
 class NETARingNode : public NETANode
@@ -28,7 +29,7 @@ class NETARingNode : public NETANode
     // Repeat count comparison operator
     NETANode::ComparisonOperator repeatCountOperator_;
     // Ring size value
-    int sizeValue_;
+    std::optional<int> sizeValue_;
     // Ring size value comparison operator
     NETANode::ComparisonOperator sizeValueOperator_;
 

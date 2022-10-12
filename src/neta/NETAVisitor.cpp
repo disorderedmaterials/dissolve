@@ -9,8 +9,8 @@
 #include "neta/geometry.h"
 #include "neta/hydrogencount.h"
 #include "neta/or.h"
-#include "neta/presence.h"
 #include "neta/ring.h"
+#include "neta/ringatom.h"
 #include "templates/optionalref.h"
 
 /*
@@ -94,15 +94,13 @@ antlrcpp::Any NETAVisitor::visitRingSequence(NETAParser::RingSequenceContext *co
 
 antlrcpp::Any NETAVisitor::visitBondCountNode(NETAParser::BondCountNodeContext *context)
 {
-    auto bondCountNode = std::make_shared<NETABondCountNode>(neta_);
-
     // Check comparison operator
     if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
             fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
-    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
+    auto op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
 
-    bondCountNode->set(op, std::stoi(context->Integer()->getText()));
+    auto bondCountNode = std::make_shared<NETABondCountNode>(neta_, op, std::stoi(context->Integer()->getText()));
 
     return std::dynamic_pointer_cast<NETANode>(bondCountNode);
 }
@@ -165,40 +163,38 @@ antlrcpp::Any NETAVisitor::visitGeometryNode(NETAParser::GeometryNodeContext *co
 
 antlrcpp::Any NETAVisitor::visitHydrogenCountNode(NETAParser::HydrogenCountNodeContext *context)
 {
-    auto hydrogenCountNode = std::make_shared<NETAHydrogenCountNode>(neta_);
-
     // Check comparison operator
     if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
             fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
     NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
 
-    hydrogenCountNode->set(op, std::stoi(context->Integer()->getText()));
+    auto hydrogenCountNode = std::make_shared<NETAHydrogenCountNode>(neta_, op, std::stoi(context->Integer()->getText()));
 
     return std::dynamic_pointer_cast<NETANode>(hydrogenCountNode);
 }
 
-antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *context)
+antlrcpp::Any NETAVisitor::visitRingAtomNode(NETAParser::RingAtomNodeContext *context)
 {
-    auto presenceNode = std::make_shared<NETAPresenceNode>(neta_);
+    auto ringAtomNode = std::make_shared<NETARingAtomNode>(neta_);
 
     // Set target elements / types
-    visitTargetList(context->Targets, presenceNode.get());
+    visitTargetList(context->Targets, ringAtomNode.get());
 
     // Reverse logic?
     if (context->Not())
-        presenceNode->setReverseLogic();
+        ringAtomNode->setReverseLogic();
 
     // Bracketed node sequence?
     if (context->Sequence)
     {
-        contextStack_.emplace_back(presenceNode);
+        contextStack_.emplace_back(ringAtomNode);
         auto nodes = visit(context->Sequence);
-        presenceNode->setNodes(nodes.as<NETANode::NETASequence>());
+        ringAtomNode->setNodes(nodes.as<NETANode::NETASequence>());
         contextStack_.pop_back();
     }
 
-    return std::dynamic_pointer_cast<NETANode>(presenceNode);
+    return std::dynamic_pointer_cast<NETANode>(ringAtomNode);
 }
 
 antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
@@ -219,6 +215,26 @@ antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
     }
 
     return std::dynamic_pointer_cast<NETANode>(ringNode);
+}
+
+antlrcpp::Any NETAVisitor::visitSubSequence(NETAParser::SubSequenceContext *context)
+{
+    auto baseNode = std::make_shared<NETANode>(neta_);
+
+    // Reverse logic?
+    if (context->Not())
+        baseNode->setReverseLogic();
+
+    // Bracketed node sequence?
+    if (context->Sequence)
+    {
+        contextStack_.emplace_back(baseNode);
+        auto nodes = visit(context->Sequence);
+        baseNode->setNodes(nodes.as<NETANode::NETASequence>());
+        contextStack_.pop_back();
+    }
+
+    return std::dynamic_pointer_cast<NETANode>(baseNode);
 }
 
 antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *context)

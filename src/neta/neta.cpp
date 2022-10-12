@@ -28,13 +28,13 @@ NETADefinition::NETADefinition(const SpeciesAtom *i, int maxDepth) : rootNode_(n
  */
 
 // Return root node pointer
-std::shared_ptr<NETARootNode> NETADefinition::rootNode() { return rootNode_; }
+std::shared_ptr<NETANode> NETADefinition::rootNode() { return rootNode_; }
 
 // Create definition from stored definition string
 bool NETADefinition::create(const Forcefield *associatedFF)
 {
     // Create a new root node, overwriting the old one
-    rootNode_ = std::make_shared<NETARootNode>(this);
+    rootNode_ = std::make_shared<NETANode>(this);
     valid_ = false;
 
     // Create string stream and set up ANTLR input stream
@@ -159,3 +159,13 @@ int NETADefinition::score(const SpeciesAtom *i) const
 
 // Return whether the supplied atom matches the definition
 bool NETADefinition::matches(const SpeciesAtom *i) const { return score(i) != NETANode::NoMatch; }
+
+// Return the path of matched atoms, including the target atom, if the definition matches
+std::vector<const SpeciesAtom *> NETADefinition::matchedPath(const SpeciesAtom *i) const
+{
+    std::vector<const SpeciesAtom *> matchPath;
+    if (rootNode_->score(i, matchPath) == NETANode::NoMatch)
+        return {};
+
+    return matchPath;
+}

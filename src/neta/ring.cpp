@@ -4,13 +4,14 @@
 #include "neta/ring.h"
 #include "classes/speciesatom.h"
 #include "data/ff/atomtype.h"
+#include "neta/ringatom.h"
 #include <algorithm>
+#include <numeric>
 
 NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::NodeType::Ring)
 {
     repeatCount_ = 1;
     repeatCountOperator_ = NETANode::ComparisonOperator::GreaterThanEqualTo;
-    sizeValue_ = -1;
     sizeValueOperator_ = NETANode::ComparisonOperator::EqualTo;
 }
 
@@ -107,69 +108,163 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     // Generate array of rings of specified size that the atom 'i' is present in
     std::vector<SpeciesRing> rings;
     std::vector<const SpeciesAtom *> ringPath;
-    if (sizeValue_ == -1)
+    if (!sizeValue_)
         findRings(i, rings, ringPath, 3, 6);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::EqualTo)
-        findRings(i, rings, ringPath, sizeValue_, sizeValue_);
+        findRings(i, rings, ringPath, *sizeValue_, *sizeValue_);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::LessThan)
-        findRings(i, rings, ringPath, 3, sizeValue_ - 1);
+        findRings(i, rings, ringPath, 3, *sizeValue_ - 1);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::LessThanEqualTo)
-        findRings(i, rings, ringPath, 3, sizeValue_);
+        findRings(i, rings, ringPath, 3, *sizeValue_);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::GreaterThan)
-        findRings(i, rings, ringPath, sizeValue_ + 1, 99);
+        findRings(i, rings, ringPath, *sizeValue_ + 1, 99);
     else if (sizeValueOperator_ == NETANode::ComparisonOperator::GreaterThanEqualTo)
-        findRings(i, rings, ringPath, sizeValue_, 99);
+        findRings(i, rings, ringPath, *sizeValue_, 99);
     else
         findRings(i, rings, ringPath, 3, 99);
 
     // Prune rings for duplicates
     rings.erase(std::unique(rings.begin(), rings.end()), rings.end());
 
+    std::map<const SpeciesRing *, std::pair<int, std::vector<const SpeciesAtom *>>> matchedRings;
+
     // Loop over rings
-    auto nMatches = 0, totalScore = 0;
-    int nodeScore = NETANode::NoMatch;
     for (const auto &ring : rings)
     {
-        // Check through atoms in the ring - either in order or not - to see if the ring matches
-        // Disordered search - try to match the branch definition against this ring, in any order (provide a copy of all
-        // atoms in the ring at once)
-
-        auto ringScore = 0;
-        auto ringAtoms = ring.atoms();
-        for (const auto &node : nodes_)
+        ring.print();
+        // Check through atoms in the ring in the order specified
+        for (auto ringAtomIt = ring.atoms().begin(); ringAtomIt != ring.atoms().end(); ++ringAtomIt)
         {
-            nodeScore = node->score(nullptr, ringAtoms);
-            if (nodeScore == NETANode::NoMatch)
+            // Copy the iterator to use for forward and backward traversal around the ring
+            auto forwardIt = ringAtomIt, backwardIt = ringAtomIt;
+
+            std::map<const SpeciesAtom *, std::pair<int, std::vector<const SpeciesAtom *>>> forwardMatches, backwardMatches;
+            auto totalAttemptedNodeMatches = 0;
+
+            // Loop over defined nodes
+            for (const auto &node : nodes_)
             {
-                ringScore = NETANode::NoMatch;
-                break;
+                // Cast up the ring node
+                auto ringAtomNode = std::dynamic_pointer_cast<NETARingAtomNode>(node);
+                auto nForwardNodeMatches = 0, nBackwardNodeMatches = 0;
+
+                // Loop until we find the required number of matches, we fail to match, or we run out of ring atoms
+                do
+                {
+                    ++totalAttemptedNodeMatches;
+
+                    // Test forward ring iterator?
+                    if (forwardIt != ring.atoms().end())
+                    {
+                        std::vector<const SpeciesAtom *> forwardMatchPath;
+                        auto forwardScore = ringAtomNode->matches(*forwardIt, forwardMatchPath);
+                        if (forwardScore == NETANode::NoMatch)
+                            forwardIt = ring.atoms().end();
+                        else
+                        {
+                            forwardMatches[*forwardIt] = {forwardScore, forwardMatchPath};
+                            ++nForwardNodeMatches;
+                        }
+                    }
+
+                    // Test backward ring iterator?
+                    if (backwardIt != ring.atoms().end())
+                    {
+                        std::vector<const SpeciesAtom *> backwardMatchPath;
+                        auto backwardScore = ringAtomNode->matches(*backwardIt, backwardMatchPath);
+                        if (backwardScore == NETANode::NoMatch)
+                            backwardIt = ring.atoms().end();
+                        else
+                        {
+                            backwardMatches[*backwardIt] = {backwardScore, backwardMatchPath};
+                            ++nBackwardNodeMatches;
+                        }
+                    }
+
+                    // Iterate until we have gone all around the ring
+                    if (forwardIt != ring.atoms().end())
+                    {
+                        forwardIt = ++forwardIt == ring.atoms().end() ? ring.atoms().begin() : forwardIt;
+                        if (forwardIt == ringAtomIt)
+                            forwardIt = ring.atoms().end();
+                    }
+                    if (backwardIt != ring.atoms().end())
+                    {
+                        backwardIt = backwardIt == ring.atoms().begin() ? ring.atoms().end() - 1 : --backwardIt;
+                        if (backwardIt == ringAtomIt)
+                            backwardIt = ring.atoms().end();
+                    }
+
+                    // Test to see if we have the requested number of repeats so can break out early
+                    if (ringAtomNode->validRepeatCount(nForwardNodeMatches) ||
+                        ringAtomNode->validRepeatCount(nBackwardNodeMatches))
+                        break;
+                } while (forwardIt != ring.atoms().end() || backwardIt != ring.atoms().end());
+
+                // Confirm that the requested number of repeats has been met - we may have left the loop early due to not
+                // finding a match
+                if (!ringAtomNode->validRepeatCount(nForwardNodeMatches) &&
+                    !ringAtomNode->validRepeatCount(nBackwardNodeMatches))
+                {
+                    forwardMatches.clear();
+                    backwardMatches.clear();
+                }
+
+                // Check iterator validity
+                if (forwardIt == ring.atoms().end() && backwardIt == ring.atoms().end())
+                    break;
             }
 
-            // Match found
-            ringScore += nodeScore;
+            // Check iterator validity - if one persists here then we have a match to the ring
+            if (totalAttemptedNodeMatches == forwardMatches.size() || totalAttemptedNodeMatches == backwardMatches.size())
+            {
+                // Get relevant atom matches
+                const auto &matchedRingAtoms =
+                    totalAttemptedNodeMatches == forwardMatches.size() ? forwardMatches : backwardMatches;
+
+                // Store the ring information - total score and all matched atoms
+                matchedRings[&ring] = {
+                    std::accumulate(matchedRingAtoms.begin(), matchedRingAtoms.end(), 0,
+                                    [](const auto &acc, const auto &jInfo) { return acc + jInfo.second.first; }),
+                    {}};
+                auto &totalRingMatch = matchedRings[&ring].second;
+                for (auto &jInfo : matchedRingAtoms)
+                {
+                    auto *j = jInfo.first;
+                    auto &&[jScore, jMatchPath] = jInfo.second;
+                    std::copy_if(jMatchPath.begin(), jMatchPath.end(), std::back_inserter(totalRingMatch),
+                                 [&totalRingMatch](const auto *i) {
+                                     return std::find(totalRingMatch.begin(), totalRingMatch.end(), i) == totalRingMatch.end();
+                                 });
+                }
+
+                // Matched the ring starting from this ring atom, so break out of the loop
+                break;
+            }
         }
 
-        // If we didn't find a match for the ring, continue to the next one
-        if (ringScore == NETANode::NoMatch)
-            continue;
-
-        ++nMatches;
-
-        // Increase the total score - ringScore (contained atoms) + 1 (for the ring) + 1 (for the size, if specified)
-        totalScore += ringScore + 1;
-        if (sizeValue_ != -1)
-            ++totalScore;
-
         // Don't match more than we need to - check the repeatCount
-        if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
+        if (compareValues(matchedRings.size(), repeatCountOperator_, repeatCount_))
             break;
     }
 
     // Did we find the required number of ring matches?
-    if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
-        return reverseLogic_ ? 1 : NETANode::NoMatch;
-    else
-        ++totalScore;
+    if (reverseLogic_ == compareValues(matchedRings.size(), repeatCountOperator_, repeatCount_))
+        return NETANode::NoMatch;
 
-    return reverseLogic_ ? NETANode::NoMatch : totalScore;
+    // Generate total score and add matched atoms to the path
+    auto totalScore = 0;
+    for (auto &ring : matchedRings)
+    {
+        auto &&[ringScore, ringMatchPath] = ring.second;
+
+        totalScore += ringScore;
+
+        // Track atoms matched in the neighbour branch
+        std::copy_if(ringMatchPath.begin(), ringMatchPath.end(), std::back_inserter(matchPath), [&matchPath](const auto *j) {
+            return std::find(matchPath.begin(), matchPath.end(), j) == matchPath.end();
+        });
+    }
+
+    return totalScore;
 }

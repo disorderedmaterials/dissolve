@@ -20,14 +20,15 @@ class NETANode
     // Node types
     enum class NodeType
     {
+        Base,
         BondCount,
         Character,
         Connection,
         Geometry,
         HydrogenCount,
         Or,
-        Presence,
         Ring,
+        RingAtom,
         Root
     };
     // Return enum options for Node Types
@@ -49,7 +50,7 @@ class NETANode
     {
         NoMatch = -1
     };
-    NETANode(NETADefinition *parent, NodeType type);
+    explicit NETANode(NETADefinition *parent, NodeType type = NodeType::Base);
     NETANode() = default;
     virtual ~NETANode() = default;
 
@@ -136,11 +137,11 @@ class NETANode
     protected:
     // Evaluate the provided sequence and return a score
     static int sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i,
-                             std::vector<const SpeciesAtom *> &atomData);
+                             std::vector<const SpeciesAtom *> &matchPath);
 
     public:
     // Set node to use reverse logic
     void setReverseLogic();
     // Evaluate the node and return its score
-    virtual int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const;
+    virtual int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
 };

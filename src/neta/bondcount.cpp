@@ -4,8 +4,8 @@
 #include "neta/bondcount.h"
 #include "classes/speciesatom.h"
 
-NETABondCountNode::NETABondCountNode(NETADefinition *parent)
-    : NETANode(parent, NETANode::NodeType::BondCount), value_(-1), operator_(NETANode::ComparisonOperator::EqualTo)
+NETABondCountNode::NETABondCountNode(NETADefinition *parent, NETANode::ComparisonOperator op, std::optional<int> value)
+    : NETANode(parent, NETANode::NodeType::BondCount), value_(value), operator_(op)
 {
 }
 
@@ -27,5 +27,8 @@ void NETABondCountNode::set(ComparisonOperator op, int value)
 // Evaluate the node and return its score
 int NETABondCountNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
-    return compareValues(i->nBonds(), operator_, value_) ? 1 : NETANode::NoMatch;
+    if (!value_)
+        return NETANode::NoMatch;
+
+    return compareValues(i->nBonds(), operator_, *value_) ? 1 : NETANode::NoMatch;
 }

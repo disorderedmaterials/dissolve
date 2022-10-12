@@ -17,12 +17,12 @@ bool Forcefield_OPLSAA2005_Aromatics::setUp()
     if (!copyAtomType(oplsAtomTypeById(140), "HC", "-&135"))
         return false;
     // -- Benzene
-    if (!copyAtomType(oplsAtomTypeById(145), "CA", "ring(size=6),-C(n=2),-H(n=1)"))
+    if (!copyAtomType(oplsAtomTypeById(145), "CA", "-C(n=2),-H(n=1),ring(size=6)"))
         return false;
     if (!copyAtomType(oplsAtomTypeById(146), "HA", "-&145"))
         return false;
     // -- Napthalene (or larger aromatics)
-    if (!copyAtomType(oplsAtomTypeById(147), "CNap", "ring(size=6,C(n=6),n>=2),nbonds=3,-C(n=3)", "CA"))
+    if (!copyAtomType(oplsAtomTypeById(147), "CNap", "nbonds=3,-C(n=3),ring(size=6,C(n=6),n>=2)", "CA"))
         return false;
     // -- Toluene
     if (!copyAtomType(oplsAtomTypeById(148), "CT", "nh=3, -C(ring(size=6))"))

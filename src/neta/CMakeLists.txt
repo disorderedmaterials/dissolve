@@ -35,9 +35,8 @@ add_library(
   neta.cpp
   node.cpp
   or.cpp
-  presence.cpp
   ring.cpp
-  root.cpp
+  ringatom.cpp
   NETAErrorListeners.cpp
   NETAVisitor.cpp
   bondcount.h
@@ -48,9 +47,8 @@ add_library(
   neta.h
   node.h
   or.h
-  presence.h
   ring.h
-  root.h
+  ringatom.h
   NETAErrorListeners.h
   NETAVisitor.h
 )

@@ -32,11 +32,11 @@ bool Forcefield_Ludwig_Py5::setUp()
 
     // Atom Types
     addAtomType(Elements::N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.0749, "nc");
-    addAtomType(Elements::C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0725,
+    addAtomType(Elements::C, 2, "ca_o", "nbonds=3,-N,-C,-H,ring(size=6,C(n=5),N)", "Carbon in aromatic ring, ortho", 0.0725,
                 "ca");
-    addAtomType(Elements::C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C", "Carbon in aromatic ring, meta", -0.2245,
+    addAtomType(Elements::C, 3, "ca_m", "nbonds=3,-C,-H,-C,ring(size=6,C(n=5),N)", "Carbon in aromatic ring, meta", -0.2245,
                 "ca");
-    addAtomType(Elements::C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(-C(-N),n=2)", "Carbon in aromatic ring, para",
+    addAtomType(Elements::C, 4, "ca_p", "nbonds=3,-C(-C(-N),n=2),ring(size=6,C(n=5),N)", "Carbon in aromatic ring, para",
                 0.1706, "ca");
     addAtomType(Elements::H, 5, "ha_o", "nbonds=1,-&2", "Hydrogen bound to carbon in aromatic ring, ortho", 0.1751, "ha");
     addAtomType(Elements::H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1760, "ha");
