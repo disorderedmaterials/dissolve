@@ -30,7 +30,10 @@ const std::vector<std::string> &TorsionFunctions::parameters(Form form)
         {TorsionFunctions::Form::Cos3, {"k1", "k2", "k3"}},
         {TorsionFunctions::Form::Cos3C, {"k0", "k1", "k2", "k3"}},
         {TorsionFunctions::Form::Cos4, {"k1", "k2", "k3", "k4"}},
-        {TorsionFunctions::Form::UFFCosine, {"k", "n", "eq"}}};
+        {TorsionFunctions::Form::UFFCosine, {"k", "n", "eq"}},
+        {TorsionFunctions::Form::CosN, {}},
+        {TorsionFunctions::Form::CosNC, {}},
+        {TorsionFunctions::Form::FourierN, {}}};
     return params_[form];
 }
 

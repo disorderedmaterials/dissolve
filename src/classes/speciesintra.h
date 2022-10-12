@@ -161,10 +161,21 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         if (node.contains("parameters"))
         {
             auto names = Functions::parameters(interactionForm());
-            auto map = toml::find<std::map<std::string, double>>(node, "parameters");
             std::vector<double> values;
-            std::transform(names.begin(), names.end(), std::back_inserter(values),
-                           [&map](const auto &name) { return map[name]; });
+            std::map<std::string, double> map;
+            switch (node.at("parameters").type())
+            {
+                case toml::value_t::array:
+                    values = toml::find<std::vector<double>>(node, "parameters");
+                    break;
+                case toml::value_t::table:
+                    map = toml::find<std::map<std::string, double>>(node, "parameters");
+                    std::transform(names.begin(), names.end(), std::back_inserter(values),
+                                   [&map](const auto &name) { return map[name]; });
+                    break;
+                default:
+                    Messenger::error("Cannot understand parameter value");
+            }
             setInteractionFormAndParameters(interactionForm(), values);
         }
     }
@@ -211,8 +222,11 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         {
             SerialisedValue parametersNode;
             std::vector<std::string> parameters = Functions::parameters(interactionForm());
-            for (auto parameterIndex = 0; parameterIndex < values.size(); ++parameterIndex)
-                parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+            if (parameters.empty())
+                parametersNode = values;
+            else
+                for (auto parameterIndex = 0; parameterIndex < values.size(); ++parameterIndex)
+                    parametersNode[parameters[parameterIndex]] = values[parameterIndex];
             result["parameters"] = parametersNode;
         }
 
