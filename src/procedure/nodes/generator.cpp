@@ -37,7 +37,7 @@
 #include "procedure/nodes/transmute.h"
 
 NodeRef nodeGenerator(ProcedureNode::NodeType type, const SerialisedValue &node, const CoreData &data,
-                      std::shared_ptr<SelectProcedureNode> parent)
+                      const std::shared_ptr<SelectProcedureNode> parent)
 {
     NodeRef result;
     switch (type)
