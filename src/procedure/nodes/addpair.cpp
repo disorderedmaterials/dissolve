@@ -298,3 +298,60 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
 
     return true;
 }
+
+SerialisedValue AddPairProcedureNode::serialise() const
+{
+    auto result = ProcedureNode::serialise();
+    result["speciesA"] = speciesA_->name();
+    result["speciesB"] = speciesB_->name();
+
+    if (scaleA_ != defaultScale_)
+        result["scaleA"] = scaleA_;
+    if (scaleB_ != defaultScale_)
+        result["scaleB"] = scaleB_;
+    if (scaleC_ != defaultScale_)
+        result["scaleC"] = scaleC_;
+    if (!rotate_)
+        result["rotate"] = true;
+    if (positioningType_ != PositioningType::Random)
+        result["positioning"] = positioningTypes().serialise(positioningType_);
+    if (population_ != 0)
+        result["population"] = population_.serialise();
+    if (boxAction_ != defaultBoxAction_)
+        result["boxAction"] = boxActionStyles().serialise(boxAction_);
+    if (region_)
+        result["region"] = region_->serialise();
+}
+
+void AddPairProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    scaleA_ = toml::find_or<bool>(node, "scaleA", defaultScale_);
+    scaleB_ = toml::find_or<bool>(node, "scaleB", defaultScale_);
+    scaleC_ = toml::find_or<bool>(node, "scaleC", defaultScale_);
+
+    rotate_ = toml::find_or<bool>(node, "rotate", true);
+
+    population_ = toml::find_or<NodeValue>(node, "population", 0);
+
+    speciesA_ = data.findSpecies(toml::find<std::string>(node, "speciesA"));
+    speciesB_ = data.findSpecies(toml::find<std::string>(node, "speciesB"));
+
+    if (node.contains("boxAction"))
+        boxAction_ = boxActionStyles().deserialise(node.at("boxAction"));
+    else
+        boxAction_ = defaultBoxAction_;
+
+    if (node.contains("density"))
+    {
+        auto magnitude = toml::find<NodeValue>(node.at("density"), "magnitude");
+        auto unit = Units::densityUnits().deserialise(node.at("density").at("unit"));
+        density_ = {magnitude, unit};
+    }
+    else
+        density_ = {0.1, Units::DensityUnits::AtomsPerAngstromUnits};
+    if (node.contains("positioning"))
+        positioningType_ = positioningTypes().deserialise(node.at("Positioning"));
+    else
+        positioningType_ = PositioningType::Random;
+    // TODO: Add Region Parsing Code
+}

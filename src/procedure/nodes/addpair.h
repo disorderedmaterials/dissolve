@@ -73,8 +73,12 @@ class AddPairProcedureNode : public ProcedureNode
     bool rotate_{true};
     // Flags controlling box axis scaling
     bool scaleA_{true}, scaleB_{true}, scaleC_{true};
+    // The default scaling settings
+    static constexpr bool defaultScale_{true};
     // Species to be added
     const Species *speciesA_{nullptr}, *speciesB_{nullptr};
+    // The default box action if none is specified
+    static constexpr AddPairProcedureNode::BoxActionStyle defaultBoxAction_ = AddPairProcedureNode::BoxActionStyle::AddVolume;
 
     /*
      * Execute
@@ -84,4 +88,6 @@ class AddPairProcedureNode : public ProcedureNode
     bool prepare(const ProcedureContext &procedureContext) override;
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
+    void deserialise(const SerialisedValue &node, const CoreData &data) override;
+    SerialisedValue serialise() const override;
 };
