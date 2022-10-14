@@ -160,12 +160,12 @@ void NodeValue::deserialise(const SerialisedValue &node)
                 type_ = DoubleNodeValue;
                 valueD_ = arg;
             }
-            else
+            else if constexpr (std::is_same_v<T, toml::string>)
             {
                 type_ = ExpressionNodeValue;
                 // FIXME: This needs to be handled properly when we
-                // start serialising expressions.
-                expression_.create("FIXME", {});
+                // start serialising expression
+                expression_.create(std::string_view(arg), {});
             }
         },
         node);

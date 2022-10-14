@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
+#include "procedure/nodes/serial_utils.h"
 #include "procedure/nodes/addpair.h"
 #include "base/randombuffer.h"
 #include "classes/atomchangetoken.h"
@@ -321,6 +322,8 @@ SerialisedValue AddPairProcedureNode::serialise() const
         result["boxAction"] = boxActionStyles().serialise(boxAction_);
     if (region_)
         result["region"] = region_->serialise();
+    if (density_.first != 0.1 || density_.second != Units::AtomsPerAngstromUnits)
+        result["density"] = write_density(density_);
 }
 
 void AddPairProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
@@ -338,17 +341,10 @@ void AddPairProcedureNode::deserialise(const SerialisedValue &node, const CoreDa
 
     if (node.contains("boxAction"))
         boxAction_ = boxActionStyles().deserialise(node.at("boxAction"));
-    else
-        boxAction_ = defaultBoxAction_;
 
     if (node.contains("density"))
-    {
-        auto magnitude = toml::find<NodeValue>(node.at("density"), "magnitude");
-        auto unit = Units::densityUnits().deserialise(node.at("density").at("unit"));
-        density_ = {magnitude, unit};
-    }
-    else
-        density_ = {0.1, Units::DensityUnits::AtomsPerAngstromUnits};
+        density_ = find_density<NodeValue>(node.at("density"));
+
     if (node.contains("positioning"))
         positioningType_ = positioningTypes().deserialise(node.at("Positioning"));
     else

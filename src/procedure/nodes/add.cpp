@@ -16,6 +16,7 @@
 #include "procedure/nodes/coordinatesets.h"
 #include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/regionbase.h"
+#include "serial_utils.h"
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)
@@ -354,11 +355,7 @@ SerialisedValue AddProcedureNode::serialise() const
     if (population_ != 0)
         result["population"] = population_.serialise();
     if (density_.first != 0.1 || density_.second != Units::AtomsPerAngstromUnits)
-    {
-        SerialisedValue density;
-        density["magnitude"] = density_.first.serialise();
-        density["unit"] = Units::densityUnits().serialise(density_.second);
-    }
+        result["density"] = write_density(density_);
     if (coordinateSets_)
     {
         result["coordinateSets"] = coordinateSets_->serialise();
@@ -400,11 +397,10 @@ void AddProcedureNode::deserialise(const SerialisedValue &node, const CoreData &
         boxAction_ = defaultBoxAction_;
 
     if (node.contains("density"))
-    {
-        auto magnitude = toml::find<NodeValue>(node.at("density"), "magnitude");
-        auto unit = Units::densityUnits().deserialise(node.at("density").at("unit"));
-        density_ = {magnitude, unit};
-    }
+        density_ = find_density<NodeValue>(node.at("density"));
+    else
+        density_ = {0.1, Units::AtomsPerAngstromUnits};
+
     if (node.contains("region"))
     {
         // FIXME: I need to make a Region node factory that can return the correct type of region.

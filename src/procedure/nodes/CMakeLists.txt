@@ -91,6 +91,7 @@ add_library(
   select.h
   sequence.h
   sum1d.h
+  serial_utils.h
 )
 
 target_include_directories(procedurenodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
