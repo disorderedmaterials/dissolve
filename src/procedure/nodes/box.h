@@ -48,6 +48,4 @@ class BoxProcedureNode : public ProcedureNode
     bool prepare(const ProcedureContext &procedureContext) override;
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
-    SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

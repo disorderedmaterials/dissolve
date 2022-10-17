@@ -317,7 +317,14 @@ SerialisedValue ProcedureNode::serialise() const
 {
     SerialisedValue result;
     result["type"] = nodeTypes().keyword(type_);
+    if(mustBeNamed()) result["name"] = name_;
+    for (auto &[k, v] : keywords_.keywords())
+        result[std::string(k)] = v->serialise();
     return result;
 }
 
-void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data) { return; }
+void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    if (mustBeNamed())
+        name_ = toml::find<std::string>(node, "name");
+}

@@ -48,3 +48,13 @@ bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, st
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }
+
+SerialisedValue BoolKeyword::serialise() const
+{
+    return data_;
+}
+
+void BoolKeyword::deserialise(const SerialisedValue &node)
+{
+    data_ = node.as_boolean();
+}

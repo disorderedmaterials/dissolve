@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "procedure/nodes/aliases.h"
 #include "templates/flags.h"
 #include <memory>
@@ -24,7 +25,7 @@ class Species;
 class SpeciesSite;
 
 // Keyword Base Class
-class KeywordBase
+class KeywordBase : public Serialisable
 {
     public:
     KeywordBase(const std::type_index typeIndex);
@@ -67,6 +68,8 @@ class KeywordBase
     virtual bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) = 0;
     // Serialise data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node) override {};
 
     /*
      * Parse Result
