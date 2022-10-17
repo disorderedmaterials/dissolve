@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 
-#include "procedure/nodes/serial_utils.h"
 #include "procedure/nodes/addpair.h"
 #include "base/randombuffer.h"
 #include "classes/atomchangetoken.h"
@@ -15,6 +14,7 @@
 #include "keywords/nodevalueenumoptions.h"
 #include "keywords/species.h"
 #include "procedure/nodes/regionbase.h"
+#include "procedure/nodes/serial_utils.h"
 
 AddPairProcedureNode::AddPairProcedureNode(const Species *spA, const Species *spB, const NodeValue &population,
                                            const NodeValue &density, Units::DensityUnits densityUnits)

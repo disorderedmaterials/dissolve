@@ -7,15 +7,15 @@
 #include "procedure/nodevalue.h"
 #include <utility>
 
-template <typename T>
-std::pair<T, Units::DensityUnits> find_density(const SerialisedValue &node) {
+template <typename T> std::pair<T, Units::DensityUnits> find_density(const SerialisedValue &node)
+{
     auto magnitude = toml::find<T>(node, "magnitude");
     auto unit = Units::densityUnits().deserialise(node.at("unit"));
     return {magnitude, unit};
 }
 
-template <typename T>
-SerialisedValue write_density(const std::pair<T, Units::DensityUnits> &density) {
+template <typename T> SerialisedValue write_density(const std::pair<T, Units::DensityUnits> &density)
+{
     SerialisedValue result;
     result["magnitude"] = density.first;
     result["unit"] = Units::densityUnits().serialise(density.second);
