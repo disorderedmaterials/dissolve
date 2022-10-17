@@ -76,3 +76,7 @@ bool Vec3NodeValueKeyword::serialise(LineParser &parser, std::string_view keywor
     return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x.asString(true), data_.y.asString(true),
                              data_.z.asString(true));
 }
+
+SerialisedValue Vec3NodeValueKeyword::serialise() const { return data_.serialise(); }
+
+void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node) { data_.deserialise(node); }
