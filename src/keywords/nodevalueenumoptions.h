@@ -115,4 +115,18 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
         return parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(), data_.first.asString(),
                                  optionData_.keyword(data_.second));
     }
+
+    SerialisedValue serialise() const override
+    {
+        SerialisedValue result;
+        result["value"] = data_.first.serialise();
+        result["option"] = optionData_.serialise(data_.second);
+        return result;
+    }
+
+    void deserialise(const SerialisedValue &node) override
+    {
+        data_.first = toml::find<NodeValue>(node, "value");
+        data_.second = optionData_.deserialise(node.at("option"));
+    }
 };
