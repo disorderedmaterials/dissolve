@@ -105,4 +105,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     };
     // Set new option index
     void setEnumerationByIndex(int optionIndex) override { data_ = optionData_.enumerationByIndex(optionIndex); }
+
+    SerialisedValue serialise() const override { return optionData_.keyword(data_); }
+
+    void deserialise(const SerialisedValue &node) { data_ = optionData_.deserialise(node); }
 };
