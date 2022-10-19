@@ -320,7 +320,8 @@ SerialisedValue ProcedureNode::serialise() const
     if (mustBeNamed())
         result["name"] = name_;
     for (auto &[k, v] : keywords_.keywords())
-        result[std::string(k)] = v->serialise();
+        if (!v->isDefault())
+            result[std::string(k)] = v->serialise();
     return result;
 }
 
@@ -330,5 +331,5 @@ void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &dat
         name_ = toml::find<std::string>(node, "name");
     for (auto &[k, v] : keywords_.keywords())
         if (node.contains(std::string(k)))
-            v->deserialise(node.at(std::string(k)));
+            v->deserialise(node.at(std::string(k)), data);
 }

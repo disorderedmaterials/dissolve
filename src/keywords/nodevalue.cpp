@@ -48,4 +48,4 @@ bool NodeValueKeyword::serialise(LineParser &parser, std::string_view keywordNam
 
 SerialisedValue NodeValueKeyword::serialise() const { return data_; }
 
-void NodeValueKeyword::deserialise(const SerialisedValue &node) { data_ = toml::get<NodeValue>(node); }
+void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data) { data_ = toml::get<NodeValue>(node); }

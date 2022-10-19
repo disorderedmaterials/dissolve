@@ -42,5 +42,5 @@ class NodeValueKeyword : public KeywordBase
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
     SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node, const CoreData &cordeData) override;
 };
