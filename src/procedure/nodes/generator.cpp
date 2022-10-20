@@ -36,10 +36,11 @@
 #include "procedure/nodes/sum1d.h"
 #include "procedure/nodes/transmute.h"
 
-NodeRef nodeGenerator(ProcedureNode::NodeType type, const SerialisedValue &node, const CoreData &data,
-                      const std::shared_ptr<SelectProcedureNode> parent)
+NodeRef nodeGenerator(const SerialisedValue &node, const CoreData &data,
+                      const std::shared_ptr<ProcedureNode> parent)
 {
     NodeRef result;
+    ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(node.at("type"));
     switch (type)
     {
         case ProcedureNode::NodeType::Add:
@@ -79,7 +80,7 @@ NodeRef nodeGenerator(ProcedureNode::NodeType type, const SerialisedValue &node,
             result = std::make_shared<CylindricalRegionProcedureNode>();
             break;
         case ProcedureNode::NodeType::DynamicSite:
-            result = std::make_shared<DynamicSiteProcedureNode>(parent);
+            result = std::make_shared<DynamicSiteProcedureNode>(std::dynamic_pointer_cast<SelectProcedureNode>(parent));
             break;
         case ProcedureNode::NodeType::Fit1D:
             result = std::make_shared<Fit1DProcedureNode>();
