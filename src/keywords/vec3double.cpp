@@ -105,7 +105,4 @@ bool Vec3DoubleKeyword::isDefault() const { return data_ == default_; }
 
 SerialisedValue Vec3DoubleKeyword::serialise() const { return data_.serialise(); }
 
-void Vec3DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
-{
-    data_.deserialise(node);
-}
+void Vec3DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
