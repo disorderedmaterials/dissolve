@@ -79,4 +79,7 @@ bool Vec3NodeValueKeyword::serialise(LineParser &parser, std::string_view keywor
 
 SerialisedValue Vec3NodeValueKeyword::serialise() const { return data_.serialise(); }
 
-void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node) { data_.deserialise(node); }
+void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) {
+    data_.deserialise(node); }
+
+bool Vec3NodeValueKeyword::isDefault() const { return data_ == default_; }
