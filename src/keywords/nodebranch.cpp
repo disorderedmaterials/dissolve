@@ -62,6 +62,7 @@ bool NodeBranchKeyword::isDefault() const { return data_ != nullptr; }
 
 SerialisedValue NodeBranchKeyword::serialise() const { return data_->serialise(); }
 
-void NodeBranchKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) {
+void NodeBranchKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
     data_->deserialise(node, coreData);
 }
