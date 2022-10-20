@@ -36,8 +36,7 @@
 #include "procedure/nodes/sum1d.h"
 #include "procedure/nodes/transmute.h"
 
-NodeRef nodeGenerator(const SerialisedValue &node, const CoreData &data,
-                      const std::shared_ptr<ProcedureNode> parent)
+NodeRef nodeGenerator(const SerialisedValue &node, const CoreData &data, const std::shared_ptr<ProcedureNode> parent)
 {
     NodeRef result;
     ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(node.at("type"));
