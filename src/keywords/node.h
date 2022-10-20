@@ -6,6 +6,7 @@
 #include "base/lineparser.h"
 #include "keywords/base.h"
 #include "keywords/nodeunderlay.h"
+#include "procedure/nodes/generator.h"
 #include "procedure/nodes/node.h"
 
 // Base class for NodeKeyword
@@ -102,6 +103,16 @@ template <class N> class NodeKeyword : public NodeKeywordBase
             return false;
 
         return true;
+    }
+
+    bool isDefault() const override { return data_ == nullptr; }
+
+    SerialisedValue serialise() const override { return data_->name(); }
+
+    void deserialise(const SerialisedValue &node, const CoreData &coreData)
+    {
+        auto child = findNode(std::string_view(node.as_string()));
+        setData(child);
     }
 
     /*
