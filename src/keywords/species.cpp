@@ -50,3 +50,12 @@ void SpeciesKeyword::removeReferencesTo(Species *sp)
     if (data_ == sp)
         data_ = nullptr;
 }
+
+// There cannot eb a default species
+bool SpeciesKeyword::isDefault() const { return false; }
+
+SerialisedValue SpeciesKeyword::serialise() const { return data_->name(); }
+void SpeciesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_ = coreData.findSpecies(std::string_view(node.as_string()));
+}
