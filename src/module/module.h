@@ -136,5 +136,5 @@ class Module : public Serialisable
         return results;
     }
     SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node, const CoreData &data);
 };

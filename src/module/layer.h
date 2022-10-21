@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
+#include "classes/coredata.h"
 #include "templates/flags.h"
 #include <map>
 #include <memory>
@@ -100,5 +101,5 @@ class ModuleLayer : public Serialisable
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
     SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData);
 };

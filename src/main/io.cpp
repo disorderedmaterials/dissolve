@@ -180,7 +180,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
     Serialisable::toMap(node, "layers", [this](const std::string &name, const SerialisedValue &data) {
         auto *layer = addProcessingLayer();
         layer->setName(name);
-        layer->deserialise(data);
+        layer->deserialise(data, coreData_);
     });
 }
 

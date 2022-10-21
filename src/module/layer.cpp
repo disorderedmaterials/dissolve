@@ -199,7 +199,7 @@ SerialisedValue ModuleLayer::serialise() const
     Serialisable::fromVector(modules_, "modules", result);
     return result;
 }
-void ModuleLayer::deserialise(const SerialisedValue &node)
+void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     frequency_ = toml::find_or<int>(node, "frequency", 1);
     if (toml::find_or<bool>(node, "disabled", false))
