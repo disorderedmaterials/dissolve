@@ -30,13 +30,15 @@ const ExpressionValue &ExpressionVariable::value() const { return value_; }
 // Return pointer to value
 ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 
-SerialisedValue ExpressionVariable::serialise() const {
+SerialisedValue ExpressionVariable::serialise() const
+{
     SerialisedValue result;
     result["name"] = name_;
     result["value"] = value_;
     return result;
 }
-void ExpressionVariable::deserialise(const SerialisedValue &node) {
+void ExpressionVariable::deserialise(const SerialisedValue &node)
+{
     value_ = toml::find<ExpressionValue>(node, "value");
     setName(toml::find<std::string>(node, "name"));
 }
