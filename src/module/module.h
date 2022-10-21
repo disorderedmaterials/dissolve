@@ -16,7 +16,7 @@ class ModuleWidget;
 class QWidget;
 
 // Module
-class Module
+class Module : public Serialisable
 {
     public:
     explicit Module(std::string typeName);
@@ -135,4 +135,6 @@ class Module
 
         return results;
     }
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node) override;
 };

@@ -185,3 +185,19 @@ std::vector<Module *> Module::allOfType(std::vector<std::string> types)
                  [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
     return modules;
 }
+
+SerialisedValue Module::serialise() const
+{
+    SerialisedValue result;
+    result["name"] = name_;
+    result["type"] = typeName_;
+    if (!enabled_)
+        result["disabled"] = true;
+    return result;
+}
+
+void Module::deserialise(const SerialisedValue &node)
+{
+    name_ = toml::find<std::string>(node, "name");
+    enabled_ = toml::find_or<bool>(node, "disabled", false);
+}

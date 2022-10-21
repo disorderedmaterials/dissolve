@@ -196,6 +196,7 @@ SerialisedValue ModuleLayer::serialise() const
         result["requireEnergyStability"] = true;
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
         result["requireSizeFactors"] = true;
+    Serialisable::fromVector(modules_, "modules", result);
     return result;
 }
 void ModuleLayer::deserialise(const SerialisedValue &node)
@@ -207,4 +208,8 @@ void ModuleLayer::deserialise(const SerialisedValue &node)
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::EnergyStability);
     if (toml::find_or<bool>(node, "requireSieFactors", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
+    Serialisable::toVector(node, "modules", [this](const SerialisedValue &data) {
+        auto *module = append(toml::find<std::string>(data, "type"), {});
+        module->setName(toml::find<std::string>(data, "name"));
+    });
 }
