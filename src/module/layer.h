@@ -4,6 +4,7 @@
 #pragma once
 
 #include "templates/flags.h"
+#include "base/serialiser.h"
 #include <map>
 #include <memory>
 #include <string>
@@ -17,7 +18,7 @@ class Module;
 class ProcessPool;
 
 // Module Layer
-class ModuleLayer
+class ModuleLayer : public Serialisable
 {
     public:
     ModuleLayer() = default;
@@ -98,4 +99,6 @@ class ModuleLayer
     bool setUpAll(Dissolve &dissolve, const ProcessPool &procPool);
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node) override;
 };

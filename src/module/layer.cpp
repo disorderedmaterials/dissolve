@@ -186,3 +186,24 @@ std::vector<Configuration *> ModuleLayer::allTargetedConfigurations() const
 
     return result;
 }
+SerialisedValue ModuleLayer::serialise() const
+{
+    SerialisedValue result;
+    result["frequency"] = frequency_;
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
+        result["disabled"] = true;
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::EnergyStability))
+        result["requireEnergyStability"] = true;
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
+        result["requireSizeFactors"] = true;
+    return result;
+}
+void ModuleLayer::deserialise(const SerialisedValue &node) {
+    frequency_ = toml::find_or<int>(node, "frequency", 1);
+    if (toml::find_or<bool>(node, "disabled", false))
+        runControlFlags_.setFlag(ModuleLayer::RunControlFlag::Disabled);
+    if (toml::find_or<bool>(node, "requireEnergyStability", false))
+        runControlFlags_.setFlag(ModuleLayer::RunControlFlag::EnergyStability);
+    if (toml::find_or<bool>(node, "requireSieFactors", false))
+        runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
+}

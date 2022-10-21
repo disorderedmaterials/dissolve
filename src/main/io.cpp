@@ -147,6 +147,8 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable(configurations(), "configurations", root);
 
+    Serialisable::fromVectorToTable(processingLayers_, "layers", root);
+
     return root;
 }
 
@@ -165,15 +167,25 @@ void Dissolve::deserialise(const SerialisedValue &node)
         if (!mastersNode.is_uninitialized())
             coreData_.deserialiseMaster(mastersNode);
     }
-    Serialisable::toMap(node, "species", [this](const std::string &name, const SerialisedValue &data) {
-        species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_);
-    });
+    Serialisable::toMap(node, "species",
+                        [this](const std::string &name, const SerialisedValue &data)
+                        { species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
 
-    Serialisable::toMap(node, "configurations", [this](const std::string &name, const SerialisedValue &data) {
-        auto *cfg = addConfiguration();
-        cfg->setName(name);
-        cfg->deserialise(data, coreData_);
-    });
+    Serialisable::toMap(node, "configurations",
+                        [this](const std::string &name, const SerialisedValue &data)
+                        {
+                            auto *cfg = addConfiguration();
+                            cfg->setName(name);
+                            cfg->deserialise(data, coreData_);
+                        });
+
+    Serialisable::toMap(node, "layers",
+                        [this](const std::string &name, const SerialisedValue &data)
+                        {
+                            auto *layer = addProcessingLayer();
+                            layer->setName(name);
+                            layer->deserialise(data);
+                        });
 }
 
 // Load input from supplied file
