@@ -59,3 +59,15 @@ bool ParametersProcedureNode::prepare(const ProcedureContext &procedureContext) 
 
 // Execute node
 bool ParametersProcedureNode::execute(const ProcedureContext &procedureContext) { return true; }
+SerialisedValue ParametersProcedureNode::serialise() const {
+    SerialisedValue result;
+    for(auto &param : parameters_)
+            result[std::string(param->name())] = param->value();
+    return result;
+}
+void ParametersProcedureNode::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for(auto &[k, v] : node.as_table())
+        if (k != "type")
+        parameters_.push_back(std::make_shared<ExpressionVariable>(k, toml::get<ExpressionValue>(v)));
+}

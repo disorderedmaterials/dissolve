@@ -40,6 +40,8 @@ class ParametersProcedureNode : public ProcedureNode
                                                      std::shared_ptr<ExpressionVariable> excludeParameter) override;
     // Return vector of all parameters for this node
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 
     /*
      * Execute
