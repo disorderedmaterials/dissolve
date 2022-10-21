@@ -198,7 +198,8 @@ SerialisedValue ModuleLayer::serialise() const
         result["requireSizeFactors"] = true;
     return result;
 }
-void ModuleLayer::deserialise(const SerialisedValue &node) {
+void ModuleLayer::deserialise(const SerialisedValue &node)
+{
     frequency_ = toml::find_or<int>(node, "frequency", 1);
     if (toml::find_or<bool>(node, "disabled", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::Disabled);

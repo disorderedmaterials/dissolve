@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "templates/flags.h"
 #include "base/serialiser.h"
+#include "templates/flags.h"
 #include <map>
 #include <memory>
 #include <string>
