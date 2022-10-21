@@ -27,6 +27,8 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     ProcedureNode *parentNode_;
 
     public:
+    // Check if the value has changed
+    bool isDefault() const override;
     // Return reference to vector of data
     std::vector<std::shared_ptr<ExpressionVariable>> &data();
     const std::vector<std::shared_ptr<ExpressionVariable>> &data() const;
@@ -45,4 +47,6 @@ class ExpressionVariableVectorKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

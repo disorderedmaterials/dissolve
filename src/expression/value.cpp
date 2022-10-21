@@ -132,3 +132,21 @@ bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValu
 {
     return ((a.type_ == ValueType::Double) && (b.type_ == ValueType::Double));
 }
+SerialisedValue ExpressionValue::serialise() const {
+    switch (type_) {
+        case ValueType::Integer:
+            return valueI_;
+        case ValueType::Double:
+            return valueD_;
+    }
+}
+void ExpressionValue::deserialise(const SerialisedValue &node) {
+    if (node.is_integer()) {
+        type_ = ValueType::Integer;
+        valueI_ = node.as_integer();
+    }
+    else {
+        type_ = ValueType::Double;
+        valueD_ = node.as_floating();
+    }
+}
