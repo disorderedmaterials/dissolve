@@ -45,3 +45,19 @@ bool StringDoubleVectorKeyword::serialise(LineParser &parser, std::string_view k
 
     return true;
 }
+SerialisedValue StringDoubleVectorKeyword::serialise() const
+{
+    std::vector<SerialisedValue> result;
+    for (auto &[name, value] : data_)
+    {
+        SerialisedValue item = {{"name", name}, {"value", value}};
+        result.push_back(item);
+    }
+    return result;
+}
+
+void StringDoubleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto item : node.as_array())
+        data_.emplace_back(toml::find<std::string>(item, "name"), toml::find<double>(item, "value"));
+}
