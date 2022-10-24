@@ -218,7 +218,7 @@ SerialisedValue Species::serialise() const
     Serialisable::fromVector<>(torsions_, "torsions", species);
     Serialisable::fromVector<>(impropers_, "impropers", species);
     Serialisable::fromVector<>(isotopologues_, "isotopologues", species);
-    Serialisable::fromVector<>(sites_, "sites", species);
+    Serialisable::fromVectorToTable<>(sites_, "sites", species);
 
     return species;
 }
@@ -256,7 +256,8 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
     Serialisable::toVector(node, "isotopologues", [this, &coreData](const SerialisedValue &iso) {
         isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(iso, coreData);
     });
-    Serialisable::toVector(node, "sites", [this, &coreData](const SerialisedValue &site) {
-        sites_.emplace_back(std::make_unique<SpeciesSite>(this))->deserialise(site);
+
+    Serialisable::toMap(node, "sites", [this, &coreData](const std::string &name, const SerialisedValue &site) {
+        sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site);
     });
 }
