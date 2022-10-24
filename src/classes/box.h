@@ -16,7 +16,7 @@ class Data1D;
 class ProcessPool;
 
 // Basic Box Definition
-class Box : public Serialisable
+class Box : public Serialisable<>
 {
     public:
     // Box Type Enum

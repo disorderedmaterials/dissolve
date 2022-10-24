@@ -7,7 +7,7 @@
 #include <string>
 
 // Expression Value
-class ExpressionValue : public Serialisable
+class ExpressionValue : public Serialisable<>
 {
     public:
     ExpressionValue();

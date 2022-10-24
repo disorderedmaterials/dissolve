@@ -19,7 +19,7 @@ class Module;
 class ProcessPool;
 
 // Module Layer
-class ModuleLayer : public Serialisable
+class ModuleLayer : public Serialisable<const CoreData &>
 {
     public:
     ModuleLayer() = default;
@@ -101,5 +101,5 @@ class ModuleLayer : public Serialisable
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
     SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node, const CoreData &coreData);
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

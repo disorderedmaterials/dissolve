@@ -65,7 +65,7 @@ class CoreData
      * Master Intramolecular Terms
      */
     private:
-    class Masters : public Serialisable
+    class Masters : public Serialisable<>
     {
         public:
         // Master Bond parameters for Species

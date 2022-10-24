@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-class SerializablePairPotential : public Serialisable
+class SerializablePairPotential : public Serialisable<>
 {
     private:
     double &range_;

@@ -11,7 +11,7 @@
 #include <stdexcept>
 
 // 3D vector
-template <class T> class Vec3 : public Serialisable
+template <class T> class Vec3 : public Serialisable<>
 {
     public:
     Vec3<T>() : x(T()), y(T()), z(T()){};

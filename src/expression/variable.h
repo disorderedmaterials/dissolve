@@ -6,7 +6,7 @@
 #include "expression/value.h"
 
 // Variable
-class ExpressionVariable : public Serialisable
+class ExpressionVariable : public Serialisable<>
 {
     public:
     ExpressionVariable(const ExpressionValue &value = ExpressionValue());

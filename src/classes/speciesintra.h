@@ -16,7 +16,7 @@ class SpeciesAtom;
 class Species;
 
 // Base class for intramolecular interactions within Species
-template <class Intra, class Functions> class SpeciesIntra : public Serialisable
+template <class Intra, class Functions> class SpeciesIntra : public Serialisable<>
 {
     public:
     explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form){};

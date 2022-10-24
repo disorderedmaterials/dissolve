@@ -8,7 +8,7 @@
 #include "templates/optionalref.h"
 
 // Node Value
-class NodeValue : public Serialisable
+class NodeValue : public Serialisable<>
 {
     public:
     NodeValue();

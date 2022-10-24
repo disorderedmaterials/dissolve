@@ -16,7 +16,7 @@ class ModuleWidget;
 class QWidget;
 
 // Module
-class Module : public Serialisable
+class Module : public Serialisable<const CoreData &>
 {
     public:
     explicit Module(std::string typeName);
@@ -136,5 +136,5 @@ class Module : public Serialisable
         return results;
     }
     SerialisedValue serialise() const override;
-    void deserialise(const SerialisedValue &node, const CoreData &data);
+    void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

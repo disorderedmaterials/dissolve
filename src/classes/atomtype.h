@@ -32,7 +32,7 @@ class ShortRangeFunctions
 };
 
 // AtomType Definition
-class AtomType : public Serialisable
+class AtomType : public Serialisable<>
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);

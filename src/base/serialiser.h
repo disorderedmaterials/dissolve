@@ -12,13 +12,13 @@
 using SerialisedValue = toml::value;
 
 // An interface for classes that can be serialised into an input file
-class Serialisable
+template <typename... Contexts> class Serialisable
 {
     public:
     // Express as a tree node
     virtual SerialisedValue serialise() const = 0;
     // Read values from a tree node
-    virtual void deserialise(const SerialisedValue &node) { return; }
+    virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
 
     /* Functions that hook into the toml11 library */
     // Wrapper for deserialise that toml11 will check for

@@ -21,7 +21,7 @@ class Isotopologue;
 class Molecule;
 
 // Dissolve Main Class
-class Dissolve : public Serialisable
+class Dissolve : public Serialisable<>
 {
     public:
     Dissolve(CoreData &coreData);

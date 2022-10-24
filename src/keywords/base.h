@@ -25,7 +25,7 @@ class Species;
 class SpeciesSite;
 
 // Keyword Base Class
-class KeywordBase : public Serialisable
+class KeywordBase : public Serialisable<CoreData const &>
 {
     public:
     KeywordBase(const std::type_index typeIndex);
@@ -71,7 +71,7 @@ class KeywordBase : public Serialisable
     // Serialise data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
     SerialisedValue serialise() const override;
-    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData){};
+    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
 
     /*
      * Parse Result
