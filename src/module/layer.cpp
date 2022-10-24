@@ -208,8 +208,9 @@ void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreD
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::EnergyStability);
     if (toml::find_or<bool>(node, "requireSieFactors", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
-    Serialisable::toVector(node, "modules", [this](const SerialisedValue &data) {
+    Serialisable::toVector(node, "modules", [&coreData, this](const SerialisedValue &data) {
         auto *module = append(toml::find<std::string>(data, "type"), {});
         module->setName(toml::find<std::string>(data, "name"));
+        module->deserialise(data, coreData);
     });
 }

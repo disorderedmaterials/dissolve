@@ -193,6 +193,13 @@ SerialisedValue Module::serialise() const
     result["type"] = typeName_;
     if (!enabled_)
         result["disabled"] = true;
+        for (auto &[k, v] : keywords_.keywords())
+            if (!v->isDefault())
+            {
+                auto value = v->serialise();
+                if (!value.is_uninitialized())
+                    result[std::string(k)] = v->serialise();
+            }
     return result;
 }
 
@@ -200,4 +207,8 @@ void Module::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     name_ = toml::find<std::string>(node, "name");
     enabled_ = toml::find_or<bool>(node, "disabled", false);
+
+        for (auto &[k, v] : keywords_.keywords())
+            if (node.contains(std::string(k)))
+                v->deserialise(node.at(std::string(k)), data);
 }
