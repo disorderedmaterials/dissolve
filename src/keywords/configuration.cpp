@@ -55,3 +55,16 @@ void ConfigurationKeyword::removeReferencesTo(Configuration *cfg)
     if (data_ == cfg)
         data_ = nullptr;
 }
+
+SerialisedValue ConfigurationKeyword::serialise() const
+{
+    if (data_)
+        return data_->name();
+    else
+        return name();
+}
+
+void ConfigurationKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_ = coreData.findConfiguration(std::string_view(node.as_string()));
+}
