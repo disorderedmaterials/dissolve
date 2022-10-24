@@ -327,7 +327,8 @@ SerialisedValue ProcedureNode::serialise() const
     if (mustBeNamed())
         result["name"] = name_;
     for (auto &[k, v] : keywords_.keywords())
-        if (!v->isDefault()) {
+        if (!v->isDefault())
+        {
             auto value = v->serialise();
             if (!value.is_uninitialized())
                 result[toml_format(k)] = value;
