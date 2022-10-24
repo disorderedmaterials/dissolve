@@ -87,3 +87,20 @@ bool IntegerStringVectorKeyword::serialise(LineParser &parser, std::string_view 
 
     return true;
 }
+SerialisedValue IntegerStringVectorKeyword::serialise() const
+{
+    std::vector<SerialisedValue> result;
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](auto pair) {
+        SerialisedValue result;
+        result["indices"] = std::get<0>(pair);
+        result["values"] = std::get<1>(pair);
+        return result;
+    });
+    return result;
+}
+
+void IntegerStringVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto item : node.as_array())
+        data_.emplace_back(toml::find<std::vector<int>>(item, "indices"), toml::find<std::vector<std::string>>(item, "values"));
+}
