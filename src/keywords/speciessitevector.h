@@ -52,4 +52,8 @@ class SpeciesSiteVectorKeyword : public KeywordBase
     void removeReferencesTo(Species *sp) override;
     // Prune any references to the supplied SpeciesSite in the contained data
     void removeReferencesTo(SpeciesSite *spSite) override;
+
+    public:
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
