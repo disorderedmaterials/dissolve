@@ -119,3 +119,20 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
 {
     return keywords_.serialise(parser, fmt::format("{}  ", prefix));
 }
+SerialisedValue FileAndFormat::serialise() const
+{
+    SerialisedValue result;
+    result["name"] = filename_;
+    result["format"] = formats_.keywordByIndex(formats_.index());
+    return keywords_.serialiseOnto(result);
+}
+void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    SerialisedValue result;
+    filename_ = toml::find<std::string>(node, "name");
+    auto idx = formats_.keywordIndex(toml::find<std::string>(node, "format"));
+    if (!idx)
+        throw toml::err("Unknown file format");
+    formats_.setIndex(*idx);
+    keywords_.deserialiseFrom(node, coreData);
+}
