@@ -313,34 +313,18 @@ bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
     return true;
 }
 
-std::string toml_format(const std::string_view original)
-{
-    auto result = std::string(original);
-    result[0] = tolower(result[0]);
-    return result;
-}
-
 SerialisedValue ProcedureNode::serialise() const
 {
     SerialisedValue result;
     result["type"] = nodeTypes().keyword(type_);
     if (mustBeNamed())
         result["name"] = name_;
-    for (auto &[k, v] : keywords_.keywords())
-        if (!v->isDefault())
-        {
-            auto value = v->serialise();
-            if (!value.is_uninitialized())
-                result[toml_format(k)] = value;
-        }
-    return result;
+    return keywords_.serialiseOnto(result);
 }
 
 void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     if (mustBeNamed())
         name_ = toml::find<std::string>(node, "name");
-    for (auto &[k, v] : keywords_.keywords())
-        if (node.contains(toml_format(k)))
-            v->deserialise(node.at(toml_format(k)), data);
+    keywords_.deserialiseFrom(node, data);
 }
