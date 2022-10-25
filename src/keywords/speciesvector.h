@@ -44,4 +44,10 @@ class SpeciesVectorKeyword : public KeywordBase
     protected:
     // Prune any references to the supplied Species in the contained data
     void removeReferencesTo(Species *sp) override;
+
+    public:
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+
+    public:
+    SerialisedValue serialise() const override;
 };
