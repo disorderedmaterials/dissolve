@@ -65,3 +65,10 @@ bool ValueStoreKeyword::serialise(LineParser &parser, std::string_view keywordNa
 
     return true;
 }
+
+SerialisedValue ValueStoreKeyword::serialise() const { return data_; }
+
+void ValueStoreKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_.deserialise(node, coreData);
+}

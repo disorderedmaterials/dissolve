@@ -3,13 +3,14 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "io/import/values.h"
 #include "templates/optionalref.h"
 #include <list>
 #include <vector>
 
 // Value Store
-class ValueStore
+class ValueStore : public Serialisable<const CoreData &>
 {
     public:
     ValueStore() = default;
@@ -32,4 +33,6 @@ class ValueStore
     OptionalReferenceWrapper<const std::vector<double>> data(std::string_view name) const;
     // Return vector of all data
     const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileFormat>> &data() const;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

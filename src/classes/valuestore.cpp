@@ -43,3 +43,27 @@ OptionalReferenceWrapper<const std::vector<double>> ValueStore::data(std::string
 
 // Return vector of all data
 const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileFormat>> &ValueStore::data() const { return data_; }
+
+SerialisedValue ValueStore::serialise() const
+{
+    SerialisedValue result = toml::array{};
+    for (auto &[tag, data, format] : data_)
+    {
+        SerialisedValue item;
+        item["tag"] = tag;
+        item["values"] = data;
+        item["format"] = format;
+        result.push_back(item);
+    }
+    return result;
+}
+void ValueStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto &item : node.as_array())
+    {
+        auto &[tag, data, format] = data_.emplace_back();
+        tag = toml::find<std::string>(item, "tag");
+        data = toml::find<std::vector<double>>(item, "values");
+        format.deserialise(item.at("format"), coreData);
+    }
+}
