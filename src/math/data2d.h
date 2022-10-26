@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "base/version.h"
 #include "math/data2dbase.h"
 #include "templates/array2d.h"
@@ -11,7 +12,7 @@
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public Data2DBase
+class Data2D : public Data2DBase, public Serialisable<>
 {
     public:
     Data2D();
@@ -96,6 +97,8 @@ class Data2D : public Data2DBase
     /*
      * Operators
      */
+    SerialisedValue serialise() const override;
+
     public:
     void operator=(const Data2D &source);
     void operator+=(const double delta);

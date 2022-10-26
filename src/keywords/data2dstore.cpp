@@ -53,3 +53,4 @@ bool Data2DStoreKeyword::serialise(LineParser &parser, std::string_view keywordN
 
     return true;
 }
+SerialisedValue Data2DStoreKeyword::serialise() const { return data_; }

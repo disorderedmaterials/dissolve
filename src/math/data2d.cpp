@@ -419,3 +419,14 @@ bool Data2D::serialise(LineParser &parser) const
 
     return true;
 }
+SerialisedValue Data2D::serialise() const
+{
+    SerialisedValue result;
+    result["tag"] = tag_;
+    result["x"] = x_;
+    result["y"] = y_;
+    result["values"] = values_.linearArray();
+    if (hasError_)
+        result["errors"] = errors_.linearArray();
+    return result;
+}

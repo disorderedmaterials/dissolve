@@ -43,3 +43,17 @@ OptionalReferenceWrapper<const Data2D> Data2DStore::data(std::string_view name) 
 
 // Return vector of all data
 const std::vector<std::shared_ptr<std::pair<Data2D, Data2DImportFileFormat>>> &Data2DStore::data() const { return data_; }
+SerialisedValue Data2DStore::serialise() const
+{
+
+    if (data_.empty())
+        return {};
+    SerialisedValue result = toml::array{};
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) {
+        SerialisedValue result;
+        result["data"] = item->first;
+        result["format"] = item->second;
+        return result;
+    });
+    return result;
+}
