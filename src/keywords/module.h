@@ -100,6 +100,23 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     /*
      * Object Management
      */
+    SerialisedValue serialise() const override
+    {
+        if (data_)
+            return data_->name();
+        return {};
+    }
+
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override
+    {
+        auto *module = Module::find(std::string(node.as_string()));
+        if (!module)
+            throw toml::err(
+                fmt::format("Module '{}' given to keyword {} doesn't exist.\n", node.as_string(), KeywordBase::name()));
+
+        setData(module);
+    }
+
     protected:
     // Prune any references to the supplied Module in the contained data
     void removeReferencesTo(Module *module) override
