@@ -4,6 +4,7 @@
 #include "classes/data1dstore.h"
 #include "base/lineparser.h"
 #include "io/import/data1d.h"
+#include <algorithm>
 
 /*
  * Data
@@ -43,3 +44,26 @@ OptionalReferenceWrapper<const Data1D> Data1DStore::data(std::string_view name) 
 
 // Return vector of all data
 const std::vector<std::shared_ptr<std::pair<Data1D, Data1DImportFileFormat>>> &Data1DStore::data() const { return data_; }
+SerialisedValue Data1DStore::serialise() const
+{
+    if (data_.empty())
+        return {};
+    SerialisedValue result = toml::array{};
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) {
+        SerialisedValue result;
+        result["data"] = item->first;
+        result["format"] = item->second;
+        return result;
+    });
+    return result;
+}
+void Data1DStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    auto &arr = node.as_array();
+    std::transform(arr.begin(), arr.end(), std::back_inserter(data_), [&coreData](const auto &item) {
+        auto pair = std::make_shared<std::pair<Data1D, Data1DImportFileFormat>>();
+        pair->first.deserialise(item.at("data"));
+        pair->second.deserialise(item.at("format"), coreData);
+        return pair;
+    });
+}

@@ -58,3 +58,9 @@ bool Data1DStoreKeyword::serialise(LineParser &parser, std::string_view keywordN
 
     return true;
 }
+
+SerialisedValue Data1DStoreKeyword::serialise() const { return data_; }
+void Data1DStoreKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_.deserialise(node, coreData);
+}

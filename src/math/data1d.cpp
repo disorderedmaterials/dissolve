@@ -417,3 +417,28 @@ bool Data1D::serialise(LineParser &parser) const
 
     return true;
 }
+
+SerialisedValue Data1D::serialise() const
+{
+    SerialisedValue result;
+    result["tag"] = tag_;
+    result["x"] = x_;
+    result["y"] = values_;
+    if (hasError_)
+        result["errors"] = errors_;
+    return result;
+}
+
+void Data1D::deserialise(const SerialisedValue &node)
+{
+    tag_ = toml::find<std::string>(node, "tag");
+    x_ = toml::find<std::vector<double>>(node, "x");
+    values_ = toml::find<std::vector<double>>(node, "y");
+    if (node.contains("errors"))
+    {
+        hasError_ = true;
+        errors_ = toml::find<std::vector<double>>(node, "errors");
+    }
+    else
+        hasError_ = false;
+}

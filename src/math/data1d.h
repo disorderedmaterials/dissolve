@@ -5,12 +5,13 @@
 
 #include "base/lineparser.h"
 #include "base/processpool.h"
+#include "base/serialiser.h"
 #include "base/version.h"
 #include "math/data1dbase.h"
 #include <string>
 
 // One-Dimensional Data
-class Data1D : public Data1DBase
+class Data1D : public Data1DBase, public Serialisable<>
 {
     public:
     Data1D();
@@ -111,4 +112,6 @@ class Data1D : public Data1DBase
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node) override;
 };

@@ -3,13 +3,14 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "io/import/data1d.h"
 #include "math/data1d.h"
 #include "templates/optionalref.h"
 #include <list>
 
 // Data1D Store
-class Data1DStore
+class Data1DStore : public Serialisable<const CoreData &>
 {
     public:
     Data1DStore() = default;
@@ -32,4 +33,6 @@ class Data1DStore
     OptionalReferenceWrapper<const Data1D> data(std::string_view name) const;
     // Return vector of all data
     const std::vector<std::shared_ptr<std::pair<Data1D, Data1DImportFileFormat>>> &data() const;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
