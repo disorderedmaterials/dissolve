@@ -88,6 +88,7 @@ const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isot
 SerialisedValue Isotopologue::serialise() const
 {
     SerialisedValue isotopologue;
+    isotopologue["name"] = name_;
     for (auto &&[type, isotope] : isotopes_)
         isotopologue[type->name().data()] = Sears91::A(isotope);
     return isotopologue;
@@ -95,8 +96,11 @@ SerialisedValue Isotopologue::serialise() const
 
 void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
+    name_ = toml::find<std::string>(node, "name");
     for (auto &[name, value] : node.as_table())
     {
+        if (value.is_string())
+            continue;
         auto at = coreData.findAtomType(name);
         setAtomTypeIsotope(at, Sears91::isotope(at->Z(), value.as_integer()));
     }
