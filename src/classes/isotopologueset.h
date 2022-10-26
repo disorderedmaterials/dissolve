@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "classes/isotopologues.h"
 #include "templates/optionalref.h"
 #include <vector>
@@ -13,7 +14,7 @@ class Isotopologue;
 class LineParser;
 
 // IsotopologueSet - Isotopologues for one or more Species
-class IsotopologueSet
+class IsotopologueSet : public Serialisable<const CoreData &>
 {
     public:
     IsotopologueSet() = default;
@@ -55,4 +56,6 @@ class IsotopologueSet
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser);
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

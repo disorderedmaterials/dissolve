@@ -12,7 +12,8 @@ class IsotopologueSetKeyword : public KeywordBase
     public:
     explicit IsotopologueSetKeyword(IsotopologueSet &data);
     ~IsotopologueSetKeyword() override = default;
-
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
     /*
      * Data
      */

@@ -155,3 +155,35 @@ bool Isotopologues::serialise(LineParser &parser) const
 
     return true;
 }
+SerialisedValue Isotopologues::serialise() const
+{
+    SerialisedValue result;
+    result["name"] = species_->name();
+    result["population"] = speciesPopulation_;
+
+    SerialisedValue mix;
+    for (const auto &isoWeight : mix_)
+        mix[std::string(isoWeight.isotopologue()->name())] = isoWeight.weight();
+
+    result["mix"] = mix;
+
+    return result;
+}
+void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    species_ = coreData.findSpecies(toml::find<std::string>(node, "name"));
+    speciesPopulation_ = toml::find<double>(node, "population");
+
+    Serialisable::toMap(node, "mix", [&coreData, this](const auto &name, const auto &item) {
+        auto iso = species_->findIsotopologue(name);
+        if (!iso)
+        {
+            std::cout << fmt::format("Cannot find iso {} in list of length {}", name, species_->isotopologues().size())
+                      << std::endl;
+            for (auto &log : species_->isotopologues())
+                std::cout << log->name() << std::endl;
+            throw toml::err(fmt::format("Cannot find iso {}", name));
+        }
+        add(iso, item.as_floating());
+    });
+}

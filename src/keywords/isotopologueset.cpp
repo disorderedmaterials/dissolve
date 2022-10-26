@@ -70,3 +70,10 @@ void IsotopologueSetKeyword::removeReferencesTo(Species *sp) { data_.remove(sp);
 
 // Prune any references to the supplied Isotopologue in the contained data
 void IsotopologueSetKeyword::removeReferencesTo(Isotopologue *iso) { data_.remove(iso); }
+
+SerialisedValue IsotopologueSetKeyword::serialise() const { return data_; }
+
+void IsotopologueSetKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_.deserialise(node, coreData);
+}
