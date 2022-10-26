@@ -33,6 +33,7 @@ class StringPairVectorKeyword : public KeywordBase
      * Arguments
      */
     public:
+    SerialisedValue serialise() const override;
     // Return minimum number of arguments accepted
     int minArguments() const override;
     // Return maximum number of arguments accepted
@@ -41,4 +42,5 @@ class StringPairVectorKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
