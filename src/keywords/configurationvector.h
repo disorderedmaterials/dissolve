@@ -44,4 +44,8 @@ class ConfigurationVectorKeyword : public KeywordBase
     protected:
     // Prune any references to the supplied Configuration in the contained data
     void removeReferencesTo(Configuration *cfg) override;
+
+    public:
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

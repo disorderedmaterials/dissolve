@@ -67,3 +67,30 @@ void ConfigurationVectorKeyword::removeReferencesTo(Configuration *cfg)
 {
     data_.erase(std::remove(data_.begin(), data_.end(), cfg), data_.end());
 }
+
+SerialisedValue ConfigurationVectorKeyword::serialise() const
+{
+    if (data_.empty())
+        return {};
+    SerialisedValue result = toml::array{};
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result),
+                   [](const auto &cfg) { return std::string(cfg->name()); });
+    return result;
+}
+
+void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto &name : node.as_array())
+    {
+        auto *cfg = coreData.findConfiguration(std::string_view(name.as_string()));
+        if (!cfg)
+            throw toml::err(
+                fmt::format("Error defining Configuration targets - no Configuration named '{}' exists.\n", name.as_string()));
+
+        // Check that the configuration isn't already present
+        if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
+            throw toml::err(fmt::format("Configuration '{}' has already been referenced.\n", cfg->name()));
+
+        data_.push_back(cfg);
+    }
+}
