@@ -73,3 +73,31 @@ void AtomTypeVectorKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
     if (it != data_.end())
         data_.erase(it);
 }
+
+SerialisedValue AtomTypeVectorKeyword::serialise() const
+{
+    SerialisedValue result = toml::array{};
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) { return item->name(); });
+    return result;
+}
+
+void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (const auto &item : node.as_array())
+    {
+
+        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&item](const auto atomType) {
+            return DissolveSys::sameString(atomType->name(), std::string_view(item.as_string()));
+        });
+        if (it == coreData.atomTypes().end())
+            throw toml::err(fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n", item.as_string(), name()));
+        auto atomType = *it;
+
+        // If the AtomType is already present, complain
+        if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
+            throw toml::err(fmt::format("AtomType '{}' specified in selection twice.\n", item.as_string()));
+
+        // All OK - add it to our vector
+        data_.push_back(atomType);
+    }
+}
