@@ -34,9 +34,9 @@ MolShakeModule::MolShakeModule() : Module("MolShake")
                                             "Step size in Angstroms for the translational component of the Monte Carlo moves",
                                             translationStepSize_, 0.0001, 100.0);
     keywords_.add<DoubleKeyword>("Control", "TranslationStepSizeMin", "Minimum step size for translations (Angstroms)",
-                                 translationStepSizeMin_, 0.0001);
+                                 translationStepSizeMin_, 0.0001, 100.0);
     keywords_.add<DoubleKeyword>("Control", "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)",
-                                 translationStepSizeMax_, 100.0);
+                                 translationStepSizeMax_, 0.0001, 100.0);
     keywords_.add<SpeciesVectorKeyword>("Control", "RestrictToSpecies", "Restrict the calculation to the specified Species",
                                         restrictToSpecies_);
 }
