@@ -26,49 +26,51 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Get the module and decide on the PartialSet data name we're looking for
     if (targetModule_.empty())
         return Messenger::error("No target module set.");
-    const auto *targetModule = targetModule_.front();
-    if (!targetModule)
-        return Messenger::error("No target module set.\n");
 
-    // Print summary of parameters
-    Messenger::print("Accumulate: Source module is '{}'.\n", targetModule->name());
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");
 
-    // Is the target module / data type a valid combination?
-    auto targetModule_It = std::find_if(validTargets.begin(), validTargets.end(),
-                                        [targetModule](const auto &target) { return target.first == targetModule->type(); });
-    if (targetModule_It == validTargets.end())
-        return Messenger::error("Module of type '{}' is not a valid target.\n", targetModule->type());
-    auto dataName = targetModule_It->second[targetPartialSet_];
-    if (dataName.empty())
-        return Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
-                                targetPartialSet().keyword(targetPartialSet_), targetModule->type());
-
-    // Find the target data
-    auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
-    if (!targetSet)
+    for (const auto *targetModule : targetModule_)
     {
-        Messenger::print("Target PartialSet data '{}' in module '{}' does not yet exist.\n",
-                         targetPartialSet().keyword(targetPartialSet_), targetModule->name());
-        return true;
+        // Print summary of parameters
+        Messenger::print("Accumulating data from module '{}'...\n", targetModule->name());
+
+        // Is the target module / data type a valid combination?
+        auto targetModule_It = std::find_if(validTargets.begin(), validTargets.end(), [targetModule](const auto &target) {
+            return target.first == targetModule->type();
+        });
+        if (targetModule_It == validTargets.end())
+            return Messenger::error("Module of type '{}' is not a valid target.\n", targetModule->type());
+        auto dataName = targetModule_It->second[targetPartialSet_];
+        if (dataName.empty())
+            return Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
+                                    targetPartialSet().keyword(targetPartialSet_), targetModule->type());
+
+        // Find the target data
+        auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
+        if (!targetSet)
+        {
+            Messenger::print("Target PartialSet data '{}' in module '{}' does not yet exist.\n",
+                             targetPartialSet().keyword(targetPartialSet_), targetModule->name());
+            return true;
+        }
+
+        // Realise the accumulated partial set
+        auto &accumulated = dissolve.processingModuleData().realise<PartialSetAccumulator>(
+            "Accumulation", name(), GenericItem::ItemFlag::InRestartFileFlag);
+
+        accumulated += *targetSet;
+
+        Messenger::print("Accumulated data count = {}.\n", accumulated.nAccumulated());
+
+        // Save data if requested
+        std::vector<std::string> suffixes = {"gr", "sq", "gr"};
+        std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
+        if (save_ &&
+            (!MPIRunMaster(procPool, accumulated.save(name_, dataName, suffixes[targetPartialSet_], units[targetPartialSet_]))))
+            return false;
     }
-
-    // Realise the accumulated partial set
-    auto &accumulated = dissolve.processingModuleData().realise<PartialSetAccumulator>(
-        "Accumulation", name(), GenericItem::ItemFlag::InRestartFileFlag);
-
-    accumulated += *targetSet;
-
-    Messenger::print("Accumulated data count = {}.\n", accumulated.nAccumulated());
-
-    // Save data if requested
-    std::vector<std::string> suffixes = {"gr", "sq", "gr"};
-    std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
-    if (save_ &&
-        (!MPIRunMaster(procPool, accumulated.save(name_, dataName, suffixes[targetPartialSet_], units[targetPartialSet_]))))
-        return false;
 
     return true;
 }
