@@ -39,3 +39,11 @@ bool Range::contains(double d) const
         return false;
     return true;
 }
+
+SerialisedValue Range::serialise() const { return {{"min", minimum_}, {"max", maximum_}}; }
+
+void Range::deserialise(const SerialisedValue &node)
+{
+    minimum_ = toml::find<double>(node, "min");
+    maximum_ = toml::find<double>(node, "max");
+}

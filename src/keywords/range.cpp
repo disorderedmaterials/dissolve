@@ -48,3 +48,7 @@ bool RangeKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 {
     return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.minimum(), data_.maximum());
 }
+
+SerialisedValue RangeKeyword::serialise() const { return data_; }
+
+void RangeKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
