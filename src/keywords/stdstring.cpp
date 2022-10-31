@@ -37,3 +37,7 @@ bool StringKeyword::serialise(LineParser &parser, std::string_view keywordName, 
 {
     return parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_);
 }
+
+SerialisedValue StringKeyword::serialise() const { return data_; }
+
+void StringKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_string(); }
