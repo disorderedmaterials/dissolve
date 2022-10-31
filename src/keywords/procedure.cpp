@@ -52,3 +52,6 @@ bool ProcedureKeyword::serialise(LineParser &parser, std::string_view keywordNam
 
     return true;
 }
+
+SerialisedValue ProcedureKeyword::serialise() const { return data_.serialise(); }
+void ProcedureKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node, coreData); }
