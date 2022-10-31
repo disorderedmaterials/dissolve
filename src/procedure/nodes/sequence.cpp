@@ -484,19 +484,21 @@ void SequenceProcedureNode::QueryRange::next() { start_++; }
 
 SerialisedValue SequenceProcedureNode::serialise() const
 {
-    toml::array node;
+    SerialisedValue node;
     for (auto n : sequence_)
     {
         // node.push_back(n->serialise());
         SerialisedValue inner = n->serialise();
         inner["type"] = n->nodeTypes().serialise(n->type());
-        node.push_back(inner);
+        node[std::string(n->name())] = inner;
     }
     return node;
 }
 
 void SequenceProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
-    for (auto n : node.as_array())
-        addNode(nodeGenerator(n, data));
+    for (auto &[k, v] : node.as_table())
+    {
+        addNode(nodeGenerator(v, k, data));
+    }
 }
