@@ -86,3 +86,37 @@ void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite *spSite)
     if (data_ == spSite)
         data_ = nullptr;
 }
+
+SerialisedValue SpeciesSiteKeyword::serialise() const
+{
+    if (!data_)
+        return {};
+    SerialisedValue result;
+    result["species"] = data_->parent()->name();
+    result["site"] = data_->name();
+    return result;
+}
+
+void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    KeywordBase::deserialise(node, coreData);
+    std::string species = toml::find<std::string>(node, "species");
+    std::string site = toml::find<std::string>(node, "site");
+    // Find target Species (first argument)
+    Species *sp = coreData.findSpecies(species);
+    if (!sp)
+    {
+        throw toml::err(fmt::format("Error setting SpeciesSite - no Species named '{}' exists.\n", species));
+    }
+
+    // Find specified Site (second argument) in the Species
+    data_ = sp->findSite(site);
+    if (!data_)
+        throw toml::err(
+            fmt::format("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n", site, sp->name()));
+
+    if (axesRequired_ && (!data_->hasAxes()))
+        throw toml::err(
+            fmt::format("Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
+                        data_->name(), name()));
+}
