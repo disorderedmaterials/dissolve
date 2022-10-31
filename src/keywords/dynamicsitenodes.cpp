@@ -66,3 +66,24 @@ bool DynamicSiteNodesKeyword::serialise(LineParser &parser, std::string_view key
 
     return true;
 }
+
+SerialisedValue DynamicSiteNodesKeyword::serialise() const
+{
+    SerialisedValue result = toml::array{};
+    for (auto n : data_)
+    {
+        result.push_back(n->serialise());
+    }
+    return result;
+}
+
+void DynamicSiteNodesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto n : node.as_array())
+    {
+        auto dynamicSite = std::make_shared<DynamicSiteProcedureNode>(
+            std::dynamic_pointer_cast<SelectProcedureNode>(parentNode_->shared_from_this()));
+        dynamicSite->deserialise(node, coreData);
+        data_.push_back(dynamicSite);
+    }
+}

@@ -46,6 +46,8 @@ class DynamicSiteNodesKeyword : public KeywordBase
     std::optional<int> maxArguments() const override;
     // Deserialise from supplied LineParser, starting at given argument offset
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
 };
