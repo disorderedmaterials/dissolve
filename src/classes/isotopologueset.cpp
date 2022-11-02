@@ -131,7 +131,11 @@ bool IsotopologueSet::write(LineParser &parser)
 
     return true;
 }
+
+// Express as a tree node
 SerialisedValue IsotopologueSet::serialise() const { return isotopologues_; }
+
+// Read values from a tree node
 void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &item : node.as_array())

@@ -56,6 +56,8 @@ class IsotopologueSet : public Serialisable<const CoreData &>
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser);
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
