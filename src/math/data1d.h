@@ -112,6 +112,8 @@ class Data1D : public Data1DBase, public Serialisable<>
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node) override;
 };
