@@ -197,7 +197,8 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         }
         deserialiseParameters(node);
     }
-    // Deserialise the form and parameters
+
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node) override
     {
         if (node.contains("form"))
@@ -207,7 +208,8 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         }
         deserialiseParameters(node);
     }
-    // Serialise the form and parameters
+
+    // Express as a tree node
     SerialisedValue serialise() const override
     {
         SerialisedValue result;
