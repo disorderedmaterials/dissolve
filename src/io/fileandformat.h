@@ -81,6 +81,8 @@ class FileAndFormat : public Serialisable<const CoreData &>
     bool writeFilenameAndFormat(LineParser &parser, std::string_view prefix) const;
     // Write options and end block
     bool writeBlock(LineParser &parser, std::string_view prefix) const;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
