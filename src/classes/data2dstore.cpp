@@ -60,6 +60,7 @@ SerialisedValue Data2DStore::serialise() const
     return result;
 }
 
+// Read values from a tree node
 void Data2DStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &item : node.as_array())
