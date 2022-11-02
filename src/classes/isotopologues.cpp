@@ -155,11 +155,11 @@ bool Isotopologues::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a tree node
 SerialisedValue Isotopologues::serialise() const
 {
-    SerialisedValue result;
-    result["name"] = species_->name();
-    result["population"] = speciesPopulation_;
+    SerialisedValue result = {{"name", species_->name()}, {"population", speciesPopulation_}};
 
     SerialisedValue mix;
     for (const auto &isoWeight : mix_)
@@ -169,6 +169,8 @@ SerialisedValue Isotopologues::serialise() const
 
     return result;
 }
+
+// Read values from a tree node
 void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     species_ = coreData.findSpecies(toml::find<std::string>(node, "name"));
