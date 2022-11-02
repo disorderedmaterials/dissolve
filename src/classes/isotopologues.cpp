@@ -179,13 +179,7 @@ void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &cor
     Serialisable::toMap(node, "mix", [&coreData, this](const auto &name, const auto &item) {
         auto iso = species_->findIsotopologue(name);
         if (!iso)
-        {
-            std::cout << fmt::format("Cannot find iso {} in list of length {}", name, species_->isotopologues().size())
-                      << std::endl;
-            for (auto &log : species_->isotopologues())
-                std::cout << log->name() << std::endl;
             throw toml::err(fmt::format("Cannot find iso {}", name));
-        }
         add(iso, item.as_floating());
     });
 }
