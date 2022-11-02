@@ -436,6 +436,6 @@ void Data2D::deserialise(const SerialisedValue &node)
     x_ = toml::find<std::vector<double>>(node, "x");
     y_ = toml::find<std::vector<double>>(node, "y");
     values_.linearArray() = toml::find<std::vector<double>>(node, "values");
-    if(node.contains("errors"))
+    if (node.contains("errors"))
         errors_.linearArray() = toml::find<std::vector<double>>(node, "errors");
 }

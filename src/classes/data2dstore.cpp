@@ -51,14 +51,12 @@ SerialisedValue Data2DStore::serialise() const
     if (data_.empty())
         return {};
     SerialisedValue result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result),
-                   [](const auto &item)
-                   {
-                       SerialisedValue result;
-                       result["data"] = item->first;
-                       result["format"] = item->second;
-                       return result;
-                   });
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) {
+        SerialisedValue result;
+        result["data"] = item->first;
+        result["format"] = item->second;
+        return result;
+    });
     return result;
 }
 
@@ -71,4 +69,3 @@ void Data2DStore::deserialise(const SerialisedValue &node, const CoreData &coreD
         format.deserialise(node.at("format"), coreData);
     }
 }
-
