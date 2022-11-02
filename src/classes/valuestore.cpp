@@ -44,6 +44,7 @@ OptionalReferenceWrapper<const std::vector<double>> ValueStore::data(std::string
 // Return vector of all data
 const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileFormat>> &ValueStore::data() const { return data_; }
 
+// Express as a tree node
 SerialisedValue ValueStore::serialise() const
 {
     SerialisedValue result = toml::array{};
@@ -51,6 +52,8 @@ SerialisedValue ValueStore::serialise() const
         result.push_back({{"tag", tag}, {"values", data}, {"format", format}});
     return result;
 }
+
+// Read values from a tree node
 void ValueStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &item : node.as_array())
