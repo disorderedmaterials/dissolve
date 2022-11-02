@@ -12,7 +12,7 @@ class Configuration;
 class LineParser;
 
 // Procedure
-class Procedure
+class Procedure : public Serialisable<const CoreData &>
 {
     public:
     Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword = "EndProcedure");
@@ -63,6 +63,8 @@ class Procedure
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write procedure to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix);
-    SerialisedValue serialise() const;
-    void deserialise(const SerialisedValue &node, const CoreData &data);
+    // Express as a tree node.
+    SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

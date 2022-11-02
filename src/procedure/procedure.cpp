@@ -98,8 +98,10 @@ bool Procedure::deserialise(LineParser &parser, const CoreData &coreData)
 // Write structure to specified LineParser
 bool Procedure::serialise(LineParser &parser, std::string_view prefix) { return rootSequence_->serialise(parser, prefix); }
 
+// Express as a tree node
 SerialisedValue Procedure::serialise() const { return rootSequence_->serialise(); }
 
+// Read values from a tree node
 void Procedure::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     rootSequence_->deserialise(node, data);
