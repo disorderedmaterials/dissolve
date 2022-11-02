@@ -49,11 +49,8 @@ SerialisedValue Data1DStore::serialise() const
     if (data_.empty())
         return {};
     SerialisedValue result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) {
-        SerialisedValue result;
-        result["data"] = item->first;
-        result["format"] = item->second;
-        return result;
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) -> SerialisedValue {
+        return {{"data", item->first}, {"format", item->second}};
     });
     return result;
 }
