@@ -119,13 +119,15 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
 {
     return keywords_.serialise(parser, fmt::format("{}  ", prefix));
 }
+
+// Express as a tree node
 SerialisedValue FileAndFormat::serialise() const
 {
-    SerialisedValue result;
-    result["name"] = filename_;
-    result["format"] = formats_.keywordByIndex(formats_.index());
+    SerialisedValue result = {{"name", filename_}, {"format", formats_.keywordByIndex(formats_.index())}};
     return keywords_.serialiseOnto(result);
 }
+
+// Read values from a tree node
 void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     SerialisedValue result;
