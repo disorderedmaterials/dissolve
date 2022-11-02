@@ -66,6 +66,8 @@ class ExpressionValue : public Serialisable<>
     static bool bothIntegers(const ExpressionValue &a, const ExpressionValue &b);
     // Return the supplied ExpressionValues both contain double types
     static bool bothDoubles(const ExpressionValue &a, const ExpressionValue &b);
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node) override;
 };

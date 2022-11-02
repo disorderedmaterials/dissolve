@@ -132,6 +132,8 @@ bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValu
 {
     return ((a.type_ == ValueType::Double) && (b.type_ == ValueType::Double));
 }
+
+// Express as a tree node
 SerialisedValue ExpressionValue::serialise() const
 {
     switch (type_)
@@ -142,6 +144,8 @@ SerialisedValue ExpressionValue::serialise() const
             return valueD_;
     }
 }
+
+// Read values from a tree node
 void ExpressionValue::deserialise(const SerialisedValue &node)
 {
     if (node.is_integer())
