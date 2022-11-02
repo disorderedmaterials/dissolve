@@ -135,6 +135,8 @@ class Module : public Serialisable<const CoreData &>
 
         return results;
     }
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };
