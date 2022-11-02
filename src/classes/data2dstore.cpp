@@ -43,17 +43,32 @@ OptionalReferenceWrapper<const Data2D> Data2DStore::data(std::string_view name) 
 
 // Return vector of all data
 const std::vector<std::shared_ptr<std::pair<Data2D, Data2DImportFileFormat>>> &Data2DStore::data() const { return data_; }
+
+// Express as a tree node
 SerialisedValue Data2DStore::serialise() const
 {
 
     if (data_.empty())
         return {};
     SerialisedValue result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) {
-        SerialisedValue result;
-        result["data"] = item->first;
-        result["format"] = item->second;
-        return result;
-    });
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result),
+                   [](const auto &item)
+                   {
+                       SerialisedValue result;
+                       result["data"] = item->first;
+                       result["format"] = item->second;
+                       return result;
+                   });
     return result;
 }
+
+void Data2DStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto &item : node.as_array())
+    {
+        auto &[data, format] = *data_.emplace_back(std::make_shared<std::pair<Data2D, Data2DImportFileFormat>>()).get();
+        data.deserialise(item.at("data"));
+        format.deserialise(node.at("format"), coreData);
+    }
+}
+

@@ -419,14 +419,23 @@ bool Data2D::serialise(LineParser &parser) const
 
     return true;
 }
+
+// Express as a tree node
 SerialisedValue Data2D::serialise() const
 {
-    SerialisedValue result;
-    result["tag"] = tag_;
-    result["x"] = x_;
-    result["y"] = y_;
-    result["values"] = values_.linearArray();
+    SerialisedValue result = {{"tag", tag_}, {"x", x_}, {"y", y_}, {"values", values_.linearArray()}};
     if (hasError_)
         result["errors"] = errors_.linearArray();
     return result;
+}
+
+// Read values from a tree node
+void Data2D::deserialise(const SerialisedValue &node)
+{
+    tag_ = toml::find<std::string>(node, "tag");
+    x_ = toml::find<std::vector<double>>(node, "x");
+    y_ = toml::find<std::vector<double>>(node, "y");
+    values_.linearArray() = toml::find<std::vector<double>>(node, "values");
+    if(node.contains("errors"))
+        errors_.linearArray() = toml::find<std::vector<double>>(node, "errors");
 }

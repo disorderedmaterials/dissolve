@@ -97,8 +97,6 @@ class Data2D : public Data2DBase, public Serialisable<>
     /*
      * Operators
      */
-    SerialisedValue serialise() const override;
-
     public:
     void operator=(const Data2D &source);
     void operator+=(const double delta);
@@ -114,4 +112,8 @@ class Data2D : public Data2DBase, public Serialisable<>
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
+    // Express as a tree node
+    SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(const SerialisedValue &node) override;
 };

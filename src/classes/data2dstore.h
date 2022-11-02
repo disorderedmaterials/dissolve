@@ -33,5 +33,8 @@ class Data2DStore : public Serialisable<const CoreData &>
     OptionalReferenceWrapper<const Data2D> data(std::string_view name) const;
     // Return vector of all data
     const std::vector<std::shared_ptr<std::pair<Data2D, Data2DImportFileFormat>>> &data() const;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
