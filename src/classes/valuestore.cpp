@@ -48,13 +48,7 @@ SerialisedValue ValueStore::serialise() const
 {
     SerialisedValue result = toml::array{};
     for (auto &[tag, data, format] : data_)
-    {
-        SerialisedValue item;
-        item["tag"] = tag;
-        item["values"] = data;
-        item["format"] = format;
-        result.push_back(item);
-    }
+        result.push_back({{"tag", tag}, {"values", data}, {"format", format}});
     return result;
 }
 void ValueStore::deserialise(const SerialisedValue &node, const CoreData &coreData)

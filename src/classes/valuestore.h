@@ -33,6 +33,8 @@ class ValueStore : public Serialisable<const CoreData &>
     OptionalReferenceWrapper<const std::vector<double>> data(std::string_view name) const;
     // Return vector of all data
     const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileFormat>> &data() const;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
