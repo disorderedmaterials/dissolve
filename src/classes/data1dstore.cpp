@@ -44,6 +44,8 @@ OptionalReferenceWrapper<const Data1D> Data1DStore::data(std::string_view name) 
 
 // Return vector of all data
 const std::vector<std::shared_ptr<std::pair<Data1D, Data1DImportFileFormat>>> &Data1DStore::data() const { return data_; }
+
+// Express as a tree node
 SerialisedValue Data1DStore::serialise() const
 {
     if (data_.empty())
@@ -54,6 +56,8 @@ SerialisedValue Data1DStore::serialise() const
     });
     return result;
 }
+
+// Read values from a tree node
 void Data1DStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     auto &arr = node.as_array();
