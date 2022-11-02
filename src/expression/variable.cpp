@@ -31,10 +31,7 @@ const ExpressionValue &ExpressionVariable::value() const { return value_; }
 ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 
 // Express as a tree node
-SerialisedValue ExpressionVariable::serialise() const
-{
-    return {{"name", name_}, {"value", value_}};
-}
+SerialisedValue ExpressionVariable::serialise() const { return {{"name", name_}, {"value", value_}}; }
 
 // Read values from a tree node
 void ExpressionVariable::deserialise(const SerialisedValue &node)
