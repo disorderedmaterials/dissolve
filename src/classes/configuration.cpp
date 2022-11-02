@@ -161,6 +161,7 @@ SerialisedValue Configuration::serialise() const
     return configuration;
 }
 
+// Read values from a tree node
 void Configuration::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     setTemperature(toml::find_or<double>(node, "temperature", defaultTemperature_));

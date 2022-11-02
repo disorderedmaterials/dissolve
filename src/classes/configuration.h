@@ -33,7 +33,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration
+class Configuration : public Serialisable<const CoreData &>
 {
     public:
     Configuration();
@@ -235,7 +235,7 @@ class Configuration
     bool deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
                      double pairPotentialRange);
     // Express as a tree node
-    SerialisedValue serialise() const;
+    SerialisedValue serialise() const override;
     // Read values from a tree node
-    void deserialise(const SerialisedValue &node, const CoreData &data);
+    void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };
