@@ -40,8 +40,10 @@ bool Range::contains(double d) const
     return true;
 }
 
+// Express as a tree node
 SerialisedValue Range::serialise() const { return {{"min", minimum_}, {"max", maximum_}}; }
 
+// Read values from a tree node
 void Range::deserialise(const SerialisedValue &node)
 {
     minimum_ = toml::find<double>(node, "min");

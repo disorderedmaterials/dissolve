@@ -32,6 +32,8 @@ class Range : public Serialisable<>
     double maximum() const;
     // Return whether the range contains the specified value
     bool contains(double d) const;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node) override;
 };
