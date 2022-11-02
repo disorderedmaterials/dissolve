@@ -14,16 +14,16 @@ void compare_toml(std::string location, SerialisedValue toml, SerialisedValue to
         ASSERT_TRUE(toml2.is_table()) << location;
         for (auto &[k, v] : toml.as_table())
         {
-            ASSERT_TRUE(toml2.contains(k)) << location << "." << k;
-            compare_toml(fmt::format("{}.{}",location, k), v, toml2.at(k));
+            ASSERT_TRUE(toml2.contains(k)) << location << "." << k << std::endl << "Expected:" << std::endl << toml[k];
+            compare_toml(fmt::format("{}.{}", location, k), v, toml2.at(k));
         }
     }
     else if (toml.is_array())
     {
         auto arr = toml.as_array();
         auto arr2 = toml2.as_array();
-        ASSERT_EQ(arr.size(), arr2.size()) << location;
-        for(int i = 0; i < arr.size(); ++i)
+        ASSERT_EQ(arr.size(), arr2.size()) << location << std::endl << "Expected" << std::endl << toml;
+        for (int i = 0; i < arr.size(); ++i)
             compare_toml(fmt::format("{}[{}]", location, i), arr[i], arr2[i]);
     }
     else
