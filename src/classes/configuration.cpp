@@ -155,8 +155,7 @@ SerialisedValue Configuration::serialise() const
         configuration["temperature"] = temperature_;
 
     SerialisedValue generator;
-    // generator["box"] = box_->serialise();
-    configuration["generator"] = generator_.serialise();
+    configuration["generator"] = generator_;
 
     return configuration;
 }
