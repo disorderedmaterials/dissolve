@@ -57,9 +57,13 @@ bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywor
     return true;
 }
 
+// Express as a tree node
 SerialisedValue FileAndFormatKeyword::serialise() const { return data_; }
 
+// Read values from a tree node
 void FileAndFormatKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_.deserialise(node, coreData);
 }
+// Has not changed from inital value
+bool FileAndFormatKeyword::isDefault() const { return false; }
