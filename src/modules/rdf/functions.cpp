@@ -517,6 +517,10 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &
     double totalWeight = 0.0;
     for (Configuration *cfg : parentCfgs)
     {
+        // Confirm atomic density is available (for the subsequent accumulator)
+        if (!cfg->atomicDensity())
+            return Messenger::error("No density available for target configuration '{}'\n", cfg->name());
+
         // TODO Assume weight of 1.0
         auto weight = 1.0;
 
