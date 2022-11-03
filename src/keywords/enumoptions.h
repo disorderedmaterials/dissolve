@@ -107,9 +107,12 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     // Set new option index
     void setEnumerationByIndex(int optionIndex) override { data_ = optionData_.enumerationByIndex(optionIndex); }
 
+    // Has not changed from inital value
     bool isDefault() const override { return data_ == default_; }
 
+    // Express as a tree node
     SerialisedValue serialise() const override { return optionData_.keyword(data_); }
 
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = optionData_.deserialise(node); }
 };
