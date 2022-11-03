@@ -169,9 +169,9 @@ Layer  'Refine (EPSR)'
     Target  'D2O'
     Target  'H2O'
     Target  'HDO'
-    TestAbsEnergyEP  OW-OW  0.4395
-    TestAbsEnergyEP  OW-HW  0.2772
-    TestAbsEnergyEP  HW-HW  0.6498
+    TestAbsEnergyEP  OW-OW  0.2272
+    TestAbsEnergyEP  OW-HW  0.3526
+    TestAbsEnergyEP  HW-HW  0.3371
   EndModule
 
   Module DataTest  'Estimated Partials'
