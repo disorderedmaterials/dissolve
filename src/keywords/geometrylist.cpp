@@ -145,12 +145,4 @@ void GeometryListKeyword::deserialise(const SerialisedValue &node, const CoreDat
 }
 
 // Has not changed from inital value
-bool GeometryListKeyword::isDefault() const
-{
-    if (data_.size() != default_.size())
-        return false;
-    for (auto &&[a, b] : zip(data_, default_))
-        if (a != b)
-            return false;
-    return true;
-}
+bool GeometryListKeyword::isDefault() const { return data_ == default_; }
