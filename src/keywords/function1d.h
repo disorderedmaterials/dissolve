@@ -39,6 +39,8 @@ class Function1DKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

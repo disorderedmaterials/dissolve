@@ -54,13 +54,14 @@ bool Function1DKeyword::serialise(LineParser &parser, std::string_view keywordNa
     return parser.writeLineF("{}{}  '{}'  {}\n", prefix, keywordName, Functions::function1D().keyword(data_.type()),
                              joinStrings(data_.parameters(), "  "));
 }
+
+// Express as a tree node
 SerialisedValue Function1DKeyword::serialise() const
 {
-    SerialisedValue result;
-    result["type"] = Functions::function1D().serialise(data_.type());
-    result["parameters"] = data_.parameters();
-    return result;
+    return {{"type", Functions::function1D().serialise(data_.type())}, {"parameters", data_.parameters()}};
 }
+
+// Read values from a tree node
 void Function1DKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_.setFunctionAndParameters(Functions::function1D().deserialise(node.at("type")),
