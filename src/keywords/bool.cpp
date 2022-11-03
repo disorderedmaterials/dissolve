@@ -11,7 +11,7 @@ BoolKeyword::BoolKeyword(bool &data) : KeywordBase(typeid(this)), default_(data)
  * Data
  */
 
-// Check if value has changed
+// Has not changed from inital value
 bool BoolKeyword::isDefault() const { return data_ == default_; }
 
 // Set data
@@ -52,6 +52,8 @@ bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, st
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }
 
+// Express as a tree node
 SerialisedValue BoolKeyword::serialise() const { return data_; }
 
+// Read values from a tree node
 void BoolKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_boolean(); }
