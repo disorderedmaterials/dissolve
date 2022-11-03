@@ -4,6 +4,7 @@
 #include "keywords/geometrylist.h"
 #include "base/lineparser.h"
 #include "classes/coredata.h"
+#include "templates/algorithms.h"
 
 GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> &data, Geometry::GeometryType geometryType)
     : KeywordBase(typeid(this)), data_(data), geometryType_(geometryType)
@@ -77,6 +78,8 @@ bool GeometryListKeyword::serialise(LineParser &parser, std::string_view keyword
 
     return true;
 }
+
+// Express as a tree node
 SerialisedValue GeometryListKeyword::serialise() const
 {
     SerialisedValue result;
@@ -108,6 +111,7 @@ SerialisedValue GeometryListKeyword::serialise() const
     return result;
 }
 
+// Read values from a tree node
 void GeometryListKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     auto typeString = toml::find<std::string>(node, "type");
@@ -138,4 +142,15 @@ void GeometryListKeyword::deserialise(const SerialisedValue &node, const CoreDat
         }
         data_.push_back(geo);
     }
+}
+
+// Has not changed from inital value
+bool GeometryListKeyword::isDefault() const
+{
+    if (data_.size() != default_.size())
+        return false;
+    for (auto &&[a, b] : zip(data_, default_))
+        if (a != b)
+            return false;
+    return true;
 }
