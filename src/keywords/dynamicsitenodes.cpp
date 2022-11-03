@@ -67,6 +67,7 @@ bool DynamicSiteNodesKeyword::serialise(LineParser &parser, std::string_view key
     return true;
 }
 
+// Express as a tree node
 SerialisedValue DynamicSiteNodesKeyword::serialise() const
 {
     SerialisedValue result = toml::array{};
@@ -77,6 +78,7 @@ SerialisedValue DynamicSiteNodesKeyword::serialise() const
     return result;
 }
 
+// Read values from a tree node
 void DynamicSiteNodesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto n : node.as_array())
@@ -87,3 +89,5 @@ void DynamicSiteNodesKeyword::deserialise(const SerialisedValue &node, const Cor
         data_.push_back(dynamicSite);
     }
 }
+// Has not changed from inital value
+bool DynamicSiteNodesKeyword::isDefault() const { return data_.empty(); }
