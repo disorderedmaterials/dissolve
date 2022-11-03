@@ -74,6 +74,7 @@ void AtomTypeVectorKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
         data_.erase(it);
 }
 
+// Express as a tree node
 SerialisedValue AtomTypeVectorKeyword::serialise() const
 {
     SerialisedValue result = toml::array{};
@@ -81,6 +82,7 @@ SerialisedValue AtomTypeVectorKeyword::serialise() const
     return result;
 }
 
+// Read values from a tree node
 void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (const auto &item : node.as_array())
@@ -101,3 +103,6 @@ void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreD
         data_.push_back(atomType);
     }
 }
+
+// Has not changed from initial value
+bool AtomTypeVectorKeyword::isDefault() const { return data_.empty(); }
