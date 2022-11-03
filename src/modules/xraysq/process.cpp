@@ -266,8 +266,10 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
-    auto rho = *rdfModule->effectiveDensity();
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
+    auto rho = rdfModule->effectiveDensity();
+    if (!rho)
+        return Messenger::error("No effective density available from RDF module '{}'\n", rdfModule->name());
+    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested
     if (saveRepresentativeGR_)

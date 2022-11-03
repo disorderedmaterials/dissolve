@@ -535,6 +535,9 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &
     std::string fingerprint;
     for (auto [cfg, cfgWeight] : configWeights)
     {
+        if (!cfg->atomicDensity())
+            return Messenger::error("No density available for target configuration '{}'\n", cfg->name());
+
         // Update fingerprint
         fingerprint +=
             fingerprint.empty() ? fmt::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());

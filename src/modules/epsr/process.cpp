@@ -164,6 +164,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (!targetConfiguration_)
         return Messenger::error("No target configuration is set.\n");
 
+    if (!targetConfiguration_->atomicDensity())
+        return Messenger::error("No density available for target configuration '{}'\n", targetConfiguration_->name());
     auto rho = *targetConfiguration_->atomicDensity();
 
     /*
