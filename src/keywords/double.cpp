@@ -6,7 +6,7 @@
 #include "base/sysfunc.h"
 
 DoubleKeyword::DoubleKeyword(double &data, std::optional<double> minValue, std::optional<double> maxValue)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), default_(data)
 {
     minimumLimit_ = minValue;
     maximumLimit_ = maxValue;
@@ -74,5 +74,12 @@ bool DoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, 
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }
+
+// Express as a tree node
 SerialisedValue DoubleKeyword::serialise() const { return data_; }
+
+// Read values from a tree node
 void DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = toml::get<double>(node); }
+
+// Has not changed from inital value
+bool DoubleKeyword::isDefault() const { return data_ == default_; }
