@@ -58,13 +58,13 @@ void ConfigurationKeyword::removeReferencesTo(Configuration *cfg)
 
 SerialisedValue ConfigurationKeyword::serialise() const
 {
-    if (data_)
-        return data_->name();
-    else
-        return name();
+    // isDefault is checked before serialisation of keywords
+    // so we have checked for the null pointer
+    return data_->name();
 }
 
 void ConfigurationKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_ = coreData.findConfiguration(std::string_view(node.as_string()));
 }
+bool ConfigurationKeyword::isDefault() const { return !data_; }
