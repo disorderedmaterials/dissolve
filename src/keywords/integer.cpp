@@ -6,7 +6,7 @@
 #include "base/sysfunc.h"
 
 IntegerKeyword::IntegerKeyword(int &data, std::optional<int> minValue, std::optional<int> maxValue)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), default_(data)
 {
     minimumLimit_ = minValue;
     maximumLimit_ = maxValue;
@@ -74,6 +74,12 @@ bool IntegerKeyword::serialise(LineParser &parser, std::string_view keywordName,
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }
+
+// Express as a tree node
 SerialisedValue IntegerKeyword::serialise() const { return data_; }
 
+// Read values from a tree node
 void IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_integer(); }
+
+// Has not changed from inital value
+bool IntegerKeyword::isDefault() const { return data_ == default_; }
