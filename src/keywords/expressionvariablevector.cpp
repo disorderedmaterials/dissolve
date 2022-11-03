@@ -79,8 +79,11 @@ bool ExpressionVariableVectorKeyword::serialise(LineParser &parser, std::string_
 
     return true;
 }
+
+// Has not changed from inital value
 bool ExpressionVariableVectorKeyword::isDefault() const { return data_.empty(); }
 
+// Express as a tree node
 SerialisedValue ExpressionVariableVectorKeyword::serialise() const
 {
     SerialisedValue result;
@@ -88,6 +91,8 @@ SerialisedValue ExpressionVariableVectorKeyword::serialise() const
         result[std::string(i->name())] = i->value();
     return result;
 }
+
+// Read values from a tree node
 void ExpressionVariableVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_.clear();
