@@ -68,16 +68,16 @@ void ConfigurationVectorKeyword::removeReferencesTo(Configuration *cfg)
     data_.erase(std::remove(data_.begin(), data_.end(), cfg), data_.end());
 }
 
+// Express as a tree node
 SerialisedValue ConfigurationVectorKeyword::serialise() const
 {
-    if (data_.empty())
-        return {};
     SerialisedValue result = toml::array{};
     std::transform(data_.begin(), data_.end(), std::back_inserter(result),
                    [](const auto &cfg) { return std::string(cfg->name()); });
     return result;
 }
 
+// Read values from a tree node
 void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &name : node.as_array())
@@ -94,3 +94,6 @@ void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const 
         data_.push_back(cfg);
     }
 }
+
+// Has not changed from inital value
+bool ConfigurationVectorKeyword::isDefault() const { return data_.empty(); }
