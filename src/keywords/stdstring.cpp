@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-StringKeyword::StringKeyword(std::string &data) : KeywordBase(typeid(this)), data_(data) {}
+StringKeyword::StringKeyword(std::string &data) : KeywordBase(typeid(this)), data_(data), default_(data) {}
 
 /*
  * Data
@@ -38,6 +38,11 @@ bool StringKeyword::serialise(LineParser &parser, std::string_view keywordName, 
     return parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_);
 }
 
+// Express as a tree node
 SerialisedValue StringKeyword::serialise() const { return data_; }
 
+// Read values from a tree node
 void StringKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_string(); }
+
+// Has not changed from inital value
+bool StringKeyword::isDefault() const { return data_ == default_; }
