@@ -45,6 +45,8 @@ bool StringDoubleVectorKeyword::serialise(LineParser &parser, std::string_view k
 
     return true;
 }
+
+// Express as a tree node
 SerialisedValue StringDoubleVectorKeyword::serialise() const
 {
     std::vector<SerialisedValue> result;
@@ -56,8 +58,12 @@ SerialisedValue StringDoubleVectorKeyword::serialise() const
     return result;
 }
 
+// Read values from a tree node
 void StringDoubleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto item : node.as_array())
         data_.emplace_back(toml::find<std::string>(item, "name"), toml::find<double>(item, "value"));
 }
+
+// Has not changed from inital value
+bool StringDoubleVectorKeyword::isDefault() const { return data_.empty(); }
