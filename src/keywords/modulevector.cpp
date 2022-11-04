@@ -86,6 +86,7 @@ void ModuleVectorKeyword::removeReferencesTo(Module *module)
         data_.erase(it);
 }
 
+// Express as a tree node
 SerialisedValue ModuleVectorKeyword::serialise() const
 {
     auto result = toml::array{};
@@ -93,6 +94,7 @@ SerialisedValue ModuleVectorKeyword::serialise() const
     return result;
 }
 
+// Read values from a tree node
 void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto item : node.as_array())
@@ -112,3 +114,6 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
         data_.push_back(module);
     }
 }
+
+// Has not changed from inital value
+bool ModuleVectorKeyword::isDefault() const { return data_.empty(); }

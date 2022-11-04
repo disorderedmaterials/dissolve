@@ -56,6 +56,9 @@ class ModuleVectorKeyword : public KeywordBase
     void removeReferencesTo(Module *module) override;
 
     public:
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    bool isDefault() const override;
 };
