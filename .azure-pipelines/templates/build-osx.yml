@@ -18,7 +18,6 @@ steps:
       python3 -m aqt install-qt --outputdir /tmp/qt mac desktop ${{ parameters.qtver }}
       # -- Conan
       pip3 install --user conan
-      ls -lart ~/.local/bin
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
