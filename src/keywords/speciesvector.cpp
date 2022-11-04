@@ -60,6 +60,7 @@ void SpeciesVectorKeyword::removeReferencesTo(Species *sp)
     data_.erase(std::remove(data_.begin(), data_.end(), sp), data_.end());
 }
 
+// Express as a tree node
 SerialisedValue SpeciesVectorKeyword::serialise() const
 {
     auto result = toml::array{};
@@ -67,6 +68,7 @@ SerialisedValue SpeciesVectorKeyword::serialise() const
     return result;
 }
 
+// Read values from a tree node
 void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto item : node.as_array())
@@ -79,3 +81,6 @@ void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreDa
         data_.push_back(species);
     }
 }
+
+// Has not changed from inital value
+bool SpeciesVectorKeyword::isDefault() const { return data_.empty(); }

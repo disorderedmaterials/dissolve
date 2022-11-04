@@ -46,8 +46,10 @@ class SpeciesVectorKeyword : public KeywordBase
     void removeReferencesTo(Species *sp) override;
 
     public:
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
-
-    public:
+    // Has not changed from inital value
+    bool isDefault() const override;
+    // Express as a tree node
     SerialisedValue serialise() const override;
 };
