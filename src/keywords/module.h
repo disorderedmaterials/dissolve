@@ -97,16 +97,10 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
         return true;
     }
 
-    /*
-     * Object Management
-     */
-    SerialisedValue serialise() const override
-    {
-        if (data_)
-            return data_->name();
-        return {};
-    }
+    // Express as a tree node
+    SerialisedValue serialise() const override { return data_->name(); }
 
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         auto *module = Module::find(std::string(node.as_string()));
@@ -116,6 +110,13 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
 
         setData(module);
     }
+
+    // Has not changed from inital value
+    bool isDefault() const override { return !data_; }
+
+    /*
+     * Object Management
+     */
 
     protected:
     // Prune any references to the supplied Module in the contained data
