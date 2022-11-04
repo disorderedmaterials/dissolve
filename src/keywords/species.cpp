@@ -54,7 +54,10 @@ void SpeciesKeyword::removeReferencesTo(Species *sp)
 // There cannot eb a default species
 bool SpeciesKeyword::isDefault() const { return false; }
 
+// Express as a tree node
 SerialisedValue SpeciesKeyword::serialise() const { return data_->name(); }
+
+// Read values from a tree node
 void SpeciesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_ = coreData.findSpecies(std::string_view(node.as_string()));
