@@ -31,7 +31,7 @@ class Vec3DoubleKeyword : public KeywordBase
     std::optional<Vec3<double>> minimumLimit_, maximumLimit_;
 
     public:
-    // See if the value has changed
+    // Has not changed from inital value
     bool isDefault() const override;
     // Set data
     bool setData(Vec3<double> value);
@@ -65,6 +65,8 @@ class Vec3DoubleKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
