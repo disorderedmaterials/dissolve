@@ -49,3 +49,8 @@ void Range::deserialise(const SerialisedValue &node)
     minimum_ = toml::find<double>(node, "min");
     maximum_ = toml::find<double>(node, "max");
 }
+
+// Equality
+bool Range::operator==(const Range &rhs) const { return minimum_ == rhs.minimum_ && maximum_ == rhs.maximum_; }
+
+bool Range::operator!=(const Range &rhs) const { return !(rhs == *this); }

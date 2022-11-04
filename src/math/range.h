@@ -36,4 +36,6 @@ class Range : public Serialisable<>
     SerialisedValue serialise() const override;
     // Read values from a tree node
     void deserialise(const SerialisedValue &node) override;
+    bool operator==(const Range &rhs) const;
+    bool operator!=(const Range &rhs) const;
 };
