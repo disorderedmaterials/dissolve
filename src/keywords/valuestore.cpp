@@ -66,9 +66,14 @@ bool ValueStoreKeyword::serialise(LineParser &parser, std::string_view keywordNa
     return true;
 }
 
+// Express as a tree node
 SerialisedValue ValueStoreKeyword::serialise() const { return data_; }
 
+// Read values from a tree node
 void ValueStoreKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_.deserialise(node, coreData);
 }
+
+// Has not changed from inital value
+bool ValueStoreKeyword::isDefault() const { return data_.data().empty(); }
