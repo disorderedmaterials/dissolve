@@ -9,9 +9,6 @@
 #include "keywords/bool.h"
 #include "keywords/vec3nodevalue.h"
 
-const Vec3<NodeValue> BoxProcedureNode::defaultAngles_ = {90.0, 90.0, 90.0};
-const Vec3<NodeValue> BoxProcedureNode::defaultLengths_ = {1.0, 1.0, 1.0};
-
 BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
     : ProcedureNode(ProcedureNode::NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)),
       nonPeriodic_(nonPeriodic)
