@@ -189,6 +189,8 @@ std::vector<Module *> KeywordStore::getVectorModule(std::string_view name) const
     return getKeyword<ModuleVectorKeyword>(keywords_, name)->data();
 }
 
+// Turn first character of keyword label to lower case to match
+// convention with the rest of the file format.
 std::string toml_format(const std::string_view original)
 {
     auto result = std::string(original);
@@ -196,6 +198,7 @@ std::string toml_format(const std::string_view original)
     return result;
 }
 
+// Apply the terms in the keyword store to a node
 SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
 {
 
@@ -208,9 +211,10 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
         }
     return node;
 }
+
+// Pull keywords from entries in table
 void KeywordStore::deserialiseFrom(const SerialisedValue &node, const CoreData &coreData)
 {
-
     for (auto &[k, v] : keywords())
         if (node.contains(toml_format(k)))
             v->deserialise(node.at(toml_format(k)), coreData);
