@@ -85,20 +85,23 @@ bool IntegerDoubleVectorKeyword::serialise(LineParser &parser, std::string_view 
 
     return true;
 }
+
+// Express as a tree node
 SerialisedValue IntegerDoubleVectorKeyword::serialise() const
 {
     std::vector<SerialisedValue> result;
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](auto pair) {
-        SerialisedValue result;
-        result["indices"] = std::get<0>(pair);
-        result["values"] = std::get<1>(pair);
-        return result;
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](auto pair) -> SerialisedValue {
+        return {{"indices", std::get<0>(pair)}, {"values", std::get<1>(pair)}};
     });
     return result;
 }
 
+// Read values from a tree node
 void IntegerDoubleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto item : node.as_array())
         data_.emplace_back(toml::find<std::vector<int>>(item, "indices"), toml::find<std::vector<double>>(item, "values"));
 }
+
+// Has not changed from inital value
+bool IntegerDoubleVectorKeyword::isDefault() const { return KeywordBase::isDefault(); }
