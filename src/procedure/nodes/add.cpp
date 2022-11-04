@@ -16,7 +16,6 @@
 #include "procedure/nodes/coordinatesets.h"
 #include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/regionbase.h"
-#include "serial_utils.h"
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)

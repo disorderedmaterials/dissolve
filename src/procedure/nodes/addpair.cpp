@@ -14,7 +14,6 @@
 #include "keywords/nodevalueenumoptions.h"
 #include "keywords/species.h"
 #include "procedure/nodes/regionbase.h"
-#include "procedure/nodes/serial_utils.h"
 
 AddPairProcedureNode::AddPairProcedureNode(const Species *spA, const Species *spB, const NodeValue &population,
                                            const NodeValue &density, Units::DensityUnits densityUnits)
