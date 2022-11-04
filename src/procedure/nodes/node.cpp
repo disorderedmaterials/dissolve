@@ -315,8 +315,7 @@ bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
 
 SerialisedValue ProcedureNode::serialise() const
 {
-    SerialisedValue result;
-    result["type"] = nodeTypes().keyword(type_);
+    SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
     if (mustBeNamed())
         result["name"] = name_;
     return keywords_.serialiseOnto(result);
