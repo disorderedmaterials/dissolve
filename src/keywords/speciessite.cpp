@@ -87,16 +87,13 @@ void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite *spSite)
         data_ = nullptr;
 }
 
+// Express as a tree node
 SerialisedValue SpeciesSiteKeyword::serialise() const
 {
-    if (!data_)
-        return {};
-    SerialisedValue result;
-    result["species"] = data_->parent()->name();
-    result["site"] = data_->name();
-    return result;
+    return {{"species", data_->parent()->name()}, {"site", data_->name()}};
 }
 
+// Read values from a tree node
 void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     KeywordBase::deserialise(node, coreData);
@@ -120,3 +117,6 @@ void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData
             fmt::format("Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
                         data_->name(), name()));
 }
+
+// Has not changed from inital value
+bool SpeciesSiteKeyword::isDefault() const { return !data_; }
