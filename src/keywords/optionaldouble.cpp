@@ -80,16 +80,15 @@ bool OptionalDoubleKeyword::serialise(LineParser &parser, std::string_view keywo
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value_or(minimumLimit_));
 }
-SerialisedValue OptionalDoubleKeyword::serialise() const
-{
-    if (set_ && data_)
-    {
-        return data_.value_or(minimumLimit_);
-    }
-    SerialisedValue result;
-    return {};
-}
+
+// Express as a tree node
+SerialisedValue OptionalDoubleKeyword::serialise() const { return data_.value_or(minimumLimit_); }
+
+// Read values from a tree node
 void OptionalDoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     setData(toml::get<double>(node));
 }
+
+// Has not changed from inital value
+bool OptionalDoubleKeyword::isDefault() const { return !set_ || !data_; }
