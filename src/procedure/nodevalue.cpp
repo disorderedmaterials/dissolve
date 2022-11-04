@@ -182,9 +182,7 @@ bool NodeValue::operator==(const NodeValue &value) const
         case DoubleNodeValue:
             return valueD_ == value.asDouble();
         case ExpressionNodeValue:
-            // FIXME: This should eventually be handled properly
-            // eventually, but it isn't used at the moment.
-            return false;
+            return expression_.expressionString() == value.expression_.expressionString();
     }
     return false;
 }
