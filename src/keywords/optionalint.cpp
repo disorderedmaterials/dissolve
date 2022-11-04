@@ -80,16 +80,15 @@ bool OptionalIntegerKeyword::serialise(LineParser &parser, std::string_view keyw
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value_or(minimumLimit_));
 }
-SerialisedValue OptionalIntegerKeyword::serialise() const
-{
-    if (set_ && data_)
-    {
-        return data_.value_or(minimumLimit_);
-    }
-    SerialisedValue result;
-    return {};
-}
+
+// Express as a tree node
+SerialisedValue OptionalIntegerKeyword::serialise() const { return data_.value_or(minimumLimit_); }
+
+// Read values from a tree node
 void OptionalIntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     setData(toml::get<int>(node));
 }
+
+// Has not changed from inital value
+bool OptionalIntegerKeyword::isDefault() const { return !set_ || !data_; }
