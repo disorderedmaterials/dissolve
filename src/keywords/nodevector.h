@@ -133,11 +133,13 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         return true;
     }
 
+    // Has not changed from inital value
+    bool isDefault() const override { return data_.empty(); }
+
+    // Express as a tree node
     SerialisedValue serialise() const override
     {
         SerialisedValue result = toml::array{};
-        if (data_.empty())
-            return {};
         for (auto n : data_)
         {
             result.push_back(n->name());
@@ -145,19 +147,20 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         return result;
     }
 
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         for (auto n : node.as_array())
         {
             // Locate the named node - don't prune by type yet (we'll check that in setNode())
-            ConstNodeRef node = findNode(std::string(n.as_string()));
-            if (!node)
+            ConstNodeRef noderef = findNode(std::string(n.as_string()));
+            if (!noderef)
                 throw toml::err(fmt::format("Node '{}' given to keyword {} doesn't exist.\n", n.as_string(), name()));
 
-            if (!validNode(node.get(), name()))
+            if (!validNode(noderef.get(), name()))
                 throw toml::err("Invalid node");
 
-            data_.push_back(std::dynamic_pointer_cast<const N>(node));
+            data_.push_back(std::dynamic_pointer_cast<const N>(noderef));
         }
     }
 

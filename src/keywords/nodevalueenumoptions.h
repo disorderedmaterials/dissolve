@@ -122,7 +122,10 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     }
 
     // Read values from a tree node
-    SerialisedValue serialise() const override { return {{"value", data_.first.serialise()}, {"option", optionData_.serialise(data_.second)}}; }
+    SerialisedValue serialise() const override
+    {
+        return {{"value", data_.first.serialise()}, {"option", optionData_.serialise(data_.second)}};
+    }
 
     // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
