@@ -50,6 +50,8 @@ class IntraShakeModule : public Module
     double torsionStepSizeMin_{0.5};
     // Maximum step size for torsion adjustments (degrees)
     double torsionStepSizeMax_{45.0};
+    // Species to restrict calculation to
+    std::vector<const Species *> restrictToSpecies_;
 
     /*
      * Processing

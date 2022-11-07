@@ -191,7 +191,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
 
                 auto pp = dissolve_.pairPotential(at1, at2);
                 if (pp)
-                    graph_->createRenderable<RenderableData1D, Data1D>(pp->uAdditional(), id, "Phi");
+                    graph_->createRenderable<RenderableData1D>(fmt::format("Dissolve//Potential_{}_Additional", id), id, "Phi");
             }
         }
         else if (ui_.RFactorButton->isChecked())
