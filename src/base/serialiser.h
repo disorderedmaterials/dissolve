@@ -72,10 +72,10 @@ template <typename... Contexts> class Serialisable
     {
         if (vector.empty())
             return;
-        node[name] =  fromVector(vector, toSerial);
+        node[name] = fromVector(vector, toSerial);
     }
-    template <typename T, typename Lambda>
-    static SerialisedValue fromVector(const std::vector<T> &vector, Lambda toSerial) {
+    template <typename T, typename Lambda> static SerialisedValue fromVector(const std::vector<T> &vector, Lambda toSerial)
+    {
         SerialisedValue result = toml::array{};
         std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
         return result;

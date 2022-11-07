@@ -98,10 +98,9 @@ void SpeciesSiteVectorKeyword::removeReferencesTo(SpeciesSite *spSite)
 // Express as a tree node
 SerialisedValue SpeciesSiteVectorKeyword::serialise() const
 {
-    return fromVector(data_,
-                      [](const auto item) -> SerialisedValue {
-                          return {{"site", item->name()}, {"species", item->parent()->name()}};
-                      });
+    return fromVector(data_, [](const auto item) -> SerialisedValue {
+        return {{"site", item->name()}, {"species", item->parent()->name()}};
+    });
 }
 
 // Read values from a tree node

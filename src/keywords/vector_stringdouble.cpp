@@ -49,10 +49,9 @@ bool StringDoubleVectorKeyword::serialise(LineParser &parser, std::string_view k
 // Express as a tree node
 SerialisedValue StringDoubleVectorKeyword::serialise() const
 {
-    return fromVector(data_,
-                      [](const auto &item) -> SerialisedValue {
-                          return {{"name", item.first}, {"value", item.second}};
-                      });
+    return fromVector(data_, [](const auto &item) -> SerialisedValue {
+        return {{"name", item.first}, {"value", item.second}};
+    });
 }
 
 // Read values from a tree node
