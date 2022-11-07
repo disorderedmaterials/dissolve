@@ -87,7 +87,7 @@ void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreD
     {
 
         auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&item](const auto atomType) {
-            return DissolveSys::sameString(atomType->name(), std::string_view(item.as_string()));
+            return DissolveSys::sameString(atomType->name(), std::string_view(std::string(item.as_string())));
         });
         if (it == coreData.atomTypes().end())
             throw toml::err(fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n", item.as_string(), name()));
