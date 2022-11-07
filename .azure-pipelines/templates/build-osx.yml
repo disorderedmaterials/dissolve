@@ -16,7 +16,7 @@ steps:
       # -- Qt
       pip3 install --user aqtinstall
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
-      python3 -m aqt install-qt --outputdir /tmp/qt mac desktop ${{ parameters.qtver }}
+      aqt install-qt --outputdir /tmp/qt mac desktop ${{ parameters.qtver }}
       # -- Conan
       pip3 install --user conan
     displayName: 'Install Prerequisites'
