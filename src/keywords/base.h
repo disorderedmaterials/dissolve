@@ -58,7 +58,7 @@ class KeywordBase : public Serialisable<CoreData const &>
      * Arguments
      */
     public:
-    // Has not changed from initial value
+    // Has not changed from inital value
     virtual bool isDefault() const { return false; }
     // Return minimum number of arguments accepted
     virtual int minArguments() const;
@@ -70,7 +70,9 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) = 0;
     // Serialise data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
 
     /*
