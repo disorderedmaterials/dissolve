@@ -60,7 +60,8 @@ bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordNa
 }
 
 // Has not changed from inital value
-bool NodeBranchKeyword::isDefault() const {
+bool NodeBranchKeyword::isDefault() const
+{
     // FIXME: This is backwards
     return data_ != nullptr;
 }
