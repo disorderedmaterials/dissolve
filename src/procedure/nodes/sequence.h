@@ -163,6 +163,8 @@ class SequenceProcedureNode : public ProcedureNode
     bool deserialise(LineParser &parser, const CoreData &coreData) override;
     // Write structure to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix) override;
+    // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

@@ -482,6 +482,7 @@ std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::
 bool SequenceProcedureNode::QueryRange::empty() { return start_ == stop_; }
 void SequenceProcedureNode::QueryRange::next() { start_++; }
 
+// Express as a tree node
 SerialisedValue SequenceProcedureNode::serialise() const
 {
     SerialisedValue node;
@@ -495,6 +496,7 @@ SerialisedValue SequenceProcedureNode::serialise() const
     return node;
 }
 
+// Read values from a tree node
 void SequenceProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     for (auto &[k, v] : node.as_table())
