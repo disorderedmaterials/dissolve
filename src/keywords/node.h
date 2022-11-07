@@ -105,10 +105,13 @@ template <class N> class NodeKeyword : public NodeKeywordBase
         return true;
     }
 
+    // Has not changed from inital value
     bool isDefault() const override { return data_ == nullptr; }
 
+    // Express as a tree node
     SerialisedValue serialise() const override { return {}; /*FIXME: return data_->name();*/ }
 
+    // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData)
     {
         auto child = findNode(std::string_view(node.as_string()));
