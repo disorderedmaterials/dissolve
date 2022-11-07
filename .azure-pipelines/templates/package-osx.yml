@@ -11,6 +11,7 @@ steps:
   - bash: |
       set -ex
       Qt6_ROOT=/tmp/qt/${{ parameters.qtver }}/macos/
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
