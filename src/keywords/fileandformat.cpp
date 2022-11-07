@@ -66,5 +66,5 @@ void FileAndFormatKeyword::deserialise(const SerialisedValue &node, const CoreDa
     data_.deserialise(node, coreData);
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool FileAndFormatKeyword::isDefault() const { return false; }

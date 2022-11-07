@@ -44,5 +44,5 @@ SerialisedValue StringKeyword::serialise() const { return data_; }
 // Read values from a tree node
 void StringKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_string(); }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool StringKeyword::isDefault() const { return data_ == default_; }

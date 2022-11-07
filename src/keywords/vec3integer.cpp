@@ -101,5 +101,5 @@ SerialisedValue Vec3IntegerKeyword::serialise() const { return data_; }
 // Read values from a tree node
 void Vec3IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool Vec3IntegerKeyword::isDefault() const { return data_ == default_; }

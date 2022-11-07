@@ -31,7 +31,7 @@ class Vec3DoubleKeyword : public KeywordBase
     std::optional<Vec3<double>> minimumLimit_, maximumLimit_;
 
     public:
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override;
     // Set data
     bool setData(Vec3<double> value);

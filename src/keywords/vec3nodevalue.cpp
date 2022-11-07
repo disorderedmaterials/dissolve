@@ -83,5 +83,5 @@ SerialisedValue Vec3NodeValueKeyword::serialise() const { return data_; }
 // Read values from a tree node
 void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool Vec3NodeValueKeyword::isDefault() const { return data_ == default_; }

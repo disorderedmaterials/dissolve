@@ -90,5 +90,5 @@ void OptionalIntegerKeyword::deserialise(const SerialisedValue &node, const Core
     setData(toml::get<int>(node));
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool OptionalIntegerKeyword::isDefault() const { return !set_ || !data_; }

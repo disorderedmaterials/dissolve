@@ -103,5 +103,5 @@ void IntegerDoubleVectorKeyword::deserialise(const SerialisedValue &node, const 
         data_.emplace_back(toml::find<std::vector<int>>(item, "indices"), toml::find<std::vector<double>>(item, "values"));
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool IntegerDoubleVectorKeyword::isDefault() const { return KeywordBase::isDefault(); }

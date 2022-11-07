@@ -111,7 +111,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
         setData(module);
     }
 
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override { return !data_; }
 
     /*

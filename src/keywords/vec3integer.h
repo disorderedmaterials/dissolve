@@ -29,7 +29,7 @@ class Vec3IntegerKeyword : public KeywordBase
     std::optional<Vec3<int>> minimumLimit_, maximumLimit_;
 
     public:
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override;
     // Set data
     bool setData(Vec3<int> value);

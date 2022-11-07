@@ -50,6 +50,6 @@ class IntegerDoubleVectorKeyword : public KeywordBase
     SerialisedValue serialise() const override;
     // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override;
 };

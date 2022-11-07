@@ -33,7 +33,7 @@ class Vec3NodeValueKeyword : public KeywordBase
     Vec3Labels::LabelType labelType_;
 
     public:
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override;
     // Return reference to data
     const Vec3<NodeValue> &data() const;

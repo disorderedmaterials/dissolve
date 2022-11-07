@@ -52,5 +52,5 @@ SerialisedValue NodeValueKeyword::serialise() const { return data_; }
 // Read values from a tree node
 void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data) { data_ = toml::get<NodeValue>(node); }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool NodeValueKeyword::isDefault() const { return default_ == data_; }

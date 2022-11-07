@@ -107,7 +107,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     // Set new option index
     void setEnumerationByIndex(int optionIndex) override { data_ = optionData_.enumerationByIndex(optionIndex); }
 
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override { return data_ == default_; }
 
     // Express as a tree node

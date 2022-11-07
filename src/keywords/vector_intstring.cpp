@@ -105,5 +105,5 @@ void IntegerStringVectorKeyword::deserialise(const SerialisedValue &node, const 
         data_.emplace_back(toml::find<std::vector<int>>(item, "indices"), toml::find<std::vector<std::string>>(item, "values"));
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool IntegerStringVectorKeyword::isDefault() const { return data_.empty(); }

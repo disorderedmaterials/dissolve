@@ -60,5 +60,5 @@ void StringPairVectorKeyword::deserialise(const SerialisedValue &node, const Cor
         data_.emplace_back(key, value.as_string());
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool StringPairVectorKeyword::isDefault() const { return data_.empty(); }

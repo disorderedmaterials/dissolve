@@ -53,5 +53,5 @@ void ExpressionKeyword::deserialise(const SerialisedValue &node, const CoreData 
 {
     setData(std::string_view(node.as_string()));
 }
-// Has not changed from inital value
+// Has not changed from initial value
 bool ExpressionKeyword::isDefault() const { return data_.expressionString() == default_; }

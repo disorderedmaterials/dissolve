@@ -80,7 +80,7 @@ bool ExpressionVariableVectorKeyword::serialise(LineParser &parser, std::string_
     return true;
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool ExpressionVariableVectorKeyword::isDefault() const { return data_.empty(); }
 
 // Express as a tree node

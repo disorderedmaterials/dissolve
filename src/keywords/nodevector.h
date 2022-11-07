@@ -133,7 +133,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         return true;
     }
 
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override { return data_.empty(); }
 
     // Express as a tree node

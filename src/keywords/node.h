@@ -105,7 +105,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
         return true;
     }
 
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override { return data_ == nullptr; }
 
     // Express as a tree node

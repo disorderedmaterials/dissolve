@@ -65,5 +65,5 @@ void StringDoubleVectorKeyword::deserialise(const SerialisedValue &node, const C
         data_.emplace_back(toml::find<std::string>(item, "name"), toml::find<double>(item, "value"));
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool StringDoubleVectorKeyword::isDefault() const { return data_.empty(); }

@@ -81,5 +81,5 @@ SerialisedValue IntegerKeyword::serialise() const { return data_; }
 // Read values from a tree node
 void IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_integer(); }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool IntegerKeyword::isDefault() const { return data_ == default_; }

@@ -59,5 +59,5 @@ SerialisedValue ProcedureKeyword::serialise() const { return data_.serialise(); 
 // Read values from a tree node
 void ProcedureKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node, coreData); }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool ProcedureKeyword::isDefault() const { return false; }

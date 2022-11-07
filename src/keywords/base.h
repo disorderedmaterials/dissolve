@@ -58,7 +58,7 @@ class KeywordBase : public Serialisable<CoreData const &>
      * Arguments
      */
     public:
-    // Has not changed from inital value
+    // Has not changed from initial value
     virtual bool isDefault() const { return false; }
     // Return minimum number of arguments accepted
     virtual int minArguments() const;

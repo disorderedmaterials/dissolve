@@ -11,7 +11,7 @@ BoolKeyword::BoolKeyword(bool &data) : KeywordBase(typeid(this)), default_(data)
  * Data
  */
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool BoolKeyword::isDefault() const { return data_ == default_; }
 
 // Set data

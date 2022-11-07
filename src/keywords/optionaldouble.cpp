@@ -90,5 +90,5 @@ void OptionalDoubleKeyword::deserialise(const SerialisedValue &node, const CoreD
     setData(toml::get<double>(node));
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool OptionalDoubleKeyword::isDefault() const { return !set_ || !data_; }

@@ -101,7 +101,7 @@ bool Vec3DoubleKeyword::serialise(LineParser &parser, std::string_view keywordNa
     return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool Vec3DoubleKeyword::isDefault() const { return data_ == default_; }
 
 // Express as a tree node

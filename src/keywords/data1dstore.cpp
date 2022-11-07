@@ -68,5 +68,5 @@ void Data1DStoreKeyword::deserialise(const SerialisedValue &node, const CoreData
     data_.deserialise(node, coreData);
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool Data1DStoreKeyword::isDefault() const { return data_.data().empty(); }

@@ -80,5 +80,5 @@ void IsotopologueSetKeyword::deserialise(const SerialisedValue &node, const Core
     data_.deserialise(node, coreData);
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool IsotopologueSetKeyword::isDefault() const { return false; }

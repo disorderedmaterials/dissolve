@@ -82,5 +82,5 @@ void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreDa
     }
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool SpeciesVectorKeyword::isDefault() const { return data_.empty(); }

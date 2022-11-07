@@ -95,5 +95,5 @@ void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const 
     }
 }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool ConfigurationVectorKeyword::isDefault() const { return data_.empty(); }

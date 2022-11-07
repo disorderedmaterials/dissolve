@@ -81,5 +81,5 @@ SerialisedValue DoubleKeyword::serialise() const { return data_; }
 // Read values from a tree node
 void DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = toml::get<double>(node); }
 
-// Has not changed from inital value
+// Has not changed from initial value
 bool DoubleKeyword::isDefault() const { return data_ == default_; }

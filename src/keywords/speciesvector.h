@@ -48,7 +48,7 @@ class SpeciesVectorKeyword : public KeywordBase
     public:
     // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override;
     // Express as a tree node
     SerialisedValue serialise() const override;

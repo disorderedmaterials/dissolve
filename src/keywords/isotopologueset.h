@@ -12,7 +12,7 @@ class IsotopologueSetKeyword : public KeywordBase
     public:
     explicit IsotopologueSetKeyword(IsotopologueSet &data);
     ~IsotopologueSetKeyword() override = default;
-    // Has not changed from inital value
+    // Has not changed from initial value
     bool isDefault() const override;
     // Express as a tree node
     SerialisedValue serialise() const override;
