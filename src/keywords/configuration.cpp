@@ -65,6 +65,6 @@ SerialisedValue ConfigurationKeyword::serialise() const
 
 void ConfigurationKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    data_ = coreData.findConfiguration(std::string_view(node.as_string()));
+    data_ = coreData.findConfiguration(std::string_view(std::string(node.as_string())));
 }
 bool ConfigurationKeyword::isDefault() const { return !data_; }

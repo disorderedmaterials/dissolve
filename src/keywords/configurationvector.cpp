@@ -79,7 +79,7 @@ void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const 
 {
     for (auto &name : node.as_array())
     {
-        auto *cfg = coreData.findConfiguration(std::string_view(name.as_string()));
+        auto *cfg = coreData.findConfiguration(std::string_view(std::string(name.as_string())));
         if (!cfg)
             throw toml::err(
                 fmt::format("Error defining Configuration targets - no Configuration named '{}' exists.\n", name.as_string()));
