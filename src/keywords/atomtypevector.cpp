@@ -96,7 +96,7 @@ void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreD
 
         // If the AtomType is already present, complain
         if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
-            throw toml::err(fmt::format("AtomType '{}' specified in selection twice.\n", item.as_string()));
+            throw toml::err(fmt::format("AtomType '{}' specified in selection twice.\n", std::string(item.as_string())));
 
         // All OK - add it to our vector
         data_.push_back(atomType);
