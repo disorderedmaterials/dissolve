@@ -57,7 +57,7 @@ SerialisedValue StringPairVectorKeyword::serialise() const
 void StringPairVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &[key, value] : node.as_table())
-        data_.emplace_back(key, value.as_string());
+        data_.emplace_back(key, std::string(value.as_string()));
 }
 
 // Has not changed from initial value

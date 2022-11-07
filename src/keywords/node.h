@@ -114,7 +114,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
     // Read values from a tree node
     void deserialise(const SerialisedValue &node, const CoreData &coreData)
     {
-        auto child = findNode(std::string_view(node.as_string()));
+        auto child = findNode(std::string_view(std::string(node.as_string())));
         setData(child);
     }
 

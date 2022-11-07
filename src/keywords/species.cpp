@@ -60,5 +60,5 @@ SerialisedValue SpeciesKeyword::serialise() const { return data_->name(); }
 // Read values from a tree node
 void SpeciesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    data_ = coreData.findSpecies(std::string_view(node.as_string()));
+    data_ = coreData.findSpecies(std::string_view(std::string(node.as_string())));
 }

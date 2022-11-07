@@ -51,7 +51,8 @@ SerialisedValue ExpressionKeyword::serialise() const { return data_.expressionSt
 // Read values from a tree node
 void ExpressionKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    setData(std::string_view(node.as_string()));
+    setData(std::string_view(std::string(node.as_string())));
 }
+
 // Has not changed from initial value
 bool ExpressionKeyword::isDefault() const { return data_.expressionString() == default_; }
