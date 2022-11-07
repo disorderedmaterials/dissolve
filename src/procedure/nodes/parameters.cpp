@@ -59,6 +59,8 @@ bool ParametersProcedureNode::prepare(const ProcedureContext &procedureContext) 
 
 // Execute node
 bool ParametersProcedureNode::execute(const ProcedureContext &procedureContext) { return true; }
+
+// Express as a tree node
 SerialisedValue ParametersProcedureNode::serialise() const
 {
     SerialisedValue result;
@@ -66,6 +68,8 @@ SerialisedValue ParametersProcedureNode::serialise() const
         result[std::string(param->name())] = param->value();
     return result;
 }
+
+// Read values from a tree node
 void ParametersProcedureNode::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &[k, v] : node.as_table())
