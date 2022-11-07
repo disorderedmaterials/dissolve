@@ -71,10 +71,7 @@ void ConfigurationVectorKeyword::removeReferencesTo(Configuration *cfg)
 // Express as a tree node
 SerialisedValue ConfigurationVectorKeyword::serialise() const
 {
-    SerialisedValue result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result),
-                   [](const auto &cfg) { return std::string(cfg->name()); });
-    return result;
+    return fromVector(data_, [](const auto &cfg) { return std::string(cfg->name()); });
 }
 
 // Read values from a tree node

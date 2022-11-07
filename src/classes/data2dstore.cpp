@@ -50,11 +50,10 @@ SerialisedValue Data2DStore::serialise() const
 
     if (data_.empty())
         return {};
-    SerialisedValue result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) -> SerialisedValue {
-        return {{"data", item->first}, {"format", item->second}};
-    });
-    return result;
+    return fromVector(data_,
+                      [](const auto &item) -> SerialisedValue {
+                          return {{"data", item->first}, {"format", item->second}};
+                      });
 }
 
 // Read values from a tree node

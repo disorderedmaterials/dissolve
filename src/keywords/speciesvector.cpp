@@ -63,9 +63,7 @@ void SpeciesVectorKeyword::removeReferencesTo(Species *sp)
 // Express as a tree node
 SerialisedValue SpeciesVectorKeyword::serialise() const
 {
-    auto result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto *item) { return item->name(); });
-    return result;
+    return fromVector(data_, [](const auto *item) { return item->name(); });
 }
 
 // Read values from a tree node

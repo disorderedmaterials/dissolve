@@ -72,10 +72,13 @@ template <typename... Contexts> class Serialisable
     {
         if (vector.empty())
             return;
-        toml::array result;
-        for (auto &item : vector)
-            result.push_back(toSerial(item));
-        node[name] = result;
+        node[name] =  fromVector(vector, toSerial);
+    }
+    template <typename T, typename Lambda>
+    static SerialisedValue fromVector(const std::vector<T> &vector, Lambda toSerial) {
+        SerialisedValue result = toml::array{};
+        std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
+        return result;
     }
 
     // Act over each value in a node table, if the key exists

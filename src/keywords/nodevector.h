@@ -139,12 +139,7 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     // Express as a tree node
     SerialisedValue serialise() const override
     {
-        SerialisedValue result = toml::array{};
-        for (auto n : data_)
-        {
-            result.push_back(n->name());
-        }
-        return result;
+        return fromVector(data_, [](const auto &item) { return item->name(); });
     }
 
     // Read values from a tree node

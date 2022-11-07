@@ -34,9 +34,9 @@ bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const 
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
-        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&parser, n](const auto atomType) {
-            return DissolveSys::sameString(atomType->name(), parser.argsv(n));
-        });
+        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(),
+                               [&parser, n](const auto atomType)
+                               { return DissolveSys::sameString(atomType->name(), parser.argsv(n)); });
         if (it == coreData.atomTypes().end())
             return Messenger::error("Unrecognised AtomType '{}' given to '{}' keyword.\n", parser.argsv(n), name());
         auto atomType = *it;
@@ -77,9 +77,7 @@ void AtomTypeVectorKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
 // Express as a tree node
 SerialisedValue AtomTypeVectorKeyword::serialise() const
 {
-    SerialisedValue result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) { return item->name(); });
-    return result;
+    return fromVector(data_, [](const auto &item) { return item->name(); });
 }
 
 // Read values from a tree node
@@ -88,9 +86,9 @@ void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreD
     for (const auto &item : node.as_array())
     {
 
-        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&item](const auto atomType) {
-            return DissolveSys::sameString(atomType->name(), std::string_view(item.as_string()));
-        });
+        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(),
+                               [&item](const auto atomType)
+                               { return DissolveSys::sameString(atomType->name(), std::string_view(item.as_string())); });
         if (it == coreData.atomTypes().end())
             throw toml::err(fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n", item.as_string(), name()));
         auto atomType = *it;

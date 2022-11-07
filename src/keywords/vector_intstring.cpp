@@ -91,11 +91,10 @@ bool IntegerStringVectorKeyword::serialise(LineParser &parser, std::string_view 
 // Express as a tree node
 SerialisedValue IntegerStringVectorKeyword::serialise() const
 {
-    std::vector<SerialisedValue> result;
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](auto pair) -> SerialisedValue {
-        return {{"indices", std::get<0>(pair)}, {"values", std::get<1>(pair)}};
-    });
-    return result;
+    return fromVector(data_,
+                      [](auto pair) -> SerialisedValue {
+                          return {{"indices", std::get<0>(pair)}, {"values", std::get<1>(pair)}};
+                      });
 }
 
 // Read values from a tree node

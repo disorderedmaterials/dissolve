@@ -70,12 +70,7 @@ bool DynamicSiteNodesKeyword::serialise(LineParser &parser, std::string_view key
 // Express as a tree node
 SerialisedValue DynamicSiteNodesKeyword::serialise() const
 {
-    SerialisedValue result = toml::array{};
-    for (auto n : data_)
-    {
-        result.push_back(n->serialise());
-    }
-    return result;
+    return fromVector(data_, [](const auto &item) -> SerialisedValue { return *item; });
 }
 
 // Read values from a tree node
