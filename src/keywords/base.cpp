@@ -104,7 +104,4 @@ void KeywordBase::removeReferencesTo(NodeRef node)
 }
 
 // Express as a tree node
-SerialisedValue KeywordBase::serialise() const
-{
-    return "FIXME";
-}
+SerialisedValue KeywordBase::serialise() const { return "FIXME"; }
