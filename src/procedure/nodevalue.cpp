@@ -165,7 +165,7 @@ void NodeValue::deserialise(const SerialisedValue &node)
                 type_ = ExpressionNodeValue;
                 // FIXME: This needs to be handled properly when we
                 // start serialising expression
-                expression_.create(std::string_view(arg), {});
+                expression_.create(std::string_view(std::string(arg)), {});
             }
         },
         node);
