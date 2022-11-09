@@ -4,13 +4,14 @@ parameters:
 
 steps:
   - bash: |
-      pip3 install dmgbuild biplist
+      pip3 install --user dmgbuild biplist
       wget https://raw.githubusercontent.com/disorderedmaterials/scripts/master/prep-dmg
       chmod u+x ./prep-dmg
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
       Qt6_ROOT=/tmp/qt/${{ parameters.qtver }}/macos/
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
@@ -33,6 +34,7 @@ steps:
     displayName: 'Prepare DMG Dirs'
   - bash: |
       set -ex
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
       # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
       # Fix icon link
