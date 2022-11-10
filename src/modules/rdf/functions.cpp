@@ -247,23 +247,33 @@ bool RDFModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg
  * Public Functions
  */
 
-// Calculate and return effective density for based on the target Configurations
-double RDFModule::effectiveDensity() const
+// Calculate and return effective density based on target Configurations
+std::optional<double> RDFModule::effectiveDensity() const
 {
-    auto rho0 = 0.0, totalWeight = 0.0;
+    std::optional<double> rho0;
+    auto totalWeight = 0.0;
     for (auto *cfg : targetConfigurations_)
     {
+        auto cfgRho = cfg->atomicDensity();
+        if (!cfgRho)
+            continue;
+
         // TODO Get weight for configuration
         auto weight = 1.0;
 
         totalWeight += weight;
 
-        rho0 += weight / cfg->atomicDensity();
+        // ADd to sum
+        if (rho0)
+            *rho0 += weight / *cfg->atomicDensity();
+        else
+            rho0 = weight / *cfg->atomicDensity();
     }
-    rho0 /= totalWeight;
-    rho0 = 1.0 / rho0;
 
-    return rho0;
+    if (!rho0)
+        return {};
+
+    return 1.0 / (rho0.value() / totalWeight);
 }
 
 // Calculate and return used species populations based on target Configurations
@@ -507,6 +517,10 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &
     double totalWeight = 0.0;
     for (Configuration *cfg : parentCfgs)
     {
+        // Confirm atomic density is available (for the subsequent accumulator)
+        if (!cfg->atomicDensity())
+            return Messenger::error("No density available for target configuration '{}'\n", cfg->name());
+
         // TODO Assume weight of 1.0
         auto weight = 1.0;
 
@@ -517,7 +531,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &
 
     // Calculate overall density of combined system
     double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0, [totalWeight](double acc, auto pair) {
-        return acc + pair.second / totalWeight / pair.first->atomicDensity();
+        return acc + pair.second / totalWeight / pair.first->atomicDensity().value();
     });
     rho0 = 1.0 / rho0;
 
@@ -525,12 +539,15 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &
     std::string fingerprint;
     for (auto [cfg, cfgWeight] : configWeights)
     {
+        if (!cfg->atomicDensity())
+            return Messenger::error("No density available for target configuration '{}'\n", cfg->name());
+
         // Update fingerprint
         fingerprint +=
             fingerprint.empty() ? fmt::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
 
         // Calculate weighting factor
-        double weight = ((cfgWeight / totalWeight) * cfg->atomicDensity()) / rho0;
+        double weight = ((cfgWeight / totalWeight) * *cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
         if (!processingData.contains(fmt::format("{}//UnweightedGR", cfg->niceName()), targetPrefix))

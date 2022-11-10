@@ -115,9 +115,9 @@ class Configuration : public Serialisable
     // Return the total atomic mass present in the Configuration
     double atomicMass() const;
     // Return the atomic density of the Configuration
-    double atomicDensity() const;
+    std::optional<double> atomicDensity() const;
     // Return the chemical density (g/cm3) of the Configuration
-    double chemicalDensity() const;
+    std::optional<double> chemicalDensity() const;
     // Return version of current contents
     int contentsVersion() const;
     // Increment version of current contents

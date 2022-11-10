@@ -92,7 +92,7 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     }
 
     // Transform g(r) into S(Q)
-    if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, rho,
+    if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, *rho,
                                WindowFunction(windowFunction_), qBroadening_))
         return false;
 
