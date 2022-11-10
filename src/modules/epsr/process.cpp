@@ -32,7 +32,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
 {
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
-    auto rho = 0.0;
+    std::optional<double> rho;
     for (auto *module : targets_)
     {
         // Retrieve source SQ module, and then the related RDF module
@@ -82,12 +82,14 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
         // Set up the additional potentials - reconstruct them from the current coefficients
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
-            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rMinPT_, rMaxPT_, gSigma1_, gSigma2_))
+            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rMinPT_, rMaxPT_,
+                                             gSigma1_, gSigma2_))
                 return false;
         }
         else
         {
-            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rMinPT_, rMaxPT_, pSigma1_, pSigma2_))
+            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rMinPT_, rMaxPT_,
+                                             pSigma1_, pSigma2_))
                 return false;
         }
     }
@@ -136,6 +138,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          "will not be modified).\n");
     Messenger::print("EPSR: Range for potential generation is {} < Q < {} Angstroms**-1.\n", qMin_, qMax_);
     Messenger::print("EPSR: Weighting factor used when applying fluctuation coefficients is {}\n", weighting_);
+    if (fluctuationSmoothing_)
+        Messenger::print("EPSR: Fluctuation coefficients will be smoothed (average length = 2N+1, N = {})",
+                         *fluctuationSmoothing_);
     if (saveDifferenceFunctions_)
         Messenger::print("EPSR: Difference functions will be saved.\n");
     if (saveEmpiricalPotentials_)
@@ -158,6 +163,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     if (!targetConfiguration_)
         return Messenger::error("No target configuration is set.\n");
+
+    auto rho = *targetConfiguration_->atomicDensity();
 
     /*
      * EPSR Main
@@ -327,8 +334,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
         simulatedFR = weightedSQ.total();
         Filters::trim(simulatedFR, originalReferenceData);
-        Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.03, 30.0,
-                        WindowFunction(WindowFunction::Form::Lorch0));
+        Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * rho), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Form::Lorch0));
 
         /*
          * Add the Data to the Scattering Matrix
@@ -560,17 +566,16 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     auto &estimatedGR =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", name_, GenericItem::InRestartFileFlag);
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2) {
-                                auto &expGR = estimatedGR[{i, j}];
-                                expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+            auto &expGR = estimatedGR[{i, j}];
+            expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
 
-                                // Copy experimental S(Q) and FT it
-                                expGR = estimatedSQ[{i, j}];
-                                Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.05,
-                                                30.0, WindowFunction(WindowFunction::Form::Lorch0));
-                                expGR += 1.0;
-                            });
+            // Copy experimental S(Q) and FT it
+            expGR = estimatedSQ[{i, j}];
+            Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Form::Lorch0));
+            expGR += 1.0;
+        });
 
     /*
      * Calculate contribution to potential coefficients.
@@ -629,9 +634,23 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                     if (overwritePotentials_)
                                         std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
-                                    // Add in fluctuation coefficients
-                                    for (auto n = 0; n < nCoeffP_; ++n)
-                                        potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
+                                    // Add in fluctuation coefficients, smoothing beforehand if requested
+                                    if (fluctuationSmoothing_)
+                                    {
+                                        // Perform smoothing of the fluctuation coefficients before we sum them into the
+                                        // potential (the un-smoothed coefficients are stored)
+                                        Data1D smoothedCoefficients;
+                                        for (auto n = 0; n < nCoeffP_; ++n)
+                                            smoothedCoefficients.addPoint(n, fluctuationCoefficients[{i, j, n}]);
+                                        Filters::normalisedMovingAverage(smoothedCoefficients, *fluctuationSmoothing_);
+
+                                        // Add in fluctuation coefficients
+                                        for (auto n = 0; n < nCoeffP_; ++n)
+                                            potCoeff[n] += weighting_ * smoothedCoefficients.value(n);
+                                    }
+                                    else
+                                        for (auto n = 0; n < nCoeffP_; ++n)
+                                            potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
 
                                     // Set first term to zero (following EPSR)
                                     potCoeff[0] = 0.0;
@@ -678,8 +697,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto sigma1 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
         auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
 
-        if (!generateEmpiricalPotentials(dissolve, expansionFunction_, targetConfiguration_->atomicDensity(), nCoeffP_, rMinPT_,
-                                         rMaxPT_, sigma1, sigma2))
+        if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rMinPT_, rMaxPT_, sigma1, sigma2))
             return false;
     }
     else

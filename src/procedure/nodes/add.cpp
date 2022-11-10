@@ -329,8 +329,8 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         }
     }
 
-    Messenger::print("[Add] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n", cfg->atomicDensity(),
-                     cfg->chemicalDensity());
+    Messenger::print("[Add] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n", *cfg->atomicDensity(),
+                     *cfg->chemicalDensity());
 
     return true;
 }

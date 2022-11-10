@@ -59,6 +59,9 @@ EPSRModule::EPSRModule() : Module("EPSR")
     keywords_.add<DoubleKeyword>("Expansion Function", "RMinPT",
                                  "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)",
                                  rMinPT_, -1.0);
+    keywords_.add<OptionalIntegerKeyword>("Expansion Function", "Smoothing",
+                                          "Smoothing to apply to fluctuation coefficients before summation into potential",
+                                          fluctuationSmoothing_, 0, std::nullopt, 1, "Off");
 
     // Test
     keywords_.add<BoolKeyword>("Test", "Test", "Test against supplied reference data", test_);

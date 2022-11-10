@@ -75,10 +75,22 @@ double Configuration::atomicMass() const
 }
 
 // Return the atomic density of the Configuration
-double Configuration::atomicDensity() const { return nAtoms() / box_->volume(); }
+std::optional<double> Configuration::atomicDensity() const
+{
+    if (nAtoms() == 0)
+        return {};
+
+    return nAtoms() / box_->volume();
+}
 
 // Return the chemical density (g/cm3) of the Configuration
-double Configuration::chemicalDensity() const { return atomicMass() / (box_->volume() / 1.0E24); }
+std::optional<double> Configuration::chemicalDensity() const
+{
+    if (nAtoms() == 0)
+        return {};
+
+    return atomicMass() / (box_->volume() / 1.0E24);
+}
 
 // Return version of current contents
 int Configuration::contentsVersion() const { return contentsVersion_; }

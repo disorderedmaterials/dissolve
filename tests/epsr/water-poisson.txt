@@ -164,6 +164,7 @@ Layer  'Refine (EPSR)'
     OverwritePotentials  True
     InpAFile  '../_data/epsr25/water1000-neutron/water.EPSR.inpa'
     QMin  1.5
+    Smoothing  0
     NPItSs  0
     Target  'D2O'
     Target  'H2O'

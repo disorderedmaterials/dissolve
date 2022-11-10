@@ -86,10 +86,15 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
         auto rho = rdfModule->effectiveDensity();
-        Messenger::print(
-            "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", name_,
-            rho);
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
+        if (rho)
+            Messenger::print(
+                "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n",
+                name_, rho.value());
+        else
+            Messenger::warn("[SETUP {}] Effective atomic density used in Fourier transform of reference data not yet "
+                            "available, so a default of 0.1 atoms/Angstrom3 used.\n",
+                            name_);
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho.value_or(0.1)), referenceFTDeltaR_, referenceFTDeltaR_, 30.0,
                         WindowFunction(referenceWindowFunction_));
 
         // Save data?
@@ -220,7 +225,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
-    auto rho = rdfModule->effectiveDensity();
+    auto rho = *rdfModule->effectiveDensity();
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested

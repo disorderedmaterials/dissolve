@@ -574,7 +574,9 @@ bool ImportCIFDialog::createSupercellSpecies()
     ui_.SupercellBoxAlphaLabel->setText(QString::number(supercell->box()->axisAngles().x) + "&deg;");
     ui_.SupercellBoxBetaLabel->setText(QString::number(supercell->box()->axisAngles().y) + "&deg;");
     ui_.SupercellBoxGammaLabel->setText(QString::number(supercell->box()->axisAngles().z) + "&deg;");
-    ui_.SupercellDensityLabel->setText(QString::number(supercellConfiguration_->chemicalDensity()) + " g cm<sup>3</sup>");
+    auto chemicalDensity = supercellConfiguration_->chemicalDensity();
+    ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
+                                                       : "-- g cm<sup>3</sup>");
     ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration_->box()->volume()) + " &#8491;<sup>3</sup>");
     ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration_->nAtoms()));
 

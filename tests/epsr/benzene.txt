@@ -270,6 +270,7 @@ Module  EPSR  'EPSR01'
   EReq 3.0
   InpAFile  '../_data/epsr25/benzene200-neutron/benzene.EPSR.inpa'
   NPItSs  0
+  Smoothing  0
   Feedback  0.9
   TestAbsEnergyEP  CA-CA  0.4023
   TestAbsEnergyEP  CA-HA  0.1966

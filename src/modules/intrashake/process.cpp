@@ -44,6 +44,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (termEnergyOnly_)
         Messenger::print("IntraShake: Only term energy will be considered (interactions with the rest of the"
                          "system will be ignored).\n");
+    if (!restrictToSpecies_.empty())
+        Messenger::print("IntraShake: Calculation will be restricted to species:\n",
+                         joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
+
     Messenger::print("\n");
 
     ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -58,6 +62,20 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Initialise the random number buffer
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
+
+    // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
+    if (!restrictToSpecies_.empty())
+    {
+        std::vector<int> targetIndices;
+        auto id = 0;
+        for (const auto &mol : targetConfiguration_->molecules())
+        {
+            if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
+                targetIndices.push_back(id);
+            ++id;
+        }
+        distributor.setTargetMolecules(targetIndices);
+    }
 
     // Ensure that the Species used in the present Configuration have attached atom lists
     for (auto &spPop : targetConfiguration_->speciesPopulations())
@@ -224,6 +242,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             if (adjustTorsions_)
                 for (const auto &torsion : mol->species()->torsions())
                 {
+                    // Refuse to change a torsion which is in a cycle
+                    if (torsion.inCycle())
+                        continue;
+
                     // Get Atom pointers
                     i = mol->atom(torsion.indexI());
                     j = mol->atom(torsion.indexJ());
@@ -231,8 +253,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     l = mol->atom(torsion.indexL());
 
                     // Store current energy of this intramolecular term
-                    intraEnergy =
-                        torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
+                    intraEnergy = kernel.energy(torsion, *i, *j, *k, *l);
 
                     // Select random terminus
                     terminus = randomBuffer.random() > 0.5 ? 1 : 0;
@@ -256,12 +277,11 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         // Calculate new energy
                         newPPEnergy =
                             termEnergyOnly_ ? 0.0 : kernel.energy(*mol, true, ProcessPool::subDivisionStrategy(strategy));
-                        newIntraEnergy =
-                            torsion.inCycle() ? kernel.intramolecularEnergy(*mol) : kernel.energy(torsion, *i, *j, *k, *l);
+                        newIntraEnergy = kernel.energy(torsion, *i, *j, *k, *l);
 
                         // Trial the transformed Molecule
                         delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-                        accept = delta < 0 ? true : (randomBuffer.random() < exp(-delta * rRT));
+                        accept = delta < 0 || (randomBuffer.random() < exp(-delta * rRT));
 
                         // Accept new (current) positions of the Molecule's Atoms?
                         if (accept)

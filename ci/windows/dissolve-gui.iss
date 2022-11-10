@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dissolve-GUI"
-#define MyAppVersion "0.9.5"
+#define MyAppVersion "0.9.9"
 #define MyAppPublisher "Team Dissolve"
 #define MyAppURL "https://www.projectdissolve.com/"
 #define MyAppExeName "Dissolve-GUI.exe"
@@ -31,7 +31,7 @@ DefaultDirName={commonpf}\Dissolve-GUI
 DefaultGroupName={#MyAppName}
 LicenseFile=..\..\LICENSE.txt
 OutputDir=..\..\
-OutputBaseFilename=Dissolve-GUI-0.9.5-Win64
+OutputBaseFilename=Dissolve-GUI-0.9.9-Win64
 SetupIconFile=Dissolve.ico
 Compression=lzma
 SolidCompression=yes
@@ -67,6 +67,7 @@ Source: "C:\Windows\System32\D3DCompiler_47.dll"; DestDir: "{app}\bin"; Flags: i
 Source: "{#DeployDir}\tbb\bin\tbb.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\tbb\bin\tbbmalloc.dll"; DestDir: "{app}\bin"
 Source: "{#DeployDir}\tbb\bin\tbbmalloc_proxy.dll"; DestDir: "{app}\bin"
+Source: "{#DeployDir}\antlr4-cppruntime\bin\antlr4-runtime.dll"; DestDir: "{app}\bin"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; IconFilename: "{app}\bin\Dissolve.ico"; Filename: "{app}\bin\{#MyAppExeName}"; WorkingDir: "{app}"
