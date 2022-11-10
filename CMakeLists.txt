@@ -3,7 +3,6 @@ project(Dissolve)
 
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Team Dissolve")
-
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "9")
 set(VERSION_PATCH "9")
