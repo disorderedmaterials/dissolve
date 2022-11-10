@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
 #pragma once
-#include <tbb/combinable.h>
 #include <tbb/blocked_range2d.h>
+#include <tbb/combinable.h>
 #include <tbb/iterators.h>
 #include <tbb/parallel_reduce.h>
 
