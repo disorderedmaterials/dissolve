@@ -44,6 +44,7 @@
           fmt_8
           fmt_8.dev
           freetype
+
           inetutils # for rsh
           ninja
           jre
