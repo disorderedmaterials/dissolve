@@ -56,7 +56,7 @@ class EPSRModule : public Module
     double gSigma2_{0.2};
     // Whether to apply generated perturbations to interatomic potentials
     bool modifyPotential_{true};
-    // Number of coefficients used to define the empirical potential (-1 for automatic)
+    // Number of coefficients used to define the empirical potential
     std::optional<int> nCoeffP_;
     // Number of steps for refining the potential
     std::optional<int> nPItSs_{1000};

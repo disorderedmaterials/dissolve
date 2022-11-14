@@ -39,8 +39,8 @@ EPSRModule::EPSRModule() : Module("EPSR")
     keywords_.add<DoubleKeyword>("Expansion Function", "GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001,
                                  1.0);
     keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NCoeffP",
-                                          "Number of coefficients used to define the empirical potential (-1 for automatic)",
-                                          nCoeffP_, 0, std::nullopt, 100, "Automatic");
+                                          "Number of coefficients used to define the empirical potential", nCoeffP_, 0,
+                                          std::nullopt, 100, "Automatic");
     keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NPItSs",
                                           "Number of steps for refining fits to delta functions", nPItSs_, 0, std::nullopt, 100,
                                           "Off (No Fitting - CAUTION!)");
