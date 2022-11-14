@@ -14,16 +14,7 @@ The EPSR algorithm implemented within Dissolve doesn't contain any attempts at a
 3. Once the r-factors have stabilised, increase **EReq** (increasing by an amount equivalent to the initial value each time is sensible).
 4. If the r-factors decrease again, repeat (3). If not, then you have probably reached the limit of what is possible within the context of the current simulation and its forcefield.
 
-If you now take a look at the r-factors for your water simulation you should see that they have steadily decreased while you've been reading. In fact, an **EReq** value of around 5 or 6 represents the "limit of no improvement", so let's pause the simulation step up to that value now:
-
-
-{{< step text="Pause the simulation with **Esc**" />}}
-{{< action type="tabs" text=" **Refine (EPSR)** tab" />}}
-{{< action type="groups" text="Open the **Control** settings group" />}}
-{{< step text="Set **EReq** to 6.0" />}}
-{{< step text="Start the simulation running again with **Ctrl-R**" />}}
-
-Now that we're running again with a higher value of **EReq** the r-factors should start to come down again, and with a value of 6.0 the total r-factor should soon approach a value of around 1.55&times;10<sup>-4</sup>. The simulated F(Q) should now agree pretty well with the experimental data:
+If you now take a look at the r-factors for your water simulation you should see that they have steadily decreased while you've been reading. In fact, an **EReq** value of around 3 represents the "limit of no improvement" for the present case - R-factors should be of the order of 1.4&times;10<sup>-4</sup>, and the simulated F(Q) should now agree pretty well with the experimental data:
 
 {{< cimage src="../refined-fq.png" caption="Experimental (solid lines) and simulated (dashed lines) total F(Q) after refinement" >}}
 
