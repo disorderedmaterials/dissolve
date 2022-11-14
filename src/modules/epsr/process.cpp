@@ -132,7 +132,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                      expansionFunctionTypes().keyword(expansionFunction_));
     Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", nCoeffP_.value(), pSigma2_);
     if (modifyPotential_)
-        Messenger::print("EPSR: Perturbations to interatomic potentials will be generated and applied.\n");
+        Messenger::print(
+            "EPSR: Perturbations to interatomic potentials will be generated and applied with a frequency of {}.\n",
+            *modifyPotential_);
     else
         Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials "
                          "will not be modified).\n");
@@ -167,6 +169,15 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (!targetConfiguration_->atomicDensity())
         return Messenger::error("No density available for target configuration '{}'\n", targetConfiguration_->name());
     auto rho = *targetConfiguration_->atomicDensity();
+
+    /*
+     * Realise and increase run counter
+     */
+    auto [runCount, runCountStatus] =
+        dissolve.processingModuleData().realiseIf<int>("RunCount", name(), GenericItem::InRestartFileFlag);
+    if (runCountStatus == GenericItem::ItemStatus::Created)
+        runCount = 0;
+    ++runCount;
 
     /*
      * EPSR Main
@@ -624,7 +635,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Generate new empirical potentials
     auto energabs = 0.0;
-    if (modifyPotential_)
+    if (modifyPotential_ && (runCount % *modifyPotential_ == 0))
     {
         // Sum fluctuation coefficients in to the potential coefficients
         auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, nCoeffP_);
