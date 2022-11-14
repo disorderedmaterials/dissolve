@@ -21,8 +21,9 @@ EPSRModule::EPSRModule() : Module("EPSR")
     keywords_.add<DoubleKeyword>("Control", "EReq", "Limit of magnitude of additional potential for any one pair potential",
                                  eReq_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "Feedback", "Confidence factor", feedback_, 0.0, 1.0);
-    keywords_.add<BoolKeyword>("Control", "ModifyPotential",
-                               "Whether to apply generated perturbations to interatomic potentials", modifyPotential_);
+    keywords_.add<OptionalIntegerKeyword>("Control", "ModifyPotential",
+                                          "Frequency at which to apply generated perturbations to interatomic potentials",
+                                          modifyPotential_, 0, std::nullopt, 1, "Off");
     keywords_.add<DoubleKeyword>("Control", "QMax",
                                  "Maximum Q value over which to generate potentials from total scattering data", qMax_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "QMin",
