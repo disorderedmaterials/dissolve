@@ -58,7 +58,7 @@ set +x
 # Determine the release branch that we're currently on, if it wasn't already provided with -v
 if [ "$ON_RELEASE" = "none" ]
 then
-  ON_RELEASE=$(git branch --show-current | sed "s/releases\?\/\([0-9].[0-9].[0-9]\)/\1/g")
+  ON_RELEASE=$(git branch --show-current | sed "s/releases\?\/\([0-9].[0-9].[0-9]+\)/\1/g")
   if [ "x${ON_RELEASE}" = "x" ]
   then
     echo "On a branch that doesn't appear to be a release ($(git branch --show-current)). Exiting now."
@@ -98,7 +98,7 @@ if [[ -e ${OLD_RELEASES_FILE}.new ]]
 then
   rm ${OLD_RELEASES_FILE}.new
 fi
-for tag in $(echo ${RELEASES} | jq -r ".[] | select(.tag_name | match(\"[0-9].[0-9].[0-9]\")) | .tag_name")
+for tag in $(echo ${RELEASES} | jq -r ".[] | select(.tag_name | match(\"[0-9].[0-9].[0-9]+\")) | .tag_name")
 do
   echo "Processing ${tag}..."
 
