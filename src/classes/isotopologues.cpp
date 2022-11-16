@@ -176,10 +176,11 @@ void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &cor
     species_ = coreData.findSpecies(toml::find<std::string>(node, "name"));
     speciesPopulation_ = toml::find<double>(node, "population");
 
-    Serialisable::toMap(node, "mix", [&coreData, this](const auto &name, const auto &item) {
+    auto location = node.location();
+    Serialisable::toMap(node, "mix", [&coreData, &location, this](const auto &name, const auto &item) {
         auto iso = species_->findIsotopologue(name);
         if (!iso)
-            throw toml::err(fmt::format("Cannot find iso {}", name));
+            throw toml::syntax_error(fmt::format("Cannot find iso {}", name), location);
         add(iso, item.as_floating());
     });
 }

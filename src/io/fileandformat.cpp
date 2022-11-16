@@ -131,9 +131,10 @@ SerialisedValue FileAndFormat::serialise() const
 void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     filename_ = toml::find<std::string>(node, "name");
-    auto idx = formats_.keywordIndex(toml::find<std::string>(node, "format"));
+    auto format = toml::find<std::string>(node, "format");
+    auto idx = formats_.keywordIndex(format);
     if (!idx)
-        throw toml::err("Unknown file format");
+      throw toml::syntax_error(fmt::format("Unknown file format: {}", format), node.location());
     formats_.setIndex(*idx);
     keywords_.deserialiseFrom(node, coreData);
 }

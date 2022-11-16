@@ -89,13 +89,15 @@ void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreD
             return DissolveSys::sameString(atomType->name(), std::string_view(std::string(item.as_string())));
         });
         if (it == coreData.atomTypes().end())
-            throw toml::err(
-                fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n", std::string(item.as_string()), name()));
+            throw toml::syntax_error(
+                fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n", std::string(item.as_string()), name()),
+                node.location());
         auto atomType = *it;
 
         // If the AtomType is already present, complain
         if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
-            throw toml::err(fmt::format("AtomType '{}' specified in selection twice.\n", std::string(item.as_string())));
+            throw toml::syntax_error(
+                fmt::format("AtomType '{}' specified in selection twice.\n", std::string(item.as_string())), node.location());
 
         // All OK - add it to our vector
         data_.push_back(atomType);
