@@ -6,7 +6,6 @@
 #include "base/lineparser.h"
 #include "keywords/base.h"
 #include "keywords/nodeunderlay.h"
-#include "procedure/nodes/generator.h"
 #include "procedure/nodes/node.h"
 
 // Base class for NodeKeyword

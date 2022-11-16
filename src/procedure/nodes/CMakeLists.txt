@@ -17,7 +17,6 @@ add_library(
   dynamicsite.cpp
   fit1d.cpp
   generalregion.cpp
-  generator.cpp
   integrate1d.cpp
   node.cpp
   nodereference.cpp
@@ -62,7 +61,6 @@ add_library(
   dynamicsite.h
   fit1d.h
   generalregion.h
-  generator.h
   integrate1d.h
   node.h
   nodereference.h

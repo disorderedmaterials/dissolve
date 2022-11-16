@@ -4,7 +4,6 @@
 #include "procedure/nodes/sequence.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "procedure/nodes/generator.h"
 #include "procedure/nodes/registry.h"
 
 SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, NodeRef owner,
@@ -501,6 +500,10 @@ void SequenceProcedureNode::deserialise(const SerialisedValue &node, const CoreD
 {
     for (auto &[k, v] : node.as_table())
     {
-        addNode(nodeGenerator(v, k, data));
+        ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(v.at("type"));
+        auto result = ProcedureNodeRegistry::create(type);
+        result->deserialise(v, data);
+        result->setName(k);
+        addNode(result);
     }
 }
