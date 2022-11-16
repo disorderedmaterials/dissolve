@@ -87,11 +87,11 @@ const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isot
 // Express as a serialisable value
 SerialisedValue Isotopologue::serialise() const
 {
-    SerialisedValue isotopologue;
-    isotopologue["name"] = name_;
+    SerialisedValue result;
+    result["name"] = name_;
     for (auto &&[type, isotope] : isotopes_)
-        isotopologue[type->name().data()] = Sears91::A(isotope);
-    return isotopologue;
+        result[type->name().data()] = Sears91::A(isotope);
+    return result;
 }
 
 void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &coreData)
