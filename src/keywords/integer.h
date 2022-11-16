@@ -20,7 +20,7 @@ class IntegerKeyword : public KeywordBase
     // Reference to target data
     int &data_;
     // Initial value
-    int default_;
+    const int default_;
     // Validation limits to apply (if any)
     std::optional<int> minimumLimit_, maximumLimit_;
     // Whether the data has been set
