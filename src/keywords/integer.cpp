@@ -75,10 +75,10 @@ bool IntegerKeyword::serialise(LineParser &parser, std::string_view keywordName,
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue IntegerKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_integer(); }
 
 // Has not changed from initial value

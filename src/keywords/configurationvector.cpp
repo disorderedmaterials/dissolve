@@ -68,13 +68,13 @@ void ConfigurationVectorKeyword::removeReferencesTo(Configuration *cfg)
     data_.erase(std::remove(data_.begin(), data_.end(), cfg), data_.end());
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue ConfigurationVectorKeyword::serialise() const
 {
     return fromVector(data_, [](const auto &cfg) { return std::string(cfg->name()); });
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &name : node.as_array())

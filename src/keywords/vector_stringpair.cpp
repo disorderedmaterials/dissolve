@@ -44,7 +44,7 @@ bool StringPairVectorKeyword::serialise(LineParser &parser, std::string_view key
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue StringPairVectorKeyword::serialise() const
 {
     SerialisedValue result;
@@ -53,7 +53,7 @@ SerialisedValue StringPairVectorKeyword::serialise() const
     return result;
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void StringPairVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &[key, value] : node.as_table())

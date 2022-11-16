@@ -362,7 +362,7 @@ double SpeciesAngle::force(double angleInDegrees) const
                                          AngleFunctions::forms().keyword(angleForm))));
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesAngle::serialise() const
 {
     auto angle = SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise();

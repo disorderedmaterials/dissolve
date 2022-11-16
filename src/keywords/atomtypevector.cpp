@@ -74,13 +74,13 @@ void AtomTypeVectorKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
         data_.erase(it);
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue AtomTypeVectorKeyword::serialise() const
 {
     return fromVector(data_, [](const auto &item) { return item->name(); });
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (const auto &item : node.as_array())

@@ -52,8 +52,8 @@ bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, st
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue BoolKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void BoolKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_boolean(); }

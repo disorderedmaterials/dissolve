@@ -66,10 +66,10 @@ bool ValueStoreKeyword::serialise(LineParser &parser, std::string_view keywordNa
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue ValueStoreKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void ValueStoreKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_.deserialise(node, coreData);

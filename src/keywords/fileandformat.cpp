@@ -57,10 +57,10 @@ bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywor
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue FileAndFormatKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void FileAndFormatKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_.deserialise(node, coreData);

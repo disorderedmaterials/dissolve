@@ -418,7 +418,7 @@ bool Data1D::serialise(LineParser &parser) const
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Data1D::serialise() const
 {
     SerialisedValue result = {{"tag", tag_}, {"x", x_}, {"y", values_}};
@@ -427,7 +427,7 @@ SerialisedValue Data1D::serialise() const
     return result;
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void Data1D::deserialise(const SerialisedValue &node)
 {
     tag_ = toml::find<std::string>(node, "tag");

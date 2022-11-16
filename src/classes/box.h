@@ -180,7 +180,7 @@ class Box : public Serialisable<>
     // Determine axis scale factors to give requested volume, with scaling ratios provided
     Vec3<double> scaleFactors(double requestedVolume, Vec3<bool> scalableAxes = {true, true, true}) const;
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
 };
 

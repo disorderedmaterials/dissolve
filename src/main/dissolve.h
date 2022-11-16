@@ -253,13 +253,13 @@ class Dissolve : public Serialisable<>
     public:
     // Load input file
     bool loadInput(std::string_view filename);
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
     // Load input from supplied string
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Load restart file
     bool loadRestart(std::string_view filename);

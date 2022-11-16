@@ -37,7 +37,7 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
     return shortRangeTruncationScheme_;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SerializablePairPotential::serialise() const
 {
     SerialisedValue pairPotentials;

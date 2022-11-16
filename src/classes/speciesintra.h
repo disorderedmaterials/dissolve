@@ -155,7 +155,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     virtual void setName(std::string_view name) { throw(std::runtime_error("Can't set the name of a base SpeciesIntra.\n")); }
     // Return identifying name (if a master term)
     virtual std::string_view name() const { return ""; };
-    // Load parameters from tree node
+    // Load parameters from serialisable value
     void deserialiseParameters(const SerialisedValue &node)
     {
         if (node.contains("parameters"))
@@ -179,7 +179,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
             setInteractionFormAndParameters(interactionForm(), values);
         }
     }
-    // Load form from tree node
+    // Load form from serialisable value
     template <typename Lambda> void deserialiseForm(const SerialisedValue &node, Lambda lambda)
     {
         if (node.contains("form"))
@@ -198,7 +198,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         deserialiseParameters(node);
     }
 
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override
     {
         if (node.contains("form"))
@@ -209,7 +209,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         deserialiseParameters(node);
     }
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override
     {
         SerialisedValue result;

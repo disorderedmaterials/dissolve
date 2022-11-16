@@ -133,7 +133,7 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
     return result;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Dissolve::serialise() const
 {
     SerialisedValue root;
@@ -152,7 +152,7 @@ SerialisedValue Dissolve::serialise() const
     return root;
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void Dissolve::deserialise(const SerialisedValue &node)
 {
     if (node.contains("pairPotentials"))

@@ -205,7 +205,7 @@ void Species::print() const
 // Return version
 int Species::version() const { return version_; }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Species::serialise() const
 {
     SerialisedValue species;
@@ -223,7 +223,7 @@ SerialisedValue Species::serialise() const
     return species;
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     atoms_ = toml::find<std::vector<SpeciesAtom>>(node, "atoms");

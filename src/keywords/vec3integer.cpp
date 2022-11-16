@@ -95,10 +95,10 @@ bool Vec3IntegerKeyword::serialise(LineParser &parser, std::string_view keywordN
     return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Vec3IntegerKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void Vec3IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
 
 // Has not changed from initial value

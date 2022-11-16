@@ -53,10 +53,10 @@ bool ProcedureKeyword::serialise(LineParser &parser, std::string_view keywordNam
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue ProcedureKeyword::serialise() const { return data_.serialise(); }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void ProcedureKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node, coreData); }
 
 // Has not changed from initial value

@@ -77,10 +77,10 @@ bool Vec3NodeValueKeyword::serialise(LineParser &parser, std::string_view keywor
                              data_.z.asString(true));
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Vec3NodeValueKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void Vec3NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
 
 // Has not changed from initial value

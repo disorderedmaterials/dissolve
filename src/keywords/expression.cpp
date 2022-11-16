@@ -45,10 +45,10 @@ bool ExpressionKeyword::serialise(LineParser &parser, std::string_view keywordNa
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue ExpressionKeyword::serialise() const { return data_.expressionString(); }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void ExpressionKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     setData(std::string_view(std::string(node.as_string())));

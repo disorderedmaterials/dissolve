@@ -15,9 +15,9 @@ using SerialisedValue = toml::value;
 template <typename... Contexts> class Serialisable
 {
     public:
-    // Express as a tree node
+    // Express as a serialisable value
     virtual SerialisedValue serialise() const = 0;
-    // Read values from a tree node
+    // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
 
     /* Functions that hook into the toml11 library */

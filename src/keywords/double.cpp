@@ -75,10 +75,10 @@ bool DoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue DoubleKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = toml::get<double>(node); }
 
 // Has not changed from initial value

@@ -33,8 +33,8 @@ class ExpressionVariable : public Serialisable<>
     const ExpressionValue &value() const;
     // Return pointer to value
     ExpressionValue *valuePointer();
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node);
 };

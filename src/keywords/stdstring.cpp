@@ -38,10 +38,10 @@ bool StringKeyword::serialise(LineParser &parser, std::string_view keywordName, 
     return parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_);
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue StringKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void StringKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_string(); }
 
 // Has not changed from initial value

@@ -187,7 +187,7 @@ std::vector<Configuration *> ModuleLayer::allTargetedConfigurations() const
     return result;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue ModuleLayer::serialise() const
 {
     SerialisedValue result;
@@ -202,7 +202,7 @@ SerialisedValue ModuleLayer::serialise() const
     return result;
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     frequency_ = toml::find_or<int>(node, "frequency", 1);

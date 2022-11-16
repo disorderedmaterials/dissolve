@@ -100,8 +100,8 @@ class ModuleLayer : public Serialisable<const CoreData &>
     bool setUpAll(Dissolve &dissolve, const ProcessPool &procPool);
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

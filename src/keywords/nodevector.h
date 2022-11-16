@@ -136,13 +136,13 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     // Has not changed from initial value
     bool isDefault() const override { return data_.empty(); }
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override
     {
         return fromVector(data_, [](const auto &item) { return item->name(); });
     }
 
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         for (auto n : node.as_array())

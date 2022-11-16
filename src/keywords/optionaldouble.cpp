@@ -81,10 +81,10 @@ bool OptionalDoubleKeyword::serialise(LineParser &parser, std::string_view keywo
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value_or(minimumLimit_));
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue OptionalDoubleKeyword::serialise() const { return data_.value_or(minimumLimit_); }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void OptionalDoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     setData(toml::get<double>(node));

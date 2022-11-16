@@ -86,7 +86,7 @@ bool IntegerDoubleVectorKeyword::serialise(LineParser &parser, std::string_view 
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue IntegerDoubleVectorKeyword::serialise() const
 {
     return fromVector(data_, [](auto pair) -> SerialisedValue {
@@ -94,7 +94,7 @@ SerialisedValue IntegerDoubleVectorKeyword::serialise() const
     });
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void IntegerDoubleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto item : node.as_array())

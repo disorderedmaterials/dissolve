@@ -46,10 +46,10 @@ bool NodeValueKeyword::serialise(LineParser &parser, std::string_view keywordNam
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue NodeValueKeyword::serialise() const { return data_; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data) { data_ = toml::get<NodeValue>(node); }
 
 // Has not changed from initial value

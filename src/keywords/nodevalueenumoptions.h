@@ -121,13 +121,13 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
                                  optionData_.keyword(data_.second));
     }
 
-    // Read values from a tree node
+    // Read values from a serialisable value
     SerialisedValue serialise() const override
     {
         return {{"value", data_.first.serialise()}, {"option", optionData_.serialise(data_.second)}};
     }
 
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
         data_.first = toml::find<NodeValue>(node, "value");

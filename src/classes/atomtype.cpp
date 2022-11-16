@@ -95,7 +95,7 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue AtomType::serialise() const
 {
     SerialisedValue atomType;

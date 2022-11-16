@@ -186,7 +186,7 @@ std::vector<Module *> Module::allOfType(std::vector<std::string> types)
     return modules;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Module::serialise() const
 {
     SerialisedValue result = {{"name", name_}, {"type", typeName_}};
@@ -195,7 +195,7 @@ SerialisedValue Module::serialise() const
     return keywords_.serialiseOnto(result);
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void Module::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     name_ = toml::find<std::string>(node, "name");

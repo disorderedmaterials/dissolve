@@ -30,10 +30,10 @@ const ExpressionValue &ExpressionVariable::value() const { return value_; }
 // Return pointer to value
 ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue ExpressionVariable::serialise() const { return {{"name", name_}, {"value", value_}}; }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void ExpressionVariable::deserialise(const SerialisedValue &node)
 {
     value_ = toml::find<ExpressionValue>(node, "value");

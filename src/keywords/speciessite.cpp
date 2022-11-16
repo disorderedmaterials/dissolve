@@ -87,13 +87,13 @@ void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite *spSite)
         data_ = nullptr;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesSiteKeyword::serialise() const
 {
     return {{"species", data_->parent()->name()}, {"site", data_->name()}};
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     KeywordBase::deserialise(node, coreData);

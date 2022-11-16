@@ -66,8 +66,8 @@ class Isotopologues : public Serialisable<const CoreData &>
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
 };

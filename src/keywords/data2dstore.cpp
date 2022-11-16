@@ -54,7 +54,7 @@ bool Data2DStoreKeyword::serialise(LineParser &parser, std::string_view keywordN
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Data2DStoreKeyword::serialise() const { return data_; }
 
 // Has not changed from initial value

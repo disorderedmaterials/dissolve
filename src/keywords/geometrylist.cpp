@@ -79,7 +79,7 @@ bool GeometryListKeyword::serialise(LineParser &parser, std::string_view keyword
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue GeometryListKeyword::serialise() const
 {
     SerialisedValue result;
@@ -111,7 +111,7 @@ SerialisedValue GeometryListKeyword::serialise() const
     return result;
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void GeometryListKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     auto typeString = toml::find<std::string>(node, "type");

@@ -67,13 +67,13 @@ bool DynamicSiteNodesKeyword::serialise(LineParser &parser, std::string_view key
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue DynamicSiteNodesKeyword::serialise() const
 {
     return fromVector(data_, [](const auto &item) -> SerialisedValue { return *item; });
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void DynamicSiteNodesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto n : node.as_array())

@@ -70,9 +70,9 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) = 0;
     // Serialise data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
+    // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
 
     /*
