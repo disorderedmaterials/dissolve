@@ -19,8 +19,6 @@ class GeometryListKeyword : public KeywordBase
     private:
     // Reference to vector of data
     std::vector<Geometry> &data_;
-    // Initial Value
-    const std::vector<Geometry> default_;
     // Geometry type accepted
     Geometry::GeometryType geometryType_;
 
