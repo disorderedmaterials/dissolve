@@ -210,7 +210,7 @@ void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreD
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::Disabled);
     if (toml::find_or<bool>(node, "requireEnergyStability", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::EnergyStability);
-    if (toml::find_or<bool>(node, "requireSieFactors", false))
+    if (toml::find_or<bool>(node, "requireSizeFactors", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
     Serialisable::toMap(node, "modules", [&coreData, this](const auto &key, const SerialisedValue &data) {
         auto *module = append(toml::find<std::string>(data, "type"), {});
