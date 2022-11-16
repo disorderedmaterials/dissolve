@@ -24,7 +24,7 @@ class Vec3IntegerKeyword : public KeywordBase
     // Reference to target data
     Vec3<int> &data_;
     // Initial Value
-    Vec3<int> default_;
+    const Vec3<int> default_;
     // Validation limits to apply (if any)
     std::optional<Vec3<int>> minimumLimit_, maximumLimit_;
 
