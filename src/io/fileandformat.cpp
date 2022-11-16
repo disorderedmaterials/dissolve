@@ -130,7 +130,6 @@ SerialisedValue FileAndFormat::serialise() const
 // Read values from a serialisable value
 void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    SerialisedValue result;
     filename_ = toml::find<std::string>(node, "name");
     auto idx = formats_.keywordIndex(toml::find<std::string>(node, "format"));
     if (!idx)
