@@ -60,6 +60,7 @@ SerialisedValue ConfigurationKeyword::serialise() const
 {
     // isDefault is checked before serialisation of keywords
     // so we have checked for the null pointer
+    assert(data_);
     return data_->name();
 }
 
