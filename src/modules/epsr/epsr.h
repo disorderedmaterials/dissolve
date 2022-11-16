@@ -54,9 +54,9 @@ class EPSRModule : public Module
     double gSigma1_{0.1};
     // Width for Gaussian function in real space
     double gSigma2_{0.2};
-    // Whether to apply generated perturbations to interatomic potentials
-    bool modifyPotential_{true};
-    // Number of coefficients used to define the empirical potential (-1 for automatic)
+    // Frequency at which to apply generated perturbations to interatomic potentials
+    std::optional<int> modifyPotential_{1};
+    // Number of coefficients used to define the empirical potential
     std::optional<int> nCoeffP_;
     // Number of steps for refining the potential
     std::optional<int> nPItSs_{1000};

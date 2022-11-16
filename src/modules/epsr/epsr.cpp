@@ -21,8 +21,9 @@ EPSRModule::EPSRModule() : Module("EPSR")
     keywords_.add<DoubleKeyword>("Control", "EReq", "Limit of magnitude of additional potential for any one pair potential",
                                  eReq_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "Feedback", "Confidence factor", feedback_, 0.0, 1.0);
-    keywords_.add<BoolKeyword>("Control", "ModifyPotential",
-                               "Whether to apply generated perturbations to interatomic potentials", modifyPotential_);
+    keywords_.add<OptionalIntegerKeyword>("Control", "ModifyPotential",
+                                          "Frequency at which to apply generated perturbations to interatomic potentials",
+                                          modifyPotential_, 0, std::nullopt, 1, "Off");
     keywords_.add<DoubleKeyword>("Control", "QMax",
                                  "Maximum Q value over which to generate potentials from total scattering data", qMax_, 0.0);
     keywords_.add<DoubleKeyword>("Control", "QMin",
@@ -39,8 +40,8 @@ EPSRModule::EPSRModule() : Module("EPSR")
     keywords_.add<DoubleKeyword>("Expansion Function", "GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001,
                                  1.0);
     keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NCoeffP",
-                                          "Number of coefficients used to define the empirical potential (-1 for automatic)",
-                                          nCoeffP_, 0, std::nullopt, 100, "Automatic");
+                                          "Number of coefficients used to define the empirical potential", nCoeffP_, 0,
+                                          std::nullopt, 100, "Automatic");
     keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NPItSs",
                                           "Number of steps for refining fits to delta functions", nPItSs_, 0, std::nullopt, 100,
                                           "Off (No Fitting - CAUTION!)");
