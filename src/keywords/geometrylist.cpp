@@ -136,8 +136,10 @@ void GeometryListKeyword::deserialise(const SerialisedValue &node, const CoreDat
                 geo.set(value, indices[0], indices[1]);
                 break;
             case Geometry::GeometryType::TorsionType:
-            default:
                 geo.set(value, indices[0], indices[1], indices[2], indices[3]);
+                break;
+            default:
+                throw toml::syntax_error(fmt::format("Cannot handle GeometryType {}", geometryType_), node.location());
                 break;
         }
         data_.push_back(geo);
