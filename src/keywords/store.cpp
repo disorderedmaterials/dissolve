@@ -201,7 +201,6 @@ std::string toml_format(const std::string_view original)
 // Apply the terms in the keyword store to a node
 SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
 {
-
     for (auto &[k, v] : keywords())
         if (!v->isDefault())
         {
