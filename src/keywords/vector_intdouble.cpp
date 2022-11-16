@@ -102,4 +102,4 @@ void IntegerDoubleVectorKeyword::deserialise(const SerialisedValue &node, const 
 }
 
 // Has not changed from initial value
-bool IntegerDoubleVectorKeyword::isDefault() const { return KeywordBase::isDefault(); }
+bool IntegerDoubleVectorKeyword::isDefault() const { return data_.empty(); }

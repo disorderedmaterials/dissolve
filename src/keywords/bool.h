@@ -18,6 +18,7 @@ class BoolKeyword : public KeywordBase
     private:
     // Reference to target data
     bool &data_;
+    // Initial value
     const bool default_;
     // Whether the data has been set
     bool set_{false};

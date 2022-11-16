@@ -53,6 +53,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     private:
     // Reference to data
     E &data_;
+    // Initial value
     const E default_;
     // Related EnumOptions data
     EnumOptions<E> optionData_;
