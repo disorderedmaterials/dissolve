@@ -134,7 +134,7 @@ void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &cor
     auto format = toml::find<std::string>(node, "format");
     auto idx = formats_.keywordIndex(format);
     if (!idx)
-      throw toml::syntax_error(fmt::format("Unknown file format: {}", format), node.location());
+        throw toml::syntax_error(fmt::format("Unknown file format: {}", format), node.location());
     formats_.setIndex(*idx);
     keywords_.deserialiseFrom(node, coreData);
 }

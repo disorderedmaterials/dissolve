@@ -100,7 +100,7 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
         auto title = toml::get<std::string>(item);
         auto *module = Module::find(title);
         if (!module)
-	  throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", title), node.location());
+            throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", title), node.location());
 
         // Check the module's type if we can
         if (!moduleTypes_.empty() && std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s) {
@@ -108,7 +108,8 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
                                      }) == moduleTypes_.cend())
             throw toml::syntax_error(
                 fmt::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n", title,
-                            module->type(), name(), joinStrings(moduleTypes_)), node.location());
+                            module->type(), name(), joinStrings(moduleTypes_)),
+                node.location());
         data_.push_back(module);
     }
 }
