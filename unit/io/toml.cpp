@@ -41,11 +41,15 @@ void runParse(std::string input)
         Dissolve initial(coreData);
         initial.loadInput(input);
         auto toml = initial.serialise();
+        auto knownGood = initial.iterate(100);
         Dissolve repeat(coreData2);
         EXPECT_NO_THROW(repeat.deserialise(toml));
         auto toml2 = repeat.serialise();
 
         compare_toml("", toml, toml2);
+
+        auto confirmation = repeat.iterate(100);
+        EXPECT_EQ(knownGood, confirmation);
     }
 }
 
