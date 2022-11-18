@@ -6,7 +6,7 @@
 #include "expression/expression.h"
 
 ExpressionKeyword::ExpressionKeyword(Expression &data, const std::vector<std::shared_ptr<ExpressionVariable>> &variables)
-    : KeywordBase(typeid(this)), data_(data), variables_(variables)
+    : KeywordBase(typeid(this)), data_(data), variables_(variables), default_(data.expressionString())
 {
 }
 
@@ -44,3 +44,15 @@ bool ExpressionKeyword::serialise(LineParser &parser, std::string_view keywordNa
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue ExpressionKeyword::serialise() const { return data_.expressionString(); }
+
+// Read values from a serialisable value
+void ExpressionKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    setData(std::string_view(std::string(node.as_string())));
+}
+
+// Has not changed from initial value
+bool ExpressionKeyword::isDefault() const { return data_.expressionString() == default_; }

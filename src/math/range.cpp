@@ -39,3 +39,18 @@ bool Range::contains(double d) const
         return false;
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue Range::serialise() const { return {{"min", minimum_}, {"max", maximum_}}; }
+
+// Read values from a serialisable value
+void Range::deserialise(const SerialisedValue &node)
+{
+    minimum_ = toml::find<double>(node, "min");
+    maximum_ = toml::find<double>(node, "max");
+}
+
+// Equality
+bool Range::operator==(const Range &rhs) const { return minimum_ == rhs.minimum_ && maximum_ == rhs.maximum_; }
+
+bool Range::operator!=(const Range &rhs) const { return !(rhs == *this); }

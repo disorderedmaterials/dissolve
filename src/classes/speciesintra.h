@@ -16,7 +16,7 @@ class SpeciesAtom;
 class Species;
 
 // Base class for intramolecular interactions within Species
-template <class Intra, class Functions> class SpeciesIntra : public Serialisable
+template <class Intra, class Functions> class SpeciesIntra : public Serialisable<>
 {
     public:
     explicit SpeciesIntra(typename Functions::Form form) : interactionPotential_(form){};
@@ -155,20 +155,31 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
     virtual void setName(std::string_view name) { throw(std::runtime_error("Can't set the name of a base SpeciesIntra.\n")); }
     // Return identifying name (if a master term)
     virtual std::string_view name() const { return ""; };
-    // Load parameters from tree node
+    // Load parameters from serialisable value
     void deserialiseParameters(const SerialisedValue &node)
     {
         if (node.contains("parameters"))
         {
             auto names = Functions::parameters(interactionForm());
-            auto map = toml::find<std::map<std::string, double>>(node, "parameters");
             std::vector<double> values;
-            std::transform(names.begin(), names.end(), std::back_inserter(values),
-                           [&map](const auto &name) { return map[name]; });
+            std::map<std::string, double> map;
+            switch (node.at("parameters").type())
+            {
+                case toml::value_t::array:
+                    values = toml::find<std::vector<double>>(node, "parameters");
+                    break;
+                case toml::value_t::table:
+                    map = toml::find<std::map<std::string, double>>(node, "parameters");
+                    std::transform(names.begin(), names.end(), std::back_inserter(values),
+                                   [&map](const auto &name) { return map[name]; });
+                    break;
+                default:
+                    Messenger::error("Cannot understand parameter value");
+            }
             setInteractionFormAndParameters(interactionForm(), values);
         }
     }
-    // Load form from tree node
+    // Load form from serialisable value
     template <typename Lambda> void deserialiseForm(const SerialisedValue &node, Lambda lambda)
     {
         if (node.contains("form"))
@@ -186,7 +197,8 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         }
         deserialiseParameters(node);
     }
-    // Deserialise the form and parameters
+
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override
     {
         if (node.contains("form"))
@@ -196,7 +208,8 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         }
         deserialiseParameters(node);
     }
-    // Serialise the form and parameters
+
+    // Express as a serialisable value
     SerialisedValue serialise() const override
     {
         SerialisedValue result;
@@ -211,8 +224,11 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
         {
             SerialisedValue parametersNode;
             std::vector<std::string> parameters = Functions::parameters(interactionForm());
-            for (auto parameterIndex = 0; parameterIndex < values.size(); ++parameterIndex)
-                parametersNode[parameters[parameterIndex]] = values[parameterIndex];
+            if (parameters.empty())
+                parametersNode = values;
+            else
+                for (auto parameterIndex = 0; parameterIndex < values.size(); ++parameterIndex)
+                    parametersNode[parameters[parameterIndex]] = values[parameterIndex];
             result["parameters"] = parametersNode;
         }
 

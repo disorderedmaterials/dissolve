@@ -30,7 +30,7 @@ void CoreData::Masters::deserialise(const SerialisedValue &node)
     return;
 }
 
-// Express Master terms as tree node
+// Express Master terms as serialisable value
 SerialisedValue CoreData::serialiseMaster() const { return masters_.serialise(); }
-// Read Master values from tree node
+// Read Master values from serialisable value
 void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deserialise(node); }

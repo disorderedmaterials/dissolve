@@ -23,6 +23,8 @@ class NodeValueKeyword : public KeywordBase
     private:
     // Reference to data
     NodeValue &data_;
+    // initial value
+    const NodeValue default_;
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
 
@@ -41,4 +43,10 @@ class NodeValueKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &cordeData) override;
+    // Has not changed from initial value
+    bool isDefault() const override;
 };

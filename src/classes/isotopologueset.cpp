@@ -131,3 +131,13 @@ bool IsotopologueSet::write(LineParser &parser)
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue IsotopologueSet::serialise() const { return isotopologues_; }
+
+// Read values from a serialisable value
+void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto &item : node.as_array())
+        isotopologues_.emplace_back().deserialise(item, coreData);
+}

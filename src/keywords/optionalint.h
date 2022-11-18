@@ -12,6 +12,7 @@ class OptionalIntegerKeyword : public KeywordBase
     public:
     explicit OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue, int valueDelta,
                                     std::string_view textWhenNull);
+    bool isDefault() const override;
     ~OptionalIntegerKeyword() override = default;
 
     /*
@@ -53,4 +54,6 @@ class OptionalIntegerKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    SerialisedValue serialise() const override;
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

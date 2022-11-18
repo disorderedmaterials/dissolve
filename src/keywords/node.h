@@ -104,6 +104,19 @@ template <class N> class NodeKeyword : public NodeKeywordBase
         return true;
     }
 
+    // Has not changed from initial value
+    bool isDefault() const override { return data_ == nullptr; }
+
+    // Express as a serialisable value
+    SerialisedValue serialise() const override { return {}; /*FIXME: return data_->name();*/ }
+
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData)
+    {
+        auto child = findNode(std::string_view(std::string(node.as_string())));
+        setData(child);
+    }
+
     /*
      * Object Management
      */

@@ -480,3 +480,30 @@ std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::
 std::vector<NodeRef>::const_reverse_iterator SequenceProcedureNode::QueryRange::end() { return stop_; }
 bool SequenceProcedureNode::QueryRange::empty() { return start_ == stop_; }
 void SequenceProcedureNode::QueryRange::next() { start_++; }
+
+// Express as a serialisable value
+SerialisedValue SequenceProcedureNode::serialise() const
+{
+    SerialisedValue node;
+    for (auto n : sequence_)
+    {
+        // node.push_back(n->serialise());
+        SerialisedValue inner = n->serialise();
+        inner["type"] = n->nodeTypes().serialise(n->type());
+        node[std::string(n->name())] = inner;
+    }
+    return node;
+}
+
+// Read values from a serialisable value
+void SequenceProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    for (auto &[k, v] : node.as_table())
+    {
+        ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(v.at("type"));
+        auto result = ProcedureNodeRegistry::create(type);
+        result->deserialise(v, data);
+        result->setName(k);
+        addNode(result);
+    }
+}

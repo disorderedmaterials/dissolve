@@ -6,7 +6,7 @@
 #include "procedure/nodes/node.h"
 
 NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)
-    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode)
+    : KeywordBase(typeid(this)), data_(data), default_(data), parentNode_(parentNode)
 {
 }
 
@@ -45,3 +45,12 @@ bool NodeValueKeyword::serialise(LineParser &parser, std::string_view keywordNam
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue NodeValueKeyword::serialise() const { return data_; }
+
+// Read values from a serialisable value
+void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data) { data_ = toml::get<NodeValue>(node); }
+
+// Has not changed from initial value
+bool NodeValueKeyword::isDefault() const { return default_ == data_; }

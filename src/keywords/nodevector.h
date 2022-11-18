@@ -133,6 +133,34 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         return true;
     }
 
+    // Has not changed from initial value
+    bool isDefault() const override { return data_.empty(); }
+
+    // Express as a serialisable value
+    SerialisedValue serialise() const override
+    {
+        return fromVector(data_, [](const auto &item) { return item->name(); });
+    }
+
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override
+    {
+        for (auto n : node.as_array())
+        {
+            // Locate the named node - don't prune by type yet (we'll check that in setNode())
+            ConstNodeRef noderef = findNode(std::string(n.as_string()));
+            if (!noderef)
+                throw toml::syntax_error(
+                    fmt::format("Node '{}' given to keyword {} doesn't exist.\n", std::string(n.as_string()), name()),
+                    node.location());
+
+            if (!validNode(noderef.get(), name()))
+                throw toml::syntax_error(fmt::format("Invalid node: {}", name()), node.location());
+
+            data_.push_back(std::dynamic_pointer_cast<const N>(noderef));
+        }
+    }
+
     /*
      * Object Management
      */

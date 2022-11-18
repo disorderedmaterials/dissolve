@@ -4,6 +4,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "data/ff/ff.h"
+#include "data/ff/library.h"
 #include "data/isotopes.h"
 
 Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false), forcefield_(nullptr)
@@ -204,7 +205,7 @@ void Species::print() const
 // Return version
 int Species::version() const { return version_; }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Species::serialise() const
 {
     SerialisedValue species;
@@ -217,15 +218,17 @@ SerialisedValue Species::serialise() const
     Serialisable::fromVector<>(torsions_, "torsions", species);
     Serialisable::fromVector<>(impropers_, "impropers", species);
     Serialisable::fromVector<>(isotopologues_, "isotopologues", species);
-    Serialisable::fromVector<>(sites_, "sites", species);
+    Serialisable::fromVectorToTable<>(sites_, "sites", species);
 
     return species;
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     atoms_ = toml::find<std::vector<SpeciesAtom>>(node, "atoms");
+    if (node.contains("forcefield"))
+        forcefield_ = ForcefieldLibrary::forcefield(toml::find<std::string>(node, "forcefield"));
 
     Serialisable::toVector(node, "bonds", [this, &coreData](const SerialisedValue &bond) {
         bonds_.emplace_back(&atoms_.at(toml::find<int>(bond, "i") - 1), &atoms_.at(toml::find<int>(bond, "j") - 1))
@@ -253,7 +256,8 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
     Serialisable::toVector(node, "isotopologues", [this, &coreData](const SerialisedValue &iso) {
         isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(iso, coreData);
     });
-    Serialisable::toVector(node, "sites", [this, &coreData](const SerialisedValue &site) {
-        sites_.emplace_back(std::make_unique<SpeciesSite>(this))->deserialise(site);
+
+    Serialisable::toMap(node, "sites", [this, &coreData](const std::string &name, const SerialisedValue &site) {
+        sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site);
     });
 }

@@ -18,6 +18,8 @@ class SpeciesSiteKeyword : public KeywordBase
     /*
      * Data
      */
+    bool isDefault() const override;
+
     private:
     // Reference to data
     const SpeciesSite *&data_;
@@ -43,6 +45,10 @@ class SpeciesSiteKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 
     /*
      * Object Management

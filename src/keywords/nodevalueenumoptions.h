@@ -45,7 +45,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 {
     public:
     NodeValueEnumOptionsKeyword(std::pair<NodeValue, E> &data, ProcedureNode *parentNode, EnumOptions<E> optionData)
-        : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), parentNode_(parentNode), optionData_(optionData)
+        : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), parentNode_(parentNode), optionData_(optionData),
+          default_(data)
     {
     }
     ~NodeValueEnumOptionsKeyword() override = default;
@@ -56,6 +57,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     private:
     // Reference to data
     std::pair<NodeValue, E> &data_;
+    // Initial Value
+    const std::pair<NodeValue, E> default_;
     // Parent ProcedureNode
     const ProcedureNode *parentNode_;
     // Related EnumOptions data
@@ -91,6 +94,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
      * Arguments
      */
     public:
+    // Default
+    bool isDefault() const override { return data_ == default_; }
     // Return minimum number of arguments accepted
     int minArguments() const override { return 2; }
     // Return maximum number of arguments accepted
@@ -114,5 +119,18 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     {
         return parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(), data_.first.asString(),
                                  optionData_.keyword(data_.second));
+    }
+
+    // Read values from a serialisable value
+    SerialisedValue serialise() const override
+    {
+        return {{"value", data_.first.serialise()}, {"option", optionData_.serialise(data_.second)}};
+    }
+
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override
+    {
+        data_.first = toml::find<NodeValue>(node, "value");
+        data_.second = optionData_.deserialise(node.at("option"));
     }
 };

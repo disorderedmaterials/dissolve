@@ -43,3 +43,25 @@ OptionalReferenceWrapper<const Data2D> Data2DStore::data(std::string_view name) 
 
 // Return vector of all data
 const std::vector<std::shared_ptr<std::pair<Data2D, Data2DImportFileFormat>>> &Data2DStore::data() const { return data_; }
+
+// Express as a serialisable value
+SerialisedValue Data2DStore::serialise() const
+{
+
+    if (data_.empty())
+        return {};
+    return fromVector(data_, [](const auto &item) -> SerialisedValue {
+        return {{"data", item->first}, {"format", item->second}};
+    });
+}
+
+// Read values from a serialisable value
+void Data2DStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto &item : node.as_array())
+    {
+        auto &[data, format] = *data_.emplace_back(std::make_shared<std::pair<Data2D, Data2DImportFileFormat>>()).get();
+        data.deserialise(item.at("data"));
+        format.deserialise(node.at("format"), coreData);
+    }
+}

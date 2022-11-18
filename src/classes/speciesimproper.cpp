@@ -225,7 +225,7 @@ double SpeciesImproper::force(double angleInDegrees) const
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesImproper::serialise() const
 {
     auto improper = SpeciesIntra<SpeciesImproper, TorsionFunctions>::serialise();

@@ -424,7 +424,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesSite::serialise() const
 {
     SerialisedValue site;

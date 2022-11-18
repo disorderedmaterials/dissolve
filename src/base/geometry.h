@@ -35,4 +35,6 @@ class Geometry
     double value() const;
     // Return specified index
     int indices(int i) const;
+    bool operator==(const Geometry &rhs) const;
+    bool operator!=(const Geometry &rhs) const;
 };

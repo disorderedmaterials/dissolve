@@ -159,7 +159,7 @@
             ++ (with pkgs; [
               (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages_7; })
               ccache
-              ccls
+              (pkgs.ccls.override { llvmPackages = pkgs.llvmPackages_7; })
               cmake-format
               cmake-language-server
               conan

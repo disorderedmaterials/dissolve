@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 
 RangeKeyword::RangeKeyword(Range &data, Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data), labelType_(labelType)
+    : KeywordBase(typeid(this)), data_(data), default_(data), labelType_(labelType)
 {
 }
 
@@ -48,3 +48,12 @@ bool RangeKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 {
     return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.minimum(), data_.maximum());
 }
+
+// Express as a serialisable value
+SerialisedValue RangeKeyword::serialise() const { return data_; }
+
+// Read values from a serialisable value
+void RangeKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
+
+// Has not changed from initial value
+bool RangeKeyword::isDefault() const { return data_ == default_; }

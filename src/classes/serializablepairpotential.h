@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-class SerializablePairPotential : public Serialisable
+class SerializablePairPotential : public Serialisable<>
 {
     private:
     double &range_;
@@ -43,8 +43,8 @@ class SerializablePairPotential : public Serialisable
     PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme();
     const PairPotential::ShortRangeTruncationScheme &shortRangeTruncationScheme() const;
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };

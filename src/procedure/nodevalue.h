@@ -8,7 +8,7 @@
 #include "templates/optionalref.h"
 
 // Node Value
-class NodeValue : public Serialisable
+class NodeValue : public Serialisable<>
 {
     public:
     NodeValue();
@@ -19,6 +19,8 @@ class NodeValue : public Serialisable
     ~NodeValue();
     void operator=(const int value);
     void operator=(const double value);
+    bool operator==(const NodeValue &value) const;
+    bool operator!=(const NodeValue &value) const;
     operator double();
 
     /*
@@ -57,9 +59,9 @@ class NodeValue : public Serialisable
      */
     public:
     // Return contained value as integer
-    int asInteger();
+    int asInteger() const;
     // Return contained value as double
-    double asDouble();
+    double asDouble() const;
     // Return value represented as a string
     std::string asString(bool addQuotesIfRequired = false) const;
 
@@ -67,8 +69,8 @@ class NodeValue : public Serialisable
      * Serialisable
      */
     public:
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
 };

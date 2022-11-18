@@ -6,7 +6,7 @@
 
 Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> &data, std::optional<Vec3<int>> minValue, std::optional<Vec3<int>> maxValue,
                                        Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data)
+    : KeywordBase(typeid(this)), data_(data), default_(data)
 {
     labelType_ = labelType;
     minimumLimit_ = minValue;
@@ -94,3 +94,12 @@ bool Vec3IntegerKeyword::serialise(LineParser &parser, std::string_view keywordN
 {
     return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
+
+// Express as a serialisable value
+SerialisedValue Vec3IntegerKeyword::serialise() const { return data_; }
+
+// Read values from a serialisable value
+void Vec3IntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
+
+// Has not changed from initial value
+bool Vec3IntegerKeyword::isDefault() const { return data_ == default_; }

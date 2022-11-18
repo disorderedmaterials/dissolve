@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "math/matrix4.h"
 
 // Range
-class Range
+class Range : public Serialisable<>
 {
     public:
     Range(double minimum = 0.0, double maximum = 0.0);
@@ -31,4 +32,10 @@ class Range
     double maximum() const;
     // Return whether the range contains the specified value
     bool contains(double d) const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
+    bool operator==(const Range &rhs) const;
+    bool operator!=(const Range &rhs) const;
 };

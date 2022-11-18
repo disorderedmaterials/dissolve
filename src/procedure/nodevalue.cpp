@@ -95,7 +95,7 @@ bool NodeValue::isValid() const { return (type_ == ExpressionNodeValue ? express
  */
 
 // Return contained value as integer
-int NodeValue::asInteger()
+int NodeValue::asInteger() const
 {
     if (type_ == IntegerNodeValue)
         return valueI_;
@@ -106,7 +106,7 @@ int NodeValue::asInteger()
 }
 
 // Return contained value as double
-double NodeValue::asDouble()
+double NodeValue::asDouble() const
 {
     if (type_ == IntegerNodeValue)
         return (double)valueI_;
@@ -150,23 +150,41 @@ void NodeValue::deserialise(const SerialisedValue &node)
     toml::visit(
         [this](auto &arg) {
             using T = std::decay_t<decltype(arg)>;
-            if constexpr (std::is_same_v<T, int>)
+            if constexpr (std::is_same_v<T, toml::integer>)
             {
                 type_ = IntegerNodeValue;
                 valueI_ = arg;
             }
-            else if constexpr (std::is_same_v<T, double>)
+            else if constexpr (std::is_same_v<T, toml::floating>)
             {
                 type_ = DoubleNodeValue;
                 valueD_ = arg;
             }
-            else if constexpr (std::is_same_v<T, std::string>)
+            else if constexpr (std::is_same_v<T, toml::string>)
             {
                 type_ = ExpressionNodeValue;
                 // FIXME: This needs to be handled properly when we
-                // start serialising expressions.
-                expression_.create(arg, {});
+                // start serialising expression
+                expression_.create(std::string_view(std::string(arg)), {});
             }
         },
         node);
 }
+
+bool NodeValue::operator==(const NodeValue &value) const
+{
+    if (type_ != value.type_)
+        return false;
+    switch (type_)
+    {
+        case IntegerNodeValue:
+            return valueI_ == value.asInteger();
+        case DoubleNodeValue:
+            return valueD_ == value.asDouble();
+        case ExpressionNodeValue:
+            return expression_.expressionString() == value.expression_.expressionString();
+    }
+    return false;
+}
+
+bool NodeValue::operator!=(const NodeValue &value) const { return !(*this == value); }

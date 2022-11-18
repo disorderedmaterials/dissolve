@@ -3,10 +3,11 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include <string>
 
 // Expression Value
-class ExpressionValue
+class ExpressionValue : public Serialisable<>
 {
     public:
     ExpressionValue();
@@ -65,4 +66,8 @@ class ExpressionValue
     static bool bothIntegers(const ExpressionValue &a, const ExpressionValue &b);
     // Return the supplied ExpressionValues both contain double types
     static bool bothDoubles(const ExpressionValue &a, const ExpressionValue &b);
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

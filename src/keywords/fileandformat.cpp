@@ -56,3 +56,15 @@ bool FileAndFormatKeyword::serialise(LineParser &parser, std::string_view keywor
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue FileAndFormatKeyword::serialise() const { return data_; }
+
+// Read values from a serialisable value
+void FileAndFormatKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_.deserialise(node, coreData);
+}
+
+// Has not changed from initial value
+bool FileAndFormatKeyword::isDefault() const { return false; }

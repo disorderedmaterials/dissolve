@@ -218,6 +218,10 @@ class KeywordStore
     KeywordBase::ParseResult deserialise(LineParser &parser, const CoreData &coreData, int startArg = 0);
     // Write all keywords to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
+    // Apply the terms in the keyword store to a node
+    SerialisedValue serialiseOnto(SerialisedValue node) const;
+    // Pull keywords from entries in table
+    void deserialiseFrom(const SerialisedValue &node, const CoreData &coreData);
 
     /*
      * Object Management

@@ -133,7 +133,7 @@ bool Dissolve::loadInputFromString(std::string_view inputString)
     return result;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Dissolve::serialise() const
 {
     SerialisedValue root;
@@ -145,12 +145,14 @@ SerialisedValue Dissolve::serialise() const
 
     root["pairPotentials"] = serializablePairPotential_.serialise();
 
-    Serialisable::fromVectorToTable<>(configurations(), "configurations", root);
+    Serialisable::fromVectorToTable(configurations(), "configurations", root);
+
+    Serialisable::fromVectorToTable(processingLayers_, "layers", root);
 
     return root;
 }
 
-// Read values from a tree node
+// Read values from a serialisable value
 void Dissolve::deserialise(const SerialisedValue &node)
 {
     if (node.contains("pairPotentials"))
@@ -167,6 +169,18 @@ void Dissolve::deserialise(const SerialisedValue &node)
     }
     Serialisable::toMap(node, "species", [this](const std::string &name, const SerialisedValue &data) {
         species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_);
+    });
+
+    Serialisable::toMap(node, "configurations", [this](const std::string &name, const SerialisedValue &data) {
+        auto *cfg = addConfiguration();
+        cfg->setName(name);
+        cfg->deserialise(data, coreData_);
+    });
+
+    Serialisable::toMap(node, "layers", [this](const std::string &name, const SerialisedValue &data) {
+        auto *layer = addProcessingLayer();
+        layer->setName(name);
+        layer->deserialise(data, coreData_);
     });
 }
 

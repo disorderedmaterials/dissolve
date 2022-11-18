@@ -58,3 +58,25 @@ bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordNa
 
     return true;
 }
+
+// Has not changed from initial value
+bool NodeBranchKeyword::isDefault() const
+{
+    // FIXME: This is backwards
+    return data_ != nullptr;
+}
+
+// Express as a serialisable value
+SerialisedValue NodeBranchKeyword::serialise() const
+{
+    if (!data_)
+        return {};
+    return data_->serialise();
+}
+
+// Read values from a serialisable value
+void NodeBranchKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_ = std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_->scope()->procedure(), parentNode_, name());
+    data_->deserialise(node, coreData);
+}

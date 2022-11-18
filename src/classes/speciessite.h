@@ -18,7 +18,7 @@ class Species;
 class SpeciesAtom;
 
 // Species Site Definition
-class SpeciesSite : public Serialisable
+class SpeciesSite : public Serialisable<>
 {
     public:
     explicit SpeciesSite(const Species *parent);

@@ -11,7 +11,7 @@
 #include <stdexcept>
 
 // 3D vector
-template <class T> class Vec3 : public Serialisable
+template <class T> class Vec3 : public Serialisable<>
 {
     public:
     Vec3<T>() : x(T()), y(T()), z(T()){};
@@ -82,6 +82,10 @@ template <class T> class Vec3 : public Serialisable
      * Operators
      */
     public:
+    bool operator==(const Vec3<T> &value) const { return x == value.x && y == value.y && z == value.z; }
+    bool operator!=(const Vec3<T> &value) const { return !(*this == value); }
+    bool operator==(const T &value) const { return x == value && y == value && z == value; }
+    bool operator!=(const T &value) const { return !(*this == value); }
     void operator=(const T value)
     {
         x = value;

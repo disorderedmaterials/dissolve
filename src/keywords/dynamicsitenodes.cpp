@@ -66,3 +66,23 @@ bool DynamicSiteNodesKeyword::serialise(LineParser &parser, std::string_view key
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue DynamicSiteNodesKeyword::serialise() const
+{
+    return fromVector(data_, [](const auto &item) -> SerialisedValue { return *item; });
+}
+
+// Read values from a serialisable value
+void DynamicSiteNodesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto n : node.as_array())
+    {
+        auto dynamicSite = std::make_shared<DynamicSiteProcedureNode>(
+            std::dynamic_pointer_cast<SelectProcedureNode>(parentNode_->shared_from_this()));
+        dynamicSite->deserialise(node, coreData);
+        data_.push_back(dynamicSite);
+    }
+}
+// Has not changed from initial value
+bool DynamicSiteNodesKeyword::isDefault() const { return data_.empty(); }

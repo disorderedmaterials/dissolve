@@ -360,7 +360,7 @@ double SpeciesBond::force(double distance) const
                                          BondFunctions::forms().keyword(bondForm))));
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesBond::serialise() const
 {
     auto bond = SpeciesIntra<SpeciesBond, BondFunctions>::serialise();
