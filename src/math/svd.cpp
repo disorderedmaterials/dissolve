@@ -151,7 +151,7 @@ bool decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double> &S,
         l = i;
     }
 
-    // Assumulate left-hand transformation
+    // Accumulate left-hand transformation
     //   for(i=min(nRows,nCols) - 1;i >= 0;i--) {
     for (i = nCols - 1; i >= 0; i--)
     {
