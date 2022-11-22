@@ -3,6 +3,7 @@
 
 #include "math/interpolator.h"
 #include "math/data1d.h"
+#include "templates/algorithms.h"
 
 Interpolator::Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme)
     : x_(x), y_(y)
@@ -316,40 +317,34 @@ double Interpolator::y(double x)
     // and avoid the binary chop
     if (lastInterval_ != -1)
     {
-        // If the x value now exceeds the last interval boundary, try to increment it
-        if (x >= x_[lastInterval_ + 1])
+        // If the x value exceeds the next interval boundary, try to increment it
+        if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
         {
-            if (lastInterval_ < x_.size())
-                ++lastInterval_;
-            if (lastInterval_ < x_.size() && x >= x_[lastInterval_ + 1])
+            ++lastInterval_;
+
+            // If there are still intervals beyond this one, check the next limit
+            if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
                 lastInterval_ = -1;
         }
-        else if (lastInterval_ > 0)
-        {
-            // Upper boundary limit OK - double-check lower limit
-            if (x <= x_[lastInterval_])
-            {
-                --lastInterval_;
-                if (x <= x_[lastInterval_])
-                    lastInterval_ = -1;
-            }
-        }
 
-        // Valid interval found?
-        if (lastInterval_ != -1)
-            return y(x, lastInterval_);
+        // Double-check lower limit
+        if (lastInterval_ > 0 && (x < x_[lastInterval_]))
+            lastInterval_ = -1;
     }
 
-    // Perform binary chop search
-    lastInterval_ = 0;
-    int i, right = h_.size() - 1;
-    while ((right - lastInterval_) > 1)
+    // Perform binary chop search if no valid interval was found
+    if (lastInterval_ == -1)
     {
-        i = (right + lastInterval_) / 2;
-        if (x_[i] > x)
-            right = i;
-        else
-            lastInterval_ = i;
+        lastInterval_ = 0;
+        int i, right = h_.size() - 1;
+        while ((right - lastInterval_) > 1)
+        {
+            i = (right + lastInterval_) / 2;
+            if (x_[i] > x)
+                right = i;
+            else
+                lastInterval_ = i;
+        }
     }
 
     return y(x, lastInterval_);
@@ -461,7 +456,8 @@ void Interpolator::addInterpolated(const Data1D &source, Data1D &dest, double fa
         // Generate interpolation of source data
         Interpolator I(source);
 
-        std::transform(destX.begin(), destX.end(), destY.begin(), destY.begin(),
-                       [&](auto x, auto y) { return y + I.y(x) * factor; });
+        // Explicit loop over values
+        for (auto &&[x, y] : zip(destX, destY))
+            y += I.y(x) * factor;
     }
 }

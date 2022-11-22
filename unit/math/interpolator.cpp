@@ -109,7 +109,7 @@ TEST_F(InterpolatorTest, RegularBasic)
     }
 }
 
-TEST_F(InterpolatorTest, RegularManipulationTest)
+TEST_F(InterpolatorTest, RegularSequentialTest)
 {
     // Form interpolation of regular data
     Interpolator I(regularData_);
@@ -130,6 +130,17 @@ TEST_F(InterpolatorTest, RegularManipulationTest)
         EXPECT_DOUBLE_EQ(y, I.y(x));
         EXPECT_DOUBLE_EQ(y, interpy);
     }
+}
+
+TEST_F(InterpolatorTest, RegularRandomTest)
+{
+    // Form interpolation of regular data
+    Interpolator I(regularData_);
+
+    // Check values in a non-sequential way
+    auto indices = {0, 6, 3, 40, 3, 20, 50, 41, 12};
+    for (auto i : indices)
+        EXPECT_NEAR(regularFineY_[i], I.y(fineDeltaX * i), 1.0e-10);
 }
 
 } // namespace UnitTest
