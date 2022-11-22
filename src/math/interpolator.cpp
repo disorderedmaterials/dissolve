@@ -312,6 +312,34 @@ double Interpolator::y(double x)
         }
     }
 
+    // Quick check of our interval - if the data is sequential increasing in x then we should be able to quickly determine it
+    // and avoid the binary chop
+    if (lastInterval_ != -1)
+    {
+        // If the x value now exceeds the last interval boundary, try to increment it
+        if (x >= x_[lastInterval_ + 1])
+        {
+            if (lastInterval_ < x_.size())
+                ++lastInterval_;
+            if (lastInterval_ < x_.size() && x >= x_[lastInterval_ + 1])
+                lastInterval_ = -1;
+        }
+        else if (lastInterval_ > 0)
+        {
+            // Upper boundary limit OK - double-check lower limit
+            if (x <= x_[lastInterval_])
+            {
+                --lastInterval_;
+                if (x <= x_[lastInterval_])
+                    lastInterval_ = -1;
+            }
+        }
+
+        // Valid interval found?
+        if (lastInterval_ != -1)
+            return y(x, lastInterval_);
+    }
+
     // Perform binary chop search
     lastInterval_ = 0;
     int i, right = h_.size() - 1;
