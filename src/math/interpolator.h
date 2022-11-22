@@ -65,4 +65,6 @@ class Interpolator
     static double approximate(const Data1D &data, double x);
     // Add interpolated source data into destination with supplied multiplication factor
     static void addInterpolated(const Data1D &source, Data1D &dest, double factor = 1.0);
+    // Add interpolation into destination with supplied multiplication factor
+    static void addInterpolated(Interpolator &source, Data1D &dest, double factor = 1.0);
 };

@@ -461,3 +461,16 @@ void Interpolator::addInterpolated(const Data1D &source, Data1D &dest, double fa
             y += I.y(x) * factor;
     }
 }
+
+// Add interpolation into destination with supplied multiplication factor
+void Interpolator::addInterpolated(Interpolator &source, Data1D &dest, double factor)
+{
+    // Must have a valid destination
+    if (dest.nValues() == 0)
+        throw(std::runtime_error(
+            "Destination Data1D is empty, and must be initialised before an Interpolator can be added to it.\n"));
+
+    // Explicit loop over values
+    for (auto &&[x, y] : zip(dest.xAxis(), dest.values()))
+        y += source.y(x) * factor;
+}
