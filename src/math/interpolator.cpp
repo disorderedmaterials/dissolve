@@ -414,26 +414,26 @@ double Interpolator::approximate(const Data1D &data, double x)
     return t1 + (t2 - t1) * ppp * 0.5;
 }
 
-// Add interpolated data B to data A, with supplied multiplication factor
-void Interpolator::addInterpolated(Data1D &A, const Data1D &B, double factor)
+// Add interpolated source data to target data, with supplied multiplication factor
+void Interpolator::addInterpolated(const Data1D &source, Data1D &dest, double factor)
 {
-    // Grab x and y arrays from data A
-    std::vector<double> &aX = A.xAxis();
-    std::vector<double> &aY = A.values();
+    // Grab x and y arrays from destination
+    std::vector<double> &destX = dest.xAxis();
+    std::vector<double> &destY = dest.values();
 
-    // If there is currently no data in A, just copy the arrays from B
-    if (aX.size() == 0)
+    // If there is currently no data in the destination, just copy the source arrays
+    if (destX.size() == 0)
     {
-        aX = B.xAxis();
-        aY = B.values();
-        std::transform(aY.begin(), aY.end(), aY.begin(), [factor](auto value) { return value * factor; });
+        destX = source.xAxis();
+        destY = source.values();
+        std::transform(destY.begin(), destY.end(), destY.begin(), [factor](auto value) { return value * factor; });
     }
     else
     {
-        // Generate interpolation of data B
-        Interpolator interpolatedB(B);
+        // Generate interpolation of source data
+        Interpolator I(source);
 
-        std::transform(aX.begin(), aX.end(), aY.begin(), aY.begin(),
-                       [&](auto x, auto y) { return y + interpolatedB.y(x) * factor; });
+        std::transform(destX.begin(), destX.end(), destY.begin(), destY.begin(),
+                       [&](auto x, auto y) { return y + I.y(x) * factor; });
     }
 }

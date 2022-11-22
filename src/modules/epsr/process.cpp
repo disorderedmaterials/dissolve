@@ -248,7 +248,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto &differenceData = dissolve.processingModuleData().realise<Data1D>(fmt::format("Difference//{}", module->name()),
                                                                                name(), GenericItem::InRestartFileFlag);
         differenceData = originalReferenceData;
-        Interpolator::addInterpolated(differenceData, weightedSQ.total(), -1.0);
+        Interpolator::addInterpolated(weightedSQ.total(), differenceData, -1.0);
 
         // Calculate r-factor over fit range and store
         auto tempRefData = originalReferenceData;
@@ -367,7 +367,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = originalReferenceData;
-            Interpolator::addInterpolated(refMinusIntra, weightedSQ.boundTotal(), -1.0);
+            Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
             // normalisation from the reference data (we assume that the two are consistent)
@@ -411,7 +411,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             auto bbar = weights.boundCoherentAverageOfSquares(boundTotal.xAxis());
             std::transform(boundTotal.values().begin(), boundTotal.values().end(), bbar.begin(), boundTotal.values().begin(),
                            std::divides<>());
-            Interpolator::addInterpolated(normalisedRef, boundTotal, -1.0);
+            Interpolator::addInterpolated(boundTotal, normalisedRef, -1.0);
 
             if (!scatteringMatrix.addReferenceData(normalisedRef, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
@@ -433,7 +433,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 auto globalJ = atd2.atomType()->index();
 
                 const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
-                Interpolator::addInterpolated(calculatedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets_.size());
+                Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[{globalI, globalJ}], 1.0 / targets_.size());
             });
 
         /*
