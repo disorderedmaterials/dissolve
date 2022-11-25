@@ -391,7 +391,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
                                         usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
 
             // Now have the local column index of the AtomType pair in our matrix A_.
-            // Since this is X-ray data, we will just store the product of the concentrtion weights and the factor
+            // Since this is X-ray data, we will just store the product of the concentration weights and the factor
             A_[{rowIndex, colIndex}] = dataWeights.preFactor(n, m) * factor;
         }
     }

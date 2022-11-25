@@ -29,7 +29,7 @@ class EPSRModule : public Module
     enum ExpansionFunctionType
     {
         PoissonExpansionFunction,  /* Fit difference functions using Poisson (power exponential) functions */
-        GaussianExpansionFunction, /* Fit difference functiuns using Gaussian functions */
+        GaussianExpansionFunction, /* Fit difference functions using Gaussian functions */
         nExpansionFunctionTypes
     };
     // Return enum option info for ExpansionFunctionType
