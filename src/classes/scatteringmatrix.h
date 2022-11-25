@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "classes/neutronweights.h"
+#include "classes/xrayweights.h"
 #include "data/formfactors.h"
 #include "data/structurefactors.h"
 #include "math/data1d.h"
@@ -13,8 +15,6 @@
 
 // Forward Declarations
 class AtomType;
-class NeutronWeights;
-class XRayWeights;
 
 // Scattering Matrix Container
 class ScatteringMatrix

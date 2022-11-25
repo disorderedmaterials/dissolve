@@ -30,6 +30,11 @@
 // Run set-up stage
 bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
+    // Realise storage for generated S(Q), and initialise a scattering matrix
+    auto &estimatedSQ =
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
+    scatteringMatrix_.initialise(dissolve.atomTypes(), estimatedSQ);
+
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
     std::optional<double> rho;
@@ -195,12 +200,6 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                             [&](int i, auto at1, int j, auto at2) {
                                 calculatedUnweightedSQ[{i, j}].setTag(fmt::format("{}-{}", at1->name(), at2->name()));
                             });
-
-    // Realise storage for generated S(Q), and initialise a scattering matrix
-    auto &estimatedSQ =
-        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-    ScatteringMatrix scatteringMatrix;
-    scatteringMatrix.initialise(dissolve.atomTypes(), estimatedSQ);
 
     // Loop over target data
     auto rFacTot = 0.0;
@@ -377,7 +376,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
-            if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback_))
+            if (!scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else if (module->type() == "XRaySQ")
@@ -413,7 +412,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                            std::divides<>());
             Interpolator::addInterpolated(boundTotal, normalisedRef, -1.0);
 
-            if (!scatteringMatrix.addReferenceData(normalisedRef, weights, feedback_))
+            if (!scatteringMatrix_.addReferenceData(normalisedRef, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else
@@ -518,28 +517,30 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                             data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
 
                             // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
-                            if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
+                            if (!scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
                                 return Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
                                                         at1->name(), at2->name());
                             return EarlyReturn<bool>::Continue;
                         });
 
-    scatteringMatrix.print();
+    scatteringMatrix_.print();
 
     if (Messenger::isVerbose())
     {
         Messenger::print("\nScattering Matrix Inverse (Q = 0.0):\n");
-        scatteringMatrix.printInverse();
+        scatteringMatrix_.printInverse();
 
         Messenger::print("\nIdentity (Ainv * A):\n");
-        scatteringMatrix.matrixProduct().print();
+        scatteringMatrix_.matrixProduct().print();
     }
 
     /*
      * Generate S(Q) from completed scattering matrix
      */
 
-    scatteringMatrix.generatePartials(estimatedSQ);
+    auto &estimatedSQ =
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
+    scatteringMatrix_.generatePartials(estimatedSQ);
     updateDeltaSQ(dissolve.processingModuleData(), calculatedUnweightedSQ, estimatedSQ);
 
     // Save data?
@@ -613,7 +614,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
         dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                                 [&](int i, auto at1, int j, auto at2) {
-                                    auto weight = scatteringMatrix.pairWeightInverse(0.0, at1, at2, dataIndex);
+                                    auto weight = scatteringMatrix_.pairWeightInverse(0.0, at1, at2, dataIndex);
 
                                     /*
                                      * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
