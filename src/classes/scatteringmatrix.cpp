@@ -405,6 +405,19 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
     return true;
 }
 
+// Update reference data)
+bool ScatteringMatrix::updateReferenceData(const Data1D &weightedData, double factor)
+{
+    auto it = std::find_if(data_.begin(), data_.end(), [weightedData](auto &data) { return weightedData.tag() == data.tag(); });
+    if (it == data_.end())
+        return false;
+
+    *it = weightedData;
+    *it *= factor;
+
+    return true;
+}
+
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
 bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
                                                const std::shared_ptr<AtomType> &at2, double dataWeight, double factor)
@@ -431,3 +444,6 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::
 
     return true;
 }
+
+// Return number of currently-defined reference data sets (== matrix rows)
+int ScatteringMatrix::nReferenceData() const { return A_.nRows(); }

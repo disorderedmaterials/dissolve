@@ -201,6 +201,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                 calculatedUnweightedSQ[{i, j}].setTag(fmt::format("{}-{}", at1->name(), at2->name()));
                             });
 
+    // Is our scattering matrix fully set-up and just requiring updated data?
+    auto scatteringMatrixSetUp = scatteringMatrix_.nReferenceData() != 0;
+
     // Loop over target data
     auto rFacTot = 0.0;
     for (auto *module : targets_)
@@ -376,7 +379,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
-            if (!scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, feedback_)
+                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else if (module->type() == "XRaySQ")
@@ -412,7 +416,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                            std::divides<>());
             Interpolator::addInterpolated(boundTotal, normalisedRef, -1.0);
 
-            if (!scatteringMatrix_.addReferenceData(normalisedRef, weights, feedback_))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(normalisedRef, feedback_)
+                                      : !scatteringMatrix_.addReferenceData(normalisedRef, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else
@@ -510,18 +515,19 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
-    for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
-                            // Copy and rename the data for clarity
-                            auto data = calculatedUnweightedSQ[{i, j}];
-                            data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
+    for_each_pair_early(
+        dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
+            // Copy and rename the data for clarity
+            auto data = calculatedUnweightedSQ[{i, j}];
+            data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
 
-                            // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
-                            if (!scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
-                                return Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
-                                                        at1->name(), at2->name());
-                            return EarlyReturn<bool>::Continue;
-                        });
+            // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
+                                      : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
+                return Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n", at1->name(),
+                                        at2->name());
+            return EarlyReturn<bool>::Continue;
+        });
 
     scatteringMatrix_.print();
 
