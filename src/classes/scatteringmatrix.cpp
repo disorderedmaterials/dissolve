@@ -290,7 +290,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
         {
             // Add in contribution from each datset (row).
             for (auto refDataIndex = 0; refDataIndex < data_.size(); ++refDataIndex)
-                Interpolator::addInterpolated(estimatedSQ[partialIndex], data_[refDataIndex],
+                Interpolator::addInterpolated(data_[refDataIndex], estimatedSQ[partialIndex],
                                               inverseA[{partialIndex, refDataIndex}]);
         }
     }

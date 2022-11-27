@@ -35,7 +35,7 @@ void EPSRModule::updateDeltaSQ(GenericList &processingData, OptionalReferenceWra
     {
         delta.setTag(calc.tag());
         delta = est;
-        Interpolator::addInterpolated(delta, calc, -1.0);
+        Interpolator::addInterpolated(calc, delta, -1.0);
     }
 }
 

@@ -572,7 +572,7 @@ void PairPotential::setUAdditional(Data1D &newUAdditional)
 void PairPotential::adjustUAdditional(const Data1D &u, double factor)
 {
     // Interpolate the supplied data 'u' and add it to the additional potential
-    Interpolator::addInterpolated(uAdditional_, u, factor);
+    Interpolator::addInterpolated(u, uAdditional_, factor);
 
     calculateUFull();
     calculateDUFull();

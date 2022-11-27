@@ -3,6 +3,7 @@
 
 #include "math/interpolator.h"
 #include "math/data1d.h"
+#include "templates/algorithms.h"
 
 Interpolator::Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme)
     : x_(x), y_(y)
@@ -312,16 +313,38 @@ double Interpolator::y(double x)
         }
     }
 
-    // Perform binary chop search
-    lastInterval_ = 0;
-    int i, right = h_.size() - 1;
-    while ((right - lastInterval_) > 1)
+    // Quick check of our interval - if the data is sequential increasing in x then we should be able to quickly determine it
+    // and avoid the binary chop
+    if (lastInterval_ != -1)
     {
-        i = (right + lastInterval_) / 2;
-        if (x_[i] > x)
-            right = i;
-        else
-            lastInterval_ = i;
+        // If the x value exceeds the next interval boundary, try to increment it
+        if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
+        {
+            ++lastInterval_;
+
+            // If there are still intervals beyond this one, check the next limit
+            if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
+                lastInterval_ = -1;
+        }
+
+        // Double-check lower limit
+        if (lastInterval_ > 0 && (x < x_[lastInterval_]))
+            lastInterval_ = -1;
+    }
+
+    // Perform binary chop search if no valid interval was found
+    if (lastInterval_ == -1)
+    {
+        lastInterval_ = 0;
+        int i, right = h_.size() - 1;
+        while ((right - lastInterval_) > 1)
+        {
+            i = (right + lastInterval_) / 2;
+            if (x_[i] > x)
+                right = i;
+            else
+                lastInterval_ = i;
+        }
     }
 
     return y(x, lastInterval_);
@@ -414,26 +437,40 @@ double Interpolator::approximate(const Data1D &data, double x)
     return t1 + (t2 - t1) * ppp * 0.5;
 }
 
-// Add interpolated data B to data A, with supplied multiplication factor
-void Interpolator::addInterpolated(Data1D &A, const Data1D &B, double factor)
+// Add interpolated source data to target data, with supplied multiplication factor
+void Interpolator::addInterpolated(const Data1D &source, Data1D &dest, double factor)
 {
-    // Grab x and y arrays from data A
-    std::vector<double> &aX = A.xAxis();
-    std::vector<double> &aY = A.values();
+    // Grab x and y arrays from destination
+    std::vector<double> &destX = dest.xAxis();
+    std::vector<double> &destY = dest.values();
 
-    // If there is currently no data in A, just copy the arrays from B
-    if (aX.size() == 0)
+    // If there is currently no data in the destination, just copy the source arrays
+    if (destX.size() == 0)
     {
-        aX = B.xAxis();
-        aY = B.values();
-        std::transform(aY.begin(), aY.end(), aY.begin(), [factor](auto value) { return value * factor; });
+        destX = source.xAxis();
+        destY = source.values();
+        std::transform(destY.begin(), destY.end(), destY.begin(), [factor](auto value) { return value * factor; });
     }
     else
     {
-        // Generate interpolation of data B
-        Interpolator interpolatedB(B);
+        // Generate interpolation of source data
+        Interpolator I(source);
 
-        std::transform(aX.begin(), aX.end(), aY.begin(), aY.begin(),
-                       [&](auto x, auto y) { return y + interpolatedB.y(x) * factor; });
+        // Explicit loop over values
+        for (auto &&[x, y] : zip(destX, destY))
+            y += I.y(x) * factor;
     }
+}
+
+// Add interpolation into destination with supplied multiplication factor
+void Interpolator::addInterpolated(Interpolator &source, Data1D &dest, double factor)
+{
+    // Must have a valid destination
+    if (dest.nValues() == 0)
+        throw(std::runtime_error(
+            "Destination Data1D is empty, and must be initialised before an Interpolator can be added to it.\n"));
+
+    // Explicit loop over values
+    for (auto &&[x, y] : zip(dest.xAxis(), dest.values()))
+        y += source.y(x) * factor;
 }

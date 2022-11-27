@@ -325,9 +325,9 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
             }
 
             // Add interpolated source partials to our set
-            Interpolator::addInterpolated(partials_[{localI, localJ}], source.partial(typeI, typeJ), weighting);
-            Interpolator::addInterpolated(boundPartials_[{localI, localJ}], source.boundPartial(typeI, typeJ), weighting);
-            Interpolator::addInterpolated(unboundPartials_[{localI, localJ}], source.unboundPartial(typeI, typeJ), weighting);
+            Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{localI, localJ}], weighting);
+            Interpolator::addInterpolated(source.boundPartial(typeI, typeJ), boundPartials_[{localI, localJ}], weighting);
+            Interpolator::addInterpolated(source.unboundPartial(typeI, typeJ), unboundPartials_[{localI, localJ}], weighting);
 
             // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set
             // correctly
@@ -337,9 +337,9 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
     }
 
     // Add total function
-    Interpolator::addInterpolated(total_, source.total_, weighting);
-    Interpolator::addInterpolated(boundTotal_, source.boundTotal_, weighting);
-    Interpolator::addInterpolated(unboundTotal_, source.unboundTotal_, weighting);
+    Interpolator::addInterpolated(source.total_, total_, weighting);
+    Interpolator::addInterpolated(source.boundTotal_, boundTotal_, weighting);
+    Interpolator::addInterpolated(source.unboundTotal_, unboundTotal_, weighting);
 
     return true;
 }
@@ -407,9 +407,9 @@ void PartialSet::operator+=(const PartialSet &source)
             }
 
             // Add interpolated source partials to our set
-            Interpolator::addInterpolated(partials_[{localI, localJ}], source.partial(typeI, typeJ));
-            Interpolator::addInterpolated(boundPartials_[{localI, localJ}], source.boundPartial(typeI, typeJ));
-            Interpolator::addInterpolated(unboundPartials_[{localI, localJ}], source.unboundPartial(typeI, typeJ));
+            Interpolator::addInterpolated(source.partial(typeI, typeJ), partials_[{localI, localJ}]);
+            Interpolator::addInterpolated(source.boundPartial(typeI, typeJ), boundPartials_[{localI, localJ}]);
+            Interpolator::addInterpolated(source.unboundPartial(typeI, typeJ), unboundPartials_[{localI, localJ}]);
 
             // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
             if (!source.isBoundPartialEmpty(typeI, typeJ))
@@ -417,7 +417,7 @@ void PartialSet::operator+=(const PartialSet &source)
         });
 
     // Add total function
-    Interpolator::addInterpolated(total_, source.total());
+    Interpolator::addInterpolated(source.total(), total_);
 }
 
 void PartialSet::operator-=(const double delta) { adjust(-delta); }
