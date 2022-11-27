@@ -63,6 +63,8 @@ class Interpolator
     public:
     // Approximate y at specified x value using three-point interpolation of supplied data
     static double approximate(const Data1D &data, double x);
-    // Add interpolated data B to data A, with supplied multiplication factor
-    static void addInterpolated(Data1D &A, const Data1D &B, double factor = 1.0);
+    // Add interpolated source data into destination with supplied multiplication factor
+    static void addInterpolated(const Data1D &source, Data1D &dest, double factor = 1.0);
+    // Add interpolation into destination with supplied multiplication factor
+    static void addInterpolated(Interpolator &source, Data1D &dest, double factor = 1.0);
 };
