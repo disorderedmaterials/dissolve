@@ -622,31 +622,32 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             fmt::format("FitCoefficients_{}", module->name()), name_);
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
-        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                [&](int i, auto at1, int j, auto at2) {
-                                    auto weight = scatteringMatrix_.pairWeightInverse(0.0, at1, at2, dataIndex);
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+            [&](int i, auto at1, int j, auto at2) {
+                auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.pairIndex(at1, at2), dataIndex}];
 
-                                    /*
-                                     * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
-                                     * combination with the following weighting factors (see circa line 3378 in
-                                     * epsr_standalone_rev1.f):
-                                     *
-                                     * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
-                                     * disable potential generation)
-                                     * 2. A flag controlling whether specific potentials are refined (efacp)
-                                     * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
-                                     * multiplied by the feedback factor.
-                                     */
+                /*
+                 * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
+                 * combination with the following weighting factors (see circa line 3378 in
+                 * epsr_standalone_rev1.f):
+                 *
+                 * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
+                 * disable potential generation)
+                 * 2. A flag controlling whether specific potentials are refined (efacp)
+                 * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
+                 * multiplied by the feedback factor.
+                 */
 
-                                    // In the original EPSR the off-diagonal elements in the inverse matrix have also been
-                                    // halved so as not to double-count the i != j terms
-                                    if (i != j)
-                                        weight *= 0.5;
+                // In the original EPSR the off-diagonal elements in the inverse matrix have also been
+                // halved so as not to double-count the i != j terms
+                if (i != j)
+                    weight *= 0.5;
 
-                                    // Store fluctuation coefficients ready for addition to potential coefficients later on.
-                                    for (auto n = 0; n < nCoeffP_; ++n)
-                                        fluctuationCoefficients[{i, j, n}] += weight * feedback_ * fitCoefficients[n];
-                                });
+                // Store fluctuation coefficients ready for addition to potential coefficients later on.
+                for (auto n = 0; n < nCoeffP_; ++n)
+                    fluctuationCoefficients[{i, j, n}] += weight * feedback_ * fitCoefficients[n];
+            });
 
         // Increase dataIndex
         ++dataIndex;

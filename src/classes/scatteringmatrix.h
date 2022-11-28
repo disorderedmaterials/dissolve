@@ -54,8 +54,8 @@ class ScatteringMatrix
     int pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
     // Generate matrices
     void generateMatrices();
-    // Return weight of the specified AtomType pair in the inverse matrix at the specified Q value
-    double pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ, int dataIndex) const;
+    // Return the precalculated Q = 0.0 scattering matrix inverse
+    const Array2D<double> &qZeroMatrixInverse() const;
     // Calculate and return the scattering matrix at the specified Q value
     Array2D<double> matrix(double q = 0.0) const;
     // Calculate and return the inverse matrix at the specified Q value

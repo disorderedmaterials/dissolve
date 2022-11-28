@@ -71,18 +71,8 @@ void ScatteringMatrix::generateMatrices()
     }
 }
 
-// Return weight of the specified AtomType pair in the inverse matrix at the specified Q value
-double ScatteringMatrix::pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
-                                           int dataIndex) const
-{
-    /*
-     * The required row of the inverse matrix is the index of the AtomType pair.
-     * The required column of the inverse matrix is the original (row) index of the supplied data.
-     */
-
-    auto index = pairIndex(std::move(typeI), std::move(typeJ));
-    return inverse(q)[{index, dataIndex}];
-}
+// Return the precalculated Q = 0.0 scattering matrix inverse
+const Array2D<double> &ScatteringMatrix::qZeroMatrixInverse() const { return qZeroInverse_; }
 
 // Calculate and return the scattering matrix at the specified Q value
 Array2D<double> ScatteringMatrix::matrix(double q) const
