@@ -40,6 +40,10 @@ class ScatteringMatrix
     std::vector<Data1D> data_;
     // X-ray specification for reference data (if relevant)
     std::vector<std::tuple<bool, std::optional<XRayWeights>, StructureFactors::NormalisationType>> xRayData_;
+    // Scattering matrix and inverse at Q = 0
+    Array2D<double> qZeroMatrix_, qZeroInverse_;
+    // Scattering matrix / inverse pairs at specific Q values
+    std::vector<std::tuple<double, Array2D<double>, Array2D<double>>> qMatrices_;
 
     private:
     // Return whether Q-dependent weighting is required
@@ -48,6 +52,8 @@ class ScatteringMatrix
     public:
     // Return index of specified AtomType pair
     int pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
+    // Generate matrices
+    void generateMatrices();
     // Return weight of the specified AtomType pair in the inverse matrix at the specified Q value
     double pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ, int dataIndex) const;
     // Calculate and return the scattering matrix at the specified Q value

@@ -39,6 +39,38 @@ int ScatteringMatrix::pairIndex(const std::shared_ptr<AtomType> &typeI, const st
     return -1;
 }
 
+// Generate matrices
+void ScatteringMatrix::generateMatrices()
+{
+    // We always generate the matrices for Q = 0
+    Messenger::printVerbose("Generating Q = 0.0 matrix and inverse.\n");
+    qZeroMatrix_ = matrix(0.0);
+    qZeroInverse_ = qZeroMatrix_;
+    if (!SVD::pseudoinverse(qZeroInverse_))
+        throw(std::runtime_error("Failed to invert the scattering matrix at Q = 0.0.\n"));
+
+    // Generate Q-dependent matrices if we need them
+    qMatrices_.clear();
+    if (qDependentWeighting())
+    {
+        // Use the first reference data as the Q-axis template (as is done elsewhere)
+        assert(!data_.empty());
+        auto &qs = data_[0].xAxis();
+        qMatrices_.reserve(qs.size());
+        for (auto q : qs)
+        {
+            Messenger::printVerbose("Generating Q = {} matrix and inverse.\n", q);
+
+            auto &&[qValue, mat, inv] = qMatrices_.emplace_back();
+            qValue = q;
+            mat = matrix(q);
+            inv = mat;
+            if (!SVD::pseudoinverse(inv))
+                throw(std::runtime_error(fmt::format("Failed to invert the scattering matrix at Q = {}.\n", q)));
+        }
+    }
+}
+
 // Return weight of the specified AtomType pair in the inverse matrix at the specified Q value
 double ScatteringMatrix::pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
                                            int dataIndex) const
@@ -245,8 +277,6 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
     for (auto &estSQ : estimatedSQ)
         estSQ.initialise(data_[0]);
 
-    Array2D<double> inverseA;
-
     if (qDependentWeighting())
     {
         // Generate interpolations for each dataset
@@ -261,10 +291,8 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
         {
             const auto q = x[n];
 
-            // Generate inverse matrix at this Q value
-            inverseA = matrix(q);
-            if (!SVD::pseudoinverse(inverseA))
-                return false;
+            // Grab the pre-calculated scattering matrix
+            auto &inverseA = std::get<2>(qMatrices_[n]);
 
             // Sum in contributions from each dataset at this Q value, provided it is within the range of the dataset
             for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
@@ -281,11 +309,6 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
     }
     else
     {
-        // No Q-dependent terms in the scattering matrix, so only need to invert once
-        inverseA = A_;
-        if (!SVD::pseudoinverse(inverseA))
-            return false;
-
         // Generate new partials (nPartials = nColumns)
         for (auto refDataIndex = 0; refDataIndex < data_.size(); ++refDataIndex)
         {
@@ -293,7 +316,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
             Interpolator I(data_[refDataIndex]);
 
             for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
-                Interpolator::addInterpolated(I, estimatedSQ[partialIndex], inverseA[{partialIndex, refDataIndex}]);
+                Interpolator::addInterpolated(I, estimatedSQ[partialIndex], qZeroInverse_[{partialIndex, refDataIndex}]);
         }
     }
 
@@ -314,6 +337,9 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     A_.clear();
     data_.clear();
     typePairs_.clear();
+    qZeroMatrix_.clear();
+    qZeroInverse_.clear();
+    qMatrices_.clear();
 
     // Copy atom types
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),

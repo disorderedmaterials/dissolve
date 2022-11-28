@@ -529,6 +529,10 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             return EarlyReturn<bool>::Continue;
         });
 
+    // If the scattering matrix was not set-up, need to generate the necessary inverse matrix or matrices here
+    if (!scatteringMatrixSetUp)
+        scatteringMatrix_.generateMatrices();
+
     scatteringMatrix_.print();
 
     if (Messenger::isVerbose())
