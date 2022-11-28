@@ -108,7 +108,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase
     bool isDefault() const override { return data_ == nullptr; }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override { return {}; /*FIXME: return data_->name();*/ }
+    SerialisedValue serialise() const override { return data_->name(); }
 
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData)

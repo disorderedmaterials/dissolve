@@ -62,8 +62,7 @@ bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordNa
 // Has not changed from initial value
 bool NodeBranchKeyword::isDefault() const
 {
-    // FIXME: This is backwards
-    return data_ != nullptr;
+    return !data_;
 }
 
 // Express as a serialisable value

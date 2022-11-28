@@ -502,8 +502,8 @@ void SequenceProcedureNode::deserialise(const SerialisedValue &node, const CoreD
     {
         ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(v.at("type"));
         auto result = ProcedureNodeRegistry::create(type);
+	addNode(result);
         result->deserialise(v, data);
         result->setName(k);
-        addNode(result);
     }
 }

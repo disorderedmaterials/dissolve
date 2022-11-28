@@ -154,7 +154,6 @@ SerialisedValue Configuration::serialise() const
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
-    SerialisedValue generator;
     configuration["generator"] = generator_;
 
     return configuration;

@@ -148,7 +148,10 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         for (auto n : node.as_array())
         {
             // Locate the named node - don't prune by type yet (we'll check that in setNode())
-            ConstNodeRef noderef = findNode(std::string(n.as_string()));
+            // ConstNodeRef noderef = findNode(std::string(n.as_string()));
+            std::string nodeName = n.as_string();
+
+            ConstNodeRef noderef = onlyInScope() ? parentNode()->nodeInScope(nodeName) : parentNode()->nodeExists(nodeName);
             if (!noderef)
                 throw toml::syntax_error(
                     fmt::format("Node '{}' given to keyword {} doesn't exist.\n", std::string(n.as_string()), name()),
