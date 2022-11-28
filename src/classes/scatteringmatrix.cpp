@@ -36,7 +36,7 @@ int ScatteringMatrix::pairIndex(const std::shared_ptr<AtomType> &typeI, const st
     return -1;
 }
 
-// Return weight of the specified AtomType pair in the inverse matrix
+// Return weight of the specified AtomType pair in the inverse matrix at the specified Q value
 double ScatteringMatrix::pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
                                            int dataIndex) const
 {
