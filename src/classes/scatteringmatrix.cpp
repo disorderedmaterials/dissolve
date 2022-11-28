@@ -17,6 +17,12 @@ ScatteringMatrix::ScatteringMatrix() = default;
  * Data
  */
 
+// Return whether Q-dependent weighting is required
+bool ScatteringMatrix::qDependentWeighting() const
+{
+    return std::find_if(xRayData_.begin(), xRayData_.end(), [](auto data) { return std::get<0>(data); }) != xRayData_.end();
+}
+
 // Return index of specified AtomType pair
 int ScatteringMatrix::pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
 {
@@ -240,10 +246,8 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
         estSQ.initialise(data_[0]);
 
     Array2D<double> inverseA;
-    auto qDependentMatrix =
-        std::find_if(xRayData_.begin(), xRayData_.end(), [](auto data) { return std::get<0>(data); }) != xRayData_.end();
 
-    if (qDependentMatrix)
+    if (qDependentWeighting())
     {
         // Generate interpolations for each dataset
         std::vector<Interpolator> interpolations;

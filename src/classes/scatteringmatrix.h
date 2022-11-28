@@ -41,6 +41,10 @@ class ScatteringMatrix
     // X-ray specification for reference data (if relevant)
     std::vector<std::tuple<bool, std::optional<XRayWeights>, StructureFactors::NormalisationType>> xRayData_;
 
+    private:
+    // Return whether Q-dependent weighting is required
+    bool qDependentWeighting() const;
+
     public:
     // Return index of specified AtomType pair
     int pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
