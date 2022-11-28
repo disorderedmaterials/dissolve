@@ -239,8 +239,8 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
      */
 
     // Template the estimatedSQ from the first data item
-    for (auto &n : estimatedSQ)
-        n.initialise(data_[0]);
+    for (auto &estSQ : estimatedSQ)
+        estSQ.initialise(data_[0]);
 
     Array2D<double> inverseA;
     auto qDependentMatrix =
