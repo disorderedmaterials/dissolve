@@ -42,8 +42,6 @@ class ScatteringMatrix
     std::vector<std::tuple<bool, std::optional<XRayWeights>, StructureFactors::NormalisationType>> xRayData_;
 
     public:
-    // Return number of reference AtomType pairs
-    int nPairs() const;
     // Return index of specified AtomType pair
     int pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
     // Return weight of the specified AtomType pair in the inverse matrix at the specified Q value
@@ -58,8 +56,6 @@ class ScatteringMatrix
     void printInverse(double q = 0.0) const;
     // Generate partials from reference data using inverse matrix
     bool generatePartials(Array2D<Data1D> &estimatedSQ);
-    // Return if the scattering matrix is underdetermined
-    bool underDetermined() const;
     // Return the product of inverseA_ and A_ (which should be the identity matrix) at the specified Q value
     Array2D<double> matrixProduct(double q = 0.0) const;
 

@@ -17,9 +17,6 @@ ScatteringMatrix::ScatteringMatrix() = default;
  * Data
  */
 
-// Return number of reference AtomType pairs
-int ScatteringMatrix::nPairs() const { return typePairs_.size(); }
-
 // Return index of specified AtomType pair
 int ScatteringMatrix::pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
 {
@@ -298,9 +295,6 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
 
     return true;
 }
-
-// Return if the scattering matrix is underdetermined
-bool ScatteringMatrix::underDetermined() const { return (data_.size() < A_.nColumns()); }
 
 // Return the product of inverseA_ and A_ (which should be the identity matrix) at the specified Q value
 Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse(q) * matrix(q); }
