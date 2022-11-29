@@ -4,7 +4,7 @@
 #include "main/version.h"
 #include <fmt/format.h>
 
-#define DISSOLVEVERSION "0.9.10"
+#define DISSOLVEVERSION "0.9.11"
 #define DISSOLVESHORTHASH ""
 #define DISSOLVEREPO "https://github.com/disorderedmaterials/dissolve.git"
 
