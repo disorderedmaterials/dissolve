@@ -5,6 +5,7 @@
 
 #include "base/enumoptions.h"
 #include "classes/data1dstore.h"
+#include "classes/scatteringmatrix.h"
 #include "math/data1d.h"
 #include "module/groups.h"
 #include "module/module.h"
@@ -29,7 +30,7 @@ class EPSRModule : public Module
     enum ExpansionFunctionType
     {
         PoissonExpansionFunction,  /* Fit difference functions using Poisson (power exponential) functions */
-        GaussianExpansionFunction, /* Fit difference functiuns using Gaussian functions */
+        GaussianExpansionFunction, /* Fit difference functions using Gaussian functions */
         nExpansionFunctionTypes
     };
     // Return enum option info for ExpansionFunctionType
@@ -42,6 +43,8 @@ class EPSRModule : public Module
     EPSRModule::ExpansionFunctionType expansionFunction_{EPSRModule::PoissonExpansionFunction};
     // Confidence factor
     double feedback_{0.9};
+    // Scattering matrix
+    ScatteringMatrix scatteringMatrix_;
     // EPSR 'inpa' file from which to read deltaFQ fit coefficients from
     std::string inpaFilename_;
     // Maximum Q value over which to generate potentials from total scattering data
