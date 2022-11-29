@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "classes/neutronweights.h"
+#include "classes/xrayweights.h"
 #include "data/formfactors.h"
 #include "data/structurefactors.h"
 #include "math/data1d.h"
@@ -13,8 +15,6 @@
 
 // Forward Declarations
 class AtomType;
-class NeutronWeights;
-class XRayWeights;
 
 // Scattering Matrix Container
 class ScatteringMatrix
@@ -40,14 +40,22 @@ class ScatteringMatrix
     std::vector<Data1D> data_;
     // X-ray specification for reference data (if relevant)
     std::vector<std::tuple<bool, std::optional<XRayWeights>, StructureFactors::NormalisationType>> xRayData_;
+    // Scattering matrix and inverse at Q = 0
+    Array2D<double> qZeroMatrix_, qZeroInverse_;
+    // Scattering matrix / inverse pairs at specific Q values
+    std::vector<std::tuple<double, Array2D<double>, Array2D<double>>> qMatrices_;
+
+    private:
+    // Return whether Q-dependent weighting is required
+    bool qDependentWeighting() const;
 
     public:
-    // Return number of reference AtomType pairs
-    int nPairs() const;
     // Return index of specified AtomType pair
     int pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const;
-    // Return weight of the specified AtomType pair in the inverse matrix
-    double pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ, int dataIndex) const;
+    // Generate matrices
+    void generateMatrices();
+    // Return the precalculated Q = 0.0 scattering matrix inverse
+    const Array2D<double> &qZeroMatrixInverse() const;
     // Calculate and return the scattering matrix at the specified Q value
     Array2D<double> matrix(double q = 0.0) const;
     // Calculate and return the inverse matrix at the specified Q value
@@ -58,8 +66,6 @@ class ScatteringMatrix
     void printInverse(double q = 0.0) const;
     // Generate partials from reference data using inverse matrix
     bool generatePartials(Array2D<Data1D> &estimatedSQ);
-    // Return if the scattering matrix is underdetermined
-    bool underDetermined() const;
     // Return the product of inverseA_ and A_ (which should be the identity matrix) at the specified Q value
     Array2D<double> matrixProduct(double q = 0.0) const;
 
@@ -73,7 +79,11 @@ class ScatteringMatrix
     bool addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor = 1.0);
     // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
     bool addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor = 1.0);
+    // Update reference data)
+    bool updateReferenceData(const Data1D &weightedData, double factor = 1.0);
     // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
     bool addPartialReferenceData(Data1D &weightedData, const std::shared_ptr<AtomType> &at1,
                                  const std::shared_ptr<AtomType> &at2, double dataWeight, double factor = 1.0);
+    // Return number of currently-defined reference data sets (== matrix rows)
+    int nReferenceData() const;
 };
