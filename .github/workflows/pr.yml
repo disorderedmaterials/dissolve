@@ -1,0 +1,58 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches:
+    - '*'
+
+env:
+  pythonVersion: 3.9
+
+jobs:
+
+  QC:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Quality Control
+      uses: "./.github/workflows/qc"
+
+  Build:
+    needs: QC
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: "Build (${{ matrix.os }})"
+        uses: "./.github/workflows/build"
+
+  Test:
+    needs: Build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: "Test (${{ matrix.os }})"
+      uses: "./.github/workflows/test"
+
+  Package:
+    needs: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: "Package (${{ matrix.os }})"
+        uses: "./.github/workflows/package"
