@@ -7,6 +7,7 @@ on:
 
 env:
   pythonVersion: 3.9
+  qtVersion: 6.2.2
 
 jobs:
 
@@ -28,6 +29,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Acquire Code Version
+        shell: bash
+        run: |
+          DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed 's/.*\"\(.*\)\"/\1/g'`
+          echo "Dissolve code version is ${DISSOLVE_VERSION}"
+          echo "DISSOLVE_VERSION=${DISSOLVE_VERSION}" >> ${GITHUB_ENV}
       - name: "Build (${{ matrix.os }})"
         uses: "./.github/workflows/build"
 
