@@ -1,4 +1,4 @@
-name: Lint
+name: Quality Control
 
 runs:
   using: "composite"

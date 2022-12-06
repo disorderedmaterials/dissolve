@@ -64,10 +64,17 @@ runs:
       conan install .. --build missing
       cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
+      cd ../
+
+      # Deploy Conan dependencies for ease
+      mkdir deploy && cd deploy
+      conan install .. -g deploy
 
   - name: Upload Raw Build Artifacts
     uses: actions/upload-artifact@v3
     with:
       name: osx-build-artifacts
-      path: ${{ github.workspace }}/build
+      path: |
+        ${{ github.workspace }}/build
+        ${{ github.workspace }}/deploy
       retention-days: 1
