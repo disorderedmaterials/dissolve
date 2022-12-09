@@ -13,12 +13,12 @@ stages:
               wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
               sudo add-apt-repository --yes 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main'
               sudo apt-get update
-              sudo apt-get install --yes clang-format-7
+              sudo apt-get install --yes clang-format-14
             displayName: 'Install tooling'
           - bash: |
               set -ex
-              clang-format-7 --version
-              find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec clang-format-7 -i {} +
+              clang-format-14 --version
+              find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec clang-format-14 -i {} +
               git diff
               git diff --quiet
             displayName: 'Run clang-format'
