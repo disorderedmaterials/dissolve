@@ -1,15 +1,18 @@
 name: Build
 
+inputs:
+  target:
+    default: "dissolve"
+
 runs:
   using: "composite"
   steps:
 
   - name: Build ??? (Linux)
     if: runner.os == 'Linux'
-    shell: bash
-    run: |
-      VERSION=$(grep "VERSION =" gudpy.spec | sed "s/.*\"\(.*\)\"/\1/g")
-      mv dist/GudPy-${VERSION} dist/GudPy-${VERSION}-Linux
+    uses: "./.github/workflows/build/linux"
+    with:
+      target: ${{ inputs.target }}
 
   - name: Build (OSX)
     if: runner.os == 'MacOS'

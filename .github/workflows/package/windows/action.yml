@@ -14,6 +14,20 @@ runs:
       key: windows-qt-${{ env.qtVersion }}
       path: ${{ runner.temp }}\qt
 
+  - name: Retrieve FTGL Cache
+    id: cache-ftgl
+    uses: actions/cache@v3
+    with:
+      key: windows-ftgl
+      path: ${{ runner.temp }}\ftgl-install
+
+  - name: Retrieve FreeType Cache
+    id: cache-freetype
+    uses: actions/cache@v3
+    with:
+      key: windows-freetype
+      path: ${{ runner.temp }}\freetype-install
+
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v3
     with:

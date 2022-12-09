@@ -1,0 +1,29 @@
+name: Get Externals
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Install Dependencies
+    shell: bash
+    run: |
+      set -ex
+
+      sudo apt-get update -q
+      sudo apt-get install curl gpg
+      
+  - name: Retrieve nix
+    shell: bash
+    run: |
+      curl -o install-nix${{ env.nixVersion }} https://releases.nixos.org/nix/nix-${{ env.nixVersion }}/install
+      curl -o install-nix${{ env.nixVersion }}.asc https://releases.nixos.org/nix/nix-${{ env.nixVersion }}/install.asc
+      gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
+      gpg2 --verify ./install-nix${{ env.nixVersion }}.asc
+      
+  - name: Install / Setup nix
+    shell: bash
+    run: |
+      sh ./install-nix${{ env.nixVersion }}
+      mkdir -p ~/.config/nix/
+      echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+      echo "system-features = kvm" >> ~/.config/nix/nix.conf
