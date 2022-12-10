@@ -194,9 +194,9 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         totalScore += jScore;
 
         // Track atoms matched in the neighbour branch
-        std::copy_if(jMatchPath.begin(), jMatchPath.end(), std::back_inserter(matchPath), [&matchPath](const auto *j) {
-            return std::find(matchPath.begin(), matchPath.end(), j) == matchPath.end();
-        });
+        std::copy_if(jMatchPath.begin(), jMatchPath.end(), std::back_inserter(matchPath),
+                     [&matchPath](const auto *j)
+                     { return std::find(matchPath.begin(), matchPath.end(), j) == matchPath.end(); });
     }
 
     return totalScore;

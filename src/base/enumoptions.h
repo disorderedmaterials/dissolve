@@ -97,9 +97,9 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Return whether specified option keyword is valid
     bool isValid(std::string_view keyword) const
     {
-        return std::find_if(options_.cbegin(), options_.cend(), [keyword](auto &option) {
-                   return DissolveSys::sameString(keyword, option.keyword());
-               }) != options_.end();
+        return std::find_if(options_.cbegin(), options_.cend(),
+                            [keyword](auto &option)
+                            { return DissolveSys::sameString(keyword, option.keyword()); }) != options_.end();
     }
 
     // Raise error, printing valid options
@@ -247,9 +247,9 @@ template <class E> class EnumOptions : public EnumOptionsBase
                     else
                         return Messenger::error(
                             "'{}' keyword '{}' requires {} {} {}, but {} {} provided.\n", name(), opt.keyword(),
-                            opt.minArgs().value() == opt.maxArgs().value()
-                                ? "exactly"
-                                : nArgsProvided < opt.minArgs().value() ? "at least" : "at most",
+                            opt.minArgs().value() == opt.maxArgs().value() ? "exactly"
+                            : nArgsProvided < opt.minArgs().value()        ? "at least"
+                                                                           : "at most",
                             nArgsProvided < opt.minArgs().value() ? opt.minArgs().value() : opt.maxArgs().value(),
                             opt.minArgs().value() == 1 ? "argument" : "arguments", nArgsProvided,
                             nArgsProvided == 1 ? "was" : "were");

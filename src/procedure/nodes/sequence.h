@@ -40,7 +40,7 @@ class ProcedureNodeSequence
     // Append specified node to the sequence, or optionally insert at index
     void appendNode(NodeRef nodeToAdd, std::optional<int> insertAtIndex = std::nullopt);
     // Create new node
-    template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&... args)
+    template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&...args)
     {
         // Create the new node
         auto node = std::make_shared<N>(args...);

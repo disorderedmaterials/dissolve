@@ -147,11 +147,13 @@ bool CoordinateSetsProcedureNode::execute(const ProcedureContext &procedureConte
 
     // Initialise random velocities
     std::vector<Vec3<double>> velocities(species_->nAtoms());
-    std::generate(velocities.begin(), velocities.end(), [&]() {
-        return Vec3<double>(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5),
-                            exp(randomBuffer.random() - 0.5)) /
-               sqrt(TWOPI);
-    });
+    std::generate(velocities.begin(), velocities.end(),
+                  [&]()
+                  {
+                      return Vec3<double>(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5),
+                                          exp(randomBuffer.random() - 0.5)) /
+                             sqrt(TWOPI);
+                  });
 
     // Grab current Species coordinates
     std::vector<Vec3<double>> r(species_->nAtoms());

@@ -124,9 +124,9 @@ Species *Dissolve::copySpecies(const Species *species)
 {
     // Create our new Species
     Species *newSpecies = addSpecies();
-    newSpecies->setName(DissolveSys::uniqueName(species->name(), coreData_.species(), [&](const auto &sp) {
-        return newSpecies == sp.get() ? std::string() : sp->name();
-    }));
+    newSpecies->setName(DissolveSys::uniqueName(species->name(), coreData_.species(),
+                                                [&](const auto &sp)
+                                                { return newSpecies == sp.get() ? std::string() : sp->name(); }));
 
     // Copy Box definition if one exists
     if (species->box()->type() != Box::BoxType::NonPeriodic)

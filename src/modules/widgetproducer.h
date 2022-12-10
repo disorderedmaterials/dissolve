@@ -38,7 +38,8 @@ class ModuleWidgetProducer
     // Register producer for specific class
     template <class M, class W> void registerProducer()
     {
-        producers_[typeid(M)] = [](Module *module, Dissolve &dissolve) {
+        producers_[typeid(M)] = [](Module *module, Dissolve &dissolve)
+        {
             auto *derived = dynamic_cast<M *>(module);
             assert(derived);
             return new W(nullptr, derived, dissolve);

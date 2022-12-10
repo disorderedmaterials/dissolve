@@ -17,15 +17,19 @@
 template <> GenericItemSearcher<const Data1D>::GenericItemSearcher()
 {
     // Custom Classes
-    registerSearcher<Array2D<Data1D>>([](const std::any &a, std::string_view dataName) {
-        auto &array = std::any_cast<const Array2D<Data1D> &>(a);
-        auto it = std::find_if(array.begin(), array.end(), [dataName](const auto &data) { return dataName == data.tag(); });
-        return it == array.end() ? OptionalReferenceWrapper<const Data1D>() : OptionalReferenceWrapper<const Data1D>(*it);
-    });
-    registerSearcher<PartialSet>([](const std::any &a, std::string_view dataName) {
-        auto &ps = std::any_cast<const PartialSet &>(a);
-        return ps.searchData1D(dataName);
-    });
+    registerSearcher<Array2D<Data1D>>(
+        [](const std::any &a, std::string_view dataName)
+        {
+            auto &array = std::any_cast<const Array2D<Data1D> &>(a);
+            auto it = std::find_if(array.begin(), array.end(), [dataName](const auto &data) { return dataName == data.tag(); });
+            return it == array.end() ? OptionalReferenceWrapper<const Data1D>() : OptionalReferenceWrapper<const Data1D>(*it);
+        });
+    registerSearcher<PartialSet>(
+        [](const std::any &a, std::string_view dataName)
+        {
+            auto &ps = std::any_cast<const PartialSet &>(a);
+            return ps.searchData1D(dataName);
+        });
 }
 
 /*
@@ -47,16 +51,20 @@ template <> GenericItemSearcher<const Data3D>::GenericItemSearcher() {}
 template <> GenericItemSearcher<const SampledData1D>::GenericItemSearcher()
 {
     // Custom Classes
-    registerSearcher<Array2D<SampledData1D>>([](const std::any &a, std::string_view dataName) {
-        auto &array = std::any_cast<const Array2D<SampledData1D> &>(a);
-        auto it = std::find_if(array.begin(), array.end(), [dataName](const auto &data) { return dataName == data.tag(); });
-        return it == array.end() ? OptionalReferenceWrapper<const SampledData1D>()
-                                 : OptionalReferenceWrapper<const SampledData1D>(*it);
-    });
-    registerSearcher<PartialSetAccumulator>([](const std::any &a, std::string_view dataName) {
-        auto &psa = std::any_cast<const PartialSetAccumulator &>(a);
-        return psa.searchSampledData1D(dataName);
-    });
+    registerSearcher<Array2D<SampledData1D>>(
+        [](const std::any &a, std::string_view dataName)
+        {
+            auto &array = std::any_cast<const Array2D<SampledData1D> &>(a);
+            auto it = std::find_if(array.begin(), array.end(), [dataName](const auto &data) { return dataName == data.tag(); });
+            return it == array.end() ? OptionalReferenceWrapper<const SampledData1D>()
+                                     : OptionalReferenceWrapper<const SampledData1D>(*it);
+        });
+    registerSearcher<PartialSetAccumulator>(
+        [](const std::any &a, std::string_view dataName)
+        {
+            auto &psa = std::any_cast<const PartialSetAccumulator &>(a);
+            return psa.searchSampledData1D(dataName);
+        });
 }
 
 /*

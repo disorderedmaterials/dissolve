@@ -72,27 +72,28 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Specie
     auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
     auto [loopStart, loopEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
-    double energy =
-        dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(loopStart),
-                                   dissolve::counting_iterator<int>(loopEnd), 0.0, std::plus<double>(), [&](const auto idx) {
-                                       auto [n, m] = comb.nthCombination(idx);
-                                       auto &i = sp->atom(n);
-                                       auto &j = sp->atom(m);
-                                       auto &rI = i.r();
-                                       auto &rJ = j.r();
+    double energy = dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(loopStart),
+                                               dissolve::counting_iterator<int>(loopEnd), 0.0, std::plus<double>(),
+                                               [&](const auto idx)
+                                               {
+                                                   auto [n, m] = comb.nthCombination(idx);
+                                                   auto &i = sp->atom(n);
+                                                   auto &j = sp->atom(m);
+                                                   auto &rI = i.r();
+                                                   auto &rJ = j.r();
 
-                                       // Get interatomic distance
-                                       double r = (rJ - rI).magnitude();
-                                       if (r > cutoff)
-                                           return 0.0;
+                                                   // Get interatomic distance
+                                                   double r = (rJ - rI).magnitude();
+                                                   if (r > cutoff)
+                                                       return 0.0;
 
-                                       // Get intramolecular scaling of atom pair
-                                       double scale = i.scaling(&j);
-                                       if (scale < 1.0e-3)
-                                           return 0.0;
+                                                   // Get intramolecular scaling of atom pair
+                                                   double scale = i.scaling(&j);
+                                                   if (scale < 1.0e-3)
+                                                       return 0.0;
 
-                                       return potentialMap.energy(&i, &j, r) * scale;
-                                   });
+                                                   return potentialMap.energy(&i, &j, r) * scale;
+                                               });
 
     return energy;
 }
@@ -167,34 +168,35 @@ double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Con
     std::shared_ptr<const Molecule> mol;
     auto [begin, end] = chop_range(molecules.begin(), molecules.end(), stride, start);
 
-    auto unaryOp = [&](const auto &mol) -> Energies {
+    auto unaryOp = [&](const auto &mol) -> Energies
+    {
         Energies localEnergies{0.0, 0.0, 0.0, 0.0};
 
         // Loop over Bond
         localEnergies.bondEnergy +=
             std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
-                            [&mol, &kernel](auto const acc, const auto &t) {
-                                return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()));
-                            });
+                            [&mol, &kernel](auto const acc, const auto &t)
+                            { return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
 
         // Loop over Angle
         localEnergies.angleEnergy += std::accumulate(
             mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
-            [&mol, &kernel](auto const acc, const auto &t) {
-                return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK()));
-            });
+            [&mol, &kernel](auto const acc, const auto &t)
+            { return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
 
         // Loop over Torsions
         localEnergies.torsionEnergy +=
             std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
-                            [&mol, &kernel](auto const acc, const auto &t) {
+                            [&mol, &kernel](auto const acc, const auto &t)
+                            {
                                 return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
                                                            *mol->atom(t.indexK()), *mol->atom(t.indexL()));
                             });
 
         localEnergies.improperEnergy +=
             std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
-                            [&mol, &kernel](auto const acc, const auto &imp) {
+                            [&mol, &kernel](auto const acc, const auto &imp)
+                            {
                                 return acc + kernel.energy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
                                                            *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
                             });
@@ -242,29 +244,36 @@ double EnergyModule::intraMolecularEnergy(const Species *sp)
     const Box *box = sp->box();
 
     // Loop over bonds
-    energy += std::accumulate(sp->bonds().begin(), sp->bonds().end(), 0.0, [box](const auto acc, const auto &b) {
-        return acc + b.energy(box->minimumDistance(b.j()->r(), b.i()->r()));
-    });
+    energy += std::accumulate(sp->bonds().begin(), sp->bonds().end(), 0.0,
+                              [box](const auto acc, const auto &b)
+                              { return acc + b.energy(box->minimumDistance(b.j()->r(), b.i()->r())); });
 
     // Loop over angles
-    energy += std::accumulate(sp->angles().begin(), sp->angles().end(), 0.0, [box](const auto acc, const auto &a) {
-        return acc + a.energy(Box::angleInDegrees(box->minimumVectorN(a.j()->r(), a.i()->r()),
-                                                  box->minimumVectorN(a.j()->r(), a.k()->r())));
-    });
+    energy += std::accumulate(sp->angles().begin(), sp->angles().end(), 0.0,
+                              [box](const auto acc, const auto &a)
+                              {
+                                  return acc + a.energy(Box::angleInDegrees(box->minimumVectorN(a.j()->r(), a.i()->r()),
+                                                                            box->minimumVectorN(a.j()->r(), a.k()->r())));
+                              });
 
     // Loop over torsions
-    energy += std::accumulate(sp->torsions().begin(), sp->torsions().end(), 0.0, [box](const auto acc, const auto &t) {
-        return acc + t.energy(Box::torsionInDegrees(box->minimumVector(t.j()->r(), t.i()->r()),
-                                                    box->minimumVector(t.j()->r(), t.k()->r()),
-                                                    box->minimumVector(t.k()->r(), t.l()->r())));
-    });
+    energy += std::accumulate(sp->torsions().begin(), sp->torsions().end(), 0.0,
+                              [box](const auto acc, const auto &t)
+                              {
+                                  return acc + t.energy(Box::torsionInDegrees(box->minimumVector(t.j()->r(), t.i()->r()),
+                                                                              box->minimumVector(t.j()->r(), t.k()->r()),
+                                                                              box->minimumVector(t.k()->r(), t.l()->r())));
+                              });
 
     // Loop over impropers
-    energy += std::accumulate(sp->impropers().begin(), sp->impropers().end(), 0.0, [box](const auto acc, const auto &imp) {
-        return acc + imp.energy(Box::torsionInDegrees(box->minimumVector(imp.j()->r(), imp.i()->r()),
-                                                      box->minimumVector(imp.j()->r(), imp.k()->r()),
-                                                      box->minimumVector(imp.k()->r(), imp.l()->r())));
-    });
+    energy +=
+        std::accumulate(sp->impropers().begin(), sp->impropers().end(), 0.0,
+                        [box](const auto acc, const auto &imp)
+                        {
+                            return acc + imp.energy(Box::torsionInDegrees(box->minimumVector(imp.j()->r(), imp.i()->r()),
+                                                                          box->minimumVector(imp.j()->r(), imp.k()->r()),
+                                                                          box->minimumVector(imp.k()->r(), imp.l()->r())));
+                        });
 
     return energy;
 }

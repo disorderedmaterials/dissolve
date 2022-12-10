@@ -73,7 +73,9 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
     Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
     auto result = for_each_pair_early(
-        dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
+        dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+        {
             auto &potCoeff = coefficients[{i, j}];
 
             // Regenerate empirical potential from the stored coefficients
@@ -173,7 +175,8 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     auto absEnergyEP = 0.0;
 
-    auto unaryOp = [&](auto pair) {
+    auto unaryOp = [&](auto pair)
+    {
         auto [i, j] = pair;
         auto &potCoeff = coefficients[{i, j}];
 
@@ -203,30 +206,32 @@ bool EPSRModule::testAbsEnergyEP(Dissolve &dissolve)
         return false;
 
     auto result = true;
-    dissolve::for_each_pair(
-        ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-            auto id1 = fmt::format("{}-{}", at1->name(), at2->name());
-            auto id2 = fmt::format("{}-{}", at2->name(), at1->name());
-            auto it = std::find_if(testAbsEnergyEP_.begin(), testAbsEnergyEP_.end(),
-                                   [id1, id2](const auto &pair) { return pair.first == id1 || pair.first == id2; });
+    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                            [&](int i, auto at1, int j, auto at2)
+                            {
+                                auto id1 = fmt::format("{}-{}", at1->name(), at2->name());
+                                auto id2 = fmt::format("{}-{}", at2->name(), at1->name());
+                                auto it = std::find_if(testAbsEnergyEP_.begin(), testAbsEnergyEP_.end(),
+                                                       [id1, id2](const auto &pair)
+                                                       { return pair.first == id1 || pair.first == id2; });
 
-            if (it != testAbsEnergyEP_.end())
-            {
-                auto &potCoeff = coefficients[{i, j}];
+                                if (it != testAbsEnergyEP_.end())
+                                {
+                                    auto &potCoeff = coefficients[{i, j}];
 
-                auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
-                auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
-                auto range = cMax - cMin;
+                                    auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
+                                    auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
+                                    auto range = cMax - cMin;
 
-                auto error = fabs(it->second - range);
-                Messenger::print("Absolute EP magnitude for '{}' has error of {} with reference data "
-                                 "and is {} (threshold is {})\n\n",
-                                 it->first, error, error <= testAbsEnergyEPThreshold_ ? "OK" : "NOT OK",
-                                 testAbsEnergyEPThreshold_);
-                if (error > testAbsEnergyEPThreshold_)
-                    result = false;
-            }
-        });
+                                    auto error = fabs(it->second - range);
+                                    Messenger::print("Absolute EP magnitude for '{}' has error of {} with reference data "
+                                                     "and is {} (threshold is {})\n\n",
+                                                     it->first, error, error <= testAbsEnergyEPThreshold_ ? "OK" : "NOT OK",
+                                                     testAbsEnergyEPThreshold_);
+                                    if (error > testAbsEnergyEPThreshold_)
+                                        result = false;
+                                }
+                            });
 
     return result;
 }

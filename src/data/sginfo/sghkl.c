@@ -261,10 +261,10 @@ int IsSuppressed_hkl(const T_SgInfo *SgInfo, int Minh, int Mink, int Minl, int M
                     return (mate ? -(iList + 1) : iList + 1);
                 else /* if (hm == h) */
                     if (km < k)
-                    return (mate ? -(iList + 1) : iList + 1);
-                else if (km == k)
-                    if (lm < l)
                         return (mate ? -(iList + 1) : iList + 1);
+                    else if (km == k)
+                        if (lm < l)
+                            return (mate ? -(iList + 1) : iList + 1);
             }
         }
     }

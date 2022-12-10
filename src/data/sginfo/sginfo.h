@@ -36,7 +36,8 @@ extern "C"
         int *TrVector;
     } T_LatticeInfo;
 
-    typedef union {
+    typedef union
+    {
         struct
         {
             int R[9], T[3];

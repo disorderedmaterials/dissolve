@@ -62,7 +62,8 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
     {Function1D::Gaussian,
      {{"fwhm"},
       FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
-      [](std::vector<double> p) {
+      [](std::vector<double> p)
+      {
           p.push_back(p[0] / (2.0 * sqrt(2.0 * log(2.0))));
           p.push_back(1.0 / p[1]);
           return p;
@@ -97,7 +98,8 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
     {Function1D::ScaledGaussian,
      {{"A", "fwhm"},
       FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
-      [](std::vector<double> p) {
+      [](std::vector<double> p)
+      {
           p.push_back(p[1] / (2.0 * sqrt(2.0 * log(2.0))));
           p.push_back(1.0 / p[2]);
           return p;
@@ -131,7 +133,8 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
     {Function1D::OmegaDependentGaussian,
      {{"fwhm(x)"},
       FunctionProperties::FourierTransform | FunctionProperties::Normalisation,
-      [](std::vector<double> p) {
+      [](std::vector<double> p)
+      {
           p.push_back(p[0] / (2.0 * sqrt(2.0 * log(2.0))));
           p.push_back(1.0 / p[1]);
           return p;
@@ -141,17 +144,15 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
        * f(x) = exp ( - ---------------- )
        *            (   2 * (c*omega)**2 )
        */
-      [](double x, double omega, const std::vector<double> &p) {
-          return exp(-(x * x) / (2.0 * (p[1] * omega) * (p[1] * omega)));
-      },
+      [](double x, double omega, const std::vector<double> &p)
+      { return exp(-(x * x) / (2.0 * (p[1] * omega) * (p[1] * omega))); },
       /*
        *             (   x*x * (c*omega)**2 )
        * FT(x) = exp ( - ------------------ )
        *             (            2         )
        */
-      [](double x, double omega, const std::vector<double> &p) {
-          return exp(-(0.5 * x * x * (p[1] * omega) * (p[1] * omega)));
-      },
+      [](double x, double omega, const std::vector<double> &p)
+      { return exp(-(0.5 * x * x * (p[1] * omega) * (p[1] * omega))); },
       /*
        *                1
        * Norm = ------------------
@@ -172,7 +173,8 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
     {Function1D::GaussianC2,
      {{"fwhm", "fwhm(x)"},
       FunctionProperties::FourierTransform,
-      [](std::vector<double> p) {
+      [](std::vector<double> p)
+      {
           p.push_back(p[0] / (2.0 * sqrt(2.0 * log(2.0))));
           p.push_back(p[1] / (2.0 * sqrt(2.0 * log(2.0))));
           p.push_back(1.0 / p[2]);
@@ -184,17 +186,15 @@ static std::map<Function1D, FunctionDefinition1D> functions1D_ = {
        * f(x) = exp ( - ---------------------- )
        *            (   2 * (c1 + c2*omega)**2 )
        */
-      [](double x, double omega, const std::vector<double> &p) {
-          return exp(-(x * x) / (2.0 * (p[2] + p[3] * omega) * (p[2] + p[3] * omega)));
-      },
+      [](double x, double omega, const std::vector<double> &p)
+      { return exp(-(x * x) / (2.0 * (p[2] + p[3] * omega) * (p[2] + p[3] * omega))); },
       /*
        *             (   x * x * (c1 + c2*omega)**2 )
        * FT(x) = exp ( - -------------------------- )
        *             (                2             )
        */
-      [](double x, double omega, const std::vector<double> &p) {
-          return exp(-(0.5 * x * x * (p[2] + p[3] * omega) * (p[2] + p[3] * omega)));
-      },
+      [](double x, double omega, const std::vector<double> &p)
+      { return exp(-(0.5 * x * x * (p[2] + p[3] * omega) * (p[2] + p[3] * omega))); },
       /*
        *                    1
        * Norm = --------------------------

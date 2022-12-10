@@ -94,8 +94,8 @@ void SpeciesEditor::updateStatusBar()
 
     // Set / update empirical formula for the Species and its current atom selection
     auto selection = sp->selectedAtoms();
-    ui_.FormulaLabel->setText(
-        QString::fromStdString(EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
+    ui_.FormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
+        sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
     ui_.SelectionLabel->setText(selection.empty() ? "--"
                                                   : QString::fromStdString(EmpiricalFormula::formula(
                                                         selection, [](const auto &i) { return i->Z(); }, true)));

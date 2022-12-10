@@ -43,9 +43,11 @@ void GetModuleLayerNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        nameValid = std::none_of(layers_.begin(), layers_.end(), [text, this](const auto &layer) {
-            return this->moduleLayer_ != layer.get() && DissolveSys::sameString(layer->name(), qPrintable(text));
-        });
+        nameValid = std::none_of(layers_.begin(), layers_.end(),
+                                 [text, this](const auto &layer) {
+                                     return this->moduleLayer_ != layer.get() &&
+                                            DissolveSys::sameString(layer->name(), qPrintable(text));
+                                 });
     }
 
     // Update indicator

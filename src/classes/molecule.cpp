@@ -127,10 +127,12 @@ void Molecule::traverseLocal(const Box *box, ConstManipulationFunction action) c
 Vec3<double> Molecule::unFold(const Box *box)
 {
     Vec3<double> cog{0.0, 0.0, 0.0};
-    traverseLocal(box, [&cog](Atom *j, Vec3<double> rJ) {
-        j->setCoordinates(rJ);
-        cog += rJ;
-    });
+    traverseLocal(box,
+                  [&cog](Atom *j, Vec3<double> rJ)
+                  {
+                      j->setCoordinates(rJ);
+                      cog += rJ;
+                  });
     return cog / nAtoms();
 }
 

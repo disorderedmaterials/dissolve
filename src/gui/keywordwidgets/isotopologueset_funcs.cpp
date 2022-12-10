@@ -127,9 +127,9 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
     auto nNatural = 0;
     for (const auto &topes : keyword_->data().isotopologues())
         // Check if this is a completely "natural" specification
-        if (std::count_if(topes.mix().begin(), topes.mix().end(), [&topes](const auto &part) {
-                return part.isotopologue() == topes.species()->naturalIsotopologue();
-            }) == topes.nIsotopologues())
+        if (std::count_if(topes.mix().begin(), topes.mix().end(),
+                          [&topes](const auto &part)
+                          { return part.isotopologue() == topes.species()->naturalIsotopologue(); }) == topes.nIsotopologues())
         {
             text += fmt::format("{}{}[Natural]", text.empty() ? "" : ", ", topes.species()->name());
             ++nNatural;
@@ -141,9 +141,9 @@ void IsotopologueSetKeywordWidget::updateSummaryText()
                                     topes.mix().front().isotopologue()->name());
             else
                 text += fmt::format("{}{}[{}]", text.empty() ? "" : ", ", topes.species()->name(),
-                                    joinStrings(topes.mix(), ", ", [](const auto &part) {
-                                        return fmt::format("{}={}", part.isotopologue()->name(), part.weight());
-                                    }));
+                                    joinStrings(topes.mix(), ", ",
+                                                [](const auto &part)
+                                                { return fmt::format("{}={}", part.isotopologue()->name(), part.weight()); }));
         }
 
     setSummaryText(nNatural == keyword_->data().nSpecies() ? QString("<Default to Natural>") : QString::fromStdString(text));
