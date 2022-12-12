@@ -56,9 +56,9 @@ bool Configuration::containsSpecies(const Species *sp)
 // Return the total charge of the Configuration
 double Configuration::totalCharge(bool ppIncludeCoulomb) const
 {
-    return std::accumulate(speciesPopulations_.begin(), speciesPopulations_.end(), 0.0, [&](const auto &acc, auto &spPop) {
-        return acc + spPop.first->totalCharge(ppIncludeCoulomb) * spPop.second;
-    });
+    return std::accumulate(speciesPopulations_.begin(), speciesPopulations_.end(), 0.0,
+                           [&](const auto &acc, auto &spPop)
+                           { return acc + spPop.first->totalCharge(ppIncludeCoulomb) * spPop.second; });
 }
 
 // Return the total atomic mass present in the Configuration
@@ -150,7 +150,8 @@ std::shared_ptr<Molecule> Configuration::copyMolecule(AtomChangeToken &lock, con
 void Configuration::removeMolecules(const Species *sp)
 {
     molecules_.erase(std::remove_if(molecules_.begin(), molecules_.end(),
-                                    [&, sp](auto &mol) {
+                                    [&, sp](auto &mol)
+                                    {
                                         if (mol->species() == sp)
                                         {
                                             for (auto &i : mol->atoms())
@@ -169,7 +170,8 @@ void Configuration::removeMolecules(const Species *sp)
 void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>> &molecules)
 {
     molecules_.erase(std::remove_if(molecules_.begin(), molecules_.end(),
-                                    [&, molecules](const auto &mol) {
+                                    [&, molecules](const auto &mol)
+                                    {
                                         if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
                                         {
                                             for (auto &i : mol->atoms())

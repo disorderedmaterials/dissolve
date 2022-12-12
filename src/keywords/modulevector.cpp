@@ -52,9 +52,9 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
             return Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
 
         // Check the module's type if we can
-        if (!moduleTypes_.empty() && std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s) {
-                                         return s == module->type();
-                                     }) == moduleTypes_.cend())
+        if (!moduleTypes_.empty() &&
+            std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s) { return s == module->type(); }) ==
+                moduleTypes_.cend())
             return Messenger::error("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                     parser.argsv(n), module->type(), name(), joinStrings(moduleTypes_));
 

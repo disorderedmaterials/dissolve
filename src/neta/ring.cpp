@@ -223,10 +223,10 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
                     totalAttemptedNodeMatches == forwardMatches.size() ? forwardMatches : backwardMatches;
 
                 // Store the ring information - total score and all matched atoms
-                matchedRings[&ring] = {
-                    std::accumulate(matchedRingAtoms.begin(), matchedRingAtoms.end(), 0,
-                                    [](const auto &acc, const auto &jInfo) { return acc + jInfo.second.first; }),
-                    {}};
+                matchedRings[&ring] = {std::accumulate(matchedRingAtoms.begin(), matchedRingAtoms.end(), 0,
+                                                       [](const auto &acc, const auto &jInfo)
+                                                       { return acc + jInfo.second.first; }),
+                                       {}};
                 auto &totalRingMatch = matchedRings[&ring].second;
                 for (auto &jInfo : matchedRingAtoms)
                 {
@@ -261,9 +261,9 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
         totalScore += ringScore;
 
         // Track atoms matched in the neighbour branch
-        std::copy_if(ringMatchPath.begin(), ringMatchPath.end(), std::back_inserter(matchPath), [&matchPath](const auto *j) {
-            return std::find(matchPath.begin(), matchPath.end(), j) == matchPath.end();
-        });
+        std::copy_if(ringMatchPath.begin(), ringMatchPath.end(), std::back_inserter(matchPath),
+                     [&matchPath](const auto *j)
+                     { return std::find(matchPath.begin(), matchPath.end(), j) == matchPath.end(); });
     }
 
     return totalScore;

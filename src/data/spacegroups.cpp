@@ -594,16 +594,19 @@ SpaceGroups::SpaceGroupId findByHermannMauginnSymbol(std::string_view hmSymbol, 
                                      return sg.hermannMauginnSymbol() == cleanedHMSymbol ||
                                             sg.condensedHermannMauginnSymbol() == cleanedHMSymbol;
                                  })
-                  : std::find_if(symbols_.begin(), symbols_.end(), [cleanedHMSymbol, code](const auto &sg) {
-                        if (sg.hermannMauginnSymbol().find(':') == std::string::npos)
-                            return (sg.hermannMauginnSymbol() == cleanedHMSymbol ||
-                                    sg.condensedHermannMauginnSymbol() == cleanedHMSymbol) &&
-                                   (code.empty() || sg.code() == code);
-                        else
-                            return (DissolveSys::beforeChar(sg.hermannMauginnSymbol(), ':') == cleanedHMSymbol ||
-                                    DissolveSys::beforeChar(sg.condensedHermannMauginnSymbol(), ':') == cleanedHMSymbol) &&
-                                   (code.empty() || sg.code() == code);
-                    });
+                  : std::find_if(symbols_.begin(), symbols_.end(),
+                                 [cleanedHMSymbol, code](const auto &sg)
+                                 {
+                                     if (sg.hermannMauginnSymbol().find(':') == std::string::npos)
+                                         return (sg.hermannMauginnSymbol() == cleanedHMSymbol ||
+                                                 sg.condensedHermannMauginnSymbol() == cleanedHMSymbol) &&
+                                                (code.empty() || sg.code() == code);
+                                     else
+                                         return (DissolveSys::beforeChar(sg.hermannMauginnSymbol(), ':') == cleanedHMSymbol ||
+                                                 DissolveSys::beforeChar(sg.condensedHermannMauginnSymbol(), ':') ==
+                                                     cleanedHMSymbol) &&
+                                                (code.empty() || sg.code() == code);
+                                 });
 
     return it == symbols_.end() ? SpaceGroupId::NoSpaceGroup : it->id();
 }
@@ -611,9 +614,9 @@ SpaceGroups::SpaceGroupId findByHermannMauginnSymbol(std::string_view hmSymbol, 
 // Find space group from supplied International Tables index and (optional) code
 SpaceGroups::SpaceGroupId findByInternationalTablesIndex(int itIndex, std::string_view code)
 {
-    auto it = std::find_if(symbols_.begin(), symbols_.end(), [itIndex, code](const auto &sg) {
-        return sg.internationalTableIndex() == itIndex && (code.empty() || sg.code() == code);
-    });
+    auto it = std::find_if(symbols_.begin(), symbols_.end(),
+                           [itIndex, code](const auto &sg)
+                           { return sg.internationalTableIndex() == itIndex && (code.empty() || sg.code() == code); });
     return it == symbols_.end() ? SpaceGroupId::NoSpaceGroup : it->id();
 }
 

@@ -195,7 +195,7 @@ class Forcefield
 };
 
 template <class T, typename... Args>
-OptionalReferenceWrapper<const T> Forcefield::termMatch_(const std::vector<T> &container, Args &&... args)
+OptionalReferenceWrapper<const T> Forcefield::termMatch_(const std::vector<T> &container, Args &&...args)
 {
     auto it = std::find_if(container.begin(), container.end(),
                            [&](const T &item) { return item.isMatch(std::forward<Args>(args)...); });

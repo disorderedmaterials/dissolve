@@ -229,33 +229,41 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
     for (auto &tomlAtom : tomlAtoms)
         atoms_.emplace_back().deserialise(tomlAtom);
 
-    Serialisable::toVector(node, "bonds", [this, &coreData](SerialisedValue &bond) {
-        bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
-            .deserialise(bond, coreData);
-    });
-    Serialisable::toVector(node, "angles", [this, &coreData](SerialisedValue &angle) {
-        angles_
-            .emplace_back(&atoms_[angle["i"].as_integer() - 1], &atoms_[angle["j"].as_integer() - 1],
-                          &atoms_[angle["k"].as_integer() - 1])
-            .deserialise(angle, coreData);
-    });
-    Serialisable::toVector(node, "impropers", [this, &coreData](SerialisedValue &improper) {
-        impropers_
-            .emplace_back(&atoms_[improper["i"].as_integer() - 1], &atoms_[improper["j"].as_integer() - 1],
-                          &atoms_[improper["k"].as_integer() - 1], &atoms_[improper["l"].as_integer() - 1])
-            .deserialise(improper, coreData);
-    });
-    Serialisable::toVector(node, "torsions", [this, &coreData](SerialisedValue &torsion) {
-        torsions_
-            .emplace_back(&atoms_[torsion["i"].as_integer() - 1], &atoms_[torsion["j"].as_integer() - 1],
-                          &atoms_[torsion["k"].as_integer() - 1], &atoms_[torsion["l"].as_integer() - 1])
-            .deserialise(torsion, coreData);
-    });
+    Serialisable::toVector(node, "bonds",
+                           [this, &coreData](SerialisedValue &bond) {
+                               bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
+                                   .deserialise(bond, coreData);
+                           });
+    Serialisable::toVector(node, "angles",
+                           [this, &coreData](SerialisedValue &angle)
+                           {
+                               angles_
+                                   .emplace_back(&atoms_[angle["i"].as_integer() - 1], &atoms_[angle["j"].as_integer() - 1],
+                                                 &atoms_[angle["k"].as_integer() - 1])
+                                   .deserialise(angle, coreData);
+                           });
+    Serialisable::toVector(node, "impropers",
+                           [this, &coreData](SerialisedValue &improper)
+                           {
+                               impropers_
+                                   .emplace_back(
+                                       &atoms_[improper["i"].as_integer() - 1], &atoms_[improper["j"].as_integer() - 1],
+                                       &atoms_[improper["k"].as_integer() - 1], &atoms_[improper["l"].as_integer() - 1])
+                                   .deserialise(improper, coreData);
+                           });
+    Serialisable::toVector(node, "torsions",
+                           [this, &coreData](SerialisedValue &torsion)
+                           {
+                               torsions_
+                                   .emplace_back(&atoms_[torsion["i"].as_integer() - 1], &atoms_[torsion["j"].as_integer() - 1],
+                                                 &atoms_[torsion["k"].as_integer() - 1], &atoms_[torsion["l"].as_integer() - 1])
+                                   .deserialise(torsion, coreData);
+                           });
 
-    Serialisable::toVector(node, "isotopologues", [this, &coreData](SerialisedValue &iso) {
-        isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(iso, coreData);
-    });
-    Serialisable::toVector(node, "sites", [this, &coreData](SerialisedValue &site) {
-        sites_.emplace_back(std::make_unique<SpeciesSite>(this))->deserialise(site);
-    });
+    Serialisable::toVector(node, "isotopologues",
+                           [this, &coreData](SerialisedValue &iso)
+                           { isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(iso, coreData); });
+    Serialisable::toVector(node, "sites",
+                           [this, &coreData](SerialisedValue &site)
+                           { sites_.emplace_back(std::make_unique<SpeciesSite>(this))->deserialise(site); });
 }

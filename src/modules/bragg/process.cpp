@@ -153,7 +153,8 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto &types = targetConfiguration_->atomTypes();
         auto success = for_each_pair_early(
             types.begin(), types.end(),
-            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool> {
+            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool>
+            {
                 LineParser intensityParser(&procPool);
                 if (!intensityParser.openOutput(fmt::format("{}-{}-{}.txt", name_, atd1.atomTypeName(), atd2.atomTypeName())))
                     return false;

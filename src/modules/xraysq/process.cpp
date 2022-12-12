@@ -193,7 +193,8 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         auto result = for_each_pair_early(
             unweightedSQ.atomTypeMix().begin(), unweightedSQ.atomTypeMix().end(),
-            [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
+            [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool>
+            {
                 if (i == j)
                 {
                     if (procPool.isMaster())

@@ -59,15 +59,15 @@ bool sineFT(Data1D &data, double normFactor, double wMin, double wStep, double w
 
     // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
     dissolve::transform(ParallelPolicies::par, newX.begin(), newX.end(), newY.begin(),
-                        [normFactor, &product, &x, &windowFunction, &broadening](const auto omega) {
+                        [normFactor, &product, &x, &windowFunction, &broadening](const auto omega)
+                        {
                             double ft = 0.0;
 
                             if (omega > 0.0)
-                                ft = std::transform_reduce(product.begin(), product.end(), x.begin(), 0.0, std::plus(),
-                                                           [omega, &windowFunction, &broadening](const auto r, const auto x) {
-                                                               return r * sin(x * omega) * windowFunction.y(x, omega) *
-                                                                      broadening.yFT(x, omega);
-                                                           });
+                                ft = std::transform_reduce(
+                                    product.begin(), product.end(), x.begin(), 0.0, std::plus(),
+                                    [omega, &windowFunction, &broadening](const auto r, const auto x)
+                                    { return r * sin(x * omega) * windowFunction.y(x, omega) * broadening.yFT(x, omega); });
                             else
                                 ft = std::transform_reduce(product.begin(), product.end(), x.begin(), 0.0, std::plus(),
                                                            [omega, &windowFunction, &broadening](const auto r, const auto x) {

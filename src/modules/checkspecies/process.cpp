@@ -79,12 +79,14 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool
     {
         Messenger::print("\nChecking bond parameters...\n");
         nBondsFailed =
-            std::accumulate(bondParameters_.begin(), bondParameters_.end(), 0, [&](const auto &acc, const auto &bond) {
-                auto &indices = std::get<0>(bond);
-                return acc + parametersDiffer<const SpeciesBond>("bond",
-                                                                 targetSpecies_->getBond(indices.at(0) - 1, indices.at(1) - 1),
-                                                                 indices, std::get<1>(bond), tolerance_);
-            });
+            std::accumulate(bondParameters_.begin(), bondParameters_.end(), 0,
+                            [&](const auto &acc, const auto &bond)
+                            {
+                                auto &indices = std::get<0>(bond);
+                                return acc + parametersDiffer<const SpeciesBond>(
+                                                 "bond", targetSpecies_->getBond(indices.at(0) - 1, indices.at(1) - 1), indices,
+                                                 std::get<1>(bond), tolerance_);
+                            });
     }
 
     // Check angle parameters
@@ -92,8 +94,10 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool
     if (!angleParameters_.empty())
     {
         Messenger::print("\nChecking angle parameters...\n");
-        nAnglesFailed =
-            std::accumulate(angleParameters_.begin(), angleParameters_.end(), 0, [&](const auto &acc, const auto &angle) {
+        nAnglesFailed = std::accumulate(
+            angleParameters_.begin(), angleParameters_.end(), 0,
+            [&](const auto &acc, const auto &angle)
+            {
                 auto &indices = std::get<0>(angle);
                 return acc + parametersDiffer<SpeciesAngle>(
                                  "angle", targetSpecies_->getAngle(indices.at(0) - 1, indices.at(1) - 1, indices.at(2) - 1),
@@ -106,14 +110,16 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool
     if (!torsionParameters_.empty())
     {
         Messenger::print("\nChecking torsion parameters...\n");
-        nTorsionsFailed =
-            std::accumulate(torsionParameters_.begin(), torsionParameters_.end(), 0, [&](const auto &acc, const auto &torsion) {
-                auto &indices = std::get<0>(torsion);
-                return acc + parametersDiffer<SpeciesTorsion>("torsion",
-                                                              targetSpecies_->getTorsion(indices.at(0) - 1, indices.at(1) - 1,
-                                                                                         indices.at(2) - 1, indices.at(3) - 1),
-                                                              indices, std::get<1>(torsion), tolerance_);
-            });
+        nTorsionsFailed = std::accumulate(torsionParameters_.begin(), torsionParameters_.end(), 0,
+                                          [&](const auto &acc, const auto &torsion)
+                                          {
+                                              auto &indices = std::get<0>(torsion);
+                                              return acc + parametersDiffer<SpeciesTorsion>(
+                                                               "torsion",
+                                                               targetSpecies_->getTorsion(indices.at(0) - 1, indices.at(1) - 1,
+                                                                                          indices.at(2) - 1, indices.at(3) - 1),
+                                                               indices, std::get<1>(torsion), tolerance_);
+                                          });
     }
 
     // Check improper parameters
@@ -121,15 +127,17 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool
     if (!improperParameters_.empty())
     {
         Messenger::print("\nChecking improper parameters...\n");
-        nImpropersFailed = std::accumulate(
-            improperParameters_.begin(), improperParameters_.end(), 0, [&](const auto &acc, const auto &improper) {
-                auto &indices = std::get<0>(improper);
-                return acc +
-                       parametersDiffer<SpeciesImproper>("improper",
-                                                         targetSpecies_->getImproper(indices.at(0) - 1, indices.at(1) - 1,
-                                                                                     indices.at(2) - 1, indices.at(3) - 1),
-                                                         indices, std::get<1>(improper), tolerance_);
-            });
+        nImpropersFailed =
+            std::accumulate(improperParameters_.begin(), improperParameters_.end(), 0,
+                            [&](const auto &acc, const auto &improper)
+                            {
+                                auto &indices = std::get<0>(improper);
+                                return acc + parametersDiffer<SpeciesImproper>(
+                                                 "improper",
+                                                 targetSpecies_->getImproper(indices.at(0) - 1, indices.at(1) - 1,
+                                                                             indices.at(2) - 1, indices.at(3) - 1),
+                                                 indices, std::get<1>(improper), tolerance_);
+                            });
     }
 
     return (nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0;

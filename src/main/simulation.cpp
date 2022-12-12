@@ -33,7 +33,8 @@ bool Dissolve::prepare()
         usedAtomTypes.add(sp->atomTypes());
 
     atomTypes().erase(std::remove_if(atomTypes().begin(), atomTypes().end(),
-                                     [&](const auto &at) {
+                                     [&](const auto &at)
+                                     {
                                          if (usedAtomTypes.contains(at))
                                              return false;
                                          else
@@ -106,10 +107,14 @@ bool Dissolve::prepare()
                             DissolveSys::btoa(neutralConfigsWithSpeciesCharges));
 
     // -- Do all used Species have 95% non-zero atomic charges?
-    auto speciesHaveValidAtomicCharges = std::all_of(globalUsedSpecies.begin(), globalUsedSpecies.end(), [](const auto &sp) {
-        return (std::count_if(sp->atoms().begin(), sp->atoms().end(), [](const auto &i) { return fabs(i.charge()) > 1.0e-5; }) /
-                double(sp->nAtoms())) > 0.95;
-    });
+    auto speciesHaveValidAtomicCharges =
+        std::all_of(globalUsedSpecies.begin(), globalUsedSpecies.end(),
+                    [](const auto &sp)
+                    {
+                        return (std::count_if(sp->atoms().begin(), sp->atoms().end(),
+                                              [](const auto &i) { return fabs(i.charge()) > 1.0e-5; }) /
+                                double(sp->nAtoms())) > 0.95;
+                    });
     Messenger::printVerbose("Species atomic charge validity  : {}\n", DissolveSys::btoa(speciesHaveValidAtomicCharges));
     // -- Do all atom types have 95% non-zero charges
     auto atomTypesHaveValidAtomicCharges =

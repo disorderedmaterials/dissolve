@@ -10,9 +10,10 @@ void ModuleModel::setData(const std::vector<Module *> &modules)
     modules_ = modules;
     if (checkedItems_)
     {
-        auto it = std::remove_if(checkedItems_->get().begin(), checkedItems_->get().end(), [&](const auto *m) {
-            return std::find(modules_->get().begin(), modules_->get().end(), m) == modules_->get().end();
-        });
+        auto it =
+            std::remove_if(checkedItems_->get().begin(), checkedItems_->get().end(),
+                           [&](const auto *m)
+                           { return std::find(modules_->get().begin(), modules_->get().end(), m) == modules_->get().end(); });
         if (it != checkedItems_->get().end())
             checkedItems_->get().erase(it, checkedItems_->get().end());
     }

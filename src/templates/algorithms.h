@@ -95,9 +95,11 @@ template <typename... Args> class ZipIterator
     bool operator!=(ZipIterator<Args...> other)
     {
         return std::apply(
-            [&other](auto &a, auto &... as) {
+            [&other](auto &a, auto &...as)
+            {
                 return std::apply(
-                    [&a](auto &b, auto &... bs) {
+                    [&a](auto &b, auto &...bs)
+                    {
                         // Only test the first elements.  We have to make the
                         // assumption that all the containers are the same length,
                         // anyway and this saves us some tests and some code.
@@ -109,11 +111,11 @@ template <typename... Args> class ZipIterator
     }
     void operator++()
     {
-        std::apply([](auto &... item) { (item++, ...); }, source_);
+        std::apply([](auto &...item) { (item++, ...); }, source_);
     }
     auto operator*()
     {
-        return std::apply([](auto &... item) { return std::make_tuple(std::ref(*item)...); }, source_);
+        return std::apply([](auto &...item) { return std::make_tuple(std::ref(*item)...); }, source_);
     }
 
     private:
@@ -123,14 +125,14 @@ template <typename... Args> class ZipIterator
 template <typename... Args> class zip
 {
     public:
-    zip(Args &... args) : sources_(args...) {}
+    zip(Args &...args) : sources_(args...) {}
     auto begin()
     {
-        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.begin()...); }, sources_));
+        return ZipIterator(std::apply([](auto &...item) { return std::make_tuple(item.begin()...); }, sources_));
     }
     auto end()
     {
-        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.end()...); }, sources_));
+        return ZipIterator(std::apply([](auto &...item) { return std::make_tuple(item.end()...); }, sources_));
     }
 
     private:
@@ -218,20 +220,24 @@ template <typename ParallelPolicy, class Iter, class Lam>
 void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
 {
     PairIterator start(end - begin), stop(end - begin, ((end - begin) * (end - begin + 1)) / 2);
-    for_each(policy, start, stop, [&lambda, &begin](const auto pair) {
-        auto &[i, j] = pair;
-        lambda(i, begin[i], j, begin[j]);
-    });
+    for_each(policy, start, stop,
+             [&lambda, &begin](const auto pair)
+             {
+                 auto &[i, j] = pair;
+                 lambda(i, begin[i], j, begin[j]);
+             });
 }
 
 // Perform an operation on every pair of elements in a range (begin <= i < end)
 template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
 {
     PairIterator start(end), stop(end, end * (end + 1) / 2);
-    for_each(policy, start, stop, [&lambda](const auto pair) {
-        auto [i, j] = pair;
-        lambda(i, j);
-    });
+    for_each(policy, start, stop,
+             [&lambda](const auto pair)
+             {
+                 auto [i, j] = pair;
+                 lambda(i, j);
+             });
 }
 } // namespace dissolve
 

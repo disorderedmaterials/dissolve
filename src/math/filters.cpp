@@ -47,9 +47,8 @@ void convolve(Data1D &data, const Functions::Function1DWrapper function, bool va
         {
             // Inner loop over whole array
             std::transform(x.begin(), x.end(), newY.begin(), newY.begin(),
-                           [yn = yn, &function, norm, xCentre = xCentre](auto X, auto NewY) {
-                               return NewY + yn * function.y(X - xCentre) * norm;
-                           });
+                           [yn = yn, &function, norm, xCentre = xCentre](auto X, auto NewY)
+                           { return NewY + yn * function.y(X - xCentre) * norm; });
         }
     }
 
