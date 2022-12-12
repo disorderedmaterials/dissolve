@@ -266,7 +266,7 @@ bool XRayWeights::deserialise(LineParser &parser, const CoreData &coreData)
     clear();
 
     // Read form factor dataset to use
-    if (!parser.getArgsDelim())
+    if (parser.getArgsDelim() != LineParser::Success)
         return false;
     formFactors_ = XRayFormFactors::xRayFormFactorData().enumeration(parser.argsv(0));
 
