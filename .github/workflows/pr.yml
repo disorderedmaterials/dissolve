@@ -39,6 +39,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Acquire Code Version
         uses: "./.github/workflows/get-version"
+      - name: Set Short Hash
+        uses: "./.github/workflows/set-short-hash"
       - name: "Build (${{ matrix.os }})"
         uses: "./.github/workflows/build"
         env:
