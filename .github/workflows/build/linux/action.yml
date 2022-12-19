@@ -42,8 +42,6 @@ runs:
       nix build --json .#${{ inputs.target }} > archive.json
 
   - name: "Push to Cachix"
-    env:
-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_TOKEN }}
     shell: bash
     run: |
       set -ex
