@@ -145,15 +145,23 @@ then
     git config --local user.name "Tristan Youngs"
     git config --local user.email "tristan.youngs@stfc.ac.uk"
 
+    # Show the differences in the CI log
     git diff
+
+    # Checkout a new branch
+    git checkout -b automation/release-version-${CURRENT_VERSION}
+
+    # Create a commit
     git add ${OLD_RELEASES_FILE} web/config.toml README.md
-    git commit -m "(Release Automation) Update version info."
-    git push origin HEAD:develop
+    git commit -m "Change release version to ${CURRENT_VERSION}.."
+
+    # Push the branch
+    git push --set-upstream origin automation/release-version-${CURRENT_VERSION}
 
     # Return to existing revision
     git checkout $CURRENTREV
   else
-    echo "No changes to be committed to develop."
+    echo "No changes to be committed."
   fi
 
 fi
