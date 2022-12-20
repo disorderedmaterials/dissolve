@@ -28,12 +28,14 @@ class KeywordStore
     ~KeywordStore()
     {
         // Remove keywords in this store from the global reference
-        auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(), [&](const auto *k) {
-            for (auto &[name, keyword] : keywords_)
-                if (k == keyword)
-                    return true;
-            return false;
-        });
+        auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(),
+                                 [&](const auto *k)
+                                 {
+                                     for (auto &[name, keyword] : keywords_)
+                                         if (k == keyword)
+                                             return true;
+                                     return false;
+                                 });
         allKeywords_.erase(it, allKeywords_.end());
     }
 
@@ -53,7 +55,7 @@ class KeywordStore
     public:
     // Add keyword (no group)
     template <class K, typename... Args>
-    KeywordBase *addKeyword(std::string_view name, std::string_view description, Args &&... args)
+    KeywordBase *addKeyword(std::string_view name, std::string_view description, Args &&...args)
     {
         // Check for keyword of this name already
         if (keywords_.find(name) != keywords_.end())
@@ -70,7 +72,7 @@ class KeywordStore
         return k;
     }
     // Add target keyword
-    template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&... args)
+    template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&...args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
@@ -78,7 +80,7 @@ class KeywordStore
     }
     // Add keyword (displaying in named group)
     template <class K, typename... Args>
-    KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&... args)
+    KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&...args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
@@ -94,13 +96,13 @@ class KeywordStore
     // Add keyword (displaying in named group) and capture in restart file
     template <class K, typename... Args>
     KeywordBase *addRestartable(std::string_view displayGroup, std::string_view name, std::string_view description,
-                                Args &&... args)
+                                Args &&...args)
     {
         return restartables_.emplace_back(add<K>(displayGroup, name, description, args...));
     }
     // Add deprecated keyword
     template <class K, typename... Args>
-    KeywordBase *addDeprecated(std::string_view name, std::string_view description, Args &&... args)
+    KeywordBase *addDeprecated(std::string_view name, std::string_view description, Args &&...args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 

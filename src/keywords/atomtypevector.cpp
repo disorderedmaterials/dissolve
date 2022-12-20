@@ -34,9 +34,9 @@ bool AtomTypeVectorKeyword::deserialise(LineParser &parser, int startArg, const 
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
-        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&parser, n](const auto atomType) {
-            return DissolveSys::sameString(atomType->name(), parser.argsv(n));
-        });
+        auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(),
+                               [&parser, n](const auto atomType)
+                               { return DissolveSys::sameString(atomType->name(), parser.argsv(n)); });
         if (it == coreData.atomTypes().end())
             return Messenger::error("Unrecognised AtomType '{}' given to '{}' keyword.\n", parser.argsv(n), name());
         auto atomType = *it;

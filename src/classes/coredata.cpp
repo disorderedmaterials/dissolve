@@ -337,9 +337,9 @@ Configuration *CoreData::addConfiguration()
     auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
 
     // Create a suitable unique name
-    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_, [&](const auto &cfg) {
-        return newConfiguration == cfg ? std::string() : cfg->name();
-    }));
+    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_,
+                                                      [&](const auto &cfg)
+                                                      { return newConfiguration == cfg ? std::string() : cfg->name(); }));
 
     return newConfiguration.get();
 }

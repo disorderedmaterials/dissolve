@@ -46,7 +46,8 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
 
     dissolve::for_each_pair(
         ParallelPolicies::seq, cfg->atoms().begin(), cfg->atoms().end(),
-        [box, &partialSet](auto i, auto &ii, auto j, auto &jj) {
+        [box, &partialSet](auto i, auto &ii, auto j, auto &jj)
+        {
             if (&ii != &jj)
                 partialSet.fullHistogram(ii.localTypeIndex(), jj.localTypeIndex()).bin(box->minimumDistance(ii.r(), jj.r()));
         });
@@ -108,16 +109,18 @@ bool RDFModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cf
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
         PairIterator pairs(maxr[typeI]);
         auto [start, stop] = chop_range(pairs, pairs.end(), nChunks, offset);
-        std::for_each(start, stop, [box, bins, rbin, ri, nPoints, &histogram](auto it) {
-            auto [i, j] = it;
-            auto centre = ri[i];
-            auto other = ri[j];
-            if (i == j)
-                return;
-            bins[j] = box->minimumDistance(centre, other) * rbin;
-            if (bins[j] < nPoints)
-                ++histogram[bins[j]];
-        });
+        std::for_each(start, stop,
+                      [box, bins, rbin, ri, nPoints, &histogram](auto it)
+                      {
+                          auto [i, j] = it;
+                          auto centre = ri[i];
+                          auto other = ri[j];
+                          if (i == j)
+                              return;
+                          bins[j] = box->minimumDistance(centre, other) * rbin;
+                          if (bins[j] < nPoints)
+                              ++histogram[bins[j]];
+                      });
     }
 
     Messenger::printVerbose("Cross terms..\n");
@@ -174,16 +177,19 @@ bool RDFModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg
     auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
     auto [cStart, cEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
-    auto combinableHistograms = dissolve::CombinableValue<Array2D<Histogram1D>>([&partialSet]() {
-        Array2D<Histogram1D> histograms;
-        histograms.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes(), true);
-        for (auto i = 0; i < partialSet.nAtomTypes(); ++i)
-            for (auto j = i; j < partialSet.nAtomTypes(); ++j)
-                histograms[{i, j}] = partialSet.fullHistogram(i, j);
-        return histograms;
-    });
+    auto combinableHistograms = dissolve::CombinableValue<Array2D<Histogram1D>>(
+        [&partialSet]()
+        {
+            Array2D<Histogram1D> histograms;
+            histograms.initialise(partialSet.nAtomTypes(), partialSet.nAtomTypes(), true);
+            for (auto i = 0; i < partialSet.nAtomTypes(); ++i)
+                for (auto j = i; j < partialSet.nAtomTypes(); ++j)
+                    histograms[{i, j}] = partialSet.fullHistogram(i, j);
+            return histograms;
+        });
 
-    auto unaryOp = [&combinableHistograms, cfg, &comb, rdfRange](const auto idx) {
+    auto unaryOp = [&combinableHistograms, cfg, &comb, rdfRange](const auto idx)
+    {
         // auto &histograms = combinableHistograms.local().histograms_;
         auto &histograms = combinableHistograms.local();
         const auto *box = cfg->box();
@@ -229,16 +235,18 @@ bool RDFModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg
 
         // Add contributions between atoms in cellI
         PairIterator pairs(atomsI.size());
-        std::for_each(pairs.begin(), pairs.end(), [&atomsI, &partialSet](auto it) {
-            auto [idx, jdx] = it;
-            if (idx == jdx)
-                return;
-            auto &i = atomsI[idx];
-            auto &j = atomsI[jdx];
-            // No need to perform MIM since we're in the same cell
-            double distance = (i->r() - j->r()).magnitude();
-            partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-        });
+        std::for_each(pairs.begin(), pairs.end(),
+                      [&atomsI, &partialSet](auto it)
+                      {
+                          auto [idx, jdx] = it;
+                          if (idx == jdx)
+                              return;
+                          auto &i = atomsI[idx];
+                          auto &j = atomsI[jdx];
+                          // No need to perform MIM since we're in the same cell
+                          double distance = (i->r() - j->r()).magnitude();
+                          partialSet.fullHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+                      });
     }
     return true;
 }
@@ -374,7 +382,8 @@ bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &proc
 
         dissolve::for_each_pair(
             ParallelPolicies::seq, atoms.begin(), atoms.end(),
-            [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j) {
+            [box, &cells, &originalgr](int index, auto &i, int jndex, auto &j)
+            {
                 // Ignore atom on itself
                 if (index == jndex)
                     return;
@@ -394,24 +403,26 @@ bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &proc
 
     timer.start();
     Timer commsTimer(false);
-    auto success = for_each_pair_early(
-        0, originalgr.nAtomTypes(), [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool> {
-            // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
-            // processes have all data already)
-            if (method != RDFModule::TestMethod)
-            {
-                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
-                    return false;
-                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
-                    return false;
-            }
+    auto success =
+        for_each_pair_early(0, originalgr.nAtomTypes(),
+                            [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
+                            {
+                                // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
+                                // processes have all data already)
+                                if (method != RDFModule::TestMethod)
+                                {
+                                    if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
+                                        return false;
+                                    if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool, commsTimer))
+                                        return false;
+                                }
 
-            // Create unbound histogram from total and bound data
-            originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-            originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+                                // Create unbound histogram from total and bound data
+                                originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+                                originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
 
-            return EarlyReturn<bool>::Continue;
-        });
+                                return EarlyReturn<bool>::Continue;
+                            });
     if (success.has_value() && !success.value())
         return false;
 
@@ -466,21 +477,20 @@ bool RDFModule::calculateUnweightedGR(const ProcessPool &procPool, Configuration
     // Broaden the bound partials according to the supplied PairBroadeningFunction
     auto &types = unweightedgr.atomTypeMix();
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
-                            [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-                                Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, true, true);
-                            });
+                            [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
+                            { Filters::convolve(unweightedgr.boundPartial(i, j), intraBroadening, true, true); });
 
     // Add broadened bound partials back in to full partials
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
-                            [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-                                unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
-                            });
+                            [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
+                            { unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j); });
 
     // Apply smoothing if requested
     if (smoothing > 0)
     {
         dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
-                                [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
+                                [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ)
+                                {
                                     Filters::movingAverage(unweightedgr.partial(i, j), smoothing);
                                     Filters::movingAverage(unweightedgr.boundPartial(i, j), smoothing);
                                     Filters::movingAverage(unweightedgr.unboundPartial(i, j), smoothing);
@@ -526,9 +536,9 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &
     }
 
     // Calculate overall density of combined system
-    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0, [totalWeight](double acc, auto pair) {
-        return acc + pair.second / totalWeight / pair.first->atomicDensity().value();
-    });
+    double rho0 = std::accumulate(configWeights.begin(), configWeights.end(), 0.0,
+                                  [totalWeight](double acc, auto pair)
+                                  { return acc + pair.second / totalWeight / pair.first->atomicDensity().value(); });
     rho0 = 1.0 / rho0;
 
     // Sum Configurations into the PartialSet
@@ -562,7 +572,8 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 
     for_each_pair_early(
         atomTypes.begin(), atomTypes.end(),
-        [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool> {
+        [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
+        {
             // Full partial
             error = Error::percent(setA.partial(n, m), setB.partial(n, m));
             Messenger::print("Test reference full partial '{}-{}' has error of {:7.3f}% with calculated data and is "
@@ -657,7 +668,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
         auto &[data, format] = *sharedDataPointer.get();
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data.tag()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
@@ -688,7 +700,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
         auto &[data, format] = *sharedDataPointer.get();
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data.tag()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments

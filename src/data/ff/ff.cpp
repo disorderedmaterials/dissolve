@@ -123,13 +123,15 @@ void Forcefield::addParameters(std::string_view name, const std::vector<double> 
 // Create NETA definitions for all atom types from stored defs
 bool Forcefield::createNETADefinitions()
 {
-    auto nFailed = std::count_if(atomTypes_.begin(), atomTypes_.end(), [this](auto &atomType) {
-        auto success = atomType.createNETA(this);
-        if (!success)
-            Messenger::print("Failed to parse NETA definition '{}' for atom type '{}'.", atomType.neta().definitionString(),
-                             atomType.name());
-        return !success;
-    });
+    auto nFailed = std::count_if(atomTypes_.begin(), atomTypes_.end(),
+                                 [this](auto &atomType)
+                                 {
+                                     auto success = atomType.createNETA(this);
+                                     if (!success)
+                                         Messenger::print("Failed to parse NETA definition '{}' for atom type '{}'.",
+                                                          atomType.neta().definitionString(), atomType.name());
+                                     return !success;
+                                 });
 
     if (nFailed > 0)
         Messenger::error("Failed to create {} NETA {} for the forcefield '{}'.\n", nFailed,

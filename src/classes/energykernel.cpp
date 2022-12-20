@@ -168,28 +168,31 @@ double EnergyKernel::energy(const Atom &i)
     // Get cell neighbours for atom i's cell
     auto &neighbours = cellArray_.neighbours(*i.cell());
 
-    return dissolve::transform_reduce(
-        ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
-        [&i, this](const auto &neighbour) {
-            auto mimRequired = neighbour.requiresMIM_;
-            auto &nbrCellAtoms = neighbour.neighbour_.atoms();
-            return std::accumulate(
-                nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0, [&i, mimRequired, this](const auto innerAcc, const auto *j) {
-                    auto &jj = *j;
+    return dissolve::transform_reduce(ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
+                                      [&i, this](const auto &neighbour)
+                                      {
+                                          auto mimRequired = neighbour.requiresMIM_;
+                                          auto &nbrCellAtoms = neighbour.neighbour_.atoms();
+                                          return std::accumulate(
+                                              nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
+                                              [&i, mimRequired, this](const auto innerAcc, const auto *j)
+                                              {
+                                                  auto &jj = *j;
 
-                    // Calculate rSquared distance between atoms, and check it against
-                    // the stored cutoff distance
-                    auto rSq = mimRequired ? box_->minimumDistanceSquared(i.r(), jj.r()) : (i.r() - jj.r()).magnitudeSq();
-                    if (rSq > cutoffDistanceSquared_)
-                        return innerAcc;
+                                                  // Calculate rSquared distance between atoms, and check it against
+                                                  // the stored cutoff distance
+                                                  auto rSq = mimRequired ? box_->minimumDistanceSquared(i.r(), jj.r())
+                                                                         : (i.r() - jj.r()).magnitudeSq();
+                                                  if (rSq > cutoffDistanceSquared_)
+                                                      return innerAcc;
 
-                    // Check for atoms in the same species
-                    if (i.molecule().get() != jj.molecule().get())
-                        return innerAcc + pairPotentialEnergy(i, jj, sqrt(rSq));
+                                                  // Check for atoms in the same species
+                                                  if (i.molecule().get() != jj.molecule().get())
+                                                      return innerAcc + pairPotentialEnergy(i, jj, sqrt(rSq));
 
-                    return innerAcc;
-                });
-        });
+                                                  return innerAcc;
+                                              });
+                                      });
 }
 
 // Return PairPotential energy of Molecule with world
@@ -200,8 +203,10 @@ double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, Pro
     for (auto &i : mol.atoms())
         locationMap[i->cell()].push_back(i);
 
-    auto totalEnergy =
-        std::accumulate(locationMap.begin(), locationMap.end(), 0.0, [&](const auto totalAcc, const auto &location) {
+    auto totalEnergy = std::accumulate(
+        locationMap.begin(), locationMap.end(), 0.0,
+        [&](const auto totalAcc, const auto &location)
+        {
             const auto &centralCellAtoms = location.second;
 
             // Get cell neighbours for the cell
@@ -209,37 +214,39 @@ double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, Pro
 
             auto localEnergy = dissolve::transform_reduce(
                 ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
-                [&centralCellAtoms, includeIntraMolecular, this](const auto &neighbour) {
+                [&centralCellAtoms, includeIntraMolecular, this](const auto &neighbour)
+                {
                     return std::accumulate(
                         centralCellAtoms.begin(), centralCellAtoms.end(), 0.0,
-                        [&neighbour, includeIntraMolecular, this](const auto acc, const auto &i) {
+                        [&neighbour, includeIntraMolecular, this](const auto acc, const auto &i)
+                        {
                             auto &ii = *i;
                             auto mimRequired = neighbour.requiresMIM_;
                             auto &nbrCellAtoms = neighbour.neighbour_.atoms();
-                            return acc + std::accumulate(nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
-                                                         [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc,
-                                                                                                         const auto *j) {
-                                                             auto &jj = *j;
+                            return acc + std::accumulate(
+                                             nbrCellAtoms.begin(), nbrCellAtoms.end(), 0.0,
+                                             [&ii, mimRequired, includeIntraMolecular, this](const auto innerAcc, const auto *j)
+                                             {
+                                                 auto &jj = *j;
 
-                                                             // Check for atoms in the same species
-                                                             if (includeIntraMolecular)
-                                                             {
-                                                                 if (&ii == &jj)
-                                                                     return innerAcc;
-                                                             }
-                                                             else if (ii.molecule().get() == jj.molecule().get())
-                                                                 return innerAcc;
+                                                 // Check for atoms in the same species
+                                                 if (includeIntraMolecular)
+                                                 {
+                                                     if (&ii == &jj)
+                                                         return innerAcc;
+                                                 }
+                                                 else if (ii.molecule().get() == jj.molecule().get())
+                                                     return innerAcc;
 
-                                                             // Calculate rSquared distance between atoms, and check it against
-                                                             // the stored cutoff distance
-                                                             auto rSq = mimRequired
-                                                                            ? box_->minimumDistanceSquared(ii.r(), jj.r())
-                                                                            : (ii.r() - jj.r()).magnitudeSq();
-                                                             if (rSq > cutoffDistanceSquared_)
-                                                                 return innerAcc;
+                                                 // Calculate rSquared distance between atoms, and check it against
+                                                 // the stored cutoff distance
+                                                 auto rSq = mimRequired ? box_->minimumDistanceSquared(ii.r(), jj.r())
+                                                                        : (ii.r() - jj.r()).magnitudeSq();
+                                                 if (rSq > cutoffDistanceSquared_)
+                                                     return innerAcc;
 
-                                                             return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
-                                                         });
+                                                 return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
+                                             });
                         });
                 });
 
@@ -256,16 +263,18 @@ double EnergyKernel::correct(const Atom &i)
     auto &atoms = i.molecule()->atoms();
     const auto &rI = i.r();
 
-    double correctionEnergy = dissolve::transform_reduce(ParallelPolicies::par, atoms.begin(), atoms.end(), 0.0,
-                                                         std::plus<double>(), [&](auto &j) -> double {
-                                                             if (&i == j)
-                                                                 return 0.0;
-                                                             double scale = 1.0 - i.scaling(j);
-                                                             if (scale <= 1.0e-3)
-                                                                 return 0.0;
-                                                             double r = box_->minimumDistance(rI, j->r());
-                                                             return pairPotentialEnergy(i, *j, r) * scale;
-                                                         });
+    double correctionEnergy =
+        dissolve::transform_reduce(ParallelPolicies::par, atoms.begin(), atoms.end(), 0.0, std::plus<double>(),
+                                   [&](auto &j) -> double
+                                   {
+                                       if (&i == j)
+                                           return 0.0;
+                                       double scale = 1.0 - i.scaling(j);
+                                       if (scale <= 1.0e-3)
+                                           return 0.0;
+                                       double r = box_->minimumDistance(rI, j->r());
+                                       return pairPotentialEnergy(i, *j, r) * scale;
+                                   });
 
     return -correctionEnergy;
 }
@@ -283,16 +292,17 @@ double EnergyKernel::energy(const CellArray &cellArray, bool includeIntraMolecul
     auto totalEnergy = 0.0;
     auto [begin, end] = chop_range(cellNeighbourPairs.begin(), cellNeighbourPairs.end(), nChunks, offset);
 
-    totalEnergy +=
-        dissolve::transform_reduce(ParallelPolicies::par, begin, end, 0.0, std::plus<double>(), [&](const auto &pair) {
-            auto &cellI = pair.master_;
-            auto &cellJ = pair.neighbour_;
-            auto mimRequired = pair.requiresMIM_;
-            if (&cellI == &cellJ)
-                return energy(cellI, includeIntraMolecular);
-            else
-                return energy(cellI, cellJ, mimRequired, includeIntraMolecular);
-        });
+    totalEnergy += dissolve::transform_reduce(ParallelPolicies::par, begin, end, 0.0, std::plus<double>(),
+                                              [&](const auto &pair)
+                                              {
+                                                  auto &cellI = pair.master_;
+                                                  auto &cellJ = pair.neighbour_;
+                                                  auto mimRequired = pair.requiresMIM_;
+                                                  if (&cellI == &cellJ)
+                                                      return energy(cellI, includeIntraMolecular);
+                                                  else
+                                                      return energy(cellI, cellJ, mimRequired, includeIntraMolecular);
+                                              });
 
     return totalEnergy;
 }
@@ -342,26 +352,27 @@ double EnergyKernel::intramolecularEnergy(const Molecule &mol, const Atom &i)
 
     // Add energy from SpeciesAngle terms
     intraEnergy += std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesBond &bond) {
-                                       return acc + energy(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ()));
-                                   });
+                                   [this, &mol](const auto acc, const SpeciesBond &bond)
+                                   { return acc + energy(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ())); });
 
     // Add energy from SpeciesAngle terms
     intraEnergy += std::accumulate(
-        spAtom->angles().begin(), spAtom->angles().end(), 0.0, [this, &mol](const auto acc, const SpeciesAngle &angle) {
-            return acc + energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK()));
-        });
+        spAtom->angles().begin(), spAtom->angles().end(), 0.0,
+        [this, &mol](const auto acc, const SpeciesAngle &angle)
+        { return acc + energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
 
     // Add energy from SpeciesTorsion terms
     intraEnergy += std::accumulate(spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesTorsion &torsion) {
+                                   [this, &mol](const auto acc, const SpeciesTorsion &torsion)
+                                   {
                                        return acc + energy(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()),
                                                            *mol.atom(torsion.indexK()), *mol.atom(torsion.indexL()));
                                    });
 
     // Add energy from SpeciesImproper terms
     intraEnergy += std::accumulate(spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesImproper &improper) {
+                                   [this, &mol](const auto acc, const SpeciesImproper &improper)
+                                   {
                                        return acc + energy(improper, *mol.atom(improper.indexI()), *mol.atom(improper.indexJ()),
                                                            *mol.atom(improper.indexK()), *mol.atom(improper.indexL()));
                                    });
@@ -382,14 +393,15 @@ double EnergyKernel::intramolecularEnergy(const Molecule &mol)
     // Loop over Angles
     intraEnergy = dissolve::transform_reduce(
         ParallelPolicies::seq, mol.species()->angles().begin(), mol.species()->angles().end(), intraEnergy, std::plus<double>(),
-        [&mol, this](const auto &angle) -> double {
-            return energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK()));
-        });
+        [&mol, this](const auto &angle) -> double
+        { return energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
 
     // Loop over Torsions
     intraEnergy =
         dissolve::transform_reduce(ParallelPolicies::par, mol.species()->torsions().begin(), mol.species()->torsions().end(),
-                                   intraEnergy, std::plus<double>(), [&mol, this](const auto &torsion) -> double {
+                                   intraEnergy, std::plus<double>(),
+                                   [&mol, this](const auto &torsion) -> double
+                                   {
                                        return energy(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()),
                                                      *mol.atom(torsion.indexK()), *mol.atom(torsion.indexL()));
                                    });
@@ -397,7 +409,9 @@ double EnergyKernel::intramolecularEnergy(const Molecule &mol)
     // Loop over Impropers
     intraEnergy =
         dissolve::transform_reduce(ParallelPolicies::par, mol.species()->impropers().begin(), mol.species()->impropers().end(),
-                                   intraEnergy, std::plus<double>(), [&mol, this](const auto &improper) -> double {
+                                   intraEnergy, std::plus<double>(),
+                                   [&mol, this](const auto &improper) -> double
+                                   {
                                        return energy(improper, *mol.atom(improper.indexI()), *mol.atom(improper.indexJ()),
                                                      *mol.atom(improper.indexK()), *mol.atom(improper.indexL()));
                                    });

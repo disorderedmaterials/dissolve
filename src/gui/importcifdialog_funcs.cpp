@@ -334,9 +334,9 @@ bool ImportCIFDialog::createStructuralSpecies()
                         r = box->fold(r);
 
                         // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
-                        if (std::any_of(
-                                crystalSpecies_->atoms().begin(), crystalSpecies_->atoms().end(),
-                                [&r, box, tolerance](const auto &j) { return box->minimumDistance(r, j.r()) < tolerance; }))
+                        if (std::any_of(crystalSpecies_->atoms().begin(), crystalSpecies_->atoms().end(),
+                                        [&r, box, tolerance](const auto &j)
+                                        { return box->minimumDistance(r, j.r()) < tolerance; }))
                             continue;
 
                         // Create the new atom

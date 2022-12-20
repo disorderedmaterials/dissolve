@@ -124,7 +124,8 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
         auto result = for_each_pair_early(
             unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
-            [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool> {
+            [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool>
+            {
                 // Locate the corresponding Bragg intensities for this atom type pair
                 auto pairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
                 if (pairIndex.first == -1 || pairIndex.second == -1)
@@ -154,7 +155,8 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic fractions
         dissolve::for_each_pair(ParallelPolicies::par, unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
-                                [&braggPartials](auto i, auto &atd1, auto j, auto &atd2) {
+                                [&braggPartials](auto i, auto &atd1, auto j, auto &atd2)
+                                {
                                     // Subtract self-scattering level if types are equivalent
                                     if (i == j)
                                         braggPartials[{i, j}] -= atd1.fraction();
@@ -164,25 +166,27 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                 });
 
         // Blend the bound/unbound and Bragg partials at the higher Q limit
-        dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {
-            // Note: Intramolecular broadening will not be applied to bound terms within the
-            // calculated Bragg scattering
-            auto &bound = unweightedsq.boundPartial(i, j);
-            auto &unbound = unweightedsq.unboundPartial(i, j);
-            auto &partial = unweightedsq.partial(i, j);
-            auto &bragg = braggPartials[{i, j}];
+        dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedsq.nAtomTypes(),
+                                [&](const int i, const int j)
+                                {
+                                    // Note: Intramolecular broadening will not be applied to bound terms within the
+                                    // calculated Bragg scattering
+                                    auto &bound = unweightedsq.boundPartial(i, j);
+                                    auto &unbound = unweightedsq.unboundPartial(i, j);
+                                    auto &partial = unweightedsq.partial(i, j);
+                                    auto &bragg = braggPartials[{i, j}];
 
-            for (auto n = 0; n < bound.nValues(); ++n)
-            {
-                const auto q = bound.xAxis(n);
-                if (q <= braggQMax)
-                {
-                    bound.value(n) = 0.0;
-                    unbound.value(n) = bragg.value(n);
-                    partial.value(n) = bragg.value(n);
-                }
-            }
-        });
+                                    for (auto n = 0; n < bound.nValues(); ++n)
+                                    {
+                                        const auto q = bound.xAxis(n);
+                                        if (q <= braggQMax)
+                                        {
+                                            bound.value(n) = 0.0;
+                                            unbound.value(n) = bragg.value(n);
+                                            partial.value(n) = bragg.value(n);
+                                        }
+                                    }
+                                });
 
         // Re-form the total function
         unweightedsq.formTotals(true);

@@ -578,12 +578,14 @@ SpaceGroups::SpaceGroupId findByHermannMauginnSymbol(std::string_view hmSymbol, 
     auto it = hmSymbol.find(':') != std::string::npos
                   ? std::find_if(symbols_.begin(), symbols_.end(),
                                  [hmSymbol](const auto &sg) { return sg.hermannMauginnSymbol() == hmSymbol; })
-                  : std::find_if(symbols_.begin(), symbols_.end(), [hmSymbol, code](const auto &sg) {
-                        return (sg.hermannMauginnSymbol().find(':') == std::string::npos
-                                    ? sg.hermannMauginnSymbol()
-                                    : DissolveSys::beforeChar(sg.hermannMauginnSymbol(), ':')) == hmSymbol &&
-                               (code.empty() || sg.code() == code);
-                    });
+                  : std::find_if(symbols_.begin(), symbols_.end(),
+                                 [hmSymbol, code](const auto &sg)
+                                 {
+                                     return (sg.hermannMauginnSymbol().find(':') == std::string::npos
+                                                 ? sg.hermannMauginnSymbol()
+                                                 : DissolveSys::beforeChar(sg.hermannMauginnSymbol(), ':')) == hmSymbol &&
+                                            (code.empty() || sg.code() == code);
+                                 });
 
     return it == symbols_.end() ? SpaceGroupId::NoSpaceGroup : it->id();
 }
@@ -591,9 +593,9 @@ SpaceGroups::SpaceGroupId findByHermannMauginnSymbol(std::string_view hmSymbol, 
 // Find space group from supplied International Tables index and (optional) code
 SpaceGroups::SpaceGroupId findByInternationalTablesIndex(int itIndex, std::string_view code)
 {
-    auto it = std::find_if(symbols_.begin(), symbols_.end(), [itIndex, code](const auto &sg) {
-        return sg.internationalTableIndex() == itIndex && (code.empty() || sg.code() == code);
-    });
+    auto it = std::find_if(symbols_.begin(), symbols_.end(),
+                           [itIndex, code](const auto &sg)
+                           { return sg.internationalTableIndex() == itIndex && (code.empty() || sg.code() == code); });
     return it == symbols_.end() ? SpaceGroupId::NoSpaceGroup : it->id();
 }
 

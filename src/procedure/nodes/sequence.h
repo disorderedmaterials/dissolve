@@ -64,7 +64,7 @@ class SequenceProcedureNode : public ProcedureNode
     // Clear all data
     void clear();
     // Create new node
-    template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&... args)
+    template <class N, typename... Args> std::shared_ptr<N> create(std::string_view name, Args &&...args)
     {
         // Create the new node
         auto node = std::make_shared<N>(args...);

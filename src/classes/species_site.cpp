@@ -50,9 +50,9 @@ std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *ex
 // Search for SpeciesSite by name
 const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
 {
-    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &site) {
-        return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name())));
-    });
+    auto it = std::find_if(sites_.begin(), sites_.end(),
+                           [name, exclude](const auto &site)
+                           { return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name()))); });
     if (it != sites_.end())
         return (*it).get();
 
@@ -60,9 +60,9 @@ const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *e
 }
 SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude)
 {
-    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &site) {
-        return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name())));
-    });
+    auto it = std::find_if(sites_.begin(), sites_.end(),
+                           [name, exclude](const auto &site)
+                           { return ((site.get() != exclude) && (DissolveSys::sameString(name, site->name()))); });
     if (it != sites_.end())
         return (*it).get();
 

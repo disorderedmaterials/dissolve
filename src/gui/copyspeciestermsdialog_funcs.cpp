@@ -70,20 +70,22 @@ void CopySpeciesTermsDialog::findTermsToCopy(std::vector<std::pair<Intra *, cons
 
         // Check for a suitable term in the target species
         auto js = targetTerm.atoms();
-        auto it = std::find_if(sourceTerms.begin(), sourceTerms.end(), [js](const auto &sourceTerm) {
-            // Assess atom types between the two terms, from both vector directions
-            auto n = 0;
-            auto sameForwards = true, sameBackwards = true;
-            for (const auto *i : sourceTerm.atoms())
-            {
-                if (sameForwards && i->atomType() != js[n]->atomType())
-                    sameForwards = false;
-                if (sameBackwards && i->atomType() != js[js.size() - n - 1]->atomType())
-                    sameBackwards = false;
-                ++n;
-            }
-            return sameForwards || sameBackwards;
-        });
+        auto it = std::find_if(sourceTerms.begin(), sourceTerms.end(),
+                               [js](const auto &sourceTerm)
+                               {
+                                   // Assess atom types between the two terms, from both vector directions
+                                   auto n = 0;
+                                   auto sameForwards = true, sameBackwards = true;
+                                   for (const auto *i : sourceTerm.atoms())
+                                   {
+                                       if (sameForwards && i->atomType() != js[n]->atomType())
+                                           sameForwards = false;
+                                       if (sameBackwards && i->atomType() != js[js.size() - n - 1]->atomType())
+                                           sameBackwards = false;
+                                       ++n;
+                                   }
+                                   return sameForwards || sameBackwards;
+                               });
         if (it != sourceTerms.end())
             termVector.emplace_back(&targetTerm, &(*it));
     }

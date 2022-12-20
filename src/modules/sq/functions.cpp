@@ -24,21 +24,24 @@ bool SQModule::calculateUnweightedSQ(const ProcessPool &procPool, const PartialS
     // Don't subtract 1.0 from the bound partials
     Timer timer;
     timer.start();
-    dissolve::for_each_pair(ParallelPolicies::par, 0, unweightedgr.nAtomTypes(), [&](int n, int m) {
-        // Total partial
-        unweightedsq.partial(n, m).copyArrays(unweightedgr.partial(n, m));
-        unweightedsq.partial(n, m) -= 1.0;
-        Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+    dissolve::for_each_pair(
+        ParallelPolicies::par, 0, unweightedgr.nAtomTypes(),
+        [&](int n, int m)
+        {
+            // Total partial
+            unweightedsq.partial(n, m).copyArrays(unweightedgr.partial(n, m));
+            unweightedsq.partial(n, m) -= 1.0;
+            Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
 
-        // Bound partial
-        unweightedsq.boundPartial(n, m).copyArrays(unweightedgr.boundPartial(n, m));
-        Fourier::sineFT(unweightedsq.boundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+            // Bound partial
+            unweightedsq.boundPartial(n, m).copyArrays(unweightedgr.boundPartial(n, m));
+            Fourier::sineFT(unweightedsq.boundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
 
-        // Unbound partial
-        unweightedsq.unboundPartial(n, m).copyArrays(unweightedgr.unboundPartial(n, m));
-        unweightedsq.unboundPartial(n, m) -= 1.0;
-        Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
-    });
+            // Unbound partial
+            unweightedsq.unboundPartial(n, m).copyArrays(unweightedgr.unboundPartial(n, m));
+            unweightedsq.unboundPartial(n, m) -= 1.0;
+            Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
+        });
 
     // Sum into total
     unweightedsq.formTotals(true);

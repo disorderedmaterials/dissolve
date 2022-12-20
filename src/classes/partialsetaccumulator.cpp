@@ -23,39 +23,43 @@ void PartialSetAccumulator::operator+=(const PartialSet &source)
         total_.clear();
 
         // Copy tags (for retrieval and sanity checking purposes)
-        dissolve::for_each_pair(ParallelPolicies::par, 0, n, [&](auto i, auto j) {
-            partials_[{i, j}].setTag(source.partial(i, j).tag());
-            boundPartials_[{i, j}].setTag(source.boundPartial(i, j).tag());
-            unboundPartials_[{i, j}].setTag(source.unboundPartial(i, j).tag());
-        });
+        dissolve::for_each_pair(ParallelPolicies::par, 0, n,
+                                [&](auto i, auto j)
+                                {
+                                    partials_[{i, j}].setTag(source.partial(i, j).tag());
+                                    boundPartials_[{i, j}].setTag(source.boundPartial(i, j).tag());
+                                    unboundPartials_[{i, j}].setTag(source.unboundPartial(i, j).tag());
+                                });
         total_.setTag(source.total().tag());
     }
 
     assert(n == partials_.nRows());
 
     // Accumulate the data, ensuring tags are identical - if not, we really don't want to be blindly accumulating
-    dissolve::for_each_pair(ParallelPolicies::par, 0, n, [&](auto i, auto j) {
-        // Full partials
-        if (partials_[{i, j}].tag() != source.partial(i, j).tag())
-            throw(std::runtime_error(
-                fmt::format("Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
-                            partials_[{i, j}].tag(), source.partial(i, j).tag())));
-        partials_[{i, j}] += source.partial(i, j);
+    dissolve::for_each_pair(ParallelPolicies::par, 0, n,
+                            [&](auto i, auto j)
+                            {
+                                // Full partials
+                                if (partials_[{i, j}].tag() != source.partial(i, j).tag())
+                                    throw(std::runtime_error(fmt::format(
+                                        "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
+                                        partials_[{i, j}].tag(), source.partial(i, j).tag())));
+                                partials_[{i, j}] += source.partial(i, j);
 
-        // Bound partials
-        if (boundPartials_[{i, j}].tag() != source.boundPartial(i, j).tag())
-            throw(std::runtime_error(
-                fmt::format("Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
-                            boundPartials_[{i, j}].tag(), source.boundPartial(i, j).tag())));
-        boundPartials_[{i, j}] += source.boundPartial(i, j);
+                                // Bound partials
+                                if (boundPartials_[{i, j}].tag() != source.boundPartial(i, j).tag())
+                                    throw(std::runtime_error(fmt::format(
+                                        "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
+                                        boundPartials_[{i, j}].tag(), source.boundPartial(i, j).tag())));
+                                boundPartials_[{i, j}] += source.boundPartial(i, j);
 
-        // Unbound partials
-        if (unboundPartials_[{i, j}].tag() != source.unboundPartial(i, j).tag())
-            throw(std::runtime_error(
-                fmt::format("Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
-                            unboundPartials_[{i, j}].tag(), source.unboundPartial(i, j).tag())));
-        unboundPartials_[{i, j}] += source.unboundPartial(i, j);
-    });
+                                // Unbound partials
+                                if (unboundPartials_[{i, j}].tag() != source.unboundPartial(i, j).tag())
+                                    throw(std::runtime_error(fmt::format(
+                                        "Can't accumulate PartialSet data as the data tags are mismatched ('{}' vs '{}').\n",
+                                        unboundPartials_[{i, j}].tag(), source.unboundPartial(i, j).tag())));
+                                unboundPartials_[{i, j}] += source.unboundPartial(i, j);
+                            });
 
     total_ += source.total();
 
