@@ -5,6 +5,7 @@ trigger:
   paths:
     include:
     - web/*
+    - .azure-pipelines/templates/build-web.yml
     exclude:
     - /
 
@@ -16,6 +17,7 @@ pr:
   paths:
     include:
     - web/*
+    - .azure-pipelines/templates/build-web.yml
     exclude:
     - /
 
