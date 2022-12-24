@@ -150,7 +150,7 @@ class Species : public Serialisable
     void removeBond(int i, int j);
     // Return number of SpeciesBonds defined
     int nBonds() const;
-    // Return array of SpeciesBond
+    // Return vector of SpeciesBond
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
@@ -173,7 +173,7 @@ class Species : public Serialisable
     SpeciesAngle &addAngle(int i, int j, int k);
     // Return number of SpeciesAngle defined
     int nAngles() const;
-    // Return array of SpeciesAngle
+    // Return vector of SpeciesAngle
     std::vector<SpeciesAngle> &angles();
     const std::vector<SpeciesAngle> &angles() const;
     // Return whether SpeciesAngle between SpeciesAtoms exists
@@ -190,7 +190,7 @@ class Species : public Serialisable
     SpeciesTorsion &addTorsion(int i, int j, int k, int l);
     // Return number of SpeciesTorsion defined
     int nTorsions() const;
-    // Return array of SpeciesTorsion
+    // Return vector of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
     const std::vector<SpeciesTorsion> &torsions() const;
     // Return whether SpeciesTorsion between SpeciesAtoms exists
@@ -207,7 +207,7 @@ class Species : public Serialisable
     SpeciesImproper &addImproper(int i, int j, int k, int l);
     // Return number of SpeciesImproper defined
     int nImpropers() const;
-    // Return array of SpeciesImproper
+    // Return vector of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
     const std::vector<SpeciesImproper> &impropers() const;
     // Return whether SpeciesImproper between SpeciesAtoms exists

@@ -85,13 +85,13 @@ class SpeciesAtom : public Serialisable
      * Intramolecular Information
      */
     private:
-    // List of bonds which this atom participates in
+    // Vector of bonds which this atom participates in
     std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
-    // List of angles which this atom participates in
+    // Vector of angles which this atom participates in
     std::vector<std::reference_wrapper<SpeciesAngle>> angles_;
-    // List of torsions which this atom participates in
+    // Vector of torsions which this atom participates in
     std::vector<std::reference_wrapper<SpeciesTorsion>> torsions_;
-    // List of torsions which this atom participates in
+    // Vector of torsions which this atom participates in
     std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
     // Vector of Atoms with scaled or excluded interactions
     std::vector<std::pair<SpeciesAtom *, double>> exclusions_;
