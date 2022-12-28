@@ -7,12 +7,8 @@
 
 ForcefieldAngleTerm::ForcefieldAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                          AngleFunctions::Form form, const std::vector<double> &parameters)
+    : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), form_(form), parameters_(parameters)
 {
-    typeI_ = typeI;
-    typeJ_ = typeJ;
-    typeK_ = typeK;
-    form_ = form;
-    parameters_ = parameters;
     if (!AngleFunctions::forms().validNArgs(form, parameters_.size()))
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldAngleTerm."));
 }
