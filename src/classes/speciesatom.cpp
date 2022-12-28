@@ -166,13 +166,13 @@ void SpeciesAtom::addAngle(SpeciesAngle &angle)
 {
     angles_.emplace_back(angle);
 
-    // Insert the pointers to the other Atoms into the exclusions_ list
+    // Insert the pointers to the other Atoms into the scaledInteractions_ list
     if (angle.i() != this)
-        exclusions_.emplace_back(angle.i(), 0.0);
+        scaledInteractions_.emplace_back(angle.i(), 0.0);
     if (angle.j() != this)
-        exclusions_.emplace_back(angle.j(), 0.0);
+        scaledInteractions_.emplace_back(angle.j(), 0.0);
     if (angle.k() != this)
-        exclusions_.emplace_back(angle.k(), 0.0);
+        scaledInteractions_.emplace_back(angle.k(), 0.0);
 }
 
 // Remove angle reference
@@ -195,27 +195,27 @@ void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double scaling14)
 {
     torsions_.emplace_back(torsion);
 
-    // Insert the pointers to the other Atoms into the exclusions_ list
+    // Insert the pointers to the other Atoms into the scaledInteractions_ list
     if (torsion.i() == this)
     {
-        exclusions_.emplace_back(torsion.j(), 0.0);
-        exclusions_.emplace_back(torsion.k(), 0.0);
-        exclusions_.emplace_back(torsion.l(), scaling14);
+        scaledInteractions_.emplace_back(torsion.j(), 0.0);
+        scaledInteractions_.emplace_back(torsion.k(), 0.0);
+        scaledInteractions_.emplace_back(torsion.l(), scaling14);
     }
     else if (torsion.l() == this)
     {
-        exclusions_.emplace_back(torsion.i(), scaling14);
-        exclusions_.emplace_back(torsion.j(), 0.0);
-        exclusions_.emplace_back(torsion.k(), 0.0);
+        scaledInteractions_.emplace_back(torsion.i(), scaling14);
+        scaledInteractions_.emplace_back(torsion.j(), 0.0);
+        scaledInteractions_.emplace_back(torsion.k(), 0.0);
     }
     else
     {
-        exclusions_.emplace_back(torsion.i(), 0.0);
-        exclusions_.emplace_back(torsion.l(), 0.0);
+        scaledInteractions_.emplace_back(torsion.i(), 0.0);
+        scaledInteractions_.emplace_back(torsion.l(), 0.0);
         if (torsion.j() != this)
-            exclusions_.emplace_back(torsion.j(), 0.0);
+            scaledInteractions_.emplace_back(torsion.j(), 0.0);
         if (torsion.k() != this)
-            exclusions_.emplace_back(torsion.k(), 0.0);
+            scaledInteractions_.emplace_back(torsion.k(), 0.0);
     }
 }
 
@@ -257,8 +257,8 @@ const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::imprope
 // Return scaling factor to employ with specified Atom
 double SpeciesAtom::scaling(const SpeciesAtom *j) const
 {
-    auto it = std::find_if(exclusions_.begin(), exclusions_.end(), [j](const auto &p) { return p.first == j; });
-    if (it != exclusions_.end())
+    auto it = std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(), [j](const auto &p) { return p.first == j; });
+    if (it != scaledInteractions_.end())
     {
         return it->second;
     }

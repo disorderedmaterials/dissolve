@@ -94,7 +94,7 @@ class SpeciesAtom : public Serialisable
     // Vector of torsions which this atom participates in
     std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
     // Vector of Atoms with scaled or excluded interactions
-    std::vector<std::pair<SpeciesAtom *, double>> exclusions_;
+    std::vector<std::pair<SpeciesAtom *, double>> scaledInteractions_;
 
     public:
     // Add bond reference
