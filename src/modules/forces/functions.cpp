@@ -63,9 +63,11 @@ void ForcesModule::internalMoleculeForces(const ProcessPool &procPool, Configura
                                     {
                                         if (indexI == indexJ)
                                             return;
-                                        auto scale = i->scaling(j);
-                                        if (scale >= 1.0e-3)
-                                            kernel.forcesWithMim(*i, *j, fLocalInter, scale);
+                                        auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                                        if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                            kernel.forcesWithMim(*i, *j, fLocalInter);
+                                        else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                            kernel.forcesWithMim(*i, *j, fLocalInter, elec14, vdw14);
                                     });
     };
 
@@ -223,23 +225,27 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
     {
         if (indexI == indexJ)
             return;
-        auto scale = i.scaling(&j);
-        if (scale >= 1.0e-3)
-        {
-            // Determine final forces
-            auto vecij = box->minimumVector(j.r(), i.r());
-            auto magjisq = vecij.magnitudeSq();
-            if (magjisq <= cutoffSq)
-            {
-                auto r = sqrt(magjisq);
-                vecij /= r;
+        auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
+        if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
+            return;
 
-                vecij *= potentialMap.force(&i, &j, r) * scale;
-                auto &fLocal = combinableForces.local();
-                fLocal[indexI] += vecij;
-                fLocal[indexJ] -= vecij;
-            }
-        }
+        // Determine final forces
+        auto vecij = box->minimumVector(j.r(), i.r());
+        auto magjisq = vecij.magnitudeSq();
+        if (magjisq > cutoffSq)
+            return;
+
+        auto r = sqrt(magjisq);
+        vecij /= r;
+
+        if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+            vecij *= potentialMap.force(&i, &j, r);
+        else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+            vecij *= potentialMap.force(&i, &j, r, elec14, vdw14);
+
+        auto &fLocal = combinableForces.local();
+        fLocal[indexI] += vecij;
+        fLocal[indexJ] -= vecij;
     };
 
     // Calculate pairwise forces between atoms
@@ -280,7 +286,7 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
     // Zero force array
     std::fill(f.begin(), f.end(), Vec3<double>());
 
-    double scale, rij, magjisq;
+    double rij, magjisq;
     const auto cutoffSq = potentialMap.range() * potentialMap.range();
     Vec3<double> vecij;
     // NOTE PR #334 : use for_each_pair
@@ -293,8 +299,8 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
             auto &j = sp->atom(indexJ);
 
             // Get intramolecular scaling of atom pair
-            scale = i.scaling(&j);
-            if (scale < 1.0e-3)
+            auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
+            if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
                 continue;
 
             // Determine final forces
@@ -305,7 +311,11 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
             rij = sqrt(magjisq);
             vecij /= rij;
 
-            vecij *= potentialMap.force(&i, &j, rij) * scale;
+            if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                vecij *= potentialMap.force(&i, &j, rij);
+            else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                vecij *= potentialMap.force(&i, &j, rij, elec14, vdw14);
+
             f[indexI] += vecij;
             f[indexJ] -= vecij;
         }

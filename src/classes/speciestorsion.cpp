@@ -189,10 +189,10 @@ void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spec
     l_ = l;
     assert(i_ && j_ && k_ && l_);
 
-    i_->addTorsion(*this, 0.5);
-    j_->addTorsion(*this, 0.5);
-    k_->addTorsion(*this, 0.5);
-    l_->addTorsion(*this, 0.5);
+    i_->addTorsion(*this, 0.5, 0.5);
+    j_->addTorsion(*this, 0.5, 0.5);
+    k_->addTorsion(*this, 0.5, 0.5);
+    l_->addTorsion(*this, 0.5, 0.5);
 }
 
 // Detach from current atoms

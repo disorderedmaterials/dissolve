@@ -31,4 +31,6 @@ class ScaledEnergyKernel : public EnergyKernel
     private:
     // Return PairPotential energy between atoms provided as pointers, at the distance specified
     double pairPotentialEnergy(const Atom &i, const Atom &j, double r) override;
+    // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
+    double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) override;
 };

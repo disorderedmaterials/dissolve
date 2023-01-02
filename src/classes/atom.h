@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/speciesatom.h"
 #include "templates/vector3.h"
 #include <memory>
 #include <vector>
@@ -10,7 +11,6 @@
 // Forward Declarations
 class Cell;
 class Molecule;
-class SpeciesAtom;
 
 // Atom Definition
 class Atom
@@ -96,6 +96,6 @@ class Atom
      * Intramolecular Information
      */
     public:
-    // Return scaling factor to employ with specified Atom
-    double scaling(const Atom *j) const;
+    // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+    SpeciesAtom::ScaledInteractionDefinition scaling(const Atom *j) const;
 };

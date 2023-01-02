@@ -168,11 +168,11 @@ void SpeciesAtom::addAngle(SpeciesAngle &angle)
 
     // Insert the pointers to the other Atoms into the scaledInteractions_ list
     if (angle.i() != this)
-        scaledInteractions_.emplace_back(angle.i(), 0.0);
+        scaledInteractions_.emplace_back(angle.i(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
     if (angle.j() != this)
-        scaledInteractions_.emplace_back(angle.j(), 0.0);
+        scaledInteractions_.emplace_back(angle.j(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
     if (angle.k() != this)
-        scaledInteractions_.emplace_back(angle.k(), 0.0);
+        scaledInteractions_.emplace_back(angle.k(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
 }
 
 // Remove angle reference
@@ -191,31 +191,33 @@ SpeciesAngle &SpeciesAtom::angle(int index) { return angles_.at(index); }
 const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesAtom::angles() const { return angles_; }
 
 // Add specified SpeciesTorsion to Atom
-void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double scaling14)
+void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double elec14Scaling, double vdw14Scaling)
 {
     torsions_.emplace_back(torsion);
 
     // Insert the pointers to the other Atoms into the scaledInteractions_ list
     if (torsion.i() == this)
     {
-        scaledInteractions_.emplace_back(torsion.j(), 0.0);
-        scaledInteractions_.emplace_back(torsion.k(), 0.0);
-        scaledInteractions_.emplace_back(torsion.l(), scaling14);
+        scaledInteractions_.emplace_back(torsion.j(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
+        scaledInteractions_.emplace_back(torsion.k(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
+        scaledInteractions_.emplace_back(torsion.l(),
+                                         ScaledInteractionDefinition{ScaledInteraction::Scaled, elec14Scaling, vdw14Scaling});
     }
     else if (torsion.l() == this)
     {
-        scaledInteractions_.emplace_back(torsion.i(), scaling14);
-        scaledInteractions_.emplace_back(torsion.j(), 0.0);
-        scaledInteractions_.emplace_back(torsion.k(), 0.0);
+        scaledInteractions_.emplace_back(torsion.i(),
+                                         ScaledInteractionDefinition{ScaledInteraction::Scaled, elec14Scaling, vdw14Scaling});
+        scaledInteractions_.emplace_back(torsion.j(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
+        scaledInteractions_.emplace_back(torsion.k(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
     }
     else
     {
-        scaledInteractions_.emplace_back(torsion.i(), 0.0);
-        scaledInteractions_.emplace_back(torsion.l(), 0.0);
+        scaledInteractions_.emplace_back(torsion.i(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
+        scaledInteractions_.emplace_back(torsion.l(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
         if (torsion.j() != this)
-            scaledInteractions_.emplace_back(torsion.j(), 0.0);
+            scaledInteractions_.emplace_back(torsion.j(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
         if (torsion.k() != this)
-            scaledInteractions_.emplace_back(torsion.k(), 0.0);
+            scaledInteractions_.emplace_back(torsion.k(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
     }
 }
 
@@ -254,18 +256,13 @@ SpeciesImproper &SpeciesAtom::improper(int index) { return impropers_.at(index);
 // Return array of Impropers in which the Atom is involved
 const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::impropers() const { return impropers_; }
 
-// Return scaling factor to employ with specified Atom
-double SpeciesAtom::scaling(const SpeciesAtom *j) const
+// Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+SpeciesAtom::ScaledInteractionDefinition SpeciesAtom::scaling(const SpeciesAtom *j) const
 {
     auto it = std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(), [j](const auto &p) { return p.first == j; });
     if (it != scaledInteractions_.end())
-    {
         return it->second;
-    }
-    else
-    {
-        return 1.0;
-    }
+    return {SpeciesAtom::ScaledInteraction::NotScaled, 1.0, 1.0};
 }
 
 /*

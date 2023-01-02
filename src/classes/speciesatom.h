@@ -84,6 +84,16 @@ class SpeciesAtom : public Serialisable
     /*
      * Intramolecular Information
      */
+    public:
+    // Scaled interaction types
+    enum class ScaledInteraction
+    {
+        Excluded,
+        Scaled,
+        NotScaled
+    };
+    using ScaledInteractionDefinition = std::tuple<ScaledInteraction, double, double>;
+
     private:
     // Vector of bonds which this atom participates in
     std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
@@ -94,7 +104,7 @@ class SpeciesAtom : public Serialisable
     // Vector of torsions which this atom participates in
     std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
     // Vector of Atoms with scaled or excluded interactions
-    std::vector<std::pair<SpeciesAtom *, double>> scaledInteractions_;
+    std::vector<std::pair<SpeciesAtom *, ScaledInteractionDefinition>> scaledInteractions_;
 
     public:
     // Add bond reference
@@ -122,7 +132,7 @@ class SpeciesAtom : public Serialisable
     // Return array of Angles in which the Atom is involved
     const std::vector<std::reference_wrapper<SpeciesAngle>> &angles() const;
     // Add specified SpeciesTorsion to Atom
-    void addTorsion(SpeciesTorsion &torsion, double scaling14);
+    void addTorsion(SpeciesTorsion &torsion, double elec14Scaling, double vdw14Scaling);
     // Remove torsion reference
     void removeTorsion(SpeciesTorsion &t);
     // Return the number of SpeciesTorsions in which the Atom is involved
@@ -141,8 +151,8 @@ class SpeciesAtom : public Serialisable
     SpeciesImproper &improper(int index);
     // Return array of Impropers in which the Atom is involved
     const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
-    // Return scaling factor to employ with specified Atom
-    double scaling(const SpeciesAtom *j) const;
+    // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+    ScaledInteractionDefinition scaling(const SpeciesAtom *j) const;
 
     /*
      * Coordinate Manipulation

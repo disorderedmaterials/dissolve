@@ -103,6 +103,10 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     /*
      * Interaction Parameters
      */
+    private:
+    // Electrostatic and van der Waals 1-4 scale factors
+    double q14Scale_, vdw14Scale_;
+
     public:
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;

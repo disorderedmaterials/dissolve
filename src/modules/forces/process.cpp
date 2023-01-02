@@ -93,8 +93,9 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         j = molN->atom(jj);
 
                         // Get intramolecular scaling of atom pair
-                        scale = i->scaling(j);
-                        if (scale < 1.0e-3)
+                        auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+
+                        if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
                             continue;
 
                         // Determine final forces
@@ -105,10 +106,14 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         r = sqrt(magjisq);
                         vecji /= r;
 
-                        if (testAnalytic_)
-                            vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r) * scale;
-                        else
-                            vecji *= potentialMap.force(*molN->atom(ii), *molN->atom(jj), r) * scale;
+                        if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                            vecji *= testAnalytic_ ? potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r)
+                                                   : potentialMap.force(*molN->atom(ii), *molN->atom(jj), r);
+                        else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                            vecji *= testAnalytic_
+                                         ? potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r, elec14, vdw14)
+                                         : potentialMap.force(*molN->atom(ii), *molN->atom(jj), r, elec14, vdw14);
+
                         fInter[i->arrayIndex()] += vecji;
                         fInter[j->arrayIndex()] -= vecji;
                     }

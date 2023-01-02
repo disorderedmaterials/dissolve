@@ -45,14 +45,26 @@ class PotentialMap
     public:
     // Return energy between Atoms at distance specified
     double energy(const Atom &i, const Atom &j, double r) const;
+    // Return energy between Atoms at distance specified, scaling electrostatic and van der Waals components
+    double energy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const;
     // Return energy between SpeciesAtoms at distance specified
     double energy(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
+    // Return energy between SpeciesAtoms at distance specified, scaling electrostatic and van der Waals components
+    double energy(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double vdwScale) const;
     // Return analytic energy between Atom types at distance specified
     double analyticEnergy(const Atom *i, const Atom *j, double r) const;
+    // Return analytic energy between Atom types at distance specified, scaling electrostatic and van der Waals components
+    double analyticEnergy(const Atom *i, const Atom *j, double r, double elecScale, double vdwScale) const;
     // Return force between Atoms at distance specified
     double force(const Atom &i, const Atom &j, double r) const;
+    // Return force between Atoms at distance specified, scaling electrostatic and van der Waals components
+    double force(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const;
     // Return force between SpeciesAtoms at distance specified
     double force(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
+    // Return force between SpeciesAtoms at distance specified, scaling electrostatic and van der Waals components
+    double force(const SpeciesAtom *i, const SpeciesAtom *j, double r, double elecScale, double vdwScale) const;
     // Return analytic force between Atom types at distance specified
     double analyticForce(const Atom *i, const Atom *j, double r) const;
+    // Return analytic force between Atom types at distance specified, scaling electrostatic and van der Waals components
+    double analyticForce(const Atom *i, const Atom *j, double r, double elecScale, double vdwScale) const;
 };

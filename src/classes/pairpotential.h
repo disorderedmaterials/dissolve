@@ -167,7 +167,7 @@ class PairPotential
     // Return analytic potential at specified r, including Coulomb term from local atomtype charges
     double analyticEnergy(double r) const;
     // Return analytic potential at specified r, including Coulomb term from supplied charge product
-    double analyticEnergy(double qiqj, double r,
+    double analyticEnergy(double qiqj, double r, double elecScale = 1.0, double vdwScale = 1.0,
                           PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme()) const;
     // Return analytic coulomb potential energy of specified charge product
     double
@@ -178,7 +178,7 @@ class PairPotential
     // Return analytic force at specified r, including Coulomb term from local atomtype charges
     double analyticForce(double r) const;
     // Return analytic force at specified r, including Coulomb term from supplied charge product
-    double analyticForce(double qiqj, double r,
+    double analyticForce(double qiqj, double r, double elecScale = 1.0, double vdwScale = 1.0,
                          PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme()) const;
     // Return analytic coulomb force of specified charge product
     double
