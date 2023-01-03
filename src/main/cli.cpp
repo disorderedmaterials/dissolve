@@ -14,7 +14,7 @@ CLIOptions::CLIOptions() {}
 int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 {
     // Create CLI object
-    CLI::App app{fmt::format("Dissolve-{} version {}, Copyright (C) 2022 Team Dissolve and contributors.\n", Version::appType(),
+    CLI::App app{fmt::format("Dissolve-{} version {}, Copyright (C) 2023 Team Dissolve and contributors.\n", Version::appType(),
                              Version::info())};
     // Add positionals
     auto inputFileOption = app.add_option("inputFile", inputFile_, "Input file to load")->check(CLI::ExistingFile);
