@@ -110,8 +110,14 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     public:
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
+    // Set 1-4 scaling factors
+    void set14ScalingFactors(double elecScale, double vdwScale);
+    // Set electrostatic 1-4 scaling factor for the interaction
+    void setElectrostatic14Scaling(double scaling);
     // Return electrostatic 1-4 scaling factor for the interaction
     double electrostatic14Scaling() const;
+    // Set van der Waals 1-4 scaling factor for the interaction
+    void setVanDerWaals14Scaling(double scaling);
     // Return van der Waals 1-4 scaling factor for the interaction
     double vanDerWaals14Scaling() const;
     // Return energy for specified angle and functional form, given supplied parameters

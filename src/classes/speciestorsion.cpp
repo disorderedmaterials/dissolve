@@ -294,8 +294,21 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
     return 0.0;
 }
 
+// Set 1-4 scaling factors
+void SpeciesTorsion::set14ScalingFactors(double elecScale, double vdwScale)
+{
+    electrostatic14Scaling_ = elecScale;
+    vdw14Scaling_ = vdwScale;
+}
+
+// Set electrostatic 1-4 scaling factor for the interaction
+void SpeciesTorsion::setElectrostatic14Scaling(double scaling) { electrostatic14Scaling_ = scaling; }
+
 // Return electrostatic 1-4 scaling factor for the interaction
 double SpeciesTorsion::electrostatic14Scaling() const { return electrostatic14Scaling_; }
+
+// Set van der Waals 1-4 scaling factor for the interaction
+void SpeciesTorsion::setVanDerWaals14Scaling(double scaling) { vdw14Scaling_ = scaling; }
 
 // Return van der Waals 1-4 scaling factor for the interaction
 double SpeciesTorsion::vanDerWaals14Scaling() const { return vdw14Scaling_; }
