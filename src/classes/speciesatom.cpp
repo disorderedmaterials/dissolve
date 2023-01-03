@@ -159,18 +159,7 @@ OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::getBond(const SpeciesAtom *pa
 }
 
 // Add specified SpeciesAngle to Atom
-void SpeciesAtom::addAngle(SpeciesAngle &angle)
-{
-    angles_.emplace_back(angle);
-
-    // Insert the pointers to the other Atoms into the scaledInteractions_ list
-    if (angle.i() != this)
-        scaledInteractions_.emplace_back(angle.i(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-    if (angle.j() != this)
-        scaledInteractions_.emplace_back(angle.j(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-    if (angle.k() != this)
-        scaledInteractions_.emplace_back(angle.k(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-}
+void SpeciesAtom::addAngle(SpeciesAngle &angle) { angles_.emplace_back(angle); }
 
 // Remove angle reference
 void SpeciesAtom::removeAngle(SpeciesAngle &angle)
@@ -188,35 +177,7 @@ SpeciesAngle &SpeciesAtom::angle(int index) { return angles_.at(index); }
 const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesAtom::angles() const { return angles_; }
 
 // Add specified SpeciesTorsion to Atom
-void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double elec14Scaling, double vdw14Scaling)
-{
-    torsions_.emplace_back(torsion);
-
-    // Insert the pointers to the other Atoms into the scaledInteractions_ list
-    if (torsion.i() == this)
-    {
-        scaledInteractions_.emplace_back(torsion.j(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-        scaledInteractions_.emplace_back(torsion.k(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-        scaledInteractions_.emplace_back(torsion.l(),
-                                         ScaledInteractionDefinition{ScaledInteraction::Scaled, elec14Scaling, vdw14Scaling});
-    }
-    else if (torsion.l() == this)
-    {
-        scaledInteractions_.emplace_back(torsion.i(),
-                                         ScaledInteractionDefinition{ScaledInteraction::Scaled, elec14Scaling, vdw14Scaling});
-        scaledInteractions_.emplace_back(torsion.j(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-        scaledInteractions_.emplace_back(torsion.k(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-    }
-    else
-    {
-        scaledInteractions_.emplace_back(torsion.i(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-        scaledInteractions_.emplace_back(torsion.l(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-        if (torsion.j() != this)
-            scaledInteractions_.emplace_back(torsion.j(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-        if (torsion.k() != this)
-            scaledInteractions_.emplace_back(torsion.k(), ScaledInteractionDefinition{ScaledInteraction::Excluded, 0.0, 0.0});
-    }
-}
+void SpeciesAtom::addTorsion(SpeciesTorsion &torsion) { torsions_.emplace_back(torsion); }
 
 // Remove torsion reference
 void SpeciesAtom::removeTorsion(SpeciesTorsion &torsion)
@@ -252,6 +213,72 @@ SpeciesImproper &SpeciesAtom::improper(int index) { return impropers_.at(index);
 
 // Return array of Impropers in which the Atom is involved
 const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::impropers() const { return impropers_; }
+
+// Set all scaled intramolecular interactions
+void SpeciesAtom::setScaledInteractions()
+{
+    scaledInteractions_.clear();
+
+    std::function<void(SpeciesAtom *, SpeciesAtom::ScaledInteraction, double, double)> addInteractionFunction =
+        [&](SpeciesAtom *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double vdwScale)
+    {
+        auto it =
+            std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(), [j](const auto &p) { return p.first == j; });
+        if (it == scaledInteractions_.end())
+            scaledInteractions_.emplace_back(j, ScaledInteractionDefinition{scaledType, elecScale, vdwScale});
+    };
+
+    /*
+     * Add atoms to our scaledInteractions_ vector with appropriate scaling factors based on the intramolecular term in which
+     * the atoms exist. We never overwrite a scaling factor from a "lower order" interaction (i.e. a torsion 1-4 can never
+     * override a bond or an angle exclusion) so need to search the list for each partner atom every time.
+     */
+
+    // Bonds
+    for (const auto &b : bonds_)
+        addInteractionFunction(b.get().partner(this), SpeciesAtom::ScaledInteraction::Excluded, 0.0, 0.0);
+
+    // Angles
+    for (const auto &aRef : angles_)
+    {
+        auto &a = aRef.get();
+
+        if (a.i() != this)
+            addInteractionFunction(a.i(), ScaledInteraction::Excluded, 0.0, 0.0);
+        if (a.j() != this)
+            addInteractionFunction(a.j(), ScaledInteraction::Excluded, 0.0, 0.0);
+        if (a.k() != this)
+            addInteractionFunction(a.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+    }
+
+    // Torsions
+    for (const auto &tRef : torsions_)
+    {
+        auto &t = tRef.get();
+
+        if (t.i() == this)
+        {
+            addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.l(), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
+        }
+        else if (t.l() == this)
+        {
+            addInteractionFunction(t.i(), ScaledInteraction::Scaled, t.electrostatic14Scaling(), t.vanDerWaals14Scaling());
+            addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+        }
+        else
+        {
+            addInteractionFunction(t.i(), ScaledInteraction::Excluded, 0.0, 0.0);
+            addInteractionFunction(t.l(), ScaledInteraction::Excluded, 0.0, 0.0);
+            if (t.j() != this)
+                addInteractionFunction(t.j(), ScaledInteraction::Excluded, 0.0, 0.0);
+            if (t.k() != this)
+                addInteractionFunction(t.k(), ScaledInteraction::Excluded, 0.0, 0.0);
+        }
+    }
+}
 
 // Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
 SpeciesAtom::ScaledInteractionDefinition SpeciesAtom::scaling(const SpeciesAtom *j) const

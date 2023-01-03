@@ -24,8 +24,12 @@ bool Dissolve::prepare()
 
     // Check Species
     for (const auto &sp : species())
+    {
         if (!sp->checkSetUp())
             return false;
+
+        sp->setUpScaledInteractions();
+    }
 
     // Remove unused atom types
     AtomTypeMix usedAtomTypes;

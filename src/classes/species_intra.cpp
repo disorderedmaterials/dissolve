@@ -426,6 +426,13 @@ OptionalReferenceWrapper<const SpeciesImproper> Species::getImproper(int i, int 
     return getImproper(&atom(i), &atom(j), &atom(k), &atom(l));
 }
 
+// Set-up excluded / scaled interactions on atoms
+void Species::setUpScaledInteractions()
+{
+    for (auto &i : atoms_)
+        i.setScaledInteractions();
+}
+
 // Return whether the attached atoms lists have been created
 bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGenerated_; }
 

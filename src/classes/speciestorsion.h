@@ -105,11 +105,15 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
      */
     private:
     // Electrostatic and van der Waals 1-4 scale factors
-    double q14Scale_, vdw14Scale_;
+    double electrostatic14Scaling_{0.5}, vdw14Scaling_{0.5};
 
     public:
     // Return fundamental frequency for the interaction
     double fundamentalFrequency(double reducedMass) const override;
+    // Return electrostatic 1-4 scaling factor for the interaction
+    double electrostatic14Scaling() const;
+    // Return van der Waals 1-4 scaling factor for the interaction
+    double vanDerWaals14Scaling() const;
     // Return energy for specified angle and functional form, given supplied parameters
     static double energy(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params);
     // Return energy for specified angle
@@ -118,7 +122,6 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     static double force(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params);
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
-
     // Express as a tree node
     SerialisedValue serialise() const override;
     // Read values from a tree node

@@ -189,10 +189,10 @@ void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spec
     l_ = l;
     assert(i_ && j_ && k_ && l_);
 
-    i_->addTorsion(*this, 0.5, 0.5);
-    j_->addTorsion(*this, 0.5, 0.5);
-    k_->addTorsion(*this, 0.5, 0.5);
-    l_->addTorsion(*this, 0.5, 0.5);
+    i_->addTorsion(*this);
+    j_->addTorsion(*this);
+    k_->addTorsion(*this);
+    l_->addTorsion(*this);
 }
 
 // Detach from current atoms
@@ -293,6 +293,12 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
     Messenger::warn("No fundamental frequency can be calculated for this torsion interaction.\n");
     return 0.0;
 }
+
+// Return electrostatic 1-4 scaling factor for the interaction
+double SpeciesTorsion::electrostatic14Scaling() const { return electrostatic14Scaling_; }
+
+// Return van der Waals 1-4 scaling factor for the interaction
+double SpeciesTorsion::vanDerWaals14Scaling() const { return vdw14Scaling_; }
 
 // Return energy for specified angle and functional form, given supplied parameters
 double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params)

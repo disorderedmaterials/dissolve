@@ -219,6 +219,8 @@ class Species : public Serialisable
     // Return the SpeciesImproper between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesImproper> getImproper(int i, int j, int k, int l);
     OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
+    // Set-up excluded / scaled interactions on atoms
+    void setUpScaledInteractions();
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
     // Generate attached Atom lists for all intramolecular terms
