@@ -111,8 +111,6 @@ class SpeciesAtom : public Serialisable
     void addBond(SpeciesBond &b);
     // Remove bond reference
     void removeBond(SpeciesBond &b);
-    // Clear all bond references
-    void clearBonds();
     // Return number of bonds
     int nBonds() const;
     // Return specified bond

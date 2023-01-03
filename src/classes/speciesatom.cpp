@@ -140,9 +140,6 @@ void SpeciesAtom::removeBond(SpeciesBond &b)
     bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond) { return &b == &bond; }));
 }
 
-// Clear all Bond references
-void SpeciesAtom::clearBonds() { bonds_.clear(); }
-
 // Return number of Bond references
 int SpeciesAtom::nBonds() const { return bonds_.size(); }
 
