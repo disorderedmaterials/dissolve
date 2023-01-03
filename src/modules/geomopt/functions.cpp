@@ -101,6 +101,9 @@ bool GeometryOptimisationModule::optimiseSpecies(const PotentialMap &potentialMa
     rTemp_.resize(sp->nAtoms());
     f_.resize(sp->nAtoms());
 
+    // Make sure the species' is ready for optimisation
+    sp->setUpScaledInteractions();
+
     optimise<Species>(potentialMap, procPool, sp);
 
     return true;
