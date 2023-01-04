@@ -14,6 +14,16 @@ class SpeciesAngleModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    // Enumerated column-to-data relationships
+    enum DataType
+    {
+        IndexI = 0,
+        IndexJ = 1,
+        IndexK = 2,
+        Form = 3,
+        Parameters = 4
+    };
+
     private:
     std::vector<SpeciesAngle> &angles_;
     const CoreData &coreData_;

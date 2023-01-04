@@ -40,16 +40,16 @@ QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole || role == Qt::EditRole)
         switch (index.column())
         {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
+            case (DataType::IndexI):
+            case (DataType::IndexJ):
+            case (DataType::IndexK):
+            case (DataType::IndexL):
                 return improper.index(index.column()) + 1;
-            case 4:
+            case (DataType::Form):
                 return improper.masterTerm()
                            ? QString::fromStdString("@" + std::string(improper.masterTerm()->name()))
                            : QString::fromStdString(TorsionFunctions::forms().keyword(improper.interactionForm()));
-            case 5:
+            case (DataType::Parameters):
                 return improper.masterTerm()
                            ? QString::fromStdString(improper.masterTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(improper.interactionPotential().parametersAsString());
@@ -66,21 +66,18 @@ QVariant SpeciesImproperModel::headerData(int section, Qt::Orientation orientati
         return {};
     switch (section)
     {
-        case 0:
+        case (DataType::IndexI):
             return "I";
-        case 1:
+        case (DataType::IndexJ):
             return "J";
-        case 2:
+        case (DataType::IndexK):
             return "K";
-        case 3:
+        case (DataType::IndexL):
             return "L";
-
-        case 4:
+        case (DataType::Form):
             return "Form";
-
-        case 5:
+        case (DataType::Parameters):
             return "Parameters";
-
         default:
             return {};
     }
@@ -100,12 +97,12 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
     auto &improper = impropers_[index.row()];
     switch (index.column())
     {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
+        case (DataType::IndexI):
+        case (DataType::IndexJ):
+        case (DataType::IndexK):
+        case (DataType::IndexL):
             return false;
-        case 4:
+        case (DataType::Form):
             if (value.toString().at(0) == '@')
             {
                 auto master = coreData_.getMasterImproper(value.toString().toStdString());
@@ -128,7 +125,7 @@ bool SpeciesImproperModel::setData(const QModelIndex &index, const QVariant &val
                 }
             }
             break;
-        case 5:
+        case (DataType::Parameters):
             if (!improper.setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;

@@ -37,14 +37,14 @@ QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole || role == Qt::EditRole)
         switch (index.column())
         {
-            case 0:
-            case 1:
+            case (DataType::IndexI):
+            case (DataType::IndexJ):
                 return bond.index(index.column()) + 1;
-            case 2:
+            case (DataType::Form):
                 return bond.masterTerm()
                            ? QString::fromStdString("@" + std::string(bond.masterTerm()->name()))
                            : QString::fromStdString(std::string(BondFunctions::forms().keyword(bond.interactionForm())));
-            case 3:
+            case (DataType::Parameters):
                 return bond.masterTerm()
                            ? QString::fromStdString(bond.masterTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(bond.interactionPotential().parametersAsString());
@@ -61,13 +61,13 @@ QVariant SpeciesBondModel::headerData(int section, Qt::Orientation orientation, 
         return {};
     switch (section)
     {
-        case 0:
+        case (DataType::IndexI):
             return "i";
-        case 1:
+        case (DataType::IndexJ):
             return "J";
-        case 2:
+        case (DataType::Form):
             return "Form";
-        case 3:
+        case (DataType::Parameters):
             return "Parameters";
         default:
             return {};
@@ -88,10 +88,10 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
     auto &bond = bonds_[index.row()];
     switch (index.column())
     {
-        case 0:
-        case 1:
+        case (DataType::IndexI):
+        case (DataType::IndexJ):
             return false;
-        case 2:
+        case (DataType::Form):
             if (value.toString().at(0) == '@')
             {
                 auto master = coreData_.getMasterBond(value.toString().toStdString());
@@ -114,7 +114,7 @@ bool SpeciesBondModel::setData(const QModelIndex &index, const QVariant &value, 
                 }
             }
             break;
-        case 3:
+        case (DataType::Parameters):
             if (!bond.setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;

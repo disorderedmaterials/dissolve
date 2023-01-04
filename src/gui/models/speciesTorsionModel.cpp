@@ -40,23 +40,23 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole || role == Qt::EditRole)
         switch (index.column())
         {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
+            case (DataType::IndexI):
+            case (DataType::IndexJ):
+            case (DataType::IndexK):
+            case (DataType::IndexL):
                 return torsion.index(index.column()) + 1;
-            case 4:
+            case (DataType::Form):
                 return torsion.masterTerm()
                            ? QString::fromStdString("@" + std::string(torsion.masterTerm()->name()))
                            : QString::fromStdString(TorsionFunctions::forms().keyword(torsion.interactionForm()));
-            case 5:
+            case (DataType::Parameters):
                 return torsion.masterTerm()
                            ? QString::fromStdString(torsion.masterTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(torsion.interactionPotential().parametersAsString());
-            case 6:
+            case (DataType::Electrostatic14Scale):
                 return torsion.masterTerm() ? QString::number(torsion.masterTerm()->electrostatic14Scaling())
                                             : QString::number(torsion.electrostatic14Scaling());
-            case 7:
+            case (DataType::VanDerWaals14Scale):
                 return torsion.masterTerm() ? QString::number(torsion.masterTerm()->vanDerWaals14Scaling())
                                             : QString::number(torsion.vanDerWaals14Scaling());
             default:
@@ -72,21 +72,21 @@ QVariant SpeciesTorsionModel::headerData(int section, Qt::Orientation orientatio
         return {};
     switch (section)
     {
-        case 0:
+        case (DataType::IndexI):
             return "I";
-        case 1:
+        case (DataType::IndexJ):
             return "J";
-        case 2:
+        case (DataType::IndexK):
             return "K";
-        case 3:
+        case (DataType::IndexL):
             return "L";
-        case 4:
+        case (DataType::Form):
             return "Form";
-        case 5:
+        case (DataType::Parameters):
             return "Parameters";
-        case 6:
+        case (DataType::Electrostatic14Scale):
             return "Elec 1-4";
-        case 7:
+        case (DataType::VanDerWaals14Scale):
             return "vdW 1-4";
         default:
             return {};
@@ -107,12 +107,12 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
     auto &torsion = torsions_[index.row()];
     switch (index.column())
     {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
+        case (DataType::IndexI):
+        case (DataType::IndexJ):
+        case (DataType::IndexK):
+        case (DataType::IndexL):
             return false;
-        case 4:
+        case (DataType::Form):
             if (value.toString().at(0) == '@')
             {
                 auto master = coreData_.getMasterTorsion(value.toString().toStdString());
@@ -135,13 +135,13 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
                 }
             }
             break;
-        case 5:
+        case (DataType::Parameters):
             if (!torsion.setInteractionParameters(value.toString().toStdString()))
                 return false;
-        case 6:
+        case (DataType::Electrostatic14Scale):
             torsion.setElectrostatic14Scaling(value.toDouble());
             break;
-        case 7:
+        case (DataType::VanDerWaals14Scale):
             torsion.setVanDerWaals14Scaling(value.toDouble());
             break;
         default:

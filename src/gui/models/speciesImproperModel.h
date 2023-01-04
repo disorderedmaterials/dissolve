@@ -16,6 +16,17 @@ class SpeciesImproperModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    // Enumerated column-to-data relationships
+    enum DataType
+    {
+        IndexI = 0,
+        IndexJ = 1,
+        IndexK = 2,
+        IndexL = 3,
+        Form = 4,
+        Parameters = 5
+    };
+
     private:
     std::vector<SpeciesImproper> &impropers_;
     const CoreData &coreData_;
