@@ -24,7 +24,7 @@ int SpeciesTorsionModel::rowCount(const QModelIndex &parent) const
 int SpeciesTorsionModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 6;
+    return 8;
 }
 
 QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
@@ -53,6 +53,12 @@ QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
                 return torsion.masterTerm()
                            ? QString::fromStdString(torsion.masterTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(torsion.interactionPotential().parametersAsString());
+            case 6:
+                return torsion.masterTerm() ? QString::number(torsion.masterTerm()->electrostatic14Scaling())
+                                            : QString::number(torsion.electrostatic14Scaling());
+            case 7:
+                return torsion.masterTerm() ? QString::number(torsion.masterTerm()->vanDerWaals14Scaling())
+                                            : QString::number(torsion.vanDerWaals14Scaling());
             default:
                 return {};
         }
@@ -74,13 +80,14 @@ QVariant SpeciesTorsionModel::headerData(int section, Qt::Orientation orientatio
             return "K";
         case 3:
             return "L";
-
         case 4:
             return "Form";
-
         case 5:
             return "Parameters";
-
+        case 6:
+            return "Elec 1-4";
+        case 7:
+            return "vdW 1-4";
         default:
             return {};
     }
@@ -131,10 +138,17 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
         case 5:
             if (!torsion.setInteractionParameters(value.toString().toStdString()))
                 return false;
+        case 6:
+            torsion.setElectrostatic14Scaling(value.toDouble());
+            break;
+        case 7:
+            torsion.setVanDerWaals14Scaling(value.toDouble());
             break;
         default:
             return false;
     }
+
     emit dataChanged(index, index);
+
     return true;
 }
