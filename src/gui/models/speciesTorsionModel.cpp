@@ -139,10 +139,12 @@ bool SpeciesTorsionModel::setData(const QModelIndex &index, const QVariant &valu
             if (!torsion.setInteractionParameters(value.toString().toStdString()))
                 return false;
         case (DataType::Electrostatic14Scale):
-            torsion.setElectrostatic14Scaling(value.toDouble());
+            if (!torsion.setElectrostatic14Scaling(value.toDouble()))
+                return false;
             break;
         case (DataType::VanDerWaals14Scale):
-            torsion.setVanDerWaals14Scaling(value.toDouble());
+            if (!torsion.setVanDerWaals14Scaling(value.toDouble()))
+                return false;
             break;
         default:
             return false;

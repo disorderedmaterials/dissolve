@@ -80,10 +80,12 @@ bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType data
                 return false;
             break;
         case (MasterTermModelData::DataType::Electrostatic14Scale):
-            t->setElectrostatic14Scaling(value.toDouble());
+            if (!t->setElectrostatic14Scaling(value.toDouble()))
+                return false;
             break;
         case (MasterTermModelData::DataType::VanDerWaals14Scale):
-            t->setVanDerWaals14Scaling(value.toDouble());
+            if (!t->setVanDerWaals14Scaling(value.toDouble()))
+                return false;
             break;
         default:
             return false;

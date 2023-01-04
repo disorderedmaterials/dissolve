@@ -295,20 +295,35 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
 }
 
 // Set 1-4 scaling factors
-void SpeciesTorsion::set14ScalingFactors(double elecScale, double vdwScale)
+bool SpeciesTorsion::set14ScalingFactors(double elecScale, double vdwScale)
 {
+    if (masterTerm_)
+        return Messenger::error("Refused to set 1-4 scaling factors since master parameters are referenced.\n");
     electrostatic14Scaling_ = elecScale;
     vdw14Scaling_ = vdwScale;
+    return true;
 }
 
 // Set electrostatic 1-4 scaling factor for the interaction
-void SpeciesTorsion::setElectrostatic14Scaling(double scaling) { electrostatic14Scaling_ = scaling; }
+bool SpeciesTorsion::setElectrostatic14Scaling(double scaling)
+{
+    if (masterTerm_)
+        return Messenger::error("Refused to set electrostatic 1-4 scaling factor since master parameters are referenced.\n");
+    electrostatic14Scaling_ = scaling;
+    return true;
+}
 
 // Return electrostatic 1-4 scaling factor for the interaction
 double SpeciesTorsion::electrostatic14Scaling() const { return electrostatic14Scaling_; }
 
 // Set van der Waals 1-4 scaling factor for the interaction
-void SpeciesTorsion::setVanDerWaals14Scaling(double scaling) { vdw14Scaling_ = scaling; }
+bool SpeciesTorsion::setVanDerWaals14Scaling(double scaling)
+{
+    if (masterTerm_)
+        return Messenger::error("Refused to set van der Waals 1-4 scaling factor since master parameters are referenced.\n");
+    vdw14Scaling_ = scaling;
+    return true;
+}
 
 // Return van der Waals 1-4 scaling factor for the interaction
 double SpeciesTorsion::vanDerWaals14Scaling() const { return vdw14Scaling_; }
