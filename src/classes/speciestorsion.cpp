@@ -641,10 +641,20 @@ SerialisedValue SpeciesTorsion::serialise() const
     if (l_ != nullptr)
         torsion["l"] = l_->userIndex();
 
+    torsion["q14"] = electrostatic14Scaling_;
+    torsion["v14"] = vdw14Scaling_;
+
     return torsion;
 }
+
 // This method populates the object's members with values read from a 'torsion' TOML node
 void SpeciesTorsion::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterTorsion(form); });
+
+    if (node.contains("q14"))
+        electrostatic14Scaling_ = node["q14"].as_floating();
+
+    if (node.contains("v14"))
+        vdw14Scaling_ = node["v14"].as_floating();
 }
