@@ -165,7 +165,7 @@ TEST_F(SpeciesTabTest, Torsions)
     SpeciesTorsionModel torsion(species->torsions(), coreData);
 
     // Test Torsions
-    EXPECT_EQ(torsion.columnCount(), 6);
+    EXPECT_EQ(torsion.columnCount(), 8);
     EXPECT_EQ(torsion.rowCount(), 24);
     for (auto role : roles)
     {
@@ -176,6 +176,8 @@ TEST_F(SpeciesTabTest, Torsions)
         EXPECT_EQ(torsion.data(torsion.index(3, 4), role).toString().toStdString(), "@CA-CA-CA-CA");
         EXPECT_THAT(torsion.data(torsion.index(3, 5), role).toString().toStdString(),
                     testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=0.0"), testing::Eq("k1=0 k2=30.334 k3=0")));
+        EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6), role).toDouble(), 0.5);
+        EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 7), role).toDouble(), 0.5);
     }
 
     // Mutate torsion
@@ -194,11 +196,19 @@ TEST_F(SpeciesTabTest, Torsions)
     EXPECT_THAT(torsion.data(torsion.index(3, 5)).toString().toStdString(),
                 testing::AnyOf(testing::Eq("k1=4.0 k2=5.0 k3=6.0"), testing::Eq("k1=4 k2=5 k3=6")));
 
+    EXPECT_TRUE(torsion.setData(torsion.index(3, 6), 0.83));
+    EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 6)).toDouble(), 0.83);
+    EXPECT_TRUE(torsion.setData(torsion.index(3, 7), 0.0));
+    EXPECT_DOUBLE_EQ(torsion.data(torsion.index(3, 7)).toDouble(), 0.0);
+
     EXPECT_FALSE(torsion.setData(torsion.index(3, 8), 8));
     EXPECT_EQ(torsion.data(torsion.index(3, 8)).toDouble(), 0);
     EXPECT_TRUE(torsion.setData(torsion.index(3, 4), "@CA-CA-CA-CA"));
     EXPECT_THAT(torsion.data(torsion.index(3, 5)).toString().toStdString(),
                 testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=0.0"), testing::Eq("k1=0 k2=30.334 k3=0")));
+
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 6), 0.83));
+    EXPECT_FALSE(torsion.setData(torsion.index(3, 7), 0.0));
 }
 
 TEST_F(SpeciesTabTest, Impropers)
