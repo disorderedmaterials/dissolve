@@ -8,7 +8,12 @@ set(models_MOC_HDRS
     dataManagerSimulationModel.h
     enumOptionsModel.h
     isotopologueSetModel.h
+    masterAngleModel.h
+    masterBondModel.h
+    masterImproperModel.h
     masterTermModel.h
+    masterTermTreeModel.h
+    masterTorsionModel.h
     moduleLayerModel.h
     moduleModel.h
     modulePaletteModel.h
@@ -52,7 +57,12 @@ set(models_SRCS
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     isotopologueSetModel.cpp
+    masterAngleModel.cpp
+    masterBondModel.cpp
+    masterImproperModel.cpp
     masterTermModel.cpp
+    masterTermTreeModel.cpp
+    masterTorsionModel.cpp
     moduleLayerModel.cpp
     moduleModel.cpp
     modulePaletteModel.cpp

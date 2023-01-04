@@ -7,7 +7,10 @@
 #include "classes/pairpotential.h"
 #include "gui/maintab.h"
 #include "gui/models/atomTypeModel.h"
-#include "gui/models/masterTermModel.h"
+#include "gui/models/masterAngleModel.h"
+#include "gui/models/masterBondModel.h"
+#include "gui/models/masterImproperModel.h"
+#include "gui/models/masterTorsionModel.h"
 #include "gui/models/pairPotentialModel.h"
 #include "gui/ui_forcefieldtab.h"
 
@@ -45,10 +48,10 @@ class ForcefieldTab : public QWidget, public MainTab
      */
     private:
     // Table models
-    MasterTermBondModel masterBondsTableModel_;
-    MasterTermAngleModel masterAnglesTableModel_;
-    MasterTermTorsionModel masterTorsionsTableModel_;
-    MasterTermImproperModel masterImpropersTableModel_;
+    MasterBondModel masterBondsTableModel_;
+    MasterAngleModel masterAnglesTableModel_;
+    MasterTorsionModel masterTorsionsTableModel_;
+    MasterImproperModel masterImpropersTableModel_;
 
     private:
     // Update all pair potentials

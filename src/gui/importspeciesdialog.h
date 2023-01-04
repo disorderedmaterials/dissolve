@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/models/atomTypeModel.h"
-#include "gui/models/masterTermModel.h"
+#include "gui/models/masterTermTreeModel.h"
 #include "gui/models/speciesModel.h"
 #include "gui/ui_importspeciesdialog.h"
 #include "gui/wizard.hui"
