@@ -224,11 +224,23 @@ bool Dissolve::saveInput(std::string_view filename)
                                    a->interactionPotential().parametersAsString()))
                 return false;
 
+        auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
         for (auto &t : coreData_.masterTorsions())
+        {
+            // Write new 1-4 scale factor line if this torsion has different values
+            if ((t->electrostatic14Scaling() != elec14Scaling || t->vanDerWaals14Scaling() != vdw14Scaling) &&
+                !parser.writeLineF(fmt::format("  {}  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::Scaling14Keyword),
+                                               t->electrostatic14Scaling(), t->vanDerWaals14Scaling())))
+                return false;
+
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
                                    t->name(), TorsionFunctions::forms().keyword(t->interactionForm()),
                                    t->interactionPotential().parametersAsString()))
                 return false;
+
+            elec14Scaling = t->electrostatic14Scaling();
+            vdw14Scaling = t->vanDerWaals14Scaling();
+        }
 
         for (auto &imp : coreData_.masterImpropers())
             if (!parser.writeLineF("  {}  '{}'  {}  {}\n", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),

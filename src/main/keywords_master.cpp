@@ -15,6 +15,7 @@ EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
                                                     {MasterBlock::BondKeyword, "Bond", 2, OptionArguments::AnyNumber},
                                                     {MasterBlock::EndMasterKeyword, "EndMaster"},
                                                     {MasterBlock::ImproperKeyword, "Improper", 2, OptionArguments::AnyNumber},
+                                                    {MasterBlock::Scaling14Keyword, "Scaling14", 2, 2},
                                                     {MasterBlock::TorsionKeyword, "Torsion", 2, OptionArguments::AnyNumber}});
 }
 
@@ -26,6 +27,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
     BondFunctions::Form bf;
     AngleFunctions::Form af;
     TorsionFunctions::Form tf;
+    auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
     auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
@@ -168,6 +170,10 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     error = true;
                 }
                 break;
+            case (MasterBlock::Scaling14Keyword):
+                elec14Scaling = parser.argd(1);
+                vdw14Scaling = parser.argd(2);
+                break;
             case (MasterBlock::TorsionKeyword):
                 // Check the functional form specified
                 if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
@@ -197,6 +203,9 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
+
+                    // Set scaling factors
+                    masterTorsion.set14ScalingFactors(elec14Scaling, vdw14Scaling);
 
                     Messenger::printVerbose("Defined master torsion term: {:<10}  {:<12}  {}\n", masterTorsion.name(),
                                             TorsionFunctions::forms().keyword(masterTorsion.interactionForm()),

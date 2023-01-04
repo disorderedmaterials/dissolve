@@ -364,6 +364,7 @@ class Species : public Serialisable
         NBonds,       /* 'NBonds' - Hint at the total number of bonds in the Species */
         NImpropers,   /* 'NImpropers' - Hint at the total number of impropers in the Species */
         NTorsions,    /* 'NTorsions' - Hint at the total number of torsions in the Species */
+        Scaling14,    /* 'Scaling14' - Specify 1-4 scaling factors for torsion terms */
         Site,         /* 'Site' - Define an analysis site within the Species */
         Torsion       /* 'Torsion' - Define a Torsion interaction between four atoms */
     };

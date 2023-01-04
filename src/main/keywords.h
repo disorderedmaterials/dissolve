@@ -95,6 +95,7 @@ enum MasterKeyword
     BondKeyword,      /* 'Bond' - Define master Bond parameters that can be referred to */
     EndMasterKeyword, /* 'EndMaster' - Signals the end of the Master block */
     ImproperKeyword,  /* 'Improper' - Define master Improper parameters that can be referred to */
+    Scaling14Keyword, /* 'Scaling14' - Set 1-4 scaling factors to apply to master torsions */
     TorsionKeyword    /* 'Torsion' - Define master Torsion parameters that can be referred to */
 };
 // Return enum option info for MasterKeyword

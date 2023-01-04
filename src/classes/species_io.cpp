@@ -91,6 +91,7 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
                            {Species::SpeciesKeyword::NBonds, "NBonds", 1},
                            {Species::SpeciesKeyword::NImpropers, "NImpropers", 1},
                            {Species::SpeciesKeyword::NTorsions, "NTorsions", 1},
+                           {Species::SpeciesKeyword::Scaling14, "Scaling14", 2, 2},
                            {Species::SpeciesKeyword::Site, "Site", 1},
                            {Species::SpeciesKeyword::Torsion, "Torsion", 4, OptionArguments::AnyNumber}});
 }
@@ -114,6 +115,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     SpeciesBond::BondType bt;
     Vec3<double> boxAngles(90.0, 90.0, 90.0);
     std::optional<Vec3<double>> boxLengths;
+    auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
     auto blockDone = false, error = false;
     auto atomVectorFixed = false, bondVectorFixed = false, angleVectorFixed = false, torsionVectorFixed = false,
          improperVectorFixed = false;
@@ -515,6 +517,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 torsionVectorFixed = true;
                 torsions_.resize(parser.argi(1));
                 break;
+            case (Species::SpeciesKeyword::Scaling14):
+                elec14Scaling = parser.argd(1);
+                vdw14Scaling = parser.argd(2);
+                break;
             case (Species::SpeciesKeyword::Site):
                 // First argument is the name of the site to create - make sure it doesn't exist already
                 site = findSite(parser.argsv(1));
@@ -595,6 +601,9 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
+
+                    // Set 1-4 scale factors
+                    torsion->get().set14ScalingFactors(elec14Scaling, vdw14Scaling);
                 }
                 break;
             default:
@@ -727,6 +736,10 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         if (!parser.writeLineF("{}{}  {}\n", newPrefix, keywords().keyword(Species::SpeciesKeyword::NTorsions),
                                torsions_.size()))
             return false;
+
+        // Set default scaling factors
+        auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
+
         for (const auto &torsion : torsions())
         {
             if (torsion.masterTerm())
@@ -737,12 +750,25 @@ bool Species::write(LineParser &parser, std::string_view prefix)
                                        torsion.masterTerm()->name()))
                     return false;
             }
-            else if (!parser.writeLineF(fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
-                                                    keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
-                                                    torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
-                                                    TorsionFunctions::forms().keyword(torsion.interactionForm()),
-                                                    torsion.interactionPotential().parametersAsString())))
-                return false;
+            else
+            {
+                // Write new 1-4 scale factor line if this torsion has different values
+                if ((torsion.electrostatic14Scaling() != elec14Scaling || torsion.vanDerWaals14Scaling() != vdw14Scaling) &&
+                    !parser.writeLineF(fmt::format("{}{}  {}  {}\n", newPrefix,
+                                                   keywords().keyword(Species::SpeciesKeyword::Scaling14),
+                                                   torsion.electrostatic14Scaling(), torsion.vanDerWaals14Scaling())))
+                    return false;
+
+                if (!parser.writeLineF(fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}  {}\n", newPrefix,
+                                                   keywords().keyword(Species::SpeciesKeyword::Torsion), torsion.indexI() + 1,
+                                                   torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                                                   TorsionFunctions::forms().keyword(torsion.interactionForm()),
+                                                   torsion.interactionPotential().parametersAsString())))
+                    return false;
+
+                elec14Scaling = torsion.electrostatic14Scaling();
+                vdw14Scaling = torsion.vanDerWaals14Scaling();
+            }
         }
     }
 
