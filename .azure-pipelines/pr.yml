@@ -13,6 +13,8 @@ pr:
     - README.md
     - .azure-pipelines/continuous.yml
     - .azure-pipelines/release.yml
+    - .azure-pipelines/web.yml
+    - .azure-pipelines/templates/build-web.yml
 
 stages:
   - template: templates/code-quality-checks.yml
