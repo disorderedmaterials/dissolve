@@ -2,17 +2,13 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
-    flake-utils.url = "github:numtide/flake-utils";
-    flake-utils.inputs.nixpkgs.follows = "nixpkgs";
-    bundler.url = "github:matthewbauer/nix-bundle";
-    bundler.inputs.nixpkgs.follows = "nixpkgs";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
   outputs =
-    { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
+    { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src, weggli }:
     let
 
       qtoverlay = final: prev: {
