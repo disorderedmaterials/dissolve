@@ -107,6 +107,25 @@ bool NETANode::isValidFlag(std::string_view s) const { return false; }
 bool NETANode::setFlag(std::string_view flag, bool state) { return false; }
 
 /*
+ * Identifier Names
+ */
+
+// Add identifier to this node, returning if it is already in use
+bool NETANode::addIdentifier(std::string_view s)
+{
+    auto it = std::find(identifiers_.begin(), identifiers_.end(), s);
+    if (it != identifiers_.end())
+        return false;
+
+    identifiers_.emplace_back(s);
+
+    return true;
+}
+
+// Return identifying names associated to this node
+const std::vector<std::string> &NETANode::identifiers() const { return identifiers_; }
+
+/*
  * Value Comparison
  */
 

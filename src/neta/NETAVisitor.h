@@ -38,8 +38,6 @@ class NETAVisitor : private NETAParserBaseVisitor
     private:
     // Nodes
     antlrcpp::Any visitNeta(NETAParser::NetaContext *context) override;
-    void setContextuals(std::vector<NETAParser::ModifierContext *> modifiers, std::vector<NETAParser::OptionContext *> options,
-                        std::vector<NETAParser::FlagContext *> flags);
     antlrcpp::Any visitOrSequence(NETAParser::OrSequenceContext *context) override;
     antlrcpp::Any visitSequence(NETAParser::SequenceContext *context) override;
     antlrcpp::Any visitRingSequence(NETAParser::RingSequenceContext *context) override;
@@ -58,4 +56,5 @@ class NETAVisitor : private NETAParserBaseVisitor
     void visitModifier(NETAParser::ModifierContext *context, NETANode *contextNode);
     void visitOption(NETAParser::OptionContext *context, NETANode *contextNode);
     void visitFlag(NETAParser::FlagContext *context, NETANode *contextNode);
+    void visitIdentifier(NETAParser::IdentifierContext *context, NETANode *contextNode);
 };

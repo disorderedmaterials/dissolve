@@ -121,6 +121,19 @@ class NETANode
     virtual bool setFlag(std::string_view flag, bool state);
 
     /*
+     * Identifier Names
+     */
+    private:
+    // Identifying names associated to this node
+    std::vector<std::string> identifiers_;
+
+    public:
+    // Add identifier to this node, returning if it is already in use
+    virtual bool addIdentifier(std::string_view s);
+    // Return identifying names associated to this node
+    const std::vector<std::string> &identifiers() const;
+
+    /*
      * Value Comparison
      */
     public:
