@@ -38,4 +38,6 @@ class NETAMatchedPath
     bool isRoot(const SpeciesAtom *i) const;
     // Merge supplied path into this one, appending new atoms and copying any relevant identifiers
     void merge(const NETAMatchedPath &other);
+    // Add identifier for specified atom
+    void addIdentifier(const SpeciesAtom *i, std::string id);
 };

@@ -36,3 +36,6 @@ void NETAMatchedPath::merge(const NETAMatchedPath &other)
         for (auto &i : atoms)
             identifiers_[key].insert(i);
 }
+
+// Add identifier for specified atom
+void NETAMatchedPath::addIdentifier(const SpeciesAtom *i, std::string id) { identifiers_[id].insert(i); }

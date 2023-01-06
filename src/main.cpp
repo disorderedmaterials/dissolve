@@ -144,9 +144,9 @@ int main(int args, char **argv)
                                    [](const auto &j) { return fmt::format("{}({})", j->index(), Elements::symbol(j->Z())); }));
             tempI.erase(std::remove_if(tempI.begin(), tempI.end(),
                                        [matchedPath](const auto *j) {
-                return std::find(matchedPath.path().begin(), matchedPath.path().end(), j) !=
-                matchedPath.path().end();
-            }),
+                                           return std::find(matchedPath.path().begin(), matchedPath.path().end(), j) !=
+                                                  matchedPath.path().end();
+                                       }),
                         tempI.end());
         }
     }
