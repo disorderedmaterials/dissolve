@@ -34,5 +34,5 @@ class NETABondCountNode : public NETANode
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const override;
+    int score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const override;
 };

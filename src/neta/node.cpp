@@ -167,12 +167,11 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
  */
 
 // Evaluate the provided sequence and return a score
-int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i,
-                            std::vector<const SpeciesAtom *> &matchPath)
+int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i, NETAMatchedPath &matchPath)
 {
     auto totalScore = 0;
     auto newMatchPath = matchPath;
-    newMatchPath.push_back(i);
+    newMatchPath.append(i);
 
     // Loop over nodes in sequence
     for (const auto &node : sequence)
@@ -195,7 +194,7 @@ int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const Specie
 void NETANode::setReverseLogic() { reverseLogic_ = true; }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
+int NETANode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
 {
     auto branchScore = sequenceScore(nodes_, i, matchPath);
 

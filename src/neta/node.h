@@ -5,6 +5,7 @@
 
 #include "base/enumoptions.h"
 #include "data/elements.h"
+#include "neta/matchedpath.h"
 #include <memory>
 #include <vector>
 
@@ -149,12 +150,11 @@ class NETANode
 
     protected:
     // Evaluate the provided sequence and return a score
-    static int sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i,
-                             std::vector<const SpeciesAtom *> &matchPath);
+    static int sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i, NETAMatchedPath &matchPath);
 
     public:
     // Set node to use reverse logic
     void setReverseLogic();
     // Evaluate the node and return its score
-    virtual int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
+    virtual int score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const;
 };

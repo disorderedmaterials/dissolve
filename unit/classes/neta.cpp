@@ -131,11 +131,12 @@ class NETATest : public ::testing::Test
         fmt::print("Path Test: {}, atom {}...\n", title, targetAtomIndex);
         fmt::print("-- Species '{}', expected matched atom path : {}\n", sp.name(), matchingIndices);
 
-        auto path = neta.matchedPath(&sp.atom(targetAtomIndex));
-        fmt::print("-- Actual matched atom path : {}\n", joinStrings(path, " ", [](const auto *i) { return i->index(); }));
-        EXPECT_EQ(path.size(), matchingIndices.size());
+        auto matchedPath = neta.matchedPath(&sp.atom(targetAtomIndex));
+        fmt::print("-- Actual matched atom path : {}\n",
+                   joinStrings(matchedPath.path(), " ", [](const auto *i) { return i->index(); }));
+        EXPECT_EQ(matchedPath.path().size(), matchingIndices.size());
 
-        for (auto *i : path)
+        for (auto *i : matchedPath.path())
             EXPECT_TRUE(std::find(matchingIndices.begin(), matchingIndices.end(), i->index()) != matchingIndices.end());
     }
 };
