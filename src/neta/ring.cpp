@@ -131,7 +131,6 @@ int NETARingNode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
     // Loop over rings
     for (const auto &ring : rings)
     {
-        ring.print();
         // Check through atoms in the ring in the order specified
         for (auto ringAtomIt = ring.atoms().begin(); ringAtomIt != ring.atoms().end(); ++ringAtomIt)
         {
