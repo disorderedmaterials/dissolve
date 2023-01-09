@@ -193,6 +193,10 @@ int NETAConnectionNode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) 
 
         // Track atoms matched in the neighbour branch
         matchPath.merge(jMatchPath);
+
+        // Add identifiers to the match data
+        for (auto &id : identifiers())
+            matchPath.addIdentifier(nbr.first, id);
     }
 
     return totalScore;

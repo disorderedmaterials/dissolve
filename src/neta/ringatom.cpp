@@ -109,6 +109,10 @@ int NETARingAtomNode::matches(const SpeciesAtom *i, NETAMatchedPath &matchPath) 
     // Track atoms matched in the neighbour branch
     matchPath.merge(newPath);
 
+    // Add identifiers to the match data
+    for (auto &id : identifiers())
+        matchPath.addIdentifier(i, id);
+
     return reverseLogic_ ? NETANode::NoMatch : (atomScore + branchScore);
 }
 
