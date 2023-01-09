@@ -21,8 +21,14 @@ class SpeciesAtom;
 class SpeciesSite : public Serialisable
 {
     public:
-    explicit SpeciesSite(const Species *parent);
-    SpeciesSite(const Species *parent, std::string name);
+    // Site Type
+    enum class SiteType
+    {
+        Static, /* Site is based on fixed atom indices within the species */
+        Dynamic /* Site is atomic and based on elements and atom types */
+    };
+    explicit SpeciesSite(const Species *parent, SiteType type = SiteType::Static);
+    SpeciesSite(const Species *parent, std::string name, SiteType type = SiteType::Static);
     ~SpeciesSite() = default;
 
     /*
@@ -50,6 +56,8 @@ class SpeciesSite : public Serialisable
      * Definition
      */
     private:
+    // Type of site
+    SiteType type_;
     // Species atoms whose average position is the origin of the site
     std::vector<const SpeciesAtom *> originAtoms_;
     // Whether the origin should be calculated with mass-weighted positions
@@ -60,6 +68,8 @@ class SpeciesSite : public Serialisable
     std::vector<const SpeciesAtom *> yAxisAtoms_;
 
     public:
+    // Return type of site
+    SiteType type() const;
     // Add origin atom
     bool addOriginAtom(const SpeciesAtom *originAtom);
     // Add origin atom from index

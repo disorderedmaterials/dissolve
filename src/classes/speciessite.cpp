@@ -9,8 +9,12 @@
 #include "templates/algorithms.h"
 #include <numeric>
 
-SpeciesSite::SpeciesSite(const Species *parent) : parent_(parent), originMassWeighted_(false) {}
-SpeciesSite::SpeciesSite(const Species *parent, std::string name) : name_(name), parent_(parent), originMassWeighted_(false) {}
+SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), originMassWeighted_(false), type_(type) {}
+SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
+    : name_(name), parent_(parent), originMassWeighted_(false), type_(type)
+{
+}
+
 /*
  * Basic Information
  */
@@ -31,10 +35,16 @@ int SpeciesSite::version() const { return version_; }
  * Definition
  */
 
+// Return type of site
+SpeciesSite::SiteType SpeciesSite::type() const { return type_; }
+
 // Add origin atom
 bool SpeciesSite::addOriginAtom(const SpeciesAtom *originAtom)
 {
     assert(originAtom);
+
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting origin atoms for a non-static site is not permitted.\n");
 
     // If the SpeciesAtom already exists in the vector, complain
     if (std::find(originAtoms_.begin(), originAtoms_.end(), originAtom) != originAtoms_.end())
@@ -51,12 +61,19 @@ bool SpeciesSite::addOriginAtom(const SpeciesAtom *originAtom)
 bool SpeciesSite::addOriginAtom(int atomIndex)
 {
     assert(parent_);
+
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting origin atoms for a non-static site is not permitted.\n");
+
     return addOriginAtom(&parent_->atom(atomIndex));
 }
 
 // Set origin atoms
 bool SpeciesSite::setOriginAtoms(const std::vector<SpeciesAtom *> &atoms)
 {
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting origin atoms for a non-static site is not permitted.\n");
+
     originAtoms_.clear();
 
     ++version_;
@@ -86,6 +103,12 @@ std::vector<int> SpeciesSite::originAtomIndices() const
 // Set whether the origin should be calculated with mass-weighted positions
 void SpeciesSite::setOriginMassWeighted(bool b)
 {
+    if (type_ != SpeciesSite::SiteType::Static)
+    {
+        Messenger::error("Setting mass weighting for a non-static site is not permitted.\n");
+        return;
+    }
+
     originMassWeighted_ = b;
 
     ++version_;
@@ -98,6 +121,9 @@ bool SpeciesSite::originMassWeighted() const { return originMassWeighted_; }
 bool SpeciesSite::addXAxisAtom(const SpeciesAtom *xAxisAtom)
 {
     assert(xAxisAtom);
+
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting x-axis atoms for a non-static site is not permitted.\n");
 
     // If the SpeciesAtom already exists in the vector, complain
     if (std::find(xAxisAtoms_.begin(), xAxisAtoms_.end(), xAxisAtom) != xAxisAtoms_.end())
@@ -114,12 +140,19 @@ bool SpeciesSite::addXAxisAtom(const SpeciesAtom *xAxisAtom)
 bool SpeciesSite::addXAxisAtom(int atomIndex)
 {
     assert(parent_);
+
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting x-axis atoms for a non-static site is not permitted.\n");
+
     return addXAxisAtom(&parent_->atom(atomIndex));
 }
 
 // Set x-axis atoms
 bool SpeciesSite::setXAxisAtoms(const std::vector<SpeciesAtom *> &atoms)
 {
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting x-axis atoms for a non-static site is not permitted.\n");
+
     xAxisAtoms_.clear();
 
     ++version_;
@@ -150,6 +183,9 @@ bool SpeciesSite::addYAxisAtom(const SpeciesAtom *yAxisAtom)
 {
     assert(yAxisAtom);
 
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting y-axis atoms for a non-static site is not permitted.\n");
+
     // If the SpeciesAtom already exists in the vector, complain
     if (std::find(yAxisAtoms_.begin(), yAxisAtoms_.end(), yAxisAtom) != yAxisAtoms_.end())
         return Messenger::error("Y-axis atom index {} specified twice for site '{}'.\n", yAxisAtom->index(), name_);
@@ -165,12 +201,19 @@ bool SpeciesSite::addYAxisAtom(const SpeciesAtom *yAxisAtom)
 bool SpeciesSite::addYAxisAtom(int atomIndex)
 {
     assert(parent_);
+
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting y-axis atoms for a non-static site is not permitted.\n");
+
     return addYAxisAtom(&parent_->atom(atomIndex));
 }
 
 // Set y-axis atoms
 bool SpeciesSite::setYAxisAtoms(const std::vector<SpeciesAtom *> &atoms)
 {
+    if (type_ != SpeciesSite::SiteType::Static)
+        return Messenger::error("Setting y-axis atoms for a non-static site is not permitted.\n");
+
     yAxisAtoms_.clear();
 
     ++version_;
