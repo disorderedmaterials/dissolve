@@ -198,5 +198,10 @@ int NETANode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
 {
     auto branchScore = sequenceScore(nodes_, i, matchPath);
 
+    // Add local identifiers to the match data
+    if (branchScore != NETANode::NoMatch && !reverseLogic_)
+        for (auto &id : identifiers())
+            matchPath.addIdentifier(i, id);
+
     return reverseLogic_ ? (branchScore == NETANode::NoMatch ? 1 : NETANode::NoMatch) : branchScore;
 }

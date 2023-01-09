@@ -427,10 +427,11 @@ TEST_F(NETATest, IdentifierMatching)
     NETADefinition neta;
 
     // Methanol identifying cog at the oxygen, x on the carbon, and y on the hydroxyl hydrogen
-    EXPECT_TRUE(neta.create("?O,-C(#x),-H(-O(root),#y)"));
+    EXPECT_TRUE(neta.create("?O,#cog,-C(#x),-H(-O(root),#y)"));
     auto matchedPath = testNETAMatchPath("Carbon and hydroxyl", methanol_, neta, 4, {0, 4, 5});
     for (auto &&[key, ids] : matchedPath.identifiers())
         fmt::print("ID '{}' : {}\n", key, joinStrings(ids, " ", [](const auto *i) { return i->index(); }));
+    testIdentifiers(matchedPath, "cog", {4});
     testIdentifiers(matchedPath, "x", {0});
     testIdentifiers(matchedPath, "y", {5});
 
