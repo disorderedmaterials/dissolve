@@ -55,7 +55,7 @@ void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDef
         return;
 
     // Generate a temporary Site from the parent Species
-    Site *site = siteSource_->createFromParent();
+    auto site = siteSource_->createFromParent();
     if (!site)
         return;
 

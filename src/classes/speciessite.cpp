@@ -247,14 +247,12 @@ bool SpeciesSite::hasAxes() const { return !(xAxisAtoms_.empty() || yAxisAtoms_.
  */
 
 // Create and return Site description from parent Species
-Site *SpeciesSite::createFromParent() const
+std::shared_ptr<Site> SpeciesSite::createFromParent() const
 {
     // Get origin atom indices from site
     std::vector<int> originIndices = originAtomIndices();
     if (originIndices.empty())
         return nullptr;
-
-    Site *site = nullptr;
 
     // Calculate origin
     Vec3<double> origin;
@@ -314,12 +312,10 @@ Site *SpeciesSite::createFromParent() const
         Vec3<double> z = x * y;
 
         // Store data
-        site = new OrientedSite(nullptr, origin, x, y, z);
+        return std::make_shared<OrientedSite>(nullptr, origin, x, y, z);
     }
     else
-        site = new Site(nullptr, origin);
-
-    return site;
+        return std::make_shared<Site>(nullptr, origin);
 }
 
 /*
