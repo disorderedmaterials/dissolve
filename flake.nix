@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
@@ -48,13 +48,26 @@
           (toml pkgs)
         ];
       gui_libs = pkgs:
-        with pkgs; [
+        let
+          q = import ./nix/qt {
+            inherit (pkgs)
+              newScope lib stdenv fetchurl fetchgit fetchpatch fetchFromGitHub
+              makeSetupHook makeWrapper bison cups harfbuzz libGL perl ninja
+              writeText gtk3 dconf libglvnd darwin buildPackages;
+            cmake = pkgs.cmake.overrideAttrs (attrs: {
+              patches = attrs.patches ++ [ ./nix/qt/patches/cmake.patch ];
+            });
+          };
+        in with pkgs; [
           glib
           freetype
           ftgl
           libGL.dev
           libglvnd
           libglvnd.dev
+          q.qtbase
+          q.qtsvg
+          q.wrapQtAppsHook
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
@@ -62,7 +75,7 @@
 
       let
         pkgs = import nixpkgs {
-          overlays = self.overlays.${system};
+          # overlays = self.overlays.${system};
           inherit system;
         };
         nixGL = import nixGL-src { inherit pkgs; };
@@ -72,12 +85,9 @@
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
-            src =
-              builtins.filterSource (path: type:
-                type != "directory"
-                || builtins.baseNameOf path != ".azure-pipelines"
-                || builtins.baseNameOf path != "web")
-              ./.;
+            src = builtins.filterSource (path: type:
+              type != "directory" || builtins.baseNameOf path
+              != ".azure-pipelines" || builtins.baseNameOf path != "web") ./.;
             patches = [ ./nix/patches/ctest.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
@@ -85,8 +95,6 @@
               ++ pkgs.lib.optional threading pkgs.tbb;
             nativeBuildInputs = pkgs.lib.optionals gui [
               pkgs.wrapGAppsHook
-              pkgs.qt6Packages.wrapQtAppsHook
-              pkgs.qt6Packages.qtsvg
             ];
 
             TBB_DIR = "${pkgs.tbb}";
@@ -153,7 +161,9 @@
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
             ++ (with pkgs; [
-              (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages_7; })
+              (pkgs.clang-tools.override {
+                llvmPackages = pkgs.llvmPackages_7;
+              })
               ccache
               ccls
               cmake-format
