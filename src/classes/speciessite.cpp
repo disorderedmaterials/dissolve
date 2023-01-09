@@ -247,6 +247,35 @@ std::vector<int> SpeciesSite::yAxisAtomIndices() const
 }
 
 /*
+ * Dynamic Site Definition
+ */
+
+// Add target Elements for selection as sites
+bool SpeciesSite::addElement(Elements::Element el)
+{
+    if (type_ != SiteType::Dynamic)
+        return Messenger::error("Setting element targets for a non-dynamic site is not permitted.\n");
+
+    if (std::find(elements_.begin(), elements_.end(), el) != elements_.end())
+        return Messenger::error("Element '{}' is already defined as a target for site '{}'.\n", Elements::symbol(el), name_);
+
+    elements_.push_back(el);
+
+    return true;
+}
+
+// Set target Elements for selection as sites
+bool SpeciesSite::setElements(const std::vector<Elements::Element> &els)
+{
+    elements_.clear();
+
+    return std::all_of(els.begin(), els.end(), [&](const auto el) { return addElement(el); });
+}
+
+// Return elements for selection as sites
+const std::vector<Elements::Element> SpeciesSite::elements() const { return elements_; }
+
+/*
  * Generation from Parent
  */
 
@@ -330,7 +359,9 @@ std::shared_ptr<Site> SpeciesSite::createFromParent() const
 EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 {
     return EnumOptions<SpeciesSite::SiteKeyword>("SiteKeyword",
-                                                 {{SpeciesSite::EndSiteKeyword, "EndSite"},
+                                                 {{SpeciesSite::DynamicKeyword, "Dynamic"},
+                                                  {SpeciesSite::ElementKeyword, "Element", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::EndSiteKeyword, "EndSite"},
                                                   {SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore},
                                                   {SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1},
                                                   {SpeciesSite::XAxisKeyword, "XAxis", OptionArguments::OneOrMore},
@@ -360,6 +391,28 @@ bool SpeciesSite::read(LineParser &parser)
         // All OK, so process the keyword
         switch (kwd)
         {
+            case (SpeciesSite::DynamicKeyword):
+                if (originAtoms_.empty() && xAxisAtoms_.empty() && yAxisAtoms_.empty())
+                    type_ = SiteType::Dynamic;
+                else
+                {
+                    Messenger::error(
+                        "Can't set '{}' to be dynamic as origin, x-axis, or y-axis atoms have already been defined.\n", name());
+                    error = true;
+                }
+                break;
+            case (SpeciesSite::ElementKeyword):
+                for (auto n = 1; n < parser.nArgs(); ++n)
+                {
+                    auto el = Elements::element(parser.args(n));
+                    if (el == Elements::Unknown || !addElement(el))
+                    {
+                        Messenger::error("Failed to add target element for site '{}'.\n", name());
+                        error = true;
+                        break;
+                    }
+                }
+                break;
             case (SpeciesSite::EndSiteKeyword):
                 Messenger::print("Found end of Site '{}'.\n", name());
                 blockDone = true;
@@ -432,35 +485,36 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     if (!parser.writeLineF("{}Site  '{}'\n", prefix, name()))
         return false;
 
+    // Site type
+    if (type_ == SiteType::Dynamic && !parser.writeLineF("{}  {}\n", prefix, keywords().keyword(DynamicKeyword)))
+        return false;
+
     // Origin atom indices
-    if (!originAtoms_.empty())
-    {
-        if (!parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
-                               joinStrings(originAtomIndices(), "  ", [](const auto i) { return i + 1; })))
-            return false;
-    }
+    if (!originAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
+                                                    joinStrings(originAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+        return false;
 
     // Origin mass weighted?
     if (originMassWeighted_ && (!parser.writeLineF("{}  {}  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
         return false;
 
     // X-Axis atom indices
-    if (!xAxisAtoms_.empty())
-    {
-        if (!parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(XAxisKeyword),
-                               joinStrings(xAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
-            return false;
-    }
+    if (!xAxisAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(XAxisKeyword),
+                                                   joinStrings(xAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+        return false;
 
     // Y-Axis atom indices
-    if (!yAxisAtoms_.empty())
-    {
-        if (!parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(YAxisKeyword),
-                               joinStrings(yAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
-            return false;
-    }
+    if (!yAxisAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(YAxisKeyword),
+                                                   joinStrings(yAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+        return false;
 
-    // Write start of site definition
+    // Elements
+    if (!elements_.empty() &&
+        !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(ElementKeyword),
+                           joinStrings(elements_, "  ", [](const auto el) { return Elements::symbol(el); })))
+        return false;
+
+    // Write end of site definition
     if (!parser.writeLineF("{}{}\n", prefix, keywords().keyword(EndSiteKeyword)))
         return false;
 

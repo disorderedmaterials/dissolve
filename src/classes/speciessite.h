@@ -6,6 +6,7 @@
 #include "base/enumoptions.h"
 #include "base/serialiser.h"
 #include "base/version.h"
+#include "data/elements.h"
 #include "templates/vector3.h"
 
 #include <map>
@@ -115,6 +116,21 @@ class SpeciesSite : public Serialisable
     std::vector<int> yAxisAtomIndices() const;
 
     /*
+     * Dynamic Site Definition
+     */
+    private:
+    // Target elements for selection as sites
+    std::vector<Elements::Element> elements_;
+
+    public:
+    // Add target elements for selection as sites
+    bool addElement(Elements::Element el);
+    // Set target elements for selection as sites
+    bool setElements(const std::vector<Elements::Element> &els);
+    // Return elements for selection as sites
+    const std::vector<Elements::Element> elements() const;
+
+    /*
      * Generation from Parent
      */
     public:
@@ -128,6 +144,8 @@ class SpeciesSite : public Serialisable
     // Site Block Keyword Enum
     enum SiteKeyword
     {
+        DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
+        ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
         EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
         OriginKeyword,             /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
         OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with
