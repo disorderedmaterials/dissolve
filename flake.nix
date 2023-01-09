@@ -11,17 +11,6 @@
     { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src, weggli }:
     let
 
-      qtoverlay = final: prev: {
-        qt6 = prev.qt6.overrideScope' (qfinal: qprev: {
-          qtbase = qprev.qtbase.overrideAttrs (oldAttrs: {
-            postFixup = ''
-              strip --remove-section=.note.ABI-tag $out/lib/libQt6Core.so
-            '';
-
-          });
-        });
-      };
-
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
       exe-name = mpi: gui:
         if mpi then
@@ -74,10 +63,7 @@
     in flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
 
       let
-        pkgs = import nixpkgs {
-          # overlays = self.overlays.${system};
-          inherit system;
-        };
+        pkgs = import nixpkgs { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
@@ -93,9 +79,7 @@
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
-            nativeBuildInputs = pkgs.lib.optionals gui [
-              pkgs.wrapGAppsHook
-            ];
+            nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
 
             TBB_DIR = "${pkgs.tbb}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
@@ -142,7 +126,6 @@
               }";
           };
       in {
-        overlays = nixpkgs.lib.optional (system == "x86_64-linux") qtoverlay;
         checks.dissolve = dissolve { checks = true; };
         checks.dissolve-mpi = dissolve {
           mpi = true;
