@@ -24,7 +24,7 @@ int SpeciesTorsionModel::rowCount(const QModelIndex &parent) const
 int SpeciesTorsionModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 8;
+    return nDataTypes;
 }
 
 QVariant SpeciesTorsionModel::data(const QModelIndex &index, int role) const
@@ -95,9 +95,9 @@ QVariant SpeciesTorsionModel::headerData(int section, Qt::Orientation orientatio
 
 Qt::ItemFlags SpeciesTorsionModel::flags(const QModelIndex &index) const
 {
-    if (index.column() < 4)
+    if (index.column() <= DataType::IndexL)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 4 && torsions_[index.row()].masterTerm())
+    if (index.column() > DataType::IndexL && torsions_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }

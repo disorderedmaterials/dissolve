@@ -25,7 +25,8 @@ class SpeciesTorsionModel : public QAbstractTableModel
         Form = 4,
         Parameters = 5,
         Electrostatic14Scale = 6,
-        VanDerWaals14Scale = 7
+        VanDerWaals14Scale = 7,
+        nDataTypes = 8
     };
 
     private:

@@ -21,7 +21,8 @@ class SpeciesAngleModel : public QAbstractTableModel
         IndexJ = 1,
         IndexK = 2,
         Form = 3,
-        Parameters = 4
+        Parameters = 4,
+        nDataTypes = 5
     };
 
     private:

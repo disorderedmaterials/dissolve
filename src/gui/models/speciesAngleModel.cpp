@@ -24,7 +24,7 @@ int SpeciesAngleModel::rowCount(const QModelIndex &parent) const
 int SpeciesAngleModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 5;
+    return nDataTypes;
 }
 
 QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
@@ -81,9 +81,9 @@ QVariant SpeciesAngleModel::headerData(int section, Qt::Orientation orientation,
 
 Qt::ItemFlags SpeciesAngleModel::flags(const QModelIndex &index) const
 {
-    if (index.column() < 3)
+    if (index.column() <= DataType::IndexK)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 3 && angles_[index.row()].masterTerm())
+    if (index.column() > DataType::IndexK && angles_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }

@@ -24,7 +24,8 @@ class SpeciesImproperModel : public QAbstractTableModel
         IndexK = 2,
         IndexL = 3,
         Form = 4,
-        Parameters = 5
+        Parameters = 5,
+        nDataTypes = 6
     };
 
     private:

@@ -24,7 +24,7 @@ int SpeciesBondModel::rowCount(const QModelIndex &parent) const
 int SpeciesBondModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 4;
+    return nDataTypes;
 }
 
 QVariant SpeciesBondModel::data(const QModelIndex &index, int role) const
@@ -76,9 +76,9 @@ QVariant SpeciesBondModel::headerData(int section, Qt::Orientation orientation, 
 
 Qt::ItemFlags SpeciesBondModel::flags(const QModelIndex &index) const
 {
-    if (index.column() < 2)
+    if (index.column() <= DataType::IndexJ)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 2 && bonds_[index.row()].masterTerm())
+    if (index.column() > DataType::IndexJ && bonds_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }

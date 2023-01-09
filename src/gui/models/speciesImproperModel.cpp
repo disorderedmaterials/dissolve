@@ -24,7 +24,7 @@ int SpeciesImproperModel::rowCount(const QModelIndex &parent) const
 int SpeciesImproperModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 6;
+    return nDataTypes;
 }
 
 QVariant SpeciesImproperModel::data(const QModelIndex &index, int role) const
@@ -85,9 +85,9 @@ QVariant SpeciesImproperModel::headerData(int section, Qt::Orientation orientati
 
 Qt::ItemFlags SpeciesImproperModel::flags(const QModelIndex &index) const
 {
-    if (index.column() < 4)
+    if (index.column() <= DataType::IndexL)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 4 && impropers_[index.row()].masterTerm())
+    if (index.column() > DataType::IndexL && impropers_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }

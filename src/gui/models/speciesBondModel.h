@@ -20,7 +20,8 @@ class SpeciesBondModel : public QAbstractTableModel
         IndexI = 0,
         IndexJ = 1,
         Form = 2,
-        Parameters = 3
+        Parameters = 3,
+        nDataTypes = 4
     };
 
     private:
