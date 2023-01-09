@@ -25,6 +25,16 @@ class NETATest : public ::testing::Test
         methane_.addAtom(Elements::H, {-0.881973, -0.359744, 0.509026});
         methane_.addMissingBonds();
 
+        // Construct methanol test species
+        methanol_.setName("Methanol");
+        methanol_.addAtom(Elements::C, {0.000078, -0.353546, -0.169274});
+        methanol_.addAtom(Elements::H, {0.000078, -0.714057, -1.187327});
+        methanol_.addAtom(Elements::H, {0.882051, -0.713290, 0.339752});
+        methanol_.addAtom(Elements::H, {-0.881895, -0.713290, 0.339752});
+        methanol_.addAtom(Elements::O, {-0.000129, 1.066453, -0.170343});
+        methanol_.addAtom(Elements::H, {-0.000177, 1.394279, 0.753199});
+        methanol_.addMissingBonds();
+
         // Construct ethane test species
         ethane_.setName("Ethane");
         ethane_.addAtom(Elements::C, {0.000000, 0.000000, 0.000000});
@@ -58,6 +68,22 @@ class NETATest : public ::testing::Test
         rings_.addAtom(Elements::H, {-2.075934, -1.268474, -1.147377});
         rings_.addAtom(Elements::H, {-2.213863, -0.767963, 0.649555});
         rings_.addMissingBonds();
+
+        // Construct 1,4-difluorobenzene test species
+        dfb_.setName("Difluorobenzene");
+        dfb_.addAtom(Elements::C, {-1.399000e+00, 1.600000e-01, 0.000000e+00});
+        dfb_.addAtom(Elements::C, {-5.610000e-01, 1.293000e+00, 0.000000e+00});
+        dfb_.addAtom(Elements::C, {8.390000e-01, 1.132000e+00, 0.000000e+00});
+        dfb_.addAtom(Elements::C, {1.399000e+00, -1.600000e-01, 0.000000e+00});
+        dfb_.addAtom(Elements::C, {5.600000e-01, -1.293000e+00, 0.000000e+00});
+        dfb_.addAtom(Elements::C, {-8.390000e-01, -1.132000e+00, 0.000000e+00});
+        dfb_.addAtom(Elements::F, {1.483000e+00, 2.001000e+00, 0.000000e+00});
+        dfb_.addAtom(Elements::H, {2.472000e+00, -2.840000e-01, 0.000000e+00});
+        dfb_.addAtom(Elements::H, {9.910000e-01, -2.284000e+00, 0.000000e+00});
+        dfb_.addAtom(Elements::F, {-1.483000e+00, -2.000000e+00, 0.000000e+00});
+        dfb_.addAtom(Elements::H, {-2.472000e+00, 2.820000e-01, 0.000000e+00});
+        dfb_.addAtom(Elements::H, {-9.900000e-01, 2.284000e+00, 0.000000e+00});
+        dfb_.addMissingBonds();
 
         // Construct geometry test species
         geometric_.setName("Geometric");
@@ -103,7 +129,7 @@ class NETATest : public ::testing::Test
 
     protected:
     // Species
-    Species methane_, ethane_, rings_, geometric_;
+    Species methane_, methanol_, ethane_, dfb_, rings_, geometric_;
 
     protected:
     // Test NETA description on all atom in molecule, expecting success for supplied atom indices
@@ -125,8 +151,8 @@ class NETATest : public ::testing::Test
         }
     }
     // Test NETA description on specific atom in molecule, expecting the match path to contain the supplied atom indices
-    void testNETAMatchPath(std::string_view title, const Species &sp, const NETADefinition &neta, int targetAtomIndex,
-                           const std::vector<int> &matchingIndices)
+    NETAMatchedPath testNETAMatchPath(std::string_view title, const Species &sp, const NETADefinition &neta,
+                                      int targetAtomIndex, const std::vector<int> &matchingIndices)
     {
         fmt::print("Path Test: {}, atom {}...\n", title, targetAtomIndex);
         fmt::print("-- Species '{}', expected matched atom path : {}\n", sp.name(), matchingIndices);
@@ -137,6 +163,31 @@ class NETATest : public ::testing::Test
         EXPECT_EQ(matchedPath.path().size(), matchingIndices.size());
 
         for (auto *i : matchedPath.path())
+            EXPECT_TRUE(std::find(matchingIndices.begin(), matchingIndices.end(), i->index()) != matchingIndices.end());
+
+        return matchedPath;
+    }
+    // Test identifier group specified
+    void testIdentifiers(const NETAMatchedPath &matchedPath, std::string idName, const std::vector<int> &matchingIndices)
+    {
+        fmt::print("Identifier Test: {}\n", idName);
+        fmt::print("-- Expected identified atoms : {}\n", matchingIndices);
+        auto &ids = matchedPath.identifiers();
+        auto it = ids.find(idName);
+        EXPECT_TRUE(it != ids.end());
+        if (it == ids.end())
+        {
+            fmt::print("Identifier group '{}' not present in matched data.\n", idName);
+            return;
+        }
+
+        auto &group = it->second;
+
+        fmt::print("-- Actual identified atoms : {}\n", joinStrings(group, " ", [](const auto *i) { return i->index(); }));
+
+        EXPECT_EQ(group.size(), matchingIndices.size());
+
+        for (auto *i : group)
             EXPECT_TRUE(std::find(matchingIndices.begin(), matchingIndices.end(), i->index()) != matchingIndices.end());
     }
 };
@@ -369,6 +420,38 @@ TEST_F(NETATest, FragmentMatching)
 
     EXPECT_TRUE(neta.create("ring(size=6,C(n=8))"));
     testNETA("No atoms - too many for ring (8 vs 6)", rings_, neta, {});
+}
+
+TEST_F(NETATest, IdentifierMatching)
+{
+    NETADefinition neta;
+
+    // Methanol identifying cog at the oxygen, x on the carbon, and y on the hydroxyl hydrogen
+    EXPECT_TRUE(neta.create("?O,-C(#x),-H(-O(root),#y)"));
+    auto matchedPath = testNETAMatchPath("Carbon and hydroxyl", methanol_, neta, 4, {0, 4, 5});
+    for (auto &&[key, ids] : matchedPath.identifiers())
+        fmt::print("ID '{}' : {}\n", key, joinStrings(ids, " ", [](const auto *i) { return i->index(); }));
+    testIdentifiers(matchedPath, "x", {0});
+    testIdentifiers(matchedPath, "y", {5});
+
+    // Difluorobenzene, identify carbon atoms attached to fluorines as 'cog'
+    EXPECT_TRUE(neta.create("?C,ring(size=6,C(-H),C(-H),C(#cog,-F),C(-H),C(-H),C(#cog,-F))"));
+    matchedPath = testNETAMatchPath("Whole molecule", dfb_, neta, 0, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+    testIdentifiers(matchedPath, "cog", {2, 5});
+
+    // Difluorobenzene with full axis definition
+    EXPECT_TRUE(neta.create("?C,ring(size=6,C(-H),C(-H),C(#cog,-F),C(-H),C(#y,-H),C(#[cog,x],-F))"));
+    matchedPath = testNETAMatchPath("Whole molecule", dfb_, neta, 0, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+    testIdentifiers(matchedPath, "cog", {2, 5});
+    testIdentifiers(matchedPath, "x", {5});
+    testIdentifiers(matchedPath, "y", {4});
+
+    // Difluorobenzene with full axis definition (separate cog and x specification for one carbon
+    EXPECT_TRUE(neta.create("?C,ring(size=6,C(-H),C(-H),C(#cog,-F),C(-H),C(#y,-H),C(#cog,#x,-F))"));
+    matchedPath = testNETAMatchPath("Whole molecule", dfb_, neta, 0, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+    testIdentifiers(matchedPath, "cog", {2, 5});
+    testIdentifiers(matchedPath, "x", {5});
+    testIdentifiers(matchedPath, "y", {4});
 }
 
 } // namespace UnitTest
