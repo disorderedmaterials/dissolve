@@ -243,8 +243,6 @@
             config.ENTRYPOINT =
               [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
           };
-
-          qtdeclarative = pkgs.qt6.qtdeclarative.dev;
         };
       });
 }
