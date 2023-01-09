@@ -189,10 +189,10 @@ void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spec
     l_ = l;
     assert(i_ && j_ && k_ && l_);
 
-    i_->addTorsion(*this, 0.5);
-    j_->addTorsion(*this, 0.5);
-    k_->addTorsion(*this, 0.5);
-    l_->addTorsion(*this, 0.5);
+    i_->addTorsion(*this);
+    j_->addTorsion(*this);
+    k_->addTorsion(*this);
+    l_->addTorsion(*this);
 }
 
 // Detach from current atoms
@@ -293,6 +293,40 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
     Messenger::warn("No fundamental frequency can be calculated for this torsion interaction.\n");
     return 0.0;
 }
+
+// Set 1-4 scaling factors
+bool SpeciesTorsion::set14ScalingFactors(double elecScale, double vdwScale)
+{
+    if (masterTerm_)
+        return Messenger::error("Refused to set 1-4 scaling factors since master parameters are referenced.\n");
+    electrostatic14Scaling_ = elecScale;
+    vdw14Scaling_ = vdwScale;
+    return true;
+}
+
+// Set electrostatic 1-4 scaling factor for the interaction
+bool SpeciesTorsion::setElectrostatic14Scaling(double scaling)
+{
+    if (masterTerm_)
+        return Messenger::error("Refused to set electrostatic 1-4 scaling factor since master parameters are referenced.\n");
+    electrostatic14Scaling_ = scaling;
+    return true;
+}
+
+// Return electrostatic 1-4 scaling factor for the interaction
+double SpeciesTorsion::electrostatic14Scaling() const { return electrostatic14Scaling_; }
+
+// Set van der Waals 1-4 scaling factor for the interaction
+bool SpeciesTorsion::setVanDerWaals14Scaling(double scaling)
+{
+    if (masterTerm_)
+        return Messenger::error("Refused to set van der Waals 1-4 scaling factor since master parameters are referenced.\n");
+    vdw14Scaling_ = scaling;
+    return true;
+}
+
+// Return van der Waals 1-4 scaling factor for the interaction
+double SpeciesTorsion::vanDerWaals14Scaling() const { return vdw14Scaling_; }
 
 // Return energy for specified angle and functional form, given supplied parameters
 double SpeciesTorsion::energy(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params)
@@ -607,10 +641,20 @@ SerialisedValue SpeciesTorsion::serialise() const
     if (l_ != nullptr)
         torsion["l"] = l_->userIndex();
 
+    torsion["q14"] = electrostatic14Scaling_;
+    torsion["v14"] = vdw14Scaling_;
+
     return torsion;
 }
+
 // This method populates the object's members with values read from a 'torsion' TOML node
 void SpeciesTorsion::deserialise(SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterTorsion(form); });
+
+    if (node.contains("q14"))
+        electrostatic14Scaling_ = node["q14"].as_floating();
+
+    if (node.contains("v14"))
+        vdw14Scaling_ = node["v14"].as_floating();
 }

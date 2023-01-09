@@ -23,8 +23,8 @@ ForceKernel::ForceKernel(const ProcessPool &procPool, const Box *box, const Cell
  * Force Calculation
  */
 
-// Calculate PairPotential forces between Atoms provided (no minimum image calculation)
-void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double scale) const
+// Calculate PairPotential forces between Atoms provided
+void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f) const
 {
     auto force = j.r() - i.r();
     auto distanceSq = force.magnitudeSq();
@@ -32,13 +32,27 @@ void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f,
         return;
     auto r = sqrt(distanceSq);
     force /= r;
-    force *= potentialMap_.force(i, j, r) * scale;
+    force *= potentialMap_.force(i, j, r);
     f[i.arrayIndex()] += force;
     f[j.arrayIndex()] -= force;
 }
 
-// Calculate PairPotential forces between Atoms provided (minimum image calculation)
-void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double scale) const
+// Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
+void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const
+{
+    auto force = j.r() - i.r();
+    auto distanceSq = force.magnitudeSq();
+    if (distanceSq > cutoffDistanceSquared_)
+        return;
+    auto r = sqrt(distanceSq);
+    force /= r;
+    force *= potentialMap_.force(i, j, r, elecScale, vdwScale);
+    f[i.arrayIndex()] += force;
+    f[j.arrayIndex()] -= force;
+}
+
+// Calculate PairPotential forces between Atoms provided
+void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f) const
 {
     auto force = box_->minimumVector(i.r(), j.r());
     auto distanceSq = force.magnitudeSq();
@@ -46,7 +60,22 @@ void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, do
         return;
     auto r = sqrt(distanceSq);
     force /= r;
-    force *= potentialMap_.force(i, j, r) * scale;
+    force *= potentialMap_.force(i, j, r);
+
+    f[i.arrayIndex()] += force;
+    f[j.arrayIndex()] -= force;
+}
+
+// Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
+void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const
+{
+    auto force = box_->minimumVector(i.r(), j.r());
+    auto distanceSq = force.magnitudeSq();
+    if (distanceSq > cutoffDistanceSquared_)
+        return;
+    auto r = sqrt(distanceSq);
+    force /= r;
+    force *= potentialMap_.force(i, j, r, elecScale, vdwScale);
 
     f[i.arrayIndex()] += force;
     f[j.arrayIndex()] -= force;
@@ -92,9 +121,11 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
                     forcesWithMim(*ii, *jj, f);
                 else
                 {
-                    double scale = ii->scaling(jj);
-                    if (scale > 1.0e-3)
-                        forcesWithMim(*ii, *jj, f, scale);
+                    auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
+                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                        forcesWithMim(*ii, *jj, f);
+                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                        forcesWithMim(*ii, *jj, f, elec14, vdw14);
                 }
             }
         }
@@ -120,9 +151,11 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
                     forcesWithoutMim(*ii, *jj, f);
                 else
                 {
-                    double scale = ii->scaling(jj);
-                    if (scale > 1.0e-3)
-                        forcesWithoutMim(*ii, *jj, f, scale);
+                    auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
+                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                        forcesWithoutMim(*ii, *jj, f);
+                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                        forcesWithoutMim(*ii, *jj, f, elec14, vdw14);
                 }
             }
         }

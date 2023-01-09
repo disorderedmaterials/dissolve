@@ -150,7 +150,7 @@ class Species : public Serialisable
     void removeBond(int i, int j);
     // Return number of SpeciesBonds defined
     int nBonds() const;
-    // Return array of SpeciesBond
+    // Return vector of SpeciesBond
     std::vector<SpeciesBond> &bonds();
     const std::vector<SpeciesBond> &bonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
@@ -173,7 +173,7 @@ class Species : public Serialisable
     SpeciesAngle &addAngle(int i, int j, int k);
     // Return number of SpeciesAngle defined
     int nAngles() const;
-    // Return array of SpeciesAngle
+    // Return vector of SpeciesAngle
     std::vector<SpeciesAngle> &angles();
     const std::vector<SpeciesAngle> &angles() const;
     // Return whether SpeciesAngle between SpeciesAtoms exists
@@ -190,7 +190,7 @@ class Species : public Serialisable
     SpeciesTorsion &addTorsion(int i, int j, int k, int l);
     // Return number of SpeciesTorsion defined
     int nTorsions() const;
-    // Return array of SpeciesTorsion
+    // Return vector of SpeciesTorsion
     std::vector<SpeciesTorsion> &torsions();
     const std::vector<SpeciesTorsion> &torsions() const;
     // Return whether SpeciesTorsion between SpeciesAtoms exists
@@ -207,7 +207,7 @@ class Species : public Serialisable
     SpeciesImproper &addImproper(int i, int j, int k, int l);
     // Return number of SpeciesImproper defined
     int nImpropers() const;
-    // Return array of SpeciesImproper
+    // Return vector of SpeciesImproper
     std::vector<SpeciesImproper> &impropers();
     const std::vector<SpeciesImproper> &impropers() const;
     // Return whether SpeciesImproper between SpeciesAtoms exists
@@ -219,6 +219,8 @@ class Species : public Serialisable
     // Return the SpeciesImproper between the specified SpeciesAtom indices
     OptionalReferenceWrapper<SpeciesImproper> getImproper(int i, int j, int k, int l);
     OptionalReferenceWrapper<const SpeciesImproper> getImproper(int i, int j, int k, int l) const;
+    // Set-up excluded / scaled interactions on atoms
+    void setUpScaledInteractions();
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
     // Generate attached Atom lists for all intramolecular terms
@@ -362,6 +364,7 @@ class Species : public Serialisable
         NBonds,       /* 'NBonds' - Hint at the total number of bonds in the Species */
         NImpropers,   /* 'NImpropers' - Hint at the total number of impropers in the Species */
         NTorsions,    /* 'NTorsions' - Hint at the total number of torsions in the Species */
+        Scaling14,    /* 'Scaling14' - Specify 1-4 scaling factors for torsion terms */
         Site,         /* 'Site' - Define an analysis site within the Species */
         Torsion       /* 'Torsion' - Define a Torsion interaction between four atoms */
     };

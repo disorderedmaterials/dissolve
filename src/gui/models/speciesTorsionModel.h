@@ -15,6 +15,20 @@ class SpeciesTorsionModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    // Enumerated column-to-data relationships
+    enum DataType
+    {
+        IndexI = 0,
+        IndexJ = 1,
+        IndexK = 2,
+        IndexL = 3,
+        Form = 4,
+        Parameters = 5,
+        Electrostatic14Scale = 6,
+        VanDerWaals14Scale = 7,
+        nDataTypes = 8
+    };
+
     private:
     std::vector<SpeciesTorsion> &torsions_;
     const CoreData &coreData_;

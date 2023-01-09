@@ -14,6 +14,16 @@ class SpeciesBondModel : public QAbstractTableModel
 {
     Q_OBJECT
 
+    // Enumerated column-to-data relationships
+    enum DataType
+    {
+        IndexI = 0,
+        IndexJ = 1,
+        Form = 2,
+        Parameters = 3,
+        nDataTypes = 4
+    };
+
     private:
     std::vector<SpeciesBond> &bonds_;
     const CoreData &coreData_;

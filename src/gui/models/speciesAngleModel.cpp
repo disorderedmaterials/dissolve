@@ -24,7 +24,7 @@ int SpeciesAngleModel::rowCount(const QModelIndex &parent) const
 int SpeciesAngleModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 5;
+    return nDataTypes;
 }
 
 QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
@@ -40,14 +40,14 @@ QVariant SpeciesAngleModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole || role == Qt::EditRole)
         switch (index.column())
         {
-            case 0:
-            case 1:
-            case 2:
+            case (DataType::IndexI):
+            case (DataType::IndexJ):
+            case (DataType::IndexK):
                 return angle.index(index.column()) + 1;
-            case 3:
+            case (DataType::Form):
                 return angle.masterTerm() ? QString::fromStdString("@" + std::string(angle.masterTerm()->name()))
                                           : QString::fromStdString(AngleFunctions::forms().keyword(angle.interactionForm()));
-            case 4:
+            case (DataType::Parameters):
                 return angle.masterTerm()
                            ? QString::fromStdString(angle.masterTerm()->interactionPotential().parametersAsString())
                            : QString::fromStdString(angle.interactionPotential().parametersAsString());
@@ -64,15 +64,15 @@ QVariant SpeciesAngleModel::headerData(int section, Qt::Orientation orientation,
         return {};
     switch (section)
     {
-        case 0:
+        case (DataType::IndexI):
             return "I";
-        case 1:
+        case (DataType::IndexJ):
             return "J";
-        case 2:
+        case (DataType::IndexK):
             return "K";
-        case 3:
+        case (DataType::Form):
             return "Form";
-        case 4:
+        case (DataType::Parameters):
             return "Parameters";
         default:
             return {};
@@ -81,9 +81,9 @@ QVariant SpeciesAngleModel::headerData(int section, Qt::Orientation orientation,
 
 Qt::ItemFlags SpeciesAngleModel::flags(const QModelIndex &index) const
 {
-    if (index.column() < 3)
+    if (index.column() <= DataType::IndexK)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > 3 && angles_[index.row()].masterTerm())
+    if (index.column() > DataType::IndexK && angles_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
@@ -93,11 +93,11 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
     auto &angle = angles_[index.row()];
     switch (index.column())
     {
-        case 0:
-        case 1:
-        case 2:
+        case (DataType::IndexI):
+        case (DataType::IndexJ):
+        case (DataType::IndexK):
             return false;
-        case 3:
+        case (DataType::Form):
             if (value.toString().at(0) == '@')
             {
                 auto master = coreData_.getMasterAngle(value.toString().toStdString());
@@ -120,7 +120,7 @@ bool SpeciesAngleModel::setData(const QModelIndex &index, const QVariant &value,
                 }
             }
             break;
-        case 4:
+        case (DataType::Parameters):
             if (!angle.setInteractionParameters(value.toString().toStdString()))
                 return false;
             break;

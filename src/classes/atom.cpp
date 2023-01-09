@@ -84,8 +84,8 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
  * Intramolecular Information
  */
 
-// Return scaling factor to employ with specified Atom
-double Atom::scaling(const Atom *j) const
+// Return scaling type and factors (electrostatic, van der Waals) to employ with specified Atom
+SpeciesAtom::ScaledInteractionDefinition Atom::scaling(const Atom *j) const
 {
     assert(speciesAtom_ != nullptr);
     assert(j != nullptr);

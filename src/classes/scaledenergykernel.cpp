@@ -39,3 +39,23 @@ double ScaledEnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, dou
 
     return potentialMap_.energy(i, j, r) * intraMoleculeEScale_;
 }
+
+// Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
+double ScaledEnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale)
+{
+    /*
+     * Check the Molecules of the supplied Atoms - if they exist within different Molecules we scale the distance
+     * between the Atoms, effectively reproducing a scaling of the positions of all Molecular centres in the Box.
+     */
+    if (i.molecule() != j.molecule())
+    {
+        // Get COG of Molecules
+        const auto cogI = i.molecule()->centreOfGeometry(box_);
+        const auto cogJ = j.molecule()->centreOfGeometry(box_);
+        double rIJ = box_->minimumDistance(cogI, cogJ);
+
+        return potentialMap_.energy(i, j, r + (rIJ * interMoleculeRScale_ - rIJ), elecScale, vdwScale);
+    }
+
+    return potentialMap_.energy(i, j, r, elecScale, vdwScale) * intraMoleculeEScale_;
+}

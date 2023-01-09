@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/models/atomTypeModel.h"
-#include "gui/models/masterTermModel.h"
+#include "gui/models/masterTermTreeModel.h"
 #include "gui/ui_addforcefieldtermsdialog.h"
 #include "gui/wizard.hui"
 #include "main/dissolve.h"

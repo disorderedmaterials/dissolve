@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
-#include "gui/models/masterTermModel.h"
+
+#include "gui/models/masterAngleModel.h"
+#include "gui/models/masterBondModel.h"
+#include "gui/models/masterTorsionModel.h"
 #include "main/dissolve.h"
 #include <QTableView>
 #include <gmock/gmock.h>
@@ -30,7 +33,7 @@ TEST_F(MasterTermsTableModelTest, MasterBonds)
     auto &b2 = masterBonds.emplace_back(std::make_shared<MasterBond>("CA-HA"));
     b2->setInteractionFormAndParameters(BondFunctions::Form::Harmonic, "k=3071.060   eq=1.080");
 
-    MasterTermBondModel model;
+    MasterBondModel model;
     model.setSourceData(masterBonds);
 
     // test table structure
@@ -73,7 +76,7 @@ TEST_F(MasterTermsTableModelTest, MasterAngles)
     auto &a2 = masterAngles.emplace_back(std::make_shared<MasterAngle>("CA-CA-HA"));
     a2->setInteractionFormAndParameters(AngleFunctions::Form::Harmonic, "k=292.880   eq=120.000");
 
-    MasterTermAngleModel model;
+    MasterAngleModel model;
     model.setSourceData(masterAngles);
 
     // test table structure
@@ -119,11 +122,11 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
     auto &t3 = masterTorsions.emplace_back(std::make_shared<MasterTorsion>("HA-CA-CA-HA"));
     t3->setInteractionFormAndParameters(TorsionFunctions::Form::Cos3, "0.000    30.334     2.000");
 
-    MasterTermTorsionModel model;
+    MasterTorsionModel model;
     model.setSourceData(masterTorsions);
 
     // test table structure
-    EXPECT_EQ(model.columnCount(), 3);
+    EXPECT_EQ(model.columnCount(), 5);
     EXPECT_EQ(model.rowCount(), 3);
 
     // test table contents
@@ -141,6 +144,8 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
                     testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=1.0"), testing::Eq("k1=0 k2=30.334 k3=1")));
         EXPECT_THAT(model.data(model.index(2, 2), role).toString().toStdString(),
                     testing::AnyOf(testing::Eq("k1=0.0 k2=30.334 k3=2.0"), testing::Eq("k1=0 k2=30.334 k3=2")));
+        EXPECT_DOUBLE_EQ(model.data(model.index(0, 3), role).toDouble(), 0.5);
+        EXPECT_DOUBLE_EQ(model.data(model.index(0, 4), role).toDouble(), 0.5);
     }
 
     // Mutate table contents
@@ -157,6 +162,11 @@ TEST_F(MasterTermsTableModelTest, MasterTorsions)
     EXPECT_TRUE(model.setData(model.index(0, 2), "1.0 3 4 5"));
     EXPECT_THAT(model.data(model.index(0, 2)).toString().toStdString(),
                 testing::AnyOf(testing::Eq("k0=1.0 k1=3.0 k2=4.0 k3=5.0"), testing::Eq("k0=1 k1=3 k2=4 k3=5")));
+
+    EXPECT_TRUE(model.setData(model.index(0, 3), 0.83));
+    EXPECT_DOUBLE_EQ(model.data(model.index(0, 3)).toDouble(), 0.83);
+    EXPECT_TRUE(model.setData(model.index(0, 4), 0.0));
+    EXPECT_DOUBLE_EQ(model.data(model.index(0, 4)).toDouble(), 0.0);
 }
 
 } // namespace UnitTest

@@ -49,6 +49,8 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.TorsionTable->setItemDelegateForColumn(
         4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
                                       dissolve.coreData().masterTorsions()));
+    ui_.TorsionTable->setItemDelegateForColumn(6, new ExponentialSpinDelegate(this));
+    ui_.TorsionTable->setItemDelegateForColumn(7, new ExponentialSpinDelegate(this));
     ui_.ImproperTable->setItemDelegateForColumn(
         4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
                                       dissolve.coreData().masterImpropers()));

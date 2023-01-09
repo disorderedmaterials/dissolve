@@ -49,6 +49,8 @@ class EnergyKernel
     private:
     // Return PairPotential energy between atoms
     virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r);
+    // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
+    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale);
     // Return PairPotential energy between atoms provided
     double energyWithoutMim(const Atom &i, const Atom &j);
     // Return PairPotential energy between atoms provided

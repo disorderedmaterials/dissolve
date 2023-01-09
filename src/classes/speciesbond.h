@@ -60,6 +60,8 @@ class SpeciesBond : public SpeciesIntra<SpeciesBond, BondFunctions>
     public:
     // Assign the two atoms in the bond
     void assign(SpeciesAtom *i, SpeciesAtom *j);
+    // Set scaled intramolecular interactions on the involved atoms
+    void addScaledInteractions();
     // Rewrite SpeciesAtom pointer
     void switchAtom(const SpeciesAtom *oldPtr, SpeciesAtom *newPtr);
     // Return first SpeciesAtom

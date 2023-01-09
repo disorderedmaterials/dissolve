@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
-#include "modules/forces/forces.h"
 #include "modules/geomopt/geomopt.h"
 
 // Run main processing

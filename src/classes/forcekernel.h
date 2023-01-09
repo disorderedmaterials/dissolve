@@ -46,10 +46,14 @@ class ForceKernel
      * PairPotential Terms
      */
     public:
-    // Calculate inter-particle forces between Atoms provided (no minimum image calculation)
-    void forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double scale = 1.00) const;
-    // Calculate inter-particle forces between Atoms provided (minimum image calculation)
-    void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double scale = 1.00) const;
+    // Calculate inter-particle forces between Atoms provided
+    void forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f) const;
+    // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
+    void forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const;
+    // Calculate inter-particle forces between Atoms provided
+    void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f) const;
+    // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
+    void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const;
     // Calculate forces between two cells
     void forces(const Cell *cell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
                 ProcessPool::DivisionStrategy strategy, ForceVector &f) const;

@@ -88,11 +88,13 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Specie
                                                        return 0.0;
 
                                                    // Get intramolecular scaling of atom pair
-                                                   double scale = i.scaling(&j);
-                                                   if (scale < 1.0e-3)
-                                                       return 0.0;
+                                                   auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
+                                                   if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                                       return potentialMap.energy(&i, &j, r);
+                                                   else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                                       return potentialMap.energy(&i, &j, r, elec14, vdw14);
 
-                                                   return potentialMap.energy(&i, &j, r) * scale;
+                                                   return 0.0;
                                                });
 
     return energy;

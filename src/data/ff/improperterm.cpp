@@ -8,13 +8,8 @@
 ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                                std::string_view typeL, TorsionFunctions::Form form,
                                                const std::vector<double> &parameters)
+    : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), typeL_(typeL), form_(form), parameters_(parameters)
 {
-    typeI_ = typeI;
-    typeJ_ = typeJ;
-    typeK_ = typeK;
-    typeL_ = typeL;
-    form_ = form;
-    parameters_ = parameters;
     if (!TorsionFunctions::forms().validNArgs(form, parameters_.size()))
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldImproperTerm."));
 }

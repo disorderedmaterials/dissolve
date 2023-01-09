@@ -27,6 +27,12 @@ EnergyKernel::EnergyKernel(const ProcessPool &procPool, const Box *box, const Ce
 // Return PairPotential energy between atoms
 double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r) { return potentialMap_.energy(i, j, r); }
 
+// Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
+double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale)
+{
+    return potentialMap_.energy(i, j, r, elecScale, vdwScale);
+}
+
 // Return PairPotential energy between atoms
 double EnergyKernel::energyWithoutMim(const Atom &i, const Atom &j)
 {
@@ -87,9 +93,11 @@ double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular)
                 totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
             else if (includeIntraMolecular)
             {
-                auto scale = ii->scaling(jj);
-                if (scale > 1.0e-3)
-                    totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
+                auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
+                if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                    totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
+                else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                    totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14);
             }
         }
     }
@@ -125,9 +133,11 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
                     totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
                 else if (includeIntraMolecular)
                 {
-                    auto scale = ii->scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
+                    auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
+                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                        totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
+                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                        totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14);
                 }
             }
         }
@@ -152,9 +162,11 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
                     totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
                 else if (includeIntraMolecular)
                 {
-                    auto scale = ii->scaling(jj);
-                    if (scale > 1.0e-3)
-                        totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq)) * scale;
+                    auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
+                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                        totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq));
+                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                        totalEnergy += pairPotentialEnergy(*ii, *jj, sqrt(rSq), elec14, vdw14);
                 }
             }
         }
@@ -263,18 +275,21 @@ double EnergyKernel::correct(const Atom &i)
     auto &atoms = i.molecule()->atoms();
     const auto &rI = i.r();
 
-    double correctionEnergy =
-        dissolve::transform_reduce(ParallelPolicies::par, atoms.begin(), atoms.end(), 0.0, std::plus<double>(),
-                                   [&](auto &j) -> double
-                                   {
-                                       if (&i == j)
-                                           return 0.0;
-                                       double scale = 1.0 - i.scaling(j);
-                                       if (scale <= 1.0e-3)
-                                           return 0.0;
-                                       double r = box_->minimumDistance(rI, j->r());
-                                       return pairPotentialEnergy(i, *j, r) * scale;
-                                   });
+    double correctionEnergy = dissolve::transform_reduce(
+        ParallelPolicies::par, atoms.begin(), atoms.end(), 0.0, std::plus<double>(),
+        [&](const auto &j) -> double
+        {
+            if (&i == j)
+                return 0.0;
+
+            auto &&[scalingType, elec14, vdw14] = i.scaling(j);
+            if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
+                return pairPotentialEnergy(i, *j, box_->minimumDistance(rI, j->r()));
+            else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                return pairPotentialEnergy(i, *j, box_->minimumDistance(rI, j->r()), 1.0 - elec14, 1.0 - vdw14);
+
+            return 0.0;
+        });
 
     return -correctionEnergy;
 }
