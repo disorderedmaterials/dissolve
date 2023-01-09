@@ -119,6 +119,39 @@ int main(int args, char **argv)
             Messenger::print("Restart file '{}' does not exist.\n", restartFile);
     }
 
+    // TEST
+    NETADefinition ring;
+    if (!ring.create("?C,ring(size=6,C(-H),C(-H),C(-F),C(-H),C(-H),C(-F))"))
+        return 0;
+    // Create working vector of species atom pointers
+    std::vector<const SpeciesAtom *> tempI;
+    tempI.resize(coreData.species().front()->atoms().size());
+    std::transform(coreData.species().front()->atoms().begin(), coreData.species().front()->atoms().end(), tempI.begin(),
+                   [](const auto &j) { return &j; });
+    while (!tempI.empty())
+    {
+        // Get last atom pointer
+        auto *i = tempI.back();
+
+        // Attempt match
+        auto matchedPath = ring.matchedPath(i);
+        if (matchedPath.path().empty())
+            tempI.pop_back();
+        else
+        {
+            fmt::print("Cool! Atom {} matches: {}\n", i->index(),
+                       joinStrings(matchedPath.path(), " ",
+                                   [](const auto &j) { return fmt::format("{}({})", j->index(), Elements::symbol(j->Z())); }));
+            tempI.erase(std::remove_if(tempI.begin(), tempI.end(),
+                                       [matchedPath](const auto *j) {
+                                           return std::find(matchedPath.path().begin(), matchedPath.path().end(), j) !=
+                                                  matchedPath.path().end();
+                                       }),
+                        tempI.end());
+        }
+    }
+    // END TEST
+
     // If we're just checking the input and restart files, exit now
     if (!options.nIterations())
     {
