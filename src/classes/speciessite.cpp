@@ -32,11 +32,18 @@ const Species *SpeciesSite::parent() const { return parent_; }
 int SpeciesSite::version() const { return version_; }
 
 /*
- * Definition
+ * Basic Definition
  */
 
 // Return type of site
 SpeciesSite::SiteType SpeciesSite::type() const { return type_; }
+
+// Return whether the site has defined axes sites
+bool SpeciesSite::hasAxes() const { return type_ == SiteType::Static && !(xAxisAtoms_.empty() || yAxisAtoms_.empty()); }
+
+/*
+ * Static Site Definition
+ */
 
 // Add origin atom
 bool SpeciesSite::addOriginAtom(const SpeciesAtom *originAtom)
@@ -238,9 +245,6 @@ std::vector<int> SpeciesSite::yAxisAtomIndices() const
                    [](auto *atom) { return atom->index(); });
     return indices;
 }
-
-// Return whether the site has defined axes sites
-bool SpeciesSite::hasAxes() const { return !(xAxisAtoms_.empty() || yAxisAtoms_.empty()); }
 
 /*
  * Generation from Parent

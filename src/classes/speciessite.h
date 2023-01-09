@@ -53,11 +53,22 @@ class SpeciesSite : public Serialisable
     int version() const;
 
     /*
-     * Definition
+     * Basic Definition
      */
     private:
     // Type of site
     SiteType type_;
+
+    public:
+    // Return type of site
+    SiteType type() const;
+    // Return whether the site has defined axes
+    bool hasAxes() const;
+
+    /*
+     * Static Site Definition
+     */
+    private:
     // Species atoms whose average position is the origin of the site
     std::vector<const SpeciesAtom *> originAtoms_;
     // Whether the origin should be calculated with mass-weighted positions
@@ -68,8 +79,6 @@ class SpeciesSite : public Serialisable
     std::vector<const SpeciesAtom *> yAxisAtoms_;
 
     public:
-    // Return type of site
-    SiteType type() const;
     // Add origin atom
     bool addOriginAtom(const SpeciesAtom *originAtom);
     // Add origin atom from index
@@ -104,8 +113,6 @@ class SpeciesSite : public Serialisable
     const std::vector<const SpeciesAtom *> &yAxisAtoms() const;
     // Return integer array of indices from which y-axis should be formed
     std::vector<int> yAxisAtomIndices() const;
-    // Return whether the site has defined axes sites
-    bool hasAxes() const;
 
     /*
      * Generation from Parent
