@@ -69,7 +69,7 @@ bool SpeciesSite::addOriginAtom(int atomIndex)
 }
 
 // Set origin atoms
-bool SpeciesSite::setOriginAtoms(const std::vector<SpeciesAtom *> &atoms)
+bool SpeciesSite::setOriginAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting origin atoms for a non-static site is not permitted.\n");
@@ -148,7 +148,7 @@ bool SpeciesSite::addXAxisAtom(int atomIndex)
 }
 
 // Set x-axis atoms
-bool SpeciesSite::setXAxisAtoms(const std::vector<SpeciesAtom *> &atoms)
+bool SpeciesSite::setXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting x-axis atoms for a non-static site is not permitted.\n");
@@ -209,7 +209,7 @@ bool SpeciesSite::addYAxisAtom(int atomIndex)
 }
 
 // Set y-axis atoms
-bool SpeciesSite::setYAxisAtoms(const std::vector<SpeciesAtom *> &atoms)
+bool SpeciesSite::setYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting y-axis atoms for a non-static site is not permitted.\n");

@@ -75,7 +75,7 @@ class SpeciesSite : public Serialisable
     // Add origin atom from index
     bool addOriginAtom(int atomIndex);
     // Set origin atoms
-    bool setOriginAtoms(const std::vector<SpeciesAtom *> &atoms);
+    bool setOriginAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return origin atom vector
     const std::vector<const SpeciesAtom *> &originAtoms() const;
     // Return integer array of indices from which the origin should be formed
@@ -89,7 +89,7 @@ class SpeciesSite : public Serialisable
     // Add x-axis atom from index
     bool addXAxisAtom(int atomIndex);
     // Set x-axis atoms
-    bool setXAxisAtoms(const std::vector<SpeciesAtom *> &atoms);
+    bool setXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return x-axis atom vector
     const std::vector<const SpeciesAtom *> &xAxisAtoms() const;
     // Return integer array of indices from which x-axis should be formed
@@ -99,7 +99,7 @@ class SpeciesSite : public Serialisable
     // Add y-axis atom from index
     bool addYAxisAtom(int atomIndex);
     // Set y-axis atoms
-    bool setYAxisAtoms(const std::vector<SpeciesAtom *> &atoms);
+    bool setYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return y-axis atom vector
     const std::vector<const SpeciesAtom *> &yAxisAtoms() const;
     // Return integer array of indices from which y-axis should be formed

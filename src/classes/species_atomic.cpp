@@ -223,8 +223,8 @@ std::vector<int> Species::fragment(int startIndex, OptionalReferenceWrapper<Spec
     return indices;
 }
 
-// Return current atom selection
-std::vector<SpeciesAtom *> Species::selectedAtoms()
+// Return current atom selection for modification
+const std::vector<SpeciesAtom *> Species::modifiableSelectedAtoms()
 {
     std::vector<SpeciesAtom *> selectedAtoms;
     for (auto &i : atoms_)
