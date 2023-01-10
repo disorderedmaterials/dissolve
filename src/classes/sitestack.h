@@ -29,19 +29,30 @@ class SiteStack
     // Target SpeciesSite
     const SpeciesSite *speciesSite_;
 
+    public:
+    // Return target Configuration
+    Configuration *configuration() const;
+    // Return target SpeciesSite
+    const SpeciesSite *speciesSite() const;
+
+    /*
+     * Creation
+     */
     private:
     // Calculate geometric centre of atoms in the given molecule
     Vec3<double> centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices);
     // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
     Vec3<double> centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices);
+    // Create stack of static, unoriented sites
+    bool createStatic();
+    // Create stack of static, oriented sites
+    bool createStaticOriented();
+    // Create stack from dynamic site definition
+    bool createDynamic();
 
     public:
     // Create stack for specified Configuration and site
     bool create(Configuration *cfg, const SpeciesSite *site);
-    // Return target Configuration
-    Configuration *configuration() const;
-    // Return target SpeciesSite
-    const SpeciesSite *speciesSite() const;
 
     /*
      * Stack
@@ -59,10 +70,6 @@ class SiteStack
     public:
     // Return number of sites in the stack
     int nSites() const;
-    // Return whether the stack contains associate Molecule information
-    bool sitesInMolecules() const;
-    // Return whether the current stack contains local axes information
-    bool sitesHaveOrientation() const;
     // Return site with index specified
     const Site &site(int index) const;
 };
