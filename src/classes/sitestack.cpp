@@ -4,7 +4,7 @@
 #include "classes/sitestack.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/speciesatom.h"
+#include "classes/species.h"
 #include "classes/speciessite.h"
 #include "data/atomicmasses.h"
 #include <numeric>
@@ -142,7 +142,49 @@ bool SiteStack::createStaticOriented()
 }
 
 // Create stack from dynamic site definition
-bool SiteStack::createDynamic() { return false; }
+bool SiteStack::createDynamic()
+{
+    // Get dynamic site data
+    const auto &elements = speciesSite_->elements();
+    if (elements.empty())
+        return Messenger::error("No elements defined for species site '{}'.\n", speciesSite_->name());
+
+    auto *targetSpecies = speciesSite_->parent();
+
+    // Get species population for use later once we have established number of sites per molecule
+    auto spPop = configuration_->speciesPopulation(targetSpecies);
+    if (spPop == 0)
+        return true;
+
+    // Determine matching atom indices for the species
+    std::vector<int> siteIndices;
+    for (auto &i : targetSpecies->atoms())
+    {
+        // Valid element?
+        if (std::find(elements.begin(), elements.end(), i.Z()) != elements.end())
+            siteIndices.push_back(i.index());
+    }
+    if (siteIndices.empty())
+        return true;
+
+    // Resize our array
+    sites_.reserve(siteIndices.size() * spPop);
+
+    // Get Molecule array from Configuration and search for the target Species
+    for (const auto &molecule : configuration_->molecules())
+    {
+        if (molecule->species() != targetSpecies)
+            continue;
+
+        auto &atoms = molecule->atoms();
+
+        // Loop over site indices
+        for (auto id : siteIndices)
+            sites_.emplace_back(molecule, atoms[id]->r());
+    }
+
+    return true;
+}
 
 // Create stack for specified Configuration and site
 bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
