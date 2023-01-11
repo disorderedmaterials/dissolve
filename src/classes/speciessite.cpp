@@ -585,18 +585,27 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 SerialisedValue SpeciesSite::serialise() const
 {
     SerialisedValue site;
+    if (type_ == SiteType::Dynamic)
+        site["dynamic"] = true;
     Serialisable::fromVector(originAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
     Serialisable::fromVector(xAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
     Serialisable::fromVector(yAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
+    Serialisable::fromVector(elements_, "elements", site, [](const auto &item) { return Elements::symbol(item); });
+    Serialisable::fromVector(atomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
     site["originMassWeighted"] = originMassWeighted_;
     return site;
 }
 
-void SpeciesSite::deserialise(SerialisedValue &node)
+void SpeciesSite::deserialise(SerialisedValue &node, CoreData &coreData)
 {
+    if (node.contains("dynamic"))
+        type_ = SiteType::Dynamic;
+
     toVector(node, "originAtoms", [this](const auto &originAtom) { addOriginAtom(originAtom.as_integer()); });
     toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addXAxisAtom(xAxisAtom.as_integer()); });
     toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addYAxisAtom(yAxisAtom.as_integer()); });
+    toVector(node, "elements", [this](const auto &el) { addElement(Elements::element(std::string(el.as_string()))); });
+    toVector(node, "atomTypes", [&, this](const auto &at) { addAtomType(coreData.findAtomType(std::string(at.as_string()))); });
 
     if (node.contains("originMassWeighted"))
         originMassWeighted_ = node["originMassWeighted"].as_boolean();
