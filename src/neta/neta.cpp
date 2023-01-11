@@ -153,7 +153,7 @@ bool NETADefinition::isValid() const { return valid_; }
 // Return score of supplied atom for this definition
 int NETADefinition::score(const SpeciesAtom *i) const
 {
-    NETAMatchedPath matchPath;
+    NETAMatchedGroup matchPath(i);
     return rootNode_->score(i, matchPath);
 }
 
@@ -161,9 +161,9 @@ int NETADefinition::score(const SpeciesAtom *i) const
 bool NETADefinition::matches(const SpeciesAtom *i) const { return score(i) != NETANode::NoMatch; }
 
 // Return the path of matched atoms, including the target atom, if the definition matches
-NETAMatchedPath NETADefinition::matchedPath(const SpeciesAtom *i) const
+NETAMatchedGroup NETADefinition::matchedPath(const SpeciesAtom *i) const
 {
-    NETAMatchedPath matchPath;
+    NETAMatchedGroup matchPath(i);
     if (rootNode_->score(i, matchPath) == NETANode::NoMatch)
         return {};
 

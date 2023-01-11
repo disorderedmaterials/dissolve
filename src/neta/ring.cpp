@@ -103,7 +103,7 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, std::vector<Species
 }
 
 // Evaluate the node and return its score
-int NETARingNode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
+int NETARingNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
 {
     // Generate array of rings of specified size that the atom 'i' is present in
     std::vector<SpeciesRing> rings;
@@ -126,7 +126,7 @@ int NETARingNode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
     // Prune rings for duplicates
     rings.erase(std::unique(rings.begin(), rings.end()), rings.end());
 
-    std::map<const SpeciesRing *, std::pair<int, NETAMatchedPath>> matchedRings;
+    std::map<const SpeciesRing *, std::pair<int, NETAMatchedGroup>> matchedRings;
 
     // Loop over rings
     for (const auto &ring : rings)
@@ -137,7 +137,7 @@ int NETARingNode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
             // Copy the iterator to use for forward and backward traversal around the ring
             auto forwardIt = ringAtomIt, backwardIt = ringAtomIt;
 
-            std::map<const SpeciesAtom *, std::pair<int, NETAMatchedPath>> forwardMatches, backwardMatches;
+            std::map<const SpeciesAtom *, std::pair<int, NETAMatchedGroup>> forwardMatches, backwardMatches;
             auto totalAttemptedNodeMatches = 0;
 
             // Loop over defined nodes
@@ -155,7 +155,7 @@ int NETARingNode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
                     // Test forward ring iterator?
                     if (forwardIt != ring.atoms().end())
                     {
-                        NETAMatchedPath forwardMatchPath;
+                        NETAMatchedGroup forwardMatchPath;
                         auto forwardScore = ringAtomNode->matches(*forwardIt, forwardMatchPath);
                         if (forwardScore == NETANode::NoMatch)
                             forwardIt = ring.atoms().end();
@@ -169,7 +169,7 @@ int NETARingNode::score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
                     // Test backward ring iterator?
                     if (backwardIt != ring.atoms().end())
                     {
-                        NETAMatchedPath backwardMatchPath;
+                        NETAMatchedGroup backwardMatchPath;
                         auto backwardScore = ringAtomNode->matches(*backwardIt, backwardMatchPath);
                         if (backwardScore == NETANode::NoMatch)
                             backwardIt = ring.atoms().end();

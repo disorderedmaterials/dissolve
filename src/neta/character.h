@@ -40,5 +40,5 @@ class NETACharacterNode : public NETANode
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, NETAMatchedPath &matchPath) const override;
+    int score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const override;
 };

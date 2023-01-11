@@ -79,7 +79,7 @@ bool NETARingAtomNode::validRepeatCount(int value) const { return compareValues(
  */
 
 // Return whether we match the specified atom
-int NETARingAtomNode::matches(const SpeciesAtom *i, NETAMatchedPath &matchPath) const
+int NETARingAtomNode::matches(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
 {
     // Evaluate the atom against our elements
     int atomScore = NETANode::NoMatch;
@@ -101,7 +101,7 @@ int NETARingAtomNode::matches(const SpeciesAtom *i, NETAMatchedPath &matchPath) 
         return reverseLogic_ ? 1 : NETANode::NoMatch;
 
     // Process branch definition via the base class, using an empty path
-    NETAMatchedPath newPath;
+    NETAMatchedGroup newPath;
     auto branchScore = NETANode::sequenceScore(nodes_, i, newPath);
     if (branchScore == NETANode::NoMatch)
         return reverseLogic_ ? 1 : NETANode::NoMatch;
@@ -117,7 +117,7 @@ int NETARingAtomNode::matches(const SpeciesAtom *i, NETAMatchedPath &matchPath) 
 }
 
 // Evaluate the node and return its score
-int NETARingAtomNode::score(const SpeciesAtom *i, NETAMatchedPath &availableAtoms) const
+int NETARingAtomNode::score(const SpeciesAtom *i, NETAMatchedGroup &availableAtoms) const
 {
     throw(std::runtime_error("NETARingAtomNode was called via its score() function, but this should never be done.\n"));
 }

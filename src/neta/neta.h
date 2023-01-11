@@ -5,7 +5,7 @@
 
 #include "base/enumoptions.h"
 #include "neta/connection.h"
-#include "neta/matchedpath.h"
+#include "neta/matchedgroup.h"
 
 // Forward Declarations
 class Forcefield;
@@ -55,5 +55,5 @@ class NETADefinition
     // Return whether the supplied atom matches the definition
     bool matches(const SpeciesAtom *i) const;
     // Return the path of matched atoms, including the target atom, if the definition matches
-    NETAMatchedPath matchedPath(const SpeciesAtom *i) const;
+    NETAMatchedGroup matchedPath(const SpeciesAtom *i) const;
 };

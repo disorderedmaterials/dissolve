@@ -32,7 +32,7 @@ add_library(
   connection.cpp
   geometry.cpp
   hydrogencount.cpp
-  matchedpath.cpp
+  matchedgroup.cpp
   neta.cpp
   node.cpp
   or.cpp
@@ -45,7 +45,7 @@ add_library(
   connection.h
   geometry.h
   hydrogencount.h
-  matchedpath.h
+  matchedgroup.h
   neta.h
   node.h
   or.h

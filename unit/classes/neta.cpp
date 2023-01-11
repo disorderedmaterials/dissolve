@@ -151,24 +151,24 @@ class NETATest : public ::testing::Test
         }
     }
     // Test NETA description on specific atom in molecule, expecting the match path to contain the supplied atom indices
-    NETAMatchedPath testNETAMatchPath(std::string_view title, const Species &sp, const NETADefinition &neta,
-                                      int targetAtomIndex, const std::vector<int> &matchingIndices)
+    NETAMatchedGroup testNETAMatchPath(std::string_view title, const Species &sp, const NETADefinition &neta,
+                                       int targetAtomIndex, const std::vector<int> &matchingIndices)
     {
         fmt::print("Path Test: {}, atom {}...\n", title, targetAtomIndex);
-        fmt::print("-- Species '{}', expected matched atom path : {}\n", sp.name(), matchingIndices);
+        fmt::print("-- Species '{}', expected matched atom set : {}\n", sp.name(), matchingIndices);
 
         auto matchedPath = neta.matchedPath(&sp.atom(targetAtomIndex));
-        fmt::print("-- Actual matched atom path : {}\n",
-                   joinStrings(matchedPath.path(), " ", [](const auto *i) { return i->index(); }));
-        EXPECT_EQ(matchedPath.path().size(), matchingIndices.size());
+        fmt::print("-- Actual matched atom set : {}\n",
+                   joinStrings(matchedPath.set(), " ", [](const auto *i) { return i->index(); }));
+        EXPECT_EQ(matchedPath.set().size(), matchingIndices.size());
 
-        for (auto *i : matchedPath.path())
+        for (auto *i : matchedPath.set())
             EXPECT_TRUE(std::find(matchingIndices.begin(), matchingIndices.end(), i->index()) != matchingIndices.end());
 
         return matchedPath;
     }
     // Test identifier group specified
-    void testIdentifiers(const NETAMatchedPath &matchedPath, std::string idName, const std::vector<int> &matchingIndices)
+    void testIdentifiers(const NETAMatchedGroup &matchedPath, std::string idName, const std::vector<int> &matchingIndices)
     {
         fmt::print("Identifier Test: {}\n", idName);
         fmt::print("-- Expected identified atoms : {}\n", matchingIndices);
