@@ -157,7 +157,7 @@ TEST_F(SpeciesSiteTest, DynamicBasic)
     sites = site.createFromParent();
     ASSERT_EQ(sites.size(), 4);
     for (auto n = 1; n < 5; ++n)
-        testVector(sites[n-1]->origin(), methane.atom(n).r());
+        testVector(sites[n - 1]->origin(), methane.atom(n).r());
 }
 
 } // namespace UnitTest

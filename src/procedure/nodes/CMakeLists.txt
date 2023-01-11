@@ -15,7 +15,6 @@ add_library(
   coordinatesets.cpp
   copy.cpp
   cylindricalregion.cpp
-  dynamicsite.cpp
   generalregion.cpp
   integrate1d.cpp
   node.cpp
@@ -59,7 +58,6 @@ add_library(
   coordinatesets.h
   copy.h
   cylindricalregion.h
-  dynamicsite.h
   generalregion.h
   integrate1d.h
   node.h

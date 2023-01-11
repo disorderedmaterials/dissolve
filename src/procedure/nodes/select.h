@@ -10,7 +10,6 @@
 #include <set>
 
 // Forward Declarations
-class DynamicSiteProcedureNode;
 class Element;
 class Molecule;
 class SiteStack;
@@ -38,8 +37,6 @@ class SelectProcedureNode : public ProcedureNode
     private:
     // Vector of sites to select
     std::vector<const SpeciesSite *> speciesSites_;
-    // Vector of DynamicSites to select, if any
-    std::vector<std::shared_ptr<DynamicSiteProcedureNode>> dynamicSites_;
     // Whether sites must have a defined orientation
     bool axesRequired_;
 
