@@ -146,8 +146,9 @@ bool SiteStack::createDynamic()
 {
     // Get dynamic site data
     const auto &elements = speciesSite_->elements();
-    if (elements.empty())
-        return Messenger::error("No elements defined for species site '{}'.\n", speciesSite_->name());
+    const auto &atomTypes = speciesSite_->atomTypes();
+    if (elements.empty() && atomTypes.empty())
+        return Messenger::error("No elements or atom types defined for dynamic species site '{}'.\n", speciesSite_->name());
 
     auto *targetSpecies = speciesSite_->parent();
 
@@ -160,8 +161,9 @@ bool SiteStack::createDynamic()
     std::vector<int> siteIndices;
     for (auto &i : targetSpecies->atoms())
     {
-        // Valid element?
-        if (std::find(elements.begin(), elements.end(), i.Z()) != elements.end())
+        // Valid element or atom type?
+        if ((std::find(elements.begin(), elements.end(), i.Z()) != elements.end()) ||
+            std::find(atomTypes.begin(), atomTypes.end(), i.atomType()) != atomTypes.end())
             siteIndices.push_back(i.index());
     }
     if (siteIndices.empty())

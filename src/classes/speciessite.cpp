@@ -3,6 +3,7 @@
 
 #include "classes/speciessite.h"
 #include "base/lineparser.h"
+#include "classes/coredata.h"
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
@@ -275,6 +276,31 @@ bool SpeciesSite::setElements(const std::vector<Elements::Element> &els)
 // Return elements for selection as sites
 const std::vector<Elements::Element> SpeciesSite::elements() const { return elements_; }
 
+// Add target atom type for selection as sites
+bool SpeciesSite::addAtomType(const std::shared_ptr<AtomType> &at)
+{
+    if (type_ != SiteType::Dynamic)
+        return Messenger::error("Setting atom type targets for a non-dynamic site is not permitted.\n");
+
+    if (std::find(atomTypes_.begin(), atomTypes_.end(), at) != atomTypes_.end())
+        return Messenger::error("Atom type '{}' is already defined as a target for site '{}'.\n", at->name(), name_);
+
+    atomTypes_.push_back(at);
+
+    return true;
+}
+
+// Set target atom types for selection as sites
+bool SpeciesSite::setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types)
+{
+    atomTypes_.clear();
+
+    return std::all_of(types.begin(), types.end(), [&](const auto &at) { return addAtomType(at); });
+}
+
+// Return atom types for selection as sites
+const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { return atomTypes_; }
+
 /*
  * Generation from Parent
  */
@@ -359,7 +385,8 @@ std::shared_ptr<Site> SpeciesSite::createFromParent() const
 EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 {
     return EnumOptions<SpeciesSite::SiteKeyword>("SiteKeyword",
-                                                 {{SpeciesSite::DynamicKeyword, "Dynamic"},
+                                                 {{SpeciesSite::AtomTypeKeyword, "AtomType", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::DynamicKeyword, "Dynamic"},
                                                   {SpeciesSite::ElementKeyword, "Element", OptionArguments::OneOrMore},
                                                   {SpeciesSite::EndSiteKeyword, "EndSite"},
                                                   {SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore},
@@ -369,7 +396,7 @@ EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 }
 
 // Read site definition from specified LineParser
-bool SpeciesSite::read(LineParser &parser)
+bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
 {
     Messenger::printVerbose("\nReading information for Site '{}'...\n", name());
 
@@ -391,6 +418,18 @@ bool SpeciesSite::read(LineParser &parser)
         // All OK, so process the keyword
         switch (kwd)
         {
+            case (SpeciesSite::AtomTypeKeyword):
+                for (auto n = 1; n < parser.nArgs(); ++n)
+                {
+                    auto at = coreData.findAtomType(parser.args(n));
+                    if (!at || !addAtomType(at))
+                    {
+                        Messenger::error("Failed to add target atom type for site '{}'.\n", name());
+                        error = true;
+                        break;
+                    }
+                }
+                break;
             case (SpeciesSite::DynamicKeyword):
                 if (originAtoms_.empty() && xAxisAtoms_.empty() && yAxisAtoms_.empty())
                     type_ = SiteType::Dynamic;
@@ -512,6 +551,11 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     if (!elements_.empty() &&
         !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(ElementKeyword),
                            joinStrings(elements_, "  ", [](const auto el) { return Elements::symbol(el); })))
+        return false;
+
+    // Atom Types
+    if (!atomTypes_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(AtomTypeKeyword),
+                                                  joinStrings(atomTypes_, "  ", [](const auto &at) { return at->name(); })))
         return false;
 
     // Write end of site definition

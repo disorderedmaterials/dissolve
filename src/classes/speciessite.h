@@ -6,6 +6,7 @@
 #include "base/enumoptions.h"
 #include "base/serialiser.h"
 #include "base/version.h"
+#include "classes/atomtype.h"
 #include "data/elements.h"
 #include "templates/vector3.h"
 
@@ -121,6 +122,8 @@ class SpeciesSite : public Serialisable
     private:
     // Target elements for selection as sites
     std::vector<Elements::Element> elements_;
+    // Target atom types for selection as sites
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
     public:
     // Add target elements for selection as sites
@@ -129,6 +132,12 @@ class SpeciesSite : public Serialisable
     bool setElements(const std::vector<Elements::Element> &els);
     // Return elements for selection as sites
     const std::vector<Elements::Element> elements() const;
+    // Add target atom type for selection as sites
+    bool addAtomType(const std::shared_ptr<AtomType> &at);
+    // Set target atom types for selection as sites
+    bool setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types);
+    // Return atom types for selection as sites
+    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
 
     /*
      * Generation from Parent
@@ -144,6 +153,7 @@ class SpeciesSite : public Serialisable
     // Site Block Keyword Enum
     enum SiteKeyword
     {
+        AtomTypeKeyword,           /* 'AtomType' - Specify allowed atom type(s) for dynamic sites */
         DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
         ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
         EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
@@ -158,7 +168,7 @@ class SpeciesSite : public Serialisable
     // Return enum option info for SiteKeyword
     static EnumOptions<SpeciesSite::SiteKeyword> keywords();
     // Read site definition from specified LineParser
-    bool read(LineParser &parser);
+    bool read(LineParser &parser, const CoreData &coreData);
     // Write site definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
