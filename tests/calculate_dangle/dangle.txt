@@ -52,11 +52,9 @@ Species 'Water'
   Site  'O'
     Origin  2
   EndSite
-  Site  'H1'
-    Origin  1
-  EndSite
-  Site  'H2'
-    Origin  3
+  Site  'H'
+    Dynamic
+    Element  H
   EndSite
   Site  'COM'
     Origin  1  2  3
@@ -108,7 +106,7 @@ EndModule
 Module  CalculateDAngle  'DAngle(X-H...O)'
   Configuration  'Bulk'
   SiteA  Water  'O'
-  SiteB  Water  'H1'  Water  'H2'
+  SiteB  Water  'H'
   SiteC  Water  'O'
   DistanceRange  0.0  5.0  0.01
   AngleRange  0.0  180.0  1.0
@@ -129,9 +127,7 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
 
         Select  'H'
 
-          DynamicSite
-            Element  'H'
-          EndDynamicSite
+          Site  Water 'H'
 
 	  SameMoleculeAsSite  'X'
 
