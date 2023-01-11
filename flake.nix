@@ -1,30 +1,15 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
-    flake-utils.url = "github:numtide/flake-utils";
-    flake-utils.inputs.nixpkgs.follows = "nixpkgs";
-    bundler.url = "github:matthewbauer/nix-bundle";
-    bundler.inputs.nixpkgs.follows = "nixpkgs";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
   outputs =
-    { self, nixpkgs, outdated, flake-utils, bundler, nixGL-src, weggli }:
+    { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src, weggli }:
     let
-
-      qtoverlay = final: prev: {
-        qt6 = prev.qt6.overrideScope' (qfinal: qprev: {
-          qtbase = qprev.qtbase.overrideAttrs (oldAttrs: {
-            postFixup = ''
-              strip --remove-section=.note.ABI-tag $out/lib/libQt6Core.so
-            '';
-
-          });
-        });
-      };
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
       exe-name = mpi: gui:
@@ -52,23 +37,33 @@
           (toml pkgs)
         ];
       gui_libs = pkgs:
-        with pkgs; [
+        let
+          q = import ./nix/qt {
+            inherit (pkgs)
+              newScope lib stdenv fetchurl fetchgit fetchpatch fetchFromGitHub
+              makeSetupHook makeWrapper bison cups harfbuzz libGL perl ninja
+              writeText gtk3 dconf libglvnd darwin buildPackages;
+            cmake = pkgs.cmake.overrideAttrs (attrs: {
+              patches = attrs.patches ++ [ ./nix/qt/patches/cmake.patch ];
+            });
+          };
+        in with pkgs; [
           glib
           freetype
           ftgl
           libGL.dev
           libglvnd
           libglvnd.dev
+          q.qtbase
+          q.qtsvg
+          q.wrapQtAppsHook
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
 
     in flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
 
       let
-        pkgs = import nixpkgs {
-          overlays = self.overlays.${system};
-          inherit system;
-        };
+        pkgs = import nixpkgs { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
         dissolve =
           { mpi ? false, gui ? true, threading ? true, checks ? false }:
@@ -76,22 +71,15 @@
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
-            src =
-              builtins.filterSource (path: type:
-                type != "directory"
-                || builtins.baseNameOf path != ".azure-pipelines"
-                || builtins.baseNameOf path != "web")
-              ./.;
+            src = builtins.filterSource (path: type:
+              type != "directory" || builtins.baseNameOf path
+              != ".azure-pipelines" || builtins.baseNameOf path != "web") ./.;
             patches = [ ./nix/patches/ctest.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
-            nativeBuildInputs = pkgs.lib.optionals gui [
-              pkgs.wrapGAppsHook
-              pkgs.qt6Packages.wrapQtAppsHook
-              pkgs.qt6Packages.qtsvg
-            ];
+            nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
 
             TBB_DIR = "${pkgs.tbb}";
             CTEST_OUTPUT_ON_FAILURE = "ON";
@@ -138,7 +126,6 @@
               }";
           };
       in {
-        overlays = nixpkgs.lib.optional (system == "x86_64-linux") qtoverlay;
         checks.dissolve = dissolve { checks = true; };
         checks.dissolve-mpi = dissolve {
           mpi = true;
@@ -157,7 +144,9 @@
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
             ++ (with pkgs; [
-              (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages_7; })
+              (pkgs.clang-tools.override {
+                llvmPackages = pkgs.llvmPackages_7;
+              })
               ccache
               ccls
               cmake-format
@@ -254,8 +243,6 @@
             config.ENTRYPOINT =
               [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
           };
-
-          qtdeclarative = pkgs.qt6.qtdeclarative.dev;
         };
       });
 }
