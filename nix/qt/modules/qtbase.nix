@@ -269,8 +269,8 @@ stdenv.mkDerivation rec {
     moveToOutput libexec "$dev"
 
     # fixup .pc file (where to find 'moc' etc.)
-    sed -i "$dev/lib/pkgconfig/Qt6Core.pc" \
-      -e "/^bindir=/ c bindir=$dev/bin"
+    # sed -i "$dev/lib/pkgconfig/Qt6Core.pc" \
+    #   -e "/^bindir=/ c bindir=$dev/bin"
 
     patchShebangs $out $dev
     strip --remove-section=.note.ABI-tag $out/lib/libQt6Core.so
