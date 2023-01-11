@@ -81,22 +81,24 @@ TEST_F(SpeciesSiteTest, StaticAxes)
     EXPECT_TRUE(site1.addXAxisAtom(1));
     EXPECT_TRUE(site1.addYAxisAtom(2));
 
-    // -- Generate the site
-    // from the parent species and check its info
-    auto s = site1.createFromParent();
-    testVector(s->origin(), methane.atom(0).r());
-    testAxes(s->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
+    // -- Generate the site from the parent species and check its info
+    auto sites = site1.createFromParent();
+    ASSERT_EQ(sites.size(), 1);
+    testVector(sites.front()->origin(), methane.atom(0).r());
+    testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
     // -- Set origin (centre of geometry) to be all atoms rather than just the carbon (expect same result)
     site1.setOriginAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2), &methane.atom(3), &methane.atom(4)});
     site1.setOriginMassWeighted(false);
-    s = site1.createFromParent();
-    testVector(s->origin(), methane.atom(0).r());
-    testAxes(s->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
+    sites = site1.createFromParent();
+    ASSERT_EQ(sites.size(), 1);
+    testVector(sites.front()->origin(), methane.atom(0).r());
+    testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
     // -- Centre of mass should also be the same
     site1.setOriginMassWeighted(true);
-    s = site1.createFromParent();
-    testVector(s->origin(), methane.atom(0).r());
-    testAxes(s->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
+    sites = site1.createFromParent();
+    ASSERT_EQ(sites.size(), 1);
+    testVector(sites.front()->origin(), methane.atom(0).r());
+    testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, -1.0}, {-1.0, 0.0, 0.0});
 
     // Site 2 - O(C), X=+Y, Y=+Z, Z=+X
     SpeciesSite site2(&methane, SpeciesSite::SiteType::Static);
@@ -106,20 +108,23 @@ TEST_F(SpeciesSiteTest, StaticAxes)
     EXPECT_TRUE(site2.addYAxisAtom(4));
 
     // -- Generate the site from the parent species and check its info
-    s = site2.createFromParent();
-    testVector(s->origin(), methane.atom(0).r());
-    testAxes(s->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
+    sites = site2.createFromParent();
+    ASSERT_EQ(sites.size(), 1);
+    testVector(sites.front()->origin(), methane.atom(0).r());
+    testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
     // -- Set origin (centre of geometry) to be all atoms rather than just the carbon (expect same result)
     site2.setOriginAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2), &methane.atom(3), &methane.atom(4)});
     site2.setOriginMassWeighted(false);
-    s = site2.createFromParent();
-    testVector(s->origin(), methane.atom(0).r());
-    testAxes(s->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
+    sites = site2.createFromParent();
+    ASSERT_EQ(sites.size(), 1);
+    testVector(sites.front()->origin(), methane.atom(0).r());
+    testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
     // -- Centre of mass should also be the same
     site2.setOriginMassWeighted(true);
-    s = site2.createFromParent();
-    testVector(s->origin(), methane.atom(0).r());
-    testAxes(s->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
+    sites = site2.createFromParent();
+    ASSERT_EQ(sites.size(), 1);
+    testVector(sites.front()->origin(), methane.atom(0).r());
+    testAxes(sites.front()->axes(), {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0});
 }
 
 TEST_F(SpeciesSiteTest, DynamicBasic)

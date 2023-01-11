@@ -305,76 +305,92 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { r
  * Generation from Parent
  */
 
-// Create and return Site description from parent Species
-std::shared_ptr<Site> SpeciesSite::createFromParent() const
+// Create and return site description from parent Species
+std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 {
-    // Get origin atom indices from site
-    std::vector<int> originIndices = originAtomIndices();
-    if (originIndices.empty())
-        return nullptr;
-
-    // Calculate origin
-    Vec3<double> origin;
-    double mass;
-    if (originMassWeighted_)
+    if (type_ == SiteType::Static)
     {
-        double massNorm = 0.0;
-        for (const auto &index : originIndices)
+        // Get origin atom indices from site
+        std::vector<int> originIndices = originAtomIndices();
+        if (originIndices.empty())
+            return {};
+
+        // Calculate origin
+        Vec3<double> origin;
+        double mass;
+        if (originMassWeighted_)
         {
-            mass = AtomicMass::mass(parent_->atom(index).Z());
-            origin += parent_->atom(index).r() * mass;
-            massNorm += mass;
+            double massNorm = 0.0;
+            for (const auto &index : originIndices)
+            {
+                mass = AtomicMass::mass(parent_->atom(index).Z());
+                origin += parent_->atom(index).r() * mass;
+                massNorm += mass;
+            }
+            origin /= massNorm;
         }
-        origin /= massNorm;
-    }
-    else
-    {
-        for (const auto &index : originIndices)
-            origin += parent_->atom(index).r();
-        origin /= originIndices.size();
-    }
+        else
+        {
+            for (const auto &index : originIndices)
+                origin += parent_->atom(index).r();
+            origin /= originIndices.size();
+        }
 
-    // Calculate axes and store data if required
-    if (hasAxes())
-    {
-        // If the site has axes, grab the atom indices involved
-        std::vector<int> xAxisIndices, yAxisIndices;
+        // Calculate axes and store data if required
         if (hasAxes())
         {
-            xAxisIndices = xAxisAtomIndices();
-            yAxisIndices = yAxisAtomIndices();
+            // If the site has axes, grab the atom indices involved
+            std::vector<int> xAxisIndices, yAxisIndices;
+            if (hasAxes())
+            {
+                xAxisIndices = xAxisAtomIndices();
+                yAxisIndices = yAxisAtomIndices();
+            }
+
+            Vec3<double> v;
+
+            // Get average position of supplied x-axis atoms
+            for (const auto &index : xAxisIndices)
+                v += parent_->atom(index).r();
+            v /= xAxisIndices.size();
+
+            // Get vector from site origin and normalise it
+            auto x = v - origin;
+            x.normalise();
+
+            // Get average position of supplied y-axis atoms
+            v.zero();
+            for (const auto &index : yAxisIndices)
+                v += parent_->atom(index).r();
+            v /= yAxisIndices.size();
+
+            // Get vector from site origin, normalise it, and orthogonalise
+            auto y = v - origin;
+            y.orthogonalise(x);
+            y.normalise();
+
+            // Calculate z vector from cross product of x and y
+            auto z = x * y;
+
+            return {std::make_shared<OrientedSite>(nullptr, origin, x, y, z)};
         }
-
-        Vec3<double> v;
-
-        // Get average position of supplied x-axis atoms
-        for (const auto &index : xAxisIndices)
-            v += parent_->atom(index).r();
-        v /= xAxisIndices.size();
-
-        // Get vector from site origin and normalise it
-        auto x = v - origin;
-        x.normalise();
-
-        // Get average position of supplied y-axis atoms
-        v.zero();
-        for (const auto &index : yAxisIndices)
-            v += parent_->atom(index).r();
-        v /= yAxisIndices.size();
-
-        // Get vector from site origin, normalise it, and orthogonalise
-        auto y = v - origin;
-        y.orthogonalise(x);
-        y.normalise();
-
-        // Calculate z vector from cross product of x and y
-        Vec3<double> z = x * y;
-
-        // Store data
-        return std::make_shared<OrientedSite>(nullptr, origin, x, y, z);
+        else
+            return {std::make_shared<Site>(nullptr, origin)};
     }
-    else
-        return std::make_shared<Site>(nullptr, origin);
+    else if (type_ == SiteType::Dynamic)
+    {
+        std::vector<std::shared_ptr<Site>> sites;
+        for (auto &i : parent_->atoms())
+        {
+            // Valid element or atom type?
+            if ((std::find(elements_.begin(), elements_.end(), i.Z()) != elements_.end()) ||
+                std::find(atomTypes_.begin(), atomTypes_.end(), i.atomType()) != atomTypes_.end())
+                sites.push_back(std::make_shared<Site>(nullptr, i.r()));
+        }
+        return sites;
+    }
+
+    return {};
 }
 
 /*

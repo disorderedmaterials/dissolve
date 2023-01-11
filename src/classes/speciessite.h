@@ -144,7 +144,7 @@ class SpeciesSite : public Serialisable
      */
     public:
     // Create and return Site description from parent Species
-    std::shared_ptr<Site> createFromParent() const;
+    std::vector<std::shared_ptr<Site>> createFromParent() const;
 
     /*
      * Read / Write
