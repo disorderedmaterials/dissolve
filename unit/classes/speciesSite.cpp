@@ -143,6 +143,21 @@ TEST_F(SpeciesSiteTest, DynamicBasic)
     EXPECT_FALSE(site.setOriginAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
     EXPECT_FALSE(site.setXAxisAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
     EXPECT_FALSE(site.setYAxisAtoms({&methane.atom(0), &methane.atom(1), &methane.atom(2)}));
+
+    // Set an element
+    EXPECT_TRUE(site.addElement(Elements::C));
+    EXPECT_FALSE(site.addElement(Elements::C));
+    EXPECT_TRUE(site.addElement(Elements::Zn));
+    auto sites = site.createFromParent();
+    ASSERT_EQ(sites.size(), 1);
+    testVector(sites.front()->origin(), methane.atom(0).r());
+
+    // Set elements vector
+    EXPECT_TRUE(site.setElements({Elements::H}));
+    sites = site.createFromParent();
+    ASSERT_EQ(sites.size(), 4);
+    for (auto n = 1; n < 5; ++n)
+        testVector(sites[n-1]->origin(), methane.atom(n).r());
 }
 
 } // namespace UnitTest
