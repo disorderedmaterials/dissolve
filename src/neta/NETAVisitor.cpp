@@ -46,17 +46,6 @@ void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
 
 antlrcpp::Any NETAVisitor::visitNeta(NETAParser::NetaContext *context) { return true; }
 
-void NETAVisitor::setContextuals(std::vector<NETAParser::ModifierContext *> modifiers,
-                                 std::vector<NETAParser::OptionContext *> options, std::vector<NETAParser::FlagContext *> flags)
-{
-    for (auto *modifier : modifiers)
-        visitModifier(modifier, currentContext());
-    for (auto *option : options)
-        visitOption(option, currentContext());
-    for (auto *flag : flags)
-        visitFlag(flag, currentContext());
-}
-
 antlrcpp::Any NETAVisitor::visitOrSequence(NETAParser::OrSequenceContext *context)
 {
     NETANode::NETASequence sequence;
@@ -74,7 +63,15 @@ antlrcpp::Any NETAVisitor::visitOrSequence(NETAParser::OrSequenceContext *contex
 
 antlrcpp::Any NETAVisitor::visitSequence(NETAParser::SequenceContext *context)
 {
-    setContextuals(context->Modifiers, context->Options, context->Flags);
+    // Set contextuals
+    for (auto *modifier : context->Modifiers)
+        visitModifier(modifier, currentContext());
+    for (auto *option : context->Options)
+        visitOption(option, currentContext());
+    for (auto *flag : context->Flags)
+        visitFlag(flag, currentContext());
+    for (auto *id : context->Identifiers)
+        visitIdentifier(id, currentContext());
 
     NETANode::NETASequence sequence;
     for (auto *node : context->Nodes)
@@ -84,7 +81,13 @@ antlrcpp::Any NETAVisitor::visitSequence(NETAParser::SequenceContext *context)
 
 antlrcpp::Any NETAVisitor::visitRingSequence(NETAParser::RingSequenceContext *context)
 {
-    setContextuals(context->Modifiers, context->Options, context->Flags);
+    // Set contextuals
+    for (auto *modifier : context->Modifiers)
+        visitModifier(modifier, currentContext());
+    for (auto *option : context->Options)
+        visitOption(option, currentContext());
+    for (auto *flag : context->Flags)
+        visitFlag(flag, currentContext());
 
     NETANode::NETASequence sequence;
     for (auto *node : context->Nodes)
@@ -285,7 +288,7 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
         fmt::format("'{]' is not an element symbol, type name, or type index.", context->getText())));
 }
 
-antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *context, NETANode *node)
+antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *context, NETANode *contextNode)
 {
     for (auto elementOrType : context->targets)
     {
@@ -293,13 +296,13 @@ antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *contex
         if (target.is<Elements::Element>())
         {
             auto Z = target.as<Elements::Element>();
-            if (!node->addElementTarget(Z))
+            if (!contextNode->addElementTarget(Z))
                 throw(NETAExceptions::NETASyntaxException("Failed to add element to target list."));
         }
         else if (target.is<std::reference_wrapper<const ForcefieldAtomType>>())
         {
             auto atomTypeRef = target.as<std::reference_wrapper<const ForcefieldAtomType>>();
-            if (!node->addFFTypeTarget(atomTypeRef.get()))
+            if (!contextNode->addFFTypeTarget(atomTypeRef.get()))
                 throw(NETAExceptions::NETASyntaxException("Failed to add atom type to target list."));
         }
         else
@@ -309,27 +312,27 @@ antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *contex
     return true;
 }
 
-void NETAVisitor::visitModifier(NETAParser::ModifierContext *context, NETANode *node)
+void NETAVisitor::visitModifier(NETAParser::ModifierContext *context, NETANode *contextNode)
 {
     // Check comparison operator
     if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
         throw(NETAExceptions::NETASyntaxException(
             fmt::format("'{}' is not a valid comparison operator.\n", context->comparisonOperator()->getText())));
     NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->comparisonOperator()->getText());
-    if (node->isValidModifier(context->Keyword()->getText()))
+    if (contextNode->isValidModifier(context->Text()->getText()))
     {
-        if (!node->setModifier(context->Keyword()->getText(), op, std::stoi(context->value->getText())))
+        if (!contextNode->setModifier(context->Text()->getText(), op, std::stoi(context->value->getText())))
             throw(NETAExceptions::NETASyntaxException(fmt::format("Failed to set modifier '{}' for the current context ({}).",
-                                                                  context->Keyword()->getText(),
-                                                                  NETANode::nodeTypes().keyword(node->nodeType()))));
+                                                                  context->Text()->getText(),
+                                                                  NETANode::nodeTypes().keyword(contextNode->nodeType()))));
     }
     else
         throw(NETAExceptions::NETASyntaxException(
-            fmt::format("'{}' is not a valid modifier keyword for the current context ({}).", context->Keyword()->getText(),
-                        NETANode::nodeTypes().keyword(node->nodeType()))));
+            fmt::format("'{}' is not a valid modifier keyword for the current context ({}).", context->Text()->getText(),
+                        NETANode::nodeTypes().keyword(contextNode->nodeType()))));
 }
 
-void NETAVisitor::visitOption(NETAParser::OptionContext *context, NETANode *node)
+void NETAVisitor::visitOption(NETAParser::OptionContext *context, NETANode *contextNode)
 {
     // Check comparison operator - must be either '=' or '!='
     if (!NETANode::comparisonOperators().isValid(context->comparisonOperator()->getText()))
@@ -340,30 +343,39 @@ void NETAVisitor::visitOption(NETAParser::OptionContext *context, NETANode *node
         throw(NETAExceptions::NETASyntaxException(fmt::format(
             "Option '{}' may only use the equal to ('=') or not equal to ('!=') operators.", context->opt->getText())));
 
-    if (node->isValidOption(context->opt->getText()))
+    if (contextNode->isValidOption(context->opt->getText()))
     {
-        if (!node->setOption(context->opt->getText(), op, context->value->getText()))
+        if (!contextNode->setOption(context->opt->getText(), op, context->value->getText()))
             throw(NETAExceptions::NETASyntaxException(fmt::format("Failed to set option '{}' for the current context ({}).",
                                                                   context->opt->getText(),
-                                                                  NETANode::nodeTypes().keyword(node->nodeType()))));
+                                                                  NETANode::nodeTypes().keyword(contextNode->nodeType()))));
     }
     else
         throw(NETAExceptions::NETASyntaxException(
             fmt::format("'{}' is not a valid option keyword for the current context ({}).", context->opt->getText(),
-                        NETANode::nodeTypes().keyword(node->nodeType()))));
+                        NETANode::nodeTypes().keyword(contextNode->nodeType()))));
 }
 
-void NETAVisitor::visitFlag(NETAParser::FlagContext *context, NETANode *node)
+void NETAVisitor::visitFlag(NETAParser::FlagContext *context, NETANode *contextNode)
 {
-    if (node->isValidFlag(context->Keyword()->getText()))
+    if (contextNode->isValidFlag(context->Text()->getText()))
     {
-        if (!node->setFlag(context->Keyword()->getText(), true))
+        if (!contextNode->setFlag(context->Text()->getText(), true))
             throw(NETAExceptions::NETASyntaxException(fmt::format("Failed to set flag '{}' for the current context ({}).",
-                                                                  context->Keyword()->getText(),
-                                                                  NETANode::nodeTypes().keyword(node->nodeType()))));
+                                                                  context->Text()->getText(),
+                                                                  NETANode::nodeTypes().keyword(contextNode->nodeType()))));
     }
     else
         throw(NETAExceptions::NETASyntaxException(fmt::format("'{}' is not a valid flag for the current context ({}).",
-                                                              context->Keyword()->getText(),
-                                                              NETANode::nodeTypes().keyword(node->nodeType()))));
+                                                              context->Text()->getText(),
+                                                              NETANode::nodeTypes().keyword(contextNode->nodeType()))));
+}
+
+void NETAVisitor::visitIdentifier(NETAParser::IdentifierContext *context, NETANode *contextNode)
+{
+    for (auto name : context->names)
+        if (!contextNode->addIdentifier(name->getText()))
+            throw(NETAExceptions::NETASyntaxException(fmt::format("Failed to add identifier '{}' to the current context ({}).",
+                                                                  name->getText(),
+                                                                  NETANode::nodeTypes().keyword(contextNode->nodeType()))));
 }

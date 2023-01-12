@@ -32,7 +32,7 @@ options {
 neta: RootNodes=nodeSequence? EOF;
 
 // Node Sequence - Zero or more nodes, comma-separated
-nodeSequence:    (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag) (Comma (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag))*      #sequence
+nodeSequence:    (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag|Identifiers+=identifier) (Comma (Nodes+=node|Modifiers+=modifier|Options+=option|Flags+=flag|Identifiers+=identifier))*      #sequence
 | LHS=nodeSequence Or RHS=nodeSequence                                                                                                                     #orSequence
 ;
 
@@ -64,7 +64,7 @@ connectionNode: Not? ConnectionKeyword Targets=targetList OpenParenthesis Sequen
 ;
 
 // Geometry Node
-geometryNode: GeometryKeyword EqualityOperator geometry=Keyword;
+geometryNode: GeometryKeyword EqualityOperator geometry=Text;
 
 // Hydrogen Count Node
 hydrogenCountNode: HydrogenCountKeyword comparisonOperator Integer;
@@ -86,13 +86,17 @@ targetList: targets+=elementOrType
 ;
 
 // Contextual Modifiers (kwd op value)
-modifier: Keyword comparisonOperator value=Integer;
+modifier: Text comparisonOperator value=Integer;
 
 // Option (kwd op kwd, only accepting '=' and '!=')
-option: opt=Keyword comparisonOperator value=Keyword;
+option: opt=Text comparisonOperator value=Text;
 
 // Context Flags (kwd)
-flag: Keyword;
+flag: Text;
+
+// Identifying Name
+identifier: IdKeyword names+=Text
+| IdKeyword OpenSquareBracket names+=Text (Comma names+=Text)* CloseSquareBracket;
 
 // Comparison Operators
 comparisonOperator: SizeOperator

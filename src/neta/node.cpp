@@ -107,6 +107,25 @@ bool NETANode::isValidFlag(std::string_view s) const { return false; }
 bool NETANode::setFlag(std::string_view flag, bool state) { return false; }
 
 /*
+ * Identifier Names
+ */
+
+// Add identifier to this node, returning if it is already in use
+bool NETANode::addIdentifier(std::string_view s)
+{
+    auto it = std::find(identifiers_.begin(), identifiers_.end(), s);
+    if (it != identifiers_.end())
+        return false;
+
+    identifiers_.emplace_back(s);
+
+    return true;
+}
+
+// Return identifying names associated to this node
+const std::vector<std::string> &NETANode::identifiers() const { return identifiers_; }
+
+/*
  * Value Comparison
  */
 
@@ -148,12 +167,11 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
  */
 
 // Evaluate the provided sequence and return a score
-int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i,
-                            std::vector<const SpeciesAtom *> &matchPath)
+int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i, NETAMatchedGroup &matchPath)
 {
     auto totalScore = 0;
     auto newMatchPath = matchPath;
-    newMatchPath.push_back(i);
+    newMatchPath.insert(i);
 
     // Loop over nodes in sequence
     for (const auto &node : sequence)
@@ -176,9 +194,14 @@ int NETANode::sequenceScore(const NETANode::NETASequence &sequence, const Specie
 void NETANode::setReverseLogic() { reverseLogic_ = true; }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
+int NETANode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
 {
     auto branchScore = sequenceScore(nodes_, i, matchPath);
+
+    // Add local identifiers to the match data
+    if (branchScore != NETANode::NoMatch && !reverseLogic_)
+        for (auto &id : identifiers())
+            matchPath.addIdentifier(i, id);
 
     return reverseLogic_ ? (branchScore == NETANode::NoMatch ? 1 : NETANode::NoMatch) : branchScore;
 }

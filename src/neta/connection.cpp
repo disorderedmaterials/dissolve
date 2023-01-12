@@ -116,19 +116,17 @@ bool NETAConnectionNode::setFlag(std::string_view flag, bool state)
  */
 
 // Evaluate the node and return its score
-int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
+int NETAConnectionNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
 {
     // Get directly connected atoms about 'i', excluding any that have already been matched
-    std::map<const SpeciesAtom *, std::pair<int, std::vector<const SpeciesAtom *>>> neighbours;
+    std::map<const SpeciesAtom *, std::pair<int, NETAMatchedGroup>> neighbours;
     for (const SpeciesBond &bond : i->bonds())
     {
         const auto *partner = bond.partner(i);
 
-        // Search for this species atom in the current match path
-        auto atomIt =
-            std::find_if(matchPath.begin(), matchPath.end(), [partner](const auto spAtom) { return spAtom == partner; });
-        if (atomIt == matchPath.end() || (atomIt == matchPath.begin() && allowRootMatch_))
-            neighbours.emplace(partner, std::pair<int, std::vector<const SpeciesAtom *>>(NETANode::NoMatch, matchPath));
+        // Search for this atom in the current match path
+        if (!matchPath.contains(partner) || (allowRootMatch_ && matchPath.isRoot(partner)))
+            neighbours.emplace(partner, std::pair<int, NETAMatchedGroup>(NETANode::NoMatch, matchPath));
     }
 
     // Loop over neighbour atoms
@@ -194,9 +192,11 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         totalScore += jScore;
 
         // Track atoms matched in the neighbour branch
-        std::copy_if(jMatchPath.begin(), jMatchPath.end(), std::back_inserter(matchPath),
-                     [&matchPath](const auto *j)
-                     { return std::find(matchPath.begin(), matchPath.end(), j) == matchPath.end(); });
+        matchPath.merge(jMatchPath);
+
+        // Add identifiers to the match data
+        for (auto &id : identifiers())
+            matchPath.addIdentifier(nbr.first, id);
     }
 
     return totalScore;

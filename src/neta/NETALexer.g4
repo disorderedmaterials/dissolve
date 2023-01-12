@@ -59,10 +59,11 @@ CharacterKeyword: '?';
 ConnectionKeyword: '-';
 GeometryKeyword: 'g' 'e' 'o' 'm' 'e' 't' 'r' 'y';
 HydrogenCountKeyword: 'n' 'h';
+IdKeyword: '#';
 RingKeyword: 'r' 'i' 'n' 'g';
 
 // Named Tokens
 Element: UCASELETTER LCASELETTER*;
 FFTypeName: TypeReference LETTER (LETTER | DIGIT | SYMBOL)*;
 FFTypeIndex: TypeReference Integer;
-Keyword: LCASELETTER+;
+Text: LCASELETTER+;

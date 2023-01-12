@@ -5,6 +5,7 @@
 
 #include "base/enumoptions.h"
 #include "data/elements.h"
+#include "neta/matchedgroup.h"
 #include <memory>
 #include <vector>
 
@@ -121,6 +122,19 @@ class NETANode
     virtual bool setFlag(std::string_view flag, bool state);
 
     /*
+     * Identifier Names
+     */
+    private:
+    // Identifying names associated to this node
+    std::vector<std::string> identifiers_;
+
+    public:
+    // Add identifier to this node, returning if it is already in use
+    virtual bool addIdentifier(std::string_view s);
+    // Return identifying names associated to this node
+    const std::vector<std::string> &identifiers() const;
+
+    /*
      * Value Comparison
      */
     public:
@@ -136,12 +150,11 @@ class NETANode
 
     protected:
     // Evaluate the provided sequence and return a score
-    static int sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i,
-                             std::vector<const SpeciesAtom *> &matchPath);
+    static int sequenceScore(const NETANode::NETASequence &sequence, const SpeciesAtom *i, NETAMatchedGroup &matchPath);
 
     public:
     // Set node to use reverse logic
     void setReverseLogic();
     // Evaluate the node and return its score
-    virtual int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
+    virtual int score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const;
 };
