@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2022 Team Dissolve and contributors
+//Dan is working here
 
 #include "gui/models/modulePaletteModel.h"
 #include "modules/registry.h"
