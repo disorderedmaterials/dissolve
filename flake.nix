@@ -71,9 +71,13 @@
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
-            src = builtins.filterSource (path: type:
-              type != "directory" || builtins.baseNameOf path
-              != ".azure-pipelines" || builtins.baseNameOf path != "web") ./.;
+            src = builtins.path {
+              path = ./.;
+              name = "dissolve-src";
+              filter = path: type:
+                type != "directory" || builtins.baseNameOf path
+                != ".azure-pipelines" || builtins.baseNameOf path != "web";
+            };
             patches = [ ./nix/patches/ctest.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
