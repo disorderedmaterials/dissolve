@@ -114,7 +114,8 @@ runs:
     run: |
       set -ex
       mkdir ftgl-build && cd ftgl-build
-      FREETYPE_DIR="${{ runner.temp }}/freetype-install"
+      INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
+      LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
       cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
       cmake --build . --target install --config Release
 
