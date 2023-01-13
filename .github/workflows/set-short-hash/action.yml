@@ -10,5 +10,5 @@ runs:
       set -ex
       SHORT_HASH=$(git rev-parse --short HEAD)
       echo "Current short hash is ${SHORT_HASH}"
-      sed -i "s/DISSOLVESHORTHASH \".*\"/DISSOLVESHORTHASH \"${SHORT_HASH}\"/g" src/main/version.cpp
+      sed -i -e "s/DISSOLVESHORTHASH \".*\"/DISSOLVESHORTHASH \"${SHORT_HASH}\"/g" src/main/version.cpp
       cat src/main/version.cpp
