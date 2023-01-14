@@ -13,6 +13,7 @@
 #include "gui/models/speciesBondModel.h"
 #include "gui/models/speciesImproperModel.h"
 #include "gui/models/speciesIsoModel.h"
+#include "gui/models/speciesSiteFilterProxy.h"
 #include "gui/models/speciesSiteModel.h"
 #include "gui/models/speciesTorsionModel.h"
 #include "gui/ui_speciestab.h"
@@ -140,6 +141,7 @@ class SpeciesTab : public QWidget, public MainTab
     void setCurrentSiteFromViewer();
     void on_SiteAddButton_clicked(bool checked);
     void on_SiteRemoveButton_clicked(bool checked);
+    void on_SiteTypeCombo_currentIndexChanged(int index);
     void siteSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void on_SiteOriginMassWeightedCheck_clicked(bool checked);
 
