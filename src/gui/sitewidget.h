@@ -81,4 +81,6 @@ class SiteWidget : public QWidget
     void on_SiteSetOriginButton_clicked(bool checked);
     void on_SiteSetXAxisButton_clicked(bool checked);
     void on_SiteSetYAxisButton_clicked(bool checked);
+    void on_SiteSetElementsButton_clicked(bool checked);
+    void on_SiteSetAtomTypesButton_clicked(bool checked);
 };

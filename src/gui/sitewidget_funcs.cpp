@@ -63,10 +63,18 @@ void SiteWidget::updateToolbar()
 
     // Enable site-definition buttons
     auto currentSelection = (siteViewer()->species() ? !siteViewer()->species()->selectedAtoms().empty() : false);
+    auto siteType = siteViewer()->speciesSite() ? siteViewer()->speciesSite()->type() : SpeciesSite::SiteType::Static;
     ui_.SiteCreateButton->setEnabled(currentSelection);
-    ui_.SiteSetOriginButton->setEnabled(currentSelection && siteViewer()->speciesSite());
-    ui_.SiteSetXAxisButton->setEnabled(currentSelection && siteViewer()->speciesSite());
-    ui_.SiteSetYAxisButton->setEnabled(currentSelection && siteViewer()->speciesSite());
+    ui_.SiteSetOriginButton->setEnabled(currentSelection && siteViewer()->speciesSite() &&
+                                        siteType == SpeciesSite::SiteType::Static);
+    ui_.SiteSetXAxisButton->setEnabled(currentSelection && siteViewer()->speciesSite() &&
+                                       siteType == SpeciesSite::SiteType::Static);
+    ui_.SiteSetYAxisButton->setEnabled(currentSelection && siteViewer()->speciesSite() &&
+                                       siteType == SpeciesSite::SiteType::Static);
+    ui_.SiteSetElementsButton->setEnabled(currentSelection && siteViewer()->speciesSite() &&
+                                          siteType == SpeciesSite::SiteType::Dynamic);
+    ui_.SiteSetAtomTypesButton->setEnabled(currentSelection && siteViewer()->speciesSite() &&
+                                           siteType == SpeciesSite::SiteType::Dynamic);
 }
 
 // Update status bar
@@ -203,6 +211,41 @@ void SiteWidget::on_SiteSetYAxisButton_clicked(bool checked)
 
     // Get current atom selection from Species
     site->setYAxisAtoms(sp->selectedAtoms());
+
+    siteViewer()->postRedisplay();
+
+    emit(dataModified());
+}
+
+void SiteWidget::on_SiteSetElementsButton_clicked(bool checked)
+{
+    // Sanity check for valid SpeciesSite and Species
+    Species *sp = siteViewer()->species();
+    SpeciesSite *site = siteViewer()->speciesSite();
+    if (!site)
+        return;
+
+    // Get current atom selection from Species
+    for (auto &i : sp->selectedAtoms())
+        site->addElement(i->Z());
+
+    siteViewer()->postRedisplay();
+
+    emit(dataModified());
+}
+
+void SiteWidget::on_SiteSetAtomTypesButton_clicked(bool checked)
+{
+    // Sanity check for valid SpeciesSite and Species
+    Species *sp = siteViewer()->species();
+    SpeciesSite *site = siteViewer()->speciesSite();
+    if (!site)
+        return;
+
+    // Get current atom selection from Species
+    for (auto &i : sp->selectedAtoms())
+        if (i->atomType())
+            site->addAtomType(i->atomType());
 
     siteViewer()->postRedisplay();
 
