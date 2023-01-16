@@ -32,13 +32,13 @@ runs:
         !/nix/var/nix/db/reserved
       key: ${{ runner.os }}-nix-store
 
-  - name: Install cachix
-    shell: bash
-    run: |
-      set -ex
+  # - name: Install cachix
+  #   shell: bash
+  #   run: |
+  #     set -ex
 
-      mkdir -p .config/cachix
-      nix-env -iA cachix -f https://cachix.org/api/v1/install
+  #     mkdir -p .config/cachix
+  #     nix-env -iA cachix -f https://cachix.org/api/v1/install
       # nix-env -iA jq
 
   - name: Build
@@ -49,7 +49,7 @@ runs:
       # source ~/.nix-profile/etc/profile.d/nix.sh
 
       # Prep cachix
-      cachix use dissolve-nix
+      # cachix use dissolve-nix
 
       # Build
       nix build -L .#${{ inputs.target }}
