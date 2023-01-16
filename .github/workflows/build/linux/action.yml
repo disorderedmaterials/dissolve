@@ -10,18 +10,15 @@ runs:
   using: "composite"
   steps:
 
-  - name: Install nix
-    uses: "./.github/workflows/get-nix"
+  - uses: cachix/install-nix-action@v15
+    with:
+      nix_path: nixpkgs=channel:${{ env.nixOSVersion }}
+
 
   - name: Install cachix
     shell: bash
     run: |
       set -ex
-
-      source ~/.nix-profile/etc/profile.d/nix.sh
-
-      nix-channel --add https://nixos.org/channels/nixos-${{ env.nixOSVersion }} nixos
-      nix-channel --update
 
       mkdir -p .config/cachix
       nix-env -iA cachix -f https://cachix.org/api/v1/install
