@@ -81,7 +81,7 @@ void SiteWidget::updateToolbar()
 void SiteWidget::updateStatusBar()
 {
     // Get displayed Species
-    const Species *sp = siteViewer()->species();
+    const auto *sp = siteViewer()->species();
 
     // Set interaction mode text
     ui_.ModeLabel->setText(siteViewer()->interactionModeText());
@@ -172,8 +172,8 @@ void SiteWidget::on_SiteCreateButton_clicked(bool checked)
 void SiteWidget::on_SiteSetOriginButton_clicked(bool checked)
 {
     // Sanity check for valid SpeciesSite and Species
-    Species *sp = siteViewer()->species();
-    SpeciesSite *site = siteViewer()->speciesSite();
+    auto *sp = siteViewer()->species();
+    auto *site = siteViewer()->speciesSite();
     if (!site)
         return;
 
@@ -188,8 +188,8 @@ void SiteWidget::on_SiteSetOriginButton_clicked(bool checked)
 void SiteWidget::on_SiteSetXAxisButton_clicked(bool checked)
 {
     // Sanity check for valid SpeciesSite and Species
-    Species *sp = siteViewer()->species();
-    SpeciesSite *site = siteViewer()->speciesSite();
+    auto *sp = siteViewer()->species();
+    auto *site = siteViewer()->speciesSite();
     if (!site)
         return;
 
@@ -204,8 +204,8 @@ void SiteWidget::on_SiteSetXAxisButton_clicked(bool checked)
 void SiteWidget::on_SiteSetYAxisButton_clicked(bool checked)
 {
     // Sanity check for valid SpeciesSite and Species
-    Species *sp = siteViewer()->species();
-    SpeciesSite *site = siteViewer()->speciesSite();
+    auto *sp = siteViewer()->species();
+    auto *site = siteViewer()->speciesSite();
     if (!site)
         return;
 
@@ -220,8 +220,8 @@ void SiteWidget::on_SiteSetYAxisButton_clicked(bool checked)
 void SiteWidget::on_SiteSetElementsButton_clicked(bool checked)
 {
     // Sanity check for valid SpeciesSite and Species
-    Species *sp = siteViewer()->species();
-    SpeciesSite *site = siteViewer()->speciesSite();
+    auto *sp = siteViewer()->species();
+    auto *site = siteViewer()->speciesSite();
     if (!site)
         return;
 
@@ -237,8 +237,8 @@ void SiteWidget::on_SiteSetElementsButton_clicked(bool checked)
 void SiteWidget::on_SiteSetAtomTypesButton_clicked(bool checked)
 {
     // Sanity check for valid SpeciesSite and Species
-    Species *sp = siteViewer()->species();
-    SpeciesSite *site = siteViewer()->speciesSite();
+    auto *sp = siteViewer()->species();
+    auto *site = siteViewer()->speciesSite();
     if (!site)
         return;
 

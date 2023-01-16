@@ -57,7 +57,7 @@ void SpeciesTab::on_SiteAddButton_clicked(bool checked)
 void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
 {
     // Get the currently-selected site
-    SpeciesSite *site = currentSite();
+    auto *site = currentSite();
     if (!site)
         return;
 
@@ -104,7 +104,7 @@ void SpeciesTab::siteSelectionChanged(const QItemSelection &current, const QItem
 
 void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
 {
-    SpeciesSite *site = currentSite();
+    auto *site = currentSite();
     if (refreshLock_.isLocked() || (!site))
         return;
 
