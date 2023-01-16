@@ -52,7 +52,7 @@ runs:
     run: |
       set -ex
 
-      source ~/.nix-profile/etc/profile.d/nix.sh
+      # source ~/.nix-profile/etc/profile.d/nix.sh
 
       nix bundle -L .#${{ inputs.target }} -o ${{ inputs.target }}
       ls -R ${{ inputs.target }}
