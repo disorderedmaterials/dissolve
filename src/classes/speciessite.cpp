@@ -36,6 +36,26 @@ int SpeciesSite::version() const { return version_; }
  * Basic Definition
  */
 
+// Clear definition data from site
+void SpeciesSite::clearDefinition()
+{
+    originAtoms_.clear();
+    xAxisAtoms_.clear();
+    yAxisAtoms_.clear();
+    elements_.clear();
+    atomTypes_.clear();
+
+    ++version_;
+}
+
+// Set type of site
+void SpeciesSite::setType(SpeciesSite::SiteType type)
+{
+    type_ = type;
+
+    clearDefinition();
+}
+
 // Return type of site
 SpeciesSite::SiteType SpeciesSite::type() const { return type_; }
 
