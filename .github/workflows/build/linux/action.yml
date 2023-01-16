@@ -22,7 +22,7 @@ runs:
 
       mkdir -p .config/cachix
       nix-env -iA cachix -f https://cachix.org/api/v1/install
-      nix-env -iA jq
+      # nix-env -iA jq
 
   - name: Build
     shell: bash
