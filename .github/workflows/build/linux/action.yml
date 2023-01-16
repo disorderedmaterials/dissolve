@@ -29,7 +29,7 @@ runs:
     run: |
       set -ex
 
-      source ~/.nix-profile/etc/profile.d/nix.sh
+      # source ~/.nix-profile/etc/profile.d/nix.sh
 
       # Prep cachix
       cachix use dissolve-nix
@@ -38,12 +38,12 @@ runs:
       nix build -L .#${{ inputs.target }}
       nix build --json .#${{ inputs.target }} > archive.json
 
-  - name: "Push to Cachix"
-    shell: bash
-    run: |
-      set -ex
+  # - name: "Push to Cachix"
+  #   shell: bash
+  #   run: |
+  #     set -ex
 
-      source ~/.nix-profile/etc/profile.d/nix.sh
+  #     source ~/.nix-profile/etc/profile.d/nix.sh
       # cat archive.json | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
       # nix-collect-garbage -d
 
