@@ -16,10 +16,9 @@
 #include "classes/speciestorsion.h"
 #include "io/import/coordinates.h"
 #include <list>
+#include <map>
 #include <memory>
 #include <variant>
-
-#include <map>
 #include <vector>
 
 // Forward Declarations
