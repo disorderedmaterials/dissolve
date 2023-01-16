@@ -207,7 +207,7 @@
           flake-utils.lib.mkApp { drv = self.defaultPackage.${system}; };
 
         packages = {
-          dissolve-cli = dissolve { gui = false; };
+          dissolve = dissolve { gui = false; };
           dissolve-threadless = dissolve {
             gui = false;
             threading = false;
