@@ -20,13 +20,13 @@ runs:
       key: nix-${{ hashFiles('flake.nix') }}
       nix_file: 'shell.nix'
 
-  - name: Install cachix
-    shell: bash
-    run: |
-      set -ex
+  # - name: Install cachix
+  #   shell: bash
+  #   run: |
+  #     set -ex
 
-      mkdir -p .config/cachix
-      nix-env -iA cachix -f https://cachix.org/api/v1/install
+  #     mkdir -p .config/cachix
+  #     nix-env -iA cachix -f https://cachix.org/api/v1/install
 
   - name: Build
     shell: bash
