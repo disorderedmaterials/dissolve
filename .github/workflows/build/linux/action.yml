@@ -46,7 +46,7 @@ runs:
       set -ex
 
       # Prep cachix
-      cachix use dissolve-nix
+      # cachix use dissolve-nix
 
       # Build
       nix build -L .#${{ inputs.target }}
