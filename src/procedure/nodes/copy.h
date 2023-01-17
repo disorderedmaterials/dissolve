@@ -8,7 +8,6 @@
 #include <set>
 
 // Forward Declarations
-class DynamicSiteProcedureNode;
 class Element;
 class Molecule;
 class SiteStack;

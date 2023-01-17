@@ -6,13 +6,11 @@
 #include "classes/coredata.h"
 #include "classes/sitereference.h"
 #include "classes/species.h"
-#include "keywords/dynamicsitenodes.h"
 #include "keywords/node.h"
 #include "keywords/nodebranch.h"
 #include "keywords/nodevector.h"
 #include "keywords/range.h"
 #include "keywords/speciessitevector.h"
-#include "procedure/nodes/dynamicsite.h"
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 
@@ -25,8 +23,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.add<SpeciesSiteVectorKeyword>("Control", "Site", "Add target site(s) to the selection", speciesSites_,
                                             axesRequired_);
-    keywords_.add<DynamicSiteNodesKeyword>("Control", "DynamicSite", "Add a new dynamic site to the selection", dynamicSites_,
-                                           this, axesRequired_);
     keywords_.add<NodeKeyword<SelectProcedureNode>>(
         "Control", "SameMoleculeAsSite",
         "Request that the selected site comes from the molecule containing the current site in the specified "
@@ -171,7 +167,7 @@ OptionalReferenceWrapper<ProcedureNodeSequence> SelectProcedureNode::branch() { 
 bool SelectProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Check for at least one site being defined
-    if (speciesSites_.empty() && dynamicSites_.empty())
+    if (speciesSites_.empty())
         return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
 
     // Prep some variables
@@ -182,11 +178,6 @@ bool SelectProcedureNode::prepare(const ProcedureContext &procedureContext)
     // If one exists, prepare the ForEach branch nodes
     if (!forEachBranch_.prepare(procedureContext))
         return false;
-
-    // Prepare any dynamic site nodes
-    for (auto dynamicNode : dynamicSites_)
-        if (!dynamicNode->prepare(procedureContext))
-            return false;
 
     return true;
 }
@@ -256,20 +247,6 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
         }
     }
 
-    /*
-     * Add dynamically-generated sites.
-     * Call each DynamicSiteProcedureNode's execute function in turn, adding any generated sites to our reference array
-     * afterwards.
-     */
-    for (auto dynamicNode : dynamicSites_)
-    {
-        if (!dynamicNode->execute(procedureContext))
-            return false;
-
-        for (auto &s : dynamicNode->generatedSites())
-            sites_.push_back(&s);
-    }
-
     // Set first site index and increase selections counter
     currentSiteIndex_ = (sites_.empty() ? -1 : 0);
     ++nSelections_;
@@ -296,11 +273,6 @@ bool SelectProcedureNode::finalise(const ProcedureContext &procedureContext)
     // If one exists, finalise the ForEach branch nodes
     if (!forEachBranch_.finalise(procedureContext))
         return false;
-
-    // Finalise any dynamic site nodes
-    for (auto dynamicNode : dynamicSites_)
-        if (!dynamicNode->finalise(procedureContext))
-            return false;
 
     // Print out summary information
     Messenger::print("Select - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(), nSelections_,

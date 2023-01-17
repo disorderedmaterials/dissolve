@@ -5,6 +5,7 @@
 #include "classes/species.h"
 #include "data/elements.h"
 #include "data/ff/ff.h"
+#include "unit/data/species.h"
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 #include <gtest/gtest.h>
@@ -13,124 +14,6 @@ namespace UnitTest
 {
 class NETATest : public ::testing::Test
 {
-    public:
-    NETATest()
-    {
-        // Construct methane test species
-        methane_.setName("Methane");
-        methane_.addAtom(Elements::C, {0.000000, 0.000000, 0.000000});
-        methane_.addAtom(Elements::H, {0.000000, 1.080000, 0.000000});
-        methane_.addAtom(Elements::H, {0.000000, -0.360511, -1.018053});
-        methane_.addAtom(Elements::H, {0.881973, -0.359744, 0.509026});
-        methane_.addAtom(Elements::H, {-0.881973, -0.359744, 0.509026});
-        methane_.addMissingBonds();
-
-        // Construct methanol test species
-        methanol_.setName("Methanol");
-        methanol_.addAtom(Elements::C, {0.000078, -0.353546, -0.169274});
-        methanol_.addAtom(Elements::H, {0.000078, -0.714057, -1.187327});
-        methanol_.addAtom(Elements::H, {0.882051, -0.713290, 0.339752});
-        methanol_.addAtom(Elements::H, {-0.881895, -0.713290, 0.339752});
-        methanol_.addAtom(Elements::O, {-0.000129, 1.066453, -0.170343});
-        methanol_.addAtom(Elements::H, {-0.000177, 1.394279, 0.753199});
-        methanol_.addMissingBonds();
-
-        // Construct ethane test species
-        ethane_.setName("Ethane");
-        ethane_.addAtom(Elements::C, {0.000000, 0.000000, 0.000000});
-        ethane_.addAtom(Elements::C, {0.000000, 1.540000, 0.000000});
-        ethane_.addAtom(Elements::H, {0.000000, -0.360511, -1.018053});
-        ethane_.addAtom(Elements::H, {0.881973, -0.359744, 0.509026});
-        ethane_.addAtom(Elements::H, {-0.881973, -0.359744, 0.509026});
-        ethane_.addAtom(Elements::H, {0.000000, 1.900511, 1.018053});
-        ethane_.addAtom(Elements::H, {0.881973, 1.899744, -0.509026});
-        ethane_.addAtom(Elements::H, {-0.881973, 1.899744, -0.509026});
-        ethane_.addMissingBonds();
-
-        // Construct rings test species
-        rings_.setName("Rings");
-        rings_.addAtom(Elements::C, {-0.208763, -0.975789, -0.095504});
-        rings_.addAtom(Elements::C, {0.045228, 0.295623, -0.380595});
-        rings_.addAtom(Elements::C, {1.300571, 0.857602, -0.348819});
-        rings_.addAtom(Elements::C, {2.360934, -0.005443, -0.027080});
-        rings_.addAtom(Elements::C, {2.111776, -1.366987, 0.240107});
-        rings_.addAtom(Elements::C, {0.805131, -1.869462, 0.219207});
-        rings_.addAtom(Elements::H, {1.468477, 1.902060, -0.572229});
-        rings_.addAtom(Elements::H, {3.373539, 0.371667, 0.002685});
-        rings_.addAtom(Elements::H, {2.939423, -2.029266, 0.465935});
-        rings_.addAtom(Elements::H, {0.596002, -2.910744, 0.426097});
-        rings_.addAtom(Elements::N, {-1.289150, 0.716693, -0.702798});
-        rings_.addAtom(Elements::C, {-1.646291, -0.686037, -0.306734});
-        rings_.addAtom(Elements::C, {-1.785682, 1.724996, 0.228719});
-        rings_.addAtom(Elements::H, {-1.619801, 1.449463, 1.291036});
-        rings_.addAtom(Elements::H, {-1.288061, 2.694431, 0.011695});
-        rings_.addAtom(Elements::H, {-2.873536, 1.867631, 0.046101});
-        rings_.addAtom(Elements::H, {-2.075934, -1.268474, -1.147377});
-        rings_.addAtom(Elements::H, {-2.213863, -0.767963, 0.649555});
-        rings_.addMissingBonds();
-
-        // Construct 1,4-difluorobenzene test species
-        dfb_.setName("Difluorobenzene");
-        dfb_.addAtom(Elements::C, {-1.399000e+00, 1.600000e-01, 0.000000e+00});
-        dfb_.addAtom(Elements::C, {-5.610000e-01, 1.293000e+00, 0.000000e+00});
-        dfb_.addAtom(Elements::C, {8.390000e-01, 1.132000e+00, 0.000000e+00});
-        dfb_.addAtom(Elements::C, {1.399000e+00, -1.600000e-01, 0.000000e+00});
-        dfb_.addAtom(Elements::C, {5.600000e-01, -1.293000e+00, 0.000000e+00});
-        dfb_.addAtom(Elements::C, {-8.390000e-01, -1.132000e+00, 0.000000e+00});
-        dfb_.addAtom(Elements::F, {1.483000e+00, 2.001000e+00, 0.000000e+00});
-        dfb_.addAtom(Elements::H, {2.472000e+00, -2.840000e-01, 0.000000e+00});
-        dfb_.addAtom(Elements::H, {9.910000e-01, -2.284000e+00, 0.000000e+00});
-        dfb_.addAtom(Elements::F, {-1.483000e+00, -2.000000e+00, 0.000000e+00});
-        dfb_.addAtom(Elements::H, {-2.472000e+00, 2.820000e-01, 0.000000e+00});
-        dfb_.addAtom(Elements::H, {-9.900000e-01, 2.284000e+00, 0.000000e+00});
-        dfb_.addMissingBonds();
-
-        // Construct geometry test species
-        geometric_.setName("Geometric");
-        geometric_.addAtom(Elements::P, {-5.824000, 3.981000, 0.000000});
-        geometric_.addAtom(Elements::P, {-1.824000, 3.981000, 0.000000});
-        geometric_.addAtom(Elements::F, {-1.824000, 4.981000, 0.000000});
-        geometric_.addAtom(Elements::P, {2.176000, 3.981000, 0.000000});
-        geometric_.addAtom(Elements::F, {2.176000, 4.981000, 0.000000});
-        geometric_.addAtom(Elements::F, {2.176000, 2.981000, 0.000000});
-        geometric_.addAtom(Elements::P, {6.176000, 4.003000, 0.000000});
-        geometric_.addAtom(Elements::F, {6.176000, 5.003000, 0.000000});
-        geometric_.addAtom(Elements::F, {5.241000, 3.463000, 0.000000});
-        geometric_.addAtom(Elements::F, {7.111000, 3.463000, 0.000000});
-        geometric_.addAtom(Elements::P, {-5.000000, 0.000000, 0.000000});
-        geometric_.addAtom(Elements::F, {-5.000000, 1.080000, 0.000000});
-        geometric_.addAtom(Elements::F, {-5.000000, -0.361000, -1.018000});
-        geometric_.addAtom(Elements::F, {-4.118000, -0.360000, 0.509000});
-        geometric_.addAtom(Elements::F, {-5.882000, -0.360000, 0.509000});
-        geometric_.addAtom(Elements::P, {0.000000, 0.000000, 0.000000});
-        geometric_.addAtom(Elements::F, {0.000000, 1.200000, 0.000000});
-        geometric_.addAtom(Elements::F, {0.000000, -1.200000, 0.000000});
-        geometric_.addAtom(Elements::F, {-1.280000, 0.000000, 0.000000});
-        geometric_.addAtom(Elements::F, {1.280000, 0.000000, 0.000000});
-        geometric_.addAtom(Elements::F, {0.000000, 0.000000, -1.200000});
-        geometric_.addAtom(Elements::F, {0.000000, 0.000000, 1.200000});
-        geometric_.addAtom(Elements::P, {4.800000, -0.020000, 0.000000});
-        geometric_.addAtom(Elements::F, {4.800000, 1.180000, 0.000000});
-        geometric_.addAtom(Elements::F, {3.865000, -0.560000, 0.000000});
-        geometric_.addAtom(Elements::F, {5.735000, -0.560000, 0.000000});
-        geometric_.addAtom(Elements::F, {4.800000, -0.020000, -1.200000});
-        geometric_.addAtom(Elements::F, {4.800000, -0.020000, 1.200000});
-        geometric_.addAtom(Elements::P, {-3.000000, -4.300000, 0.000000});
-        geometric_.addAtom(Elements::F, {-3.000000, -3.100000, 0.000000});
-        geometric_.addAtom(Elements::F, {-4.280000, -4.300000, 0.000000});
-        geometric_.addAtom(Elements::F, {-1.720000, -4.300000, 0.000000});
-        geometric_.addAtom(Elements::P, {3.000000, -4.000000, 0.000000});
-        geometric_.addAtom(Elements::F, {3.000000, -2.800000, 0.000000});
-        geometric_.addAtom(Elements::F, {3.000000, -5.200000, 0.000000});
-        geometric_.addAtom(Elements::F, {1.720000, -4.000000, 0.000000});
-        geometric_.addAtom(Elements::F, {4.280000, -4.000000, 0.000000});
-        geometric_.addMissingBonds();
-    }
-
-    protected:
-    // Species
-    Species methane_, methanol_, ethane_, dfb_, rings_, geometric_;
-
     protected:
     // Test NETA description on all atom in molecule, expecting success for supplied atom indices
     void testNETA(std::string_view title, const Species &sp, const NETADefinition &neta,
@@ -243,72 +126,72 @@ TEST_F(NETATest, Matching)
     NETADefinition neta;
 
     EXPECT_TRUE(neta.create("-C"));
-    testNETA("Any atom bound to carbon", methane_, neta, {1, 2, 3, 4});
+    testNETA("Any atom bound to carbon", UnitTest::methaneSpecies(), neta, {1, 2, 3, 4});
 
     EXPECT_TRUE(neta.create("nbonds=4"));
-    testNETA("Any atom with four bonds", methane_, neta, {0});
+    testNETA("Any atom with four bonds", UnitTest::methaneSpecies(), neta, {0});
 
     EXPECT_TRUE(neta.create("-C"));
-    testNETA("Any atom bound to carbon", ethane_, neta, {0, 1, 2, 3, 4, 5, 6, 7});
+    testNETA("Any atom bound to carbon", UnitTest::ethaneSpecies(), neta, {0, 1, 2, 3, 4, 5, 6, 7});
 
     EXPECT_TRUE(neta.create("nh=3"));
-    testNETA("Any atom with three hydrogens attached", ethane_, neta, {0, 1});
+    testNETA("Any atom with three hydrogens attached", UnitTest::ethaneSpecies(), neta, {0, 1});
 
     EXPECT_TRUE(neta.create("ring()"));
-    testNETA("Atom in any ring", rings_, neta, {0, 1, 2, 3, 4, 5, 10, 11});
+    testNETA("Atom in any ring", UnitTest::ringsSpecies(), neta, {0, 1, 2, 3, 4, 5, 10, 11});
 
     EXPECT_TRUE(neta.create("ring(size=6)"));
-    testNETA("Atom in six-membered ring", rings_, neta, {0, 1, 2, 3, 4, 5});
+    testNETA("Atom in six-membered ring", UnitTest::ringsSpecies(), neta, {0, 1, 2, 3, 4, 5});
 
     EXPECT_TRUE(neta.create("ring(n=0)"));
-    testNETA("Any atom not in a ring", rings_, neta, {6, 7, 8, 9, 12, 13, 14, 15, 16, 17});
+    testNETA("Any atom not in a ring", UnitTest::ringsSpecies(), neta, {6, 7, 8, 9, 12, 13, 14, 15, 16, 17});
 
     EXPECT_TRUE(neta.create("nbonds=1,-C(ring(size=6))"));
-    testNETA("Hydrogen atom attached to atom within a six-membered ring", rings_, neta, {6, 7, 8, 9});
+    testNETA("Hydrogen atom attached to atom within a six-membered ring", UnitTest::ringsSpecies(), neta, {6, 7, 8, 9});
 
     EXPECT_TRUE(neta.create("ring(size=6), ring(size=4)"));
-    testNETA("Atom at junction of four and six-membered ring", rings_, neta, {0, 1});
+    testNETA("Atom at junction of four and six-membered ring", UnitTest::ringsSpecies(), neta, {0, 1});
 
     EXPECT_TRUE(neta.create("-N, ring(size=6), ring(size=4)"));
-    testNETA("Atom at junction of four and six-membered ring, adjacent to nitrogen", rings_, neta, {1});
+    testNETA("Atom at junction of four and six-membered ring, adjacent to nitrogen", UnitTest::ringsSpecies(), neta, {1});
 
     EXPECT_TRUE(neta.create("-N,ring(n=0)"));
-    testNETA("Atom adjacent to nitrogen, but not in a ring ", rings_, neta, {12});
+    testNETA("Atom adjacent to nitrogen, but not in a ring ", UnitTest::ringsSpecies(), neta, {12});
 
     EXPECT_TRUE(neta.create("-N,ring(n=0) | -N,ring(size=6), ring(size=4)"));
-    testNETA("Either of the previous atoms", rings_, neta, {1, 12});
+    testNETA("Either of the previous atoms", UnitTest::ringsSpecies(), neta, {1, 12});
 
     EXPECT_TRUE(neta.create("-C(nh=3),nbonds=1"));
-    testNETA("Hydrogen atoms present in CH3 group", rings_, neta, {13, 14, 15});
+    testNETA("Hydrogen atoms present in CH3 group", UnitTest::ringsSpecies(), neta, {13, 14, 15});
 
     EXPECT_TRUE(neta.create("?C,!ring(size=6)"));
-    testNETA("Any carbon except one in a 6-membered ring", rings_, neta, {11, 12});
+    testNETA("Any carbon except one in a 6-membered ring", UnitTest::ringsSpecies(), neta, {11, 12});
 
     EXPECT_TRUE(neta.create("?C,!(nh=2 | -C(-N))"));
-    testNETA("Any carbon except one with two hydrogens or which is two bonds away from a nitrogen", rings_, neta,
-             {1, 3, 4, 5, 12});
+    testNETA("Any carbon except one with two hydrogens or which is two bonds away from a nitrogen", UnitTest::ringsSpecies(),
+             neta, {1, 3, 4, 5, 12});
 }
 
 TEST_F(NETATest, Creation)
 {
     // Carbon atom - full description
-    NETADefinition neta(&methane_.atom(0));
+    NETADefinition neta(&UnitTest::methaneSpecies().atom(0));
     EXPECT_EQ(neta.definitionString(), "nbonds=4,nh=4");
-    testNETA("Carbon atom in methane", methane_, neta, {0});
+    testNETA("Carbon atom in methane", UnitTest::methaneSpecies(), neta, {0});
 
     // Methane hydrogen atom
     // -- Basic connectivity
-    neta.create(&methane_.atom(1), 0);
+    neta.create(&UnitTest::methaneSpecies().atom(1), 0);
     EXPECT_EQ(neta.definitionString(), "nbonds=1,-C");
-    testNETA("Hydrogen atom in methane", methane_, neta, {1, 2, 3, 4});
+    testNETA("Hydrogen atom in methane", UnitTest::methaneSpecies(), neta, {1, 2, 3, 4});
     // -- Primary neighbour connectivity
-    neta.create(&methane_.atom(1), 1);
+    neta.create(&UnitTest::methaneSpecies().atom(1), 1);
     EXPECT_EQ(neta.definitionString(), "nbonds=1,-C(nbonds=4,nh=4)");
-    testNETA("Hydrogen atom in methane", methane_, neta, {1, 2, 3, 4});
+    testNETA("Hydrogen atom in methane", UnitTest::methaneSpecies(), neta, {1, 2, 3, 4});
     // -- Secondary neighbour connectivity (equivalent to primary)
-    neta.create(&methane_.atom(1), 2);
+    neta.create(&UnitTest::methaneSpecies().atom(1), 2);
     EXPECT_EQ(neta.definitionString(), "nbonds=1,-C(nbonds=4,nh=4)");
-    testNETA("Hydrogen atom in methane", methane_, neta, {1, 2, 3, 4});
+    testNETA("Hydrogen atom in methane", UnitTest::methaneSpecies(), neta, {1, 2, 3, 4});
 }
 
 TEST_F(NETATest, Forcefield)
@@ -336,10 +219,10 @@ TEST_F(NETATest, Forcefield)
     NETADefinition neta;
 
     EXPECT_TRUE(neta.create("-&C6,nbonds=1", &testFF));
-    testNETA("Reference to type by name", rings_, neta, {6, 7, 8, 9});
+    testNETA("Reference to type by name", UnitTest::ringsSpecies(), neta, {6, 7, 8, 9});
 
     EXPECT_TRUE(neta.create("-&1,nbonds=1", &testFF));
-    testNETA("Reference to type by ID", rings_, neta, {6, 7, 8, 9});
+    testNETA("Reference to type by ID", UnitTest::ringsSpecies(), neta, {6, 7, 8, 9});
 
     fmt::print("Testing: Non-existent type name...\n");
     EXPECT_FALSE(neta.create("-&C5", &testFF));
@@ -353,35 +236,35 @@ TEST_F(NETATest, Geometry)
     NETADefinition neta;
 
     neta.create("geometry=unbound");
-    testNETA("Geometry = unbound", geometric_, neta, {0});
+    testNETA("Geometry = unbound", UnitTest::geometricSpecies(), neta, {0});
 
     neta.create("geometry=terminal");
-    testNETA("Geometry = terminal [single bond]", geometric_, neta,
+    testNETA("Geometry = terminal [single bond]", UnitTest::geometricSpecies(), neta,
              {1, 2, 4, 5, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 29, 30, 31, 33, 34, 35, 36});
 
     neta.create("geometry!=terminal");
-    testNETA("Geometry != terminal [single bond]", geometric_, neta, {0, 3, 6, 10, 15, 22, 28, 32});
+    testNETA("Geometry != terminal [single bond]", UnitTest::geometricSpecies(), neta, {0, 3, 6, 10, 15, 22, 28, 32});
 
     neta.create("geometry=linear");
-    testNETA("Geometry = linear", geometric_, neta, {3});
+    testNETA("Geometry = linear", UnitTest::geometricSpecies(), neta, {3});
 
     neta.create("geometry=ts");
-    testNETA("Geometry = TShape", geometric_, neta, {28});
+    testNETA("Geometry = TShape", UnitTest::geometricSpecies(), neta, {28});
 
     neta.create("geometry=tp");
-    testNETA("Geometry = trigonal planar", geometric_, neta, {6});
+    testNETA("Geometry = trigonal planar", UnitTest::geometricSpecies(), neta, {6});
 
     neta.create("geometry=tet");
-    testNETA("Geometry = tetrahedral", geometric_, neta, {10});
+    testNETA("Geometry = tetrahedral", UnitTest::geometricSpecies(), neta, {10});
 
     neta.create("geometry=sqp");
-    testNETA("Geometry = square planar", geometric_, neta, {32});
+    testNETA("Geometry = square planar", UnitTest::geometricSpecies(), neta, {32});
 
     neta.create("geometry=tbp");
-    testNETA("Geometry = trigonal bipyramidal", geometric_, neta, {22});
+    testNETA("Geometry = trigonal bipyramidal", UnitTest::geometricSpecies(), neta, {22});
 
     neta.create("geometry=oct");
-    testNETA("Geometry = octahedral", geometric_, neta, {15});
+    testNETA("Geometry = octahedral", UnitTest::geometricSpecies(), neta, {15});
 }
 
 TEST_F(NETATest, FragmentMatching)
@@ -389,37 +272,38 @@ TEST_F(NETATest, FragmentMatching)
     NETADefinition neta;
 
     EXPECT_TRUE(neta.create("?C,-H(n=3)"));
-    testNETAMatchPath("Methyl group C(0)", ethane_, neta, 0, {0, 2, 3, 4});
+    testNETAMatchPath("Methyl group C(0)", UnitTest::ethaneSpecies(), neta, 0, {0, 2, 3, 4});
 
     EXPECT_TRUE(neta.create("?C,-C(-H(n=3))"));
-    testNETAMatchPath("C(1) methyl plus C(0)", ethane_, neta, 0, {0, 1, 5, 6, 7});
+    testNETAMatchPath("C(1) methyl plus C(0)", UnitTest::ethaneSpecies(), neta, 0, {0, 1, 5, 6, 7});
 
     EXPECT_TRUE(neta.create("ring(size=4,C,C,C,N)"));
-    testNETA("Any atom in a four-membered ring (explicit ring definition)", rings_, neta, {0, 1, 10, 11});
+    testNETA("Any atom in a four-membered ring (explicit ring definition)", UnitTest::ringsSpecies(), neta, {0, 1, 10, 11});
 
     EXPECT_TRUE(neta.create("ring(size=4,C(n=3),N)"));
-    testNETA("Any atom in a four-membered ring (shortest ring definition)", rings_, neta, {0, 1, 10, 11});
+    testNETA("Any atom in a four-membered ring (shortest ring definition)", UnitTest::ringsSpecies(), neta, {0, 1, 10, 11});
 
     EXPECT_TRUE(neta.create("ring(size=4,C,C(n=2),N)"));
-    testNETA("Any atom in a four-membered ring (unnecessary ring definition)", rings_, neta, {0, 1, 10, 11});
+    testNETA("Any atom in a four-membered ring (unnecessary ring definition)", UnitTest::ringsSpecies(), neta, {0, 1, 10, 11});
 
     EXPECT_TRUE(neta.create("ring(size=4,N)"));
-    testNETA("Any atom in a four-membered ring (only one atom specified)", rings_, neta, {0, 1, 10, 11});
+    testNETA("Any atom in a four-membered ring (only one atom specified)", UnitTest::ringsSpecies(), neta, {0, 1, 10, 11});
 
     EXPECT_TRUE(neta.create("ring(size=4,C(n=2))"));
-    testNETA("Any atom in a four-membered ring (only one atom specified)", rings_, neta, {0, 1, 10, 11});
+    testNETA("Any atom in a four-membered ring (only one atom specified)", UnitTest::ringsSpecies(), neta, {0, 1, 10, 11});
 
     EXPECT_TRUE(neta.create("ring(size=8,C(n=4),N,C(n=3))"));
-    testNETA("Any atom in an eight-membered ring (split definition)", rings_, neta, {0, 1, 2, 3, 4, 5, 10, 11});
+    testNETA("Any atom in an eight-membered ring (split definition)", UnitTest::ringsSpecies(), neta,
+             {0, 1, 2, 3, 4, 5, 10, 11});
 
     EXPECT_TRUE(neta.create("ring(size=4,N(n=2),C(n=2))"));
-    testNETA("No atoms - too many of atom type requested", rings_, neta, {});
+    testNETA("No atoms - too many of atom type requested", UnitTest::ringsSpecies(), neta, {});
 
     EXPECT_TRUE(neta.create("ring(size=8,C(n=4),N,C(n=4))"));
-    testNETA("No atoms - too many for ring (9 vs 8)", rings_, neta, {});
+    testNETA("No atoms - too many for ring (9 vs 8)", UnitTest::ringsSpecies(), neta, {});
 
     EXPECT_TRUE(neta.create("ring(size=6,C(n=8))"));
-    testNETA("No atoms - too many for ring (8 vs 6)", rings_, neta, {});
+    testNETA("No atoms - too many for ring (8 vs 6)", UnitTest::ringsSpecies(), neta, {});
 }
 
 TEST_F(NETATest, IdentifierMatching)
@@ -428,7 +312,7 @@ TEST_F(NETATest, IdentifierMatching)
 
     // Methanol identifying cog at the oxygen, x on the carbon, and y on the hydroxyl hydrogen
     EXPECT_TRUE(neta.create("?O,#cog,-C(#x),-H(-O(root),#y)"));
-    auto matchedPath = testNETAMatchPath("Carbon and hydroxyl", methanol_, neta, 4, {0, 4, 5});
+    auto matchedPath = testNETAMatchPath("Carbon and hydroxyl", UnitTest::methanolSpecies(), neta, 4, {0, 4, 5});
     for (auto &&[key, ids] : matchedPath.identifiers())
         fmt::print("ID '{}' : {}\n", key, joinStrings(ids, " ", [](const auto *i) { return i->index(); }));
     testIdentifiers(matchedPath, "cog", {4});
@@ -437,19 +321,22 @@ TEST_F(NETATest, IdentifierMatching)
 
     // Difluorobenzene, identify carbon atoms attached to fluorines as 'cog'
     EXPECT_TRUE(neta.create("?C,ring(size=6,C(-H),C(-H),C(#cog,-F),C(-H),C(-H),C(#cog,-F))"));
-    matchedPath = testNETAMatchPath("Whole molecule", dfb_, neta, 0, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+    matchedPath = testNETAMatchPath("Whole molecule", UnitTest::difluorobenzeneSpecies(), neta, 0,
+                                    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
     testIdentifiers(matchedPath, "cog", {2, 5});
 
     // Difluorobenzene with full axis definition
     EXPECT_TRUE(neta.create("?C,ring(size=6,C(-H),C(-H),C(#cog,-F),C(-H),C(#y,-H),C(#[cog,x],-F))"));
-    matchedPath = testNETAMatchPath("Whole molecule", dfb_, neta, 0, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+    matchedPath = testNETAMatchPath("Whole molecule", UnitTest::difluorobenzeneSpecies(), neta, 0,
+                                    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
     testIdentifiers(matchedPath, "cog", {2, 5});
     testIdentifiers(matchedPath, "x", {5});
     testIdentifiers(matchedPath, "y", {4});
 
     // Difluorobenzene with full axis definition (separate cog and x specification for one carbon
     EXPECT_TRUE(neta.create("?C,ring(size=6,C(-H),C(-H),C(#cog,-F),C(-H),C(#y,-H),C(#cog,#x,-F))"));
-    matchedPath = testNETAMatchPath("Whole molecule", dfb_, neta, 0, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+    matchedPath = testNETAMatchPath("Whole molecule", UnitTest::difluorobenzeneSpecies(), neta, 0,
+                                    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
     testIdentifiers(matchedPath, "cog", {2, 5});
     testIdentifiers(matchedPath, "x", {5});
     testIdentifiers(matchedPath, "y", {4});

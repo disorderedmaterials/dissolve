@@ -340,7 +340,7 @@ void DissolveWindow::updateMenus()
 
     // Species Menu
     auto speciesAtomSelection = activeTab->type() == MainTab::TabType::Species ? ui_.MainTabs->currentSpecies()->selectedAtoms()
-                                                                               : std::vector<SpeciesAtom *>();
+                                                                               : std::vector<const SpeciesAtom *>();
     ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesAddForcefieldTermsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);

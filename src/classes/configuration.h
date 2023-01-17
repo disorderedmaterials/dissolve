@@ -108,6 +108,8 @@ class Configuration : public Serialisable
     void adjustSpeciesPopulation(const Species *sp, int delta);
     // Return Species populations within the Configuration
     const std::vector<std::pair<const Species *, int>> &speciesPopulations() const;
+    // Return population of specified species within the Configuration
+    int speciesPopulation(const Species *sp) const;
     // Return if the specified Species is present in the Configuration
     bool containsSpecies(const Species *sp);
     // Return the total charge of the Configuration

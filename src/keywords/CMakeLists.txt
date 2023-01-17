@@ -9,7 +9,6 @@ add_library(
   data2dstore.cpp
   data3dstore.cpp
   double.cpp
-  dynamicsitenodes.cpp
   elementvector.cpp
   expression.cpp
   expressionvariablevector.cpp
@@ -49,7 +48,6 @@ add_library(
   data2dstore.h
   data3dstore.h
   double.h
-  dynamicsitenodes.h
   elementvector.h
   enumoptions.h
   expression.h

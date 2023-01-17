@@ -533,7 +533,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
 
                 site = addSite(parser.argsv(1));
-                if (!site->read(parser))
+                if (!site->read(parser, coreData))
                     error = true;
                 break;
             case (Species::SpeciesKeyword::Torsion):

@@ -300,7 +300,7 @@ void DissolveWindow::on_SpeciesSetAtomTypesInSelectionAction_triggered(bool chec
         return;
 
     // Set atom types in selection - we also need to update Isotopologues afterwards
-    for (auto *i : species->selectedAtoms())
+    for (auto *i : species->modifiableSelectedAtoms())
         i->setAtomType(at);
     species->updateIsotopologues();
 
@@ -326,7 +326,7 @@ void DissolveWindow::on_SpeciesSetChargesInSelectionAction_triggered(bool checke
     if (!ok)
         return;
 
-    for (auto *i : species->selectedAtoms())
+    for (auto *i : species->modifiableSelectedAtoms())
         i->setCharge(q);
 
     setModified();
