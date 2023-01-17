@@ -32,44 +32,30 @@ runs:
         !/nix/var/nix/db/reserved
       key: ${{ runner.os }}-nix-store
 
-  # - name: Install cachix
-  #   shell: bash
-  #   run: |
-  #     set -ex
+  - name: Install cachix
+    shell: bash
+    run: |
+      set -ex
 
-  #     mkdir -p .config/cachix
-  #     nix-env -iA cachix -f https://cachix.org/api/v1/install
-      # nix-env -iA jq
+      mkdir -p .config/cachix
+      nix-env -iA cachix -f https://cachix.org/api/v1/install
 
   - name: Build
     shell: bash
     run: |
       set -ex
 
-      # source ~/.nix-profile/etc/profile.d/nix.sh
-
       # Prep cachix
-      # cachix use dissolve-nix
+      cachix use dissolve-nix
 
       # Build
       nix build -L .#${{ inputs.target }}
       nix build --json .#${{ inputs.target }} > archive.json
 
-  # - name: "Push to Cachix"
-  #   shell: bash
-  #   run: |
-  #     set -ex
-
-  #     source ~/.nix-profile/etc/profile.d/nix.sh
-      # cat archive.json | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
-      # nix-collect-garbage -d
-
   - name: Bundle
     shell: bash
     run: |
       set -ex
-
-      # source ~/.nix-profile/etc/profile.d/nix.sh
 
       nix bundle -L .#${{ inputs.target }} -o ${{ inputs.target }}
       ls -R ${{ inputs.target }}
