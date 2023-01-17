@@ -15,9 +15,9 @@ runs:
       nix_path: nixpkgs=channel:${{ env.nixOSVersion }}
 
   - name: Cache install Nix packages
-      uses: mtoohey31/cache-flake-attrs@v2
-      with:
-        key: ${{ runner.os }}-nix-${{ hashFiles('./flake.lock', './flake.nix') }}
+    uses: mtoohey31/cache-flake-attrs@v2
+    with:
+      key: ${{ runner.os }}-nix-${{ hashFiles('./flake.lock', './flake.nix') }}
 
   - name: Install cachix
     shell: bash
