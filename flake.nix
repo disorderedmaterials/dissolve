@@ -4,11 +4,15 @@
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
   outputs =
-    { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src, weggli }:
+    { self, nixpkgs, outdated, flake-compat, flake-utils, bundlers, nixGL-src, weggli }:
     let
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
