@@ -144,7 +144,7 @@
 
         defaultPackage = self.packages.${system}.dissolve-gui;
 
-        devShell = pkgs.stdenv.mkDerivation {
+        devShells.default = pkgs.stdenv.mkDerivation {
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
             ++ (with pkgs; [
