@@ -46,24 +46,26 @@ int ModuleLayerModel::rowCount(const QModelIndex &parent) const
 QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
 {
     auto *module = rawData(index);
-
-    if (role == Qt::DisplayRole)
+    switch (role)
     {
-        if (module->isDisabled())
-            return QString::fromStdString(fmt::format("{} [{}] (disabled)", module->name(), module->frequency()));
-        else if (moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
-            return QString::fromStdString(fmt::format("{} [{}] (disabled via layer)", module->name(), module->frequency()));
-        else
-            return QString::fromStdString(fmt::format("{} [{}]", module->name(), module->frequency()));
+
+        case (Qt::DisplayRole):
+            if (module->isDisabled())
+                return QString::fromStdString(fmt::format("{} [{}] (disabled)", module->name(), module->frequency()));
+            else if (moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
+                return QString::fromStdString(fmt::format("{} [{}] (disabled via layer)", module->name(), module->frequency()));
+            else                
+                return QString::fromStdString(fmt::format("{} [{}]", module->name(), module->frequency()));
+        case (Qt::EditRole):
+            return QString::fromStdString(std::string(module->name()));
+        case (Qt::UserRole):
+            return QVariant::fromValue(module);
+        case (Qt::DecorationRole):
+            return QIcon((QPixmap(
+                QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module->type())).toLower()))));
+        default:
+        return {};
     }
-    else if (role == Qt::EditRole)
-        return QString::fromStdString(std::string(module->name()));
-    else if (role == Qt::UserRole)
-        return QVariant::fromValue(module);
-    else if (role == Qt::DecorationRole)
-        return QIcon((QPixmap(
-            QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module->type())).toLower()))));
-    return {};
 }
 
 bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, int role)

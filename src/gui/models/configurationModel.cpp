@@ -37,16 +37,20 @@ int ConfigurationModel::rowCount(const QModelIndex &parent) const
 
 QVariant ConfigurationModel::data(const QModelIndex &index, int role) const
 {
-    if (role == Qt::DisplayRole)
-        return QString::fromStdString(std::string(rawData(index)->name()));
-    else if (role == Qt::CheckStateRole && checkedItems_)
-        return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
-                   ? Qt::Unchecked
-                   : Qt::Checked;
-    else if (role == Qt::UserRole)
-        return QVariant::fromValue(rawData(index));
-
-    return {};
+    switch (role)
+    {
+        case (Qt::DisplayRole):
+            return QString::fromStdString(std::string(rawData(index)->name()));
+        case (Qt::CheckStateRole && checkedItems_):
+            return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
+                           checkedItems_->get().end()
+                       ? Qt::Unchecked
+                       : Qt::Checked;
+        case (Qt::UserRole):
+            return QVariant::fromValue(rawData(index));
+        default:
+            return {};
+    }
 }
 
 bool ConfigurationModel::setData(const QModelIndex &index, const QVariant &value, int role)
