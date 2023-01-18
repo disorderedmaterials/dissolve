@@ -19,7 +19,7 @@ runs:
       sudo chmod -R 777 /nix
 
   - name: Load nix cache
-    uses: actions/cache
+    uses: actions/cache@v2
     with:
       path: |
         /nix/store/**
