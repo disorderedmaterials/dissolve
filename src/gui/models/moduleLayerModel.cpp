@@ -54,7 +54,7 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
                 return QString::fromStdString(fmt::format("{} [{}] (disabled)", module->name(), module->frequency()));
             else if (moduleLayer_->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled))
                 return QString::fromStdString(fmt::format("{} [{}] (disabled via layer)", module->name(), module->frequency()));
-            else                
+            else
                 return QString::fromStdString(fmt::format("{} [{}]", module->name(), module->frequency()));
         case (Qt::EditRole):
             return QString::fromStdString(std::string(module->name()));
@@ -64,7 +64,7 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
             return QIcon((QPixmap(
                 QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module->type())).toLower()))));
         default:
-        return {};
+            return {};
     }
 }
 

@@ -41,15 +41,19 @@ QVariant SpeciesModel::data(const QModelIndex &index, int role) const
     {
         case (Qt::DisplayRole):
             return QString::fromStdString(std::string(rawData(index)->name()));
-        case (Qt::CheckStateRole && checkedItems_):
-            return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
-                           checkedItems_->get().end()
-                       ? Qt::Unchecked
-                       : Qt::Checked;
+        case (Qt::CheckStateRole):
+            if (checkedItems_)
+            {
+                return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
+                               checkedItems_->get().end()
+                           ? Qt::Unchecked
+                           : Qt::Checked;
+            }
+            return {};
         case (Qt::UserRole):
             return QVariant::fromValue(rawData(index));
         default:
-        return {};
+            return {};
     }
 }
 

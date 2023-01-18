@@ -54,8 +54,7 @@ QVariant ModulePaletteModel::data(const QModelIndex &index, int role) const
         if (index.column() != 1)
             return {};
 
-        auto [moduleType, brief] = 
-            std::next(ModuleRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
+        auto [moduleType, brief] = std::next(ModuleRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
         switch (role)
         {
             case (Qt::DisplayRole):

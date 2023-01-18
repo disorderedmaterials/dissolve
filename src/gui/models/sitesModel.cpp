@@ -95,14 +95,18 @@ QVariant SitesModel::data(const QModelIndex &index, int role) const
         switch (role)
         {
             case (Qt::DisplayRole):
-            return QString::fromStdString(std::string(rawData(index)->name()));
-            case (Qt::CheckStateRole && checkedItems_):
-            return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
-                           checkedItems_->get().end()
-                       ? Qt::Unchecked
-                       : Qt::Checked;
+                return QString::fromStdString(std::string(rawData(index)->name()));
+            case (Qt::CheckStateRole):
+                if (checkedItems_)
+                {
+                    return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) ==
+                                   checkedItems_->get().end()
+                               ? Qt::Unchecked
+                               : Qt::Checked;
+                }
+                return {};
             case (Qt::UserRole):
-            return QVariant::fromValue(rawData(index));
+                return QVariant::fromValue(rawData(index));
         }
     }
     else if (!index.parent().isValid() && index.column() == 0)
