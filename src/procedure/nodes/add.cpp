@@ -117,6 +117,12 @@ bool AddProcedureNode::prepare(const ProcedureContext &procedureContext)
     if (!scaleA_ && !scaleB_ && !scaleC_)
         return Messenger::error("Must have at least one scalable box axis!\n");
 
+    // If the positioning type is 'Central', don't allow more than one molecule to be added
+    if (positioningType_ == AddProcedureNode::PositioningType::Central && population_.asInteger() > 1)
+        return Messenger::error(
+            "Positioning type is set to be the centre of the box, but the requested population is greater than 1 ({}).\n",
+            population_.asInteger());
+
     return true;
 }
 
