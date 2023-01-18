@@ -109,8 +109,9 @@ bool AddProcedureNode::prepare(const ProcedureContext &procedureContext)
     if (positioningType_ == AddProcedureNode::PositioningType::Region && !region_)
         return Messenger::error("A valid region must be specified with the 'Region' keyword.\n");
     else if (positioningType_ != AddProcedureNode::PositioningType::Region && region_)
-        Messenger::warn("A region has been specified ({}) but the positioningType_ type is set to '{}'\n", region_->name(),
-                        AddProcedureNode::positioningTypes().keyword(positioningType_));
+        Messenger::warn(
+            "A region has been specified ({}) but the positioning type is set to '{}' (rather than targetting the region).\n",
+            region_->name(), AddProcedureNode::positioningTypes().keyword(positioningType_));
 
     // Check scalable axes definitions
     if (!scaleA_ && !scaleB_ && !scaleC_)
