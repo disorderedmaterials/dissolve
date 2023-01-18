@@ -10,32 +10,10 @@ runs:
   using: "composite"
   steps:
 
-  - name: Create nix store
-    shell: bash
-    run: |
-      # Create with liberal rights, otherwise cache action will complain
-      # about permission errors.
-      sudo mkdir -p /nix/store
-      sudo chmod -R 777 /nix
-
-  - name: Load nix cache
-    uses: actions/cache@v2
+  - name: Install nix
+    uses: "./.github/workflows/get-nix"
     with:
-      path: |
-        /nix/store/**
-        /nix/var/nix/*/*
-        /nix/var/nix/db/*
-        /nix/var/nix/db/*/**
-        !/nix/var/nix/daemon-socket/socket
-        !/nix/var/nix/userpool/*
-        !/nix/var/nix/gc.lock
-        !/nix/var/nix/db/big-lock
-        !/nix/var/nix/db/reserved
-      key: ${{ runner.os }}-${{ inputs.target }}-cache
-
-  - uses: cachix/install-nix-action@v15
-    with:
-      nix_path: nixpkgs=channel:nixos-unstable
+      target: ${{ inputs.target }}
 
   - name: Build
     shell: bash
