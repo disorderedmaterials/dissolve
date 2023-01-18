@@ -8,7 +8,7 @@
     weggli.flake = false;
   };
   outputs =
-    { self, nixpkgs, outdated, flake-compat, flake-utils, bundlers, nixGL-src, weggli }:
+    { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src, weggli }:
     let
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
