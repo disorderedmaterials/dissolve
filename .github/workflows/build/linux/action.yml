@@ -11,6 +11,7 @@ runs:
   steps:
 
   - name: Create nix store
+    shell: bash
     run: |
       # Create with liberal rights, otherwise cache action will complain
       # about permission errors.
