@@ -176,12 +176,12 @@
         };
 
         apps = {
-          dissolve =
+          dissolve-app =
             flake-utils.lib.mkApp { drv = self.packages.${system}.dissolve; };
-          dissolve-mpi = flake-utils.lib.mkApp {
+          dissolve-mpi-app = flake-utils.lib.mkApp {
             drv = self.packages.${system}.dissolve-mpi;
           };
-          dissolve-gui = flake-utils.lib.mkApp {
+          dissolve-gui-app = flake-utils.lib.mkApp {
             drv = self.packages.${system}.dissolve-gui;
           };
           uploader = {
