@@ -4,10 +4,6 @@
     outdated.url = "github:NixOS/nixpkgs/nixos-21.05";
     nixGL-src.url = "github:guibou/nixGL";
     nixGL-src.flake = false;
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
   };
