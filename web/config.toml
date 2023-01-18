@@ -51,7 +51,7 @@ latexDashes = true
 
 # General Parameters
 [params]
-copyright = "Copyright (c) 2022 Team Dissolve and contributors. Built using Hugo/Docsy."
+copyright = "Copyright (c) 2023 Team Dissolve and contributors. Built using Hugo/Docsy."
 releaseVersion = "0.9.12"
 releaseDate = "18th January 2023"
 devVersion = "1.0.0"
