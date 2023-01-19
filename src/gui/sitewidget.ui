@@ -503,6 +503,92 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="SiteSetElementsButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>500</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Set site y-axis reference point from current atom selection</string>
+        </property>
+        <property name="text">
+         <string>Elements</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="SiteSetAtomTypesButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>500</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Set site y-axis reference point from current atom selection</string>
+        </property>
+        <property name="text">
+         <string>Atom Types</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -645,6 +731,7 @@
         <property name="font">
          <font>
           <pointsize>10</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -696,6 +783,7 @@
         <property name="font">
          <font>
           <pointsize>10</pointsize>
+          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -738,7 +826,7 @@
  </customwidgets>
  <resources>
   <include location="main.qrc"/>
-  <include location="../main.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

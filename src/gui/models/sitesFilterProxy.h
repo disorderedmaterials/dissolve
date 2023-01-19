@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "templates/flags.h"
 #include <QSortFilterProxyModel>
-#include <bitset>
 
 // Forward Declarations
 class QModelIndex;
@@ -14,21 +14,21 @@ class SitesFilterProxy : public QSortFilterProxyModel
     Q_OBJECT
 
     public:
-    SitesFilterProxy(int flags = 0);
     // Filter flags
     enum FilterFlags
     {
-        HasAxes,
-        nFilterFlags
+        HasAxes
     };
 
     private:
     // Current filter flags
-    std::bitset<nFilterFlags> filterFlags_;
+    Flags<FilterFlags> flags_;
 
     public:
     // Set filter flag
     void setFlag(FilterFlags flag);
+    // Remove filter flag
+    void removeFlag(FilterFlags flag);
 
     /*
      * QSortFilterProxyModel overrides

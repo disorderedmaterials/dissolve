@@ -57,7 +57,7 @@ void SpeciesTab::on_SiteAddButton_clicked(bool checked)
 void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
 {
     // Get the currently-selected site
-    SpeciesSite *site = currentSite();
+    auto *site = currentSite();
     if (!site)
         return;
 
@@ -75,11 +75,36 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
     dissolveWindow_->fullUpdate();
 }
 
+void SpeciesTab::on_SiteTypeCombo_currentIndexChanged(int index)
+{
+    auto *site = currentSite();
+    if (refreshLock_.isLocked() || (!site))
+        return;
+
+    switch (index)
+    {
+        case (0):
+            site->setType(SpeciesSite::SiteType::Static);
+            break;
+        case (1):
+            site->setType(SpeciesSite::SiteType::Dynamic);
+            break;
+        default:
+            Messenger::error("Type combo index '{}' not handled.\n", index);
+    }
+
+    updateSitesTab();
+
+    ui_.SiteViewerWidget->postRedisplay();
+
+    dissolveWindow_->setModified();
+}
+
 void SpeciesTab::siteSelectionChanged(const QItemSelection &current, const QItemSelection &previous) { updateSitesTab(); }
 
 void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
 {
-    SpeciesSite *site = currentSite();
+    auto *site = currentSite();
     if (refreshLock_.isLocked() || (!site))
         return;
 
@@ -113,29 +138,49 @@ void SpeciesTab::updateSitesTab()
     }
 
     ui_.SiteRemoveButton->setEnabled(site != nullptr);
-    ui_.SiteOriginGroup->setEnabled(site != nullptr);
-    ui_.SiteXAxisGroup->setEnabled(site != nullptr);
-    ui_.SiteYAxisGroup->setEnabled(site != nullptr);
+    ui_.SiteTypeCombo->setEnabled(site != nullptr);
+    ui_.SiteDefinitionStack->setEnabled(site != nullptr);
     if (!site)
     {
         ui_.SiteOriginAtomsEdit->clear();
         ui_.SiteXAxisAtomsEdit->clear();
         ui_.SiteYAxisAtomsEdit->clear();
+        ui_.SiteElementsEdit->clear();
+        ui_.SiteAtomTypesEdit->clear();
         return;
     }
 
-    // Set origin atom indices
-    ui_.SiteOriginAtomsEdit->setText(
-        QString::fromStdString(joinStrings(site->originAtoms(), " ", [](const auto &i) { return siteName(*i); })));
-    ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
+    if (site->type() == SpeciesSite::SiteType::Static)
+    {
+        ui_.SiteTypeCombo->setCurrentIndex(0);
+        ui_.SiteDefinitionStack->setCurrentIndex(0);
 
-    // Set x axis atom indices
-    ui_.SiteXAxisAtomsEdit->setText(
-        QString::fromStdString(joinStrings(site->xAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+        // Set origin atom indices
+        ui_.SiteOriginAtomsEdit->setText(
+            QString::fromStdString(joinStrings(site->originAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+        ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
-    // Set y axis atom indices
-    ui_.SiteYAxisAtomsEdit->setText(
-        QString::fromStdString(joinStrings(site->yAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+        // Set x axis atom indices
+        ui_.SiteXAxisAtomsEdit->setText(
+            QString::fromStdString(joinStrings(site->xAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+
+        // Set y axis atom indices
+        ui_.SiteYAxisAtomsEdit->setText(
+            QString::fromStdString(joinStrings(site->yAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+    }
+    else if (site->type() == SpeciesSite::SiteType::Dynamic)
+    {
+        ui_.SiteTypeCombo->setCurrentIndex(1);
+        ui_.SiteDefinitionStack->setCurrentIndex(1);
+
+        // Set elements
+        ui_.SiteElementsEdit->setText(
+            QString::fromStdString(joinStrings(site->elements(), " ", [](const auto &el) { return Elements::symbol(el); })));
+
+        // Set atom types
+        ui_.SiteAtomTypesEdit->setText(
+            QString::fromStdString(joinStrings(site->atomTypes(), " ", [](const auto &at) { return at->name(); })));
+    }
 
     // If the current site has changed, also regenerate the SpeciesSite renderable
     if (ui_.SiteViewerWidget->siteViewer()->speciesSite() != site)

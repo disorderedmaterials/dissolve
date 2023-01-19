@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "templates/flags.h"
 #include <QSortFilterProxyModel>
 
 // Forward Declarations
@@ -13,19 +14,23 @@ class SpeciesSiteFilterProxy : public QSortFilterProxyModel
     Q_OBJECT
 
     public:
-    SpeciesSiteFilterProxy(int flags = SpeciesSiteFilterProxy::None);
+    // Filter flags
+    enum FilterFlag
+    {
+        IsOriented,
+        HideDynamic,
+        HideStatic
+    };
+
+    private:
+    // Filter flags
+    Flags<FilterFlag> flags_;
 
     public:
-    // Filter flags
-    enum FilterFlags
-    {
-        None = 0,
-        IsOriented = 1
-    };
-    // Current filter flags
-    int filterFlags_;
-    // Set filter flags
-    void setFlags(int flags);
+    // Set filter flag
+    void setFlag(FilterFlag flag);
+    // Remove filter flag
+    void removeFlag(FilterFlag flag);
 
     /*
      * QSortFilterProxyModel overrides

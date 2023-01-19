@@ -107,7 +107,10 @@ void SpeciesSiteKeywordWidget::updateAvailableSites(int speciesIndex)
     {
         auto &sites = coreData_.species()[speciesIndex]->sites();
         siteModel_.setData(sites);
-        siteFilterProxy_.setFlags(keyword_->axesRequired() ? SpeciesSiteFilterProxy::IsOriented : SpeciesSiteFilterProxy::None);
+        if (keyword_->axesRequired())
+            siteFilterProxy_.setFlag(SpeciesSiteFilterProxy::IsOriented);
+        else
+            siteFilterProxy_.removeFlag(SpeciesSiteFilterProxy::IsOriented);
         if (keyword_->data())
             ui_.SiteCombo->setCurrentIndex(
                 std::find_if(sites.begin(), sites.end(), [&](const auto &site) { return site.get() == keyword_->data(); }) -

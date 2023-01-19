@@ -62,6 +62,10 @@ class SpeciesSite : public Serialisable
     SiteType type_;
 
     public:
+    // Clear definition data from site
+    void clearDefinition();
+    // Set type of site
+    void setType(SiteType type);
     // Return type of site
     SiteType type() const;
     // Return whether the site has defined axes
