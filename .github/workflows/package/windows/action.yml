@@ -1,0 +1,81 @@
+name: Package
+
+runs:
+  using: "composite"
+  steps:
+
+  #
+  # Setup / Install Dependencies
+  #
+
+  - name: Retrieve Qt Cache
+    uses: actions/cache@v3
+    with:
+      key: windows-qt-${{ env.qtVersion }}
+      path: ${{ runner.temp }}\qt
+
+  - name: Retrieve FTGL Cache
+    id: cache-ftgl
+    uses: actions/cache@v3
+    with:
+      key: windows-ftgl
+      path: ${{ runner.temp }}\ftgl-install
+
+  - name: Retrieve FreeType Cache
+    id: cache-freetype
+    uses: actions/cache@v3
+    with:
+      key: windows-freetype
+      path: ${{ runner.temp }}\freetype-install
+
+  - name: Download Raw Build Artifacts
+    uses: actions/download-artifact@v3
+    with:
+      name: windows-build-artifacts
+      path: ${{ github.workspace }}
+
+  - name: Install Chocolatey Dependencies
+    shell: bash
+    run: choco install -y zip innoextract
+
+  #
+  # Create Packages
+  #
+
+  - name: Create Installers
+    shell: bash
+    run: |
+      set -ex
+
+      # Setup environment
+      export Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
+      export PATH="${Qt6_DIR}\bin;$PATH"
+      export FREETYPE_DIR="${RUNNER_TEMP}\freetype-install\bin"
+      export FTGL_DIR="${RUNNER_TEMP}\ftgl-install\bin"
+      export DISSOLVE_DIR="${GITHUB_WORKSPACE}\build\bin"
+      export DEPLOY_DIR="${GITHUB_WORKSPACE}\deploy"
+
+      # Run Inno Setup Compiler
+      iscc.exe -O./ ./ci/windows/dissolve-gui.iss
+      exe=${ls *.exe}
+      exeBase=${basename $exe}
+      echo "Executable installer is $exe, basename is $exeBase"
+      
+      # Create Zip from Exe
+      innoextract.exe $exe -d $exeBase
+      mv "$exeBase/app/bin/*" $exeBase
+      mv "$exeBase/app" ./
+      zipFile="${exeBaseName}.zip"
+      zip -r $zipFile $exeBase
+      
+      # Collect artifacts
+      mkdir packages
+      mv $zipFile packages
+      mv $exe packages
+
+  - name: Upload Package Artifacts
+    uses: actions/upload-artifact@v3
+    with:
+      name: windows-package-artifacts
+      path: |
+        ${{ github.workspace }}\packages

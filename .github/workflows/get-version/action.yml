@@ -1,0 +1,13 @@
+name: Get Code Version
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Grep Version
+    shell: bash
+    run: |
+      set -ex
+      DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed 's/.*\"\(.*\)\"/\1/g'`
+      echo "Dissolve code version is ${DISSOLVE_VERSION}"
+      echo "dissolveVersion=${DISSOLVE_VERSION}" >> ${GITHUB_ENV}

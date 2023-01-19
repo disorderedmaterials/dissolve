@@ -1,0 +1,46 @@
+name: Quality Control
+
+runs:
+  using: "composite"
+  steps:
+  - name: Setup Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: ${{ env.pythonVersion }}
+
+  - name: Install Dependencies
+    shell: bash
+    run: |
+      set -ex
+      sudo apt-get update
+      sudo apt-get install --yes clang-format-13
+      pip install cmake_format==0.6.9
+
+  - name: C++ Formatting
+    shell: bash
+    run: |
+      set -ex
+      clang-format-13 --version
+      find . -type f -regex '.*\.\(c\|cpp\|h\|hpp\|hui\)' -exec clang-format-13 -i {} +
+      git diff
+      git diff --quiet
+
+  - name: CMake Formatting
+    shell: bash
+    run: |
+      set -ex
+      cmake-format --version
+      find . -type f -name CMakeLists.txt -exec cmake-format -i '{}' \;
+      git diff
+      git diff --quiet
+
+  - name: Copyright Year
+    shell: bash
+    run: |
+      set -ex
+      # Find all occurances of "YYYY Team Dissolve and contributors" and replace YYYY with the current year
+      find . -type f -not -path '.git/*' -exec sed -ri "s/[0-9]{4} (Team Dissolve and contributors)/$(date +%Y) \1/g" {} +
+      # Show the diff to give an indication of the issues in the CI log
+      git diff
+      # Run quiet diff to fail the job if any changes were made (see man git-diff)
+      git diff --quiet

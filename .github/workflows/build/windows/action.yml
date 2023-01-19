@@ -1,0 +1,174 @@
+name: Build
+
+inputs:
+  threading:
+    default: true
+  extraCMakeFlags:
+    default: ""
+  freeTypeArchive:
+    default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
+  ftglRepo:
+    default: https://github.com/frankheckenbach/ftgl.git
+
+runs:
+  using: "composite"
+  steps:
+
+  #
+  # Setup / Install Dependencies
+  #
+
+  - name: Setup Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: ${{ env.pythonVersion }}
+
+  - name: Install Chocolatey Dependencies
+    shell: bash
+    run: choco install -y antlr4 ninja wget
+
+  - name: Install Python Dependencies
+    shell: bash
+    run: pip3 install --user aqtinstall conan
+
+  #
+  # Retrieve Qt cache (or install it)
+  #
+
+  - name: Retrieve Qt Cache
+    id: cache-qt
+    uses: actions/cache@v3
+    with:
+      key: windows-qt-${{ env.qtVersion }}
+      path: ${{ runner.temp }}\qt
+
+  - name: Install Qt
+    if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
+    shell: bash
+    run: |
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
+      aqt install-qt --outputdir ${RUNNER_TEMP}/qt windows desktop ${{ env.qtVersion }} win64_msvc2019_64
+
+  - name: Setup MSVC Compiler
+    uses: ilammy/msvc-dev-cmd@v1
+
+  #
+  # Build / Retrieve Freetype
+  #
+
+  - name: Retrieve FreeType Cache
+    id: cache-freetype
+    uses: actions/cache@v3
+    with:
+      key: windows-freetype
+      path: |
+        ${{ runner.temp }}\freetype-latest
+        ${{ runner.temp }}\freetype-install
+
+  - name: Download FreeType
+    if: ${{ steps.cache-freetype.outputs.cache-hit != 'true' }}
+    working-directory: ${{ runner.temp }}
+    shell: bash
+    run: |
+      set -ex
+      wget ${{ inputs.freeTypeArchive }} -Ofreetype.tgz
+      tar -zxvf freetype.tgz
+      rm freetype.tgz
+      mv freetype-* freetype-latest
+
+  - name: Build FreeType
+    if: ${{ steps.cache-freetype.outputs.cache-hit != 'true' }}
+    working-directory: ${{ runner.temp }}
+    shell: bash
+    run: |
+      set -ex
+      mkdir freetype-build && cd freetype-build
+      cmake ../freetype-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DBUILD_SHARED_LIBS:STRING=ON -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_PNG:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:bool=true -DCMAKE_DISABLE_FIND_PACKAGE_BrotliDec:bool=true -DCMAKE_INSTALL_PREFIX:path=../freetype-install
+      cmake --build . --target install --config Release
+
+  #
+  # Build / Retrieve FTGL
+  #
+
+  - name: Retrieve FTGL Cache
+    id: cache-ftgl
+    uses: actions/cache@v3
+    with:
+      key: windows-ftgl
+      path: |
+        ${{ runner.temp }}\ftgl-latest
+        ${{ runner.temp }}\ftgl-install
+
+  - name: Download FTGL
+    if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
+    working-directory: ${{ runner.temp }}
+    shell: bash
+    run: |
+      set -ex
+      git clone ${{ inputs.ftglRepo }} ftgl-latest
+
+  - name: Build FTGL
+    if: ${{ steps.cache-ftgl.outputs.cache-hit != 'true' }}
+    working-directory: ${{ runner.temp }}
+    shell: bash
+    run: |
+      set -ex
+      mkdir ftgl-build && cd ftgl-build
+      INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
+      LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
+      cmake ../ftgl-latest -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_INSTALL_PREFIX:path=../ftgl-install
+      cmake --build . --target install --config Release
+
+  #
+  # Main Build
+  #
+
+  - name: Retrieve Conan Cache
+    id: cache-conan
+    uses: actions/cache@v3
+    with:
+      key: windows-conan
+      path: |
+        ~\.conan
+        ~\.conancache
+
+  - name: Install Conan Dependencies
+    if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
+    shell: bash
+    run: |
+      conan profile new default --detect
+      conan profile update settings.compiler="Visual Studio" default
+      conan profile update settings.compiler.version=17 default
+
+  - name: Build
+    shell: bash
+    run: |
+      # Setup environment
+      Qt6_DIR="${RUNNER_TEMP}\qt\${{ env.qtVersion }}\msvc2019_64"
+      export PATH="${Qt6_DIR}\bin;$PATH"
+      INCLUDE="${RUNNER_TEMP}\freetype-latest;$INCLUDE"
+      LIB="${RUNNER_TEMP}\freetype-install\lib;${RUNNER_TEMP}\freetype-install\bin;$LIB"
+      INCLUDE="${RUNNER_TEMP}\ftgl-latest\src;$INCLUDE"
+      LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
+
+      # Build
+      mkdir build && cd build
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+      conan install .. --build missing
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
+      cmake --build . --config Release --target keywordwidgets
+      cmake --build . --config Release
+      cd ../
+
+      # Deploy Conan dependencies for ease
+      mkdir deploy && cd deploy
+      conan install .. -g deploy
+
+  - name: Upload Raw Build Artifacts
+    uses: actions/upload-artifact@v3
+    with:
+      name: windows-build-artifacts
+      path: |
+        ${{ github.workspace }}\build
+        ${{ github.workspace }}\deploy
+      retention-days: 1

@@ -1,0 +1,72 @@
+name: Build
+
+inputs:
+  extraCMakeFlags:
+    default: ""
+  target:
+    default: "dissolve"
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Install nix
+    uses: "./.github/workflows/get-nix"
+
+  - name: Install cachix
+    shell: bash
+    run: |
+      set -ex
+
+      source ~/.nix-profile/etc/profile.d/nix.sh
+
+      nix-channel --add https://nixos.org/channels/nixos-${{ env.nixOSVersion }} nixos
+      nix-channel --update
+
+      mkdir -p .config/cachix
+      nix-env -iA cachix -f https://cachix.org/api/v1/install
+      nix-env -iA nixos.jq
+
+  - name: Build
+    shell: bash
+    run: |
+      set -ex
+
+      source ~/.nix-profile/etc/profile.d/nix.sh
+
+      # Prep cachix
+      cachix use dissolve-nix
+
+      # Build
+      nix build -L .#${{ inputs.target }}
+      nix build --json .#${{ inputs.target }} > archive.json
+
+  - name: "Push to Cachix"
+    shell: bash
+    run: |
+      set -ex
+
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      cat archive.json | jq -r '.[].outputs | to_entries[].value' | cachix push dissolve-nix
+      nix-collect-garbage -d
+
+  - name: Bundle
+    shell: bash
+    run: |
+      set -ex
+
+      source ~/.nix-profile/etc/profile.d/nix.sh
+
+      nix bundle -L .#${{ inputs.target }} -o ${{ inputs.target }}
+      ls -R ${{ inputs.target }}
+
+      # Assemble artifacts
+      mkdir build
+      cp -v ${{ inputs.target }} build/${{ inputs.target }}-${{ env.dissolveVersion }}
+
+  - name: Upload Raw Build Artifacts
+    uses: actions/upload-artifact@v3
+    with:
+      name: linux-build-artifacts-${{ inputs.target }}
+      path: ${{ github.workspace }}/build
+      retention-days: 1

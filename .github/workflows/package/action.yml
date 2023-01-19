@@ -1,0 +1,20 @@
+name: Package
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Package ??? (Linux)
+    if: runner.os == 'Linux'
+    shell: bash
+    run: |
+      VERSION=$(grep "VERSION =" gudpy.spec | sed "s/.*\"\(.*\)\"/\1/g")
+      mv dist/GudPy-${VERSION} dist/GudPy-${VERSION}-Linux
+
+  - name: Package (OSX)
+    if: runner.os == 'MacOS'
+    uses: "./.github/workflows/package/osx"
+
+  - name: Package (Windows)
+    if: runner.os == 'Windows'
+    uses: "./.github/workflows/package/windows"

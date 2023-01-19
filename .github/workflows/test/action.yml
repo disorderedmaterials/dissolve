@@ -1,0 +1,40 @@
+name: Test
+
+inputs:
+  target:
+    default: "dissolve"
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Install nix
+    uses: "./.github/workflows/get-nix"
+
+  - name: Install cachix
+    shell: bash
+    run: |
+      set -ex
+
+      source ~/.nix-profile/etc/profile.d/nix.sh
+
+      nix-channel --add https://nixos.org/channels/nixos-${{ env.nixOSVersion }} nixos
+      nix-channel --update
+
+      mkdir -p .config/cachix
+      nix-env -iA cachix -f https://cachix.org/api/v1/install
+      nix-env -iA nixos.jq
+
+  - name: Test
+    shell: bash
+    run: |
+      set -ex
+
+      source ~/.nix-profile/etc/profile.d/nix.sh
+
+      # Prep cachix
+      cachix use dissolve-nix
+
+      # Build
+      nix build -L .#checks.x86_64-linux.${{ inputs.target }}
+      nix build --json .#checks.x86_64-linux.${{ inputs.target }} > archive.json

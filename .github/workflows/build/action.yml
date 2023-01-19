@@ -1,0 +1,23 @@
+name: Build
+
+inputs:
+  target:
+    default: "dissolve"
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Build ??? (Linux)
+    if: runner.os == 'Linux'
+    uses: "./.github/workflows/build/linux"
+    with:
+      target: ${{ inputs.target }}
+
+  - name: Build (OSX)
+    if: runner.os == 'MacOS'
+    uses: "./.github/workflows/build/osx"
+
+  - name: Build (Windows)
+    if: runner.os == 'Windows'
+    uses: "./.github/workflows/build/windows"

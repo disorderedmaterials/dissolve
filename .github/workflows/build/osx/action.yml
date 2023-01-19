@@ -1,0 +1,80 @@
+name: Build
+
+inputs:
+  threading:
+    default: true
+  extraCMakeFlags:
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Setup Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: ${{ env.pythonVersion }}
+
+  - name: Install Homebrew Dependencies
+    shell: bash
+    run: |
+      set -ex
+      brew update-reset
+      brew install ftgl ninja
+
+  - name: Acquire ANTLR Java
+    shell: bash
+    run: |
+      set -ex
+      curl https://raw.githubusercontent.com/antlr/website-antlr4/gh-pages/download/antlr-4.9.3-complete.jar  --output antlr.jar
+
+  - name: Install Python Dependencies
+    shell: bash
+    run: |
+      pip3 install --user aqtinstall conan
+
+  - name: Retrieve Qt Cache
+    id: cache-qt
+    uses: actions/cache@v3
+    with:
+      key: osx-qt-${{ env.qtVersion }}
+      path: ${{ runner.temp }}/qt
+
+  - name: Install Qt
+    if: ${{ steps.cache-qt.outputs.cache-hit != 'true' }}
+    shell: bash
+    run: |
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
+      aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }}
+
+  - name: Build
+    shell: bash
+    run: |
+      set -ex
+
+      # Setup paths
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
+      Qt6_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos/lib/cmake/Qt6
+      QT_BASE_DIR=${{ runner.temp }}/qt/${{ env.qtVersion }}/macos
+      ANTLR_EXE=`pwd`/antlr.jar
+      echo "Detected ANTLR exe as [$ANTLR_EXE]"
+
+      # Build
+      mkdir build && cd build
+      conan install .. --build missing
+      cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
+      cmake --build . --config Release
+      cd ../
+
+      # Deploy Conan dependencies for ease
+      mkdir deploy && cd deploy
+      conan install .. -g deploy
+
+  - name: Upload Raw Build Artifacts
+    uses: actions/upload-artifact@v3
+    with:
+      name: osx-build-artifacts
+      path: |
+        ${{ github.workspace }}/build
+        ${{ github.workspace }}/deploy
+      retention-days: 1

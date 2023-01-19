@@ -1,20 +1,6 @@
 trigger: none
 
-pr:
-  autoCancel: true
-  branches:
-    include:
-      - "*"
-  paths:
-    exclude:
-    - examples/*
-    - scripts/*
-    - web/*
-    - README.md
-    - .azure-pipelines/continuous.yml
-    - .azure-pipelines/release.yml
-    - .azure-pipelines/web.yml
-    - .azure-pipelines/templates/build-web.yml
+pr: none
 
 stages:
   - template: templates/code-quality-checks.yml

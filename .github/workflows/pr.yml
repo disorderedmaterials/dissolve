@@ -1,0 +1,79 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches:
+    - '*'
+
+env:
+  pythonVersion: 3.9
+  qtVersion: 6.2.2
+  nixVersion: 2.4
+  nixOSVersion: 21.11
+
+jobs:
+
+  QC:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Quality Control
+      uses: "./.github/workflows/qc"
+
+  Build:
+    needs: QC
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        target: [dissolve-gui]
+        include:
+          - os: ubuntu-latest
+            target: dissolve
+          - os: ubuntu-latest
+            target: dissolve-threadless
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Acquire Code Version
+        uses: "./.github/workflows/get-version"
+      - name: Set Short Hash
+        uses: "./.github/workflows/set-short-hash"
+      - name: "Build (${{ matrix.os }})"
+        uses: "./.github/workflows/build"
+        env:
+          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_TOKEN }}
+        with:
+          target: ${{ matrix.target }}
+
+  Test:
+    needs: Build
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ dissolve, dissolve-threadless ]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: "Test (${{ matrix.target }})"
+      uses: "./.github/workflows/test"
+      with:
+        target: ${{ matrix.target }}
+
+  Package:
+    needs: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Acquire Code Version
+        uses: "./.github/workflows/get-version"
+      - name: "Package (${{ matrix.os }})"
+        uses: "./.github/workflows/package"
