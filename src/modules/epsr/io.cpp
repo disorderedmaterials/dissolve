@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "main/dissolve.h"
@@ -141,7 +141,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("Failed to read pair potential atom types from pcof file.\n");
 
-        // Find the atom types to which these cofficients relate
+        // Find the atom types to which these coefficients relate
         auto at1 = dissolve.findAtomType(parser.argsv(0));
         if (!at1)
             return Messenger::error("Unrecognised AtomType '{}' referenced in pcof file.\n", parser.argsv(0));

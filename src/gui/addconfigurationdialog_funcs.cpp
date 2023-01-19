@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/units.h"
 #include "classes/configuration.h"
@@ -90,9 +90,9 @@ bool AddConfigurationDialog::progressionAllowed(int index) const
     {
         // Must have at least one species, and not more than one periodic species
         auto selection = ui_.TargetSpeciesWidget->selection();
-        if (selection.size() == 0 || std::count_if(selection.begin(), selection.end(), [](const auto *sp) {
-                                         return sp->box()->type() != Box::BoxType::NonPeriodic;
-                                     }) > 1)
+        if (selection.size() == 0 ||
+            std::count_if(selection.begin(), selection.end(),
+                          [](const auto *sp) { return sp->box()->type() != Box::BoxType::NonPeriodic; }) > 1)
             return false;
     }
     else if (index == AddConfigurationDialog::BoxGeometryPage)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "module/groups.h"
 #include "base/sysfunc.h"
@@ -41,9 +41,9 @@ const std::vector<std::string> &ModuleGroups::allowedModuleTypes() const { retur
 ModuleGroup *ModuleGroups::addModule(Module *module, std::string_view groupName)
 {
     // Does the specified group exist?
-    auto moduleGroup = std::find_if(groups_.begin(), groups_.end(), [groupName](auto &moduleGroup) {
-        return DissolveSys::sameString(moduleGroup->name(), groupName);
-    });
+    auto moduleGroup =
+        std::find_if(groups_.begin(), groups_.end(),
+                     [groupName](auto &moduleGroup) { return DissolveSys::sameString(moduleGroup->name(), groupName); });
 
     if (moduleGroup == groups_.end())
     {

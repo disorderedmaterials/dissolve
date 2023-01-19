@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/svd.h"
 #include "base/messenger.h"
@@ -92,7 +92,7 @@ bool decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double> &S,
         {
             for (k = l; k < nCols; k++)
                 scale += fabs(U[{i, k}]);
-            if (scale)
+            if (scale != 0.0)
             {
                 for (k = l; k < nCols; k++)
                 {
@@ -127,7 +127,7 @@ bool decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double> &S,
     {
         if (i < nCols - 1)
         {
-            if (g)
+            if (g != 0.0)
             {
                 for (j = l; j < nCols; j++)
                     Vt[{j, i}] = (U[{i, j}] / U[{i, l}]) / g;
@@ -151,7 +151,7 @@ bool decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double> &S,
         l = i;
     }
 
-    // Assumulate left-hand transformation
+    // Accumulate left-hand transformation
     //   for(i=min(nRows,nCols) - 1;i >= 0;i--) {
     for (i = nCols - 1; i >= 0; i--)
     {
@@ -160,7 +160,7 @@ bool decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double> &S,
         if (i < (nCols - 1))
             for (j = l; j < nCols; j++)
                 U[{i, j}] = 0.0;
-        if (g)
+        if (g != 0.0)
         {
             g = 1.0 / g;
             if (i != (nCols - 1)) // TGAY

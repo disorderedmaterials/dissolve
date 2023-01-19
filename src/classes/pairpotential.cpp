@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/pairpotential.h"
 #include "base/lineparser.h"
@@ -572,7 +572,7 @@ void PairPotential::setUAdditional(Data1D &newUAdditional)
 void PairPotential::adjustUAdditional(const Data1D &u, double factor)
 {
     // Interpolate the supplied data 'u' and add it to the additional potential
-    Interpolator::addInterpolated(uAdditional_, u, factor);
+    Interpolator::addInterpolated(u, uAdditional_, factor);
 
     calculateUFull();
     calculateDUFull();

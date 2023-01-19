@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "genericitems/serialisers.h"
 #include "base/lineparser.h"
@@ -19,75 +19,86 @@
 GenericItemSerialiser::GenericItemSerialiser()
 {
     // PODs
-    registerSerialiser<bool>([](const std::any &a, LineParser &parser) {
-        return parser.writeLineF("{}\n", DissolveSys::btoa(std::any_cast<bool>(a)));
-    });
-    registerSerialiser<double>(
-        [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<double>(a)); });
-    registerSerialiser<int>(
-        [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<int>(a)); });
+    registerSerialiser<bool>([](const std::any &a, LineParser &parser)
+                             { return parser.writeLineF("{}\n", DissolveSys::btoa(std::any_cast<bool>(a))); });
+    registerSerialiser<double>([](const std::any &a, LineParser &parser)
+                               { return parser.writeLineF("{}\n", std::any_cast<double>(a)); });
+    registerSerialiser<int>([](const std::any &a, LineParser &parser)
+                            { return parser.writeLineF("{}\n", std::any_cast<int>(a)); });
 
     // Standard Classes / Containers
-    registerSerialiser<std::string>(
-        [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<std::string>(a)); });
-    registerSerialiser<std::streampos>(
-        [](const std::any &a, LineParser &parser) { return parser.writeLineF("{}\n", std::any_cast<std::streampos>(a)); });
-    registerSerialiser<std::vector<double>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const std::vector<double> &>(a);
-        if (!parser.writeLineF("{}\n", v.size()))
-            return false;
-        for (auto &n : v)
-            if (!parser.writeLineF("{}\n", n))
+    registerSerialiser<std::string>([](const std::any &a, LineParser &parser)
+                                    { return parser.writeLineF("{}\n", std::any_cast<std::string>(a)); });
+    registerSerialiser<std::streampos>([](const std::any &a, LineParser &parser)
+                                       { return parser.writeLineF("{}\n", std::any_cast<std::streampos>(a)); });
+    registerSerialiser<std::vector<double>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const std::vector<double> &>(a);
+            if (!parser.writeLineF("{}\n", v.size()))
                 return false;
-        return true;
-    });
-    registerSerialiser<std::vector<Vec3<double>>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const std::vector<Vec3<double>> &>(a);
-        if (!parser.writeLineF("{}\n", v.size()))
-            return false;
-        for (auto &n : v)
-            if (!parser.writeLineF("{} {} {}\n", n.x, n.y, n.z))
+            for (auto &n : v)
+                if (!parser.writeLineF("{}\n", n))
+                    return false;
+            return true;
+        });
+    registerSerialiser<std::vector<Vec3<double>>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const std::vector<Vec3<double>> &>(a);
+            if (!parser.writeLineF("{}\n", v.size()))
                 return false;
-        return true;
-    });
+            for (auto &n : v)
+                if (!parser.writeLineF("{} {} {}\n", n.x, n.y, n.z))
+                    return false;
+            return true;
+        });
 
     // Custom Classes / Containers
-    registerSerialiser<Array2D<char>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Array2D<char> &>(a);
-        if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
-            return false;
-        for (auto &n : v)
-            if (!parser.writeLineF("{}\n", n ? 'T' : 'F'))
+    registerSerialiser<Array2D<char>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const Array2D<char> &>(a);
+            if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
                 return false;
-        return true;
-    });
-    registerSerialiser<Array2D<double>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Array2D<double> &>(a);
-        if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
-            return false;
-        for (auto &n : v)
-            if (!parser.writeLineF("{}\n", n))
+            for (auto &n : v)
+                if (!parser.writeLineF("{}\n", n ? 'T' : 'F'))
+                    return false;
+            return true;
+        });
+    registerSerialiser<Array2D<double>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const Array2D<double> &>(a);
+            if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
                 return false;
-        return true;
-    });
-    registerSerialiser<Array2D<std::vector<double>>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Array2D<std::vector<double>> &>(a);
-        if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
-            return false;
-        for (auto &data : v)
-            if (!GenericItemSerialiser::serialise<std::vector<double>>(data, parser))
+            for (auto &n : v)
+                if (!parser.writeLineF("{}\n", n))
+                    return false;
+            return true;
+        });
+    registerSerialiser<Array2D<std::vector<double>>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const Array2D<std::vector<double>> &>(a);
+            if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
                 return false;
-        return true;
-    });
-    registerSerialiser<Array2D<Data1D>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Array2D<Data1D> &>(a);
-        if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
-            return false;
-        for (auto &n : v)
-            if (!n.serialise(parser))
+            for (auto &data : v)
+                if (!GenericItemSerialiser::serialise<std::vector<double>>(data, parser))
+                    return false;
+            return true;
+        });
+    registerSerialiser<Array2D<Data1D>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const Array2D<Data1D> &>(a);
+            if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
                 return false;
-        return true;
-    });
+            for (auto &n : v)
+                if (!n.serialise(parser))
+                    return false;
+            return true;
+        });
     registerSerialiser<AtomTypeMix>(simpleSerialise<AtomTypeMix>);
     registerSerialiser<Data1D>(simpleSerialise<Data1D>);
     registerSerialiser<Data2D>(simpleSerialise<Data2D>);
@@ -100,10 +111,12 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<PartialSetAccumulator>(simpleSerialise<PartialSetAccumulator>);
     registerSerialiser<SampledDouble>(simpleSerialise<SampledDouble>);
     registerSerialiser<SampledVector>(simpleSerialise<SampledVector>);
-    registerSerialiser<Vec3<int>>([](const std::any &a, LineParser &parser) {
-        const auto &v = std::any_cast<const Vec3<int> &>(a);
-        return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
-    });
+    registerSerialiser<Vec3<int>>(
+        [](const std::any &a, LineParser &parser)
+        {
+            const auto &v = std::any_cast<const Vec3<int> &>(a);
+            return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
+        });
     registerSerialiser<XRayWeights>(simpleSerialise<XRayWeights>);
 
     // Containers of Custom Classes

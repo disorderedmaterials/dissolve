@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
@@ -82,8 +82,8 @@ void SiteWidget::updateStatusBar()
     if (sp)
     {
         auto selection = sp->selectedAtoms();
-        ui_.FormulaLabel->setText(
-            QString::fromStdString(EmpiricalFormula::formula(sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
+        ui_.FormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
+            sp->atoms(), [](const auto &i) { return i.Z(); }, true)));
         ui_.SelectionLabel->setText(!selection.empty() ? QString::fromStdString(EmpiricalFormula::formula(
                                                              selection, [](const auto &i) { return i->Z(); }, true))
                                                        : "--");

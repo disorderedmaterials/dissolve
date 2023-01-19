@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomchangetoken.h"
 #include "classes/atomtype.h"
@@ -334,9 +334,9 @@ bool ImportCIFDialog::createStructuralSpecies()
                         r = box->fold(r);
 
                         // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
-                        if (std::any_of(
-                                crystalSpecies_->atoms().begin(), crystalSpecies_->atoms().end(),
-                                [&r, box, tolerance](const auto &j) { return box->minimumDistance(r, j.r()) < tolerance; }))
+                        if (std::any_of(crystalSpecies_->atoms().begin(), crystalSpecies_->atoms().end(),
+                                        [&r, box, tolerance](const auto &j)
+                                        { return box->minimumDistance(r, j.r()) < tolerance; }))
                             continue;
 
                         // Create the new atom

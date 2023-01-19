@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/molecule.h"
 #include "classes/atom.h"
@@ -124,10 +124,12 @@ void Molecule::traverseLocal(const Box *box, ConstManipulationFunction action) c
 Vec3<double> Molecule::unFold(const Box *box)
 {
     Vec3<double> cog{0.0, 0.0, 0.0};
-    traverseLocal(box, [&cog](Atom *j, Vec3<double> rJ) {
-        j->setCoordinates(rJ);
-        cog += rJ;
-    });
+    traverseLocal(box,
+                  [&cog](Atom *j, Vec3<double> rJ)
+                  {
+                      j->setCoordinates(rJ);
+                      cog += rJ;
+                  });
     return cog / nAtoms();
 }
 

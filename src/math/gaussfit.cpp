@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/gaussfit.h"
 #include "base/lineparser.h"
@@ -273,24 +273,27 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
             generateApproximation(alphaSpace_);
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser gaussMinimiser([this]() {
-                double sose = 0.0;
-                double multiplier = 1.0;
-
-                // Loop over data points, add in our Gaussian contributions, and
-                double dy;
-                for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
+            MonteCarloMinimiser gaussMinimiser(
+                [this]()
                 {
-                    // Add in contributions from our Gaussians
-                    for (auto n = 0; n < A_.size(); ++n)
-                        y += functionValue(alphaSpace_, x, x_[n], A_[n], fwhm_[n]);
+                    double sose = 0.0;
+                    double multiplier = 1.0;
 
-                    dy = refY - y;
-                    sose += dy * dy;
-                }
+                    // Loop over data points, add in our Gaussian contributions, and
+                    double dy;
+                    for (auto &&[x, y, refY] :
+                         zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
+                    {
+                        // Add in contributions from our Gaussians
+                        for (auto n = 0; n < A_.size(); ++n)
+                            y += functionValue(alphaSpace_, x, x_[n], A_[n], fwhm_[n]);
 
-                return sose * multiplier;
-            });
+                        dy = refY - y;
+                        sose += dy * dy;
+                    }
+
+                    return sose * multiplier;
+                });
 
             // Add Gaussian parameters as fitting targets
             for (auto n = 0; n < sampleSize; ++n)
@@ -353,26 +356,28 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     updatePrecalculatedFunctions(alphaSpace_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser gaussMinimiser([this]() {
-        auto sose = 0.0;
-
-        // Loop over data points and sum contributions from tabulated functions on to the current approximate data
-        double y, dy;
-        for (auto i = 0; i < approximateData_.nValues(); ++i)
+    MonteCarloMinimiser gaussMinimiser(
+        [this]()
         {
-            // Get approximate data x and y for this point
-            y = approximateData_.value(i);
+            auto sose = 0.0;
 
-            // Add in contributions from our Gaussians
-            for (auto n = 0; n < A_.size(); ++n)
-                y += functions_[{n, i}] * A_[n];
+            // Loop over data points and sum contributions from tabulated functions on to the current approximate data
+            double y, dy;
+            for (auto i = 0; i < approximateData_.nValues(); ++i)
+            {
+                // Get approximate data x and y for this point
+                y = approximateData_.value(i);
 
-            dy = referenceData_.value(i) - y;
-            sose += dy * dy;
-        }
+                // Add in contributions from our Gaussians
+                for (auto n = 0; n < A_.size(); ++n)
+                    y += functions_[{n, i}] * A_[n];
 
-        return sose;
-    });
+                dy = referenceData_.value(i) - y;
+                sose += dy * dy;
+            }
+
+            return sose;
+        });
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
     for (auto n = 0; n < nGaussians_; ++n)
@@ -421,26 +426,28 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     updatePrecalculatedFunctions(alphaSpace_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser gaussMinimiser([this]() {
-        auto sose = 0.0;
-
-        // Loop over data points and sum contributions from tabulated functions on to the current approximate data
-        double y, dy;
-        for (auto i = 0; i < approximateData_.nValues(); ++i)
+    MonteCarloMinimiser gaussMinimiser(
+        [this]()
         {
-            // Get approximate data x and y for this point
-            y = approximateData_.value(i);
+            auto sose = 0.0;
 
-            // Add in contributions from our Gaussians
-            for (auto n = 0; n < A_.size(); ++n)
-                y += functions_[{n, i}] * A_[n];
+            // Loop over data points and sum contributions from tabulated functions on to the current approximate data
+            double y, dy;
+            for (auto i = 0; i < approximateData_.nValues(); ++i)
+            {
+                // Get approximate data x and y for this point
+                y = approximateData_.value(i);
 
-            dy = referenceData_.value(i) - y;
-            sose += dy * dy;
-        }
+                // Add in contributions from our Gaussians
+                for (auto n = 0; n < A_.size(); ++n)
+                    y += functions_[{n, i}] * A_[n];
 
-        return sose;
-    });
+                dy = referenceData_.value(i) - y;
+                sose += dy * dy;
+            }
+
+            return sose;
+        });
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
     for (auto n = 0; n < nGaussians_; ++n)

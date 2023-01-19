@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include <utility>
 
@@ -65,18 +65,23 @@ PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n].get();
 // Return specified PairPotential (if defined)
 PairPotential *Dissolve::pairPotential(const std::shared_ptr<AtomType> &at1, const std::shared_ptr<AtomType> &at2) const
 {
-    auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(), [at1, at2](const auto &pp) {
-        return (pp->atomTypeI() == at1 && pp->atomTypeJ() == at2) || (pp->atomTypeI() == at2 && pp->atomTypeJ() == at1);
-    });
+    auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(),
+                           [at1, at2](const auto &pp) {
+                               return (pp->atomTypeI() == at1 && pp->atomTypeJ() == at2) ||
+                                      (pp->atomTypeI() == at2 && pp->atomTypeJ() == at1);
+                           });
     return it != pairPotentials_.end() ? it->get() : nullptr;
 }
 
 PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at2) const
 {
-    auto it = std::find_if(pairPotentials_.begin(), pairPotentials_.end(), [at1, at2](const auto &pp) {
-        return (DissolveSys::sameString(pp->atomTypeNameI(), at1) && DissolveSys::sameString(pp->atomTypeNameJ(), at2)) ||
-               (DissolveSys::sameString(pp->atomTypeNameI(), at2) && DissolveSys::sameString(pp->atomTypeNameJ(), at1));
-    });
+    auto it = std::find_if(
+        pairPotentials_.begin(), pairPotentials_.end(),
+        [at1, at2](const auto &pp)
+        {
+            return (DissolveSys::sameString(pp->atomTypeNameI(), at1) && DissolveSys::sameString(pp->atomTypeNameJ(), at2)) ||
+                   (DissolveSys::sameString(pp->atomTypeNameI(), at2) && DissolveSys::sameString(pp->atomTypeNameJ(), at1));
+        });
     return it != pairPotentials_.end() ? it->get() : nullptr;
 }
 
@@ -93,7 +98,8 @@ bool Dissolve::regeneratePairPotentials()
     // Create a pair potential for each unique atom type pair
     auto success =
         for_each_pair_early(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
-                            [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool> {
+                            [&](int typeI, const auto &at1, int typeJ, const auto &at2) -> EarlyReturn<bool>
+                            {
                                 Messenger::printVerbose("Adding new PairPotential for interaction between '{}' and '{}'...\n",
                                                         at1->name(), at2->name());
                                 auto *pot = addPairPotential(at1, at2);

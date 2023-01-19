@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/scatteringmatrix.h"
 #include "classes/atomtype.h"
@@ -17,8 +17,11 @@ ScatteringMatrix::ScatteringMatrix() = default;
  * Data
  */
 
-// Return number of reference AtomType pairs
-int ScatteringMatrix::nPairs() const { return typePairs_.size(); }
+// Return whether Q-dependent weighting is required
+bool ScatteringMatrix::qDependentWeighting() const
+{
+    return std::find_if(xRayData_.begin(), xRayData_.end(), [](auto data) { return std::get<0>(data); }) != xRayData_.end();
+}
 
 // Return index of specified AtomType pair
 int ScatteringMatrix::pairIndex(const std::shared_ptr<AtomType> &typeI, const std::shared_ptr<AtomType> &typeJ) const
@@ -36,18 +39,40 @@ int ScatteringMatrix::pairIndex(const std::shared_ptr<AtomType> &typeI, const st
     return -1;
 }
 
-// Return weight of the specified AtomType pair in the inverse matrix
-double ScatteringMatrix::pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
-                                           int dataIndex) const
+// Generate matrices
+void ScatteringMatrix::generateMatrices()
 {
-    /*
-     * The required row of the inverse matrix is the index of the AtomType pair.
-     * The required column of the inverse matrix is the original (row) index of the supplied data.
-     */
+    // We always generate the matrices for Q = 0
+    Messenger::printVerbose("Generating Q = 0.0 matrix and inverse.\n");
+    qZeroMatrix_ = matrix(0.0);
+    qZeroInverse_ = qZeroMatrix_;
+    if (!SVD::pseudoinverse(qZeroInverse_))
+        throw(std::runtime_error("Failed to invert the scattering matrix at Q = 0.0.\n"));
 
-    auto index = pairIndex(std::move(typeI), std::move(typeJ));
-    return inverse(q)[{index, dataIndex}];
+    // Generate Q-dependent matrices if we need them
+    qMatrices_.clear();
+    if (qDependentWeighting())
+    {
+        // Use the first reference data as the Q-axis template (as is done elsewhere)
+        assert(!data_.empty());
+        auto &qs = data_[0].xAxis();
+        qMatrices_.reserve(qs.size());
+        for (auto q : qs)
+        {
+            Messenger::printVerbose("Generating Q = {} matrix and inverse.\n", q);
+
+            auto &&[qValue, mat, inv] = qMatrices_.emplace_back();
+            qValue = q;
+            mat = matrix(q);
+            inv = mat;
+            if (!SVD::pseudoinverse(inv))
+                throw(std::runtime_error(fmt::format("Failed to invert the scattering matrix at Q = {}.\n", q)));
+        }
+    }
 }
+
+// Return the precalculated Q = 0.0 scattering matrix inverse
+const Array2D<double> &ScatteringMatrix::qZeroMatrixInverse() const { return qZeroInverse_; }
 
 // Calculate and return the scattering matrix at the specified Q value
 Array2D<double> ScatteringMatrix::matrix(double q) const
@@ -239,14 +264,10 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
      */
 
     // Template the estimatedSQ from the first data item
-    for (auto &n : estimatedSQ)
-        n.initialise(data_[0]);
+    for (auto &estSQ : estimatedSQ)
+        estSQ.initialise(data_[0]);
 
-    Array2D<double> inverseA;
-    auto qDependentMatrix =
-        std::find_if(xRayData_.begin(), xRayData_.end(), [](auto data) { return std::get<0>(data); }) != xRayData_.end();
-
-    if (qDependentMatrix)
+    if (qDependentWeighting())
     {
         // Generate interpolations for each dataset
         std::vector<Interpolator> interpolations;
@@ -260,10 +281,8 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
         {
             const auto q = x[n];
 
-            // Generate inverse matrix at this Q value
-            inverseA = matrix(q);
-            if (!SVD::pseudoinverse(inverseA))
-                return false;
+            // Grab the pre-calculated scattering matrix
+            auto &inverseA = std::get<2>(qMatrices_[n]);
 
             // Sum in contributions from each dataset at this Q value, provided it is within the range of the dataset
             for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
@@ -280,26 +299,19 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
     }
     else
     {
-        // No Q-dependent terms in the scattering matrix, so only need to invert once
-        inverseA = A_;
-        if (!SVD::pseudoinverse(inverseA))
-            return false;
-
         // Generate new partials (nPartials = nColumns)
-        for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
+        for (auto refDataIndex = 0; refDataIndex < data_.size(); ++refDataIndex)
         {
-            // Add in contribution from each datset (row).
-            for (auto refDataIndex = 0; refDataIndex < data_.size(); ++refDataIndex)
-                Interpolator::addInterpolated(estimatedSQ[partialIndex], data_[refDataIndex],
-                                              inverseA[{partialIndex, refDataIndex}]);
+            // Generate interpolation for this dataset (row).
+            Interpolator I(data_[refDataIndex]);
+
+            for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
+                Interpolator::addInterpolated(I, estimatedSQ[partialIndex], qZeroInverse_[{partialIndex, refDataIndex}]);
         }
     }
 
     return true;
 }
-
-// Return if the scattering matrix is underdetermined
-bool ScatteringMatrix::underDetermined() const { return (data_.size() < A_.nColumns()); }
 
 // Return the product of inverseA_ and A_ (which should be the identity matrix) at the specified Q value
 Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse(q) * matrix(q); }
@@ -315,6 +327,9 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     A_.clear();
     data_.clear();
     typePairs_.clear();
+    qZeroMatrix_.clear();
+    qZeroInverse_.clear();
+    qMatrices_.clear();
 
     // Copy atom types
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
@@ -390,7 +405,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
                                         usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
 
             // Now have the local column index of the AtomType pair in our matrix A_.
-            // Since this is X-ray data, we will just store the product of the concentrtion weights and the factor
+            // Since this is X-ray data, we will just store the product of the concentration weights and the factor
             A_[{rowIndex, colIndex}] = dataWeights.preFactor(n, m) * factor;
         }
     }
@@ -400,6 +415,19 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
 
     // Store XRay form factor data indicator
     xRayData_.emplace_back(true, dataWeights, StructureFactors::AverageOfSquaresNormalisation);
+
+    return true;
+}
+
+// Update reference data)
+bool ScatteringMatrix::updateReferenceData(const Data1D &weightedData, double factor)
+{
+    auto it = std::find_if(data_.begin(), data_.end(), [weightedData](auto &data) { return weightedData.tag() == data.tag(); });
+    if (it == data_.end())
+        return false;
+
+    *it = weightedData;
+    *it *= factor;
 
     return true;
 }
@@ -430,3 +458,6 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, const std::
 
     return true;
 }
+
+// Return number of currently-defined reference data sets (== matrix rows)
+int ScatteringMatrix::nReferenceData() const { return A_.nRows(); }

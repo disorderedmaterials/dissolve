@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/xrayweights.h"
 #include "base/lineparser.h"
@@ -135,7 +135,8 @@ void XRayWeights::setUpMatrices()
 
     // Determine atomic concentration products and full pre-factor
     dissolve::for_each_pair(ParallelPolicies::seq, atomTypeMix_.begin(), atomTypeMix_.end(),
-                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+                            [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2)
+                            {
                                 double ci = atd1.fraction();
                                 concentrations_.at(typeI) = ci;
 
@@ -266,7 +267,7 @@ bool XRayWeights::deserialise(LineParser &parser, const CoreData &coreData)
     clear();
 
     // Read form factor dataset to use
-    if (!parser.getArgsDelim())
+    if (parser.getArgsDelim() != LineParser::Success)
         return false;
     formFactors_ = XRayFormFactors::xRayFormFactorData().enumeration(parser.argsv(0));
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/randombuffer.h"
@@ -368,10 +368,12 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (capForces_)
         Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
                          double(nCapped) / nSteps_);
-    Messenger::print("{} steps performed ({} work, {} comms)\n", step, timer.totalTimeString(), commsTimer.totalTimeString());
+    Messenger::print("{} steps performed ({} work, {} comms)\n", step - 1, timer.totalTimeString(),
+                     commsTimer.totalTimeString());
 
     // Increment configuration changeCount
-    targetConfiguration_->incrementContentsVersion();
+    if (step > 1)
+        targetConfiguration_->incrementContentsVersion();
 
     /*
      * Calculation End

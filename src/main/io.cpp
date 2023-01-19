@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -167,6 +167,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
         if (!mastersNode.is_uninitialized())
             coreData_.deserialiseMaster(mastersNode);
     }
+
     Serialisable::toMap(node, "species", [this](const std::string &name, const SerialisedValue &data) {
         species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_);
     });

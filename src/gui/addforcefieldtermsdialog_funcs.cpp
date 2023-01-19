@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -21,10 +21,12 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
 
     // Set model for atom type conflicts list
     ui_.AtomTypesConflictsList->setModel(&atomTypeModel_);
-    atomTypeModel_.setIconFunction([&](const auto &atomType) {
-        return QIcon(dissolve_.findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
-                                                              : ":/general/icons/general_true.svg");
-    });
+    atomTypeModel_.setIconFunction(
+        [&](const auto &atomType)
+        {
+            return QIcon(dissolve_.findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
+                                                                  : ":/general/icons/general_true.svg");
+        });
     connect(ui_.AtomTypesConflictsList->selectionModel(),
             SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(atomTypeConflictsSelectionChanged(const QItemSelection &, const QItemSelection &)));
@@ -32,22 +34,30 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
             SLOT(atomTypeConflictsDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
 
     // Set model and signals for the master terms tree
-    masterTermModel_.setBondIconFunction([&](std::string_view name) {
-        return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/general_warn.svg"
-                                                              : ":/general/icons/general_true.svg");
-    });
-    masterTermModel_.setAngleIconFunction([&](std::string_view name) {
-        return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/general_warn.svg"
-                                                               : ":/general/icons/general_true.svg");
-    });
-    masterTermModel_.setTorsionIconFunction([&](std::string_view name) {
-        return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
-                                                                 : ":/general/icons/general_true.svg");
-    });
-    masterTermModel_.setImproperIconFunction([&](std::string_view name) {
-        return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
+    masterTermModel_.setBondIconFunction(
+        [&](std::string_view name)
+        {
+            return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/general_warn.svg"
                                                                   : ":/general/icons/general_true.svg");
-    });
+        });
+    masterTermModel_.setAngleIconFunction(
+        [&](std::string_view name)
+        {
+            return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/general_warn.svg"
+                                                                   : ":/general/icons/general_true.svg");
+        });
+    masterTermModel_.setTorsionIconFunction(
+        [&](std::string_view name)
+        {
+            return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
+                                                                     : ":/general/icons/general_true.svg");
+        });
+    masterTermModel_.setImproperIconFunction(
+        [&](std::string_view name)
+        {
+            return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
+                                                                      : ":/general/icons/general_true.svg");
+        });
     ui_.MasterTermsTree->setModel(&masterTermModel_);
     connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(masterTermDataChanged(const QModelIndex &, const QModelIndex &)));

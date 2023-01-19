@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/poissonfit.h"
 #include "base/lineparser.h"
@@ -322,28 +322,30 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
             generateApproximation(space);
 
             // Set up minimiser for the next batch
-            MonteCarloMinimiser poissonMinimiser([this]() {
-                auto sose = 0.0;
-                auto multiplier = 1.0;
-
-                // Loop over data points, add in our Gaussian contributions, and
-                double x, y, dy;
-                for (auto i = 0; i < approximateData_.nValues(); ++i)
+            MonteCarloMinimiser poissonMinimiser(
+                [this]()
                 {
-                    // Get approximate data x and y for this point
-                    x = approximateData_.xAxis(i);
-                    y = approximateData_.value(i);
+                    auto sose = 0.0;
+                    auto multiplier = 1.0;
 
-                    // Add in contributions from our Gaussians
-                    for (auto n = 0; n < C_.size(); ++n)
-                        y += (alphaSpace_ == FunctionSpace::RealSpace ? C_[n] * poisson(x, n) : C_[n] * poissonFT(i, n));
+                    // Loop over data points, add in our Gaussian contributions, and
+                    double x, y, dy;
+                    for (auto i = 0; i < approximateData_.nValues(); ++i)
+                    {
+                        // Get approximate data x and y for this point
+                        x = approximateData_.xAxis(i);
+                        y = approximateData_.value(i);
 
-                    dy = referenceData_.value(i) - y;
-                    sose += dy * dy;
-                }
+                        // Add in contributions from our Gaussians
+                        for (auto n = 0; n < C_.size(); ++n)
+                            y += (alphaSpace_ == FunctionSpace::RealSpace ? C_[n] * poisson(x, n) : C_[n] * poissonFT(i, n));
 
-                return sose * multiplier;
-            });
+                        dy = referenceData_.value(i) - y;
+                        sose += dy * dy;
+                    }
+
+                    return sose * multiplier;
+                });
 
             alphaSpace_ = space;
 

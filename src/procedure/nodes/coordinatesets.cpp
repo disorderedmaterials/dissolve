@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/coordinatesets.h"
 #include "base/lineparser.h"
@@ -147,11 +147,13 @@ bool CoordinateSetsProcedureNode::execute(const ProcedureContext &procedureConte
 
     // Initialise random velocities
     std::vector<Vec3<double>> velocities(species_->nAtoms());
-    std::generate(velocities.begin(), velocities.end(), [&]() {
-        return Vec3<double>(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5),
-                            exp(randomBuffer.random() - 0.5)) /
-               sqrt(TWOPI);
-    });
+    std::generate(velocities.begin(), velocities.end(),
+                  [&]()
+                  {
+                      return Vec3<double>(exp(randomBuffer.random() - 0.5), exp(randomBuffer.random() - 0.5),
+                                          exp(randomBuffer.random() - 0.5)) /
+                             sqrt(TWOPI);
+                  });
 
     // Grab current Species coordinates
     std::vector<Vec3<double>> r(species_->nAtoms());

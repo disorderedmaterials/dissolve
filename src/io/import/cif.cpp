@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/cif.h"
 #include "CIFImportLexer.h"
@@ -367,9 +367,11 @@ bool CIFImport::hasBondDistances() const { return !bondingPairs_.empty(); }
 // Return whether a bond distance is defined for the specified label pair
 std::optional<double> CIFImport::bondDistance(std::string_view labelI, std::string_view labelJ) const
 {
-    auto it = std::find_if(bondingPairs_.begin(), bondingPairs_.end(), [labelI, labelJ](const auto &bp) {
-        return (bp.labelI() == labelI && bp.labelJ() == labelJ) || (bp.labelI() == labelJ && bp.labelJ() == labelI);
-    });
+    auto it = std::find_if(bondingPairs_.begin(), bondingPairs_.end(),
+                           [labelI, labelJ](const auto &bp) {
+                               return (bp.labelI() == labelI && bp.labelJ() == labelJ) ||
+                                      (bp.labelI() == labelJ && bp.labelJ() == labelI);
+                           });
     if (it != bondingPairs_.end())
         return it->r();
     return std::nullopt;

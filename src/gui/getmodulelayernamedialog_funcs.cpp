@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/coredata.h"
@@ -43,9 +43,11 @@ void GetModuleLayerNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        nameValid = std::none_of(layers_.begin(), layers_.end(), [text, this](const auto &layer) {
-            return this->moduleLayer_ != layer.get() && DissolveSys::sameString(layer->name(), qPrintable(text));
-        });
+        nameValid = std::none_of(layers_.begin(), layers_.end(),
+                                 [text, this](const auto &layer) {
+                                     return this->moduleLayer_ != layer.get() &&
+                                            DissolveSys::sameString(layer->name(), qPrintable(text));
+                                 });
     }
 
     // Update indicator

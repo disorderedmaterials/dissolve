@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -31,8 +31,9 @@ void ForcesModule::internalMoleculeForces(const ProcessPool &procPool, Configura
     // Molecule Force Operator
     auto combinableForcesInter = createCombinableForces(fInter);
     auto combinableForcesIntra = createCombinableForces(fIntra);
-    auto moleculeForceOperator = [&combinableForcesInter, &combinableForcesIntra, &kernel,
-                                  includePairPotentialTerms](const auto &mol) {
+    auto moleculeForceOperator =
+        [&combinableForcesInter, &combinableForcesIntra, &kernel, includePairPotentialTerms](const auto &mol)
+    {
         auto &fLocalInter = combinableForcesInter.local();
         auto &fLocalIntra = combinableForcesIntra.local();
 
@@ -58,7 +59,8 @@ void ForcesModule::internalMoleculeForces(const ProcessPool &procPool, Configura
         // Pair potential interactions between atoms
         if (includePairPotentialTerms)
             dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
-                                    [&](int indexI, const auto &i, int indexJ, const auto &j) {
+                                    [&](int indexI, const auto &i, int indexJ, const auto &j)
+                                    {
                                         if (indexI == indexJ)
                                             return;
                                         auto scale = i->scaling(j);
@@ -115,7 +117,8 @@ void ForcesModule::pairPotentialForces(const ProcessPool &procPool, Configuratio
     auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
 
     // algorithm parameters
-    auto unaryOp = [&combinableForces, &kernel, &cellArray, strategy](const int id) {
+    auto unaryOp = [&combinableForces, &kernel, &cellArray, strategy](const int id)
+    {
         auto *cellI = cellArray.cell(id);
         auto &fLocal = combinableForces.local();
         // This cell with itself
@@ -215,8 +218,9 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
     const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
     auto combinableForces = createCombinableForces(f);
-    auto pairwiseForceOperator = [&combinableForces, &potentialMap, cutoffSq, box](int indexI, const auto &i, int indexJ,
-                                                                                   const auto &j) {
+    auto pairwiseForceOperator =
+        [&combinableForces, &potentialMap, cutoffSq, box](int indexI, const auto &i, int indexJ, const auto &j)
+    {
         if (indexI == indexJ)
             return;
         auto scale = i.scaling(&j);

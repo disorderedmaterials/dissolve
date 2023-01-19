@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/kvector.h"
 #include "classes/braggreflection.h"
@@ -71,9 +71,10 @@ void KVector::calculateIntensities(std::vector<BraggReflection> &reflections)
     auto halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
     auto &braggReflection = reflections[braggReflectionIndex_];
     braggReflection.addKVectors(halfSphereNorm);
-    dissolve::for_each_pair(ParallelPolicies::par, 0, cosTerms_.size(), [&](auto i, auto j) {
-        braggReflection.addIntensity(i, j, (cosTerms_[i] * cosTerms_[j] + sinTerms_[i] * sinTerms_[j]) * halfSphereNorm);
-    });
+    dissolve::for_each_pair(
+        ParallelPolicies::par, 0, cosTerms_.size(),
+        [&](auto i, auto j)
+        { braggReflection.addIntensity(i, j, (cosTerms_[i] * cosTerms_[j] + sinTerms_[i] * sinTerms_[j]) * halfSphereNorm); });
 }
 
 // Return specified intensity

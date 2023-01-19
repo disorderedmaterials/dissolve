@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
 #include "data/formfactors_wk1995.h"
@@ -1132,9 +1132,9 @@ OptionalReferenceWrapper<const FormFactorData> wk1995Data(Elements::Element Z, i
                                                                {0.550447, 3.581973, 14.357388, 96.064972, 0.052450},
                                                                3.005326}};
 
-    auto it = std::find_if(wk1995.cbegin(), wk1995.cend(), [&](const FormFactorData_WK1995 &data) {
-        return data.Z() == Z && data.formalCharge() == formalCharge;
-    });
+    auto it =
+        std::find_if(wk1995.cbegin(), wk1995.cend(),
+                     [&](const FormFactorData_WK1995 &data) { return data.Z() == Z && data.formalCharge() == formalCharge; });
     if (it == wk1995.end())
         return {};
     return *it;
