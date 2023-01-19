@@ -48,7 +48,6 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
     auto *module = rawData(index);
     switch (role)
     {
-
         case (Qt::DisplayRole):
             if (module->isDisabled())
                 return QString::fromStdString(fmt::format("{} [{}] (disabled)", module->name(), module->frequency()));

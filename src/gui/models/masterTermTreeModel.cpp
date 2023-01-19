@@ -16,7 +16,7 @@ MasterTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
         case (3):
             return improperModel_;
         default:
-        throw(std::runtime_error("Invalid row provided, so can't return top level model.\n"));
+            throw(std::runtime_error("Invalid row provided, so can't return top level model.\n"));
     }
 }
 
