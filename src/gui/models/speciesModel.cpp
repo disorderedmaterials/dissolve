@@ -49,7 +49,10 @@ QVariant SpeciesModel::data(const QModelIndex &index, int role) const
                            ? Qt::Unchecked
                            : Qt::Checked;
             }
-            else { return {}; }
+            else
+            {
+                return {};
+            }
         case (Qt::UserRole):
             return QVariant::fromValue(rawData(index));
         default:

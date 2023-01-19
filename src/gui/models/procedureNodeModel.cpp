@@ -53,7 +53,10 @@ QVariant ProcedureNodeModel::data(const QModelIndex &index, int role) const
             {
                 return nodePresenceFunction_(node) ? Qt::Unchecked : Qt::Checked;
             }
-            else { return {}; }
+            else
+            {
+                return {};
+            }
         case (Qt::UserRole):
             return QVariant::fromValue(node);
         default:
