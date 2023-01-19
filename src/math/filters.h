@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #pragma once
 
@@ -19,10 +19,11 @@ void convolve(double xCentre, double value, const Functions::Function1DWrapper f
 void kolmogorovZurbenko(Data1D &data, int k, int m, bool normalised = false);
 // Apply median filter to data
 void median(Data1D &data, int length);
-// Perform moving average smoothing on data
-void movingAverage(Data1D &data, int avgSize);
+// Perform moving average smoothing
+void movingAverage(std::vector<double> &data, int length);
+void movingAverage(Data1D &data, int length);
 // Perform moving average smoothing on data, normalising area after smooth
-void normalisedMovingAverage(Data1D &data, int avgSize);
+void normalisedMovingAverage(Data1D &data, int length);
 // Subtract average level (starting at supplied x value) from data
 double subtractAverage(Data1D &data, double xStart);
 // Trim supplied data to specified range

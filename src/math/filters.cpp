@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/filters.h"
 #include "math/data1d.h"
@@ -47,9 +47,8 @@ void convolve(Data1D &data, const Functions::Function1DWrapper function, bool va
         {
             // Inner loop over whole array
             std::transform(x.begin(), x.end(), newY.begin(), newY.begin(),
-                           [yn = yn, &function, norm, xCentre = xCentre](auto X, auto NewY) {
-                               return NewY + yn * function.y(X - xCentre) * norm;
-                           });
+                           [yn = yn, &function, norm, xCentre = xCentre](auto X, auto NewY)
+                           { return NewY + yn * function.y(X - xCentre) * norm; });
         }
     }
 
@@ -135,17 +134,14 @@ void median(Data1D &data, int length)
     std::copy(newY.begin(), newY.end(), y.begin());
 }
 
-// Perform moving average smoothing
-void movingAverage(Data1D &data, const int length)
+// Perform moving average smoothing on vector
+void movingAverage(std::vector<double> &data, int length)
 {
     // Ensure average length (representing number of points averaged on one side of a given point) is positive non-zero
     if (length < 1)
         return;
 
-    // Grab y array
-    auto &y = data.values();
-
-    std::vector<double> newY(data.nValues());
+    std::vector<double> newY(data.size());
     std::fill(newY.begin(), newY.end(), 0.0);
     auto avgSize = length * 2 + 1;
 
@@ -153,28 +149,31 @@ void movingAverage(Data1D &data, const int length)
     for (auto n = 0; n < length; ++n)
     {
         for (auto m = 0; m <= n + length; ++m)
-            newY[n] += y[m];
+            newY[n] += data[m];
         newY[n] /= (length + 1 + n);
     }
 
     // Central region (full average width available)
-    for (auto n = length; n < data.nValues() - length; ++n)
+    for (auto n = length; n < data.size() - length; ++n)
     {
         for (auto m = n - length; m <= n + length; ++m)
-            newY[n] += y[m];
+            newY[n] += data[m];
         newY[n] /= avgSize;
     }
 
     // Right-most region of data
-    for (auto n = data.nValues() - length; n < data.nValues(); ++n)
+    for (auto n = data.size() - length; n < data.size(); ++n)
     {
-        for (auto m = n - length; m < data.nValues(); ++m)
-            newY[n] += y[m];
-        newY[n] /= (data.nValues() - n + length + 1);
+        for (auto m = n - length; m < data.size(); ++m)
+            newY[n] += data[m];
+        newY[n] /= (data.size() - n + length + 1);
     }
 
-    y = newY;
+    data = newY;
 }
+
+// Perform moving average smoothing
+void movingAverage(Data1D &data, const int length) { movingAverage(data.values(), length); }
 
 // Perform moving average smoothing, normalising area after smooth
 void normalisedMovingAverage(Data1D &data, int length)

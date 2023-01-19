@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "base/sysfunc.h"
@@ -337,9 +337,9 @@ Configuration *CoreData::addConfiguration()
     auto &newConfiguration = configurations_.emplace_back(std::make_unique<Configuration>());
 
     // Create a suitable unique name
-    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_, [&](const auto &cfg) {
-        return newConfiguration == cfg ? std::string() : cfg->name();
-    }));
+    newConfiguration->setName(DissolveSys::uniqueName("NewConfiguration", configurations_,
+                                                      [&](const auto &cfg)
+                                                      { return newConfiguration == cfg ? std::string() : cfg->name(); }));
 
     return newConfiguration.get();
 }

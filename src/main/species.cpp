@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "base/sysfunc.h"
@@ -124,9 +124,9 @@ Species *Dissolve::copySpecies(const Species *species)
 {
     // Create our new Species
     Species *newSpecies = addSpecies();
-    newSpecies->setName(DissolveSys::uniqueName(species->name(), coreData_.species(), [&](const auto &sp) {
-        return newSpecies == sp.get() ? std::string() : sp->name();
-    }));
+    newSpecies->setName(DissolveSys::uniqueName(species->name(), coreData_.species(),
+                                                [&](const auto &sp)
+                                                { return newSpecies == sp.get() ? std::string() : sp->name(); }));
 
     // Copy Box definition if one exists
     if (species->box()->type() != Box::BoxType::NonPeriodic)

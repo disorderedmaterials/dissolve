@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include <gtest/gtest.h>
@@ -119,9 +119,9 @@ TEST(SysFunc, StringManipulation)
     auto &exc = names.emplace_back("IAmUnique01");
     EXPECT_FALSE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique01");
     EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [](const auto &obj) { return obj.name; }) == "IAmUnique02");
-    EXPECT_TRUE(DissolveSys::uniqueName("IAmUnique", names, [&](const auto &obj) {
-                    return &exc == &obj ? std::string() : obj.name;
-                }) == "IAmUnique01");
+    EXPECT_TRUE(
+        DissolveSys::uniqueName("IAmUnique", names, [&](const auto &obj) { return &exc == &obj ? std::string() : obj.name; }) ==
+        "IAmUnique01");
 }
 
 } // namespace UnitTest

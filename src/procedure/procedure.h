@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,7 +31,7 @@ class Procedure : public Serialisable<const CoreData &>
     // Clear all data
     void clear();
     // Create new node
-    template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&... args)
+    template <class N, typename... Args> std::shared_ptr<N> createRootNode(std::string_view name, Args &&...args)
     {
         return rootSequence_->create<N>(name, args...);
     }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/coredata.h"
 #include "classes/species.h"
@@ -70,7 +70,7 @@ void SpeciesSiteVectorKeywordWidget::updateSummaryText()
     if (keyword_->data().empty())
         setSummaryText("<None>");
     else
-        setSummaryText(QString::fromStdString(joinStrings(keyword_->data(), ", ", [](const auto &site) {
-            return fmt::format("{} ({})", site->name(), site->parent()->name());
-        })));
+        setSummaryText(QString::fromStdString(
+            joinStrings(keyword_->data(), ", ",
+                        [](const auto &site) { return fmt::format("{} ({})", site->name(), site->parent()->name()); })));
 }

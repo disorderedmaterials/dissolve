@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -55,15 +55,17 @@ void Species::removeAtom(int index)
     impropers_.clear();
 
     // Detach & remove any bond terms that involve 'i'
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [i](auto &bond) {
-        if (bond.i() == i || bond.j() == i)
-        {
-            bond.detach();
-            return true;
-        }
-        else
-            return false;
-    });
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(),
+                             [i](auto &bond)
+                             {
+                                 if (bond.i() == i || bond.j() == i)
+                                 {
+                                     bond.detach();
+                                     return true;
+                                 }
+                                 else
+                                     return false;
+                             });
     if (it != bonds_.end())
         bonds_.erase(it, bonds_.end());
 
@@ -84,23 +86,27 @@ void Species::removeAtoms(std::vector<int> indices)
     impropers_.clear();
 
     // Detach & remove any bond terms that involve any of the supplied atom
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [&indices](auto &bond) {
-        if (std::find_if(indices.begin(), indices.end(),
-                         [&bond](const auto i) { return (bond.i()->index() == i || bond.j()->index() == i); }) != indices.end())
-        {
-            bond.detach();
-            return true;
-        }
-        else
-            return false;
-    });
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(),
+                             [&indices](auto &bond)
+                             {
+                                 if (std::find_if(indices.begin(), indices.end(),
+                                                  [&bond](const auto i) {
+                                                      return (bond.i()->index() == i || bond.j()->index() == i);
+                                                  }) != indices.end())
+                                 {
+                                     bond.detach();
+                                     return true;
+                                 }
+                                 else
+                                     return false;
+                             });
     if (it != bonds_.end())
         bonds_.erase(it, bonds_.end());
 
     // Now remove the atoms
-    auto atomIt = std::remove_if(atoms_.begin(), atoms_.end(), [&](const auto &i) {
-        return std::find(indices.begin(), indices.end(), i.index()) != indices.end();
-    });
+    auto atomIt =
+        std::remove_if(atoms_.begin(), atoms_.end(),
+                       [&](const auto &i) { return std::find(indices.begin(), indices.end(), i.index()) != indices.end(); });
     atoms_.erase(atomIt, atoms_.end());
     renumberAtoms();
 
@@ -303,9 +309,9 @@ int Species::simplifyAtomTypes()
 double Species::totalCharge(bool useAtomTypes) const
 {
     if (useAtomTypes)
-        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0, [](const auto acc, const auto &i) {
-            return acc + (i.atomType() ? i.atomType()->charge() : 0.0);
-        });
+        return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
+                               [](const auto acc, const auto &i)
+                               { return acc + (i.atomType() ? i.atomType()->charge() : 0.0); });
     else
         return std::accumulate(atoms_.begin(), atoms_.end(), 0.0,
                                [](const auto acc, const auto &i) { return acc + i.charge(); });

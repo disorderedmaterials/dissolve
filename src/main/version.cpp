@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "main/version.h"
 #include <fmt/format.h>
 
-#define DISSOLVEVERSION "0.9.9"
+#define DISSOLVEVERSION "0.9.12"
 #define DISSOLVESHORTHASH ""
 #define DISSOLVEREPO "https://github.com/disorderedmaterials/dissolve.git"
 

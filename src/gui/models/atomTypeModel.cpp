@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/atomTypeModel.h"
 #include "base/sysfunc.h"
@@ -126,9 +126,9 @@ bool AtomTypeModel::setData(const QModelIndex &index, const QVariant &value, int
             case (0):
                 // Ensure uniqueness of name if we have a reference CoreData
                 if (coreData_)
-                    atomType->setName(DissolveSys::uniqueName(
-                        value.toString().toStdString(), coreData_->get().atomTypes(),
-                        [&atomType](const auto &at) { return atomType == at ? std::string() : at->name(); }));
+                    atomType->setName(DissolveSys::uniqueName(value.toString().toStdString(), coreData_->get().atomTypes(),
+                                                              [&atomType](const auto &at)
+                                                              { return atomType == at ? std::string() : at->name(); }));
                 else
                     atomType->setName(value.toString().toStdString());
                 break;

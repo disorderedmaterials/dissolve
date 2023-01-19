@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #pragma once
 
@@ -195,7 +195,7 @@ class Forcefield
 };
 
 template <class T, typename... Args>
-OptionalReferenceWrapper<const T> Forcefield::termMatch_(const std::vector<T> &container, Args &&... args)
+OptionalReferenceWrapper<const T> Forcefield::termMatch_(const std::vector<T> &container, Args &&...args)
 {
     auto it = std::find_if(container.begin(), container.end(),
                            [&](const T &item) { return item.isMatch(std::forward<Args>(args)...); });

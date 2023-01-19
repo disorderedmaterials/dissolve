@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -193,7 +193,8 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         auto result = for_each_pair_early(
             unweightedSQ.atomTypeMix().begin(), unweightedSQ.atomTypeMix().end(),
-            [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
+            [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool>
+            {
                 if (i == j)
                 {
                     if (procPool.isMaster())

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
@@ -30,6 +30,11 @@
 // Run set-up stage
 bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
+    // Realise storage for generated S(Q), and initialise a scattering matrix
+    auto &estimatedSQ =
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
+    scatteringMatrix_.initialise(dissolve.atomTypes(), estimatedSQ);
+
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
     std::optional<double> rho;
@@ -132,15 +137,16 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                      expansionFunctionTypes().keyword(expansionFunction_));
     Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", nCoeffP_.value(), pSigma2_);
     if (modifyPotential_)
-        Messenger::print("EPSR: Perturbations to interatomic potentials will be generated and applied.\n");
+        Messenger::print(
+            "EPSR: Perturbations to interatomic potentials will be generated and applied with a frequency of {}.\n",
+            *modifyPotential_);
     else
         Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials "
                          "will not be modified).\n");
     Messenger::print("EPSR: Range for potential generation is {} < Q < {} Angstroms**-1.\n", qMin_, qMax_);
     Messenger::print("EPSR: Weighting factor used when applying fluctuation coefficients is {}\n", weighting_);
     if (fluctuationSmoothing_)
-        Messenger::print("EPSR: Fluctuation coefficients will be smoothed (average length = 2N+1, N = {})",
-                         *fluctuationSmoothing_);
+        Messenger::print("EPSR: Coefficients will be smoothed (average length = 2N+1, N = {})", *fluctuationSmoothing_);
     if (saveDifferenceFunctions_)
         Messenger::print("EPSR: Difference functions will be saved.\n");
     if (saveEmpiricalPotentials_)
@@ -167,6 +173,15 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     auto rho = *targetConfiguration_->atomicDensity();
 
     /*
+     * Realise and increase run counter
+     */
+    auto [runCount, runCountStatus] =
+        dissolve.processingModuleData().realiseIf<int>("RunCount", name(), GenericItem::InRestartFileFlag);
+    if (runCountStatus == GenericItem::ItemStatus::Created)
+        runCount = 0;
+    ++runCount;
+
+    /*
      * EPSR Main
      */
 
@@ -184,11 +199,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                 calculatedUnweightedSQ[{i, j}].setTag(fmt::format("{}-{}", at1->name(), at2->name()));
                             });
 
-    // Realise storage for generated S(Q), and initialise a scattering matrix
-    auto &estimatedSQ =
-        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-    ScatteringMatrix scatteringMatrix;
-    scatteringMatrix.initialise(dissolve.atomTypes(), estimatedSQ);
+    // Is our scattering matrix fully set-up and just requiring updated data?
+    auto scatteringMatrixSetUp = scatteringMatrix_.nReferenceData() != 0;
 
     // Loop over target data
     auto rFacTot = 0.0;
@@ -236,7 +248,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto &differenceData = dissolve.processingModuleData().realise<Data1D>(fmt::format("Difference//{}", module->name()),
                                                                                name(), GenericItem::InRestartFileFlag);
         differenceData = originalReferenceData;
-        Interpolator::addInterpolated(differenceData, weightedSQ.total(), -1.0);
+        Interpolator::addInterpolated(weightedSQ.total(), differenceData, -1.0);
 
         // Calculate r-factor over fit range and store
         auto tempRefData = originalReferenceData;
@@ -319,6 +331,15 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // Store the new fit coefficients
             fitCoefficients = coeffMinimiser.C();
 
+            // Smooth coefficients?
+            if (fluctuationSmoothing_)
+            {
+                Filters::movingAverage(fitCoefficients, *fluctuationSmoothing_);
+
+                // Need to pass the smoothed parameters back into the minimiser so we generate the matching approximation
+                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_, 0, 0.01);
+            }
+
             deltaFQFit = coeffMinimiser.approximation();
         }
         Messenger::print("Error between delta F(Q) and fit function is {:.2f}%.\n", fitError);
@@ -346,7 +367,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = originalReferenceData;
-            Interpolator::addInterpolated(refMinusIntra, weightedSQ.boundTotal(), -1.0);
+            Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
             // normalisation from the reference data (we assume that the two are consistent)
@@ -356,7 +377,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
-            if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback_))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, feedback_)
+                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else if (module->type() == "XRaySQ")
@@ -390,9 +412,10 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             auto bbar = weights.boundCoherentAverageOfSquares(boundTotal.xAxis());
             std::transform(boundTotal.values().begin(), boundTotal.values().end(), bbar.begin(), boundTotal.values().begin(),
                            std::divides<>());
-            Interpolator::addInterpolated(normalisedRef, boundTotal, -1.0);
+            Interpolator::addInterpolated(boundTotal, normalisedRef, -1.0);
 
-            if (!scatteringMatrix.addReferenceData(normalisedRef, weights, feedback_))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(normalisedRef, feedback_)
+                                      : !scatteringMatrix_.addReferenceData(normalisedRef, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else
@@ -407,12 +430,13 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto &types = unweightedSQ.atomTypeMix();
         dissolve::for_each_pair(
             ParallelPolicies::seq, types.begin(), types.end(),
-            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
+            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2)
+            {
                 auto globalI = atd1.atomType()->index();
                 auto globalJ = atd2.atomType()->index();
 
                 const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
-                Interpolator::addInterpolated(calculatedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets_.size());
+                Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[{globalI, globalJ}], 1.0 / targets_.size());
             });
 
         /*
@@ -491,34 +515,43 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
     for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
+                        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+                        {
                             // Copy and rename the data for clarity
                             auto data = calculatedUnweightedSQ[{i, j}];
                             data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
 
                             // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
-                            if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
+                            if (scatteringMatrixSetUp
+                                    ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
+                                    : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
                                 return Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
                                                         at1->name(), at2->name());
                             return EarlyReturn<bool>::Continue;
                         });
 
-    scatteringMatrix.print();
+    // If the scattering matrix was not set-up, need to generate the necessary inverse matrix or matrices here
+    if (!scatteringMatrixSetUp)
+        scatteringMatrix_.generateMatrices();
+
+    scatteringMatrix_.print();
 
     if (Messenger::isVerbose())
     {
         Messenger::print("\nScattering Matrix Inverse (Q = 0.0):\n");
-        scatteringMatrix.printInverse();
+        scatteringMatrix_.printInverse();
 
         Messenger::print("\nIdentity (Ainv * A):\n");
-        scatteringMatrix.matrixProduct().print();
+        scatteringMatrix_.matrixProduct().print();
     }
 
     /*
      * Generate S(Q) from completed scattering matrix
      */
 
-    scatteringMatrix.generatePartials(estimatedSQ);
+    auto &estimatedSQ =
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
+    scatteringMatrix_.generatePartials(estimatedSQ);
     updateDeltaSQ(dissolve.processingModuleData(), calculatedUnweightedSQ, estimatedSQ);
 
     // Save data?
@@ -542,7 +575,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (test_)
     {
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
+                            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+                            {
                                 testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
                                 auto optRefData = testReferenceData_.data(testDataName);
                                 if (optRefData)
@@ -566,16 +600,18 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     auto &estimatedGR =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", name_, GenericItem::InRestartFileFlag);
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-    dissolve::for_each_pair(
-        ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-            auto &expGR = estimatedGR[{i, j}];
-            expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                            [&](int i, auto at1, int j, auto at2)
+                            {
+                                auto &expGR = estimatedGR[{i, j}];
+                                expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
 
-            // Copy experimental S(Q) and FT it
-            expGR = estimatedSQ[{i, j}];
-            Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Form::Lorch0));
-            expGR += 1.0;
-        });
+                                // Copy experimental S(Q) and FT it
+                                expGR = estimatedSQ[{i, j}];
+                                Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0,
+                                                WindowFunction(WindowFunction::Form::Lorch0));
+                                expGR += 1.0;
+                            });
 
     /*
      * Calculate contribution to potential coefficients.
@@ -590,31 +626,33 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             fmt::format("FitCoefficients_{}", module->name()), name_);
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
-        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                [&](int i, auto at1, int j, auto at2) {
-                                    auto weight = scatteringMatrix.pairWeightInverse(0.0, at1, at2, dataIndex);
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+            [&](int i, auto at1, int j, auto at2)
+            {
+                auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.pairIndex(at1, at2), dataIndex}];
 
-                                    /*
-                                     * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
-                                     * combination with the following weighting factors (see circa line 3378 in
-                                     * epsr_standalone_rev1.f):
-                                     *
-                                     * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
-                                     * disable potential generation)
-                                     * 2. A flag controlling whether specific potentials are refined (efacp)
-                                     * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
-                                     * multiplied by the feedback factor.
-                                     */
+                /*
+                 * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
+                 * combination with the following weighting factors (see circa line 3378 in
+                 * epsr_standalone_rev1.f):
+                 *
+                 * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
+                 * disable potential generation)
+                 * 2. A flag controlling whether specific potentials are refined (efacp)
+                 * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
+                 * multiplied by the feedback factor.
+                 */
 
-                                    // In the original EPSR the off-diagonal elements in the inverse matrix have also been
-                                    // halved so as not to double-count the i != j terms
-                                    if (i != j)
-                                        weight *= 0.5;
+                // In the original EPSR the off-diagonal elements in the inverse matrix have also been
+                // halved so as not to double-count the i != j terms
+                if (i != j)
+                    weight *= 0.5;
 
-                                    // Store fluctuation coefficients ready for addition to potential coefficients later on.
-                                    for (auto n = 0; n < nCoeffP_; ++n)
-                                        fluctuationCoefficients[{i, j, n}] += weight * feedback_ * fitCoefficients[n];
-                                });
+                // Store fluctuation coefficients ready for addition to potential coefficients later on.
+                for (auto n = 0; n < nCoeffP_; ++n)
+                    fluctuationCoefficients[{i, j, n}] += weight * feedback_ * fitCoefficients[n];
+            });
 
         // Increase dataIndex
         ++dataIndex;
@@ -622,35 +660,22 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Generate new empirical potentials
     auto energabs = 0.0;
-    if (modifyPotential_)
+    if (modifyPotential_ && (runCount % *modifyPotential_ == 0))
     {
         // Sum fluctuation coefficients in to the potential coefficients
         auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, nCoeffP_);
         dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                [&](int i, auto at1, int j, auto at2) {
+                                [&](int i, auto at1, int j, auto at2)
+                                {
                                     auto &potCoeff = coefficients[{i, j}];
 
                                     // Zero potential before adding in fluctuation coefficients?
                                     if (overwritePotentials_)
                                         std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
-                                    // Add in fluctuation coefficients, smoothing beforehand if requested
-                                    if (fluctuationSmoothing_)
-                                    {
-                                        // Perform smoothing of the fluctuation coefficients before we sum them into the
-                                        // potential (the un-smoothed coefficients are stored)
-                                        Data1D smoothedCoefficients;
-                                        for (auto n = 0; n < nCoeffP_; ++n)
-                                            smoothedCoefficients.addPoint(n, fluctuationCoefficients[{i, j, n}]);
-                                        Filters::normalisedMovingAverage(smoothedCoefficients, *fluctuationSmoothing_);
-
-                                        // Add in fluctuation coefficients
-                                        for (auto n = 0; n < nCoeffP_; ++n)
-                                            potCoeff[n] += weighting_ * smoothedCoefficients.value(n);
-                                    }
-                                    else
-                                        for (auto n = 0; n < nCoeffP_; ++n)
-                                            potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
+                                    // Add in fluctuation coefficients
+                                    for (auto n = 0; n < nCoeffP_; ++n)
+                                        potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
 
                                     // Set first term to zero (following EPSR)
                                     potCoeff[0] = 0.0;
@@ -713,7 +738,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         if (procPool.isMaster())
         {
             dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
+                                    {
                                         // Grab pointer to the relevant pair potential
                                         PairPotential *pp = dissolve.pairPotential(at1, at2);
 
@@ -736,7 +762,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             dissolve::for_each_pair(
                 ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
+                {
                     // Grab reference to coefficients
                     auto &potCoeff = coefficients[{i, j}];
 

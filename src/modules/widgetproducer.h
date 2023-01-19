@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #pragma once
 
@@ -38,7 +38,8 @@ class ModuleWidgetProducer
     // Register producer for specific class
     template <class M, class W> void registerProducer()
     {
-        producers_[typeid(M)] = [](Module *module, Dissolve &dissolve) {
+        producers_[typeid(M)] = [](Module *module, Dissolve &dissolve)
+        {
             auto *derived = dynamic_cast<M *>(module);
             assert(derived);
             return new W(nullptr, derived, dissolve);

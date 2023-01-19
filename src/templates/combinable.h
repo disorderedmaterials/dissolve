@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 #include "parallel_defs.h"
 
 namespace dissolve
@@ -24,9 +24,8 @@ template <class Container> class CombinableContainer
     }
     void finalize()
     {
-        auto combineOp = [this](const auto &localContainer) {
-            std::transform(parent_.begin(), parent_.end(), localContainer.begin(), parent_.begin(), std::plus<>{});
-        };
+        auto combineOp = [this](const auto &localContainer)
+        { std::transform(parent_.begin(), parent_.end(), localContainer.begin(), parent_.begin(), std::plus<>{}); };
         combinable_.combine_each(combineOp);
     }
 

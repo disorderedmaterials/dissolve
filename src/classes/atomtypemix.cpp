@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomtypemix.h"
 #include "base/lineparser.h"
@@ -144,9 +144,9 @@ bool AtomTypeMix::contains(const std::shared_ptr<AtomType> &atomType) const
 // Check for presence of AtomType/Isotope pair
 bool AtomTypeMix::contains(const std::shared_ptr<AtomType> &atomType, Sears91::Isotope tope) const
 {
-    return std::find_if(types_.begin(), types_.end(), [&atomType, tope](const auto &typeData) {
-               return typeData.atomType() == atomType && typeData.hasIsotope(tope);
-           }) != types_.end();
+    return std::find_if(types_.begin(), types_.end(),
+                        [&atomType, tope](const auto &typeData)
+                        { return typeData.atomType() == atomType && typeData.hasIsotope(tope); }) != types_.end();
 }
 
 // Return number of AtomType/Isotopes

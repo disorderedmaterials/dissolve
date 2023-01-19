@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "module/layer.h"
 #include "base/lineparser.h"
@@ -84,9 +84,9 @@ bool ModuleLayer::canRun(GenericList &processingModuleData) const
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
     {
         // Check that Configurations have unmodified size factor
-        if (std::any_of(cfgs.begin(), cfgs.end(), [](const auto *cfg) {
-                return std::abs(cfg->appliedSizeFactor() - 1.0) > 2 * std::numeric_limits<double>::epsilon();
-            }))
+        if (std::any_of(cfgs.begin(), cfgs.end(),
+                        [](const auto *cfg)
+                        { return std::abs(cfg->appliedSizeFactor() - 1.0) > 2 * std::numeric_limits<double>::epsilon(); }))
         {
             Messenger::print("One or more configurations have an applied size factor, so the layer will not run.\n");
             return false;

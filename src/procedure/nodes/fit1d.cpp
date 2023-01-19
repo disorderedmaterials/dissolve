@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/fit1d.h"
 #include "base/lineparser.h"
@@ -124,29 +124,31 @@ bool Fit1DProcedureNode::finalise(const ProcedureContext &procedureContext)
     if (fitTargets_.size() > 0)
     {
         // Create a minimiser
-        MonteCarloMinimiser mcMinimiser([this]() {
-            // We assume that the minimiser has 'pokeBeforeCost' set, so our
-            // Expression's variables are up-to-date with new test values.
-            double cost = 0.0;
-            const auto &xs = referenceData_.xAxis();
-            const auto &ys = referenceData_.values();
-            double equationY;
-            for (auto &&[x, y] : zip(xs, ys))
+        MonteCarloMinimiser mcMinimiser(
+            [this]()
             {
-                // Set axis value
-                xVariable_->setValue(x);
+                // We assume that the minimiser has 'pokeBeforeCost' set, so our
+                // Expression's variables are up-to-date with new test values.
+                double cost = 0.0;
+                const auto &xs = referenceData_.xAxis();
+                const auto &ys = referenceData_.values();
+                double equationY;
+                for (auto &&[x, y] : zip(xs, ys))
+                {
+                    // Set axis value
+                    xVariable_->setValue(x);
 
-                // Evaluate expression
-                equationY = equation_.asDouble();
+                    // Evaluate expression
+                    equationY = equation_.asDouble();
 
-                // Sum squared error
-                cost += (equationY - y) * (equationY - y);
-            }
+                    // Sum squared error
+                    cost += (equationY - y) * (equationY - y);
+                }
 
-            cost /= referenceData_.nValues();
+                cost /= referenceData_.nValues();
 
-            return sqrt(cost);
-        });
+                return sqrt(cost);
+            });
         mcMinimiser.setMaxIterations(1000);
         mcMinimiser.setStepSize(0.1);
         for (const auto &var : fitTargets_)

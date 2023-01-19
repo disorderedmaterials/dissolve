@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "classes/box.h"
@@ -339,7 +339,8 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, const Process
     int bin;
     auto &types = cfg->atomTypes();
     dissolve::for_each_pair(ParallelPolicies::seq, types.begin(), types.end(),
-                            [&](int typeI, auto &atd1, int typeJ, auto &atd2) {
+                            [&](int typeI, auto &atd1, int typeJ, auto &atd2)
+                            {
                                 // Retrieve partial container and make sure its tag is set
                                 auto &partial = braggPartials[{typeI, typeJ}];
                                 partial.setTag(fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName()));

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #pragma once
 
@@ -45,7 +45,8 @@ class KeywordWidgetProducer
     template <class K> void registerProducer(ProducerFunction function) { producers_[typeid(K)] = std::move(function); }
     template <class K, class W> void registerProducer()
     {
-        producers_[typeid(K *)] = [&](KeywordBase *keyword, const CoreData &coreData) {
+        producers_[typeid(K *)] = [&](KeywordBase *keyword, const CoreData &coreData)
+        {
             // Cast the base up to the full keyword
             auto *k = dynamic_cast<K *>(keyword);
             assert(k);

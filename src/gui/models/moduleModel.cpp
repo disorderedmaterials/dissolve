@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/moduleModel.h"
 
@@ -10,9 +10,10 @@ void ModuleModel::setData(const std::vector<Module *> &modules)
     modules_ = modules;
     if (checkedItems_)
     {
-        auto it = std::remove_if(checkedItems_->get().begin(), checkedItems_->get().end(), [&](const auto *m) {
-            return std::find(modules_->get().begin(), modules_->get().end(), m) == modules_->get().end();
-        });
+        auto it =
+            std::remove_if(checkedItems_->get().begin(), checkedItems_->get().end(),
+                           [&](const auto *m)
+                           { return std::find(modules_->get().begin(), modules_->get().end(), m) == modules_->get().end(); });
         if (it != checkedItems_->get().end())
             checkedItems_->get().erase(it, checkedItems_->get().end());
     }

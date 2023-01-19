@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2022 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
@@ -133,10 +133,13 @@ void Species::removePeriodicBonds()
     if (box_->type() == Box::BoxType::NonPeriodic)
         return;
 
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [&](const auto &b) {
-        // Check the literal vs the minimum image distance between the involved atoms 'i' and 'j'
-        return fabs(box_->minimumDistance(b.i()->r(), b.j()->r()) - (b.j()->r() - b.i()->r()).magnitude()) > 1.0e-3;
-    });
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(),
+                             [&](const auto &b)
+                             {
+                                 // Check the literal vs the minimum image distance between the involved atoms 'i' and 'j'
+                                 return fabs(box_->minimumDistance(b.i()->r(), b.j()->r()) -
+                                             (b.j()->r() - b.i()->r()).magnitude()) > 1.0e-3;
+                             });
     if (it != bonds_.end())
         bonds_.erase(it, bonds_.end());
 }
@@ -187,13 +190,13 @@ void Species::updateIntramolecularTerms()
             }
         }
     }
-    auto atomsContains = [this](const auto *x) {
-        return std::find_if(atoms_.begin(), atoms_.end(), [&x](const auto &p) { return &p == x; }) != atoms_.end();
-    };
+    auto atomsContains = [this](const auto *x)
+    { return std::find_if(atoms_.begin(), atoms_.end(), [&x](const auto &p) { return &p == x; }) != atoms_.end(); };
 
     // Check existing angle terms for any that are invalid
     angles_.erase(std::remove_if(angles_.begin(), angles_.end(),
-                                 [this, &atomsContains](const auto &angle) {
+                                 [this, &atomsContains](const auto &angle)
+                                 {
                                      return ((!atomsContains(angle.i())) || (!atomsContains(angle.j())) ||
                                              (!atomsContains(angle.k()))) ||
                                             ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
@@ -202,7 +205,8 @@ void Species::updateIntramolecularTerms()
 
     // Remove torsions with invalid atoms or bonds
     torsions_.erase(std::remove_if(torsions_.begin(), torsions_.end(),
-                                   [this, &atomsContains](const auto &torsion) {
+                                   [this, &atomsContains](const auto &torsion)
+                                   {
                                        return ((!atomsContains(torsion.i())) || (!atomsContains(torsion.j())) ||
                                                (!atomsContains(torsion.k())) || (!atomsContains(torsion.l()))) ||
                                               ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
@@ -212,7 +216,8 @@ void Species::updateIntramolecularTerms()
 
     // Remove impropers with invalid atoms or bonds
     impropers_.erase(std::remove_if(impropers_.begin(), impropers_.end(),
-                                    [this, &atomsContains](const auto &improper) {
+                                    [this, &atomsContains](const auto &improper)
+                                    {
                                         return ((!atomsContains(improper.i())) || (!atomsContains(improper.j())) ||
                                                 (!atomsContains(improper.k())) || (!atomsContains(improper.l()))) ||
                                                ((!hasBond(improper.i(), improper.j())) ||
@@ -632,9 +637,9 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
         // Construct a name for the master term based on the atom types
         std::vector<std::string_view> names = {bond.i()->atomType()->name(), bond.j()->atomType()->name()};
         std::sort(names.begin(), names.end());
-        generateMasterTerm<MasterBond>(bond, joinStrings(names, "-"),
-                                       [&coreData](std::string_view name) { return coreData.getMasterBond(name); },
-                                       [&coreData](auto name) -> MasterBond & { return coreData.addMasterBond(name); });
+        generateMasterTerm<MasterBond>(
+            bond, joinStrings(names, "-"), [&coreData](std::string_view name) { return coreData.getMasterBond(name); },
+            [&coreData](auto name) -> MasterBond & { return coreData.addMasterBond(name); });
     }
 
     // Angles
@@ -646,17 +651,19 @@ void Species::reduceToMasterTerms(CoreData &coreData, bool selectionOnly)
 
         // Construct a name for the master term based on the atom types
         if (angle.i()->atomType()->name() < angle.k()->atomType()->name())
-            generateMasterTerm<MasterAngle>(angle,
-                                            fmt::format("{}-{}-{}", angle.i()->atomType()->name(),
-                                                        angle.j()->atomType()->name(), angle.k()->atomType()->name()),
-                                            [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
-                                            [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
+            generateMasterTerm<MasterAngle>(
+                angle,
+                fmt::format("{}-{}-{}", angle.i()->atomType()->name(), angle.j()->atomType()->name(),
+                            angle.k()->atomType()->name()),
+                [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
+                [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
         else
-            generateMasterTerm<MasterAngle>(angle,
-                                            fmt::format("{}-{}-{}", angle.k()->atomType()->name(),
-                                                        angle.j()->atomType()->name(), angle.i()->atomType()->name()),
-                                            [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
-                                            [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
+            generateMasterTerm<MasterAngle>(
+                angle,
+                fmt::format("{}-{}-{}", angle.k()->atomType()->name(), angle.j()->atomType()->name(),
+                            angle.i()->atomType()->name()),
+                [&coreData](std::string_view name) { return coreData.getMasterAngle(name); },
+                [&coreData](auto name) -> MasterAngle & { return coreData.addMasterAngle(name); });
     }
 
     // Torsions
