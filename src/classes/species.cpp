@@ -265,5 +265,5 @@ void Species::deserialise(SerialisedValue &node, CoreData &coreData)
                            { isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(iso, coreData); });
     Serialisable::toVector(node, "sites",
                            [this, &coreData](SerialisedValue &site)
-                           { sites_.emplace_back(std::make_unique<SpeciesSite>(this))->deserialise(site); });
+                           { sites_.emplace_back(std::make_unique<SpeciesSite>(this))->deserialise(site, coreData); });
 }

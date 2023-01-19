@@ -6,6 +6,8 @@
 #include "base/enumoptions.h"
 #include "base/serialiser.h"
 #include "base/version.h"
+#include "classes/atomtype.h"
+#include "data/elements.h"
 #include "templates/vector3.h"
 
 #include <map>
@@ -21,8 +23,14 @@ class SpeciesAtom;
 class SpeciesSite : public Serialisable
 {
     public:
-    explicit SpeciesSite(const Species *parent);
-    SpeciesSite(const Species *parent, std::string name);
+    // Site Type
+    enum class SiteType
+    {
+        Static, /* Site is based on fixed atom indices within the species */
+        Dynamic /* Site is atomic and based on elements and atom types */
+    };
+    explicit SpeciesSite(const Species *parent, SiteType type = SiteType::Static);
+    SpeciesSite(const Species *parent, std::string name, SiteType type = SiteType::Static);
     ~SpeciesSite() = default;
 
     /*
@@ -47,7 +55,24 @@ class SpeciesSite : public Serialisable
     int version() const;
 
     /*
-     * Definition
+     * Basic Definition
+     */
+    private:
+    // Type of site
+    SiteType type_;
+
+    public:
+    // Clear definition data from site
+    void clearDefinition();
+    // Set type of site
+    void setType(SiteType type);
+    // Return type of site
+    SiteType type() const;
+    // Return whether the site has defined axes
+    bool hasAxes() const;
+
+    /*
+     * Static Site Definition
      */
     private:
     // Species atoms whose average position is the origin of the site
@@ -65,7 +90,7 @@ class SpeciesSite : public Serialisable
     // Add origin atom from index
     bool addOriginAtom(int atomIndex);
     // Set origin atoms
-    bool setOriginAtoms(const std::vector<SpeciesAtom *> &atoms);
+    bool setOriginAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return origin atom vector
     const std::vector<const SpeciesAtom *> &originAtoms() const;
     // Return integer array of indices from which the origin should be formed
@@ -79,7 +104,7 @@ class SpeciesSite : public Serialisable
     // Add x-axis atom from index
     bool addXAxisAtom(int atomIndex);
     // Set x-axis atoms
-    bool setXAxisAtoms(const std::vector<SpeciesAtom *> &atoms);
+    bool setXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return x-axis atom vector
     const std::vector<const SpeciesAtom *> &xAxisAtoms() const;
     // Return integer array of indices from which x-axis should be formed
@@ -89,20 +114,41 @@ class SpeciesSite : public Serialisable
     // Add y-axis atom from index
     bool addYAxisAtom(int atomIndex);
     // Set y-axis atoms
-    bool setYAxisAtoms(const std::vector<SpeciesAtom *> &atoms);
+    bool setYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return y-axis atom vector
     const std::vector<const SpeciesAtom *> &yAxisAtoms() const;
     // Return integer array of indices from which y-axis should be formed
     std::vector<int> yAxisAtomIndices() const;
-    // Return whether the site has defined axes sites
-    bool hasAxes() const;
+
+    /*
+     * Dynamic Site Definition
+     */
+    private:
+    // Target elements for selection as sites
+    std::vector<Elements::Element> elements_;
+    // Target atom types for selection as sites
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
+
+    public:
+    // Add target elements for selection as sites
+    bool addElement(Elements::Element el);
+    // Set target elements for selection as sites
+    bool setElements(const std::vector<Elements::Element> &els);
+    // Return elements for selection as sites
+    const std::vector<Elements::Element> elements() const;
+    // Add target atom type for selection as sites
+    bool addAtomType(const std::shared_ptr<AtomType> &at);
+    // Set target atom types for selection as sites
+    bool setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types);
+    // Return atom types for selection as sites
+    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
 
     /*
      * Generation from Parent
      */
     public:
     // Create and return Site description from parent Species
-    Site *createFromParent() const;
+    std::vector<std::shared_ptr<Site>> createFromParent() const;
 
     /*
      * Read / Write
@@ -111,6 +157,9 @@ class SpeciesSite : public Serialisable
     // Site Block Keyword Enum
     enum SiteKeyword
     {
+        AtomTypeKeyword,           /* 'AtomType' - Specify allowed atom type(s) for dynamic sites */
+        DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
+        ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
         EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
         OriginKeyword,             /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
         OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with
@@ -123,10 +172,10 @@ class SpeciesSite : public Serialisable
     // Return enum option info for SiteKeyword
     static EnumOptions<SpeciesSite::SiteKeyword> keywords();
     // Read site definition from specified LineParser
-    bool read(LineParser &parser);
+    bool read(LineParser &parser, const CoreData &coreData);
     // Write site definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
     SerialisedValue serialise() const override;
-    void deserialise(SerialisedValue &node) override;
+    void deserialise(SerialisedValue &node, CoreData &coreData);
 };

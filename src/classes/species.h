@@ -16,10 +16,9 @@
 #include "classes/speciestorsion.h"
 #include "io/import/coordinates.h"
 #include <list>
+#include <map>
 #include <memory>
 #include <variant>
-
-#include <map>
 #include <vector>
 
 // Forward Declarations
@@ -106,8 +105,9 @@ class Species : public Serialisable
     // provided
     std::vector<int> fragment(int startIndex, OptionalReferenceWrapper<SpeciesBond> exclude = std::nullopt,
                               OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt) const;
+    // Return current atom selection for modification
+    const std::vector<SpeciesAtom *> modifiableSelectedAtoms();
     // Return current atom selection
-    std::vector<SpeciesAtom *> selectedAtoms();
     const std::vector<const SpeciesAtom *> selectedAtoms() const;
     // Return whether the current selection comprises atoms of a single element
     bool isSelectionSingleElement() const;

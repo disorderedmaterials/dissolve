@@ -54,26 +54,29 @@ void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDef
     if (!siteSource_)
         return;
 
-    // Generate a temporary Site from the parent Species
-    Site *site = siteSource_->createFromParent();
-    if (!site)
+    // Generate temporary site(s) from the parent Species
+    auto sites = siteSource_->createFromParent();
+    if (sites.empty())
         return;
 
     // Render according to the current displayStyle
     if (displayStyle_ == LinesStyle)
     {
-        // Plot origin
-        A.setTranslation(site->origin());
-        if (site->hasAxes())
-            A.applyRotation(site->axes());
-        siteAssembly_.add(originPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
-        siteAssembly_.add(crossPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
-
-        // Plot axes?
-        if (site->hasAxes())
+        for (auto &site : sites)
         {
-            A.setRotation(site->axes());
-            siteAssembly_.add(axesPrimitive_, A);
+            // Plot origin
+            A.setTranslation(site->origin());
+            if (site->hasAxes())
+                A.applyRotation(site->axes());
+            siteAssembly_.add(originPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
+            siteAssembly_.add(crossPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
+
+            // Plot axes?
+            if (site->hasAxes())
+            {
+                A.setRotation(site->axes());
+                siteAssembly_.add(axesPrimitive_, A);
+            }
         }
     }
 }

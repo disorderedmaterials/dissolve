@@ -4,7 +4,7 @@
 #include "classes/sitestack.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/speciesatom.h"
+#include "classes/species.h"
 #include "classes/speciessite.h"
 #include "data/atomicmasses.h"
 #include <numeric>
@@ -17,6 +17,20 @@ SiteStack::SiteStack()
     sitesInMolecules_ = false;
     sitesHaveOrientation_ = false;
 }
+
+/*
+ * Target
+ */
+
+// Return target Configuration
+Configuration *SiteStack::configuration() const { return configuration_; }
+
+// Return target SpeciesSite
+const SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
+
+/*
+ * Generation
+ */
 
 // Calculate geometric centre of atoms in the given molecule
 Vec3<double> SiteStack::centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices)
@@ -43,9 +57,136 @@ Vec3<double> SiteStack::centreOfMass(const Molecule &mol, const Box *box, const 
     return sums.first / sums.second;
 }
 
-/*
- * Target
- */
+// Create stack of static, unoriented sites
+bool SiteStack::createStatic()
+{
+    // Get origin atom indices from site
+    auto originAtomIndices = speciesSite_->originAtomIndices();
+    if (originAtomIndices.empty())
+        return Messenger::error("No origin atoms defined in species site '{}'.\n", speciesSite_->name());
+
+    auto *targetSpecies = speciesSite_->parent();
+
+    // Resize the array
+    auto spPop = configuration_->speciesPopulation(targetSpecies);
+    if (spPop == 0)
+        return true;
+    sites_.reserve(spPop);
+
+    // Get Molecule array from Configuration and search for the target Species
+    const auto *box = configuration_->box();
+    for (const auto &molecule : configuration_->molecules())
+    {
+        if (molecule->species() != targetSpecies)
+            continue;
+
+        sites_.emplace_back(molecule, speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices)
+                                                                         : centreOfGeometry(*molecule, box, originAtomIndices));
+    }
+
+    return true;
+}
+
+// Create stack of static, oriented sites
+bool SiteStack::createStaticOriented()
+{
+    // Get origin atom indices from site
+    auto originAtomIndices = speciesSite_->originAtomIndices();
+    if (originAtomIndices.empty())
+        return Messenger::error("No origin atoms defined in species site '{}'.\n", speciesSite_->name());
+
+    // Get axis atom indices
+    auto xAxisAtomIndices = speciesSite_->xAxisAtomIndices();
+    if (xAxisAtomIndices.empty())
+        return Messenger::error("No x-axis atoms defined in species site '{}'.\n", speciesSite_->name());
+    auto yAxisAtomIndices = speciesSite_->yAxisAtomIndices();
+    if (yAxisAtomIndices.empty())
+        return Messenger::error("No y-axis atoms defined in species site '{}'.\n", speciesSite_->name());
+
+    auto *targetSpecies = speciesSite_->parent();
+
+    // Resize the array
+    auto spPop = configuration_->speciesPopulation(targetSpecies);
+    if (spPop == 0)
+        return true;
+    sites_.reserve(spPop);
+
+    // Get Molecule array from Configuration and search for the target Species
+    Vec3<double> origin, x, y, z;
+    Matrix3 axes;
+    const auto *box = configuration_->box();
+    for (const auto &molecule : configuration_->molecules())
+    {
+        if (molecule->species() != targetSpecies)
+            continue;
+
+        origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices)
+                                                    : centreOfGeometry(*molecule, box, originAtomIndices);
+
+        // Get vector from site origin to x-axis reference point and normalise it
+        x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAxisAtomIndices));
+        x.normalise();
+
+        // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
+        y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAxisAtomIndices));
+        y.orthogonalise(x);
+        y.normalise();
+
+        // Calculate z vector from cross product of x and y
+        z = x * y;
+
+        orientedSites_.emplace_back(molecule, origin, x, y, z);
+    }
+
+    return true;
+}
+
+// Create stack from dynamic site definition
+bool SiteStack::createDynamic()
+{
+    // Get dynamic site data
+    const auto &elements = speciesSite_->elements();
+    const auto &atomTypes = speciesSite_->atomTypes();
+    if (elements.empty() && atomTypes.empty())
+        return Messenger::error("No elements or atom types defined for dynamic species site '{}'.\n", speciesSite_->name());
+
+    auto *targetSpecies = speciesSite_->parent();
+
+    // Get species population for use later once we have established number of sites per molecule
+    auto spPop = configuration_->speciesPopulation(targetSpecies);
+    if (spPop == 0)
+        return true;
+
+    // Determine matching atom indices for the species
+    std::vector<int> siteIndices;
+    for (auto &i : targetSpecies->atoms())
+    {
+        // Valid element or atom type?
+        if ((std::find(elements.begin(), elements.end(), i.Z()) != elements.end()) ||
+            std::find(atomTypes.begin(), atomTypes.end(), i.atomType()) != atomTypes.end())
+            siteIndices.push_back(i.index());
+    }
+    if (siteIndices.empty())
+        return true;
+
+    // Resize our array
+    sites_.reserve(siteIndices.size() * spPop);
+
+    // Get Molecule array from Configuration and search for the target Species
+    for (const auto &molecule : configuration_->molecules())
+    {
+        if (molecule->species() != targetSpecies)
+            continue;
+
+        auto &atoms = molecule->atoms();
+
+        // Loop over site indices
+        for (auto id : siteIndices)
+            sites_.emplace_back(molecule, atoms[id]->r());
+    }
+
+    return true;
+}
 
 // Create stack for specified Configuration and site
 bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
@@ -60,70 +201,22 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     sitesInMolecules_ = true;
     sitesHaveOrientation_ = speciesSite_->hasAxes();
 
-    // Get origin atom indices from site, and grab the Configuration's Box
-    auto originAtomIndices = speciesSite_->originAtomIndices();
-    if (originAtomIndices.empty())
-        return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite_->name());
-    const auto *box = configuration_->box();
-
-    // If the site has axes, grab the atom indices involved
-    std::vector<int> xAxisAtomIndices, yAxisAtomIndices;
-    if (sitesHaveOrientation_)
-    {
-        xAxisAtomIndices = speciesSite_->xAxisAtomIndices();
-        yAxisAtomIndices = speciesSite_->yAxisAtomIndices();
-    }
-
     // Set new index and clear old arrays
-    configurationIndex_ = cfg->contentsVersion();
+    configurationIndex_ = configuration_->contentsVersion();
     sites_.clear();
     orientedSites_.clear();
 
-    // Get Molecule array from Configuration and search for the target Species
-    auto *targetSpecies = speciesSite_->parent();
-    Vec3<double> origin, x, y, z;
-    Matrix3 axes;
-    for (const auto &molecule : cfg->molecules())
+    // Create based on the type of site we were given
+    switch (site->type())
     {
-        if (molecule->species() != targetSpecies)
-            continue;
-
-        // Calculate origin
-        if (speciesSite_->originMassWeighted())
-            origin = centreOfMass(*molecule, box, originAtomIndices);
-        else
-            origin = centreOfGeometry(*molecule, box, originAtomIndices);
-
-        // Calculate axes and store data
-        if (sitesHaveOrientation_)
-        {
-            // Get vector from site origin to x-axis reference point and normalise it
-            x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAxisAtomIndices));
-            x.normalise();
-
-            // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-            y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAxisAtomIndices));
-            y.orthogonalise(x);
-            y.normalise();
-
-            // Calculate z vector from cross product of x and y
-            z = x * y;
-
-            // Store data
-            orientedSites_.emplace_back(molecule, origin, x, y, z);
-        }
-        else
-            sites_.emplace_back(molecule, origin);
+        case (SpeciesSite::SiteType::Static):
+            return sitesHaveOrientation_ ? createStaticOriented() : createStatic();
+        case (SpeciesSite::SiteType::Dynamic):
+            return createDynamic();
+        default:
+            return Messenger::error("Species site type not handled in stack generation.\n");
     }
-
-    return true;
 }
-
-// Return target Configuration
-Configuration *SiteStack::configuration() const { return configuration_; }
-
-// Return target SpeciesSite
-const SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
 
 /*
  * Stack
@@ -131,12 +224,6 @@ const SpeciesSite *SiteStack::speciesSite() const { return speciesSite_; }
 
 // Return number of sites in the stack
 int SiteStack::nSites() const { return (sitesHaveOrientation_ ? orientedSites_.size() : sites_.size()); }
-
-// Return whether the stack contains associate Molecule information
-bool SiteStack::sitesInMolecules() const { return sitesInMolecules_; }
-
-// Return whether the current stack contains local axes information
-bool SiteStack::sitesHaveOrientation() const { return sitesHaveOrientation_; }
 
 // Return site with index specified
 const Site &SiteStack::site(int index) const { return (sitesHaveOrientation_ ? orientedSites_.at(index) : sites_.at(index)); }

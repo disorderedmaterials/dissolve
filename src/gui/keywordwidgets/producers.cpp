@@ -36,7 +36,6 @@
 #include "keywords/data1dstore.h"
 #include "keywords/data2dstore.h"
 #include "keywords/data3dstore.h"
-#include "keywords/dynamicsitenodes.h"
 #include "keywords/elementvector.h"
 #include "keywords/expression.h"
 #include "keywords/geometrylist.h"
@@ -86,7 +85,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerNullProducer<Data1DStoreKeyword>();
     registerNullProducer<Data2DStoreKeyword>();
     registerNullProducer<Data3DStoreKeyword>();
-    registerNullProducer<DynamicSiteNodesKeyword>();
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
     registerNullProducer<GeometryListKeyword>();

@@ -4,12 +4,17 @@
 #include "gui/models/sitesFilterProxy.h"
 #include "classes/speciessite.h"
 
-SitesFilterProxy::SitesFilterProxy(int flags) : filterFlags_(flags) {}
-
 // Set filter flag
 void SitesFilterProxy::setFlag(SitesFilterProxy::FilterFlags flag)
 {
-    filterFlags_.set(flag);
+    flags_ += flag;
+    invalidateFilter();
+}
+
+// Remove filter flag
+void SitesFilterProxy::removeFlag(SitesFilterProxy::FilterFlags flag)
+{
+    flags_ -= flag;
     invalidateFilter();
 }
 
@@ -19,13 +24,13 @@ void SitesFilterProxy::setFlag(SitesFilterProxy::FilterFlags flag)
 
 bool SitesFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    if (filterFlags_.none() || !parent.isValid())
+    if (!flags_.anySet() || !parent.isValid())
         return true;
 
     const auto *site = sourceModel()->data(sourceModel()->index(row, 1, parent), Qt::UserRole).value<SpeciesSite *>();
     assert(site);
 
-    if (filterFlags_.test(SitesFilterProxy::HasAxes) && !site->hasAxes())
+    if (flags_.isSet(SitesFilterProxy::HasAxes) && !site->hasAxes())
         return false;
 
     return true;

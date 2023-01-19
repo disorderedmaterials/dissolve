@@ -46,6 +46,14 @@ void Configuration::adjustSpeciesPopulation(const Species *sp, int delta)
 // Return Species populations within the Configuration
 const std::vector<std::pair<const Species *, int>> &Configuration::speciesPopulations() const { return speciesPopulations_; }
 
+// Return population of specified species within the Configuration
+int Configuration::speciesPopulation(const Species *sp) const
+{
+    auto it = std::find_if(speciesPopulations_.begin(), speciesPopulations_.end(),
+                           [sp](const auto &spInfo) { return spInfo.first == sp; });
+    return it == speciesPopulations_.end() ? 0 : it->second;
+}
+
 // Return if the specified Species is present in the Configuration
 bool Configuration::containsSpecies(const Species *sp)
 {
