@@ -55,13 +55,18 @@ QVariant ModulePaletteModel::data(const QModelIndex &index, int role) const
             return {};
 
         auto [moduleType, brief] = std::next(ModuleRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
-        if (role == Qt::DisplayRole)
-            return QString::fromStdString(moduleType);
-        else if (role == Qt::ToolTipRole)
-            return QString::fromStdString(brief);
-        else if (role == Qt::DecorationRole)
-            return QIcon(
-                (QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(moduleType).toLower()))));
+        switch (role)
+        {
+            case (Qt::DisplayRole):
+                return QString::fromStdString(moduleType);
+            case (Qt::ToolTipRole):
+                return QString::fromStdString(brief);
+            case (Qt::DecorationRole):
+                return QIcon(
+                    (QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(moduleType).toLower()))));
+            default:
+                return {};
+        }
     }
     else if (role == Qt::DisplayRole && index.column() == 0)
         return QString::fromStdString(std::next(ModuleRegistry::categoryMap().begin(), index.row())->first);

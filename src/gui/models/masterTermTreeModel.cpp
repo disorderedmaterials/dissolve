@@ -5,15 +5,19 @@
 
 MasterTermModel &MasterTermTreeModel::modelForTopLevelRow(int row)
 {
-    if (row == 0)
-        return bondModel_;
-    else if (row == 1)
-        return angleModel_;
-    else if (row == 2)
-        return torsionModel_;
-    else if (row == 3)
-        return improperModel_;
-    throw(std::runtime_error("Invalid row provided, so can't return top level model.\n"));
+    switch (row)
+    {
+        case (0):
+            return bondModel_;
+        case (1):
+            return angleModel_;
+        case (2):
+            return torsionModel_;
+        case (3):
+            return improperModel_;
+        default:
+            throw(std::runtime_error("Invalid row provided, so can't return top level model.\n"));
+    }
 }
 
 void MasterTermTreeModel::setData(std::vector<std::shared_ptr<MasterBond>> &bonds,
