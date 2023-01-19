@@ -82,7 +82,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
 {
     if (role != Qt::EditRole)
         return false;
-    SpeciesAtom &item = species_.atom(index.row());
+    auto &item = species_.atom(index.row());
     switch (index.column())
     {
         case 0:
@@ -101,8 +101,12 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
         case 2:
         case 3:
         case 4:
-            item.setCoordinate(index.column() - 2, value.toDouble());
-            break;
+        {
+            auto newR = item.r();
+            newR.set(index.column() - 2, value.toDouble());
+            species_.setAtomCoordinates(&item, newR);
+        }
+        break;
         case 5:
             item.setCharge(value.toDouble());
     }
