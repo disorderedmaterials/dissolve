@@ -225,12 +225,13 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
     {
         if (indexI == indexJ)
             return;
+
         auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
         if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
             return;
 
         // Determine final forces
-        auto vecij = box->minimumVector(j.r(), i.r());
+        auto vecij = box->minimumVector(i.r(), j.r());
         auto magjisq = vecij.magnitudeSq();
         if (magjisq > cutoffSq)
             return;
