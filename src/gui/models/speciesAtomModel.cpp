@@ -108,7 +108,8 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
         }
         break;
         case 5:
-            item.setCharge(value.toDouble());
+            species_.setAtomCharge(&item, value.toDouble());
+            break;
     }
     emit dataChanged(index, index);
     return true;
