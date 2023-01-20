@@ -31,7 +31,7 @@ class KeywordStore
         auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(),
                                  [&](const auto *k)
                                  {
-                                     for (auto &[name, keyword] : keywords_)
+                                     for (auto *keyword : keywords_)
                                          if (k == keyword)
                                              return true;
                                      return false;
@@ -43,8 +43,8 @@ class KeywordStore
      * Keyword Data
      */
     private:
-    // Defined keywords
-    std::map<std::string_view, KeywordBase *> keywords_, deprecatedKeywords_;
+    // Keywords present in this store
+    std::vector<KeywordBase *> keywords_, deprecatedKeywords_;
     // Targets group
     std::vector<KeywordBase *> targetsGroup_;
     // Keyword group mappings
@@ -58,7 +58,7 @@ class KeywordStore
     KeywordBase *addKeyword(std::string_view name, std::string_view description, Args &&...args)
     {
         // Check for keyword of this name already
-        if (keywords_.find(name) != keywords_.end())
+        if (find(name))
             throw(std::runtime_error(fmt::format("Keyword named '{}' already exists, and can't be added again.", name)));
 
         // Create new keyword using the supplied arguments
@@ -66,7 +66,7 @@ class KeywordStore
         k->setBaseInfo(name, description);
 
         // Add ourselves to both the local map and the global reference vector
-        keywords_.emplace(name, k);
+        keywords_.push_back(k);
         allKeywords_.push_back(k);
 
         return k;
@@ -106,7 +106,7 @@ class KeywordStore
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        deprecatedKeywords_.emplace(name, k);
+        deprecatedKeywords_.push_back(k);
 
         return k;
     }
@@ -118,12 +118,12 @@ class KeywordStore
     {
         std::vector<K *> result;
         for (auto &kwd : keywords_)
-            if (kwd.second->typeIndex() == typeid(K *))
-                result.push_back(dynamic_cast<K *>(kwd.second));
+            if (kwd->typeIndex() == typeid(K *))
+                result.push_back(dynamic_cast<K *>(kwd));
         return result;
     }
     // Return keywords
-    const std::map<std::string_view, KeywordBase *> &keywords() const;
+    const std::vector<KeywordBase *> &keywords() const;
     // Return "Target" group keywords
     const std::vector<KeywordBase *> &targetsGroup() const;
     // Return restartable keywords
@@ -156,12 +156,12 @@ class KeywordStore
     // Set specified enumerated keyword
     template <class E> void setEnumeration(std::string_view name, E data)
     {
-        auto it = keywords_.find(name);
-        if (it == keywords_.end())
+        auto *base = find(name);
+        if (!base)
             throw(std::runtime_error(
                 fmt::format("Enumerated keyword '{}' cannot be set as no suitable setter has been registered.\n", name)));
 
-        auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(it->second);
+        auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(base);
         if (!k)
             throw(std::runtime_error(
                 fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
@@ -195,12 +195,12 @@ class KeywordStore
     // Get specified keyword data, casting as necessary
     template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name) const
     {
-        auto it = keywords_.find(name);
+        auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto *k) { return k->name() == name; });
         if (it == keywords_.end())
             return {};
 
         // Cast the keyword
-        K *keyword = dynamic_cast<K *>(it->second);
+        K *keyword = dynamic_cast<K *>(*it);
         if (!keyword)
             throw(std::runtime_error(fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
 
@@ -209,12 +209,12 @@ class KeywordStore
     // Get specified keyword enumeration, casting as necessary
     template <class E> std::optional<E> getEnumeration(std::string_view name) const
     {
-        auto it = keywords_.find(name);
+        auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto *k) { return k->name() == name; });
         if (it == keywords_.end())
             return {};
 
         // Cast the keyword
-        auto *keyword = dynamic_cast<EnumOptionsKeyword<E> *>(it->second);
+        auto *keyword = dynamic_cast<EnumOptionsKeyword<E> *>((*it));
         if (!keyword)
             throw(std::runtime_error(
                 fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));

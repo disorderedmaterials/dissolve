@@ -24,21 +24,21 @@ std::vector<KeywordBase *> KeywordStore::allKeywords_;
 // Find named keyword
 KeywordBase *KeywordStore::find(std::string_view name)
 {
-    auto it = keywords_.find(name);
+    auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto *k) { return k->name() == name; });
     if (it == keywords_.end())
         return nullptr;
-    return it->second;
+    return *it;
 }
 const KeywordBase *KeywordStore::find(std::string_view name) const
 {
-    auto it = keywords_.find(name);
+    auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto *k) { return k->name() == name; });
     if (it == keywords_.end())
         return nullptr;
-    return it->second;
+    return *it;
 }
 
 // Return keywords
-const std::map<std::string_view, KeywordBase *> &KeywordStore::keywords() const { return keywords_; }
+const std::vector<KeywordBase *> &KeywordStore::keywords() const { return keywords_; }
 
 // Return "Target" group keywords
 const std::vector<KeywordBase *> &KeywordStore::targetsGroup() const { return targetsGroup_; }
@@ -61,14 +61,18 @@ KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const Cor
 {
     // Do we recognise the first item (the 'keyword')?
     auto deprecated = false;
-    auto it = deprecatedKeywords_.find(parser.argsv(startArg));
+    KeywordBase *keyword = nullptr;
+    auto it = std::find_if(deprecatedKeywords_.begin(), deprecatedKeywords_.end(),
+                           [&](const auto *k) { return k->name() == parser.argsv(startArg); });
     if (it != deprecatedKeywords_.end())
+    {
         deprecated = true;
+        keyword = *it;
+    }
     else
-        it = keywords_.find(parser.argsv(startArg));
-    if (it == keywords_.end())
+        keyword = find(parser.argsv(startArg));
+    if (!keyword)
         return KeywordBase::ParseResult::Unrecognised;
-    auto *keyword = it->second;
 
     // We recognised the keyword - check the number of arguments we have against the min / max for the keyword
     if (!keyword->validNArgs(parser.nArgs() - startArg - 1))
@@ -87,20 +91,20 @@ KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const Cor
 // Write all keywords to specified LineParser
 bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
-    for (const auto &[name, keyword] : keywords_)
-        if (!keyword->serialise(parser, name, prefix))
+    for (const auto *keyword : keywords_)
+        if (!keyword->serialise(parser, keyword->name(), prefix))
             return false;
 
     return true;
 }
 
 // Local template for handling boilerplate of casting the keyword
-template <typename K> K *getKeyword(const std::map<std::string_view, KeywordBase *> &keywords, std::string_view name)
+template <typename K> K *getKeyword(const std::vector<KeywordBase *> &keywords, std::string_view name)
 {
-    auto it = keywords.find(name);
+    auto it = std::find_if(keywords.begin(), keywords.end(), [name](const auto *k) { return k->name() == name; });
     if (it == keywords.end())
         throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    K *result = dynamic_cast<K *>(it->second);
+    K *result = dynamic_cast<K *>(*it);
     if (!result)
         throw(std::runtime_error(fmt::format("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name())));
     return result;
