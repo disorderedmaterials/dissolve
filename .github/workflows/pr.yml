@@ -9,7 +9,7 @@ env:
   pythonVersion: 3.9
   qtVersion: 6.2.2
   nixVersion: 2.4
-  nixOSVersion: 21.11
+  nixOSVersion: 22.11
 
 jobs:
 

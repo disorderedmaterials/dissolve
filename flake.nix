@@ -71,9 +71,13 @@
           pkgs.stdenv.mkDerivation ({
             inherit version;
             pname = exe-name mpi gui;
-            src = builtins.filterSource (path: type:
-              type != "directory" || builtins.baseNameOf path
-              != ".azure-pipelines" || builtins.baseNameOf path != "web") ./.;
+            src = builtins.path {
+              path = ./.;
+              name = "dissolve-src";
+              filter = path: type:
+                type != "directory" || builtins.baseNameOf path
+                != ".azure-pipelines" || builtins.baseNameOf path != "web";
+            };
             patches = [ ./nix/patches/ctest.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
               ++ pkgs.lib.optionals gui (gui_libs pkgs)
@@ -140,7 +144,7 @@
 
         defaultPackage = self.packages.${system}.dissolve-gui;
 
-        devShell = pkgs.stdenv.mkDerivation {
+        devShells.default = pkgs.stdenv.mkDerivation {
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
             ++ (with pkgs; [
@@ -172,12 +176,12 @@
         };
 
         apps = {
-          dissolve =
+          dissolve-app =
             flake-utils.lib.mkApp { drv = self.packages.${system}.dissolve; };
-          dissolve-mpi = flake-utils.lib.mkApp {
+          dissolve-mpi-app = flake-utils.lib.mkApp {
             drv = self.packages.${system}.dissolve-mpi;
           };
-          dissolve-gui = flake-utils.lib.mkApp {
+          dissolve-gui-app = flake-utils.lib.mkApp {
             drv = self.packages.${system}.dissolve-gui;
           };
           uploader = {
