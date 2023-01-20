@@ -474,3 +474,13 @@ void Interpolator::addInterpolated(Interpolator &source, Data1D &dest, double fa
     for (auto &&[x, y] : zip(dest.xAxis(), dest.values()))
         y += source.y(x) * factor;
 }
+
+std::vector<double> Interpolator::y(std::vector<double> xs)
+{
+    std::vector<double> result;
+    result.reserve(xs.size());
+
+    for (auto x : xs)
+        result.push_back(y(x));
+    return result;
+}
