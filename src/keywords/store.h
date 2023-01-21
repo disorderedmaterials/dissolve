@@ -8,16 +8,11 @@
 #include "procedure/nodevalue.h"
 #include "templates/optionalref.h"
 #include <any>
-#include <list>
-#include <map>
 #include <typeindex>
-#include <unordered_map>
 
 class SelectProcedureNode;
 class Collect1DProcedureNode;
 class RegionProcedureNodeBase;
-class SQModule;
-class RDFModule;
 class Configuration;
 
 // Keyword Store
