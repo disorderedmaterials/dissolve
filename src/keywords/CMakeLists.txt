@@ -31,6 +31,7 @@ add_library(
   speciesvector.cpp
   stdstring.cpp
   store.cpp
+  storedata.cpp
   valuestore.cpp
   vec3double.cpp
   vec3integer.cpp
@@ -76,6 +77,7 @@ add_library(
   speciesvector.h
   stdstring.h
   store.h
+  storedata.h
   valuestore.h
   vec3double.h
   vec3integer.h

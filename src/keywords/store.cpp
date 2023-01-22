@@ -22,29 +22,33 @@
 std::vector<KeywordBase *> KeywordStore::allKeywords_;
 
 // Find named keyword
-KeywordBase *KeywordStore::find(std::string_view name)
+OptionalReferenceWrapper<KeywordStoreData> KeywordStore::find(std::string_view name)
 {
-    auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto *k) { return k->name() == name; });
+    auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](auto &kd) { return kd.keyword()->name() == name; });
     if (it == keywords_.end())
-        return nullptr;
+        return {};
     return *it;
 }
-const KeywordBase *KeywordStore::find(std::string_view name) const
+OptionalReferenceWrapper<const KeywordStoreData> KeywordStore::find(std::string_view name) const
 {
-    auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto *k) { return k->name() == name; });
+    auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto &kd) { return kd.keyword()->name() == name; });
     if (it == keywords_.end())
-        return nullptr;
+        return {};
     return *it;
 }
 
 // Return keywords
-const std::vector<KeywordBase *> &KeywordStore::keywords() const { return keywords_; }
+const std::vector<KeywordStoreData> &KeywordStore::keywords() const { return keywords_; }
 
 // Return "Target" group keywords
-const std::vector<KeywordBase *> &KeywordStore::targetsGroup() const { return targetsGroup_; }
-
-// Return restartable keywords
-const std::vector<KeywordBase *> &KeywordStore::restartables() const { return restartables_; }
+std::vector<KeywordBase *> KeywordStore::targetKeywords()
+{
+    std::vector<KeywordBase *> targets;
+    for (auto &kd : keywords_)
+        if (kd.type() == KeywordStoreData::KeywordType::Target)
+            targets.push_back(kd.keyword());
+    return targets;
+}
 
 // Return keyword group mappings
 const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &KeywordStore::displayGroups() const
@@ -60,19 +64,13 @@ const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &Keyw
 KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const CoreData &coreData, int startArg)
 {
     // Do we recognise the first item (the 'keyword')?
-    auto deprecated = false;
-    KeywordBase *keyword = nullptr;
-    auto it = std::find_if(deprecatedKeywords_.begin(), deprecatedKeywords_.end(),
-                           [&](const auto *k) { return k->name() == parser.argsv(startArg); });
-    if (it != deprecatedKeywords_.end())
-    {
-        deprecated = true;
-        keyword = *it;
-    }
-    else
-        keyword = find(parser.argsv(startArg));
-    if (!keyword)
+    auto optKwdData = find(parser.argsv(startArg));
+    if (!optKwdData)
         return KeywordBase::ParseResult::Unrecognised;
+
+    auto &keywordData = optKwdData->get();
+    auto *keyword = keywordData.keyword();
+    auto deprecated = keywordData.type() == KeywordStoreData::KeywordType::Deprecated;
 
     // We recognised the keyword - check the number of arguments we have against the min / max for the keyword
     if (!keyword->validNArgs(parser.nArgs() - startArg - 1))
@@ -81,7 +79,7 @@ KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const Cor
     // All OK, so parse the keyword
     if (!keyword->deserialise(parser, startArg + 1, coreData))
     {
-        Messenger::error("Failed to parse arguments for keyword '{}'.\n", keyword->name());
+        Messenger::error("Failed to parse arguments for keyword '{}'.\n", keywordData.keyword()->name());
         return deprecated ? KeywordBase::ParseResult::Deprecated : KeywordBase::ParseResult::Failed;
     }
 
@@ -91,20 +89,30 @@ KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const Cor
 // Write all keywords to specified LineParser
 bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
-    for (const auto *keyword : keywords_)
-        if (!keyword->serialise(parser, keyword->name(), prefix))
+    for (const auto &kd : keywords_)
+        if (!kd.keyword()->serialise(parser, kd.keyword()->name(), prefix))
             return false;
 
     return true;
 }
 
 // Local template for handling boilerplate of casting the keyword
-template <typename K> K *getKeyword(const std::vector<KeywordBase *> &keywords, std::string_view name)
+template <typename K> K *getKeyword(std::vector<KeywordStoreData> &keywords, std::string_view name)
 {
-    auto it = std::find_if(keywords.begin(), keywords.end(), [name](const auto *k) { return k->name() == name; });
+    auto it = std::find_if(keywords.begin(), keywords.end(), [name](auto &kd) { return kd.keyword()->name() == name; });
     if (it == keywords.end())
-        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be set as it doesn't exist.\n", name)));
-    K *result = dynamic_cast<K *>(*it);
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be retrieved as it doesn't exist.\n", name)));
+    K *result = dynamic_cast<K *>(it->keyword());
+    if (!result)
+        throw(std::runtime_error(fmt::format("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name())));
+    return result;
+}
+template <typename K> const K *getKeyword(const std::vector<KeywordStoreData> &keywords, std::string_view name)
+{
+    auto it = std::find_if(keywords.begin(), keywords.end(), [name](auto &kd) { return kd.keyword()->name() == name; });
+    if (it == keywords.end())
+        throw(std::runtime_error(fmt::format("Keyword '{}' cannot be retrieved as it doesn't exist.\n", name)));
+    const K *result = dynamic_cast<const K *>(it->keyword());
     if (!result)
         throw(std::runtime_error(fmt::format("Keyword '{}' is not of type '{}'.\n", name, typeid(K).name())));
     return result;
@@ -191,18 +199,21 @@ Configuration *KeywordStore::getConfiguration(std::string_view name) const
 {
     return getKeyword<ConfigurationKeyword>(keywords_, name)->data();
 }
+
 // Retrieve a Species by keyword name
 const Species *KeywordStore::getSpecies(std::string_view name) const
 {
     return getKeyword<SpeciesKeyword>(keywords_, name)->data();
 }
+
 // Retrieve a vector of Configurations by keyword name
 std::vector<Configuration *> KeywordStore::getVectorConfiguration(std::string_view name) const
 {
     return getKeyword<ConfigurationVectorKeyword>(keywords_, name)->data();
 }
+
 // Retrieve an Integer by keyword name
-int KeywordStore::getInt(std::string_view name) const { return getKeyword<IntegerKeyword>(keywords_, name)->data(); }
+int KeywordStore::getInt(std::string_view name) { return getKeyword<IntegerKeyword>(keywords_, name)->data(); }
 
 // Retrieve a vector of Modules by keyword name
 std::vector<Module *> KeywordStore::getVectorModule(std::string_view name) const

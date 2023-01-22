@@ -29,10 +29,11 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
         QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module_->type())).toLower())));
 
     // Set up any target keyword widgets
-    if (!module_->keywords().targetsGroup().empty())
+    auto targets = module_->keywords().targetKeywords();
+    if (!targets.empty())
     {
         ui_.NoTargetsLabel->setVisible(false);
-        for (auto *keyword : module_->keywords().targetsGroup())
+        for (auto *keyword : targets)
         {
             // Try to create a suitable widget
             auto [widget, base] = KeywordWidgetProducer::create(keyword, dissolve_.coreData());

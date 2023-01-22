@@ -5,6 +5,7 @@
 
 #include "keywords/base.h"
 #include "keywords/enumoptions.h"
+#include "keywords/storedata.h"
 #include "procedure/nodevalue.h"
 #include "templates/optionalref.h"
 #include <any>
@@ -26,8 +27,8 @@ class KeywordStore
         auto it = std::remove_if(allKeywords_.begin(), allKeywords_.end(),
                                  [&](const auto *k)
                                  {
-                                     for (auto *keyword : keywords_)
-                                         if (k == keyword)
+                                     for (auto &kd : keywords_)
+                                         if (k == kd.keyword())
                                              return true;
                                      return false;
                                  });
@@ -39,13 +40,9 @@ class KeywordStore
      */
     private:
     // Keywords present in this store
-    std::vector<KeywordBase *> keywords_, deprecatedKeywords_;
-    // Targets group
-    std::vector<KeywordBase *> targetsGroup_;
+    std::vector<KeywordStoreData> keywords_;
     // Keyword group mappings
     std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups_;
-    // Keywords to be stored in the restart file
-    std::vector<KeywordBase *> restartables_;
 
     public:
     // Add keyword (no group)
@@ -60,8 +57,7 @@ class KeywordStore
         K *k = new K(std::forward<Args>(args)...);
         k->setBaseInfo(name, description);
 
-        // Add ourselves to both the local map and the global reference vector
-        keywords_.push_back(k);
+        // Add the new keyword to the global reference vector
         allKeywords_.push_back(k);
 
         return k;
@@ -71,7 +67,7 @@ class KeywordStore
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        targetsGroup_.push_back(k);
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Target);
     }
     // Add keyword (displaying in named group)
     template <class K, typename... Args>
@@ -79,12 +75,7 @@ class KeywordStore
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        auto it = std::find_if(displayGroups_.begin(), displayGroups_.end(),
-                               [displayGroup](auto &group) { return group.first == displayGroup; });
-        if (it == displayGroups_.end())
-            displayGroups_.emplace_back(displayGroup, std::vector<KeywordBase *>{k});
-        else
-            it->second.push_back(k);
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Standard, displayGroup);
 
         return k;
     }
@@ -93,7 +84,11 @@ class KeywordStore
     KeywordBase *addRestartable(std::string_view displayGroup, std::string_view name, std::string_view description,
                                 Args &&...args)
     {
-        return restartables_.emplace_back(add<K>(displayGroup, name, description, args...));
+        auto *k = add<K>(displayGroup, name, description, args...);
+
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Restartable, displayGroup);
+
+        return k;
     }
     // Add deprecated keyword
     template <class K, typename... Args>
@@ -101,28 +96,26 @@ class KeywordStore
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        deprecatedKeywords_.push_back(k);
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Deprecated);
 
         return k;
     }
     // Find named keyword
-    KeywordBase *find(std::string_view name);
-    const KeywordBase *find(std::string_view name) const;
+    OptionalReferenceWrapper<KeywordStoreData> find(std::string_view name);
+    OptionalReferenceWrapper<const KeywordStoreData> find(std::string_view name) const;
     // Find all keywords of specified type
     template <class K> std::vector<K *> allOfType()
     {
         std::vector<K *> result;
-        for (auto &kwd : keywords_)
-            if (kwd->typeIndex() == typeid(K *))
-                result.push_back(dynamic_cast<K *>(kwd));
+        for (auto &kd : keywords_)
+            if (kd.keyword()->typeIndex() == typeid(K *))
+                result.push_back(dynamic_cast<K *>(kd.keyword()));
         return result;
     }
     // Return keywords
-    const std::vector<KeywordBase *> &keywords() const;
-    // Return "Target" group keywords
-    const std::vector<KeywordBase *> &targetsGroup() const;
-    // Return restartable keywords
-    const std::vector<KeywordBase *> &restartables() const;
+    const std::vector<KeywordStoreData> &keywords() const;
+    // Return all target keywords
+    std::vector<KeywordBase *> targetKeywords();
     // Return keyword group mappings
     const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &displayGroups() const;
 
@@ -151,12 +144,12 @@ class KeywordStore
     // Set specified enumerated keyword
     template <class E> void setEnumeration(std::string_view name, E data)
     {
-        auto *base = find(name);
-        if (!base)
+        auto kd = find(name);
+        if (!kd)
             throw(std::runtime_error(
                 fmt::format("Enumerated keyword '{}' cannot be set as no suitable setter has been registered.\n", name)));
 
-        auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(base);
+        auto *k = dynamic_cast<EnumOptionsKeyword<E> *>(kd->get().keyword());
         if (!k)
             throw(std::runtime_error(
                 fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
@@ -185,17 +178,30 @@ class KeywordStore
     // Retrieve a vector of Modules by keyword name
     std::vector<Module *> getVectorModule(std::string_view name) const;
     // Retrieve an Integer by keyword name
-    int getInt(std::string_view name) const;
+    int getInt(std::string_view name);
 
     // Get specified keyword data, casting as necessary
-    template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name) const
+    template <class D, class K> OptionalReferenceWrapper<const D> get(std::string_view name) const
     {
-        auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto *k) { return k->name() == name; });
-        if (it == keywords_.end())
+        auto optKd = find(name);
+        if (!optKd)
             return {};
 
         // Cast the keyword
-        K *keyword = dynamic_cast<K *>(*it);
+        const K *keyword = dynamic_cast<const K *>(optKd->get().keyword());
+        if (!keyword)
+            throw(std::runtime_error(fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
+
+        return keyword->data();
+    }
+    template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name)
+    {
+        auto optKd = find(name);
+        if (!optKd)
+            return {};
+
+        // Cast the keyword
+        K *keyword = dynamic_cast<K *>(optKd->get().keyword());
         if (!keyword)
             throw(std::runtime_error(fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(K).name())));
 
@@ -204,12 +210,12 @@ class KeywordStore
     // Get specified keyword enumeration, casting as necessary
     template <class E> std::optional<E> getEnumeration(std::string_view name) const
     {
-        auto it = std::find_if(keywords_.begin(), keywords_.end(), [name](const auto *k) { return k->name() == name; });
-        if (it == keywords_.end())
+        auto optKd = find(name);
+        if (!optKd)
             return {};
 
         // Cast the keyword
-        auto *keyword = dynamic_cast<EnumOptionsKeyword<E> *>((*it));
+        const auto *keyword = dynamic_cast<const EnumOptionsKeyword<E> *>(optKd->get().keyword());
         if (!keyword)
             throw(std::runtime_error(
                 fmt::format("Couldn't cast keyword '{}' into type '{}'.\n", name, typeid(EnumOptionsKeyword<E>).name())));
