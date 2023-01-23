@@ -8,6 +8,7 @@
 #include "module/module.h"
 #include <QFormLayout>
 #include <QLabel>
+#include <QSpacerItem>
 #include <QToolBox>
 
 KeywordsWidget::KeywordsWidget(QWidget *parent) : QToolBox(parent)
@@ -29,12 +30,38 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
     keywordWidgets_.clear();
 
     // Get the organisation info from the keyword store
+    std::string_view currentGroupName = "";
+    QWidget *groupWidget = nullptr;
+    QGridLayout *groupLayout = nullptr;
+    auto row = 0;
     auto &&[keywordIndex, keywordMap] = keywords.keywordOrganisation();
     for (auto &[groupName, sectionName] : keywordIndex)
     {
-        // Create a new QWidget and layout for our widgets
-        auto *groupWidget = new QWidget;
-        auto *groupLayout = new QFormLayout(groupWidget);
+        // Check current group name widget we're processing
+        if ((currentGroupName != groupName) && groupWidget)
+        {
+            // Add a vertical spacer to finish the group
+            groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
+            addItem(groupWidget, QString::fromStdString(std::string(currentGroupName)));
+            groupWidget = nullptr;
+        }
+
+        currentGroupName = groupName;
+
+        // Create a new QWidget and layout for the next group?
+        if (!groupWidget)
+        {
+            groupWidget = new QWidget;
+            groupLayout = new QGridLayout(groupWidget);
+            row = 0;
+        }
+
+        // Create a widget for the section name
+        if (sectionName != "")
+        {
+            auto *sectionLabel = new QLabel(QString::fromStdString(std::string(sectionName)));
+            groupLayout->addWidget(sectionLabel, row++, 0, 1, 2);
+        }
 
         // Loop over keywords in the group and add them to our groupbox
         for (auto *keyword : keywordMap[groupName][sectionName])
@@ -53,15 +80,17 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
             // Create a label and add it and the widget to our layout
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
             nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
-            groupLayout->addRow(nameLabel, widget);
+            groupLayout->addWidget(nameLabel, row, 0);
+            groupLayout->addWidget(widget, row++, 1);
 
             // Push onto our reference list
             keywordWidgets_.push_back(base);
         }
-
-        // Group is finished, so add the widget as a new tab in our QToolBox
-        addItem(groupWidget, QString::fromStdString(std::string(groupName)));
     }
+
+    // Add final group
+    if (groupWidget)
+        addItem(groupWidget, QString::fromStdString(std::string(currentGroupName)));
 }
 
 // Update controls within widget

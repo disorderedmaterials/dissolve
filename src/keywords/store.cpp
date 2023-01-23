@@ -21,6 +21,17 @@
 // Static Singletons
 std::vector<KeywordBase *> KeywordStore::allKeywords_;
 
+/*
+ * Keyword Data
+ */
+
+// Set current group and section organisation
+void KeywordStore::setOrganisation(std::string_view groupName, std::string_view sectionName)
+{
+    currentGroupName_ = groupName;
+    currentSectionName_ = sectionName;
+}
+
 // Find named keyword
 OptionalReferenceWrapper<KeywordStoreData> KeywordStore::find(std::string_view name)
 {

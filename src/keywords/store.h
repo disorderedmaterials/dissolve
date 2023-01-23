@@ -42,6 +42,8 @@ class KeywordStore
     private:
     // Keywords present in this store
     std::vector<KeywordStoreData> keywords_;
+    // Current group and section organisation for new keywords
+    std::string currentGroupName_{"UNGROUPED"}, currentSectionName_;
 
     private:
     // Add keyword
@@ -63,6 +65,8 @@ class KeywordStore
     }
 
     public:
+    // Set current group and section organisation
+    void setOrganisation(std::string_view groupName, std::string_view sectionName = "");
     // Add target keyword
     template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&...args)
     {
@@ -84,7 +88,7 @@ class KeywordStore
     {
         auto *k = addKeyword<K>(name, description, args...);
 
-        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Standard, displayGroup);
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Standard, currentGroupName_, currentSectionName_);
 
         return k;
     }
