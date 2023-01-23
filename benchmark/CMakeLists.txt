@@ -8,6 +8,7 @@ dissolve_benchmark(histogram)
 dissolve_benchmark(array)
 dissolve_benchmark(energy)
 dissolve_benchmark(forces)
+dissolve_benchmark(math)
 
 # create a single benchmark executable
 add_executable(benchmarks benchmarks.cpp ${benchmark_files})
