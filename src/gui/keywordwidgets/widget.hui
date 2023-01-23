@@ -4,14 +4,14 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
-#include <QToolBox>
+#include <QTabWidget>
 
 // Forward Declarations
 class CoreData;
 class KeywordStore;
 
 // Keywords Widget
-class KeywordsWidget : public QToolBox
+class KeywordsWidget : public QTabWidget
 {
     Q_OBJECT
 

@@ -11,7 +11,7 @@
 #include <QSpacerItem>
 #include <QToolBox>
 
-KeywordsWidget::KeywordsWidget(QWidget *parent) : QToolBox(parent)
+KeywordsWidget::KeywordsWidget(QWidget *parent) : QTabWidget(parent)
 {
     refreshing_ = false;
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -26,7 +26,7 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
 {
     // Clear existing item groups....
     while (count() > 0)
-        removeItem(0);
+        removeTab(0);
     keywordWidgets_.clear();
 
     // Get the organisation info from the keyword store
@@ -42,7 +42,7 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
         {
             // Add a vertical spacer to finish the group
             groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
-            addItem(groupWidget, QString::fromStdString(std::string(currentGroupName)));
+            addTab(groupWidget, QString::fromStdString(std::string(currentGroupName)));
             groupWidget = nullptr;
         }
 
@@ -90,7 +90,7 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
 
     // Add final group
     if (groupWidget)
-        addItem(groupWidget, QString::fromStdString(std::string(currentGroupName)));
+        addTab(groupWidget, QString::fromStdString(std::string(currentGroupName)));
 }
 
 // Update controls within widget
