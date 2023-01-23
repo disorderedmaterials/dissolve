@@ -28,34 +28,6 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     ui_.ModuleIconLabel->setPixmap(
         QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module_->type())).toLower())));
 
-    // Set up any target keyword widgets
-    auto targets = module_->keywords().targetKeywords();
-    if (!targets.empty())
-    {
-        ui_.NoTargetsLabel->setVisible(false);
-        for (auto *keyword : targets)
-        {
-            // Try to create a suitable widget
-            auto [widget, base] = KeywordWidgetProducer::create(keyword, dissolve_.coreData());
-            if (!widget || !base)
-                throw(std::runtime_error(fmt::format("No widget created for keyword '{}'.\n", keyword->name())));
-
-            // Connect it up
-            connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(localKeywordChanged(int)));
-
-            // Create the label
-            auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
-            nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
-            nameLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-
-            ui_.TargetsLayout->addWidget(nameLabel);
-            ui_.TargetsLayout->addWidget(widget);
-
-            targetKeywordWidgets_.push_back(base);
-        }
-        ui_.TargetsLayout->addStretch(2);
-    }
-
     // Set up our keyword widget
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.coreData());
 
@@ -105,10 +77,6 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
                                                         QString::fromStdString(std::string(module_->type()))));
     ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
 
-    // Update tqrget keywords
-    for (auto w : targetKeywordWidgets_)
-        w->updateValue();
-
     // Update keywords
     ui_.ModuleKeywordsWidget->updateControls();
 
@@ -120,7 +88,6 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
 // Disable editing
 void ModuleControlWidget::preventEditing()
 {
-    ui_.TargetsGroup->setEnabled(false);
     ui_.ModuleKeywordsWidget->setEnabled(false);
     if (moduleWidget_)
         moduleWidget_->preventEditing();
@@ -129,7 +96,6 @@ void ModuleControlWidget::preventEditing()
 // Allow editing
 void ModuleControlWidget::allowEditing()
 {
-    ui_.TargetsGroup->setEnabled(true);
     ui_.ModuleKeywordsWidget->setEnabled(true);
     if (moduleWidget_)
         moduleWidget_->allowEditing();
@@ -212,10 +178,6 @@ void ModuleControlWidget::globalDataMutated(int mutationFlags)
     Flags<DissolveSignals::DataMutations> dataMutations(mutationFlags);
     if (!dataMutations.anySet())
         return;
-
-    // Target keywords
-    for (auto w : targetKeywordWidgets_)
-        w->updateValue(dataMutations);
 
     // Control keywords
     ui_.ModuleKeywordsWidget->updateControls(mutationFlags);

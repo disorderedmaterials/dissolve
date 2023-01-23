@@ -70,7 +70,8 @@ class KeywordStore
     // Add target keyword
     template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&...args)
     {
-        keywords_.emplace_back(addKeyword<K>(name, description, args...), KeywordStoreData::KeywordType::Target);
+        keywords_.emplace_back(addKeyword<K>(name, description, args...), KeywordStoreData::KeywordType::Target, "Options",
+                               "Targets");
     }
     // Add hidden keyword (no group)
     template <class K, typename... Args>
