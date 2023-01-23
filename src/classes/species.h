@@ -121,6 +121,8 @@ class Species : public Serialisable
     void clearAtomTypes();
     // Simplify atom types, merging together those with identical parameters
     int simplifyAtomTypes();
+    // Set charge of specified atom
+    void setAtomCharge(SpeciesAtom *i, double q);
     // Return total charge of species from local/atomtype atomic charges
     double totalCharge(bool useAtomTypes) const;
     // Apply random noise to atoms

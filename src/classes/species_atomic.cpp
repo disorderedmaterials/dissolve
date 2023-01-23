@@ -305,6 +305,16 @@ int Species::simplifyAtomTypes()
     return nModified;
 }
 
+// Set charge of specified atom
+void Species::setAtomCharge(SpeciesAtom *i, double q)
+{
+    assert(i);
+
+    i->setCharge(q);
+
+    ++version_;
+}
+
 // Return total charge of species from local/atomtype atomic charges
 double Species::totalCharge(bool useAtomTypes) const
 {
