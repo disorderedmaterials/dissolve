@@ -83,8 +83,7 @@ class KeywordStore
         return k;
     }
     // Add keyword, displaying in named group
-    template <class K, typename... Args>
-    KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&...args)
+    template <class K, typename... Args> KeywordBase *add(std::string_view name, std::string_view description, Args &&...args)
     {
         auto *k = addKeyword<K>(name, description, args...);
 
@@ -94,12 +93,11 @@ class KeywordStore
     }
     // Add keyword (displaying in named group) and capture in restart file
     template <class K, typename... Args>
-    KeywordBase *addRestartable(std::string_view displayGroup, std::string_view name, std::string_view description,
-                                Args &&...args)
+    KeywordBase *addRestartable(std::string_view name, std::string_view description, Args &&...args)
     {
-        auto *k = add<K>(displayGroup, name, description, args...);
+        auto *k = add<K>(name, description, args...);
 
-        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Restartable, displayGroup);
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Restartable, currentGroupName_, currentSectionName_);
 
         return k;
     }
