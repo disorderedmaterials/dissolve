@@ -30,7 +30,7 @@ class KeywordsWidget : public QToolBox
 
     public:
     // Set up controls for specified keywords
-    void setUp(const KeywordStore &keywords, const CoreData &coreData);
+    void setUp(KeywordStore &keywords, const CoreData &coreData);
 
     public slots:
     // Update controls within widget

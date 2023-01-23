@@ -50,11 +50,43 @@ std::vector<KeywordBase *> KeywordStore::targetKeywords()
     return targets;
 }
 
-// Return keyword group mappings
-const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &KeywordStore::displayGroups() const
+// Return keyword organisation based on group and section names
+std::pair<KeywordStore::KeywordStoreIndex, KeywordStore::KeywordStoreMap> KeywordStore::keywordOrganisation()
 {
-    return displayGroups_;
-};
+    // Organise keywords together by group and section names, if they have them
+    KeywordStore::KeywordStoreIndex index;
+    KeywordStore::KeywordStoreMap map;
+
+    // Iterate over the defined keywords
+    for (auto &kd : keywords_)
+    {
+        // Don't include deprecated or target keywords
+        if (kd.type() == KeywordStoreData::KeywordType::Target || kd.type() == KeywordStoreData::KeywordType::Deprecated)
+            continue;
+
+        // The order of the defined keywords is important, since it reflects the desired group/section order in the GUI
+        // Check for the presence of the current group / section
+        auto groupIt = map.find(kd.groupName());
+        if (groupIt != map.end())
+        {
+            auto sectionIt = groupIt->second.find(kd.sectionName());
+            if (sectionIt != groupIt->second.end())
+                sectionIt->second.push_back(kd.keyword());
+            else
+            {
+                groupIt->second[kd.sectionName()].push_back(kd.keyword());
+                index.emplace_back(kd.groupName(), kd.sectionName());
+            }
+        }
+        else
+        {
+            map[kd.groupName()][kd.sectionName()].push_back(kd.keyword());
+            index.emplace_back(kd.groupName(), kd.sectionName());
+        }
+    }
+
+    return {index, map};
+}
 
 /*
  * Read / Write

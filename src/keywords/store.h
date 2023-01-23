@@ -9,6 +9,7 @@
 #include "procedure/nodevalue.h"
 #include "templates/optionalref.h"
 #include <any>
+#include <map>
 #include <typeindex>
 
 class SelectProcedureNode;
@@ -41,8 +42,6 @@ class KeywordStore
     private:
     // Keywords present in this store
     std::vector<KeywordStoreData> keywords_;
-    // Keyword group mappings
-    std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups_;
 
     private:
     // Add keyword
@@ -126,8 +125,10 @@ class KeywordStore
     const std::vector<KeywordStoreData> &keywords() const;
     // Return all target keywords
     std::vector<KeywordBase *> targetKeywords();
-    // Return keyword group mappings
-    const std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> &displayGroups() const;
+    // Return keyword organisation based on group and section names
+    using KeywordStoreIndex = std::vector<std::pair<std::string_view, std::string_view>>;
+    using KeywordStoreMap = std::map<std::string_view, std::map<std::string_view, std::vector<KeywordBase *>>>;
+    std::pair<KeywordStoreIndex, KeywordStoreMap> keywordOrganisation();
 
     /*
      * Set / Get

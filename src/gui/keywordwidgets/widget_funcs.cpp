@@ -21,21 +21,23 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QToolBox(parent)
  */
 
 // Set up controls for specified keywords
-void KeywordsWidget::setUp(const KeywordStore &keywords, const CoreData &coreData)
+void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
 {
     // Clear existing item groups....
     while (count() > 0)
         removeItem(0);
     keywordWidgets_.clear();
 
-    for (auto &[groupName, keywords] : keywords.displayGroups())
+    // Get the organisation info from the keyword store
+    auto &&[keywordIndex, keywordMap] = keywords.keywordOrganisation();
+    for (auto &[groupName, sectionName] : keywordIndex)
     {
         // Create a new QWidget and layout for our widgets
         auto *groupWidget = new QWidget;
         auto *groupLayout = new QFormLayout(groupWidget);
 
         // Loop over keywords in the group and add them to our groupbox
-        for (const auto &keyword : keywords)
+        for (auto *keyword : keywordMap[groupName][sectionName])
         {
             // Try to create a suitable widget
             auto [widget, base] = KeywordWidgetProducer::create(keyword, coreData);
