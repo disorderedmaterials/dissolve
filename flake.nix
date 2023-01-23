@@ -157,9 +157,9 @@
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
             ++ (with pkgs; [
-              (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages_7; })
+              (pkgs.clang-tools.override { llvmPackages = pkgs.llvmPackages_13; })
               ccache
-              (pkgs.ccls.override { llvmPackages = pkgs.llvmPackages_7; })
+              (pkgs.ccls.override { llvmPackages = pkgs.llvmPackages_13; })
               cmake-format
               cmake-language-server
               conan

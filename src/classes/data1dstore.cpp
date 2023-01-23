@@ -51,9 +51,10 @@ SerialisedValue Data1DStore::serialise() const
     if (data_.empty())
         return {};
     SerialisedValue result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result), [](const auto &item) -> SerialisedValue {
-        return {{"data", item->first}, {"format", item->second}};
-    });
+    std::transform(data_.begin(), data_.end(), std::back_inserter(result),
+                   [](const auto &item) -> SerialisedValue {
+                       return {{"data", item->first}, {"format", item->second}};
+                   });
     return result;
 }
 
@@ -61,10 +62,12 @@ SerialisedValue Data1DStore::serialise() const
 void Data1DStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     auto &arr = node.as_array();
-    std::transform(arr.begin(), arr.end(), std::back_inserter(data_), [&coreData](const auto &item) {
-        auto pair = std::make_shared<std::pair<Data1D, Data1DImportFileFormat>>();
-        pair->first.deserialise(item.at("data"));
-        pair->second.deserialise(item.at("format"), coreData);
-        return pair;
-    });
+    std::transform(arr.begin(), arr.end(), std::back_inserter(data_),
+                   [&coreData](const auto &item)
+                   {
+                       auto pair = std::make_shared<std::pair<Data1D, Data1DImportFileFormat>>();
+                       pair->first.deserialise(item.at("data"));
+                       pair->second.deserialise(item.at("format"), coreData);
+                       return pair;
+                   });
 }
