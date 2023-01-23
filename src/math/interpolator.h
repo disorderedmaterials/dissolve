@@ -56,6 +56,8 @@ class Interpolator
     double y(double x);
     // Return interpolated y value for supplied x, specifying containing interval
     double y(double x, int interval);
+    // Return interpolated y values for all supplied x values
+    std::vector<double> y(std::vector<double> xs);
 
     /*
      * Static Functions
@@ -67,10 +69,4 @@ class Interpolator
     static void addInterpolated(const Data1D &source, Data1D &dest, double factor = 1.0);
     // Add interpolation into destination with supplied multiplication factor
     static void addInterpolated(Interpolator &source, Data1D &dest, double factor = 1.0);
-
-    /*
-     * Test Functions
-     */
-    public:
-    std::vector<double> y(std::vector<double> xs);
 };
