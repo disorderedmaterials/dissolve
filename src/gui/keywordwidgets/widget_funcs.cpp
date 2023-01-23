@@ -90,7 +90,10 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
 
     // Add final group
     if (groupWidget)
+    {
+        groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
         addTab(groupWidget, QString::fromStdString(std::string(currentGroupName)));
+    }
 }
 
 // Update controls within widget
