@@ -72,5 +72,5 @@ class Interpolator
      * Test Functions
      */
     public:
-    std::vector<double> Interpolator::y(std::vector<double> xs);
+    std::vector<double> y(std::vector<double> xs);
 };
