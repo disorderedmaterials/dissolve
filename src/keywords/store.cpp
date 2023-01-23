@@ -71,8 +71,8 @@ std::pair<KeywordStore::KeywordStoreIndex, KeywordStore::KeywordStoreMap> Keywor
     // Iterate over the defined keywords
     for (auto &kd : keywords_)
     {
-        // Don't include deprecated or target keywords
-        if (kd.type() == KeywordStoreData::KeywordType::Target || kd.type() == KeywordStoreData::KeywordType::Deprecated)
+        // Don't include deprecated keywords or those with no defined group
+        if (kd.type() == KeywordStoreData::KeywordType::Deprecated || kd.groupName().empty())
             continue;
 
         // The order of the defined keywords is important, since it reflects the desired group/section order in the GUI
