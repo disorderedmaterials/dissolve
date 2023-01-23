@@ -3,7 +3,6 @@
 
 #include "base/sysfunc.h"
 #include "classes/species.h"
-#include <cstring>
 
 // Update current Isotopologues
 void Species::updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes)
