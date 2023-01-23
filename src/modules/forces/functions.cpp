@@ -225,12 +225,13 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
     {
         if (indexI == indexJ)
             return;
+
         auto &&[scalingType, elec14, vdw14] = i.scaling(&j);
         if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
             return;
 
         // Determine final forces
-        auto vecij = box->minimumVector(j.r(), i.r());
+        auto vecij = box->minimumVector(i.r(), j.r());
         auto magjisq = vecij.magnitudeSq();
         if (magjisq > cutoffSq)
             return;
@@ -287,6 +288,7 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
     std::fill(f.begin(), f.end(), Vec3<double>());
 
     double rij, magjisq;
+    auto *box = sp->box();
     const auto cutoffSq = potentialMap.range() * potentialMap.range();
     Vec3<double> vecij;
     // NOTE PR #334 : use for_each_pair
@@ -304,7 +306,7 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
                 continue;
 
             // Determine final forces
-            vecij = r[indexJ] - r[indexI];
+            vecij = box->minimumVector(r[indexI], r[indexJ]);
             magjisq = vecij.magnitudeSq();
             if (magjisq > cutoffSq)
                 continue;

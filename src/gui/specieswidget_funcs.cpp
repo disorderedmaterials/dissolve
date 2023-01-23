@@ -132,10 +132,18 @@ void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
     if (!sp->checkSetUp())
         return;
 
+    // Set up interatomic potentials
+    if (!dissolve_->regeneratePairPotentials())
+    {
+        Messenger::error("Couldn't set up interatomic pair potentials - no optimisation performed!\n");
+        return;
+    }
+
     // Apply a small randomisation to the Species so we can overcome edge cases in initial geometries (e.g. all atoms in one
     // plane)
     sp->randomiseCoordinates(0.0001);
 
+    // Do the optimisation
     GeometryOptimisationModule optimiser;
     optimiser.optimiseSpecies(dissolve_->potentialMap(), dissolve_->worldPool(), sp);
 
