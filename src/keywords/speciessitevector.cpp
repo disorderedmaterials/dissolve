@@ -98,9 +98,10 @@ void SpeciesSiteVectorKeyword::removeReferencesTo(SpeciesSite *spSite)
 // Express as a serialisable value
 SerialisedValue SpeciesSiteVectorKeyword::serialise() const
 {
-    return fromVector(data_, [](const auto item) -> SerialisedValue {
-        return {{"site", item->name()}, {"species", item->parent()->name()}};
-    });
+    return fromVector(data_,
+                      [](const auto item) -> SerialisedValue {
+                          return {{"site", item->name()}, {"species", item->parent()->name()}};
+                      });
 }
 
 // Read values from a serialisable value

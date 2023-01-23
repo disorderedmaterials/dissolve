@@ -91,9 +91,10 @@ bool IntegerStringVectorKeyword::serialise(LineParser &parser, std::string_view 
 // Express as a serialisable value
 SerialisedValue IntegerStringVectorKeyword::serialise() const
 {
-    return fromVector(data_, [](auto pair) -> SerialisedValue {
-        return {{"indices", std::get<0>(pair)}, {"values", std::get<1>(pair)}};
-    });
+    return fromVector(data_,
+                      [](auto pair) -> SerialisedValue {
+                          return {{"indices", std::get<0>(pair)}, {"values", std::get<1>(pair)}};
+                      });
 }
 
 // Read values from a serialisable value

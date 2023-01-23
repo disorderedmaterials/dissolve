@@ -50,9 +50,10 @@ SerialisedValue Data2DStore::serialise() const
 
     if (data_.empty())
         return {};
-    return fromVector(data_, [](const auto &item) -> SerialisedValue {
-        return {{"data", item->first}, {"format", item->second}};
-    });
+    return fromVector(data_,
+                      [](const auto &item) -> SerialisedValue {
+                          return {{"data", item->first}, {"format", item->second}};
+                      });
 }
 
 // Read values from a serialisable value
