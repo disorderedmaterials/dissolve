@@ -68,10 +68,9 @@ class Interpolator
     // Add interpolation into destination with supplied multiplication factor
     static void addInterpolated(Interpolator &source, Data1D &dest, double factor = 1.0);
 
-
     /*
-    * Test Functions
-    */
+     * Test Functions
+     */
     public:
     std::vector<double> Interpolator::y(std::vector<double> xs);
 };

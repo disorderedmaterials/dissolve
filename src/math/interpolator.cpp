@@ -475,11 +475,14 @@ void Interpolator::addInterpolated(Interpolator &source, Data1D &dest, double fa
         y += source.y(x) * factor;
 }
 
+// Add test function for benchmarks
 std::vector<double> Interpolator::y(std::vector<double> xs)
 {
+    // Creates vector to store results in reserving space the same size as xs
     std::vector<double> result;
     result.reserve(xs.size());
 
+    // Runs double Interpolator::y(double x) on a loop for speed testing
     for (auto x : xs)
         result.push_back(y(x));
     return result;
