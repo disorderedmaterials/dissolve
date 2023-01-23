@@ -24,8 +24,8 @@ Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedur
     keywords_.add<StringKeyword>("Control", "LabelY", "Label for the y axis", labelY_);
     keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
                                         exportFileAndFormat_, "EndExport");
-    keywords_.addKeyword<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
-                                            normalisationBranch_, this, ProcedureNode::OperateContext);
+    keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
+                                           normalisationBranch_, this, ProcedureNode::OperateContext);
 
     // Initialise data pointer
     processedData_ = nullptr;

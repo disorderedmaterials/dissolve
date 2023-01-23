@@ -25,8 +25,8 @@ Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedur
     keywords_.add<StringKeyword>("Control", "LabelZ", "Label for the z axis", labelZ_);
     keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
                                         exportFileAndFormat_, "EndExport");
-    keywords_.addKeyword<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
-                                            normalisationBranch_, this, ProcedureNode::OperateContext);
+    keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
+                                           normalisationBranch_, this, ProcedureNode::OperateContext);
 
     // Initialise data pointer
     processedData_ = nullptr;

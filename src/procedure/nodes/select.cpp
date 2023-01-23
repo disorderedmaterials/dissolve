@@ -44,8 +44,8 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
         "Control", "InclusiveRange",
         "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)",
         inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.addKeyword<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_, this,
-                                            ProcedureNode::AnalysisContext);
+    keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_, this,
+                                           ProcedureNode::AnalysisContext);
 
     currentSiteIndex_ = -1;
     nCumulativeSites_ = 0;

@@ -44,8 +44,8 @@ class KeywordStore
     // Keyword group mappings
     std::vector<std::pair<std::string_view, std::vector<KeywordBase *>>> displayGroups_;
 
-    public:
-    // Add keyword (no group)
+    private:
+    // Add keyword
     template <class K, typename... Args>
     KeywordBase *addKeyword(std::string_view name, std::string_view description, Args &&...args)
     {
@@ -62,14 +62,24 @@ class KeywordStore
 
         return k;
     }
+
+    public:
     // Add target keyword
     template <class K, typename... Args> void addTarget(std::string_view name, std::string_view description, Args &&...args)
     {
+        keywords_.emplace_back(addKeyword<K>(name, description, args...), KeywordStoreData::KeywordType::Target);
+    }
+    // Add hidden keyword (no group)
+    template <class K, typename... Args>
+    KeywordBase *addHidden(std::string_view name, std::string_view description, Args &&...args)
+    {
         auto *k = addKeyword<K>(name, description, args...);
 
-        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Target);
+        keywords_.emplace_back(k, KeywordStoreData::KeywordType::Standard);
+
+        return k;
     }
-    // Add keyword (displaying in named group)
+    // Add keyword, displaying in named group
     template <class K, typename... Args>
     KeywordBase *add(std::string_view displayGroup, std::string_view name, std::string_view description, Args &&...args)
     {
