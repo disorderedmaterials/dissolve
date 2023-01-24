@@ -28,10 +28,7 @@ NodeControlWidget::NodeControlWidget(DissolveWindow *dissolveWindow, NodeRef nod
         Messenger::warn("There are {} keyword groups defined, but only one can be displayed. Tell the developer!\n");
 
     if (!keywordIndex.empty())
-    {
-        auto &[groupName, sectionName] = keywordIndex.front();
-        ui_.NodeKeywordsWidget->setUp(groupName, keywordMap, dissolve_.coreData());
-    }
+        ui_.NodeKeywordsWidget->setUp(keywordIndex.front(), keywordMap, dissolve_.coreData());
 
     updateControls();
 }

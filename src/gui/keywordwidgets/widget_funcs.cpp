@@ -23,17 +23,23 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QWidget(parent)
  */
 
 // Set up controls for specified keywords
-void KeywordsWidget::setUp(std::string_view groupName, const KeywordStore::KeywordStoreMap &keywordMap,
-                           const CoreData &coreData)
+void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
+                           const KeywordStore::KeywordStoreMap &keywordMap, const CoreData &coreData)
 {
     keywordWidgets_.clear();
+
+    // Get group map
+    auto &groupMap = keywordMap.at(keywordIndexInfo.first);
 
     // Create a new QWidget and layout for the next group?
     auto *groupWidget = new QWidget;
     auto *groupLayout = new QGridLayout(groupWidget);
     auto row = 0;
-    for (auto &[sectionName, keywords] : keywordMap.at(groupName))
+    for (auto sectionName : keywordIndexInfo.second)
     {
+        // Get keyword map
+        auto &keywords = groupMap.at(sectionName);
+
         // Create a widget for the section name
         if (!sectionName.empty())
         {

@@ -16,8 +16,7 @@ KeywordsDialog::KeywordsDialog(QWidget *parent, KeywordStore &keywords, const Co
 
     if (!keywordIndex.empty())
     {
-        auto &[groupName, sectionName] = keywordIndex.front();
-        ui_.Keywords->setUp(groupName, keywordMap, coreData);
+        ui_.Keywords->setUp(keywordIndex.front(), keywordMap, coreData);
 
         connect(ui_.Keywords, SIGNAL(keywordChanged(int)), this, SLOT(keywordChanged(int)));
     }

@@ -129,7 +129,8 @@ class KeywordStore
     // Return all target keywords
     std::vector<KeywordBase *> targetKeywords();
     // Return keyword organisation based on group and section names
-    using KeywordStoreIndex = std::vector<std::pair<std::string_view, std::string_view>>;
+    using KeywordStoreIndexInfo = std::pair<std::string_view, std::vector<std::string_view>>;
+    using KeywordStoreIndex = std::vector<KeywordStoreIndexInfo>;
     using KeywordStoreMap = std::map<std::string_view, std::map<std::string_view, std::vector<KeywordBase *>>>;
     std::pair<KeywordStoreIndex, KeywordStoreMap> keywordOrganisation();
 

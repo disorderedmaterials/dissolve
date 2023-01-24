@@ -86,13 +86,17 @@ std::pair<KeywordStore::KeywordStoreIndex, KeywordStore::KeywordStoreMap> Keywor
             else
             {
                 groupIt->second[kd.sectionName()].push_back(kd.keyword());
-                index.emplace_back(kd.groupName(), kd.sectionName());
+
+                // Find the existing index entry
+                auto it =
+                    std::find_if(index.begin(), index.end(), [kd](const auto &idx) { return kd.groupName() == idx.first; });
+                it->second.push_back(kd.sectionName());
             }
         }
         else
         {
             map[kd.groupName()][kd.sectionName()].push_back(kd.keyword());
-            index.emplace_back(kd.groupName(), kd.sectionName());
+            index.emplace_back(kd.groupName(), std::vector{kd.sectionName()});
         }
     }
 

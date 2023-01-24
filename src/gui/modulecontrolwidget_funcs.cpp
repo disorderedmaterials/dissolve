@@ -32,7 +32,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     auto &&[keywordIndex, keywordMap] = module_->keywords().keywordOrganisation();
     std::string_view currentGroupName = "";
     QPushButton *firstButton = nullptr;
-    for (auto &[groupName, sectionName] : keywordIndex)
+    for (auto &[groupName, sections] : keywordIndex)
     {
         if (currentGroupName == groupName)
             continue;
@@ -49,7 +49,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
 
         // Add a new KeywordsWidget, set it up, and add it to the stack
         auto *w = new KeywordsWidget();
-        w->setUp(groupName, keywordMap, dissolve_.coreData());
+        w->setUp({groupName, sections}, keywordMap, dissolve_.coreData());
         connect(w, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
         keywordWidgets_.push_back(w);
         ui_.ModuleControlStack->addWidget(w);
