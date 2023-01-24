@@ -25,7 +25,8 @@ ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImp
 // Set up keywords for the format
 void ForceImportFileFormat::setUpKeywords()
 {
-    keywords_.add<DoubleKeyword>("Conversion", "Factor", "Factor to multiply forces by (for unit conversion etc.)", factor_);
+    keywords_.setOrganisation("Options", "Conversion");
+    keywords_.add<DoubleKeyword>("Factor", "Factor to multiply forces by (for unit conversion etc.)", factor_);
 }
 
 /*
