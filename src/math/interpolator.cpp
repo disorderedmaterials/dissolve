@@ -482,8 +482,56 @@ std::vector<double> Interpolator::y(std::vector<double> xs)
     std::vector<double> result;
     result.reserve(xs.size());
 
+    // Do we need to (re)generate the interpolation?
+    if (lastInterval_ == -1)
+    {
+        // Do we know what the interpolation scheme is?
+        if (scheme_ != Interpolator::NoInterpolation)
+            interpolate(scheme_);
+        else
+        {
+            // No existing interpolation scheme, so use Spline by default
+            interpolate(Interpolator::SplineInterpolation);
+        }
+    }
     // Runs double Interpolator::y(double x) on a loop for speed testing
     for (auto x : xs)
-        result.push_back(y(x));
+    {
+        // Quick check of our interval - if the data is sequential increasing in x then we should be able to quickly determine
+        // it and avoid the binary chop
+        if (lastInterval_ != -1)
+        {
+            // If the x value exceeds the next interval boundary, try to increment it
+            if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
+            {
+                ++lastInterval_;
+
+                // If there are still intervals beyond this one, check the next limit
+                if ((lastInterval_ + 1) < x_.size() && x >= x_[lastInterval_ + 1])
+                    lastInterval_ = -1;
+            }
+
+            // Double-check lower limit
+            if (lastInterval_ > 0 && (x < x_[lastInterval_]))
+                lastInterval_ = -1;
+        }
+
+        // Perform binary chop search if no valid interval was found
+        if (lastInterval_ == -1)
+        {
+            lastInterval_ = 0;
+            int i, right = h_.size() - 1;
+            while ((right - lastInterval_) > 1)
+            {
+                i = (right + lastInterval_) / 2;
+                if (x_[i] > x)
+                    right = i;
+                else
+                    lastInterval_ = i;
+            }
+        }
+
+        result.push_back(y(x, lastInterval_));
+    }
     return result;
 }
