@@ -11,7 +11,7 @@
 #include <QSpacerItem>
 #include <QToolBox>
 
-KeywordsWidget::KeywordsWidget(QWidget *parent) : QTabWidget(parent)
+KeywordsWidget::KeywordsWidget(QWidget *parent) : QWidget(parent)
 {
     refreshing_ = false;
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -22,49 +22,26 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QTabWidget(parent)
  */
 
 // Set up controls for specified keywords
-void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
+void KeywordsWidget::setUp(std::string_view groupName, const KeywordStore::KeywordStoreMap &keywordMap,
+                           const CoreData &coreData)
 {
-    // Clear existing item groups....
-    while (count() > 0)
-        removeTab(0);
     keywordWidgets_.clear();
 
-    // Get the organisation info from the keyword store
-    std::string_view currentGroupName = "";
-    QWidget *groupWidget = nullptr;
-    QGridLayout *groupLayout = nullptr;
+    // Create a new QWidget and layout for the next group?
+    auto *groupWidget = new QWidget;
+    auto *groupLayout = new QGridLayout(groupWidget);
     auto row = 0;
-    auto &&[keywordIndex, keywordMap] = keywords.keywordOrganisation();
-    for (auto &[groupName, sectionName] : keywordIndex)
+    for (auto &[sectionName, keywords] : keywordMap.at(groupName))
     {
-        // Check current group name widget we're processing
-        if ((currentGroupName != groupName) && groupWidget)
-        {
-            // Add a vertical spacer to finish the group
-            groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
-            addTab(groupWidget, QString::fromStdString(std::string(currentGroupName)));
-            groupWidget = nullptr;
-        }
-
-        currentGroupName = groupName;
-
-        // Create a new QWidget and layout for the next group?
-        if (!groupWidget)
-        {
-            groupWidget = new QWidget;
-            groupLayout = new QGridLayout(groupWidget);
-            row = 0;
-        }
-
         // Create a widget for the section name
-        if (sectionName != "")
+        if (!sectionName.empty())
         {
             auto *sectionLabel = new QLabel(QString::fromStdString(std::string(sectionName)));
             groupLayout->addWidget(sectionLabel, row++, 0, 1, 2);
         }
 
         // Loop over keywords in the group and add them to our groupbox
-        for (auto *keyword : keywordMap[groupName][sectionName])
+        for (auto *keyword : keywords)
         {
             // Try to create a suitable widget
             auto [widget, base] = KeywordWidgetProducer::create(keyword, coreData);
@@ -93,12 +70,9 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
         }
     }
 
-    // Add final group
-    if (groupWidget)
-    {
-        groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
-        addTab(groupWidget, QString::fromStdString(std::string(currentGroupName)));
-    }
+    // Add vertical spacer to the end of the group
+    groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
+    setLayout(groupLayout);
 }
 
 // Update controls within widget

@@ -10,6 +10,7 @@
 // Forward Declarations
 class Dissolve;
 class DissolveWindow;
+class KeywordsWidget;
 class Module;
 class ModuleWidget;
 class ProcedureWidget;
@@ -62,11 +63,14 @@ class ModuleControlWidget : public QWidget
     ModuleWidget *moduleWidget_{nullptr};
     // Procedure widget for the module (if any)
     ProcedureWidget *procedureWidget_{nullptr};
-    // Stack indices for module and procedure widgets
-    int moduleWidgetStackIndex_{0}, procedureWidgetStackIndex_{0};
+    // Keyword widgets for the module (if any)
+    std::vector<KeywordsWidget *> keywordWidgets_;
+    // Map of button widgets to related stack indices
+    std::map<QPushButton *, int> controlStackMap_;
 
     private slots:
-    void on_ModuleControlsButton_clicked(bool checked);
+    void switchControlStackPage(QPushButton *button);
+    void keywordGroupButtonClicked(bool checked);
     void on_ModuleWidgetButton_clicked(bool checked);
     void on_ProcedureWidgetButton_clicked(bool checked);
 

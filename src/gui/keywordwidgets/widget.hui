@@ -4,19 +4,19 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
+#include "keywords/store.h"
 #include <QTabWidget>
 
 // Forward Declarations
 class CoreData;
-class KeywordStore;
 
 // Keywords Widget
-class KeywordsWidget : public QTabWidget
+class KeywordsWidget : public QWidget
 {
     Q_OBJECT
 
     public:
-    KeywordsWidget(QWidget *parent);
+    KeywordsWidget(QWidget *parent = nullptr);
     ~KeywordsWidget() = default;
 
     /*
@@ -30,7 +30,7 @@ class KeywordsWidget : public QTabWidget
 
     public:
     // Set up controls for specified keywords
-    void setUp(KeywordStore &keywords, const CoreData &coreData);
+    void setUp(std::string_view groupName, const KeywordStore::KeywordStoreMap &keywordMap, const CoreData &coreData);
 
     public slots:
     // Update controls within widget

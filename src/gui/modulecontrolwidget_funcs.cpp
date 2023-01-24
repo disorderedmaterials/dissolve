@@ -5,6 +5,7 @@
 #include "gui/gui.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/producers.h"
+#include "gui/keywordwidgets/widget.hui"
 #include "gui/modulecontrolwidget.h"
 #include "keywords/procedure.h"
 #include "module/module.h"
@@ -21,15 +22,46 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     assert(module_);
 
     // Connect signals
-    connect(ui_.ModuleKeywordsWidget, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
     connect(dissolveWindow, SIGNAL(dataMutated(int)), this, SLOT(globalDataMutated(int)));
 
     // Set the icon label
     ui_.ModuleIconLabel->setPixmap(
         QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module_->type())).toLower())));
 
-    // Set up our keyword widget
-    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_.coreData());
+    // Set up keyword widgets, one group per stack page
+    auto &&[keywordIndex, keywordMap] = module_->keywords().keywordOrganisation();
+    std::string_view currentGroupName = "";
+    QPushButton *firstButton = nullptr;
+    for (auto &[groupName, sectionName] : keywordIndex)
+    {
+        if (currentGroupName == groupName)
+            continue;
+
+        // Create a button for the group
+        auto *b = new QPushButton(QString::fromStdString(std::string(groupName)));
+        b->setCheckable(true);
+        b->setAutoExclusive(true);
+        connect(b, SIGNAL(clicked(bool)), this, SLOT(keywordGroupButtonClicked(bool)));
+        ui_.KeywordGroupButtonsLayout->insertWidget(-1, b);
+
+        // Add a new KeywordsWidget, set it up, and add it to the stack
+        auto *w = new KeywordsWidget();
+        w->setUp(groupName, keywordMap, dissolve_.coreData());
+        connect(w, SIGNAL(keywordChanged(int)), this, SLOT(localKeywordChanged(int)));
+        keywordWidgets_.push_back(w);
+        ui_.ModuleControlStack->addWidget(w);
+
+        // Map our button to the new stack page
+        controlStackMap_[b] = ui_.ModuleControlStack->count() - 1;
+
+        currentGroupName = groupName;
+        if (!firstButton)
+            firstButton = b;
+    }
+
+    // If we added at least one button, check it now
+    if (firstButton)
+        firstButton->setChecked(true);
 
     // Treat any ProcedureKeywords as special cases
     auto procedures = module_->keywords().allOfType<ProcedureKeyword>();
@@ -39,8 +71,11 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     {
         procedureWidget_ = new ProcedureWidget();
         procedureWidget_->setUp(dissolveWindow, procedures.front()->data());
-        ui_.ModuleControlsStack->addWidget(procedureWidget_);
-        procedureWidgetStackIndex_ = ui_.ModuleControlsStack->count() - 1;
+        ui_.ModuleControlStack->addWidget(procedureWidget_);
+        controlStackMap_[ui_.ProcedureWidgetButton] = ui_.ModuleControlStack->count() - 1;
+
+        if (keywordWidgets_.empty())
+            ui_.ProcedureWidgetButton->setChecked(true);
     }
 
     // Create any additional controls offered by the Module
@@ -52,9 +87,12 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     }
     else
     {
-        ui_.ModuleControlsStack->addWidget(moduleWidget_);
-        moduleWidgetStackIndex_ = ui_.ModuleControlsStack->count() - 1;
+        ui_.ModuleControlStack->addWidget(moduleWidget_);
+        controlStackMap_[ui_.ModuleWidgetButton] = ui_.ModuleControlStack->count() - 1;
         moduleWidget_->updateControls(ModuleWidget::RecreateRenderablesFlag);
+
+        if (keywordWidgets_.empty() && !ui_.ProcedureWidgetButton->isVisible())
+            ui_.ModuleWidgetButton->setChecked(true);
     }
 
     updateControls();
@@ -78,7 +116,8 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
     ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
 
     // Update keywords
-    ui_.ModuleKeywordsWidget->updateControls();
+    for (auto &kw : keywordWidgets_)
+        kw->updateControls();
 
     // Update additional controls (if they exist)
     if (moduleWidget_)
@@ -88,7 +127,8 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
 // Disable editing
 void ModuleControlWidget::preventEditing()
 {
-    ui_.ModuleKeywordsWidget->setEnabled(false);
+    for (auto &kw : keywordWidgets_)
+        kw->setEnabled(false);
     if (moduleWidget_)
         moduleWidget_->preventEditing();
 }
@@ -96,7 +136,8 @@ void ModuleControlWidget::preventEditing()
 // Allow editing
 void ModuleControlWidget::allowEditing()
 {
-    ui_.ModuleKeywordsWidget->setEnabled(true);
+    for (auto &kw : keywordWidgets_)
+        kw->setEnabled(true);
     if (moduleWidget_)
         moduleWidget_->allowEditing();
 }
@@ -105,22 +146,29 @@ void ModuleControlWidget::allowEditing()
  * UI
  */
 
-void ModuleControlWidget::on_ModuleControlsButton_clicked(bool checked)
+void ModuleControlWidget::switchControlStackPage(QPushButton *button)
+{
+    auto it = controlStackMap_.find(button);
+    if (it != controlStackMap_.end())
+        ui_.ModuleControlStack->setCurrentIndex(it->second);
+}
+
+void ModuleControlWidget::keywordGroupButtonClicked(bool checked)
 {
     if (checked)
-        ui_.ModuleControlsStack->setCurrentIndex(0);
+        switchControlStackPage(qobject_cast<QPushButton *>(sender()));
 }
 
 void ModuleControlWidget::on_ModuleWidgetButton_clicked(bool checked)
 {
     if (checked)
-        ui_.ModuleControlsStack->setCurrentIndex(moduleWidgetStackIndex_);
+        switchControlStackPage(ui_.ModuleWidgetButton);
 }
 
 void ModuleControlWidget::on_ProcedureWidgetButton_clicked(bool checked)
 {
     if (checked)
-        ui_.ModuleControlsStack->setCurrentIndex(procedureWidgetStackIndex_);
+        switchControlStackPage(ui_.ProcedureWidgetButton);
 }
 
 // Prepare widget for deletion
@@ -179,6 +227,7 @@ void ModuleControlWidget::globalDataMutated(int mutationFlags)
     if (!dataMutations.anySet())
         return;
 
-    // Control keywords
-    ui_.ModuleKeywordsWidget->updateControls(mutationFlags);
+    // Module keywords
+    for (auto &kw : keywordWidgets_)
+        kw->updateControls(mutationFlags);
 }
