@@ -19,6 +19,7 @@ set(keywordwidgets_MOC_HDRS
     nodevalueenumoptions.h
     nodevector.h
     range.h
+    sectionHeader.h
     species.h
     speciessite.h
     speciessitevector.h
@@ -57,6 +58,7 @@ set(keywordwidgets_UIS
     nodevalueenumoptions.ui
     nodevector.ui
     range.ui
+    sectionHeader.ui
     species.ui
     speciessite.ui
     speciessitevector.ui
@@ -95,6 +97,7 @@ set(keywordwidgets_SRCS
     optionalint_funcs.cpp
     producers.cpp
     range_funcs.cpp
+    sectionHeader_funcs.cpp
     species_funcs.cpp
     speciessite_funcs.cpp
     speciessitevector_funcs.cpp

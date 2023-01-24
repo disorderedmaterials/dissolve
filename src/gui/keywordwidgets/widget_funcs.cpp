@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/keywordwidgets/producers.h"
+#include "gui/keywordwidgets/sectionHeader.h"
 #include "gui/keywordwidgets/widget.hui"
 #include "gui/signals.h"
 #include "main/dissolve.h"
@@ -36,7 +37,7 @@ void KeywordsWidget::setUp(std::string_view groupName, const KeywordStore::Keywo
         // Create a widget for the section name
         if (!sectionName.empty())
         {
-            auto *sectionLabel = new QLabel(QString::fromStdString(std::string(sectionName)));
+            auto *sectionLabel = new SectionHeaderWidget(QString::fromStdString(std::string(sectionName)));
             groupLayout->addWidget(sectionLabel, row++, 0, 1, 2);
         }
 
