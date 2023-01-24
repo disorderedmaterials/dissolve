@@ -77,11 +77,16 @@ void KeywordsWidget::setUp(KeywordStore &keywords, const CoreData &coreData)
             // Connect signals
             connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(keywordDataChanged(int)));
 
+            // Put the widget in a horizontal layout with a stretch to absorb extra space
+            auto *w = new QHBoxLayout;
+            w->addWidget(widget, 0);
+            w->addStretch(1);
+
             // Create a label and add it and the widget to our layout
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
             nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
             groupLayout->addWidget(nameLabel, row, 0);
-            groupLayout->addWidget(widget, row++, 1);
+            groupLayout->addLayout(w, row++, 1);
 
             // Push onto our reference list
             keywordWidgets_.push_back(base);
