@@ -100,33 +100,34 @@ CalculateDAngleModule::CalculateDAngleModule() : Module("CalculateDAngle"), anal
      * Keywords
      */
 
-    // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    // Control
-    keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, binwidth) of distance binning",
-                                     distanceRange_, Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt,
-                                     Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Add site(s) which represent 'A' in the interaction A-B...C",
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Add site(s) which represent 'A' in the interaction A-B...C",
                                             selectA_->speciesSites(), selectA_->axesRequired());
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Add site(s) which represent 'B' in the interaction A-B...C",
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Add site(s) which represent 'B' in the interaction A-B...C",
                                             selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteC", "Add site(s) which represent 'C' in the interaction A-B...C",
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteC", "Add site(s) which represent 'C' in the interaction A-B...C",
                                             selectC_->speciesSites(), selectC_->axesRequired());
-    keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
+
+    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, binwidth) of distance binning", distanceRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<BoolKeyword>("ExcludeSameMolecule",
                                "Whether to exclude correlations between B and C sites on the same molecule",
                                excludeSameMolecule_);
 
-    // Export
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportRDF",
-                                        "File format and file name under which to save calculated B-C RDF",
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("ExportRDF", "File format and file name under which to save calculated B-C RDF",
                                         processDistance_->exportFileAndFormat(), "EndExportRDF");
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportAngle",
+    keywords_.add<FileAndFormatKeyword>("ExportAngle",
                                         "File format and file name under which to save calculated A-B...C angle histogram",
                                         processAngle_->exportFileAndFormat(), "EndExportAngle");
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngle",
+    keywords_.add<FileAndFormatKeyword>("ExportDAngle",
                                         "File format and file name under which to save calculated A-B...C angle map",
                                         processDAngle_->exportFileAndFormat(), "EndExportDAngle");
 }

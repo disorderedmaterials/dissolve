@@ -12,79 +12,68 @@
 
 EPSRModule::EPSRModule() : Module("EPSR")
 {
-    // Initialise Module - set up keywords etc.
-    // Targets
     keywords_.addTarget<ModuleVectorKeyword>("Target", "Add specified Module (and it's Reference data) as a refinement target",
                                              targets_, std::vector<std::string>{"NeutronSQ", "XRaySQ"});
 
-    // Control
-    keywords_.add<DoubleKeyword>("Control", "EReq", "Limit of magnitude of additional potential for any one pair potential",
-                                 eReq_, 0.0);
-    keywords_.add<DoubleKeyword>("Control", "Feedback", "Confidence factor", feedback_, 0.0, 1.0);
-    keywords_.add<OptionalIntegerKeyword>("Control", "ModifyPotential",
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<DoubleKeyword>("EReq", "Limit of magnitude of additional potential for any one pair potential", eReq_, 0.0);
+    keywords_.add<DoubleKeyword>("Feedback", "Confidence factor", feedback_, 0.0, 1.0);
+    keywords_.add<OptionalIntegerKeyword>("ModifyPotential",
                                           "Frequency at which to apply generated perturbations to interatomic potentials",
                                           modifyPotential_, 0, std::nullopt, 1, "Off");
-    keywords_.add<DoubleKeyword>("Control", "QMax",
-                                 "Maximum Q value over which to generate potentials from total scattering data", qMax_, 0.0);
-    keywords_.add<DoubleKeyword>("Control", "QMin",
-                                 "Minimum Q value over which to generate potentials from total scattering data", qMin_, 0.0);
-    keywords_.add<DoubleKeyword>("Control", "Weighting", "Factor used when adding fluctuation coefficients to pair potentials",
-                                 weighting_, 0.0, 100.0);
+    keywords_.add<DoubleKeyword>("QMin", "Minimum Q value over which to generate potentials from total scattering data", qMin_,
+                                 0.0);
+    keywords_.add<DoubleKeyword>("QMax", "Maximum Q value over which to generate potentials from total scattering data", qMax_,
+                                 0.0);
 
-    // Expansion Function
+    keywords_.setOrganisation("Advanced", "Control");
+    keywords_.add<DoubleKeyword>("Weighting", "Factor used when adding fluctuation coefficients to pair potentials", weighting_,
+                                 0.0, 100.0);
+
+    keywords_.setOrganisation("Advanced", "Expansion Function");
     keywords_.add<EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>>(
-        "Expansion Function", "ExpansionFunction", "Form of expansion function to use when fitting difference data",
-        expansionFunction_, EPSRModule::expansionFunctionTypes());
-    keywords_.add<DoubleKeyword>("Expansion Function", "GSigma1", "Width for Gaussian function in reciprocal space", gSigma1_,
-                                 0.001, 1.0);
-    keywords_.add<DoubleKeyword>("Expansion Function", "GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001,
-                                 1.0);
-    keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NCoeffP",
-                                          "Number of coefficients used to define the empirical potential", nCoeffP_, 0,
-                                          std::nullopt, 100, "Automatic");
-    keywords_.add<OptionalIntegerKeyword>("Expansion Function", "NPItSs",
-                                          "Number of steps for refining fits to delta functions", nPItSs_, 0, std::nullopt, 100,
-                                          "Off (No Fitting - CAUTION!)");
-    keywords_.add<StringKeyword>("Expansion Function", "InpAFile",
-                                 "EPSR inpa file from which to read starting coefficients from", inpaFilename_);
-    keywords_.add<StringKeyword>("Expansion Function", "PCofFile",
-                                 "EPSR pcof file from which to read empirical potential coefficients from", pCofFilename_);
-    keywords_.add<DoubleKeyword>("Expansion Function", "PSigma1",
-                                 "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)", pSigma1_,
-                                 0.001, 1.0);
-    keywords_.add<DoubleKeyword>("Expansion Function", "PSigma2", "Width for Poisson functions in real space", pSigma2_, 0.001,
-                                 1.0);
-    keywords_.add<DoubleKeyword>("Expansion Function", "RMaxPT",
+        "ExpansionFunction", "Form of expansion function to use when fitting difference data", expansionFunction_,
+        EPSRModule::expansionFunctionTypes());
+    keywords_.add<DoubleKeyword>("GSigma1", "Width for Gaussian function in reciprocal space", gSigma1_, 0.001, 1.0);
+    keywords_.add<DoubleKeyword>("GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001, 1.0);
+    keywords_.add<OptionalIntegerKeyword>("NCoeffP", "Number of coefficients used to define the empirical potential", nCoeffP_,
+                                          0, std::nullopt, 100, "Automatic");
+    keywords_.add<OptionalIntegerKeyword>("NPItSs", "Number of iterations when refining fits to delta functions", nPItSs_, 0,
+                                          std::nullopt, 100, "Off (No Fitting - CAUTION!)");
+    keywords_.add<StringKeyword>("InpAFile", "EPSR inpa file from which to read starting coefficients from", inpaFilename_);
+    keywords_.add<StringKeyword>("PCofFile", "EPSR pcof file from which to read empirical potential coefficients from",
+                                 pCofFilename_);
+    keywords_.add<DoubleKeyword>("PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)",
+                                 pSigma1_, 0.001, 1.0);
+    keywords_.add<DoubleKeyword>("PSigma2", "Width for Poisson functions in real space", pSigma2_, 0.001, 1.0);
+    keywords_.add<DoubleKeyword>("RMaxPT",
                                  "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)",
                                  rMaxPT_, -1.0);
-    keywords_.add<DoubleKeyword>("Expansion Function", "RMinPT",
-                                 "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)",
-                                 rMinPT_, -1.0);
-    keywords_.add<OptionalIntegerKeyword>("Expansion Function", "Smoothing",
+    keywords_.add<DoubleKeyword>(
+        "RMinPT", "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)", rMinPT_, -1.0);
+    keywords_.add<OptionalIntegerKeyword>("Smoothing",
                                           "Smoothing to apply to fluctuation coefficients before summation into potential",
                                           fluctuationSmoothing_, 0, std::nullopt, 1, "Off");
 
-    // Test
-    keywords_.add<BoolKeyword>("Test", "Test", "Test against supplied reference data", test_);
-    keywords_.add<StringDoubleVectorKeyword>("Test", "TestAbsEnergyEP",
-                                             "Specify test absolute EP energy values for pair potentials", testAbsEnergyEP_);
-    keywords_.add<DoubleKeyword>("Test", "TestAbsEnergyEPThreshold", "Test threshold above which absolute EP energy test fails",
+    keywords_.setOrganisation("Advanced", "Test");
+    keywords_.add<BoolKeyword>("Test", "Test against supplied reference data", test_);
+    keywords_.add<StringDoubleVectorKeyword>("TestAbsEnergyEP", "Specify test absolute EP energy values for pair potentials",
+                                             testAbsEnergyEP_);
+    keywords_.add<DoubleKeyword>("TestAbsEnergyEPThreshold", "Test threshold above which absolute EP energy test fails",
                                  testAbsEnergyEPThreshold_, 1.0e-8);
-    keywords_.add<Data1DStoreKeyword>("Test", "TestReference", "Specify test reference data", testReferenceData_);
-    keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Test threshold (%error) above which test fails", testThreshold_,
-                                 1.0e-5);
-    keywords_.add<BoolKeyword>("Test", "OverwritePotentials", "Overwrite potentials each time rather than summing them",
+    keywords_.add<Data1DStoreKeyword>("TestReference", "Specify test reference data", testReferenceData_);
+    keywords_.add<DoubleKeyword>("TestThreshold", "Test threshold (%error) above which test fails", testThreshold_, 1.0e-5);
+    keywords_.add<BoolKeyword>("OverwritePotentials", "Overwrite potentials each time rather than summing them",
                                overwritePotentials_);
 
-    // Export
-    keywords_.add<BoolKeyword>("Export", "SaveDifferenceFunctions", "Whether to save difference function and fit",
+    keywords_.setOrganisation("Export");
+    keywords_.add<BoolKeyword>("SaveDifferenceFunctions", "Whether to save difference function and fit",
                                saveDifferenceFunctions_);
-    keywords_.add<BoolKeyword>("Export", "SaveEmpiricalPotentials", "Whether to save empirical potentials",
-                               saveEmpiricalPotentials_);
-    keywords_.add<BoolKeyword>("Export", "SaveEstimatedPartials", "Whether to save estimated partials", saveEstimatedPartials_);
-    keywords_.add<BoolKeyword>("Export", "SavePCof", "Whether to save potential coefficients", savePotentialCoefficients_);
-    keywords_.add<BoolKeyword>("Export", "SaveSimulatedFR",
-                               "Whether to save simulated F(r) (Fourier transform of calculated F(Q))", saveSimulatedFR_);
+    keywords_.add<BoolKeyword>("SaveEmpiricalPotentials", "Whether to save empirical potentials", saveEmpiricalPotentials_);
+    keywords_.add<BoolKeyword>("SaveEstimatedPartials", "Whether to save estimated partials", saveEstimatedPartials_);
+    keywords_.add<BoolKeyword>("SavePCof", "Whether to save potential coefficients", savePotentialCoefficients_);
+    keywords_.add<BoolKeyword>("SaveSimulatedFR", "Whether to save simulated F(r) (Fourier transform of calculated F(Q))",
+                               saveSimulatedFR_);
 }
 
 // Return enum option info for ExpansionFunctionType

@@ -70,48 +70,50 @@ CalculateRDFModule::CalculateRDFModule() : Module("CalculateRDF"), analyser_(Pro
      * Keywords
      */
 
-    // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    // Control
-    keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA",
-                                            "Set the site(s) 'A' which are to represent the origin of the RDF",
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<SpeciesSiteVectorKeyword>(
-        "Control", "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
+        "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
         selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
-                               "Whether to exclude correlations between sites on the same molecule", excludeSameMolecule_);
-    keywords_.add<BoolKeyword>("Control", "RangeAEnabled", "Whether calculation of the second coordination number is enabled",
+
+    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<BoolKeyword>("ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule",
+                               excludeSameMolecule_);
+
+    keywords_.setOrganisation("Options", "Coordination Numbers");
+    keywords_.add<BoolKeyword>("RangeAEnabled", "Whether calculation of the second coordination number is enabled",
                                sumCN_->rangeEnabled(0));
-    keywords_.add<RangeKeyword>("Control", "RangeA", "Distance range for first coordination number", sumCN_->range(0));
-    keywords_.add<BoolKeyword>("Control", "RangeBEnabled", "Whether calculation of the second coordination number is enabled",
+    keywords_.add<RangeKeyword>("RangeA", "Distance range for first coordination number", sumCN_->range(0));
+    keywords_.add<BoolKeyword>("RangeBEnabled", "Whether calculation of the second coordination number is enabled",
                                sumCN_->rangeEnabled(1));
-    keywords_.add<RangeKeyword>("Control", "RangeB", "Distance range for second coordination number", sumCN_->range(1));
-    keywords_.add<BoolKeyword>("Control", "RangeCEnabled", "Whether calculation of the third coordination number is enabled",
+    keywords_.add<RangeKeyword>("RangeB", "Distance range for second coordination number", sumCN_->range(1));
+    keywords_.add<BoolKeyword>("RangeCEnabled", "Whether calculation of the third coordination number is enabled",
                                sumCN_->rangeEnabled(2));
-    keywords_.add<RangeKeyword>("Control", "RangeC", "Distance range for third coordination number", sumCN_->range(2));
+    keywords_.add<RangeKeyword>("RangeC", "Distance range for third coordination number", sumCN_->range(2));
 
-    // Export
-    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save calculated RDF data",
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated RDF data",
                                         processDistance_->exportFileAndFormat(), "EndExport");
-    keywords_.add<BoolKeyword>(
-        "Export", "ExportInstantaneousCN",
-        "Export instantaneous coordination numbers to disk (only if 'Instantaneous' option is enabled)\n",
-        exportInstantaneous_);
+    keywords_.add<BoolKeyword>("ExportInstantaneousCN", "Export instantaneous coordination numbers to disk\n",
+                               exportInstantaneous_);
 
-    // Test
+    keywords_.setOrganisation("Advanced");
     keywords_.add<OptionalDoubleKeyword>(
-        "Test", "TestRangeA", "Reference coordination number for range A against which calculated value should be tested",
-        testRangeA_, 0.0, std::nullopt, 0.1, "Off");
+        "TestRangeA", "Reference coordination number for range A against which calculated value should be tested", testRangeA_,
+        0.0, std::nullopt, 0.1, "Off");
     keywords_.add<OptionalDoubleKeyword>(
-        "Test", "TestRangeB", "Reference coordination number for range B against which calculated value should be tested",
-        testRangeB_, 0.0, std::nullopt, 0.1, "Off");
+        "TestRangeB", "Reference coordination number for range B against which calculated value should be tested", testRangeB_,
+        0.0, std::nullopt, 0.1, "Off");
     keywords_.add<OptionalDoubleKeyword>(
-        "Test", "TestRangeC", "Reference coordination number for range C against which calculated value should be tested",
-        testRangeC_, 0.0, std::nullopt, 0.1, "Off");
-    keywords_.add<DoubleKeyword>("Test", "TestThreshold", "Threshold difference at which test comparisons will fail",
-                                 testThreshold_, 1.0e-5);
+        "TestRangeC", "Reference coordination number for range C against which calculated value should be tested", testRangeC_,
+        0.0, std::nullopt, 0.1, "Off");
+    keywords_.add<DoubleKeyword>("TestThreshold", "Threshold difference at which test comparisons will fail", testThreshold_,
+                                 1.0e-5);
 }

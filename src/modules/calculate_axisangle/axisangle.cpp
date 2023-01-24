@@ -100,40 +100,38 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module("CalculateAxisAngl
      * Keywords
      */
 
-    // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    // Control
-    keywords_.add<Vec3DoubleKeyword>("Control", "DistanceRange", "Range (min, max, binwidth) of distance binning",
-                                     distanceRange_, Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt,
-                                     Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA",
-                                            "Specify site(s) which represent 'A' in the interaction A-B...C",
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B...C",
                                             selectA_->speciesSites(), selectA_->axesRequired());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisA", "Axis to use from site A",
-                                                              calculateAxisAngle_->axis(0), OrientedSite::siteAxis());
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB",
-                                            "Specify site(s) which represent 'B' in the interaction A-B...C",
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", calculateAxisAngle_->axis(0),
+                                                              OrientedSite::siteAxis());
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B...C",
                                             selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisB", "Axis to use from site B",
-                                                              calculateAxisAngle_->axis(1), OrientedSite::siteAxis());
-    keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", calculateAxisAngle_->axis(1),
+                                                              OrientedSite::siteAxis());
+
+    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, binwidth) of distance binning", distanceRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<BoolKeyword>("ExcludeSameMolecule",
                                "Whether to exclude correlations between B and C sites on the same molecule",
                                excludeSameMolecule_);
-    keywords_.add<BoolKeyword>("Control", "Symmetric",
-                               "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)",
-                               symmetric_);
+    keywords_.add<BoolKeyword>(
+        "Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 
-    // Export
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportRDF",
-                                        "File format and file name under which to save calculated B-C RDF",
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("ExportRDF", "File format and file name under which to save calculated B-C RDF",
                                         processDistance_->exportFileAndFormat(), "EndExportRDF");
     keywords_.add<FileAndFormatKeyword>(
-        "Export", "ExportAngle", "File format and file name under which to save calculated A-B...C angle histogram to disk",
+        "ExportAngle", "File format and file name under which to save calculated A-B...C angle histogram to disk",
         processAngle_->exportFileAndFormat(), "EndExportAngle");
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngle",
+    keywords_.add<FileAndFormatKeyword>("ExportDAngle",
                                         "File format and file name under which to save calculated A-B...C angle map to disk",
                                         processDAngle_->exportFileAndFormat(), "EndExportDAngle");
 }

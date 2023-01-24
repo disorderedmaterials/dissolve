@@ -142,49 +142,48 @@ CalculateAngleModule::CalculateAngleModule() : Module("CalculateAngle"), analyse
      * Keywords
      */
 
-    // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    // Control
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeAB", "Range (min, max, binwidth) of A-B distance binning", rangeAB_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C",
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Specify site(s) which represent 'A' in the interaction A-B-C",
                                             selectA_->speciesSites(), selectA_->axesRequired());
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C",
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteB", "Specify site(s) which represent 'B' in the interaction A-B-C",
                                             selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C",
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteC", "Specify site(s) which represent 'C' in the interaction A-B-C",
                                             selectC_->speciesSites(), selectC_->axesRequired());
-    keywords_.add<BoolKeyword>("Control", "ExcludeSameMoleculeAB",
+
+    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.add<Vec3DoubleKeyword>("RangeAB", "Range (min, max, binwidth) of A-B distance binning", rangeAB_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("RangeBC", "Range (min, max, binwidth) of B-C distance binning", rangeBC_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+    keywords_.add<Vec3DoubleKeyword>("AngleRange", "Range (min, max, binwidth) of angle binning", angleRange_,
+                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<BoolKeyword>("ExcludeSameMoleculeAB",
                                "Whether to exclude correlations between A and B sites on the same molecule",
                                excludeSameMoleculeAB_);
-    keywords_.add<BoolKeyword>("Control", "ExcludeSameMoleculeBC",
+    keywords_.add<BoolKeyword>("ExcludeSameMoleculeBC",
                                "Whether to exclude correlations between B and C sites on the same molecule",
                                excludeSameMoleculeBC_);
-    keywords_.add<BoolKeyword>("Control", "ExcludeSameSiteAC",
-                               "Whether to exclude correlations between A and C sites on the same molecule",
-                               excludeSameSiteAC_);
-    keywords_.add<BoolKeyword>("Control", "Symmetric",
-                               "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)",
-                               symmetric_);
+    keywords_.add<BoolKeyword>(
+        "ExcludeSameSiteAC", "Whether to exclude correlations between A and C sites on the same molecule", excludeSameSiteAC_);
+    keywords_.add<BoolKeyword>(
+        "Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 
-    // Export
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportAB",
-                                        "File format and file name under which to save calculated A-B RDF data",
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("ExportAB", "File format and file name under which to save calculated A-B RDF data",
                                         processAB_->exportFileAndFormat(), "EndExportAB");
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportBC",
-                                        "File format and file name under which to save calculated B-C RDF data",
+    keywords_.add<FileAndFormatKeyword>("ExportBC", "File format and file name under which to save calculated B-C RDF data",
                                         processBC_->exportFileAndFormat(), "EndExportBC");
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportAngle",
+    keywords_.add<FileAndFormatKeyword>("ExportAngle",
                                         "File format and file name under which to save calculated A-B-C angle histogram",
                                         processAngle_->exportFileAndFormat(), "EndExportAngle");
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngleAB",
+    keywords_.add<FileAndFormatKeyword>("ExportDAngleAB",
                                         "File format and file name under which to save calculated (A-B)-C distance-angle map",
                                         processDAngleAB_->exportFileAndFormat(), "EndExportDAngleAB");
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportDAngleBC",
+    keywords_.add<FileAndFormatKeyword>("ExportDAngleBC",
                                         "File format and file name under which to save calculated A-(B-C) distance-angle map",
                                         processDAngleBC_->exportFileAndFormat(), "EndExportDAngleBC");
 }

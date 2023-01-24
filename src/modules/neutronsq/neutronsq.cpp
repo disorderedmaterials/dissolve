@@ -13,55 +13,53 @@
 
 NeutronSQModule::NeutronSQModule() : Module("NeutronSQ")
 {
-    // Targets
     keywords_.addTarget<ModuleKeyword<const SQModule>>(
         "SourceSQs", "Source unweighted S(Q) to transform into neutron-weighted S(Q)", sourceSQ_, "SQ");
 
-    // Control
+    keywords_.setOrganisation("Options", "Isotopes & Normalisation");
     keywords_.add<AtomTypeVectorKeyword>(
-        "Control", "Exchangeable", "A set of atom types in the system that are exchangeable with each other", exchangeable_);
-    keywords_.add<IsotopologueSetKeyword>(
-        "Control", "Isotopologue", "Set/add an isotopologue and its population for a particular species", isotopologueSet_);
+        "Exchangeable", "A set of atom types in the system that are exchangeable with each other", exchangeable_);
+    keywords_.add<IsotopologueSetKeyword>("Isotopologue", "Set/add an isotopologue and its population for a particular species",
+                                          isotopologueSet_);
     keywords_.add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
-        "Control", "Normalisation", "Normalisation to apply to total weighted F(Q)", normalisation_,
+        "Normalisation", "Normalisation to apply to total weighted F(Q)", normalisation_,
         StructureFactors::normalisationTypes());
 
-    // Reference Data
-    keywords_.add<FileAndFormatKeyword>("Reference Data", "Reference", "F(Q) reference data", referenceFQ_, "EndReference")
+    keywords_.setOrganisation("Options", "Reference Data");
+    keywords_.add<FileAndFormatKeyword>("Reference", "F(Q) reference data", referenceFQ_, "EndReference")
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
         .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
-            "Reference Data", "ReferenceNormalisation", "Normalisation to remove from reference data before use",
-            referenceNormalisation_, StructureFactors::normalisationTypes())
+            "ReferenceNormalisation", "Normalisation to remove from reference data before use", referenceNormalisation_,
+            StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
-        .add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMin",
+        .add<OptionalDoubleKeyword>("ReferenceFTQMin",
                                     "Minimum Q value to use when Fourier-transforming reference data (0.0 for no minimum)",
                                     referenceFTQMin_, 0.0, std::nullopt, 0.1, "No Minimum Limit")
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
-        .add<OptionalDoubleKeyword>("Reference Data", "ReferenceFTQMax",
+        .add<OptionalDoubleKeyword>("ReferenceFTQMax",
                                     "Maximum Q value to use when Fourier-transforming reference data (0.0 for no maximum)",
                                     referenceFTQMax_, 0.0, std::nullopt, 0.1, "No Maximum Limit")
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
-        .add<DoubleKeyword>("Reference Data", "ReferenceFTDeltaR",
-                            "Spacing in r to use when generating the Fourier-transformed data", referenceFTDeltaR_, 1.0e-4, 1.0)
+        .add<DoubleKeyword>("ReferenceFTDeltaR", "Spacing in r to use when generating the Fourier-transformed data",
+                            referenceFTDeltaR_, 1.0e-4, 1.0)
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
         .add<EnumOptionsKeyword<WindowFunction::Form>>(
-            "Reference Data", "ReferenceWindowFunction",
-            "Window function to apply when Fourier-transforming reference S(Q) to g(r)", referenceWindowFunction_,
-            WindowFunction::forms())
+            "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
+            referenceWindowFunction_, WindowFunction::forms())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
 
-    // Export
-    keywords_.add<BoolKeyword>("Export", "SaveGR", "Save weighted g(r) and G(r)", saveGR_);
-    keywords_.add<BoolKeyword>("Export", "SaveReference", "Save the reference data and its Fourier transform", saveReference_);
-    keywords_.add<BoolKeyword>("Export", "SaveRepresentativeGR",
+    keywords_.setOrganisation("Export");
+    keywords_.add<BoolKeyword>("SaveGR", "Save weighted g(r) and G(r)", saveGR_);
+    keywords_.add<BoolKeyword>("SaveReference", "Save the reference data and its Fourier transform", saveReference_);
+    keywords_.add<BoolKeyword>("SaveRepresentativeGR",
                                "Save representative G(r), obtained from Fourier transform of the calculated F(Q)",
                                saveRepresentativeGR_);
-    keywords_.add<BoolKeyword>("Export", "SaveSQ", "Save weighted partial and total structure factors", saveSQ_);
+    keywords_.add<BoolKeyword>("SaveSQ", "Save weighted partial and total structure factors", saveSQ_);
 }
 
 // Return file and format for reference total F(Q)
