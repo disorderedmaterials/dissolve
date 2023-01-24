@@ -3,6 +3,9 @@ name: Build
 inputs:
   target:
     default: "dissolve"
+  cacheOnly:
+    type: boolean
+    default: false
 
 runs:
   using: "composite"
@@ -13,11 +16,16 @@ runs:
     uses: "./.github/workflows/build/linux"
     with:
       target: ${{ inputs.target }}
+      cacheOnly: ${{ inputs.cacheOnly }}
 
   - name: Build (OSX)
     if: runner.os == 'MacOS'
     uses: "./.github/workflows/build/osx"
+    with:
+      cacheOnly: ${{ inputs.cacheOnly }}
 
   - name: Build (Windows)
     if: runner.os == 'Windows'
     uses: "./.github/workflows/build/windows"
+    with:
+      cacheOnly: ${{ inputs.cacheOnly }}
