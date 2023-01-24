@@ -15,17 +15,17 @@ static void BM_Interpolator(benchmark::State &state)
     std::default_random_engine re;
 
     for (auto &x : xs)
-	x = unif(re);
+        x = unif(re);
     for (auto &y : ys)
-	y = unif(re);
+        y = unif(re);
     for (auto &s : samples)
-	s = unif(re);
+        s = unif(re);
 
     Interpolator interp(xs, ys, Interpolator::SplineInterpolation);
 
     for (auto _ : state)
     {
-	auto result = interp.y(samples);
+        auto result = interp.y(samples);
     }
 
     state.SetBytesProcessed(long(state.iterations()) * (long(bytes)));
