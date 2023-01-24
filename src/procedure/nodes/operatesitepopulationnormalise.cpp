@@ -13,7 +13,8 @@ OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProce
     ConstNodeVector<SelectProcedureNode> sites)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateSitePopulationNormalise), normalisationSites_(std::move(sites))
 {
-    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>("Control", "Site",
+    keywords_.setOrganisation("Options", "Inputs");
+    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>("Site",
                                                           "Site(s) by which to normalise data based on their population",
                                                           normalisationSites_, this, ProcedureNode::NodeType::Select, false);
 }

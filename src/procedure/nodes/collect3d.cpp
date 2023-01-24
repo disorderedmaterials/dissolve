@@ -23,21 +23,23 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                                                                                             zBinWidth},
       subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
-    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
-        "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,
-        ProcedureNode::NodeClass::Calculate, true);
-    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
-        "Control", "QuantityY", "Calculated observable to collect for y axis", yObservable_, this,
-        ProcedureNode::NodeClass::Calculate, true);
-    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
-        "Control", "QuantityZ", "Calculated observable to collect for z axis", zObservable_, this,
-        ProcedureNode::NodeClass::Calculate, true);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
+    keywords_.setOrganisation("Options", "Quantities / Ranges");
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityX", "Calculated observable to collect for x axis",
+                                                                     xObservable_, this, ProcedureNode::NodeClass::Calculate,
+                                                                     true);
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityY", "Calculated observable to collect for y axis",
+                                                                     yObservable_, this, ProcedureNode::NodeClass::Calculate,
+                                                                     true);
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityZ", "Calculated observable to collect for z axis",
+                                                                     zObservable_, this, ProcedureNode::NodeClass::Calculate,
+                                                                     true);
+    keywords_.add<Vec3DoubleKeyword>("RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range and binwidth of the y-axis of the histogram", rangeY_,
+    keywords_.add<Vec3DoubleKeyword>("RangeY", "Range and binwidth of the y-axis of the histogram", rangeY_,
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range and binwidth of the z-axis of the histogram", rangeZ_,
+    keywords_.add<Vec3DoubleKeyword>("RangeZ", "Range and binwidth of the z-axis of the histogram", rangeZ_,
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
 }
@@ -50,21 +52,23 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                                                                                               zBinWidth},
       subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
-    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
-        "Control", "QuantityX", "Calculated observable to collect for x axis", xObservable_, this,
-        ProcedureNode::NodeClass::Calculate, true);
-    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
-        "Control", "QuantityY", "Calculated observable to collect for y axis", yObservable_, this,
-        ProcedureNode::NodeClass::Calculate, true);
-    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
-        "Control", "QuantityZ", "Calculated observable to collect for z axis", zObservable_, this,
-        ProcedureNode::NodeClass::Calculate, true);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
+    keywords_.setOrganisation("Options", "Quantities / Ranges");
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityX", "Calculated observable to collect for x axis",
+                                                                     xObservable_, this, ProcedureNode::NodeClass::Calculate,
+                                                                     true);
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityY", "Calculated observable to collect for y axis",
+                                                                     yObservable_, this, ProcedureNode::NodeClass::Calculate,
+                                                                     true);
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityZ", "Calculated observable to collect for z axis",
+                                                                     zObservable_, this, ProcedureNode::NodeClass::Calculate,
+                                                                     true);
+    keywords_.add<Vec3DoubleKeyword>("RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range and binwidth of the y-axis of the histogram", rangeY_,
+    keywords_.add<Vec3DoubleKeyword>("RangeY", "Range and binwidth of the y-axis of the histogram", rangeY_,
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range and binwidth of the z-axis of the histogram", rangeZ_,
+    keywords_.add<Vec3DoubleKeyword>("RangeZ", "Range and binwidth of the z-axis of the histogram", rangeZ_,
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
 }

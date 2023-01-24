@@ -12,8 +12,9 @@
 OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNormalise), value_{value}
 {
-    keywords_.add<NodeValueKeyword>("Control", "Value", "Constant value to normalise to", value_, this);
-    keywords_.add<BoolKeyword>("Control", "Absolute", "Normalise absolute sum of values rather than direct sum", absolute_);
+    keywords_.setOrganisation("Options", "Inputs");
+    keywords_.add<NodeValueKeyword>("Value", "Constant value to normalise to", value_, this);
+    keywords_.add<BoolKeyword>("Absolute", "Normalise absolute sum of values rather than direct sum", absolute_);
 }
 
 /*

@@ -14,15 +14,14 @@
 Integrate1DProcedureNode::Integrate1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Integrate1D), sourceData_(target)
 {
-    keywords_.add<NodeKeyword<Process1DProcedureNode>>("Control", "SourceData",
-                                                       "Process1D node containing the data to integrate", sourceData_, this,
-                                                       ProcedureNode::NodeType::Process1D, false);
-    keywords_.add<RangeKeyword>("Control", "RangeA", "X range for first integration region", range_[0],
-                                Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<RangeKeyword>("Control", "RangeB", "X range for second integration region", range_[1],
-                                Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<RangeKeyword>("Control", "RangeC", "X range for third integration region", range_[2],
-                                Vec3Labels::MinMaxDeltaLabels);
+    keywords_.setOrganisation("Options", "Target");
+    keywords_.add<NodeKeyword<Process1DProcedureNode>>("SourceData", "Process1D node containing the data to integrate",
+                                                       sourceData_, this, ProcedureNode::NodeType::Process1D, false);
+
+    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.add<RangeKeyword>("RangeA", "X range for first integration region", range_[0], Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<RangeKeyword>("RangeB", "X range for second integration region", range_[1], Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<RangeKeyword>("RangeC", "X range for third integration region", range_[2], Vec3Labels::MinMaxDeltaLabels);
 }
 
 /*

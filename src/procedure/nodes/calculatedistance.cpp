@@ -13,10 +13,11 @@ CalculateDistanceProcedureNode::CalculateDistanceProcedureNode(std::shared_ptr<S
                                                                std::shared_ptr<SelectProcedureNode> site1)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateDistance, site0, site1)
 {
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that represents 'i' in the distance i-j", sites_[0],
-                                                    this, ProcedureNode::NodeType::Select, true);
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "J", "Site that represents 'j' in the distance i-j", sites_[1],
-                                                    this, ProcedureNode::NodeType::Select, true);
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("I", "Site that represents 'i' in the distance i-j", sites_[0], this,
+                                                    ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("J", "Site that represents 'j' in the distance i-j", sites_[1], this,
+                                                    ProcedureNode::NodeType::Select, true);
 }
 
 /*

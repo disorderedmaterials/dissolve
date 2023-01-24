@@ -18,17 +18,19 @@
 CoordinateSetsProcedureNode::CoordinateSetsProcedureNode(const Species *sp)
     : ProcedureNode(ProcedureNode::NodeType::CoordinateSets), species_(sp)
 {
-    // Set up keywords
-    keywords_.add<SpeciesKeyword>("Control", "Species", "Target species", species_);
+    keywords_.setOrganisation("Options", "Target");
+    keywords_.add<SpeciesKeyword>("Species", "Target species", species_);
     keywords_.add<EnumOptionsKeyword<CoordinateSetsProcedureNode::CoordinateSetSource>>(
-        "Control", "Source", "Source of coordinate sets on addition of the species", source_, coordinateSetSources());
-    keywords_.add<FileAndFormatKeyword>("Control", "File", "File / format for coordinate sets to read in", fileSource_,
-                                        "EndFile");
-    keywords_.add<NodeValueKeyword>("Control", "NSets", "Number of coordinate sets to generate", nSets_, this);
-    keywords_.add<NodeValueKeyword>("Control", "NSteps", "Number of steps to run (between storing coordinate sets)", nSteps_,
-                                    this);
-    keywords_.add<NodeValueKeyword>("Control", "DeltaT", "Timestep in ps", deltaT_, this);
-    keywords_.add<BoolKeyword>("Control", "Force", "Force generation of coordinates, even if existing sets exist", force_);
+        "Source", "Source of coordinate sets on addition of the species", source_, coordinateSetSources());
+    keywords_.add<BoolKeyword>("Force", "Force generation of coordinates, even if existing sets exist", force_);
+
+    keywords_.setOrganisation("Options", "Source Data (if using file)");
+    keywords_.add<FileAndFormatKeyword>("File", "File / format for coordinate sets to read in", fileSource_, "EndFile");
+
+    keywords_.setOrganisation("Options", "Generation (if using MD)");
+    keywords_.add<NodeValueKeyword>("NSets", "Number of coordinate sets to generate", nSets_, this);
+    keywords_.add<NodeValueKeyword>("NSteps", "Number of steps to run (between storing coordinate sets)", nSteps_, this);
+    keywords_.add<NodeValueKeyword>("DeltaT", "Timestep in ps", deltaT_, this);
 }
 
 /*

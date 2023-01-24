@@ -13,9 +13,10 @@ BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angl
     : ProcedureNode(ProcedureNode::NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)),
       nonPeriodic_(nonPeriodic)
 {
-    keywords_.add<Vec3NodeValueKeyword>("Control", "Lengths", "Box lengths", lengths_, this, Vec3Labels::ABCLabels);
-    keywords_.add<Vec3NodeValueKeyword>("Control", "Angles", "Box angles", angles_, this, Vec3Labels::AlphaBetaGammaLabels);
-    keywords_.add<BoolKeyword>("Control", "NonPeriodic", "Whether the box is non-periodic", nonPeriodic_);
+    keywords_.setOrganisation("Options", "Definition");
+    keywords_.add<Vec3NodeValueKeyword>("Lengths", "Box lengths", lengths_, this, Vec3Labels::ABCLabels);
+    keywords_.add<Vec3NodeValueKeyword>("Angles", "Box angles", angles_, this, Vec3Labels::AlphaBetaGammaLabels);
+    keywords_.add<BoolKeyword>("NonPeriodic", "Whether the box is non-periodic", nonPeriodic_);
 }
 
 /*

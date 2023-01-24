@@ -7,7 +7,8 @@
 
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Parameters)
 {
-    keywords_.add<ExpressionVariableVectorKeyword>("Control", "Parameter", "Defined parameters", parameters_, this);
+    keywords_.setOrganisation("Options", "Data");
+    keywords_.add<ExpressionVariableVectorKeyword>("Parameter", "Defined parameters", parameters_, this);
 }
 
 /*

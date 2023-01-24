@@ -14,12 +14,15 @@ CalculateVectorProcedureNode::CalculateVectorProcedureNode(std::shared_ptr<Selec
                                                            std::shared_ptr<SelectProcedureNode> site1, bool rotateIntoFrame)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateVector, site0, site1), rotateIntoFrame_(rotateIntoFrame)
 {
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that represents 'i' in the vector i->j", sites_[0],
-                                                    this, ProcedureNode::NodeType::Select, true);
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "J", "Site that represents 'j' in the vector i->j", sites_[1],
-                                                    this, ProcedureNode::NodeType::Select, true);
-    keywords_.add<BoolKeyword>("Control", "RotateIntoFrame",
-                               "Whether to rotate the calculated vector into the local frame defined on 'I'", rotateIntoFrame_);
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("I", "Site that represents 'i' in the vector i->j", sites_[0], this,
+                                                    ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("J", "Site that represents 'j' in the vector i->j", sites_[1], this,
+                                                    ProcedureNode::NodeType::Select, true);
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<BoolKeyword>("RotateIntoFrame", "Whether to rotate the calculated vector into the local frame defined on 'I'",
+                               rotateIntoFrame_);
 }
 
 /*

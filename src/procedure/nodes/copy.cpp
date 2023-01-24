@@ -12,8 +12,9 @@
 
 CopyProcedureNode::CopyProcedureNode(Configuration *cfg) : ProcedureNode(ProcedureNode::NodeType::Copy), source_(cfg)
 {
-    keywords_.add<ConfigurationKeyword>("Control", "Source", "Source configuration to copy", source_);
-    keywords_.add<SpeciesVectorKeyword>("Control", "Exclude", "Species types to exclude from copy", excludedSpecies_);
+    keywords_.setOrganisation("Options", "Target");
+    keywords_.add<ConfigurationKeyword>("Source", "Source configuration to copy", source_);
+    keywords_.add<SpeciesVectorKeyword>("Exclude", "Species types to exclude from copy", excludedSpecies_);
 }
 
 /*

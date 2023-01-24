@@ -14,17 +14,17 @@
 Sum1DProcedureNode::Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target)
     : ProcedureNode(ProcedureNode::NodeType::Sum1D), sourceData_(target)
 {
-    keywords_.add<NodeKeyword<Process1DProcedureNode>>("Control", "SourceData", "Process1D node containing the data to sum",
-                                                       sourceData_, this, ProcedureNode::NodeType::Process1D, false);
-    keywords_.add<RangeKeyword>("Control", "RangeA", "X range for first summation region", range_[0],
-                                Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<BoolKeyword>("Control", "RangeBEnabled", "Whether the second summation region is enabled", rangeEnabled_[1]);
-    keywords_.add<RangeKeyword>("Control", "RangeB", "X range for second summation region", range_[1],
-                                Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<BoolKeyword>("Control", "RangeCEnabled", "Whether the second summation region is enabled", rangeEnabled_[2]);
-    keywords_.add<RangeKeyword>("Control", "RangeC", "X range for third summation region", range_[2],
-                                Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<BoolKeyword>("Control", "Instantaneous", "Calculate instantaneous sums rather than averages", instantaneous_);
+    keywords_.setOrganisation("Options", "Source");
+    keywords_.add<NodeKeyword<Process1DProcedureNode>>("SourceData", "Process1D node containing the data to sum", sourceData_,
+                                                       this, ProcedureNode::NodeType::Process1D, false);
+    keywords_.add<BoolKeyword>("Instantaneous", "Calculate instantaneous sums rather than averages", instantaneous_);
+
+    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.add<RangeKeyword>("RangeA", "X range for first summation region", range_[0], Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<BoolKeyword>("RangeBEnabled", "Whether the second summation region is enabled", rangeEnabled_[1]);
+    keywords_.add<RangeKeyword>("RangeB", "X range for second summation region", range_[1], Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<BoolKeyword>("RangeCEnabled", "Whether the second summation region is enabled", rangeEnabled_[2]);
+    keywords_.add<RangeKeyword>("RangeC", "X range for third summation region", range_[2], Vec3Labels::MinMaxDeltaLabels);
 }
 
 /*

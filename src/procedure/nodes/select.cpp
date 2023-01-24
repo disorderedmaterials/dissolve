@@ -21,29 +21,31 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 {
     inclusiveDistanceRange_.set(0.0, 5.0);
 
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "Site", "Add target site(s) to the selection", speciesSites_,
-                                            axesRequired_);
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<SpeciesSiteVectorKeyword>("Site", "Add target site(s) to the selection", speciesSites_, axesRequired_);
+
+    keywords_.setOrganisation("Options", "Control");
     keywords_.add<NodeKeyword<SelectProcedureNode>>(
-        "Control", "SameMoleculeAsSite",
+        "SameMoleculeAsSite",
         "Request that the selected site comes from the molecule containing the current site in the specified "
         "SelectNode",
         sameMolecule_, this, ProcedureNode::NodeType::Select, true);
     keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
-        "Control", "ExcludeSameMolecule",
+        "ExcludeSameMolecule",
         "Exclude sites from selection if they are present in the same molecule as the current site in the specified "
         "SelectNode(s)",
         sameMoleculeExclusions_, this, ProcedureNode::NodeType::Select, true);
     keywords_.add<NodeVectorKeyword<SelectProcedureNode>>(
-        "Control", "ExcludeSameSite",
-        "Exclude sites from selection if they are the current site in the specified SelectNode(s)", sameSiteExclusions_, this,
-        ProcedureNode::NodeType::Select, true);
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "ReferenceSite",
+        "ExcludeSameSite", "Exclude sites from selection if they are the current site in the specified SelectNode(s)",
+        sameSiteExclusions_, this, ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("ReferenceSite",
                                                     "Site to use as reference point when determining inclusions / exclusions",
                                                     distanceReferenceSite_, this, ProcedureNode::NodeType::Select, true);
     keywords_.add<RangeKeyword>(
-        "Control", "InclusiveRange",
+        "InclusiveRange",
         "Distance range (from reference site) within which sites are selected (only if ReferenceSite is defined)",
         inclusiveDistanceRange_, Vec3Labels::MinMaxBinwidthlabels);
+
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_, this,
                                            ProcedureNode::AnalysisContext);
 

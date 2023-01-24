@@ -30,7 +30,8 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view 
 
     expression_.create(expressionText, variables_);
 
-    keywords_.add<ExpressionKeyword>("Control", "Expression", "Expression to apply to values", expression_, variables_);
+    keywords_.setOrganisation("Options", "Inputs");
+    keywords_.add<ExpressionKeyword>("Expression", "Expression to apply to values", expression_, variables_);
 }
 
 // Set the expression
