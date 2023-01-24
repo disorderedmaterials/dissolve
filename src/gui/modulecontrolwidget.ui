@@ -233,6 +233,9 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <layout class="QHBoxLayout" name="KeywordGroupRightButtonsLayout"/>
+         </item>
         </layout>
        </widget>
       </item>

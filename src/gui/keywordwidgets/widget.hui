@@ -9,6 +9,7 @@
 
 // Forward Declarations
 class CoreData;
+class QPushButton;
 
 // Keywords Widget
 class KeywordsWidget : public QWidget
@@ -31,6 +32,8 @@ class KeywordsWidget : public QWidget
     public:
     // Set up controls for specified keywords
     void setUp(std::string_view groupName, const KeywordStore::KeywordStoreMap &keywordMap, const CoreData &coreData);
+    // Create a suitable button for the named group
+    static std::pair<QPushButton *, bool> buttonForGroup(std::string_view groupName);
 
     public slots:
     // Update controls within widget

@@ -38,11 +38,14 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
             continue;
 
         // Create a button for the group
-        auto *b = new QPushButton(QString::fromStdString(std::string(groupName)));
+        auto &&[b, alignRight] = KeywordsWidget::buttonForGroup(groupName);
         b->setCheckable(true);
         b->setAutoExclusive(true);
         connect(b, SIGNAL(clicked(bool)), this, SLOT(keywordGroupButtonClicked(bool)));
-        ui_.KeywordGroupButtonsLayout->insertWidget(-1, b);
+        if (alignRight)
+            ui_.KeywordGroupRightButtonsLayout->insertWidget(0, b);
+        else
+            ui_.KeywordGroupButtonsLayout->insertWidget(-1, b);
 
         // Add a new KeywordsWidget, set it up, and add it to the stack
         auto *w = new KeywordsWidget();
