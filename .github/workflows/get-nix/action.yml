@@ -29,7 +29,7 @@ runs:
         !/nix/var/nix/gc.lock
         !/nix/var/nix/db/big-lock
         !/nix/var/nix/db/reserved
-      key: ${{ runner.os }}-${{ inputs.target }}-cache
+      key: ${{ runner.os }}-nix-cache
 
   - uses: cachix/install-nix-action@v15
     with:
