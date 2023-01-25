@@ -22,14 +22,19 @@ Once a {{< gui-node "Process1D" >}} node has processed data into something meani
 
 Note that, of the three ranges, the first ("A") is always calculated.
 
-## Configuration
+## Options
 
-### Control
+### Source
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Instantaneous`|`bool`|`false`|Whether the processed data should reflect the accumulated average over the defined ranges (`false`) or the "instantaneous" value (`true`).|
 |`SourceData`|`name`|--|{{< required-label >}} The `name` of a {{< gui-node "Process1D" >}} node containing the target data.|
+
+### Ranges
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
 |`RangeA`|`min`</br>`max`|`0.0`</br>`3.0`|First range to target.|
 |`RangeB`|`min`</br>`max`|`3.0`</br>`6.0`|Second range to target.|
 |`RangeC`|`min`</br>`max`|`6.0`</br>`9.0`|Third range to target.|

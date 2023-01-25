@@ -22,10 +22,10 @@ In the "Operate" context all `Operate*` nodes are passed data of some dimensiona
 
 The `OperateSitePopulationNormalise` node simply divides the values (not the axes) of the supplied data by the populations of one or more target sites. The target data may be of any dimensionality.
 
-## Configuration
+## Options
 
-### Control
+### Inputs
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Site`|`name`<br/>[`name...`]|--|{{< required-label >}} One or more `name`d {{< gui-node "Select" >}} nodes from which the site populations are used as divisors on the data. If more than one {{< gui-node "Select" >}} nodes is given, the divisions are made sequentially.|
+|`Site`|{{< gui-node "Select" >}}  ...|--|{{< required-label >}} One or more named {{< gui-node "Select" >}} nodes from which the site populations are used as divisors on the data. If more than one {{< gui-node "Select" >}} nodes is given, the divisions are made sequentially.|

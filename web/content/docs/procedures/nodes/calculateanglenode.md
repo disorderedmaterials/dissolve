@@ -22,12 +22,18 @@ The `CalculateAngle` node calculates the angle, in degrees, between three provid
 
 `CalculateAngle` determines the angle $i$-$j$-$k$ between the selected sites $i$, $j$, and $k$, obeying minimum image distances if the encompassing box is periodic. The resulting value is measured in degrees.
 
-## Configuration
+## Options
+
+### Sites
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`I`|{{< gui-node "Select" >}}|--|Site that represents $i$ in the angle $i$-$j$-$k$, taken from the named {{< gui-node "Select" >}} node.|
+|`J`|{{< gui-node "Select" >}}|--|Site that represents $j$ in the angle $i$-$j$-$k$, taken from the named {{< gui-node "Select" >}} node.|
+|`K`|{{< gui-node "Select" >}}|--|Site that represents $k$ in the angle $i$-$j$-$k$, taken from the named {{< gui-node "Select" >}} node.|
 
 ### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|`name`|--|Site that represents $i$ in the angle $i$-$j$-$k$, taken from the `name`d {{< gui-node "Select" >}} node.|
-|`J`|`name`|--|Site that represents $j$ in the angle $i$-$j$-$k$, taken from the `name`d {{< gui-node "Select" >}} node.|
-|`K`|`name`|--|Site that represents $k$ in the angle $i$-$j$-$k$, taken from the `name`d {{< gui-node "Select" >}} node.|
+|`Symmetric`|`bool`|`false`|Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90.|

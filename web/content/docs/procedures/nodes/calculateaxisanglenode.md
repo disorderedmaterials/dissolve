@@ -22,11 +22,19 @@ The `CalculateAxisAngle` node calculates the angle, in degrees, between specific
 
 `CalculateAxisAngle` determines the angle formed between specific axes on two oriented sites $i$ and $j$, mapping the origins of both axes to {0,0,0}. The resulting value is measured in degrees.
 
-## Configuration
+## Options
+
+### Sites
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`I`|{{< gui-node "Select" >}}|--|Site that represents $i$ in the angle $i$-$j$-$k$, taken from the named {{< gui-node "Select" >}} node.|
+|`J`|{{< gui-node "Select" >}}|--|Site that represents $j$ in the angle $i$-$j$-$k$, taken from the named {{< gui-node "Select" >}} node.|
+|`AxisI`|`X|Y|Z`|`X`|Axis to use from site I|
+|`AxisJ`|`X|Y|Z`|`X`|Axis to use from site J|
 
 ### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|`name`|--|Site that represents $i$ in the angle $i$-$j$-$k$, taken from the `name`d {{< gui-node "Select" >}} node.|
-|`J`|`name`|--|Site that represents $j$ in the angle $i$-$j$-$k$, taken from the `name`d {{< gui-node "Select" >}} node.|
+|`Symmetric`|`bool`|`false`|Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90.|

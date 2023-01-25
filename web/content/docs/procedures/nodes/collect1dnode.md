@@ -26,11 +26,11 @@ Where the `Calculate*` nodes are responsible for calculating quantities, the `Co
 
 The `Collect*` nodes all have a branch (accessed through the hidden `SubCollect` keyword) which is executed if the value is successfully binned (i.e. is within all ranges specified).
 
-## Configuration
+## Options
 
-### Control
+### Quantities / Ranges
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`QuantityX`|`name`<br/>`[index]`|--|{{< required-label >}} The calculated observable to collect. The `name`d node must be one of the `Calculate*` nodes. The `index` specifies which value to take from multi-dimensional observables, starting from zero for the first. If not specified, index` defaults to zero.|
+|`QuantityX`|`name`<br/>`[index]`|--|{{< required-label >}} The calculated observable to collect. The named node must be one of the `Calculate*` nodes. The `index` specifies which value to take from multi-dimensional observables, starting from zero for the first. If not specified, index` defaults to zero.|
 |`RangeX `|`min`<br/>`max`<br/>`delta`|--|Defines the range and binwidth of the histogram over which `QuantityX` will be accumulated.|

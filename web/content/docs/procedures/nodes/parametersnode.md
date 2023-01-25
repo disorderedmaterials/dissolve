@@ -20,10 +20,10 @@ The `Parameters` node stores zero or more named numerical values that may be ref
 
 The `Parameters` node stores named values, with each value being one of two explicit types - integer or floating point. The type of the value is automatically detected on input.
 
-## Configuration
+## Options
 
-### Control
+### Data
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Parameter`|`name`<br/>`value`|--|Define a `name`d parameter with the specified `value`, which can be either integer or floating point.|
+|`Parameter`|`name`<br/>`value`|--|Define a named parameter with the specified `value`, which can be either integer or floating point.|

@@ -22,12 +22,17 @@ The `CalculateVector` node calculates the vector between two provided sites $i$ 
 
 `CalculateVector` determines the vector $v_{ij}$ in 3D space between the selected sites $i$ and $j$, obeying the minimum image convention if the encompassing box is periodic. The resulting value is measured in Angstroms.
 
-## Configuration
+## Options
+
+### Sites
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`I`|{{< gui-node "Select" >}}|--|Site that represents $i$ in the distance $i$-$j$, taken from the named {{< gui-node "Select" >}} node.|
+|`J`|{{< gui-node "Select" >}}|--|Site that represents $j$ in the distance $i$-$j$, taken from the named {{< gui-node "Select" >}} node.|
 
 ### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|`name`|--|Site that represents $i$ in the distance $i$-$j$, taken from the `name`d {{< gui-node "Select" >}} node.|
-|`J`|`name`|--|Site that represents $j$ in the distance $i$-$j$, taken from the `name`d {{< gui-node "Select" >}} node.|
 |`RotateIntoFrame`|`bool`|`false`|Whether to rotate the calculated vector into the local frame defined on $i$. If `true`, and the site $i$ has a set of axes defined, the vector is rotated into the frame of those axes.|

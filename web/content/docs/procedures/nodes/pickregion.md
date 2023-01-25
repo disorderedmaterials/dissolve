@@ -1,7 +1,7 @@
 ---
-title: Pick (Node)
-linkTitle: Pick
-description: Pick species molecules from anywhere inside a box
+title: PickRegion (Node)
+linkTitle: PickRegion
+description: Pick species molecules from a specific region
 ---
 
 {{< htable >}}
@@ -14,15 +14,17 @@ description: Pick species molecules from anywhere inside a box
 
 ## Overview
 
-The `Pick` node picks (selects) all molecules of a given species type from the current configuration, for further processing by other nodes.
+The `PickRegion` node picks (selects) all molecules of any species type from a specified region, for further processing by other nodes.
 
 ## Options
+
+### Control
 
 ### Target
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Species`|`name`|--|Add target species to pick - all molecules of the target species will be added to the node's internal selection list. More than one species name may be given to the keyword if it is desired to pick multiple species.|
+|`Region`|`name`|--|Region from which species molecules can be picked.|
 
 ### Source
 

@@ -28,14 +28,19 @@ The `Process1D` node is intended to appear at the very end of a procedure, prepa
 
 The `Process*` nodes all have a branch with the "Operate" context (accessed through the hidden `Normalisation` keyword) which is always executed, and can be used to perform mathematical operations via a sequence of `Operate*` nodes.
 
-## Configuration
+## Options
 
-### Control
+### Source
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Instantaneous`|`bool`|`false`|Whether the processed data should reflect the accumulated histogram data (`false`) or the "instantaneous" data from the last iteration only (`true`).|
 |`SourceData`|`name`|--|{{< required-label >}} The `name` of a {{< gui-node "Collect1D" >}} node containing the histogram data to process.|
+
+### Labels
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
 |`LabelValue`|`label`|`"Y"`|Label for the value axis|
 |`LabelX`|`label`|`"X"`|Label for the x axis|
 

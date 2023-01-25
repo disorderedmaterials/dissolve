@@ -28,13 +28,18 @@ The `Process3D` node is intended to appear at the very end of a procedure, prepa
 
 The `Process*` nodes all have a branch with the "Operate" context (accessed through the hidden `Normalisation` keyword) which is always executed, and can be used to perform mathematical operations via a sequence of `Operate*` nodes.
 
-## Configuration
+## Options
 
-### Control
+### Source
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`SourceData`|`name`|--|{{< required-label >}} The `name` of a {{< gui-node "Collect3D" >}} node containing the histogram data to process.|
+
+### Labels
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
 |`LabelValue`|`label`|`"Counts"`|Label for the value axis|
 |`LabelX`|`label`|`"X"`|Label for the x axis|
 |`LabelY`|`label`|`"Y"`|Label for the y axis|

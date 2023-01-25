@@ -1,7 +1,7 @@
 ---
-title: GeneralRegion (Node)
-linkTitle: GeneralRegion
-description: Constructs a general region
+title: CylindricalRegion (Node)
+linkTitle: CylindricalRegion
+description: Constructs a cylindrical region
 ---
 
 {{< htable >}}
@@ -26,7 +26,9 @@ The `GeneralRegion` node assesses the current contents of a configuration and lo
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Tolerance`|`double`|`2.0`|Minimum distance at which an existing atom may reside next to a voxel's central coordinate. If an atom exists at a shorter distance, that voxel is excluded.|
+|`OriginFrac`|`Vec3<double>`|`0.0 0.0 0.0`|Origin of vector in fractional coordinates|
+|`Radius`|`double`|`2.0`|Cylinder radius|
+|`Vector`|`Vec3<double>`|`0.0 0.0 1.0`|Vector of cylinder|
 
 ### Grid
 

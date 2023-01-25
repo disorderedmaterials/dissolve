@@ -16,9 +16,9 @@ description: Copy a configuration
 
 The `Copy` node copies the box and all molecules from a source configuration into the current one, providing e.g. a basis for further editing.
 
-## Configuration
+## Options
 
-### Control
+### Target
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

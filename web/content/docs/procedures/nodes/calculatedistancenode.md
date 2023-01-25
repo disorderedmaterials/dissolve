@@ -22,11 +22,11 @@ The `CalculateDistance` node calculates the distance, in Angstroms, between two 
 
 `CalculateDistance` determines the distance $i$-$j$ between the selected sites $i$ and $j$, obeying the minimum image convention if the encompassing box is periodic. The resulting value is measured in Angstroms.
 
-## Configuration
+## Options
 
-### Control
+### Sites
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|`name`|--|Site that represents $i$ in the distance $i$-$j$, taken from the `name`d {{< gui-node "Select" >}} node.|
-|`J`|`name`|--|Site that represents $j$ in the distance $i$-$j$, taken from the `name`d {{< gui-node "Select" >}} node.|
+|`I`|{{< gui-node "Select" >}}|--|Site that represents $i$ in the distance $i$-$j$, taken from the named {{< gui-node "Select" >}} node.|
+|`J`|{{< gui-node "Select" >}}|--|Site that represents $j$ in the distance $i$-$j$, taken from the named {{< gui-node "Select" >}} node.|

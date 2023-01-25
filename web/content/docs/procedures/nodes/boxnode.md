@@ -20,9 +20,9 @@ The `Box` node creates a unit cell for the current configuration.
 
 The sole purpose of the `Box` node is to set the geometry of the unit cell (box) for the current configuration.
 
-## Configuration
+## Options
 
-### Control
+### Definition
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
