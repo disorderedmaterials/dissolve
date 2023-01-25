@@ -5,6 +5,9 @@ inputs:
     default: ""
   target:
     default: "dissolve"
+  cacheOnly:
+    type: boolean
+    default: false
 
 runs:
   using: "composite"
@@ -16,6 +19,7 @@ runs:
       target: ${{ inputs.target }}
 
   - name: Build
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
@@ -25,6 +29,7 @@ runs:
       nix build --json .#${{ inputs.target }} > archive.json
 
   - name: Bundle
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
@@ -37,6 +42,7 @@ runs:
       cp -v ${{ inputs.target }} build/${{ inputs.target }}-${{ env.dissolveVersion }}
 
   - name: Upload Raw Build Artifacts
+    if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v3
     with:
       name: linux-build-artifacts-${{ inputs.target }}

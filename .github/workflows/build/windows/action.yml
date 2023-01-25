@@ -9,6 +9,9 @@ inputs:
     default: https://download.savannah.gnu.org/releases/freetype/freetype-2.12.1.tar.gz
   ftglRepo:
     default: https://github.com/frankheckenbach/ftgl.git
+  cacheOnly:
+    type: boolean
+    default: false
 
 runs:
   using: "composite"
@@ -141,6 +144,7 @@ runs:
       conan profile update settings.compiler.version=17 default
 
   - name: Build
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       # Setup environment
@@ -165,6 +169,7 @@ runs:
       conan install .. -g deploy
 
   - name: Upload Raw Build Artifacts
+    if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v3
     with:
       name: windows-build-artifacts

@@ -5,10 +5,17 @@ inputs:
     default: true
   extraCMakeFlags:
     default: ""
+  cacheOnly:
+    type: boolean
+    default: false
 
 runs:
   using: "composite"
   steps:
+
+  #
+  # Setup / Install Dependencies
+  #
 
   - name: Setup Python
     uses: actions/setup-python@v4
@@ -16,6 +23,7 @@ runs:
       python-version: ${{ env.pythonVersion }}
 
   - name: Install Homebrew Dependencies
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
@@ -23,6 +31,7 @@ runs:
       brew install ftgl ninja
 
   - name: Acquire ANTLR Java
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
@@ -47,7 +56,12 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
       aqt install-qt --outputdir ${{ runner.temp }}/qt mac desktop ${{ env.qtVersion }}
 
+  #
+  # Main Build
+  #
+
   - name: Build
+    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
@@ -71,6 +85,7 @@ runs:
       conan install .. -g deploy
 
   - name: Upload Raw Build Artifacts
+    if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v3
     with:
       name: osx-build-artifacts

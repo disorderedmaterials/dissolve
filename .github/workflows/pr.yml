@@ -43,8 +43,6 @@ jobs:
         uses: "./.github/workflows/set-short-hash"
       - name: "Build (${{ matrix.os }})"
         uses: "./.github/workflows/build"
-        env:
-          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_TOKEN }}
         with:
           target: ${{ matrix.target }}
 
