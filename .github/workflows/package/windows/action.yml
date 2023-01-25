@@ -15,18 +15,20 @@ runs:
       path: ${{ runner.temp }}\qt
 
   - name: Retrieve FTGL Cache
-    id: cache-ftgl
     uses: actions/cache@v3
     with:
       key: windows-ftgl
-      path: ${{ runner.temp }}\ftgl-install
+      path: |
+        ${{ runner.temp }}\ftgl-latest
+        ${{ runner.temp }}\ftgl-install
 
   - name: Retrieve FreeType Cache
-    id: cache-freetype
     uses: actions/cache@v3
     with:
       key: windows-freetype
-      path: ${{ runner.temp }}\freetype-install
+      path: |
+        ${{ runner.temp }}\freetype-latest
+        ${{ runner.temp }}\freetype-install
 
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v3
