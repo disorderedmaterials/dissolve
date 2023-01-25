@@ -23,8 +23,6 @@ jobs:
         uses: actions/checkout@v3
       - name: "Build (Cache Only) (${{ matrix.os }})"
         uses: "./.github/workflows/build"
-        env:
-          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_TOKEN }}
         with:
           target: ${{ matrix.target }}
           cacheOnly: true
