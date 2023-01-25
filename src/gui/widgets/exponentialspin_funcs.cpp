@@ -144,7 +144,7 @@ QSize ExponentialSpin::sizeHint() const
     const QFontMetrics fm(fontMetrics());
 
     int h = lineEdit()->sizeHint().height();
-    int w = fm.horizontalAdvance("1.000e-5");
+    int w = fm.horizontalAdvance("1.000000000e-5");
 
     return {w, h};
 }
