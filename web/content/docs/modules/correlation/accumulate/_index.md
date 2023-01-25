@@ -12,7 +12,7 @@ The averaging performed by the `Accumulation` module differs from that performed
 
 A target module containing partial set data must be provided, along with the type of target data to accumulate (since in the case of the {{< gui-module "NeutronSQ" >}}, for instance, both g(r) and S(Q) partial sets are generated).
 
-## Keywords
+## Options
 
 ### Targets
 
@@ -21,7 +21,7 @@ A target module containing partial set data must be provided, along with the typ
 |`Data`|`Module`...|--|{{< required-label >}}Name of the source module(s) from which to take partial set data to accumulate. If multiple modules are specified then each is accumulated separately, rather than them all being accumulated into one final dataset.|
 |`Target`|`RDF|SQ|OriginalRDF`|`RDF`|Partial set type to take from the target module. Not all partial set types are relevant to all target module types - e.g. `SQ` has no meaning for an {{< gui-module "RDF" >}} module, but both `RDF` and `SQ` are relevant for an {{< gui-module "XRaySQ" >}} module. The `OriginalRDF` option is specific to the {{< gui-module "RDF" >}} module, and refers to the as-calculated partials before any intramolecular broadening has been applied.
 
-### Export
+## Export
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

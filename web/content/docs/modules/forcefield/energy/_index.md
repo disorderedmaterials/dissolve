@@ -36,7 +36,7 @@ The stability of the total energy is an important thing to consider when running
 
 The `StabilityThreshold` value is multiplied by the mean of the last N points (governed by the `StabilityWindow` size) to give an absolute threshold energy value. The absolute value of the gradient over the last N points is compared to this value and, if it is lower, the energy is considered stable.
 
-## Keywords
+## Options
 
 ### Targets
 
@@ -45,12 +45,20 @@ The `StabilityThreshold` value is multiplied by the mean of the last N points (g
 |`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
 
 ### Control
+
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`StabilityThreshold`|`double`|`1.0e-3`|Threshold value at which energy is deemed stable over the defined windowing period|
 |`StabilityWindow`|`int`|`10`|Number of points over which to assess the stability of the energy (per Configuration)|
 
-### Test
+## Export
+
+|Keyword|Arguments|Default|Description|
+|:------|:-------:|:-----:|-----------|
+|`Save`|`bool`|`false`|Save calculated energies to disk, one file per targetted configuration|
+
+## Advanced
+
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`Test`|`bool`|`false`|Test parallel energy routines against basic serial versions and supplied reference values|
@@ -58,8 +66,3 @@ The `StabilityThreshold` value is multiplied by the mean of the last N points (g
 |`TestReferenceInter`|`double`|`0.0`|Reference value for interatomic energy against which to test calculated value|
 |`TestReferenceIntra`|`double`|`0.0`|Reference value for intramolecular energy against which to test calculated value|
 |`TestThreshold`|`double`|`0.1`|Threshold of energy at which test comparison will fail|
-
-### Export
-|Keyword|Arguments|Default|Description|
-|:------|:-------:|:-----:|-----------|
-|`Save`|`bool`|`false`|Save calculated energies to disk, one file per targetted configuration|

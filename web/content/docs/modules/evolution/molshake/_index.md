@@ -40,7 +40,7 @@ $$ \delta_{new}^{rot} = \delta_{old}^{rot} \frac{\alpha_{actual}^{rot}}{\alpha} 
 
 If it occurs that no moves are accepted for either of the move types, the corresponding step size is multiplied by a factor of 0.8 instead of using the above equations. Following adjustment of the step sizes they are clamped such that $\delta_{min} \le \delta_{new} \le \delta_{max}$.
 
-## Keywords
+## Options
 
 ### Targets
 
@@ -52,13 +52,28 @@ If it occurs that no moves are accepted for either of the move types, the corres
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`CutoffDistance`|`r`|--|Interatomic cutoff distance $r$to use for energy calculation. The default is to use the global pair potential cutoff defined in the simulation. If necessary, a short cutoff value can be set during early equilibration runs to significantly speed up calculation times at the expense of realism.|
-|`RestrictToSpecies`|`Species ...`|`--`|Restrict Monte Carlo moves to only molecules of the specified species. Molecules of other species types remain at their current positions.|
-|`RotationStepSize`|`delta`|`1.0`|Step size $\delta$ in degrees to use for the rotational component of the Monte Carlo moves. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
-|`RotationStepSizeMax`|`deltamax`|`90.0`|Maximum allowed value for rotational step size,  $\delta^{rot}_{max}$, in Angstroms|
-|`RotationStepSizeMin`|`deltamin`|`0.01`|Minimum allowed value for rotational step size, $\delta^{rot}_{min}$, in Angstroms|
-|`ShakesPerAtom`|`n`|`1`|Number of shakes $n$ to attempt per atom|
-|`TargetAcceptanceRate`|`alpha`|`0.33`|Target acceptance rate $\alpha$ for Monte Carlo moves|
-|`TranslationStepSize`|`delta`|`0.05`|Step size $\delta$ in Angstroms for the translational component of the Monte Carlo moves. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
-|`TranslationStepSizeMax`|`deltamax`|`1.0`|Maximum allowed value for translational step size, $\delta^{trans}_{max}$, in Angstroms|
-|`TranslationStepSizeMin`|`deltamin`|`0.001`|Minimum allowed value for translational step size, $\delta^{trans}_{min}$, in Angstroms|
+|`ShakesPerAtom`|`int`|`1`|Number of shakes $n$ to attempt per atom|
+|`RestrictToSpecies`|`Species ...`|--|Restrict Monte Carlo moves to only molecules of the specified species. Molecules of other species types remain at their current positions.|
+
+### Rotations
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`RotationStepSize`|`double`|`1.0`|Step size $\delta$ in degrees to use for the rotational component of the Monte Carlo moves. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
+|`RotationStepSizeMax`|`double`|`90.0`|Maximum allowed value for rotational step size,  $\delta^{rot}_{max}$, in Angstroms|
+|`RotationStepSizeMin`|`double`|`0.01`|Minimum allowed value for rotational step size, $\delta^{rot}_{min}$, in Angstroms|
+
+### Translations
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`TargetAcceptanceRate`|`double`|`0.33`|Target acceptance rate $\alpha$ for Monte Carlo moves|
+|`TranslationStepSize`|`double`|`0.05`|Step size $\delta$ in Angstroms for the translational component of the Monte Carlo moves. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
+|`TranslationStepSizeMax`|`double`|`1.0`|Maximum allowed value for translational step size, $\delta^{trans}_{max}$, in Angstroms|
+|`TranslationStepSizeMin`|`double`|`0.001`|Minimum allowed value for translational step size, $\delta^{trans}_{min}$, in Angstroms|
+
+## Advanced
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`CutoffDistance`|`double`|--|Interatomic cutoff distance $r$to use for energy calculation. The default is to use the global pair potential cutoff defined in the simulation. If necessary, a short cutoff value can be set during early equilibration runs to significantly speed up calculation times at the expense of realism.|

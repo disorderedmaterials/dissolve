@@ -11,11 +11,16 @@ The `CalculateAvgMol` module calculates the average geometry of a species using 
 
 Results of the average molecule calculation can be used as a display reference in the {{< gui-module "CalculateSDF" >}} module.
 
-## Keywords
+## Options
 
 ### Targets
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Configuration`|`Configuration`|`--`|{{< required-label >}}Specifies the configuration on which to operate.|
-|`Site`|`Site`|`--`|{{< required-label >}}Target site about which to calculate the average species geometry. Must be an oriented site.|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Specifies the configuration on which to operate.|
+
+### Sites
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Site`|`Site`|--|{{< required-label >}}Target site about which to calculate the average species geometry. Must be an oriented site.|

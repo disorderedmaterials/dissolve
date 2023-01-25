@@ -8,7 +8,7 @@ description: Export configuration coordinates to a trajectory file
 
 The `ExportTrajectory` module writes the coordinate data from a target configuration to a named trajectory file, appending frames on successive calls. As such it can be used to generate a trajectory of coordinates for analysis by external codes.
 
-## Keywords
+## Options
 
 ### Targets
 
@@ -16,7 +16,7 @@ The `ExportTrajectory` module writes the coordinate data from a target configura
 |:------|:--:|:-----:|-----------|
 |`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
 
-### Control
+### File
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

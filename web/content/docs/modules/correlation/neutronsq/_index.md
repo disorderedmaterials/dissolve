@@ -34,14 +34,14 @@ With isotopologues and exchangeable atoms provided, matrices of weighting factor
 
 The application of instrumental broadening is the responsibility of the source {{< gui-module "SQ" >}} module - see its [`QBroadening`]({{< ref "sq#control" >}}) keyword.
 
-## Keywords
+## Options
 
 ### Targets
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`SourceSQs`|`Module`|--|{{< required-label >}} Source {{< gui-module "SQ" >}} module from which to take unweighted $S(Q)$.|
 
-### Control
+### Isotopes & Normalisation
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`Exchangeable`|`AtomType` ...|--|A list of one or more atom types in the system that are exchangeable with each other|
@@ -58,7 +58,7 @@ Keyword|Arguments|Default|Description|
 |`ReferenceNormalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Assumed normalisation type to remove from the reference total structure factor data once loaded|
 |`ReferenceWindowFunction`|[`WindowFunction`]({{< ref "windowfunction" >}})|`Lorch0`|Window function to apply when Fourier-transforming reference $F(Q)$ to a reference $g(r)$|
 
-### Export
+## Export
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`SaveGR`|`bool`|`false`|Save weighted g(r) and G(r). Separate files are written for each partial between atom types $i$ and $j$, as well as the total.||

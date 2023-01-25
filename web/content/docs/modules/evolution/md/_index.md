@@ -36,7 +36,7 @@ $$ v_i\left(t + \Delta t\right) = v_i\left(t + \frac{1}{2}\Delta t\right) + \fra
 
 $$ v_i\left(t + \Delta t, T\right) = v_i\left(t + \Delta t\right) \sqrt{\frac{T}{ \frac{2}{3 N k_b}\sum_i{\frac{1}{2} m_i\left(v_i\left(t + \Delta t, T\right) \cdot v_i\left(t + \Delta t, T\right)\right)}}} $$
 
-## Keywords
+## Options
 
 ### Targets
 
@@ -44,18 +44,35 @@ $$ v_i\left(t + \Delta t, T\right) = v_i\left(t + \Delta t\right) \sqrt{\frac{T}
 |:------|:--:|:-----:|-----------|
 |`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
 
+### Simulation
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+`NSteps`|`int`|`50`|Number of molecular dynamics steps to perform|
+|`Timestep`|[`TimestepType`]({{< ref "timesteptype" >}})|`Auto`|Timestep type / strategy to use in the calculation.|
+|`DeltaT`|`double`|`5.0e-4`|Timestep to use in the simulation (if the timestep style utilises one).|
+|`RandomVelocities`|`bool`|`false`|Whether to always assign random velocities when starting the molecular dynamics simulation. If `false` then random velocities are only generated if no other velocities exist.|
+
 ### Control
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`OnlyWhenEnergyStable`|`bool`|`true`|Only run molecular dynamics on a configuration if the total energy of the configuration (as determined by an [`Energy`]({{< ref "energy" >}}) module is considered stable.|
+|`RestrictToSpecies`|`Species ...`|--|Restrict force calculation to only molecules of the specified species. Molecules of other species types remain at their current positions (always have zero force acting on them).|
+
+### Output
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+`EnergyFrequency`|`int`|`10`|Frequency at which to calculate total system energy|
+`OutputFrequency`|`int`|`5`|Frequency at which to output step information|
+`TrajectoryFrequency`|`int`|`0`|Write frequency for trajectory file|
+
+### Advanced
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`CapForces`|`bool`|`false`|Whether to cap forces acting on atoms to a predefined limit, preventing potential explosions when bad contacts are present in the system. The value at which to cap forces is set by the `CapForcesAt` keyword.|
 |`CapForcesAt`|`force`|`1.0e7`|Value (in 10 J/mol) at which to cap forces if `CapForces` is enabled.|
 |`CutoffDistance`|`r`|--|Interatomic cutoff distance $r$ to use for energy and force calculation. The default is to use the global pair potential cutoff defined in the simulation. If necessary, a short cutoff value can be set during early equilibration runs to significantly speed up calculation times at the expense of realism.|
-|`DeltaT`|`dt`|`5.0e-4`|Timestep to use in the simulation (if the timestep style utilises one).|
-|`IntraOnly`|`false`|`true`|Only calculate forces arising from internal molecule interactions (i.e. bonds, angles, torsion, impropers, and any allowed pair potential contributions) and ignore forces between molecules. This can be useful to force efficient exploration of intramolecular degrees of freedom at the expense of molecule-molecule interactions. If used, a subsequent relaxation with [`MolShake`]({{< ref "molshake" >}}) is highly recommended.|
-|`NSteps`|`n`|`50`|Number of shakes $n$ to attempt per atom|
-|`OnlyWhenEnergyStable`|`bool`|`true`|Only run molecular dynamics on a configuration if the total energy of the configuration (as determined by an [`Energy`]({{< ref "energy" >}}) module is considered stable.|
-|`RandomVelocities`|`bool`|`false`|Whether to always assign random velocities when starting the molecular dynamics simulation. If `false` then random velocities are only generated if no other velocities exist.|
-|`RestrictToSpecies`|`Species ...`|`--`|Restrict force calculation to only molecules of the specified species. Molecules of other species types remain at their current positions (always have zero force acting on them).|
-|`Timestep`|[`TimestepType`]({{< ref "timesteptype" >}})|`Auto`|Timestep type / strategy to use in the calculation.|
-
+|`IntraOnly`|`bool`|`false`|Only calculate forces arising from internal molecule interactions (i.e. bonds, angles, torsion, impropers, and any allowed pair potential contributions) and ignore forces between molecules. This can be useful to force efficient exploration of intramolecular degrees of freedom at the expense of molecule-molecule interactions. If used, a subsequent relaxation with [`MolShake`]({{< ref "molshake" >}}) is highly recommended.|

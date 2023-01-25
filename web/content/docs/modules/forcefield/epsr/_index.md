@@ -20,10 +20,66 @@ What follows is a brief overview of the basic ideas behind the EPSR methodology.
 
 ### Intramolecular Potentials
 
-## Keywords
+## Options
 
-### Control
+### Targets
+
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`StabilityThreshold`|`double`|`1.0e-3`|Threshold value at which energy is deemed stable over the defined windowing period|
-|`StabilityWindow`|`int`|`10`|Number of points over which to assess the stability of the energy (per Configuration)|
+|`Target`|`Module ...`|--|List of {{< gui-module "NeutronSQ" >}} and/or {{< gui-module "XRaySQ" >}} modules from which to take reference data and introduce into the fitting procedure|
+
+### Control
+
+|Keyword|Arguments|Default|Description|
+|:------|:-------:|:-----:|-----------|
+|`EReq`|`double`|`3.0`|Limit of magnitude of additional potential for any one pair potential|
+|`Feedback`|`double`|`0.9`|Confidence factor|
+|`ModifyPotential`|`int`|`1`|Frequency at which to apply generated perturbations to interatomic potentials. A value of `1` modifies the potential every time the module is run, while higher values create delays in the modification (other aspects such as fitting of delta F(Q) are still performed by the module)|
+|`QMax`|`double`|`30.0`|Maximum Q value over which to generate potentials from total scattering data|
+|`QMin`|`double`|`0.5`|Minimum Q value over which to generate potentials from total scattering data|
+
+## Advanced
+
+### Control
+
+|Keyword|Arguments|Default|Description|
+|:------|:-------:|:-----:|-----------|
+|`Weighting`|`double`|`1.9`|Factor used when adding fluctuation coefficients to pair potentials|
+|`OverwritePotentials`|`bool`|`false`|Overwrite potentials each time rather than summing them|
+
+### Expansion Function
+
+|Keyword|Arguments|Default|Description|
+|:------|:-------:|:-----:|-----------|
+|`Weighting`|`[ExpansionFunction]({{< ref "expansionfunction" >}})`|`Gaussian`|Form of expansion function to use when fitting difference data|
+|`GSigma1`|`double`|`0.1`|Width for Gaussian function in reciprocal space|
+|`GSigma2`|`double`|`0.2`|Width for Gaussian function in real space|
+|`NCoeffP`|`int`|--|Number of coefficients used to define the empirical potential - this is defined based on the potential range if not provided explicitly|
+|`NPItSs`|`int`|`1000`|Number of iterations when refining fits to delta functions|
+|`InpAFile`|`string`|--|EPSR inpa file from which to read starting coefficients from|
+|`PCofFile`|`string`|--|EPSR pcof file from which to read empirical potential coefficients|
+|`PSigma1`|`double`|`0.01`|Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)|
+|`PSigma2`|`double`|`0.01`|Width for Poisson functions in real space|
+|`RMaxPT`|`double`|`-1.0`|Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)|
+|`RMinPT`|`double`|`1.9`|Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)|
+|`Smoothing`|`int`|`0`|Smoothing to apply to fluctuation coefficients before summation into potential|
+
+### Test
+
+|Keyword|Arguments|Default|Description|
+|:------|:-------:|:-----:|-----------|
+|`Test`|`bool`|`false`|Test against supplied reference data|
+|`TestAbsEnergyEP`|`[string double] ...]`|--|Specify test absolute EP energy values for pair potentials|
+|`TestAbsEnergyEPThreshold`|`double`|`1.0e-4`|Test threshold above which absolute EP energy test fails|
+|`TestReference`|`Data1DStore`|--|Specify test reference data|
+|`TestThreshold`|`double`|`0.1`|Test threshold (%error) above which test fails|
+
+## Export
+
+|Keyword|Arguments|Default|Description|
+|:------|:-------:|:-----:|-----------|
+|`SaveDifferenceFunctions`|`bool`|`false`|Whether to save difference function and fit|
+|`SaveEmpiricalPotentials`|`bool`|`false`|Whether to save empirical potentials|
+|`SaveEstimatedPartials`|`bool`|`false`|Whether to save estimated partials|
+|`SavePCof`|`bool`|`false`|Whether to save potential coefficients|
+|`SaveSimulatedFR`|`bool`|`false`|Whether to save simulated F(r) (Fourier transform of calculated F(Q))|

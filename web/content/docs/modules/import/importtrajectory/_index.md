@@ -12,14 +12,14 @@ The module requires that the contents of the configuration have been described i
 
 `ImportTrajectory` stores the file position of the last frame read in the restart file, and so permits analysis pipelines to be restarted if required.
 
-## Keywords
+## Options
 
 ### Targets
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
 
-### Control
+### File
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

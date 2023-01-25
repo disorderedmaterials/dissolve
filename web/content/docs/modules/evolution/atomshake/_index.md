@@ -32,21 +32,31 @@ $$ \delta_{new} = \delta_{old} \frac{\alpha_{actual}}{\alpha} $$
 
 If it occurs that no moves are accepted, the step size is multiplied by a factor of 0.8 instead of using the above equation. Following adjustment of the step size it is clamped such that $\delta_{min} \le \delta_{new} \le \delta_{max}$.
 
-## Keywords
+## Options
 
 ### Targets
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Configuration`|`Configuration`|`--`|{{< required-label >}}Target configuration on which to operate.|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Target configuration on which to operate.|
 
 ### Control
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`CutoffDistance`|`r`|--|Interatomic cutoff distance $r$ to use for energy calculation. The default is to use the global pair potential cutoff defined in the simulation. If necessary, a short cutoff value can be set during early equilibration runs to significantly speed up calculation times at the expense of realism.|
-|`ShakesPerAtom`|`n`|`1`|Number of shakes $n$ to attempt per atom|
+|`ShakesPerAtom`|`int`|`1`|Number of shakes $n$ to attempt per atom|
+|`TargetAcceptanceRate`|`alpha`|`0.33`|Target acceptance rate $\alpha$ for Monte Carlo moves|
+
+### Step Size
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
 |`StepSize`|`delta`|`0.05`|Step size $\delta$ in Angstroms to use in Monte Carlo moves. As detailed above, the step size is dynamically updated after the module has run, with the updated value being saved in the restart file.|
 |`StepSizeMax`|`deltamax`|`1.0`|Maximum allowed value for step size, $\delta_{max}$, in Angstroms|
 |`StepSizeMin`|`deltamin`|`0.001`|Minimum allowed value for step size, $\delta_{min}$, in Angstroms|
-|`TargetAcceptanceRate`|`alpha`|`0.33`|Target acceptance rate $\alpha$ for Monte Carlo moves|
+
+### Advanced
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`CutoffDistance`|`r`|--|Interatomic cutoff distance $r$ to use for energy calculation. The default is to use the global pair potential cutoff defined in the simulation. If necessary, a short cutoff value can be set during early equilibration runs to significantly speed up calculation times at the expense of realism.|

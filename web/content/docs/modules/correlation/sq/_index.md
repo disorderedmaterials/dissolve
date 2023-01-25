@@ -32,7 +32,7 @@ Any broadening arising from instrumental effects (i.e. instrumental broadening) 
 
 Intensity information from a [`Bragg module`]({{< ref "bragg" >}}) calculation can be incorporated into the calculate S(Q) and F(Q) by setting the `IncludeBragg` keyword to the name of the relevant module. Intensities will be broadened according to the `BraggQBroadening` keyword - note that the `QBroadening` keyword has no effect on the broadening of Bragg intensities.
 
-## Keywords
+## Options
 
 ### Targets
 
@@ -40,26 +40,36 @@ Intensity information from a [`Bragg module`]({{< ref "bragg" >}}) calculation c
 |:------|:--:|:-----:|-----------|
 |`SourceRDFs`|`Module`|--|{{< required-label >}} Source {{< gui-module "RDF" >}} module from which to take $g(r)$ and transform to $S(Q)$.|
 
-### Control
+### Range
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Averaging`|`n`|`5`|Number of historical partial sets to combine into final partials|
-|`AveragingScheme`|[`AveragingScheme`]({{< ref "averagingscheme" >}})|`Linear`|Weighting scheme to use when averaging partials|
 |`QDelta`|`qdelta`|`0.01`|Step size in $Q$ for Fourier transform.|
 |`QMax`|`qmax`|`30.0`|$Q_{max}$ limit of Fourier transform.|
 |`QMin`|`qmin`|`0.01`|$Q_{min}$ limit of Fourier transform.|
+
+### Broadening & Windowing
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
 |`QBroadening`|[`Function1D`]({{< ref "function1d" >}})|`None`|Broadening function to convolve in the Fourier transform.|
 |`WindowFunction`|[`WindowFunction`]({{< ref "windowfunction" >}})|`None`|Window function to apply in the Fourier transform.|
 
-### Bragg Keywords
+### Bragg Scattering
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`IncludeBragg`|[`Module`]|--|Source {{< gui-module "bragg" >}} module from which to take and incorporate reflection information. The reflections are broadened according to the function specified by the `BraggQBroadening` keyword.|
 |`BraggQBroadening`|[`Function1D`]({{< ref "function1d" >}})|`None`|Broadening function to apply to Bragg reflection data.|
 
-### Export
+### Averaging
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`Averaging`|`int`|`5`|Number of historical partial sets to combine into final partials|
+|`AveragingScheme`|[`AveragingScheme`]({{< ref "averagingscheme" >}})|`Linear`|Weighting scheme to use when averaging partials|
+
+## Export
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|

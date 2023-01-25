@@ -28,20 +28,23 @@ Depending on the need, $F^{X}(Q)$ may be normalised to an appropriate constant w
 
 The application of instrumental broadening is the responsibility of the source {{< gui-module "SQ" >}} module - see its [`QBroadening`]({{< ref "sq#control" >}}) keyword.
 
-## Keywords
+## Options
 
 ### Targets
+
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`SourceSQs`|`Module`|--|{{< required-label >}} Source {{< gui-module "SQ" >}} module from which to take unweighted $S(Q)$.|
 
-### Control
+### Form Factors & Normalisation
+
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`FormFactors`|[`XRayFormFactors`]({{< ref "xrayformfactors" >}})|`WK1995`|Atomic form factors to use for weighting|
 |`Normalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Quantity against which to normalise the total structure factor|
 
 ### Reference Data
+
 Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`Reference`|[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|Format and filename of reference $F(Q)$ data, to be displayed in the GUI alongside calculated data, and made available for other modules to utilise (e.g. [`EPSR`]({{< ref "epsr" >}})|
@@ -51,7 +54,8 @@ Keyword|Arguments|Default|Description|
 |`ReferenceNormalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Assumed normalisation type to remove from the reference total structure factor data once loaded|
 |`ReferenceWindowFunction`|[`WindowFunction`]({{< ref "function1d" >}})|`Lorch0`|Window function to apply when Fourier-transforming reference $F(Q)$ to a reference $g(r)$|
 
-### Export
+## Export
+
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`SaveFormFactors`|`bool`|`false`|Save Q-dependent form factors for each atom type pair|

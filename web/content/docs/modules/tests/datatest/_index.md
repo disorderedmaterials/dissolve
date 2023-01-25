@@ -8,7 +8,7 @@ description: Compare calculated data from modules with external or internal refe
 
 `DataTest` is predominantly used in Dissolve's system tests for checking calculated one-, two-, or three-dimensional properties against external reference data. It also allows comparison between datasets within Dissolve, for example when ensuring the correctness and consistency of two different methods calculating the same thing.
 
-## Keywords
+## Options
 
 ### Test
 

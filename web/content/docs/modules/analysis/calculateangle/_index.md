@@ -10,27 +10,37 @@ The `CalculateAngle` module calculates the angle between three sites A&middot;&m
 
 Unlike the {{< gui-module "CalculateDAngle" >}} module, no restrictions are imposed on the relationship or connectivity between sites A, B, and C.
 
-## Keywords
+## Options
 
 ### Targets
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Configuration`|`Configuration`|`--`|{{< required-label >}}Specifies the configuration on which to operate.|
+|`Configuration`|`Configuration`|--|{{< required-label >}}Specifies the configuration on which to operate.|
 
-## Control
+### Sites
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`SiteA`|`Site ...`|--|Specify site(s) which represent 'A' in the interaction A-B-C.|
+|`SiteB`|`Site ...`|--|Specify site(s) which represent 'B' in the interaction A-B-C.|
+|`SiteC`|`Site ...`|--|Specify site(s) which represent 'C' in the interaction A-B-C.|
+
+### Ranges
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`AngleRange`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`180.0`<br/>`10.0`|Range (min, max, bin width) of A-B-C angle binning.|
+|`RangeAB`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of A-B distance binning.|
+|`RangeBC`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of B-C distance binning.|
+
+### Control
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
 |`ExcludeSameMoleculeAB`|`bool`|`false`|Whether to exclude correlations between A and B sites on the same molecule.|
 |`ExcludeSameMoleculeBC`|`bool`|`false`|Whether to exclude correlations between B and C sites on the same molecule.|
 |`ExcludeSameSiteAC`|`bool`|`false`|Whether to exclude correlations between A and C sites on the same molecule.|
-|`RangeAB`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of A-B distance binning.|
-|`RangeBC`|`double`<br/>`double`<br/>`double`|`0.0`<br/>`10.0`<br/>`0.05`|Range (min, max, bin width) of B-C distance binning.|
-|`SiteA`|`Site ...`|--|Specify site(s) which represent 'A' in the interaction A-B-C.|
-|`SiteB`|`Site ...`|--|Specify site(s) which represent 'B' in the interaction A-B-C.|
-|`SiteC`|`Site ...`|--|Specify site(s) which represent 'C' in the interaction A-B-C.|
 |`Symmetric`|`bool`|`false`|Whether to consider the angle A-B-C as symmetric about 90, mapping all angles to the 0-90 range.|
 
 ## Export
