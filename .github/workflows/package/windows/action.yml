@@ -79,6 +79,5 @@ runs:
   - name: Upload Package Artifacts
     uses: actions/upload-artifact@v3
     with:
-      name: windows-package-artifacts
-      path: |
-        ${{ github.workspace }}\packages
+      name: packages
+      path: ${{ github.workspace }}\packages

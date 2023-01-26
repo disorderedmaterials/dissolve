@@ -1,15 +1,21 @@
 name: Package
 
+inputs:
+  target:
+    default: "dissolve"
+  singularityTarget:
+    default: "singularity"
+
 runs:
   using: "composite"
   steps:
 
-  - name: Package ??? (Linux)
+  - name: Package ${{ inputs.target }} (Linux)
     if: runner.os == 'Linux'
-    shell: bash
-    run: |
-      VERSION=$(grep "VERSION =" gudpy.spec | sed "s/.*\"\(.*\)\"/\1/g")
-      mv dist/GudPy-${VERSION} dist/GudPy-${VERSION}-Linux
+    uses: "./.github/workflows/package/linux"
+    with:
+      target: ${{ inputs.target }}
+      singularityTarget: ${{ inputs.singularityTarget }}
 
   - name: Package (OSX)
     if: runner.os == 'MacOS'

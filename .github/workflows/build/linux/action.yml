@@ -28,7 +28,7 @@ runs:
       nix build -L .#${{ inputs.target }}
       nix build --json .#${{ inputs.target }} > archive.json
 
-  - name: Bundle
+  - name: Bundle Executable
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
@@ -38,13 +38,13 @@ runs:
       ls -R ${{ inputs.target }}
 
       # Assemble artifacts
-      mkdir build
-      cp -v ${{ inputs.target }} build/${{ inputs.target }}-${{ env.dissolveVersion }}
+      mkdir packages
+      cp -v ${{ inputs.target }} packages/${{ inputs.target }}-${{ env.dissolveVersion }}
 
   - name: Upload Raw Build Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v3
     with:
       name: linux-build-artifacts-${{ inputs.target }}
-      path: ${{ github.workspace }}/build
+      path: ${{ github.workspace }}/packages
       retention-days: 1
