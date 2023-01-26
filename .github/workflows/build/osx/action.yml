@@ -64,7 +64,7 @@ runs:
     id: cache-conan
     uses: actions/cache@v3
     with:
-      key: windows-conan
+      key: osx-conan
       path: |
         ~\.conan
         ~\.conancache
@@ -73,7 +73,12 @@ runs:
     shell: bash
     run: |
       set -ex
+
+      # Setup paths
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
+
       mkdir build && cd build
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
       conan install .. --build missing
 
   - name: Build
