@@ -1,21 +1,9 @@
 name: Package
-
-inputs:
-  target:
-    default: "dissolve"
-  singularityTarget:
-    default: "singularity"
+description: Create installable packages
 
 runs:
   using: "composite"
   steps:
-
-  - name: Package ${{ inputs.target }} (Linux)
-    if: runner.os == 'Linux'
-    uses: "./.github/workflows/package/linux"
-    with:
-      target: ${{ inputs.target }}
-      singularityTarget: ${{ inputs.singularityTarget }}
 
   - name: Package (OSX)
     if: runner.os == 'MacOS'

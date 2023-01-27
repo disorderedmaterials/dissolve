@@ -1,4 +1,5 @@
 name: Build
+description: Build Linux via nix
 
 inputs:
   extraCMakeFlags:
@@ -19,14 +20,28 @@ runs:
       target: ${{ inputs.target }}
 
   - name: Build
-    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
 
-      # Build
-      nix build -L .#${{ inputs.target }}
-      nix build --json .#${{ inputs.target }} > archive.json
+      # Build Singularity target
+      singularityTarget=${${{ inputs.target }}/dissolve/singularity}
+      nix build -L .#$singularityTarget -o sif
+      nix build --json .#singularityTarget > archive.json
+      ls -lart sif
+      ls -R sif
+
+      # Assemble artifacts
+      mkdir packages
+      cp -v sif packages/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
+
+  - name: Tidy nix Store
+    if: ${{ inputs.cacheOnly == 'false' }}
+    shell: bash
+    run: |
+      set -ex
+      # Remove the dissolve package from the nix store to save some space and leave just the other deps
+      
 
   - name: Bundle Executable
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -34,17 +49,15 @@ runs:
     run: |
       set -ex
 
-      nix bundle -L .#${{ inputs.target }} -o ${{ inputs.target }}
-      ls -R ${{ inputs.target }}
+      nix bundle -L .#${{ inputs.target }} -o binary
 
       # Assemble artifacts
       mkdir packages
-      cp -v ${{ inputs.target }} packages/${{ inputs.target }}-${{ env.dissolveVersion }}
+      cp -v binary packages/${{ inputs.target }}-${{ env.dissolveVersion }}
 
-  - name: Upload Raw Build Artifacts
+  - name: Upload Package Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v3
     with:
-      name: linux-build-artifacts-${{ inputs.target }}
+      name: packages
       path: ${{ github.workspace }}/packages
-      retention-days: 1

@@ -46,33 +46,31 @@ jobs:
         with:
           target: ${{ matrix.target }}
 
-  Test:
-    needs: Build
+  BuildLinux:
+    needs: QC
     strategy:
       fail-fast: false
       matrix:
-        target: [ dissolve, dissolve-threadless ]
+        target: [ dissolve, dissolve-gui ]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: "Test (${{ matrix.target }})"
-      uses: "./.github/workflows/test"
+    - name: Acquire Code Version
+      uses: "./.github/workflows/get-version"
+    - name: Set Short Hash
+      uses: "./.github/workflows/set-short-hash"
+    - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
+      uses: "./.github/workflows/build"
       with:
         target: ${{ matrix.target }}
 
   Package:
-    needs: Test
+    needs: [ Build, BuildLinux ]
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        target: [dissolve-gui]
-        singularityTarget: [singularity-gui]
-        include:
-          - os: ubuntu-latest
-            target: dissolve
-            singularityTarget: [singularity]
+        os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
