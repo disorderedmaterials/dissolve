@@ -66,7 +66,7 @@
         pkgs = import nixpkgs { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
         dissolve =
-          { mpi ? false, gui ? false, threading ? true, checks ? false }:
+          { mpi ? false, gui ? false, threading ? true, checks ? true }:
           assert (!(gui && mpi));
           pkgs.stdenv.mkDerivation ({
             inherit version;
