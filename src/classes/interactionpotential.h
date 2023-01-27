@@ -37,11 +37,11 @@ template <class Functions> class InteractionPotential
         form_ = form;
         // Set parameters vector to correct size
         while (parameters_.size() != Functions::forms().minArgs(form_))
-        if (parameters_.size() < Functions::forms().minArgs(form_))
-            parameters_.push_back(0.0);
+            if (parameters_.size() < Functions::forms().minArgs(form_))
+                parameters_.push_back(0.0);
 
-        else
-            parameters_.pop_back();
+            else
+                parameters_.pop_back();
     }
     // Return functional form of interaction
     typename Functions::Form form() const { return form_; }
@@ -50,47 +50,47 @@ template <class Functions> class InteractionPotential
     {
         // Do we have a suitable number of parameters
         if (!Functions::forms().validNArgs(form(), terms.size()))
-        return false;
+            return false;
 
         // We allow either a set of plain values or a set of name=value assignments - we don't allow mixing of the two
         auto nAssigned =
             std::count_if(terms.begin(), terms.end(), [](const auto &s) { return s.find('=') != std::string::npos; });
         if (nAssigned == 0)
         {
-        // Plain values
-        parameters_.resize(terms.size(), 0.0);
-        std::transform(terms.begin(), terms.end(), parameters_.begin(), [](const auto &term) { return std::stod(term); });
+            // Plain values
+            parameters_.resize(terms.size(), 0.0);
+            std::transform(terms.begin(), terms.end(), parameters_.begin(), [](const auto &term) { return std::stod(term); });
         }
         else if (nAssigned == terms.size())
         {
-        // Name = value assignments
-        // The parameters may not have been given in the expected order, so maintain/resize a value vector
-        parameters_.clear();
-        for (const auto &term : terms)
-        {
-            // Split the string into name and value parts
-            auto name = DissolveSys::beforeChar(term, '=');
-            if (name.empty())
-                return Messenger::error("Bad assignment found in parameters - no name present in '{}'.\n", term);
-            auto value = DissolveSys::afterChar(term, '=');
-            if (value.empty())
-                return Messenger::error("Bad assignment found in parameters - no value present in '{}'.\n", term);
+            // Name = value assignments
+            // The parameters may not have been given in the expected order, so maintain/resize a value vector
+            parameters_.clear();
+            for (const auto &term : terms)
+            {
+                // Split the string into name and value parts
+                auto name = DissolveSys::beforeChar(term, '=');
+                if (name.empty())
+                    return Messenger::error("Bad assignment found in parameters - no name present in '{}'.\n", term);
+                auto value = DissolveSys::afterChar(term, '=');
+                if (value.empty())
+                    return Messenger::error("Bad assignment found in parameters - no value present in '{}'.\n", term);
 
-            // Get the index of the named parameter
-            auto index = Functions::parameterIndex(form(), name);
-            if (!index)
-                return Messenger::error(
-                    "Bad assignment found in parameters - '{}' is not a valid parameter for this interaction.\n", name);
+                // Get the index of the named parameter
+                auto index = Functions::parameterIndex(form(), name);
+                if (!index)
+                    return Messenger::error(
+                        "Bad assignment found in parameters - '{}' is not a valid parameter for this interaction.\n", name);
 
-            // Resize vector if necessary
-            if (index.value() >= parameters_.size())
-                parameters_.resize(index.value() + 1, 0.0);
-            parameters_[index.value()] = std::stod(std::string(value));
-        }
+                // Resize vector if necessary
+                if (index.value() >= parameters_.size())
+                    parameters_.resize(index.value() + 1, 0.0);
+                parameters_[index.value()] = std::stod(std::string(value));
+            }
         }
         else
-        return Messenger::error(
-            "Failed to parse parameters string - provide either plain values or name=value, but don't mix both.\n");
+            return Messenger::error(
+                "Failed to parse parameters string - provide either plain values or name=value, but don't mix both.\n");
 
         return true;
     }
@@ -102,7 +102,7 @@ template <class Functions> class InteractionPotential
         // Construct a vector of all remaining arguments on the line, starting from the argument offset
         std::vector<std::string> terms;
         for (auto n = startArg; n < parser.nArgs(); ++n)
-        terms.emplace_back(parser.args(n));
+            terms.emplace_back(parser.args(n));
         return parseParameters(terms);
     }
     // Set form and parameters
