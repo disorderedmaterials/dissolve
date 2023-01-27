@@ -66,7 +66,7 @@
         pkgs = import nixpkgs { inherit system; };
         nixGL = import nixGL-src { inherit pkgs; };
         dissolve =
-          { mpi ? false, gui ? true, threading ? true, checks ? false }:
+          { mpi ? false, gui ? false, threading ? true, checks ? false }:
           assert (!(gui && mpi));
           pkgs.stdenv.mkDerivation ({
             inherit version;
@@ -131,6 +131,10 @@
           };
       in {
         checks.dissolve = dissolve { checks = true; };
+        checks.dissolve-gui = dissolve {
+          gui = true;
+          checks = true;
+        };
         checks.dissolve-mpi = dissolve {
           mpi = true;
           gui = false;
@@ -142,7 +146,7 @@
           checks = true;
         };
 
-        defaultPackage = self.packages.${system}.dissolve-gui;
+        defaultPackage = self.packages.${system}.dissolve;
 
         devShells.default = pkgs.stdenv.mkDerivation {
           name = "dissolve-shell";
@@ -207,7 +211,7 @@
           flake-utils.lib.mkApp { drv = self.defaultPackage.${system}; };
 
         packages = {
-          dissolve = dissolve { gui = false; };
+          dissolve = dissolve { };
           dissolve-threadless = dissolve {
             gui = false;
             threading = false;
@@ -216,7 +220,7 @@
             mpi = true;
             gui = false;
           };
-          dissolve-gui = dissolve { };
+          dissolve-gui = dissolve { gui = true; };
 
           singularity = mkSingularity { };
           singularity-mpi = mkSingularity { mpi = true; };
