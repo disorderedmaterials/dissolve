@@ -25,7 +25,8 @@ runs:
       set -ex
 
       # Build Singularity target
-      singularityTarget=${${{ inputs.target }}/dissolve/singularity}
+      target=${{ inputs.target }}
+      singularityTarget=${target/dissolve/singularity}
       nix build -L .#$singularityTarget -o sif
       nix build --json .#singularityTarget > archive.json
       ls -lart sif
