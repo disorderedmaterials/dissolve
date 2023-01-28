@@ -62,7 +62,7 @@ runs:
       iscc.exe -O./ ./ci/windows/dissolve-gui.iss
       ls -R ./
       exe=`ls *.exe`
-      exeBase=${basename $exe}
+      exeBase=`basename $exe`
       echo "Executable installer is $exe, basename is $exeBase"
       
       # Create Zip from Exe
