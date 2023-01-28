@@ -27,14 +27,12 @@ runs:
       # Build Singularity target
       target=${{ inputs.target }}
       singularityTarget=${target/dissolve/singularity}
-      nix build -L .#$singularityTarget -o sif
+      nix build -L .#$singularityTarget
       nix build --json .#$singularityTarget > archive.json
-      ls -lart sif
-      ls -R sif
 
       # Assemble artifacts
       mkdir packages
-      cp -v sif packages/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
+      cp -v result packages/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
 
   - name: Bundle Executable
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -52,8 +50,11 @@ runs:
     shell: bash
     run: |
       set -ex
-      # Remove the dissolve package from the nix store to save some space and leave just the other deps
-      # TODO
+      # Remove the built dissolve derivations / img from the nix store to save space and leave just the other core build deps
+      for a in `nix path-info --all | grep dissolve`
+      do
+        nix --extra-experimental-features nix-command store delete --ignore-liveness $a
+      done
 
   - name: Upload Package Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
