@@ -66,9 +66,8 @@ runs:
       
       # Create Zip from Exe
       innoextract.exe $exe -d $exeBase
-      ls -R ./
-      mv "$exeBase/app/bin/*" $exeBase
-      mv "$exeBase/app" ./
+      mv ${exeBase}/app/bin/* $exeBase
+      mv ${exeBase}/app ./
       zipFile="${exeBase}.zip"
       zip -r $zipFile $exeBase
       
