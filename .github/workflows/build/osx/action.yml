@@ -1,4 +1,5 @@
 name: Build
+description: Build on OSX
 
 inputs:
   threading:

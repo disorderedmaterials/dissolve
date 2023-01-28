@@ -1,4 +1,5 @@
 name: Package
+description: Package Windows artifacts
 
 runs:
   using: "composite"

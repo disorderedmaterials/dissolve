@@ -1,5 +1,5 @@
 name: Build
-description: Build Linux via nix
+description: Build on Linux via nix
 
 inputs:
   extraCMakeFlags:

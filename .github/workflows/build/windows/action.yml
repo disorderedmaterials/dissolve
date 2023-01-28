@@ -1,4 +1,5 @@
 name: Build
+description: Build on Windows
 
 inputs:
   threading:

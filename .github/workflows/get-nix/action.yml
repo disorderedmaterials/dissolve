@@ -1,4 +1,5 @@
 name: Get Nix
+description: Install and cache nix
 
 inputs:
   target:

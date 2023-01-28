@@ -1,4 +1,5 @@
 name: Build
+description: Stub action for build stage
 
 inputs:
   target:

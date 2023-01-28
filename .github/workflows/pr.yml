@@ -43,8 +43,6 @@ jobs:
         uses: "./.github/workflows/set-short-hash"
       - name: "Build (${{ matrix.os }})"
         uses: "./.github/workflows/build"
-        with:
-          target: ${{ matrix.target }}
 
   BuildLinux:
     needs: QC

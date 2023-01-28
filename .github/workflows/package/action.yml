@@ -1,5 +1,5 @@
 name: Package
-description: Create installable packages
+description: Stub action for package creation
 
 runs:
   using: "composite"

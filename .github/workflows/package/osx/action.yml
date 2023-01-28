@@ -1,4 +1,5 @@
 name: Package
+description: Package OSX artifacts
 
 runs:
   using: "composite"

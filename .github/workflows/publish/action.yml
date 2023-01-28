@@ -1,4 +1,5 @@
 name: Publish
+description: Publish artifacts online
 
 inputs:
   isRelease:
