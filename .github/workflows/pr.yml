@@ -4,6 +4,12 @@ on:
   pull_request:
     branches:
     - '*'
+    paths-ignore:
+    - '.github/workflows/continuous.yml'
+    - '.github/workflows/release.yml'
+    - '.github/workflows/web.yml'
+    - 'web/**'
+    - 'README.md'
 
 env:
   pythonVersion: 3.9
