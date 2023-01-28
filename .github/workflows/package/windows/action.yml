@@ -60,16 +60,16 @@ runs:
 
       # Run Inno Setup Compiler
       iscc.exe -O./ ./ci/windows/dissolve-gui.iss
-      ls -R ./
       exe=`ls *.exe`
-      exeBase=`basename $exe`
+      exeBase=`basename -s .exe $exe`
       echo "Executable installer is $exe, basename is $exeBase"
       
       # Create Zip from Exe
       innoextract.exe $exe -d $exeBase
+      ls -R ./
       mv "$exeBase/app/bin/*" $exeBase
       mv "$exeBase/app" ./
-      zipFile="${exeBaseName}.zip"
+      zipFile="${exeBase}.zip"
       zip -r $zipFile $exeBase
       
       # Collect artifacts
