@@ -42,17 +42,20 @@ runs:
 
   - name: 'Install pandoc / xetex'
     if: ${{ inputs.pdfExamples }}
+    shell: bash
     run: |
       set -ex
       sudo apt install pandoc
       sudo apt install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-xetex
 
   - name: 'Copy Icons'
+    shell: bash
     run: |
       set -ex
       cp -v src/gui/icons/*.svg web/static/img
 
   - name: 'Meld Examples'
+    shell: bash
     run: |
       set -ex
       for example in $(find ./web/content/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
@@ -61,6 +64,7 @@ runs:
       done
 
   - name: 'Build Site'
+    shell: bash
     run: |
       set -ex
       cd web
@@ -68,6 +72,7 @@ runs:
       hugo
 
   - name: 'Rewrite Edit Links'
+    shell: bash
     run: |
       set -ex
       # Remove language ('en') from 'Edit on GitHub' path links
@@ -75,6 +80,7 @@ runs:
       find web/public/examples/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/examples/:${{ parameters.web_dir_root }}/content/examples/:g" {} +
 
   - name: 'Check Links'
+    shell: bash
     run: |
       set -ex
       sudo npm install -g link-checker
@@ -82,6 +88,7 @@ runs:
 
   - name: 'Create PDFs'
     if: ${{ inputs.pdfExamples }}
+    shell: bash
     run: |
       set -ex
       cd web/public/examples/
@@ -93,23 +100,11 @@ runs:
         cd ../../
       done
 
-  - task: DownloadSecureFile@1
-    name: privateKey
-    inputs:
-      secureFile: id_rsa_dd
-    condition: eq('${{ parameters.deploy }}', true)
-  - name: 'Download Private Key'
-  - task: DownloadSecureFile@1
-    name: machineId
-    inputs:
-      secureFile: pd_hostkey
-    condition: eq('${{ parameters.deploy }}', true)
-  - name: 'Download Host Fingerprint'
-
   - name: 'SSH Deploy to Server'
     if: ${{ inputs.deploy == 'true' }}
+    shell: bash
     run: |
-      echo ${SERVER_ID} > ./serverId
+      echo ${SERVER_IDENTITY} > ./serverId
       echo ${SERVER_KEY} > ./serverKey
       chmod 0600 ./serverKey ./serverId
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p 2212 -l ${SERVER_USER}" web/public/ 87.117.225.2:/home/www/www.projectdissolve.com/public_html/
