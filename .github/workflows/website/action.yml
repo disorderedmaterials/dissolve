@@ -6,8 +6,6 @@ inputs:
     default: "0.98.0"
   webDirRoot:
     default: "github.com/disorderedmaterials/dissolve/edit/develop/web"
-  lastHashUrl:
-    default: "https://www.projectdissolve.com"
   deploy:
     type: boolean
     default: false
@@ -18,27 +16,13 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - name: Setup Python
-    uses: actions/setup-python@v4
-    with:
-      python-version: ${{ env.pythonVersion }}
 
-  - name: Install Dependencies
+  - name: 'Download & Install Hugo (Extended Version)'
     shell: bash
     run: |
       set -ex
-      sudo apt-get update
-      sudo apt-get install --yes clang-format-13
-      pip install cmake_format==0.6.9
-
-
-
-
-  - name: 'Download & Install Hugo (Extended Version)'
-    run: |
-      set -ex
-      wget https://github.com/gohugoio/hugo/releases/download/v${{ parameters.hugo_version }}/hugo_extended_${{ parameters.hugo_version }}_Linux-64bit.deb -O '$(Pipeline.Workspace)/hugo.deb'
-      sudo dpkg -i $(Pipeline.Workspace)/hugo*.deb
+      wget https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugoVersion }}/hugo_extended_${{ inputs.hugoVersion }}_Linux-64bit.deb -O '$({ github.workspace })/hugo.deb'
+      sudo dpkg -i $({ github.workspace })/hugo*.deb
 
   - name: 'Install pandoc / xetex'
     if: ${{ inputs.pdfExamples }}
@@ -76,8 +60,8 @@ runs:
     run: |
       set -ex
       # Remove language ('en') from 'Edit on GitHub' path links
-      find web/public/docs/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/docs/:${{ parameters.web_dir_root }}/content/docs/:g" {} +
-      find web/public/examples/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/examples/:${{ parameters.web_dir_root }}/content/examples/:g" {} +
+      find web/public/docs/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content/en/docs/:${{ inputs.webDirRoot }}/content/docs/:g" {} +
+      find web/public/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content/en/examples/:${{ inputs.webDirRoot }}/content/examples/:g" {} +
 
   - name: 'Check Links'
     shell: bash
@@ -104,7 +88,7 @@ runs:
     if: ${{ inputs.deploy == 'true' }}
     shell: bash
     run: |
-      echo ${SERVER_IDENTITY} > ./serverId
+      echo ${SERVER_ID} > ./serverId
       echo ${SERVER_KEY} > ./serverKey
       chmod 0600 ./serverKey ./serverId
-      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p 2212 -l ${SERVER_USER}" web/public/ 87.117.225.2:/home/www/www.projectdissolve.com/public_html/
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p 22 -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_DIR}
