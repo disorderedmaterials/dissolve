@@ -25,7 +25,7 @@ runs:
       sudo dpkg -i ${{ github.workspace }}/hugo*.deb
 
   - name: 'Install pandoc / xetex'
-    if: ${{ inputs.pdfExamples }}
+    if: ${{ inputs.pdfExamples == 'true' }}
     shell: bash
     run: |
       set -ex
@@ -71,7 +71,7 @@ runs:
       link-checker --disable-external web/public
 
   - name: 'Create PDFs'
-    if: ${{ inputs.pdfExamples }}
+    if: ${{ inputs.pdfExamples == 'true' }}
     shell: bash
     run: |
       set -ex
