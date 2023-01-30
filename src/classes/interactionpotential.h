@@ -36,8 +36,8 @@ template <class Functions> class InteractionPotential
     {
         form_ = form;
         // Set parameters vector to correct size
-        while (parameters_.size() != Functions::forms().minArgs(form_))
-            if (parameters_.size() < Functions::forms().minArgs(form_))
+        while (parameters_.size() != Functions::forms().minArgs(form_).value_or(0))
+            if (parameters_.size() < Functions::forms().minArgs(form_).value_or(0))
                 parameters_.push_back(0.0);
 
             else
