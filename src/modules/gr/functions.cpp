@@ -15,7 +15,7 @@
 #include "math/error.h"
 #include "math/filters.h"
 #include "module/group.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 #include "templates/algorithms.h"
 #include "templates/combinable.h"
 #include <iterator>
@@ -39,7 +39,7 @@ void addHistogramsToPartialSet(Array2D<Histogram1D> &histograms, PartialSet &tar
  */
 
 // Calculate partial g(r) in serial with simple double-loop
-bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
+bool GRModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
 {
     // Calculate radial distribution functions with a simple double loop, in serial
     const auto *box = cfg->box();
@@ -56,8 +56,7 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
 }
 
 // Calculate partial g(r) with optimised double-loop
-bool RDFModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet,
-                                  const double binWidth)
+bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double binWidth)
 {
     // Variables
     int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -167,7 +166,7 @@ bool RDFModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cf
     return true;
 }
 
-bool RDFModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
+bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
     auto &cellArray = cfg->cells();
 
@@ -256,7 +255,7 @@ bool RDFModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg
  */
 
 // Calculate and return effective density based on target Configurations
-std::optional<double> RDFModule::effectiveDensity() const
+std::optional<double> GRModule::effectiveDensity() const
 {
     std::optional<double> rho0;
     auto totalWeight = 0.0;
@@ -285,7 +284,7 @@ std::optional<double> RDFModule::effectiveDensity() const
 }
 
 // Calculate and return used species populations based on target Configurations
-std::vector<std::pair<const Species *, double>> RDFModule::speciesPopulations() const
+std::vector<std::pair<const Species *, double>> GRModule::speciesPopulations() const
 {
     std::vector<std::pair<const Species *, double>> populations;
 
@@ -309,9 +308,9 @@ std::vector<std::pair<const Species *, double>> RDFModule::speciesPopulations() 
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
-                            RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth,
-                            bool &alreadyUpToDate)
+bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
+                           GRModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth,
+                           bool &alreadyUpToDate)
 {
     // Does a PartialSet already exist for this Configuration?
     auto originalGRObject = processingData.realiseIf<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), name_,
@@ -324,7 +323,7 @@ bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &proc
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
     if (DissolveSys::sameString(originalgr.fingerprint(), fmt::format("{}", cfg->contentsVersion())) &&
-        (method != RDFModule::TestMethod))
+        (method != GRModule::TestMethod))
     {
         Messenger::print("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
         alreadyUpToDate = true;
@@ -345,13 +344,13 @@ bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &proc
      */
 
     Timer timer;
-    if (method == RDFModule::TestMethod)
+    if (method == GRModule::TestMethod)
         calculateGRTestSerial(cfg, originalgr);
-    else if (method == RDFModule::SimpleMethod)
+    else if (method == GRModule::SimpleMethod)
         calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
-    else if (method == RDFModule::CellsMethod)
+    else if (method == GRModule::CellsMethod)
         calculateGRCells(procPool, cfg, originalgr, rdfRange);
-    else if (method == RDFModule::AutoMethod)
+    else if (method == GRModule::AutoMethod)
     {
         cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr, rdfRange)
                               : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
@@ -367,8 +366,8 @@ bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &proc
     const auto &cells = cfg->cells();
 
     // Set start/stride for parallel loop (pool solo)
-    auto offset = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    auto nChunks = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
+    auto offset = (method == GRModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+    auto nChunks = (method == GRModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
     timer.start();
 
@@ -407,9 +406,9 @@ bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &proc
         for_each_pair_early(0, originalgr.nAtomTypes(),
                             [&originalgr, &procPool, &commsTimer, method](auto typeI, auto typeJ) -> EarlyReturn<bool>
                             {
-                                // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all
+                                // Sum histogram data from all processes (except if using GRModule::TestMethod, where all
                                 // processes have all data already)
-                                if (method != RDFModule::TestMethod)
+                                if (method != GRModule::TestMethod)
                                 {
                                     if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool, commsTimer))
                                         return false;
@@ -445,9 +444,9 @@ bool RDFModule::calculateGR(GenericList &processingData, const ProcessPool &proc
 }
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
-bool RDFModule::calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
-                                      PartialSet &unweightedgr, const Functions::Function1DWrapper intraBroadening,
-                                      int smoothing)
+bool GRModule::calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
+                                     PartialSet &unweightedgr, const Functions::Function1DWrapper intraBroadening,
+                                     int smoothing)
 {
     // If the unweightedgr is not yet initialised, copy the originalgr. Otherwise, just copy the values (in order to
     // maintain the incremental versioning of the data)
@@ -504,9 +503,9 @@ bool RDFModule::calculateUnweightedGR(const ProcessPool &procPool, Configuration
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
-                                std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
-                                PartialSet &summedUnweightedGR)
+bool GRModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &procPool, std::string_view targetPrefix,
+                               std::string_view parentPrefix, const std::vector<Configuration *> &parentCfgs,
+                               PartialSet &summedUnweightedGR)
 {
     // Realise an AtomTypeList containing the sum of atom types over all target configurations
     auto &combinedAtomTypes =
@@ -571,7 +570,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, const ProcessPool &
 }
 
 // Test supplied PartialSets against each other
-bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold)
+bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold)
 {
     // Get a copy of the AtomTypeList to work from
     auto atomTypes = setA.atomTypeMix();
@@ -622,8 +621,8 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 }
 
 // Test calculated partial against supplied reference data
-bool RDFModule::testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
-                                     std::string_view typeIorTotal, std::string_view typeJ, std::string_view target)
+bool GRModule::testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
+                                    std::string_view typeIorTotal, std::string_view typeJ, std::string_view target)
 {
     // We either expect two AtomType names and a target next, or the target 'total'
     auto testResult = false;
@@ -664,8 +663,8 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
 }
 
 // Test calculated vs reference data (two source sets)
-bool RDFModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partials,
-                                      std::string_view prefix)
+bool GRModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partials,
+                                     std::string_view prefix)
 {
     LineParser parser;
 
@@ -696,8 +695,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
 }
 
 // Test calculated vs reference data (two source sets)
-bool RDFModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partialsA,
-                                      std::string_view prefixA, const PartialSet &partialsB, std::string_view prefixB)
+bool GRModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partialsA,
+                                     std::string_view prefixA, const PartialSet &partialsB, std::string_view prefixB)
 {
     LineParser parser;
 

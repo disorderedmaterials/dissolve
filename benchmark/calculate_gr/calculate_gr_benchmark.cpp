@@ -3,7 +3,7 @@
 #include "benchmark/benchmark.h"
 #include "common/problems.h"
 
-template <ProblemType problem, Population population, RDFModule::PartialsMethod method>
+template <ProblemType problem, Population population, GRModule::PartialsMethod method>
 static void BM_CalculateGR(benchmark::State &state)
 {
     Problem<problem, population> problemDef;

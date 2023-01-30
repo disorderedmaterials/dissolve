@@ -19,8 +19,8 @@
 #include "module/group.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
+#include "modules/gr/gr.h"
 #include "modules/neutronsq/neutronsq.h"
-#include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "modules/xraysq/xraysq.h"
 #include "templates/algorithms.h"
@@ -50,25 +50,25 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
                 "[SETUP {}] Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
                 name_, module->name());
 
-        auto *rdfModule = sqModule->sourceRDF();
-        if (!rdfModule)
+        auto *grModule = sqModule->sourceGR();
+        if (!grModule)
             return Messenger::error(
-                "[SETUP {}] Target '{}'s S(Q) module doesn't reference an RDFModule, it can't be used as a target "
+                "[SETUP {}] Target '{}'s S(Q) module doesn't reference a GRModule, it can't be used as a target "
                 "for the EPSR module.",
                 name_, module->name());
 
         // Check for number of targets, or different target if there's only 1
-        auto rdfConfigs = rdfModule->keywords().getVectorConfiguration("Configurations");
+        auto rdfConfigs = grModule->keywords().getVectorConfiguration("Configurations");
         if (rdfConfigs.size() != 1)
             return Messenger::error(
-                "[SETUP {}] RDF module '{}' targets multiple configurations, which is not permitted when using "
+                "[SETUP {}] GR module '{}' targets multiple configurations, which is not permitted when using "
                 "its data in the EPSR module.",
-                name_, rdfModule->name());
+                name_, grModule->name());
 
         if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfConfigs.front()))
-            return Messenger::error("[SETUP {}] RDF module '{}' targets a configuration which is different from another target "
+            return Messenger::error("[SETUP {}] GR module '{}' targets a configuration which is different from another target "
                                     "module, and which is not permitted when using its data in the EPSR module.",
-                                    name_, rdfModule->name());
+                                    name_, grModule->name());
         else
             targetConfiguration_ = rdfConfigs.front();
 

@@ -13,7 +13,7 @@
 
 // Forward Declarations
 class PartialSet;
-class RDFModule;
+class GRModule;
 class SQModule;
 
 // Neutron SQ Module
@@ -73,7 +73,7 @@ class NeutronSQModule : public Module
     bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
                              StructureFactors::NormalisationType normalisation);
     // Calculate neutron weights for relevant Configuration targets
-    void calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const;
+    void calculateWeights(const GRModule *rdfModule, NeutronWeights &weights) const;
 
     /*
      * Processing

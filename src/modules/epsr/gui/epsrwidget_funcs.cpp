@@ -9,7 +9,7 @@
 #include "module/group.h"
 #include "modules/epsr/epsr.h"
 #include "modules/epsr/gui/epsrwidget.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
@@ -138,7 +138,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 else
                 {
                     auto optRDFModule =
-                        optSQModule.value().get()->keywords().get<const RDFModule *, ModuleKeyword<const RDFModule>>(
+                        optSQModule.value().get()->keywords().get<const GRModule *, ModuleKeyword<const GRModule>>(
                             "SourceRDFs");
                     if (optRDFModule)
                         rdfModuleName = optRDFModule.value().get()->name();

@@ -8,11 +8,11 @@
 #include "keywords/module.h"
 #include "keywords/optionalint.h"
 #include "modules/bragg/bragg.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 
 SQModule::SQModule() : Module("SQ")
 {
-    keywords_.addTarget<ModuleKeyword<const RDFModule>>("SourceRDFs", "Source RDFs to transform into S(Q)", sourceRDF_, "RDF");
+    keywords_.addTarget<ModuleKeyword<const GRModule>>("SourceGR", "Source G(r) to transform into S(Q)", sourceGR_, "GR");
 
     keywords_.setOrganisation("Options", "Range");
     keywords_.add<DoubleKeyword>("QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);
@@ -40,7 +40,10 @@ SQModule::SQModule() : Module("SQ")
 
     keywords_.setOrganisation("Export");
     keywords_.add<BoolKeyword>("Save", "Whether to save partials to disk after calculation", save_);
+
+    // Deprecated
+    keywords_.addDeprecated<ModuleKeyword<const GRModule>>("SourceRDFs", "Source RDFs to transform into S(Q)", sourceGR_, "GR");
 }
 
-// Return source module for main calculation
-const RDFModule *SQModule::sourceRDF() const { return sourceRDF_; }
+// Return source G(r) for main calculation
+const GRModule *SQModule::sourceGR() const { return sourceGR_; }

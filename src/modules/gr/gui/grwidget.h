@@ -3,30 +3,30 @@
 
 #pragma once
 
-#include "modules/rdf/gui/ui_rdfwidget.h"
+#include "modules/gr/gui/ui_grwidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations
 class Configuration;
 class Dissolve;
 class Module;
-class RDFModule;
+class GRModule;
 class PartialSet;
 class DataViewer;
 
 // Module Widget
-class RDFModuleWidget : public ModuleWidget
+class GRModuleWidget : public ModuleWidget
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 
     public:
-    RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve);
-    ~RDFModuleWidget() override = default;
+    GRModuleWidget(QWidget *parent, GRModule *module, Dissolve &dissolve);
+    ~GRModuleWidget() override = default;
 
     private:
     // Associated Module
-    RDFModule *module_;
+    GRModule *module_;
     // Target partial data being displayed (if any)
     OptionalReferenceWrapper<const PartialSet> targetPartials_;
 
@@ -35,7 +35,7 @@ class RDFModuleWidget : public ModuleWidget
      */
     private:
     // Main form declaration
-    Ui::RDFModuleWidget ui_;
+    Ui::GRModuleWidget ui_;
     // DataViewer contained within this widget
     DataViewer *rdfGraph_;
 

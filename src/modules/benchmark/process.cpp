@@ -9,7 +9,7 @@
 #include "main/dissolve.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/energy/energy.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 
 // Run main processing
 bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
@@ -51,7 +51,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         SampledDouble timing;
         for (auto n = 0; n < nRepeats_; ++n)
         {
-            RDFModule rdfModule;
+            GRModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
             targetConfiguration_->incrementContentsVersion();
 
@@ -59,7 +59,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(dissolve.processingModuleData(), procPool, targetConfiguration_, RDFModule::CellsMethod,
+            rdfModule.calculateGR(dissolve.processingModuleData(), procPool, targetConfiguration_, GRModule::CellsMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
@@ -76,7 +76,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         SampledDouble timing;
         for (auto n = 0; n < nRepeats_; ++n)
         {
-            RDFModule rdfModule;
+            GRModule rdfModule;
             rdfModule.keywords().set("Configuration", targetConfiguration_);
             targetConfiguration_->incrementContentsVersion();
 
@@ -84,7 +84,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(dissolve.processingModuleData(), procPool, targetConfiguration_, RDFModule::SimpleMethod,
+            rdfModule.calculateGR(dissolve.processingModuleData(), procPool, targetConfiguration_, GRModule::SimpleMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();

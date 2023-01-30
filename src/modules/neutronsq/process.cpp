@@ -9,8 +9,8 @@
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
+#include "modules/gr/gr.h"
 #include "modules/neutronsq/neutronsq.h"
-#include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 
 // Set target data
@@ -38,9 +38,9 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
         // Get dependent modules
         if (!sourceSQ_)
             return Messenger::error("[SETUP {}] A source SQ module must be provided.\n", name_);
-        auto *rdfModule = sourceSQ_->sourceRDF();
+        auto *rdfModule = sourceSQ_->sourceGR();
         if (!rdfModule)
-            return Messenger::error("[SETUP {}] A source RDF module (in the SQ module) must be provided.\n", name_);
+            return Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
 
         // Remove normalisation_ factor from data
         if (referenceNormalisation_ != StructureFactors::NoNormalisation)
@@ -130,9 +130,9 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     if (!sourceSQ_)
         return Messenger::error("A source SQ module must be provided.\n");
-    const auto *rdfModule = sourceSQ_->sourceRDF();
+    const auto *rdfModule = sourceSQ_->sourceGR();
     if (!rdfModule)
-        return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
+        return Messenger::error("A source GR module (in the SQ module) must be provided.\n");
 
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());

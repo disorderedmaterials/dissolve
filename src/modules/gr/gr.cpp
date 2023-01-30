@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 #include "keywords/atomtypevector.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
@@ -10,7 +10,7 @@
 #include "keywords/module.h"
 #include "keywords/optionalint.h"
 
-RDFModule::RDFModule() : Module("RDF")
+GRModule::GRModule() : Module("GR")
 {
     keywords_.addTarget<ConfigurationVectorKeyword>("Configurations", "Set target configuration(s) for the module",
                                                     targetConfigurations_);
@@ -29,7 +29,6 @@ RDFModule::RDFModule() : Module("RDF")
         "AveragingScheme", "Weighting scheme to use when averaging partials", averagingScheme_, Averaging::averagingSchemes());
     keywords_.add<Function1DKeyword>("IntraBroadening", "Type of broadening to apply to intramolecular g(r)", intraBroadening_,
                                      FunctionProperties::Normalisation);
-
     keywords_.add<OptionalIntegerKeyword>(
         "Smoothing",
         "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in "
@@ -46,16 +45,15 @@ RDFModule::RDFModule() : Module("RDF")
         "InternalTest",
         "Perform internal check of calculated partials against a set calculated by a simple unoptimised double-loop",
         internalTest_);
-    keywords_.add<EnumOptionsKeyword<RDFModule::PartialsMethod>>("Method",
-                                                                 "Calculation method for partial radial distribution functions",
-                                                                 partialsMethod_, RDFModule::partialsMethods());
+    keywords_.add<EnumOptionsKeyword<GRModule::PartialsMethod>>(
+        "Method", "Calculation method for partial radial distribution functions", partialsMethod_, GRModule::partialsMethods());
 }
 
 // Return enum option info for NormalisationType
-EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
+EnumOptions<GRModule::PartialsMethod> GRModule::partialsMethods()
 {
-    return EnumOptions<RDFModule::PartialsMethod>("PartialsMethod", {{RDFModule::AutoMethod, "Auto"},
-                                                                     {RDFModule::CellsMethod, "Cells"},
-                                                                     {RDFModule::SimpleMethod, "Simple"},
-                                                                     {RDFModule::TestMethod, "Test"}});
+    return EnumOptions<GRModule::PartialsMethod>("PartialsMethod", {{GRModule::AutoMethod, "Auto"},
+                                                                    {GRModule::CellsMethod, "Cells"},
+                                                                    {GRModule::SimpleMethod, "Simple"},
+                                                                    {GRModule::TestMethod, "Test"}});
 }

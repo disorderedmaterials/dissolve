@@ -9,7 +9,7 @@
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 #include "modules/sq/sq.h"
 #include "modules/xraysq/xraysq.h"
 #include "templates/algorithms.h"
@@ -42,16 +42,16 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
         // Get dependent modules
         if (!sourceSQ_)
             return Messenger::error("[SETUP {}] A source SQ module must be provided.\n", name_);
-        auto *rdfModule = sourceSQ_->sourceRDF();
-        if (!rdfModule)
-            return Messenger::error("[SETUP {}] A source RDF module (in the SQ module) must be provided.\n", name_);
+        auto *grModule = sourceSQ_->sourceGR();
+        if (!grModule)
+            return Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
 
         // Remove normalisation factor from data
         if (referenceNormalisation_ != StructureFactors::NoNormalisation)
         {
             // We need the x-ray weights in order to do the normalisation
             XRayWeights weights;
-            calculateWeights(rdfModule, weights, formFactors_);
+            calculateWeights(grModule, weights, formFactors_);
 
             // Remove normalisation from the data
             if (referenceNormalisation_ == StructureFactors::SquareOfAverageNormalisation)
@@ -89,7 +89,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", name(), GenericItem::ProtectedFlag);
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
-        auto rho = rdfModule->effectiveDensity();
+        auto rho = grModule->effectiveDensity();
         if (rho)
             Messenger::print(
                 "[SETUP {}] Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n",
@@ -134,9 +134,9 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     if (!sourceSQ_)
         return Messenger::error("A source SQ module must be provided.\n");
-    auto *rdfModule = sourceSQ_->sourceRDF();
-    if (!rdfModule)
-        return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
+    auto *grModule = sourceSQ_->sourceGR();
+    if (!grModule)
+        return Messenger::error("A source GR module (in the SQ module) must be provided.\n");
 
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
@@ -173,7 +173,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Construct weights matrix
     auto &weights = dissolve.processingModuleData().realise<XRayWeights>("FullWeights", name_, GenericItem::InRestartFileFlag);
-    calculateWeights(rdfModule, weights, formFactors_);
+    calculateWeights(grModule, weights, formFactors_);
     Messenger::print("Weights matrix:\n\n");
     weights.print();
 
@@ -235,9 +235,9 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     // Get summed unweighted g(r) from the specified RDFMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->name()))
+    if (!dissolve.processingModuleData().contains("UnweightedGR", grModule->name()))
         return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
-    const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
+    const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", grModule->name());
 
     // Create/retrieve PartialSet for summed weighted g(r)
     auto [weightedGR, wGRstatus] =
@@ -267,9 +267,9 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     Filters::trim(repGR, referenceFTQMin_.value_or(0.0), ftQMax);
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
-    auto rho = rdfModule->effectiveDensity();
+    auto rho = grModule->effectiveDensity();
     if (!rho)
-        return Messenger::error("No effective density available from RDF module '{}'\n", rdfModule->name());
+        return Messenger::error("No effective density available from RDF module '{}'\n", grModule->name());
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested

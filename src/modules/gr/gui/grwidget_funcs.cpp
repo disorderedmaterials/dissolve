@@ -6,13 +6,13 @@
 #include "gui/helpers/comboboxcontroller.h"
 #include "gui/render/renderabledata1d.h"
 #include "main/dissolve.h"
-#include "modules/rdf/gui/rdfwidget.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
+#include "modules/gr/gui/grwidget.h"
 #include "templates/algorithms.h"
 
 Q_DECLARE_METATYPE(Configuration *);
 
-RDFModuleWidget::RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve)
+GRModuleWidget::GRModuleWidget(QWidget *parent, GRModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
 {
     // Set up user interface
@@ -49,7 +49,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &d
  */
 
 // Create renderables for current target PartialSet
-void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
+void GRModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 {
     if (!targetPartials_)
         return;
@@ -87,7 +87,7 @@ void RDFModuleWidget::createPartialSetRenderables(std::string_view targetPrefix)
 }
 
 // Update controls within widget
-void RDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
+void GRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     refreshing_ = true;
 
@@ -133,7 +133,7 @@ void RDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &upd
  * Widgets / Functions
  */
 
-void RDFModuleWidget::on_SummedPartialsButton_clicked(bool checked)
+void GRModuleWidget::on_SummedPartialsButton_clicked(bool checked)
 {
     if (!checked)
         return;
@@ -146,7 +146,7 @@ void RDFModuleWidget::on_SummedPartialsButton_clicked(bool checked)
     updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void RDFModuleWidget::on_TotalsButton_clicked(bool checked)
+void GRModuleWidget::on_TotalsButton_clicked(bool checked)
 {
     if (!checked)
         return;
@@ -159,7 +159,7 @@ void RDFModuleWidget::on_TotalsButton_clicked(bool checked)
     updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void RDFModuleWidget::on_ConfigurationPartialsButton_clicked(bool checked)
+void GRModuleWidget::on_ConfigurationPartialsButton_clicked(bool checked)
 {
     if (!checked)
         return;
@@ -172,7 +172,7 @@ void RDFModuleWidget::on_ConfigurationPartialsButton_clicked(bool checked)
     updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void RDFModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
+void GRModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
 {
     if (refreshing_)
         return;
@@ -180,9 +180,9 @@ void RDFModuleWidget::on_ConfigurationTargetCombo_currentIndexChanged(int index)
     updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
 
-void RDFModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::RecreateRenderablesFlag); }
+void GRModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::RecreateRenderablesFlag); }
 
-void RDFModuleWidget::on_ClearFilterButton_clicked(bool checked)
+void GRModuleWidget::on_ClearFilterButton_clicked(bool checked)
 {
     ui_.FilterEdit->setText("");
     updateControls(ModuleWidget::RecreateRenderablesFlag);

@@ -32,10 +32,10 @@
 #include "modules/epsr/gui/epsrwidget.h"
 #include "modules/geomopt/geomopt.h"
 #include "modules/geomopt/gui/geomoptwidget.h"
+#include "modules/gr/gr.h"
+#include "modules/gr/gui/grwidget.h"
 #include "modules/neutronsq/gui/neutronsqwidget.h"
 #include "modules/neutronsq/neutronsq.h"
-#include "modules/rdf/gui/rdfwidget.h"
-#include "modules/rdf/rdf.h"
 #include "modules/skeleton/gui/skeletonwidget.h"
 #include "modules/skeleton/skeleton.h"
 #include "modules/sq/gui/sqwidget.h"
@@ -63,8 +63,8 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();
     registerProducer<GeometryOptimisationModule, GeometryOptimisationModuleWidget>();
+    registerProducer<GRModule, GRModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
-    registerProducer<RDFModule, RDFModuleWidget>();
     registerProducer<SkeletonModule, SkeletonModuleWidget>();
     registerProducer<SQModule, SQModuleWidget>();
     registerProducer<TestModule, TestModuleWidget>();

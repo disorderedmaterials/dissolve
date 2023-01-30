@@ -13,7 +13,7 @@
 
 // Forward Declarations
 class PartialSet;
-class RDFModule;
+class GRModule;
 class SQModule;
 class XRayWeights;
 
@@ -74,7 +74,7 @@ class XRaySQModule : public Module
     bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
                              StructureFactors::NormalisationType normalisation);
     // Calculate xray weights for relevant Configuration targets
-    void calculateWeights(const RDFModule *rdfModule, XRayWeights &weights,
+    void calculateWeights(const GRModule *rdfModule, XRayWeights &weights,
                           XRayFormFactors::XRayFormFactorData formFactors) const;
 
     /*

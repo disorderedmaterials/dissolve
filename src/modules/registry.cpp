@@ -23,12 +23,12 @@
 #include "modules/export_trajectory/exporttraj.h"
 #include "modules/forces/forces.h"
 #include "modules/geomopt/geomopt.h"
+#include "modules/gr/gr.h"
 #include "modules/import_trajectory/importtraj.h"
 #include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
 #include "modules/neutronsq/neutronsq.h"
-#include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
 #include "modules/xraysq/xraysq.h"
@@ -62,6 +62,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ForcesModule>("Forces", "Calculate the total atomic forces within a Configuration", "Forcefield");
     registerProducer<GeometryOptimisationModule>("GeometryOptimisation", "Optimise geometry with respect to energy (minimise)",
                                                  "Optimisation");
+    registerProducer<GRModule>("GR", "Calculate partial and total g(r)", "Correlation Functions");
     registerProducer<ImportTrajectoryModule>(
         "ImportTrajectory", "Calculate coordination numbers from an existing radial distribution function", "Import");
     registerProducer<IntraShakeModule>("IntraShake", "Perform Monte Carlo shakes on intramolecular terms within molecules",
@@ -69,7 +70,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<MDModule>("MD", "Evolve a Configuration using molecular dynamics", "Evolution");
     registerProducer<MolShakeModule>("MolShake", "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>("NeutronSQ", "Calculate neutron-weighted S(Q)", "Correlation Functions");
-    registerProducer<RDFModule>("RDF", "Calculate partial and total g(r)", "Correlation Functions");
     registerProducer<SQModule>("SQ", "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TestModule>("Test", "Development Module");
     registerProducer<XRaySQModule>("XRaySQ", "Calculate x-ray-weighted S(Q)", "Correlation Functions");

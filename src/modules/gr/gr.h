@@ -15,11 +15,11 @@ class ModuleGroup;
 class PartialSet;
 
 // RDF Module
-class RDFModule : public Module
+class GRModule : public Module
 {
     public:
-    RDFModule();
-    ~RDFModule() override = default;
+    GRModule();
+    ~GRModule() override = default;
 
     /*
      * Definition
@@ -35,7 +35,7 @@ class RDFModule : public Module
         nPartialsMethods
     };
     // Return enum option info for PartialsMethod
-    EnumOptions<RDFModule::PartialsMethod> partialsMethods();
+    EnumOptions<GRModule::PartialsMethod> partialsMethods();
 
     private:
     // Target configurations
@@ -53,7 +53,7 @@ class RDFModule : public Module
     // Degree of smoothing to apply
     std::optional<int> nSmooths_;
     // Calculation method for partials
-    RDFModule::PartialsMethod partialsMethod_{RDFModule::AutoMethod};
+    GRModule::PartialsMethod partialsMethod_{GRModule::AutoMethod};
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
     double requestedRange_{15.0};
     // Whether to save partials and total functions to disk
@@ -81,7 +81,7 @@ class RDFModule : public Module
     std::vector<std::pair<const Species *, double>> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
     bool calculateGR(GenericList &processingData, const ProcessPool &procPool, Configuration *cfg,
-                     RDFModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
+                     GRModule::PartialsMethod method, const double rdfRange, const double rdfBinWidth, bool &alreadyUpToDate);
     // Calculate smoothed/broadened partial g(r) from supplied partials
     static bool calculateUnweightedGR(const ProcessPool &procPool, Configuration *cfg, const PartialSet &originalgr,
                                       PartialSet &weightedgr, const Functions::Function1DWrapper intraBroadening,

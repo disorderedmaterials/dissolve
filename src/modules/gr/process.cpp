@@ -5,10 +5,10 @@
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 
 // Run main processing
-bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate standard partial g(r)
@@ -94,7 +94,7 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         {
             // Copy the already-calculated g(r), then calculate a new set using the Test method
             PartialSet referencePartials = originalgr;
-            calculateGR(dissolve.processingModuleData(), procPool, cfg, RDFModule::TestMethod, rdfRange, binWidth_,
+            calculateGR(dissolve.processingModuleData(), procPool, cfg, GRModule::TestMethod, rdfRange, binWidth_,
                         alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
                 return false;
@@ -117,8 +117,8 @@ bool RDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         dissolve.processingModuleData().realise<PartialSet>("UnweightedGR", name_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, name(), name(), targetConfigurations_,
-                                    summedUnweightedGR))
+    if (!GRModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, name(), name(), targetConfigurations_,
+                                   summedUnweightedGR))
         return false;
 
     return true;
