@@ -4,10 +4,10 @@
 #include "classes/configuration.h"
 #include "gui/render/renderabledata1d.h"
 #include "main/dissolve.h"
-#include "modules/calculate_rdf/gui/calculaterdfwidget.h"
-#include "modules/calculate_rdf/rdf.h"
+#include "modules/siterdf/gui/siterdfwidget.h"
+#include "modules/siterdf/siterdf.h"
 
-CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module, Dissolve &dissolve)
+SiteRDFModuleWidget::SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
 {
     // Set up user interface
@@ -29,7 +29,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDF
 }
 
 // Update controls within widget
-void CalculateRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
+void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     // Update CN labels
     auto rangeAOn = module_->isRangeEnabled(0);

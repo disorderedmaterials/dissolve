@@ -6,11 +6,11 @@
 #include "gui/selectconfigurationdialog.h"
 #include "main/dissolve.h"
 #include "modules/calculate_avgmol/avgmol.h"
-#include "modules/calculate_rdf/rdf.h"
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/epsr/epsr.h"
 #include "modules/gr/gr.h"
 #include "modules/registry.h"
+#include "modules/siterdf/siterdf.h"
 #include "modules/sq/sq.h"
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
@@ -316,7 +316,7 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
     auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the CalculateGR module
-    auto *calcRDFModule = ModuleRegistry::create("CalculateRDF", newLayer);
+    auto *calcRDFModule = ModuleRegistry::create("SiteRDF", newLayer);
     calcRDFModule->keywords().set("Configuration", firstCfg);
 
     // Add a CalculateCN module

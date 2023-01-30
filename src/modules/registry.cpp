@@ -11,7 +11,6 @@
 #include "modules/calculate_avgmol/avgmol.h"
 #include "modules/calculate_axisangle/axisangle.h"
 #include "modules/calculate_dangle/dangle.h"
-#include "modules/calculate_rdf/rdf.h"
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/checks/checks.h"
 #include "modules/checkspecies/checkspecies.h"
@@ -29,6 +28,7 @@
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
 #include "modules/neutronsq/neutronsq.h"
+#include "modules/siterdf/siterdf.h"
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
 #include "modules/xraysq/xraysq.h"
@@ -46,7 +46,6 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<CalculateAxisAngleModule>("CalculateAxisAngle", "Calculate distance/angle map between site axes",
                                                "Analysis");
     registerProducer<CalculateDAngleModule>("CalculateDAngle", "Calculate distance/angle maps", "Analysis");
-    registerProducer<CalculateRDFModule>("CalculateRDF", "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<CalculateSDFModule>("CalculateSDF", "Calculate spatial density functions around oriented sites",
                                          "Analysis");
     registerProducer<ChecksModule>("Checks", "Conduct simple checks on Configurations", "Checks & Tests");
@@ -70,6 +69,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<MDModule>("MD", "Evolve a Configuration using molecular dynamics", "Evolution");
     registerProducer<MolShakeModule>("MolShake", "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>("NeutronSQ", "Calculate neutron-weighted S(Q)", "Correlation Functions");
+    registerProducer<SiteRDFModule>("SiteRDF", "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<SQModule>("SQ", "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TestModule>("Test", "Development Module");
     registerProducer<XRaySQModule>("XRaySQ", "Calculate x-ray-weighted S(Q)", "Correlation Functions");

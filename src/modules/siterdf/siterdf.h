@@ -15,11 +15,11 @@ class SpeciesSite;
 class Sum1DProcedureNode;
 
 // Calculate RDF Module
-class CalculateRDFModule : public Module
+class SiteRDFModule : public Module
 {
     public:
-    CalculateRDFModule();
-    ~CalculateRDFModule() override = default;
+    SiteRDFModule();
+    ~SiteRDFModule() override = default;
 
     /*
      * Definition

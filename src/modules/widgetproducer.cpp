@@ -20,8 +20,6 @@
 #include "modules/calculate_axisangle/gui/calculateaxisanglewidget.h"
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_dangle/gui/calculatedanglewidget.h"
-#include "modules/calculate_rdf/gui/calculaterdfwidget.h"
-#include "modules/calculate_rdf/rdf.h"
 #include "modules/calculate_sdf/gui/calculatesdfwidget.h"
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/datatest/datatest.h"
@@ -36,6 +34,8 @@
 #include "modules/gr/gui/grwidget.h"
 #include "modules/neutronsq/gui/neutronsqwidget.h"
 #include "modules/neutronsq/neutronsq.h"
+#include "modules/siterdf/gui/siterdfwidget.h"
+#include "modules/siterdf/siterdf.h"
 #include "modules/skeleton/gui/skeletonwidget.h"
 #include "modules/skeleton/skeleton.h"
 #include "modules/sq/gui/sqwidget.h"
@@ -57,7 +57,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<CalculateAvgMolModule, CalculateAvgMolModuleWidget>();
     registerProducer<CalculateAxisAngleModule, CalculateAxisAngleModuleWidget>();
     registerProducer<CalculateDAngleModule, CalculateDAngleModuleWidget>();
-    registerProducer<CalculateRDFModule, CalculateRDFModuleWidget>();
+    registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
     registerProducer<CalculateSDFModule, CalculateSDFModuleWidget>();
     registerProducer<DataTestModule, DataTestModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();

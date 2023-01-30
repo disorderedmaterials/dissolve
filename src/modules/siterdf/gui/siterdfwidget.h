@@ -7,28 +7,28 @@
 #include "modules/widget.h"
 
 // Forward Declarations
-class CalculateRDFModule;
+class SiteRDFModule;
 class DataViewer;
 
 // Module Widget
-class CalculateRDFModuleWidget : public ModuleWidget
+class SiteRDFModuleWidget : public ModuleWidget
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 
     private:
     // Associated Module
-    CalculateRDFModule *module_;
+    SiteRDFModule *module_;
 
     public:
-    CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module, Dissolve &dissolve);
+    SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module, Dissolve &dissolve);
 
     /*
      * UI
      */
     private:
     // Main form declaration
-    Ui::CalculateRDFModuleWidget ui_;
+    Ui::SiteRDFModuleWidget ui_;
     // DataViewer contained within this widget
     DataViewer *rdfGraph_;
 
