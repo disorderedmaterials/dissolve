@@ -34,3 +34,4 @@ jobs:
         SERVER_USER: ${{ secrets.SERVER_USER }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
         SERVER_DIR: ${{ secrets.SERVER_DIR }}
+        SERVER_PORT: ${{ secrets.SERVER_PORT }}
