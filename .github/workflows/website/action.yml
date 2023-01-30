@@ -21,8 +21,8 @@ runs:
     shell: bash
     run: |
       set -ex
-      wget https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugoVersion }}/hugo_extended_${{ inputs.hugoVersion }}_Linux-64bit.deb -O '$({ github.workspace })/hugo.deb'
-      sudo dpkg -i $({ github.workspace })/hugo*.deb
+      wget https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugoVersion }}/hugo_extended_${{ inputs.hugoVersion }}_Linux-64bit.deb -O '${{ github.workspace }}/hugo.deb'
+      sudo dpkg -i ${{ github.workspace }}/hugo*.deb
 
   - name: 'Install pandoc / xetex'
     if: ${{ inputs.pdfExamples }}
