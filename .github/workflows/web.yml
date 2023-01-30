@@ -29,8 +29,8 @@ jobs:
       env:
         HARBOR_USER: ${{ secrets.HARBOR_USER }}
         HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
-        SERVER_ID: $${ secrets.SERVER_ID }}
-        SERVER_KEY: $${ secrets.SERVER_KEY }}
-        SERVER_USER: $${ secrets.SERVER_USER }}
-        SERVER_IP: $${ secrets.SERVER_IP }}
-        SERVER_DIR: $${ secrets.SERVER_DIR }}
+        SERVER_ID: ${{ secrets.SERVER_ID }}
+        SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_DIR: ${{ secrets.SERVER_DIR }}
