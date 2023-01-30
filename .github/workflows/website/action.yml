@@ -91,4 +91,4 @@ runs:
       echo ${SERVER_ID} > ./serverId
       echo ${SERVER_KEY} > ./serverKey
       chmod 0600 ./serverKey ./serverId
-      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p 22 -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_DIR}
+      rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p 22 -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_DIR}
