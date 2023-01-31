@@ -88,7 +88,7 @@ runs:
     if: ${{ inputs.deploy == 'true' }}
     shell: bash
     run: |
-      echo ${SERVER_ID} > ./serverId
-      echo ${SERVER_KEY} > ./serverKey
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
       chmod 0600 ./serverKey ./serverId
       rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_DIR}
