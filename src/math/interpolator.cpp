@@ -533,46 +533,54 @@ std::vector<double> Interpolator::y(const std::vector<double> &xs)
 
         if (lastInterval_ < 0)
             result.push_back(y_.front());
-
-        if (scheme_ == Interpolator::SplineInterpolation)
+        switch (scheme_)
         {
-            if (x >= x_.back())
-                result.push_back(y_.back());
+            case (Interpolator::SplineInterpolation):
+            {
+                if (x >= x_.back())
+                    result.push_back(y_.back());
 
-            double h = x - x_[lastInterval_];
-            double hh = h * h;
-            result.push_back(a_[lastInterval_] + b_[lastInterval_] * h + c_[lastInterval_] * hh + d_[lastInterval_] * hh * h);
+                double h = x - x_[lastInterval_];
+                double hh = h * h;
+                result.push_back(a_[lastInterval_] + b_[lastInterval_] * h + c_[lastInterval_] * hh +
+                                 d_[lastInterval_] * hh * h);
+            }
+            break;
+            //	case (Interpolator::ConstrainedSplineInterpolation):
+            //	{
+            //		double h = x;
+            //		double hh = h*h;
+            //		return a_[interval] + b_[interval]*h + c_[interval]*hh + d_[interval]*hh*h;
+            //	}
+            // break;
+            case (Interpolator::LinearInterpolation):
+            {
+                if (lastInterval_ >= (x_.size() - 1))
+                    result.push_back(y_.back());
+
+                double delta = (x - x_[lastInterval_]) / h_[lastInterval_];
+                result.push_back(y_[lastInterval_] + delta * a_[lastInterval_]);
+            }
+            break;
+            case (Interpolator::ThreePointInterpolation):
+            {
+                if (lastInterval_ >= (x_.size() - 3))
+                    result.push_back(y_.back());
+
+                double ppp = (x - x_[lastInterval_]) / h_[lastInterval_];
+
+                double vk0 = y_[lastInterval_];
+                double vk1 = y_[lastInterval_ + 1];
+                double vk2 = y_[lastInterval_ + 2];
+                double t1 = vk0 + (vk1 - vk0) * ppp;
+                double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
+                result.push_back(t1 + (t2 - t1) * ppp * 0.5);
+            }
+            break;
+            default:
+                // if no interpolation scheme selected then fills vector with 0.0
+                result.push_back(0.0);
         }
-        //	else if (scheme_ == Interpolator::ConstrainedSplineInterpolation)
-        //	{
-        //		double h = x;
-        //		double hh = h*h;
-        //		return a_[interval] + b_[interval]*h + c_[interval]*hh + d_[interval]*hh*h;
-        //	}
-        else if (scheme_ == Interpolator::LinearInterpolation)
-        {
-            if (lastInterval_ >= (x_.size() - 1))
-                result.push_back(y_.back());
-
-            double delta = (x - x_[lastInterval_]) / h_[lastInterval_];
-            result.push_back(y_[lastInterval_] + delta * a_[lastInterval_]);
-        }
-        else if (scheme_ == Interpolator::ThreePointInterpolation)
-        {
-            if (lastInterval_ >= (x_.size() - 3))
-                result.push_back(y_.back());
-
-            double ppp = (x - x_[lastInterval_]) / h_[lastInterval_];
-
-            double vk0 = y_[lastInterval_];
-            double vk1 = y_[lastInterval_ + 1];
-            double vk2 = y_[lastInterval_ + 2];
-            double t1 = vk0 + (vk1 - vk0) * ppp;
-            double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
-            result.push_back(t1 + (t2 - t1) * ppp * 0.5);
-        }
-
-        result.push_back(0.0);
     }
     return result;
 }
