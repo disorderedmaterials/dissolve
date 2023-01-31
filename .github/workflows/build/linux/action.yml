@@ -28,7 +28,6 @@ runs:
       target=${{ inputs.target }}
       singularityTarget=${target/dissolve/singularity}
       nix build -L .#$singularityTarget
-      nix build --json .#$singularityTarget > archive.json
 
       # Assemble artifacts
       mkdir packages
