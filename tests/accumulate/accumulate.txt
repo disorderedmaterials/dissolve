@@ -98,7 +98,7 @@ Layer  'Processing'
   # Accumulate RDFs
   Module  Accumulate  'Accumulate01'
     Target  'RDF01'
-    Data  'RDF'
+    Data  'GR'
   EndModule
 
   # Calculate RDFs (with averaging)

@@ -9,7 +9,7 @@
 AccumulateModule::AccumulateModule() : Module("Accumulate")
 {
     keywords_.addTarget<ModuleVectorKeyword>("Target", "Module containing the target partial set data to accumulate",
-                                             targetModule_, std::vector<std::string>{"NeutronSQ", "XRaySQ", "SQ", "RDF"}, 1);
+                                             targetModule_, std::vector<std::string>{"NeutronSQ", "XRaySQ", "SQ", "GR"}, 1);
     keywords_.addTarget<EnumOptionsKeyword<AccumulateModule::TargetPartialSet>>(
         "Data", "Data type to accumulate", targetPartialSet_, AccumulateModule::targetPartialSet());
 
