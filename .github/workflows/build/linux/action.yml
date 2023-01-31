@@ -1,4 +1,5 @@
 name: Build
+description: Build on Linux via nix
 
 inputs:
   extraCMakeFlags:
@@ -19,32 +20,44 @@ runs:
       target: ${{ inputs.target }}
 
   - name: Build
-    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
 
-      # Build
-      nix build -L .#${{ inputs.target }}
-      nix build --json .#${{ inputs.target }} > archive.json
-
-  - name: Bundle
-    if: ${{ inputs.cacheOnly == 'false' }}
-    shell: bash
-    run: |
-      set -ex
-
-      nix bundle -L .#${{ inputs.target }} -o ${{ inputs.target }}
-      ls -R ${{ inputs.target }}
+      # Build Singularity target
+      target=${{ inputs.target }}
+      singularityTarget=${target/dissolve/singularity}
+      nix build -L .#$singularityTarget
 
       # Assemble artifacts
-      mkdir build
-      cp -v ${{ inputs.target }} build/${{ inputs.target }}-${{ env.dissolveVersion }}
+      mkdir packages
+      cp -v result packages/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
 
-  - name: Upload Raw Build Artifacts
+  - name: Bundle Executable
+    if: ${{ inputs.cacheOnly == 'false' }}
+    shell: bash
+    run: |
+      set -ex
+
+      nix bundle -L .#${{ inputs.target }} -o binary
+
+      # Assemble artifacts
+      cp -v binary packages/${{ inputs.target }}-${{ env.dissolveVersion }}
+
+  - name: Tidy nix Store
+    if: ${{ inputs.cacheOnly == 'true' }}
+    shell: bash
+    run: |
+      set -ex
+      # Remove the built dissolve derivations / img from the nix store to save space and leave just the other core build deps
+      for a in `nix path-info --all | grep dissolve`
+      do
+        nix --extra-experimental-features nix-command store delete --ignore-liveness $a
+      done
+
+  - name: Upload Package Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
     uses: actions/upload-artifact@v3
     with:
-      name: linux-build-artifacts-${{ inputs.target }}
-      path: ${{ github.workspace }}/build
-      retention-days: 1
+      name: packages
+      path: ${{ github.workspace }}/packages

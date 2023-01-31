@@ -1,4 +1,5 @@
 name: Build
+description: Build on Windows
 
 inputs:
   threading:
@@ -135,13 +136,20 @@ runs:
         ~\.conan
         ~\.conancache
 
-  - name: Install Conan Dependencies
+  - name: Setup Conan Profile
     if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
     shell: bash
     run: |
       conan profile new default --detect
       conan profile update settings.compiler="Visual Studio" default
       conan profile update settings.compiler.version=17 default
+
+  - name: Install Conan Dependencies
+    shell: bash
+    run: |
+      mkdir build && cd build
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+      conan install .. --build missing
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
@@ -156,9 +164,7 @@ runs:
       LIB="${RUNNER_TEMP}\ftgl-install\lib;$LIB"
 
       # Build
-      mkdir build && cd build
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing
+      cd build
       cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
       cmake --build . --config Release --target keywordwidgets
       cmake --build . --config Release

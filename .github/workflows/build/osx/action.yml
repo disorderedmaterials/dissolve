@@ -1,4 +1,5 @@
 name: Build
+description: Build on OSX
 
 inputs:
   threading:
@@ -60,6 +61,27 @@ runs:
   # Main Build
   #
 
+  - name: Retrieve Conan Cache
+    id: cache-conan
+    uses: actions/cache@v3
+    with:
+      key: osx-conan
+      path: |
+        ~\.conan
+        ~\.conancache
+
+  - name: Install Conan Dependencies
+    shell: bash
+    run: |
+      set -ex
+
+      # Setup paths
+      export PATH="$(python3 -m site --user-base)/bin:$PATH"
+
+      mkdir build && cd build
+      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
+      conan install .. --build missing
+
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
@@ -74,8 +96,7 @@ runs:
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
 
       # Build
-      mkdir build && cd build
-      conan install .. --build missing
+      cd build
       cmake -G Ninja -DGUI:bool=true -DMULTI_THREADING:bool=${{ inputs.threading }} -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ inputs.extraCMakeFlags }} -DQT_BASE_DIR=$QT_BASE_DIR ../
       cmake --build . --config Release
       cd ../

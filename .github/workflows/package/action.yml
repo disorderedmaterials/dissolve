@@ -1,15 +1,9 @@
 name: Package
+description: Stub action for package creation
 
 runs:
   using: "composite"
   steps:
-
-  - name: Package ??? (Linux)
-    if: runner.os == 'Linux'
-    shell: bash
-    run: |
-      VERSION=$(grep "VERSION =" gudpy.spec | sed "s/.*\"\(.*\)\"/\1/g")
-      mv dist/GudPy-${VERSION} dist/GudPy-${VERSION}-Linux
 
   - name: Package (OSX)
     if: runner.os == 'MacOS'

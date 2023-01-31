@@ -4,6 +4,12 @@ on:
   pull_request:
     branches:
     - '*'
+    paths-ignore:
+    - '.github/workflows/continuous.yml'
+    - '.github/workflows/release.yml'
+    - '.github/workflows/web.yml'
+    - 'web/**'
+    - 'README.md'
 
 env:
   pythonVersion: 3.9
@@ -26,13 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        target: [dissolve-gui]
-        include:
-          - os: ubuntu-latest
-            target: dissolve
-          - os: ubuntu-latest
-            target: dissolve-threadless
+        os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -43,26 +43,28 @@ jobs:
         uses: "./.github/workflows/set-short-hash"
       - name: "Build (${{ matrix.os }})"
         uses: "./.github/workflows/build"
-        with:
-          target: ${{ matrix.target }}
 
-  Test:
-    needs: Build
+  BuildLinux:
+    needs: QC
     strategy:
       fail-fast: false
       matrix:
-        target: [ dissolve, dissolve-threadless ]
+        target: [ dissolve, dissolve-gui ]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: "Test (${{ matrix.target }})"
-      uses: "./.github/workflows/test"
+    - name: Acquire Code Version
+      uses: "./.github/workflows/get-version"
+    - name: Set Short Hash
+      uses: "./.github/workflows/set-short-hash"
+    - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
+      uses: "./.github/workflows/build"
       with:
         target: ${{ matrix.target }}
 
   Package:
-    needs: Test
+    needs: [ Build, BuildLinux ]
     strategy:
       fail-fast: false
       matrix:

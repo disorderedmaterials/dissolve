@@ -1,4 +1,5 @@
 name: Package
+description: Package Windows artifacts
 
 runs:
   using: "composite"
@@ -15,18 +16,20 @@ runs:
       path: ${{ runner.temp }}\qt
 
   - name: Retrieve FTGL Cache
-    id: cache-ftgl
     uses: actions/cache@v3
     with:
       key: windows-ftgl
-      path: ${{ runner.temp }}\ftgl-install
+      path: |
+        ${{ runner.temp }}\ftgl-latest
+        ${{ runner.temp }}\ftgl-install
 
   - name: Retrieve FreeType Cache
-    id: cache-freetype
     uses: actions/cache@v3
     with:
       key: windows-freetype
-      path: ${{ runner.temp }}\freetype-install
+      path: |
+        ${{ runner.temp }}\freetype-latest
+        ${{ runner.temp }}\freetype-install
 
   - name: Download Raw Build Artifacts
     uses: actions/download-artifact@v3
@@ -57,15 +60,15 @@ runs:
 
       # Run Inno Setup Compiler
       iscc.exe -O./ ./ci/windows/dissolve-gui.iss
-      exe=${ls *.exe}
-      exeBase=${basename $exe}
+      exe=`ls *.exe`
+      exeBase=`basename -s .exe $exe`
       echo "Executable installer is $exe, basename is $exeBase"
       
       # Create Zip from Exe
       innoextract.exe $exe -d $exeBase
-      mv "$exeBase/app/bin/*" $exeBase
-      mv "$exeBase/app" ./
-      zipFile="${exeBaseName}.zip"
+      mv ${exeBase}/app/bin/* $exeBase
+      mv ${exeBase}/app ./
+      zipFile="${exeBase}.zip"
       zip -r $zipFile $exeBase
       
       # Collect artifacts
@@ -76,6 +79,5 @@ runs:
   - name: Upload Package Artifacts
     uses: actions/upload-artifact@v3
     with:
-      name: windows-package-artifacts
-      path: |
-        ${{ github.workspace }}\packages
+      name: packages
+      path: ${{ github.workspace }}\packages

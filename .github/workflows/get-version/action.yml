@@ -1,4 +1,5 @@
 name: Get Code Version
+description: Obtain and export code version from source
 
 runs:
   using: "composite"
