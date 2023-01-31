@@ -476,7 +476,7 @@ void Interpolator::addInterpolated(Interpolator &source, Data1D &dest, double fa
 }
 
 // Add test function for benchmarks
-std::vector<double> Interpolator::y(std::vector<double> xs)
+std::vector<double> Interpolator::y(const std::vector<double> &xs)
 {
     // Creates vector to store results in reserving space the same size as xs
     std::vector<double> result;
