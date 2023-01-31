@@ -3,36 +3,45 @@
 
 #pragma once
 
-#include "modules/siterdf/gui/ui_siterdfwidget.h"
+#include "modules/angle/gui/ui_anglewidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations
-class SiteRDFModule;
+class AngleModule;
 class DataViewer;
 
 // Module Widget
-class SiteRDFModuleWidget : public ModuleWidget
+class AngleModuleWidget : public ModuleWidget
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 
     private:
     // Associated Module
-    SiteRDFModule *module_;
+    AngleModule *module_;
 
     public:
-    SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module, Dissolve &dissolve);
+    AngleModuleWidget(QWidget *parent, AngleModule *module, Dissolve &dissolve);
 
     /*
      * UI
      */
     private:
     // Main form declaration
-    Ui::SiteRDFModuleWidget ui_;
-    // DataViewer contained within this widget
-    DataViewer *rdfGraph_;
+    Ui::AngleModuleWidget ui_;
+    // DataViewers contained within this widget
+    DataViewer *rdfABGraph_, *rdfBCGraph_, *angleGraph_, *dAngleABGraph_, *dAngleBCGraph_;
 
     public:
     // Update controls within widget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
+
+    /*
+     * Widgets / Functions
+     */
+    private:
+    // Set data targets in graphs
+    void setGraphDataTargets(AngleModule *module);
+
+    private slots:
 };

@@ -5,11 +5,11 @@
 #include "gui/layertab.h"
 #include "gui/selectconfigurationdialog.h"
 #include "main/dissolve.h"
-#include "modules/calculate_avgmol/avgmol.h"
-#include "modules/calculate_sdf/sdf.h"
+#include "modules/avgmol/avgmol.h"
 #include "modules/epsr/epsr.h"
 #include "modules/gr/gr.h"
 #include "modules/registry.h"
+#include "modules/sdf/sdf.h"
 #include "modules/siterdf/siterdf.h"
 #include "modules/sq/sq.h"
 
