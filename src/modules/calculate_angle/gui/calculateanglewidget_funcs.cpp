@@ -121,25 +121,25 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *modul
         return;
 
     // Calculated A...B RDF
-    auto rdfAB = rdfABGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//Process1D//RDF(AB)", module_->name(), cfg->niceName()), "A...B g(r)");
+    auto rdfAB =
+        rdfABGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF(AB)", module_->name()), "A...B g(r)");
     rdfAB->setColour(StockColours::BlueStockColour);
 
     // Calculated B...C RDF
-    auto rdfBC = rdfBCGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//Process1D//RDF(BC)", module_->name(), cfg->niceName()), "B...C g(r)");
+    auto rdfBC =
+        rdfBCGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF(BC)", module_->name()), "B...C g(r)");
     rdfBC->setColour(StockColours::BlueStockColour);
 
     // Calculated angle histogram
-    auto angle = angleGraph_->createRenderable<RenderableData1D>(
-        fmt::format("{}//Process1D//Angle(ABC)", module_->name(), cfg->niceName()), "A-B...C Angle");
+    auto angle = angleGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Angle(ABC)", module_->name()),
+                                                                 "A-B...C Angle");
     angle->setColour(StockColours::RedStockColour);
 
     // Calculated (A-B)-C distance-angle map
-    dAngleABGraph_->createRenderable<RenderableData2D>(
-        fmt::format("{}//Process2D//DAngle((A-B)-C)", module_->name(), cfg->niceName()), "A-B vs A-B-C");
+    dAngleABGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle((A-B)-C)", module_->name()),
+                                                       "A-B vs A-B-C");
 
     // Calculated A-(B-C) distance-angle map
-    dAngleBCGraph_->createRenderable<RenderableData2D>(
-        fmt::format("{}//Process2D//DAngle(A-(B-C))", module_->name(), cfg->niceName()), "B-C vs A-B-C");
+    dAngleBCGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle(A-(B-C))", module_->name()),
+                                                       "B-C vs A-B-C");
 }
