@@ -540,16 +540,16 @@ std::vector<double> Interpolator::y(const std::vector<double> &xs)
                 if (x >= x_.back())
                     result.push_back(y_.back());
 
-                double h = x - x_[lastInterval_];
-                double hh = h * h;
+                auto h = x - x_[lastInterval_];
+                auto hh = h * h;
                 result.push_back(a_[lastInterval_] + b_[lastInterval_] * h + c_[lastInterval_] * hh +
                                  d_[lastInterval_] * hh * h);
             }
             break;
             //	case (Interpolator::ConstrainedSplineInterpolation):
             //	{
-            //		double h = x;
-            //		double hh = h*h;
+            //		auto h = x;
+            //		auto hh = h*h;
             //		return a_[interval] + b_[interval]*h + c_[interval]*hh + d_[interval]*hh*h;
             //	}
             // break;
@@ -558,7 +558,7 @@ std::vector<double> Interpolator::y(const std::vector<double> &xs)
                 if (lastInterval_ >= (x_.size() - 1))
                     result.push_back(y_.back());
 
-                double delta = (x - x_[lastInterval_]) / h_[lastInterval_];
+                auto delta = (x - x_[lastInterval_]) / h_[lastInterval_];
                 result.push_back(y_[lastInterval_] + delta * a_[lastInterval_]);
             }
             break;
@@ -567,13 +567,13 @@ std::vector<double> Interpolator::y(const std::vector<double> &xs)
                 if (lastInterval_ >= (x_.size() - 3))
                     result.push_back(y_.back());
 
-                double ppp = (x - x_[lastInterval_]) / h_[lastInterval_];
+                auto ppp = (x - x_[lastInterval_]) / h_[lastInterval_];
 
-                double vk0 = y_[lastInterval_];
-                double vk1 = y_[lastInterval_ + 1];
-                double vk2 = y_[lastInterval_ + 2];
-                double t1 = vk0 + (vk1 - vk0) * ppp;
-                double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
+                auto vk0 = y_[lastInterval_];
+                auto vk1 = y_[lastInterval_ + 1];
+                auto vk2 = y_[lastInterval_ + 2];
+                auto t1 = vk0 + (vk1 - vk0) * ppp;
+                auto t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
                 result.push_back(t1 + (t2 - t1) * ppp * 0.5);
             }
             break;
