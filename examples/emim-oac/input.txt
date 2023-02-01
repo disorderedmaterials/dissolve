@@ -359,10 +359,10 @@ Layer  'Evolve (Standard)'
   EndModule
 EndLayer
 
-Layer  'RDF / Neutron S(Q)'
+Layer  'GR / Neutron S(Q)'
   Frequency  5
 
-  Module  RDF  'RDF'
+  Module  GR  'GR'
     Frequency  1
     AveragingScheme  Linear
     Configurations  'Bulk'
@@ -375,7 +375,7 @@ Layer  'RDF / Neutron S(Q)'
     AveragingScheme  Linear
     BraggQBroadening  'GaussianC2'  0  0.02
     QBroadening  'OmegaDependentGaussian'  0.02
-    SourceRDFs  'RDF'
+    SourceGR  'GR'
     WindowFunction  None
   EndModule
 
@@ -472,7 +472,7 @@ EndLayer
 Layer  'Analyse RDF/CN'
   Frequency  1
 
-  Module  CalculateRDF  'RDF-CA'
+  Module  SiteRDF  'GR-CA'
     Frequency  1
     Configuration  'Bulk'
     DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
@@ -482,7 +482,7 @@ Layer  'Analyse RDF/CN'
     RangeAEnabled  True
   EndModule
 
-  Module  CalculateRDF  'RDF-CC'
+  Module  SiteRDF  'GR-CC'
     Frequency  1
     Configuration  'Bulk'
     DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02
@@ -490,7 +490,7 @@ Layer  'Analyse RDF/CN'
     SiteB  '1-ethyl-3-methylimidazolium'  'RingNN'
   EndModule
 
-  Module  CalculateRDF  'RDF-AA'
+  Module  SiteRDF  'GR-AA'
     Frequency  1
     Configuration  'Bulk'
     DistanceRange  0.000000e+00  1.400000e+01  5.000000e-02

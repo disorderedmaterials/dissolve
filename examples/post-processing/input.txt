@@ -218,10 +218,10 @@ Layer  'Import'
   EndModule
 EndLayer
 
-Layer  'RDF / Neutron S(Q)'
+Layer  'GR / Neutron S(Q)'
   Frequency  1
 
-  Module  RDF  'RDF'
+  Module  GR  'GR'
     Frequency  1
     AveragingScheme  Linear
     Configurations  'NewConfiguration'
@@ -234,7 +234,7 @@ Layer  'RDF / Neutron S(Q)'
     AveragingScheme  Linear
     BraggQBroadening  'GaussianC2'  0  0.02
     QBroadening  'None'  
-    SourceRDFs  'RDF'
+    SourceGR  'GR'
     WindowFunction  None
   EndModule
 
@@ -250,7 +250,7 @@ EndLayer
 Layer  'Analyse'
   Frequency  1
 
-  Module  CalculateRDF  'CalculateRDF'
+  Module  SiteRDF  'SiteRDF'
     Frequency  1
     Configuration  'NewConfiguration'
     DistanceRange  0.000000e+00  1.000000e+01  5.000000e-02
