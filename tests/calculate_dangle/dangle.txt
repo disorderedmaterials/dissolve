@@ -103,7 +103,7 @@ Module  ImportTrajectory
 EndModule
 
 # Distance-Angle Map X-H...O
-Module  CalculateDAngle  'DAngle(X-H...O)'
+Module  DAngle  'DAngle(X-H...O)'
   Configuration  'Bulk'
   SiteA  Water  'O'
   SiteB  Water  'H'

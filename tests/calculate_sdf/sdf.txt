@@ -99,7 +99,7 @@ Module  ImportTrajectory
 EndModule
 
 # Spatial distribution of O atoms around central molecule
-Module  CalculateSDF  'SDF(O)'
+Module  SDF  'SDF(O)'
   Configuration  'Bulk'
   SiteA  Water  'origin'
   SiteB  Water  'O'

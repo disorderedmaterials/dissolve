@@ -34,7 +34,7 @@ EndConfiguration
 
 Layer  'Main Processing'
 
-  Module  RDF  'RDFs'
+  Module  GR  'GRs'
     Frequency  1
     Method  Simple
     Configurations  'Crystal'
@@ -51,7 +51,7 @@ Layer  'Main Processing'
   EndModule
 
   Module  SQ  SQs
-    SourceRDFs  'RDFs'
+    SourceGR  'GRs'
     QMin 0.05
     # Slightly reduce QMax cf EPSR (20.0) for best consistency (EPSR "over-calculates" past the defined range)
     QMax  19.0

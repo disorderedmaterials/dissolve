@@ -128,7 +128,7 @@ EndConfiguration
 Layer  'Processing'
 
 # Calculate RDFs
-Module  RDF  'RDFs'
+Module  GR  'GRs'
   Configurations  'Liquid'
   IntraBroadening  None
   BinWidth  0.03
@@ -139,7 +139,7 @@ EndModule
 
 # Calcualte S(Q) from RDFs
 Module SQ  'SQs'
-  SourceRDFs  'RDFs'
+  SourceGR  'GRs'
   QBroadening  OmegaDependentGaussian  0.02
   WindowFunction  Lorch0
   #Save  On

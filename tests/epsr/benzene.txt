@@ -128,7 +128,7 @@ EndConfiguration
 Layer  'Processing'
 
 # Calculate RDFs
-Module  RDF  'RDFs'
+Module  GR  'GRs'
   Configurations  'Liquid'
   IntraBroadening  None
   BinWidth  0.03
@@ -140,13 +140,13 @@ EndModule
 # Test partial g(r) (unbound terms)
 Module  DataTest  'Partial g(r) (unbound)'
   Threshold  0.05
-  Data1D  'RDFs//Liquid//OriginalGR//CA-CA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
+  Data1D  'GRs//Liquid//OriginalGR//CA-CA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
     Y  2
   EndData1D
-  Data1D  'RDFs//Liquid//OriginalGR//CA-HA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
+  Data1D  'GRs//Liquid//OriginalGR//CA-HA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
     Y  4
   EndData1D
-  Data1D  'RDFs//Liquid//OriginalGR//HA-HA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
+  Data1D  'GRs//Liquid//OriginalGR//HA-HA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
     Y  6
   EndData1D
 EndModule
@@ -154,20 +154,20 @@ EndModule
 # Test partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (bound)'
   Threshold  0.17
-  Data1D  'RDFs//Liquid//OriginalGR//CA-CA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
+  Data1D  'GRs//Liquid//OriginalGR//CA-CA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
     Y  2
   EndData1D
-  Data1D  'RDFs//Liquid//OriginalGR//CA-HA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
+  Data1D  'GRs//Liquid//OriginalGR//CA-HA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
     Y  4
   EndData1D
-  Data1D  'RDFs//Liquid//OriginalGR//HA-HA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
+  Data1D  'GRs//Liquid//OriginalGR//HA-HA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
     Y  6
   EndData1D
 EndModule
 
 # Calcualte S(Q) from RDFs
 Module SQ  'SQs'
-  SourceRDFs  'RDFs'
+  SourceGR  'GRs'
   QBroadening  OmegaDependentGaussian  0.02
   WindowFunction  Lorch0
   #Save  On

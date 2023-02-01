@@ -1,15 +1,15 @@
 # Restart file written by Dissolve v0.8.0 at 10:41:55 on 03-06-2021.
-Processing  CalculateAvgMol01//X  SampledVector  249  1
+Processing  AvgMol01//X  SampledVector  249  1
 3 124 # nData count
 1.6149999999999998 0.35939764421413073 15.88750000000003
 0.0 0.0 0.0
 1.6149999999999998 0.35939764421413073 15.88750000000003
-Processing  CalculateAvgMol01//Y  SampledVector  249  1
+Processing  AvgMol01//Y  SampledVector  249  1
 3 124 # nData count
 0.0 0.0 0.0
 0.0 0.0 0.0
 2.2839549032325452 0.5082650227325635 31.775
-Processing  CalculateAvgMol01//Z  SampledVector  249  1
+Processing  AvgMol01//Z  SampledVector  249  1
 3 124 # nData count
 0.0 0.0 0.0
 0.0 0.0 0.0
@@ -1128,7 +1128,7 @@ Configuration  'Single'
 0 2.230000e+00 2.230000e+00 2.230000e+00
 Timing  ImportTrajectory01
 4.953225806451611e-05  124  7.328709677419345e-10
-Timing  CalculateAvgMol01
+Timing  AvgMol01
 3.646774193548388e-05  124  2.7287096774193583e-10
 Timing  DataTest01
 0.0  0  0.0
