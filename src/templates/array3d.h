@@ -68,11 +68,11 @@ template <class A> class Array3D
         array_.resize(nX_ * nY_ * nZ_);
 
         // Create slice offsets array
-        sliceOffsets_.resize(nZ_);
-        std::vector<int> indices(nZ_, 0);
+        sliceOffsets_.resize(nX_);
+        std::vector<int> indices(nX_, 0);
         std::iota(indices.begin(), indices.end(), 0);
         std::transform(indices.begin(), indices.end(), sliceOffsets_.begin(),
-                       [this](const int index) { return index * nX_ * nY_; });
+                       [this](const int index) { return index * nZ_ * nY_; });
     }
 
     public:
@@ -92,7 +92,7 @@ template <class A> class Array3D
         assert(y >= 0 && y < nY_);
         assert(z >= 0 && z < nZ_);
 
-        return array_[sliceOffsets_[z] + y * nX_ + x];
+        return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
     // Return specified element as const-reference
     const A &operator[](std::tuple<int, int, int> index) const
@@ -102,7 +102,7 @@ template <class A> class Array3D
         assert(y >= 0 && y < nY_);
         assert(z >= 0 && z < nZ_);
 
-        return array_[sliceOffsets_[z] + y * nX_ + x];
+        return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
     // Return address of specified element
     A *ptr(int x, int y, int z)
@@ -111,7 +111,7 @@ template <class A> class Array3D
         assert(y >= 0 && y < nY_);
         assert(z >= 0 && z < nZ_);
 
-        return &array_[sliceOffsets_[z] + y * nX_ + x];
+        return &array_[sliceOffsets_[x] + y * nZ_ + z];
     }
     // Return array size in x
     int nX() const { return nX_; }
@@ -249,10 +249,10 @@ template <class A> class OffsetArray3D
         if ((nX_ > 0) && (nY_ > 0) && (nZ_ > 0))
         {
             array_.resize(nX_ * nY_ * nZ_);
-            sliceOffsets_.resize(nZ_);
+            sliceOffsets_.resize(nX_);
 
-            for (auto n = 0; n < nZ_; ++n)
-                sliceOffsets_[n] = n * nX_ * nY_;
+            for (auto n = 0; n < nX_; ++n)
+                sliceOffsets_[n] = n * nZ_ * nY_;
         }
     }
     // Return specified element as reference
@@ -263,7 +263,7 @@ template <class A> class OffsetArray3D
         assert(y >= yMin_ && y <= yMax_);
         assert(z >= zMin_ && z <= zMax_);
 
-        return array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
+        return array_[sliceOffsets_[x - xMin_] + (y - yMin_) * nZ_ + (z - zMin_)];
     }
     // Return specified element as const reference
     const A &operator[](std::tuple<int, int, int> index) const
@@ -273,7 +273,7 @@ template <class A> class OffsetArray3D
         assert(y >= yMin_ && y <= yMax_);
         assert(z >= zMin_ && z <= zMax_);
 
-        return array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
+        return array_[sliceOffsets_[x - xMin_] + (y - yMin_) * nZ_ + (z - zMin_)];
     }
     // Return address of specified element
     A *pointerAt(int x, int y, int z)
@@ -282,7 +282,7 @@ template <class A> class OffsetArray3D
         assert(y >= yMin_ && y <= yMax_);
         assert(z >= zMin_ && z <= zMax_);
 
-        return &array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
+        return &array_[sliceOffsets_[x - xMin_] + (y - yMin_) * nZ_ + (z - zMin_)];
     }
     // Return array size in x
     int nX() const { return nX_; }
