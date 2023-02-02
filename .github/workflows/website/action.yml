@@ -1,0 +1,94 @@
+name: Website
+description: Build and publish website
+
+inputs:
+  hugoVersion:
+    default: "0.98.0"
+  webDirRoot:
+    default: "github.com/disorderedmaterials/dissolve/edit/develop/web"
+  deploy:
+    type: boolean
+    default: false
+  pdfExamples:
+    type: boolean
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: 'Download & Install Hugo (Extended Version)'
+    shell: bash
+    run: |
+      set -ex
+      wget https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugoVersion }}/hugo_extended_${{ inputs.hugoVersion }}_Linux-64bit.deb -O '${{ github.workspace }}/hugo.deb'
+      sudo dpkg -i ${{ github.workspace }}/hugo*.deb
+
+  - name: 'Install pandoc / xetex'
+    if: ${{ inputs.pdfExamples == 'true' }}
+    shell: bash
+    run: |
+      set -ex
+      sudo apt install pandoc
+      sudo apt install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-xetex
+
+  - name: 'Copy Icons'
+    shell: bash
+    run: |
+      set -ex
+      cp -v src/gui/icons/*.svg web/static/img
+
+  - name: 'Meld Examples'
+    shell: bash
+    run: |
+      set -ex
+      for example in $(find ./web/content/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      do
+        ci/scripts/meld-example -d ${example}
+      done
+
+  - name: 'Build Site'
+    shell: bash
+    run: |
+      set -ex
+      cd web
+      npm install
+      hugo
+
+  - name: 'Rewrite Edit Links'
+    shell: bash
+    run: |
+      set -ex
+      # Remove language ('en') from 'Edit on GitHub' path links
+      find web/public/docs/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content/en/docs/:${{ inputs.webDirRoot }}/content/docs/:g" {} +
+      find web/public/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content/en/examples/:${{ inputs.webDirRoot }}/content/examples/:g" {} +
+
+  - name: 'Check Links'
+    shell: bash
+    run: |
+      set -ex
+      sudo npm install -g link-checker
+      link-checker --disable-external web/public
+
+  - name: 'Create PDFs'
+    if: ${{ inputs.pdfExamples == 'true' }}
+    shell: bash
+    run: |
+      set -ex
+      cd web/public/examples/
+      for example in $(find . -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      do
+        echo "Creating pdf for example \"${example}\"..."
+        cd ${example}/single/
+        pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index.html -o ../${example}.pdf
+        cd ../../
+      done
+
+  - name: 'SSH Deploy to Server'
+    if: ${{ inputs.deploy == 'true' }}
+    shell: bash
+    run: |
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
+      chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_DIR}
