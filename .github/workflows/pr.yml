@@ -5,6 +5,7 @@ on:
     branches:
     - '*'
     paths-ignore:
+    - '.github/workflows/cache.yml'
     - '.github/workflows/continuous.yml'
     - '.github/workflows/release.yml'
     - '.github/workflows/web.yml'
