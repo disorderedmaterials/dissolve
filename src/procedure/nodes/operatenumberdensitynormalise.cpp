@@ -16,12 +16,12 @@ OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedu
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateNumberDensityNormalise),
       normalisationSites_(std::move(nodes)), targetPopulation_{populationTarget}
 {
-    // Create keywords
-    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>("Control", "Site",
+    keywords_.setOrganisation("Options", "Inputs");
+    keywords_.add<NodeVectorKeyword<SelectProcedureNode>>("Site",
                                                           "Site(s) by which to normalise data based on their population",
                                                           normalisationSites_, this, ProcedureNode::NodeType::Select, false);
     keywords_.add<EnumOptionsKeyword<SelectProcedureNode::SelectionPopulation>>(
-        "Control", "Population", "Target population quantity to use in normalisation", targetPopulation_,
+        "Population", "Target population quantity to use in normalisation", targetPopulation_,
         SelectProcedureNode::selectionPopulations());
 }
 

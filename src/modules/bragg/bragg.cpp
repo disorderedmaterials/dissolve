@@ -11,34 +11,34 @@
 
 BraggModule::BraggModule() : Module("Bragg")
 {
-    // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    // Control
-    keywords_.add<OptionalIntegerKeyword>("Control", "Averaging",
-                                          "Number of historical data sets to combine into final reflection data",
-                                          averagingLength_, 1, std::nullopt, 1, "Off");
-    keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("Control", "AveragingScheme",
-                                                                  "Weighting scheme to use when averaging reflection data",
-                                                                  averagingScheme_, Averaging::averagingSchemes());
-    keywords_
-        .add<DoubleKeyword>("Control", "QDelta", "Resolution (bin width) in Q space to use when calculating Bragg reflections",
-                            qDelta_, 1.0e-5)
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<DoubleKeyword>("QMin", "Minimum Q value for Bragg calculation", qMin_, 0.0)
         ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
-    keywords_.add<DoubleKeyword>("Control", "QMax", "Maximum Q value for Bragg calculation", qMax_, 0.0)
-        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
-    keywords_.add<DoubleKeyword>("Control", "QMin", "Minimum Q value for Bragg calculation", qMin_, 0.0)
+    keywords_.add<DoubleKeyword>("QMax", "Maximum Q value for Bragg calculation", qMax_, 0.0)
         ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
     keywords_
-        .add<Vec3IntegerKeyword>("Control", "Multiplicity",
+        .add<DoubleKeyword>("QDelta", "Resolution (bin width) in Q space to use when calculating Bragg reflections", qDelta_,
+                            1.0e-5)
+        ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
+    keywords_
+        .add<Vec3IntegerKeyword>("Multiplicity",
                                  "Bragg intensity scaling factor accounting for number of repeat units in Configuration",
                                  multiplicity_, Vec3<int>(1, 1, 1), std::nullopt, Vec3Labels::HKLLabels)
         ->setEditSignals({KeywordBase::ClearModuleData, KeywordBase::RecreateRenderables});
 
-    // Export
-    keywords_.add<BoolKeyword>("Export", "SaveReflections", "Whether to save Bragg reflection data to disk", saveReflections_);
+    keywords_.setOrganisation("Options", "Averaging");
+    keywords_.add<OptionalIntegerKeyword>("Averaging", "Number of historical data sets to combine into final reflection data",
+                                          averagingLength_, 1, std::nullopt, 1, "Off");
+    keywords_.add<EnumOptionsKeyword<Averaging::AveragingScheme>>("AveragingScheme",
+                                                                  "Weighting scheme to use when averaging reflection data",
+                                                                  averagingScheme_, Averaging::averagingSchemes());
 
-    // Test
+    keywords_.setOrganisation("Export");
+    keywords_.add<BoolKeyword>("SaveReflections", "Whether to save Bragg reflection data to disk", saveReflections_);
+
+    keywords_.setOrganisation("Advanced");
     keywords_.addHidden<StringKeyword>(
         "TestReflections", "Whether to test calculated reflection data against that in specified file", testReflectionsFile_);
 }

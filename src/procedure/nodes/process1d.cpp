@@ -18,16 +18,21 @@ Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedur
     : ProcedureNode(ProcedureNode::NodeType::Process1D), sourceData_(target),
       normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
-    keywords_.add<NodeKeyword<Collect1DProcedureNode>>("Control", "SourceData",
-                                                       "Collect1D node containing the histogram data to process", sourceData_,
-                                                       this, ProcedureNode::NodeType::Collect1D, false);
+    keywords_.setOrganisation("Options", "Source");
+    keywords_.add<NodeKeyword<Collect1DProcedureNode>>("SourceData", "Collect1D node containing the histogram data to process",
+                                                       sourceData_, this, ProcedureNode::NodeType::Collect1D, false);
     keywords_.add<BoolKeyword>(
-        "Control", "Instantaneous",
-        "Whether to use only the current binned data of the histogram, rather than the accumulated average", instantaneous_);
-    keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
-    keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
-    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
+        "Instantaneous", "Whether to use only the current binned data of the histogram, rather than the accumulated average",
+        instantaneous_);
+
+    keywords_.setOrganisation("Options", "Labels");
+    keywords_.add<StringKeyword>("LabelValue", "Label for the value axis", labelValue_);
+    keywords_.add<StringKeyword>("LabelX", "Label for the x axis", labelX_);
+
+    keywords_.setOrganisation("Options", "Export");
+    keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save processed data",
                                         exportFileAndFormat_, "EndExport");
+
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
                                            normalisationBranch_, this, ProcedureNode::OperateContext);
 

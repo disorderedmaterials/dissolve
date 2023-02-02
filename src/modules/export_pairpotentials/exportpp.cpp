@@ -6,7 +6,7 @@
 
 ExportPairPotentialsModule::ExportPairPotentialsModule() : Module("ExportPairPotentials")
 {
-    // Format
-    keywords_.add<FileAndFormatKeyword>("Format", "Format", "Basename and format in which to write potentials",
-                                        pairPotentialFormat_, "EndFormat");
+    keywords_.setOrganisation("File");
+    keywords_.add<FileAndFormatKeyword>("Format", "Basename and format in which to write potentials", pairPotentialFormat_,
+                                        "EndFormat");
 }

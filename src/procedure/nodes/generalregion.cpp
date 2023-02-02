@@ -7,8 +7,9 @@
 
 GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::GeneralRegion)
 {
-    keywords_.add<DoubleKeyword>("Control", "Tolerance", "Distance threshold for avoiding existing atoms in the configuration",
-                                 tolerance_, 0.1);
+    keywords_.setOrganisation("Options", "Definition");
+    keywords_.add<DoubleKeyword>("Tolerance", "Distance threshold for avoiding existing atoms in the configuration", tolerance_,
+                                 0.1);
 }
 
 /*

@@ -34,25 +34,27 @@ AddProcedureNode::AddProcedureNode(std::shared_ptr<const CoordinateSetsProcedure
 // Set up keywords for node
 void AddProcedureNode::setUpKeywords()
 {
-    // Set up keywords
-    keywords_.add<SpeciesKeyword>("Control", "Species", "Target species to add", species_);
-    keywords_.add<NodeValueKeyword>("Control", "Population", "Population of the target species to add", population_, this);
+    keywords_.setOrganisation("Options", "Target");
+    keywords_.add<SpeciesKeyword>("Species", "Target species to add", species_);
+    keywords_.add<NodeKeyword<CoordinateSetsProcedureNode>>("CoordinateSets", "Target coordinate sets to add", coordinateSets_,
+                                                            this, ProcedureNode::NodeType::CoordinateSets, true);
+    keywords_.add<NodeValueKeyword>("Population", "Population of the target species to add", population_, this);
+    keywords_.add<NodeValueEnumOptionsKeyword<Units::DensityUnits>>("Density", "Density at which to add the target species",
+                                                                    density_, this, Units::densityUnits());
+
+    keywords_.setOrganisation("Options", "Box Modification");
     keywords_.add<EnumOptionsKeyword<AddProcedureNode::BoxActionStyle>>(
-        "Control", "BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_,
-        boxActionStyles());
-    keywords_.add<BoolKeyword>("Control", "ScaleA", "Scale box length A when modifying volume", scaleA_);
-    keywords_.add<BoolKeyword>("Control", "ScaleB", "Scale box length B when modifying volume", scaleB_);
-    keywords_.add<BoolKeyword>("Control", "ScaleC", "Scale box length C when modifying volume", scaleC_);
-    keywords_.add<NodeValueEnumOptionsKeyword<Units::DensityUnits>>(
-        "Control", "Density", "Density at which to add the target species", density_, this, Units::densityUnits());
-    keywords_.add<BoolKeyword>("Control", "Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
+        "BoxAction", "Action to take on the Box geometry / volume on addition of the species", boxAction_, boxActionStyles());
+    keywords_.add<BoolKeyword>("ScaleA", "Scale box length A when modifying volume", scaleA_);
+    keywords_.add<BoolKeyword>("ScaleB", "Scale box length B when modifying volume", scaleB_);
+    keywords_.add<BoolKeyword>("ScaleC", "Scale box length C when modifying volume", scaleC_);
+
+    keywords_.setOrganisation("Options", "Target");
     keywords_.add<EnumOptionsKeyword<AddProcedureNode::PositioningType>>(
-        "Control", "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
-    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Control", "Region", "Region into which to add the species", region_,
-                                                        this, ProcedureNode::NodeClass::Region, true);
-    keywords_.add<NodeKeyword<CoordinateSetsProcedureNode>>("Control", "CoordinateSets", "Target coordinate sets to add",
-                                                            coordinateSets_, this, ProcedureNode::NodeType::CoordinateSets,
-                                                            true);
+        "Positioning", "Positioning type for individual molecules", positioningType_, positioningTypes());
+    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Region", "Region into which to add the species", region_, this,
+                                                        ProcedureNode::NodeClass::Region, true);
+    keywords_.add<BoolKeyword>("Rotate", "Whether to randomly rotate molecules on insertion", rotate_);
 }
 
 /*

@@ -12,16 +12,16 @@
 
 DataTestModule::DataTestModule() : Module("DataTest")
 {
-    // Test
-    keywords_.add<Data1DStoreKeyword>("Test", "Data1D", "Specify one-dimensional test reference data", test1DData_);
-    keywords_.add<Data2DStoreKeyword>("Test", "Data2D", "Specify two-dimensional test reference data", test2DData_);
-    keywords_.add<EnumOptionsKeyword<Error::ErrorType>>("Test", "ErrorType", "Type of error calculation to use", errorType_,
+    keywords_.setOrganisation("Test");
+    keywords_.add<Data1DStoreKeyword>("Data1D", "Specify one-dimensional test reference data", test1DData_);
+    keywords_.add<Data2DStoreKeyword>("Data2D", "Specify two-dimensional test reference data", test2DData_);
+    keywords_.add<EnumOptionsKeyword<Error::ErrorType>>("ErrorType", "Type of error calculation to use", errorType_,
                                                         Error::errorTypes());
-    keywords_.add<StringPairVectorKeyword>("Test", "InternalData1D", "Specify one-dimensional internal reference and test data",
+    keywords_.add<StringPairVectorKeyword>("InternalData1D", "Specify one-dimensional internal reference and test data",
                                            internal1DData_);
     keywords_.add<StringDoubleVectorKeyword>(
-        "Test", "SampledDouble", "Specify test reference values for named SampledDouble (value) data", testSampledDoubleData_);
-    keywords_.add<ValueStoreKeyword>("Test", "SampledVector", "Specify test reference values for named SampledVector data",
+        "SampledDouble", "Specify test reference values for named SampledDouble (value) data", testSampledDoubleData_);
+    keywords_.add<ValueStoreKeyword>("SampledVector", "Specify test reference values for named SampledVector data",
                                      testSampledVectorData_);
-    keywords_.add<DoubleKeyword>("Test", "Threshold", "Threshold for error metric above which test fails", threshold_, 1.0e-15);
+    keywords_.add<DoubleKeyword>("Threshold", "Threshold for error metric above which test fails", threshold_, 1.0e-15);
 }

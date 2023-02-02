@@ -12,13 +12,14 @@
 
 PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase(ProcedureNode::NodeType::PickProximity)
 {
-    keywords_.add<SpeciesVectorKeyword>("Control", "Species", "Species to count", speciesToPick_);
-    keywords_.add<OptionalIntegerKeyword>("Control", "MinCount", "Minimum number", minCount_, 0, std::nullopt, 1, "Off");
-    keywords_.add<OptionalIntegerKeyword>("Control", "MaxCount", "Maximum number", maxCount_, 0, std::nullopt, 1, "Off");
-    keywords_.add<OptionalDoubleKeyword>("Control", "MinDistance", "Minimum distance for picking (Angstroms)", minDistance_,
-                                         0.0, std::nullopt, 0.1, "Off");
-    keywords_.add<OptionalDoubleKeyword>("Control", "MaxDistance", "Maximum distance for picking (Angstroms)", maxDistance_,
-                                         0.0, std::nullopt, 0.1, "Off");
+    keywords_.setOrganisation("Options", "Proximal Species");
+    keywords_.add<SpeciesVectorKeyword>("Species", "Species to count", speciesToPick_);
+    keywords_.add<OptionalIntegerKeyword>("MinCount", "Minimum number", minCount_, 0, std::nullopt, 1, "Off");
+    keywords_.add<OptionalIntegerKeyword>("MaxCount", "Maximum number", maxCount_, 0, std::nullopt, 1, "Off");
+    keywords_.add<OptionalDoubleKeyword>("MinDistance", "Minimum distance for picking (Angstroms)", minDistance_, 0.0,
+                                         std::nullopt, 0.1, "Off");
+    keywords_.add<OptionalDoubleKeyword>("MaxDistance", "Maximum distance for picking (Angstroms)", maxDistance_, 0.0,
+                                         std::nullopt, 0.1, "Off");
 }
 
 /*

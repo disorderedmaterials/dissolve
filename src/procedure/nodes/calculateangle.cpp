@@ -13,15 +13,17 @@ CalculateAngleProcedureNode::CalculateAngleProcedureNode(std::shared_ptr<SelectP
                                                          std::shared_ptr<SelectProcedureNode> site2)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAngle, site0, site1, site2)
 {
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that represents 'i' in the angle i-j-k", sites_[0],
-                                                    this, ProcedureNode::NodeType::Select, true);
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "J", "Site that represents 'j' in the angle i-j-k", sites_[1],
-                                                    this, ProcedureNode::NodeType::Select, true);
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "K", "Site that represents 'k' in the angle i-j-k", sites_[2],
-                                                    this, ProcedureNode::NodeType::Select, true);
-    keywords_.add<BoolKeyword>("Control", "Symmetric",
-                               "Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90",
-                               symmetric_);
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("I", "Site that represents 'i' in the angle i-j-k", sites_[0], this,
+                                                    ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("J", "Site that represents 'j' in the angle i-j-k", sites_[1], this,
+                                                    ProcedureNode::NodeType::Select, true);
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("K", "Site that represents 'k' in the angle i-j-k", sites_[2], this,
+                                                    ProcedureNode::NodeType::Select, true);
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<BoolKeyword>(
+        "Symmetric", "Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90", symmetric_);
 }
 
 /*

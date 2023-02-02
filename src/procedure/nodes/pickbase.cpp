@@ -8,8 +8,9 @@
 PickProcedureNodeBase::PickProcedureNodeBase(ProcedureNode::NodeType nodeType)
     : ProcedureNode(nodeType, ProcedureNode::NodeClass::Pick), selection_(nullptr)
 {
-    keywords_.add<NodeKeyword<PickProcedureNodeBase>>("Control", "From", "Previous selection of molecules from which to pick",
-                                                      selection_, this, ProcedureNode::NodeClass::Pick, true);
+    keywords_.setOrganisation("Options", "Source");
+    keywords_.add<NodeKeyword<PickProcedureNodeBase>>("From", "Previous selection of molecules from which to pick", selection_,
+                                                      this, ProcedureNode::NodeClass::Pick, true);
 }
 
 /*

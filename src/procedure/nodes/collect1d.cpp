@@ -18,11 +18,12 @@ Collect1DProcedureNode::Collect1DProcedureNode(std::shared_ptr<CalculateProcedur
     : ProcedureNode(ProcedureNode::NodeType::Collect1D), xObservable_{observable, 0}, rangeX_{rMin, rMax, binWidth},
       subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
-    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("Control", "QuantityX", "Calculated observable to collect",
-                                                                     xObservable_, this, ProcedureNode::NodeClass::Calculate,
-                                                                     true);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
+    keywords_.setOrganisation("Options", "Quantity / Range");
+    keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
+        "QuantityX", "Calculated observable to collect", xObservable_, this, ProcedureNode::NodeClass::Calculate, true);
+    keywords_.add<Vec3DoubleKeyword>("RangeX", "Range and binwidth of the x-axis of the histogram", rangeX_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
+
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantity was binned successfully",
                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
 }

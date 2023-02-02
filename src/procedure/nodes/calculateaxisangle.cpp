@@ -17,17 +17,19 @@ CalculateAxisAngleProcedureNode::CalculateAxisAngleProcedureNode(std::shared_ptr
                                                                  OrientedSite::SiteAxis axis1)
     : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateAxisAngle, site0, site1), axes_{axis0, axis1}
 {
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "I", "Site that contains the first set of axes", sites_[0], this,
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("I", "Site that contains the first set of axes", sites_[0], this,
                                                     ProcedureNode::NodeType::Select, true);
-    keywords_.add<NodeKeyword<SelectProcedureNode>>("Control", "J", "Site that contains the second set of axes", sites_[1],
-                                                    this, ProcedureNode::NodeType::Select, true);
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisI", "Axis to use from site I", axes_[0],
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("J", "Site that contains the second set of axes", sites_[1], this,
+                                                    ProcedureNode::NodeType::Select, true);
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisI", "Axis to use from site I", axes_[0],
                                                               OrientedSite::siteAxis());
-    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Control", "AxisJ", "Axis to use from site J", axes_[1],
+    keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisJ", "Axis to use from site J", axes_[1],
                                                               OrientedSite::siteAxis());
-    keywords_.add<BoolKeyword>("Control", "Symmetric",
-                               "Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90",
-                               symmetric_);
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<BoolKeyword>(
+        "Symmetric", "Whether to consider angles as symmetric about 90, mapping all angles to the range 0 - 90", symmetric_);
 }
 
 /*

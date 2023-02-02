@@ -10,9 +10,9 @@
 PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region)
     : PickProcedureNodeBase(ProcedureNode::NodeType::PickRegion), region_(region)
 {
-    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Control", "Region",
-                                                        "Region containing molecules that should be picked", region_, this,
-                                                        ProcedureNode::NodeClass::Region, true);
+    keywords_.setOrganisation("Options", "Target");
+    keywords_.add<NodeKeyword<RegionProcedureNodeBase>>("Region", "Region containing molecules that should be picked", region_,
+                                                        this, ProcedureNode::NodeClass::Region, true);
 }
 
 /*

@@ -8,12 +8,10 @@
 
 GeometryOptimisationModule::GeometryOptimisationModule() : Module("GeometryOptimisation")
 {
-    // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    // Method Control
-    keywords_.add<IntegerKeyword>("Control", "MaxCycles", "Maximum number of minimisation cycles to perform", maxCycles_, 1);
-    keywords_.add<DoubleKeyword>("Control", "StepSize", "Initial step size to employ", initialStepSize_, 1.0e-10);
-    keywords_.add<DoubleKeyword>("Control", "Tolerance", "Tolerance controlling convergence of algorithm)", tolerance_,
-                                 1.0e-10);
+    keywords_.setOrganisation("Control");
+    keywords_.add<IntegerKeyword>("MaxCycles", "Maximum number of minimisation cycles to perform", maxCycles_, 1);
+    keywords_.add<DoubleKeyword>("StepSize", "Initial step size to employ", initialStepSize_, 1.0e-10);
+    keywords_.add<DoubleKeyword>("Tolerance", "Tolerance controlling convergence of algorithm)", tolerance_, 1.0e-10);
 }

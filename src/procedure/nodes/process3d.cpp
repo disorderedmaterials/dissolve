@@ -16,15 +16,20 @@ Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedur
     : ProcedureNode(ProcedureNode::NodeType::Process3D), sourceData_(target),
       normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
-    keywords_.add<NodeKeyword<Collect3DProcedureNode>>("Control", "SourceData",
-                                                       "Collect2D node containing the histogram data to process", sourceData_,
-                                                       this, ProcedureNode::NodeType::Collect3D, false);
-    keywords_.add<StringKeyword>("Control", "LabelValue", "Label for the value axis", labelValue_);
-    keywords_.add<StringKeyword>("Control", "LabelX", "Label for the x axis", labelX_);
-    keywords_.add<StringKeyword>("Control", "LabelY", "Label for the y axis", labelY_);
-    keywords_.add<StringKeyword>("Control", "LabelZ", "Label for the z axis", labelZ_);
-    keywords_.add<FileAndFormatKeyword>("Export", "Export", "File format and file name under which to save processed data",
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<NodeKeyword<Collect3DProcedureNode>>("SourceData", "Collect2D node containing the histogram data to process",
+                                                       sourceData_, this, ProcedureNode::NodeType::Collect3D, false);
+
+    keywords_.setOrganisation("Options", "Labels");
+    keywords_.add<StringKeyword>("LabelValue", "Label for the value axis", labelValue_);
+    keywords_.add<StringKeyword>("LabelX", "Label for the x axis", labelX_);
+    keywords_.add<StringKeyword>("LabelY", "Label for the y axis", labelY_);
+    keywords_.add<StringKeyword>("LabelZ", "Label for the z axis", labelZ_);
+
+    keywords_.setOrganisation("Options", "Export");
+    keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save processed data",
                                         exportFileAndFormat_, "EndExport");
+
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
                                            normalisationBranch_, this, ProcedureNode::OperateContext);
 

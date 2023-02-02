@@ -7,11 +7,11 @@
 
 CalculateAvgMolModule::CalculateAvgMolModule() : Module("CalculateAvgMol")
 {
-    // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
+
+    keywords_.setOrganisation("Options", "Sites");
     keywords_
-        .add<SpeciesSiteKeyword>("Control", "Site", "Target site about which to calculate average species geometry",
-                                 targetSite_, true)
+        .add<SpeciesSiteKeyword>("Site", "Target site about which to calculate average species geometry", targetSite_, true)
         ->setEditSignals(KeywordBase::ReloadExternalData);
 
     targetSpecies_ = nullptr;

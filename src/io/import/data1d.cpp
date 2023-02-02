@@ -28,18 +28,19 @@ Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1D
 // Set up keywords for the format
 void Data1DImportFileFormat::setUpKeywords()
 {
-    keywords_.add<IntegerKeyword>("Columns", "X", "Column index to use for x values", xColumn_, 1);
-    keywords_.add<IntegerKeyword>("Columns", "Y", "Column index to use for y values", yColumn_, 1);
-    keywords_.add<IntegerKeyword>("Columns", "Error", "Column index to use for error values", errorColumn_, 0);
-    keywords_.add<OptionalDoubleKeyword>("Manipulations", "RemoveAverage",
-                                         "X axis value from which to form average value to subtract from data",
+    keywords_.setOrganisation("Options", "Columns");
+    keywords_.add<IntegerKeyword>("X", "Column index to use for x values", xColumn_, 1);
+    keywords_.add<IntegerKeyword>("Y", "Column index to use for y values", yColumn_, 1);
+    keywords_.add<IntegerKeyword>("Error", "Column index to use for error values", errorColumn_, 0);
+
+    keywords_.setOrganisation("Options", "Manipulation");
+    keywords_.add<OptionalDoubleKeyword>("RemoveAverage", "X axis value from which to form average value to subtract from data",
                                          removeAverageFromX_, 0.0, std::nullopt, 0.1, "Off");
-    keywords_.add<OptionalDoubleKeyword>("Manipulations", "XMin", "Minimum X value to allow when reading in the data", xMin_,
-                                         0.0, std::nullopt, 0.1, "No Minimum");
-    keywords_.add<OptionalDoubleKeyword>("Manipulations", "XMax", "Maximum X value to allow when reading in the data", xMax_,
-                                         0.0, std::nullopt, 0.1, "No Maximum");
-    keywords_.add<IntegerKeyword>("Manipulations", "RemovePoints", "Remove a number of points from the start of the data",
-                                  nPointsToRemove_, 0);
+    keywords_.add<OptionalDoubleKeyword>("XMin", "Minimum X value to allow when reading in the data", xMin_, 0.0, std::nullopt,
+                                         0.1, "No Minimum");
+    keywords_.add<OptionalDoubleKeyword>("XMax", "Maximum X value to allow when reading in the data", xMax_, 0.0, std::nullopt,
+                                         0.1, "No Maximum");
+    keywords_.add<IntegerKeyword>("RemovePoints", "Remove a number of points from the start of the data", nPointsToRemove_, 0);
 }
 
 /*

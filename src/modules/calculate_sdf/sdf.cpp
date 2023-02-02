@@ -57,26 +57,28 @@ CalculateSDFModule::CalculateSDFModule() : Module("CalculateSDF"), analyser_(Pro
      * Keywords
      */
 
-    // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    // Control
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeX", "Range along X axis", rangeX_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range along Y axis", rangeY_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range along Z axis", rangeZ_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
-                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
-    keywords_.add<SpeciesSiteVectorKeyword>("Control", "SiteA",
-                                            "Set the site(s) 'A' which are to represent the origin of the SDF",
+    keywords_.setOrganisation("Options", "Sites");
+    keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the SDF",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<SpeciesSiteVectorKeyword>(
-        "Control", "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
+        "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
         selectB_->speciesSites(), selectB_->axesRequired());
-    keywords_.add<BoolKeyword>("Control", "ExcludeSameMolecule",
-                               "Whether to exclude correlations between sites on the same molecule", excludeSameMolecule_);
 
-    // Export
-    keywords_.add<FileAndFormatKeyword>("Export", "ExportSDF", "Save the SDF to the specified file / format", sdfFileAndFormat_,
+    keywords_.setOrganisation("Options", "Ranges");
+    keywords_.add<Vec3DoubleKeyword>("RangeX", "Range along X axis", rangeX_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("RangeY", "Range along Y axis", rangeY_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<Vec3DoubleKeyword>("RangeZ", "Range along Z axis", rangeZ_, Vec3<double>(-1.0e6, -1.0e6, 0.05),
+                                     Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels);
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<BoolKeyword>("ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule",
+                               excludeSameMolecule_);
+
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("ExportSDF", "Save the SDF to the specified file / format", sdfFileAndFormat_,
                                         "EndExportSDF");
 }

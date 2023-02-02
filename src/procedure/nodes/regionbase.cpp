@@ -8,9 +8,10 @@
 RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeType)
     : ProcedureNode(nodeType, ProcedureNode::NodeClass::Region)
 {
-    keywords_.add<DoubleKeyword>("Control", "VoxelSize", "Voxel size (length) guiding the coarseness / detail of the region",
-                                 voxelSize_, 0.1);
-    keywords_.add<BoolKeyword>("Control", "Invert", "Invert the logic used to determine free space in the region", invert_);
+    keywords_.setOrganisation("Options", "Grid");
+    keywords_.add<DoubleKeyword>("VoxelSize", "Voxel size (length) guiding the coarseness / detail of the region", voxelSize_,
+                                 0.1);
+    keywords_.add<BoolKeyword>("Invert", "Invert the logic used to determine free space in the region", invert_);
 }
 
 /*
