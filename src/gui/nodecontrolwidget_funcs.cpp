@@ -22,8 +22,13 @@ NodeControlWidget::NodeControlWidget(DissolveWindow *dissolveWindow, NodeRef nod
         QPixmap(QString(":/nodes/icons/nodes_%1.svg")
                     .arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node_->type()))).toLower())));
 
-    // Set up our keyword widget
-    ui_.NodeKeywordsWidget->setUp(node_->keywords(), dissolve_.coreData());
+    // We can only display a single group of widgets at present, so check the size of the index
+    auto &&[keywordIndex, keywordMap] = node_->keywords().keywordOrganisation();
+    if (keywordIndex.size() > 1)
+        Messenger::warn("There are {} keyword groups defined, but only one can be displayed. Tell the developer!\n");
+
+    if (!keywordIndex.empty())
+        ui_.NodeKeywordsWidget->setUp(keywordIndex.front(), keywordMap, dissolve_.coreData());
 
     updateControls();
 }

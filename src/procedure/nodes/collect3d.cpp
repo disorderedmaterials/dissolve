@@ -38,8 +38,8 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range and binwidth of the z-axis of the histogram", rangeZ_,
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
-                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
+    keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
+                                           subCollectBranch_, this, ProcedureNode::AnalysisContext);
 }
 Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable,
                                                ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
@@ -65,8 +65,8 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("Control", "RangeZ", "Range and binwidth of the z-axis of the histogram", rangeZ_,
                                      Vec3<double>(-1.0e6, -1.0e6, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
-                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
+    keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
+                                           subCollectBranch_, this, ProcedureNode::AnalysisContext);
 }
 
 /*

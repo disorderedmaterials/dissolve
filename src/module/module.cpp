@@ -39,8 +39,9 @@ void Module::printValidKeywords()
 {
     Messenger::print("Valid keywords for '{}' Module are:\n", type());
 
-    for (auto &[name, keyword] : keywords_.keywords())
-        Messenger::print("  {:30}  {}\n", name, keyword->description());
+    for (const auto &keywordData : keywords_.keywords())
+        if (keywordData.type() != KeywordStoreData::KeywordType::Deprecated)
+            Messenger::print("  {:30}  {}\n", keywordData.keyword()->name(), keywordData.keyword()->description());
 }
 
 /*
@@ -107,16 +108,16 @@ void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &confi
 {
     // Search for Configuration-based targets
     if (!configurations.empty())
-        for (auto &target : keywords_.targetsGroup())
+        for (auto *keyword : keywords_.targetKeywords())
         {
-            if (target->typeIndex() == typeid(ConfigurationKeyword *))
-                keywords_.set(target->name(), configurations.front().get());
-            else if (target->typeIndex() == typeid(ConfigurationVectorKeyword *))
+            if (keyword->typeIndex() == typeid(ConfigurationKeyword *))
+                keywords_.set(keyword->name(), configurations.front().get());
+            else if (keyword->typeIndex() == typeid(ConfigurationVectorKeyword *))
             {
                 std::vector<Configuration *> rawCfgs(configurations.size());
                 std::transform(configurations.begin(), configurations.end(), rawCfgs.begin(),
                                [](const auto &unique) { return unique.get(); });
-                keywords_.set(target->name(), rawCfgs);
+                keywords_.set(keyword->name(), rawCfgs);
             }
         }
 }

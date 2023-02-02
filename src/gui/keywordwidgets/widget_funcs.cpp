@@ -2,15 +2,17 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/keywordwidgets/producers.h"
+#include "gui/keywordwidgets/sectionHeader.h"
 #include "gui/keywordwidgets/widget.hui"
 #include "gui/signals.h"
 #include "main/dissolve.h"
 #include "module/module.h"
 #include <QFormLayout>
 #include <QLabel>
-#include <QToolBox>
+#include <QPushButton>
+#include <QSpacerItem>
 
-KeywordsWidget::KeywordsWidget(QWidget *parent) : QToolBox(parent)
+KeywordsWidget::KeywordsWidget(QWidget *parent) : QWidget(parent)
 {
     refreshing_ = false;
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -21,21 +23,32 @@ KeywordsWidget::KeywordsWidget(QWidget *parent) : QToolBox(parent)
  */
 
 // Set up controls for specified keywords
-void KeywordsWidget::setUp(const KeywordStore &keywords, const CoreData &coreData)
+void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
+                           const KeywordStore::KeywordStoreMap &keywordMap, const CoreData &coreData)
 {
-    // Clear existing item groups....
-    while (count() > 0)
-        removeItem(0);
     keywordWidgets_.clear();
 
-    for (auto &[groupName, keywords] : keywords.displayGroups())
+    // Get group map
+    auto &groupMap = keywordMap.at(keywordIndexInfo.first);
+
+    // Create a new QWidget and layout for the next group?
+    auto *groupWidget = new QWidget;
+    auto *groupLayout = new QGridLayout(groupWidget);
+    auto row = 0;
+    for (auto sectionName : keywordIndexInfo.second)
     {
-        // Create a new QWidget and layout for our widgets
-        auto *groupWidget = new QWidget;
-        auto *groupLayout = new QFormLayout(groupWidget);
+        // Get keyword map
+        auto &keywords = groupMap.at(sectionName);
+
+        // Create a widget for the section name
+        if (!sectionName.empty())
+        {
+            auto *sectionLabel = new SectionHeaderWidget(QString::fromStdString(std::string(sectionName)));
+            groupLayout->addWidget(sectionLabel, row++, 0, 1, 2);
+        }
 
         // Loop over keywords in the group and add them to our groupbox
-        for (const auto &keyword : keywords)
+        for (auto *keyword : keywords)
         {
             // Try to create a suitable widget
             auto [widget, base] = KeywordWidgetProducer::create(keyword, coreData);
@@ -48,18 +61,53 @@ void KeywordsWidget::setUp(const KeywordStore &keywords, const CoreData &coreDat
             // Connect signals
             connect(widget, SIGNAL(keywordDataChanged(int)), this, SLOT(keywordDataChanged(int)));
 
+            // Put the widget in a horizontal layout with a stretch to absorb extra space
+            auto *w = new QHBoxLayout;
+            w->addWidget(widget, 0);
+            w->addStretch(1);
+
             // Create a label and add it and the widget to our layout
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
             nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
-            groupLayout->addRow(nameLabel, widget);
+            groupLayout->addWidget(nameLabel, row, 0);
+            groupLayout->addLayout(w, row++, 1);
 
             // Push onto our reference list
             keywordWidgets_.push_back(base);
         }
-
-        // Group is finished, so add the widget as a new tab in our QToolBox
-        addItem(groupWidget, QString::fromStdString(std::string(groupName)));
     }
+
+    // Add vertical spacer to the end of the group
+    groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
+    setLayout(groupLayout);
+}
+
+// Create a suitable button for the named group
+std::pair<QPushButton *, bool> KeywordsWidget::buttonForGroup(std::string_view groupName)
+{
+    // Create basic button
+    auto *b = new QPushButton(QString::fromStdString(std::string(groupName)));
+    b->setCheckable(true);
+    b->setAutoExclusive(true);
+    b->setFlat(true);
+
+    const std::vector<std::tuple<std::string_view, QString, bool>> knownButtons = {
+        {"Options", ":/general/icons/general_options.svg", false},
+        {"Export", ":/menu/icons/menu_save.svg", false},
+        {"Advanced", ":/general/icons/general_advanced.svg", true},
+    };
+
+    // Apply icons / alignment to recognised buttons
+    bool alignRight = false;
+    auto it = std::find_if(knownButtons.begin(), knownButtons.end(),
+                           [groupName](const auto &btnData) { return std::get<0>(btnData) == groupName; });
+    if (it != knownButtons.end())
+    {
+        b->setIcon(QIcon(std::get<1>(*it)));
+        alignRight = std::get<2>(*it);
+    }
+
+    return {b, alignRight};
 }
 
 // Update controls within widget

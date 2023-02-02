@@ -28,8 +28,8 @@ Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedur
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
     keywords_.add<Vec3DoubleKeyword>("Control", "RangeY", "Range and binwidth of the y-axis of the histogram", rangeY_,
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
-    keywords_.addKeyword<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
-                                            subCollectBranch_, this, ProcedureNode::AnalysisContext);
+    keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
+                                           subCollectBranch_, this, ProcedureNode::AnalysisContext);
 }
 
 /*

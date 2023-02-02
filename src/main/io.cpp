@@ -6,6 +6,7 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
+#include "keywords/storedata.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
@@ -643,8 +644,10 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Module Keyword Data
     for (const auto *module : Module::instances())
     {
-        for (auto &keyword : module->keywords().restartables())
-            if (!keyword->serialise(parser, fmt::format("Keyword  {}  {}  ", module->name(), keyword->name())))
+        for (auto &keywordData : module->keywords().keywords())
+            if (keywordData.type() == KeywordStoreData::KeywordType::Restartable &&
+                !keywordData.keyword()->serialise(
+                    parser, fmt::format("Keyword  {}  {}  ", module->name(), keywordData.keyword()->name())))
                 return false;
     }
 

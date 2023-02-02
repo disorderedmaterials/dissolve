@@ -89,7 +89,7 @@
  <customwidgets>
   <customwidget>
    <class>KeywordsWidget</class>
-   <extends>QToolBox</extends>
+   <extends>QWidget</extends>
    <header>gui/keywordwidgets/widget.hui</header>
    <container>1</container>
   </customwidget>

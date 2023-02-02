@@ -4,19 +4,20 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
-#include <QToolBox>
+#include "keywords/store.h"
+#include <QTabWidget>
 
 // Forward Declarations
 class CoreData;
-class KeywordStore;
+class QPushButton;
 
 // Keywords Widget
-class KeywordsWidget : public QToolBox
+class KeywordsWidget : public QWidget
 {
     Q_OBJECT
 
     public:
-    KeywordsWidget(QWidget *parent);
+    KeywordsWidget(QWidget *parent = nullptr);
     ~KeywordsWidget() = default;
 
     /*
@@ -30,7 +31,10 @@ class KeywordsWidget : public QToolBox
 
     public:
     // Set up controls for specified keywords
-    void setUp(const KeywordStore &keywords, const CoreData &coreData);
+    void setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo, const KeywordStore::KeywordStoreMap &keywordMap,
+               const CoreData &coreData);
+    // Create a suitable button for the named group
+    static std::pair<QPushButton *, bool> buttonForGroup(std::string_view groupName);
 
     public slots:
     // Update controls within widget

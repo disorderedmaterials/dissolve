@@ -9,9 +9,17 @@ KeywordsDialog::KeywordsDialog(QWidget *parent, KeywordStore &keywords, const Co
 {
     ui_.setupUi(this);
 
-    ui_.Keywords->setUp(keywords, coreData);
+    // We can only display a single group of widgets at present, so check the size of the index
+    auto &&[keywordIndex, keywordMap] = keywords.keywordOrganisation();
+    if (keywordIndex.size() > 1)
+        Messenger::warn("There are {} keyword groups defined, but only one can be displayed. Tell the developer!\n");
 
-    connect(ui_.Keywords, SIGNAL(keywordChanged(int)), this, SLOT(keywordChanged(int)));
+    if (!keywordIndex.empty())
+    {
+        ui_.Keywords->setUp(keywordIndex.front(), keywordMap, coreData);
+
+        connect(ui_.Keywords, SIGNAL(keywordChanged(int)), this, SLOT(keywordChanged(int)));
+    }
 
     keywordsModified_ = false;
 }

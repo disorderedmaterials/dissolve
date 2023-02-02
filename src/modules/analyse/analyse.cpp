@@ -10,7 +10,7 @@ AnalyseModule::AnalyseModule() : Module("Analyse"), analyser_(ProcedureNode::Ana
     // Targets
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.addKeyword<ProcedureKeyword>("Analyser", "Analysis procedure to run", analyser_);
+    keywords_.addHidden<ProcedureKeyword>("Analyser", "Analysis procedure to run", analyser_);
 }
 
 // Return the analyser
