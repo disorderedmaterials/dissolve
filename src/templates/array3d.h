@@ -117,7 +117,7 @@ template <class A> class Array3D
     {
         auto [x, y] = index;
         auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
-        auto end = array_.begin() + sliceOffsets_[x] + (y + 1) * nZ_;
+        auto end = begin + nZ_;
         return {begin, end};
     }
     // Return address of specified element
