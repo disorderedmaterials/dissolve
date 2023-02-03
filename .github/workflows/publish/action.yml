@@ -54,7 +54,7 @@ runs:
     run: |
       echo "Release tag will be: latest"
       singularity remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
-      ${SINGULARITY_ROOT}/bin/singularity push packages/GudPy-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:latest
+      ${SINGULARITY_ROOT}/bin/singularity push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:latest
 
   - name: Publish on Harbor (Continuous)
     if: ${{ inputs.publish == 'true' && inputs.isRelease == 'false' }}
@@ -62,4 +62,4 @@ runs:
     run: |
       echo "Release tag will be: continuous"
       singularity remote login --username ${HARBOR_USER} --password ${HARBOR_SECRET} docker://harbor.stfc.ac.uk
-      ${SINGULARITY_ROOT}/bin/singularity push packages/GudPy-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:continuous
+      ${SINGULARITY_ROOT}/bin/singularity push packages/dissolve-gui-${{ env.dissolveVersion }}.sif oras://harbor.stfc.ac.uk/isis_disordered_materials/dissolve:continuous

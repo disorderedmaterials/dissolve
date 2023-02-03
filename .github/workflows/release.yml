@@ -1,12 +1,12 @@
-name: Pull Request
+name: Release
 
 on:
   pull_request:
     branches:
-    - '*'
+    - 'release/*'
     paths-ignore:
     - '.github/workflows/cache.yml'
-    - '.github/workflows/continuous.yml'
+    - '.github/workflows/pr.yml'
     - '.github/workflows/release.yml'
     - '.github/workflows/web.yml'
     - 'web/**'
@@ -78,3 +78,22 @@ jobs:
         uses: "./.github/workflows/get-version"
       - name: "Package (${{ matrix.os }})"
         uses: "./.github/workflows/package"
+
+  Publish:
+    needs: Package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Acquire Code Version
+        uses: "./.github/workflows/get-version"
+      - name: Set Short Hash
+        uses: "./.github/workflows/set-short-hash"
+      - name: Publish
+        uses: "./.github/workflows/publish"
+        with:
+          isRelease: true
+          publish: ${{ ! endsWith(github.ref, 'pre') }}
+        env:
+          HARBOR_USER: ${{ secrets.HARBOR_USER }}
+          HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
