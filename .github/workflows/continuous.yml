@@ -1,9 +1,9 @@
 name: Continuous
 
 on:
-  pull_request:
+  push:
     branches:
-    - '*'
+    - 'develop'
     paths-ignore:
     - '.github/workflows/cache.yml'
     - '.github/workflows/pr.yml'
