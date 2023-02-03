@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  pull_request:
+    branches:
+    - 'release/*'
+    paths-ignore:
+    - '.github/workflows/cache.yml'
+    - '.github/workflows/pr.yml'
+    - '.github/workflows/release.yml'
+    - '.github/workflows/web.yml'
+    - 'web/**'
+    - 'README.md'
+
+env:
+  pythonVersion: 3.9
+  qtVersion: 6.2.2
+  nixVersion: 2.4
+  nixOSVersion: 22.11
+
+jobs:
+
+  QC:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Quality Control
+      uses: "./.github/workflows/qc"
+
+  Build:
+    needs: QC
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Acquire Code Version
+        uses: "./.github/workflows/get-version"
+      - name: Set Short Hash
+        uses: "./.github/workflows/set-short-hash"
+      - name: "Build (${{ matrix.os }})"
+        uses: "./.github/workflows/build"
+
+  BuildLinux:
+    needs: QC
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ dissolve, dissolve-gui ]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Acquire Code Version
+      uses: "./.github/workflows/get-version"
+    - name: Set Short Hash
+      uses: "./.github/workflows/set-short-hash"
+    - name: "Build, Test, Package (Linux, ${{ matrix.target }})"
+      uses: "./.github/workflows/build"
+      with:
+        target: ${{ matrix.target }}
+
+  Package:
+    needs: [ Build, BuildLinux ]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Acquire Code Version
+        uses: "./.github/workflows/get-version"
+      - name: "Package (${{ matrix.os }})"
+        uses: "./.github/workflows/package"
+
+  Publish:
+    needs: Package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Acquire Code Version
+        uses: "./.github/workflows/get-version"
+      - name: Set Short Hash
+        uses: "./.github/workflows/set-short-hash"
+      - name: Publish
+        uses: "./.github/workflows/publish"
+        with:
+          isRelease: true
+          publish: ${{ ! endsWith(github.ref, 'pre') }}
+        env:
+          HARBOR_USER: ${{ secrets.HARBOR_USER }}
+          HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
