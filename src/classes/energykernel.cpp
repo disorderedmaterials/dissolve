@@ -241,14 +241,15 @@ double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, Pro
                                              {
                                                  auto &jj = *j;
 
-                                                 // Check for atoms in the same species
-                                                 if (includeIntraMolecular)
+                                                 // Same molecule?
+                                                 auto sameMol = ii.molecule().get() == jj.molecule().get();
+                                                 if (sameMol)
                                                  {
-                                                     if (&ii == &jj)
+                                                     if (!includeIntraMolecular)
+                                                         return innerAcc;
+                                                     else if (&ii == &jj)
                                                          return innerAcc;
                                                  }
-                                                 else if (ii.molecule().get() == jj.molecule().get())
-                                                     return innerAcc;
 
                                                  // Calculate rSquared distance between atoms, and check it against
                                                  // the stored cutoff distance
@@ -257,7 +258,20 @@ double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, Pro
                                                  if (rSq > cutoffDistanceSquared_)
                                                      return innerAcc;
 
-                                                 return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
+                                                 // If the same molecule need to check scaling (other checks already made above)
+                                                 if (sameMol)
+                                                 {
+                                                     auto &&[scalingType, elec14, vdw14] = ii.scaling(&jj);
+                                                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                                         return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
+                                                     else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                                         return innerAcc +
+                                                                pairPotentialEnergy(ii, jj, sqrt(rSq), elec14, vdw14);
+                                                     else
+                                                         return innerAcc;
+                                                 }
+                                                 else
+                                                     return innerAcc + pairPotentialEnergy(ii, jj, sqrt(rSq));
                                              });
                         });
                 });
