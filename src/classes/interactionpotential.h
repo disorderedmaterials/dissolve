@@ -32,7 +32,17 @@ template <class Functions> class InteractionPotential
 
     public:
     // Set functional form of interaction
-    void setForm(typename Functions::Form form) { form_ = form; }
+    void setForm(typename Functions::Form form)
+    {
+        form_ = form;
+        // Set parameters vector to correct size
+        while (parameters_.size() != Functions::forms().minArgs(form_).value_or(0))
+            if (parameters_.size() < Functions::forms().minArgs(form_).value_or(0))
+                parameters_.push_back(0.0);
+
+            else
+                parameters_.pop_back();
+    }
     // Return functional form of interaction
     typename Functions::Form form() const { return form_; }
     // Parse supplied vector of terms
