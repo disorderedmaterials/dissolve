@@ -109,8 +109,7 @@ template <class A> class Array3D
     {
         auto [x, y] = index;
         auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
-        auto end = array_.begin() + sliceOffsets_[x] + (y + 1) * nZ_;
-        return {begin, end};
+        return {begin, begin + nZ_};
     }
     // Return array range for a given x and y value
     std::pair<typename std::vector<A>::const_iterator, typename std::vector<A>::const_iterator>
@@ -118,8 +117,7 @@ template <class A> class Array3D
     {
         auto [x, y] = index;
         auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
-        auto end = array_.begin() + sliceOffsets_[x] + (y + 1) * nZ_;
-        return {begin, end};
+        return {begin, begin + nZ_};
     }
     // Return address of specified element
     A *ptr(int x, int y, int z)
