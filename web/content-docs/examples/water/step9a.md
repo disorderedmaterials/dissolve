@@ -32,7 +32,6 @@ The new layer contains the following modules:
 | Module | Purpose |
 |--------|---------|
 | {{< gui-module "CalculateRDF" >}} | Calculates the radial distribution function between two specified sites |
-| {{< gui-module "CalculateCN" >}} | Calculates a coordination number by summing histogram data calculated by a {{< gui-module "CalculateRDF" >}} module |
 
 We'll need to set up both of these modules to calculate exactly what we need.  First, {{< gui-module "CalculateRDF" >}}:
 
@@ -44,13 +43,12 @@ We'll need to set up both of these modules to calculate exactly what we need.  F
 
 Since we are calculating the RDF of a site around itself, the **ExcludeSameMolecule** option prevents consideration of the same site with itself (which would give a distance of zero and result in a large undesirable spike at the beginning of the RDF). The distance range over which to calculate the RDF can be set in the **Control** settings group, but the defaults (0 - 10 &#8491; with a step size of 0.05 &#8491;) are fine for what we need.
 
-Now the {{< gui-module "CalculateCN" >}} module:
+For the coordination number calculation:
 
-{{< action type="mouse" >}}Select the {{< gui-module "CalculateCN" >}} module to display its options{{< /action >}}
-{{< action type="groups" text="Open the **Ranges** settings group" />}}
-{{< action type="edit" text=" Set the maximum for **RangeA** to 3.4 &#8491;" />}}
+{{< action type="edit" text="Set the maximum for **RangeA** to 3.4 &#8491;" />}}
+{{< action type="edit" text="Tick the **RangeAEnabled** option" />}}
 
-The {{< gui-module "CalculateCN" >}} module calculates up to three separate coordination numbers over different distance regions of the target RDF, but we will focus on the first coordination shell in this example. The target RDF is taken from a {{< gui-module "CalculateRDF" >}} module, specified by the **SourceRDF** keyword (this will have been set automatically to the {{< gui-module "CalculateRDF" >}} module in the current layer).
+We can specify up to three separate ranges over which to calculate coordination numbers but we will focus on the first coordination shell in this example.
 
 * * *
 {{< button pos="left" text="Previous Step" path="step9/">}}

@@ -14,12 +14,7 @@ When you're ready, restart the simulation and we can look at the quantities star
 
 ### Centre-of-Mass RDF
 
-We can use the [CalculateCN]({{< ref "calculatecn" >}}) module graphs to view both the centre-of-mass RDF and the associated coordination number.
-
-{{< action type="tabs" >}}Go to the {{< gui-tab text="Analyse RDF/CN" type="Layer" >}} layer {{< /action >}}
-{{< action type="mouse" >}}Click the {{< gui-module "CalculateCN" >}} module and go to the {{< gui-button text="Output" icon="general_output" >}} page{{< /action >}}
-
-The source radial distribution function is shown in the graph and exhibits a strong peak at around 2.8 &#8491; for the COM&ndash;COM distance in the liquid. Integrating the curve up to the first minimum (approximately 3.4 &#8491;) gives us a first shell coordination number of around 4.7 molecules (displayed in the panel above the graph).
+The {{< gui-module "CalculateRDF" >}} module output shows a strong peak at around 2.8 &#8491; for the COM&ndash;COM distance in the liquid. Integrating the curve up to the first minimum (approximately 3.4 &#8491;) gives us a first shell coordination number of around 4.7 molecules (displayed in the panel below the graph).
 
 {{< question text="Is the coordination number of 4.7 realistic?" >}}
 

@@ -1,6 +1,7 @@
 ---
 title: "Dissolve User Guide"
 linkTitle: "User Guide"
+weight: 1
 ---
 
 **Structure Refinement for Scattering Data**
