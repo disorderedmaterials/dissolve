@@ -4,7 +4,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/xrayweights.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 #include "modules/xraysq/xraysq.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
@@ -86,10 +86,10 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
 }
 
 // Calculate xray weights for relevant Configuration targets
-void XRaySQModule::calculateWeights(const RDFModule *rdfModule, XRayWeights &weights,
+void XRaySQModule::calculateWeights(const GRModule *rdfModule, XRayWeights &weights,
                                     XRayFormFactors::XRayFormFactorData formFactors) const
 {
-    // Clear weights and get species populations from RDFModule
+    // Clear weights and get species populations from GRModule
     weights.clear();
     auto populations = rdfModule->speciesPopulations();
 

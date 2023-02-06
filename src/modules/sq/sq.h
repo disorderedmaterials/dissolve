@@ -13,7 +13,7 @@
 // Forward Declarations
 class BraggModule;
 class PartialSet;
-class RDFModule;
+class GRModule;
 
 // SQ Module
 class SQModule : public Module
@@ -44,16 +44,16 @@ class SQModule : public Module
     bool save_{false};
     // Source module for Bragg calculation
     const BraggModule *sourceBragg_{nullptr};
-    // Source module for main calculation
-    const RDFModule *sourceRDF_{nullptr};
+    // Source G(r) for main calculation
+    const GRModule *sourceGR_{nullptr};
     // Test data
     Data1DStore testData_;
     // Window function to use when Fourier-transforming reference S(Q) to g(r))
     WindowFunction::Form windowFunction_{WindowFunction::Form::None};
 
     public:
-    // Return source module for main calculation
-    const RDFModule *sourceRDF() const;
+    // Return source G(r) for main calculation
+    const GRModule *sourceGR() const;
 
     /*
      * Functions

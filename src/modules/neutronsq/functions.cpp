@@ -4,8 +4,8 @@
 #include "classes/configuration.h"
 #include "classes/isotopologueset.h"
 #include "classes/species.h"
+#include "modules/gr/gr.h"
 #include "modules/neutronsq/neutronsq.h"
-#include "modules/rdf/rdf.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
 bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
@@ -82,9 +82,9 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
 }
 
 // Calculate neutron weights for relevant Configuration targets
-void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const
+void NeutronSQModule::calculateWeights(const GRModule *rdfModule, NeutronWeights &weights) const
 {
-    // Clear weights and get species populations from RDFModule
+    // Clear weights and get species populations from GRModule
     weights.clear();
     auto populations = rdfModule->speciesPopulations();
 

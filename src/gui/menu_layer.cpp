@@ -5,12 +5,12 @@
 #include "gui/layertab.h"
 #include "gui/selectconfigurationdialog.h"
 #include "main/dissolve.h"
-#include "modules/calculate_avgmol/avgmol.h"
-#include "modules/calculate_rdf/rdf.h"
-#include "modules/calculate_sdf/sdf.h"
+#include "modules/avgmol/avgmol.h"
 #include "modules/epsr/epsr.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 #include "modules/registry.h"
+#include "modules/sdf/sdf.h"
+#include "modules/siterdf/siterdf.h"
 #include "modules/sq/sq.h"
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)
@@ -190,13 +190,13 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(DissolveSys::uniqueName("RDF", dissolve_.processingLayers(),
+    newLayer->setName(DissolveSys::uniqueName("GR", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
-    // Add the RDF module
-    newLayer->append("RDF", dissolve_.configurations());
+    // Add the GR module
+    newLayer->append("GR", dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -209,13 +209,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
 void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(DissolveSys::uniqueName("RDF / Unweighted S(Q)", dissolve_.processingLayers(),
+    newLayer->setName(DissolveSys::uniqueName("G(r) / Unweighted S(Q)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
-    // Add the RDF module
-    newLayer->append("RDF", dissolve_.configurations());
+    // Add the GR module
+    newLayer->append("GR", dissolve_.configurations());
 
     // Add a plain structure factor module
     newLayer->append("SQ", dissolve_.configurations());
@@ -231,13 +231,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggere
 void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(DissolveSys::uniqueName("RDF / Neutron S(Q)", dissolve_.processingLayers(),
+    newLayer->setName(DissolveSys::uniqueName("G(r) / Neutron S(Q)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
-    // Add the RDF module
-    newLayer->append("RDF", dissolve_.configurations());
+    // Add the GR module
+    newLayer->append("GR", dissolve_.configurations());
 
     // Add a plain structure factor module
     newLayer->append("SQ", dissolve_.configurations());
@@ -256,13 +256,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool c
 void DissolveWindow::on_LayerCreateCorrelationsRDFXRayAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(DissolveSys::uniqueName("RDF / X-ray S(Q)", dissolve_.processingLayers(),
+    newLayer->setName(DissolveSys::uniqueName("G(r) / X-ray S(Q)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
-    // Add the RDF module
-    newLayer->append("RDF", dissolve_.configurations());
+    // Add the GR module
+    newLayer->append("GR", dissolve_.configurations());
 
     // Add a plain structure factor module
     newLayer->append("SQ", dissolve_.configurations());
@@ -281,13 +281,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFXRayAction_triggered(bool chec
 void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bool checked)
 {
     auto *newLayer = dissolve_.addProcessingLayer();
-    newLayer->setName(DissolveSys::uniqueName("RDF / Neutron S(Q) / X-ray S(Q)", dissolve_.processingLayers(),
+    newLayer->setName(DissolveSys::uniqueName("G(r) / Neutron S(Q) / X-ray S(Q)", dissolve_.processingLayers(),
                                               [&](const auto &l) { return newLayer == l.get() ? std::string() : l->name(); }));
     newLayer->setFrequency(5);
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
-    // Add the RDF module
-    newLayer->append("RDF", dissolve_.configurations());
+    // Add the GR module
+    newLayer->append("GR", dissolve_.configurations());
 
     // Add a plain structure factor module
     newLayer->append("SQ", dissolve_.configurations());
@@ -315,8 +315,8 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
 
     auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
-    // Add the CalculateRDF module
-    auto *calcRDFModule = ModuleRegistry::create("CalculateRDF", newLayer);
+    // Add the CalculateGR module
+    auto *calcRDFModule = ModuleRegistry::create("SiteRDF", newLayer);
     calcRDFModule->keywords().set("Configuration", firstCfg);
 
     // Add a CalculateCN module

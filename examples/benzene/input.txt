@@ -200,7 +200,7 @@ Layer  'Analysis'
   Frequency  1
   Disabled
 
-  Module  CalculateAxisAngle  'CalculateAxisAngle01'
+  Module  AxisAngle  'AxisAngle01'
     Frequency  1
     AngleRange  0.000000e+00  9.000000e+01  1.000000e+01
     AxisA  ZAxis
@@ -214,10 +214,10 @@ Layer  'Analysis'
   EndModule
 EndLayer
 
-Layer  'RDF / Neutron S(Q)'
+Layer  'GR / Neutron S(Q)'
   Frequency  5
 
-  Module  RDF  'RDF01'
+  Module  GR  'GR01'
     Frequency  1
     AveragingScheme  Linear
     Configurations  'Bulk'
@@ -230,7 +230,7 @@ Layer  'RDF / Neutron S(Q)'
     AveragingScheme  Linear
     BraggQBroadening  'GaussianC2'  0  0.02
     QBroadening  'OmegaDependentGaussian'  0.02
-    SourceRDFs  'RDF01'
+    SourceGR  'GR01'
     WindowFunction  None
   EndModule
 

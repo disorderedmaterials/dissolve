@@ -5252,10 +5252,10 @@ Layer  'Evolve (MD)'
   EndModule
 EndLayer
 
-Layer  'RDF / Neutron S(Q)'
+Layer  'GR / Neutron S(Q)'
   Frequency  5
 
-  Module  RDF  'RDF'
+  Module  GR  'GR'
     Frequency  1
     AveragingScheme  Linear
     Configurations  'MOF'
@@ -5279,7 +5279,7 @@ Layer  'RDF / Neutron S(Q)'
     IncludeBragg  'Bragg'
     QBroadening  'OmegaDependentGaussian'  0.02
     QDelta  0.01
-    SourceRDFs  'RDF'
+    SourceGR  'GR'
     WindowFunction  None
   EndModule
 

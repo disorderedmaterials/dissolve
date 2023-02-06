@@ -68,7 +68,7 @@ Module  ImportTrajectory  'ImportTrajectory01'
 EndModule
 
 # Average Water Molecule
-Module  CalculateAvgMol  'CalculateAvgMol01'
+Module  AvgMol  'AvgMol01'
   Configuration  'Single'
   Site  'BeNDy'  'origin'
 EndModule
@@ -76,14 +76,14 @@ EndModule
 Module  DataTest
   Frequency  201
   Threshold  1.0e-10
-  SampledVector  'CalculateAvgMol01//X'  values  @
+  SampledVector  'AvgMol01//X'  values  @
   EndSampledVector
   3
   2.0
   0.0
   2.0
 
-  SampledVector  'CalculateAvgMol01//Y'  values  @
+  SampledVector  'AvgMol01//Y'  values  @
   EndSampledVector
   3
   0.0
@@ -95,7 +95,7 @@ Module  DataTest
   Frequency  201
   ErrorType  RMSE
   Threshold  1.0e-10
-  SampledVector  'CalculateAvgMol01//Z'  values  @
+  SampledVector  'AvgMol01//Z'  values  @
   EndSampledVector
   3
   0.0

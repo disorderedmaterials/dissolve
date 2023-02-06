@@ -86,7 +86,7 @@ Layer  'Processing'
   EndModule
 
   # Calculate RDFs (no averaging)
-  Module  RDF  'RDF01'
+  Module  GR  'GR01'
     Frequency  1
     Configurations  'Bulk'
     Range  10.0
@@ -97,12 +97,12 @@ Layer  'Processing'
 
   # Accumulate RDFs
   Module  Accumulate  'Accumulate01'
-    Target  'RDF01'
-    Data  'RDF'
+    Target  'GR01'
+    Data  'GR'
   EndModule
 
   # Calculate RDFs (with averaging)
-  Module  RDF  'AveragedRDF'
+  Module  GR  'AveragedRDF'
     Frequency  1
     Configurations  'Bulk'
     Range  10.0
@@ -112,7 +112,7 @@ Layer  'Processing'
   EndModule
 
   # Oxygen-oxygen radial distribution function
-  Module  CalculateRDF  'RDF(OW-OW)'
+  Module  SiteRDF  'RDF(OW-OW)'
     Configuration  'Bulk'
     SiteA  Water  'O'
     SiteB  Water  'O'
@@ -120,7 +120,7 @@ Layer  'Processing'
   EndModule
 
   # Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations
-  Module  CalculateRDF  'RDF(H1-H2)'
+  Module  SiteRDF  'RDF(H1-H2)'
     Configuration  'Bulk'
     SiteA  Water  'H1'  Water  'H2'
     SiteB  Water  'H2'  Water  'H1'
@@ -129,7 +129,7 @@ Layer  'Processing'
   EndModule
 
   # Hydrogen-hydrogen (O-H, 1-1) radial distribution function, excluding intramolecular correlations
-  Module  CalculateRDF  'RDF(O-H1_H2)'
+  Module  SiteRDF  'RDF(O-H1_H2)'
     Configuration  'Bulk'
     SiteA  Water  'O'
     SiteB  Water  'H1'  Water  'H2'

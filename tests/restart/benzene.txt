@@ -181,7 +181,7 @@ EndLayer
 Layer  'Analysis'
   Frequency  1
 
-  Module  CalculateAxisAngle  'CalculateAxisAngle01'
+  Module  AxisAngle  'AxisAngle01'
     Frequency  1
 
     Configuration  'Bulk'
@@ -197,7 +197,7 @@ EndLayer
 Layer  'RDF / Neutron S(Q)'
   Frequency  1
 
-  Module  RDF  'RDF01'
+  Module  GR  'GR01'
     Frequency  1
 
     Configurations  'Bulk'
@@ -206,7 +206,7 @@ Layer  'RDF / Neutron S(Q)'
 
   Module  SQ  'SQ01'
     Frequency  1
-    SourceRDFs  'RDF01'
+    SourceGR  'GR01'
     QBroadening  'OmegaDependentGaussian'  0.020000
   EndModule
 

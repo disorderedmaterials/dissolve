@@ -7,7 +7,7 @@
 #include "modules/accumulate/accumulate.h"
 
 // Valid Target Modules / Data
-const std::map<std::string, std::vector<std::string>> validTargets = {{"RDF", {"UnweightedGR", "", "OriginalGR"}},
+const std::map<std::string, std::vector<std::string>> validTargets = {{"GR", {"UnweightedGR", "", "OriginalGR"}},
                                                                       {"SQ", {"", "UnweightedSQ", ""}},
                                                                       {"NeutronSQ", {"WeightedGR", "WeightedSQ", ""}},
                                                                       {"XRaySQ", {"WeightedGR", "WeightedSQ", ""}}};
@@ -17,7 +17,7 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 {
     return EnumOptions<AccumulateModule::TargetPartialSet>(
         "TargetPartialSet",
-        {{TargetPartialSet::GR, "RDF"}, {TargetPartialSet::SQ, "SQ"}, {TargetPartialSet::OriginalGR, "OriginalRDF"}});
+        {{TargetPartialSet::GR, "GR"}, {TargetPartialSet::SQ, "SQ"}, {TargetPartialSet::OriginalGR, "OriginalRDF"}});
 }
 
 // Run main processing

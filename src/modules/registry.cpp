@@ -4,17 +4,15 @@
 #include "modules/registry.h"
 #include "modules/accumulate/accumulate.h"
 #include "modules/analyse/analyse.h"
+#include "modules/angle/angle.h"
 #include "modules/atomshake/atomshake.h"
+#include "modules/avgmol/avgmol.h"
+#include "modules/axisangle/axisangle.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/bragg/bragg.h"
-#include "modules/calculate_angle/angle.h"
-#include "modules/calculate_avgmol/avgmol.h"
-#include "modules/calculate_axisangle/axisangle.h"
-#include "modules/calculate_dangle/dangle.h"
-#include "modules/calculate_rdf/rdf.h"
-#include "modules/calculate_sdf/sdf.h"
 #include "modules/checks/checks.h"
 #include "modules/checkspecies/checkspecies.h"
+#include "modules/dangle/dangle.h"
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
@@ -23,12 +21,14 @@
 #include "modules/export_trajectory/exporttraj.h"
 #include "modules/forces/forces.h"
 #include "modules/geomopt/geomopt.h"
+#include "modules/gr/gr.h"
 #include "modules/import_trajectory/importtraj.h"
 #include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
 #include "modules/neutronsq/neutronsq.h"
-#include "modules/rdf/rdf.h"
+#include "modules/sdf/sdf.h"
+#include "modules/siterdf/siterdf.h"
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
 #include "modules/xraysq/xraysq.h"
@@ -37,21 +37,17 @@ ModuleRegistry::ModuleRegistry()
 {
     registerProducer<AccumulateModule>("Accumulate", "Accumulate partials data to form an average", "Correlation Functions");
     registerProducer<AnalyseModule>("Analyse", "Perform custom analysis of one or more Configurations", "Analysis");
+    registerProducer<AngleModule>("Angle", "Calculate distance/angle maps", "Analysis");
     registerProducer<AtomShakeModule>("AtomShake", "Perform atomic Monte Carlo on all atoms", "Evolution");
+    registerProducer<AvgMolModule>("AvgMol", "Calculate average atomic positions of a species around an oriented site",
+                                   "Analysis");
+    registerProducer<AxisAngleModule>("AxisAngle", "Calculate distance/angle map between site axes", "Analysis");
     registerProducer<BenchmarkModule>("Benchmark", "Perform benchmarking on a variety of functions", "Checks & Tests");
     registerProducer<BraggModule>("Bragg", "Calculate Bragg intensities", "Correlation Functions");
-    registerProducer<CalculateAngleModule>("CalculateAngle", "Calculate distance/angle maps", "Analysis");
-    registerProducer<CalculateAvgMolModule>(
-        "CalculateAvgMol", "Calculate average atomic positions of a species around an oriented site", "Analysis");
-    registerProducer<CalculateAxisAngleModule>("CalculateAxisAngle", "Calculate distance/angle map between site axes",
-                                               "Analysis");
-    registerProducer<CalculateDAngleModule>("CalculateDAngle", "Calculate distance/angle maps", "Analysis");
-    registerProducer<CalculateRDFModule>("CalculateRDF", "Calculate radial distribution functions between sites", "Analysis");
-    registerProducer<CalculateSDFModule>("CalculateSDF", "Calculate spatial density functions around oriented sites",
-                                         "Analysis");
     registerProducer<ChecksModule>("Checks", "Conduct simple checks on Configurations", "Checks & Tests");
     registerProducer<CheckSpeciesModule>("CheckSpecies", "Check the contents of a Species against reference values",
                                          "Checks & Tests");
+    registerProducer<DAngleModule>("DAngle", "Calculate distance/angle maps", "Analysis");
     registerProducer<DataTestModule>("DataTest", "Test named data in other modules against reference data", "Checks & Tests");
     registerProducer<EnergyModule>("Energy", "Calculate the total energy of a Configuration", "Forcefield");
     registerProducer<EPSRModule>("EPSR", "Refine interatomic potentials in a manner consistent with EPSR", "Forcefield");
@@ -62,6 +58,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ForcesModule>("Forces", "Calculate the total atomic forces within a Configuration", "Forcefield");
     registerProducer<GeometryOptimisationModule>("GeometryOptimisation", "Optimise geometry with respect to energy (minimise)",
                                                  "Optimisation");
+    registerProducer<GRModule>("GR", "Calculate partial and total g(r)", "Correlation Functions");
     registerProducer<ImportTrajectoryModule>(
         "ImportTrajectory", "Calculate coordination numbers from an existing radial distribution function", "Import");
     registerProducer<IntraShakeModule>("IntraShake", "Perform Monte Carlo shakes on intramolecular terms within molecules",
@@ -69,7 +66,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<MDModule>("MD", "Evolve a Configuration using molecular dynamics", "Evolution");
     registerProducer<MolShakeModule>("MolShake", "Perform molecular Monte Carlo moves", "Evolution");
     registerProducer<NeutronSQModule>("NeutronSQ", "Calculate neutron-weighted S(Q)", "Correlation Functions");
-    registerProducer<RDFModule>("RDF", "Calculate partial and total g(r)", "Correlation Functions");
+    registerProducer<SDFModule>("SDF", "Calculate spatial density functions around oriented sites", "Analysis");
+    registerProducer<SiteRDFModule>("SiteRDF", "Calculate radial distribution functions between sites", "Analysis");
     registerProducer<SQModule>("SQ", "Transform g(r) into unweighted S(Q)", "Correlation Functions");
     registerProducer<TestModule>("Test", "Development Module");
     registerProducer<XRaySQModule>("XRaySQ", "Calculate x-ray-weighted S(Q)", "Correlation Functions");

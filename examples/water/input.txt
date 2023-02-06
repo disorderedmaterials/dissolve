@@ -123,10 +123,10 @@ Layer  'Evolve (Standard)'
   EndModule
 EndLayer
 
-Layer  'RDF / Neutron S(Q)'
+Layer  'GR / Neutron S(Q)'
   Frequency  5
 
-  Module  RDF  'RDF01'
+  Module  GR  'GR01'
     Frequency  1
 
     Configurations  'Bulk'
@@ -136,7 +136,7 @@ Layer  'RDF / Neutron S(Q)'
   Module  SQ  'SQ01'
     Frequency  1
 
-    SourceRDFs  'RDF01'
+    SourceGR  'GR01'
     QBroadening  'OmegaDependentGaussian'  0.020000
   EndModule
 
@@ -185,7 +185,7 @@ EndLayer
 Layer  'Analyse RDF/CN'
   Frequency  1
 
-  Module  CalculateRDF  'CalculateRDF01'
+  Module  SiteRDF  'SiteRDF01'
     Frequency  1
 
     Configuration  'Bulk'
@@ -200,7 +200,7 @@ EndLayer
 Layer  'Analyse HBond'
   Frequency  1
 
-  Module  CalculateDAngle  'CalculateDAngle01'
+  Module  DAngle  'DAngle01'
     Frequency  1
 
     Configuration  'Bulk'
@@ -215,14 +215,14 @@ EndLayer
 Layer  'Analyse AvgMol/SDF'
   Frequency  1
 
-  Module  CalculateAvgMol  'CalculateAvgMol01'
+  Module  AvgMol  'AvgMol01'
     Frequency  1
 
     Configuration  'Bulk'
     Site  'Water'  'COM'
   EndModule
 
-  Module  CalculateSDF  'CalculateSDF01'
+  Module  SDF  'SDF01'
     Frequency  1
 
     Configuration  'Bulk'

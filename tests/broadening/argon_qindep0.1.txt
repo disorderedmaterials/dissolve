@@ -27,13 +27,13 @@ EndConfiguration
 
 Layer  'Processing'
 
-Module  RDF  'RDF01'
+Module  GR  'GR01'
   Configurations  'liquid'
   Frequency  1
 EndModule
 
 Module  SQ  'SQ01'
-  SourceRDFs  'RDF01'
+  SourceGR  'GR01'
   QBroadening  Gaussian  0.1
   WindowFunction  None
 EndModule

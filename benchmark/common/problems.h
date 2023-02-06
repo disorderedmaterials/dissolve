@@ -7,7 +7,7 @@
 #include "classes/coredata.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 #include <string>
 
 namespace
@@ -78,8 +78,8 @@ template <ProblemType problem, Population population> std::string benchmarkFileP
 
 namespace Method
 {
-constexpr auto CellsMethod = RDFModule::PartialsMethod::CellsMethod;
-constexpr auto SimpleMethod = RDFModule::PartialsMethod::SimpleMethod;
+constexpr auto CellsMethod = GRModule::PartialsMethod::CellsMethod;
+constexpr auto SimpleMethod = GRModule::PartialsMethod::SimpleMethod;
 } // namespace Method
 
 template <ProblemType problem, Population population> struct Problem
@@ -96,11 +96,11 @@ template <ProblemType problem, Population population> struct Problem
 
     void setUpRDF()
     {
-        rdfmodule_ = std::make_unique<RDFModule>();
+        rdfmodule_ = std::make_unique<GRModule>();
         rdfmodule_->keywords().set("Configurations", std::vector<Configuration *>{cfg_});
     }
 
-    template <RDFModule::PartialsMethod method> void iterateGR()
+    template <GRModule::PartialsMethod method> void iterateGR()
     {
         double rdfRange = cfg_->box()->inscribedSphereRadius();
         bool upToDate = false;
@@ -111,7 +111,7 @@ template <ProblemType problem, Population population> struct Problem
 
     CoreData coredata_;
     Dissolve dissolve_;
-    std::unique_ptr<RDFModule> rdfmodule_;
+    std::unique_ptr<GRModule> rdfmodule_;
     std::unique_ptr<EnergyModule> energymodule_;
 
     Configuration *cfg_;

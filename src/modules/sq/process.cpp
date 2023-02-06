@@ -6,7 +6,7 @@
 #include "math/averaging.h"
 #include "math/filters.h"
 #include "modules/bragg/bragg.h"
-#include "modules/rdf/rdf.h"
+#include "modules/gr/gr.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
@@ -14,9 +14,9 @@
 void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                           const std::map<std::string, std::vector<const Module *>> &moduleMap)
 {
-    auto sqIt = moduleMap.find("RDF");
+    auto sqIt = moduleMap.find("GR");
     if (sqIt != moduleMap.end())
-        sourceRDF_ = dynamic_cast<const RDFModule *>(sqIt->second.front());
+        sourceGR_ = dynamic_cast<const GRModule *>(sqIt->second.front());
 }
 
 // Run main processing
@@ -28,13 +28,13 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      * This is a serial routine, with each process constructing its own copy of the data.
      */
 
-    if (!sourceRDF_)
-        return Messenger::error("A source RDF module must be provided.\n");
+    if (!sourceGR_)
+        return Messenger::error("A source GR module must be provided.\n");
 
     // Print argument/parameter summary
     Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin_,
                      qMax_, qDelta_);
-    Messenger::print("SQ: Source RDFs will be taken from module '{}'.\n", sourceRDF_->name());
+    Messenger::print("SQ: Source G(r) will be taken from module '{}'.\n", sourceGR_->name());
     if (windowFunction_ == WindowFunction::Form::None)
         Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
@@ -67,12 +67,12 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     // Get unweighted g(r) from the source RDF module
-    if (!dissolve.processingModuleData().contains("UnweightedGR", sourceRDF_->name()))
-        return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceRDF_->name());
-    const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", sourceRDF_->name());
+    if (!dissolve.processingModuleData().contains("UnweightedGR", sourceGR_->name()))
+        return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceGR_->name());
+    const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", sourceGR_->name());
 
     // Get effective atomic density of underlying g(r)
-    const auto rho = sourceRDF_->effectiveDensity();
+    const auto rho = sourceGR_->effectiveDensity();
 
     // Does a PartialSet already exist for this Configuration?
     auto uSQObject =
@@ -84,7 +84,7 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Is the PartialSet already up-to-date?
     if (DissolveSys::sameString(
             unweightedsq.fingerprint(),
-            fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceRDF_->name()),
+            fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceGR_->name()),
                         sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1)))
     {
         Messenger::print("SQ: Unweighted partial S(Q) are up-to-date.\n");
@@ -207,7 +207,7 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Set fingerprint
     unweightedsq.setFingerprint(
-        fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceRDF_->name()),
+        fmt::format("{}/{}", dissolve.processingModuleData().version("UnweightedGR", sourceGR_->name()),
                     sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1));
 
     // Save data if requested

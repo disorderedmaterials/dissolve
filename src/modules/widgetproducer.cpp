@@ -6,24 +6,20 @@
 #include "modules/accumulate/gui/accumulatewidget.h"
 #include "modules/analyse/analyse.h"
 #include "modules/analyse/gui/analysewidget.h"
+#include "modules/angle/angle.h"
+#include "modules/angle/gui/anglewidget.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/atomshake/gui/atomshakewidget.h"
+#include "modules/avgmol/avgmol.h"
+#include "modules/avgmol/gui/avgmolwidget.h"
+#include "modules/axisangle/axisangle.h"
+#include "modules/axisangle/gui/axisanglewidget.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/benchmark/gui/benchmarkwidget.h"
 #include "modules/bragg/bragg.h"
 #include "modules/bragg/gui/braggwidget.h"
-#include "modules/calculate_angle/angle.h"
-#include "modules/calculate_angle/gui/calculateanglewidget.h"
-#include "modules/calculate_avgmol/avgmol.h"
-#include "modules/calculate_avgmol/gui/calculateavgmolwidget.h"
-#include "modules/calculate_axisangle/axisangle.h"
-#include "modules/calculate_axisangle/gui/calculateaxisanglewidget.h"
-#include "modules/calculate_dangle/dangle.h"
-#include "modules/calculate_dangle/gui/calculatedanglewidget.h"
-#include "modules/calculate_rdf/gui/calculaterdfwidget.h"
-#include "modules/calculate_rdf/rdf.h"
-#include "modules/calculate_sdf/gui/calculatesdfwidget.h"
-#include "modules/calculate_sdf/sdf.h"
+#include "modules/dangle/dangle.h"
+#include "modules/dangle/gui/danglewidget.h"
 #include "modules/datatest/datatest.h"
 #include "modules/datatest/gui/datatestwidget.h"
 #include "modules/energy/energy.h"
@@ -32,10 +28,14 @@
 #include "modules/epsr/gui/epsrwidget.h"
 #include "modules/geomopt/geomopt.h"
 #include "modules/geomopt/gui/geomoptwidget.h"
+#include "modules/gr/gr.h"
+#include "modules/gr/gui/grwidget.h"
 #include "modules/neutronsq/gui/neutronsqwidget.h"
 #include "modules/neutronsq/neutronsq.h"
-#include "modules/rdf/gui/rdfwidget.h"
-#include "modules/rdf/rdf.h"
+#include "modules/sdf/gui/sdfwidget.h"
+#include "modules/sdf/sdf.h"
+#include "modules/siterdf/gui/siterdfwidget.h"
+#include "modules/siterdf/siterdf.h"
 #include "modules/skeleton/gui/skeletonwidget.h"
 #include "modules/skeleton/skeleton.h"
 #include "modules/sq/gui/sqwidget.h"
@@ -53,18 +53,18 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<AtomShakeModule, AtomShakeModuleWidget>();
     registerProducer<BenchmarkModule, BenchmarkModuleWidget>();
     registerProducer<BraggModule, BraggModuleWidget>();
-    registerProducer<CalculateAngleModule, CalculateAngleModuleWidget>();
-    registerProducer<CalculateAvgMolModule, CalculateAvgMolModuleWidget>();
-    registerProducer<CalculateAxisAngleModule, CalculateAxisAngleModuleWidget>();
-    registerProducer<CalculateDAngleModule, CalculateDAngleModuleWidget>();
-    registerProducer<CalculateRDFModule, CalculateRDFModuleWidget>();
-    registerProducer<CalculateSDFModule, CalculateSDFModuleWidget>();
+    registerProducer<AngleModule, AngleModuleWidget>();
+    registerProducer<AvgMolModule, AvgMolModuleWidget>();
+    registerProducer<AxisAngleModule, AxisAngleModuleWidget>();
+    registerProducer<DAngleModule, DAngleModuleWidget>();
+    registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
+    registerProducer<SDFModule, SDFModuleWidget>();
     registerProducer<DataTestModule, DataTestModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();
     registerProducer<GeometryOptimisationModule, GeometryOptimisationModuleWidget>();
+    registerProducer<GRModule, GRModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
-    registerProducer<RDFModule, RDFModuleWidget>();
     registerProducer<SkeletonModule, SkeletonModuleWidget>();
     registerProducer<SQModule, SQModuleWidget>();
     registerProducer<TestModule, TestModuleWidget>();
