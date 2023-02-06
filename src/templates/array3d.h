@@ -105,7 +105,7 @@ template <class A> class Array3D
         return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
     // Return array range for a given x and y value
-    std::pair<typename std::vector<A>::iterator , typename std::vector<A>::iterator> operator[](std::tuple<int, int> index)
+    std::pair<typename std::vector<A>::iterator, typename std::vector<A>::iterator> operator[](std::tuple<int, int> index)
     {
         auto [x, y] = index;
         auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
@@ -113,7 +113,8 @@ template <class A> class Array3D
         return {begin, end};
     }
     // Return array range for a given x and y value
-    std::pair<typename std::vector<A>::const_iterator , typename std::vector<A>::const_iterator> operator[](std::tuple<int, int> index) const
+    std::pair<typename std::vector<A>::const_iterator, typename std::vector<A>::const_iterator>
+    operator[](std::tuple<int, int> index) const
     {
         auto [x, y] = index;
         auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;

@@ -678,8 +678,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
                                     // Add in fluctuation coefficients
                                     auto [begin, end] = fluctuationCoefficients[{i, j}];
-				    std::transform(potCoeff.begin(), potCoeff.end(), begin, potCoeff.begin(),
-						   [this](auto pot, auto fluct) { return pot + weighting_ * fluct; });
+                                    std::transform(potCoeff.begin(), potCoeff.end(), begin, potCoeff.begin(),
+                                                   [this](auto pot, auto fluct) { return pot + weighting_ * fluct; });
 
                                     // Set first term to zero (following EPSR)
                                     potCoeff[0] = 0.0;
