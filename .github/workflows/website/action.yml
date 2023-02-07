@@ -71,8 +71,8 @@ runs:
       set -ex
       cd web
       npm install
-      hugo
-      hugo --contentDir content-docs/ --config config-docs.toml --destination public-docs
+      hugo --contentDir main/ --config main.toml --destination public
+      hugo --contentDir docs/ --config docs.toml --destination public-docs
 
   - name: 'Rewrite Edit Links'
     shell: bash
@@ -96,8 +96,8 @@ runs:
         cd ../../
       done
 
-  - name: 'SSH Deploy to Server'
-    if: ${{ inputs.deploy == 'true' }}
+  - name: 'SSH Deploy to Server (Release)'
+    if: ${{ inputs.deploy == 'true' && inputs.continuous == 'false' }}
     shell: bash
     run: |
       echo "${SERVER_ID}" > ./serverId
@@ -105,3 +105,12 @@ runs:
       chmod 0600 ./serverKey ./serverId
       rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
       rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
+
+  - name: 'SSH Deploy to Server (Continuous, docs only)'
+    if: ${{ inputs.deploy == 'true' && inputs.continuous == 'true' }}
+    shell: bash
+    run: |
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
+      chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/continuous

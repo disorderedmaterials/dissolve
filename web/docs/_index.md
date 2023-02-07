@@ -1,7 +1,8 @@
 ---
 title: "Dissolve User Guide for vMAJOR.X"
 linkTitle: "User Guide (vMAJOR.X)"
-type: docs
+cascade:
+  - type: "docs"
 ---
 
 Here you can find the user guide and examples for the current release series of Dissolve (vMAJOR.X). Documentation for the previous series is [available here](/previous), and updated documentation for the current development series is [available here](/continuous).
