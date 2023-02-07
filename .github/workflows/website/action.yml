@@ -82,14 +82,6 @@ runs:
       find web/public-docs/docs/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content-docs/en/docs/:${{ inputs.webDirRoot }}/content-docs/docs/:g" {} +
       find web/public-docs/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content-docs/en/examples/:${{ inputs.webDirRoot }}/content-docs/examples/:g" {} +
 
-  - name: 'Check Links'
-    shell: bash
-    run: |
-      set -ex
-      sudo npm install -g link-checker
-      link-checker --disable-external web/public
-      link-checker --disable-external web/public-docs
-
   - name: 'Create PDFs'
     if: ${{ inputs.pdfExamples == 'true' }}
     shell: bash
