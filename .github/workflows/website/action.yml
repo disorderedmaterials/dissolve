@@ -87,7 +87,8 @@ runs:
     run: |
       set -ex
       sudo npm install -g link-checker
-      link-checker --disable-external web/public web/public-docs
+      link-checker --disable-external web/public
+      link-checker --disable-external web/public-docs
 
   - name: 'Create PDFs'
     if: ${{ inputs.pdfExamples == 'true' }}
