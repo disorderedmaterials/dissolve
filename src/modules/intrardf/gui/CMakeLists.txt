@@ -1,1 +1,1 @@
-dissolve_add_module_gui(siterdfmodule)
+dissolve_add_module_gui(intrardfmodule)

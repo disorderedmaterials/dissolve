@@ -1,1 +1,1 @@
-dissolve_add_module(siterdf.h siterdf)
+dissolve_add_module(intrardf.h intrardf)
