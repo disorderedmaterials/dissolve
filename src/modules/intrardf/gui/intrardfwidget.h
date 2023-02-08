@@ -3,32 +3,32 @@
 
 #pragma once
 
-#include "modules/siterdf/gui/ui_siterdfwidget.h"
+#include "modules/intrardf/gui/ui_intrardfwidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations
-class SiteRDFModule;
+class IntraRDFModule;
 class DataViewer;
 
 // Module Widget
-class SiteRDFModuleWidget : public ModuleWidget
+class IntraRDFModuleWidget : public ModuleWidget
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 
     private:
     // Associated Module
-    SiteRDFModule *module_;
+    IntraRDFModule *module_;
 
     public:
-    SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module, Dissolve &dissolve);
+    IntraRDFModuleWidget(QWidget *parent, IntraRDFModule *module, Dissolve &dissolve);
 
     /*
      * UI
      */
     private:
     // Main form declaration
-    Ui::SiteRDFModuleWidget ui_;
+    Ui::IntraRDFModuleWidget ui_;
     // DataViewer contained within this widget
     DataViewer *rdfGraph_;
 

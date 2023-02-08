@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SiteRDFModuleWidget</class>
- <widget class="QWidget" name="SiteRDFModuleWidget">
+ <class>IntraRDFModuleWidget</class>
+ <widget class="QWidget" name="IntraRDFModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

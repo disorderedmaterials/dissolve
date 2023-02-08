@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/configuration.h"
 #include "gui/render/renderabledata1d.h"
 #include "main/dissolve.h"
-#include "modules/siterdf/gui/siterdfwidget.h"
-#include "modules/siterdf/siterdf.h"
+#include "modules/intrardf/gui/intrardfwidget.h"
+#include "modules/intrardf/intrardf.h"
 
-SiteRDFModuleWidget::SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module, Dissolve &dissolve)
+IntraRDFModuleWidget::IntraRDFModuleWidget(QWidget *parent, IntraRDFModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
 {
     // Set up user interface
@@ -29,7 +28,7 @@ SiteRDFModuleWidget::SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module,
 }
 
 // Update controls within widget
-void SiteRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
+void IntraRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     // Update CN labels
     auto rangeAOn = module_->isRangeEnabled(0);
