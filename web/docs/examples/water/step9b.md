@@ -22,11 +22,11 @@ Let's now create a new layer and add the analysis module that we want:
 {{< action type="menu" text="Layer &#8680; Create &#8680; Empty" />}}
 {{< action type="edit" text="Rename the layer by double-clicking on the tab name, and change it to 'Analyse HBond'" />}}
 {{< action type="mouse" >}}Show the module palette for the layer by clicking {{< gui-button text="Show Available Modules" >}} at the very bottom of the module list {{< /action >}}
-{{< action type="mouse" >}}Drag a {{< gui-module "CalculateDAngle" >}} module over to the **Current Modules** list{{< /action>}}
+{{< action type="mouse" >}}Drag a {{< gui-module "DAngle" >}} module over to the **Current Modules** list{{< /action>}}
 
-As its name suggests, the {{< gui-module "CalculateDAngle" >}} module calculates distance and angle histograms, and their 2D map, from three target sites. Since the module is general-purpose, we'll need to set up the module to give us information on our specific geometry of interest. {{< gui-module "CalculateDAngle" >}} assumes in the target interaction A&ndash;B&middot;&middot;&middot;C that A&ndash;B occur on the same molecule, and gives us a choice as to whether we exclude C sites that are also on the same molecule.
+As its name suggests, the {{< gui-module "DAngle" >}} module calculates distance and angle histograms, and their 2D map, from three target sites. Since the module is general-purpose, we'll need to set up the module to give us information on our specific geometry of interest. {{< gui-module "DAngle" >}} assumes in the target interaction A&ndash;B&middot;&middot;&middot;C that A&ndash;B occur on the same molecule, and gives us a choice as to whether we exclude C sites that are also on the same molecule.
 
-{{< action type="mouse" >}}Select the {{< gui-module "CalculateDAngle" >}} module to display its options{{< /action >}}
+{{< action type="mouse" >}}Select the {{< gui-module "DAngle" >}} module to display its options{{< /action >}}
 {{< action type="groups" text="Open the **Control** settings group" />}}
 {{< action type="edit" text="Change the maximum value of the **DistanceRange** to 5.0 &#8491;" />}}
 {{< action type="mouse" text="Press the button for **SiteA** and choose the `O` site" />}}

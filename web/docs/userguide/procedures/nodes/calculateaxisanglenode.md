@@ -1,6 +1,6 @@
 ---
-title: CalculateAxisAngle (Node)
-linkTitle: CalculateAxisAngle
+title: AxisAngle (Node)
+linkTitle: AxisAngle
 description: Calculate angle between axes on two oriented sites
 ---
 
@@ -14,13 +14,13 @@ description: Calculate angle between axes on two oriented sites
 
 ## Overview
 
-The `CalculateAxisAngle` node calculates the angle, in degrees, between specific axes on two sites $i$ and $j$, which are referenced from {{< gui-node "Select" >}} nodes.
+The `AxisAngle` node calculates the angle, in degrees, between specific axes on two sites $i$ and $j$, which are referenced from {{< gui-node "Select" >}} nodes.
 
 ## Description
 
-`CalculateAxisAngle` is one of several calculation nodes that determine and store a numerical result, ready for retrieval and use by other nodes in a procedure.
+`AxisAngle` is one of several calculation nodes that determine and store a numerical result, ready for retrieval and use by other nodes in a procedure.
 
-`CalculateAxisAngle` determines the angle formed between specific axes on two oriented sites $i$ and $j$, mapping the origins of both axes to {0,0,0}. The resulting value is measured in degrees.
+`AxisAngle` determines the angle formed between specific axes on two oriented sites $i$ and $j$, mapping the origins of both axes to {0,0,0}. The resulting value is measured in degrees.
 
 ## Options
 

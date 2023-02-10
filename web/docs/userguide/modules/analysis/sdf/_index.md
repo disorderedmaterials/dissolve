@@ -1,12 +1,12 @@
 ---
-title: CalculateSDF (Module)
-linkTitle: CalculateSDF
+title: SDF (Module)
+linkTitle: SDF
 description: Calculate a three-dimensional spatial distribution function
 ---
 
 ## Overview
 
-The `CalculateSDF` module calculates a three-dimensional spatial density / distribution function between two sites A and B over a defined volume range. The central site A must be an oriented site.
+The `SDF` module calculates a three-dimensional spatial density / distribution function between two sites A and B over a defined volume range. The central site A must be an oriented site.
 
 ## Options
 

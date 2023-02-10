@@ -1,12 +1,12 @@
 ---
-title: CalculateAxisAngle (Module)
-linkTitle: CalculateAxisAngle
+title: AxisAngle (Module)
+linkTitle: AxisAngle
 description: Calculate distance distribution and angle map between oriented sites A and B for A&middot;&middot;&middot;B&middot;&middot;&middot;C
 ---
 
 ## Overview
 
-The `CalculateAxisAngle` module calculates the angle between two vectors $u$ and $v$ from two oriented sites A and B, forming the averages of the angle, the A&middot;&middot;&middot;B distances, and the distance-angle map.
+The `AxisAngle` module calculates the angle between two vectors $u$ and $v$ from two oriented sites A and B, forming the averages of the angle, the A&middot;&middot;&middot;B distances, and the distance-angle map.
 
 ## Options
 

@@ -1,12 +1,12 @@
 ---
-title: CalculateRDF (Module)
-linkTitle: CalculateRDF
+title: SiteRDF (Module)
+linkTitle: SiteRDF
 description: Calculate a site-site radial distribution function and associated coordination numbers
 ---
 
 ## Overview
 
-The `CalculateRDF` module calculates a radial distribution function between two sites A and B over a defined distance range. Optionally up to three coordination numbers can be calculated over defined ranges of the resulting RDF.
+The `SiteRDF` module calculates a radial distribution function between two sites A and B over a defined distance range. Optionally up to three coordination numbers can be calculated over defined ranges of the resulting RDF.
 
 ## Options
 

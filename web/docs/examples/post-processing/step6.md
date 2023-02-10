@@ -10,7 +10,7 @@ At this point, you can set the simulation running (although it is a pure analysi
 
 Dissolve will churn through the trajectory file until it hits iteration 21, at which point you will encounter some errors. This is because, for practical distribution reasons, the trajectory file only has twenty steps in it, hence attempting to read past the end of the twentieth frame (in step 21) causes an error.
 
-Also, our {{< gui-module "CalculateRDF" >}} module missed data from the first frame (which we used to test the RDF/F(Q) calculation). So let's reset everything and do it again:
+Also, our {{< gui-module "SiteRDF" >}} module missed data from the first frame (which we used to test the RDF/F(Q) calculation). So let's reset everything and do it again:
 
 {{< action type="menu" text="Simulation &#8680; Clear Module Data" />}}
 {{< step text="Be brave, and click _OK_" />}}

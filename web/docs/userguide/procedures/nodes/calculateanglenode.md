@@ -1,6 +1,6 @@
 ---
-title: CalculateAngle (Node)
-linkTitle: CalculateAngle
+title: Angle (Node)
+linkTitle: Angle
 description: Calculate angle between three sites
 ---
 
@@ -14,13 +14,13 @@ description: Calculate angle between three sites
 
 ## Overview
 
-The `CalculateAngle` node calculates the angle, in degrees, between three provided sites $i$, $j$, and $k$, which are referenced from {{< gui-node "Select" >}} nodes.
+The `Angle` node calculates the angle, in degrees, between three provided sites $i$, $j$, and $k$, which are referenced from {{< gui-node "Select" >}} nodes.
 
 ## Description
 
-`CalculateAngle` is one of several calculation nodes that determine and store a numerical result, ready for retrieval and use by other nodes in a procedure.
+`Angle` is one of several calculation nodes that determine and store a numerical result, ready for retrieval and use by other nodes in a procedure.
 
-`CalculateAngle` determines the angle $i$-$j$-$k$ between the selected sites $i$, $j$, and $k$, obeying minimum image distances if the encompassing box is periodic. The resulting value is measured in degrees.
+`Angle` determines the angle $i$-$j$-$k$ between the selected sites $i$, $j$, and $k$, obeying minimum image distances if the encompassing box is periodic. The resulting value is measured in degrees.
 
 ## Options
 
