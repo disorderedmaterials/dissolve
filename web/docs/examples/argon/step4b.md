@@ -11,11 +11,11 @@ The new layer contains the following modules:
 
 | Module | Purpose |
 |--------|---------|
-| {{< gui-module RDF >}} | Calculates partial g(r) between every pair of atom types, and sums them into the total G(r) |
+| {{< gui-module "GR" >}} | Calculates partial g(r) between every pair of atom types, and sums them into the total G(r) |
 | {{< gui-module "SQ" >}} | Calculates partial S(Q) between every pair of atom types by Fourier-transforming a source set of g(r), and sums them into the total F(Q) |
 | {{< gui-module "NeutronSQ" >}} | Takes the S(Q) calculated by an {{< gui-module "SQ" >}} module to generate the neutron-weighted partial and total structure factors |
 
-Note that the ordering of these three modules in the layer is important - calculating the neutron-weighted structure factors requires the unweighted structure factors from the {{< gui-module "SQ" >}} module, which in turn requires the radial distribution functions from the {{< gui-module "RDF" >}} module. Modules are run "top to bottom" in the list, fulfilling the requirement that the {{< gui-module "RDF" >}} module runs before the {{< gui-module "SQ" >}} module etc.
+Note that the ordering of these three modules in the layer is important - calculating the neutron-weighted structure factors requires the unweighted structure factors from the {{< gui-module "SQ" >}} module, which in turn requires the radial distribution functions from the {{< gui-module "GR" >}} module. Modules are run "top to bottom" in the list, fulfilling the requirement that the {{< gui-module "GR" >}} module runs before the {{< gui-module "SQ" >}} module etc.
 
 We will now need to set a few parameters in the {{< gui-module "NeutronSQ" >}} module, in particular informing it of the isotopic composition of our system and loading in reference data.
 

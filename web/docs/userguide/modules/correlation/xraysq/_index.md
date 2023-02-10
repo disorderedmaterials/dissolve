@@ -8,7 +8,7 @@ description: Calculate x-ray-weighted S(Q) and G(r)
 
 `XRaySQ` is responsible for taking a set of previously calculated $S(Q)$ from an {{< gui-module "SQ" >}} module and generating a new set of x-ray-weighted structure factors. The total x-ray-weighted structure factor, $F^{X}(Q)$, is generated through summation of the individual partial x-ray-weighted $S(Q)$. X-ray-weighted partial and total radial distribution functions are also calculated.
 
-The `XRaySQ` module does not target any configurations itself - the underlying {{< gui-module "RDF" >}} module, referenced by the {{< gui-module "SQ" >}} module, dictates the source configuration data.
+The `XRaySQ` module does not target any configurations itself - the underlying {{< gui-module "GR" >}} module, referenced by the {{< gui-module "SQ" >}} module, dictates the source configuration data.
 
 ## Description
 

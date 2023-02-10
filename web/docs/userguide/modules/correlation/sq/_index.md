@@ -8,9 +8,9 @@ description: Unweighted structure factors
 
 The `SQ` module calculates the atomic structure factors, $S(Q)$, via Fourier transform of a source set of radial distribution functions. The total structure factor, $F(Q)$, is also generated through summation of the atomic partials.
 
-The required radial distribution functions must be calculated by an {{< gui-module "RDF" >}} module and referenced using the [`SourceRDFs`](#targets) keyword.
+The required radial distribution functions must be calculated by an {{< gui-module "GR" >}} module and referenced using the [`SourceRDFs`](#targets) keyword.
 
-The {{< gui-module "RDF" >}} module dictates the target configurations from which the $g(r)$, and hence the $S(Q)$, are generated - as such, the `SQ` module does not target any configurations itself. If Bragg scattering is to be explicitly included, a source {{< gui-module "bragg" >}} module can be specified with the [`IncludeBragg`](#control) keyword.
+The {{< gui-module "GR" >}} module dictates the target configurations from which the $g(r)$, and hence the $S(Q)$, are generated - as such, the `SQ` module does not target any configurations itself. If Bragg scattering is to be explicitly included, a source {{< gui-module "bragg" >}} module can be specified with the [`IncludeBragg`](#control) keyword.
 
 ## Description
 
@@ -38,7 +38,7 @@ Intensity information from a [`Bragg module`]({{< ref "bragg" >}}) calculation c
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`SourceRDFs`|`Module`|--|{{< required-label >}} Source {{< gui-module "RDF" >}} module from which to take $g(r)$ and transform to $S(Q)$.|
+|`SourceRDFs`|`Module`|--|{{< required-label >}} Source {{< gui-module "GR" >}} module from which to take $g(r)$ and transform to $S(Q)$.|
 
 ### Range
 

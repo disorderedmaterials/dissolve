@@ -44,7 +44,7 @@ We're changing to a finer binning in $Q$ so our Bragg features have better defin
 One thing missing from the standard layers is the calculation of Bragg scattering, so we must add a {{< gui-module "Bragg" >}} module in to this layer.
 
 {{< action type="mouse" >}}Show the module palette for the current layer by clicking the {{< gui-button icon="general_palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
-{{< action type="mouse" >}}Drag a {{< gui-module "Bragg" >}} module from the **Correlations** category up to the module list, placing it in-between the existing {{< gui-module "RDF" >}} and {{< gui-module "SQ" >}} modules{{< /action >}}
+{{< action type="mouse" >}}Drag a {{< gui-module "Bragg" >}} module from the **Correlations** category up to the module list, placing it in-between the existing {{< gui-module "GR" >}} and {{< gui-module "SQ" >}} modules{{< /action >}}
 {{< action type="mouse" >}}Select the new {{< gui-module "Bragg" >}} module to show its options{{< /action >}}
 {{< action type="edit" >}}Change the **QMax** to `5.0`{{< /action >}}
 

@@ -1,6 +1,6 @@
 ---
-title: RDF (Module)
-linkTitle: RDF
+title: GR (Module)
+linkTitle: GR
 description: Calculate radial distribution functions between all atom types
 ---
 

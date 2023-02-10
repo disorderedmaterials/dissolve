@@ -35,7 +35,7 @@ Now run the simulation for a little longer and let the species adjust to their n
 
 {{< cimage src="../equilibrated-d2o-adjusted-gr.png" caption="Simulated (black), Fourier-transformed from simulated F(Q) (green), and experimental (red) G(r) for the equilibrated water (D<sub>2</sub>O) simulation with adjusted intramolecular parameters" >}}
 
-{{< tip >}}The change in the G(r) will not be instant as the majority of the evolution of the system is from the {{< gui-module "MolShake" >}} module which does not change the intramolecular geometry. Only the {{< gui-module "MD" >}} module will affect the intramolecular geometry. Also, the g(r) calculated by the {{< gui-module "RDF" >}} are averaged over five calculations by default. {{< /tip >}}
+{{< tip >}}The change in the G(r) will not be instant as the majority of the evolution of the system is from the {{< gui-module "MolShake" >}} module which does not change the intramolecular geometry. Only the {{< gui-module "MD" >}} module will affect the intramolecular geometry. Also, the g(r) calculated by the {{< gui-module "GR" >}} are averaged over five calculations by default. {{< /tip >}}
 
 It's also worth checking the other two samples, where the same kind of improvement should be noticeable (if a little less prominent).
 
