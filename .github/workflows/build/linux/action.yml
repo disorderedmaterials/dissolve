@@ -19,6 +19,18 @@ runs:
     with:
       target: ${{ inputs.target }}
 
+  - name: Cache Nix Store
+    uses: actions/cache@v3
+    id: nix-cache
+    with:
+      path: /tmp/nixcache
+      key: ${{ runner.os }}-nix-cache
+
+  - name: Import Nix Store Cache
+    if: "steps.nix-cache.outputs.cache-hit == 'true'"
+    shell: bash
+    run: nix-store --import < /tmp/nixcache
+
   - name: Build
     shell: bash
     run: |
@@ -50,10 +62,15 @@ runs:
     run: |
       set -ex
       # Remove the built dissolve derivations / img from the nix store to save space and leave just the other core build deps
-      for a in `nix path-info --all | grep dissolve`
-      do
-        nix --extra-experimental-features nix-command store delete --ignore-liveness $a
-      done
+      # Need to do this via sudo so we can use --ignore-liveness
+      nixStoreCmd=`which nix-store`
+      targets=`nix path-info --all | grep dissolve`
+      echo "for a in \"$targets\"; do $nixStoreCmd -q --referrers-closure \$a | xargs $nixStoreCmd --delete --ignore-liveness $b; done" | sudo bash
+
+  - name: Export Nix Store Cache
+    if: ${{ inputs.cacheOnly == 'true' }}
+    shell: bash
+    run: nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache
 
   - name: Upload Package Artifacts
     if: ${{ inputs.cacheOnly == 'false' }}
