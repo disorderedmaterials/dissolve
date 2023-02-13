@@ -25,7 +25,7 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (useHalfCellRange_)
         Messenger::print("RDF: Partials will be calculated up to the half-cell range limit.\n");
     else
-        Messenger::print("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_);
+        Messenger::print("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_.value());
     Messenger::print("RDF: Bin-width to use is {} Angstroms.\n", binWidth_);
     if (averagingLength_)
         Messenger::print("RDF: Partials will be averaged over {} sets (scheme = {}).\n", averagingLength_.value(),
@@ -58,11 +58,11 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Messenger::print("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->niceName(), rdfRange);
         else
         {
-            if (requestedRange_ > rdfRange)
+            if (requestedRange_.value_or(0.0) > rdfRange)
                 return Messenger::error("Specified RDF range of {} Angstroms is out of range for Configuration "
                                         "'{}' (max = {} Angstroms).\n",
-                                        requestedRange_, cfg->niceName(), rdfRange);
-            rdfRange = requestedRange_;
+                                        requestedRange_.value(), cfg->niceName(), rdfRange);
+            rdfRange = requestedRange_.value();
             Messenger::print("Cutoff for Configuration '{}' is {} Angstroms.\n", cfg->niceName(), rdfRange);
         }
 

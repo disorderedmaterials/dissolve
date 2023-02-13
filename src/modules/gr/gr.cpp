@@ -8,6 +8,7 @@
 #include "keywords/function1d.h"
 #include "keywords/integer.h"
 #include "keywords/module.h"
+#include "keywords/optionaldouble.h"
 #include "keywords/optionalint.h"
 
 GRModule::GRModule() : Module("GR")
@@ -17,8 +18,8 @@ GRModule::GRModule() : Module("GR")
 
     keywords_.setOrganisation("Options", "Range");
     keywords_.add<DoubleKeyword>("BinWidth", "Bin width (spacing in r) to use", binWidth_, 1.0e-3);
-    keywords_.add<DoubleKeyword>("Range", "Maximum r to calculate g(r) out to, unless UseHalfCellRange is true",
-                                 requestedRange_, 1.0);
+    keywords_.add<OptionalDoubleKeyword>("Range", "Maximum r to calculate g(r) out to, unless UseHalfCellRange is true",
+                                         requestedRange_, 0.0, std::nullopt, 1.0, "");
     keywords_.add<BoolKeyword>("UseHalfCellRange", "Whether to use the maximal RDF range possible that avoids periodic images",
                                useHalfCellRange_);
 
