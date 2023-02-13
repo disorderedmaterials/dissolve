@@ -44,22 +44,22 @@ class MDModule : public Module
     TimestepType timestepType_{TimestepType::Automatic};
     // Fixed timestep (ps) to use in MD simulation
     double fixedTimestep_{5.0e-4};
-    // Frequency at which to calculate total system energy (or 0 to inhibit)
-    int energyFrequency_{10};
+    // Frequency at which to calculate total system energy
+    std::optional<int> energyFrequency_;
     // Whether to restrict force calculation to intramolecular contributions only
     bool intramolecularForcesOnly_{false};
     // Number of steps to perform
     int nSteps_{50};
     // Only run MD when target Configuration energies are stable
     bool onlyWhenEnergyStable_{true};
-    // Frequency at which to output step information (or 0 to inhibit)
-    int outputFrequency_{5};
+    // Frequency at which to output step information
+    std::optional<int> outputFrequency_;
     // Whether random velocities should always be assigned before beginning MD simulation
     bool randomVelocities_{false};
     // Species to restrict calculation to
     std::vector<const Species *> restrictToSpecies_;
-    // Write frequency for trajectory file (or 0 to inhibit)
-    int trajectoryFrequency_{0};
+    // Write frequency for trajectory file
+    std::optional<int> trajectoryFrequency_;
 
     /*
      * Functions

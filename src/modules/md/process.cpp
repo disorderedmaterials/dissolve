@@ -20,7 +20,6 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
-    auto writeTraj = trajectoryFrequency_ > 0;
 
     // Units
     // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
@@ -33,18 +32,18 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     Messenger::print("MD: Timestep type is '{}'\n", timestepType().keyword(timestepType_));
     if (onlyWhenEnergyStable_)
         Messenger::print("MD: Only perform MD if target Configuration energies are stable.\n");
-    if (writeTraj)
-        Messenger::print("MD: Trajectory file will be appended every {} step(s).\n", trajectoryFrequency_);
+    if (trajectoryFrequency_.value_or(0) > 0)
+        Messenger::print("MD: Trajectory file will be appended every {} step(s).\n", trajectoryFrequency_.value());
     else
         Messenger::print("MD: Trajectory file off.\n");
     if (capForces_)
         Messenger::print("MD: Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
-    if (energyFrequency_ > 0)
-        Messenger::print("MD: Energy will be calculated every {} step(s).\n", energyFrequency_);
+    if (energyFrequency_.value_or(0) > 0)
+        Messenger::print("MD: Energy will be calculated every {} step(s).\n", energyFrequency_.value());
     else
         Messenger::print("MD: Energy will be not be calculated.\n");
-    if (outputFrequency_ > 0)
-        Messenger::print("MD: Summary will be written every {} step(s).\n", outputFrequency_);
+    if (outputFrequency_.value_or(0) > 0)
+        Messenger::print("MD: Summary will be written every {} step(s).\n", outputFrequency_.value());
     else
         Messenger::print("MD: Summary will not be written.\n");
     if (!restrictToSpecies_.empty())
@@ -169,7 +168,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Open trajectory file (if requested)
     LineParser trajParser;
-    if (writeTraj)
+    if (trajectoryFrequency_.value_or(0) > 0)
     {
         std::string trajectoryFile = fmt::format("{}.md.xyz", targetConfiguration_->name());
         if (procPool.isMaster())
@@ -187,7 +186,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     }
 
     // Write header
-    if (outputFrequency_ > 0)
+    if (outputFrequency_.value_or(0) > 0)
     {
         Messenger::print("                                             Energies (kJ/mol)\n");
         Messenger::print("  Step             T(K)         Kinetic      Inter        Intra        Total      "
@@ -308,10 +307,10 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         ke *= 0.01;
 
         // Write step summary?
-        if ((step == 1) || (step % outputFrequency_ == 0))
+        if ((step == 1) || (step % outputFrequency_.value_or(0) == 0))
         {
             // Include total energy term?
-            if ((energyFrequency_ > 0) && (step % energyFrequency_ == 0))
+            if ((energyFrequency_.value_or(0) > 0) && (step % energyFrequency_.value_or(0) == 0))
             {
                 peInter = EnergyModule::interAtomicEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
                 peIntra = EnergyModule::intraMolecularEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
@@ -324,7 +323,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         }
 
         // Save trajectory frame
-        if (writeTraj && (step % trajectoryFrequency_ == 0))
+        if (trajectoryFrequency_.value_or(0) > 0 && (step % trajectoryFrequency_.value_or(0) == 0))
         {
             if (procPool.isMaster())
             {
@@ -333,7 +332,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
                 // Construct and write header
                 std::string header = fmt::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps_, tInstant, ke);
-                if ((energyFrequency_ > 0) && (step % energyFrequency_ == 0))
+                if ((energyFrequency_.value_or(0) > 0) && (step % energyFrequency_.value_or(0) == 0))
                     header += fmt::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", peInter, peIntra,
                                           ke + peInter + peIntra);
                 if (!trajParser.writeLine(header))
@@ -362,7 +361,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     timer.stop();
 
     // Close trajectory file
-    if (writeTraj && procPool.isMaster())
+    if (trajectoryFrequency_.value_or(0) > 0 && procPool.isMaster())
         trajParser.closeFiles();
 
     if (capForces_)
