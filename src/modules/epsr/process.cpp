@@ -652,8 +652,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     weight *= 0.5;
 
                 // Store fluctuation coefficients ready for addition to potential coefficients later on.
-                for (auto n = 0; n < nCoeffP_; ++n)
-                    fluctuationCoefficients[{i, j, n}] += weight * feedback_ * fitCoefficients[n];
+                auto [begin, end] = fluctuationCoefficients[{i, j}];
+                std::transform(fitCoefficients.begin(), fitCoefficients.end(), begin, begin,
+                               [weight, this](auto coeff, auto result) { return result + weight * feedback_ * coeff; });
             });
 
         // Increase dataIndex
@@ -676,8 +677,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                         std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
                                     // Add in fluctuation coefficients
-                                    for (auto n = 0; n < nCoeffP_; ++n)
-                                        potCoeff[n] += weighting_ * fluctuationCoefficients[{i, j, n}];
+                                    auto [begin, end] = fluctuationCoefficients[{i, j}];
+                                    std::transform(potCoeff.begin(), potCoeff.end(), begin, potCoeff.begin(),
+                                                   [this](auto pot, auto fluct) { return pot + weighting_ * fluct; });
 
                                     // Set first term to zero (following EPSR)
                                     potCoeff[0] = 0.0;
