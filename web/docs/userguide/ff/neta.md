@@ -35,7 +35,7 @@ The current atom being checked for a match to the description is the "root" atom
 
 |Keyword|Syntax|Description|
 |:------|------|-----------|
-|`geometry`|`geometry` `=`|`!=` [`type`](#geometry-types)|States that the root atom must (or must not) have the bond geometry specified.|
+|`geometry`|`geometry` `operator` [`type`](#geometry-types)|States that the root atom must (or must not) have the bond geometry specified. The `operator` in this case may be only a simple (in)equality comparison ( `=` or `!=`).|
 |`nbonds`|`nbonds` [`operator`](#comparison-operators) `value`|States that the bond count on the root atom must satisfy the given criterion.|
 |`nh`|`nh` [`operator`](#comparison-operators) `value`|States that the total number of hydrogen atoms bound to the root atom must satisfy the given criterion.|
 
@@ -53,7 +53,7 @@ The `-` keyword specifies a connection to another atom that the current atom mus
 
 |Keyword|Syntax|Description|
 |:------|------|-----------|
-|`geometry`|`geometry` `=`|`!=` [`type`](#geometry-types)|States that the bound atom must (or must not) have the bond geometry specified.|
+|`geometry`|`geometry` `operator` [`type`](#geometry-types)|States that the bound atom must (or must not) have the bond geometry specified. The `operator` in this case may be only a simple (in)equality comparison ( `=` or `!=`).|
 |`n`|`n` [`operator`](#comparison-operators) `value`|Requests that there must be a certain number of unique matches of the bound atom.|
 |`nbonds`|`nbonds` [`operator`](#comparison-operators) `value`|States that the bond count on the bound atom root atom must satisfy the given criterion.|
 |`nh`|`nh` [`operator`](#comparison-operators) `value`|States that the total number of hydrogen atoms on the bound atom must satisfy the given criterion.|
@@ -79,6 +79,8 @@ The `-` keyword specifies a connection to another atom that the current atom mus
 
 On its own, the `ring` keyword indicates that the atom should be present in some sort of cyclic moiety of any size within the molecule. The exact size of the ring can be specified using the `size` modifier within parentheses immediately following the keyword. Within the same parentheses, the exact composition of the ring can be provided with a comma-separated list of elements or type references.
 
+Where a `ring` occurs in a description needs a little bit of consideration. Stating it first and getting a match will add the constituent atoms to the current match group, meaning that subsequent matching by connectivity may not work as you expect. For that reason, the `ring` keyword is often best used as late in the definition as possible.
+
 |Keyword|Syntax|Description|
 |:------|------|-----------|
 |`n`|`n` [`operator`](#comparison-operators) `value`|Requests that there must be a certain number of unique matches of the ring.|
@@ -95,13 +97,30 @@ ring(C,C,N,C,C)      # ... exists in a ring containing the elemental sequence `C
 
 ### Or'ing Descriptions
 
-Multiple sequences of comma-separated keywords can be "or'd" together to allow a single description to match completely different atom environments if so desired.  The vertical bar `|` is the "or" operator.
+Multiple sequences of comma-separated keywords can be "or'd" together to allow a single description to match completely different atom environments if so desired. The vertical bar `|` is the "or" operator, and is non-greedy (i.e. "binds" to the fewest other elements either side of it), so you might need to use parentheses in order get the desired behaviour. 
 
 For example:
 
 ```
 -C(nh=3)|-P                # ... is bound to a CH3 group or a phosphorus
 ring(size=4)|ring(size=6)  # ... is present in a ring of either size 4 or 6
+-C,-N|-&3                  # ... is bound to a carbon, and is bound to either a nitrogen or atom type 3
+(-C,-N)|-&3                # ... is bound to a carbon and a nitrogen, or is bound to atom type 3
+```
+
+### Identifier Matching
+
+For advanced uses of NETA definitions it is possible to tag matched atoms with identifying names through the `#` operator. Multiple atoms can be tagged with the same name if this is desired, and which form distinct groups of matched atoms for further use.
+
+|Keyword|Syntax|Description|
+|:------|------|-----------|
+|`#`|`#` `name`|Add the current atom to the `name`d group.|
+
+For example:
+
+```
+-N(#amine),-C(nh=3,#methyl),-C(#chain)   # ... tag the matched nitrogen as "amine", and two different carbons
+#origin,-C(-H(n=3,#hydrogens))           # ... tag the root matched atom as "origin", and group methyl H together
 ```
 
 ### Comparison Operators
