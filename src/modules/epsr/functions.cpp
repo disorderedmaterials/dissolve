@@ -126,8 +126,8 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
     const auto mcoeff = 200;
 
     // Calculate some values if they were not provided
-    auto rmaxpt = rMaxPT_ < 0.0 ? dissolve.pairPotentialRange() : rMaxPT_;
-    auto rminpt = rMinPT_ < 0.0 ? rmaxpt - 2.0 : rMinPT_;
+    auto rmaxpt = rMaxPT_.value() < 0.0 ? dissolve.pairPotentialRange() : rMaxPT_.value();
+    auto rminpt = rMinPT_.value() < 0.0 ? rmaxpt - 2.0 : rMinPT_.value();
     nCoeffP_ = nCoeffP_ <= 0 ? std::min(int(10.0 * rmaxpt + 0.0001), mcoeff) : nCoeffP_;
 
     // Get coefficients array

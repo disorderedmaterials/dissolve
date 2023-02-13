@@ -87,13 +87,13 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
         // Set up the additional potentials - reconstruct them from the current coefficients
         if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
         {
-            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rMinPT_, rMaxPT_,
+            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rMinPT_.value(), rMaxPT_.value(),
                                              gSigma1_, gSigma2_))
                 return false;
         }
         else
         {
-            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rMinPT_, rMaxPT_,
+            if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rMinPT_.value(), rMaxPT_.value(),
                                              pSigma1_, pSigma2_))
                 return false;
         }
@@ -124,12 +124,12 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     const auto mcoeff = 200;
 
     // Calculate some values if they were not provided
-    if (rMaxPT_ < 0.0)
-        rMaxPT_ = dissolve.pairPotentialRange();
-    if (rMinPT_ < 0.0)
-        rMinPT_ = rMaxPT_ - 2.0;
+    if (rMaxPT_.value_or(0.0) < 0.0)
+        rMaxPT_.value() = dissolve.pairPotentialRange();
+    if (rMinPT_.value_or(0.0) < 0.0)
+        rMinPT_.value() = rMaxPT_.value() - 2.0;
     if (!nCoeffP_)
-        nCoeffP_ = std::min(int(10.0 * rMaxPT_ + 0.0001), mcoeff);
+        nCoeffP_ = std::min(int(10.0 * rMaxPT_.value() + 0.0001), mcoeff);
 
     // Print option summary
     Messenger::print("EPSR: Feedback factor is {}.\n", feedback_);
@@ -288,7 +288,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             if (status == GenericItem::ItemStatus::Created)
                 fitError =
-                    coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01, false);
+                    coeffMinimiser.constructReciprocal(0.0, rMaxPT_.value(), nCoeffP_.value(), gSigma1_, nIterations, 0.01, false);
             else
             {
                 if (fitCoefficients.size() != nCoeffP_)
@@ -296,10 +296,10 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
                                     fitCoefficients.size(), module->name(), nCoeffP_.value());
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), gSigma1_, nIterations, 0.01);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_.value(), nCoeffP_.value(), gSigma1_, nIterations, 0.01);
                 }
                 else
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, gSigma1_, nIterations, 0.01);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_.value(), fitCoefficients, gSigma1_, nIterations, 0.01);
             }
 
             // Store the new fit coefficients
@@ -313,7 +313,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             PoissonFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_, nIterations,
+                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_.value(), nCoeffP_.value(), pSigma1_, pSigma2_, nIterations,
                                                               0.1, false);
             else
             {
@@ -322,11 +322,11 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
                                     fitCoefficients.size(), module->name(), nCoeffP_.value());
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, nCoeffP_.value(), pSigma1_, pSigma2_,
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_.value(), nCoeffP_.value(), pSigma1_, pSigma2_,
                                                                   nIterations, 0.01);
                 }
                 else
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_,
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_.value(), fitCoefficients, pSigma1_, pSigma2_,
                                                                   nIterations, 0.01);
             }
 
@@ -339,7 +339,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 Filters::movingAverage(fitCoefficients, *fluctuationSmoothing_);
 
                 // Need to pass the smoothed parameters back into the minimiser so we generate the matching approximation
-                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_, 0, 0.01);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_.value(), fitCoefficients, pSigma1_, pSigma2_, 0, 0.01);
             }
 
             deltaFQFit = coeffMinimiser.approximation();
@@ -726,7 +726,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto sigma1 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
         auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
 
-        if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rMinPT_, rMaxPT_, sigma1, sigma2))
+        if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rMinPT_.value(), rMaxPT_.value(), sigma1, sigma2))
             return false;
     }
     else

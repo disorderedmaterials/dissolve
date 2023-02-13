@@ -72,9 +72,9 @@ class EPSRModule : public Module
     // Width for Poisson functions in real space
     double pSigma2_{0.01};
     // Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)
-    double rMaxPT_{-1.0};
+    std::optional<double> rMaxPT_{-1.0};
     // Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)
-    double rMinPT_{-1.0};
+    std::optional<double> rMinPT_{-1.0};
     // Degree of smoothing to apply to fluctuation coefficients before summation into potential
     std::optional<int> fluctuationSmoothing_;
     // Whether to save difference function and fit
