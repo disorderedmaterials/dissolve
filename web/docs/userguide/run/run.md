@@ -44,6 +44,6 @@ This uses the ([OpenMPI](https://www.open-mpi.org/)) `mpirun` command to run `di
 
 ## Restarting a Simulation
 
-No matter how you run Dissolve, a [restart file]({{< ref "restart" >}}) is periodically written, and which contains the complete state of the simulation. The default is to do so every ten steps, but this can be controlled with the [`-f`]({{< ref "cli#-f-n---frequency-n" >}}) switch. Following completion of the requested number of steps or, if you're unlucky, a crash, the simulation can be restarted using the data contained within the [restart file]({{< ref "restart" >}}).
+No matter how you run Dissolve, a restart file is periodically written (unless you explicitly request it not to be), and which contains the complete state of the simulation. The default is to do so every ten steps, but this can be controlled with the [`-f`]({{< ref "cli#-f-n---frequency-n" >}}) switch. Following completion of the requested number of steps or, if you're unlucky, a crash, the simulation can be restarted using the data contained within the restart file.
 
 The restart file is always named after the input file so, if it exists, Dissolve will automatically read it in before continuing the simulation. The GUI offers slightly more flexibility than the command-line version in this regard, and will prompt you for which restart file to load if it finds one or more in the input file directory.
