@@ -48,11 +48,11 @@ EPSRModule::EPSRModule() : Module("EPSR")
                                  pSigma1_, 0.001, 1.0);
     keywords_.add<DoubleKeyword>("PSigma2", "Width for Poisson functions in real space", pSigma2_, 0.001, 1.0);
     keywords_.add<OptionalDoubleKeyword>(
-        "RMaxPT", "Radius at which potential truncation goes to zero (-1.0 to use pair potential maximum range)", rMaxPT_, 0.0,
-        std::nullopt, -1.0, "");
+        "RMaxPT", "Radius at which potential truncation goes to zero", rMaxPT_, 0.0,
+        std::nullopt, 1.0, "Use Cuttoff Range");
     keywords_.add<OptionalDoubleKeyword>(
-        "RMinPT", "Radius at which potential truncation begins (-1.0 to set to 2.0 Angstroms under rmaxpt)", rMinPT_, 0.0,
-        std::nullopt, -1.0, "");
+        "RMinPT", "Radius at which potential truncation begins (or Auto for 2 Angstroms under rmaxpt)", rMinPT_, 0.0,
+        std::nullopt, 1.0, "Auto");
     keywords_.add<OptionalIntegerKeyword>("Smoothing",
                                           "Smoothing to apply to fluctuation coefficients before summation into potential",
                                           fluctuationSmoothing_, 0, std::nullopt, 1, "Off");

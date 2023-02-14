@@ -307,10 +307,10 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         ke *= 0.01;
 
         // Write step summary?
-        if ((step == 1) || (step % outputFrequency_.value_or(0) == 0))
+        if (outputFrequency_ && (step == 1 || (step % outputFrequency_.value() == 0)))
         {
             // Include total energy term?
-            if ((energyFrequency_.value_or(0) > 0) && (step % energyFrequency_.value_or(0) == 0))
+            if (energyFrequency_ && (step % energyFrequency_.value() == 0))
             {
                 peInter = EnergyModule::interAtomicEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
                 peIntra = EnergyModule::intraMolecularEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
@@ -323,7 +323,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         }
 
         // Save trajectory frame
-        if (trajectoryFrequency_.value_or(0) > 0 && (step % trajectoryFrequency_.value_or(0) == 0))
+        if (trajectoryFrequency_ && (step % trajectoryFrequency_.value() == 0))
         {
             if (procPool.isMaster())
             {
@@ -332,7 +332,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
                 // Construct and write header
                 std::string header = fmt::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps_, tInstant, ke);
-                if ((energyFrequency_.value_or(0) > 0) && (step % energyFrequency_.value_or(0) == 0))
+                if (energyFrequency_ && (step % energyFrequency_.value() == 0))
                     header += fmt::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", peInter, peIntra,
                                           ke + peInter + peIntra);
                 if (!trajParser.writeLine(header))
