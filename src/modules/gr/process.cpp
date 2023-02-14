@@ -22,7 +22,7 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", name());
 
     // Print argument/parameter summary
-    if (useHalfCellRange_)
+    if (!requestedRange_)
         Messenger::print("RDF: Partials will be calculated up to the half-cell range limit.\n");
     else
         Messenger::print("RDF: Partials will be calculated out to {} Angstroms.\n", requestedRange_.value());
@@ -54,7 +54,7 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         // Check RDF range
         double rdfRange = cfg->box()->inscribedSphereRadius();
-        if (useHalfCellRange_)
+        if (!requestedRange_)
             Messenger::print("Maximal cutoff used for Configuration '{}' ({} Angstroms).\n", cfg->niceName(), rdfRange);
         else
         {

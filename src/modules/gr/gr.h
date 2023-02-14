@@ -60,8 +60,6 @@ class GRModule : public Module
     bool save_{false};
     // Whether to save original (unbroadened) partials and total functions to disk
     bool saveOriginal_{false};
-    // Whether to use the maximal RDF range possible that avoids periodic images
-    bool useHalfCellRange_{true};
 
     /*
      * Functions

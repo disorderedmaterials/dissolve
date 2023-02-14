@@ -32,11 +32,11 @@ MDModule::MDModule() : Module("MD")
 
     keywords_.setOrganisation("Options", "Output");
     keywords_.add<OptionalIntegerKeyword>("EnergyFrequency", "Frequency at which to calculate total system energy",
-                                          energyFrequency_, 0, std::nullopt, 10, "Off");
+                                          energyFrequency_, 0, std::nullopt, 5, "Off");
     keywords_.add<OptionalIntegerKeyword>("OutputFrequency", "Frequency at which to output step information", outputFrequency_,
                                           0, std::nullopt, 5, "Off");
     keywords_.add<OptionalIntegerKeyword>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
-                                          std::nullopt, 0, "Off");
+                                          std::nullopt, 5, "Off");
 
     keywords_.setOrganisation("Advanced");
     keywords_.add<BoolKeyword>("CapForces", "Control whether atomic forces are capped every step", capForces_);
