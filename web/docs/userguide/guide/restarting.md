@@ -1,8 +1,15 @@
 ---
-title: Input, Output, and Workflow
-description: An overview of key files and basic operation
-weight: 1
+title: Checkpointing / Restarting
+description: Checkpointing and restarting simulations
+weight: 6
 ---
+## Restarting a Simulation
+
+No matter how you run Dissolve, a restart file is periodically written (unless you explicitly request it not to be), and which contains the complete state of the simulation. The default is to do so every ten steps, but this can be controlled with the [`-f`]({{< ref "cli#-f-n---frequency-n" >}}) switch. Following completion of the requested number of steps or, if you're unlucky, a crash, the simulation can be restarted using the data contained within the restart file.
+
+The restart file is always named after the input file so, if it exists, Dissolve will automatically read it in before continuing the simulation. The GUI offers slightly more flexibility than the command-line version in this regard, and will prompt you for which restart file to load if it finds one or more in the input file directory.
+
+
 
 ## Input
 
@@ -10,9 +17,6 @@ Dissolve takes a single [main input file]({{< ref "inputfile" >}}) that contains
 
 The restart file is named after the input file, with the suffix `.restart` appended - e.g. if the input file is `water-3000.txt` the restart file for the simulation will be `water-3000.txt.restart`. Dissolve also keeps a second, backup restart file with the suffix `.restart.bak`, containing the previous saved state of the simulation.
 
-### External Data
-
-Certain modules may require external data - this data does not have to be stored in the same directory as the main input file, since Dissolve uses relative paths for any referenced external files.
 
 ## Workflow
 

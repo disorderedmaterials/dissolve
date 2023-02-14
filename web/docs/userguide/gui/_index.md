@@ -1,10 +1,14 @@
 ---
-title: Using the GUI
+title: 6. The GUI
 description: An overview of Dissolve's GUI
+weight: 6
 ---
 
 ## Overview
-Dissolve's user interface comprises three main areas:
+
+The GUI of Dissolve looks like this (displaying the example water input file):
+
+{{< cimage src="mainwindow.png" caption="Dissolve GUI with water simulation loaded" width=90% >}}
 
 ### Run Controls
 
@@ -36,3 +40,21 @@ The order of tabs is fixed, and represent how the simulation is built-up within 
 {{< cimage src="../messages.png" >}}
 
 All of Dissolve's output (information, warnings, errors, and, of course, good things) is printed to the messages box. Keep an eye on the content here to make sure the correct things are happening. Especially, check here for clues as to why simulations aren't running, for instance.
+
+
+
+## Running a Simulation
+
+There are pros and cons of running the simulation through the GUI. On the one hand, you can investigate / plot / interrogate the simulation as it is running. On the other, the GUI invokes some overhead from displaying all the information, and so is not as performant as the CLI version. However, as of version 0.8 the GUI is multithreaded, so can be used for production simulations of small to medium systems.
+
+The "Simulation" menu allows simulations to be stopped and started, or the following keyboard shortcuts can be used instead:
+
+|Shortcut|Action|
+|:-----:|------|
+|`Ctrl-R`|Run the simulation until interrupted.|
+|`Esc`|Stop a running simulation. This may not happen immediately since the current iteration will always run to completion.|
+|`Ctrl-1`|Perform a single iteration.|
+|`Ctrl-5`|Perform five iterations.|
+|`Ctrl-F`|Run for a specific number of iterations - a dialog will pop up asking for the number to run.|
+
+The status bar at the bottom of Dissolve's main window will tell you the current status ("Idle", "Running" etc.) and, equally importantly, will show you when errors are detected. If errors are reported, go to the "Messages" tab to get more information on what went wrong.

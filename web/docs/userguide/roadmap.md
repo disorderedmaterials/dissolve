@@ -1,6 +1,7 @@
 ---
 title: C. Top-Level Roadmap
 description: Broad Roadmap for Dissolve's Development
+weight: 103
 ---
 
 The roadmap shown here is a top-level roadmap showing only the general "big feature" additions being considered / implemented. Input to this roadmap is largely driven by the [project management committee]({{< ref "pmc" >}}).

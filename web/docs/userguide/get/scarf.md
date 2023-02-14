@@ -1,6 +1,7 @@
 ---
 title: SCARF
 description: Where to find, and how to run, Dissolve on SCARF
+weight: 4
 ---
 
 Dissolve is installed as a module on [SCARF](https://www.scarf.rl.ac.uk), and is built (as of v0.7.3) using the `gcc` compilers.
