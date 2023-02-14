@@ -9,6 +9,8 @@ Below are listed the interaction forms available for torsion angles (also called
 
 Note that within input files any equilibrium angles $\phi_{eq}$ should be provided in degrees, but the equations as written below work internally in radians.
 
+For proper torsions the interactions between the two terminal atoms 1 and 4 are typically scaled by two independent factors, one each for the electrostatic and short-range interactions between those atoms, although this is forcefield dependent.
+
 Force equations are derived by applying the chain rule, and where
 
 $$ \frac{d\phi}{d\cos\phi} = -\frac{1}{\sin\phi} $$
