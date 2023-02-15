@@ -128,12 +128,13 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Calculate some values if they were not provided
     auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : dissolve.pairPotentialRange();
     auto rminpt = rMinPT_ ? rMinPT_.value() : rmaxpt - 2.0;
+    auto ncoeffp = nCoeffP_ ? nCoeffP_.value() : std::min(int(10.0 * rmaxpt + 0.0001), mcoeff);
 
     // Print option summary
     Messenger::print("EPSR: Feedback factor is {}.\n", feedback_);
     Messenger::print("EPSR: {} functions will be used to approximate difference data.\n",
                      expansionFunctionTypes().keyword(expansionFunction_));
-    Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", nCoeffP_.value(), pSigma2_);
+    Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", ncoeffp, pSigma2_);
     if (modifyPotential_)
         Messenger::print(
             "EPSR: Perturbations to interatomic potentials will be generated and applied with a frequency of {}.\n",
@@ -187,7 +188,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Set up storage for the changes to coefficients used to generate the empirical potentials
     const auto nAtomTypes = dissolve.nAtomTypes();
-    Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, nCoeffP_.value());
+    Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
     fluctuationCoefficients = 0.0;
 
     // Create storage for our summed UnweightedSQ
@@ -286,15 +287,15 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             if (status == GenericItem::ItemStatus::Created)
                 fitError =
-                    coeffMinimiser.constructReciprocal(0.0, rmaxpt, nCoeffP_.value(), gSigma1_, nIterations, 0.01, false);
+                    coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01, false);
             else
             {
-                if (fitCoefficients.size() != nCoeffP_)
+                if (fitCoefficients.size() != ncoeffp)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.size(), module->name(), nCoeffP_.value());
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, nCoeffP_.value(), gSigma1_, nIterations, 0.01);
+                                    fitCoefficients.size(), module->name(), ncoeffp);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01);
                 }
                 else
                     fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gSigma1_, nIterations, 0.01);
@@ -311,16 +312,16 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             PoissonFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, nCoeffP_.value(), pSigma1_, pSigma2_, nIterations,
+                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations,
                                                               0.1, false);
             else
             {
-                if (fitCoefficients.size() != nCoeffP_)
+                if (fitCoefficients.size() != ncoeffp)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.size(), module->name(), nCoeffP_.value());
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, nCoeffP_.value(), pSigma1_, pSigma2_,
+                                    fitCoefficients.size(), module->name(), ncoeffp);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_,
                                                                   nIterations, 0.01);
                 }
                 else
@@ -664,7 +665,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (modifyPotential_ && (runCount % *modifyPotential_ == 0))
     {
         // Sum fluctuation coefficients in to the potential coefficients
-        auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, nCoeffP_);
+        auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
         dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                                 [&](int i, auto at1, int j, auto at2)
                                 {
@@ -724,7 +725,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto sigma1 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
         auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
 
-        if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, nCoeffP_, rminpt, rmaxpt, sigma1, sigma2))
+        if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, ncoeffp, rminpt, rmaxpt, sigma1, sigma2))
             return false;
     }
     else
@@ -760,7 +761,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, nCoeffP_);
+            auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
             dissolve::for_each_pair(
                 ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
