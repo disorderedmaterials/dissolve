@@ -15,7 +15,7 @@ endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
-set(CMAKE_AUTOMOC OFF)
+set(CMAKE_AUTOMOC ON)
 
 # Set policy for automatic linkage of Qt libs to project
 cmake_policy(SET CMP0020 NEW)
@@ -85,13 +85,20 @@ if(GUI)
                Widgets
                OpenGL
                OpenGLWidgets
+	       ShaderTools
+	       Qml
+	       QmlModels
+	       QmlTools
+	       Quick
+	       QuickWidgets
+	       QuickControls2
                REQUIRED
   )
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
 
   # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
-  set(CMAKE_AUTOMOC OFF)
+  set(CMAKE_AUTOMOC ON)
 
   # Set policy for automatic linkage of Qt libs to project
   cmake_policy(SET CMP0020 NEW)
@@ -207,7 +214,7 @@ target_include_directories(
 if(GUI)
 
   # Main Dissolve GUI
-  add_executable(${gui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui.cpp)
+  qt_add_executable(${gui_target_name} MACOSX_BUNDLE ${SRCS}/dissolve-gui.cpp)
 
   # Set project-local include directories for target
   target_include_directories(

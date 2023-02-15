@@ -25,6 +25,7 @@
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <valarray>
+#include <QQuickView>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
@@ -211,11 +212,12 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
     if (!species)
         return;
 
-    AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_, species);
+    AddForcefieldTermsDialog addForcefieldTermsDialog(this);
 
     if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
     {
-        // Atom types will likely have changed, so make sure the Isotopologues in the species are up-to-date
+        // Atom types will likely have changed, so make sure the
+        // Isotopologues in the species are up-to-date
         species->updateIsotopologues();
 
         // Fully update GUI

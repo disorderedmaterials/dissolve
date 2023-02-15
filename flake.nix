@@ -47,7 +47,12 @@
           libglvnd
           libglvnd.dev
           q.qtbase
+          q.qtbase.dev
           q.qtsvg
+          q.qtshadertools
+          q.qttools
+          q.qtdeclarative
+          q.qtdeclarative.dev
           q.wrapQtAppsHook
         ];
       check_libs = pkgs: with pkgs; [ gtest ];

@@ -212,9 +212,19 @@ add_library(gui ${gui_RES} ${gui_UIS_H} ${gui_SRCS} ${gui_MOC_SRCS})
 target_include_directories(
   gui PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt6Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} Qt6::OpenGL
               Qt6::OpenGLWidgets
+	      Qt6::Core
 )
+
+qt_add_qml_module(gui
+    URI gui
+    VERSION 1.0
+    QML_FILES
+        main.qml
+)
+
 target_link_libraries(
   gui
+  PRIVATE
   keywordwidgets
   delegates
   widgets
@@ -222,6 +232,14 @@ target_link_libraries(
   base
   Qt6::OpenGL
   Qt6::OpenGLWidgets
+  Qt6::Quick
+  Qt6::QuickControls2
+  Qt6::Core
+  Qt6::Gui
+  Qt6::ShaderTools
+  Qt6::Qml
+  Qt6::QmlModels
+  Qt6::QuickWidgets
 )
 
 # Subdirectories
