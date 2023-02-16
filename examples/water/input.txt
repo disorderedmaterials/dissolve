@@ -1,4 +1,4 @@
-# Input file written by Dissolve v1.0.0 at 12:58:30 on 14-02-2023.
+# Input file written by Dissolve v1.0.0 at 09:47:55 on 16-02-2023.
 
 #==============================================================================#
 #                                 Master Terms                                 #
@@ -132,6 +132,7 @@ EndLayer
 
 Layer  'GR / Neutron S(Q)'
   Frequency  5
+  Disabled
 
   Module  GR  'GR01'
     Frequency  1
@@ -186,6 +187,7 @@ EndLayer
 
 Layer  'Refine (EPSR)'
   Frequency  5
+  Disabled
 
   Module  EPSR  'EPSR01'
     Frequency  1
@@ -201,6 +203,7 @@ EndLayer
 
 Layer  'Analyse RDF/CN'
   Frequency  1
+  Disabled
 
   Module  SiteRDF  'SiteRDF01'
     Frequency  1
@@ -218,6 +221,7 @@ EndLayer
 
 Layer  'Analyse HBond'
   Frequency  1
+  Disabled
 
   Module  DAngle  'DAngle01'
     Frequency  1
@@ -233,6 +237,7 @@ EndLayer
 
 Layer  'Analyse AvgMol/SDF'
   Frequency  1
+  Disabled
 
   Module  AvgMol  'AvgMol01'
     Frequency  1

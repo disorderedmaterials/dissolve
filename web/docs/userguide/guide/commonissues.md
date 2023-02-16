@@ -22,3 +22,5 @@ Higher-Q Peaks Not Matching
 Lower Q peaks not matching
 XXX TODO
 
+## Simulation tips & Tricks Section?
+Size Factors - 
