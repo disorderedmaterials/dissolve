@@ -22,13 +22,13 @@
 bool Forcefield_Ludwig_Py5::setUp()
 {
     // Short-Range Parameters
-    addParameters("nc", {0.711302, 3.250});
-    addParameters("ca", {0.292919, 3.550});
-    addParameters("ha", {0.125548, 2.420});
-    addParameters("ct", {0.276040, 3.50});
-    addParameters("hc", {0.125548, 2.50});
-    addParameters("cm", {0.276040, 3.50});
-    addParameters("hm", {0.125548, 2.50});
+    addParameters("nc", "epsilon=0.711302 sigma=3.250");
+    addParameters("ca", "epsilon=0.292919 sigma=3.550");
+    addParameters("ha", "epsilon=0.125548 sigma=2.420");
+    addParameters("ct", "epsilon=0.276040 sigma=3.50");
+    addParameters("hc", "epsilon=0.125548 sigma=2.50");
+    addParameters("cm", "epsilon=0.276040 sigma=3.50");
+    addParameters("hm", "epsilon=0.125548 sigma=2.50");
 
     // Atom Types
     addAtomType(Elements::N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.0749, "nc");

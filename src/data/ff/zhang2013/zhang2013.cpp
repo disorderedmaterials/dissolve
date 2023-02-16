@@ -26,16 +26,19 @@
 bool Forcefield_Zhang2013::setUp()
 {
     // Atom types
-    addAtomType(Elements::Zn, 1, "Zn", "-N", "Zinc", 0.6894, {0.280328, 2.462});
-    addAtomType(Elements::N, 2, "N", "-[Zn,H],ring(size=5,N,C,N,C,C)", "Imidazolate nitrogen", -0.28, {0.156063, 3.261});
+    addAtomType(Elements::Zn, 1, "Zn", "-N", "Zinc", 0.6894, "epsilon=0.280328 sigma=2.462");
+    addAtomType(Elements::N, 2, "N", "-[Zn,H],ring(size=5,N,C,N,C,C)", "Imidazolate nitrogen", -0.28,
+                "epsilon=0.156063 sigma=3.261");
     addAtomType(Elements::C, 3, "C1", "-C(nh=3),-N(n=2),ring(size=5,N,C,N,C,C)", "Imidazolate methylated carbon", 0.4184,
                 {0.237233, 3.431});
-    addAtomType(Elements::C, 4, "C2", "-H,ring(size=5,N,C,N,C,C)", "Imidazolate C4,5 carbon", -0.191, {0.237233, 3.431});
-    addAtomType(Elements::C, 5, "C3", "nh=3,-C,ring(n=0)", "Methyl carbon on imidazolate", -0.5726, {0.237233, 3.431});
-    addAtomType(Elements::H, 6, "H1", "-&5", "Hydrogen on methyl carbon", 0.1481, {0.0995792, 2.571});
-    addAtomType(Elements::H, 7, "H2", "-&4", "Hydrogen on C4,5 carbon", 0.1536, {0.0995792, 2.571});
+    addAtomType(Elements::C, 4, "C2", "-H,ring(size=5,N,C,N,C,C)", "Imidazolate C4,5 carbon", -0.191,
+                "epsilon=0.237233 sigma=3.431");
+    addAtomType(Elements::C, 5, "C3", "nh=3,-C,ring(n=0)", "Methyl carbon on imidazolate", -0.5726,
+                "epsilon=0.237233 sigma=3.431");
+    addAtomType(Elements::H, 6, "H1", "-&5", "Hydrogen on methyl carbon", 0.1481, "epsilon=0.0995792 sigma=2.571");
+    addAtomType(Elements::H, 7, "H2", "-&4", "Hydrogen on C4,5 carbon", 0.1536, "epsilon=0.0995792 sigma=2.571");
     // -- Hydrogen Capping - J. Phys. Chem. C *118*, 20727 (2014)
-    addAtomType(Elements::H, 8, "H3", "-&2", "Capping hydrogen on nitrogen", 0.17235, {0.0995792, 2.571});
+    addAtomType(Elements::H, 8, "H3", "-&2", "Capping hydrogen on nitrogen", 0.17235, "epsilon=0.0995792 sigma=2.571");
 
     // Intramolecular terms
     addBondTerm("N", "C1", BondFunctions::Form::Harmonic, {4083.58, 1.339});

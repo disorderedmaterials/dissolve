@@ -25,10 +25,10 @@
 bool Forcefield_Strader2002::setUp()
 {
     // Atom types
-    addAtomType(Elements::C, 1, "CD", "-S,-H(n=3)", "DMSO carbon", -0.148, {0.3265, 3.6349});
-    addAtomType(Elements::S, 2, "SD", "nbonds=3,-O,-C(n=2)", "DMSO sulfur", 0.312, {1.4651, 3.5636});
-    addAtomType(Elements::O, 3, "OD", "-&2", "DMSO oxygen", -0.556, {0.50232, 3.0291});
-    addAtomType(Elements::H, 4, "HD", "-C", "DMSO hydrogen", 0.090, {0.10046, 2.3876});
+    addAtomType(Elements::C, 1, "CD", "-S,-H(n=3)", "DMSO carbon", -0.148, "epsilon=0.3265 sigma=3.6349");
+    addAtomType(Elements::S, 2, "SD", "nbonds=3,-O,-C(n=2)", "DMSO sulfur", 0.312, "epsilon=1.4651 sigma=3.5636");
+    addAtomType(Elements::O, 3, "OD", "-&2", "DMSO oxygen", -0.556, "epsilon=0.50232 sigma=3.0291");
+    addAtomType(Elements::H, 4, "HD", "-C", "DMSO hydrogen", 0.090, "epsilon=0.10046 sigma=2.3876");
 
     // Bond terms
     addBondTerm("CD", "SD", BondFunctions::Form::Harmonic, {2009.28, 1.80});

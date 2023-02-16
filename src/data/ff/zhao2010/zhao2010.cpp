@@ -32,13 +32,14 @@
 bool Forcefield_Zhao2010::setUp()
 {
     // Atom types
-    addAtomType(Elements::Cu, 1, "Cu", "-O(n=4)", "Copper", 1.098, {0.02092, 3.144});
-    addAtomType(Elements::O, 2, "O", "-&1,-C(n=1)", "Oxygen in BTC linker", -0.665, {0.401664, 3.033});
-    addAtomType(Elements::C, 3, "C1", "-&2(n=2),-C,nbonds=3", "Carboxylate carbon in BTC linker", 0.778, {0.39748, 3.473});
+    addAtomType(Elements::Cu, 1, "Cu", "-O(n=4)", "Copper", 1.098, "epsilon=0.02092 sigma=3.144");
+    addAtomType(Elements::O, 2, "O", "-&1,-C(n=1)", "Oxygen in BTC linker", -0.665, "epsilon=0.401664 sigma=3.033");
+    addAtomType(Elements::C, 3, "C1", "-&2(n=2),-C,nbonds=3", "Carboxylate carbon in BTC linker", 0.778,
+                "epsilon=0.39748 sigma=3.473");
     addAtomType(Elements::C, 4, "C2", "ring(size=6),-&3,-C(-H,n=2)", "Carbon in benzene ring attached to carboxylate carbon",
                 -0.092, {0.39748, 3.473});
-    addAtomType(Elements::C, 5, "C3", "ring(size=6),-H", "Carbon in benzene ring", -0.014, {0.39748, 3.473});
-    addAtomType(Elements::H, 6, "H", "-&5", "BTC linker hydrogen", 0.109, {0.06276, 2.846});
+    addAtomType(Elements::C, 5, "C3", "ring(size=6),-H", "Carbon in benzene ring", -0.014, "epsilon=0.39748 sigma=3.473");
+    addAtomType(Elements::H, 6, "H", "-&5", "BTC linker hydrogen", 0.109, "epsilon=0.06276 sigma=2.846");
 
     // Intramolecular terms
     addBondTerm("Cu", "O", BondFunctions::Form::Morse, {358.8575, 2.85, 1.969});
