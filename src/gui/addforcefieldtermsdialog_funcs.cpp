@@ -6,6 +6,7 @@
 #include "gui/addforcefieldtermsdialog.h"
 #include "templates/algorithms.h"
 #include <QInputDialog>
+#include <QQuickItem>
 #include <QMessageBox>
 #include <set>
 #include <QQuickWidget>
@@ -13,7 +14,7 @@
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent)
     : QDialog(parent)
 {
-    QQuickWidget *view = new QQuickWidget;
+    QQuickWidget *view = new QQuickWidget(QUrl("main.qml"), this);
     view->setMinimumSize(400,400);
     view->setResizeMode(QQuickWidget::SizeRootObjectToView);
     // QWidget *container = QWidget::createWindowContainer(view, this);
@@ -25,8 +26,9 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent)
 
     // ..
 
-    view->setSource(QUrl("main.qml"));
-    // view->setResizeMode(QQuickView::SizeViewToRootObject);
+    auto root =view->rootObject();
+
+    connect(root, SIGNAL(qmlCancel()), this, SLOT(reject()));
 
     QHBoxLayout *topLeftLayout = new QHBoxLayout;
     topLeftLayout->addWidget(view);

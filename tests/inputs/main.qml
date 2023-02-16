@@ -4,9 +4,11 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 Rectangle {
+    id: root;
     visible: true;
     anchors.fill: parent;
     color: "#EEEEEE";
+    signal qmlCancel();
 
     StackLayout {
 	id: stack;
@@ -79,6 +81,7 @@ Rectangle {
 	text: "Cancel";
 	anchors.bottom: parent.bottom;
 	anchors.left: parent.left;
+	onClicked: root.qmlCancel();
     }
     Button {
 	id: nextButton;
