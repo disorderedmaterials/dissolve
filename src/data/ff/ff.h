@@ -61,8 +61,8 @@ class Forcefield
      * Atom Type Data
      */
     protected:
-    // Short-range parameter sets
-    std::vector<std::pair<std::string, std::vector<double>>> shortRangeParameters_;
+    // Named short-range parameter sets
+    std::vector<std::pair<std::string, std::string>> shortRangeParameters_;
     // Atom type data
     std::vector<ForcefieldAtomType> atomTypes_;
     // Atom type data, grouped by element
@@ -70,13 +70,12 @@ class Forcefield
 
     protected:
     // Add short-range parameters
-    void addParameters(std::string_view name, const std::vector<double> &parameters);
-    // Add new atom type with its own parameters
+    void addParameters(std::string_view name, const std::string_view parameterString);
+    // Add new atom type with specified parameters
+    void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                     std::string_view description, double q, std::string_view parameterString);
     void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
                      std::string_view description, double q, const std::vector<double> &parameters);
-    // Add new atom type referencing existing parameters by name
-    void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                     std::string_view description, double q, std::string_view parameterReference);
     // Copy existing atom type
     bool copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, std::string_view description,
                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
@@ -91,7 +90,7 @@ class Forcefield
     // Create NETA definitions for all atom types from stored defs
     bool createNETADefinitions();
     // Return named short-range parameters (if they exist)
-    std::optional<std::vector<double>> shortRangeParameters(std::string_view name) const;
+    std::optional<std::string> shortRangeParameters(std::string_view name) const;
     // Return the named ForcefieldAtomType (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAtomType>
     atomTypeByName(std::string_view name, Elements::Element onlyZ = Elements::Unknown) const;

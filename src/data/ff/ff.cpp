@@ -46,20 +46,19 @@ bool Forcefield::prepare()
 
 // Add new atom type with its own parameters
 void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                             std::string_view description, double q, std::string_view parameterString)
+{
+    // The passed parameterString might be a name referencing some predefined named set, or be a set of name=value pairs
+    auto refParams = shortRangeParameters(parameterString);
+    if (refParams)
+        atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, shortRangeForm(), *refParams, parameterString);
+    else
+        atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, shortRangeForm(), parameterString);
+}
+void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
                              std::string_view description, double q, const std::vector<double> &parameters)
 {
     atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, parameters);
-}
-
-// Add new atom type referencing existing parameters by name
-void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                             std::string_view description, double q, std::string_view parameterReference)
-{
-    auto refParams = shortRangeParameters(parameterReference);
-    if (!refParams)
-        Messenger::error("Reference parameters named '{}' are not defined in the forcefield '{}'.\n", parameterReference,
-                         this->name());
-    atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, *refParams, parameterReference);
 }
 
 // Copy existing atom type
@@ -114,10 +113,10 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType
     return determineAtomType(i, atomTypesByElementPrivate_);
 }
 
-// Ass short-range parameters
-void Forcefield::addParameters(std::string_view name, const std::vector<double> &parameters)
+// Add short-range parameters
+void Forcefield::addParameters(std::string_view name, const std::string_view parameterString)
 {
-    shortRangeParameters_.emplace_back(name, parameters);
+    shortRangeParameters_.emplace_back(name, parameterString);
 }
 
 // Create NETA definitions for all atom types from stored defs
@@ -141,7 +140,7 @@ bool Forcefield::createNETADefinitions()
 }
 
 // Return named short-range parameters (if they exist)
-std::optional<std::vector<double>> Forcefield::shortRangeParameters(std::string_view name) const
+std::optional<std::string> Forcefield::shortRangeParameters(std::string_view name) const
 {
     auto it = std::find_if(shortRangeParameters_.begin(), shortRangeParameters_.end(),
                            [&name](const auto &params) { return DissolveSys::sameString(name, params.first); });
