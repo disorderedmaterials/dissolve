@@ -35,26 +35,30 @@ Rectangle {
 		anchors.top: ffFilter.bottom;
 		anchors.bottom: parent.bottom;
 		width: parent.width;
-		ListView {
+		Rectangle {
 		    width: parent.width;
-		    height: parent.height/2;
-		    id: ffList;
-		    model: ffModel;
-		    delegate:
-		    Text {
-			property variant fullData: model;
-			text: name;
-			color: ListView.isCurrentItem ? "red" : "black";
-			MouseArea {
-			    anchors.fill: parent;
-			    onClicked: ffList.currentIndex = index;
+		    height: parent.height/2-5;
+		    color: "white";
+		    ListView {
+			id: ffList;
+			anchors.fill: parent;
+			model: ffModel;
+			delegate:
+			Text {
+			    property variant fullData: model;
+			    text: name;
+			    color: ListView.isCurrentItem ? "red" : "black";
+			    MouseArea {
+				anchors.fill: parent;
+				onClicked: ffList.currentIndex = index;
+			    }
 			}
 		    }
 		}
 		Rectangle {
 		    width: parent.width;
-		    height: parent.height/4;
-		    anchors.top: ffList.bottom;
+		    height: parent.height/2-5;
+		    anchors.bottom: parent.bottom;
 		    color: "white";
 		    TextArea {
 			anchors.fill: parent;
