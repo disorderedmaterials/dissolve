@@ -47,6 +47,12 @@ Rectangle {
 			}
 		    }
 		}
+		Text {
+		    width: parent.width;
+		    height: parent.height/2;
+		    anchors.top: ffList.bottom;
+		    text: pictures.get(ffList.currentIndex).imagePath;
+		}
 	    }
 	}
 
