@@ -39,9 +39,11 @@ Rectangle {
 		    width: parent.width;
 		    height: parent.height/2;
 		    id: ffList;
-		    model: pictures;
-		    delegate: Text {
-			text: imageName;
+		    model: ffModel;
+		    delegate:
+		    Text {
+			property variant fullData: model;
+			text: name;
 			color: ListView.isCurrentItem ? "red" : "black";
 			MouseArea {
 			    anchors.fill: parent;
@@ -49,11 +51,16 @@ Rectangle {
 			}
 		    }
 		}
-		Text {
+		Rectangle {
 		    width: parent.width;
-		    height: parent.height/2;
+		    height: parent.height/4;
 		    anchors.top: ffList.bottom;
-		    text: pictures.get(ffList.currentIndex).imagePath;
+		    color: "white";
+		    TextArea {
+			anchors.fill: parent;
+			text: ffList.currentItem.fullData.description;
+			wrapMode: TextEdit.Wrap;
+		    }
 		}
 	    }
 	}
@@ -61,21 +68,11 @@ Rectangle {
 	Rectangle {
 	    color: "#EEEEEE";
 	    Text {
-		text: pictures.get(ffList.currentIndex).imageName;
+		text: ffList.currentItem.fullData.description;
 		color: "red";
 	    }
 	}
     }
-
-    ListModel {
-	id: pictures;
-
-	ListElement { imagePath: "1.jpg"; imageName: "flower" }
-	ListElement { imagePath: "2.jpg"; imageName: "house" }
-	ListElement { imagePath: "3.jpg"; imageName: "water" }
-
-    }
-
 
     Button {
 	text: "Cancel";

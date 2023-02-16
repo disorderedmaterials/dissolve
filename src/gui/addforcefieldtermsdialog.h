@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/models/atomTypeModel.h"
+#include "gui/models/forcefieldModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/ui_addforcefieldtermsdialog.h"
 #include "gui/wizard.hui"
@@ -13,8 +13,12 @@
 class AddForcefieldTermsDialog : public QDialog
 {
     Q_OBJECT
+    private:
+    Dissolve& dissolve_;
+    ForcefieldModel ffModel_;
+
 
     public:
-    AddForcefieldTermsDialog(QWidget *parent);
+    AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve);
     ~AddForcefieldTermsDialog() = default;
 };

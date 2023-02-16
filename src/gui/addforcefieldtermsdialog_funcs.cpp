@@ -5,17 +5,23 @@
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
 #include "templates/algorithms.h"
+#include "data/ff/library.h"
 #include <QInputDialog>
 #include <QQuickItem>
 #include <QMessageBox>
 #include <set>
 #include <QQuickWidget>
+#include <QQmlContext>
 
-AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent)
-    : QDialog(parent)
+AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve) :
+  QDialog(parent), dissolve_(dissolve), ffModel_(ForcefieldLibrary::forcefields())
 {
-    QQuickWidget *view = new QQuickWidget(QUrl("main.qml"), this);
-    view->setMinimumSize(400,400);
+    QQuickWidget *view = new QQuickWidget;
+
+    view->rootContext()->setContextProperty("ffModel", QVariant::fromValue(&ffModel_));
+    view->setSource(QUrl("main.qml"));
+    view->setParent(this);
+    view->setMinimumSize(200,200);
     view->setResizeMode(QQuickWidget::SizeRootObjectToView);
     // QWidget *container = QWidget::createWindowContainer(view, this);
 
@@ -26,7 +32,7 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent)
 
     // ..
 
-    auto root =view->rootObject();
+    auto root = view->rootObject();
 
     connect(root, SIGNAL(qmlCancel()), this, SLOT(reject()));
 

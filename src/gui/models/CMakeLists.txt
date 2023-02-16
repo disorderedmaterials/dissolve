@@ -41,6 +41,7 @@ set(models_MOC_HDRS
     speciesImproperModel.h
     speciesIsoModel.h
     speciesTorsionModel.h
+    forcefieldModel.h
 )
 
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
@@ -56,6 +57,7 @@ set(models_SRCS
     dataManagerSimulationModel.cpp
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
+    forcefieldModel.cpp
     isotopologueSetModel.cpp
     masterAngleModel.cpp
     masterBondModel.cpp
@@ -116,6 +118,7 @@ qt_wrap_cpp(
   speciesImproperModel.h
   speciesIsoModel.h
   speciesTorsionModel.h
+  forcefieldModel.h
 )
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})

@@ -212,7 +212,7 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
     if (!species)
         return;
 
-    AddForcefieldTermsDialog addForcefieldTermsDialog(this);
+    AddForcefieldTermsDialog addForcefieldTermsDialog(this, dissolve_);
 
     if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
     {
