@@ -16,8 +16,13 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
   Q_PROPERTY(QString filterFF READ filterFF WRITE setFilterFF NOTIFY filterFFChanged)
   Q_PROPERTY(bool speciesHasSelection READ speciesHasSelection NOTIFY ready)
+  Q_PROPERTY(Radio atomTypeRadio MEMBER atomTypeRadio_);
 
- signals:
+public:
+  enum class Radio {All, Selected, Empty, None};
+  Q_ENUM(Radio);
+
+signals:
   void nextTextChanged();
   void indexChanged();
   void filterFFChanged();
@@ -32,6 +37,7 @@ class AddForcefieldDialogModel : public QObject {
   std::shared_ptr<ForcefieldModel> ffModel_;
   std::shared_ptr<QSortFilterProxyModel> ffSort_;
   QString filterFF_ = "";
+  Radio atomTypeRadio_;
 
  public:
   AddForcefieldDialogModel();
