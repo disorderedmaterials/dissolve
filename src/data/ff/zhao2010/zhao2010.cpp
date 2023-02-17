@@ -37,7 +37,7 @@ bool Forcefield_Zhao2010::setUp()
     addAtomType(Elements::C, 3, "C1", "-&2(n=2),-C,nbonds=3", "Carboxylate carbon in BTC linker", 0.778,
                 "epsilon=0.39748 sigma=3.473");
     addAtomType(Elements::C, 4, "C2", "ring(size=6),-&3,-C(-H,n=2)", "Carbon in benzene ring attached to carboxylate carbon",
-                -0.092, {0.39748, 3.473});
+                -0.092, "epsilon=0.39748 sigma=3.473");
     addAtomType(Elements::C, 5, "C3", "ring(size=6),-H", "Carbon in benzene ring", -0.014, "epsilon=0.39748 sigma=3.473");
     addAtomType(Elements::H, 6, "H", "-&5", "BTC linker hydrogen", 0.109, "epsilon=0.06276 sigma=2.846");
 
