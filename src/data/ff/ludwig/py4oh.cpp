@@ -54,14 +54,14 @@ bool Forcefield_Ludwig_Py4OH::setUp()
     addAtomType(Elements::H, 17, "ho", "nbonds=1,-&16", "Hydrogen of Hydroxyl Group", 0.4370, "ho");
 
     // Bond Terms
-    addBondTerm("ha", "ca", BondFunctions::Form::Harmonic, {3071., 1.080});
-    addBondTerm("ca", "ca", BondFunctions::Form::Harmonic, {3925., 1.400});
-    addBondTerm("nc", "ca", BondFunctions::Form::Harmonic, {4042., 1.339});
-    addBondTerm("nc", "ct", BondFunctions::Form::Harmonic, {4042, 1.339});
-    addBondTerm("ct", "ct", BondFunctions::Form::Harmonic, {2244.1, 1.529});
-    addBondTerm("ct", "hc", BondFunctions::Form::Harmonic, {2847.0, 1.09});
-    addBondTerm("ct", "oh", BondFunctions::Form::Harmonic, {2679.6, 1.41});
-    addBondTerm("ho", "oh", BondFunctions::Form::Harmonic, {4630.6, 0.945});
+    addBondTerm("ha", "ca", BondFunctions::Form::Harmonic, "k=3071. eq=1.080");
+    addBondTerm("ca", "ca", BondFunctions::Form::Harmonic, "k=3925. eq=1.400");
+    addBondTerm("nc", "ca", BondFunctions::Form::Harmonic, "k=4042. eq=1.339");
+    addBondTerm("nc", "ct", BondFunctions::Form::Harmonic, "k=4042 eq=1.339");
+    addBondTerm("ct", "ct", BondFunctions::Form::Harmonic, "k=2244.1 eq=1.529");
+    addBondTerm("ct", "hc", BondFunctions::Form::Harmonic, "k=2847.0 eq=1.09");
+    addBondTerm("ct", "oh", BondFunctions::Form::Harmonic, "k=2679.6 eq=1.41");
+    addBondTerm("ho", "oh", BondFunctions::Form::Harmonic, "k=4630.6 eq=0.945");
 
     // Angle Terms
     addAngleTerm("ca", "ca", "ca", AngleFunctions::Form::Harmonic, {527.2, 120.0});

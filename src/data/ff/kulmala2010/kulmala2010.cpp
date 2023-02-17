@@ -56,21 +56,21 @@ bool Forcefield_Kulmala2010::setUp()
 
     // Intramolecular terms
     // -- Water (SPC/E)
-    addBondTerm("HW", "OW", BondFunctions::Form::Harmonic, {4637.0, 1.0});
+    addBondTerm("HW", "OW", BondFunctions::Form::Harmonic, "k=4637.0 eq=1.0");
     addAngleTerm("HW", "OW", "HW", AngleFunctions::Form::Harmonic, {383.0, 109.4});
     // -- Hydronium Ion
-    addBondTerm("HW+", "OW+", BondFunctions::Form::Harmonic, {4030.0, 0.969});
+    addBondTerm("HW+", "OW+", BondFunctions::Form::Harmonic, "k=4030.0 eq=0.969");
     addAngleTerm("HW+", "OW+", "HW+", AngleFunctions::Form::Harmonic, {451.4, 113.1});
     // -- Ammonia
-    addBondTerm("HN", "NH", BondFunctions::Form::Harmonic, {3864.0, 1.003});
+    addBondTerm("HN", "NH", BondFunctions::Form::Harmonic, "k=3864.0 eq=1.003");
     addAngleTerm("HN", "NH", "HN", AngleFunctions::Form::Harmonic, {334.01, 107.18});
     // -- Ammonium Ion
-    addBondTerm("HN+", "NH+", BondFunctions::Form::Harmonic, {3660.3, 1.013});
+    addBondTerm("HN+", "NH+", BondFunctions::Form::Harmonic, "k=3660.3 eq=1.013");
     addAngleTerm("HN+", "NH+", "HN+", AngleFunctions::Form::Harmonic, {518.26, 109.47});
     // -- Sulphuric Acid
-    addBondTerm("SA", "OA", BondFunctions::Form::Harmonic, {6258.0, 1.411});
-    addBondTerm("SA", "OHA", BondFunctions::Form::Harmonic, {3083.8, 1.571});
-    addBondTerm("OHA*", "HSA*", BondFunctions::Form::Harmonic, {4561.1, 0.949});
+    addBondTerm("SA", "OA", BondFunctions::Form::Harmonic, "k=6258.0 eq=1.411");
+    addBondTerm("SA", "OHA", BondFunctions::Form::Harmonic, "k=3083.8 eq=1.571");
+    addBondTerm("OHA*", "HSA*", BondFunctions::Form::Harmonic, "k=4561.1 eq=0.949");
     addAngleTerm("OA", "SA", "OA", AngleFunctions::Form::Harmonic, {224.37, 123.69});
     addAngleTerm("OHA", "SA", "OA", AngleFunctions::Form::Harmonic, {364.56, 107.32});
     addAngleTerm("OHA", "SA", "OHA", AngleFunctions::Form::Harmonic, {608.15, 101.79});
@@ -78,16 +78,16 @@ bool Forcefield_Kulmala2010::setUp()
     addTorsionTerm("OA", "SA", "OHA", "HSA", TorsionFunctions::Form::Cos3, {0.0, 0.0, 0.0});
     addTorsionTerm("OHA", "SA", "OHA", "HSA", TorsionFunctions::Form::Cos3, {-15.8628, -7.797, 2.3399});
     // -- Hydrogen Sulfate Ion
-    addBondTerm("SA-", "OA-", BondFunctions::Form::Harmonic, {5239.9, 1.438});
-    addBondTerm("SA-", "OHA-", BondFunctions::Form::Harmonic, {2328.3, 1.634});
+    addBondTerm("SA-", "OA-", BondFunctions::Form::Harmonic, "k=5239.9 eq=1.438");
+    addBondTerm("SA-", "OHA-", BondFunctions::Form::Harmonic, "k=2328.3 eq=1.634");
     addAngleTerm("OA-", "SA-", "OA-", AngleFunctions::Form::Harmonic, {456.97, 114.76});
     addAngleTerm("OHA-", "SA-", "OA-", AngleFunctions::Form::Harmonic, {814.48, 103.45});
     addAngleTerm("HSA-", "OHA-", "SA-", AngleFunctions::Form::Harmonic, {398.12, 106.39});
     addTorsionTerm("OA-", "SA-", "OHA-", "HSA-", TorsionFunctions::Form::Cos3, {0.0, 0.0, 0.0});
     // -- Dimethylammonium Ion
-    addBondTerm("NDM", "CDM", BondFunctions::Form::Harmonic, {3071.0, 1.499});
-    addBondTerm("NDM", "HDM", BondFunctions::Form::Harmonic, {3632.0, 1.01});
-    addBondTerm("CDM", "HCD", BondFunctions::Form::Harmonic, {2845.12, 1.09}); // Missing from SI - taken from OPLS-AA
+    addBondTerm("NDM", "CDM", BondFunctions::Form::Harmonic, "k=3071.0 eq=1.499");
+    addBondTerm("NDM", "HDM", BondFunctions::Form::Harmonic, "k=3632.0 eq=1.01");
+    addBondTerm("CDM", "HCD", BondFunctions::Form::Harmonic, "k=2845.12 eq=1.09"); // Missing from SI - taken from OPLS-AA
     addAngleTerm("CDM", "NDM", "CDM", AngleFunctions::Form::Harmonic, {418.4, 114.3});
     addAngleTerm("HDM", "NDM", "CDM", AngleFunctions::Form::Harmonic, {418.4, 109.2});
     addAngleTerm("HCD", "CDM", "NDM", AngleFunctions::Form::Harmonic, {209.2, 108.5});

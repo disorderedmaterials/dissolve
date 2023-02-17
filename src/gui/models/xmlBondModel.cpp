@@ -91,7 +91,7 @@ std::vector<ForcefieldBondTerm> XmlBondModel::toVector()
     std::vector<ForcefieldBondTerm> result;
     for (auto &bond : bonds_)
         result.emplace_back(std::get<0>(bond), std::get<1>(bond), BondFunctions::Form::Harmonic,
-                            std::vector({std::get<3>(bond), std::get<2>(bond)}));
+                            fmt::format("k={} eq={}", std::get<3>(bond), std::get<2>(bond)));
     return result;
 }
 

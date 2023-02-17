@@ -114,7 +114,7 @@ class Forcefield
     protected:
     // Add bond term
     void addBondTerm(std::string_view typeI, std::string_view typeJ, BondFunctions::Form form,
-                     const std::vector<double> &parameters = {});
+                     std::string_view parameterString);
     // Add angle term
     void addAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, AngleFunctions::Form form,
                       const std::vector<double> &parameters = {});

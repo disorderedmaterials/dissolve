@@ -31,9 +31,9 @@ bool Forcefield_Strader2002::setUp()
     addAtomType(Elements::H, 4, "HD", "-C", "DMSO hydrogen", 0.090, "epsilon=0.10046 sigma=2.3876");
 
     // Bond terms
-    addBondTerm("CD", "SD", BondFunctions::Form::Harmonic, {2009.28, 1.80});
-    addBondTerm("SD", "OD", BondFunctions::Form::Harmonic, {4520.88, 1.53});
-    addBondTerm("CD", "HD", BondFunctions::Form::Harmonic, {2695.78, 1.11});
+    addBondTerm("CD", "SD", BondFunctions::Form::Harmonic, "k=2009.28 eq=1.80");
+    addBondTerm("SD", "OD", BondFunctions::Form::Harmonic, "k=4520.88 eq=1.53");
+    addBondTerm("CD", "HD", BondFunctions::Form::Harmonic, "k=2695.78 eq=1.11");
 
     // Angle terms
     addAngleTerm("CD", "SD", "CD", AngleFunctions::Form::Harmonic, {284.65, 95.0});

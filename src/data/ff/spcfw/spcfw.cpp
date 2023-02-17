@@ -32,7 +32,7 @@ bool Forcefield_SPCFw::setUp()
     addAtomType(Elements::O, 2, "OW", "-H(n=2)", "Water oxygen", -0.82, "epsilon=0.6503 sigma=3.165492");
 
     // Bond terms
-    addBondTerm("HW", "OW", BondFunctions::Form::Harmonic, {4431.53, 1.0});
+    addBondTerm("HW", "OW", BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
 
     // Angle terms
     addAngleTerm("HW", "OW", "HW", AngleFunctions::Form::Harmonic, {317.5656, 113.24});

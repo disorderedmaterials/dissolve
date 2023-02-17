@@ -41,13 +41,13 @@ bool Forcefield_Zhang2013::setUp()
     addAtomType(Elements::H, 8, "H3", "-&2", "Capping hydrogen on nitrogen", 0.17235, "epsilon=0.0995792 sigma=2.571");
 
     // Intramolecular terms
-    addBondTerm("N", "C1", BondFunctions::Form::Harmonic, {4083.58, 1.339});
-    addBondTerm("N", "C2", BondFunctions::Form::Harmonic, {3430.88, 1.371});
-    addBondTerm("C1", "C3", BondFunctions::Form::Harmonic, {2652.66, 1.492});
-    addBondTerm("C2", "C2", BondFunctions::Form::Harmonic, {4334.62, 1.346});
-    addBondTerm("C2", "H2", BondFunctions::Form::Harmonic, {3071.06, 0.929});
-    addBondTerm("C3", "H1", BondFunctions::Form::Harmonic, {2845.12, 0.959});
-    addBondTerm("Zn", "N", BondFunctions::Form::Harmonic, {719.648, 1.987});
+    addBondTerm("N", "C1", BondFunctions::Form::Harmonic, "k=4083.58 eq=1.339");
+    addBondTerm("N", "C2", BondFunctions::Form::Harmonic, "k=3430.88 eq=1.371");
+    addBondTerm("C1", "C3", BondFunctions::Form::Harmonic, "k=2652.66 eq=1.492");
+    addBondTerm("C2", "C2", BondFunctions::Form::Harmonic, "k=4334.62 eq=1.346");
+    addBondTerm("C2", "H2", BondFunctions::Form::Harmonic, "k=3071.06 eq=0.929");
+    addBondTerm("C3", "H1", BondFunctions::Form::Harmonic, "k=2845.12 eq=0.959");
+    addBondTerm("Zn", "N", BondFunctions::Form::Harmonic, "k=719.648 eq=1.987");
     addAngleTerm("C1", "N", "C2", AngleFunctions::Form::Harmonic, {585.76, 105.24});
     addAngleTerm("N", "C1", "N", AngleFunctions::Form::Harmonic, {585.76, 112.17});
     addAngleTerm("N", "C1", "C3", AngleFunctions::Form::Harmonic, {585.76, 123.89});
@@ -76,7 +76,7 @@ bool Forcefield_Zhang2013::setUp()
     addImproperTerm("C1", "C3", "N", "N", TorsionFunctions::Form::Cosine, {4.6024, 2.0, 180.0, 1.0});
     addImproperTerm("C2", "C2", "H2", "N", TorsionFunctions::Form::Cosine, {4.6024, 2.0, 180.0, 1.0});
     // -- Hydrogen Capping - J. Phys. Chem. C *118*, 20727 (2014)
-    addBondTerm("H3", "N", BondFunctions::Form::Harmonic, {3631.712, 1.01});
+    addBondTerm("H3", "N", BondFunctions::Form::Harmonic, "k=3631.712 eq=1.01");
     addAngleTerm("H3", "N", "C1", AngleFunctions::Form::Harmonic, {585.76, 125.8});
     addAngleTerm("H3", "N", "C2", AngleFunctions::Form::Harmonic, {585.76, 125.8});
     addTorsionTerm("H3", "N", "C1", "N", TorsionFunctions::Form::Cosine, {16.736, 2, 180.0, 1.0});

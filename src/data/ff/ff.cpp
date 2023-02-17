@@ -189,9 +189,9 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
 
 // Add bond term
 void Forcefield::addBondTerm(std::string_view typeI, std::string_view typeJ, BondFunctions::Form form,
-                             const std::vector<double> &parameters)
+                             std::string_view parameterString)
 {
-    bondTerms_.emplace_back(typeI, typeJ, form, parameters);
+    bondTerms_.emplace_back(typeI, typeJ, form, parameterString);
 }
 
 // Add angle term

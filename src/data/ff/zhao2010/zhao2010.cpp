@@ -42,11 +42,11 @@ bool Forcefield_Zhao2010::setUp()
     addAtomType(Elements::H, 6, "H", "-&5", "BTC linker hydrogen", 0.109, "epsilon=0.06276 sigma=2.846");
 
     // Intramolecular terms
-    addBondTerm("Cu", "O", BondFunctions::Form::Morse, {358.8575, 2.85, 1.969});
-    addBondTerm("O", "C1", BondFunctions::Form::Morse, {564.84, 2.0, 1.260});
-    addBondTerm("C1", "C2", BondFunctions::Form::Morse, {367.5226, 2.0, 1.456});
-    addBondTerm("C2", "C3", BondFunctions::Form::Morse, {502.08, 2.0, 1.355});
-    addBondTerm("C3", "H", BondFunctions::Form::Morse, {485.344, 1.77, 0.931});
+    addBondTerm("Cu", "O", BondFunctions::Form::Morse, "D=358.8575 alpha=2.85 eq=1.969");
+    addBondTerm("O", "C1", BondFunctions::Form::Morse, "D=564.84 alpha=2.0 eq=1.260");
+    addBondTerm("C1", "C2", BondFunctions::Form::Morse, "D=367.5226 alpha=2.0 eq=1.456");
+    addBondTerm("C2", "C3", BondFunctions::Form::Morse, "D=502.08 alpha=2.0 eq=1.355");
+    addBondTerm("C3", "H", BondFunctions::Form::Morse, "D=485.344 alpha=1.77 eq=0.931");
 
     // -- O-Cu-O angles handled separately in our local assignAngleTermParameters()
     addAngleTerm("O(1)", "Cu", "O(1)", AngleFunctions::Form::Harmonic, {419.7389, 170.2});

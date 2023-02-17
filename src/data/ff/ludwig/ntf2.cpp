@@ -35,10 +35,10 @@ bool Forcefield_Ludwig_NTf2::setUp()
     addAtomType(Elements::N, 5, "N", "-S(-O(n=2),-C)", "Nitrogen", -0.69, "N");
 
     // Bond Terms
-    addBondTerm("C", "F", BondFunctions::Form::Harmonic, {3697.0, 1.323});
-    addBondTerm("C", "S", BondFunctions::Form::Harmonic, {1979.0, 1.818});
-    addBondTerm("S", "O", BondFunctions::Form::Harmonic, {5331.0, 1.442});
-    addBondTerm("N", "S", BondFunctions::Form::Harmonic, {3113.0, 1.570});
+    addBondTerm("C", "F", BondFunctions::Form::Harmonic, "k=3697.0 eq=1.323");
+    addBondTerm("C", "S", BondFunctions::Form::Harmonic, "k=1979.0 eq=1.818");
+    addBondTerm("S", "O", BondFunctions::Form::Harmonic, "k=5331.0 eq=1.442");
+    addBondTerm("N", "S", BondFunctions::Form::Harmonic, "k=3113.0 eq=1.570");
 
     // Angle Terms
     addAngleTerm("F", "C", "F", AngleFunctions::Form::Harmonic, {781.0, 107.1});

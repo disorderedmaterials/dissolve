@@ -21,79 +21,79 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> PCL2019BaseForcefield::getBon
         //	i	j	Type (Harmonic)			k	eq
         // i j    pot    re/A    kr/kJmol-1
         // alkanes OPLS-AA JACS118(1996)11225, JPC100(1996)18010
-        {"HC", "CT", BondFunctions::Form::Harmonic, {2845.0, 1.090}},
-        {"CT", "CT", BondFunctions::Form::Harmonic, {2242.0, 1.529}},
+        {"HC", "CT", BondFunctions::Form::Harmonic, "k=2845.0 eq=1.090"},
+        {"CT", "CT", BondFunctions::Form::Harmonic, "k=2242.0 eq=1.529"},
         // aromatics AMBER JACS 117(1995)5179
-        {"CA", "CA", BondFunctions::Form::Harmonic, {3924.6, 1.400}},
-        {"CA", "HA", BondFunctions::Form::Harmonic, {3071.1, 1.080}},
+        {"CA", "CA", BondFunctions::Form::Harmonic, "k=3924.6 eq=1.400"},
+        {"CA", "HA", BondFunctions::Form::Harmonic, "k=3071.1 eq=1.080"},
         // toluene AMBER JACS 117(1995)5179
-        {"CA", "CT", BondFunctions::Form::Harmonic, {2652.7, 1.510}},
+        {"CA", "CT", BondFunctions::Form::Harmonic, "k=2652.7 eq=1.510"},
         // pyridinium JPCB110(2006)19586
-        {"CA", "NA", BondFunctions::Form::Harmonic, {4042.0, 1.340}},
+        {"CA", "NA", BondFunctions::Form::Harmonic, "k=4042.0 eq=1.340"},
         // dialkylimidazolium JPCB108(2004)2038
-        {"CR", "HA", BondFunctions::Form::Harmonic, {2845.0, 1.080}},
-        {"CW*", "HA", BondFunctions::Form::Harmonic, {2845.0, 1.080}},
-        {"CR", "NA", BondFunctions::Form::Harmonic, {3992.0, 1.315}},
-        {"CW*", "NA", BondFunctions::Form::Harmonic, {3574.0, 1.378}},
-        {"CW*", "CW*", BondFunctions::Form::Harmonic, {4352.0, 1.341}},
-        {"NA", "CT", BondFunctions::Form::Harmonic, {2820.0, 1.466}},
+        {"CR", "HA", BondFunctions::Form::Harmonic, "k=2845.0 eq=1.080"},
+        {"CW*", "HA", BondFunctions::Form::Harmonic, "k=2845.0 eq=1.080"},
+        {"CR", "NA", BondFunctions::Form::Harmonic, "k=3992.0 eq=1.315"},
+        {"CW*", "NA", BondFunctions::Form::Harmonic, "k=3574.0 eq=1.378"},
+        {"CW*", "CW*", BondFunctions::Form::Harmonic, "k=4352.0 eq=1.341"},
+        {"NA", "CT", BondFunctions::Form::Harmonic, "k=2820.0 eq=1.466"},
         // alkylimidazolium JPCB 110 (2006) 19586
-        {"HNA", "NA", BondFunctions::Form::Harmonic, {3632.0, 1.010}},
+        {"HNA", "NA", BondFunctions::Form::Harmonic, "k=3632.0 eq=1.010"},
         // dialkylimethylmidazolium JPCB112(2008)5039
-        {"CR", "CT", BondFunctions::Form::Harmonic, {2653.0, 1.510}},
+        {"CR", "CT", BondFunctions::Form::Harmonic, "k=2653.0 eq=1.510"},
         // fluoroalkyl JPCA105(2001)4118, JPCA106(2002)10116
-        {"CT", "CF", BondFunctions::Form::Harmonic, {2242.6, 1.529}},
-        {"FC", "CF", BondFunctions::Form::Harmonic, {3071.1, 1.332}},
-        {"CF", "CF", BondFunctions::Form::Harmonic, {2242.6, 1.529}},
+        {"CT", "CF", BondFunctions::Form::Harmonic, "k=2242.6 eq=1.529"},
+        {"FC", "CF", BondFunctions::Form::Harmonic, "k=3071.1 eq=1.332"},
+        {"CF", "CF", BondFunctions::Form::Harmonic, "k=2242.6 eq=1.529"},
         // ammonium, pyrrolidinium OPLS-AA JACS121(1999)4827, AMBER
-        {"NT", "CT", BondFunctions::Form::Harmonic, {3196.6, 1.448}},
-        {"HN", "NT", BondFunctions::Form::Harmonic, {3632.0, 1.010}},
+        {"NT", "CT", BondFunctions::Form::Harmonic, "k=3196.6 eq=1.448"},
+        {"HN", "NT", BondFunctions::Form::Harmonic, "k=3632.0 eq=1.010"},
         // guanidinium
-        {"HG", "NG", BondFunctions::Form::Harmonic, {3632.0, 1.010}},
-        {"NG", "CG", BondFunctions::Form::Harmonic, {4027.7, 1.340}},
+        {"HG", "NG", BondFunctions::Form::Harmonic, "k=3632.0 eq=1.010"},
+        {"NG", "CG", BondFunctions::Form::Harmonic, "k=4027.7 eq=1.340"},
         // phosphonium OPLS-AA JPCB110(2006)19586
-        {"PT", "CT", BondFunctions::Form::Harmonic, {3550.0, 1.81}},
+        {"PT", "CT", BondFunctions::Form::Harmonic, "k=3550.0 eq=1.81"},
         // hydroxyl OPLS-AA JACS 118(1996)11225, JPC 100(1996)18010
-        {"CT", "OH", BondFunctions::Form::Harmonic, {2677.8, 1.410}},
-        {"HO", "OH", BondFunctions::Form::Harmonic, {4627.5, 0.945}},
+        {"CT", "OH", BondFunctions::Form::Harmonic, "k=2677.8 eq=1.410"},
+        {"HO", "OH", BondFunctions::Form::Harmonic, "k=4627.5 eq=0.945"},
         // tetrafluoroborate
-        {"B", "F", BondFunctions::Form::Harmonic, {3235.0, 1.394}},
+        {"B", "F", BondFunctions::Form::Harmonic, "k=3235.0 eq=1.394"},
         // hexafluorophosphate JCSPerkin2(1999)2365
-        {"P", "F", BondFunctions::Form::Harmonic, {3100.0, 1.606}},
+        {"P", "F", BondFunctions::Form::Harmonic, "k=3100.0 eq=1.606"},
         // triflate and bistriflamide JPCB108(2004)16893
-        {"FB", "CF", BondFunctions::Form::Harmonic, {3698.0, 1.323}},
-        {"CF", "SB", BondFunctions::Form::Harmonic, {1950.0, 1.818}},
-        {"SB", "OB", BondFunctions::Form::Harmonic, {5331.0, 1.437}},
-        {"NB", "SB", BondFunctions::Form::Harmonic, {3137.0, 1.570}},
+        {"FB", "CF", BondFunctions::Form::Harmonic, "k=3698.0 eq=1.323"},
+        {"CF", "SB", BondFunctions::Form::Harmonic, "k=1950.0 eq=1.818"},
+        {"SB", "OB", BondFunctions::Form::Harmonic, "k=5331.0 eq=1.437"},
+        {"NB", "SB", BondFunctions::Form::Harmonic, "k=3137.0 eq=1.570"},
         // bis(fluorosulfonyl)amide
-        {"FB", "SB", BondFunctions::Form::Harmonic, {1879.0, 1.575}},
+        {"FB", "SB", BondFunctions::Form::Harmonic, "k=1879.0 eq=1.575"},
         // dicyanamide JPCB110(2006)19586
-        {"N3", "CZ", BondFunctions::Form::Harmonic, {4206.0, 1.310}},
-        {"CZ", "NZ", BondFunctions::Form::Harmonic, {5439.2, 1.157}},
+        {"N3", "CZ", BondFunctions::Form::Harmonic, "k=4206.0 eq=1.310"},
+        {"CZ", "NZ", BondFunctions::Form::Harmonic, "k=5439.2 eq=1.157"},
         // acetate OPLS-AA
-        {"CO", "O2", BondFunctions::Form::Harmonic, {5489.0, 1.250}},
-        {"CT", "CO", BondFunctions::Form::Harmonic, {2653.0, 1.522}},
+        {"CO", "O2", BondFunctions::Form::Harmonic, "k=5489.0 eq=1.250"},
+        {"CT", "CO", BondFunctions::Form::Harmonic, "k=2653.0 eq=1.522"},
         // trifluoroacetate (copied from old.oplsaa.ff) (JPCB, 110, 24, 2006, 12062)
-        {"CF", "CO", BondFunctions::Form::Harmonic, {1087.84, 1.568}},
-        {"CO", "O2F", BondFunctions::Form::Harmonic, {2322.12, 1.223}},
-        {"CF", "FFA", BondFunctions::Form::Harmonic, {1004.16, 1.334}},
+        {"CF", "CO", BondFunctions::Form::Harmonic, "k=1087.84 eq=1.568"},
+        {"CO", "O2F", BondFunctions::Form::Harmonic, "k=2322.12 eq=1.223"},
+        {"CF", "FFA", BondFunctions::Form::Harmonic, "k=1004.16 eq=1.334"},
         // alkylsulfates JPCB112(2008)5039
-        {"CT", "OC", BondFunctions::Form::Harmonic, {745.8, 1.402}},
-        {"OS", "SO", BondFunctions::Form::Harmonic, {5331.0, 1.455}},
-        {"OC", "SO", BondFunctions::Form::Harmonic, {1789.6, 1.633}},
+        {"CT", "OC", BondFunctions::Form::Harmonic, "k=745.8 eq=1.402"},
+        {"OS", "SO", BondFunctions::Form::Harmonic, "k=5331.0 eq=1.455"},
+        {"OC", "SO", BondFunctions::Form::Harmonic, "k=1789.6 eq=1.633"},
         // alkylsulfonates JPCB112(2008)
-        {"CT", "SO", BondFunctions::Form::Harmonic, {1970.0, 1.792}},
+        {"CT", "SO", BondFunctions::Form::Harmonic, "k=1970.0 eq=1.792"},
         // thiocyanate JCP128(2008)154504, our MP2
-        {"SK", "CK", BondFunctions::Form::Harmonic, {2836.8, 1.67}},
-        {"CK", "NK", BondFunctions::Form::Harmonic, {12221.5, 1.19}},
+        {"SK", "CK", BondFunctions::Form::Harmonic, "k=2836.8 eq=1.67"},
+        {"CK", "NK", BondFunctions::Form::Harmonic, "k=12221.5 eq=1.19"},
         // tricyanomethanide MG Martin STTR report 2008
         // C3A  CN  harm   1.408   1799.12
         // CN   NC  harm   1.167   5062.64
         // tricyanomethanide OPLS nitriles
-        {"C3A", "CN", BondFunctions::Form::Harmonic, {3347.2, 1.412}},
-        {"CN", "NC", BondFunctions::Form::Harmonic, {5439.2, 1.157}},
+        {"C3A", "CN", BondFunctions::Form::Harmonic, "k=3347.2 eq=1.412"},
+        {"CN", "NC", BondFunctions::Form::Harmonic, "k=5439.2 eq=1.157"},
         // tosylate JPCB 112 (2008) 5039
-        {"CA", "SO", BondFunctions::Form::Harmonic, {1970.0, 1.797}}};
+        {"CA", "SO", BondFunctions::Form::Harmonic, "k=1970.0 eq=1.797"}};
 
     return Forcefield::termMatch_(bondTerms, i, j);
 }
