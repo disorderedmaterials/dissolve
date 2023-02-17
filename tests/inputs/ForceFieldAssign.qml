@@ -4,6 +4,7 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 GroupBox {
+    property variant dialogModel;
     title: "What Atom Types do you want to assign to this forcefield?"
 
     ColumnLayout {
@@ -13,6 +14,7 @@ GroupBox {
 	}
 	RadioButton {
 	    text: "Determine Atoms Types for Current Atom Selection.  Override ant assigned atom type"
+	    enabled: dialogModel.speciesHasSelection;
 	}
 	RadioButton {
 	    text: "Determine Atom Types for any atoms that do not currentl have one assigned"

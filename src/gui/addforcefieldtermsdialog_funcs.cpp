@@ -14,7 +14,7 @@
 #include <QQuickWidget>
 #include <QQmlContext>
 
-AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve) :
+AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp) :
   QDialog(parent)
 {
 
@@ -33,6 +33,8 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     auto model = root->findChild<AddForcefieldDialogModel*>("dialogModel");
 
     model->setDissolve(dissolve);
+    model->setSpecies(sp);
+    model->ready();
 
     connect(model, SIGNAL(cancel()), this, SLOT(reject()));
     connect(model, SIGNAL(accept()), this, SLOT(accept()));

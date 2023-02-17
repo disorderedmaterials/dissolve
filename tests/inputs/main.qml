@@ -30,6 +30,7 @@ Rectangle {
 	}
 
 	ForceFieldAssign {
+	    dialogModel: dialogModel;
 	}
 
 	ForceFieldAtomTypes {

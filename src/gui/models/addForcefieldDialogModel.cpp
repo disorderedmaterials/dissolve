@@ -29,9 +29,14 @@ void AddForcefieldDialogModel::setIndex(int idx) {
     accept();
 }
 
-void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve) {
-  dissolve_ = &dissolve;
-  emit ready();
+void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve) {dissolve_ = &dissolve;}
+
+void AddForcefieldDialogModel::setSpecies(Species* sp) {species_ = sp;}
+
+bool AddForcefieldDialogModel::speciesHasSelection() {
+  if (!species_)
+    return false;
+  return !species_->selectedAtoms().empty();
 }
 
 QAbstractItemModel* AddForcefieldDialogModel::forcefields() {return ffSort_.get();}

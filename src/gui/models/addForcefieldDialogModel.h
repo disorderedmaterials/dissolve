@@ -15,6 +15,7 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(int index READ index WRITE setIndex NOTIFY indexChanged)
   Q_PROPERTY(QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
   Q_PROPERTY(QString filterFF READ filterFF WRITE setFilterFF NOTIFY filterFFChanged)
+  Q_PROPERTY(bool speciesHasSelection READ speciesHasSelection NOTIFY ready)
 
  signals:
   void nextTextChanged();
@@ -27,6 +28,7 @@ class AddForcefieldDialogModel : public QObject {
  private:
   int index_ = 0;
   Dissolve* dissolve_ = nullptr;
+  Species* species_ = nullptr;
   std::shared_ptr<ForcefieldModel> ffModel_;
   std::shared_ptr<QSortFilterProxyModel> ffSort_;
   QString filterFF_ = "";
@@ -37,7 +39,9 @@ class AddForcefieldDialogModel : public QObject {
   int index();
   QAbstractItemModel* forcefields();
   void setIndex(int idx);
+  bool speciesHasSelection();
   void setDissolve(Dissolve& Dissolve);
+  void setSpecies(Species* species);
   QString filterFF();
   void setFilterFF(QString value);
 
