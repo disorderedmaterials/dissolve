@@ -13,6 +13,7 @@ Rectangle {
     AddForcefieldDialogModel {
 	id: dialogModel;
 	objectName: "dialogModel";
+	filterFF: ffList.filter;
     }
 
     StackLayout {

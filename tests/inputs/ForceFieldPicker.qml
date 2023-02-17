@@ -6,6 +6,7 @@ import QtQuick.Layouts
 Item {
     property variant dialogModel;
     property variant fullData: ffList.currentItem.fullData;
+    property string filter: ffFilter.text;
     Text {
 	anchors.top: parent.top
 	anchors.right: ffFilter.left;

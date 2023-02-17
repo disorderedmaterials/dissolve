@@ -6,6 +6,9 @@
 
 AddForcefieldDialogModel::AddForcefieldDialogModel() {
   ffModel_ = std::make_shared<ForcefieldModel>(ForcefieldLibrary::forcefields());
+  ffSort_ = std::make_shared<QSortFilterProxyModel>(this);
+
+  ffSort_->setSourceModel(ffModel_.get());
 }
 
 QString AddForcefieldDialogModel::nextText() {
@@ -31,6 +34,11 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve) {
   emit ready();
 }
 
-ForcefieldModel* AddForcefieldDialogModel::forcefields() {
-  return ffModel_.get();
+QAbstractItemModel* AddForcefieldDialogModel::forcefields() {return ffSort_.get();}
+
+QString AddForcefieldDialogModel::filterFF() {return filterFF_;}
+
+void AddForcefieldDialogModel::setFilterFF(QString value) {
+  filterFF_ = value;
+  ffSort_->setFilterFixedString(value);
 }

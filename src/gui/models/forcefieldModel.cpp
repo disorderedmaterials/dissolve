@@ -14,6 +14,7 @@ QVariant ForcefieldModel::data(const QModelIndex &index, int role) const {
     return {};
 
   switch (role) {
+  case Qt::DisplayRole: // Intentional Fallthrough
   case NameRole:
     return QString::fromStdString(std::string(forcefields_[index.row()]->name()));
   case DescRole:
