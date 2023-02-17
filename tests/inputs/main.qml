@@ -45,7 +45,7 @@ Rectangle {
     }
     Button {
 	id: nextButton;
-	text: dialogModel.nextText;
+	text: dialogModel.index == AddForcefieldDialogModel.AtomTypesConflictsPage ? "Finish" : "Next";
 	anchors.bottom: parent.bottom;
 	anchors.right: parent.right;
 	onClicked: dialogModel.index += 1;

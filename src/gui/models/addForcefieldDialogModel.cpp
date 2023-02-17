@@ -11,21 +11,14 @@ AddForcefieldDialogModel::AddForcefieldDialogModel() {
   ffSort_->setSourceModel(ffModel_.get());
 }
 
-QString AddForcefieldDialogModel::nextText() {
-  if (index_ >= 2)
-    return "Finish";
-  return "Next";
-}
-
-int AddForcefieldDialogModel::index() {
+AddForcefieldDialogModel::Page AddForcefieldDialogModel::index() {
   return index_;
 }
 
-void AddForcefieldDialogModel::setIndex(int idx) {
+void AddForcefieldDialogModel::setIndex(Page idx) {
   index_ = idx;
   indexChanged();
-  nextTextChanged();
-  if (index_ > 2)
+  if (index_ > Page::AtomTypesConflictsPage)
     accept();
 }
 
