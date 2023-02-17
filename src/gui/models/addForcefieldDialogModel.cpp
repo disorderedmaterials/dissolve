@@ -2,6 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/addForcefieldDialogModel.h"
+#include "data/ff/library.h"
+
+AddForcefieldDialogModel::AddForcefieldDialogModel() {
+  ffModel_ = std::make_shared<ForcefieldModel>(ForcefieldLibrary::forcefields());
+}
 
 QString AddForcefieldDialogModel::nextText() {
   if (index_ >= 2)
@@ -19,4 +24,13 @@ void AddForcefieldDialogModel::setIndex(int idx) {
   nextTextChanged();
   if (index_ > 2)
     accept();
+}
+
+void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve) {
+  dissolve_ = &dissolve;
+  emit ready();
+}
+
+ForcefieldModel* AddForcefieldDialogModel::forcefields() {
+  return ffModel_.get();
 }

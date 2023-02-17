@@ -13,11 +13,6 @@
 class AddForcefieldTermsDialog : public QDialog
 {
     Q_OBJECT
-    private:
-    Dissolve& dissolve_;
-    ForcefieldModel ffModel_;
-
-
     public:
     AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve);
     ~AddForcefieldTermsDialog() = default;

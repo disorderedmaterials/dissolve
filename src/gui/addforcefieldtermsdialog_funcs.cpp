@@ -7,7 +7,6 @@
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/addForcefieldDialogModel.h"
 #include "templates/algorithms.h"
-#include "data/ff/library.h"
 #include <QInputDialog>
 #include <QQuickItem>
 #include <QMessageBox>
@@ -16,7 +15,7 @@
 #include <QQmlContext>
 
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve) :
-  QDialog(parent), dissolve_(dissolve), ffModel_(ForcefieldLibrary::forcefields())
+  QDialog(parent)
 {
 
     qmlRegisterType<AddForcefieldDialogModel>("Dissolve", 1, 0, "AddForcefieldDialogModel");
@@ -26,7 +25,6 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
 
     atModel.setData(dissolve.coreData().atomTypes());
 
-    view->rootContext()->setContextProperty("ffModel", QVariant::fromValue(&ffModel_));
     view->rootContext()->setContextProperty("atModel", QVariant::fromValue(&atModel));
     view->setMinimumSize(300, 300);
     view->setResizeMode(QQuickWidget::SizeRootObjectToView);
@@ -34,8 +32,7 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     auto root = view->rootObject();
     auto model = root->findChild<AddForcefieldDialogModel*>("dialogModel");
 
-    if (!model)
-      std::cout<<"No dialogModel"<<std::endl;
+    model->setDissolve(dissolve);
 
     connect(model, SIGNAL(cancel()), this, SLOT(reject()));
     connect(model, SIGNAL(accept()), this, SLOT(accept()));

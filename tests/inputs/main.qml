@@ -25,6 +25,7 @@ Rectangle {
 
 	ForceFieldPicker {
 	    id: ffList;
+	    dialogModel: dialogModel;
 	}
 
 	ForceFieldAssign {

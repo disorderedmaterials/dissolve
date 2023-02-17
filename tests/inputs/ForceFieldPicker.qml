@@ -4,6 +4,7 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 Item {
+    property variant dialogModel;
     property variant fullData: ffList.currentItem.fullData;
     Text {
 	anchors.top: parent.top
@@ -28,7 +29,7 @@ Item {
 	    ListView {
 		id: ffList;
 		anchors.fill: parent;
-		model: ffModel;
+		model: dialogModel.forcefields;
 		delegate:
 		Text {
 		    property variant fullData: model;
