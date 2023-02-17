@@ -5,6 +5,7 @@
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/models/atomTypeModel.h"
+#include "gui/models/addForcefieldDialogModel.h"
 #include "templates/algorithms.h"
 #include "data/ff/library.h"
 #include <QInputDialog>
@@ -17,8 +18,12 @@
 AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve) :
   QDialog(parent), dissolve_(dissolve), ffModel_(ForcefieldLibrary::forcefields())
 {
+
+    qmlRegisterType<AddForcefieldDialogModel>("Dissolve", 1, 0, "AddForcefieldDialogModel");
+
     QQuickWidget *view = new QQuickWidget;
     AtomTypeModel atModel(dissolve.coreData());
+    AddForcefieldDialogModel model;
 
     atModel.setData(dissolve.coreData().atomTypes());
 
@@ -40,6 +45,7 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     auto root = view->rootObject();
 
     connect(root, SIGNAL(qmlCancel()), this, SLOT(reject()));
+    connect(root, SIGNAL(qmlAccept()), this, SLOT(accept()));
 
     QHBoxLayout *topLeftLayout = new QHBoxLayout;
     topLeftLayout->addWidget(view);

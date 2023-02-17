@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
+import Dissolve
 
 Rectangle {
     id: root;
@@ -9,6 +10,12 @@ Rectangle {
     anchors.fill: parent;
     color: "#EEEEEE";
     signal qmlCancel();
+    signal qmlAccept();
+
+    AddForcefieldDialogModel {
+	id: dialogModel;
+	onAccepted: root.qmlAccept();
+    }
 
     StackLayout {
 	id: stack;
@@ -16,7 +23,7 @@ Rectangle {
 	anchors.left: parent.left;
 	anchors.right: parent.right;
 	anchors.bottom: nextButton.top;
-	currentIndex: 0;
+	currentIndex: dialogModel.index;
 
 	ForceFieldPicker {
 	    id: ffList;
@@ -37,16 +44,16 @@ Rectangle {
     }
     Button {
 	id: nextButton;
-	text: "Next";
+	text: dialogModel.nextText;
 	anchors.bottom: parent.bottom;
 	anchors.right: parent.right;
-	onClicked: stack.currentIndex += 1;
+	onClicked: dialogModel.index += 1;
     }
     Button {
 	text: "Back";
 	anchors.bottom: parent.bottom;
 	anchors.right: nextButton.left;
-	enabled: stack.currentIndex > 0;
-	onClicked: stack.currentIndex -= 1;
+	enabled: dialogModel.index > 0;
+	onClicked: dialogModel.index -= 1;
     }
 }

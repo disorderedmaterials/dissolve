@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "gui/models/addForcefieldDialogModel.h"
 #include "gui/models/forcefieldModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/wizard.hui"
