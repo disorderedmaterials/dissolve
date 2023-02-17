@@ -5,7 +5,6 @@
 
 #include "gui/models/forcefieldModel.h"
 #include "gui/models/masterTermTreeModel.h"
-#include "gui/ui_addforcefieldtermsdialog.h"
 #include "gui/wizard.hui"
 #include "main/dissolve.h"
 

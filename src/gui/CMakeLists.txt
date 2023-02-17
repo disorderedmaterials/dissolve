@@ -83,7 +83,6 @@ set(gui_UIS
     wizardheader.ui
     # Dialogs
     addconfigurationdialog.ui
-    addforcefieldtermsdialog.ui
     copyspeciestermsdialog.ui
     datamanagerdialog.ui
     editspeciesdialog.ui

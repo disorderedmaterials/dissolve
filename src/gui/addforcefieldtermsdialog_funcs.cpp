@@ -4,6 +4,7 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
+#include "gui/models/atomTypeModel.h"
 #include "templates/algorithms.h"
 #include "data/ff/library.h"
 #include <QInputDialog>
@@ -17,8 +18,12 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
   QDialog(parent), dissolve_(dissolve), ffModel_(ForcefieldLibrary::forcefields())
 {
     QQuickWidget *view = new QQuickWidget;
+    AtomTypeModel atModel(dissolve.coreData());
+
+    atModel.setData(dissolve.coreData().atomTypes());
 
     view->rootContext()->setContextProperty("ffModel", QVariant::fromValue(&ffModel_));
+    view->rootContext()->setContextProperty("atModel", QVariant::fromValue(&atModel));
     view->setSource(QUrl("main.qml"));
     view->setParent(this);
     view->setMinimumSize(200,200);
