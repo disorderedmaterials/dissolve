@@ -95,7 +95,7 @@ template <class Functions> class InteractionPotential
         return true;
     }
     // Parse parameters from specified string
-    bool parseParameters(std::string paramString) { return parseParameters(DissolveSys::splitString(paramString)); }
+    bool parseParameters(std::string_view paramString) { return parseParameters(DissolveSys::splitString(paramString)); }
     // Parse parameters from current line
     bool parseParameters(const LineParser &parser, int startArg)
     {
