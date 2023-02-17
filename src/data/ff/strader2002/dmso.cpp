@@ -42,8 +42,8 @@ bool Forcefield_Strader2002::setUp()
     addAngleTerm("HD", "CD", "HD", AngleFunctions::Form::Harmonic, "k=297.21 eq=108.40");
 
     // Dihedral terms
-    addTorsionTerm("HD", "CD", "SD", "OD", TorsionFunctions::Form::Cosine, {0.8372, 3.0, 0.0, 1});
-    addTorsionTerm("HD", "CD", "SD", "CD", TorsionFunctions::Form::Cosine, {0.8372, 3.0, 0.0, 1});
+    addTorsionTerm("HD", "CD", "SD", "OD", TorsionFunctions::Form::Cosine, "k=0.8372 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("HD", "CD", "SD", "CD", TorsionFunctions::Form::Cosine, "k=0.8372 n=3.0 eq=0.0 s=1");
 
     return true;
 }

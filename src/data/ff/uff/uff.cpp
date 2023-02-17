@@ -560,13 +560,14 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
     if (typeI.name() == "C_2" || typeI.name() == "C_R" || typeI.name() == "C_amR")
     {
         // If an O_2 is present, set barrier to 50 kcal/mol, otherwise 6 kcal/mol
-        improper = {
-            typeI.name(),
-            typeJ.name(),
-            typeK.name(),
-            typeL.name(),
-            TorsionFunctions::Form::FourierN,
-            {4.184 * (typeJ.name() == "O_2" || typeK.name() == "O_2" || typeL.name() == "O_2" ? 50.0 : 6.0), 1.0, -1.0, 0.0}};
+        improper = {typeI.name(),
+                    typeJ.name(),
+                    typeK.name(),
+                    typeL.name(),
+                    TorsionFunctions::Form::FourierN,
+                    fmt::format("k={} C1={} C2={} C3={}",
+                                4.184 * (typeJ.name() == "O_2" || typeK.name() == "O_2" || typeL.name() == "O_2" ? 50.0 : 6.0),
+                                1.0, -1.0, 0.0)};
     }
     else if (typeI.name() == "N_2" || typeI.name() == "N_R" || typeI.name() == "N_amR")
         improper = {typeI.name(),
@@ -574,7 +575,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeK.name(),
                     typeL.name(),
                     TorsionFunctions::Form::FourierN,
-                    {4.184 * 6.0, 1.0, -1.0, 0.0}};
+                    fmt::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, 1.0, -1.0, 0.0)};
     else if (groupI == 15)
     {
         // Determine equilibrium angle
@@ -586,12 +587,13 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
         else if (typeI.name() == "Sb3+3")
             phi = 87.7047;
         phi /= DEGRAD;
-        improper = {typeI.name(),
-                    typeJ.name(),
-                    typeK.name(),
-                    typeL.name(),
-                    TorsionFunctions::Form::FourierN,
-                    {4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0}};
+        improper = {
+            typeI.name(),
+            typeJ.name(),
+            typeK.name(),
+            typeL.name(),
+            TorsionFunctions::Form::FourierN,
+            fmt::format("k={} C1={} C2={} C3={}", 4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0)};
     }
     else
         improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), TorsionFunctions::Form::None};

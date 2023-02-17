@@ -75,15 +75,15 @@ bool Forcefield_Kulmala2010::setUp()
     addAngleTerm("OHA", "SA", "OA", AngleFunctions::Form::Harmonic, "k=364.56 eq=107.32");
     addAngleTerm("OHA", "SA", "OHA", AngleFunctions::Form::Harmonic, "k=608.15 eq=101.79");
     addAngleTerm("HSA", "OHA", "SA", AngleFunctions::Form::Harmonic, "k=396.82 eq=110.5");
-    addTorsionTerm("OA", "SA", "OHA", "HSA", TorsionFunctions::Form::Cos3, {0.0, 0.0, 0.0});
-    addTorsionTerm("OHA", "SA", "OHA", "HSA", TorsionFunctions::Form::Cos3, {-15.8628, -7.797, 2.3399});
+    addTorsionTerm("OA", "SA", "OHA", "HSA", TorsionFunctions::Form::Cos3, "k1=0.0 k2=0.0 k3=0.0");
+    addTorsionTerm("OHA", "SA", "OHA", "HSA", TorsionFunctions::Form::Cos3, "k1=-15.8628 k2=-7.797 k3=2.3399");
     // -- Hydrogen Sulfate Ion
     addBondTerm("SA-", "OA-", BondFunctions::Form::Harmonic, "k=5239.9 eq=1.438");
     addBondTerm("SA-", "OHA-", BondFunctions::Form::Harmonic, "k=2328.3 eq=1.634");
     addAngleTerm("OA-", "SA-", "OA-", AngleFunctions::Form::Harmonic, "k=456.97 eq=114.76");
     addAngleTerm("OHA-", "SA-", "OA-", AngleFunctions::Form::Harmonic, "k=814.48 eq=103.45");
     addAngleTerm("HSA-", "OHA-", "SA-", AngleFunctions::Form::Harmonic, "k=398.12 eq=106.39");
-    addTorsionTerm("OA-", "SA-", "OHA-", "HSA-", TorsionFunctions::Form::Cos3, {0.0, 0.0, 0.0});
+    addTorsionTerm("OA-", "SA-", "OHA-", "HSA-", TorsionFunctions::Form::Cos3, "k1=0.0 k2=0.0 k3=0.0");
     // -- Dimethylammonium Ion
     addBondTerm("NDM", "CDM", BondFunctions::Form::Harmonic, "k=3071.0 eq=1.499");
     addBondTerm("NDM", "HDM", BondFunctions::Form::Harmonic, "k=3632.0 eq=1.01");
@@ -94,8 +94,8 @@ bool Forcefield_Kulmala2010::setUp()
     addAngleTerm("HDM", "NDM", "HDM", AngleFunctions::Form::Harmonic, "k=292.9 eq=105.5");
     addAngleTerm("HCD", "CDM", "HCD", AngleFunctions::Form::Harmonic,
                  "k=276.144 eq=107.8"); // Missing from SI - taken from OPLS-AA
-    addTorsionTerm("HCD", "CDM", "NDM", "HDM", TorsionFunctions::Form::Cos3, {0.0, 0.0, 0.0});
-    addTorsionTerm("HCD", "CDM", "NDM", "CDM", TorsionFunctions::Form::Cos3, {0.0, 0.0, 3.3765});
+    addTorsionTerm("HCD", "CDM", "NDM", "HDM", TorsionFunctions::Form::Cos3, "k1=0.0 k2=0.0 k3=0.0");
+    addTorsionTerm("HCD", "CDM", "NDM", "CDM", TorsionFunctions::Form::Cos3, "k1=0.0 k2=0.0 k3=3.3765");
 
     return true;
 }

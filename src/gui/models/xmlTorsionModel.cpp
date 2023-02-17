@@ -182,25 +182,21 @@ std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector()
     std::vector<ForcefieldTorsionTerm> result;
     for (auto &torsion : torsions_)
     {
-        std::vector<double> params,
-            ks({std::get<4>(torsion), std::get<5>(torsion), std::get<6>(torsion), std::get<7>(torsion)}),
+        std::vector<double> ks({std::get<4>(torsion), std::get<5>(torsion), std::get<6>(torsion), std::get<7>(torsion)}),
             phases({std::get<12>(torsion), std::get<13>(torsion), std::get<14>(torsion), std::get<15>(torsion)});
         std::vector<int> ns({std::get<8>(torsion), std::get<9>(torsion), std::get<10>(torsion), std::get<11>(torsion)});
 
-        params.resize(*std::max_element(ns.begin(), ns.end()) - 1);
-        for (int n = 1; n <= params.size(); ++n)
+        std::string paramString;
+        auto index = 0;
+        for (auto n : ns)
         {
-            for (int index = 0; index < ns.size(); ++index)
-            {
-                if (n == ns[index])
-                {
-                    params[n - 1] = (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index];
-                }
-            }
+            paramString += fmt::format("k{}={} ", n, (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index]);
+
+            ++index;
         }
 
         result.emplace_back(std::get<0>(torsion), std::get<1>(torsion), std::get<2>(torsion), std::get<3>(torsion),
-                            TorsionFunctions::Form::CosN, params);
+                            TorsionFunctions::Form::CosN, paramString);
     }
     return result;
 }

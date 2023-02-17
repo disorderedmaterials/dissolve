@@ -80,24 +80,25 @@ bool Forcefield_Ludwig_Py4OH::setUp()
     addAngleTerm("hc", "ct", "oh", AngleFunctions::Form::Harmonic, "k=293.08 eq=109.5");
 
     // Torsion Terms
-    addTorsionTerm("*", "ca", "ca", "*", TorsionFunctions::Form::Cosine, {15.178, 2.0, 180.0, 1});
-    addTorsionTerm("*", "ca", "nc", "*", TorsionFunctions::Form::Cosine, {15.178, 2.0, 180.0, 1});
-    addTorsionTerm("ca", "nc", "ct", "ct", TorsionFunctions::Form::CosN, {0.0, -0.3579, 0.0, -0.4037});
-    addTorsionTerm("nc", "ct", "ct", "ct", TorsionFunctions::Form::CosN, {-3.7014, 0.0, 6.9923});
-    addTorsionTerm("ct", "ct", "ct", "ct", TorsionFunctions::Form::CosN, {-0.2825, 0.6065, 4.6858, 0.7018, 0.4468, 0.4564});
-    addTorsionTerm("ct", "ct", "ct", "oh", TorsionFunctions::Form::CosN, {-2.3748, 0.0, 6.8089, 0.9531});
-    addTorsionTerm("ct", "ct", "oh", "ho", TorsionFunctions::Form::CosN, {-3.5552, 0.5886, 2.5272, 0.1504});
-    addTorsionTerm("hc", "ct", "ct", "hc", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "ct", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "nc", "ca", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "nc", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "oh", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "oh", "ho", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("*", "ca", "ca", "*", TorsionFunctions::Form::Cosine, "k=15.178 n=2.0 eq=180.0 s=1");
+    addTorsionTerm("*", "ca", "nc", "*", TorsionFunctions::Form::Cosine, "k=15.178 n=2.0 eq=180.0 s=1");
+    addTorsionTerm("ca", "nc", "ct", "ct", TorsionFunctions::Form::CosN, "k1=0.0 k2=-0.3579 k3=0.0 k4=-0.4037");
+    addTorsionTerm("nc", "ct", "ct", "ct", TorsionFunctions::Form::CosN, "k1=-3.7014 k2=0.0 k3=6.9923");
+    addTorsionTerm("ct", "ct", "ct", "ct", TorsionFunctions::Form::CosN,
+                   "k1=-0.2825 k2=0.6065 k3=4.6858 k4=0.7018 k5=0.4468 k6=0.4564");
+    addTorsionTerm("ct", "ct", "ct", "oh", TorsionFunctions::Form::CosN, "k1=-2.3748 k2=0.0 k3=6.8089 k4=0.9531");
+    addTorsionTerm("ct", "ct", "oh", "ho", TorsionFunctions::Form::CosN, "k1=-3.5552 k2=0.5886 k3=2.5272 k4=0.1504");
+    addTorsionTerm("hc", "ct", "ct", "hc", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "ct", "ct", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "nc", "ca", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "ct", "nc", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "ct", "oh", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "oh", "ho", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
 
     // Improper Terms
-    addImproperTerm("ca", "ca", "ca", "ha", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
-    addImproperTerm("ca", "nc", "ca", "ha", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
-    addImproperTerm("nc", "ca", "ca", "ct", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("ca", "ca", "ca", "ha", TorsionFunctions::Form::Cosine, "k=4.606 n=2.0 eq=180.0 s=1");
+    addImproperTerm("ca", "nc", "ca", "ha", TorsionFunctions::Form::Cosine, "k=4.606 n=2.0 eq=180.0 s=1");
+    addImproperTerm("nc", "ca", "ca", "ct", TorsionFunctions::Form::Cosine, "k=4.606 n=2.0 eq=180.0 s=1");
 
     return true;
 }

@@ -120,10 +120,10 @@ class Forcefield
                       std::string_view parameterString = "");
     // Add torsion term
     void addTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                        TorsionFunctions::Form form, const std::vector<double> &parameters = {});
+                        TorsionFunctions::Form form, std::string_view parameterString = "");
     // Add improper term
     void addImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                         TorsionFunctions::Form form, const std::vector<double> &parameters = {});
+                         TorsionFunctions::Form form, std::string_view parameterString = "");
     // Match any kind of term
     template <class T, typename... Args>
     static OptionalReferenceWrapper<const T> termMatch_(const std::vector<T> &, Args &&...);

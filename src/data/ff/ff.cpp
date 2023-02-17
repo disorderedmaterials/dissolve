@@ -203,16 +203,16 @@ void Forcefield::addAngleTerm(std::string_view typeI, std::string_view typeJ, st
 
 // Add torsion term
 void Forcefield::addTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                TorsionFunctions::Form form, const std::vector<double> &parameters)
+                                TorsionFunctions::Form form, std::string_view parameterString)
 {
-    torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
+    torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameterString);
 }
 
 // Add improper term
 void Forcefield::addImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                 TorsionFunctions::Form form, const std::vector<double> &parameters)
+                                 TorsionFunctions::Form form, std::string_view parameterString)
 {
-    improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
+    improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameterString);
 }
 
 // Return bond term for the supplied atom type pair (if it exists)

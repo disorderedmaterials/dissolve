@@ -60,21 +60,21 @@ bool Forcefield_Zhao2010::setUp()
     addAngleTerm("C2", "C3", "C2", AngleFunctions::Form::Harmonic, "k=753.12 eq=119.9");
     addAngleTerm("C2", "C3", "H", AngleFunctions::Form::Harmonic, "k=309.616 eq=120.0");
 
-    addTorsionTerm("Cu", "O", "C1", "C2", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
-    addTorsionTerm("Cu", "O", "C1", "O", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
-    addTorsionTerm("C2", "C3", "C2", "C3", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
-    addTorsionTerm("C1", "C2", "C3", "C2", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
-    addTorsionTerm("C1", "C2", "C3", "H", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
-    addTorsionTerm("C3", "C2", "C3", "H", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
-    addTorsionTerm("O", "C1", "C2", "C3", TorsionFunctions::Form::Cosine, {10.46, 2, 0.0, -1.0});
+    addTorsionTerm("Cu", "O", "C1", "C2", TorsionFunctions::Form::Cosine, "k=12.552 n=2 eq=0.0 s=-1.0");
+    addTorsionTerm("Cu", "O", "C1", "O", TorsionFunctions::Form::Cosine, "k=12.552 n=2 eq=0.0 s=-1.0");
+    addTorsionTerm("C2", "C3", "C2", "C3", TorsionFunctions::Form::Cosine, "k=12.552 n=2 eq=0.0 s=-1.0");
+    addTorsionTerm("C1", "C2", "C3", "C2", TorsionFunctions::Form::Cosine, "k=12.552 n=2 eq=0.0 s=-1.0");
+    addTorsionTerm("C1", "C2", "C3", "H", TorsionFunctions::Form::Cosine, "k=12.552 n=2 eq=0.0 s=-1.0");
+    addTorsionTerm("C3", "C2", "C3", "H", TorsionFunctions::Form::Cosine, "k=12.552 n=2 eq=0.0 s=-1.0");
+    addTorsionTerm("O", "C1", "C2", "C3", TorsionFunctions::Form::Cosine, "k=10.46 n=2 eq=0.0 s=-1.0");
     // -- Missing in original
-    addTorsionTerm("H", "C2", "C3", "C2", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
+    addTorsionTerm("H", "C2", "C3", "C2", TorsionFunctions::Form::Cosine, "k=12.552 n=2 eq=0.0 s=-1.0");
     // -- Required in model, but assumed to be explicitly not applied (see notes above)
     addTorsionTerm("O", "Cu", "O", "C1", TorsionFunctions::Form::None, {});
 
-    addImproperTerm("C2", "C1", "C3", "C3", TorsionFunctions::Form::Cosine, {41.84, 2, 0.0, -1.0});
-    addImproperTerm("C1", "C2", "O", "O", TorsionFunctions::Form::Cosine, {41.84, 2, 0.0, -1.0});
-    addImproperTerm("C3", "H", "C2", "C2", TorsionFunctions::Form::Cosine, {1.5481, 2, 0.0, -1.0});
+    addImproperTerm("C2", "C1", "C3", "C3", TorsionFunctions::Form::Cosine, "k=41.84 n=2 eq=0.0 s=-1.0");
+    addImproperTerm("C1", "C2", "O", "O", TorsionFunctions::Form::Cosine, "k=41.84 n=2 eq=0.0 s=-1.0");
+    addImproperTerm("C3", "H", "C2", "C2", TorsionFunctions::Form::Cosine, "k=1.5481 n=2 eq=0.0 s=-1.0");
 
     return true;
 }

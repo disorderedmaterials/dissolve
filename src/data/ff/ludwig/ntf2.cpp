@@ -50,10 +50,11 @@ bool Forcefield_Ludwig_NTf2::setUp()
     addAngleTerm("S", "N", "S", AngleFunctions::Form::Harmonic, "k=671.0 eq=125.6");
 
     // Torsion Terms
-    addTorsionTerm("F", "C", "S", "N", TorsionFunctions::Form::Cosine, {2.0401, 3.0, 0.0, 1});
+    addTorsionTerm("F", "C", "S", "N", TorsionFunctions::Form::Cosine, "k=2.0401 n=3.0 eq=0.0 s=1");
     addTorsionTerm("F", "C", "S", "O", TorsionFunctions::Form::None);
     addTorsionTerm("O", "S", "N", "S", TorsionFunctions::Form::None);
-    addTorsionTerm("S", "N", "S", "C", TorsionFunctions::Form::CosN, {23.7647, 6.2081, -2.3684, -0.0298, 0.6905, 1.0165});
+    addTorsionTerm("S", "N", "S", "C", TorsionFunctions::Form::CosN,
+                   "k1=23.7647 k2=6.2081 k3=-2.3684 k4=-0.0298 k5=0.6905 k6=1.0165");
 
     return true;
 }
