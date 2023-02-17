@@ -21,31 +21,24 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
 
     qmlRegisterType<AddForcefieldDialogModel>("Dissolve", 1, 0, "AddForcefieldDialogModel");
 
-    QQuickWidget *view = new QQuickWidget;
+    QQuickWidget *view = new QQuickWidget(QUrl("main.qml"), this);
     AtomTypeModel atModel(dissolve.coreData());
-    AddForcefieldDialogModel model;
 
     atModel.setData(dissolve.coreData().atomTypes());
 
     view->rootContext()->setContextProperty("ffModel", QVariant::fromValue(&ffModel_));
     view->rootContext()->setContextProperty("atModel", QVariant::fromValue(&atModel));
-    view->setSource(QUrl("main.qml"));
-    view->setParent(this);
-    view->setMinimumSize(200,200);
+    view->setMinimumSize(300, 300);
     view->setResizeMode(QQuickWidget::SizeRootObjectToView);
-    // QWidget *container = QWidget::createWindowContainer(view, this);
-
-    // some set up if needed
-    // container->setMinimumSize(1280, 600);
-    // container->setMaximumSize(1280, 600);
-    // container->setFocusPolicy(Qt::TabFocus);
-
-    // ..
 
     auto root = view->rootObject();
+    auto model = root->findChild<AddForcefieldDialogModel*>("dialogModel");
 
-    connect(root, SIGNAL(qmlCancel()), this, SLOT(reject()));
-    connect(root, SIGNAL(qmlAccept()), this, SLOT(accept()));
+    if (!model)
+      std::cout<<"No dialogModel"<<std::endl;
+
+    connect(model, SIGNAL(cancel()), this, SLOT(reject()));
+    connect(model, SIGNAL(accept()), this, SLOT(accept()));
 
     QHBoxLayout *topLeftLayout = new QHBoxLayout;
     topLeftLayout->addWidget(view);

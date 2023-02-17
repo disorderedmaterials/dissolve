@@ -18,5 +18,5 @@ void AddForcefieldDialogModel::setIndex(int idx) {
   indexChanged();
   nextTextChanged();
   if (index_ > 2)
-    accepted();
+    accept();
 }

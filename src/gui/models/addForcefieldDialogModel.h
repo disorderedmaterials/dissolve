@@ -13,7 +13,8 @@ class AddForcefieldDialogModel : public QObject {
  signals:
   void nextTextChanged();
   void indexChanged();
-  void accepted();
+  void accept();
+  void cancel();
 
  private:
   int index_ = 0;

@@ -9,12 +9,10 @@ Rectangle {
     visible: true;
     anchors.fill: parent;
     color: "#EEEEEE";
-    signal qmlCancel();
-    signal qmlAccept();
 
     AddForcefieldDialogModel {
 	id: dialogModel;
-	onAccepted: root.qmlAccept();
+	objectName: "dialogModel";
     }
 
     StackLayout {
@@ -40,7 +38,7 @@ Rectangle {
 	text: "Cancel";
 	anchors.bottom: parent.bottom;
 	anchors.left: parent.left;
-	onClicked: root.qmlCancel();
+	onClicked: dialogModel.cancel();
     }
     Button {
 	id: nextButton;
