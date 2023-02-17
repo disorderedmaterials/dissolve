@@ -49,16 +49,16 @@ bool Forcefield_Zhao2010::setUp()
     addBondTerm("C3", "H", BondFunctions::Form::Morse, "D=485.344 alpha=1.77 eq=0.931");
 
     // -- O-Cu-O angles handled separately in our local assignAngleTermParameters()
-    addAngleTerm("O(1)", "Cu", "O(1)", AngleFunctions::Form::Harmonic, {419.7389, 170.2});
-    addAngleTerm("O(2)", "Cu", "O(2)", AngleFunctions::Form::Harmonic, {419.7389, 170.2});
-    addAngleTerm("O(1)", "Cu", "O(2)", AngleFunctions::Form::Harmonic, {100.416, 90.0});
-    addAngleTerm("Cu", "O", "C1", AngleFunctions::Form::Harmonic, {338.6530, 127.5});
-    addAngleTerm("O", "C1", "O", AngleFunctions::Form::Harmonic, {1213.36, 128.5});
-    addAngleTerm("O", "C1", "C2", AngleFunctions::Form::Harmonic, {456.0142, 116.2});
-    addAngleTerm("C1", "C2", "C3", AngleFunctions::Form::Harmonic, {290.2022, 119.9});
-    addAngleTerm("C3", "C2", "C3", AngleFunctions::Form::Harmonic, {753.12, 120.1});
-    addAngleTerm("C2", "C3", "C2", AngleFunctions::Form::Harmonic, {753.12, 119.9});
-    addAngleTerm("C2", "C3", "H", AngleFunctions::Form::Harmonic, {309.616, 120.0});
+    addAngleTerm("O(1)", "Cu", "O(1)", AngleFunctions::Form::Harmonic, "k=419.7389 eq=170.2");
+    addAngleTerm("O(2)", "Cu", "O(2)", AngleFunctions::Form::Harmonic, "k=419.7389 eq=170.2");
+    addAngleTerm("O(1)", "Cu", "O(2)", AngleFunctions::Form::Harmonic, "k=100.416 eq=90.0");
+    addAngleTerm("Cu", "O", "C1", AngleFunctions::Form::Harmonic, "k=338.6530 eq=127.5");
+    addAngleTerm("O", "C1", "O", AngleFunctions::Form::Harmonic, "k=1213.36 eq=128.5");
+    addAngleTerm("O", "C1", "C2", AngleFunctions::Form::Harmonic, "k=456.0142 eq=116.2");
+    addAngleTerm("C1", "C2", "C3", AngleFunctions::Form::Harmonic, "k=290.2022 eq=119.9");
+    addAngleTerm("C3", "C2", "C3", AngleFunctions::Form::Harmonic, "k=753.12 eq=120.1");
+    addAngleTerm("C2", "C3", "C2", AngleFunctions::Form::Harmonic, "k=753.12 eq=119.9");
+    addAngleTerm("C2", "C3", "H", AngleFunctions::Form::Harmonic, "k=309.616 eq=120.0");
 
     addTorsionTerm("Cu", "O", "C1", "C2", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});
     addTorsionTerm("Cu", "O", "C1", "O", TorsionFunctions::Form::Cosine, {12.552, 2, 0.0, -1.0});

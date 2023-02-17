@@ -63,21 +63,21 @@ bool Forcefield_Ludwig_Py5::setUp()
     addBondTerm("cm", "hm", BondFunctions::Form::Harmonic, "k=2847.0 eq=1.09");
 
     // Angle Terms
-    addAngleTerm("ca", "ca", "ca", AngleFunctions::Form::Harmonic, {527.2, 120.0});
-    addAngleTerm("ca", "ca", "nc", AngleFunctions::Form::Harmonic, {585.8, 124.0});
-    addAngleTerm("ca", "nc", "ca", AngleFunctions::Form::Harmonic, {585.8, 117.0});
-    addAngleTerm("ca", "ca", "ha", AngleFunctions::Form::Harmonic, {292.9, 120.0});
-    addAngleTerm("nc", "ca", "ha", AngleFunctions::Form::Harmonic, {292.9, 116.0});
-    addAngleTerm("ca", "nc", "ct", AngleFunctions::Form::Harmonic, {585.8, 121.5});
-    addAngleTerm("nc", "ct", "ct", AngleFunctions::Form::Harmonic, {487.43, 112.7});
-    addAngleTerm("hc", "ct", "nc", AngleFunctions::Form::Harmonic, {313.26, 110.7});
-    addAngleTerm("hc", "ct", "hc", AngleFunctions::Form::Harmonic, {275.7, 107.8});
-    addAngleTerm("hc", "ct", "ct", AngleFunctions::Form::Harmonic, {313.26, 110.7});
-    addAngleTerm("hc", "ct", "cm", AngleFunctions::Form::Harmonic, {313.26, 110.7});
-    addAngleTerm("hm", "cm", "ct", AngleFunctions::Form::Harmonic, {313.26, 110.7});
-    addAngleTerm("hm", "cm", "hm", AngleFunctions::Form::Harmonic, {275.7, 107.8});
-    addAngleTerm("ct", "ct", "ct", AngleFunctions::Form::Harmonic, {487.43, 112.7});
-    addAngleTerm("ct", "ct", "cm", AngleFunctions::Form::Harmonic, {487.43, 112.7});
+    addAngleTerm("ca", "ca", "ca", AngleFunctions::Form::Harmonic, "k=527.2 eq=120.0");
+    addAngleTerm("ca", "ca", "nc", AngleFunctions::Form::Harmonic, "k=585.8 eq=124.0");
+    addAngleTerm("ca", "nc", "ca", AngleFunctions::Form::Harmonic, "k=585.8 eq=117.0");
+    addAngleTerm("ca", "ca", "ha", AngleFunctions::Form::Harmonic, "k=292.9 eq=120.0");
+    addAngleTerm("nc", "ca", "ha", AngleFunctions::Form::Harmonic, "k=292.9 eq=116.0");
+    addAngleTerm("ca", "nc", "ct", AngleFunctions::Form::Harmonic, "k=585.8 eq=121.5");
+    addAngleTerm("nc", "ct", "ct", AngleFunctions::Form::Harmonic, "k=487.43 eq=112.7");
+    addAngleTerm("hc", "ct", "nc", AngleFunctions::Form::Harmonic, "k=313.26 eq=110.7");
+    addAngleTerm("hc", "ct", "hc", AngleFunctions::Form::Harmonic, "k=275.7 eq=107.8");
+    addAngleTerm("hc", "ct", "ct", AngleFunctions::Form::Harmonic, "k=313.26 eq=110.7");
+    addAngleTerm("hc", "ct", "cm", AngleFunctions::Form::Harmonic, "k=313.26 eq=110.7");
+    addAngleTerm("hm", "cm", "ct", AngleFunctions::Form::Harmonic, "k=313.26 eq=110.7");
+    addAngleTerm("hm", "cm", "hm", AngleFunctions::Form::Harmonic, "k=275.7 eq=107.8");
+    addAngleTerm("ct", "ct", "ct", AngleFunctions::Form::Harmonic, "k=487.43 eq=112.7");
+    addAngleTerm("ct", "ct", "cm", AngleFunctions::Form::Harmonic, "k=487.43 eq=112.7");
 
     // Torsion Terms
     addTorsionTerm("*", "ca", "ca", "*", TorsionFunctions::Form::Cosine, {15.178, 2.0, 180.0, 1});

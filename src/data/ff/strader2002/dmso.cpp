@@ -36,10 +36,10 @@ bool Forcefield_Strader2002::setUp()
     addBondTerm("CD", "HD", BondFunctions::Form::Harmonic, "k=2695.78 eq=1.11");
 
     // Angle terms
-    addAngleTerm("CD", "SD", "CD", AngleFunctions::Form::Harmonic, {284.65, 95.0});
-    addAngleTerm("CD", "SD", "OD", AngleFunctions::Form::Harmonic, {661.39, 106.75});
-    addAngleTerm("HD", "CD", "SD", AngleFunctions::Form::Harmonic, {385.94, 111.30});
-    addAngleTerm("HD", "CD", "HD", AngleFunctions::Form::Harmonic, {297.21, 108.40});
+    addAngleTerm("CD", "SD", "CD", AngleFunctions::Form::Harmonic, "k=284.65 eq=95.0");
+    addAngleTerm("CD", "SD", "OD", AngleFunctions::Form::Harmonic, "k=661.39 eq=106.75");
+    addAngleTerm("HD", "CD", "SD", AngleFunctions::Form::Harmonic, "k=385.94 eq=111.30");
+    addAngleTerm("HD", "CD", "HD", AngleFunctions::Form::Harmonic, "k=297.21 eq=108.40");
 
     // Dihedral terms
     addTorsionTerm("HD", "CD", "SD", "OD", TorsionFunctions::Form::Cosine, {0.8372, 3.0, 0.0, 1});

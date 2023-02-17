@@ -41,13 +41,13 @@ bool Forcefield_Ludwig_NTf2::setUp()
     addBondTerm("N", "S", BondFunctions::Form::Harmonic, "k=3113.0 eq=1.570");
 
     // Angle Terms
-    addAngleTerm("F", "C", "F", AngleFunctions::Form::Harmonic, {781.0, 107.1});
-    addAngleTerm("S", "C", "F", AngleFunctions::Form::Harmonic, {694.0, 111.8});
-    addAngleTerm("C", "S", "O", AngleFunctions::Form::Harmonic, {870.0, 102.6});
-    addAngleTerm("O", "S", "O", AngleFunctions::Form::Harmonic, {969.0, 118.5});
-    addAngleTerm("O", "S", "N", AngleFunctions::Form::Harmonic, {789.0, 113.6});
-    addAngleTerm("C", "S", "N", AngleFunctions::Form::Harmonic, {816.0, 100.2});
-    addAngleTerm("S", "N", "S", AngleFunctions::Form::Harmonic, {671.0, 125.6});
+    addAngleTerm("F", "C", "F", AngleFunctions::Form::Harmonic, "k=781.0 eq=107.1");
+    addAngleTerm("S", "C", "F", AngleFunctions::Form::Harmonic, "k=694.0 eq=111.8");
+    addAngleTerm("C", "S", "O", AngleFunctions::Form::Harmonic, "k=870.0 eq=102.6");
+    addAngleTerm("O", "S", "O", AngleFunctions::Form::Harmonic, "k=969.0 eq=118.5");
+    addAngleTerm("O", "S", "N", AngleFunctions::Form::Harmonic, "k=789.0 eq=113.6");
+    addAngleTerm("C", "S", "N", AngleFunctions::Form::Harmonic, "k=816.0 eq=100.2");
+    addAngleTerm("S", "N", "S", AngleFunctions::Form::Harmonic, "k=671.0 eq=125.6");
 
     // Torsion Terms
     addTorsionTerm("F", "C", "S", "N", TorsionFunctions::Form::Cosine, {2.0401, 3.0, 0.0, 1});

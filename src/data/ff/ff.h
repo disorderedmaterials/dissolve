@@ -117,7 +117,7 @@ class Forcefield
                      std::string_view parameterString);
     // Add angle term
     void addAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, AngleFunctions::Form form,
-                      const std::vector<double> &parameters = {});
+                      std::string_view parameterString = "");
     // Add torsion term
     void addTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
                         TorsionFunctions::Form form, const std::vector<double> &parameters = {});

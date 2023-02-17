@@ -6,11 +6,14 @@
 #include "data/ff/ff.h"
 
 ForcefieldAngleTerm::ForcefieldAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
-                                         AngleFunctions::Form form, const std::vector<double> &parameters)
-    : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), form_(form), parameters_(parameters)
+                                         AngleFunctions::Form form, std::string_view parameterString)
+    : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), form_(form)
 {
-    if (!AngleFunctions::forms().validNArgs(form, parameters_.size()))
-        throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldAngleTerm."));
+    InteractionPotential<AngleFunctions> potential(form);
+    if (!potential.parseParameters(parameterString))
+        throw(std::runtime_error(fmt::format("Failed to parse parameter string '{}' when constructing angle term '{}-{}-{}'.\n",
+                                             parameterString, typeI_, typeJ_, typeK_)));
+    parameters_ = potential.parameters();
 }
 
 /*

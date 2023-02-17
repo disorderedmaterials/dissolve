@@ -196,9 +196,9 @@ void Forcefield::addBondTerm(std::string_view typeI, std::string_view typeJ, Bon
 
 // Add angle term
 void Forcefield::addAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, AngleFunctions::Form form,
-                              const std::vector<double> &parameters)
+                              std::string_view parameterString)
 {
-    angleTerms_.emplace_back(typeI, typeJ, typeK, form, parameters);
+    angleTerms_.emplace_back(typeI, typeJ, typeK, form, parameterString);
 }
 
 // Add torsion term

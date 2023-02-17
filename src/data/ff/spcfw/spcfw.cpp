@@ -35,7 +35,7 @@ bool Forcefield_SPCFw::setUp()
     addBondTerm("HW", "OW", BondFunctions::Form::Harmonic, "k=4431.53 eq=1.0");
 
     // Angle terms
-    addAngleTerm("HW", "OW", "HW", AngleFunctions::Form::Harmonic, {317.5656, 113.24});
+    addAngleTerm("HW", "OW", "HW", AngleFunctions::Form::Harmonic, "k=317.5656 eq=113.24");
 
     return true;
 }
