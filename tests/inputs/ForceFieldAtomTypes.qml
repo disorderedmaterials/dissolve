@@ -3,16 +3,18 @@ import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
 
-ColumnLayout {
+Item {
     property variant dialogModel;
+    property variant index: atList.currentIndex;
     ListView {
 	id: atList;
-	width: 100;
-	height: 100;
-	/* anchors.fill: parent; */
+	anchors.top: parent.top;
+	anchors.left: parent.left;
+	anchors.right: parent.right;
+	anchors.bottom: overwrite.top;
+	height: 400;
 	model: dialogModel.atomTypes;
 	delegate: Text {
-	    property variant fullData: model;
 	    text: display;
 	    color: ListView.isCurrentItem ? "red" : "black";
 	    MouseArea {
@@ -20,5 +22,11 @@ ColumnLayout {
 		onClicked: atList.currentIndex = index;
 	    }
 	}
+    }
+    CheckBox {
+	id: overwrite
+	anchors.bottom: parent.bottom;
+	anchors.left: parent.left;
+	text: "Overwrite Parameters in existing atom types";
     }
 }
