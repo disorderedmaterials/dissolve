@@ -34,6 +34,7 @@ Rectangle {
 	}
 
 	ForceFieldAtomTypes {
+	    dialogModel: dialogModel;
 	}
     }
 
@@ -48,13 +49,13 @@ Rectangle {
 	text: dialogModel.index == AddForcefieldDialogModel.AtomTypesConflictsPage ? "Finish" : "Next";
 	anchors.bottom: parent.bottom;
 	anchors.right: parent.right;
-	onClicked: dialogModel.index += 1;
+	onClicked: dialogModel.next();
     }
     Button {
 	text: "Back";
 	anchors.bottom: parent.bottom;
 	anchors.right: nextButton.left;
 	enabled: dialogModel.index > 0;
-	onClicked: dialogModel.index -= 1;
+	onClicked: dialogModel.back();
     }
 }

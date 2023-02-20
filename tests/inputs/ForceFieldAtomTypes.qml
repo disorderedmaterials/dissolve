@@ -4,6 +4,7 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 ColumnLayout {
+    property variant dialogModel;
     /* property variant fullData: ffList.currentItem.fullData; */
     Text { text: "Foo"; }
     ListView {

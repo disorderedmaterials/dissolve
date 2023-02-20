@@ -11,7 +11,7 @@
 
 class AddForcefieldDialogModel : public QObject {
   Q_OBJECT
-  Q_PROPERTY(Page index READ index WRITE setIndex NOTIFY indexChanged)
+  Q_PROPERTY(Page index READ index NOTIFY indexChanged)
   Q_PROPERTY(QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
   Q_PROPERTY(QString filterFF READ filterFF WRITE setFilterFF NOTIFY filterFFChanged)
   Q_PROPERTY(bool speciesHasSelection READ speciesHasSelection NOTIFY ready)
@@ -49,8 +49,9 @@ signals:
  public:
   AddForcefieldDialogModel();
   Page index();
+  Q_INVOKABLE void next();
+  Q_INVOKABLE void back();
   QAbstractItemModel* forcefields();
-  void setIndex(Page idx);
   bool speciesHasSelection();
   void setDissolve(Dissolve& Dissolve);
   void setSpecies(Species* species);
