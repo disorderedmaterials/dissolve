@@ -14,7 +14,7 @@ AddForcefieldDialogModel::AddForcefieldDialogModel()
     temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
 }
 
-AddForcefieldDialogModel::~AddForcefieldDialogModel() {}
+AddForcefieldDialogModel::~AddForcefieldDialogModel() { temporaryDissolve_->clear(); }
 
 AddForcefieldDialogModel::Page AddForcefieldDialogModel::index() { return index_; }
 
