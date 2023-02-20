@@ -43,7 +43,7 @@ void AddForcefieldDialogModel::next()
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesPage:
-	    if (!ff) // No valud forcefield
+	    if (!ff_) // No valud forcefield
 		return;
 	    modifiedSpecies_ = temporaryDissolve_->addSpecies();
 	    modifiedSpecies_->copyBasic(species_);
@@ -60,15 +60,15 @@ void AddForcefieldDialogModel::next()
 		    modifiedSpecies_->clearAtomTypes();
 		    temporaryDissolve_->clearAtomTypes();
 
-		    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
+		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
 					!keepSpeciesAtomChargesCheck_);
 		    break;
 		case Radio::Selected:
-		    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
+		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
 					!keepSpeciesAtomChargesCheck_);
 		    break;
 		case Radio::Empty:
-		    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
+		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
 					!keepSpeciesAtomChargesCheck_);
 		default:
 		    break;

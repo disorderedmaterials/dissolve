@@ -15,8 +15,7 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(Page index READ index NOTIFY indexChanged)
   Q_PROPERTY(QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
   Q_PROPERTY(AtomTypeModel* atomTypes READ atomTypes NOTIFY atomTypesChanged)
-  Q_PROPERTY(Forcefield* ff MEMBER ff)
-  Q_PROPERTY(std::shared_ptr<AtomType> atomType MEMBER atomType_)
+  Q_PROPERTY(Forcefield* ff MEMBER ff_)
   Q_PROPERTY(bool keepSpeciesAtomChargesCheck MEMBER keepSpeciesAtomChargesCheck_)
   Q_PROPERTY(QString filterFF READ filterFF WRITE setFilterFF NOTIFY filterFFChanged)
   Q_PROPERTY(bool speciesHasSelection READ speciesHasSelection NOTIFY ready)
@@ -46,8 +45,7 @@ signals:
  private:
   Page index_ = Page::SelectForcefieldPage;
   Dissolve* dissolve_ = nullptr;
-  Forcefield* ff;
-  std::shared_ptr<AtomType> atomType_;
+  Forcefield* ff_;
   // Temporary Dissolve reference for creating / importing layers
   std::unique_ptr<Dissolve> temporaryDissolve_;
   // Temporary core data for applying Forcefield terms
