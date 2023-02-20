@@ -7,6 +7,7 @@
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/optionaldouble.h"
+#include "keywords/optionalint.h"
 #include "keywords/speciesvector.h"
 
 MDModule::MDModule() : Module("MD")
@@ -30,12 +31,12 @@ MDModule::MDModule() : Module("MD")
                                onlyWhenEnergyStable_);
 
     keywords_.setOrganisation("Options", "Output");
-    keywords_.add<IntegerKeyword>("EnergyFrequency", "Frequency at which to calculate total system energy (or 0 to inhibit)",
-                                  energyFrequency_, 0);
-    keywords_.add<IntegerKeyword>("OutputFrequency", "Frequency at which to output step information (or 0 to inhibit)",
-                                  outputFrequency_, 0);
-    keywords_.add<IntegerKeyword>("TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)",
-                                  trajectoryFrequency_, 0);
+    keywords_.add<OptionalIntegerKeyword>("EnergyFrequency", "Frequency at which to calculate total system energy",
+                                          energyFrequency_, 0, std::nullopt, 5, "Off");
+    keywords_.add<OptionalIntegerKeyword>("OutputFrequency", "Frequency at which to output step information", outputFrequency_,
+                                          0, std::nullopt, 5, "Off");
+    keywords_.add<OptionalIntegerKeyword>("TrajectoryFrequency", "Write frequency for trajectory file", trajectoryFrequency_, 0,
+                                          std::nullopt, 5, "Off");
 
     keywords_.setOrganisation("Advanced");
     keywords_.add<BoolKeyword>("CapForces", "Control whether atomic forces are capped every step", capForces_);

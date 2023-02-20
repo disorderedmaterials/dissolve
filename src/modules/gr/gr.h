@@ -55,13 +55,11 @@ class GRModule : public Module
     // Calculation method for partials
     GRModule::PartialsMethod partialsMethod_{GRModule::AutoMethod};
     // Maximum r to calculate g(r) out to, unless UseHalfCellRange is true
-    double requestedRange_{15.0};
+    std::optional<double> requestedRange_;
     // Whether to save partials and total functions to disk
     bool save_{false};
     // Whether to save original (unbroadened) partials and total functions to disk
     bool saveOriginal_{false};
-    // Whether to use the maximal RDF range possible that avoids periodic images
-    bool useHalfCellRange_{true};
 
     /*
      * Functions
