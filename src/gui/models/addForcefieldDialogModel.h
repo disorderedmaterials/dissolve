@@ -5,6 +5,7 @@
 
 #include "main/dissolve.h"
 #include "gui/models/forcefieldModel.h"
+#include "gui/models/atomTypeModel.h"
 #include <QObject>
 #include <QSortFilterProxyModel>
 #include <memory>
@@ -13,6 +14,9 @@ class AddForcefieldDialogModel : public QObject {
   Q_OBJECT
   Q_PROPERTY(Page index READ index NOTIFY indexChanged)
   Q_PROPERTY(QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
+  Q_PROPERTY(AtomTypeModel* atomTypes READ atomTypes NOTIFY atomTypesChanged)
+  Q_PROPERTY(Forcefield* ff MEMBER ff)
+  Q_PROPERTY(bool keepSpeciesAtomChargesCheck MEMBER keepSpeciesAtomChargesCheck_)
   Q_PROPERTY(QString filterFF READ filterFF WRITE setFilterFF NOTIFY filterFFChanged)
   Q_PROPERTY(bool speciesHasSelection READ speciesHasSelection NOTIFY ready)
   Q_PROPERTY(Radio atomTypeRadio MEMBER atomTypeRadio_);
@@ -33,6 +37,7 @@ public:
 signals:
   void indexChanged();
   void filterFFChanged();
+  void atomTypesChanged();
   void ready();
   void accept();
   void cancel();
@@ -40,7 +45,17 @@ signals:
  private:
   Page index_ = Page::SelectForcefieldPage;
   Dissolve* dissolve_ = nullptr;
+  Forcefield* ff;
+  // Temporary Dissolve reference for creating / importing layers
+  std::unique_ptr<Dissolve> temporaryDissolve_;
+  // Temporary core data for applying Forcefield terms
+  CoreData temporaryCoreData_;
   Species* species_ = nullptr;
+  Species* modifiedSpecies_ = nullptr;
+  // Original atom type names assigned to species
+  std::vector<std::string> originalAtomTypeNames_;
+  AtomTypeModel atomTypes_;
+  bool keepSpeciesAtomChargesCheck_;
   std::shared_ptr<ForcefieldModel> ffModel_;
   std::shared_ptr<QSortFilterProxyModel> ffSort_;
   QString filterFF_ = "";
@@ -48,10 +63,12 @@ signals:
 
  public:
   AddForcefieldDialogModel();
+  ~AddForcefieldDialogModel();
   Page index();
   Q_INVOKABLE void next();
   Q_INVOKABLE void back();
   QAbstractItemModel* forcefields();
+  AtomTypeModel* atomTypes();
   bool speciesHasSelection();
   void setDissolve(Dissolve& Dissolve);
   void setSpecies(Species* species);

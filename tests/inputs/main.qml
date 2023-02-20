@@ -14,6 +14,7 @@ Rectangle {
 	id: dialogModel;
 	objectName: "dialogModel";
 	filterFF: ffList.filter;
+	ff: ffList.fullData.raw;
     }
 
     StackLayout {

@@ -4,7 +4,6 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
-#include "gui/models/atomTypeModel.h"
 #include "gui/models/addForcefieldDialogModel.h"
 #include "templates/algorithms.h"
 #include <QInputDialog>

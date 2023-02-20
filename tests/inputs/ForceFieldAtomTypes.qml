@@ -5,21 +5,20 @@ import QtQuick.Layouts
 
 ColumnLayout {
     property variant dialogModel;
-    /* property variant fullData: ffList.currentItem.fullData; */
-    Text { text: "Foo"; }
     ListView {
 	id: atList;
+	width: 100;
+	height: 100;
 	/* anchors.fill: parent; */
-	model: atModel;
+	model: dialogModel.atomTypes;
 	delegate: Text {
 	    property variant fullData: model;
 	    text: display;
 	    color: ListView.isCurrentItem ? "red" : "black";
 	    MouseArea {
 		anchors.fill: parent;
-		onClicked: ffList.currentIndex = index;
+		onClicked: atList.currentIndex = index;
 	    }
 	}
     }
-    Text { text: "Bar"; }
 }

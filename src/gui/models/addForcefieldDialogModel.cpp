@@ -10,7 +10,11 @@ AddForcefieldDialogModel::AddForcefieldDialogModel()
     ffSort_ = std::make_shared<QSortFilterProxyModel>(this);
 
     ffSort_->setSourceModel(ffModel_.get());
+
+    temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
 }
+
+AddForcefieldDialogModel::~AddForcefieldDialogModel() {}
 
 AddForcefieldDialogModel::Page AddForcefieldDialogModel::index() { return index_; }
 
@@ -38,11 +42,49 @@ void AddForcefieldDialogModel::next()
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesPage:
+	    if (!ff) // No valud forcefield
+		return;
+	    modifiedSpecies_ = temporaryDissolve_->addSpecies();
+	    modifiedSpecies_->copyBasic(species_);
+	    originalAtomTypeNames_.clear();
+
+	    // Set selection status
+	    for (auto &&[targetI, modifiedI] : zip(species_->atoms(), modifiedSpecies_->atoms()))
+		modifiedI.setSelected(targetI.isSelected());
+
+	    // Determine atom types
+	    switch (atomTypeRadio_)
+	    {
+		case Radio::All:
+		    modifiedSpecies_->clearAtomTypes();
+		    temporaryDissolve_->clearAtomTypes();
+
+		    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
+					!keepSpeciesAtomChargesCheck_);
+		    break;
+		case Radio::Selected:
+		    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
+					!keepSpeciesAtomChargesCheck_);
+		    break;
+		case Radio::Empty:
+		    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
+					!keepSpeciesAtomChargesCheck_);
+		default:
+		    break;
+	    }
+
+	    for (auto &at : temporaryDissolve_->atomTypes())
+		originalAtomTypeNames_.emplace_back(std::string(at->name()));
+
+	    atomTypes_.setData(temporaryCoreData_.atomTypes());
+	    emit atomTypesChanged();
+
+	    // checkAtomTypeConflicts();
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
-	  accept();
-	  break;
+	    accept();
+	    break;
 	default:
 	    index_ = AddForcefieldDialogModel::Page::SelectForcefieldPage;
     }
@@ -61,6 +103,7 @@ bool AddForcefieldDialogModel::speciesHasSelection()
 }
 
 QAbstractItemModel *AddForcefieldDialogModel::forcefields() { return ffSort_.get(); }
+AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
 
 QString AddForcefieldDialogModel::filterFF() { return filterFF_; }
 

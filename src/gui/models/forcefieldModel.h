@@ -18,7 +18,8 @@ class ForcefieldModel : public QAbstractListModel
 
     enum ffRoles {
 	NameRole = Qt::UserRole + 1,
-	DescRole
+	DescRole,
+	RawRole
     };
 
 

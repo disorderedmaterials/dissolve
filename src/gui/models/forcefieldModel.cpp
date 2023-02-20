@@ -19,6 +19,8 @@ QVariant ForcefieldModel::data(const QModelIndex &index, int role) const {
     return QString::fromStdString(std::string(forcefields_[index.row()]->name()));
   case DescRole:
     return QString::fromStdString(std::string(forcefields_[index.row()]->description()));
+  case RawRole:
+    return QVariant::fromValue(forcefields_[index.row()].get());
   }
 }
 
@@ -26,6 +28,7 @@ QHash<int, QByteArray> ForcefieldModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
     roles[DescRole] = "description";
+    roles[RawRole] = "raw";
     return roles;
 }
 
