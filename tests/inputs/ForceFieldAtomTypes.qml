@@ -10,7 +10,7 @@ Item {
 	id: atList;
 	anchors.top: parent.top;
 	anchors.left: parent.left;
-	anchors.right: parent.right;
+	anchors.right: prefix.left;
 	anchors.bottom: overwrite.top;
 	height: 400;
 	model: dialogModel.atomTypes;
@@ -23,6 +23,18 @@ Item {
 		onClicked: atList.currentIndex = index;
 	    }
 	}
+    }
+    Button {
+	id: prefix;
+	text: "Prefix";
+	anchors.right: parent.right;
+	anchors.top: parent.top;
+    }
+    Button {
+	id: suffix;
+	text: "suffix";
+	anchors.right: parent.right;
+	anchors.top: prefix.bottom;
     }
     CheckBox {
 	id: overwrite
