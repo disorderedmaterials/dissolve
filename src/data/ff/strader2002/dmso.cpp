@@ -25,25 +25,25 @@
 bool Forcefield_Strader2002::setUp()
 {
     // Atom types
-    addAtomType(Elements::C, 1, "CD", "-S,-H(n=3)", "DMSO carbon", -0.148, {0.3265, 3.6349});
-    addAtomType(Elements::S, 2, "SD", "nbonds=3,-O,-C(n=2)", "DMSO sulfur", 0.312, {1.4651, 3.5636});
-    addAtomType(Elements::O, 3, "OD", "-&2", "DMSO oxygen", -0.556, {0.50232, 3.0291});
-    addAtomType(Elements::H, 4, "HD", "-C", "DMSO hydrogen", 0.090, {0.10046, 2.3876});
+    addAtomType(Elements::C, 1, "CD", "-S,-H(n=3)", "DMSO carbon", -0.148, "epsilon=0.3265 sigma=3.6349");
+    addAtomType(Elements::S, 2, "SD", "nbonds=3,-O,-C(n=2)", "DMSO sulfur", 0.312, "epsilon=1.4651 sigma=3.5636");
+    addAtomType(Elements::O, 3, "OD", "-&2", "DMSO oxygen", -0.556, "epsilon=0.50232 sigma=3.0291");
+    addAtomType(Elements::H, 4, "HD", "-C", "DMSO hydrogen", 0.090, "epsilon=0.10046 sigma=2.3876");
 
     // Bond terms
-    addBondTerm("CD", "SD", BondFunctions::Form::Harmonic, {2009.28, 1.80});
-    addBondTerm("SD", "OD", BondFunctions::Form::Harmonic, {4520.88, 1.53});
-    addBondTerm("CD", "HD", BondFunctions::Form::Harmonic, {2695.78, 1.11});
+    addBondTerm("CD", "SD", BondFunctions::Form::Harmonic, "k=2009.28 eq=1.80");
+    addBondTerm("SD", "OD", BondFunctions::Form::Harmonic, "k=4520.88 eq=1.53");
+    addBondTerm("CD", "HD", BondFunctions::Form::Harmonic, "k=2695.78 eq=1.11");
 
     // Angle terms
-    addAngleTerm("CD", "SD", "CD", AngleFunctions::Form::Harmonic, {284.65, 95.0});
-    addAngleTerm("CD", "SD", "OD", AngleFunctions::Form::Harmonic, {661.39, 106.75});
-    addAngleTerm("HD", "CD", "SD", AngleFunctions::Form::Harmonic, {385.94, 111.30});
-    addAngleTerm("HD", "CD", "HD", AngleFunctions::Form::Harmonic, {297.21, 108.40});
+    addAngleTerm("CD", "SD", "CD", AngleFunctions::Form::Harmonic, "k=284.65 eq=95.0");
+    addAngleTerm("CD", "SD", "OD", AngleFunctions::Form::Harmonic, "k=661.39 eq=106.75");
+    addAngleTerm("HD", "CD", "SD", AngleFunctions::Form::Harmonic, "k=385.94 eq=111.30");
+    addAngleTerm("HD", "CD", "HD", AngleFunctions::Form::Harmonic, "k=297.21 eq=108.40");
 
     // Dihedral terms
-    addTorsionTerm("HD", "CD", "SD", "OD", TorsionFunctions::Form::Cosine, {0.8372, 3.0, 0.0, 1});
-    addTorsionTerm("HD", "CD", "SD", "CD", TorsionFunctions::Form::Cosine, {0.8372, 3.0, 0.0, 1});
+    addTorsionTerm("HD", "CD", "SD", "OD", TorsionFunctions::Form::Cosine, "k=0.8372 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("HD", "CD", "SD", "CD", TorsionFunctions::Form::Cosine, "k=0.8372 n=3.0 eq=0.0 s=1");
 
     return true;
 }

@@ -7,11 +7,15 @@
 
 ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                                std::string_view typeL, TorsionFunctions::Form form,
-                                               const std::vector<double> &parameters)
-    : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), typeL_(typeL), form_(form), parameters_(parameters)
+                                               std::string_view parameterString)
+    : typeI_(typeI), typeJ_(typeJ), typeK_(typeK), typeL_(typeL), form_(form)
 {
-    if (!TorsionFunctions::forms().validNArgs(form, parameters_.size()))
-        throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldImproperTerm."));
+    InteractionPotential<TorsionFunctions> potential(form);
+    if (!potential.parseParameters(parameterString))
+        throw(std::runtime_error(
+            fmt::format("Failed to parse parameter string '{}' when constructing improper term '{}-{}-{}-{}'.\n",
+                        parameterString, typeI_, typeJ_, typeK_, typeL_)));
+    parameters_ = potential.parameters();
 }
 
 /*

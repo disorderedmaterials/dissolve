@@ -2,16 +2,29 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/ff/atomtype.h"
-
 #include "data/ff/ff.h"
 #include <utility>
 
 ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                                       std::string_view description, double q, std::vector<double> parameters,
-                                       std::string_view equivalentName)
-    : Z_(Z), index_(index), name_(name), equivalentName_(equivalentName),
-      description_(description), parameters_{std::move(parameters)}, charge_(q)
+                                       std::string_view description, double q, ShortRangeFunctions::Form parametersForm,
+                                       std::string_view parameterString, std::string_view equivalentName)
+    : Z_(Z), index_(index), name_(name), equivalentName_(equivalentName), description_(description), charge_(q)
 {
+    InteractionPotential<ShortRangeFunctions> srPotential(parametersForm);
+    if (!srPotential.parseParameters(parameterString))
+        throw(std::runtime_error(
+            fmt::format("Failed to parse parameters string '{}' when constructing atom type '{}'.\n", parameterString, name_)));
+    parameters_ = srPotential.parameters();
+
+    neta_.setDefinitionString(netaDefinition);
+}
+ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                                       std::string_view description, double q, const std::vector<double> &parameters,
+                                       std::string_view equivalentName)
+    : Z_(Z), index_(index), name_(name), equivalentName_(equivalentName), parameters_(parameters), description_(description),
+      charge_(q)
+{
+
     neta_.setDefinitionString(netaDefinition);
 }
 ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &sourceType, std::string_view newTypeName,

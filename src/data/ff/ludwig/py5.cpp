@@ -22,13 +22,13 @@
 bool Forcefield_Ludwig_Py5::setUp()
 {
     // Short-Range Parameters
-    addParameters("nc", {0.711302, 3.250});
-    addParameters("ca", {0.292919, 3.550});
-    addParameters("ha", {0.125548, 2.420});
-    addParameters("ct", {0.276040, 3.50});
-    addParameters("hc", {0.125548, 2.50});
-    addParameters("cm", {0.276040, 3.50});
-    addParameters("hm", {0.125548, 2.50});
+    addParameters("nc", "epsilon=0.711302 sigma=3.250");
+    addParameters("ca", "epsilon=0.292919 sigma=3.550");
+    addParameters("ha", "epsilon=0.125548 sigma=2.420");
+    addParameters("ct", "epsilon=0.276040 sigma=3.50");
+    addParameters("hc", "epsilon=0.125548 sigma=2.50");
+    addParameters("cm", "epsilon=0.276040 sigma=3.50");
+    addParameters("hm", "epsilon=0.125548 sigma=2.50");
 
     // Atom Types
     addAtomType(Elements::N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.0749, "nc");
@@ -53,51 +53,51 @@ bool Forcefield_Ludwig_Py5::setUp()
     addAtomType(Elements::H, 17, "hm", "nbonds=1,-&16", "Hydrogen of Tail End", 0.0480, "hm");
 
     // Bond Terms
-    addBondTerm("ha", "ca", BondFunctions::Form::Harmonic, {3071., 1.080});
-    addBondTerm("ca", "ca", BondFunctions::Form::Harmonic, {3925., 1.400});
-    addBondTerm("nc", "ca", BondFunctions::Form::Harmonic, {4042., 1.339});
-    addBondTerm("nc", "ct", BondFunctions::Form::Harmonic, {4042, 1.339});
-    addBondTerm("ct", "ct", BondFunctions::Form::Harmonic, {2244.1, 1.529});
-    addBondTerm("ct", "hc", BondFunctions::Form::Harmonic, {2847.0, 1.09});
-    addBondTerm("ct", "cm", BondFunctions::Form::Harmonic, {2244.1, 1.529});
-    addBondTerm("cm", "hm", BondFunctions::Form::Harmonic, {2847.0, 1.09});
+    addBondTerm("ha", "ca", BondFunctions::Form::Harmonic, "k=3071. eq=1.080");
+    addBondTerm("ca", "ca", BondFunctions::Form::Harmonic, "k=3925. eq=1.400");
+    addBondTerm("nc", "ca", BondFunctions::Form::Harmonic, "k=4042. eq=1.339");
+    addBondTerm("nc", "ct", BondFunctions::Form::Harmonic, "k=4042 eq=1.339");
+    addBondTerm("ct", "ct", BondFunctions::Form::Harmonic, "k=2244.1 eq=1.529");
+    addBondTerm("ct", "hc", BondFunctions::Form::Harmonic, "k=2847.0 eq=1.09");
+    addBondTerm("ct", "cm", BondFunctions::Form::Harmonic, "k=2244.1 eq=1.529");
+    addBondTerm("cm", "hm", BondFunctions::Form::Harmonic, "k=2847.0 eq=1.09");
 
     // Angle Terms
-    addAngleTerm("ca", "ca", "ca", AngleFunctions::Form::Harmonic, {527.2, 120.0});
-    addAngleTerm("ca", "ca", "nc", AngleFunctions::Form::Harmonic, {585.8, 124.0});
-    addAngleTerm("ca", "nc", "ca", AngleFunctions::Form::Harmonic, {585.8, 117.0});
-    addAngleTerm("ca", "ca", "ha", AngleFunctions::Form::Harmonic, {292.9, 120.0});
-    addAngleTerm("nc", "ca", "ha", AngleFunctions::Form::Harmonic, {292.9, 116.0});
-    addAngleTerm("ca", "nc", "ct", AngleFunctions::Form::Harmonic, {585.8, 121.5});
-    addAngleTerm("nc", "ct", "ct", AngleFunctions::Form::Harmonic, {487.43, 112.7});
-    addAngleTerm("hc", "ct", "nc", AngleFunctions::Form::Harmonic, {313.26, 110.7});
-    addAngleTerm("hc", "ct", "hc", AngleFunctions::Form::Harmonic, {275.7, 107.8});
-    addAngleTerm("hc", "ct", "ct", AngleFunctions::Form::Harmonic, {313.26, 110.7});
-    addAngleTerm("hc", "ct", "cm", AngleFunctions::Form::Harmonic, {313.26, 110.7});
-    addAngleTerm("hm", "cm", "ct", AngleFunctions::Form::Harmonic, {313.26, 110.7});
-    addAngleTerm("hm", "cm", "hm", AngleFunctions::Form::Harmonic, {275.7, 107.8});
-    addAngleTerm("ct", "ct", "ct", AngleFunctions::Form::Harmonic, {487.43, 112.7});
-    addAngleTerm("ct", "ct", "cm", AngleFunctions::Form::Harmonic, {487.43, 112.7});
+    addAngleTerm("ca", "ca", "ca", AngleFunctions::Form::Harmonic, "k=527.2 eq=120.0");
+    addAngleTerm("ca", "ca", "nc", AngleFunctions::Form::Harmonic, "k=585.8 eq=124.0");
+    addAngleTerm("ca", "nc", "ca", AngleFunctions::Form::Harmonic, "k=585.8 eq=117.0");
+    addAngleTerm("ca", "ca", "ha", AngleFunctions::Form::Harmonic, "k=292.9 eq=120.0");
+    addAngleTerm("nc", "ca", "ha", AngleFunctions::Form::Harmonic, "k=292.9 eq=116.0");
+    addAngleTerm("ca", "nc", "ct", AngleFunctions::Form::Harmonic, "k=585.8 eq=121.5");
+    addAngleTerm("nc", "ct", "ct", AngleFunctions::Form::Harmonic, "k=487.43 eq=112.7");
+    addAngleTerm("hc", "ct", "nc", AngleFunctions::Form::Harmonic, "k=313.26 eq=110.7");
+    addAngleTerm("hc", "ct", "hc", AngleFunctions::Form::Harmonic, "k=275.7 eq=107.8");
+    addAngleTerm("hc", "ct", "ct", AngleFunctions::Form::Harmonic, "k=313.26 eq=110.7");
+    addAngleTerm("hc", "ct", "cm", AngleFunctions::Form::Harmonic, "k=313.26 eq=110.7");
+    addAngleTerm("hm", "cm", "ct", AngleFunctions::Form::Harmonic, "k=313.26 eq=110.7");
+    addAngleTerm("hm", "cm", "hm", AngleFunctions::Form::Harmonic, "k=275.7 eq=107.8");
+    addAngleTerm("ct", "ct", "ct", AngleFunctions::Form::Harmonic, "k=487.43 eq=112.7");
+    addAngleTerm("ct", "ct", "cm", AngleFunctions::Form::Harmonic, "k=487.43 eq=112.7");
 
     // Torsion Terms
-    addTorsionTerm("*", "ca", "ca", "*", TorsionFunctions::Form::Cosine, {15.178, 2.0, 180.0, 1});
-    addTorsionTerm("*", "ca", "nc", "*", TorsionFunctions::Form::Cosine, {15.178, 2.0, 180.0, 1});
-    addTorsionTerm("ca", "nc", "ct", "ct", TorsionFunctions::Form::CosN, {0.0, -0.4172, 0.0, -0.4759});
-    addTorsionTerm("nc", "ct", "ct", "ct", TorsionFunctions::Form::CosN, {-2.9885, 0.0, 6.7221, 0.3547});
-    addTorsionTerm("ct", "ct", "ct", "ct", TorsionFunctions::Form::CosN, {-0.4882, 0.2620, 5.3908, 0.6635, 0.3339});
-    addTorsionTerm("ct", "ct", "ct", "cm", TorsionFunctions::Form::CosN, {0.0, 0.0, 6.0396, 0.5463});
-    addTorsionTerm("ct", "ct", "cm", "hm", TorsionFunctions::Form::Cosine, {1.8773, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "hc", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "cm", "hm", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "ct", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "cm", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "ct", "nc", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
-    addTorsionTerm("hc", "ct", "nc", "ca", TorsionFunctions::Form::Cosine, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("*", "ca", "ca", "*", TorsionFunctions::Form::Cosine, "k=15.178 n=2.0 eq=180.0 s=1");
+    addTorsionTerm("*", "ca", "nc", "*", TorsionFunctions::Form::Cosine, "k=15.178 n=2.0 eq=180.0 s=1");
+    addTorsionTerm("ca", "nc", "ct", "ct", TorsionFunctions::Form::CosN, "k1=0.0 k2=-0.4172 k3=0.0 k4=-0.4759");
+    addTorsionTerm("nc", "ct", "ct", "ct", TorsionFunctions::Form::CosN, "k1=-2.9885 k2=0.0 k3=6.7221 k4=0.3547");
+    addTorsionTerm("ct", "ct", "ct", "ct", TorsionFunctions::Form::CosN, "k1=-0.4882 k2=0.2620 k3=5.3908 k4=0.6635 k5=0.3339");
+    addTorsionTerm("ct", "ct", "ct", "cm", TorsionFunctions::Form::CosN, "k1=0.0 k2=0.0 k3=6.0396 k4=0.5463");
+    addTorsionTerm("ct", "ct", "cm", "hm", TorsionFunctions::Form::Cosine, "k=1.8773 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "ct", "hc", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "cm", "hm", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "ct", "ct", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "ct", "cm", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "ct", "nc", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
+    addTorsionTerm("hc", "ct", "nc", "ca", TorsionFunctions::Form::Cosine, "k=0.0000 n=3.0 eq=0.0 s=1");
 
     // Improper Terms
-    addImproperTerm("ca", "ca", "ca", "ha", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
-    addImproperTerm("ca", "nc", "ca", "ha", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
-    addImproperTerm("nc", "ca", "ca", "ct", TorsionFunctions::Form::Cosine, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("ca", "ca", "ca", "ha", TorsionFunctions::Form::Cosine, "k=4.606 n=2.0 eq=180.0 s=1");
+    addImproperTerm("ca", "nc", "ca", "ha", TorsionFunctions::Form::Cosine, "k=4.606 n=2.0 eq=180.0 s=1");
+    addImproperTerm("nc", "ca", "ca", "ct", TorsionFunctions::Form::Cosine, "k=4.606 n=2.0 eq=180.0 s=1");
 
     return true;
 }

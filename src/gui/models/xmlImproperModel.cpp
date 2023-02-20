@@ -181,25 +181,21 @@ std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
     std::vector<ForcefieldImproperTerm> result;
     for (auto &improper : impropers_)
     {
-        std::vector<double> params,
-            ks({std::get<4>(improper), std::get<5>(improper), std::get<6>(improper), std::get<7>(improper)}),
+        std::vector<double> ks({std::get<4>(improper), std::get<5>(improper), std::get<6>(improper), std::get<7>(improper)}),
             phases({std::get<12>(improper), std::get<13>(improper), std::get<14>(improper), std::get<15>(improper)});
         std::vector<int> ns({std::get<8>(improper), std::get<9>(improper), std::get<10>(improper), std::get<11>(improper)});
 
-        params.resize(*std::max_element(ns.begin(), ns.end()) - 1);
-        for (int n = 1; n <= params.size(); ++n)
+        std::string paramString;
+        auto index = 0;
+        for (auto n : ns)
         {
-            for (int index = 0; index < ns.size(); ++index)
-            {
-                if (n == ns[index])
-                {
-                    params[n - 1] = (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index];
-                }
-            }
+            paramString += fmt::format("k{}={} ", n, (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index]);
+
+            ++index;
         }
 
         result.emplace_back(std::get<0>(improper), std::get<1>(improper), std::get<2>(improper), std::get<3>(improper),
-                            TorsionFunctions::Form::CosN, params);
+                            TorsionFunctions::Form::CosN, paramString);
     }
     return result;
 }

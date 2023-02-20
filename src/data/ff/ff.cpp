@@ -46,20 +46,19 @@ bool Forcefield::prepare()
 
 // Add new atom type with its own parameters
 void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                             std::string_view description, double q, std::string_view parameterString)
+{
+    // The passed parameterString might be a name referencing some predefined named set, or be a set of name=value pairs
+    auto refParams = shortRangeParameters(parameterString);
+    if (refParams)
+        atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, shortRangeForm(), *refParams, parameterString);
+    else
+        atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, shortRangeForm(), parameterString);
+}
+void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
                              std::string_view description, double q, const std::vector<double> &parameters)
 {
     atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, parameters);
-}
-
-// Add new atom type referencing existing parameters by name
-void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                             std::string_view description, double q, std::string_view parameterReference)
-{
-    auto refParams = shortRangeParameters(parameterReference);
-    if (!refParams)
-        Messenger::error("Reference parameters named '{}' are not defined in the forcefield '{}'.\n", parameterReference,
-                         this->name());
-    atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, *refParams, parameterReference);
 }
 
 // Copy existing atom type
@@ -114,10 +113,10 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType
     return determineAtomType(i, atomTypesByElementPrivate_);
 }
 
-// Ass short-range parameters
-void Forcefield::addParameters(std::string_view name, const std::vector<double> &parameters)
+// Add short-range parameters
+void Forcefield::addParameters(std::string_view name, const std::string_view parameterString)
 {
-    shortRangeParameters_.emplace_back(name, parameters);
+    shortRangeParameters_.emplace_back(name, parameterString);
 }
 
 // Create NETA definitions for all atom types from stored defs
@@ -141,7 +140,7 @@ bool Forcefield::createNETADefinitions()
 }
 
 // Return named short-range parameters (if they exist)
-std::optional<std::vector<double>> Forcefield::shortRangeParameters(std::string_view name) const
+std::optional<std::string> Forcefield::shortRangeParameters(std::string_view name) const
 {
     auto it = std::find_if(shortRangeParameters_.begin(), shortRangeParameters_.end(),
                            [&name](const auto &params) { return DissolveSys::sameString(name, params.first); });
@@ -190,30 +189,30 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
 
 // Add bond term
 void Forcefield::addBondTerm(std::string_view typeI, std::string_view typeJ, BondFunctions::Form form,
-                             const std::vector<double> &parameters)
+                             std::string_view parameterString)
 {
-    bondTerms_.emplace_back(typeI, typeJ, form, parameters);
+    bondTerms_.emplace_back(typeI, typeJ, form, parameterString);
 }
 
 // Add angle term
 void Forcefield::addAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, AngleFunctions::Form form,
-                              const std::vector<double> &parameters)
+                              std::string_view parameterString)
 {
-    angleTerms_.emplace_back(typeI, typeJ, typeK, form, parameters);
+    angleTerms_.emplace_back(typeI, typeJ, typeK, form, parameterString);
 }
 
 // Add torsion term
 void Forcefield::addTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                TorsionFunctions::Form form, const std::vector<double> &parameters)
+                                TorsionFunctions::Form form, std::string_view parameterString)
 {
-    torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
+    torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameterString);
 }
 
 // Add improper term
 void Forcefield::addImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                 TorsionFunctions::Form form, const std::vector<double> &parameters)
+                                 TorsionFunctions::Form form, std::string_view parameterString)
 {
-    improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
+    improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameterString);
 }
 
 // Return bond term for the supplied atom type pair (if it exists)

@@ -6,11 +6,14 @@
 #include "data/ff/ff.h"
 
 ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view typeJ, BondFunctions::Form form,
-                                       const std::vector<double> &parameters)
-    : typeI_(typeI), typeJ_(typeJ), form_(form), parameters_(parameters)
+                                       std::string_view parameterString)
+    : typeI_(typeI), typeJ_(typeJ), form_(form)
 {
-    if (!BondFunctions::forms().validNArgs(form, parameters_.size()))
-        throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldBondTerm."));
+    InteractionPotential<BondFunctions> potential(form);
+    if (!potential.parseParameters(parameterString))
+        throw(std::runtime_error(fmt::format("Failed to parse parameter string '{}' when constructing bond term '{}-{}'.\n",
+                                             parameterString, typeI_, typeJ_)));
+    parameters_ = potential.parameters();
 }
 
 /*
