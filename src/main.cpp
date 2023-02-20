@@ -111,9 +111,6 @@ int main(int args, char **argv)
                 Messenger::ceaseRedirect();
                 return 1;
             }
-
-            // Reset the restart filename to be the standard one
-            dissolve.setRestartFilename(fmt::format("{}.restart", options.inputFile().value()));
         }
         else
             Messenger::print("Restart file '{}' does not exist.\n", restartFile);
