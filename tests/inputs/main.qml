@@ -15,6 +15,7 @@ Rectangle {
 	objectName: "dialogModel";
 	filterFF: ffList.filter;
 	ff: ffList.fullData.raw;
+	atomType: ffAtomTypes.fullData;
     }
 
     StackLayout {
@@ -35,6 +36,7 @@ Rectangle {
 	}
 
 	ForceFieldAtomTypes {
+	    id: ffAtomTypes;
 	    dialogModel: dialogModel;
 	}
     }

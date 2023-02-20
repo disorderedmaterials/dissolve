@@ -60,6 +60,17 @@ int AtomTypeModel::columnCount(const QModelIndex &parent) const
 
 QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
 {
+    if (role >= Qt::UserRole)
+    {
+        auto data = rawData(index);
+        switch (role)
+        {
+            case Qt::UserRole:
+                return QVariant::fromValue(data);
+            case Qt::UserRole + 1:
+                return QString::fromStdString(std::string(data->name()));
+        }
+    }
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
         switch (index.column())
@@ -200,4 +211,12 @@ QVariant AtomTypeModel::headerData(int section, Qt::Orientation orientation, int
         }
 
     return {};
+}
+
+QHash<int, QByteArray> AtomTypeModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Qt::UserRole] = "raw";
+    roles[Qt::UserRole + 1] = "description";
+    return roles;
 }

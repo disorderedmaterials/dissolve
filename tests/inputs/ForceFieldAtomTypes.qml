@@ -5,7 +5,7 @@ import QtQuick.Layouts
 
 Item {
     property variant dialogModel;
-    property variant index: atList.currentIndex;
+    property variant fullData: atList.currentItem.fullData.raw;
     ListView {
 	id: atList;
 	anchors.top: parent.top;
@@ -15,7 +15,8 @@ Item {
 	height: 400;
 	model: dialogModel.atomTypes;
 	delegate: Text {
-	    text: display;
+	    property variant fullData: model;
+	    text: description;
 	    color: ListView.isCurrentItem ? "red" : "black";
 	    MouseArea {
 		anchors.fill: parent;
