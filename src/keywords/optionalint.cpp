@@ -3,6 +3,7 @@
 
 #include "keywords/optionalint.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.cpp"
 
 OptionalIntegerKeyword::OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue,
                                                int valueDelta, std::string_view textWhenNull)
@@ -55,9 +56,26 @@ std::string OptionalIntegerKeyword::textWhenNull() const { return textWhenNull_;
 // Deserialise from supplied LineParser, starting at given argument offset
 bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
+    try
+    {
+        std::stoi(data);
+    }
+    catch (...)
+    {
+        try
+        {
+            if (data == textWhenNull)
+                //here
+            else
+                DissolveSys::stob(data);
+        }
+        catch (...)
+        {
+        }
+    }
     if (parser.hasArg(startArg))
     {
-        auto x = parser.argd(startArg);
+        auto x = parser.argi(startArg);
         if (!setData(x))
         {
             if (maximumLimit_)
