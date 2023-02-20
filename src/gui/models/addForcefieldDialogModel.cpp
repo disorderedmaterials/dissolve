@@ -23,6 +23,7 @@ void AddForcefieldDialogModel::back()
     switch (index_)
     {
 	case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
+	  temporaryDissolve_->clear();
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesPage:
