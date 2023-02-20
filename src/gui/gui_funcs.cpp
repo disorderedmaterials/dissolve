@@ -237,9 +237,6 @@ bool DissolveWindow::loadRestartFile(std::string_view restartFile)
     {
         Messenger::print("Restart file '{}' exists and will be loaded.\n", restartFile);
         loadSuccess = dissolve_.loadRestart(restartFile);
-
-        // Reset the restart filename to be the standard one
-        dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
     }
     else
         Messenger::print("Restart file '{}' does not exist.\n", restartFile);

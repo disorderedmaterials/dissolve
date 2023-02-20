@@ -273,8 +273,6 @@ class Dissolve : public Serialisable
     void setInputFilename(std::string_view filename);
     // Return current input filename
     std::string_view inputFilename() const;
-    // Set restart filename
-    void setRestartFilename(std::string_view filename);
     // Return restart filename
     std::string_view restartFilename() const;
     // Return whether a restart filename has been set
