@@ -56,8 +56,8 @@ signals:
   std::vector<std::string> originalAtomTypeNames_;
   AtomTypeModel atomTypes_;
   bool keepSpeciesAtomChargesCheck_;
-  std::shared_ptr<ForcefieldModel> ffModel_;
-  std::shared_ptr<QSortFilterProxyModel> ffSort_;
+  std::unique_ptr<ForcefieldModel> ffModel_;
+  std::unique_ptr<QSortFilterProxyModel> ffSort_;
   QString filterFF_ = "";
   Radio atomTypeRadio_;
 

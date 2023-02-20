@@ -6,8 +6,8 @@
 
 AddForcefieldDialogModel::AddForcefieldDialogModel()
 {
-    ffModel_ = std::make_shared<ForcefieldModel>(ForcefieldLibrary::forcefields());
-    ffSort_ = std::make_shared<QSortFilterProxyModel>(this);
+    ffModel_ = std::make_unique<ForcefieldModel>(ForcefieldLibrary::forcefields());
+    ffSort_ = std::make_unique<QSortFilterProxyModel>(this);
 
     ffSort_->setSourceModel(ffModel_.get());
 
