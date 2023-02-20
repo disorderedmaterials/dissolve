@@ -22,8 +22,11 @@ void AddForcefieldDialogModel::back()
 {
     switch (index_)
     {
+	case AddForcefieldDialogModel::Page::IntramolecularPage:
+	    index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
+	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
-	  temporaryDissolve_->clear();
+	    temporaryDissolve_->clear();
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesPage:
@@ -61,15 +64,15 @@ void AddForcefieldDialogModel::next()
 		    temporaryDissolve_->clearAtomTypes();
 
 		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
-					!keepSpeciesAtomChargesCheck_);
+					 !keepSpeciesAtomChargesCheck_);
 		    break;
 		case Radio::Selected:
 		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
-					!keepSpeciesAtomChargesCheck_);
+					 !keepSpeciesAtomChargesCheck_);
 		    break;
 		case Radio::Empty:
 		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
-					!keepSpeciesAtomChargesCheck_);
+					 !keepSpeciesAtomChargesCheck_);
 		default:
 		    break;
 	    }
@@ -84,6 +87,9 @@ void AddForcefieldDialogModel::next()
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
+	    index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
+	    break;
+	case AddForcefieldDialogModel::Page::IntramolecularPage:
 	    accept();
 	    break;
 	default:

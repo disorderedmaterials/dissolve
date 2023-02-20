@@ -15,7 +15,6 @@ Rectangle {
 	objectName: "dialogModel";
 	filterFF: ffList.filter;
 	ff: ffList.fullData.raw;
-	atomType: ffAtomTypes.fullData;
     }
 
     StackLayout {
@@ -49,7 +48,7 @@ Rectangle {
     }
     Button {
 	id: nextButton;
-	text: dialogModel.index == AddForcefieldDialogModel.AtomTypesConflictsPage ? "Finish" : "Next";
+	text: dialogModel.index == AddForcefieldDialogModel.IntramolecularPage ? "Finish" : "Next";
 	anchors.bottom: parent.bottom;
 	anchors.right: parent.right;
 	onClicked: dialogModel.next();
