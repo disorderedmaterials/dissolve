@@ -23,7 +23,7 @@ runs:
   - name: 'Set MAJOR Version'
     shell: bash
     run: |
-      cd web/content-docs
+      cd web/docs
       sed -i "s/MAJOR.X/${{ env.dissolveMajorVersion }}.X/g" _index.md
       grep ".X" _index.md
 
@@ -32,8 +32,8 @@ runs:
     shell: bash
     run: |
       cd web
-      sed -i 's/baseURL = .*/baseURL = "https://docs.projectdissolve.com/continuous/"/g' config-docs.toml
-      grep baseURL config-docs.toml
+      sed -i 's/baseURL = .*/baseURL = "https://docs.projectdissolve.com/continuous/"/g' docs.toml
+      grep baseURL docs.toml
 
   - name: 'Download & Install Hugo (Extended Version)'
     shell: bash
