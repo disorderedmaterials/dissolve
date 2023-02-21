@@ -79,8 +79,8 @@ runs:
     run: |
       set -ex
       # Remove language ('en') from 'Edit on GitHub' path links
-      find web/public-docs/docs/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content-docs/en/docs/:${{ inputs.webDirRoot }}/content-docs/docs/:g" {} +
-      find web/public-docs/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content-docs/en/examples/:${{ inputs.webDirRoot }}/content-docs/examples/:g" {} +
+      find web/public-docs/userguide/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/docs/en/userguide/:${{ inputs.webDirRoot }}/docs/userguide/:g" {} +
+      find web/public-docs/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/docs/en/examples/:${{ inputs.webDirRoot }}/docs/examples/:g" {} +
 
   - name: 'Create PDFs'
     if: ${{ inputs.pdfExamples == 'true' }}
