@@ -43,7 +43,19 @@ Once that's finish you should make a copy of the restart file and call it by an 
 
 ## Refinement
 
-Next step is to enable the _EPSR_ module, starting at a low value of `ereq` and increasing in order to find the best value for your system. Again it will be system dependent, but the simulation might need to be run for several thousand steps. Before you change to a new value of `ereq` it is highly recommended to make a copy of the restart file (e.g. saving it to `ereq3.restart` for instance) since you will probably want to compare results and come back to what you consider to be the best value you discovered.
+The next thing to do is compare your calculated structure factors with any reference data you have supplied. If they look almost the same then congratulations - you can skip this section entirely! However this will not usually bee case, and there are two primary steps to take.
+
+### Molecule Geometry
+
+The geometry of the molecules in your system is completely determined by the forcefield that you've applied, and it is entirely possible that you will find bond distances and angles in forcefields which do not agree with what is measured in reality. This is fair enough, since forcefields are typically not derived from experimental structural data, but you will need to correct them by hand as best you can. At present there is no reliable, automated way of achieving this, and the potentials applied by {{< gui-module "EPSR" >}} are interatomic and so cannot help correct imtramolecular terms.
+
+You can determine quite quickly whether your bond and angle terms are consistent by comparing the total G(r) on, for example, your {{< gui-module "NeutronSQ" >}} module. If you see obvious mismatches in peak position you can adjust the relevant bond terms in your forcefield to try and get a better match. You can do a similar thing for slightly longer distances corresponding to the correlations between atoms at the end of angle terms.
+
+There is of course a limit to this process, particularly with larger molecules where there may be many terms contributing to the same region in $r$, and even more so with angle terms. See the {{< ref "water" >}} example for an illustration of the basic process.
+
+### Local Ordering
+
+Now that your molecules "look" the best they can, the next step is to enable the _EPSR_ module and try to fix the local ordering of those molecules. Generally you will start at a low value of `ereq` (the "power" which additional potentials have) and sequentially increase it in order to find the best value for your system. Again it will be system dependent, but the simulation might need to be run for several thousand steps. Before you change to a new value of `ereq` it is highly recommended to make a copy of the restart file (e.g. saving it to `ereq3.restart` for instance) since you will probably want to compare results and come back to what you consider to be the best value you discovered.
 
 ## Analysis
 
