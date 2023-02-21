@@ -64,16 +64,16 @@ bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const
     }
     catch (...)
     {
-        try
-        {
-            newString = parser.argsv(startArg);
-            DissolveSys::stob(newString);
-        }
-        catch (...)
+        newString = parser.argsv(startArg);
+        if (DissolveSys::stob(newString) == false)
         {
             if (newString != textWhenNull_)
                 Messenger::error("Unkonwn input, {}, provided\n", newString);
+            else
+                newString = textWhenNull_;
         }
+        else
+            DissolveSys::stob(newString);
     }
     if (parser.hasArg(startArg))
     {
