@@ -56,21 +56,23 @@ std::string OptionalIntegerKeyword::textWhenNull() const { return textWhenNull_;
 // Deserialise from supplied LineParser, starting at given argument offset
 bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
+    std::optional<int> newValue;
+    std::string_view newString;
     try
     {
-        std::stoi(data);
+        newValue = parser.argi(startArg);
     }
     catch (...)
     {
         try
         {
-            if (data == textWhenNull)
-                //here
-            else
-                DissolveSys::stob(data);
+            newString = parser.argsv(startArg);
+            DissolveSys::stob(newString);
         }
         catch (...)
         {
+            if (newString != textWhenNull_)
+                Messenger::error("Unkonwn input, {}, provided\n", newString);
         }
     }
     if (parser.hasArg(startArg))
