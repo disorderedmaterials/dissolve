@@ -156,6 +156,10 @@ void Species::updateIntramolecularTerms()
         j = jk.i();
         k = jk.j();
 
+        // Swap j and k over if j is terminal and has only a single bond (i.e. jk)
+        if (j->nBonds() == 1)
+            std::swap(j, k);
+
         // Loop over bonds 'ij'
         for (SpeciesBond &ij : j->bonds())
         {
