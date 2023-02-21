@@ -34,6 +34,28 @@ TEST(SpeciesTest, Molecule1)
     EXPECT_EQ(sp.nAtoms(), 2);
 }
 
+TEST(SpeciesTest, Molecule1Alt)
+{
+    Species sp;
+    sp.addAtom(Elements::H, {3.924, 5.424, 0.000});
+    sp.addAtom(Elements::H, {6.088, 5.120, 0.000});
+    sp.addAtom(Elements::O, {5.139, 5.968, 0.000});
+    sp.addMissingBonds(1.5);
+    sp.updateIntramolecularTerms();
+    EXPECT_EQ(sp.nBonds(), 2);
+    EXPECT_EQ(sp.nAngles(), 1);
+    EXPECT_EQ(sp.nTorsions(), 0);
+    EXPECT_EQ(sp.atom(0).nBonds(), 1);
+    EXPECT_EQ(sp.atom(1).nBonds(), 1);
+    EXPECT_EQ(sp.atom(2).nBonds(), 2);
+    EXPECT_EQ(sp.atom(0).nAngles(), 1);
+    EXPECT_EQ(sp.atom(1).nAngles(), 1);
+    EXPECT_EQ(sp.atom(2).nAngles(), 1);
+    EXPECT_EQ(sp.atom(0).nTorsions(), 0);
+    EXPECT_EQ(sp.atom(1).nTorsions(), 0);
+    EXPECT_EQ(sp.atom(2).nTorsions(), 0);
+}
+
 TEST(SpeciesTest, Molecule2)
 {
     Species sp;
