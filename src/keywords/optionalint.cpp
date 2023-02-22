@@ -3,7 +3,7 @@
 
 #include "keywords/optionalint.h"
 #include "base/lineparser.h"
-#include "base/sysfunc.cpp"
+#include "base/sysfunc.h"
 
 OptionalIntegerKeyword::OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue,
                                                int valueDelta, std::string_view textWhenNull)
@@ -57,39 +57,31 @@ std::string OptionalIntegerKeyword::textWhenNull() const { return textWhenNull_;
 bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     std::optional<int> newValue;
-    std::string_view newString;
     try
     {
         newValue = parser.argi(startArg);
+        if (parser.hasArg(startArg))
+        {
+            auto x = parser.argi(startArg);
+            if (!setData(x))
+            {
+                if (maximumLimit_)
+                    Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", x,
+                                     maximumLimit_.value());
+
+                return false;
+            }
+        }
     }
     catch (...)
     {
-        newString = parser.argsv(startArg);
-        if (DissolveSys::stob(newString) == false)
-        {
-            if (newString != textWhenNull_)
-                Messenger::error("Unkonwn input, {}, provided\n", newString);
-            else
-                newString = textWhenNull_;
-        }
+        if (DissolveSys::sameString(parser.argsv(startArg), textWhenNull_))
+            setData(std::nullopt);
         else
-            DissolveSys::stob(newString);
-    }
-    if (parser.hasArg(startArg))
-    {
-        auto x = parser.argi(startArg);
-        if (!setData(x))
-        {
-            if (maximumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", x, maximumLimit_.value());
-
-            return false;
-        }
-
-        return true;
+            return Messenger::error("Unknown input, {}, provided\n", parser.argsv(startArg));
     }
 
-    return false;
+    return true;
 }
 
 // Serialise data to specified LineParser
