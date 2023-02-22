@@ -35,6 +35,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     // Set-up the generator procedure editor
     ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator());
+    connect(ui_.GeneratorWidget, SIGNAL(runNowRequested()), this, SLOT(generateConfiguration()));
 }
 
 /*
@@ -162,10 +163,8 @@ void ConfigurationTab::allowEditing()
  * Signals / Slots
  */
 
-void ConfigurationTab::on_GenerateButton_clicked(bool checked)
+void ConfigurationTab::generateConfiguration()
 {
-    auto proceed = true;
-
     // If the configuration already contains something, check first
     if (configuration_->nAtoms() > 0)
     {
@@ -175,11 +174,9 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
         queryBox.setInformativeText("Proceed?");
         queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         queryBox.setDefaultButton(QMessageBox::No);
-        proceed = queryBox.exec() == QMessageBox::Yes;
+        if (queryBox.exec() != QMessageBox::Yes)
+            return;
     }
-
-    if (!proceed)
-        return;
 
     // Clear the messages
     dissolveWindow_->clearMessages();

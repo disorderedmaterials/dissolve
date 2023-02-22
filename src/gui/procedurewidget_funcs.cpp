@@ -37,6 +37,9 @@ void ProcedureWidget::setUp(DissolveWindow *dissolveWindow, Procedure &proc)
     updateControls();
 }
 
+// Set visibility of "Run Now" button
+void ProcedureWidget::setRunNowVisible(bool v) { ui_.RunNowButton->setVisible(v); }
+
 /*
  * Widgets
  */
@@ -100,6 +103,8 @@ void ProcedureWidget::selectedNodeChanged(const QModelIndex &index)
     else
         ncw->updateControls();
 }
+
+void ProcedureWidget::on_RunNowButton_clicked(bool checked) { emit(runNowRequested()); }
 
 void ProcedureWidget::on_ExpandAllButton_clicked(bool checked) { ui_.NodesTree->expandAll(); }
 

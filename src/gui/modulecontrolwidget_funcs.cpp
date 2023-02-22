@@ -74,6 +74,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     {
         procedureWidget_ = new ProcedureWidget();
         procedureWidget_->setUp(dissolveWindow, procedures.front()->data());
+        procedureWidget_->setRunNowVisible(false);
         ui_.ModuleControlStack->addWidget(procedureWidget_);
         controlStackMap_[ui_.ProcedureWidgetButton] = ui_.ModuleControlStack->count() - 1;
 

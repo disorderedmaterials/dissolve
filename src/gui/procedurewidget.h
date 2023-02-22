@@ -39,6 +39,8 @@ class ProcedureWidget : public QWidget
     public:
     // Set up widget
     void setUp(DissolveWindow *dissolveWindow, Procedure &proc);
+    // Set visibility of "Run Now" button
+    void setRunNowVisible(bool v);
 
     /*
      * Widgets
@@ -51,6 +53,7 @@ class ProcedureWidget : public QWidget
 
     private slots:
     void selectedNodeChanged(const QModelIndex &);
+    void on_RunNowButton_clicked(bool checked);
     void on_ExpandAllButton_clicked(bool checked);
     void on_CollapseAllButton_clicked(bool checked);
     void on_ShowContextButton_clicked(bool checked);
@@ -60,6 +63,9 @@ class ProcedureWidget : public QWidget
     void updateNodeTree();
     void on_NodesTree_customContextMenuRequested(const QPoint &pos);
     void on_AvailableNodesTree_doubleClicked(const QModelIndex &index);
+
+    signals:
+    void runNowRequested();
 
     public:
     // Remove all node control widgets
