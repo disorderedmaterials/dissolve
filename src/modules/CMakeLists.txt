@@ -118,7 +118,7 @@ foreach(subdir ${MODULE_DIRS})
   add_subdirectory(${subdir})
 endforeach()
 
-add_library(moduleregistry registry.cpp registry.h "angle (2)/angle.cpp" "angle (2)/angle.h" "angle (2)/process.cpp" "angle (2)/gui/anglewidget.h" "angle (2)/gui/anglewidget_funcs.cpp")
+add_library(moduleregistry registry.cpp registry.h
 
 target_include_directories(
   moduleregistry PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR} ${CMAKE_BINARY_DIR}
@@ -126,8 +126,7 @@ target_include_directories(
 )
 
 if(GUI)
-  add_library(modulewidgetproducer widget.cpp widgetproducer.cpp widget.h widgetproducer.h "angle (2)/angle.cpp" "angle (2)/angle.h" "angle (2)/process.cpp" "angle (2)/gui/anglewidget.h" "angle (2)/gui/anglewidget_funcs.cpp")
-  add_dependencies(modulewidgetproducer ${MODULEGUI_LINK_LIBS})
+  add_library(modulewidgetproducer widget.cpp widgetproducer.cpp widget.h widgetproducer.h
 
   # Because Qt has its own way of checking for C++17
   if(MSVC)
