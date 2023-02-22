@@ -60,8 +60,8 @@ signals:
   std::unique_ptr<ForcefieldModel> ffModel_;
   std::unique_ptr<QSortFilterProxyModel> ffSort_;
   QString filterFF_ = "";
-  Radio atomTypeRadio_;
-  Radio intramolecularRadio_;
+  Radio atomTypeRadio_ = Radio::All;
+  Radio intramolecularRadio_ = Radio::All;
 
  public:
   AddForcefieldDialogModel();
