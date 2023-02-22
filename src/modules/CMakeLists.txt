@@ -127,6 +127,7 @@ target_include_directories(
 
 if(GUI)
   add_library(modulewidgetproducer widget.cpp widgetproducer.cpp widget.h widgetproducer.h)
+  add_dependencies(modulewidgetproducer ${MODULEGUI_LINK_LIBS})
 
   # Because Qt has its own way of checking for C++17
   if(MSVC)
