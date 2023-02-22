@@ -28,6 +28,7 @@ Item {
 	text: "Prefix";
 	anchors.right: parent.right;
 	anchors.top: parent.top;
+	enabled: atList.currentIndex >= 0;
     }
     Button {
 	id: suffixButton;
@@ -35,6 +36,7 @@ Item {
 	anchors.right: parent.right;
 	anchors.top: prefixButton.bottom;
 	onClicked: suffixDialog.open();
+	enabled: atList.currentIndex >= 0;
     }
 
     Dialog {
