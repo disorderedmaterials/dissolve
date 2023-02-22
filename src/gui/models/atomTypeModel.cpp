@@ -220,3 +220,11 @@ QHash<int, QByteArray> AtomTypeModel::roleNames() const
     roles[Qt::UserRole + 1] = "description";
     return roles;
 }
+
+void AtomTypeModel::addSuffix(int index, QString suffix)
+{
+    beginResetModel();
+    auto &data = atomTypes_->get()[index];
+    data->setName(fmt::format("{}{}", suffix.toStdString(), data->name()));
+    endResetModel();
+}

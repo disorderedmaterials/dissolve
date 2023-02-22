@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Dialogs
 import QtQuick.Layouts
 
 Item {
@@ -10,7 +9,7 @@ Item {
 	id: atList;
 	anchors.top: parent.top;
 	anchors.left: parent.left;
-	anchors.right: prefix.left;
+	anchors.right: prefixButton.left;
 	anchors.bottom: overwrite.top;
 	height: 400;
 	model: dialogModel.atomTypes;
@@ -25,17 +24,33 @@ Item {
 	}
     }
     Button {
-	id: prefix;
+	id: prefixButton;
 	text: "Prefix";
 	anchors.right: parent.right;
 	anchors.top: parent.top;
     }
     Button {
-	id: suffix;
-	text: "suffix";
+	id: suffixButton;
+	text: "Suffix";
 	anchors.right: parent.right;
-	anchors.top: prefix.bottom;
+	anchors.top: prefixButton.bottom;
+	onClicked: suffixDialog.open();
     }
+
+    Dialog {
+	id: suffixDialog
+	title: "Suffix Dialog"
+
+	standardButtons: Dialog.Ok | Dialog.Cancel
+	onAccepted: dialogModel.atomTypes.addSuffix(atList.currentIndex , suffixField.text);
+
+	TextField {
+	    id: suffixField;
+	    placeholderText: "Suffix";
+	}
+
+    }
+
     CheckBox {
 	id: overwrite
 	anchors.bottom: parent.bottom;
