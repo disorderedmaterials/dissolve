@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "gui/models/nodePaletteModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_procedurewidget.h"
 
@@ -33,14 +32,16 @@ class ProcedureWidget : public QWidget
     OptionalReferenceWrapper<Procedure> procedure_;
     // Model for procedure
     ProcedureModel procedureModel_;
-    // Model for node palette
-    NodePaletteModel nodePaletteModel_;
 
     public:
+    // Widget SetUp Options
+    enum SetUpOptions
+    {
+        AllowRun,
+        AllowEdit
+    };
     // Set up widget
-    void setUp(DissolveWindow *dissolveWindow, Procedure &proc);
-    // Set visibility of "Run Now" button
-    void setRunNowVisible(bool v);
+    void setUp(DissolveWindow *dissolveWindow, Procedure &proc, Flags<SetUpOptions> options = {});
 
     /*
      * Widgets
@@ -57,12 +58,11 @@ class ProcedureWidget : public QWidget
     void on_ExpandAllButton_clicked(bool checked);
     void on_CollapseAllButton_clicked(bool checked);
     void on_ShowContextButton_clicked(bool checked);
-    void on_ShowAvailableNodesButton_clicked(bool checked);
+    void on_EditProcedureButton_clicked(bool checked);
     void nodeNameChanged(const QModelIndex &, const QString &oldName, const QString &newName);
     void procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &);
-    void updateNodeTree();
     void on_NodesTree_customContextMenuRequested(const QPoint &pos);
-    void on_AvailableNodesTree_doubleClicked(const QModelIndex &index);
+    void updateNodeTree();
 
     signals:
     void runNowRequested();

@@ -4,8 +4,8 @@
 #include "gui/gui.h"
 #include "gui/keywordwidgets/widget.hui"
 #include "gui/nodecontrolwidget.h"
+#include "gui/procedureeditordialog.h"
 #include "gui/procedurewidget.h"
-#include "main/dissolve.h"
 #include <QMessageBox>
 
 ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
@@ -17,28 +17,27 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
     connect(ui_.NodesTree, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedNodeChanged(const QModelIndex &)));
     connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
-
-    // Set up the available nodes tree
-    ui_.AvailableNodesTree->setModel(&nodePaletteModel_);
-    ui_.AvailableNodesTree->expandAll();
-    ui_.AvailableNodesTree->setVisible(false);
 }
 
 // Set up widget
-void ProcedureWidget::setUp(DissolveWindow *dissolveWindow, Procedure &proc)
+void ProcedureWidget::setUp(DissolveWindow *dissolveWindow, Procedure &proc, Flags<SetUpOptions> options)
 {
     dissolveWindow_ = dissolveWindow;
     procedure_ = proc;
     procedureModel_.setData(proc);
+
+    // Beautify the nodes tree
     ui_.NodesTree->expandAll();
     ui_.NodesTree->resizeColumnToContents(0);
     ui_.NodesTree->resizeColumnToContents(1);
     ui_.NodesTree->hideColumn(1);
+
+    // Act on set-up options
+    ui_.RunNowButton->setVisible(options.isSet(SetUpOptions::AllowRun));
+    ui_.EditProcedureButton->setVisible(options.isSet(SetUpOptions::AllowEdit));
+
     updateControls();
 }
-
-// Set visibility of "Run Now" button
-void ProcedureWidget::setRunNowVisible(bool v) { ui_.RunNowButton->setVisible(v); }
 
 /*
  * Widgets
@@ -118,14 +117,14 @@ void ProcedureWidget::on_ShowContextButton_clicked(bool checked)
         ui_.NodesTree->hideColumn(1);
 }
 
-void ProcedureWidget::on_ShowAvailableNodesButton_clicked(bool checked)
+void ProcedureWidget::on_EditProcedureButton_clicked(bool checked)
 {
-    // Toggle the visibility of the available nodes tree
-    ui_.AvailableNodesTree->setVisible(!ui_.AvailableNodesTree->isVisible());
+    if (!procedure_)
+        return;
 
-    // Set correct text on our button
-    ui_.ShowAvailableNodesButton->setText(ui_.AvailableNodesTree->isVisible() ? "Hide Available Nodes"
-                                                                              : "Show Available Nodes");
+    ProcedureEditorDialog editor(this, dissolveWindow_, *procedure_);
+
+    editor.exec();
 }
 
 void ProcedureWidget::procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)
@@ -175,11 +174,6 @@ void ProcedureWidget::on_NodesTree_customContextMenuRequested(const QPoint &pos)
     menu.setEnabled(!dissolveWindow_->dissolveIterating());
 }
 
-void ProcedureWidget::on_AvailableNodesTree_doubleClicked(const QModelIndex &index)
-{
-    //    nodeLayerModel_.appendNew(nodePaletteModel_.data(index, Qt::DisplayRole).toString());
-}
-
 // Remove all node control widgets
 void ProcedureWidget::removeControlWidgets()
 {
@@ -212,7 +206,6 @@ void ProcedureWidget::preventEditing()
 {
     ui_.NodesTree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui_.NodesTree->setDragDropMode(QAbstractItemView::NoDragDrop);
-    ui_.AvailableNodesTree->setEnabled(false);
     for (auto n = 0; n < ui_.NodeControlsStack->count(); ++n)
     {
         auto *ncw = dynamic_cast<NodeControlWidget *>(ui_.NodeControlsStack->widget(n));
@@ -224,7 +217,6 @@ void ProcedureWidget::preventEditing()
 // Allow editing within tab
 void ProcedureWidget::allowEditing()
 {
-    ui_.AvailableNodesTree->setEnabled(true);
     ui_.NodesTree->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
     ui_.NodesTree->setDragDropMode(QAbstractItemView::DragDrop);
     for (auto n = 0; n < ui_.NodeControlsStack->count(); ++n)

@@ -46,7 +46,7 @@
        </property>
        <property name="icon">
         <iconset resource="main.qrc">
-         <normaloff>:/general/icons/general_repeat.svg</normaloff>:/general/icons/general_repeat.svg</iconset>
+         <normaloff>:/control/icons/control_play.svg</normaloff>:/control/icons/control_play.svg</iconset>
        </property>
       </widget>
      </item>
@@ -121,16 +121,50 @@
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
      </property>
+     <property name="showDropIndicator" stdset="0">
+      <bool>false</bool>
+     </property>
      <property name="dragEnabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="dragDropMode">
-      <enum>QAbstractItemView::DragDrop</enum>
+      <enum>QAbstractItemView::NoDragDrop</enum>
      </property>
      <property name="defaultDropAction">
       <enum>Qt::MoveAction</enum>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="EditProcedureButton">
+       <property name="text">
+        <string>Edit Procedure...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="main.qrc">
+         <normaloff>:/general/icons/general_edit.svg</normaloff>:/general/icons/general_edit.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QStackedWidget" name="NodeControlsStack">
@@ -157,64 +191,6 @@
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="ShowAvailableNodesButton">
-     <property name="toolTip">
-      <string>Toggle the visibility of the module palette</string>
-     </property>
-     <property name="text">
-      <string>Show Available Nodes</string>
-     </property>
-     <property name="icon">
-      <iconset resource="main.qrc">
-       <normaloff>:/general/icons/general_palette.svg</normaloff>:/general/icons/general_palette.svg</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>18</width>
-       <height>18</height>
-      </size>
-     </property>
-     <property name="checkable">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTreeView" name="AvailableNodesTree">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <property name="showDropIndicator" stdset="0">
-      <bool>false</bool>
-     </property>
-     <property name="dragEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="dragDropMode">
-      <enum>QAbstractItemView::DragOnly</enum>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
     </widget>
    </item>
   </layout>

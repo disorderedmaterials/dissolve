@@ -34,7 +34,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.ViewerWidget->setConfiguration(configuration_);
 
     // Set-up the generator procedure editor
-    ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator());
+    ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator(), {ProcedureWidget::SetUpOptions::AllowEdit});
     connect(ui_.GeneratorWidget, SIGNAL(runNowRequested()), this, SLOT(generateConfiguration()));
 }
 
