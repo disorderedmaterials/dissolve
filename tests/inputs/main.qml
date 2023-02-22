@@ -38,6 +38,10 @@ Rectangle {
 	    id: ffAtomTypes;
 	    dialogModel: dialogModel;
 	}
+
+	ForceFieldIntra {
+	    dialogModel: dialogModel;
+	}
     }
 
     Button {
