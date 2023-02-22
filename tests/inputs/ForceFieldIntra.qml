@@ -16,16 +16,16 @@ Item {
 	    RadioButton {
 		text: "Apply intramolecular terms to the whole species. Existing Data will be overriden"
 		checked: true
-		onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.All;
+		onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.All;
 	    }
 	    RadioButton {
 		text: "Apply intramolecular terms between selected atoms.  Existing Data will be overriden"
 		enabled: dialogModel.speciesHasSelection;
-		onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.Selected;
+		onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.Selected;
 	    }
 	    RadioButton {
 		text: "Do not apply intramolecular terms.  Existing data will remain unchanged"
-		onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.None;
+		onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.None;
 	    }
 	}
     }

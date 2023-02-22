@@ -20,6 +20,7 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(QString filterFF READ filterFF WRITE setFilterFF NOTIFY filterFFChanged)
   Q_PROPERTY(bool speciesHasSelection READ speciesHasSelection NOTIFY ready)
   Q_PROPERTY(Radio atomTypeRadio MEMBER atomTypeRadio_);
+  Q_PROPERTY(Radio intramolecularRadio MEMBER intramolecularRadio_);
 
 public:
   enum class Radio {All, Selected, Empty, None};
@@ -60,6 +61,7 @@ signals:
   std::unique_ptr<QSortFilterProxyModel> ffSort_;
   QString filterFF_ = "";
   Radio atomTypeRadio_;
+  Radio intramolecularRadio_;
 
  public:
   AddForcefieldDialogModel();
