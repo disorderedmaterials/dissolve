@@ -43,6 +43,8 @@ class AtomTypeModel : public QAbstractListModel
     const std::shared_ptr<AtomType> &rawData(const QModelIndex &index) const;
     // Add a suffix to the name of an AtomType
     Q_INVOKABLE void addSuffix(int index, QString suffix);
+    // Add a prefix to the name of an AtomType
+    Q_INVOKABLE void addPrefix(int index, QString prefix);
 
     /*
      * QAbstractItemModel overrides

@@ -225,6 +225,14 @@ void AtomTypeModel::addSuffix(int index, QString suffix)
 {
     beginResetModel();
     auto &data = atomTypes_->get()[index];
-    data->setName(fmt::format("{}{}", suffix.toStdString(), data->name()));
+    data->setName(fmt::format("{}{}", data->name(), suffix.toStdString()));
+    endResetModel();
+}
+
+void AtomTypeModel::addPrefix(int index, QString prefix)
+{
+    beginResetModel();
+    auto &data = atomTypes_->get()[index];
+    data->setName(fmt::format("{}{}", prefix.toStdString(), data->name()));
     endResetModel();
 }

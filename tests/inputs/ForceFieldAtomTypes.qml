@@ -28,8 +28,24 @@ Item {
 	text: "Prefix";
 	anchors.right: parent.right;
 	anchors.top: parent.top;
+	onClicked: prefixDialog.open();
 	enabled: atList.currentIndex >= 0;
     }
+
+    Dialog {
+	id: prefixDialog
+	title: "Prefix Dialog"
+
+	standardButtons: Dialog.Ok | Dialog.Cancel
+	onAccepted: dialogModel.atomTypes.addPrefix(atList.currentIndex , prefixField.text);
+
+	TextField {
+	    id: prefixField;
+	    placeholderText: "Prefix";
+	}
+
+    }
+
     Button {
 	id: suffixButton;
 	text: "Suffix";
