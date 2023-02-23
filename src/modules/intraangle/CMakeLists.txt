@@ -1,1 +1,1 @@
-dissolve_add_module(intraangle.h calculateintraangle)
+dissolve_add_module(intraangle.h intraangle)
