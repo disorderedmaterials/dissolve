@@ -77,7 +77,7 @@ bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const
     }
     catch (...)
     {
-        //Check explicitly for null text
+        // Check explicitly for null text
         if (DissolveSys::sameString(parser.argsv(startArg), textWhenNull_))
             setData(std::nullopt);
         else
