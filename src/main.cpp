@@ -99,7 +99,7 @@ int main(int args, char **argv)
     else
     {
         // We may have been provided the name of a restart file to read in...
-        std::string restartFile = options.restartFilename().value_or(fmt::format("{}.restart", options.inputFile().value()));
+        auto restartFile = options.restartFilename().value_or(fmt::format("{}.restart", options.inputFile().value()));
 
         if (DissolveSys::fileExists(restartFile))
         {
@@ -111,9 +111,6 @@ int main(int args, char **argv)
                 Messenger::ceaseRedirect();
                 return 1;
             }
-
-            // Reset the restart filename to be the standard one
-            dissolve.setRestartFilename(fmt::format("{}.restart", options.inputFile().value()));
         }
         else
             Messenger::print("Restart file '{}' does not exist.\n", restartFile);

@@ -686,13 +686,12 @@ void Dissolve::setInputFilename(std::string_view filename)
 {
     inputFilename_ = filename;
     coreData_.setInputFilename(filename);
+
+    restartFilename_ = fmt::format("{}.restart", inputFilename_);
 }
 
 // Return current input filename
 std::string_view Dissolve::inputFilename() const { return inputFilename_; }
-
-// Set restart filename
-void Dissolve::setRestartFilename(std::string_view filename) { restartFilename_ = filename; }
 
 // Return restart filename
 std::string_view Dissolve::restartFilename() const { return restartFilename_; }
