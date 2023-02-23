@@ -4,7 +4,7 @@
 #include "base/sysfunc.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
-#include "modules/intrardf/intrardf.h"
+#include "modules/intradistance/intradistance.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "procedure/nodes/select.h"
@@ -12,7 +12,7 @@
 #include "procedure/nodes/sum1d.h"
 
 // Run main processing
-bool IntraRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+bool IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

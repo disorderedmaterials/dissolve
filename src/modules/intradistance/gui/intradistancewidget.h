@@ -3,32 +3,32 @@
 
 #pragma once
 
-#include "modules/intrardf/gui/ui_intrardfwidget.h"
+#include "modules/intradistance/gui/ui_intradistancewidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations
-class IntraRDFModule;
+class IntraDistanceModule;
 class DataViewer;
 
 // Module Widget
-class IntraRDFModuleWidget : public ModuleWidget
+class IntraDistanceModuleWidget : public ModuleWidget
 {
     // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 
     private:
     // Associated Module
-    IntraRDFModule *module_;
+    IntraDistanceModule *module_;
 
     public:
-    IntraRDFModuleWidget(QWidget *parent, IntraRDFModule *module, Dissolve &dissolve);
+    IntraDistanceModuleWidget(QWidget *parent, IntraDistanceModule *module, Dissolve &dissolve);
 
     /*
      * UI
      */
     private:
     // Main form declaration
-    Ui::IntraRDFModuleWidget ui_;
+    Ui::IntraDistanceModuleWidget ui_;
     // DataViewer contained within this widget
     DataViewer *rdfGraph_;
 

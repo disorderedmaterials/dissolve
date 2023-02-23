@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/intrardf/intrardf.h"
+#include "modules/intradistance/intradistance.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
@@ -19,7 +19,7 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sum1d.h"
 
-IntraRDFModule::IntraRDFModule() : Module("SiteRDF"), analyser_(ProcedureNode::AnalysisContext)
+IntraDistanceModule::IntraDistanceModule() : Module("IntraDistance"), analyser_(ProcedureNode::AnalysisContext)
 {
     try
     {

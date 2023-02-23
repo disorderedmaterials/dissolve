@@ -3,10 +3,10 @@
 
 #include "gui/render/renderabledata1d.h"
 #include "main/dissolve.h"
-#include "modules/intrardf/gui/intrardfwidget.h"
-#include "modules/intrardf/intrardf.h"
+#include "modules/intradistance/gui/intradistancewidget.h"
+#include "modules/intradistance/intradistance.h"
 
-IntraRDFModuleWidget::IntraRDFModuleWidget(QWidget *parent, IntraRDFModule *module, Dissolve &dissolve)
+IntraDistanceModuleWidget::IntraDistanceModuleWidget(QWidget *parent, IntraDistanceModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)
 {
     // Set up user interface
@@ -28,7 +28,7 @@ IntraRDFModuleWidget::IntraRDFModuleWidget(QWidget *parent, IntraRDFModule *modu
 }
 
 // Update controls within widget
-void IntraRDFModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
+void IntraDistanceModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
     // Update CN labels
     auto rangeAOn = module_->isRangeEnabled(0);
