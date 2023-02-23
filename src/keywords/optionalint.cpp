@@ -49,6 +49,9 @@ int OptionalIntegerKeyword::valueDelta() const { return valueDelta_; }
 // Return text to display in widget  when value is null
 std::string OptionalIntegerKeyword::textWhenNull() const { return textWhenNull_; }
 
+// Return keyword name
+std::string_view KeywordBase::name() const { return name_; }
+
 /*
  * Arguments
  */
@@ -56,29 +59,29 @@ std::string OptionalIntegerKeyword::textWhenNull() const { return textWhenNull_;
 // Deserialise from supplied LineParser, starting at given argument offset
 bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    std::optional<int> newValue;
     try
     {
-        newValue = parser.argi(startArg);
-        if (parser.hasArg(startArg))
+        if (!parser.hasArg(startArg))
         {
-            auto x = parser.argi(startArg);
-            if (!setData(x))
-            {
-                if (maximumLimit_)
-                    Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", x,
-                                     maximumLimit_.value());
+            return false;
+        }
+        auto x = parser.argi(startArg);
+        if (!setData(x))
+        {
+            if (maximumLimit_)
+                Messenger::error("Value {} is out of range for keyword '{}'. Valid range is {} <= n.\n", x, name(),
+                                 maximumLimit_.value());
 
-                return false;
-            }
+            return false;
         }
     }
     catch (...)
     {
+        //Check explicitly for null text
         if (DissolveSys::sameString(parser.argsv(startArg), textWhenNull_))
             setData(std::nullopt);
         else
-            return Messenger::error("Unknown input, {}, provided\n", parser.argsv(startArg));
+            return Messenger::error("Input {} is invalid for keyword '{}'.\n", parser.argsv(startArg), name());
     }
 
     return true;
