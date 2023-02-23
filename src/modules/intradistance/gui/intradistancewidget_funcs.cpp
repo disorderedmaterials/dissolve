@@ -19,7 +19,7 @@ IntraDistanceModuleWidget::IntraDistanceModuleWidget(QWidget *parent, IntraDista
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
     view.axes().setMax(0, 10.0);
-    view.axes().setTitle(1, "g(r)");
+    view.axes().setTitle(1, "Normalised Frequency");
     view.axes().setMin(1, 0.0);
     view.axes().setMax(1, 1.0);
     view.setAutoFollowType(View::AllAutoFollow);
@@ -30,22 +30,6 @@ IntraDistanceModuleWidget::IntraDistanceModuleWidget(QWidget *parent, IntraDista
 // Update controls within widget
 void IntraDistanceModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
-    // Update CN labels
-    auto rangeAOn = module_->isRangeEnabled(0);
-    ui_.RegionAResultFrame->setText(
-        rangeAOn ? dissolve_.processingModuleData().valueOr("Sum1D//CN//A", module_->name(), SampledDouble())
-                 : SampledDouble());
-    auto rangeBOn = module_->isRangeEnabled(1);
-    ui_.RegionBResultFrame->setText(
-        rangeBOn ? dissolve_.processingModuleData().valueOr("Sum1D//CN//B", module_->name(), SampledDouble())
-                 : SampledDouble());
-    ui_.RegionBResultFrame->setEnabled(rangeBOn);
-    auto rangeCOn = module_->isRangeEnabled(2);
-    ui_.RegionCResultFrame->setText(
-        rangeCOn ? dissolve_.processingModuleData().valueOr("Sum1D//CN//C", module_->name(), SampledDouble())
-                 : SampledDouble());
-    ui_.RegionCResultFrame->setEnabled(rangeCOn);
-
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
         rdfGraph_->clearRenderables();
 
@@ -54,7 +38,7 @@ void IntraDistanceModuleWidget::updateControls(const Flags<ModuleWidget::UpdateF
         auto *cfg = module_->keywords().getConfiguration("Configuration");
         if (cfg)
             rdfGraph_
-                ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF", module_->name()),
+                ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//NormalisedHistogram", module_->name()),
                                                      fmt::format("RDF//{}", cfg->niceName()), cfg->niceName())
                 ->setColour(StockColours::BlueStockColour);
     }
