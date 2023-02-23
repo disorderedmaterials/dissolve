@@ -14,7 +14,7 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 
-SDFModule::SDFModule() : Module("CalculateSDF"), analyser_(ProcedureNode::AnalysisContext)
+SDFModule::SDFModule() : Module("SDF"), analyser_(ProcedureNode::AnalysisContext)
 {
     try
     {

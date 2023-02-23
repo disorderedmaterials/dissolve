@@ -22,7 +22,7 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 
-AngleModule::AngleModule() : Module("CalculateAngle"), analyser_(ProcedureNode::AnalysisContext)
+AngleModule::AngleModule() : Module("Angle"), analyser_(ProcedureNode::AnalysisContext)
 {
     try
     {
