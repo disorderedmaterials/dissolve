@@ -7,7 +7,7 @@
 #include "procedure/procedure.h"
 
 // Forward Declarations
-class CalculateIntraAngleProcedureNode;
+class CalculateAngleProcedureNode;
 class Collect1DProcedureNode;
 class Collect2DProcedureNode;
 class Collect3DProcedureNode;
