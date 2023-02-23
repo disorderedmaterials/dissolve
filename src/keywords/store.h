@@ -96,7 +96,7 @@ class KeywordStore
     template <class K, typename... Args>
     KeywordBase *addRestartable(std::string_view name, std::string_view description, Args &&...args)
     {
-        auto *k = add<K>(name, description, args...);
+        auto *k = addKeyword<K>(name, description, args...);
 
         keywords_.emplace_back(k, KeywordStoreData::KeywordType::Restartable, currentGroupName_, currentSectionName_);
 
