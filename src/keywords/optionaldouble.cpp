@@ -4,6 +4,7 @@
 #include "keywords/optionaldouble.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "keywords/base.h"
 
 OptionalDoubleKeyword::OptionalDoubleKeyword(std::optional<double> &data, double minValue, std::optional<double> maxValue,
                                              double valueDelta, std::string_view textWhenNull)

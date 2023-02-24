@@ -4,6 +4,7 @@
 #include "keywords/optionalint.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "keywords/base.h"
 
 OptionalIntegerKeyword::OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue,
                                                int valueDelta, std::string_view textWhenNull)
