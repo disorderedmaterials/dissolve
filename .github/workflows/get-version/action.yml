@@ -11,4 +11,7 @@ runs:
       set -ex
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed 's/.*\"\(.*\)\"/\1/g'`
       echo "Dissolve code version is ${DISSOLVE_VERSION}"
+      DISSOLVE_MAJOR=${DISSOLVE_VERSION/.*/}
+      echo "Dissolve major version is ${DISSOLVE_MAJOR}"
       echo "dissolveVersion=${DISSOLVE_VERSION}" >> ${GITHUB_ENV}
+      echo "dissolveMajorVersion=${DISSOLVE_MAJOR}" >> ${GITHUB_ENV}

@@ -6,6 +6,9 @@ inputs:
     default: "0.98.0"
   webDirRoot:
     default: "github.com/disorderedmaterials/dissolve/edit/develop/web"
+  continuous:
+    type: boolean
+    default: false
   deploy:
     type: boolean
     default: false
@@ -16,6 +19,21 @@ inputs:
 runs:
   using: "composite"
   steps:
+
+  - name: 'Set MAJOR Version'
+    shell: bash
+    run: |
+      cd web/docs
+      sed -i "s/MAJOR.X/${{ env.dissolveMajorVersion }}.X/g" _index.md
+      grep ".X" _index.md
+
+  - name: 'Set Base URL'
+    if: ${{ inputs.continuous == 'true' }}
+    shell: bash
+    run: |
+      cd web
+      sed -i 's/baseURL = .*/baseURL = "https://docs.projectdissolve.com/continuous/"/g' docs.toml
+      grep baseURL docs.toml
 
   - name: 'Download & Install Hugo (Extended Version)'
     shell: bash
@@ -42,7 +60,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      for example in $(find ./web/content/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      for example in $(find ./web/content-docs/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
       do
         ci/scripts/meld-example -d ${example}
       done
@@ -53,29 +71,23 @@ runs:
       set -ex
       cd web
       npm install
-      hugo
+      hugo --contentDir main/ --config main.toml --destination public
+      hugo --contentDir docs/ --config docs.toml --destination public-docs
 
   - name: 'Rewrite Edit Links'
     shell: bash
     run: |
       set -ex
       # Remove language ('en') from 'Edit on GitHub' path links
-      find web/public/docs/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content/en/docs/:${{ inputs.webDirRoot }}/content/docs/:g" {} +
-      find web/public/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/content/en/examples/:${{ inputs.webDirRoot }}/content/examples/:g" {} +
-
-  - name: 'Check Links'
-    shell: bash
-    run: |
-      set -ex
-      sudo npm install -g link-checker
-      link-checker --disable-external web/public
+      find web/public-docs/userguide/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/docs/en/userguide/:${{ inputs.webDirRoot }}/docs/userguide/:g" {} +
+      find web/public-docs/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/docs/en/examples/:${{ inputs.webDirRoot }}/docs/examples/:g" {} +
 
   - name: 'Create PDFs'
     if: ${{ inputs.pdfExamples == 'true' }}
     shell: bash
     run: |
       set -ex
-      cd web/public/examples/
+      cd web/public-docs/examples/
       for example in $(find . -mindepth 1 -maxdepth 1 -type d -not -iname previous)
       do
         echo "Creating pdf for example \"${example}\"..."
@@ -84,11 +96,21 @@ runs:
         cd ../../
       done
 
-  - name: 'SSH Deploy to Server'
-    if: ${{ inputs.deploy == 'true' }}
+  - name: 'SSH Deploy to Server (Release)'
+    if: ${{ inputs.deploy == 'true' && inputs.continuous == 'false' }}
     shell: bash
     run: |
       echo "${SERVER_ID}" > ./serverId
       echo "${SERVER_KEY}" > ./serverKey
       chmod 0600 ./serverKey ./serverId
-      rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_DIR}
+      rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
+      rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
+
+  - name: 'SSH Deploy to Server (Continuous, docs only)'
+    if: ${{ inputs.deploy == 'true' && inputs.continuous == 'true' }}
+    shell: bash
+    run: |
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
+      chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete -e "ssh -vvv -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/continuous
