@@ -11,13 +11,11 @@
 #include "data/atomicmasses.h"
 
 CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename, CoordinateExportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat>(
-        "CoordinateExportFileFormat",
-        {{CoordinateExportFormat::XYZ, "xyz", "Simple XYZ Coordinates"},
-         {CoordinateExportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG File"}},
-        format);
+        "CoordinateExportFileFormat", {{CoordinateExportFormat::XYZ, "xyz", "Simple XYZ Coordinates"},
+                                       {CoordinateExportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG File"}});
 }
 
 /*
@@ -95,6 +93,10 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
 // Export coordinates using current filename and format
 bool CoordinateExportFileFormat::exportData(Configuration *cfg)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for CoordinateExportFileFormat so can't export.\n");
+
     // Open the file
     LineParser parser;
     if (!parser.openOutput(filename_))
@@ -105,7 +107,7 @@ bool CoordinateExportFileFormat::exportData(Configuration *cfg)
 
     // Write data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (CoordinateExportFormat::XYZ):
             result = exportXYZ(parser, cfg);
@@ -114,8 +116,8 @@ bool CoordinateExportFileFormat::exportData(Configuration *cfg)
             result = exportDLPOLY(parser, cfg);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Coordinates format '{}' export has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(fmt::format("Coordinates format '{}' export has not been implemented.\n",
+                                                 formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

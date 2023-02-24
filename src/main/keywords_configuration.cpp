@@ -71,7 +71,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                     break;
                 }
                 Messenger::printVerbose("Initial coordinates will be loaded from file '{}' ({})\n",
-                                        cfg->inputCoordinates().filename(), cfg->inputCoordinates().format());
+                                        cfg->inputCoordinates().filename(), cfg->inputCoordinates().formatKeyword());
                 break;
             case (ConfigurationBlock::SizeFactorKeyword):
                 cfg->setRequestedSizeFactor(parser.argd(1));

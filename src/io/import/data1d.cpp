@@ -10,14 +10,13 @@
 #include "math/filters.h"
 
 Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
-        "Data1DImportFileFormat",
-        {{Data1DImportFormat::XY, "xy", "Simple XY data (x = bin centres)"},
-         {Data1DImportFormat::Histogram, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
-         {Data1DImportFormat::GudrunMint, "mint", "Gudrun output (mint01)"}},
-        format);
+        "Data1DImportFileFormat", {{Data1DImportFormat::XY, "xy", "Simple XY data (x = bin centres)"},
+                                   {Data1DImportFormat::Histogram, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
+                                   {Data1DImportFormat::GudrunMint, "mint", "Gudrun output (mint01)"}});
+
     setUpKeywords();
 }
 
@@ -70,9 +69,13 @@ bool Data1DImportFileFormat::importData(Data1D &data, const ProcessPool *procPoo
 // Import Data1D using supplied parser and current format
 bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for Data1DImportFileFormat so can't import.\n");
+
     // Import the data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (Data1DImportFormat::XY):
             result = importXY(parser, data);
@@ -84,7 +87,8 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
             result = importGudrunMint(parser, data);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Data1D format '{}' import has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(
+                fmt::format("Data1D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     // If we failed, may as well return now

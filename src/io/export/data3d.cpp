@@ -7,14 +7,12 @@
 #include "math/data3d.h"
 
 Data3DExportFileFormat::Data3DExportFileFormat(std::string_view filename, Data3DExportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<Data3DExportFileFormat::Data3DExportFormat>(
-        "Data3DExportFileFormat",
-        {{Data3DExportFormat::Block, "block", "Block Data"},
-         {Data3DExportFormat::Cartesian, "cartesian", "Cartesian (x,y,z,value) Data"},
-         {Data3DExportFormat::PDens, "pdens", "DLPutils PDens Data"}},
-        format);
+        "Data3DExportFileFormat", {{Data3DExportFormat::Block, "block", "Block Data"},
+                                   {Data3DExportFormat::Cartesian, "cartesian", "Cartesian (x,y,z,value) Data"},
+                                   {Data3DExportFormat::PDens, "pdens", "DLPutils PDens Data"}});
 }
 
 /*
@@ -116,6 +114,10 @@ bool Data3DExportFileFormat::exportPDens(LineParser &parser, const std::vector<d
 // Export Data3D using current filename and format
 bool Data3DExportFileFormat::exportData(const Data3DBase &data)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for Data3DExportFileFormat so can't export.\n");
+
     // Open the file
     LineParser parser;
     if (!parser.openOutput(filename_))
@@ -126,7 +128,7 @@ bool Data3DExportFileFormat::exportData(const Data3DBase &data)
 
     // Write data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (Data3DExportFormat::Block):
             result = exportBlock(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
@@ -138,7 +140,8 @@ bool Data3DExportFileFormat::exportData(const Data3DBase &data)
             result = exportPDens(parser, data.xAxis(), data.yAxis(), data.zAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(fmt::format("Data3D format '{}' export has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(
+                fmt::format("Data3D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

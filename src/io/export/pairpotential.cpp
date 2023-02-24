@@ -7,13 +7,11 @@
 #include "classes/pairpotential.h"
 
 PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view filename, PairPotentialExportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>(
-        "PairPotentialExportFileFormat",
-        {{PairPotentialExportFormat::Block, "block", "Block Data"},
-         {PairPotentialExportFormat::DLPOLYTABLE, "table", "DL_POLY TABLE File"}},
-        format);
+        "PairPotentialExportFileFormat", {{PairPotentialExportFormat::Block, "block", "Block Data"},
+                                          {PairPotentialExportFormat::DLPOLYTABLE, "table", "DL_POLY TABLE File"}});
 }
 
 /*
@@ -107,14 +105,18 @@ bool PairPotentialExportFileFormat::exportData(PairPotential *pp)
 
     // Write data
     auto result = false;
-    if (formats_.enumeration() == PairPotentialExportFormat::Block)
-        result = exportBlock(parser, pp);
-    else if (formats_.enumeration() == PairPotentialExportFormat::DLPOLYTABLE)
-        result = exportDLPOLY(parser, pp);
-    else
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
-        Messenger::error("Unrecognised pair potential format.\nKnown formats are:\n");
-        printAvailableFormats();
+        case (PairPotentialExportFormat::Block):
+            result = exportBlock(parser, pp);
+            break;
+        case (PairPotentialExportFormat::DLPOLYTABLE):
+            result = exportDLPOLY(parser, pp);
+            break;
+        default:
+            throw(std::runtime_error(fmt::format("Pairpotential format '{}' export has not been implemented.\n",
+                                                 formats_.keywordByIndex(*formatIndex_))));
     }
+
     return result;
 }

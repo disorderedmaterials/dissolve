@@ -10,15 +10,14 @@
 
 CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename,
                                                        CoordinateImportFileFormat::CoordinateImportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "CoordinateImportFileFormat",
-        {{CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
-         {CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
-         {CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
-         {CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}},
-        format);
+        "CoordinateImportFileFormat", {{CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
+                                       {CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
+                                       {CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
+                                       {CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
+
     setUpKeywords();
 }
 
@@ -68,9 +67,13 @@ bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPoo
 // Import coordinates using supplied parser and current format
 bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &r)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for TrajectoryImportFileFormat so can't import.\n");
+
     // Import the data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (CoordinateImportFormat::DLPOLY):
             result = importDLPOLY(parser, r);
@@ -85,8 +88,8 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
             result = importXYZ(parser, r);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Coordinate format '{}' import has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(fmt::format("Coordinate format '{}' import has not been implemented.\n",
+                                                 formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

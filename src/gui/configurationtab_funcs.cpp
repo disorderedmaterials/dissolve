@@ -132,7 +132,7 @@ void ConfigurationTab::updateControls()
 
     // Input Coordinates
     ui_.CoordinatesFileEdit->setText(QString::fromStdString(std::string(configuration_->inputCoordinates().filename())));
-    ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formats().index());
+    ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 
     // Size Factor
     ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());

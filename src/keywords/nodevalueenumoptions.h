@@ -21,7 +21,7 @@ class NodeValueEnumOptionsBaseKeyword : public KeywordBase
      * Data
      */
     protected:
-    // Reference to  EnumBaseOptions
+    // Reference to EnumBaseOptions
     EnumOptionsBase &baseOptions_;
 
     public:

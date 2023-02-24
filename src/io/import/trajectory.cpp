@@ -9,13 +9,12 @@
 
 TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename,
                                                        TrajectoryImportFileFormat::TrajectoryImportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
         "TrajectoryImportFileFormat",
         {{TrajectoryImportFormat::DLPOLYFormatted, "hisf", "Formatted DL_POLY Trajectory (no header)"},
-         {TrajectoryImportFormat::XYZ, "xyz", "XYZ Trajectory"}},
-        format);
+         {TrajectoryImportFormat::XYZ, "xyz", "XYZ Trajectory"}});
 }
 
 /*
@@ -25,10 +24,14 @@ TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename
 // Import trajectory using supplied parser and current format
 bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *cfg, std::optional<Matrix3> &unitCell)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for TrajectoryImportFileFormat so can't import.\n");
+
     // Import the data
     std::vector<Vec3<double>> r;
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (TrajectoryImportFormat::DLPOLYFormatted):
             result = importDLPOLY(parser, r, unitCell);
@@ -37,8 +40,8 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
             return CoordinateImportFileFormat("", CoordinateImportFileFormat::CoordinateImportFormat::XYZ)
                 .importData(parser, cfg);
         default:
-            throw(std::runtime_error(
-                fmt::format("Trajectory format '{}' import has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(fmt::format("Trajectory format '{}' import has not been implemented.\n",
+                                                 formats_.keywordByIndex(*formatIndex_))));
     }
 
     // All good, so copy atom coordinates over into our array

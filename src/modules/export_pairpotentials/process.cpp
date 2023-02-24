@@ -23,8 +23,8 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &
 
         for (auto &pp : dissolve.pairPotentials())
         {
-            Messenger::print("Export: Writing pair potential file ({}) for {}-{}...\n", pairPotentialFormat_.description(),
-                             pp->atomTypeNameI(), pp->atomTypeNameJ());
+            Messenger::print("Export: Writing pair potential file ({}) for {}-{}...\n",
+                             pairPotentialFormat_.formatDescription(), pp->atomTypeNameI(), pp->atomTypeNameJ());
 
             // Generate filename
             pairPotentialFormat_.setFilename(fmt::format("{}-{}-{}.pp", rootPPName, pp->atomTypeNameI(), pp->atomTypeNameJ()));

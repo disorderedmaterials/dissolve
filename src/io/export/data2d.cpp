@@ -7,13 +7,11 @@
 #include "math/data2d.h"
 
 Data2DExportFileFormat::Data2DExportFileFormat(std::string_view filename, Data2DExportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<Data2DExportFileFormat::Data2DExportFormat>(
-        "Data2DExportFileFormat",
-        {{Data2DExportFormat::Block, "block", "Block Data"},
-         {Data2DExportFormat::Cartesian, "cartesian", "Cartesian (x,y,value) Data"}},
-        format);
+        "Data2DExportFileFormat", {{Data2DExportFormat::Block, "block", "Block Data"},
+                                   {Data2DExportFormat::Cartesian, "cartesian", "Cartesian (x,y,value) Data"}});
 }
 
 /*
@@ -62,6 +60,10 @@ bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const std::vect
 // Export Data2D using current filename and format
 bool Data2DExportFileFormat::exportData(const Data2DBase &data)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for Data2DExportFileFormat so can't export.\n");
+
     // Open the file
     LineParser parser;
     if (!parser.openOutput(filename_))
@@ -72,7 +74,7 @@ bool Data2DExportFileFormat::exportData(const Data2DBase &data)
 
     // Write data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (Data2DExportFormat::Block):
             result = exportBlock(parser, data.xAxis(), data.yAxis(), data.values());
@@ -81,7 +83,8 @@ bool Data2DExportFileFormat::exportData(const Data2DBase &data)
             result = exportCartesian(parser, data.xAxis(), data.yAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(fmt::format("Data2D format '{}' export has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(
+                fmt::format("Data2D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

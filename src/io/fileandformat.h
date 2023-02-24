@@ -13,25 +13,30 @@ class LineParser;
 class FileAndFormat
 {
     public:
-    FileAndFormat(EnumOptionsBase &formats, std::string_view filename = "");
+    FileAndFormat(EnumOptionsBase &formats, std::string_view filename = "", std::optional<int> formatIndex = {});
     FileAndFormat(const FileAndFormat &source) = default;
     virtual ~FileAndFormat() = default;
-    operator std::string_view() const;
 
     /*
-     * File and Format
+     * Format
      */
     protected:
     // Formats enum as the base object
     EnumOptionsBase &formats_;
+    // Index of current format
+    std::optional<int> formatIndex_;
 
     public:
     // Return formats enum as the base object
-    EnumOptionsBase &formats();
+    const EnumOptionsBase &formats() const;
+    // Set current format by index
+    void setFormatByIndex(int index);
+    // Return current format index
+    int formatIndex() const;
     // Return current format keyword
-    std::string format() const;
+    std::string formatKeyword() const;
     // Return current format description
-    std::string description() const;
+    std::string formatDescription() const;
     // Print available formats
     void printAvailableFormats() const;
 

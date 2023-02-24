@@ -22,8 +22,8 @@ bool ExportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
     // Only the pool master saves the data
     if (procPool.isMaster())
     {
-        Messenger::print("Export: Appending trajectory file ({}) for Configuration '{}'...\n", trajectoryFormat_.description(),
-                         targetConfiguration_->name());
+        Messenger::print("Export: Appending trajectory file ({}) for Configuration '{}'...\n",
+                         trajectoryFormat_.formatDescription(), targetConfiguration_->name());
 
         if (!trajectoryFormat_.exportData(targetConfiguration_))
         {

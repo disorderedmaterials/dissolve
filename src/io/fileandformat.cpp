@@ -5,22 +5,41 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-FileAndFormat::FileAndFormat(EnumOptionsBase &formats, std::string_view filename) : formats_(formats), filename_{filename} {}
-
-FileAndFormat::operator std::string_view() const { return filename_; }
+FileAndFormat::FileAndFormat(EnumOptionsBase &formats, std::string_view filename, std::optional<int> formatIndex)
+    : formats_(formats), formatIndex_(formatIndex), filename_{filename}
+{
+}
 
 /*
  * Formats
  */
 
 // Return formats enum as the base object
-EnumOptionsBase &FileAndFormat::formats() { return formats_; }
+const EnumOptionsBase &FileAndFormat::formats() const { return formats_; }
+
+// Set current format by index
+void FileAndFormat::setFormatByIndex(int index)
+{
+    assert(index >= 0 && index < formats_.nOptions());
+
+    formatIndex_ = index;
+}
+
+// Return current format index
+int FileAndFormat::formatIndex() const
+{
+    assert(formatIndex_);
+    return *formatIndex_;
+}
 
 // Return current format keyword
-std::string FileAndFormat::format() const { return formats_.keywordByIndex(formats_.index()); }
+std::string FileAndFormat::formatKeyword() const { return formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???"; }
 
 // Return current format description
-std::string FileAndFormat::description() const { return formats_.descriptionByIndex(formats_.index()); }
+std::string FileAndFormat::formatDescription() const
+{
+    return formatIndex_ ? formats_.descriptionByIndex(*formatIndex_) : "???";
+}
 
 // Print available formats
 void FileAndFormat::printAvailableFormats() const
@@ -77,7 +96,7 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
 
         return false;
     }
-    formats_.setIndex(formatId.value());
+    formatIndex_ = formatId.value();
 
     // Set filename
     filename_ = parser.argsv(startArg + 1);
@@ -111,7 +130,7 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
 // Write format / filename to specified parser
 bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view prefix) const
 {
-    return parser.writeLineF("{}{}  '{}'\n", prefix, formats_.keywordByIndex(formats_.index()), filename_);
+    return parser.writeLineF("{}{}  '{}'\n", prefix, formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???", filename_);
 }
 
 // Write options and end block

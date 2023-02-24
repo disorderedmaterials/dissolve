@@ -11,10 +11,10 @@
 #include "data/atomicmasses.h"
 
 ForceExportFileFormat::ForceExportFileFormat(std::string_view filename, ForceExportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<ForceExportFileFormat::ForceExportFormat>(
-        "ForceExportFileFormat", {{ForceExportFormat::Simple, "simple", "Simple Free-Formatted Forces"}}, format);
+        "ForceExportFileFormat", {{ForceExportFormat::Simple, "simple", "Simple Free-Formatted Forces"}});
 }
 
 /*
@@ -51,12 +51,14 @@ bool ForceExportFileFormat::exportData(const std::vector<Vec3<double>> &f)
 
     // Write data
     auto result = false;
-    if (formats_.enumeration() == ForceExportFormat::Simple)
-        result = exportSimple(parser, f);
-    else
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
-        Messenger::error("Unrecognised force format.\nKnown formats are:\n");
-        printAvailableFormats();
+        case (ForceExportFormat::Simple):
+            result = exportSimple(parser, f);
+            break;
+        default:
+            throw(std::runtime_error(
+                fmt::format("Forces format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;
