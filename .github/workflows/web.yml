@@ -5,14 +5,14 @@ on:
     branches:
     - '*'
     paths:
-    - '.github/workflows/web.yml'
+    - '.github/workflows/web**'
     - 'web/**'
 
   push:
     branches:
     - 'develop'
     paths:
-    - '.github/workflows/web.yml'
+    - '.github/workflows/web**'
     - 'web/**'
 
 jobs:
