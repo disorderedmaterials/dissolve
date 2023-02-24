@@ -49,9 +49,6 @@ int OptionalIntegerKeyword::valueDelta() const { return valueDelta_; }
 // Return text to display in widget  when value is null
 std::string OptionalIntegerKeyword::textWhenNull() const { return textWhenNull_; }
 
-// Return keyword name
-std::string_view KeywordBase::name() const { return name_; }
-
 /*
  * Arguments
  */
@@ -62,9 +59,8 @@ bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const
     try
     {
         if (!parser.hasArg(startArg))
-        {
             return false;
-        }
+
         auto x = parser.argi(startArg);
         if (!setData(x))
         {
@@ -83,7 +79,6 @@ bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const
         else
             return Messenger::error("Input {} is invalid for keyword '{}'.\n", parser.argsv(startArg), name());
     }
-
     return true;
 }
 
