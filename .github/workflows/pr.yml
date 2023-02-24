@@ -8,7 +8,7 @@ on:
     - '.github/workflows/cache.yml'
     - '.github/workflows/continuous.yml'
     - '.github/workflows/release.yml'
-    - '.github/workflows/web.yml'
+    - '.github/workflows/web**'
     - 'web/**'
     - 'README.md'
 
