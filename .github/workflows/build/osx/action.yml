@@ -67,8 +67,8 @@ runs:
     with:
       key: osx-conan
       path: |
-        ~\.conan
-        ~\.conancache
+        ~/.conan
+        ~/.conancache
 
   - name: Install Conan Dependencies
     shell: bash
