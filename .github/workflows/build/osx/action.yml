@@ -49,7 +49,7 @@ runs:
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install aqtinstall conan==1.* --break-system-packages
+      pip3 install aqtinstall conan --break-system-packages
 
   - name: Install Qt
     shell: bash
