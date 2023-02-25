@@ -12,7 +12,7 @@ antlr4-cppruntime/4.9.3
 cmake
 
 [options]
-fmt:header_only=True
-pugixml:header_only=False
-tbb:shared=True
-antlr4-cppruntime:shared=True
+fmt/*:header_only=True
+pugixml/*:header_only=False
+tbb/*:shared=True
+antlr4-cppruntime/*:shared=True
