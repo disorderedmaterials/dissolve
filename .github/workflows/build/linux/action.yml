@@ -46,7 +46,6 @@ runs:
       cp -v result packages/${{ inputs.target }}-${{ env.dissolveVersion }}.sif
 
   - name: Bundle Executable
-    if: ${{ inputs.cacheOnly == 'false' }}
     shell: bash
     run: |
       set -ex
