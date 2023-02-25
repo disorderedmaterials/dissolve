@@ -16,9 +16,9 @@ set(_conan_requires
     ${EXTRA_CONAN_REQUIRES}
 )
 set(_conan_options
-    fmt:header_only=True
-    pugixml:header_only=False
-    antlr4-cppruntime:shared=True
+    fmt/*:header_only=True
+    pugixml/*:header_only=False
+    antlr4-cppruntime/*:shared=True
     ${EXTRA_CONAN_OPTIONS}
 )
 
