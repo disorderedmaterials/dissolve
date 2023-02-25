@@ -70,8 +70,8 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       mkdir build && cd build
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing
+      conan profile detect
+      conan install .. --build missing -s storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
