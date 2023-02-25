@@ -132,8 +132,6 @@ runs:
     shell: bash
     run: |
       conan profile detect
-      conan profile update settings.compiler="Visual Studio" default
-      conan profile update settings.compiler.version=17 default
 
   - name: Install Conan Dependencies
     shell: bash
