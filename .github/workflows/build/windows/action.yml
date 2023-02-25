@@ -127,15 +127,6 @@ runs:
   # Main Build
   #
 
-  - name: Retrieve Conan Cache
-    id: cache-conan
-    uses: actions/cache@v3
-    with:
-      key: windows-conan
-      path: |
-        ~\.conan
-        ~\.conancache
-
   - name: Setup Conan Profile
     if: ${{ steps.cache-conan.outputs.cache-hit != 'true' }}
     shell: bash
