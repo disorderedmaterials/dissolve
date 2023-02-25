@@ -159,7 +159,7 @@
               ccls
               cmake-format
               cmake-language-server
-              conan-1.58.0
+              conan
               distcc
               gdb
               openmpi
