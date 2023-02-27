@@ -32,7 +32,7 @@ runs:
     shell: bash
     run: |
       cd web
-      sed -i 's/baseURL = .*/baseURL = "https://docs.projectdissolve.com/continuous/"/g' docs.toml
+      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/continuous/"|g' docs.toml
       grep baseURL docs.toml
 
   - name: 'Download & Install Hugo (Extended Version)'
