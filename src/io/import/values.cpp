@@ -6,12 +6,11 @@
 #include "templates/optionalref.h"
 
 ValueImportFileFormat::ValueImportFileFormat(std::string_view filename, ValueImportFileFormat::ValueImportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<ValueImportFileFormat::ValueImportFormat>(
         "ValueImportFileFormat",
-        {{ValueImportFileFormat::ValueImportFormat::Simple, "values", "Number of values, followed by one value per line"}},
-        format);
+        {{ValueImportFileFormat::ValueImportFormat::Simple, "values", "Number of values, followed by one value per line"}});
 }
 
 /*
@@ -43,6 +42,10 @@ bool ValueImportFileFormat::importSimple(LineParser &parser, std::vector<double>
 // Import values using current filename and format
 bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &currentParser, const ProcessPool *procPool)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for ValueImportFileFormat so can't import.\n");
+
     // If the filename is simply '@' then we read from the current parser - otherwise open a new file / parser
     auto readFromCurrent = filename_ == "@";
     LineParser fileParser(procPool);
@@ -53,13 +56,14 @@ bool ValueImportFileFormat::importData(std::vector<double> &data, LineParser &cu
 
     // Import the data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (ValueImportFormat::Simple):
             result = importSimple(parser, data);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Value format '{}' import has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(
+                fmt::format("Value format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     if (!readFromCurrent)

@@ -9,10 +9,10 @@
 #include "data/elements.h"
 
 TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename, TrajectoryExportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>(
-        "TrajectoryExportFileFormat", {{TrajectoryExportFormat::XYZ, "xyz", "XYZ Trajectory"}}, format);
+        "TrajectoryExportFileFormat", {{TrajectoryExportFormat::XYZ, "xyz", "XYZ Trajectory"}});
 }
 
 /*
@@ -40,6 +40,10 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 // Append trajectory using current filename and format
 bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for TrajectoryExportFileFormat so can't export.\n");
+
     // Make an initial check to see if the specified file exists
     auto fileExists = DissolveSys::fileExists(filename_);
 
@@ -56,7 +60,7 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
     {
         auto headerResult = false;
 
-        if (formats_.enumeration() == TrajectoryExportFormat::XYZ)
+        if (formats_.enumerationByIndex(*formatIndex_) == TrajectoryExportFormat::XYZ)
             headerResult = true;
         else
             headerResult = Messenger::error("Unrecognised trajectory format so can't write header.\nKnown formats are:\n");
@@ -68,14 +72,14 @@ bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
 
     // Append frame in supplied format
     auto frameResult = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (TrajectoryExportFormat::XYZ):
             frameResult = exportXYZ(parser, cfg);
             break;
         default:
-            throw(std::runtime_error(
-                fmt::format("Trajectory format '{}' export has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(fmt::format("Trajectory format '{}' export has not been implemented.\n",
+                                                 formats_.keywordByIndex(*formatIndex_))));
     }
 
     parser.closeFiles();

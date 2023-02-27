@@ -84,7 +84,7 @@ void NodeValueEnumOptionsKeywordWidget::updateValue(const Flags<DissolveSignals:
     refreshing_ = true;
 
     ui_.ValueEdit->setText(QString::fromStdString(keyword_->value().asString()));
-    ui_.OptionsCombo->setCurrentIndex(keyword_->baseOptions().index());
+    ui_.OptionsCombo->setCurrentIndex(keyword_->enumerationIndex());
 
     checkValueValidity();
 

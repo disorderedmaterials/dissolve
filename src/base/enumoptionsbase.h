@@ -25,10 +25,6 @@ class EnumOptionsBase
     virtual std::string keywordByIndex(int index) const = 0;
     // Return description for the nth keyword in the list
     virtual std::string descriptionByIndex(int index) const = 0;
-    // Return index of current option
-    virtual int index() const = 0;
-    // Set current option index
-    virtual void setIndex(int index) = 0;
 
     /*
      * Search

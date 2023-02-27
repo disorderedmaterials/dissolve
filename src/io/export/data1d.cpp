@@ -8,10 +8,10 @@
 #include "templates/algorithms.h"
 
 Data1DExportFileFormat::Data1DExportFileFormat(std::string_view filename, Data1DExportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<Data1DExportFileFormat::Data1DExportFormat>(
-        "Data1DExportFileFormat", {{Data1DExportFormat::XY, "xy", "Simple XY data (x = bin centres)"}}, format);
+        "Data1DExportFileFormat", {{Data1DExportFormat::XY, "xy", "Simple XY data (x = bin centres)"}});
 }
 
 /*
@@ -39,6 +39,10 @@ bool Data1DExportFileFormat::exportXY(LineParser &parser, const std::vector<doub
 // Export Data1D using current filename and format
 bool Data1DExportFileFormat::exportData(const Data1DBase &data)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for Data1DExportFileFormat so can't export.\n");
+
     // Open the file
     LineParser parser;
     if (!parser.openOutput(filename_))
@@ -49,7 +53,7 @@ bool Data1DExportFileFormat::exportData(const Data1DBase &data)
 
     // Write data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (Data1DExportFormat::XY):
             if (data.valuesHaveErrors())
@@ -58,7 +62,8 @@ bool Data1DExportFileFormat::exportData(const Data1DBase &data)
                 result = exportXY(parser, data.xAxis(), data.values());
             break;
         default:
-            throw(std::runtime_error(fmt::format("Data1D format '{}' export has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(
+                fmt::format("Data1D format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

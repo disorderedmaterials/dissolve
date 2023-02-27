@@ -7,10 +7,11 @@
 #include "keywords/vec3double.h"
 
 Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2DImportFileFormat::Data2DImportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<Data2DImportFileFormat::Data2DImportFormat>(
-        "Data2DImportFileFormat", {{Data2DImportFormat::Cartesian, "cartesian", "Cartesian X,Y,f(X,Y) data"}}, format);
+        "Data2DImportFileFormat", {{Data2DImportFormat::Cartesian, "cartesian", "Cartesian X,Y,f(X,Y) data"}});
+
     setUpKeywords();
 }
 
@@ -51,15 +52,20 @@ bool Data2DImportFileFormat::importData(Data2D &data, const ProcessPool *procPoo
 // Import Data2D using supplied parser and current format
 bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for Data2DImportFileFormat so can't import.\n");
+
     // Import the data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (Data2DImportFormat::Cartesian):
             result = importCartesian(parser, data);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Data2D format '{}' import has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(
+                fmt::format("Data2D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;

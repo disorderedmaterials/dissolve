@@ -149,7 +149,7 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData &coreData)
 
     // Update widgets
     ui_.FileEdit->setText(QString::fromStdString(std::string(fileAndFormat.filename())));
-    ui_.FormatCombo->setCurrentIndex(fileAndFormat.formats().index());
+    ui_.FormatCombo->setCurrentIndex(fileAndFormat.formatIndex());
     checkFileValidity();
 
     refreshing_ = false;
@@ -162,5 +162,5 @@ void FileAndFormatKeywordWidget::updateKeywordData()
     auto &fileAndFormat = keyword_->data();
 
     fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
-    fileAndFormat.formats().setIndex(ui_.FormatCombo->currentIndex());
+    fileAndFormat.setFormatByIndex(ui_.FormatCombo->currentIndex());
 }

@@ -7,14 +7,13 @@
 #include "keywords/double.h"
 
 ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImportFileFormat::ForceImportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<ForceImportFileFormat::ForceImportFormat>(
-        "ForceImportFileFormat",
-        {{ForceImportFormat::DLPOLY, "dlpoly", "DL_POLY Config File Forces"},
-         {ForceImportFormat::Moscito, "moscito", "Moscito Structure File Forces"},
-         {ForceImportFormat::Simple, "simple", "Simple Free-Formatted Forces"}},
-        format);
+        "ForceImportFileFormat", {{ForceImportFormat::DLPOLY, "dlpoly", "DL_POLY Config File Forces"},
+                                  {ForceImportFormat::Moscito, "moscito", "Moscito Structure File Forces"},
+                                  {ForceImportFormat::Simple, "simple", "Simple Free-Formatted Forces"}});
+
     setUpKeywords();
 }
 
@@ -52,9 +51,13 @@ bool ForceImportFileFormat::importData(std::vector<Vec3<double>> &f, const Proce
 // Import forces using supplied parser and current format
 bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &f)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for ForceImportFileFormat so can't import.\n");
+
     // Import the data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (ForceImportFormat::DLPOLY):
             result = importDLPOLY(parser, f);
@@ -66,7 +69,8 @@ bool ForceImportFileFormat::importData(LineParser &parser, std::vector<Vec3<doub
             result = importSimple(parser, f);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Force format '{}' import has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(
+                fmt::format("Force format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     // Apply factor to data

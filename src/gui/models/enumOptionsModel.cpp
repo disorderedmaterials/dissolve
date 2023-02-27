@@ -5,7 +5,7 @@
 #include "base/enumoptionsbase.h"
 
 // Set source AtomType data
-void EnumOptionsModel::setData(EnumOptionsBase &options)
+void EnumOptionsModel::setData(const EnumOptionsBase &options)
 {
     beginResetModel();
     enumOptions_ = options;

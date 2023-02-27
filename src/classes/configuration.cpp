@@ -115,7 +115,7 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
     // If an input file was specified, try to load it
     if (inputCoordinates_.hasFilename())
     {
-        if (DissolveSys::fileExists(inputCoordinates_))
+        if (DissolveSys::fileExists(inputCoordinates_.filename()))
         {
             Messenger::print("Loading initial coordinates from file '{}'...\n", inputCoordinates_.filename());
             if (!inputCoordinates_.importData(this, &procedureContext.processPool()))

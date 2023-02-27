@@ -16,35 +16,16 @@ template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
     EnumOptions() = default;
-    EnumOptions(std::string_view name, std::vector<EnumOption<E>> options) : name_(name), options_(options)
-    {
-        currentOption_ = options_.cbegin();
-    }
-    EnumOptions(std::string_view name, std::vector<EnumOption<E>> options, E currentOption) : name_(name), options_(options)
-    {
-        currentOption_ = std::find_if(options_.cbegin(), options_.cend(),
-                                      [currentOption](const auto &optData) { return optData.enumeration() == currentOption; });
-    }
+    EnumOptions(std::string_view name, std::vector<EnumOption<E>> options) : name_(name), options_(options) {}
     EnumOptions(const EnumOptions<E> &source)
     {
         name_ = source.name_;
         options_ = source.options_;
-        currentOption_ = options_.cbegin() + (source.currentOption_ - source.options_.cbegin());
     }
     EnumOptions<E> &operator=(const EnumOptions<E> &source)
     {
         name_ = source.name_;
         options_ = source.options_;
-        currentOption_ = options_.cbegin() + (source.currentOption_ - source.options_.cbegin());
-
-        return *this;
-    }
-    EnumOptions<E> &operator=(E value)
-    {
-        currentOption_ =
-            std::find_if(options_.cbegin(), options_.cend(), [value](auto &option) { return option.enumeration() == value; });
-        if (currentOption_ == options_.end())
-            throw(std::runtime_error(fmt::format("Enumerated options '{}' missing enumeration {}.\n", name_, value)));
 
         return *this;
     }
@@ -57,8 +38,6 @@ template <class E> class EnumOptions : public EnumOptionsBase
     std::string name_;
     // Vector of valid options
     std::vector<EnumOption<E>> options_;
-    // Currently selected option (by index) in local options_ array
-    typename std::vector<EnumOption<E>>::const_iterator currentOption_;
 
     public:
     // Return name of options (e.g. from source enumeration)
@@ -71,29 +50,6 @@ template <class E> class EnumOptions : public EnumOptionsBase
     std::string keywordByIndex(int index) const override { return options_[index].keyword(); }
     // Return description for the nth keyword in the list
     std::string descriptionByIndex(int index) const override { return options_[index].description(); }
-    // Return current option keyword
-    std::string keyword() const { return currentOption_ == options_.cend() ? "UNDEFINED" : currentOption_->keyword(); }
-    // Set current option keyword
-    bool set(std::string_view keyword)
-    {
-        auto it = std::find_if(options_.cbegin(), options_.cend(),
-                               [keyword](auto &option) { return DissolveSys::sameString(keyword, option.keyword()); });
-        if (it == options_.cend())
-            return false;
-
-        currentOption_ = it;
-
-        return true;
-    }
-    // Return index of current option
-    int index() const override { return currentOption_ - options_.cbegin(); }
-    // Set current option from keyword
-    void setIndex(int index) override
-    {
-        assert(index >= 0 && index < options_.size());
-
-        currentOption_ = options_.cbegin() + index;
-    }
     // Return whether specified option keyword is valid
     bool isValid(std::string_view keyword) const
     {
@@ -125,13 +81,6 @@ template <class E> class EnumOptions : public EnumOptionsBase
             return it->enumeration();
 
         throw(std::runtime_error(fmt::format("Option '{}' is not recognised, so can't return its enumeration.\n", keyword)));
-    }
-    // Return current enumeration in E
-    E enumeration() const
-    {
-        assert(currentOption_ != options_.cend());
-
-        return currentOption_->enumeration();
     }
     // Return enumerated keyword
     std::string keyword(E enumeration) const

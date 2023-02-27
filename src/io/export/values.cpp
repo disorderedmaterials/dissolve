@@ -6,12 +6,11 @@
 #include "templates/optionalref.h"
 
 ValueExportFileFormat::ValueExportFileFormat(std::string_view filename, ValueExportFileFormat::ValueExportFormat format)
-    : FileAndFormat(formats_, filename)
+    : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<ValueExportFileFormat::ValueExportFormat>(
         "ValueExportFileFormat",
-        {{ValueExportFileFormat::ValueExportFormat::Simple, "values", "Number of values, followed by one value per line"}},
-        format);
+        {{ValueExportFileFormat::ValueExportFormat::Simple, "values", "Number of values, followed by one value per line"}});
 }
 
 /*
@@ -36,6 +35,10 @@ bool ValueExportFileFormat::exportSimple(LineParser &parser, const std::vector<d
 // Export values using current filename and format
 bool ValueExportFileFormat::exportData(const std::vector<double> &data, LineParser &currentParser, ProcessPool *procPool)
 {
+    // Check the format
+    if (!formatIndex_)
+        return Messenger::error("No format set for ValueExportFileFormat so can't export.\n");
+
     // If the filename is simply '@' then we write to the current parser - otherwise open a new file / parser
     auto writeToCurrent = filename_ == "@";
     LineParser fileParser(procPool);
@@ -46,13 +49,14 @@ bool ValueExportFileFormat::exportData(const std::vector<double> &data, LinePars
 
     // Export the data
     auto result = false;
-    switch (formats_.enumeration())
+    switch (formats_.enumerationByIndex(*formatIndex_))
     {
         case (ValueExportFormat::Simple):
             result = exportSimple(parser, data);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Value format '{}' export has not been implemented.\n", formats_.keyword())));
+            throw(std::runtime_error(
+                fmt::format("Value format '{}' export has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
     }
 
     return result;
