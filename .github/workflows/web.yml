@@ -36,5 +36,6 @@ jobs:
         SERVER_KEY: ${{ secrets.SERVER_KEY }}
         SERVER_USER: ${{ secrets.SERVER_USER }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
-        SERVER_DIR: ${{ secrets.SERVER_DIR }}
+        SERVER_DOCS_DIR: ${{ secrets.SERVER_DOCS_DIR }}
+        SERVER_MAIN_DIR: ${{ secrets.SERVER_MAIN_DIR }}
         SERVER_PORT: ${{ secrets.SERVER_PORT }}
