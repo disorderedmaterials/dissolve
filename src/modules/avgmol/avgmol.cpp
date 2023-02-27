@@ -5,7 +5,7 @@
 #include "keywords/configuration.h"
 #include "keywords/speciessite.h"
 
-AvgMolModule::AvgMolModule() : Module("CalculateAvgMol")
+AvgMolModule::AvgMolModule() : Module("AvgMol")
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

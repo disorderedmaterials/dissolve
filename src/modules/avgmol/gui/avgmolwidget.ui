@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>CalculateAvgMol Controls</string>
+   <string>AvgMol Controls</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">

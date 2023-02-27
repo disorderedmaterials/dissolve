@@ -20,7 +20,7 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/select.h"
 
-AxisAngleModule::AxisAngleModule() : Module("CalculateAxisAngle"), analyser_(ProcedureNode::AnalysisContext)
+AxisAngleModule::AxisAngleModule() : Module("AxisAngle"), analyser_(ProcedureNode::AnalysisContext)
 {
     try
     {

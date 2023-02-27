@@ -20,7 +20,7 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/select.h"
 
-DAngleModule::DAngleModule() : Module("CalculateDAngle"), analyser_(ProcedureNode::AnalysisContext)
+DAngleModule::DAngleModule() : Module("DAngle"), analyser_(ProcedureNode::AnalysisContext)
 {
     try
     {
