@@ -1,4 +1,4 @@
-name: benchmarks_ubuntu
+name: Benchmarks
 
 on:
   # Trigger the workflow on push to the develop branch
@@ -7,13 +7,13 @@ on:
       - develop
     paths-ignore:
       - 'README.md'
-      - 'docs/**'
       - 'examples/**'
       - 'scripts/*'
       - 'web/**'
       - 'tests/**'
       - 'unit/**'
-      - '.azure-pipelines/**'
+      - '.github/workflows/**'
+      - '!.github/workflows/benchmark.yml'
 
 env:
   BUILD_TYPE: Release
@@ -30,7 +30,7 @@ jobs:
         - name: Install Conan
           run: |
             sudo pip3 install wheel
-            sudo pip3 install conan
+            sudo pip3 install conan==1.58
         - name: Retrieve ANTLR4 Java
           run: |
             wget https://www.antlr.org/download/antlr-4.9.3-complete.jar -O antlr4.jar
