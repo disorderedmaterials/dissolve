@@ -1,4 +1,4 @@
-name: benchmarks_ubuntu
+name: Benchmarks
 
 on:
   # Trigger the workflow on push to the develop branch
