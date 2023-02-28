@@ -3,6 +3,8 @@
 
 #include "keywords/optionalint.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.h"
+#include "keywords/base.h"
 
 OptionalIntegerKeyword::OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue,
                                                int valueDelta, std::string_view textWhenNull)
@@ -55,21 +57,28 @@ std::string OptionalIntegerKeyword::textWhenNull() const { return textWhenNull_;
 // Deserialise from supplied LineParser, starting at given argument offset
 bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    if (parser.hasArg(startArg))
+    try
     {
-        auto x = parser.argd(startArg);
+        if (!parser.hasArg(startArg))
+            return false;
+
+        auto x = parser.argi(startArg);
         if (!setData(x))
         {
             if (maximumLimit_)
-                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", x, maximumLimit_.value());
-
-            return false;
+                return Messenger::error("Value {} is out of range for keyword '{}'. Valid range is {} <= n.\n", x, name(),
+                                        maximumLimit_.value());
         }
-
-        return true;
     }
-
-    return false;
+    catch (...)
+    {
+        // Check explicitly for null text
+        if (DissolveSys::sameString(parser.argsv(startArg), textWhenNull_))
+            setData(std::nullopt);
+        else
+            return Messenger::error("Input {} is invalid for keyword '{}'.\n", parser.argsv(startArg), name());
+    }
+    return true;
 }
 
 // Serialise data to specified LineParser
