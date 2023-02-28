@@ -66,10 +66,8 @@ bool OptionalIntegerKeyword::deserialise(LineParser &parser, int startArg, const
         if (!setData(x))
         {
             if (maximumLimit_)
-                Messenger::error("Value {} is out of range for keyword '{}'. Valid range is {} <= n.\n", x, name(),
-                                 maximumLimit_.value());
-
-            return false;
+                return Messenger::error("Value {} is out of range for keyword '{}'. Valid range is {} <= n.\n", x, name(),
+                                        maximumLimit_.value());
         }
     }
     catch (...)
