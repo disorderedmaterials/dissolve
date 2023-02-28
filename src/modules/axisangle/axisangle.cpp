@@ -22,79 +22,70 @@
 
 AxisAngleModule::AxisAngleModule() : Module("AxisAngle"), analyser_(ProcedureNode::AnalysisContext)
 {
-    try
-    {
-        // Select: Site 'A'
-        selectA_ = analyser_.createRootNode<SelectProcedureNode>("A", std::vector<const SpeciesSite *>{},
-                                                                 ProcedureNode::NodeContext::AnalysisContext, true);
-        auto &forEachA = selectA_->branch()->get();
+    // Select: Site 'A'
+    selectA_ = analyser_.createRootNode<SelectProcedureNode>("A", std::vector<const SpeciesSite *>{},
+                                                             ProcedureNode::NodeContext::AnalysisContext, true);
+    auto &forEachA = selectA_->branch()->get();
 
-        // -- Select: Site 'B'
-        selectB_ = forEachA.create<SelectProcedureNode>("B", std::vector<const SpeciesSite *>{},
-                                                        ProcedureNode::NodeContext::AnalysisContext, true);
-        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-        auto &forEachB = selectB_->branch()->get();
+    // -- Select: Site 'B'
+    selectB_ = forEachA.create<SelectProcedureNode>("B", std::vector<const SpeciesSite *>{},
+                                                    ProcedureNode::NodeContext::AnalysisContext, true);
+    selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
+    auto &forEachB = selectB_->branch()->get();
 
-        // -- -- Calculate: 'rAB'
-        auto calcDistance = forEachB.create<CalculateDistanceProcedureNode>({}, selectA_, selectB_);
+    // -- -- Calculate: 'rAB'
+    auto calcDistance = forEachB.create<CalculateDistanceProcedureNode>({}, selectA_, selectB_);
 
-        // -- -- Calculate: 'axisAngle'
-        calculateAxisAngle_ =
-            forEachB.create<CalculateAxisAngleProcedureNode>({}, selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
-        calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
+    // -- -- Calculate: 'axisAngle'
+    calculateAxisAngle_ =
+        forEachB.create<CalculateAxisAngleProcedureNode>({}, selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
+    calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
 
-        // -- -- Collect2D:  'rAB vs axisAngle)'
-        collectDAngle_ = forEachB.create<Collect2DProcedureNode>(
-            {}, calcDistance, calculateAxisAngle_, ProcedureNode::AnalysisContext, distanceRange_.x, distanceRange_.y,
-            distanceRange_.z, angleRange_.x, angleRange_.y, angleRange_.z);
-        auto &subCollection = collectDAngle_->branch()->get();
+    // -- -- Collect2D:  'rAB vs axisAngle)'
+    collectDAngle_ = forEachB.create<Collect2DProcedureNode>({}, calcDistance, calculateAxisAngle_,
+                                                             ProcedureNode::AnalysisContext, distanceRange_.x, distanceRange_.y,
+                                                             distanceRange_.z, angleRange_.x, angleRange_.y, angleRange_.z);
+    auto &subCollection = collectDAngle_->branch()->get();
 
-        // -- -- -- Collect1D:  'RDF(AB)'
-        collectDistance_ = subCollection.create<Collect1DProcedureNode>({}, calcDistance, ProcedureNode::AnalysisContext,
-                                                                        distanceRange_.x, distanceRange_.y, distanceRange_.z);
+    // -- -- -- Collect1D:  'RDF(AB)'
+    collectDistance_ = subCollection.create<Collect1DProcedureNode>({}, calcDistance, ProcedureNode::AnalysisContext,
+                                                                    distanceRange_.x, distanceRange_.y, distanceRange_.z);
 
-        // -- -- -- Collect1D:  'ANGLE(axis-axis)'
-        collectAngle_ = subCollection.create<Collect1DProcedureNode>({}, calculateAxisAngle_, ProcedureNode::AnalysisContext,
-                                                                     angleRange_.x, angleRange_.y, angleRange_.z);
+    // -- -- -- Collect1D:  'ANGLE(axis-axis)'
+    collectAngle_ = subCollection.create<Collect1DProcedureNode>({}, calculateAxisAngle_, ProcedureNode::AnalysisContext,
+                                                                 angleRange_.x, angleRange_.y, angleRange_.z);
 
-        // Process1D: 'RDF(AB)'
-        processDistance_ =
-            analyser_.createRootNode<Process1DProcedureNode>("RDF(AB)", collectDistance_, ProcedureNode::OperateContext);
-        processDistance_->keywords().set("LabelValue", std::string("g(r)"));
-        processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
+    // Process1D: 'RDF(AB)'
+    processDistance_ =
+        analyser_.createRootNode<Process1DProcedureNode>("RDF(AB)", collectDistance_, ProcedureNode::OperateContext);
+    processDistance_->keywords().set("LabelValue", std::string("g(r)"));
+    processDistance_->keywords().set("LabelX", std::string("r, \\symbol{Angstrom}"));
 
-        auto &rdfNormalisation = processDistance_->branch()->get();
-        rdfNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({},
-                                                                             ConstNodeVector<SelectProcedureNode>{selectA_});
-        rdfNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>{selectB_});
-        rdfNormalisation.create<OperateSphericalShellNormaliseProcedureNode>({});
+    auto &rdfNormalisation = processDistance_->branch()->get();
+    rdfNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>{selectA_});
+    rdfNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>{selectB_});
+    rdfNormalisation.create<OperateSphericalShellNormaliseProcedureNode>({});
 
-        // Process1D: 'ANGLE(axis)'
-        processAngle_ = analyser_.createRootNode<Process1DProcedureNode>("AxisAngle(AB)", collectAngle_);
-        processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
-        processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
-        auto &angleNormalisation = processAngle_->branch()->get();
-        angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(x)");
-        angleNormalisation.create<OperateNormaliseProcedureNode>({}, 1.0);
+    // Process1D: 'ANGLE(axis)'
+    processAngle_ = analyser_.createRootNode<Process1DProcedureNode>("AxisAngle(AB)", collectAngle_);
+    processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
+    processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
+    auto &angleNormalisation = processAngle_->branch()->get();
+    angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(x)");
+    angleNormalisation.create<OperateNormaliseProcedureNode>({}, 1.0);
 
-        // Process2D: 'DAngle'
-        processDAngle_ = analyser_.createRootNode<Process2DProcedureNode>("DAxisAngle", collectDAngle_);
-        processDAngle_->keywords().set("LabelX", std::string("\\it{r}, \\symbol{Angstrom}"));
-        processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
-        processDAngle_->keywords().set("LabelValue", std::string("g(r)"));
-        auto &dAngleNormalisation = processDAngle_->branch()->get();
-        dAngleNormalisationExpression_ = dAngleNormalisation.create<OperateExpressionProcedureNode>(
-            {}, fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
-        dAngleNormalisation.create<OperateSitePopulationNormaliseProcedureNode>(
-            {}, ConstNodeVector<SelectProcedureNode>({selectA_}));
-        dAngleNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({},
-                                                                               ConstNodeVector<SelectProcedureNode>{selectB_});
-        dAngleNormalisation.create<OperateSphericalShellNormaliseProcedureNode>({});
-    }
-    catch (...)
-    {
-        Messenger::error("Failed to create analysis procedure for module '{}'\n", name_);
-    }
+    // Process2D: 'DAngle'
+    processDAngle_ = analyser_.createRootNode<Process2DProcedureNode>("DAxisAngle", collectDAngle_);
+    processDAngle_->keywords().set("LabelX", std::string("\\it{r}, \\symbol{Angstrom}"));
+    processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
+    processDAngle_->keywords().set("LabelValue", std::string("g(r)"));
+    auto &dAngleNormalisation = processDAngle_->branch()->get();
+    dAngleNormalisationExpression_ = dAngleNormalisation.create<OperateExpressionProcedureNode>(
+        {}, fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
+    dAngleNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({},
+                                                                            ConstNodeVector<SelectProcedureNode>({selectA_}));
+    dAngleNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>{selectB_});
+    dAngleNormalisation.create<OperateSphericalShellNormaliseProcedureNode>({});
 
     /*
      * Keywords
