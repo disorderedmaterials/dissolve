@@ -48,9 +48,9 @@ then
   CURRENT_VERSION=$(grep '#define DISSOLVEVERSION' src/main/version.cpp | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g')
 elif [ "$TYPE" == "release" ]
 then
-  CURRENT_VERSION=$(grep 'releaseVersion' web/config.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
+  CURRENT_VERSION=$(grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
 else
-  CURRENT_VERSION=$(grep 'devVersion' web/config.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g')
+  CURRENT_VERSION=$(grep 'devVersion' web/main.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g')
 fi
 PARTS=($(echo $CURRENT_VERSION | tr "." " "))
 MAJOR=${PARTS[0]}
@@ -152,30 +152,30 @@ fi
 
 if [ "$TYPE" = "release" ]
 then
-  # Documentation (config.toml)
+  # Website (web/main.toml)
   if [ "$CHECK" = "false" ]
   then
-    sed -i -e "s/releaseVersion = \"[0-9\.]*\"/releaseVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/config.toml
+    sed -i -e "s/releaseVersion = \"[0-9\.]*\"/releaseVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/main.toml
 
     DAYSUFFIX=$(DaySuffix)
     TODAY=$(date "+%-d${DAYSUFFIX} %B %Y")
-    sed -i -e "s/releaseDate = \".*\"/releaseDate = \"${TODAY}\"/g" web/config.toml
+    sed -i -e "s/releaseDate = \".*\"/releaseDate = \"${TODAY}\"/g" web/main.toml
   fi
-  echo -n "         config.toml (Release Version) : "
-  grep 'releaseVersion' web/config.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g'
-  echo -n "         config.toml    (Release Date) : "
-  grep 'releaseDate' web/config.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g'
+  echo -n "           main.toml (Release Version) : "
+  grep 'releaseVersion' web/main.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g'
+  echo -n "           main.toml    (Release Date) : "
+  grep 'releaseDate' web/main.toml | sed -e 's/releaseDate = "\(.*\)"/\1/g'
 fi
 
 if [ "$TYPE" = "develop" ]
 then
-  # Documentation (config.toml)
+  # Website (web/main.toml)
   if [ "$CHECK" = "false" ]
   then
-    sed -i -e "s/devVersion = \"[0-9\.]*\"/devVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/config.toml
+    sed -i -e "s/devVersion = \"[0-9\.]*\"/devVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/main.toml
   fi
-  echo -n "         config.toml (Develop Version) : "
-  grep 'devVersion' web/config.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g'
+  echo -n "           main.toml (Develop Version) : "
+  grep 'devVersion' web/main.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g'
 fi
 
 
