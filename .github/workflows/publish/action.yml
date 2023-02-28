@@ -30,6 +30,13 @@ runs:
       wget https://raw.githubusercontent.com/disorderedmaterials/scripts/master/update-release
       chmod u+x ./update-release
 
+  - name: Package Examples
+    shell: bash
+    run: |
+      set -ex
+      cd ./examples
+      ./package-examples -v ${{ env.dissolveVersion }}
+
   - name: Publish on GitHub (Release)
     if: ${{ inputs.publish == 'true' && inputs.isRelease == 'true' }}
     shell: bash
@@ -37,7 +44,7 @@ runs:
       echo "Release tag will be: ${{ env.dissolveVersion }}"
       echo "Release name will be: ${{ env.dissolveVersion }}"
       export GITHUB_TOKEN=${{ github.token }}
-      ./update-release -r disorderedmaterials/dissolve -t ${{ env.dissolveVersion }} -n "${{ env.dissolveVersion }}" -f ReleaseNotes.md packages/*
+      ./update-release -r disorderedmaterials/dissolve -t ${{ env.dissolveVersion }} -n "${{ env.dissolveVersion }}" -f ReleaseNotes.md packages/* examples/*.zip examples/*.tar.gz
 
   - name: Publish on GitHub (Continuous)
     if: ${{ inputs.publish == 'true' && inputs.isRelease == 'false' }}
