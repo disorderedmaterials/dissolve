@@ -1,0 +1,103 @@
+name: Update Release Info
+description: List releases and update website info
+
+inputs:
+  repository:
+    type: string
+    default: disorderedmaterials/dissolve
+  oldReleasesFile:
+    type: string
+    default: web/static/include/old_releases.md
+  createPR:
+    type: boolean
+    default: true
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Get Release Information
+    shell: bash
+    run: |
+      # Set up vars
+      echo "Repository is ${{ inputs.repository }}"
+      REPO_URL="https://api.github.com/repos/${{ inputs.repository }}"
+      echo "API URL is ${REPO_URL}"
+
+      # Check if we are actually on a release branch
+      ON_RELEASE=$(git branch --show-current | sed "s/releases\?\/\([0-9].[0-9].[0-9]\)/\1/g")
+      if [ "x${ON_RELEASE}" = "x" ]
+      then
+        echo "On a branch that doesn't appear to be a release ($(git branch --show-current)). Exiting now."
+        exit 1
+      fi
+
+      # Get available releases information
+      RELEASES=""
+      for i in `seq 1 3`
+      do
+        # Download release information - we may be refused data because another job is currently accessing the repo, so try a few times
+        RELEASES=$(curl --silent --show-error -XGET --header "Authorization: token ${{ github.token }}" ${REPO_URL}/releases)
+
+        # Check for error or no data
+        if [[ ${RELEASES} =~ "documentation_url" ]]
+        then
+          MESSAGE=$(echo ${RELEASES} | jq ". | .message")
+          echo "Error returned: "${MESSAGE}
+          exit 1
+        elif (( ${#RELEASES} < 10 ))
+        then
+          echo "... Empty information returned - waiting 60 seconds and trying again..."
+          sleep 60
+        else
+          break
+        fi
+      done
+
+      # Filter releases so we only have release versions (tagged as release[s]/X.Y.Z)
+      echo "Obtaining release information..."
+      for tag in $(echo ${RELEASES} | jq -r ".[] | select(.tag_name | match(\"[0-9].[0-9].[0-9]\")) | .tag_name")
+      do
+        echo "Processing ${tag}..."
+
+        # Get full release info
+        RELEASE=$(echo ${RELEASES} | jq ".[] | select(.tag_name | match(\"${tag}\"))")
+        URL=$(echo ${RELEASE} | jq -r ". | .html_url")
+        PUBLISHED=$(date --date=$(echo ${RELEASE} | jq -r ". | .published_at") +"%-d %B %Y")
+        echo " -- published at ${PUBLISHED}"
+        echo " -- $URL"
+        echo "- [Version ${tag}, released ${PUBLISHED}]($URL)" >> ${{ inputs.oldReleasesFile }}.new
+      done
+
+      echo ""
+      cat ${{ inputs.oldReleasesFile }}.new
+      echo ""
+
+  - name: Update Release Information
+    shell: bash
+    run: |
+      # Set release version to ours
+      ./changeversion release -s ${{ env.dissolveVersion }}
+
+      # Copy the old releases data, excluding the most recent (HIGHEST)
+      grep -v "Version ${{ env.dissolveVersion }}" ${{ inputs.oldReleasesFile }}.new > ${{ inputs.oldReleasesFile }}
+
+      cat ${{ inputs.oldReleasesFile }}
+
+      # Clean-up
+      rm ${{ inputs.oldReleasesFile }}.new
+
+  - name: Create Update PR
+    if: ${{ inputs.createPR == 'true' }}
+    uses: peter-evans/create-pull-request@v4
+    with:
+      base: develop
+      add-paths: |
+        ${{ inputs.oldReleasesFile }}
+        README.md
+        web/main.toml
+      commit-message: Update release version info.
+      delete-branch: true
+      branch: automation/update-current-release-to-${{ env.dissolveVersion }}
+      title: Update website release info (v${{ env.dissolveVersion }})
+      reviewers: trisyoungs
