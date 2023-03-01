@@ -2,7 +2,8 @@
 
 _Last Release: 0.9.14, Tuesday 21st February 2023_
 
-_Development Build::_ [![Build Status](https://dev.azure.com/DisorderedMaterials/Dissolve/_apis/build/status/Continuous%20Build?branchName=develop)](https://dev.azure.com/DisorderedMaterials/Dissolve/_build/latest?definitionId=9&branchName=develop)
+_Release Build::_ [![Release Build Status](https://github.com/disorderedmaterials/dissolve/actions/workflows/release.yml/badge.svg)](https://github.com/disorderedmaterials/dissolve/actions/workflows/release.yml)
+_Development Build::_ [![Development Build Status](https://github.com/disorderedmaterials/dissolve/actions/workflows/continuous.yml/badge.svg)](https://github.com/disorderedmaterials/dissolve/actions/workflows/continuous.yml)
 
 ## Overview
 
