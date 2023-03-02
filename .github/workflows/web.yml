@@ -11,6 +11,7 @@ on:
   push:
     branches:
     - 'develop'
+    - 'release/**'
     paths:
     - '.github/workflows/web**'
     - 'web/**'
