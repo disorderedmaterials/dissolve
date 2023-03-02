@@ -1,7 +1,7 @@
 name: Release
 
 on:
-  pull_request:
+  push:
     branches:
     - 'release/*'
     paths-ignore:
@@ -86,6 +86,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Acquire Code Version
         uses: "./.github/workflows/get-version"
       - name: Set Short Hash
@@ -98,3 +100,5 @@ jobs:
         env:
           HARBOR_USER: ${{ secrets.HARBOR_USER }}
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
+      - name: Update Version Information
+        uses: "./.github/workflows/update-release-info"
