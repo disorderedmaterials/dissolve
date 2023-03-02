@@ -96,21 +96,21 @@ runs:
         cd ../../
       done
 
-  - name: 'SSH Deploy to Server (Release)'
+  - name: 'SSH Deploy to Server (Release) (Docs only)'
     if: ${{ inputs.deploy == 'true' && inputs.continuous == 'false' }}
     shell: bash
     run: |
       echo "${SERVER_ID}" > ./serverId
       echo "${SERVER_KEY}" > ./serverKey
       chmod 0600 ./serverKey ./serverId
-      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
 
-  - name: 'SSH Deploy to Server (Continuous, docs only)'
+  - name: 'SSH Deploy to Server (Continuous)'
     if: ${{ inputs.deploy == 'true' && inputs.continuous == 'true' }}
     shell: bash
     run: |
       echo "${SERVER_ID}" > ./serverId
       echo "${SERVER_KEY}" > ./serverKey
       chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/continuous
