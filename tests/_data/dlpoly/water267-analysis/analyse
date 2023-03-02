@@ -12,3 +12,9 @@ gawk ' { sum += $2 } END {print sum}' water-267-298K.dahist1_02_1_01_02.angle.no
 
 # SDFs 
 pdens water-267-298K.HISu water-267-298K.OUT 1 1 -axis 1 1 3 2 2
+
+# Intramolecular geometry
+intradist water-267-298K.HISu water-267-298K.OUT 1 1 2
+intradist water-267-298K.HISu water-267-298K.OUT 1 2 3
+intradist water-267-298K.HISu water-267-298K.OUT 1 1 3
+intraangle water-267-298K.HISu water-267-298K.OUT 1 1 2 3
