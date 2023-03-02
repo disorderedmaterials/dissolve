@@ -59,10 +59,10 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                 break;
             case (LayerBlock::ModuleKeyword):
                 // The argument following the keyword is the module type, so try to create an instance of that type
-                try
+                moduleType = std::string(parser.argsv(1));
+
+                // In case a legacy module name is given, attempt to map the provided moduleType to the current namespace.
                 {
-                    // In case a legacy module name is given, attempt to map the provided moduleType to the current namespace.
-                    moduleType = std::string(parser.argsv(1));
                     const std::map<std::string, std::string> legacyNameMap = {{"CalculateAngle", "Angle"},
                                                                               {"CalculateAvgMol", "AvgMol"},
                                                                               {"CalculateAxisAngle", "AxisAngle"},
@@ -70,16 +70,18 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                                                                               {"CalculateRDF", "SiteRDF"},
                                                                               {"CalculateSDF", "SDF"},
                                                                               {"RDF", "GR"}};
+
                     auto legacyIt = legacyNameMap.find(moduleType);
                     if (legacyIt != legacyNameMap.end())
                     {
                         moduleType = legacyIt->second;
                         Messenger::warn("Legacy module name '{}' converted to '{}'...\n", legacyIt->first, moduleType);
                     }
-
-                    module = ModuleRegistry::create(moduleType, layer);
                 }
-                catch (...)
+
+                module = ModuleRegistry::create(moduleType, layer);
+
+                if (!module)
                 {
                     Messenger::error("Module type '{}' does not exist.\n", moduleType);
                     error = true;

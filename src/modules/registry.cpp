@@ -82,8 +82,7 @@ Module *ModuleRegistry::produce(std::string moduleType) const
 {
     auto it = producers_.find(moduleType);
     if (it == producers_.end())
-        throw(std::runtime_error(fmt::format(
-            "A producer has not been registered for module type '{}', so a new instance cannot be created.\n", moduleType)));
+        return {};
 
     return (it->second.first)();
 }
@@ -120,8 +119,10 @@ const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &Module
 std::unique_ptr<Module> ModuleRegistry::create(std::string_view moduleType)
 {
     auto m = std::unique_ptr<Module>(instance().produce(std::string(moduleType)));
-    m->setName(DissolveSys::uniqueName(m->type(), Module::instances(),
-                                       [&](const auto &inst) { return inst == m.get() ? std::string() : inst->name(); }));
+
+    if (m)
+        m->setName(DissolveSys::uniqueName(m->type(), Module::instances(),
+                                           [&](const auto &inst) { return inst == m.get() ? std::string() : inst->name(); }));
     return m;
 }
 

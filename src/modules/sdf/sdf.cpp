@@ -16,42 +16,34 @@
 
 SDFModule::SDFModule() : Module("SDF"), analyser_(ProcedureNode::AnalysisContext)
 {
-    try
-    {
-        // Select: Site 'A'
-        selectA_ = analyser_.createRootNode<SelectProcedureNode>("A", std::vector<const SpeciesSite *>{},
-                                                                 ProcedureNode::AnalysisContext, true);
-        auto &forEachA = selectA_->branch()->get();
+    // Select: Site 'A'
+    selectA_ = analyser_.createRootNode<SelectProcedureNode>("A", std::vector<const SpeciesSite *>{},
+                                                             ProcedureNode::AnalysisContext, true);
+    auto &forEachA = selectA_->branch()->get();
 
-        // -- Select: Site 'B'
-        selectB_ = forEachA.create<SelectProcedureNode>("B");
-        selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
-        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-        auto &forEachB = selectB_->branch()->get();
+    // -- Select: Site 'B'
+    selectB_ = forEachA.create<SelectProcedureNode>("B");
+    selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
+    selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
+    auto &forEachB = selectB_->branch()->get();
 
-        // -- -- Calculate: 'v(B->A)'
-        auto calcVector = forEachB.create<CalculateVectorProcedureNode>({}, selectA_, selectB_, true);
+    // -- -- Calculate: 'v(B->A)'
+    auto calcVector = forEachB.create<CalculateVectorProcedureNode>({}, selectA_, selectB_, true);
 
-        // -- -- Collect3D: 'SDF'
-        collectVector_ = forEachB.create<Collect3DProcedureNode>({}, calcVector, ProcedureNode::AnalysisContext, rangeX_.x,
-                                                                 rangeX_.y, rangeX_.z, rangeY_.x, rangeY_.y, rangeY_.z,
-                                                                 rangeZ_.x, rangeZ_.y, rangeZ_.z);
+    // -- -- Collect3D: 'SDF'
+    collectVector_ =
+        forEachB.create<Collect3DProcedureNode>({}, calcVector, ProcedureNode::AnalysisContext, rangeX_.x, rangeX_.y, rangeX_.z,
+                                                rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
 
-        // Process3D: @dataName
-        processPosition_ = analyser_.createRootNode<Process3DProcedureNode>("SDF", collectVector_);
-        processPosition_->keywords().set("LabelValue", std::string("\\symbol{rho}(x,y,z)"));
-        processPosition_->keywords().set("LabelX", std::string("x, \\symbol{Angstrom}"));
-        processPosition_->keywords().set("LabelY", std::string("y, \\symbol{Angstrom}"));
-        processPosition_->keywords().set("LabelZ", std::string("z, \\symbol{Angstrom}"));
-        auto &sdfNormalisation = processPosition_->branch()->get();
-        sdfNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({},
-                                                                             ConstNodeVector<SelectProcedureNode>({selectA_}));
-        sdfNormalisation.create<OperateGridNormaliseProcedureNode>({});
-    }
-    catch (...)
-    {
-        Messenger::error("Failed to create analysis procedure for module '{}'\n", name_);
-    }
+    // Process3D: @dataName
+    processPosition_ = analyser_.createRootNode<Process3DProcedureNode>("SDF", collectVector_);
+    processPosition_->keywords().set("LabelValue", std::string("\\symbol{rho}(x,y,z)"));
+    processPosition_->keywords().set("LabelX", std::string("x, \\symbol{Angstrom}"));
+    processPosition_->keywords().set("LabelY", std::string("y, \\symbol{Angstrom}"));
+    processPosition_->keywords().set("LabelZ", std::string("z, \\symbol{Angstrom}"));
+    auto &sdfNormalisation = processPosition_->branch()->get();
+    sdfNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>({selectA_}));
+    sdfNormalisation.create<OperateGridNormaliseProcedureNode>({});
 
     /*
      * Keywords
