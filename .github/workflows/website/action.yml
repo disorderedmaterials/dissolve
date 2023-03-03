@@ -37,6 +37,8 @@ runs:
       head -n 10 web/docs/_index.md
       sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/dev/"|g' web/docs.toml
       grep baseURL web/docs.toml
+      sed -i "s/navbar-background-color/navbar-background-color-dev/g" web/assets/scss/_content.scss
+      grep navbar-background-color web/assets/scss/_content.scss
 
   - name: 'Apply Legacy Release Styling'
     if: ${{ inputs.isLegacy == 'true' }}
@@ -47,6 +49,8 @@ runs:
       head -n 10 web/docs/_index.md
       sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/legacy/"|g' web/docs.toml
       grep baseURL web/docs.toml
+      sed -i "s/navbar-background-color/navbar-background-color-legacy/g" web/assets/scss/_content.scss
+      grep navbar-background-color web/assets/scss/_content.scss
 
   - name: 'Download & Install Hugo (Extended Version)'
     shell: bash
