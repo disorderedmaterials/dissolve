@@ -4,7 +4,7 @@ weight: 2
 type: docs
 ---
 
-Here you can find various usage examples, tutorials, and step-by-step walkthroughs for the current release of Dissolve (the latest version being {{< releaseversion >}}). Examples for earlier versions can be [found here](previous/0.8/).
+Here you can find various usage examples, tutorials, and step-by-step walkthroughs for Dissolve.
 
 ### Instructions
 
