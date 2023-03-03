@@ -24,20 +24,29 @@ runs:
   using: "composite"
   steps:
 
-  - name: 'Set MAJOR Version'
+  - name: 'Set Version'
     shell: bash
-    run: |
-      cd web/docs
-      sed -i "s/MAJOR.X/${{ env.dissolveMajorVersion }}.X/g" _index.md
-      grep ".X" _index.md
+    run: sed -i "s/MAJOR.MINOR/${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g" web/docs.toml
 
-  - name: 'Set Base URL'
-    if: ${{ inputs.continuous == 'true' }}
+  - name: 'Apply Development Release Styling'
+    if: ${{ inputs.isDevelopment == 'true' }}
     shell: bash
     run: |
-      cd web
-      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/continuous/"|g' docs.toml
-      grep baseURL docs.toml
+      sed -i 's/vMAJOR.MINOR/Development v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i 's/documentationinfo target=".*"/documentationinfo target="development"/g' web/docs/_index.md
+      head -n 10 web/docs/_index.md
+      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/dev/"|g' web/docs.toml
+      grep baseURL web/docs.toml
+
+  - name: 'Apply Legacy Release Styling'
+    if: ${{ inputs.isLegacy == 'true' }}
+    shell: bash
+    run: |
+      sed -i 's/vMAJOR.MINOR/Legacy v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i 's/documentationinfo target=".*"/documentationinfo target="legacy"/g' web/docs/_index.md
+      head -n 10 web/docs/_index.md
+      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/legacy/"|g' web/docs.toml
+      grep baseURL web/docs.toml
 
   - name: 'Download & Install Hugo (Extended Version)'
     shell: bash
