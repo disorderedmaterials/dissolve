@@ -4,8 +4,6 @@ description: Build and publish website
 inputs:
   hugoVersion:
     default: "0.98.0"
-  webDirRoot:
-    default: "github.com/disorderedmaterials/dissolve/edit/develop/web"
   continuous:
     type: boolean
     default: false
@@ -73,14 +71,6 @@ runs:
       npm install
       hugo --contentDir main/ --config main.toml --destination public
       hugo --contentDir docs/ --config docs.toml --destination public-docs
-
-  - name: 'Rewrite Edit Links'
-    shell: bash
-    run: |
-      set -ex
-      # Remove language ('en') from 'Edit on GitHub' path links
-      find web/public-docs/userguide/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/docs/en/userguide/:${{ inputs.webDirRoot }}/docs/userguide/:g" {} +
-      find web/public-docs/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/docs/en/examples/:${{ inputs.webDirRoot }}/docs/examples/:g" {} +
 
   - name: 'Create PDFs'
     if: ${{ inputs.pdfExamples == 'true' }}
