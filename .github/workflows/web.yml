@@ -28,7 +28,9 @@ jobs:
     - name: Build Website
       uses: "./.github/workflows/website"
       with:
-        continuous: ${{ github.ref_name == 'develop' }}
+        isDevelopment: ${{ github.ref_name == 'develop' }}
+        isRelease: ${{ startsWith(github.ref_name, 'release') }}
+        isLegacy: false
         deploy: ${{ github.ref_name == 'develop' || (startsWith(github.ref_name, 'release') && ! endsWith(github.ref_name, 'pre')) }}
       env:
         HARBOR_USER: ${{ secrets.HARBOR_USER }}

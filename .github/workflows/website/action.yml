@@ -4,7 +4,13 @@ description: Build and publish website
 inputs:
   hugoVersion:
     default: "0.98.0"
-  continuous:
+  isRelease:
+    type: boolean
+    default: false
+  isDevelopment:
+    type: boolean
+    default: false
+  isLegacy:
     type: boolean
     default: false
   deploy:
@@ -87,20 +93,29 @@ runs:
       done
 
   - name: 'SSH Deploy to Server (Release) (Docs only)'
-    if: ${{ inputs.deploy == 'true' && inputs.continuous == 'false' }}
+    if: ${{ inputs.deploy == 'true' && inputs.isRelease == 'true' && inputs.isLegacy == 'false' }}
     shell: bash
     run: |
       echo "${SERVER_ID}" > ./serverId
       echo "${SERVER_KEY}" > ./serverKey
       chmod 0600 ./serverKey ./serverId
-      rsync -avz --delete --exclude=continuous --exclude=previous -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
+      rsync -avz --delete --exclude=dev --exclude=legacy -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
 
-  - name: 'SSH Deploy to Server (Continuous)'
-    if: ${{ inputs.deploy == 'true' && inputs.continuous == 'true' }}
+  - name: 'SSH Deploy to Server (Legacy) (Docs only)'
+    if: ${{ inputs.deploy == 'true' && inputs.isLegacy == 'true' }}
+    shell: bash
+    run: |
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
+      chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/legacy
+
+  - name: 'SSH Deploy to Server (Development)'
+    if: ${{ inputs.deploy == 'true' && inputs.isDevelopment == 'true' }}
     shell: bash
     run: |
       echo "${SERVER_ID}" > ./serverId
       echo "${SERVER_KEY}" > ./serverKey
       chmod 0600 ./serverKey ./serverId
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
-      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/continuous
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/dev
