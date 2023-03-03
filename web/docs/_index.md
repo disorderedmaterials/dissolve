@@ -17,7 +17,7 @@ Here you can find the user guide and examples for the current release series of 
 - V. Ionica (February 2022 - May 2022)
 - S. Smith (March 2021 - June 2021)
 - E. Devlin (August 2021), C. Green (August 2020 - August 2021), Simona (September 2019 - August 2020), J. Busch (October 2019 - December 2019)
-- Contributions, testing, and guidance from D. T. Bowron, T. F. Headen, S. G&auml;rtner, T.-L. Hughes, and O. Alderman.
+- Contributions, testing, and guidance from Dr D. T. Bowron, Dr T. F. Headen, Dr S. G&auml;rtner, Dr T.-L. Hughes, and Dr O. Alderman.
 
 ## Overview
 
