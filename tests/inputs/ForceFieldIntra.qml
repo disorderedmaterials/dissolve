@@ -13,18 +13,21 @@ Item {
 	anchors.right: parent.right;
 
 	ColumnLayout {
-	    RadioButton {
-		text: "Apply intramolecular terms to the whole species. Existing Data will be overriden"
+	    ImageRadio {
+		text: "Apply intramolecular terms to the whole species.\nExisting Data will be overriden"
+		source: "qrc:/wizard/icons/wizard_allatoms.svg";
 		checked: true
 		onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.All;
 	    }
-	    RadioButton {
-		text: "Apply intramolecular terms between selected atoms.  Existing Data will be overriden"
+	    ImageRadio {
+		text: "Apply intramolecular terms between selected atoms.\nExisting Data will be overriden"
+		source: "qrc:/wizard/icons/wizard_selectedatoms.svg";
 		enabled: dialogModel.speciesHasSelection;
 		onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.Selected;
 	    }
-	    RadioButton {
-		text: "Do not apply intramolecular terms.  Existing data will remain unchanged"
+	    ImageRadio {
+		text: "Do not apply intramolecular terms.\nExisting data will remain unchanged"
+		source: "qrc:/general/icons/general_cross.svg";
 		onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.None;
 	    }
 	}
