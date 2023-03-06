@@ -8,7 +8,7 @@ Rectangle {
     id: root;
     visible: true;
     anchors.fill: parent;
-    color: "#EEEEEE";
+    color: palette.active.window;
 
     AddForcefieldDialogModel {
 	id: dialogModel;
