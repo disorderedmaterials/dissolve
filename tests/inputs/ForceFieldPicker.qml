@@ -32,7 +32,7 @@ Item {
 	    width: parent.width;
 	    anchors.top: ffFilter.bottom;
 	    anchors.bottom: parent.bottom;
-	    color: "white";
+	    color: palette.active.base;
 	    PrettyListView {
 		id: ffList;
 		anchors.fill: parent;
@@ -50,7 +50,7 @@ Item {
 	anchors.bottom: parent.bottom;
 	Rectangle {
 	    anchors.fill:parent;
-	    color: "white";
+	    color: palette.active.base;
 	    TextArea {
 		readOnly: true;
 		anchors.fill: parent;

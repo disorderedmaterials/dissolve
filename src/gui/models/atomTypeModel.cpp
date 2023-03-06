@@ -217,7 +217,7 @@ QHash<int, QByteArray> AtomTypeModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole] = "raw";
-    roles[Qt::UserRole + 1] = "description";
+    roles[Qt::UserRole + 1] = "display";
     return roles;
 }
 

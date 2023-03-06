@@ -26,7 +26,7 @@ QVariant ForcefieldModel::data(const QModelIndex &index, int role) const {
 
 QHash<int, QByteArray> ForcefieldModel::roleNames() const {
     QHash<int, QByteArray> roles;
-    roles[NameRole] = "name";
+    roles[NameRole] = "display";
     roles[DescRole] = "description";
     roles[RawRole] = "raw";
     return roles;

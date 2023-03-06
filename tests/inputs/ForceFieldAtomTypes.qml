@@ -5,22 +5,17 @@ import QtQuick.Layouts
 Item {
     property variant dialogModel;
     property variant fullData: atList.currentItem.fullData.raw;
-    ListView {
-	id: atList;
+    Rectangle {
 	anchors.top: parent.top;
 	anchors.left: parent.left;
 	anchors.right: prefixButton.left;
 	anchors.bottom: overwrite.top;
 	height: 400;
-	model: dialogModel.atomTypes;
-	delegate: Text {
-	    property variant fullData: model;
-	    text: description;
-	    color: ListView.isCurrentItem ? "red" : "black";
-	    MouseArea {
-		anchors.fill: parent;
-		onClicked: atList.currentIndex = index;
-	    }
+	color: palette.active.base;
+	PrettyListView {
+	    id: atList;
+	    anchors.fill: parent;
+	    model: dialogModel.atomTypes;
 	}
     }
     Button {
@@ -75,4 +70,5 @@ Item {
 	anchors.left: parent.left;
 	text: "Overwrite Parameters in existing atom types";
     }
+    Component.onCompleted: atList.forceActiveFocus();
 }

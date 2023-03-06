@@ -11,7 +11,7 @@ ListView {
     delegate:
     Text {
 	property variant fullData: model;
-	text: name;
+	text: display;
 	color: ListView.isCurrentItem ? palette.active.base : palette.active.text;
 	MouseArea {
 	    height: parent.height;
