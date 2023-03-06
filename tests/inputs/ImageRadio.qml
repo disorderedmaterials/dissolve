@@ -10,7 +10,7 @@ RadioButton {
 	Rectangle {
 	    id: padding;
 	    anchors.left: parent.left;
-	    width: control.indicator.width;
+	    width: 2 * control.spacing;
 	}
 	Image {
 	    id: icon
