@@ -7,50 +7,31 @@ import Dissolve
 GroupBox {
     property variant dialogModel;
     title: "Which atom types do you want to assign to this forcefield?"
+    clip: true;
 
-    Grid {
-	columns: 2
-	Image {
+    ColumnLayout {
+	spacing: 5;
+	ImageRadio {
+	    onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.All;
 	    source: "qrc:/wizard/icons/wizard_allatoms.svg";
-	    fillMode: Image.PreserveAspectFit;
-	    height: allButton.height;
-	}
-	RadioButton {
-	    id: allButton;
 	    text: "Determine atom types for all atoms\nOverwrite any assigned atom types";
 	    checked: true;
-	    onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.All;
 	}
-	Image {
+	ImageRadio {
+	    onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.Selected;
 	    source: "qrc:/wizard/icons/wizard_selectedatoms.svg";
-	    fillMode: Image.PreserveAspectFit;
-	    height: selectButton.height;
-	}
-	RadioButton {
-	    id: selectButton;
 	    text: "Determine atom types for the current atom selection\nOverwrite any assigned atom types"
 	    enabled: dialogModel.speciesHasSelection;
-	    onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.Selected;
 	}
-	Image {
-	    source: "qrc:/general/icons/general_unknown.svg";
-	    fillMode: Image.PreserveAspectFit;
-	    height: unknownButton.height;
-	}
-	RadioButton {
-	    id: unknownButton;
-	    text: "Determine atom types for any atoms\nthat do not currently have one assigned"
+	ImageRadio {
 	    onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.Empty;
+	    source: "qrc:/general/icons/general_unknown.svg";
+	    text: "Determine atom types for any atoms\nthat do not currently have one assigned"
 	}
-	Image {
-	    source: "qrc:/general/icons/general_cross.svg";
-	    fillMode: Image.PreserveAspectFit;
-	    height: noneButton.height;
-	}
-	RadioButton {
-	    id: noneButton;
-	    text: "Do not assign atom types\nLeave current atom types as they are"
+	ImageRadio {
 	    onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.None;
+	    source: "qrc:/general/icons/general_cross.svg";
+	    text: "Do not assign atom types\nLeave current atom types as they are"
 	}
     }
 }
