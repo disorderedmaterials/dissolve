@@ -41,11 +41,16 @@ Item {
 		Text {
 		    property variant fullData: model;
 		    text: name;
-		    color: ListView.isCurrentItem ? "red" : "black";
+		    color: ListView.isCurrentItem ? palette.active.base : palette.active.text;
 		    MouseArea {
-			anchors.fill: parent;
+			height: parent.height;
+			width: ffList.width;
 			onClicked: ffList.currentIndex = index;
 		    }
+		}
+		highlight:
+		Rectangle {
+		    color: palette.active.highlight;
 		}
 	    }
 	}
