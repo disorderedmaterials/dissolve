@@ -7,8 +7,8 @@
 AddForcefieldDialogModel::AddForcefieldDialogModel()
 {
     ffModel_ = std::make_unique<ForcefieldModel>(ForcefieldLibrary::forcefields());
-    ffSort_ = std::make_unique<QSortFilterProxyModel>(this);
 
+    ffSort_ = std::make_unique<ForcefieldSortFilterModel>(this, temporaryCoreData_);
     ffSort_->setSourceModel(ffModel_.get());
 
     temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
@@ -100,7 +100,10 @@ void AddForcefieldDialogModel::next()
 
 void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve) { dissolve_ = &dissolve; }
 
-void AddForcefieldDialogModel::setSpecies(Species *sp) { species_ = sp; }
+void AddForcefieldDialogModel::setSpecies(Species *sp) {
+  species_ = sp;
+  ffSort_->setSpecies(species_);
+}
 
 bool AddForcefieldDialogModel::speciesHasSelection()
 {

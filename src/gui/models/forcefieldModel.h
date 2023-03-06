@@ -16,12 +16,13 @@ class ForcefieldModel : public QAbstractListModel
     // Forcefield Data
     const std::vector<std::shared_ptr<Forcefield>> &forcefields_;
 
-    enum ffRoles {
+    public:
+    enum ffRoles
+    {
 	NameRole = Qt::UserRole + 1,
 	DescRole,
 	RawRole
     };
-
 
     /*
      * QAbstractItemModel overrides

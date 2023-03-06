@@ -6,8 +6,8 @@
 #include "main/dissolve.h"
 #include "gui/models/forcefieldModel.h"
 #include "gui/models/atomTypeModel.h"
+#include "gui/models/ffSortFilterModel.h"
 #include <QObject>
-#include <QSortFilterProxyModel>
 #include <memory>
 
 class AddForcefieldDialogModel : public QObject {
@@ -58,7 +58,7 @@ signals:
   AtomTypeModel atomTypes_;
   bool keepSpeciesAtomChargesCheck_;
   std::unique_ptr<ForcefieldModel> ffModel_;
-  std::unique_ptr<QSortFilterProxyModel> ffSort_;
+  std::unique_ptr<ForcefieldSortFilterModel> ffSort_ = nullptr;
   QString filterFF_ = "";
   Radio atomTypeRadio_ = Radio::All;
   Radio intramolecularRadio_ = Radio::All;

@@ -60,6 +60,7 @@ set(models_SRCS
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     forcefieldModel.cpp
+    ffSortFilterModel.cpp
     isotopologueSetModel.cpp
     masterAngleModel.cpp
     masterBondModel.cpp
