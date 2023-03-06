@@ -14,7 +14,6 @@ Item {
 	width: parent.width;
 	TextField {
 	    id: ffFilter;
-	    focus: true;
 	    anchors.top: parent.top;
 	    anchors.right: parent.right;
 	    placeholderText: qsTr("Filter");
@@ -37,7 +36,9 @@ Item {
 		id: ffList;
 		anchors.fill: parent;
 		clip: true;
+		focus: true;
 		model: dialogModel.forcefields;
+
 		delegate:
 		Text {
 		    property variant fullData: model;
@@ -46,7 +47,10 @@ Item {
 		    MouseArea {
 			height: parent.height;
 			width: ffList.width;
-			onClicked: ffList.currentIndex = index;
+			onClicked: {
+			    ffList.currentIndex = index;
+			    ffList.focus = true;
+			}
 			onDoubleClicked: {
 			    ffList.currentIndex = index;
 			    select();
@@ -69,10 +73,12 @@ Item {
 	    anchors.fill:parent;
 	    color: "white";
 	    TextArea {
+		readOnly: true;
 		anchors.fill: parent;
 		text: ffList.currentItem.fullData.description;
 		wrapMode: TextEdit.Wrap;
 	    }
 	}
     }
+    Component.onCompleted: ffList.forceActiveFocus();
 }
