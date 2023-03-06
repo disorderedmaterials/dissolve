@@ -34,4 +34,13 @@ GroupBox {
 	    text: "Do not assign atom types\nLeave current atom types as they are"
 	}
     }
+    GroupBox {
+	clip: true;
+	width: parent.width;
+	anchors.bottom: parent.bottom;
+	title: "Options"
+	CheckBox {
+	    text: "Don't overwrite changes on species atoms";
+	}
+    }
 }
