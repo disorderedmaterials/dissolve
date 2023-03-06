@@ -114,11 +114,3 @@ bool AddForcefieldDialogModel::speciesHasSelection()
 
 QAbstractItemModel *AddForcefieldDialogModel::forcefields() { return ffSort_.get(); }
 AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
-
-QString AddForcefieldDialogModel::filterFF() { return filterFF_; }
-
-void AddForcefieldDialogModel::setFilterFF(QString value)
-{
-    filterFF_ = value;
-    ffSort_->setFilterFixedString(value);
-}

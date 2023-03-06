@@ -6,7 +6,6 @@ import QtQuick.Layouts
 Item {
     property variant dialogModel;
     property variant fullData: ffList.currentItem.fullData;
-    property string filter: ffFilter.text;
     Text {
 	anchors.top: parent.top
 	anchors.right: ffFilter.left;
@@ -18,6 +17,8 @@ Item {
 	anchors.top: parent.top;
 	anchors.right: parent.right;
 	placeholderText: qsTr("Filter");
+	onTextEdited: dialogModel.forcefields.setFilterFixedString(text);
+
     }
     Item {
 	anchors.top: ffFilter.bottom;

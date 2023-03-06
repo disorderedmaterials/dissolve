@@ -9,8 +9,8 @@
 class ForcefieldSortFilterModel : public QSortFilterProxyModel
 {
     public:
-  ForcefieldSortFilterModel(QObject *parent, CoreData &coreData);
-  void setSpecies(const Species *species);
+    ForcefieldSortFilterModel(QObject *parent, CoreData &coreData);
+    void setSpecies(const Species *species);
 
     protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &source) const override;

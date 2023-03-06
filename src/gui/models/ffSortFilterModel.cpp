@@ -16,6 +16,11 @@ bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelInde
 	return false;
 
     auto index = sourceModel()->index(sourceRow, 0, source);
+    QString name = sourceModel()->data(index).toString();
+    auto regex = filterRegularExpression();
+    regex.setPatternOptions(QRegularExpression::PatternOption::CaseInsensitiveOption);
+    if (!regex.match(name).hasMatch())
+      return false;
     Forcefield *ff = sourceModel()->data(index, ForcefieldModel::ffRoles::RawRole).value<Forcefield *>();
     if (!ff)
 	return false;
