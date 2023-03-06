@@ -4,9 +4,10 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 Item {
+    id: control;
     property variant dialogModel;
     property variant fullData: ffList.currentItem.fullData;
-    signal select();
+    signal selected();
     GroupBox {
 	title: "Select Forcefield";
 	anchors.top: parent.top;
@@ -32,35 +33,13 @@ Item {
 	    anchors.top: ffFilter.bottom;
 	    anchors.bottom: parent.bottom;
 	    color: "white";
-	    ListView {
+	    PrettyListView {
 		id: ffList;
 		anchors.fill: parent;
 		clip: true;
 		focus: true;
 		model: dialogModel.forcefields;
-
-		delegate:
-		Text {
-		    property variant fullData: model;
-		    text: name;
-		    color: ListView.isCurrentItem ? palette.active.base : palette.active.text;
-		    MouseArea {
-			height: parent.height;
-			width: ffList.width;
-			onClicked: {
-			    ffList.currentIndex = index;
-			    ffList.focus = true;
-			}
-			onDoubleClicked: {
-			    ffList.currentIndex = index;
-			    select();
-			}
-		    }
-		}
-		highlight:
-		Rectangle {
-		    color: palette.active.highlight;
-		}
+		onSelected: control.selected();
 	    }
 	}
     }

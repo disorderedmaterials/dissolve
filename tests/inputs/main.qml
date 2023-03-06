@@ -27,7 +27,7 @@ Rectangle {
 	ForceFieldPicker {
 	    id: ffList;
 	    dialogModel: dialogModel;
-	    onSelect: nextButton.clicked();
+	    onSelected: nextButton.clicked();
 	}
 
 	ForceFieldAssign {
