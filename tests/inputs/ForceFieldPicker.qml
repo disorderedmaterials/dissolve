@@ -6,6 +6,7 @@ import QtQuick.Layouts
 Item {
     property variant dialogModel;
     property variant fullData: ffList.currentItem.fullData;
+    signal select();
     GroupBox {
 	title: "Select Forcefield";
 	anchors.top: parent.top;
@@ -46,6 +47,10 @@ Item {
 			height: parent.height;
 			width: ffList.width;
 			onClicked: ffList.currentIndex = index;
+			onDoubleClicked: {
+			    ffList.currentIndex = index;
+			    select();
+			}
 		    }
 		}
 		highlight:
