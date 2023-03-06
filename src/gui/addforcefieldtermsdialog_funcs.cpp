@@ -19,6 +19,9 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
 
     qmlRegisterType<AddForcefieldDialogModel>("Dissolve", 1, 0, "AddForcefieldDialogModel");
 
+    // For the QIcon theme
+    // QIcon::setThemeName("personal");
+
     QQuickWidget *view = new QQuickWidget(QUrl("main.qml"), this);
     AtomTypeModel atModel(dissolve.coreData());
 
