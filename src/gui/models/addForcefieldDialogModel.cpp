@@ -101,6 +101,9 @@ void AddForcefieldDialogModel::next()
 	    index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
 	    break;
 	case AddForcefieldDialogModel::Page::IntramolecularPage:
+	    index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
+	    break;
+	case AddForcefieldDialogModel::Page::MasterTermsPage:
 	    accept();
 	    break;
 	default:
@@ -141,3 +144,5 @@ int AddForcefieldDialogModel::atomTypesIndicator()
     return std::count_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
 			 [&](const auto &atomType) { return dissolve_->findAtomType(atomType->name()); });
 }
+
+bool AddForcefieldDialogModel::atEnd() { return index_ == Page::MasterTermsPage; }

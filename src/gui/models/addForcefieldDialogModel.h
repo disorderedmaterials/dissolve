@@ -24,6 +24,7 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(bool noImproperTerms MEMBER noImproperTerms_)
   Q_PROPERTY(bool ignoreCurrentTypes MEMBER ignoreCurrentTypes_)
   Q_PROPERTY(bool speciesHasSelection READ speciesHasSelection NOTIFY ready)
+  Q_PROPERTY(bool atEnd READ atEnd NOTIFY indexChanged)
   Q_PROPERTY(Radio atomTypeRadio MEMBER atomTypeRadio_);
   Q_PROPERTY(Radio intramolecularRadio MEMBER intramolecularRadio_);
 
@@ -86,4 +87,5 @@ signals:
   bool progressionAllowed();
   void setDissolve(Dissolve& Dissolve);
   void setSpecies(Species* species);
+  bool atEnd();
 };

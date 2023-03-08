@@ -54,9 +54,9 @@ Rectangle {
     Button {
 	id: nextButton;
 	enabled: dialogModel.progressionAllowed;
-	text: dialogModel.index == AddForcefieldDialogModel.IntramolecularPage ? "Finish" : "Next";
-	icon.source: dialogModel.index == AddForcefieldDialogModel.IntramolecularPage ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_arrowright.svg";
-	icon.name: dialogModel.index == AddForcefieldDialogModel.IntramolecularPage ? "dialog-ok" : "go-next";
+	text: dialogModel.atEnd ? "Finish" : "Next";
+	icon.source: dialogModel.atEnd ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_arrowright.svg";
+	icon.name: dialogModel.atEnd ? "dialog-ok" : "go-next";
 	anchors.bottom: parent.bottom;
 	anchors.right: parent.right;
 	onClicked: dialogModel.next();
