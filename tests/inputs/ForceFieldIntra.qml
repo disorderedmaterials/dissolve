@@ -39,9 +39,32 @@ Item {
 	anchors.right: parent.right;
 
 	ColumnLayout {
-	    CheckBox {text: "Don't reduce master terms"; }
-	    CheckBox {text: "Don't generate improper terms"; }
-	    CheckBox {text: "Ignore current atom type"; }
+	    CheckBox {
+		id: noMasterTerms;
+		text: "Don't reduce master terms";
+	    }
+	    CheckBox {
+		id: noImproperTerms;
+		text: "Don't generate improper terms";
+	    }
+	    CheckBox {
+		id: ignoreCurrentTypes;
+		text: "Ignore current atom type"; }
+	}
+	Binding {
+	    target: dialogModel;
+	    property: "noMasterTerms";
+	    value: noMasterTerms.checked;
+	}
+	Binding {
+	    target: dialogModel;
+	    property: "noImproperTerms";
+	    value: noImproperTerms.checked;
+	}
+	Binding {
+	    target: dialogModel;
+	    property: "ignoreCurrentTypes";
+	    value: ignoreCurrentTypes.checked;
 	}
     }
 }
