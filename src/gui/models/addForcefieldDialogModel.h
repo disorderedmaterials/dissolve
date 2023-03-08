@@ -16,6 +16,7 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
   Q_PROPERTY(AtomTypeModel* atomTypes READ atomTypes NOTIFY atomTypesChanged)
   Q_PROPERTY(Forcefield* ff MEMBER ff_ NOTIFY progressionAllowedChanged)
+  Q_PROPERTY(int atomTypesIndicator READ atomTypesIndicator NOTIFY atomTypesIndicatorChanged);
   Q_PROPERTY(bool progressionAllowed READ progressionAllowed NOTIFY progressionAllowedChanged);
   Q_PROPERTY(bool keepSpeciesAtomChargesCheck MEMBER keepSpeciesAtomChargesCheck_)
   Q_PROPERTY(bool overwriteParametersCheck MEMBER overwriteParametersCheck_)
@@ -42,11 +43,12 @@ public:
 signals:
   void indexChanged();
   void atomTypesChanged();
+  void atomTypesIndicatorChanged();
   void progressionAllowedChanged();
+  void assignErrors(QList<int> indices);
   void ready();
   void accept();
   void cancel();
-  void assignErrors(QList<int> indices);
 
  private:
   Page index_ = Page::SelectForcefieldPage;
@@ -79,6 +81,7 @@ signals:
   Q_INVOKABLE void back();
   QAbstractItemModel* forcefields();
   AtomTypeModel* atomTypes();
+  int atomTypesIndicator();
   bool speciesHasSelection();
   bool progressionAllowed();
   void setDissolve(Dissolve& Dissolve);

@@ -92,7 +92,7 @@ void AddForcefieldDialogModel::next()
 		originalAtomTypeNames_.emplace_back(std::string(at->name()));
 
 	    atomTypes_.setData(temporaryCoreData_.atomTypes());
-	    emit atomTypesChanged();
+	    emit atomTypesIndicatorChanged();
 
 	    // checkAtomTypeConflicts();
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
@@ -133,4 +133,11 @@ bool AddForcefieldDialogModel::progressionAllowed()
     if (index_ == Page::SelectForcefieldPage)
 	return ff_ != nullptr;
     return true;
+}
+
+// Determine whether we have any naming conflicts
+int AddForcefieldDialogModel::atomTypesIndicator()
+{
+    return std::count_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
+			 [&](const auto &atomType) { return dissolve_->findAtomType(atomType->name()); });
 }

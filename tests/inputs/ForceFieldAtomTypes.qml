@@ -66,9 +66,26 @@ Item {
 
     CheckBox {
 	id: overwrite
-	anchors.bottom: parent.bottom;
+	anchors.bottom: indicator.top;
 	anchors.left: parent.left;
 	text: "Overwrite Parameters in existing atom types";
+    }
+
+    Image {
+	id: indicatorImage;
+	source: dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_warn.svg";
+	anchors.top: indicator.top;
+	anchors.bottom: indicator.bottom;
+	anchors.left: parent.left;
+	fillMode: Image.PreserveAspectFit;
+    }
+    Text {
+	id: indicator;
+	text: dialogModel.atomTypesIndicator == 0 ? "There are no naming conflicts with the assigned atom types" : (dialogModel.atomTypesIndicator  + " assigned atom types conflict with existing types");
+	anchors.bottom: parent.bottom;
+	anchors.left: indicatorImage.right;
+	anchors.right: parent.right;
+	wrapMode: Text.Wrap;
     }
 
     Binding {
