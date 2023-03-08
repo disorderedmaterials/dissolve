@@ -17,6 +17,7 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(AtomTypeModel* atomTypes READ atomTypes NOTIFY atomTypesChanged)
   Q_PROPERTY(Forcefield* ff MEMBER ff_)
   Q_PROPERTY(bool keepSpeciesAtomChargesCheck MEMBER keepSpeciesAtomChargesCheck_)
+  Q_PROPERTY(bool overwriteParametersCheck MEMBER overwriteParametersCheck_)
   Q_PROPERTY(bool speciesHasSelection READ speciesHasSelection NOTIFY ready)
   Q_PROPERTY(Radio atomTypeRadio MEMBER atomTypeRadio_);
   Q_PROPERTY(Radio intramolecularRadio MEMBER intramolecularRadio_);
@@ -55,6 +56,7 @@ signals:
   std::vector<std::string> originalAtomTypeNames_;
   AtomTypeModel atomTypes_;
   bool keepSpeciesAtomChargesCheck_;
+  bool overwriteParametersCheck_;
   std::unique_ptr<ForcefieldModel> ffModel_;
   std::unique_ptr<ForcefieldSortFilterModel> ffSort_ = nullptr;
   Radio atomTypeRadio_ = Radio::All;

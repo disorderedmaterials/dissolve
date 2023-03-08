@@ -4,7 +4,7 @@ import QtQuick.Layouts
 
 Item {
     property variant dialogModel;
-    property variant fullData: atList.currentItem.fullData.raw;
+
     Rectangle {
 	anchors.top: parent.top;
 	anchors.left: parent.left;
@@ -70,5 +70,12 @@ Item {
 	anchors.left: parent.left;
 	text: "Overwrite Parameters in existing atom types";
     }
+
+    Binding {
+	target: dialogModel;
+	property: "overwriteParametersCheck";
+	value: overwrite.checked;
+    }
+
     Component.onCompleted: atList.forceActiveFocus();
 }
