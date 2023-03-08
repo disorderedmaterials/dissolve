@@ -11,7 +11,7 @@ Item {
     Binding {
 	target: dialogModel
 	property: "ff";
-	value: ffList.currentItem.fullData.raw;
+	value: ffList.currentItem == null ? null : ffList.currentItem.fullData.raw;
     }
 
 
@@ -61,7 +61,7 @@ Item {
 	    TextArea {
 		readOnly: true;
 		anchors.fill: parent;
-		text: ffList.currentItem.fullData.description;
+		text: ffList.currentItem == null ? "" : ffList.currentItem.fullData.description;
 		wrapMode: TextEdit.Wrap;
 	    }
 	}
