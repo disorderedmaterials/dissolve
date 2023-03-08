@@ -3,7 +3,6 @@
 
 #include "gui/models/addForcefieldDialogModel.h"
 #include "data/ff/library.h"
-#include "templates/algorithms.h"
 #include <QMessageBox>
 #include <vector>
 
@@ -48,7 +47,7 @@ void AddForcefieldDialogModel::next()
     {
 	case AddForcefieldDialogModel::Page::SelectForcefieldPage:
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
-	    emit assignErrors("");
+	    emit assignErrors({});
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesPage:
 	    if (!ff_) // No valud forcefield
@@ -61,7 +60,7 @@ void AddForcefieldDialogModel::next()
 	    for (auto &&[targetI, modifiedI] : zip(species_->atoms(), modifiedSpecies_->atoms()))
 		modifiedI.setSelected(targetI.isSelected());
 
-	    emit assignErrors("");
+	    emit assignErrors({});
 	    // Determine atom types
 	    switch (atomTypeRadio_)
 	    {
@@ -85,9 +84,7 @@ void AddForcefieldDialogModel::next()
 
 	    if (!assignErrs.empty())
 	    {
-		emit assignErrors(
-		    QString("No matching atoms types for indices ") +
-		    QString::fromStdString(joinStrings(assignErrs, ", ", [](const auto &i) { return std::to_string(i); })));
+		emit assignErrors({assignErrs.begin(), assignErrs.end()});
 		return;
 	    }
 

@@ -16,10 +16,10 @@ GroupBox {
 
     Connections {
 	target: dialogModel;
-	function onAssignErrors(err) {
-	    console.log(err);
-	    ffErrorIcon.visible = err != "";
-	    ffErrorText.text = err;
+	function onAssignErrors(indices) {
+	    console.log(indices);
+	    ffErrorIcon.visible = indices.length != 0;
+	    ffErrorText.text = "No matching atom types for indices " + indices.join(", ");
 	}
     }
 
