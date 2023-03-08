@@ -3,6 +3,9 @@
 
 #include "gui/models/addForcefieldDialogModel.h"
 #include "data/ff/library.h"
+#include "templates/algorithms.h"
+#include <QMessageBox>
+#include <vector>
 
 AddForcefieldDialogModel::AddForcefieldDialogModel()
 {
@@ -40,10 +43,12 @@ void AddForcefieldDialogModel::back()
 
 void AddForcefieldDialogModel::next()
 {
+    std::vector<int>  assignErrs;
     switch (index_)
     {
 	case AddForcefieldDialogModel::Page::SelectForcefieldPage:
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
+	    emit assignErrors("");
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesPage:
 	    if (!ff_) // No valud forcefield
@@ -56,6 +61,7 @@ void AddForcefieldDialogModel::next()
 	    for (auto &&[targetI, modifiedI] : zip(species_->atoms(), modifiedSpecies_->atoms()))
 		modifiedI.setSelected(targetI.isSelected());
 
+	    emit assignErrors("");
 	    // Determine atom types
 	    switch (atomTypeRadio_)
 	    {
@@ -63,18 +69,26 @@ void AddForcefieldDialogModel::next()
 		    modifiedSpecies_->clearAtomTypes();
 		    temporaryDissolve_->clearAtomTypes();
 
-		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
-					 !keepSpeciesAtomChargesCheck_);
+		    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
+						      !keepSpeciesAtomChargesCheck_);
 		    break;
 		case Radio::Selected:
-		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
-					 !keepSpeciesAtomChargesCheck_);
+		    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
+						      !keepSpeciesAtomChargesCheck_);
 		    break;
 		case Radio::Empty:
-		    ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
-					 !keepSpeciesAtomChargesCheck_);
+		    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
+						      !keepSpeciesAtomChargesCheck_);
 		default:
 		    break;
+	    }
+
+	    if (!assignErrs.empty())
+	    {
+		emit assignErrors(
+		    QString("No matching atoms types for indices ") +
+		    QString::fromStdString(joinStrings(assignErrs, ", ", [](const auto &i) { return std::to_string(i); })));
+		return;
 	    }
 
 	    for (auto &at : temporaryDissolve_->atomTypes())
@@ -100,9 +114,10 @@ void AddForcefieldDialogModel::next()
 
 void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve) { dissolve_ = &dissolve; }
 
-void AddForcefieldDialogModel::setSpecies(Species *sp) {
-  species_ = sp;
-  ffSort_->setSpecies(species_);
+void AddForcefieldDialogModel::setSpecies(Species *sp)
+{
+    species_ = sp;
+    ffSort_->setSpecies(species_);
 }
 
 bool AddForcefieldDialogModel::speciesHasSelection()
@@ -113,6 +128,7 @@ bool AddForcefieldDialogModel::speciesHasSelection()
 }
 
 QAbstractItemModel *AddForcefieldDialogModel::forcefields() { return ffSort_.get(); }
+
 AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
 
 bool AddForcefieldDialogModel::progressionAllowed()

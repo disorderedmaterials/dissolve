@@ -46,6 +46,7 @@ signals:
   void ready();
   void accept();
   void cancel();
+  void assignErrors(QString err);
 
  private:
   Page index_ = Page::SelectForcefieldPage;

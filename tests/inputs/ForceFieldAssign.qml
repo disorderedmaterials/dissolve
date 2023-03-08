@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Dialogs
 import QtQuick.Layouts
 import Dissolve
 
@@ -15,7 +14,17 @@ GroupBox {
 	value: chargesCheck.checked;
     }
 
+    Connections {
+	target: dialogModel;
+	function onAssignErrors(err) {
+	    console.log(err);
+	    ffErrorIcon.visible = err != "";
+	    ffErrorText.text = err;
+	}
+    }
+
     ColumnLayout {
+	id: radioChoice;
 	spacing: 5;
 	ImageRadio {
 	    onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.All;
@@ -40,7 +49,25 @@ GroupBox {
 	    text: "Do not assign atom types\nLeave current atom types as they are"
 	}
     }
+    Image {
+	id: ffErrorIcon;
+	visible: false;
+	fillMode: Image.PreserveAspectFit;
+	source: "qrc:/general/icons/general_warn.svg";
+	anchors.top: ffErrorText.top;
+	anchors.bottom: ffErrorText.bottom;
+	anchors.left: parent.left;
+    }
+    Text {
+	id: ffErrorText;
+	wrapMode: Text.Wrap;
+	anchors.top: radioChoice.botom;
+	anchors.bottom: optionsBox.top;
+	anchors.left: ffErrorIcon.right;
+	anchors.right:parent.right;
+    }
     GroupBox {
+	id: optionsBox;
 	clip: true;
 	width: parent.width;
 	anchors.bottom: parent.bottom;
