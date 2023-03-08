@@ -45,6 +45,7 @@ Item {
 		anchors.fill: parent;
 		clip: true;
 		focus: true;
+		currentIndex: -1;
 		model: dialogModel.forcefields;
 		onSelected: control.selected();
 	    }

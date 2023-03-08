@@ -53,6 +53,7 @@ Rectangle {
     }
     Button {
 	id: nextButton;
+	enabled: dialogModel.progressionAllowed;
 	text: dialogModel.index == AddForcefieldDialogModel.IntramolecularPage ? "Finish" : "Next";
 	icon.source: dialogModel.index == AddForcefieldDialogModel.IntramolecularPage ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_arrowright.svg";
 	icon.name: dialogModel.index == AddForcefieldDialogModel.IntramolecularPage ? "dialog-ok" : "go-next";

@@ -114,3 +114,10 @@ bool AddForcefieldDialogModel::speciesHasSelection()
 
 QAbstractItemModel *AddForcefieldDialogModel::forcefields() { return ffSort_.get(); }
 AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
+
+bool AddForcefieldDialogModel::progressionAllowed()
+{
+    if (index_ == Page::SelectForcefieldPage)
+	return ff_ != nullptr;
+    return true;
+}
