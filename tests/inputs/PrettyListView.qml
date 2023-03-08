@@ -12,7 +12,7 @@ ListView {
     Text {
 	property variant fullData: model;
 	text: display;
-	color: ListView.isCurrentItem ? palette.active.base : palette.active.text;
+	color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text;
 	MouseArea {
 	    height: parent.height;
 	    width: control.width;
