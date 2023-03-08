@@ -11,7 +11,7 @@ GroupBox {
 
     Binding {
 	target: dialogModel;
-	property: "keepSpeciesAtomChargedCheck";
+	property: "keepSpeciesAtomChargesCheck";
 	value: chargesCheck.checked;
     }
 

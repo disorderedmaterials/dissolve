@@ -6,8 +6,15 @@ import QtQuick.Layouts
 Item {
     id: control;
     property variant dialogModel;
-    property variant fullData: ffList.currentItem.fullData;
     signal selected();
+
+    Binding {
+	target: dialogModel
+	property: "ff";
+	value: ffList.currentItem.fullData.raw;
+    }
+
+
     GroupBox {
 	title: "Select Forcefield";
 	anchors.top: parent.top;
