@@ -9,6 +9,12 @@ GroupBox {
     title: "Which atom types do you want to assign to this forcefield?"
     clip: true;
 
+    Binding {
+	target: dialogModel;
+	property: "keepSpeciesAtomChargedCheck";
+	value: chargesCheck.checked;
+    }
+
     ColumnLayout {
 	spacing: 5;
 	ImageRadio {
@@ -40,6 +46,7 @@ GroupBox {
 	anchors.bottom: parent.bottom;
 	title: "Options"
 	CheckBox {
+	    id: chargesCheck;
 	    text: "Don't overwrite changes on species atoms";
 	}
     }
