@@ -5,10 +5,7 @@
 #include "gui/models/forcefieldModel.h"
 #include <memory>
 
-ForcefieldSortFilterModel::ForcefieldSortFilterModel(QObject *parent, const CoreData &coreData)
-    : QSortFilterProxyModel(parent), coreData_(coreData)
-{
-}
+ForcefieldSortFilterModel::ForcefieldSortFilterModel(QObject *parent) : QSortFilterProxyModel(parent) {}
 
 bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &source) const
 {

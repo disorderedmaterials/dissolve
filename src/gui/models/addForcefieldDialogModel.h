@@ -14,7 +14,7 @@
 class AddForcefieldDialogModel : public QObject {
   Q_OBJECT
   Q_PROPERTY(Page index READ index NOTIFY indexChanged)
-  Q_PROPERTY(QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
+  Q_PROPERTY(const QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
   Q_PROPERTY(AtomTypeModel* atomTypes READ atomTypes NOTIFY atomTypesChanged)
   Q_PROPERTY(Forcefield* ff MEMBER ff_ NOTIFY progressionAllowedChanged)
   Q_PROPERTY(MasterBondModel* bonds MEMBER bonds_ NOTIFY mastersChanged)
@@ -74,7 +74,7 @@ signals:
   bool noImproperTerms_;
   bool ignoreCurrentTypes_;
   std::unique_ptr<ForcefieldModel> ffModel_;
-  std::unique_ptr<ForcefieldSortFilterModel> ffSort_ = nullptr;
+  ForcefieldSortFilterModel ffSort_;
   Radio atomTypeRadio_ = Radio::All;
   Radio intramolecularRadio_ = Radio::All;
 
@@ -84,7 +84,7 @@ signals:
   Page index();
   Q_INVOKABLE void next();
   Q_INVOKABLE void back();
-  QAbstractItemModel* forcefields() const;
+  const QAbstractItemModel* forcefields() const;
   AtomTypeModel* atomTypes();
   int atomTypesIndicator() const;
   bool speciesHasSelection() const;

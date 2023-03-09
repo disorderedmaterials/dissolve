@@ -6,12 +6,11 @@
 #include <QMessageBox>
 #include <vector>
 
-AddForcefieldDialogModel::AddForcefieldDialogModel()
+AddForcefieldDialogModel::AddForcefieldDialogModel() : ffSort_(this)
 {
     ffModel_ = std::make_unique<ForcefieldModel>(ForcefieldLibrary::forcefields());
 
-    ffSort_ = std::make_unique<ForcefieldSortFilterModel>(this, temporaryCoreData_);
-    ffSort_->setSourceModel(ffModel_.get());
+    ffSort_.setSourceModel(ffModel_.get());
 
     bonds_ = new MasterBondModel(this);
 }
@@ -128,7 +127,7 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
 void AddForcefieldDialogModel::setSpecies(Species *sp)
 {
     species_ = sp;
-    ffSort_->setSpecies(species_);
+    ffSort_.setSpecies(species_);
 }
 
 bool AddForcefieldDialogModel::speciesHasSelection() const
@@ -138,7 +137,7 @@ bool AddForcefieldDialogModel::speciesHasSelection() const
     return !species_->selectedAtoms().empty();
 }
 
-QAbstractItemModel *AddForcefieldDialogModel::forcefields() const { return ffSort_.get(); }
+const QAbstractItemModel *AddForcefieldDialogModel::forcefields() const { return &ffSort_; }
 
 AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
 
