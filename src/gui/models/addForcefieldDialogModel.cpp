@@ -11,8 +11,6 @@ AddForcefieldDialogModel::AddForcefieldDialogModel() : ffSort_(this)
     ffModel_ = std::make_unique<ForcefieldModel>(ForcefieldLibrary::forcefields());
 
     ffSort_.setSourceModel(ffModel_.get());
-
-    bonds_ = new MasterBondModel(this);
 }
 
 AddForcefieldDialogModel::~AddForcefieldDialogModel() { temporaryDissolve_->clear(); }
@@ -102,7 +100,6 @@ void AddForcefieldDialogModel::next()
 	    index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
 	    break;
 	case AddForcefieldDialogModel::Page::IntramolecularPage:
-	    bonds_->setSourceData(temporaryDissolve_->coreData().masterBonds());
 	    emit mastersChanged();
 	    index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
 	    break;
@@ -120,8 +117,12 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
 
     temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
-    auto masters = dissolve_->coreData().serialiseMaster();
-    temporaryCoreData_.deserialiseMaster(masters);
+    auto node = dissolve_->coreData().serialiseMaster();
+    temporaryCoreData_.deserialiseMaster(node);
+    masters_ = std::make_unique<MasterTermTreeModel>();
+    masters_->setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(),
+		     temporaryCoreData_.masterTorsions(), temporaryCoreData_.masterImpropers());
+    std::cout << "Improper count: " << dissolve.coreData().masterImpropers().size() << std::endl;
 }
 
 void AddForcefieldDialogModel::setSpecies(Species *sp)
@@ -156,3 +157,32 @@ int AddForcefieldDialogModel::atomTypesIndicator() const
 }
 
 bool AddForcefieldDialogModel::atEnd() const { return index_ == Page::MasterTermsPage; }
+
+const MasterBondModel *AddForcefieldDialogModel::bonds() const
+{
+    if (!masters_)
+	return nullptr;
+    return &masters_->bondModel_;
+}
+
+const MasterAngleModel *AddForcefieldDialogModel::angles() const
+{
+    if (!masters_)
+	return nullptr;
+    return &masters_->angleModel_;
+}
+
+const MasterTorsionModel *AddForcefieldDialogModel::torsions() const
+{
+    if (!masters_)
+	return nullptr;
+    return &masters_->torsionModel_;
+}
+
+const MasterImproperModel *AddForcefieldDialogModel::impropers() const
+{
+    if (!masters_)
+	return nullptr;
+    std::cout << "Improper count: " << temporaryCoreData_.masterImpropers().size() << std::endl;
+    return &masters_->improperModel_;
+}

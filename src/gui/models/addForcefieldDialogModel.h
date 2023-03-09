@@ -7,7 +7,7 @@
 #include "gui/models/forcefieldModel.h"
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/ffSortFilterModel.h"
-#include "gui/models/masterBondModel.h"
+#include "gui/models/masterTermTreeModel.h"
 #include <QObject>
 #include <memory>
 
@@ -17,7 +17,10 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(const QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
   Q_PROPERTY(AtomTypeModel* atomTypes READ atomTypes NOTIFY atomTypesChanged)
   Q_PROPERTY(Forcefield* ff MEMBER ff_ NOTIFY progressionAllowedChanged)
-  Q_PROPERTY(MasterBondModel* bonds MEMBER bonds_ NOTIFY mastersChanged)
+  Q_PROPERTY(const MasterBondModel* bonds READ bonds NOTIFY mastersChanged)
+  Q_PROPERTY(const MasterAngleModel* angles READ angles NOTIFY mastersChanged)
+  Q_PROPERTY(const MasterTorsionModel* torsions READ torsions NOTIFY mastersChanged)
+  Q_PROPERTY(const MasterImproperModel* impropers READ impropers NOTIFY mastersChanged)
   Q_PROPERTY(int atomTypesIndicator READ atomTypesIndicator NOTIFY atomTypesIndicatorChanged);
   Q_PROPERTY(bool progressionAllowed READ progressionAllowed NOTIFY progressionAllowedChanged);
   Q_PROPERTY(bool keepSpeciesAtomChargesCheck MEMBER keepSpeciesAtomChargesCheck_)
@@ -58,7 +61,7 @@ signals:
   Page index_ = Page::SelectForcefieldPage;
   Dissolve* dissolve_ = nullptr;
   Forcefield* ff_ = nullptr;
-  MasterBondModel *bonds_ = nullptr;
+  std::unique_ptr<MasterTermTreeModel> masters_ = nullptr;
   // Temporary Dissolve reference for creating / importing layers
   std::unique_ptr<Dissolve> temporaryDissolve_;
   // Temporary core data for applying Forcefield terms
@@ -86,6 +89,10 @@ signals:
   Q_INVOKABLE void back();
   const QAbstractItemModel* forcefields() const;
   AtomTypeModel* atomTypes();
+  const MasterBondModel* bonds() const;
+  const MasterAngleModel* angles() const;
+  const MasterTorsionModel* torsions() const;
+  const MasterImproperModel* impropers() const;
   int atomTypesIndicator() const;
   bool speciesHasSelection() const;
   bool progressionAllowed() const;

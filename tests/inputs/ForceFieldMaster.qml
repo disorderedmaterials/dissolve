@@ -7,39 +7,87 @@ Item {
     /* property variant fullData: masterList.currentItem.fullData.raw; */
 
 
-    ColumnLayout {
+    Grid {
+	columns: 2;
 	anchors.top: parent.top;
 	anchors.bottom: parent.bottom;
 	anchors.left: parent.left;
 	anchors.right: prefixButton.left;
+	clip: true;
 
-	Rectangle {
-	    Layout.preferredWidth: parent.width;
-	    Layout.preferredHeight: parent.height/4;
-	    color: palette.active.base;
-	    PrettyListView {
-		id: bonds;
+	GroupBox {
+	    title: "Bonds";
+	    width: parent.width/2;
+	    height: parent.height/2;
+	    Rectangle {
 		anchors.fill: parent;
-		clip: true;
-		focus: true;
-		currentIndex: -1;
-		model: dialogModel.bonds;
-		onSelected: control.selected();
+		color: palette.active.base;
+		PrettyListView {
+		    id: bonds;
+		    anchors.fill: parent;
+		    clip: true;
+		    focus: true;
+		    currentIndex: -1;
+		    model: dialogModel.bonds;
+		    onSelected: control.selected();
+		}
 	    }
 	}
 
-	Rectangle {
-	    Layout.preferredWidth: parent.width;
-	    Layout.preferredHeight: parent.height/4;
-	    color: palette.active.base;
-	    PrettyListView {
-		id: angles;
-		clip: true;
-		focus: true;
+	GroupBox {
+	    title: "Angles";
+	    width: parent.width/2;
+	    height: parent.height/2;
+	    Rectangle {
 		anchors.fill: parent;
-		currentIndex: -1;
-		model: dialogModel.atomTypes;
-		onSelected: control.selected();
+		color: palette.active.base;
+		PrettyListView {
+		    id: angles;
+		    clip: true;
+		    focus: true;
+		    anchors.fill: parent;
+		    currentIndex: -1;
+		    model: dialogModel.angles;
+		    onSelected: control.selected();
+		}
+	    }
+	}
+
+	GroupBox {
+	    title: "Torsions";
+	    width: parent.width/2;
+	    height: parent.height/2;
+	    Rectangle {
+		anchors.fill: parent;
+		color: palette.active.base;
+		PrettyListView {
+		    id: torsions;
+		    clip: true;
+		    focus: true;
+		    anchors.fill: parent;
+		    currentIndex: -1;
+		    model: dialogModel.torsions;
+		    onSelected: control.selected();
+		}
+	    }
+	}
+
+	GroupBox {
+	    title: "Impropers";
+	    width: parent.width/2;
+	    height: parent.height/2;
+	    Rectangle {
+		anchors.fill: parent;
+		color: palette.active.base;
+		PrettyListView {
+		    id: impropers;
+		    clip: true;
+		    focus: true;
+		    anchors.fill: parent;
+		    currentIndex: -1;
+		    model: dialogModel.impropers;
+		    onSelected: control.selected();
+		}
 	    }
 	}
     }

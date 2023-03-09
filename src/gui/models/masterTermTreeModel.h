@@ -19,7 +19,7 @@ class MasterTermTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
-    private:
+    public:
     // Term models
     MasterBondModel bondModel_;
     MasterAngleModel angleModel_;
