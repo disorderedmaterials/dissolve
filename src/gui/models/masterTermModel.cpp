@@ -5,7 +5,7 @@
 
 MasterTermModel::MasterTermModel(QObject *parent) : QAbstractTableModel(parent) {}
 
-void MasterTermModel::setIconFunction(std::function<QString(std::string_view termName)> func) { iconFunction_ = std::move(func); }
+void MasterTermModel::setIconFunction(std::function<bool(std::string_view termName)> func) { iconFunction_ = std::move(func); }
 
 int MasterTermModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 3; }
 

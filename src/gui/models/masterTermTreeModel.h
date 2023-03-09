@@ -33,10 +33,10 @@ class MasterTermTreeModel : public QAbstractItemModel
     void setData(std::vector<std::shared_ptr<MasterBond>> &bonds, std::vector<std::shared_ptr<MasterAngle>> &angles,
                  std::vector<std::shared_ptr<MasterTorsion>> &torsions,
                  std::vector<std::shared_ptr<MasterImproper>> &impropers);
-    void setBondIconFunction(std::function<QString(std::string_view termName)> func);
-    void setAngleIconFunction(std::function<QString(std::string_view termName)> func);
-    void setTorsionIconFunction(std::function<QString(std::string_view termName)> func);
-    void setImproperIconFunction(std::function<QString(std::string_view termName)> func);
+    void setBondIconFunction(std::function<bool(std::string_view termName)> func);
+    void setAngleIconFunction(std::function<bool(std::string_view termName)> func);
+    void setTorsionIconFunction(std::function<bool(std::string_view termName)> func);
+    void setImproperIconFunction(std::function<bool(std::string_view termName)> func);
     void prefixNames(QList<QModelIndex> indices, QString prefix);
     void suffixNames(QList<QModelIndex> indices, QString suffix);
 

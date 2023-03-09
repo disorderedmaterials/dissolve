@@ -33,30 +33,14 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
             SLOT(atomTypeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set model and signals for the master terms tree
-    masterTermModel_.setBondIconFunction(
-        [&](std::string_view name)
-        {
-            return QString(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/general_warn.svg"
-                                                                    : ":/general/icons/general_true.svg");
-        });
-    masterTermModel_.setAngleIconFunction(
-        [&](std::string_view name)
-        {
-            return QString(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/general_warn.svg"
-                                                                     : ":/general/icons/general_true.svg");
-        });
-    masterTermModel_.setTorsionIconFunction(
-        [&](std::string_view name)
-        {
-            return QString(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
-                                                                       : ":/general/icons/general_true.svg");
-        });
-    masterTermModel_.setImproperIconFunction(
-        [&](std::string_view name)
-        {
-            return QString(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
-                                                                        : ":/general/icons/general_true.svg");
-        });
+    masterTermModel_.setBondIconFunction([&](std::string_view name)
+                                         { return dissolve_.coreData().getMasterBond(name).has_value(); });
+    masterTermModel_.setAngleIconFunction([&](std::string_view name)
+                                          { return dissolve_.coreData().getMasterAngle(name).has_value(); });
+    masterTermModel_.setTorsionIconFunction([&](std::string_view name)
+                                            { return dissolve_.coreData().getMasterTorsion(name).has_value(); });
+    masterTermModel_.setImproperIconFunction([&](std::string_view name)
+                                             { return dissolve_.coreData().getMasterImproper(name).has_value(); });
     ui_.MasterTermsTree->setModel(&masterTermModel_);
     connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(masterTermDataChanged(const QModelIndex &, const QModelIndex &)));

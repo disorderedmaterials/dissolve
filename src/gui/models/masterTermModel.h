@@ -31,7 +31,7 @@ class MasterTermModel : public QAbstractTableModel
 
     protected:
     // Icon return function
-    std::function<QString(std::string_view termName)> iconFunction_;
+    std::function<bool(std::string_view termName)> iconFunction_;
 
     public:
     // Return model data, by type, for specified term index
@@ -39,7 +39,7 @@ class MasterTermModel : public QAbstractTableModel
     // Set model data, by type, for specified term index
     virtual bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) = 0;
     // Set function to return QIcon for item
-    void setIconFunction(std::function<QString(std::string_view termName)> func);
+    void setIconFunction(std::function<bool(std::string_view termName)> func);
 
     /*
      * QAbstractItemModel overrides

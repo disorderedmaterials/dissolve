@@ -33,22 +33,22 @@ void MasterTermTreeModel::setData(std::vector<std::shared_ptr<MasterBond>> &bond
     endResetModel();
 }
 
-void MasterTermTreeModel::setBondIconFunction(std::function<QString(std::string_view termName)> func)
+void MasterTermTreeModel::setBondIconFunction(std::function<bool(std::string_view termName)> func)
 {
     bondModel_.setIconFunction(func);
 }
 
-void MasterTermTreeModel::setAngleIconFunction(std::function<QString(std::string_view termName)> func)
+void MasterTermTreeModel::setAngleIconFunction(std::function<bool(std::string_view termName)> func)
 {
     angleModel_.setIconFunction(func);
 }
 
-void MasterTermTreeModel::setTorsionIconFunction(std::function<QString(std::string_view termName)> func)
+void MasterTermTreeModel::setTorsionIconFunction(std::function<bool(std::string_view termName)> func)
 {
     torsionModel_.setIconFunction(func);
 }
 
-void MasterTermTreeModel::setImproperIconFunction(std::function<QString(std::string_view termName)> func)
+void MasterTermTreeModel::setImproperIconFunction(std::function<bool(std::string_view termName)> func)
 {
     improperModel_.setIconFunction(func);
 }

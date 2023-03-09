@@ -14,7 +14,7 @@ ListView {
 
 	Image {
 	    id: image;
-	    source: "qrc" + icon;
+	    source: icon ? "qrc:/general/icons/general_warn.svg" : "qrc:/general/icons/general_true.svg";
 	    anchors.top: label.top;
 	    anchors.bottom: label.bottom;
 	    anchors.left: parent.left;
