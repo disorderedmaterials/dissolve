@@ -120,9 +120,37 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     auto node = dissolve_->coreData().serialiseMaster();
     temporaryCoreData_.deserialiseMaster(node);
     masters_ = std::make_unique<MasterTermTreeModel>();
-    masters_->setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(),
-		     temporaryCoreData_.masterTorsions(), temporaryCoreData_.masterImpropers());
-    std::cout << "Improper count: " << dissolve.coreData().masterImpropers().size() << std::endl;
+    masters_->setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(), temporaryCoreData_.masterTorsions(),
+		      temporaryCoreData_.masterImpropers());
+    // Set model and signals for the master terms tree
+    masters_->setBondIconFunction(
+	[this](std::string_view name)
+	{
+	    std::cout << "Get icon for " << name << std::endl;
+	    return dissolve_->coreData().getMasterBond(name) ? ":/general/icons/general_warn.svg"
+							     : ":/general/icons/general_true.svg";
+	});
+    masters_->setAngleIconFunction(
+	[this](std::string_view name)
+	{
+	    std::cout << "Get icon for " << name << std::endl;
+	    return dissolve_->coreData().getMasterAngle(name) ? ":/general/icons/general_warn.svg"
+							      : ":/general/icons/general_true.svg";
+	});
+    masters_->setTorsionIconFunction(
+	[this](std::string_view name)
+	{
+	    std::cout << "Get icon for " << name << std::endl;
+	    return dissolve_->coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
+								: ":/general/icons/general_true.svg";
+	});
+    masters_->setImproperIconFunction(
+	[this](std::string_view name)
+	{
+	    std::cout << "Get icon for " << name << std::endl;
+	    return dissolve_->coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
+								 : ":/general/icons/general_true.svg";
+	});
 }
 
 void AddForcefieldDialogModel::setSpecies(Species *sp)

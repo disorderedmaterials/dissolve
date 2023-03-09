@@ -12,7 +12,7 @@ Item {
 	anchors.bottom: overwrite.top;
 	height: 400;
 	color: palette.active.base;
-	PrettyListView {
+	IconListView {
 	    id: atList;
 	    anchors.fill: parent;
 	    model: dialogModel.atomTypes;

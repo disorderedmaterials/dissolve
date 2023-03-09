@@ -22,7 +22,7 @@ Item {
 	    Rectangle {
 		anchors.fill: parent;
 		color: palette.active.base;
-		PrettyListView {
+		IconListView {
 		    id: bonds;
 		    anchors.fill: parent;
 		    clip: true;
@@ -41,7 +41,7 @@ Item {
 	    Rectangle {
 		anchors.fill: parent;
 		color: palette.active.base;
-		PrettyListView {
+		IconListView {
 		    id: angles;
 		    clip: true;
 		    focus: true;
@@ -60,7 +60,7 @@ Item {
 	    Rectangle {
 		anchors.fill: parent;
 		color: palette.active.base;
-		PrettyListView {
+		IconListView {
 		    id: torsions;
 		    clip: true;
 		    focus: true;
@@ -79,7 +79,7 @@ Item {
 	    Rectangle {
 		anchors.fill: parent;
 		color: palette.active.base;
-		PrettyListView {
+		IconListView {
 		    id: impropers;
 		    clip: true;
 		    focus: true;
