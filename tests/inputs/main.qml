@@ -41,6 +41,10 @@ Rectangle {
 	ForceFieldIntra {
 	    dialogModel: dialogModel;
 	}
+
+	ForceFieldMaster {
+	    dialogModel: dialogModel;
+	}
     }
 
     Button {

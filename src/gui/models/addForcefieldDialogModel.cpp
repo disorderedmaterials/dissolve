@@ -13,7 +13,7 @@ AddForcefieldDialogModel::AddForcefieldDialogModel()
     ffSort_ = std::make_unique<ForcefieldSortFilterModel>(this, temporaryCoreData_);
     ffSort_->setSourceModel(ffModel_.get());
 
-    temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
+    bonds_ = new MasterBondModel(this);
 }
 
 AddForcefieldDialogModel::~AddForcefieldDialogModel() { temporaryDissolve_->clear(); }
@@ -24,11 +24,13 @@ void AddForcefieldDialogModel::back()
 {
     switch (index_)
     {
+	case AddForcefieldDialogModel::Page::MasterTermsPage:
+	    index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
+	    break;
 	case AddForcefieldDialogModel::Page::IntramolecularPage:
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
-	    temporaryDissolve_->clear();
 	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
 	    break;
 	case AddForcefieldDialogModel::Page::AtomTypesPage:
@@ -42,7 +44,7 @@ void AddForcefieldDialogModel::back()
 
 void AddForcefieldDialogModel::next()
 {
-    std::vector<int>  assignErrs;
+    std::vector<int> assignErrs;
     switch (index_)
     {
 	case AddForcefieldDialogModel::Page::SelectForcefieldPage:
@@ -101,6 +103,8 @@ void AddForcefieldDialogModel::next()
 	    index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
 	    break;
 	case AddForcefieldDialogModel::Page::IntramolecularPage:
+	    bonds_->setSourceData(temporaryDissolve_->coreData().masterBonds());
+	    emit mastersChanged();
 	    index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
 	    break;
 	case AddForcefieldDialogModel::Page::MasterTermsPage:
@@ -112,7 +116,14 @@ void AddForcefieldDialogModel::next()
     indexChanged();
 }
 
-void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve) { dissolve_ = &dissolve; }
+void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
+{
+    dissolve_ = &dissolve;
+
+    temporaryDissolve_ = std::make_unique<Dissolve>(temporaryCoreData_);
+    auto masters = dissolve_->coreData().serialiseMaster();
+    temporaryCoreData_.deserialiseMaster(masters);
+}
 
 void AddForcefieldDialogModel::setSpecies(Species *sp)
 {
@@ -120,18 +131,18 @@ void AddForcefieldDialogModel::setSpecies(Species *sp)
     ffSort_->setSpecies(species_);
 }
 
-bool AddForcefieldDialogModel::speciesHasSelection()
+bool AddForcefieldDialogModel::speciesHasSelection() const
 {
     if (!species_)
 	return false;
     return !species_->selectedAtoms().empty();
 }
 
-QAbstractItemModel *AddForcefieldDialogModel::forcefields() { return ffSort_.get(); }
+QAbstractItemModel *AddForcefieldDialogModel::forcefields() const { return ffSort_.get(); }
 
 AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
 
-bool AddForcefieldDialogModel::progressionAllowed()
+bool AddForcefieldDialogModel::progressionAllowed() const
 {
     if (index_ == Page::SelectForcefieldPage)
 	return ff_ != nullptr;
@@ -139,10 +150,10 @@ bool AddForcefieldDialogModel::progressionAllowed()
 }
 
 // Determine whether we have any naming conflicts
-int AddForcefieldDialogModel::atomTypesIndicator()
+int AddForcefieldDialogModel::atomTypesIndicator() const
 {
     return std::count_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
 			 [&](const auto &atomType) { return dissolve_->findAtomType(atomType->name()); });
 }
 
-bool AddForcefieldDialogModel::atEnd() { return index_ == Page::MasterTermsPage; }
+bool AddForcefieldDialogModel::atEnd() const { return index_ == Page::MasterTermsPage; }

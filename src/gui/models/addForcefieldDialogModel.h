@@ -7,6 +7,7 @@
 #include "gui/models/forcefieldModel.h"
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/ffSortFilterModel.h"
+#include "gui/models/masterBondModel.h"
 #include <QObject>
 #include <memory>
 
@@ -16,6 +17,7 @@ class AddForcefieldDialogModel : public QObject {
   Q_PROPERTY(QAbstractItemModel* forcefields READ forcefields NOTIFY ready)
   Q_PROPERTY(AtomTypeModel* atomTypes READ atomTypes NOTIFY atomTypesChanged)
   Q_PROPERTY(Forcefield* ff MEMBER ff_ NOTIFY progressionAllowedChanged)
+  Q_PROPERTY(MasterBondModel* bonds MEMBER bonds_ NOTIFY mastersChanged)
   Q_PROPERTY(int atomTypesIndicator READ atomTypesIndicator NOTIFY atomTypesIndicatorChanged);
   Q_PROPERTY(bool progressionAllowed READ progressionAllowed NOTIFY progressionAllowedChanged);
   Q_PROPERTY(bool keepSpeciesAtomChargesCheck MEMBER keepSpeciesAtomChargesCheck_)
@@ -46,6 +48,7 @@ signals:
   void atomTypesChanged();
   void atomTypesIndicatorChanged();
   void progressionAllowedChanged();
+  void mastersChanged();
   void assignErrors(QList<int> indices);
   void ready();
   void accept();
@@ -55,6 +58,7 @@ signals:
   Page index_ = Page::SelectForcefieldPage;
   Dissolve* dissolve_ = nullptr;
   Forcefield* ff_ = nullptr;
+  MasterBondModel *bonds_ = nullptr;
   // Temporary Dissolve reference for creating / importing layers
   std::unique_ptr<Dissolve> temporaryDissolve_;
   // Temporary core data for applying Forcefield terms
@@ -80,12 +84,12 @@ signals:
   Page index();
   Q_INVOKABLE void next();
   Q_INVOKABLE void back();
-  QAbstractItemModel* forcefields();
+  QAbstractItemModel* forcefields() const;
   AtomTypeModel* atomTypes();
-  int atomTypesIndicator();
-  bool speciesHasSelection();
-  bool progressionAllowed();
+  int atomTypesIndicator() const;
+  bool speciesHasSelection() const;
+  bool progressionAllowed() const;
   void setDissolve(Dissolve& Dissolve);
   void setSpecies(Species* species);
-  bool atEnd();
+  bool atEnd() const;
 };

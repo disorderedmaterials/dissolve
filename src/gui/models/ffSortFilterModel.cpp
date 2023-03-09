@@ -5,8 +5,8 @@
 #include "gui/models/forcefieldModel.h"
 #include <memory>
 
-ForcefieldSortFilterModel::ForcefieldSortFilterModel(QObject *parent, CoreData &coreData)
-    : QSortFilterProxyModel(parent), temporaryCoreData_(coreData)
+ForcefieldSortFilterModel::ForcefieldSortFilterModel(QObject *parent, const CoreData &coreData)
+    : QSortFilterProxyModel(parent), coreData_(coreData)
 {
 }
 
@@ -20,21 +20,22 @@ bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelInde
     auto regex = filterRegularExpression();
     regex.setPatternOptions(QRegularExpression::PatternOption::CaseInsensitiveOption);
     if (!regex.match(name).hasMatch())
-      return false;
+	return false;
     Forcefield *ff = sourceModel()->data(index, ForcefieldModel::ffRoles::RawRole).value<Forcefield *>();
     if (!ff)
 	return false;
 
-    Dissolve temporaryDissolve(temporaryCoreData_);
+    CoreData temporaryCoreData;
+    Dissolve temporaryDissolve(temporaryCoreData);
 
     Species *modifiedSpecies_ = temporaryDissolve.addSpecies();
     modifiedSpecies_->copyBasic(species_);
     // // originalAtomTypeNames_.clear();
 
-    modifiedSpecies_->clearAtomTypes();
-    temporaryDissolve.clearAtomTypes();
+    // modifiedSpecies_->clearAtomTypes();
+    // temporaryDissolve.clearAtomTypes();
 
-    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll, true);
+    ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData, Forcefield::TypeAll, true);
     return temporaryDissolve.atomTypes().size() > 0;
 }
 
