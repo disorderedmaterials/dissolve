@@ -47,10 +47,13 @@ QVariant MasterTermModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= rowCount())
         return {};
 
-    if (role == Qt::DecorationRole && iconFunction_)
+    if (role == MasterTermModelData::Roles::HasMaster && iconFunction_)
         return iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString());
 
-    if (role == Qt::DisplayRole || role == Qt::EditRole)
+    if (role == MasterTermModelData::Roles::Icon && iconFunction_)
+      return QIcon(iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString()) ? ":/general/icons/general_warn.svg" : ":/general/icons/general_warn.svg");
+
+    if (role == MasterTermModelData::Roles::Display || role == MasterTermModelData::Roles::Edit)
         return getTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()));
 
     return {};

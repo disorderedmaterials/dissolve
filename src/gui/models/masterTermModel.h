@@ -19,6 +19,14 @@ enum DataType
     Electrostatic14Scale = 3,
     VanDerWaals14Scale = 4
 };
+
+enum Roles
+{
+    Display = Qt::DisplayRole,
+    Edit = Qt::EditRole,
+    Icon = Qt::DecorationRole,
+    HasMaster = Qt::UserRole
+};
 }; // namespace MasterTermModelData
 
 // Base master term model
