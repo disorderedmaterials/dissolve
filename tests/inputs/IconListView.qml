@@ -9,8 +9,13 @@ ListView {
     signal selected();
 
     delegate:
-    Item {
+    Rectangle {
+
+	id: disp;
+	property bool picked: ListView.isCurrentItem;
+	color: picked ? palette.active.highlight : palette.active.base;
 	height: label.height;
+	width: label.width + label.height;
 
 	Image {
 	    id: image;
@@ -24,7 +29,7 @@ ListView {
 	    id: label;
 	    property variant fullData: model;
 	    text: display;
-	    color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text;
+	    color: picked ? palette.active.highlightedText : palette.active.text;
 	    anchors.left: image.right;
 	    anchors.top: parent.top;
 	    MouseArea {
@@ -40,9 +45,5 @@ ListView {
 		}
 	    }
 	}
-    }
-    highlight:
-    Rectangle {
-	color: palette.active.highlight;
     }
 }
