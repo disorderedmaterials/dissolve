@@ -25,8 +25,7 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     atomTypesModel_.setIconFunction(
         [&](const std::shared_ptr<AtomType> &atomType)
         {
-            return QIcon(dissolve_.findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
-                                                                  : ":/general/icons/general_true.svg");
+	  return dissolve_.findAtomType(atomType->name()) != nullptr;
         });
     ui_.AtomTypesList->setModel(&atomTypesModel_);
     connect(ui_.AtomTypesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,

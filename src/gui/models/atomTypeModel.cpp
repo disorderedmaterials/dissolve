@@ -22,7 +22,7 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTy
 }
 
 // Set function to return QIcon for item
-void AtomTypeModel::setIconFunction(std::function<QIcon(const std::shared_ptr<AtomType> &atomType)> func)
+void AtomTypeModel::setIconFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func)
 {
     iconFunction_ = func;
 }
@@ -69,6 +69,8 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
                 return QVariant::fromValue(data);
             case Qt::UserRole + 1:
                 return QString::fromStdString(std::string(data->name()));
+            case Qt::UserRole + 2:
+	      return QVariant(iconFunction_(rawData(index)));
         }
     }
     if (role == Qt::DisplayRole || role == Qt::EditRole)
@@ -98,13 +100,11 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
         }
     }
     else if (role == Qt::DecorationRole && iconFunction_)
-        return QVariant(iconFunction_(rawData(index)));
+        return QIcon(iconFunction_(rawData(index)) ? ":/general/icons/general_warn.svg" : ":/general/icons/general_warn.svg");
     else if (role == Qt::CheckStateRole && checkedItems_)
         return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
                    ? Qt::Unchecked
                    : Qt::Checked;
-    else if (role == Qt::UserRole)
-        return QVariant::fromValue(rawData(index));
 
     return {};
 }
@@ -218,6 +218,7 @@ QHash<int, QByteArray> AtomTypeModel::roleNames() const
     QHash<int, QByteArray> roles;
     roles[Qt::UserRole] = "raw";
     roles[Qt::UserRole + 1] = "display";
+    roles[Qt::UserRole + 2] = "icon";
     return roles;
 }
 
