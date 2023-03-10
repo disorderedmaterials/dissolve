@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <vector>
 
+// Instantiate the model
 AddForcefieldDialogModel::AddForcefieldDialogModel() : ffSort_(this)
 {
     ffModel_ = std::make_unique<ForcefieldModel>(ForcefieldLibrary::forcefields());
@@ -15,8 +16,10 @@ AddForcefieldDialogModel::AddForcefieldDialogModel() : ffSort_(this)
 
 AddForcefieldDialogModel::~AddForcefieldDialogModel() { temporaryDissolve_->clear(); }
 
+// The current page in the wizard
 AddForcefieldDialogModel::Page AddForcefieldDialogModel::index() { return index_; }
 
+// Regress in the wizard
 void AddForcefieldDialogModel::back()
 {
     switch (index_)
@@ -39,6 +42,7 @@ void AddForcefieldDialogModel::back()
     indexChanged();
 }
 
+// Progress in the wizard
 void AddForcefieldDialogModel::next()
 {
     std::vector<int> assignErrs;
@@ -112,6 +116,7 @@ void AddForcefieldDialogModel::next()
     indexChanged();
 }
 
+// Supply the main Dissolve instance
 void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
 {
     dissolve_ = &dissolve;
@@ -134,12 +139,15 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
 				      { return dissolve_->coreData().getMasterImproper(name).has_value(); });
 }
 
+// Supply the species to operate on
 void AddForcefieldDialogModel::setSpecies(Species *sp)
 {
     species_ = sp;
     ffSort_.setSpecies(species_);
 }
 
+
+// Does the species have selected atoms
 bool AddForcefieldDialogModel::speciesHasSelection() const
 {
     if (!species_)
@@ -147,10 +155,15 @@ bool AddForcefieldDialogModel::speciesHasSelection() const
     return !species_->selectedAtoms().empty();
 }
 
+
+// The forcefield model
 const QAbstractItemModel *AddForcefieldDialogModel::forcefields() const { return &ffSort_; }
 
+
+// The Atom Type Model
 AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
 
+// Can the user safely pass to the next stage?
 bool AddForcefieldDialogModel::progressionAllowed() const
 {
     if (index_ == Page::SelectForcefieldPage)
@@ -165,8 +178,10 @@ int AddForcefieldDialogModel::atomTypesIndicator() const
 			 [&](const auto &atomType) { return dissolve_->findAtomType(atomType->name()); });
 }
 
+// Whether we are at the final page of the wizard
 bool AddForcefieldDialogModel::atEnd() const { return index_ == Page::MasterTermsPage; }
 
+// The Master Bond Model
 const MasterBondModel *AddForcefieldDialogModel::bonds() const
 {
     if (!masters_)
@@ -174,6 +189,7 @@ const MasterBondModel *AddForcefieldDialogModel::bonds() const
     return &masters_->bondModel_;
 }
 
+// The Master Angle Model
 const MasterAngleModel *AddForcefieldDialogModel::angles() const
 {
     if (!masters_)
@@ -181,6 +197,7 @@ const MasterAngleModel *AddForcefieldDialogModel::angles() const
     return &masters_->angleModel_;
 }
 
+// The Master Torsion Model
 const MasterTorsionModel *AddForcefieldDialogModel::torsions() const
 {
     if (!masters_)
@@ -188,6 +205,7 @@ const MasterTorsionModel *AddForcefieldDialogModel::torsions() const
     return &masters_->torsionModel_;
 }
 
+// The Master Improper Model
 const MasterImproperModel *AddForcefieldDialogModel::impropers() const
 {
     if (!masters_)
@@ -195,6 +213,7 @@ const MasterImproperModel *AddForcefieldDialogModel::impropers() const
     return &masters_->improperModel_;
 }
 
+// Apply the forcefield
 void AddForcefieldDialogModel::finalise()
 {
     /*
