@@ -4,9 +4,13 @@ description: Build and publish website
 inputs:
   hugoVersion:
     default: "0.98.0"
-  webDirRoot:
-    default: "github.com/disorderedmaterials/dissolve/edit/develop/web"
-  continuous:
+  isRelease:
+    type: boolean
+    default: false
+  isDevelopment:
+    type: boolean
+    default: false
+  isLegacy:
     type: boolean
     default: false
   deploy:
@@ -20,20 +24,33 @@ runs:
   using: "composite"
   steps:
 
-  - name: 'Set MAJOR Version'
+  - name: 'Set Version'
     shell: bash
-    run: |
-      cd web/docs
-      sed -i "s/MAJOR.X/${{ env.dissolveMajorVersion }}.X/g" _index.md
-      grep ".X" _index.md
+    run: sed -i "s/MAJOR.MINOR/${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g" web/docs.toml
 
-  - name: 'Set Base URL'
-    if: ${{ inputs.continuous == 'true' }}
+  - name: 'Apply Development Release Styling'
+    if: ${{ inputs.isDevelopment == 'true' }}
     shell: bash
     run: |
-      cd web
-      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/continuous/"|g' docs.toml
-      grep baseURL docs.toml
+      sed -i 's/vMAJOR.MINOR/Development v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i 's/documentationinfo target=".*"/documentationinfo target="development"/g' web/docs/_index.md
+      head -n 10 web/docs/_index.md
+      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/dev/"|g' web/docs.toml
+      grep baseURL web/docs.toml
+      sed -i "s/navbar-background-color/navbar-background-color-dev/g" web/assets/scss/_content.scss
+      grep navbar-background-color web/assets/scss/_content.scss
+
+  - name: 'Apply Legacy Release Styling'
+    if: ${{ inputs.isLegacy == 'true' }}
+    shell: bash
+    run: |
+      sed -i 's/vMAJOR.MINOR/Legacy v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i 's/documentationinfo target=".*"/documentationinfo target="legacy"/g' web/docs/_index.md
+      head -n 10 web/docs/_index.md
+      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/legacy/"|g' web/docs.toml
+      grep baseURL web/docs.toml
+      sed -i "s/navbar-background-color/navbar-background-color-legacy/g" web/assets/scss/_content.scss
+      grep navbar-background-color web/assets/scss/_content.scss
 
   - name: 'Download & Install Hugo (Extended Version)'
     shell: bash
@@ -74,14 +91,6 @@ runs:
       hugo --contentDir main/ --config main.toml --destination public
       hugo --contentDir docs/ --config docs.toml --destination public-docs
 
-  - name: 'Rewrite Edit Links'
-    shell: bash
-    run: |
-      set -ex
-      # Remove language ('en') from 'Edit on GitHub' path links
-      find web/public-docs/userguide/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/docs/en/userguide/:${{ inputs.webDirRoot }}/docs/userguide/:g" {} +
-      find web/public-docs/examples/ -iname *.html -exec sed -i "s:${{ inputs.webDirRoot }}/docs/en/examples/:${{ inputs.webDirRoot }}/docs/examples/:g" {} +
-
   - name: 'Create PDFs'
     if: ${{ inputs.pdfExamples == 'true' }}
     shell: bash
@@ -97,20 +106,29 @@ runs:
       done
 
   - name: 'SSH Deploy to Server (Release) (Docs only)'
-    if: ${{ inputs.deploy == 'true' && inputs.continuous == 'false' }}
+    if: ${{ inputs.deploy == 'true' && inputs.isRelease == 'true' && inputs.isLegacy == 'false' }}
     shell: bash
     run: |
       echo "${SERVER_ID}" > ./serverId
       echo "${SERVER_KEY}" > ./serverKey
       chmod 0600 ./serverKey ./serverId
-      rsync -avz --delete --exclude=continuous --exclude=previous -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
+      rsync -avz --delete --exclude=dev --exclude=legacy -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
 
-  - name: 'SSH Deploy to Server (Continuous)'
-    if: ${{ inputs.deploy == 'true' && inputs.continuous == 'true' }}
+  - name: 'SSH Deploy to Server (Legacy) (Docs only)'
+    if: ${{ inputs.deploy == 'true' && inputs.isLegacy == 'true' }}
+    shell: bash
+    run: |
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
+      chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/legacy
+
+  - name: 'SSH Deploy to Server (Development)'
+    if: ${{ inputs.deploy == 'true' && inputs.isDevelopment == 'true' }}
     shell: bash
     run: |
       echo "${SERVER_ID}" > ./serverId
       echo "${SERVER_KEY}" > ./serverKey
       chmod 0600 ./serverKey ./serverId
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
-      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/continuous
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/dev
