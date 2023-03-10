@@ -70,7 +70,7 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
             case Qt::UserRole + 1:
                 return QString::fromStdString(std::string(data->name()));
             case Qt::UserRole + 2:
-	      return QVariant(iconFunction_(rawData(index)));
+                return QVariant(iconFunction_(rawData(index)));
         }
     }
     if (role == Qt::DisplayRole || role == Qt::EditRole)
@@ -222,18 +222,18 @@ QHash<int, QByteArray> AtomTypeModel::roleNames() const
     return roles;
 }
 
-void AtomTypeModel::addSuffix(int index, QString suffix)
+void AtomTypeModel::addSuffix(int row, QString suffix)
 {
-    beginResetModel();
-    auto &data = atomTypes_->get()[index];
+    auto &data = atomTypes_->get()[row];
     data->setName(fmt::format("{}{}", data->name(), suffix.toStdString()));
-    endResetModel();
+    auto idx = index(row, 0);
+    emit dataChanged(idx, idx);
 }
 
-void AtomTypeModel::addPrefix(int index, QString prefix)
+void AtomTypeModel::addPrefix(int row, QString prefix)
 {
-    beginResetModel();
-    auto &data = atomTypes_->get()[index];
+    auto &data = atomTypes_->get()[row];
     data->setName(fmt::format("{}{}", prefix.toStdString(), data->name()));
-    endResetModel();
+    auto idx = index(row, 0);
+    emit dataChanged(idx, idx);
 }

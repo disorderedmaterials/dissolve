@@ -23,13 +23,6 @@ GroupBox {
 	}
     }
 
-    Connections {
-	target: dialogModel.atomTypes;
-	function onDataChanged(topLeft, bottomRight) {
-	    dialogModel.atomTypeIndicatorChanged();
-	}
-    }
-
     ColumnLayout {
 	id: radioChoice;
 	spacing: 5;
