@@ -104,7 +104,7 @@ void AddForcefieldDialogModel::next()
 	    index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
 	    break;
 	case AddForcefieldDialogModel::Page::MasterTermsPage:
-	    accept();
+	    finalise();
 	    break;
 	default:
 	    index_ = AddForcefieldDialogModel::Page::SelectForcefieldPage;
@@ -193,4 +193,105 @@ const MasterImproperModel *AddForcefieldDialogModel::impropers() const
     if (!masters_)
 	return nullptr;
     return &masters_->improperModel_;
+}
+
+void AddForcefieldDialogModel::finalise()
+{
+    /*
+     * We have the original Species (which should exist in the provided Dissolve object) in currentSpecies()
+     * and the temporary species modifiedSpecies_ which contains the new Forcefield terms.
+     *
+     * So, we will assume that the ordering of all data (atoms, bonds etc.) in the two are the same, and then copy and reassign
+     * AtomTypes and intramolecular terms.
+     */
+
+    auto typesSelectionOnly = atomTypeRadio_ == Radio::Selected;
+    auto intraSelectionOnly = intramolecularRadio_ == Radio::Selected;
+
+    // 1) Set AtomTypes
+    for (const auto &&[original, modified] : zip(species_->atoms(), modifiedSpecies_->atoms()))
+    {
+
+	// Selection only?
+	if (typesSelectionOnly && (!original.isSelected()))
+	    continue;
+
+	// Copy AtomType
+	dissolve_->copyAtomType(&modified, &original);
+
+	// Overwrite existing parameters?
+	if (overwriteParametersCheck_)
+	{
+	    original.atomType()->interactionPotential() = modified.atomType()->interactionPotential();
+	    original.atomType()->setCharge(modified.atomType()->charge());
+	    dissolve_->coreData().bumpAtomTypesVersion();
+	}
+
+	// Copy charge on species atom
+	original.setCharge(modified.charge());
+    }
+
+    // Assign intramolecular terms if we need to
+    // if (!intramolecularTermsAssigned_)
+    //	assignIntramolecularTerms(ui_.ForcefieldWidget->currentForcefield().get());
+
+    // Copy intramolecular terms
+    if (intramolecularRadio_ != Radio::None)
+    {
+	auto modifiedBond = modifiedSpecies_->bonds().cbegin();
+	for (auto &originalBond : species_->bonds())
+	{
+	    // Selection only?
+	    if (intraSelectionOnly && (!originalBond.isSelected()))
+		continue;
+
+	    dissolve_->copySpeciesBond(*modifiedBond, originalBond);
+
+	    ++modifiedBond;
+	}
+
+	auto modifiedAngle = modifiedSpecies_->angles().cbegin();
+	for (auto &originalAngle : species_->angles())
+	{
+	    // Selection only?
+	    if (intraSelectionOnly && (!originalAngle.isSelected()))
+		continue;
+
+	    dissolve_->copySpeciesAngle(*modifiedAngle, originalAngle);
+
+	    ++modifiedAngle;
+	}
+
+	auto modifiedTorsion = modifiedSpecies_->torsions().cbegin();
+	for (auto &originalTorsion : species_->torsions())
+	{
+	    // Selection only?
+	    if (intraSelectionOnly && (!originalTorsion.isSelected()))
+		continue;
+
+	    dissolve_->copySpeciesTorsion(*modifiedTorsion, originalTorsion);
+
+	    ++modifiedTorsion;
+	}
+
+	for (auto &modifiedImproper : modifiedSpecies_->impropers())
+	{
+	    // Selection only?
+	    if (intraSelectionOnly && (!modifiedImproper.isSelected()))
+		continue;
+
+	    // Find / create the improper in the target species
+	    auto optImproper = species_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+						     modifiedImproper.indexK(), modifiedImproper.indexL());
+	    if (optImproper)
+		dissolve_->copySpeciesImproper(modifiedImproper, *optImproper);
+	    else
+	    {
+		auto &improper = species_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+						       modifiedImproper.indexK(), modifiedImproper.indexL());
+		dissolve_->copySpeciesImproper(modifiedImproper, improper);
+	    }
+	}
+    }
+    accept();
 }
