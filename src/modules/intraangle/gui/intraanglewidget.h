@@ -30,7 +30,7 @@ class IntraAngleModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::IntraAngleModuleWidget ui_;
     // DataViewers contained within this widget
-    DataViewer *rdfABGraph_, *rdfBCGraph_, *angleGraph_, *dAngleABGraph_, *dAngleBCGraph_;
+    DataViewer *angleGraph_;
 
     public:
     // Update controls within widget
