@@ -192,6 +192,5 @@ const MasterImproperModel *AddForcefieldDialogModel::impropers() const
 {
     if (!masters_)
 	return nullptr;
-    std::cout << "Improper count: " << temporaryCoreData_.masterImpropers().size() << std::endl;
     return &masters_->improperModel_;
 }
