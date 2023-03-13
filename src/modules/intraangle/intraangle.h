@@ -51,16 +51,8 @@ class IntraAngleModule : public Module
     std::shared_ptr<SelectProcedureNode> selectC_;
     // CalculateAngle node for A-B-C angle
     std::shared_ptr<CalculateAngleProcedureNode> calculateAngle_;
-    // Collect1DNode for A-B RDF
-    std::shared_ptr<Collect1DProcedureNode> collectAB_;
-    // Collect1DNode for B-C RDF
-    std::shared_ptr<Collect1DProcedureNode> collectBC_;
     // Collect1DNode for A-B-C angle histogram
     std::shared_ptr<Collect1DProcedureNode> collectABC_;
-    // Process1DNode for A-B RDF
-    std::shared_ptr<Process1DProcedureNode> processAB_;
-    // Process1DNode for B-c RDF
-    std::shared_ptr<Process1DProcedureNode> processBC_;
     // Process1DNode for A-B-C angle histogram
     std::shared_ptr<Process1DProcedureNode> processAngle_;
     // Normalisation expressions for (A-B)-C and A-(B-C) maps
