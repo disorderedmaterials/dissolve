@@ -66,8 +66,7 @@ int main(int args, char **argv)
             Messenger::print("Restart file (if it exists) will be ignored.\n");
         else
         {
-            std::string actualRestartFile{
-                options.restartFilename().value_or(fmt::format("{}.restart", options.inputFile().value()))};
+            auto actualRestartFile{options.restartFilename().value_or(std::string(dissolve.restartFilename()))};
             loadSuccessful = dissolveWindow.loadRestartFile(actualRestartFile);
         }
 

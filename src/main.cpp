@@ -99,7 +99,7 @@ int main(int args, char **argv)
     else
     {
         // We may have been provided the name of a restart file to read in...
-        auto restartFile = options.restartFilename().value_or(fmt::format("{}.restart", options.inputFile().value()));
+        auto restartFile{options.restartFilename().value_or(std::string(dissolve.restartFilename()))};
 
         if (DissolveSys::fileExists(restartFile))
         {
