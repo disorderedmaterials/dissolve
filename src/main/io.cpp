@@ -415,11 +415,9 @@ bool Dissolve::saveInput(std::string_view filename)
 // Load restart file
 bool Dissolve::loadRestart(std::string_view filename)
 {
-    restartFilename_ = filename;
-
     // Open file and check that we're OK to proceed reading from it
     LineParser parser(&worldPool());
-    if (!parser.openInput(restartFilename_))
+    if (!parser.openInput(filename))
         return false;
 
     // Peek the first line and see if can determine a version

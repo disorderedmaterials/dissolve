@@ -33,6 +33,9 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 
     // Input Files
     app.add_flag("-i,--ignore-restart", ignoreRestartFile_, "Ignore restart file (if it exists)")->group("Input Files");
+    app.add_option("--restart", restartFilename_,
+                   "Read restart file specified instead of the default one (but still write to the default one)")
+        ->group("Input Files");
     if (!isGUI)
     {
         app.add_option("-w,--write-input", writeInputFilename_,
@@ -45,9 +48,6 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 
     // Output Files
     app.add_option("-f,--frequency", restartFileFrequency_, "Frequency at which to write restart file (default = 10)")
-        ->group("Output Files");
-    app.add_option("--restart", restartFilename_,
-                   "Read restart file specified instead of the default one (but still write to the default one)")
         ->group("Output Files");
     app.add_flag("-x,--no-restart-file", noRestartFile_, "Don't write restart file at all")->group("Output Files");
 

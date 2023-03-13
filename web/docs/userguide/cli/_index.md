@@ -54,7 +54,10 @@ Print lots more output, mostly useful for debugging
 
 #### `-i`, `--ignore-restart`
 Ignore the restart file (i.e. don't read it in) if it exists. The name of the expected restart file is the input file name suffixed with `.restart`.
- 
+
+#### `--restart <filename>`
+Read restart file data from the file specified, rather than the default. Note that this only affects the initial target for reading the restart file - restart data written by the simulation will still be saved to the default restart file name.
+
 #### `-w <filename>`, `--write-input <filename>`
 Write the specified input file out to the file specified. Again, mostly useful for debugging.
 
@@ -64,9 +67,6 @@ Not available in the GUI code.
 
 #### `-f <n>`, `--frequency <n>`
 Specify the frequency (in terms of main loop iterations) that the restart file should be written at. The default value is 10.
-
-#### `--restart <filename>`
-Read restart file data from the file specified, rather than the default. Note that this only affects the initial target for reading the restart file - restart data written by the simulation will still be saved to the default restart file name.
 
 #### `-x`, `--no-restart-file`
 Prevent writing of the restart file completely. Data exported from individual modules will still be written.
