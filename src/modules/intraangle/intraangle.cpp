@@ -91,10 +91,6 @@ IntraAngleModule::IntraAngleModule() : Module("CalculateIntraAngle"), analyser_(
         "Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 
     keywords_.setOrganisation("Export");
-    keywords_.add<FileAndFormatKeyword>("ExportAB", "File format and file name under which to save calculated A-B RDF data",
-                                        processAB_->exportFileAndFormat(), "EndExportAB");
-    keywords_.add<FileAndFormatKeyword>("ExportBC", "File format and file name under which to save calculated B-C RDF data",
-                                        processBC_->exportFileAndFormat(), "EndExportBC");
     keywords_.add<FileAndFormatKeyword>("ExportAngle",
                                         "File format and file name under which to save calculated A-B-C angle histogram",
                                         processAngle_->exportFileAndFormat(), "EndExportAngle");

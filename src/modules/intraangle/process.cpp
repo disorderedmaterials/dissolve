@@ -22,8 +22,6 @@ bool IntraAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     selectC_->setDistanceReferenceSite(selectB_);
     selectC_->setInclusiveDistanceRange({rangeBC_.x, rangeBC_.y});
     calculateAngle_->keywords().set("Symmetric", symmetric_);
-    collectAB_->keywords().set("RangeX", rangeAB_);
-    collectBC_->keywords().set("RangeX", rangeBC_);
     collectABC_->keywords().set("RangeX", angleRange_);
     if (excludeSameMoleculeAB_)
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
