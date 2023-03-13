@@ -331,12 +331,8 @@ bool Dissolve::iterate(int nIterations)
                     GenericItem::InRestartFileFlag) = pot->uAdditional();
             }
 
-            // If a restart filename isn't currently set, generate one now.
-            if (restartFilename_.empty())
-                restartFilename_ = fmt::format("{}.restart", inputFilename_);
-            std::string restartFileBackup = fmt::format("{}.prev", restartFilename_);
-
             // Check and remove restart file backup
+            std::string restartFileBackup = fmt::format("{}.prev", restartFilename_);
             if (DissolveSys::fileExists(restartFileBackup) && (std::remove(restartFileBackup.c_str()) != 0))
             {
                 Messenger::error("Could not remove old restart file backup.\n");
