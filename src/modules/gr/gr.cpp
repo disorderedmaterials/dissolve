@@ -46,6 +46,11 @@ GRModule::GRModule() : Module("GR")
         internalTest_);
     keywords_.add<EnumOptionsKeyword<GRModule::PartialsMethod>>(
         "Method", "Calculation method for partial radial distribution functions", partialsMethod_, GRModule::partialsMethods());
+
+    // Deprecated
+    static bool deprecatedBool_{false};
+    keywords_.addDeprecated<BoolKeyword>(
+        "UseHalfCellRange", "Whether to use the maximal RDF range possible that avoids periodic images", deprecatedBool_);
 }
 
 // Return enum option info for NormalisationType
