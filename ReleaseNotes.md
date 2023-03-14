@@ -4,7 +4,7 @@ Version 1.0 is a major release adding a significant amount of new functionality 
 
 - Fix crash when creating an RDF/CN layer from the main menu.
 - Treat removed `UseHalfCellWidth` of the `GR` module as deprecated.
-- Fix an issue where referenced restart files (with the `--restart` CLI keyword, or loaded via File->Load Restart File in the GUI) became the target restart file to write to.
+- Fix an issue where referenced restart files (with the `--restart` CLI keyword, or opened via File->Load Restart File in the GUI) became the target restart file to write to.
 
 ## Major Changes in v1.0
 
