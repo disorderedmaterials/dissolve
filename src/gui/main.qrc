@@ -109,6 +109,7 @@
     <file>icons/modules_accumulate.svg</file>
     <file>icons/modules_axisangle.svg</file>
     <file>icons/modules_dangle.svg</file>
+    <file>icons/modules_intradistance.svg</file>
     <file>icons/modules_siterdf.svg</file>
     <file>icons/modules_sdf.svg</file>
     <file>icons/modules_molshake.svg</file>
