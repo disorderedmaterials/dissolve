@@ -27,6 +27,10 @@ class IntraAngleModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
+    // Range (min, max, binwidth) of A-B distance axis
+    Vec3<double> rangeAB_{0.0, 10.0, 0.05};
+    // Range (min, max, binwidth) of B-C distance axis
+    Vec3<double> rangeBC_{0.0, 10.0, 0.05};
     // Range (min, max, binwidth) of angle axis
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
     // Whether the angular range should be considered symmetric about 90
