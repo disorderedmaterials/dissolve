@@ -18,10 +18,6 @@ bool IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPoo
 
     // Ensure any parameters in our nodes are set correctly
     collectDistance_->keywords().set("RangeX", distanceRange_);
-    if (excludeSameMolecule_)
-        selectB_->setSameMoleculeExclusions({selectA_});
-    else
-        selectB_->setSameMoleculeExclusions({});
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

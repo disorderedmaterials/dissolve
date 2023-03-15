@@ -59,6 +59,4 @@ IntraDistanceModule::IntraDistanceModule() : Module("IntraDistance"), analyser_(
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated RDF data",
                                         processDistance_->exportFileAndFormat(), "EndExport");
-    keywords_.add<BoolKeyword>("ExportInstantaneousCN", "Export instantaneous coordination numbers to disk\n",
-                               exportInstantaneous_);
 }
