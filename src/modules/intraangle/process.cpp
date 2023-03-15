@@ -18,23 +18,9 @@ bool IntraAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Ensure any parameters in our nodes are set correctly
     selectB_->setDistanceReferenceSite(selectA_);
-    selectB_->setInclusiveDistanceRange({rangeAB_.x, rangeAB_.y});
     selectC_->setDistanceReferenceSite(selectB_);
-    selectC_->setInclusiveDistanceRange({rangeBC_.x, rangeBC_.y});
     calculateAngle_->keywords().set("Symmetric", symmetric_);
     collectABC_->keywords().set("RangeX", angleRange_);
-    if (excludeSameMoleculeAB_)
-        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-    else
-        selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
-    if (excludeSameMoleculeBC_)
-        selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectB_});
-    else
-        selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
-    if (excludeSameSiteAC_)
-        selectC_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
-    else
-        selectC_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);

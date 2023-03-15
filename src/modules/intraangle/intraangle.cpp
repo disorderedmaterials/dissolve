@@ -79,14 +79,6 @@ IntraAngleModule::IntraAngleModule() : Module("CalculateIntraAngle"), analyser_(
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
     keywords_.setOrganisation("Options", "Control");
-    keywords_.add<BoolKeyword>("ExcludeSameMoleculeAB",
-                               "Whether to exclude correlations between A and B sites on the same molecule",
-                               excludeSameMoleculeAB_);
-    keywords_.add<BoolKeyword>("ExcludeSameMoleculeBC",
-                               "Whether to exclude correlations between B and C sites on the same molecule",
-                               excludeSameMoleculeBC_);
-    keywords_.add<BoolKeyword>(
-        "ExcludeSameSiteAC", "Whether to exclude correlations between A and C sites on the same molecule", excludeSameSiteAC_);
     keywords_.add<BoolKeyword>(
         "Symmetric", "Whether the calculated angle should be mapped to 0 - 90 (i.e. is symmetric about 90)", symmetric_);
 

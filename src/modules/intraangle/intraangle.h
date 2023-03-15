@@ -27,16 +27,6 @@ class IntraAngleModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
-    // Whether to exclude correlations between A and B sites on the same molecule
-    bool excludeSameMoleculeAB_{false};
-    // Whether to exclude correlations between B and C sites on the same molecule
-    bool excludeSameMoleculeBC_{false};
-    // Whether to exclude correlations between A and C sites on the same molecule
-    bool excludeSameSiteAC_{false};
-    // Range (min, max, binwidth) of A-B distance axis
-    Vec3<double> rangeAB_{0.0, 10.0, 0.05};
-    // Range (min, max, binwidth) of B-C distance axis
-    Vec3<double> rangeBC_{0.0, 10.0, 0.05};
     // Range (min, max, binwidth) of angle axis
     Vec3<double> angleRange_{0.0, 180.0, 1.0};
     // Whether the angular range should be considered symmetric about 90
@@ -55,7 +45,6 @@ class IntraAngleModule : public Module
     std::shared_ptr<Collect1DProcedureNode> collectABC_;
     // Process1DNode for A-B-C angle histogram
     std::shared_ptr<Process1DProcedureNode> processAngle_;
-    // Normalisation expressions for (A-B)-C and A-(B-C) maps
 
     /*
      * Processing
