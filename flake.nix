@@ -182,7 +182,8 @@
           AntlrRuntime_INCLUDE_DIRS =
             "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
           AntlrRuntime_LINK_DIRS = "${pkgs.antlr4.runtime.cpp}/lib";
-          CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
+          CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
+          CMAKE_C_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
           THREADING_LINK_LIBS = "${pkgs.tbb}/lib/libtbb.so";
