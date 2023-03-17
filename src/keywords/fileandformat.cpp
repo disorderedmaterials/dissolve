@@ -35,8 +35,11 @@ std::optional<int> FileAndFormatKeyword::maxArguments() const { return 2; }
 // Deserialise from supplied LineParser, starting at given argument offset
 bool FileAndFormatKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    if (!data_.read(parser, startArg, endKeyword_, coreData))
-        Messenger::warn("Failed to read file/format for '{}'.\n", name());
+    auto result = data_.read(parser, startArg, endKeyword_, coreData);
+
+    // Fail on hard errors
+    if (result == FileAndFormat::ReadResult::UnrecognisedFormat || result == FileAndFormat::ReadResult::UnrecognisedOption)
+        return Messenger::error("Failed to read file/format for '{}'.\n", name());
 
     return true;
 }

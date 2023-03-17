@@ -79,8 +79,17 @@ class FileAndFormat
      * Read / Write
      */
     public:
+    // Read result
+    enum class ReadResult
+    {
+        UnrecognisedFormat,
+        FileNotFound,
+        UnrecognisedOption,
+        GeneralReadError,
+        Success
+    };
     // Read format / filename from specified parser
-    bool read(LineParser &parser, int startArg, std::string_view endKeyword, const CoreData &coreData);
+    ReadResult read(LineParser &parser, int startArg, std::string_view endKeyword, const CoreData &coreData);
     // Write format / filename to specified parser
     bool writeFilenameAndFormat(LineParser &parser, std::string_view prefix) const;
     // Write options and end block
