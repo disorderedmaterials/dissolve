@@ -1,11 +1,5 @@
 Version 1.0 is a major release adding a significant amount of new functionality and bugfixes.
 
-## Patch v1.0.1
-
-- Fix crash when creating an RDF/CN layer from the main menu.
-- Treat removed `UseHalfCellWidth` of the `GR` module as deprecated.
-- Fix an issue where referenced restart files (with the `--restart` CLI keyword, or opened via File->Load Restart File in the GUI) became the target restart file to write to.
-
 ## Major Changes in v1.0
 
 ### Compatibility with Earlier Versions
@@ -71,3 +65,14 @@ A new layout scheme has been adopted in the GUI in order to better group keyword
 - Procedures are now fully editable from the GUI.
 - Reference points have now been removed from the GUI.
 - Miscellaneous small fixes to the GUI - signal handling, editability etc.
+
+## Patch v1.0.1
+
+- Fix crash when creating an RDF/CN layer from the main menu.
+- Treat removed `UseHalfCellWidth` of the `GR` module as deprecated.
+- Fix an issue where referenced restart files (with the `--restart` CLI keyword, or opened via File->Load Restart File in the GUI) became the target restart file to write to.
+
+## Patch v1.0.2
+
+- Fix crash when creating a SDF layer from the main menu.
+- Better handling of errors/warnings from bad file/format specifications.
