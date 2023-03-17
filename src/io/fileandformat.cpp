@@ -84,17 +84,18 @@ KeywordStore &FileAndFormat::keywords() { return keywords_; }
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endKeyword, const CoreData &coreData)
+FileAndFormat::ReadResult FileAndFormat::read(LineParser &parser, int startArg, std::string_view endKeyword,
+                                              const CoreData &coreData)
 {
     // Convert first argument to format index
     auto formatId = formats_.keywordIndex(parser.argsv(startArg));
     if (!formatId)
     {
-        Messenger::print("Unrecognised format '{}' given for file. Recognised formats are:\n\n", parser.argsv(startArg));
+        Messenger::error("Unrecognised format '{}' given for file. Recognised formats are:\n\n", parser.argsv(startArg));
 
         printAvailableFormats();
 
-        return false;
+        return ReadResult::UnrecognisedFormat;
     }
     formatIndex_ = formatId.value();
 
@@ -106,7 +107,7 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
     {
         // Read the next line
         if (parser.getArgsDelim() != LineParser::Success)
-            return false;
+            return ReadResult::GeneralReadError;
 
         // Is this the end of the block?
         if (DissolveSys::sameString(parser.argsv(0), endKeyword))
@@ -115,16 +116,25 @@ bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endK
         // Can we parse the keyword?
         auto result = keywords_.deserialise(parser, coreData);
         if (result == KeywordBase::ParseResult::Unrecognised)
-            return Messenger::error("Unrecognised option '{}' found in file and format block.\n", parser.argsv(0));
+        {
+            Messenger::error("Unrecognised option '{}' found in file and format block.\n", parser.argsv(0));
+            return ReadResult::UnrecognisedOption;
+        }
         else if (result == KeywordBase::ParseResult::Failed)
-            return Messenger::error("Error reading option '{}'.\n", parser.argsv(0));
+        {
+            Messenger::error("Error reading option '{}'.\n", parser.argsv(0));
+            return ReadResult::GeneralReadError;
+        }
     }
 
     // Check that the file exists?
     if (fileMustExist() && (filename_ != "@") && (!DissolveSys::fileExists(filename_)))
-        return Messenger::error("Specified file '{}' does not exist.\n", filename_);
+    {
+        Messenger::warn("Specified file '{}' does not exist.\n", filename_);
+        return ReadResult::FileNotFound;
+    }
 
-    return true;
+    return ReadResult::Success;
 }
 
 // Write format / filename to specified parser

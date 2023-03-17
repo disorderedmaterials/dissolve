@@ -18,7 +18,7 @@ bool Data2DStore::addData(std::string_view dataName, LineParser &parser, int sta
     data.setTag(dataName);
 
     // Read the file / format
-    if (!format.read(parser, startArg, endKeyword, coreData))
+    if (format.read(parser, startArg, endKeyword, coreData) != FileAndFormat::ReadResult::Success)
         return false;
 
     // Load the data

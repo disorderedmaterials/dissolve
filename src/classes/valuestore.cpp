@@ -18,7 +18,7 @@ bool ValueStore::addData(std::string_view dataName, LineParser &parser, int star
     tag = dataName;
 
     // Read the file / format
-    if (!format.read(parser, startArg, endKeyword, coreData))
+    if (format.read(parser, startArg, endKeyword, coreData) != FileAndFormat::ReadResult::Success)
         return false;
 
     // Load the data
