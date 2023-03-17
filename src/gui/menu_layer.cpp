@@ -336,12 +336,12 @@ void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked
 
     auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
-    // Add the CalculateAvgMol module
-    auto *module = ModuleRegistry::create("CalculateAvgMol", newLayer);
+    // Add the AvgMol module
+    auto *module = ModuleRegistry::create("AvgMol", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
-    // Add a CalculateSDF module
-    module = ModuleRegistry::create("CalculateSDF", newLayer);
+    // Add an SDF module
+    module = ModuleRegistry::create("SDF", newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
