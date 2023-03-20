@@ -101,6 +101,6 @@ jobs:
           HARBOR_USER: ${{ secrets.HARBOR_USER }}
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
       - name: Update Version Information
+        uses: "./.github/workflows/update-release-info"
         with:
           createPR: ${{ ! endsWith(github.ref, 'pre') }}
-        uses: "./.github/workflows/update-release-info"
