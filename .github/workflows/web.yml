@@ -1,0 +1,44 @@
+name: Website Build
+
+on:
+  pull_request:
+    branches:
+    - '*'
+    paths:
+    - '.github/workflows/web**'
+    - 'web/**'
+
+  push:
+    branches:
+    - 'develop'
+    - 'release/**'
+    paths:
+    - '.github/workflows/web**'
+    - 'web/**'
+
+jobs:
+
+  BuildWeb:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup
+      uses: "./.github/workflows/setup"
+    - name: Build Website
+      uses: "./.github/workflows/website"
+      with:
+        isDevelopment: ${{ github.ref_name == 'develop' || github.event_name == 'pull_request' }}
+        isRelease: ${{ startsWith(github.ref_name, 'release') }}
+        isLegacy: false
+        deploy: ${{ github.ref_name == 'develop' || (startsWith(github.ref_name, 'release') && ! endsWith(github.ref_name, 'pre')) }}
+      env:
+        HARBOR_USER: ${{ secrets.HARBOR_USER }}
+        HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
+        SERVER_ID: ${{ secrets.SERVER_ID }}
+        SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_DOCS_DIR: ${{ secrets.SERVER_DOCS_DIR }}
+        SERVER_MAIN_DIR: ${{ secrets.SERVER_MAIN_DIR }}
+        SERVER_PORT: ${{ secrets.SERVER_PORT }}

@@ -1,0 +1,44 @@
+name: Basic Setup
+description: Set up environment variables
+
+inputs:
+  pythonVersion:
+    type: string
+    default: 3.9
+  qtVersion:
+    type: string
+    default: 6.2.2
+  nixVersion:
+    type: string
+    default: 2.4
+  nixOSVersion:
+    type: string
+    default: 22.11
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Setup environment
+      shell: bash
+      run: |
+        set -ex
+        echo "pythonVersion=${{ inputs.pythonVersion }}" >> ${GITHUB_ENV}
+        echo "qtVersion=${{ inputs.qtVersion }}" >> ${GITHUB_ENV}
+        echo "nixVersion=${{ inputs.nixVersion }}" >> ${GITHUB_ENV}
+        echo "nixOSVersion=${{ inputs.nixOSVersion }}" >> ${GITHUB_ENV}
+
+    - name: Get code version
+      shell: bash
+      run: |
+        set -ex
+        DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed 's/.*\"\(.*\)\"/\1/g'`
+        echo "Dissolve code version is ${DISSOLVE_VERSION}"
+        DISSOLVE_MAJOR=`echo $DISSOLVE_VERSION | sed "s/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\1/g"`
+        DISSOLVE_MINOR=`echo $DISSOLVE_VERSION | sed "s/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\2/g"`
+        DISSOLVE_PATCH=`echo $DISSOLVE_VERSION | sed "s/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\3/g"`
+        echo "Dissolve major version is ${DISSOLVE_MAJOR}"
+        echo "dissolveVersion=${DISSOLVE_VERSION}" >> ${GITHUB_ENV}
+        echo "dissolveMajorVersion=${DISSOLVE_MAJOR}" >> ${GITHUB_ENV}
+        echo "dissolveMinorVersion=${DISSOLVE_MINOR}" >> ${GITHUB_ENV}
+        echo "dissolvePatchVersion=${DISSOLVE_PATCH}" >> ${GITHUB_ENV}

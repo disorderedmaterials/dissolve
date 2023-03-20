@@ -1,0 +1,134 @@
+name: Website
+description: Build and publish website
+
+inputs:
+  hugoVersion:
+    default: "0.98.0"
+  isRelease:
+    type: boolean
+    default: false
+  isDevelopment:
+    type: boolean
+    default: false
+  isLegacy:
+    type: boolean
+    default: false
+  deploy:
+    type: boolean
+    default: false
+  pdfExamples:
+    type: boolean
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: 'Set Version'
+    shell: bash
+    run: sed -i "s/MAJOR.MINOR/${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g" web/docs.toml
+
+  - name: 'Apply Development Release Styling'
+    if: ${{ inputs.isDevelopment == 'true' }}
+    shell: bash
+    run: |
+      sed -i 's/vMAJOR.MINOR/Development v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i 's/documentationinfo target=".*"/documentationinfo target="development"/g' web/docs/_index.md
+      head -n 10 web/docs/_index.md
+      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/dev/"|g' web/docs.toml
+      grep baseURL web/docs.toml
+      sed -i "s/navbar-background-color/navbar-background-color-dev/g" web/assets/scss/_content.scss
+      grep navbar-background-color web/assets/scss/_content.scss
+
+  - name: 'Apply Legacy Release Styling'
+    if: ${{ inputs.isLegacy == 'true' }}
+    shell: bash
+    run: |
+      sed -i 's/vMAJOR.MINOR/Legacy v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      sed -i 's/documentationinfo target=".*"/documentationinfo target="legacy"/g' web/docs/_index.md
+      head -n 10 web/docs/_index.md
+      sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/legacy/"|g' web/docs.toml
+      grep baseURL web/docs.toml
+      sed -i "s/navbar-background-color/navbar-background-color-legacy/g" web/assets/scss/_content.scss
+      grep navbar-background-color web/assets/scss/_content.scss
+
+  - name: 'Download & Install Hugo (Extended Version)'
+    shell: bash
+    run: |
+      set -ex
+      wget https://github.com/gohugoio/hugo/releases/download/v${{ inputs.hugoVersion }}/hugo_extended_${{ inputs.hugoVersion }}_Linux-64bit.deb -O '${{ github.workspace }}/hugo.deb'
+      sudo dpkg -i ${{ github.workspace }}/hugo*.deb
+
+  - name: 'Install pandoc / xetex'
+    if: ${{ inputs.pdfExamples == 'true' }}
+    shell: bash
+    run: |
+      set -ex
+      sudo apt install pandoc
+      sudo apt install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-xetex
+
+  - name: 'Copy Icons'
+    shell: bash
+    run: |
+      set -ex
+      cp -v src/gui/icons/*.svg web/static/img
+
+  - name: 'Meld Examples'
+    shell: bash
+    run: |
+      set -ex
+      for example in $(find ./web/content-docs/examples/ -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      do
+        ci/scripts/meld-example -d ${example}
+      done
+
+  - name: 'Build Site'
+    shell: bash
+    run: |
+      set -ex
+      cd web
+      npm install
+      hugo --contentDir main/ --config main.toml --destination public
+      hugo --contentDir docs/ --config docs.toml --destination public-docs
+
+  - name: 'Create PDFs'
+    if: ${{ inputs.pdfExamples == 'true' }}
+    shell: bash
+    run: |
+      set -ex
+      cd web/public-docs/examples/
+      for example in $(find . -mindepth 1 -maxdepth 1 -type d -not -iname previous)
+      do
+        echo "Creating pdf for example \"${example}\"..."
+        cd ${example}/single/
+        pandoc --pdf-engine=xelatex -V 'mainfont:DejaVuSerif.ttf' -V 'sansfont:DejaVuSans.ttf' -V 'monofont:DejaVuSansMono.ttf' index.html -o ../${example}.pdf
+        cd ../../
+      done
+
+  - name: 'SSH Deploy to Server (Release) (Docs only)'
+    if: ${{ inputs.deploy == 'true' && inputs.isRelease == 'true' && inputs.isLegacy == 'false' }}
+    shell: bash
+    run: |
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
+      chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete --exclude=dev --exclude=legacy -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}
+
+  - name: 'SSH Deploy to Server (Legacy) (Docs only)'
+    if: ${{ inputs.deploy == 'true' && inputs.isLegacy == 'true' }}
+    shell: bash
+    run: |
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
+      chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/legacy
+
+  - name: 'SSH Deploy to Server (Development)'
+    if: ${{ inputs.deploy == 'true' && inputs.isDevelopment == 'true' }}
+    shell: bash
+    run: |
+      echo "${SERVER_ID}" > ./serverId
+      echo "${SERVER_KEY}" > ./serverKey
+      chmod 0600 ./serverKey ./serverId
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public/ ${SERVER_IP}:${SERVER_MAIN_DIR}
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=./serverId -i ./serverKey -p ${SERVER_PORT} -l ${SERVER_USER}" web/public-docs/ ${SERVER_IP}:${SERVER_DOCS_DIR}/dev
