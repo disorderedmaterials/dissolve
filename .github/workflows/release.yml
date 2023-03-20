@@ -86,8 +86,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Setup
         uses: "./.github/workflows/setup"
       - name: Set Short Hash
@@ -104,3 +102,4 @@ jobs:
         uses: "./.github/workflows/update-release-info"
         with:
           createPR: ${{ ! endsWith(github.ref, 'pre') }}
+          releaseVersion: ${{ env.dissolveVersion }}
