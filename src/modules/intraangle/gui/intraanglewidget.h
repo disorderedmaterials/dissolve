@@ -42,6 +42,4 @@ class IntraAngleModuleWidget : public ModuleWidget
     private:
     // Set data targets in graphs
     void setGraphDataTargets(IntraAngleModule *module);
-
-    private slots:
 };
