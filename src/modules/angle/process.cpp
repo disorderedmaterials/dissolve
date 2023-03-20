@@ -53,7 +53,7 @@ bool AngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
-        return Messenger::error("CalculateAngle experienced problems with its analysis.\n");
+        return Messenger::error("Angle experienced problems with its analysis.\n");
 
     return true;
 }
