@@ -1,7 +1,11 @@
 ---
-title: "Dissolve User Guide"
-linkTitle: "User Guide"
+title: "Documentation for vMAJOR.MINOR"
+linkTitle: "Documentation (vMAJOR.MINOR)"
+cascade:
+  - type: "docs"
 ---
+
+{{< documentationinfo target="release" >}}
 
 **Structure Refinement for Scattering Data**
 

@@ -88,7 +88,6 @@ runs:
       set -ex
       cd web
       npm install
-      hugo --contentDir main/ --config main.toml --destination public
       hugo --contentDir docs/ --config docs.toml --destination public-docs
 
   - name: 'Create PDFs'
