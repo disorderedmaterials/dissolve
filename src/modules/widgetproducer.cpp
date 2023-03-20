@@ -30,6 +30,8 @@
 #include "modules/geomopt/gui/geomoptwidget.h"
 #include "modules/gr/gr.h"
 #include "modules/gr/gui/grwidget.h"
+#include "modules/intradistance/gui/intradistancewidget.h"
+#include "modules/intradistance/intradistance.h"
 #include "modules/neutronsq/gui/neutronsqwidget.h"
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/sdf/gui/sdfwidget.h"
@@ -56,6 +58,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<AngleModule, AngleModuleWidget>();
     registerProducer<AvgMolModule, AvgMolModuleWidget>();
     registerProducer<AxisAngleModule, AxisAngleModuleWidget>();
+    registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
     registerProducer<DAngleModule, DAngleModuleWidget>();
     registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
     registerProducer<SDFModule, SDFModuleWidget>();
