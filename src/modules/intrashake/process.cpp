@@ -45,7 +45,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         Messenger::print("IntraShake: Only term energy will be considered (interactions with the rest of the"
                          "system will be ignored).\n");
     if (!restrictToSpecies_.empty())
-        Messenger::print("IntraShake: Calculation will be restricted to species:\n",
+        Messenger::print("IntraShake: Calculation will be restricted to species: {}\n",
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
 
     Messenger::print("\n");
