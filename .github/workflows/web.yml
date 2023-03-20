@@ -30,7 +30,7 @@ jobs:
       with:
         isDevelopment: ${{ github.ref_name == 'develop' || github.event_name == 'pull_request' }}
         isRelease: ${{ startsWith(github.ref_name, 'release') }}
-        isLegacy: false
+        isLegacy: true
         deploy: ${{ github.ref_name == 'develop' || (startsWith(github.ref_name, 'release') && ! endsWith(github.ref_name, 'pre')) }}
       env:
         HARBOR_USER: ${{ secrets.HARBOR_USER }}
