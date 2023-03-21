@@ -47,7 +47,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     else
         Messenger::print("MD: Summary will not be written.\n");
     if (!restrictToSpecies_.empty())
-        Messenger::print("MD: Calculation will be restricted to species:\n",
+        Messenger::print("MD: Calculation will be restricted to species: {}\n",
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     Messenger::print("\n");
 
