@@ -28,7 +28,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
 
     auto blockDone = false, error = false;
     Module *module = nullptr;
-    std::string niceName, moduleType;
+    std::string niceName;
 
     while (!parser.eofOrBlank())
     {
@@ -59,31 +59,35 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                 break;
             case (LayerBlock::ModuleKeyword):
                 // The argument following the keyword is the module type, so try to create an instance of that type
-                moduleType = std::string(parser.argsv(1));
-
-                // In case a legacy module name is given, attempt to map the provided moduleType to the current namespace.
+                if (ModuleTypes::moduleType(parser.argsv(1)))
+                    module = ModuleRegistry::create(*ModuleTypes::moduleType(parser.argsv(1)), layer);
+                else
                 {
-                    const std::map<std::string, std::string> legacyNameMap = {{"CalculateAngle", "Angle"},
-                                                                              {"CalculateAvgMol", "AvgMol"},
-                                                                              {"CalculateAxisAngle", "AxisAngle"},
-                                                                              {"CalculateDAngle", "DAngle"},
-                                                                              {"CalculateRDF", "SiteRDF"},
-                                                                              {"CalculateSDF", "SDF"},
-                                                                              {"RDF", "GR"}};
+                    // In case a legacy module name is given, attempt to map the provided moduleType to the current namespace.
+                    const std::map<std::string, ModuleTypes::ModuleType> legacyNameMap = {
+                        {"CalculateAngle", ModuleTypes::Angle},
+                        {"CalculateAvgMol", ModuleTypes::AvgMol},
+                        {"CalculateAxisAngle", ModuleTypes::AxisAngle},
+                        {"CalculateDAngle", ModuleTypes::DAngle},
+                        {"CalculateRDF", ModuleTypes::SiteRDF},
+                        {"CalculateSDF", ModuleTypes::SDF},
+                        {"RDF", ModuleTypes::GR}};
 
-                    auto legacyIt = legacyNameMap.find(moduleType);
+                    auto legacyIt = legacyNameMap.find(parser.args(1));
                     if (legacyIt != legacyNameMap.end())
                     {
-                        moduleType = legacyIt->second;
-                        Messenger::warn("Legacy module name '{}' converted to '{}'...\n", legacyIt->first, moduleType);
-                    }
-                }
+                        Messenger::warn("Legacy module name '{}' converted to '{}'...\n", legacyIt->first,
+                                        ModuleTypes::moduleType(legacyIt->second));
 
-                module = ModuleRegistry::create(moduleType, layer);
+                        module = ModuleRegistry::create(legacyIt->second, layer);
+                    }
+                    else
+                        module = nullptr;
+                }
 
                 if (!module)
                 {
-                    Messenger::error("Module type '{}' does not exist.\n", moduleType);
+                    Messenger::error("Module type '{}' does not exist.\n", parser.argsv(1));
                     error = true;
                     break;
                 }

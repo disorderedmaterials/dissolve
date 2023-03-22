@@ -386,7 +386,7 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &module : layer->modules())
         {
             if (!parser.writeLineF("\n  {}  {}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
-                                   module->type(), module->name()))
+                                   ModuleTypes::moduleType(module->type()), module->name()))
                 return false;
 
             // Write frequency and disabled keywords
