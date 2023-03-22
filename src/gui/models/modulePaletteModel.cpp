@@ -58,12 +58,12 @@ QVariant ModulePaletteModel::data(const QModelIndex &index, int role) const
         switch (role)
         {
             case (Qt::DisplayRole):
-                return QString::fromStdString(moduleType);
+                return QString::fromStdString(ModuleTypes::moduleType(moduleType));
             case (Qt::ToolTipRole):
                 return QString::fromStdString(brief);
             case (Qt::DecorationRole):
-                return QIcon(
-                    (QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(moduleType).toLower()))));
+                return QIcon((QPixmap(QString(":/modules/icons/modules_%1.svg")
+                                          .arg(QString::fromStdString(ModuleTypes::moduleType(moduleType)).toLower()))));
             default:
                 return {};
         }
@@ -117,7 +117,7 @@ QMimeData *ModulePaletteModel::mimeData(const QModelIndexList &indexes) const
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
     auto index = indexes.front();
     auto [moduleType, brief] = std::next(ModuleRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
-    stream << QString::fromStdString(moduleType);
+    stream << moduleType;
     mimeData->setData("application/dissolve.module.create", encodedData);
 
     return mimeData;

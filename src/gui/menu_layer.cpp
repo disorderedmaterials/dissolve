@@ -32,11 +32,11 @@ void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checke
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add some Monte Carlo
-    module = ModuleRegistry::create("AtomShake", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::AtomShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add energy calculation
-    module = ModuleRegistry::create("Energy", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -57,16 +57,16 @@ void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add some Monte Carlo
-    module = ModuleRegistry::create("AtomShake", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::AtomShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add some MD
-    module = ModuleRegistry::create("MD", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::MD, newLayer);
     module->keywords().set("Configuration", firstCfg);
     module->setFrequency(5);
 
     // Add energy calculation
-    module = ModuleRegistry::create("Energy", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -87,16 +87,16 @@ void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add a Monte Carlo shake (MolShake) module
-    module = ModuleRegistry::create("MolShake", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::MolShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add some MD
-    module = ModuleRegistry::create("MD", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::MD, newLayer);
     module->keywords().set("Configuration", firstCfg);
     module->setFrequency(5);
 
     // Add energy calculation
-    module = ModuleRegistry::create("Energy", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -117,14 +117,14 @@ void DissolveWindow::on_LayerCreateEvolveMDAction_triggered(bool checked)
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add MD
-    module = ModuleRegistry::create("MD", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::MD, newLayer);
     module->keywords().set("Configuration", firstCfg);
     module->keywords().set("NSteps", 500);
     module->keywords().set("OnlyWhenEnergyStable", false);
     module->setFrequency(1);
 
     // Add energy calculation
-    module = ModuleRegistry::create("Energy", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -145,15 +145,15 @@ void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
     auto *firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add some Monte Carlo
-    module = ModuleRegistry::create("MolShake", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::MolShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add an intramolecular shake
-    module = ModuleRegistry::create("IntraShake", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::IntraShake, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add energy calculation
-    module = ModuleRegistry::create("Energy", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -174,10 +174,10 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
                                          ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the EPSR module
-    auto *epsr = dynamic_cast<EPSRModule *>(ModuleRegistry::create("EPSR", newLayer));
+    auto *epsr = dynamic_cast<EPSRModule *>(ModuleRegistry::create(ModuleTypes::EPSR, newLayer));
 
     // Set any suitable module targets
-    epsr->keywords().set("Target", Module::allOfType("NeutronSQ"));
+    epsr->keywords().set("Target", Module::allOfType(ModuleTypes::NeutronSQ));
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -196,7 +196,7 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append("GR", dissolve_.configurations());
+    newLayer->append(ModuleTypes::GR, dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -215,10 +215,10 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggere
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append("GR", dissolve_.configurations());
+    newLayer->append(ModuleTypes::GR, dissolve_.configurations());
 
     // Add a plain structure factor module
-    newLayer->append("SQ", dissolve_.configurations());
+    newLayer->append(ModuleTypes::SQ, dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -237,13 +237,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool c
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append("GR", dissolve_.configurations());
+    newLayer->append(ModuleTypes::GR, dissolve_.configurations());
 
     // Add a plain structure factor module
-    newLayer->append("SQ", dissolve_.configurations());
+    newLayer->append(ModuleTypes::SQ, dissolve_.configurations());
 
     // Add a NeutronSQ module
-    newLayer->append("NeutronSQ", dissolve_.configurations());
+    newLayer->append(ModuleTypes::NeutronSQ, dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -262,13 +262,13 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFXRayAction_triggered(bool chec
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append("GR", dissolve_.configurations());
+    newLayer->append(ModuleTypes::GR, dissolve_.configurations());
 
     // Add a plain structure factor module
-    newLayer->append("SQ", dissolve_.configurations());
+    newLayer->append(ModuleTypes::SQ, dissolve_.configurations());
 
     // Add an XRaySQ module
-    newLayer->append("XRaySQ", dissolve_.configurations());
+    newLayer->append(ModuleTypes::XRaySQ, dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -287,16 +287,16 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bo
     newLayer->runControlFlags().setFlag(ModuleLayer::RunControlFlag::SizeFactors);
 
     // Add the GR module
-    newLayer->append("GR", dissolve_.configurations());
+    newLayer->append(ModuleTypes::GR, dissolve_.configurations());
 
     // Add a plain structure factor module
-    newLayer->append("SQ", dissolve_.configurations());
+    newLayer->append(ModuleTypes::SQ, dissolve_.configurations());
 
     // Add a NeutronSQ module
-    newLayer->append("NeutronSQ", dissolve_.configurations());
+    newLayer->append(ModuleTypes::NeutronSQ, dissolve_.configurations());
 
     // Add an XRaySQ module
-    newLayer->append("XRaySQ", dissolve_.configurations());
+    newLayer->append(ModuleTypes::XRaySQ, dissolve_.configurations());
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -316,7 +316,7 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
     auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the CalculateGR module
-    auto *calcRDFModule = ModuleRegistry::create("SiteRDF", newLayer);
+    auto *calcRDFModule = ModuleRegistry::create(ModuleTypes::SiteRDF, newLayer);
     calcRDFModule->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
@@ -337,11 +337,11 @@ void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked
     auto firstCfg = dissolve_.configurations().empty() ? nullptr : dissolve_.configurations().front().get();
 
     // Add the AvgMol module
-    auto *module = ModuleRegistry::create("AvgMol", newLayer);
+    auto *module = ModuleRegistry::create(ModuleTypes::AvgMol, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Add an SDF module
-    module = ModuleRegistry::create("SDF", newLayer);
+    module = ModuleRegistry::create(ModuleTypes::SDF, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
     // Run set-up stages for modules
