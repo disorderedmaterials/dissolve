@@ -11,10 +11,17 @@ inputs:
   createPR:
     type: boolean
     default: true
+  releaseVersion:
+    type: string
 
 runs:
   using: "composite"
   steps:
+
+  - name: Checkout Develop
+    uses: actions/checkout@v3
+    with:
+      ref: develop
 
   - name: Get Release Information
     shell: bash
@@ -77,10 +84,10 @@ runs:
     shell: bash
     run: |
       # Set release version to ours
-      ./changeversion release -s ${{ env.dissolveVersion }}
+      ./changeversion release -s ${{ inputs.releaseVersion }}
 
       # Copy the old releases data, excluding the most recent (HIGHEST)
-      grep -v "Version ${{ env.dissolveVersion }}" ${{ inputs.oldReleasesFile }}.new > ${{ inputs.oldReleasesFile }}
+      grep -v "Version ${{ inputs.releaseVersion }}" ${{ inputs.oldReleasesFile }}.new > ${{ inputs.oldReleasesFile }}
 
       cat ${{ inputs.oldReleasesFile }}
 
@@ -98,6 +105,6 @@ runs:
         web/main.toml
       commit-message: Update release version info.
       delete-branch: true
-      branch: automation/update-current-release-to-${{ env.dissolveVersion }}
-      title: Update website release info (v${{ env.dissolveVersion }})
+      branch: automation/update-current-release-to-${{ inputs.releaseVersion }}
+      title: Update website release info (v${{ inputs.releaseVersion }})
       reviewers: trisyoungs

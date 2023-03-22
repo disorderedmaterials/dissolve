@@ -86,8 +86,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Setup
         uses: "./.github/workflows/setup"
       - name: Set Short Hash
@@ -101,6 +99,7 @@ jobs:
           HARBOR_USER: ${{ secrets.HARBOR_USER }}
           HARBOR_SECRET: ${{ secrets.HARBOR_SECRET }}
       - name: Update Version Information
+        uses: "./.github/workflows/update-release-info"
         with:
           createPR: ${{ ! endsWith(github.ref, 'pre') }}
-        uses: "./.github/workflows/update-release-info"
+          releaseVersion: ${{ env.dissolveVersion }}
