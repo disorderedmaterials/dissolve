@@ -7,7 +7,7 @@
 #include "keywords/double.h"
 #include "keywords/fileandformat.h"
 
-ForcesModule::ForcesModule() : Module("Forces")
+ForcesModule::ForcesModule() : Module(ModuleTypes::Forces)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

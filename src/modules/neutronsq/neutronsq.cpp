@@ -11,10 +11,10 @@
 #include "keywords/optionaldouble.h"
 #include "modules/sq/sq.h"
 
-NeutronSQModule::NeutronSQModule() : Module("NeutronSQ")
+NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
 {
     keywords_.addTarget<ModuleKeyword<const SQModule>>(
-        "SourceSQs", "Source unweighted S(Q) to transform into neutron-weighted S(Q)", sourceSQ_, "SQ");
+        "SourceSQs", "Source unweighted S(Q) to transform into neutron-weighted S(Q)", sourceSQ_, ModuleTypes::SQ);
 
     keywords_.setOrganisation("Options", "Isotopes & Normalisation");
     keywords_.add<AtomTypeVectorKeyword>(

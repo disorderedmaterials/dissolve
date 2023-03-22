@@ -5,7 +5,7 @@
 #include "keywords/configuration.h"
 #include "keywords/procedure.h"
 
-AnalyseModule::AnalyseModule() : Module("Analyse"), analyser_(ProcedureNode::AnalysisContext, "Analyser")
+AnalyseModule::AnalyseModule() : Module(ModuleTypes::Analyse), analyser_(ProcedureNode::AnalysisContext, "Analyser")
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

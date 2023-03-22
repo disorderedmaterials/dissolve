@@ -7,7 +7,7 @@
 #include "keywords/integer.h"
 #include "keywords/optionaldouble.h"
 
-AtomShakeModule::AtomShakeModule() : Module("AtomShake")
+AtomShakeModule::AtomShakeModule() : Module(ModuleTypes::AtomShake)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

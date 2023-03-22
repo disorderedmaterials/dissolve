@@ -20,7 +20,7 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/select.h"
 
-DAngleModule::DAngleModule() : Module("DAngle"), analyser_(ProcedureNode::AnalysisContext)
+DAngleModule::DAngleModule() : Module(ModuleTypes::DAngle), analyser_(ProcedureNode::AnalysisContext)
 {
     // Select: Site 'A'
     selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");

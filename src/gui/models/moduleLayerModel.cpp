@@ -60,8 +60,8 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
         case (Qt::UserRole):
             return QVariant::fromValue(module);
         case (Qt::DecorationRole):
-            return QIcon((QPixmap(
-                QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module->type())).toLower()))));
+            return QIcon((QPixmap(QString(":/modules/icons/modules_%1.svg")
+                                      .arg(QString::fromStdString(ModuleTypes::moduleType(module->type())).toLower()))));
         default:
             return {};
     }
@@ -106,7 +106,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     else if (role == ModuleLayerModelAction::CreateNew)
     {
         // Probably indicates a drop operation - the "value" is the type of the module to create at the specified index
-        auto moduleType = value.toString().toStdString();
+        auto moduleType = (ModuleTypes::ModuleType)value.toInt();
         moduleLayer_->modules()[index.row()] = ModuleRegistry::create(moduleType);
         auto *modulePtr = moduleLayer_->modules()[index.row()].get();
         modulePtr->setTargets(dissolve_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "module/module.h"
 #include "templates/flags.h"
 #include <map>
 #include <memory>
@@ -13,7 +14,6 @@
 class Configuration;
 class Dissolve;
 class GenericList;
-class Module;
 class ProcessPool;
 
 // Module Layer
@@ -82,7 +82,7 @@ class ModuleLayer
     // Clear modules
     void clear();
     // Append new module to this layer
-    Module *append(std::string_view moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs);
+    Module *append(ModuleTypes::ModuleType moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs);
     // Find associated Module by unique name
     Module *find(std::string_view uniqueName) const;
     // Return whether specified Module is present in the layer
@@ -90,7 +90,7 @@ class ModuleLayer
     // Return vector of Modules
     std::vector<std::unique_ptr<Module>> &modules();
     // Return map of modules in the layer, optionally preceding the specified module
-    std::map<std::string, std::vector<const Module *>> modulesAsMap(const Module *beforeThis = nullptr) const;
+    std::map<ModuleTypes::ModuleType, std::vector<const Module *>> modulesAsMap(const Module *beforeThis = nullptr) const;
 
     /*
      * General Actions

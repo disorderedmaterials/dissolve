@@ -74,5 +74,5 @@ class SQModule : public Module
     public:
     // Set target data
     void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
-                    const std::map<std::string, std::vector<const Module *>> &moduleMap) override;
+                    const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap) override;
 };

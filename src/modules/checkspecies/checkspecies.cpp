@@ -8,7 +8,7 @@
 #include "keywords/vector_intdouble.h"
 #include "keywords/vector_intstring.h"
 
-CheckSpeciesModule::CheckSpeciesModule() : Module("CheckSpecies")
+CheckSpeciesModule::CheckSpeciesModule() : Module(ModuleTypes::CheckSpecies)
 {
     // Target Species
     keywords_.addTarget<SpeciesKeyword>("Species", "Target species to check", targetSpecies_);

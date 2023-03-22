@@ -3,4 +3,4 @@
 
 #include "modules/test/test.h"
 
-TestModule::TestModule() : Module("Test") {}
+TestModule::TestModule() : Module(ModuleTypes::Test) {}

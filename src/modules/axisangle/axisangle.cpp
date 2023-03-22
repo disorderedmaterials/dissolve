@@ -20,7 +20,7 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/select.h"
 
-AxisAngleModule::AxisAngleModule() : Module("AxisAngle"), analyser_(ProcedureNode::AnalysisContext)
+AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle), analyser_(ProcedureNode::AnalysisContext)
 {
     // Select: Site 'A'
     selectA_ = analyser_.createRootNode<SelectProcedureNode>("A", std::vector<const SpeciesSite *>{},

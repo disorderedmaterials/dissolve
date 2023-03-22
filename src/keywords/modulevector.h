@@ -4,16 +4,14 @@
 #pragma once
 
 #include "keywords/base.h"
+#include "module/module.h"
 
-// Forward Declarations
-class Module;
-
-// Keyword managing Module
+// Module Vector Keyword
 class ModuleVectorKeyword : public KeywordBase
 {
     public:
     ModuleVectorKeyword(std::vector<Module *> &data, std::optional<int> maxModules = std::nullopt);
-    ModuleVectorKeyword(std::vector<Module *> &data, std::vector<std::string> allowedModuleTypes,
+    ModuleVectorKeyword(std::vector<Module *> &data, std::vector<ModuleTypes::ModuleType> allowedModuleTypes,
                         std::optional<int> maxModules = std::nullopt);
     ~ModuleVectorKeyword() override = default;
 
@@ -24,7 +22,7 @@ class ModuleVectorKeyword : public KeywordBase
     // Reference to data vector
     std::vector<Module *> &data_;
     // Module type(s) to allow
-    std::vector<std::string> moduleTypes_;
+    std::vector<ModuleTypes::ModuleType> moduleTypes_;
     // Maximum number of modules to allow
     std::optional<int> maxModules_;
 
@@ -33,7 +31,7 @@ class ModuleVectorKeyword : public KeywordBase
     std::vector<Module *> &data();
     const std::vector<Module *> &data() const;
     // Return the Module type(s) to allow
-    const std::vector<std::string> &moduleTypes() const;
+    const std::vector<ModuleTypes::ModuleType> &moduleTypes() const;
     // Return maximum number of Modules to allow
     std::optional<int> maxModules() const;
 

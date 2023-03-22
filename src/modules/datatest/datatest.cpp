@@ -10,7 +10,7 @@
 #include "keywords/vector_stringdouble.h"
 #include "keywords/vector_stringpair.h"
 
-DataTestModule::DataTestModule() : Module("DataTest")
+DataTestModule::DataTestModule() : Module(ModuleTypes::DataTest)
 {
     keywords_.setOrganisation("Test");
     keywords_.add<Data1DStoreKeyword>("Data1D", "Specify one-dimensional test reference data", test1DData_);
