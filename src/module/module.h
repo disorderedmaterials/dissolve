@@ -15,25 +15,69 @@ class Configuration;
 class ModuleWidget;
 class QWidget;
 
+// Module Types
+namespace ModuleTypes
+{
+enum ModuleType
+{
+    Accumulate,
+    Analyse,
+    Angle,
+    AtomShake,
+    AvgMol,
+    AxisAngle,
+    Benchmark,
+    Bragg,
+    Checks,
+    CheckSpecies,
+    DAngle,
+    DataTest,
+    Energy,
+    EPSR,
+    ExportCoordinates,
+    ExportPairPotentials,
+    ExportTrajectory,
+    Forces,
+    GeometryOptimisation,
+    GR,
+    ImportTrajectory,
+    IntraDistance,
+    IntraShake,
+    MD,
+    MolShake,
+    NeutronSQ,
+    SDF,
+    SiteRDF,
+    Skeleton,
+    SQ,
+    Test,
+    XRaySQ
+};
+// Return module type string for specified type enumeration
+std::string moduleType(ModuleTypes::ModuleType type);
+// Return module type enumeration for specified module type string
+std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword);
+}; // namespace ModuleTypes
+
 // Module
 class Module
 {
     public:
-    explicit Module(std::string typeName);
+    explicit Module(const ModuleTypes::ModuleType type);
     virtual ~Module();
 
     /*
      * Definition
      */
     protected:
-    // Type name of module
-    const std::string typeName_;
+    // Module type
+    const ModuleTypes::ModuleType type_;
     // Name of Module
     std::string name_;
 
     public:
     // Return type of Module
-    const std::string_view type() const;
+    ModuleTypes::ModuleType type() const;
     // Set name of Module
     void setName(std::string_view name);
     // Return name of Module
@@ -88,7 +132,7 @@ class Module
     public:
     // Set target data
     virtual void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
-                            const std::map<std::string, std::vector<const Module *>> &moduleMap);
+                            const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
     virtual bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
@@ -120,8 +164,8 @@ class Module
     // Search for any instance of any module with the specified unique name
     static Module *find(std::string_view uniqueName);
     // Search for and return any instance(s) of the specified Module type
-    static std::vector<Module *> allOfType(std::string_view moduleType);
-    static std::vector<Module *> allOfType(std::vector<std::string> types);
+    static std::vector<Module *> allOfType(ModuleTypes::ModuleType type);
+    static std::vector<Module *> allOfType(std::vector<ModuleTypes::ModuleType> types);
     template <class M> static std::vector<M *> allOfType()
     {
         std::vector<M *> results;
