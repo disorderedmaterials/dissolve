@@ -46,6 +46,7 @@ enum ModuleType
     MD,
     MolShake,
     NeutronSQ,
+    Refine,
     SDF,
     SiteRDF,
     Skeleton,

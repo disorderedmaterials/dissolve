@@ -34,6 +34,8 @@
 #include "modules/intradistance/intradistance.h"
 #include "modules/neutronsq/gui/neutronsqwidget.h"
 #include "modules/neutronsq/neutronsq.h"
+#include "modules/refine/refine.h"
+#include "modules/refine/gui/refinewidget.h"
 #include "modules/sdf/gui/sdfwidget.h"
 #include "modules/sdf/sdf.h"
 #include "modules/siterdf/gui/siterdfwidget.h"
@@ -68,6 +70,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<GeometryOptimisationModule, GeometryOptimisationModuleWidget>();
     registerProducer<GRModule, GRModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
+    registerProducer<RefineModule, RefineModuleWidget>();
     registerProducer<SkeletonModule, SkeletonModuleWidget>();
     registerProducer<SQModule, SQModuleWidget>();
     registerProducer<TestModule, TestModuleWidget>();

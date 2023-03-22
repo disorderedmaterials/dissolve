@@ -1,0 +1,87 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2023 Team Dissolve and contributors
+
+#include "modules/refine/refine.h"
+#include "keywords/bool.h"
+#include "keywords/data1dstore.h"
+#include "keywords/double.h"
+#include "keywords/modulevector.h"
+#include "keywords/optionaldouble.h"
+#include "keywords/optionalint.h"
+#include "keywords/stdstring.h"
+#include "keywords/vector_stringdouble.h"
+
+RefineModule::RefineModule() : Module(ModuleTypes::Refine)
+{
+    keywords_.addTarget<ModuleVectorKeyword>("Target", "Add specified Module (and it's Reference data) as a refinement target",
+                                             targets_,
+                                             std::vector<ModuleTypes::ModuleType>{ModuleTypes::NeutronSQ, ModuleTypes::XRaySQ});
+
+    keywords_.setOrganisation("Options", "Control");
+    keywords_.add<DoubleKeyword>("EReq", "Limit of magnitude of additional potential for any one pair potential", eReq_, 0.0);
+    keywords_.add<DoubleKeyword>("Feedback", "Confidence factor", feedback_, 0.0, 1.0);
+    keywords_.add<OptionalIntegerKeyword>("ModifyPotential",
+                                          "Frequency at which to apply generated perturbations to interatomic potentials",
+                                          modifyPotential_, 0, std::nullopt, 1, "Off");
+    keywords_.add<DoubleKeyword>("QMin", "Minimum Q value over which to generate potentials from total scattering data", qMin_,
+                                 0.0);
+    keywords_.add<DoubleKeyword>("QMax", "Maximum Q value over which to generate potentials from total scattering data", qMax_,
+                                 0.0);
+
+    keywords_.setOrganisation("Advanced", "Control");
+    keywords_.add<DoubleKeyword>("Weighting", "Factor used when adding fluctuation coefficients to pair potentials", weighting_,
+                                 0.0, 100.0);
+
+    keywords_.setOrganisation("Advanced", "Expansion Function");
+    keywords_.add<EnumOptionsKeyword<RefineModule::ExpansionFunctionType>>(
+        "ExpansionFunction", "Form of expansion function to use when fitting difference data", expansionFunction_,
+        RefineModule::expansionFunctionTypes());
+    keywords_.add<DoubleKeyword>("GSigma1", "Width for Gaussian function in reciprocal space", gSigma1_, 0.001, 1.0);
+    keywords_.add<DoubleKeyword>("GSigma2", "Width for Gaussian function in real space", gSigma2_, 0.001, 1.0);
+    keywords_.add<OptionalIntegerKeyword>("NCoeffP", "Number of coefficients used to define the empirical potential", nCoeffP_,
+                                          0, std::nullopt, 100, "Automatic");
+    keywords_.add<OptionalIntegerKeyword>("NPItSs", "Number of iterations when refining fits to delta functions", nPItSs_, 0,
+                                          std::nullopt, 100, "Off (No Fitting - CAUTION!)");
+    keywords_.add<DoubleKeyword>("PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in Refine)",
+                                 pSigma1_, 0.001, 1.0);
+    keywords_.add<DoubleKeyword>("PSigma2", "Width for Poisson functions in real space", pSigma2_, 0.001, 1.0);
+    keywords_.add<OptionalDoubleKeyword>("RMaxPT", "Radius at which potential truncation goes to zero", rMaxPT_, 0.0,
+                                         std::nullopt, 1.0, "Use Cuttoff Range");
+    keywords_.add<OptionalDoubleKeyword>("RMinPT",
+                                         "Radius at which potential truncation begins (or Auto for 2 Angstroms under rmaxpt)",
+                                         rMinPT_, 0.0, std::nullopt, 1.0, "Auto");
+    keywords_.add<OptionalIntegerKeyword>("Smoothing",
+                                          "Smoothing to apply to fluctuation coefficients before summation into potential",
+                                          fluctuationSmoothing_, 0, std::nullopt, 1, "Off");
+
+    keywords_.setOrganisation("Advanced", "Test");
+    keywords_.add<BoolKeyword>("Test", "Test against supplied reference data", test_);
+    keywords_.add<StringDoubleVectorKeyword>("TestAbsEnergyEP", "Specify test absolute EP energy values for pair potentials",
+                                             testAbsEnergyEP_);
+    keywords_.add<DoubleKeyword>("TestAbsEnergyEPThreshold", "Test threshold above which absolute EP energy test fails",
+                                 testAbsEnergyEPThreshold_, 1.0e-8);
+    keywords_.add<Data1DStoreKeyword>("TestReference", "Specify test reference data", testReferenceData_);
+    keywords_.add<DoubleKeyword>("TestThreshold", "Test threshold (%error) above which test fails", testThreshold_, 1.0e-5);
+    keywords_.add<BoolKeyword>("OverwritePotentials", "Overwrite potentials each time rather than summing them",
+                               overwritePotentials_);
+
+    keywords_.setOrganisation("Export");
+    keywords_.add<BoolKeyword>("SaveDifferenceFunctions", "Whether to save difference function and fit",
+                               saveDifferenceFunctions_);
+    keywords_.add<BoolKeyword>("SaveEmpiricalPotentials", "Whether to save empirical potentials", saveEmpiricalPotentials_);
+    keywords_.add<BoolKeyword>("SaveEstimatedPartials", "Whether to save estimated partials", saveEstimatedPartials_);
+    keywords_.add<BoolKeyword>("SavePCof", "Whether to save potential coefficients", savePotentialCoefficients_);
+    keywords_.add<BoolKeyword>("SaveSimulatedFR", "Whether to save simulated F(r) (Fourier transform of calculated F(Q))",
+                               saveSimulatedFR_);
+}
+
+// Return enum option info for ExpansionFunctionType
+EnumOptions<RefineModule::ExpansionFunctionType> RefineModule::expansionFunctionTypes()
+{
+    return EnumOptions<RefineModule::ExpansionFunctionType>(
+        "ExpansionFunctionType",
+        {{RefineModule::PoissonExpansionFunction, "Poisson"}, {RefineModule::GaussianExpansionFunction, "Gaussian"}});
+}
+
+// Return list of target Modules / data for refinement
+const std::vector<Module *> &RefineModule::targets() const { return targets_; }
