@@ -23,6 +23,7 @@
 #include "modules/geomopt/geomopt.h"
 #include "modules/gr/gr.h"
 #include "modules/import_trajectory/importtraj.h"
+#include "modules/intraangle/intraangle.h"
 #include "modules/intradistance/intradistance.h"
 #include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
@@ -63,6 +64,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<ImportTrajectoryModule>(
         "ImportTrajectory", "Calculate coordination numbers from an existing radial distribution function", "Import");
     registerProducer<IntraDistanceModule>("IntraDistance", "Calculate intramolecular histogram between two sites", "Analysis");
+    registerProducer<IntraAngleModule>("IntraAngle", "Calculate intramolecular angle between two sites", "Analysis");
     registerProducer<IntraShakeModule>("IntraShake", "Perform Monte Carlo shakes on intramolecular terms within molecules",
                                        "Evolution");
     registerProducer<MDModule>("MD", "Evolve a Configuration using molecular dynamics", "Evolution");
