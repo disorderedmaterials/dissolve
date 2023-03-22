@@ -12,7 +12,7 @@
 class ModuleKeywordBase : public KeywordBase
 {
     public:
-    explicit ModuleKeywordBase(std::string_view moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType){};
+    explicit ModuleKeywordBase(ModuleTypes::ModuleType moduleType) : KeywordBase(typeid(this)), moduleType_(moduleType){};
     ~ModuleKeywordBase() override = default;
 
     /*
@@ -20,11 +20,11 @@ class ModuleKeywordBase : public KeywordBase
      */
     private:
     // Target module type to allow
-    std::string_view moduleType_;
+    ModuleTypes::ModuleType moduleType_;
 
     public:
     // Return target module type to allow
-    std::string_view moduleType() const { return moduleType_; }
+    ModuleTypes::ModuleType moduleType() const { return moduleType_; }
     // Set the target data
     virtual bool setData(const Module *module) = 0;
     // Return the current target module as the base class
@@ -35,7 +35,7 @@ class ModuleKeywordBase : public KeywordBase
 template <class M> class ModuleKeyword : public ModuleKeywordBase
 {
     public:
-    explicit ModuleKeyword(const M *&data, std::string_view moduleType) : ModuleKeywordBase(moduleType), data_(data) {}
+    explicit ModuleKeyword(const M *&data, ModuleTypes::ModuleType moduleType) : ModuleKeywordBase(moduleType), data_(data) {}
     ~ModuleKeyword() override = default;
 
     /*
@@ -61,7 +61,8 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
             if (module->type() != moduleType())
                 return Messenger::error("Module '{}' given to keyword {} is of the wrong type ({}) - only a module of "
                                         "type '{}' can be accepted.\n",
-                                        module->name(), KeywordBase::name(), module->type(), moduleType());
+                                        module->name(), KeywordBase::name(), ModuleTypes::moduleType(module->type()),
+                                        moduleType());
 
             data_ = dynamic_cast<const M *>(module);
             assert(data_);
