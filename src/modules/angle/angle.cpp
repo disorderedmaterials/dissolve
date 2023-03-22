@@ -22,7 +22,7 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 
-AngleModule::AngleModule() : Module("Angle"), analyser_(ProcedureNode::AnalysisContext)
+AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode::AnalysisContext)
 {
     // Select: Site 'A'
     selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");

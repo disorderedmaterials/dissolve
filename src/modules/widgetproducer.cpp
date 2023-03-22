@@ -89,7 +89,7 @@ ModuleWidget *ModuleWidgetProducer::produce(Module *module, Dissolve &dissolve) 
     {
         Messenger::printVerbose(
             "A producer has not been registered for module type '{}' ('{}'), so a new widget for it cannot be created.\n",
-            module->type(), typeid(*module).name());
+            ModuleTypes::moduleType(module->type()), typeid(*module).name());
         return nullptr;
     }
 

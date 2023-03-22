@@ -10,9 +10,10 @@
 #include "modules/bragg/bragg.h"
 #include "modules/gr/gr.h"
 
-SQModule::SQModule() : Module("SQ")
+SQModule::SQModule() : Module(ModuleTypes::SQ)
 {
-    keywords_.addTarget<ModuleKeyword<const GRModule>>("SourceGR", "Source G(r) to transform into S(Q)", sourceGR_, "GR");
+    keywords_.addTarget<ModuleKeyword<const GRModule>>("SourceGR", "Source G(r) to transform into S(Q)", sourceGR_,
+                                                       ModuleTypes::GR);
 
     keywords_.setOrganisation("Options", "Range");
     keywords_.add<DoubleKeyword>("QMin", "Minimum Q for calculated S(Q)", qMin_, 0.0);
@@ -28,7 +29,7 @@ SQModule::SQModule() : Module("SQ")
 
     keywords_.setOrganisation("Options", "Bragg Scattering");
     keywords_.add<ModuleKeyword<const BraggModule>>("IncludeBragg", "Include Bragg scattering from specified module",
-                                                    sourceBragg_, "Bragg");
+                                                    sourceBragg_, ModuleTypes::Bragg);
     keywords_.add<Function1DKeyword>(
         "BraggQBroadening", "Broadening function to apply to Bragg reflections when generating S(Q)", braggQBroadening_);
 
@@ -42,7 +43,8 @@ SQModule::SQModule() : Module("SQ")
     keywords_.add<BoolKeyword>("Save", "Whether to save partials to disk after calculation", save_);
 
     // Deprecated
-    keywords_.addDeprecated<ModuleKeyword<const GRModule>>("SourceRDFs", "Source RDFs to transform into S(Q)", sourceGR_, "GR");
+    keywords_.addDeprecated<ModuleKeyword<const GRModule>>("SourceRDFs", "Source RDFs to transform into S(Q)", sourceGR_,
+                                                           ModuleTypes::GR);
 }
 
 // Return source G(r) for main calculation

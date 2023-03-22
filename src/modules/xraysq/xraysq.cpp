@@ -10,10 +10,10 @@
 #include "keywords/optionaldouble.h"
 #include "modules/sq/sq.h"
 
-XRaySQModule::XRaySQModule() : Module("XRaySQ")
+XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)
 {
     keywords_.addTarget<ModuleKeyword<const SQModule>>(
-        "SourceSQs", "Source unweighted S(Q) to transform into xray-weighted S(Q)", sourceSQ_, "SQ");
+        "SourceSQs", "Source unweighted S(Q) to transform into xray-weighted S(Q)", sourceSQ_, ModuleTypes::SQ);
 
     keywords_.setOrganisation("Options", "Form Factors & Normalisation");
     keywords_.add<EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>>(

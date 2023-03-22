@@ -13,7 +13,7 @@
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
-IntraDistanceModule::IntraDistanceModule() : Module("IntraDistance"), analyser_(ProcedureNode::AnalysisContext)
+IntraDistanceModule::IntraDistanceModule() : Module(ModuleTypes::IntraDistance), analyser_(ProcedureNode::AnalysisContext)
 {
     // Select: Site 'A'
     selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");

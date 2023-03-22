@@ -11,10 +11,11 @@
 #include "keywords/stdstring.h"
 #include "keywords/vector_stringdouble.h"
 
-EPSRModule::EPSRModule() : Module("EPSR")
+EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
 {
     keywords_.addTarget<ModuleVectorKeyword>("Target", "Add specified Module (and it's Reference data) as a refinement target",
-                                             targets_, std::vector<std::string>{"NeutronSQ", "XRaySQ"});
+                                             targets_,
+                                             std::vector<ModuleTypes::ModuleType>{ModuleTypes::NeutronSQ, ModuleTypes::XRaySQ});
 
     keywords_.setOrganisation("Options", "Control");
     keywords_.add<DoubleKeyword>("EReq", "Limit of magnitude of additional potential for any one pair potential", eReq_, 0.0);
