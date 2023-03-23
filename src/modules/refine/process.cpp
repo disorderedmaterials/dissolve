@@ -490,7 +490,6 @@ bool RefineModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                 expGR += 1.0;
                             });
 
-
     /*
      * TESTING BEGINS HERE
      * TESTING BEGINS HERE
@@ -498,7 +497,73 @@ bool RefineModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      * TESTING BEGINS HERE
      */
 
+    auto realiseCoefficients = dissolve.processingModuleData().realiseIf<Array2D<Data1D>>("FitCoefficients", name_, GenericItem::InRestartFileFlag);
+    auto &coefficients = std::get<0>(realiseCoefficients);
+    auto coefficientsStatus = std::get<1>(realiseCoefficients);
+    if (coefficientsStatus == GenericItem::ItemStatus::Created)
+    {
+        coefficients.initialise(nAtomTypes, nAtomTypes, true);
+        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                                [&](int i, auto at1, int j, auto at2) {
+            coefficients[{i, j}].initialise(estimatedSQ[{i, j}]);
+                                });
+    }
 
+    auto lambdaS = .1;
+    const auto RT = .008314472 * targetConfiguration_->temperature();
+    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                            [&](int i, auto at1, int j, auto at2)
+                            {
+                                // Grab the pair potential, estimatedSQ, simulatedSQ, and uis
+                                auto *pp = dissolve.pairPotential(at1, at2);
+                                auto &uis = coefficients[{i,j}];
+                                auto &estSQ = estimatedSQ[{i, j}];
+                                auto &calcSQ = calculatedUnweightedSQ[{i, j}];
+
+                                // Interpolate the calculated unweighted S(Q)
+                                Interpolator calcSQInterp(calcSQ);
+
+                                // Calculate new uis over the defined Q limits
+                                for (auto &&[Q, S, ui] : zip(uis.xAxis(), estSQ.values(), uis.values()))
+                                {
+                                    if (Q < qMin_)
+                                        continue;
+                                    else if (Q > qMax_)
+                                        break;
+                                    ui += lambdaS * (calcSQInterp.y(Q) - S);
+                                }
+
+                                Filters::movingAverage(uis, 1);
+
+                                Data1DExportFileFormat uiExport(fmt::format("ui_{}_{}.txt", at1->name(), at2->name()));
+                                uiExport.exportData(uis);
+
+                                // Construct ep
+                                Data1D ep(pp->uFull());
+                                for (auto &&[r, U] : zip(ep.xAxis(), ep.values()))
+                                {
+                                    U = 0.0;
+                                    for (auto &&[Q, ui] : zip(uis.xAxis(), uis.values()))
+                                        U += ui * sin(Q * r) / (Q * r);
+                                    U *= RT;
+                                }
+                                ep.values()[0] = ep.values()[1];
+
+
+                                // Multiply by truncation function
+                                truncate(ep, rminpt, rmaxpt);
+
+                                // Set the additional potential in the main processing data
+                                dissolve.processingModuleData().realise<Data1D>(
+                                    fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
+                                    GenericItem::InRestartFileFlag) = ep;
+
+                                // Grab pointer to the relevant pair potential (if it exists)
+                                if (pp)
+                                    pp->setUAdditional(ep);
+
+                                return EarlyReturn<bool>::Continue;
+                            });
 
     /*
      * TESTING ENDS HERE
