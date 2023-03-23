@@ -117,7 +117,7 @@ QMimeData *ModulePaletteModel::mimeData(const QModelIndexList &indexes) const
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
     auto index = indexes.front();
     auto [moduleType, brief] = std::next(ModuleRegistry::categoryMap().begin(), index.parent().row())->second[index.row()];
-    stream << moduleType;
+    stream << QString::fromStdString(ModuleTypes::moduleType(moduleType));
     mimeData->setData("application/dissolve.module.create", encodedData);
 
     return mimeData;

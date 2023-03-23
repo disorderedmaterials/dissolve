@@ -216,8 +216,10 @@ bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         // Create a new module in the list
         QByteArray encodedData = data->data("application/dissolve.module.create");
         QDataStream stream(&encodedData, QIODevice::ReadOnly);
-        QString moduleType;
-        stream >> moduleType;
+        QString moduleTypeString;
+        stream >> moduleTypeString;
+        auto moduleType = ModuleTypes::moduleType(moduleTypeString.toStdString());
+        assert(moduleType);
 
         // Get the new index of the dragged module in the vector
         auto insertAtRow = parent.isValid() ? parent.row() : row;
@@ -229,7 +231,7 @@ bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         auto idx = index(insertAtRow, 0, QModelIndex());
 
         // Create a new module of the specified type at the index we just inserted
-        setData(idx, moduleType, ModuleLayerModelAction::CreateNew);
+        setData(idx, *moduleType, ModuleLayerModelAction::CreateNew);
 
         return true;
     }
@@ -269,8 +271,12 @@ bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
-QModelIndex ModuleLayerModel::appendNew(const QString &moduleType)
+QModelIndex ModuleLayerModel::appendNew(const QString &moduleTypeString)
 {
+    // Convert the module type string to its enumeration
+    auto moduleType = ModuleTypes::moduleType(moduleTypeString.toStdString());
+    assert(moduleType);
+
     // Get the target row for the new module
     auto insertAtRow = rowCount();
 
@@ -279,7 +285,7 @@ QModelIndex ModuleLayerModel::appendNew(const QString &moduleType)
     auto idx = index(insertAtRow, 0, QModelIndex());
 
     // Create a new module of the specified type at the index we just inserted
-    setData(idx, moduleType, ModuleLayerModelAction::CreateNew);
+    setData(idx, *moduleType, ModuleLayerModelAction::CreateNew);
 
     return idx;
 }
