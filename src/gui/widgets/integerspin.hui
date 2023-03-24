@@ -49,8 +49,9 @@ class IntegerSpin : public QAbstractSpinBox
      * Signals / Slots
      */
     private slots:
-    void valueEditingFinished();
     void returnPressed();
+    public slots:
+    void updateValueFromText();
 
     signals:
     void valueChanged(int);
@@ -61,6 +62,7 @@ class IntegerSpin : public QAbstractSpinBox
      */
     public:
     void focusInEvent(QFocusEvent *e) override;
+    void focusOutEvent(QFocusEvent *e) override;
     // Step value by specified number of increments
     void stepBy(int steps) override;
     // Return whether stepping is currently available

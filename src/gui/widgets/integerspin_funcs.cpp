@@ -14,7 +14,7 @@ IntegerSpin::IntegerSpin(QWidget *parent) : QAbstractSpinBox(parent)
     setValue(value_);
     blockSignals(false);
 
-    connect(lineEdit(), SIGNAL(editingFinished()), this, SLOT(valueEditingFinished()));
+    connect(lineEdit(), SIGNAL(editingFinished()), this, SLOT(updateValueFromText()));
     connect(lineEdit(), SIGNAL(returnPressed()), this, SLOT(returnPressed()));
 }
 
@@ -88,8 +88,13 @@ void IntegerSpin::setRange(int minValue, int maxValue)
  * Signals / Slots
  */
 
-// Line edit editing finished
-void IntegerSpin::valueEditingFinished()
+void IntegerSpin::returnPressed()
+{
+    lineEdit()->selectAll();
+    updateValueFromText();
+}
+
+void IntegerSpin::updateValueFromText()
 {
     if (lineEdit()->text() == valueText_)
         return;
@@ -97,22 +102,18 @@ void IntegerSpin::valueEditingFinished()
     setValue(lineEdit()->text().toInt());
 }
 
-void IntegerSpin::returnPressed()
-{
-    lineEdit()->selectAll();
-    valueEditingFinished();
-}
-
 /*
  * Reimplementations
  */
 
+// Focus events
 void IntegerSpin::focusInEvent(QFocusEvent *event)
 {
     if (valueText_ == specialValueText())
         lineEdit()->setText(QString::number(value_));
     QAbstractSpinBox::focusInEvent(event);
 }
+void IntegerSpin::focusOutEvent(QFocusEvent *e) { updateValueFromText(); }
 
 // Step value by specified number of increments
 void IntegerSpin::stepBy(int steps) { setValue(value_ + steps * stepSize_); }
