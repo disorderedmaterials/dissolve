@@ -56,8 +56,9 @@ class ExponentialSpin : public QAbstractSpinBox
      * Signals / Slots
      */
     private slots:
-    void valueEditingFinished();
     void returnPressed();
+    public slots:
+    void updateValueFromText();
 
     signals:
     void valueChanged(double);
@@ -67,7 +68,9 @@ class ExponentialSpin : public QAbstractSpinBox
      * Reimplementations
      */
     public:
+    // Focus events
     void focusInEvent(QFocusEvent *e) override;
+    void focusOutEvent(QFocusEvent *e) override;
     // Step value by specified number of increments
     void stepBy(int steps) override;
     // Return whether stepping is currently available
