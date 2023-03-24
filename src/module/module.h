@@ -41,6 +41,7 @@ enum ModuleType
     GeometryOptimisation,
     GR,
     ImportTrajectory,
+    IntraAngle,
     IntraDistance,
     IntraShake,
     MD,

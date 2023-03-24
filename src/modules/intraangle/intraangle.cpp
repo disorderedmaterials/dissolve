@@ -19,7 +19,7 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 
-IntraAngleModule::IntraAngleModule() : Module("CalculateIntraAngle"), analyser_(ProcedureNode::AnalysisContext)
+IntraAngleModule::IntraAngleModule() : Module(ModuleTypes::IntraAngle), analyser_(ProcedureNode::AnalysisContext)
 {
     // Select: Site 'A'
     selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");

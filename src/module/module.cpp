@@ -35,6 +35,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::GeometryOptimisation, "GeometryOptimisation"},
                                                                  {ModuleTypes::GR, "GR"},
                                                                  {ModuleTypes::ImportTrajectory, "ImportTrajectory"},
+                                                                 {ModuleTypes::IntraAngle, "IntraAngle"},
                                                                  {ModuleTypes::IntraDistance, "IntraDistance"},
                                                                  {ModuleTypes::IntraShake, "IntraShake"},
                                                                  {ModuleTypes::MD, "MD"},
