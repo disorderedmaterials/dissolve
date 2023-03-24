@@ -24,9 +24,16 @@ runs:
   using: "composite"
   steps:
 
-  - name: 'Set Version'
+  - name: 'Set Version in Main Config'
     shell: bash
     run: sed -i "s/MAJOR.MINOR/${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g" web/docs.toml
+
+  - name: 'Apply Main Release Styling'
+    if: ${{ inputs.isRelease == 'true' && inputs.isLegacy == 'false' }}
+    shell: bash
+    run: |
+      sed -i 's/vMAJOR.MINOR/Release v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      head -n 10 web/docs/_index.md
 
   - name: 'Apply Development Release Styling'
     if: ${{ inputs.isDevelopment == 'true' }}
