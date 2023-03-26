@@ -4,11 +4,11 @@ type: docs
 ---
 
 
-For our "properties of interest" we'll calculate both the centre-of-geometry RDF and the out-of-plane angle between molecules as a function of distance. We can get both from the {{< gui-module "AxisAngle" >}} module:
+For our "properties of interest" we'll calculate both the centre-of-geometry RDF and the out-of-plane angle between molecules as a function of distance. We can get both from the {{< module "AxisAngle" >}} module:
 
 | Module | Purpose |
 |--------|---------|
-| {{< gui-module "AxisAngle" >}} | Calculates the distance vs. axis angle map between two sites |
+| {{< module "AxisAngle" >}} | Calculates the distance vs. axis angle map between two sites |
 
 Since our site (`COG`) is set up for the Z axis to be pointing out of the plane of the benzene ring, it is the angle formed between these axes on the different molecules that we'll focus on.
 
@@ -17,8 +17,8 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 {{< action type="menu" text="Layer &#8680; Create &#8680; Empty" />}}
 {{< action type="edit" text="Double-click the layer tab and rename it to `Analysis`" />}}
 {{< action type="mouse">}}Show the module palette for the current layer by clicking the {{< gui-button icon="general_palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
-{{< action type="mouse">}}Drag a {{< gui-module "AxisAngle" >}} module up to the module list{{< /action >}}
-{{< action type="mouse">}}Select the new {{< gui-module "AxisAngle" >}} module to show its options{{< /action >}}
+{{< action type="mouse">}}Drag a {{< module "AxisAngle" >}} module up to the module list{{< /action >}}
+{{< action type="mouse">}}Select the new {{< module "AxisAngle" >}} module to show its options{{< /action >}}
 {{< action type="groups" text="Open the **Control** settings group" />}}
 {{< action type="edit" text="For the **DistanceRange** change the _Bin Width_ to `10` respectively" />}}
 {{< action type="edit" text="For the **AngleRange** change the _Max_ to `90`"/>}}

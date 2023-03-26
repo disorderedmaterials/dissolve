@@ -42,18 +42,18 @@ Our reference datasets are listed in the following table - we'll refer to them i
 
 Note that there are no exchangeable hydrogen atoms in this system.
 
-The existing {{< gui-module "NeutronSQ" >}} represents sample 1 in the table since it will default to use the natural isotopologues for the cation and anion, so all that remains to do for that one is to set its identifying name and the reference datafile:
+The existing {{< module "NeutronSQ" >}} represents sample 1 in the table since it will default to use the natural isotopologues for the cation and anion, so all that remains to do for that one is to set its identifying name and the reference datafile:
 
-{{< action type="mouse">}}Click on the first {{< gui-module "NeutronSQ" >}} module to select it{{< /action >}}
+{{< action type="mouse">}}Click on the first {{< module "NeutronSQ" >}} module to select it{{< /action >}}
 {{< action type="edit" text="Double-click on its name and change it to `H-H`" />}}
 {{< action type="groups" text="Open the **Reference Data** settings group" />}}
 {{< action type="edit" text="For the **Reference** keyword select the file `SLS39546-H_H.mint01` and set the format of the data to `mint`" />}}
 
-For the remaining datasets you need to drag a new {{< gui-module "NeutronSQ" >}} into the layer from the module palette (click the {{< gui-button icon="general_palette" text="Show Palette" >}} button if you can't already see it) and set the relevant isotopologues, short name, and datafile as listed above.
+For the remaining datasets you need to drag a new {{< module "NeutronSQ" >}} into the layer from the module palette (click the {{< gui-button icon="general_palette" text="Show Palette" >}} button if you can't already see it) and set the relevant isotopologues, short name, and datafile as listed above.
 
-Finally, we need to set the instrumental broadening in the {{< gui-module "SQ" >}} module first:
+Finally, we need to set the instrumental broadening in the {{< module "SQ" >}} module first:
 
-{{< action type="mouse">}}Click on the {{< gui-module "SQ" >}} module to select it{{< /action >}}
+{{< action type="mouse">}}Click on the {{< module "SQ" >}} module to select it{{< /action >}}
 {{< action type="edit" text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of `0.02`" />}}
 
 * * *

@@ -38,20 +38,20 @@ Along with the calculation of the SDF, it is useful to have the actual average g
 
 | Module | Purpose |
 |--------|---------|
-| {{< gui-module "AvgMol" >}} | Calculates the average geometry of the parent species around a specified reference site |
-| {{< gui-module "SDF" >}} | Calculates the spatial density function of a particular site around a central reference site |
+| {{< module "AvgMol" >}} | Calculates the average geometry of the parent species around a specified reference site |
+| {{< module "SDF" >}} | Calculates the spatial density function of a particular site around a central reference site |
 
-As the name implies, the {{< gui-module "AvgMol" >}}) module will provide us with the average species geometry which we can use as a reference when we plot the spatial density function calculated from the {{< gui-module "SDF" >}} module. The {{< gui-module "SDF" >}} module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both modules, the principal (central) site must have a system of axes defined.
+As the name implies, the {{< module "AvgMol" >}}) module will provide us with the average species geometry which we can use as a reference when we plot the spatial density function calculated from the {{< module "SDF" >}} module. The {{< module "SDF" >}} module takes two sites as input - the central site A about which the distribution of site B will be calculated. For both modules, the principal (central) site must have a system of axes defined.
 
-Let's proceed and set up the two modules in the layer. First, {{< gui-module "AvgMol" >}}:
+Let's proceed and set up the two modules in the layer. First, {{< module "AvgMol" >}}:
 
-{{< action type="mouse" >}}Select the {{< gui-module "AvgMol" >}} module to display its options{{< /action >}}
+{{< action type="mouse" >}}Select the {{< module "AvgMol" >}} module to display its options{{< /action >}}
 {{< action type="groups" text="Open the **Control** settings group" />}}
 {{< step text="Set the target **Site** for the average molecule calculation to be `COM` (it will be the only one available, since it is the only one which has a set of axes defined)" />}}
 
-And now {{< gui-module "SDF" >}}:
+And now {{< module "SDF" >}}:
 
-{{< action type="mouse" >}}Select the {{< gui-module "SDF" >}} module to display its options{{< /action >}}
+{{< action type="mouse" >}}Select the {{< module "SDF" >}} module to display its options{{< /action >}}
 {{< action type="groups" text="Open the **Control** settings group" />}}
 {{< action type="mouse" text="Set the central **SiteA** to `COM` (again, the only one available)" />}}
 {{< action type="mouse" text="Set the surrounding **SiteB** to `O`" />}}

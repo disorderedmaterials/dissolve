@@ -8,14 +8,14 @@ Start the simulation running:
 
 {{< action type="key" text="Ctrl-R" />}}
 
-After just a few tens of steps you should see that the {{< gui-module "MD" >}} is doing what it's supposed to and giving our framework a little bit of disorder as it flexes and vibrates:
+After just a few tens of steps you should see that the {{< module "MD" >}} is doing what it's supposed to and giving our framework a little bit of disorder as it flexes and vibrates:
 
 {{< cimage src="../framework-md.png" caption="Cu-BTC at 300 K after several iterations of molecular dynamics" >}}
 
-If we take a look at the output of the {{< gui-module "NeutronSQ" >}} we can see how our simulation compares to the experimental data:
+If we take a look at the output of the {{< module "NeutronSQ" >}} we can see how our simulation compares to the experimental data:
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
-{{< action type="mouse">}}Select the {{< gui-module "NeutronSQ" >}} module and go to its {{< gui-button icon="general_output" text="Output">}} tab{{< /action >}}
+{{< action type="mouse">}}Select the {{< module "NeutronSQ" >}} module and go to its {{< gui-button icon="general_output" text="Output">}} tab{{< /action >}}
 
 {{< cimage src="../baseline-fq.png" caption="Comparison of simulated (black) and reference (red) total structure factors" >}}
 
@@ -24,7 +24,7 @@ We've zoomed in to quite a narrow $Q$ range (0 < $Q$ < 2.0 &#8491;<sup>-1</sup>)
 We'll make an initial guess as to the right broadening here - first we'll try to get the peak widths at the lowest $Q$ values a bit better by applying a Q-independent factor:
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="RDF / Neutron S(Q)" type="layer" >}} tab{{< /action >}}
-{{< action type="mouse" >}}Click on the {{< gui-module "SQ" >}} module to display its options{{< /action >}}
+{{< action type="mouse" >}}Click on the {{< module "SQ" >}} module to display its options{{< /action >}}
 {{< action type="groups" >}}Open the **Bragg Scattering** options group{{< /action >}}
 {{< action type="edit">}}Set the **BraggQBroadening** to `GaussianC2` with a _FWHM_ of `0.05` and a _FWHM(x)_ of `0.02`{{< /action >}}
 
@@ -33,13 +33,13 @@ Now run the simulation for twenty steps or so:
 {{< action type="key" text="Ctrl-F" />}}
 {{< action type="edit">}}Enter `20` and click {{< gui-button text="OK">}}{{< /action >}}
 
-Let's go back to the {{< gui-module "NeutronSQ" >}} module and see what the comparison looks like now:
+Let's go back to the {{< module "NeutronSQ" >}} module and see what the comparison looks like now:
 
 {{< cimage src="../broadening1-fq.png" caption="First broadening of simulated structure factors" >}}
 
 As you can see this looks much better! We can still observe that as we go to Bragg peaks at higher $Q$ values are too intense, so we'll increase the $Q$-dependent broadening as well:
 
-{{< action type="edit">}}Set the **BraggQBroadening** of the {{< gui-module "SQ" >}} module to `GaussianC2` with a _FWHM_ of `0.055` and a _FWHM(x)_ of `0.03`{{< /action >}}
+{{< action type="edit">}}Set the **BraggQBroadening** of the {{< module "SQ" >}} module to `GaussianC2` with a _FWHM_ of `0.055` and a _FWHM(x)_ of `0.03`{{< /action >}}
 
 {{< cimage src="../broadening2-fq.png" caption="Second broadening of simulated structure factors" >}}
 

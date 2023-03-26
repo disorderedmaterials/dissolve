@@ -6,7 +6,7 @@ description: Calculate distance distribution and angle map for A&ndash;B&middot;
 
 ## Overview
 
-The `DAngle` module calculates the angle between two vectors $u$ and $v$ from two oriented sites A and B, forming the averages of the angle, the A&middot;&middot;&middot;B distances, and the distance-angle map. The sites A and B must be present on the same molecule - C may exist anywhere. Internal angles - i.e. between sites A-B-C all on the same molecule - are excluded by default from the calculation, but may be included if required. If more flexibility is required, see the {{< gui-module "Angle" >}} module.
+The `DAngle` module calculates the angle between two vectors $u$ and $v$ from two oriented sites A and B, forming the averages of the angle, the A&middot;&middot;&middot;B distances, and the distance-angle map. The sites A and B must be present on the same molecule - C may exist anywhere. Internal angles - i.e. between sites A-B-C all on the same molecule - are excluded by default from the calculation, but may be included if required. If more flexibility is required, see the {{< module "Angle" >}} module.
 
 ## Options
 

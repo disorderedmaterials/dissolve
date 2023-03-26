@@ -4,13 +4,13 @@ type: docs
 ---
 
 
-Restart the simulation and monitor the progress of the r-factors and eReq value in the {{< gui-module "EPSR" >}} module.
+Restart the simulation and monitor the progress of the r-factors and eReq value in the {{< module "EPSR" >}} module.
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Refine (EPSR)">}} layer tab{{< /action >}}
-{{< action type="mouse">}}Select the {{< gui-module "EPSR" >}} module and show its {{< gui-button icon="general_output" text="Output" >}} tab{{< /action >}}
+{{< action type="mouse">}}Select the {{< module "EPSR" >}} module and show its {{< gui-button icon="general_output" text="Output" >}} tab{{< /action >}}
 {{< action type="mouse" text="Click the _R Factors_ tab to display it" />}}
 
-You'll see here a graph of the individual r-factors for the three datasets, as well as the total (summed) R-factor. The current "strength" of applied potential is shown at the bottom-left of the plot (**Current EReq""). Once you've been running for a few hundred steps the ereq value should have increased to 3.0, and the fits might look something like this (on the _F(Q)_ tab of the {{< gui-module "EPSR" >}} module):
+You'll see here a graph of the individual r-factors for the three datasets, as well as the total (summed) R-factor. The current "strength" of applied potential is shown at the bottom-left of the plot (**Current EReq""). Once you've been running for a few hundred steps the ereq value should have increased to 3.0, and the fits might look something like this (on the _F(Q)_ tab of the {{< module "EPSR" >}} module):
 
 {{< cimage src="../ereq3.png" caption="Comparison of reference vs simulated structure factors at ereq=3.0" >}}
 
@@ -21,7 +21,7 @@ First, stop the simulation if it's running:
 
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="RDF / Neutron S(Q)">}} layer tab{{< /action >}}
-{{< action type="mouse">}}Select the {{< gui-module "SQ" >}} module{{< /action >}}
+{{< action type="mouse">}}Select the {{< module "SQ" >}} module{{< /action >}}
 {{< action type="edit">}}In the **Control** settings group change the **WindowFunction** to `Lorch0`{{< /action >}}
 
 

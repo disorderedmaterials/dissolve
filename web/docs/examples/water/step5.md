@@ -8,7 +8,7 @@ weight: 7
 With our equilibrated (or equilibrating...) system we'll now make a basic comparison between our simulated total structure factors and the reference datasets.
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="RDF / Neutron S(Q)" type="Layer" >}} tab {{< /action >}}
-{{< action type="mouse" >}}Click on the "H2O" {{< gui-module "NeutronSQ" >}} module and select the **Output** button{{< /action >}}
+{{< action type="mouse" >}}Click on the "H2O" {{< module "NeutronSQ" >}} module and select the **Output** button{{< /action >}}
 
 We'll first check the agreement between the experimental total structure factor (the F(Q)) and the simulated data. You'll see a row of buttons at the top of the graph giving you access to various different plotted quantities, with the default being the {{< gui-button text="Total F(Q)" >}} which should look a little like this:
 
@@ -18,7 +18,7 @@ There are some small mismatches between the peak positions at $Q$ values of 3.1 
 
 Let's take a look now at the total radial distribution functions:
 
-{{< action type="mouse" >}}Click the {{< gui-button text="Total G(r)" >}} button on the "H2O" {{< gui-module "NeutronSQ" >}} module's output page{{< /action >}}
+{{< action type="mouse" >}}Click the {{< gui-button text="Total G(r)" >}} button on the "H2O" {{< module "NeutronSQ" >}} module's output page{{< /action >}}
 
 {{< cimage src="../equilibrated-h2o-gr.png" caption="Simulated (black), Fourier-transformed from simulated F(Q) (green), and experimental (red) G(r) for the equilibrated water (H<sub>2</sub>O) simulation" >}}
 

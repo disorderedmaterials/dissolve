@@ -31,11 +31,11 @@ The new layer contains the following modules:
 
 | Module | Purpose |
 |--------|---------|
-| {{< gui-module "SiteRDF" >}} | Calculates the radial distribution function between two specified sites |
+| {{< module "SiteRDF" >}} | Calculates the radial distribution function between two specified sites |
 
-We'll need to set up both of these modules to calculate exactly what we need.  First, {{< gui-module "SiteRDF" >}}:
+We'll need to set up both of these modules to calculate exactly what we need.  First, {{< module "SiteRDF" >}}:
 
-{{< action type="mouse" >}}Select the {{< gui-module "SiteRDF" >}} module to display its options{{< /action >}}
+{{< action type="mouse" >}}Select the {{< module "SiteRDF" >}} module to display its options{{< /action >}}
 {{< action type="groups" text="Open the **Control** settings group" />}}
 {{< action type="mouse" text="Press the button for **SiteA** and choose the `COM` site" />}}
 {{< action type="mouse" text="Select the `COM` site for **SiteB** as well" />}}

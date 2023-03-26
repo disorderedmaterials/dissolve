@@ -6,9 +6,9 @@ description: Calculate neutron-weighted S(Q) and G(r)
 
 ## Overview
 
-`NeutronSQ` is responsible for taking a set of previously calculated $S(Q)$ from an {{< gui-module "SQ" >}} module and generating a new set of neutron-weighted structure factors. The total neutron-weighted structure factor, $F^{N}(Q)$, is generated through summation of the individual partial neutron-weighted $S(Q)$. Neutron-weighted partial and total radial distribution functions are also calculated.
+`NeutronSQ` is responsible for taking a set of previously calculated $S(Q)$ from an {{< module "SQ" >}} module and generating a new set of neutron-weighted structure factors. The total neutron-weighted structure factor, $F^{N}(Q)$, is generated through summation of the individual partial neutron-weighted $S(Q)$. Neutron-weighted partial and total radial distribution functions are also calculated.
 
-The `NeutronSQ` module does not target any configurations itself - the underlying  {{< gui-module "GR" >}}  module, referenced by the {{< gui-module "SQ" >}} module, dictates the source configuration data.
+The `NeutronSQ` module does not target any configurations itself - the underlying  {{< module "GR" >}}  module, referenced by the {{< module "SQ" >}} module, dictates the source configuration data.
 
 ## Description
 
@@ -32,14 +32,14 @@ With isotopologues and exchangeable atoms provided, matrices of weighting factor
 
 ### Instrumental Broadening
 
-The application of instrumental broadening is the responsibility of the source {{< gui-module "SQ" >}} module - see its [`QBroadening`]({{< ref "sq#control" >}}) keyword.
+The application of instrumental broadening is the responsibility of the source {{< module "SQ" >}} module - see its [`QBroadening`]({{< ref "sq#control" >}}) keyword.
 
 ## Options
 
 ### Targets
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`SourceSQs`|`Module`|--|{{< required-label >}} Source {{< gui-module "SQ" >}} module from which to take unweighted $S(Q)$.|
+|`SourceSQs`|`Module`|--|{{< required-label >}} Source {{< module "SQ" >}} module from which to take unweighted $S(Q)$.|
 
 ### Isotopes & Normalisation
 |Keyword|Arguments|Default|Description|
@@ -51,7 +51,7 @@ The application of instrumental broadening is the responsibility of the source {
 ### Reference Data
 Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
-|`Reference`|[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|Format and filename of reference $F(Q)$ data, to be displayed in the GUI alongside calculated data, and made available for other modules to utilise (e.g. {{< gui-module "EPSR" >}})|
+|`Reference`|[`Data1DFileAndFormat`]({{< ref "data1dformat" >}})|--|Format and filename of reference $F(Q)$ data, to be displayed in the GUI alongside calculated data, and made available for other modules to utilise (e.g. {{< module "EPSR" >}})|
 |`ReferenceFTDeltaR`|`double`|0.05|Spacing in $r$ to use when generating the Fourier-transform of the $F(Q)$|
 |`ReferenceFTQMax`|`double`|--|Maximum Q value to use when Fourier-transforming the reference $F(Q)$ to its $G(r)$|
 |`ReferenceFTQMin`|`double`|--|Minimum Q value to use when Fourier-transforming the reference $F(Q)$ to its $G(r)$|
