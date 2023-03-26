@@ -20,7 +20,7 @@ Selecting any module in the list on the left will show its full options in the p
 
 Most modules need configuration targets to work on, and all available configurations (one in our case) will have been automatically set as a target in each of the new modules in the layer. As mentioned, each module has its own defined frequency at which it will run within the layer - {{< gui-module "AtomShake" >}} and {{< gui-module "Energy" >}} modules will run every time the layer is run (frequency = 1) while the {{< gui-module "MD" >}} module will only run every fifth step. Each module can be individually enabled / disabled using the slider next to the frequency box, with a green tick indicating that the module is active.
 
-Finally, modules may have entire control panels of other functionality, most commonly graphing output for various properties etc. This can be accessed by selecting the {{< gui-button text="Output" icon="general_output" >}} button at the top of the controls. Go back to the configuration options for the module by selecting the {{< gui-button text="Options" type="options" >}} button.
+Finally, modules may have entire control panels of other functionality, most commonly graphing output for various properties etc. This can be accessed by selecting the {{< gui-button text="Output" icon="general_output" >}} button at the top of the controls. Go back to the configuration options for the module by selecting the {{< gui-button text="Options" type="options" icon="general_options" >}} button.
 
 All of the default settings for the modules within the evolution layer are sensible enough for our needs, so take a look around at what's there if you want to, but there's no need to change anything.
 
