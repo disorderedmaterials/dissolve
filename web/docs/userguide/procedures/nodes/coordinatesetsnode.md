@@ -18,7 +18,7 @@ The `CoordinateSets` node generates a population of molecules from a reference s
 
 ## Description
 
-The `CoordinateSets` node generates a population of sets of coordinates of a specified species, using a particular evolution algorithm.  These sets can then be used by another node, for instance the {{< gui-node "Add" >}} node in order to add "unique" molecules of different conformations to a box, rather than identical copies of the same species.
+The `CoordinateSets` node generates a population of sets of coordinates of a specified species, using a particular evolution algorithm.  These sets can then be used by another node, for instance the {{< node "Add" >}} node in order to add "unique" molecules of different conformations to a box, rather than identical copies of the same species.
 
 The coordinate set population is only generated once (the first time the node is run in the procedure) - subsequently the existing population will be used unless the `Force` option is enabled.
 

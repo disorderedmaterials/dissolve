@@ -20,7 +20,7 @@ The `Collect3D` node is used to accumulate a histogram over three dimensions, us
 
 Where the `Calculate*` nodes are responsible for calculating quantities, the `Collect*` nodes are responsible for accumulating averages, typically in histogram format.
 
-`Collect3D` accumulates a histogram over three dimensions using target values taken from two `Calculate*` nodes, over a specified range and binwidth for each dimension. The values are treated as a triplet giving the {x,y,z} coordinate to bin in the histogram. No post-processing (e.g. normalisation) is performed by `Collect3D` - see the {{< gui-node "Process3D" >}}for processing options.
+`Collect3D` accumulates a histogram over three dimensions using target values taken from two `Calculate*` nodes, over a specified range and binwidth for each dimension. The values are treated as a triplet giving the {x,y,z} coordinate to bin in the histogram. No post-processing (e.g. normalisation) is performed by `Collect3D` - see the {{< node "Process3D" >}}for processing options.
 
 ## Branching
 

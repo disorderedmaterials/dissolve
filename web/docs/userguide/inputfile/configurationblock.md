@@ -46,7 +46,7 @@ EndConfiguration
 
 ### Random One-Component System
 
-Simple one-component system, e.g. a pure liquid, with a set number of molecules randomly added to a cubic unit cell. The size of the cell is not explicitly specified - giving a density value (here, the atomic density in atoms/&#8491;<sup>3</sup>) to the {{< gui-node "Add" >}} node allows it to calculate the required volume for the number of molecules requested.
+Simple one-component system, e.g. a pure liquid, with a set number of molecules randomly added to a cubic unit cell. The size of the cell is not explicitly specified - giving a density value (here, the atomic density in atoms/&#8491;<sup>3</sup>) to the {{< node "Add" >}} node allows it to calculate the required volume for the number of molecules requested.
 
 ```r
 Generator
@@ -65,7 +65,7 @@ EndGenerator
 
 ### Random Two-Component System
 
-Two-component system, e.g. a liquid mixture, with a set number of molecules of the second species, and an implied ratio with the first. Again the size of the final cell is not explicitly stated, and the density units are provided in chemical units of the final mix (g/cm<sup>3</sup>). All control variables are defined in a separate {{< gui-node "Parameters" >}}block at the beginning of the generator.
+Two-component system, e.g. a liquid mixture, with a set number of molecules of the second species, and an implied ratio with the first. Again the size of the final cell is not explicitly stated, and the density units are provided in chemical units of the final mix (g/cm<sup>3</sup>). All control variables are defined in a separate {{< node "Parameters" >}}block at the beginning of the generator.
 
 ```r
 Generator

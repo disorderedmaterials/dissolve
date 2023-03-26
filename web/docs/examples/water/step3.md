@@ -18,11 +18,11 @@ The new layer contains the following modules:
 
 | Module | Purpose |
 |--------|---------|
-| {{< gui-module "MolShake" >}} | Performs standard Monte Carlo moves on individual molecules |
-| {{< gui-module "MD" >}} | Performs a number of molecular dynamics steps, evolving the system according to Newton's equations of motion |
-| {{< gui-module "Energy" >}} | Calculates the total energy of configurations |
+| {{< module "MolShake" >}} | Performs standard Monte Carlo moves on individual molecules |
+| {{< module "MD" >}} | Performs a number of molecular dynamics steps, evolving the system according to Newton's equations of motion |
+| {{< module "Energy" >}} | Calculates the total energy of configurations |
 
-Monte Carlo simulation via the {{< gui-module "MolShake" >}} module will be the principal way our system moves and evolves, translating and rotating whole molecules but keeping the internal geometry of those molecules constant. The molecular dynamics run is critical for water (and, indeed, any molecular system) because it is this that will relax and evolve the intramolecular degrees of freedom in our molecules and give us realistic sampling of our bonds and angles. We don't need this to happen every iteration of the simulation, so the frequency of the {{< gui-module "MD" >}} module is set to 5 by default.
+Monte Carlo simulation via the {{< module "MolShake" >}} module will be the principal way our system moves and evolves, translating and rotating whole molecules but keeping the internal geometry of those molecules constant. The molecular dynamics run is critical for water (and, indeed, any molecular system) because it is this that will relax and evolve the intramolecular degrees of freedom in our molecules and give us realistic sampling of our bonds and angles. We don't need this to happen every iteration of the simulation, so the frequency of the {{< module "MD" >}} module is set to 5 by default.
 
 ### g(r) and Structure Factors
 
@@ -30,39 +30,37 @@ We have neutron-weighted experimental data, so we need a layer to calculate RDFs
 
 {{< action type="menu" text="Layer &#8680; Create &#8680; Correlations &#8680; RDF and Neutron S(Q)" />}}
 
-First we need to set the instrumental broadening in the {{< gui-module "SQ" >}} module:
+First we need to set the instrumental broadening in the {{< module "SQ" >}} module:
 
-{{< action type="mouse" >}}Click on the {{< gui-module "SQ" >}} module to display its options {{< /action >}}
+{{< action type="mouse" >}}Click on the {{< module "SQ" >}} module to display its options {{< /action >}}
 {{< action type="edit" text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of `0.02`" />}}
 
 This broadening is a known parameter of the SANDALS instrument on which the experimental data were collected.
 
 {{< tip text=" For generality, some of Dissolve's broadening functions refer to 'omega', which should be taken to mean the reciprocal space axis (in this case, 'Q')." />}}
 
-Next, we will set up our calculation of the weighted structure factors. Since a {{< gui-module "NeutronSQ" >}} module calculates the partial and total structure factors for a single isotopic composition, we will need to add two more since we have three reference datasets.
+Next, we will set up our calculation of the weighted structure factors. Since a {{< module "NeutronSQ" >}} module calculates the partial and total structure factors for a single isotopic composition, we will need to add two more since we have three reference datasets.
 
 {{< action type="mouse" >}}Show the module palette for the layer by clicking {{< gui-button text="Show Available Modules" >}} at the very bottom of the module list {{< /action >}}
-{{< action type="mouse" >}}Drag a {{< gui-module "NeutronSQ" >}} module from the list of available modules, placing it after the existing {{< gui-module "NeutronSQ" >}} module. Alternatively, double-click the {{< gui-module "NeutronSQ" >}} entry in the list of available modules to append one to the current list of modules {{< /action >}}
-{{< step >}}Add another {{< gui-module "NeutronSQ" >}} module, ensuring all three are **after** the {{< gui-module "SQ" >}} module {{< /step >}}
+{{< action type="mouse" >}}Drag a {{< module "NeutronSQ" >}} module from the list of available modules, placing it after the existing {{< module "NeutronSQ" >}} module. Alternatively, double-click the {{< module "NeutronSQ" >}} entry in the list of available modules to append one to the current list of modules {{< /action >}}
+{{< step >}}Add another {{< module "NeutronSQ" >}} module, ensuring all three are **after** the {{< module "SQ" >}} module {{< /step >}}
 
-Note that each of the new {{< gui-module "NeutronSQ" >}} modules has a unique name (`NeutronSQ`, `NeutronSQ01`, and `NeutronSQ02`) - it is a requirement that modules within Dissolve can be uniquely identified by their name. We'll now give the modules sensible names that describe our three datasets, and set the isotopologues and reference data files.
+Note that each of the new {{< module "NeutronSQ" >}} modules has a unique name (`NeutronSQ`, `NeutronSQ01`, and `NeutronSQ02`) - it is a requirement that modules within Dissolve can be uniquely identified by their name. We'll now give the modules sensible names that describe our three datasets, and set the isotopologues and reference data files.
 
 ### H<sub>2</sub>O
 
-{{< action type="mouse" >}}Click on the first {{< gui-module "NeutronSQ" >}} module ("NeutronSQ") to display its options{{< /step >}}
+{{< action type="mouse" >}}Click on the first {{< module "NeutronSQ" >}} module ("NeutronSQ") to display its options{{< /step >}}
 {{< action type="edit">}}Change its name from "NeutronSQ" to "H2O"{{< /action >}}
-{{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< step >}}For the **Reference** keyword select the file "SLS18498-H2O.mint01" and set the format of the data to `mint`{{< /step >}}
+{{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18498-H2O.mint01" and set the format of the data to `mint`{{< /step >}}
 
 ### D<sub>2</sub>O
 
-{{< action type="mouse" >}}Click on the second {{< gui-module "NeutronSQ" >}} module ("NeutronSQ01") to display its options{{< /step >}}
+{{< action type="mouse" >}}Click on the second {{< module "NeutronSQ" >}} module ("NeutronSQ01") to display its options{{< /step >}}
 {{< action type="edit" >}}Change its name from "NeutronSQ01" to "D2O"{{< /action >}}
 {{< action type="groups" >}}In the **Control** section click the button for the **Isotopologue** option - it will currently say {{< gui-button text="&lt;Default to Natural&gt;" >}}{{< /action >}}
 {{< action type="mouse" >}}Press the {{< gui-button text="Species" >}} button to add a new isotopologue for each species present{{< /action >}}
 {{< step text="Change the isotopologue from `Natural` to `Deuterated`" />}}
-{{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< step >}}For the **Reference** keyword select the file "SLS18502-D2O.mint01" and set the format of the data to `mint`{{< /step >}}
+{{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18502-D2O.mint01" and set the format of the data to `mint`{{< /step >}}
 
 ### HDO
 
@@ -70,16 +68,14 @@ The HDO sample is a little different in respect of the isotopologue specificatio
 
 {{< tip text="As a general rule, any alcoholic or amine hydrogen is exchangeable." />}}
 
-{{< action type="mouse" >}}Click on the third {{< gui-module "NeutronSQ" >}} module ("NeutronSQ02") to display its options{{< /step >}}
+{{< action type="mouse" >}}Click on the third {{< module "NeutronSQ" >}} module ("NeutronSQ02") to display its options{{< /step >}}
 {{< action type="edit">}}Change its name from "NeutronSQ02" to "HDO"{{< /action >}}
 {{< action type="groups" >}}In the **Control** section click the button for the **Isotopologue** option{{< /action >}}
 {{< action type="mouse" >}}Press the {{< gui-button text="Species" >}} button to add the natural isotopologue for the water species{{< /action >}}
 {{< step >}}Select the entry for the water species, or its isotopologue, and click the {{< gui-button text="Isotopologue" >}} button to insert another isotopologue (the next unused isotopologue will be added - in this case, the `Deuterated` one) {{< /step >}}
 {{< action type="mouse" >}}Click the button for the **Exchangeable** option{{< /action >}}
 {{< step text=" Tick the `HW` atom type in the list" />}}
-{{< action type="settings" text="Open the **Reference Data** settings group" />}}
-{{< step >}}For the **Reference** keyword select the file "SLS18502-HDO5050.mint01" and set the format of the data to `mint`{{< /step >}}
-
+{{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18502-HDO5050.mint01" and set the format of the data to `mint`{{< /step >}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step2/">}}

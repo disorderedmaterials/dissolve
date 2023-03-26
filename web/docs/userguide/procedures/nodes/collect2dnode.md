@@ -20,7 +20,7 @@ The `Collect2D` node is used to accumulate a histogram over two dimensions, usin
 
 Where the `Calculate*` nodes are responsible for calculating quantities, the `Collect*` nodes are responsible for accumulating averages, typically in histogram format.
 
-`Collect2D` accumulates a histogram over two dimensions using target values taken from two `Calculate*` nodes, over a specified range and binwidth for each dimension. The values are treated as a pair giving the {x,y} coordinate to bin in the histogram. No post-processing (e.g. normalisation) is performed by `Collect2D` - see the {{< gui-node "Process2D" >}}for processing options.
+`Collect2D` accumulates a histogram over two dimensions using target values taken from two `Calculate*` nodes, over a specified range and binwidth for each dimension. The values are treated as a pair giving the {x,y} coordinate to bin in the histogram. No post-processing (e.g. normalisation) is performed by `Collect2D` - see the {{< node "Process2D" >}}for processing options.
 
 ## Branching
 

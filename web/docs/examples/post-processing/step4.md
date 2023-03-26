@@ -8,7 +8,7 @@ Let's create our correlation layer:
 
 {{< action type="menu" text="Layer &#8680; Create &#8680; Correlations &#8680; RDF and Neutron S(Q)" />}}
 
-Recall that our {{< gui-module "ImportTrajectory" >}} module is running every iteration, so our correlation calculation layer needs to do the same:
+Recall that our {{< module "ImportTrajectory" >}} module is running every iteration, so our correlation calculation layer needs to do the same:
 
 {{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
 {{< action type="edit" >}}Change the frequency in the _Layer Control_ at the top-left of the tab from `5` to `1`{{< /action >}}

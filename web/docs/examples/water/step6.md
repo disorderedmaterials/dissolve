@@ -8,8 +8,8 @@ weight: 8
 There is a hint in the structure factors for the H<sub>2</sub>O sample (particularly the G(r)), that the intramolecular geometry of our off-the-shelf forcefield is not quite consistent with the real world.  This is made clearly obvious if you look at the G(r) for the D<sub>2</sub>O sample:
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="RDF / Neutron S(Q)" type="Layer" >}} tab {{< /action >}}
-{{< action type="mouse" >}}Click on the "D2O" {{< gui-module "NeutronSQ" >}} module and select the **Output** button{{< /action >}}
-{{< action type="mouse" >}}Click the {{< gui-button text="Total G(r)" >}} button on the "H2O" {{< gui-module "NeutronSQ" >}} module's output page{{< /action >}}
+{{< action type="mouse" >}}Click on the "D2O" {{< module "NeutronSQ" >}} module and select the **Output** button{{< /action >}}
+{{< action type="mouse" >}}Click the {{< gui-button text="Total G(r)" >}} button on the "H2O" {{< module "NeutronSQ" >}} module's output page{{< /action >}}
 
 {{< cimage src="../equilibrated-d2o-gr.png" caption="Simulated (black), Fourier-transformed from simulated F(Q) (green), and experimental (red) G(r) for the equilibrated water (D<sub>2</sub>O) simulation" >}}
 
@@ -35,7 +35,7 @@ Now run the simulation for a little longer and let the species adjust to their n
 
 {{< cimage src="../equilibrated-d2o-adjusted-gr.png" caption="Simulated (black), Fourier-transformed from simulated F(Q) (green), and experimental (red) G(r) for the equilibrated water (D<sub>2</sub>O) simulation with adjusted intramolecular parameters" >}}
 
-{{< tip >}}The change in the G(r) will not be instant as the majority of the evolution of the system is from the {{< gui-module "MolShake" >}} module which does not change the intramolecular geometry. Only the {{< gui-module "MD" >}} module will affect the intramolecular geometry. Also, the g(r) calculated by the {{< gui-module "GR" >}} are averaged over five calculations by default. {{< /tip >}}
+{{< tip >}}The change in the G(r) will not be instant as the majority of the evolution of the system is from the {{< module "MolShake" >}} module which does not change the intramolecular geometry. Only the {{< module "MD" >}} module will affect the intramolecular geometry. Also, the g(r) calculated by the {{< module "GR" >}} are averaged over five calculations by default. {{< /tip >}}
 
 It's also worth checking the other two samples, where the same kind of improvement should be noticeable (if a little less prominent).
 

@@ -10,7 +10,7 @@ The `IntraShake` module performs Monte Carlo "shakes" of intramolecular terms wi
 
 ## Description
 
-The basic algorithm is the same as documented for the {{< gui-module "AtomShake" >}} module.
+The basic algorithm is the same as documented for the {{< module "AtomShake" >}} module.
 
 ## Options
 

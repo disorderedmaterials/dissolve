@@ -19,7 +19,7 @@ So, let's set up a random mix to mirror all of this:
 {{< action type="edit" text="Double-click on the configuration tab's title and change its name to `Bulk`" />}}
 
 
-With this set-up, the {{< gui-node "Parameters" >}} node is in fact redundant since our density is defined by our imposed box volume and the populations of the species. The {{< gui-node "CoordinateSets" >}} nodes also no longer have any purpose since we will be overwriting the configuration coordinates with our reference data, so if you wanted to you could reduce the number of generated sets in those nodes to `1`.
+With this set-up, the {{< node "Parameters" >}} node is in fact redundant since our density is defined by our imposed box volume and the populations of the species. The {{< node "CoordinateSets" >}} nodes also no longer have any purpose since we will be overwriting the configuration coordinates with our reference data, so if you wanted to you could reduce the number of generated sets in those nodes to `1`.
 
 * * *
 {{< button pos="left" text="Previous Step" path="step1/">}}

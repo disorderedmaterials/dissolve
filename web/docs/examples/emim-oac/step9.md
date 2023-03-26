@@ -15,16 +15,16 @@ So, let's create and prepare suitable layer:
 {{< action type="edit" >}}Set **SiteA** to `RingNN` on the cation {{< /action >}}
 {{< action type="edit" >}}Set **SiteB** to `COM` on the anion {{< /action >}}
 
-The {{< gui-module "SiteRDF" >}} module can also calculate simple coordination numbers over specific distance ranges, however typically we don't know what this range is until we've seen the actual RDF data, so we'll leave that calculation turned off for now.
+The {{< module "SiteRDF" >}} module can also calculate simple coordination numbers over specific distance ranges, however typically we don't know what this range is until we've seen the actual RDF data, so we'll leave that calculation turned off for now.
 
-Now to add on two more {{< gui-module "SiteRDF" >}} modules for the other correlations of interest:
+Now to add on two more {{< module "SiteRDF" >}} modules for the other correlations of interest:
 
-{{< action type="mouse">}}Drag a {{< gui-module "SiteRDF" >}} module from the palette up to the module list{{< /action >}}
-{{< action type="mouse">}}Double-click the new {{< gui-module "SiteRDF" >}} module and rename it to `RDF-CC`{{< /action >}}
+{{< action type="mouse">}}Drag a {{< module "SiteRDF" >}} module from the palette up to the module list{{< /action >}}
+{{< action type="mouse">}}Double-click the new {{< module "SiteRDF" >}} module and rename it to `RDF-CC`{{< /action >}}
 {{< action type="edit" >}}Change the **Range** maximum to `14.0` {{< /action >}}
 {{< action type="edit" >}}Set **SiteA** and **SiteB** to `RingNN` on the cation {{< /action >}}
-{{< action type="mouse">}}Drag another {{< gui-module "SiteRDF" >}} module from the palette up to the module list{{< /action >}}
-{{< action type="mouse">}}Double-click the second new {{< gui-module "SiteRDF" >}} module and rename it to `RDF-AA`{{< /action >}}
+{{< action type="mouse">}}Drag another {{< module "SiteRDF" >}} module from the palette up to the module list{{< /action >}}
+{{< action type="mouse">}}Double-click the second new {{< module "SiteRDF" >}} module and rename it to `RDF-AA`{{< /action >}}
 {{< action type="edit" >}}Change the **Range** maximum to `14.0` {{< /action >}}
 {{< action type="edit" >}}Set **SiteA** and **SiteB** to `COM` on the anion {{< /action >}}
 
@@ -35,7 +35,7 @@ Now start up the simulation again:
 
 Because our system is quite small (100 ion pairs) the RDFs will take a few thousand iterations to become properly averaged, but 250 steps should be enough to get a feel for the results. If you look at the output from the RDF-CA module you should see that the first minimum occurs at around 7 &#8491;, so we'll set this value as the upper limit for our coordination number calculation:
 
-{{< action type="mouse" >}}Find the _Coordination Numbers_ options in the {{< gui-module "SiteRDF" >}} module{{< /action >}}
+{{< action type="mouse" >}}Find the _Coordination Numbers_ options in the {{< module "SiteRDF" >}} module{{< /action >}}
 {{< action type="edit" >}}Set **RangeA** to span `0.0` to `7.0`{{< /action >}}
 {{< action type="edit" >}}Click **RangeAEnabled** to request the calculation{{< /action >}}
 

@@ -14,13 +14,13 @@ description: Insert correlated molecule pair into a box
 
 ## Overview
 
-The `AddPair` node is a companion to the {{< gui-node "Add" >}} node, but instead operates on a pair of species. The population refers to a population of pairs of species which are added at their current coordinates, then translated / rotated uniformly in order to maintain their relative coordinates.
+The `AddPair` node is a companion to the {{< node "Add" >}} node, but instead operates on a pair of species. The population refers to a population of pairs of species which are added at their current coordinates, then translated / rotated uniformly in order to maintain their relative coordinates.
 
-Periodic species cannot be used by this node, nor can {{< gui-node "CoordinateSets" >}}.
+Periodic species cannot be used by this node, nor can {{< node "CoordinateSets" >}}.
 
 ## Description
 
-For full details on the possible options, see the {{< gui-node "Add" >}} node.
+For full details on the possible options, see the {{< node "Add" >}} node.
 
 ## Options
 
