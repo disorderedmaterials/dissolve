@@ -1,2 +1,2 @@
 {{ $type := index .Params 0 }}
-<a href="{{ ref .Page $type }}"><span class="gui-module gui-module-{{ lower $type }}">{{ $type }}</span></a>
+<a href="{{ ref .Page $type }}"><span class="module-link module-link-{{ lower $type }}">{{ $type }}</span></a>
