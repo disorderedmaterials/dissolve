@@ -23,8 +23,7 @@ Now let's set up the three {{< module "NeutronSQ" >}} modules to calculate what 
 
 {{< action type="mouse">}}Click on the first {{< module "NeutronSQ" >}} module to select it{{< /action >}}
 {{< action type="edit" text="Double-click on its name and change it to `C6H6`" />}}
-{{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< action type="edit" text="For the **Reference** keyword select the file `C6H6.mint01` and set the format of the data to `mint`" />}}
+{{< action type="edit" text="In the **Reference Data** settings group find the **Reference** keyword, select the file `C6H6.mint01` and set the format of the data to `mint`" />}}
 
 
 ### C<sub>6</sub>D<sub>6</sub>
@@ -34,8 +33,7 @@ Now let's set up the three {{< module "NeutronSQ" >}} modules to calculate what 
 {{< action type="mouse" text="In the **Control** section click the button for the **Isotopologue** option" />}}
 {{< action type="mouse">}}Press the {{< gui-button icon="general_add" text="Species" >}} button to add the natural isotopologue for the first species present{{< /action >}}
 {{< action type="edit" text="Change the isotopologue from `Natural` to `C6D6`" />}}
-{{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< action type="edit" text="For the **Reference** keyword select the file `C6D6.mint01` and set the format of the data to `mint`" />}}
+{{< action type="edit" text="Find the **Reference Data** settings group, and for the **Reference** keyword select the file `C6D6.mint01` and set the format of the data to `mint`" />}}
 
 ### 50:50 Mix
 
@@ -47,8 +45,7 @@ Now let's set up the three {{< module "NeutronSQ" >}} modules to calculate what 
 
 {{< tip text="The isotopologue mixture you've just defined has equal parts (weight = 1.0) of the `Natural` and `C6D6` benzene isotopologues. You can use whatever ratios make sense - Dissolve will always normalise the total weight back to 1.0 internally." />}}
 
-{{< action type="settings" text="Open the **Reference Data** settings group" />}}
-{{< action type="edit" text="For the **Reference** keyword select the file `5050.mint01` and set the format of the data to `mint`" />}}
+{{< action type="edit" text="Finally, find the **Reference Data** settings group and for the **Reference** keyword select the file `5050.mint01` and set the format of the data to `mint`" />}}
 
 All that remains is to add our EPSR refinement layer:
 

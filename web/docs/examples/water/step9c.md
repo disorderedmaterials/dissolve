@@ -46,14 +46,12 @@ As the name implies, the {{< module "AvgMol" >}}) module will provide us with th
 Let's proceed and set up the two modules in the layer. First, {{< module "AvgMol" >}}:
 
 {{< action type="mouse" >}}Select the {{< module "AvgMol" >}} module to display its options{{< /action >}}
-{{< action type="groups" text="Open the **Control** settings group" />}}
-{{< step text="Set the target **Site** for the average molecule calculation to be `COM` (it will be the only one available, since it is the only one which has a set of axes defined)" />}}
+{{< action type="edit" text="Find the **Control** settings group, and set the target **Site** for the average molecule calculation to be `COM` (it will be the only one available, since it is the only one which has a set of axes defined)" />}}
 
 And now {{< module "SDF" >}}:
 
 {{< action type="mouse" >}}Select the {{< module "SDF" >}} module to display its options{{< /action >}}
-{{< action type="groups" text="Open the **Control** settings group" />}}
-{{< action type="mouse" text="Set the central **SiteA** to `COM` (again, the only one available)" />}}
+{{< action type="edit" text="In the **Control** settings group set the central **SiteA** to `COM` (again, the only one available)" />}}
 {{< action type="mouse" text="Set the surrounding **SiteB** to `O`" />}}
 
 * * *

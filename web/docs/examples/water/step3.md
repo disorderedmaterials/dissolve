@@ -51,8 +51,7 @@ Note that each of the new {{< module "NeutronSQ" >}} modules has a unique name (
 
 {{< action type="mouse" >}}Click on the first {{< module "NeutronSQ" >}} module ("NeutronSQ") to display its options{{< /step >}}
 {{< action type="edit">}}Change its name from "NeutronSQ" to "H2O"{{< /action >}}
-{{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< step >}}For the **Reference** keyword select the file "SLS18498-H2O.mint01" and set the format of the data to `mint`{{< /step >}}
+{{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18498-H2O.mint01" and set the format of the data to `mint`{{< /step >}}
 
 ### D<sub>2</sub>O
 
@@ -61,8 +60,7 @@ Note that each of the new {{< module "NeutronSQ" >}} modules has a unique name (
 {{< action type="groups" >}}In the **Control** section click the button for the **Isotopologue** option - it will currently say {{< gui-button text="&lt;Default to Natural&gt;" >}}{{< /action >}}
 {{< action type="mouse" >}}Press the {{< gui-button text="Species" >}} button to add a new isotopologue for each species present{{< /action >}}
 {{< step text="Change the isotopologue from `Natural` to `Deuterated`" />}}
-{{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< step >}}For the **Reference** keyword select the file "SLS18502-D2O.mint01" and set the format of the data to `mint`{{< /step >}}
+{{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18502-D2O.mint01" and set the format of the data to `mint`{{< /step >}}
 
 ### HDO
 
@@ -77,9 +75,7 @@ The HDO sample is a little different in respect of the isotopologue specificatio
 {{< step >}}Select the entry for the water species, or its isotopologue, and click the {{< gui-button text="Isotopologue" >}} button to insert another isotopologue (the next unused isotopologue will be added - in this case, the `Deuterated` one) {{< /step >}}
 {{< action type="mouse" >}}Click the button for the **Exchangeable** option{{< /action >}}
 {{< step text=" Tick the `HW` atom type in the list" />}}
-{{< action type="settings" text="Open the **Reference Data** settings group" />}}
-{{< step >}}For the **Reference** keyword select the file "SLS18502-HDO5050.mint01" and set the format of the data to `mint`{{< /step >}}
-
+{{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18502-HDO5050.mint01" and set the format of the data to `mint`{{< /step >}}
 
 * * *
 {{< button pos="left" text="Previous Step" path="step2/">}}

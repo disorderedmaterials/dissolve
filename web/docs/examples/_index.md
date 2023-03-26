@@ -22,10 +22,6 @@ Throughout the examples specific actions to perform in the GUI are given in bann
 
 {{< action type="tabs" text="Go to the **Refine (EPSR)** tab" />}}
 
-- Open a specific settings group
-
-{{< action type="groups" text=" Open the **Control** settings group" />}}
-
 - Edit / change a particular value
 
 {{< action type="edit" text="Set the **Temperature** to 323 K" />}}

@@ -14,8 +14,7 @@ Create an empty layer, and add a {{< module "Angle" >}} module to it.
 
 Now let's set it up.
 
-{{< action type="mouse">}}Select the {{< module "Angle" >}} module to display its options{{< /action >}}
-{{< action type="groups" text="Open the **Control** settings group" />}}
+{{< action type="mouse">}}Select the {{< module "Angle" >}} module to display its {{< gui-button text="Options" icon="general_options" >}}{{< /action >}}
 {{< action type="edit" text="Change the **RangeAB** _Min_ and _Max_ values to 1.2 and 2.1 respectively, and corresponding to the range of the Si&ndash;O bonds" />}}
 {{< action type="edit" text="Change the **RangeBC** _Min_ and _Max_ values to 1.2 and 2.1 as well" />}}
 {{< action type="edit" text="Change the **AngleRange** _BinWidth_ to 5.0" />}}

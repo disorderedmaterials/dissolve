@@ -25,8 +25,7 @@ We'll make an initial guess as to the right broadening here - first we'll try to
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="RDF / Neutron S(Q)" type="layer" >}} tab{{< /action >}}
 {{< action type="mouse" >}}Click on the {{< module "SQ" >}} module to display its options{{< /action >}}
-{{< action type="groups" >}}Open the **Bragg Scattering** options group{{< /action >}}
-{{< action type="edit">}}Set the **BraggQBroadening** to `GaussianC2` with a _FWHM_ of `0.05` and a _FWHM(x)_ of `0.02`{{< /action >}}
+{{< action type="edit" >}}Find the **Bragg Scattering** options group and set the **BraggQBroadening** to `GaussianC2` with a _FWHM_ of `0.05` and a _FWHM(x)_ of `0.02`{{< /action >}}
 
 Now run the simulation for twenty steps or so:
 

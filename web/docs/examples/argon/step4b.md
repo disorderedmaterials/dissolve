@@ -34,8 +34,8 @@ The {{< module "NeutronSQ" >}} module will use isotopic natural abundances to ca
 Now we'll go to our calculation layer and set the isotopologue for our {{< module "NeutronSQ" >}} module:
 
 {{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
-{{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and open the **Control** settings group{{< /action >}}
-{{< step >}}The **Isotopologues** keyword currently shows that all species will "Default to Natural" isotopologues{{< /step >}}
+{{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and open its main {{< gui-button text="Options" icon="general_options" >}}{{< /action >}}
+{{< step >}}The **Isotopologue** keyword currently shows that all species will "Default to Natural" isotopologues{{< /step >}}
 {{< action type="mouse" >}}Click the button for the **Isotopologue** keyword to open its full options{{< /action >}}
 {{< step >}}Press the {{< gui-button text="Species" type="add" >}} button to populate the list with the default isotopic selection for each species{{< /step >}}
 {{< step text="Change the isotopologue for the argon species from `Natural` to `Ar36` (assuming that you changed the name earlier!)"/>}}
@@ -46,18 +46,17 @@ Now we'll go to our calculation layer and set the isotopologue for our {{< modul
 
 The {{< module "NeutronSQ" >}} module itself looks after any related experimental reference data that we might wish to compare our calculated data to, and which we'll now set up.
 
-{{< action type="tabs" >}}Go to the {{< gui-tab type="layer"  text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
-{{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and open the **Reference Data** settings group{{< /action >}}
+{{< action type="tabs" >}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
+{{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and look for the **Reference Data** settings group{{< /action >}}
 {{< action type="edit" >}}For the **Reference** keyword open the file `yarnell.sq`, and set the format of the data to `xy`{{< /action >}}
 
 The data, along with its Fourier transform, can now be seen in the module's {{< gui-button text="Output" icon="general_output" >}} page. You may notice that the data have been normalised to the average squared value of the atomic scattering and oscillate around 1.0 - we will need to tell Dissolve to convert the data back to absolute units and make it oscillate around zero.
 
-{{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and open the **Reference Data** settings group (go back to the {{< gui-button text="Options" icon="general_options" >}} page if you need to){{< /action >}}
+{{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and find the **Reference Data** settings group (go back to the {{< gui-button text="Options" icon="general_options" >}} page if you need to){{< /action >}}
 {{< action type="edit" text="Set the **ReferenceNormalisation** style to `SquareOfAverage`" />}}
 {{< step text="This tells Dissolve that the data have been normalised, and allows Dissolve to remove that normalisation in order to get the data in the correct units" />}}
 {{< action type="settings" text="Open the options for the file import at the extreme right of the **ReferenceData** keyword" />}}
-{{< action type="groups" text="Open the **Manipulations** group" />}}
-{{< action type="edit" text="Set the **RemoveAverage** value to `9.0`" />}}
+{{< action type="edit" text="Find the **Manipulations** group and set the **RemoveAverage** value to `9.0`" />}}
 {{< step text="This will instruct Dissolve to work out the average value of the data from a _Q_ of 9.0 &#8491;<sup>-1</sup> onwards, and subtract it from the data" />}}
 
 

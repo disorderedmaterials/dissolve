@@ -19,8 +19,6 @@ Here we'll employ the {{< module "EPSR" >}} module in order to adjust the intera
 
 Our new layer contains only the {{< module "EPSR" >}} module, and which Dissolve has set up with sensible targets and defaults. We'll explore the various graphs as we proceed, but for now let's check the set-up of the module. Brief descriptions of the important parameters are given below - for more in-depth explanations see the {{< module "EPSR" >}} module page.
 
-{{< action type="tabs" >}}Go to the {{< gui-tab text="Refine (EPSR)" type="Layer" >}} tab{{< /action >}}
-{{< action type="groups">}}Open the **Control** settings group of the {{< module "EPSR" >}} module {{< /action >}}
 {{< step text=" An initial value for **EReq** has been set (3.0) - this determines the magnitude or \"strength\" of the generated interatomic potentials" />}}
 {{< step text="The **Feedback** factor is 0.9 - this states that we are 90% confident in the experimental data, and that the calculated partial structure factors should make up 10% of the estimated partials" />}}
 {{< step text="The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>) and **QMin** (0.5 &#8491;<sup>-1</sup>)" />}}

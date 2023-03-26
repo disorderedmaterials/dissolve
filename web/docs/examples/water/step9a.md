@@ -35,11 +35,10 @@ The new layer contains the following modules:
 
 We'll need to set up both of these modules to calculate exactly what we need.  First, {{< module "SiteRDF" >}}:
 
-{{< action type="mouse" >}}Select the {{< module "SiteRDF" >}} module to display its options{{< /action >}}
-{{< action type="groups" text="Open the **Control** settings group" />}}
-{{< action type="mouse" text="Press the button for **SiteA** and choose the `COM` site" />}}
-{{< action type="mouse" text="Select the `COM` site for **SiteB** as well" />}}
-{{< action type="mouse" text="Enable the **ExcludeSameMolecule** option" />}}
+{{< action type="mouse" >}}Select the {{< module "SiteRDF" >}} module and display its {{< gui-button text="Options" icon="general_options" >}}{{< /action >}}
+{{< action type="edit" text="Click the **SiteA** option and choose the `COM` site" />}}
+{{< action type="edit" text="Select the `COM` site for **SiteB** as well" />}}
+{{< action type="edit" text="Enable the **ExcludeSameMolecule** option" />}}
 
 Since we are calculating the RDF of a site around itself, the **ExcludeSameMolecule** option prevents consideration of the same site with itself (which would give a distance of zero and result in a large undesirable spike at the beginning of the RDF). The distance range over which to calculate the RDF can be set in the **Control** settings group, but the defaults (0 - 10 &#8491; with a step size of 0.05 &#8491;) are fine for what we need.
 

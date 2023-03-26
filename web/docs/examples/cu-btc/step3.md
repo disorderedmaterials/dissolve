@@ -34,8 +34,7 @@ Finally, we need to calculate our correlation functions:
 {{< action type="edit">}}Set the **QDelta** to `0.01`{{< /action >}}
 {{< action type="edit">}}Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of `0.02`{{< /action >}}
 {{< action type="mouse" >}}Click on the {{< module "NeutronSQ" >}} module to display its options{{< /action >}}
-{{< action type="groups" text="Open the **Reference Data** settings group" />}}
-{{< action type="edit" text="For the **Reference** keyword select the file `Empty-CuBTC.mint01` and set the format of the data to `mint`" />}}
+{{< action type="edit" text="For the **Reference** keyword in the **Reference Data** settings group, select the file `Empty-CuBTC.mint01` and set the format of the data to `mint`" />}}
 
 We're changing to a finer binning in $Q$ so our Bragg features have better definition.
 
@@ -52,8 +51,7 @@ The {{< module "Bragg" >}} module is responsible only for calculating the reflec
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="RDF / Neutron S(Q)" type="layer" >}} tab{{< /action >}}
 {{< action type="mouse" >}}Click on the {{< module "SQ" >}} module to display its options{{< /action >}}
-{{< action type="groups" >}}Open the **Bragg Scattering** options group{{< /action >}}
-{{< step >}}Set the **IncludeBragg** option to reference the only {{< module "Bragg" >}} module we have (called "Bragg"!){{< /step >}}
+{{< action type="edit" >}}Find the **Bragg Scattering** options group and set the **IncludeBragg** option to reference the only {{< module "Bragg" >}} module we have (called "Bragg"!){{< /action >}}
 
  * * *
 {{< button pos="left" text="Previous Step" path="step2">}}
