@@ -14,7 +14,7 @@ description: Perform integration on 1D data
 
 ## Overview
 
-The `Integrate1D` node integrates up to three regions of a supplied {{< gui-node "Process1D" >}} node.
+The `Integrate1D` node integrates up to three regions of a supplied {{< node "Process1D" >}} node.
 
 ## Options
 
@@ -22,7 +22,7 @@ The `Integrate1D` node integrates up to three regions of a supplied {{< gui-node
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`SourceData`|{{< gui-node "Process1D" >}}|--|Process1D node containing the data to integrate.|
+|`SourceData`|{{< node "Process1D" >}}|--|Process1D node containing the data to integrate.|
 
 ### Ranges
 

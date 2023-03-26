@@ -16,7 +16,7 @@ Let's now set up a configuration for our simulation. We'll focus on just the Cu-
 {{< action type="edit" text="Double-click on the configuration tab's title and change its name to `MOF`" />}}
 
 
-If you click on the generator's {{< gui-node "Add" >}} node for the framework species and look at its control parameters you will see that the **BoxAction** parameter is `Set`, meaning that the configuration's box is set from that defined in the species.
+If you click on the generator's {{< node "Add" >}} node for the framework species and look at its control parameters you will see that the **BoxAction** parameter is `Set`, meaning that the configuration's box is set from that defined in the species.
 
 ### Set up Layers
 

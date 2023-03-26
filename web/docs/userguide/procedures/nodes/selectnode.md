@@ -41,5 +41,5 @@ The hidden `ForEach` keyword / branch is executed for each site selected by the 
 |`SameMoleculeAsSite`|`name`|--|Request that selected sites come from the molecule containing the current site in the named `Select` node.|
 |`ExcludeSameMolecule`|`name`<br/>`[name...]`|--|Exclude sites from the selection if they are present in the same molecule as the current site in any of the named `SelectNode`s.|
 |`ExcludeSameSite`|`name`<br/>`[name...]`|--|Exclude sites from the selection if they are the current site in any of the named `SelectNode`s.|
-|`ReferenceSite`|{{< gui-node "Select" >}}|--|Site from the named `Select` node to be used as a reference point when determining inclusions / exclusions.|
+|`ReferenceSite`|{{< node "Select" >}}|--|Site from the named `Select` node to be used as a reference point when determining inclusions / exclusions.|
 |`InclusiveRange`|`min`<br/>`max`|--|Distance range from `ReferenceSite` within which sites are selected.|

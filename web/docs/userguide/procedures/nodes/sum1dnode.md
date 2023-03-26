@@ -14,11 +14,11 @@ description: Sum 1D data over ranges
 
 ## Overview
 
-The `Sum1D` node is used to form summations over up to three defined regions of data produced by a {{< gui-node "Process1D" >}} node.
+The `Sum1D` node is used to form summations over up to three defined regions of data produced by a {{< node "Process1D" >}} node.
 
 ## Description
 
-Once a {{< gui-node "Process1D" >}} node has processed data into something meaningful the `Sum1D` node can perform a summation of that data over defined ranges, providing an averaged value of the quantity.
+Once a {{< node "Process1D" >}} node has processed data into something meaningful the `Sum1D` node can perform a summation of that data over defined ranges, providing an averaged value of the quantity.
 
 Note that, of the three ranges, the first ("A") is always calculated.
 
@@ -29,7 +29,7 @@ Note that, of the three ranges, the first ("A") is always calculated.
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Instantaneous`|`bool`|`false`|Whether the processed data should reflect the accumulated average over the defined ranges (`false`) or the "instantaneous" value (`true`).|
-|`SourceData`|`name`|--|{{< required-label >}} The `name` of a {{< gui-node "Process1D" >}} node containing the target data.|
+|`SourceData`|`name`|--|{{< required-label >}} The `name` of a {{< node "Process1D" >}} node containing the target data.|
 
 ### Ranges
 
