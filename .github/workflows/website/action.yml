@@ -24,19 +24,32 @@ runs:
   using: "composite"
   steps:
 
-  - name: 'Set Version'
+  - name: 'Set Version in Main Config'
     shell: bash
     run: sed -i "s/MAJOR.MINOR/${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g" web/docs.toml
+
+  - name: 'Apply Main Release Styling'
+    if: ${{ inputs.isRelease == 'true' && inputs.isLegacy == 'false' }}
+    shell: bash
+    run: |
+      # Set version in docs index
+      sed -i 's/vMAJOR.MINOR/Release v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
+      head -n 10 web/docs/_index.md
 
   - name: 'Apply Development Release Styling'
     if: ${{ inputs.isDevelopment == 'true' }}
     shell: bash
     run: |
+      # Set version and shortcode target in docs index
       sed -i 's/vMAJOR.MINOR/Development v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
       sed -i 's/documentationinfo target=".*"/documentationinfo target="development"/g' web/docs/_index.md
       head -n 10 web/docs/_index.md
+
+      # Change base url
       sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/dev/"|g' web/docs.toml
       grep baseURL web/docs.toml
+
+      # Style navbar
       sed -i "s/navbar-background-color/navbar-background-color-dev/g" web/assets/scss/_content.scss
       grep navbar-background-color web/assets/scss/_content.scss
 
@@ -44,11 +57,16 @@ runs:
     if: ${{ inputs.isLegacy == 'true' }}
     shell: bash
     run: |
+      # Set version and shortcode target in docs index
       sed -i 's/vMAJOR.MINOR/Legacy v${{ env.dissolveMajorVersion }}.${{ env.dissolveMinorVersion }}/g' web/docs/_index.md
       sed -i 's/documentationinfo target=".*"/documentationinfo target="legacy"/g' web/docs/_index.md
       head -n 10 web/docs/_index.md
+
+      # Change base url
       sed -i 's|baseURL = .*|baseURL = "https://docs.projectdissolve.com/legacy/"|g' web/docs.toml
       grep baseURL web/docs.toml
+
+      # Style navbar
       sed -i "s/navbar-background-color/navbar-background-color-legacy/g" web/assets/scss/_content.scss
       grep navbar-background-color web/assets/scss/_content.scss
 
