@@ -115,7 +115,7 @@ if(WIN32)
   # Windows defining ERROR as a global macro (used in ANTLR4)
   add_definitions(-DNOMINMAX -DNOGDI)
   # Needed for Qt 6.4
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /PERMISSIVE")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive-")
 endif(WIN32)
 
 # -- Unix
