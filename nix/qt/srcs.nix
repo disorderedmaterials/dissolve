@@ -1,8 +1,8 @@
 { fetchurl, mirror,  }:
 
 let
-  minor = "6.3";
-  patch = "${minor}.0";
+  minor = "6.4";
+  patch = "${minor}.2";
 
 in {
   qt3d = {
@@ -37,7 +37,7 @@ in {
     src = fetchurl {
       url =
         "${mirror}/official_releases/qt/${minor}/${patch}/submodules/qtbase-everywhere-src-${patch}.tar.xz";
-      sha256 = "uGWq5DNX95KzsKFiiZ2b9qE5OlXE5eTt5TFrFXsaD5k=";
+      sha256 = "qIvGztuzSHikmmIrqnnKznjPutT5X9vTZW3bIccFUl0=";
       name = "qtbase-everywhere-src-${patch}.tar.xz";
     };
   };
@@ -244,7 +244,7 @@ in {
     src = fetchurl {
       url =
         "${mirror}/official_releases/qt/${minor}/${patch}/submodules/qtsvg-everywhere-src-${patch}.tar.xz";
-      sha256 = "MWRQTX4/ZAQ5MII1c5sRJgWrX8nMUXygso+fuTqNsOM=";
+      sha256 = "t0avPLF5NiHY7X6uONmtWhVUHcJ0IDEGnyrj/odZAxQ=";
       name = "qtsvg-everywhere-src-${patch}.tar.xz";
     };
   };
