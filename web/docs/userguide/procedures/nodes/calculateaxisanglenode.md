@@ -14,7 +14,7 @@ description: Calculate angle between axes on two oriented sites
 
 ## Overview
 
-The `AxisAngle` node calculates the angle, in degrees, between specific axes on two sites $i$ and $j$, which are referenced from {{< gui-node "Select" >}} nodes.
+The `AxisAngle` node calculates the angle, in degrees, between specific axes on two sites $i$ and $j$, which are referenced from {{< node "Select" >}} nodes.
 
 ## Description
 
@@ -28,8 +28,8 @@ The `AxisAngle` node calculates the angle, in degrees, between specific axes on 
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|{{< gui-node "Select" >}}|--|Site that represents $i$ in the angle $i$-$j$-$k$, taken from the named {{< gui-node "Select" >}} node.|
-|`J`|{{< gui-node "Select" >}}|--|Site that represents $j$ in the angle $i$-$j$-$k$, taken from the named {{< gui-node "Select" >}} node.|
+|`I`|{{< node "Select" >}}|--|Site that represents $i$ in the angle $i$-$j$-$k$, taken from the named {{< node "Select" >}} node.|
+|`J`|{{< node "Select" >}}|--|Site that represents $j$ in the angle $i$-$j$-$k$, taken from the named {{< node "Select" >}} node.|
 |`AxisI`|`X|Y|Z`|`X`|Axis to use from site I|
 |`AxisJ`|`X|Y|Z`|`X`|Axis to use from site J|
 

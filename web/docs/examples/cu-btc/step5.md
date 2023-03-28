@@ -7,7 +7,7 @@ weight: 1
 Let;s now turn our attention to the total radial distribution function:
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="RDF and Neutron S(Q)" >}} layer tab{{< /action >}}
-{{< action type="mouse">}}Select the {{< gui-module "NeutronSQ" >}} module and go to its {{< gui-button icon="general_output" text="Output">}} tab{{< /action >}}
+{{< action type="mouse">}}Select the {{< module "NeutronSQ" >}} module and go to its {{< gui-button icon="general_output" text="Output">}} tab{{< /action >}}
 {{< action type="mouse">}}Click on {{< gui-button text="Total G(r)" >}}{{< /action >}}
 
 You should see something similar to this:
@@ -33,7 +33,7 @@ It is prudent to adjust bond distances in the forcefield at this point in order 
 {{< action type="tabs">}}Go to the {{< gui-tab type="ff" text="Forcefield" >}} tab, **Master Terms** section{{< /action >}}
 {{< action type="edit">}}Find the `Cu-O` bond interaction and change the value of the _eq_ parameter from `1.969` to `1.94`{{< /action >}}
 
-We need to run the simulation long enough to allow the {{< gui-module "GR" >}} module to re-average its data, which is accumulated over five datasets and collected every five iterations.
+We need to run the simulation long enough to allow the {{< module "GR" >}} module to re-average its data, which is accumulated over five datasets and collected every five iterations.
 
 {{< action type="key" text="Ctrl-F" />}}
 {{< action type="edit">}}Enter `25` and click {{< gui-button text="OK">}}{{< /action >}}

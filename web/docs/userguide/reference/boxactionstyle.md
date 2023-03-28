@@ -3,7 +3,7 @@ title: Box Action Styles
 description: Box action styles for procedure nodes
 ---
 
-Box action / adjustment styles used by the {{< gui-node "Add" >}} procedure node.
+Box action / adjustment styles used by the {{< node "Add" >}} procedure node.
 
 |Keyword|Parameters|Description|
 |:---:|:--------:|-----------|

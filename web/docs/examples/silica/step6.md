@@ -8,13 +8,12 @@ Add the standard EPSR-style refinement layer to your simulation:
 
 {{< action type="menu" text="Layer &#8680; Create &#8680; Refinement &#8680; Standard EPSR" />}}
 
-Double-click the {{< gui-module "EPSR" >}} module to open it up as a tab - it's always useful to see the various overview graphs it provides.  We'll need to set a relatively high starting value for **EReq** as we are basically dealing with point charges in a box, and so whatever empirical potential is necessary to drive the structure of the system needs to grow large enough to have some effect against the strong Coulombic forces present.
+Select the {{< module "EPSR" >}} module if it isn't already. We'll need to set a relatively high starting value for **EReq** as we are basically dealing with point charges in a box, and so whatever empirical potential is necessary to drive the structure of the system needs to grow large enough to have some effect against the strong Coulombic forces present.
 
 {{< action type="tabs" text="**EPSR** module tab" />}}
-{{< action type="groups" text="Open the **Control** settings group" />}}
-{{< action type="edit" text="Set **EReq** to `50.0`" />}}
+{{< action type="edit" text="In the **Control** settings group set **EReq** to `50.0`" />}}
 
-On the _R-Factor_ tab of the {{< gui-module "EPSR" >}} module you will see that the magnitude of the potential (top graph) increases rather quickly to 50 (within 100 steps in the plot below), but the quality of fit as measure by the r-factor (bottom graph) takes rather longer to reach a steady state.
+On the _R-Factor_ tab of the {{< module "EPSR" >}} module you will see that the magnitude of the potential (top graph) increases rather quickly to 50 (within 100 steps in the plot below), but the quality of fit as measure by the r-factor (bottom graph) takes rather longer to reach a steady state.
 
 {{< cimage src="../ereq50-ereq.png" caption="Evolution of empirical potential magnitude (max = 50.0)" >}}
 

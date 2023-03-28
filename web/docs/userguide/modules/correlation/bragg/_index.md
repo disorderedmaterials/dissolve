@@ -6,7 +6,7 @@ description: Calculate Bragg reflection data
 
 ## Overview
 
-The `Bragg` module calculates the Bragg reflections over a specified Q-range, storing the intensities for use by other modules (e.g. {{< gui-module "SQ" >}}).
+The `Bragg` module calculates the Bragg reflections over a specified Q-range, storing the intensities for use by other modules (e.g. {{< module "SQ" >}}).
 
 ## Description
 

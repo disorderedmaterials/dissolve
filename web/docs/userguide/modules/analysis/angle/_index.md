@@ -8,7 +8,7 @@ description: Calculate distance distributions and angle maps for A&middot;&middo
 
 The `Angle` module calculates the angle between three sites A&middot;&middot;&middot;B&middot;&middot;&middot;C, forming the averages of the angle, the A&middot;&middot;&middot;B and B&middot;&middot;&middot;C distances, and the distance-angle maps (A&middot;&middot;&middot;B)&middot;&middot;&middot;C and A&middot;&middot;&middot;(B&middot;&middot;&middot;C).
 
-Unlike the {{< gui-module "DAngle" >}} module, no restrictions are imposed on the relationship or connectivity between sites A, B, and C.
+Unlike the {{< module "DAngle" >}} module, no restrictions are imposed on the relationship or connectivity between sites A, B, and C.
 
 ## Options
 

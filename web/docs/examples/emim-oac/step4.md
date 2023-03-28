@@ -40,7 +40,7 @@ Now we can equilibrate our system:
 {{< action type="key" >}}Ctrl-F{{< /action >}}
 {{< step >}}Set the number of iterations  to `1000` and hit {{< gui-button text="OK" >}}{{< /step >}}
 
-You might want to track the change in energy of the system in the {{< gui-button text="Output" icon="general_output" >}} tab of the {{< gui-module "Energy" >}} module.
+You might want to track the change in energy of the system in the {{< gui-button text="Output" icon="general_output" >}} tab of the {{< module "Energy" >}} module.
 
 After one thousand iterations the size factor of the configuration should have returned to 1.0 (check this on the configuration tab!) and the intermolecular energy of the system should have reached a stable negative value of about &ndash;100 kJ mol<sup>-1</sup> (for 100 ion pairs). The charged nature of the species in the present system means that reaching equilibrium can take a lot longer than for a system containing only small, neutral molecules - bear this in mind when running such systems. Also note that the _total_ energy of the configuration remains large and positive due to the intramolecular energy contributions.
 

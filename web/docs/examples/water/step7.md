@@ -13,21 +13,19 @@ Let's briefly recap what we've done so far:
 
 Our agreement with experiment is relatively good, but it is possible to make it even better by modifying the _inter_-atomic interaction parameters contained in the atom types. However, generally this is not to be attempted by hand in all but the simplest of cases, as the effects of adjusting the interatomic are seldom as obvious as those for _intra_-molecular parameters. Also, for even a modestly-complicated system the number of adjustable parameters is simply too large to tackle with manual fitting.
 
-Here we'll employ the {{< gui-module "EPSR" >}} module in order to adjust the interatomic potentials automatically to give better agreement with the experimental reference data.
+Here we'll employ the {{< module "EPSR" >}} module in order to adjust the interatomic potentials automatically to give better agreement with the experimental reference data.
 
 {{< action type="menu" text="Layer &#8680; Create &#8680; Refinement &#8680; Standard EPSR" />}}
 
-Our new layer contains only the {{< gui-module "EPSR" >}} module, and which Dissolve has set up with sensible targets and defaults. We'll explore the various graphs as we proceed, but for now let's check the set-up of the module. Brief descriptions of the important parameters are given below - for more in-depth explanations see the {{< gui-module "EPSR" >}} module page.
+Our new layer contains only the {{< module "EPSR" >}} module, and which Dissolve has set up with sensible targets and defaults. We'll explore the various graphs as we proceed, but for now let's check the set-up of the module. Brief descriptions of the important parameters are given below - for more in-depth explanations see the {{< module "EPSR" >}} module page.
 
-{{< action type="tabs" >}}Go to the {{< gui-tab text="Refine (EPSR)" type="Layer" >}} tab{{< /action >}}
-{{< action type="groups">}}Open the **Control** settings group of the {{< gui-module "EPSR" >}} module {{< /action >}}
 {{< step text=" An initial value for **EReq** has been set (3.0) - this determines the magnitude or \"strength\" of the generated interatomic potentials" />}}
 {{< step text="The **Feedback** factor is 0.9 - this states that we are 90% confident in the experimental data, and that the calculated partial structure factors should make up 10% of the estimated partials" />}}
 {{< step text="The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>) and **QMin** (0.5 &#8491;<sup>-1</sup>)" />}}
 
-The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the `EPSR` module to use. You'll see that Dissolve has added all of the available {{< gui-module "NeutronSQ" >}} modules have been selected automatically.
+The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the `EPSR` module to use. You'll see that Dissolve has added all of the available {{< module "NeutronSQ" >}} modules have been selected automatically.
 
-All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different {{< gui-button text="Output" icon="general_output" >}} tabs in the {{< gui-module "EPSR" >}} module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
+All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different {{< gui-button text="Output" icon="general_output" >}} tabs in the {{< module "EPSR" >}} module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
 
 ### 1. F(Q)
 

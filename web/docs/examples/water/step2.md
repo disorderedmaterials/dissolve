@@ -15,7 +15,7 @@ Time to create a suitable bulk water configuration for our simulation.
 {{< action type="edit" text="Double-click on the configuration tab's title and change its name to `Bulk`" />}}
 
 
-One thousand water molecules should have a cubic box size of just over 31 &#8491; side length. You will see in the {{< gui-node "Add" >}} node that its **Species** option is not set to anything, which seems counter-intuitive. Specifying a species here instructs the {{< gui-node "Add" >}} node that $N$ identical copies of the species should be added to the box. In most cases it is preferable to introduce some variety to the geometry of the molecules, and so the {{< gui-node "Add" >}} node can instead reference a {{< gui-node "CoordinateSets" >}} node as the source, and which contains sets of coordinates representing randomised, evolved, or read in (from a file) coordinates for the species.
+One thousand water molecules should have a cubic box size of just over 31 &#8491; side length. You will see in the {{< node "Add" >}} node that its **Species** option is not set to anything, which seems counter-intuitive. Specifying a species here instructs the {{< node "Add" >}} node that $N$ identical copies of the species should be added to the box. In most cases it is preferable to introduce some variety to the geometry of the molecules, and so the {{< node "Add" >}} node can instead reference a {{< node "CoordinateSets" >}} node as the source, and which contains sets of coordinates representing randomised, evolved, or read in (from a file) coordinates for the species.
 
 Before we proceed we'll tweak the temperature of the configuration.
 

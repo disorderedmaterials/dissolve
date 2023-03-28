@@ -14,7 +14,7 @@ description: Calculate a vector between two sites
 
 ## Overview
 
-The `CalculateVector` node calculates the vector between two provided sites $i$ and $j$, which are referenced from {{< gui-node "Select" >}} nodes.
+The `CalculateVector` node calculates the vector between two provided sites $i$ and $j$, which are referenced from {{< node "Select" >}} nodes.
 
 ## Description
 
@@ -28,8 +28,8 @@ The `CalculateVector` node calculates the vector between two provided sites $i$ 
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`I`|{{< gui-node "Select" >}}|--|Site that represents $i$ in the distance $i$-$j$, taken from the named {{< gui-node "Select" >}} node.|
-|`J`|{{< gui-node "Select" >}}|--|Site that represents $j$ in the distance $i$-$j$, taken from the named {{< gui-node "Select" >}} node.|
+|`I`|{{< node "Select" >}}|--|Site that represents $i$ in the distance $i$-$j$, taken from the named {{< node "Select" >}} node.|
+|`J`|{{< node "Select" >}}|--|Site that represents $j$ in the distance $i$-$j$, taken from the named {{< node "Select" >}} node.|
 
 ### Control
 

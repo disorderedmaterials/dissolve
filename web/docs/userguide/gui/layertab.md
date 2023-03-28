@@ -16,7 +16,7 @@ The frequency at which the layer is executed, as well as a general on/off switch
 
 It is possible to dynamically control the execution of a layer by the use of the run control settings - these provide mechanisms to prevent a layer from running under certain conditions:
 
-- _Energy Stability_ - If selected the layer will not run if the energies of any targeted configuration are not stable (as determined by an {{< gui-module "Energy" >}} module).
+- _Energy Stability_ - If selected the layer will not run if the energies of any targeted configuration are not stable (as determined by an {{< module "Energy" >}} module).
 - _Size Factors_ - If selected the layer will not run if the size factor of any target configuration has not yet returned to 1.0. 
 
 #### Modules
