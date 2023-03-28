@@ -114,6 +114,8 @@ if(WIN32)
   # Add defines for Windows systems - NOMINMAX to prevent conflicts with std::min() and std::max() - NOGDI to prevent conflicts arising from
   # Windows defining ERROR as a global macro (used in ANTLR4)
   add_definitions(-DNOMINMAX -DNOGDI)
+  # Needed for Qt 6.4
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /PERMISSIVE")
 endif(WIN32)
 
 # -- Unix
