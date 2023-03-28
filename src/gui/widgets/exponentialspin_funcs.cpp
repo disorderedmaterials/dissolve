@@ -15,7 +15,7 @@ ExponentialSpin::ExponentialSpin(QWidget *parent) : QAbstractSpinBox(parent)
     setValue(value_.value());
     blockSignals(false);
 
-    connect(lineEdit(), SIGNAL(editingFinished()), this, SLOT(valueEditingFinished()));
+    connect(lineEdit(), SIGNAL(editingFinished()), this, SLOT(updateValueFromText()));
     connect(lineEdit(), SIGNAL(returnPressed()), this, SLOT(returnPressed()));
 }
 
@@ -94,8 +94,13 @@ void ExponentialSpin::setRange(double minValue, double maxValue)
  * Signals / Slots
  */
 
-// Line edit editing finished
-void ExponentialSpin::valueEditingFinished()
+void ExponentialSpin::returnPressed()
+{
+    lineEdit()->selectAll();
+    updateValueFromText();
+}
+
+void ExponentialSpin::updateValueFromText()
 {
     if (lineEdit()->text() == valueText_)
         return;
@@ -103,22 +108,18 @@ void ExponentialSpin::valueEditingFinished()
     setValue(lineEdit()->text().toDouble());
 }
 
-void ExponentialSpin::returnPressed()
-{
-    lineEdit()->selectAll();
-    valueEditingFinished();
-}
-
 /*
  * Reimplementations
  */
 
+// Focus events
 void ExponentialSpin::focusInEvent(QFocusEvent *event)
 {
     if (valueText_ == specialValueText())
         lineEdit()->setText(QString::fromStdString(value_.asString(exponentFormatThreshold_, nDecimals_)));
     QAbstractSpinBox::focusInEvent(event);
 }
+void ExponentialSpin::focusOutEvent(QFocusEvent *e) { updateValueFromText(); }
 
 // Step value by specified number of increments
 void ExponentialSpin::stepBy(int steps) { setValue(value_.value() + steps * stepSize_); }

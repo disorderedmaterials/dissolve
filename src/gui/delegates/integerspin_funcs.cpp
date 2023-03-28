@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/delegates/integerspin.hui"
+#include "gui/widgets/integerspin.hui"
 
 IntegerSpinDelegate::IntegerSpinDelegate(QObject *parent, int vmin, int vmax, int vstep) : QItemDelegate(parent)
 {
@@ -15,7 +16,7 @@ IntegerSpinDelegate::IntegerSpinDelegate(QObject *parent, int vmin, int vmax, in
 QWidget *IntegerSpinDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     // Create editor widget (in this case a QSpinBox) and set some properties
-    auto *editor = new QSpinBox(parent);
+    auto *editor = new IntegerSpin(parent);
     editor->setMinimum(min_);
     editor->setMaximum(max_);
     editor->setSingleStep(step_);
@@ -28,20 +29,19 @@ void IntegerSpinDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
 {
     auto value = index.model()->data(index, Qt::EditRole).toInt();
 
-    auto *spinBox = static_cast<QSpinBox *>(editor);
+    auto *spinBox = static_cast<IntegerSpin *>(editor);
     spinBox->setValue(value);
 }
 
 // Get value from editing widget, and set back in model
 void IntegerSpinDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    auto *spinBox = static_cast<QSpinBox *>(editor);
+    auto *spinBox = static_cast<IntegerSpin *>(editor);
 
-    // Make sure the value in the spinBox has been updated from the current text
-    spinBox->interpretText();
-    auto value = spinBox->value();
+    // Update value from current text
+    spinBox->updateValueFromText();
 
-    model->setData(index, value, Qt::EditRole);
+    model->setData(index, spinBox->value(), Qt::EditRole);
 }
 
 // Update widget geometry
