@@ -26,7 +26,8 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
 
     // Set the icon label
     ui_.ModuleIconLabel->setPixmap(
-        QPixmap(QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module_->type())).toLower())));
+        QPixmap(QString(":/modules/icons/modules_%1.svg")
+                    .arg(QString::fromStdString(ModuleTypes::moduleType(module_->type())).toLower())));
 
     // Set up keyword widgets, one group per stack page
     auto &&[keywordIndex, keywordMap] = module_->keywords().keywordOrganisation();
@@ -85,7 +86,8 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
     moduleWidget_ = ModuleWidgetProducer::create(module_, dissolve_);
     if (moduleWidget_ == nullptr)
     {
-        Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
+        Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n",
+                                ModuleTypes::moduleType(module->type()));
         ui_.ModuleWidgetButton->setVisible(false);
     }
     else
@@ -115,7 +117,7 @@ void ModuleControlWidget::updateControls(Flags<ModuleWidget::UpdateFlags> update
 
     // Ensure module name and icon status are up to date
     ui_.ModuleNameLabel->setText(QString("%1 (%2)").arg(QString::fromStdString(std::string(module_->name())),
-                                                        QString::fromStdString(std::string(module_->type()))));
+                                                        QString::fromStdString(ModuleTypes::moduleType(module_->type()))));
     ui_.ModuleIconLabel->setEnabled(module_->isEnabled());
 
     // Update keywords

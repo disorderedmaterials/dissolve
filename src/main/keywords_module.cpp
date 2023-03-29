@@ -20,7 +20,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                         bool moduleInConfiguration)
 {
     Messenger::print("\nParsing {} block '{}' ({})...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
-                     module->name(), module->type());
+                     module->name(), ModuleTypes::moduleType(module->type()));
 
     auto blockDone = false, error = false;
 
@@ -68,7 +68,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                 Messenger::error("Unrecognised {} block keyword '{}' found, and the Module '{}' contains no "
                                  "option with this name.\n",
                                  BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), parser.argsv(0),
-                                 module->type());
+                                 ModuleTypes::moduleType(module->type()));
                 keywords().errorAndPrintValid(parser.argsv(0));
                 module->printValidKeywords();
                 error = true;

@@ -5,7 +5,7 @@
 #include "keywords/configuration.h"
 #include "keywords/fileandformat.h"
 
-ExportTrajectoryModule::ExportTrajectoryModule() : Module("ExportTrajectory")
+ExportTrajectoryModule::ExportTrajectoryModule() : Module(ModuleTypes::ExportTrajectory)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

@@ -4,7 +4,7 @@
 #include "modules/export_pairpotentials/exportpp.h"
 #include "keywords/fileandformat.h"
 
-ExportPairPotentialsModule::ExportPairPotentialsModule() : Module("ExportPairPotentials")
+ExportPairPotentialsModule::ExportPairPotentialsModule() : Module(ModuleTypes::ExportPairPotentials)
 {
     keywords_.setOrganisation("File");
     keywords_.add<FileAndFormatKeyword>("Format", "Basename and format in which to write potentials", pairPotentialFormat_,

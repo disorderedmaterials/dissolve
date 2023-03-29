@@ -105,7 +105,7 @@ bool ModuleLayer::isEnabled() const { return !runControlFlags_.isSet(ModuleLayer
 void ModuleLayer::clear() { modules_.clear(); }
 
 // Append new module to this layer
-Module *ModuleLayer::append(std::string_view moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs)
+Module *ModuleLayer::append(ModuleTypes::ModuleType moduleType, const std::vector<std::unique_ptr<Configuration>> &cfgs)
 {
     auto *module = ModuleRegistry::create(moduleType, this);
     module->setTargets(cfgs, modulesAsMap());
@@ -134,15 +134,15 @@ bool ModuleLayer::contains(Module *searchModule) const
 std::vector<std::unique_ptr<Module>> &ModuleLayer::modules() { return modules_; }
 
 // Return map of modules in the layer, optionally preceding the specified module
-std::map<std::string, std::vector<const Module *>> ModuleLayer::modulesAsMap(const Module *beforeThis) const
+std::map<ModuleTypes::ModuleType, std::vector<const Module *>> ModuleLayer::modulesAsMap(const Module *beforeThis) const
 {
-    std::map<std::string, std::vector<const Module *>> moduleMap;
+    std::map<ModuleTypes::ModuleType, std::vector<const Module *>> moduleMap;
 
     for (auto &module : modules_)
     {
         if (module.get() == beforeThis)
             break;
-        moduleMap[std::string(module->type())].emplace_back(module.get());
+        moduleMap[module->type()].emplace_back(module.get());
     }
 
     return moduleMap;

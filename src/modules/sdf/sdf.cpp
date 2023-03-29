@@ -14,7 +14,7 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/select.h"
 
-SDFModule::SDFModule() : Module("SDF"), analyser_(ProcedureNode::AnalysisContext)
+SDFModule::SDFModule() : Module(ModuleTypes::SDF), analyser_(ProcedureNode::AnalysisContext)
 {
     // Select: Site 'A'
     selectA_ = analyser_.createRootNode<SelectProcedureNode>("A", std::vector<const SpeciesSite *>{},

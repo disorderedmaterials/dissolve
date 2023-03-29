@@ -6,7 +6,7 @@
 #include "keywords/double.h"
 #include "keywords/geometrylist.h"
 
-ChecksModule::ChecksModule() : Module("Checks")
+ChecksModule::ChecksModule() : Module(ModuleTypes::Checks)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

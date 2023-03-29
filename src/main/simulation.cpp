@@ -194,7 +194,7 @@ bool Dissolve::prepare()
         return false;
 
     // Generate attached atom lists if IntraShake modules are present and enabled
-    auto intraShakeModules = Module::allOfType("IntraShake");
+    auto intraShakeModules = Module::allOfType(ModuleTypes::IntraShake);
     if (!intraShakeModules.empty())
     {
         Messenger::print("Generating attached atom lists for required species...");
@@ -250,7 +250,7 @@ bool Dissolve::iterate(int nIterations)
             auto layerExecutionCount = iteration_ / layer->frequency();
             for (auto &module : layer->modules())
             {
-                Messenger::print("      --> {:20}  ({})\n", module->type(), module->frequencyDetails(layerExecutionCount));
+                Messenger::print("      --> {:20}  ({})\n", module->name(), module->frequencyDetails(layerExecutionCount));
 
                 if (module->isEnabled())
                     ++nEnabledModules;
@@ -302,10 +302,10 @@ bool Dissolve::iterate(int nIterations)
                 if (!module->runThisIteration(layerExecutionCount))
                     continue;
 
-                Messenger::heading("{} ({})", module->type(), module->name());
+                Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
                 if (!module->executeProcessing(*this, worldPool()))
-                    return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->type());
+                    return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }
         }
 
@@ -451,8 +451,9 @@ void Dissolve::printTiming()
         for (auto &module : layer->modules())
         {
             SampledDouble timingInfo = module->processTimes();
-            Messenger::print("      --> {:>20}  {:<{}}  {:7.2g} s/iter  ({} iterations)", module->type(),
-                             fmt::format("({})", module->name()), maxLength, timingInfo.value(), timingInfo.count());
+            Messenger::print("      --> {:>20}  {:<{}}  {:7.2g} s/iter  ({} iterations)",
+                             ModuleTypes::moduleType(module->type()), fmt::format("({})", module->name()), maxLength,
+                             timingInfo.value(), timingInfo.count());
         }
 
         Messenger::print("\n");

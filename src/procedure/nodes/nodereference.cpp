@@ -61,7 +61,7 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, const CoreDa
         Module *module = Module::find(parser.argsv(startArg + 1));
         if (!module)
             return Messenger::error("No Analyse module named '{}' exists.\n", parser.argsv(startArg + 1));
-        if (!DissolveSys::sameString("Analyse", module->type()))
+        if (module->type() != ModuleTypes::Analyse)
             return Messenger::error("Specified module '{}' must be an Analyse module.\n", parser.argsv(startArg + 1));
 
         // Found the target AnalyseModule, so cast it up and search for the named node in its Analyser

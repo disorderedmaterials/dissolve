@@ -37,44 +37,51 @@
 
 ModuleRegistry::ModuleRegistry()
 {
-    registerProducer<AccumulateModule>("Accumulate", "Accumulate partials data to form an average", "Correlation Functions");
-    registerProducer<AnalyseModule>("Analyse", "Perform custom analysis of one or more Configurations", "Analysis");
-    registerProducer<AngleModule>("Angle", "Calculate distance/angle maps", "Analysis");
-    registerProducer<AtomShakeModule>("AtomShake", "Perform atomic Monte Carlo on all atoms", "Evolution");
-    registerProducer<AvgMolModule>("AvgMol", "Calculate average atomic positions of a species around an oriented site",
-                                   "Analysis");
-    registerProducer<AxisAngleModule>("AxisAngle", "Calculate distance/angle map between site axes", "Analysis");
-    registerProducer<BenchmarkModule>("Benchmark", "Perform benchmarking on a variety of functions", "Checks & Tests");
-    registerProducer<BraggModule>("Bragg", "Calculate Bragg intensities", "Correlation Functions");
-    registerProducer<ChecksModule>("Checks", "Conduct simple checks on Configurations", "Checks & Tests");
-    registerProducer<CheckSpeciesModule>("CheckSpecies", "Check the contents of a Species against reference values",
+    registerProducer<AccumulateModule>(ModuleTypes::Accumulate, "Accumulate partials data to form an average",
+                                       "Correlation Functions");
+    registerProducer<AnalyseModule>(ModuleTypes::Analyse, "Perform custom analysis of one or more Configurations", "Analysis");
+    registerProducer<AngleModule>(ModuleTypes::Angle, "Calculate distance/angle maps", "Analysis");
+    registerProducer<AtomShakeModule>(ModuleTypes::AtomShake, "Perform atomic Monte Carlo on all atoms", "Evolution");
+    registerProducer<AvgMolModule>(ModuleTypes::AvgMol,
+                                   "Calculate average atomic positions of a species around an oriented site", "Analysis");
+    registerProducer<AxisAngleModule>(ModuleTypes::AxisAngle, "Calculate distance/angle map between site axes", "Analysis");
+    registerProducer<BenchmarkModule>(ModuleTypes::Benchmark, "Perform benchmarking on a variety of functions",
+                                      "Checks & Tests");
+    registerProducer<BraggModule>(ModuleTypes::Bragg, "Calculate Bragg intensities", "Correlation Functions");
+    registerProducer<ChecksModule>(ModuleTypes::Checks, "Conduct simple checks on Configurations", "Checks & Tests");
+    registerProducer<CheckSpeciesModule>(ModuleTypes::CheckSpecies, "Check the contents of a Species against reference values",
                                          "Checks & Tests");
-    registerProducer<DAngleModule>("DAngle", "Calculate distance/angle maps", "Analysis");
-    registerProducer<DataTestModule>("DataTest", "Test named data in other modules against reference data", "Checks & Tests");
-    registerProducer<EnergyModule>("Energy", "Calculate the total energy of a Configuration", "Forcefield");
-    registerProducer<EPSRModule>("EPSR", "Refine interatomic potentials in a manner consistent with EPSR", "Forcefield");
-    registerProducer<ExportCoordinatesModule>("ExportCoordinates", "Export coordinates for one or more Configurations",
-                                              "Export");
-    registerProducer<ExportPairPotentialsModule>("ExportPairPotentials", "Export pair potentials", "Export");
-    registerProducer<ExportTrajectoryModule>("ExportTrajectory", "Export trajectory for a Configuration", "Export");
-    registerProducer<ForcesModule>("Forces", "Calculate the total atomic forces within a Configuration", "Forcefield");
-    registerProducer<GeometryOptimisationModule>("GeometryOptimisation", "Optimise geometry with respect to energy (minimise)",
-                                                 "Optimisation");
-    registerProducer<GRModule>("GR", "Calculate partial and total g(r)", "Correlation Functions");
-    registerProducer<ImportTrajectoryModule>(
-        "ImportTrajectory", "Calculate coordination numbers from an existing radial distribution function", "Import");
-    registerProducer<IntraDistanceModule>("IntraDistance", "Calculate intramolecular histogram between two sites", "Analysis");
-    registerProducer<IntraAngleModule>("IntraAngle", "Calculate intramolecular angle between two sites", "Analysis");
-    registerProducer<IntraShakeModule>("IntraShake", "Perform Monte Carlo shakes on intramolecular terms within molecules",
-                                       "Evolution");
-    registerProducer<MDModule>("MD", "Evolve a Configuration using molecular dynamics", "Evolution");
-    registerProducer<MolShakeModule>("MolShake", "Perform molecular Monte Carlo moves", "Evolution");
-    registerProducer<NeutronSQModule>("NeutronSQ", "Calculate neutron-weighted S(Q)", "Correlation Functions");
-    registerProducer<SDFModule>("SDF", "Calculate spatial density functions around oriented sites", "Analysis");
-    registerProducer<SiteRDFModule>("SiteRDF", "Calculate radial distribution functions between sites", "Analysis");
-    registerProducer<SQModule>("SQ", "Transform g(r) into unweighted S(Q)", "Correlation Functions");
-    registerProducer<TestModule>("Test", "Development Module");
-    registerProducer<XRaySQModule>("XRaySQ", "Calculate x-ray-weighted S(Q)", "Correlation Functions");
+    registerProducer<DAngleModule>(ModuleTypes::DAngle, "Calculate distance/angle maps", "Analysis");
+    registerProducer<DataTestModule>(ModuleTypes::DataTest, "Test named data in other modules against reference data",
+                                     "Checks & Tests");
+    registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
+    registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
+                                 "Forcefield");
+    registerProducer<ExportCoordinatesModule>(ModuleTypes::ExportCoordinates,
+                                              "Export coordinates for one or more Configurations", "Export");
+    registerProducer<ExportPairPotentialsModule>(ModuleTypes::ExportPairPotentials, "Export pair potentials", "Export");
+    registerProducer<ExportTrajectoryModule>(ModuleTypes::ExportTrajectory, "Export trajectory for a Configuration", "Export");
+    registerProducer<ForcesModule>(ModuleTypes::Forces, "Calculate the total atomic forces within a Configuration",
+                                   "Forcefield");
+    registerProducer<GeometryOptimisationModule>(ModuleTypes::GeometryOptimisation,
+                                                 "Optimise geometry with respect to energy (minimise)", "Optimisation");
+    registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");
+    registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
+                                             "Calculate coordination numbers from an existing radial distribution function",
+                                             "Import");
+    registerProducer<IntraAngleModule>(ModuleTypes::IntraAngle, "Calculate intramolecular angle between two sites", "Analysis");
+    registerProducer<IntraDistanceModule>(ModuleTypes::IntraDistance, "Calculate intramolecular histogram between two sites",
+                                          "Analysis");
+    registerProducer<IntraShakeModule>(ModuleTypes::IntraShake,
+                                       "Perform Monte Carlo shakes on intramolecular terms within molecules", "Evolution");
+    registerProducer<MDModule>(ModuleTypes::MD, "Evolve a Configuration using molecular dynamics", "Evolution");
+    registerProducer<MolShakeModule>(ModuleTypes::MolShake, "Perform molecular Monte Carlo moves", "Evolution");
+    registerProducer<NeutronSQModule>(ModuleTypes::NeutronSQ, "Calculate neutron-weighted S(Q)", "Correlation Functions");
+    registerProducer<SDFModule>(ModuleTypes::SDF, "Calculate spatial density functions around oriented sites", "Analysis");
+    registerProducer<SiteRDFModule>(ModuleTypes::SiteRDF, "Calculate radial distribution functions between sites", "Analysis");
+    registerProducer<SQModule>(ModuleTypes::SQ, "Transform g(r) into unweighted S(Q)", "Correlation Functions");
+    registerProducer<TestModule>(ModuleTypes::Test, "Development Module");
+    registerProducer<XRaySQModule>(ModuleTypes::XRaySQ, "Calculate x-ray-weighted S(Q)", "Correlation Functions");
 }
 
 /*
@@ -82,7 +89,7 @@ ModuleRegistry::ModuleRegistry()
  */
 
 // Produce module of specified type
-Module *ModuleRegistry::produce(std::string moduleType) const
+Module *ModuleRegistry::produce(ModuleTypes::ModuleType moduleType) const
 {
     auto it = producers_.find(moduleType);
     if (it == producers_.end())
@@ -120,18 +127,18 @@ const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &Module
 }
 
 // Create a Module instance for the named Module type
-std::unique_ptr<Module> ModuleRegistry::create(std::string_view moduleType)
+std::unique_ptr<Module> ModuleRegistry::create(ModuleTypes::ModuleType type)
 {
-    auto m = std::unique_ptr<Module>(instance().produce(std::string(moduleType)));
+    auto m = std::unique_ptr<Module>(instance().produce(type));
 
     if (m)
-        m->setName(DissolveSys::uniqueName(m->type(), Module::instances(),
+        m->setName(DissolveSys::uniqueName(ModuleTypes::moduleType(m->type()), Module::instances(),
                                            [&](const auto &inst) { return inst == m.get() ? std::string() : inst->name(); }));
     return m;
 }
 
-// Create a Module instance for the named Module type, and add it to the specified layer
-Module *ModuleRegistry::create(std::string_view moduleType, ModuleLayer *destinationLayer)
+// Create a Module instance for the specified Module type, and add it to the specified layer
+Module *ModuleRegistry::create(ModuleTypes::ModuleType moduleType, ModuleLayer *destinationLayer)
 {
     auto instance = create(moduleType);
     if (!instance)

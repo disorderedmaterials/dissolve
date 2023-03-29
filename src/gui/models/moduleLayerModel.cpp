@@ -60,8 +60,8 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
         case (Qt::UserRole):
             return QVariant::fromValue(module);
         case (Qt::DecorationRole):
-            return QIcon((QPixmap(
-                QString(":/modules/icons/modules_%1.svg").arg(QString::fromStdString(std::string(module->type())).toLower()))));
+            return QIcon((QPixmap(QString(":/modules/icons/modules_%1.svg")
+                                      .arg(QString::fromStdString(ModuleTypes::moduleType(module->type())).toLower()))));
         default:
             return {};
     }
@@ -106,7 +106,7 @@ bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, 
     else if (role == ModuleLayerModelAction::CreateNew)
     {
         // Probably indicates a drop operation - the "value" is the type of the module to create at the specified index
-        auto moduleType = value.toString().toStdString();
+        auto moduleType = (ModuleTypes::ModuleType)value.toInt();
         moduleLayer_->modules()[index.row()] = ModuleRegistry::create(moduleType);
         auto *modulePtr = moduleLayer_->modules()[index.row()].get();
         modulePtr->setTargets(dissolve_->get().configurations(), moduleLayer_->modulesAsMap(modulePtr));
@@ -216,8 +216,10 @@ bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         // Create a new module in the list
         QByteArray encodedData = data->data("application/dissolve.module.create");
         QDataStream stream(&encodedData, QIODevice::ReadOnly);
-        QString moduleType;
-        stream >> moduleType;
+        QString moduleTypeString;
+        stream >> moduleTypeString;
+        auto moduleType = ModuleTypes::moduleType(moduleTypeString.toStdString());
+        assert(moduleType);
 
         // Get the new index of the dragged module in the vector
         auto insertAtRow = parent.isValid() ? parent.row() : row;
@@ -229,7 +231,7 @@ bool ModuleLayerModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         auto idx = index(insertAtRow, 0, QModelIndex());
 
         // Create a new module of the specified type at the index we just inserted
-        setData(idx, moduleType, ModuleLayerModelAction::CreateNew);
+        setData(idx, *moduleType, ModuleLayerModelAction::CreateNew);
 
         return true;
     }
@@ -269,8 +271,12 @@ bool ModuleLayerModel::removeRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
-QModelIndex ModuleLayerModel::appendNew(const QString &moduleType)
+QModelIndex ModuleLayerModel::appendNew(const QString &moduleTypeString)
 {
+    // Convert the module type string to its enumeration
+    auto moduleType = ModuleTypes::moduleType(moduleTypeString.toStdString());
+    assert(moduleType);
+
     // Get the target row for the new module
     auto insertAtRow = rowCount();
 
@@ -279,7 +285,7 @@ QModelIndex ModuleLayerModel::appendNew(const QString &moduleType)
     auto idx = index(insertAtRow, 0, QModelIndex());
 
     // Create a new module of the specified type at the index we just inserted
-    setData(idx, moduleType, ModuleLayerModelAction::CreateNew);
+    setData(idx, *moduleType, ModuleLayerModelAction::CreateNew);
 
     return idx;
 }

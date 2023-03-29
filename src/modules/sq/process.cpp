@@ -12,9 +12,9 @@
 
 // Set target data
 void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
-                          const std::map<std::string, std::vector<const Module *>> &moduleMap)
+                          const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap)
 {
-    auto sqIt = moduleMap.find("GR");
+    auto sqIt = moduleMap.find(ModuleTypes::GR);
     if (sqIt != moduleMap.end())
         sourceGR_ = dynamic_cast<const GRModule *>(sqIt->second.front());
 }

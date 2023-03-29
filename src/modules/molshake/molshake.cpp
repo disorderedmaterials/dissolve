@@ -9,7 +9,7 @@
 #include "keywords/optionaldouble.h"
 #include "keywords/speciesvector.h"
 
-MolShakeModule::MolShakeModule() : Module("MolShake")
+MolShakeModule::MolShakeModule() : Module(ModuleTypes::MolShake)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

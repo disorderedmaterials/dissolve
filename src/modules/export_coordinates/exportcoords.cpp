@@ -6,7 +6,7 @@
 #include "keywords/configuration.h"
 #include "keywords/fileandformat.h"
 
-ExportCoordinatesModule::ExportCoordinatesModule() : Module("ExportCoordinates")
+ExportCoordinatesModule::ExportCoordinatesModule() : Module(ModuleTypes::ExportCoordinates)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

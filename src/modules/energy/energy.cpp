@@ -8,7 +8,7 @@
 #include "keywords/integer.h"
 #include "keywords/optionaldouble.h"
 
-EnergyModule::EnergyModule() : Module("Energy")
+EnergyModule::EnergyModule() : Module(ModuleTypes::Energy)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

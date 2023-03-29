@@ -7,10 +7,11 @@
 #include "modules/accumulate/accumulate.h"
 
 // Valid Target Modules / Data
-const std::map<std::string, std::vector<std::string>> validTargets = {{"GR", {"UnweightedGR", "", "OriginalGR"}},
-                                                                      {"SQ", {"", "UnweightedSQ", ""}},
-                                                                      {"NeutronSQ", {"WeightedGR", "WeightedSQ", ""}},
-                                                                      {"XRaySQ", {"WeightedGR", "WeightedSQ", ""}}};
+const std::map<ModuleTypes::ModuleType, std::vector<std::string>> validTargets = {
+    {ModuleTypes::GR, {"UnweightedGR", "", "OriginalGR"}},
+    {ModuleTypes::SQ, {"", "UnweightedSQ", ""}},
+    {ModuleTypes::NeutronSQ, {"WeightedGR", "WeightedSQ", ""}},
+    {ModuleTypes::XRaySQ, {"WeightedGR", "WeightedSQ", ""}}};
 
 // Return EnumOptions for TargetPartialSet
 EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialSet()
@@ -41,11 +42,13 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             std::find_if(validTargets.begin(), validTargets.end(),
                          [targetModule](const auto &target) { return target.first == targetModule->type(); });
         if (targetModule_It == validTargets.end())
-            return Messenger::error("Module of type '{}' is not a valid target.\n", targetModule->type());
+            return Messenger::error("Module of type '{}' is not a valid target.\n",
+                                    ModuleTypes::moduleType(targetModule->type()));
         auto dataName = targetModule_It->second[targetPartialSet_];
         if (dataName.empty())
             return Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
-                                    targetPartialSet().keyword(targetPartialSet_), targetModule->type());
+                                    targetPartialSet().keyword(targetPartialSet_),
+                                    ModuleTypes::moduleType(targetModule->type()));
 
         // Find the target data
         auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());

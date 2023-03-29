@@ -9,7 +9,7 @@
 #include "keywords/stdstring.h"
 #include "keywords/vec3integer.h"
 
-BraggModule::BraggModule() : Module("Bragg")
+BraggModule::BraggModule() : Module(ModuleTypes::Bragg)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

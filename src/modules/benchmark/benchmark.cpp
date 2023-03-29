@@ -6,7 +6,7 @@
 #include "keywords/configuration.h"
 #include "keywords/integer.h"
 
-BenchmarkModule::BenchmarkModule() : Module("Benchmark")
+BenchmarkModule::BenchmarkModule() : Module(ModuleTypes::Benchmark)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

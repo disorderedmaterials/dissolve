@@ -16,9 +16,9 @@
 
 // Set target data
 void XRaySQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
-                              const std::map<std::string, std::vector<const Module *>> &moduleMap)
+                              const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap)
 {
-    auto sqIt = moduleMap.find("SQ");
+    auto sqIt = moduleMap.find(ModuleTypes::SQ);
     if (sqIt != moduleMap.end())
         sourceSQ_ = dynamic_cast<const SQModule *>(sqIt->second.front());
 }
