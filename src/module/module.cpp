@@ -9,7 +9,57 @@
 // Static Singletons
 std::vector<Module *> Module::instances_;
 
-Module::Module(std::string typeName) : typeName_(typeName), frequency_(1), enabled_(true) { instances_.push_back(this); }
+// Module Types
+
+namespace ModuleTypes
+{
+// ENumerated Options for ModuleTypes
+EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::Accumulate, "Accumulate"},
+                                                                 {ModuleTypes::Analyse, "Analyse"},
+                                                                 {ModuleTypes::Angle, "Angle"},
+                                                                 {ModuleTypes::AtomShake, "AtomShake"},
+                                                                 {ModuleTypes::AvgMol, "AvgMol"},
+                                                                 {ModuleTypes::AxisAngle, "AxisAngle"},
+                                                                 {ModuleTypes::Benchmark, "Benchmark"},
+                                                                 {ModuleTypes::Bragg, "Bragg"},
+                                                                 {ModuleTypes::Checks, "Checks"},
+                                                                 {ModuleTypes::CheckSpecies, "CheckSpecies"},
+                                                                 {ModuleTypes::DAngle, "DAngle"},
+                                                                 {ModuleTypes::DataTest, "DataTest"},
+                                                                 {ModuleTypes::Energy, "Energy"},
+                                                                 {ModuleTypes::EPSR, "EPSR"},
+                                                                 {ModuleTypes::ExportCoordinates, "ExportCoordinates"},
+                                                                 {ModuleTypes::ExportPairPotentials, "ExportPairPotentials"},
+                                                                 {ModuleTypes::ExportTrajectory, "ExportTrajectory"},
+                                                                 {ModuleTypes::Forces, "Forces"},
+                                                                 {ModuleTypes::GeometryOptimisation, "GeometryOptimisation"},
+                                                                 {ModuleTypes::GR, "GR"},
+                                                                 {ModuleTypes::ImportTrajectory, "ImportTrajectory"},
+                                                                 {ModuleTypes::IntraAngle, "IntraAngle"},
+                                                                 {ModuleTypes::IntraDistance, "IntraDistance"},
+                                                                 {ModuleTypes::IntraShake, "IntraShake"},
+                                                                 {ModuleTypes::MD, "MD"},
+                                                                 {ModuleTypes::MolShake, "MolShake"},
+                                                                 {ModuleTypes::NeutronSQ, "NeutronSQ"},
+                                                                 {ModuleTypes::SDF, "SDF"},
+                                                                 {ModuleTypes::SiteRDF, "SiteRDF"},
+                                                                 {ModuleTypes::SQ, "SQ"},
+                                                                 {ModuleTypes::Test, "Test"},
+                                                                 {ModuleTypes::XRaySQ, "XRaySQ"}});
+
+// Return module type string for specified type enumeration
+std::string moduleType(ModuleTypes::ModuleType type) { return moduleTypes_.keyword(type); }
+// Return module type enumeration for specified module type string
+std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword)
+{
+    if (moduleTypes_.isValid(keyword))
+        return moduleTypes_.enumeration(keyword);
+    else
+        return {};
+};
+} // namespace ModuleTypes
+
+Module::Module(const ModuleTypes::ModuleType type) : type_(type), frequency_(1), enabled_(true) { instances_.push_back(this); }
 
 Module::~Module() { instances_.erase(std::remove(instances_.begin(), instances_.end(), this)); }
 
@@ -18,7 +68,7 @@ Module::~Module() { instances_.erase(std::remove(instances_.begin(), instances_.
  */
 
 // Return type of Module
-const std::string_view Module::type() const { return typeName_; }
+ModuleTypes::ModuleType Module::type() const { return type_; }
 
 // Set name of Module
 void Module::setName(std::string_view uniqueName) { name_ = uniqueName; }
@@ -37,7 +87,7 @@ const KeywordStore &Module::keywords() const { return keywords_; };
 // Print valid keywords
 void Module::printValidKeywords()
 {
-    Messenger::print("Valid keywords for '{}' Module are:\n", type());
+    Messenger::print("Valid keywords for '{}' Module are:\n", ModuleTypes::moduleType(type()));
 
     for (const auto &keywordData : keywords_.keywords())
         if (keywordData.type() != KeywordStoreData::KeywordType::Deprecated)
@@ -104,7 +154,7 @@ bool Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return f
 
 // Set target data
 void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
-                        const std::map<std::string, std::vector<const Module *>> &moduleMap)
+                        const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap)
 {
     // Search for Configuration-based targets
     if (!configurations.empty())
@@ -174,12 +224,12 @@ Module *Module::find(std::string_view uniqueName)
 }
 
 // Search for and return any instance(s) of the specified Module type
-std::vector<Module *> Module::allOfType(std::string_view moduleType)
+std::vector<Module *> Module::allOfType(ModuleTypes::ModuleType type)
 {
-    return allOfType(std::vector<std::string>{std::string{moduleType}});
+    return allOfType(std::vector<ModuleTypes::ModuleType>{type});
 }
 
-std::vector<Module *> Module::allOfType(std::vector<std::string> types)
+std::vector<Module *> Module::allOfType(std::vector<ModuleTypes::ModuleType> types)
 {
     std::vector<Module *> modules;
     std::copy_if(instances_.begin(), instances_.end(), std::back_inserter(modules),

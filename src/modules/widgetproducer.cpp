@@ -54,24 +54,24 @@ ModuleWidgetProducer::ModuleWidgetProducer()
 {
     registerProducer<AccumulateModule, AccumulateModuleWidget>();
     registerProducer<AnalyseModule, AnalyseModuleWidget>();
-    registerProducer<AtomShakeModule, AtomShakeModuleWidget>();
-    registerProducer<BenchmarkModule, BenchmarkModuleWidget>();
-    registerProducer<BraggModule, BraggModuleWidget>();
     registerProducer<AngleModule, AngleModuleWidget>();
+    registerProducer<AtomShakeModule, AtomShakeModuleWidget>();
     registerProducer<AvgMolModule, AvgMolModuleWidget>();
     registerProducer<AxisAngleModule, AxisAngleModuleWidget>();
-    registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
+    registerProducer<BenchmarkModule, BenchmarkModuleWidget>();
+    registerProducer<BraggModule, BraggModuleWidget>();
     registerProducer<DAngleModule, DAngleModuleWidget>();
-    registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
-    registerProducer<SDFModule, SDFModuleWidget>();
     registerProducer<DataTestModule, DataTestModuleWidget>();
     registerProducer<EnergyModule, EnergyModuleWidget>();
     registerProducer<EPSRModule, EPSRModuleWidget>();
     registerProducer<GeometryOptimisationModule, GeometryOptimisationModuleWidget>();
     registerProducer<GRModule, GRModuleWidget>();
     registerProducer<IntraAngleModule, IntraAngleModuleWidget>();
+    registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();
+    registerProducer<SDFModule, SDFModuleWidget>();
     registerProducer<SkeletonModule, SkeletonModuleWidget>();
+    registerProducer<SiteRDFModule, SiteRDFModuleWidget>();
     registerProducer<SQModule, SQModuleWidget>();
     registerProducer<TestModule, TestModuleWidget>();
     registerProducer<XRaySQModule, XRaySQModuleWidget>();
@@ -89,7 +89,7 @@ ModuleWidget *ModuleWidgetProducer::produce(Module *module, Dissolve &dissolve) 
     {
         Messenger::printVerbose(
             "A producer has not been registered for module type '{}' ('{}'), so a new widget for it cannot be created.\n",
-            module->type(), typeid(*module).name());
+            ModuleTypes::moduleType(module->type()), typeid(*module).name());
         return nullptr;
     }
 

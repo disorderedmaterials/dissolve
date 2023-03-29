@@ -6,7 +6,7 @@
 #include "keywords/double.h"
 #include "keywords/integer.h"
 
-GeometryOptimisationModule::GeometryOptimisationModule() : Module("GeometryOptimisation")
+GeometryOptimisationModule::GeometryOptimisationModule() : Module(ModuleTypes::GeometryOptimisation)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

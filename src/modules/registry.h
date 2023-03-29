@@ -30,19 +30,20 @@ class ModuleRegistry
     using ProducerFunction = std::function<Module *()>;
     // Typedefs
     using ModuleRegistryData = std::pair<ProducerFunction, std::string>;
-    using ModuleInfoData = std::pair<std::string, std::string>;
+    using ModuleInfoData = std::pair<ModuleTypes::ModuleType, std::string>;
     // Producers for all module types
-    std::map<std::string, ModuleRegistryData> producers_;
+    std::map<ModuleTypes::ModuleType, ModuleRegistryData> producers_;
     // Categorised map of modules
     std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> categories_;
 
     private:
     // Register producer for module
-    template <class M> void registerProducer(std::string moduleType, std::string brief, std::string category = "")
+    template <class M> void registerProducer(ModuleTypes::ModuleType moduleType, std::string brief, std::string category = "")
     {
         // Check for duplicate module type
         if (producers_.find(moduleType) != producers_.end())
-            throw(std::runtime_error(fmt::format("A module producer for type '{}' already exists.\n", moduleType)));
+            throw(std::runtime_error(
+                fmt::format("A module producer for type '{}' already exists.\n", ModuleTypes::moduleType(moduleType))));
 
         producers_.emplace(moduleType, ModuleRegistryData([]() { return new M(); }, brief));
 
@@ -50,7 +51,7 @@ class ModuleRegistry
             categories_[category].emplace_back(ModuleInfoData(moduleType, brief));
     }
     // Produce module of specified type
-    Module *produce(std::string moduleType) const;
+    Module *produce(ModuleTypes::ModuleType moduleType) const;
     // Return categorised map of modules
     const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &categories() const;
 
@@ -68,7 +69,7 @@ class ModuleRegistry
     // Return category map
     static const std::map<std::string, std::vector<ModuleRegistry::ModuleInfoData>> &categoryMap();
     // Create new item via template
-    static std::unique_ptr<Module> create(std::string_view moduleType);
-    // Create a Module instance for the named Module type, and add it to the specified layer
-    static Module *create(std::string_view moduleType, ModuleLayer *destinationLayer);
+    static std::unique_ptr<Module> create(ModuleTypes::ModuleType type);
+    // Create a Module instance for the specified Module type, and add it to the specified layer
+    static Module *create(ModuleTypes::ModuleType moduleType, ModuleLayer *destinationLayer);
 };

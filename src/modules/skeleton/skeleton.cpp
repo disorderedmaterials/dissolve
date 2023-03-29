@@ -3,4 +3,4 @@
 
 #include "modules/skeleton/skeleton.h"
 
-SkeletonModule::SkeletonModule() : Module("Skeleton") {}
+SkeletonModule::SkeletonModule() : Module(ModuleTypes::Skeleton) {}

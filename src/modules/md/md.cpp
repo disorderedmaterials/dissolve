@@ -10,7 +10,7 @@
 #include "keywords/optionalint.h"
 #include "keywords/speciesvector.h"
 
-MDModule::MDModule() : Module("MD")
+MDModule::MDModule() : Module(ModuleTypes::MD)
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 

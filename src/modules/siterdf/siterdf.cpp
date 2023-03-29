@@ -19,7 +19,7 @@
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sum1d.h"
 
-SiteRDFModule::SiteRDFModule() : Module("SiteRDF"), analyser_(ProcedureNode::AnalysisContext)
+SiteRDFModule::SiteRDFModule() : Module(ModuleTypes::SiteRDF), analyser_(ProcedureNode::AnalysisContext)
 {
     // Select: Site 'A'
     selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");

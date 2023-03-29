@@ -11,7 +11,7 @@
 #include "keywords/optionaldouble.h"
 #include "keywords/optionalint.h"
 
-GRModule::GRModule() : Module("GR")
+GRModule::GRModule() : Module(ModuleTypes::GR)
 {
     keywords_.addTarget<ConfigurationVectorKeyword>("Configurations", "Set target configuration(s) for the module",
                                                     targetConfigurations_);

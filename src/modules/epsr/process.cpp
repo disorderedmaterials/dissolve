@@ -360,7 +360,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
          * Add the Data to the Scattering Matrix
          */
 
-        if (module->type() == "NeutronSQ")
+        if (module->type() == ModuleTypes::NeutronSQ)
         {
             const auto &weights = dissolve.processingModuleData().value<NeutronWeights>("FullWeights", module->name());
 
@@ -380,7 +380,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                       : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
-        else if (module->type() == "XRaySQ")
+        else if (module->type() == ModuleTypes::XRaySQ)
         {
             auto &weights = dissolve.processingModuleData().retrieve<XRayWeights>("FullWeights", module->name());
 
@@ -419,7 +419,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         }
         else
             return Messenger::error("Don't know how to add data from a module of type '{}' to the scattering matrix.",
-                                    module->type());
+                                    ModuleTypes::moduleType(module->type()));
 
         /*
          * Sum Unweighted S(Q)
