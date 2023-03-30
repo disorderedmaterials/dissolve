@@ -41,7 +41,7 @@ runs:
   - name: Install Python Dependencies
     shell: bash
     run: |
-      pip3 install --user aqtinstall conan==1.58.0
+      pip3 install --user aqtinstall conan
 
   - name: Retrieve Qt Cache
     id: cache-qt
@@ -61,15 +61,6 @@ runs:
   # Main Build
   #
 
-  - name: Retrieve Conan Cache
-    id: cache-conan
-    uses: actions/cache@v3
-    with:
-      key: osx-conan
-      path: |
-        ~/.conan
-        ~/.conancache
-
   - name: Install Conan Dependencies
     shell: bash
     run: |
@@ -79,8 +70,8 @@ runs:
       export PATH="$(python3 -m site --user-base)/bin:$PATH"
 
       mkdir build && cd build
-      conan config set storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
-      conan install .. --build missing
+      conan profile detect
+      conan install .. --build missing -s storage.download_cache="${GITHUB_WORKSPACE}/.conancache"
 
   - name: Build
     if: ${{ inputs.cacheOnly == 'false' }}
