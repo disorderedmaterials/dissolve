@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2023 Team Dissolve and contributors
+
+#pragma once
+
+#include "procedure/nodes/calculatebase.h"
+
+// Forward Declarations
+class SelectProcedureNode;
+
+// Calculate Distance Node
+class CalculateDistanceExpression : public CalculateProcedureNodeBase
+{
+    public:
+    CalculateDistanceExpression();
+    ~CalculateDistanceExpression() override = default;
+
+    /*
+     * Observable Target (implements virtuals in CalculateProcedureNodeBase)
+     */
+    public:
+    // Return number of sites required to calculate observable
+    int nSitesRequired() const override;
+    // Return dimensionality of calculated observable
+    int dimensionality() const override;
+
+    /*
+     * Execute
+     */
+    public:
+    // Execute node
+    bool execute(const ProcedureContext &procedureContext) override;
+};
