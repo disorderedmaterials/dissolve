@@ -11,9 +11,10 @@
 class MonteCarloMinimiser
 {
     using MinimiserCostFunction = std::function<double()>;
+    using MinimiserSamplingFunction = std::function<void(std::vector<double>)>;
 
     public:
-    explicit MonteCarloMinimiser(MinimiserCostFunction costFunction);
+    explicit MonteCarloMinimiser(MinimiserCostFunction costFunction, MinimiserSamplingFunction samplingFunction = {});
 
     private:
     // Maximum number of iterations to perform
@@ -24,6 +25,10 @@ class MonteCarloMinimiser
     double targetAcceptanceRatio_{0.33};
     // Pointer to cost function
     MinimiserCostFunction costFunction_;
+    // Frequency at which sampling function will be called
+    int samplingFrequency_{0};
+    // Pointer to periodic sampling function
+    MinimiserSamplingFunction samplingFunction_;
     // Pointers to double values to be fit
     std::vector<double *> targets_;
 
@@ -42,6 +47,8 @@ class MonteCarloMinimiser
     double stepSize() const;
     // Target acceptance ratio
     void setTargetAcceptanceRatio(double ratio);
+    // Set sampling frequency
+    void setSamplingFrequency(int frequency);
     // Add fit target
     void addTarget(double *var);
     // Minimise target parameters

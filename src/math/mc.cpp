@@ -6,7 +6,10 @@
 #include "math/mathfunc.h"
 #include <numeric>
 
-MonteCarloMinimiser::MonteCarloMinimiser(MinimiserCostFunction costFunction) : costFunction_(std::move(costFunction)) {}
+MonteCarloMinimiser::MonteCarloMinimiser(MinimiserCostFunction costFunction, MinimiserSamplingFunction samplingFunction)
+    : costFunction_(std::move(costFunction)), samplingFunction_(std::move(samplingFunction))
+{
+}
 
 // Poke supplied values into target variables
 void MonteCarloMinimiser::pokeValues(const std::vector<double> &values)
@@ -35,6 +38,9 @@ double MonteCarloMinimiser::stepSize() const { return stepSize_; }
 
 // Target acceptance ratio
 void MonteCarloMinimiser::setTargetAcceptanceRatio(double ratio) { targetAcceptanceRatio_ = ratio; }
+
+// Set sampling frequency
+void MonteCarloMinimiser::setSamplingFrequency(int frequency) { samplingFrequency_ = frequency; }
 
 // Add fit target, with limits specified
 void MonteCarloMinimiser::addTarget(double *var) { targets_.push_back(var); }
@@ -80,6 +86,10 @@ double MonteCarloMinimiser::minimise()
         // Adjust step size
         auto acceptanceRate = double(nAccepted) / (iter + 1);
         stepSize_ *= nAccepted == 0 ? 0.8 : acceptanceRate / targetAcceptanceRatio_;
+
+        // Run sampling function?
+        if (samplingFunction_ && samplingFrequency_ > 0 && ((iter + 1) % samplingFrequency_ == 0))
+            samplingFunction_(values);
 
         if (maxIterations_ < 10 || (iter % (maxIterations_ / 10) == 0))
             Messenger::printVerbose("MonteCarloMinimiser::minimise() - Iteration {} error = {}, stepSize = {}\n", iter + 1,
