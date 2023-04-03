@@ -388,7 +388,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 // Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin
 // will be zeroed)
 double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations,
-                                       double initialStepSize, bool reFitAtEnd)
+                                       double initialStepSize)
 {
     // Clear any existing data
     nPoissons_ = nPoissons;
@@ -425,10 +425,6 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
     poissonMinimiser.setStepSize(initialStepSize);
     currentError_ = poissonMinimiser.minimise();
 
-    // Perform a final grouped refit of the amplitudes
-    if (reFitAtEnd)
-        sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
-
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);
     currentError_ = Error::percent(referenceData_, approximateData_, true);
@@ -438,7 +434,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 
 // Construct suitable reciprocal-space representation using provided coefficients as a starting point
 double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vector<double> &coefficients, double sigmaQ,
-                                       double sigmaR, int nIterations, double initialStepSize, bool reFitAtEnd)
+                                       double sigmaR, int nIterations, double initialStepSize)
 {
     // Set up data
     nPoissons_ = coefficients.size();
@@ -472,10 +468,6 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
     currentError_ = poissonMinimiser.minimise();
-
-    // Perform a final grouped refit of the amplitudes
-    if (reFitAtEnd)
-        sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
 
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);

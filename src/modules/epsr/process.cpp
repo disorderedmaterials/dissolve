@@ -312,7 +312,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             if (status == GenericItem::ItemStatus::Created)
                 fitError =
-                    coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.1, false);
+                    coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.1);
             else
             {
                 if (fitCoefficients.size() != ncoeffp)
