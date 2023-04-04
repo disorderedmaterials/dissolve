@@ -248,8 +248,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Get difference data container and form the difference between the reference and calculated data
         auto &differenceData = dissolve.processingModuleData().realise<Data1D>(fmt::format("Difference//{}", module->name()),
                                                                                name(), GenericItem::InRestartFileFlag);
-        differenceData = originalReferenceData;
-        Interpolator::addInterpolated(weightedSQ.total(), differenceData, -1.0);
+        differenceData = weightedSQ.total();
+        differenceData *= -1.0;
+        Interpolator::addInterpolated(originalReferenceData, differenceData);
 
         // Calculate r-factor over fit range and store
         auto tempRefData = originalReferenceData;
@@ -269,9 +270,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto &deltaFQFit = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQFit//{}", module->name()), name_,
                                                                            GenericItem::InRestartFileFlag);
 
-        // Copy the original difference data and trim to the allowed range
+        // Copy the original difference data and "invert" it
         deltaFQ = differenceData;
-        Filters::trim(deltaFQ, qMin_, qMax_);
         deltaFQ *= -1.0;
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
