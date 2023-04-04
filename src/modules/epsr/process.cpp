@@ -314,7 +314,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
         {
             // Construct our fitting object
-            PoissonFit coeffMinimiser(deltaFQ, qMin_, qMax_);
+            PoissonFit coeffMinimiser(deltaFQ, 0.0, 30.0);
 
             if (status == GenericItem::ItemStatus::Created)
                 fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.1,
