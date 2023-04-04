@@ -273,6 +273,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Copy the original difference data and "invert" it
         deltaFQ = differenceData;
         deltaFQ *= -1.0;
+        for (auto &&[x, y] : zip(deltaFQ.xAxis(), deltaFQ.values()))
+            if (x < qMin_ || x > qMax_)
+                y = 0.0;
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
         auto [fitCoefficients, status] = dissolve.processingModuleData().realiseIf<std::vector<double>>(
