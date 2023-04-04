@@ -334,8 +334,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // Store the new fit coefficients
             fitCoefficients = coeffMinimiser.C();
 
-            //            deltaFQFit = coeffMinimiser.approximation();
-            deltaFQFit = coeffMinimiser.approximation(FunctionSpace::ReciprocalSpace, 1.0, 0.01, 0.01, 30.0);
+            deltaFQFit = coeffMinimiser.approximation();
         }
         Messenger::print("Error between delta F(Q) and fit function is {:.2f}%.\n", fitError);
 
