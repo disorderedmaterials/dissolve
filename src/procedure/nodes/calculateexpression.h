@@ -4,16 +4,17 @@
 #pragma once
 
 #include "procedure/nodes/calculatebase.h"
+#include "procedure/nodevalue.h"
 
 // Forward Declarations
 class SelectProcedureNode;
 
-// Calculate Distance Node
-class CalculateDistanceExpression : public CalculateProcedureNodeBase
+// Calculate Expression
+class CalculateExpression : public CalculateProcedureNodeBase
 {
     public:
-    CalculateDistanceExpression();
-    ~CalculateDistanceExpression() override = default;
+    CalculateExpression();
+    ~CalculateExpression() override = default;
 
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)
@@ -29,5 +30,5 @@ class CalculateDistanceExpression : public CalculateProcedureNodeBase
      */
     public:
     // Execute node
-    bool execute(const ProcedureContext &procedureContext) override;
+    double execute() override;
 };
