@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "math/data1d.h"
 #include "math/error.h"
+#include "math/filters.h"
 #include "math/mc.h"
 #include "math/praxis.h"
 #include "templates/algorithms.h"
@@ -333,7 +334,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 
 // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
 double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ, int nIterations,
-                                     double initialStepSize)
+                                     double initialStepSize, std::optional<int> degreeOfSmoothing)
 {
     // Clear any existing data
     x_.clear();
@@ -377,6 +378,11 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
             }
 
             return sose;
+        },
+        [degreeOfSmoothing](std::vector<double> &params)
+        {
+            if (degreeOfSmoothing)
+                Filters::movingAverage(params, *degreeOfSmoothing);
         });
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
@@ -390,6 +396,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     // Optimise this set of Gaussians
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
+    gaussMinimiser.setSamplingFrequency(nIterations / 2.5);
     currentError_ = gaussMinimiser.minimise();
 
     // Regenerate approximation and calculate percentage error of fit
@@ -401,7 +408,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 
 // Construct function representation in reciprocal space using specified parameters as starting point
 double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ, int nIterations,
-                                     double initialStepSize)
+                                     double initialStepSize, std::optional<int> degreeOfSmoothing)
 {
     // Create the fitting functions
     A_ = A;
@@ -443,6 +450,11 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
             }
 
             return sose;
+        },
+        [degreeOfSmoothing](std::vector<double> &params)
+        {
+            if (degreeOfSmoothing)
+                Filters::movingAverage(params, *degreeOfSmoothing);
         });
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
@@ -456,6 +468,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     // Optimise this set of Gaussians
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
+    gaussMinimiser.setSamplingFrequency(nIterations / 2.5);
     currentError_ = gaussMinimiser.minimise();
 
     // Regenerate approximation and calculate percentage error of fit
