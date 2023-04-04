@@ -333,7 +333,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 
 // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
 double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ, int nIterations,
-                                     double initialStepSize, bool reFitAtEnd)
+                                     double initialStepSize)
 {
     // Clear any existing data
     x_.clear();
@@ -392,10 +392,6 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
     gaussMinimiser.setStepSize(initialStepSize);
     currentError_ = gaussMinimiser.minimise();
 
-    // Perform a final grouped refit of the amplitudes
-    if (reFitAtEnd)
-        sweepFitA(FunctionSpace::ReciprocalSpace, rMin);
-
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);
     currentError_ = Error::percent(referenceData_, approximateData_);
@@ -405,7 +401,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, d
 
 // Construct function representation in reciprocal space using specified parameters as starting point
 double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ, int nIterations,
-                                     double initialStepSize, bool reFitAtEnd)
+                                     double initialStepSize)
 {
     // Create the fitting functions
     A_ = A;
@@ -461,10 +457,6 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
     currentError_ = gaussMinimiser.minimise();
-
-    // Perform a final grouped refit of the amplitudes
-    if (reFitAtEnd)
-        sweepFitA(FunctionSpace::ReciprocalSpace, rMin);
 
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);
