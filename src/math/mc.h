@@ -11,7 +11,7 @@
 class MonteCarloMinimiser
 {
     using MinimiserCostFunction = std::function<double()>;
-    using MinimiserSamplingFunction = std::function<void(std::vector<double>)>;
+    using MinimiserSamplingFunction = std::function<void(std::vector<double> &)>;
 
     public:
     explicit MonteCarloMinimiser(MinimiserCostFunction costFunction, MinimiserSamplingFunction samplingFunction = {});
