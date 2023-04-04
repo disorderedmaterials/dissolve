@@ -10,9 +10,14 @@
 #include "math/praxis.h"
 #include "templates/algorithms.h"
 
-PoissonFit::PoissonFit(const Data1D &referenceData) : expMax_(25.0)
+PoissonFit::PoissonFit(const Data1D &referenceData, std::optional<double> fitMinLimit, std::optional<double> fitMaxLimit)
+    : expMax_(25.0)
 {
     referenceData_ = referenceData;
+
+    fitRangeMask_.reserve(referenceData_.nValues());
+    for (auto x : referenceData_.xAxis())
+        fitRangeMask_.push_back((!fitMinLimit || x >= *fitMinLimit) && (!fitMaxLimit || x <= *fitMaxLimit));
 
     alphaSpace_ = FunctionSpace::RealSpace;
     rBroad_ = 0.0;
@@ -282,6 +287,10 @@ double PoissonFit::calculateReferenceError() const
     double y, dy;
     for (auto i = 0; i < approximateData_.nValues(); ++i)
     {
+        // Check data fit error mask
+        if (!fitRangeMask_[i])
+            continue;
+
         // Get approximate data x and y for this point
         y = approximateData_.value(i);
 

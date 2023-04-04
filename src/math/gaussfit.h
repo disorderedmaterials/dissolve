@@ -11,7 +11,7 @@
 class GaussFit
 {
     public:
-    GaussFit(const Data1D &referenceData);
+    GaussFit(const Data1D &referenceData, std::optional<double> fitMinLimit = {}, std::optional<double> fitMaxLimit = {});
 
     /*
      * Data
@@ -21,6 +21,8 @@ class GaussFit
     Data1D referenceData_;
     // Approximate (fitted) data
     Data1D approximateData_;
+    // Fit range mask stating which points in referenceData_ / approximateData_ to consider in error calculation
+    std::vector<double> fitRangeMask_;
     // Number of Gaussians used in fit
     int nGaussians_;
     // Function centres

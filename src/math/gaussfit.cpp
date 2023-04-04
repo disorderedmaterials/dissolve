@@ -10,9 +10,13 @@
 #include "math/praxis.h"
 #include "templates/algorithms.h"
 
-GaussFit::GaussFit(const Data1D &referenceData)
+GaussFit::GaussFit(const Data1D &referenceData, std::optional<double> fitMinLimit, std::optional<double> fitMaxLimit)
 {
     referenceData_ = referenceData;
+
+    fitRangeMask_.reserve(referenceData_.nValues());
+    for (auto x : referenceData_.xAxis())
+        fitRangeMask_.push_back(((!fitMinLimit || x >= *fitMinLimit) && (!fitMaxLimit || x <= *fitMaxLimit)) ? 1.0 : 0.0);
 
     alphaSpace_ = FunctionSpace::RealSpace;
     nGaussians_ = 0;
@@ -282,9 +286,12 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 
                     // Loop over data points, add in our Gaussian contributions, and
                     double dy;
-                    for (auto &&[x, y, refY] :
-                         zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
+                    for (auto &&[x, y, refY, mask] :
+                         zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values(), fitRangeMask_))
                     {
+                        if (mask < 0.5)
+                            continue;
+
                         // Add in contributions from our Gaussians
                         for (auto n = 0; n < A_.size(); ++n)
                             y += functionValue(alphaSpace_, x, x_[n], A_[n], fwhm_[n]);
