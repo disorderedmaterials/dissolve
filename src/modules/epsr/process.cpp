@@ -286,7 +286,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             GaussFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01, false);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01);
             else
             {
                 if (fitCoefficients.size() != ncoeffp)
