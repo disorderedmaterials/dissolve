@@ -278,14 +278,16 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
         kernel.forces(imp, imp.i()->r(), imp.j()->r(), imp.k()->r(), imp.l()->r(), f);
 }
 
-// Calculate total forces within the specified Species,
+// Calculate total forces within the specified Species
 void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap,
-                               const std::vector<Vec3<double>> &r, std::vector<Vec3<double>> &f)
+                               const std::vector<Vec3<double>> &r, std::vector<Vec3<double>> &fInter,
+                               std::vector<Vec3<double>> &fIntra)
 {
     assert(sp->nAtoms() == r.size());
 
-    // Zero force array
-    std::fill(f.begin(), f.end(), Vec3<double>());
+    // Zero force arrays
+    std::fill(fInter.begin(), fInter.end(), Vec3<double>());
+    std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
 
     double rij, magjisq;
     auto *box = sp->box();
@@ -318,8 +320,8 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
             else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
                 vecij *= potentialMap.force(&i, &j, rij, elec14, vdw14);
 
-            f[indexI] += vecij;
-            f[indexJ] -= vecij;
+            fInter[indexI] += vecij;
+            fInter[indexJ] -= vecij;
         }
     }
 
@@ -329,17 +331,17 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
 
     // Loop over bonds
     for (const auto &b : sp->bonds())
-        kernel.forces(b, r[b.i()->index()], r[b.j()->index()], f);
+        kernel.forces(b, r[b.i()->index()], r[b.j()->index()], fIntra);
 
     // Loop over angles
     for (const auto &a : sp->angles())
-        kernel.forces(a, r[a.i()->index()], r[a.j()->index()], r[a.k()->index()], f);
+        kernel.forces(a, r[a.i()->index()], r[a.j()->index()], r[a.k()->index()], fIntra);
 
     // Loop over torsions
     for (const auto &t : sp->torsions())
-        kernel.forces(t, r[t.i()->index()], r[t.j()->index()], r[t.k()->index()], r[t.l()->index()], f);
+        kernel.forces(t, r[t.i()->index()], r[t.j()->index()], r[t.k()->index()], r[t.l()->index()], fIntra);
 
     // Loop over impropers
     for (const auto &imp : sp->impropers())
-        kernel.forces(imp, r[imp.i()->index()], r[imp.j()->index()], r[imp.k()->index()], r[imp.l()->index()], f);
+        kernel.forces(imp, r[imp.i()->index()], r[imp.j()->index()], r[imp.k()->index()], r[imp.l()->index()], fIntra);
 }
