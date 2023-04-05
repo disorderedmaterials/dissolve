@@ -61,7 +61,7 @@ std::optional<double> MDModule::determineTimeStep(TimestepType timestepType, dou
 
 // Evolve Species coordinates, returning new coordinates
 std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const PotentialMap &potentialMap, const Species *sp,
-                                           double temperature, int nSteps, double deltaT,
+                                           double temperature, int nSteps, double maxDeltaT,
                                            const std::vector<Vec3<double>> &rInit, std::vector<Vec3<double>> &velocities)
 {
     assert(sp);
@@ -69,7 +69,7 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
 
     // Create arrays
     std::vector<double> mass(sp->nAtoms(), 0.0);
-    std::vector<Vec3<double>> forces(sp->nAtoms()), accelerations(sp->nAtoms());
+    std::vector<Vec3<double>> fInter(sp->nAtoms()), fIntra(sp->nAtoms()), accelerations(sp->nAtoms());
 
     // Variables
     auto &atoms = sp->atoms();
@@ -100,8 +100,22 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
     tScale = sqrt(temperature / tInstant);
     std::transform(velocities.begin(), velocities.end(), velocities.begin(), [tScale](auto v) { return v * tScale; });
 
-    // Get timestep
-    auto deltaTSq = deltaT * deltaT;
+    // Zero force arrays
+    std::fill(fInter.begin(), fInter.end(), Vec3<double>());
+    std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+
+    ForcesModule::totalForces(procPool, sp, potentialMap, rInit, fInter, fIntra);
+
+    // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+    std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
+    std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+
+    // Check for suitable timestep
+    if (!determineTimeStep(TimestepType::Automatic, maxDeltaT, fInter, fIntra))
+    {
+        Messenger::print("Forces are currently too high for species MD to proceed. Try decreasing the maximum timestep.\n");
+        return rInit;
+    }
 
     // Copy coordinates ready for propagation
     auto rNew = rInit;
@@ -109,6 +123,16 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
     // Ready to do MD propagation of the species
     for (auto step = 1; step <= nSteps; ++step)
     {
+        // Get timestep
+        auto optDT = determineTimeStep(TimestepType::Automatic, maxDeltaT, fInter, fIntra);
+        if (!optDT)
+        {
+            Messenger::warn("A reasonable timestep could not be determined. Stopping evolution.\n");
+            break;
+        }
+        auto dT = *optDT;
+        auto deltaTSq = dT * dT;
+
         // Velocity Verlet first stage (A)
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
         // A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
@@ -117,18 +141,20 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
         for (auto &&[r, v, a] : zip(rNew, velocities, accelerations))
         {
             // Propagate positions (by whole step)...
-            r += v * deltaT + a * 0.5 * deltaTSq;
+            r += v * dT + a * 0.5 * deltaTSq;
 
             // ...velocities (by half step)...
-            v += a * 0.5 * deltaT;
+            v += a * 0.5 * dT;
         }
 
         // Zero force arrays
-        std::fill(forces.begin(), forces.end(), Vec3<double>());
+        std::fill(fInter.begin(), fInter.end(), Vec3<double>());
+        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        ForcesModule::totalForces(procPool, sp, potentialMap, rNew, forces);
-        std::transform(forces.begin(), forces.end(), forces.begin(), [](auto &f) { return f * 100.0; });
+        ForcesModule::totalForces(procPool, sp, potentialMap, rNew, fInter, fIntra);
+        std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
 
         // Velocity Verlet second stage (B) and velocity scaling
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -136,13 +162,13 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
         // B:  a(t+dt) = F(t+dt)/m
         // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
         ke = 0.0;
-        for (auto &&[f, v, a, m] : zip(forces, velocities, accelerations, mass))
+        for (auto &&[f1, f2, v, a, m] : zip(fInter, fIntra, velocities, accelerations, mass))
         {
             // Determine new accelerations
-            a = f / m;
+            a = (f1 + f2) / m;
 
             // ..and finally velocities again (by second half-step)
-            v += a * 0.5 * deltaT;
+            v += a * 0.5 * dT;
 
             ke += 0.5 * m * v.dp(v);
         }
