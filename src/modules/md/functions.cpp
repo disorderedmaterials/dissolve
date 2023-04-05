@@ -30,14 +30,15 @@ int MDModule::capForces(double maxForce, std::vector<Vec3<double>> &fInter, std:
 }
 
 // Determine timestep to use
-std::optional<double> MDModule::determineTimeStep(const std::vector<Vec3<double>> &fInter,
-                                                  const std::vector<Vec3<double>> &fIntra) const
+std::optional<double> MDModule::determineTimeStep(TimestepType timestepType, double requestedTimeStep,
+                                                  const std::vector<Vec3<double>> &fInter,
+                                                  const std::vector<Vec3<double>> &fIntra)
 {
-    if (timestepType_ == TimestepType::Fixed)
-        return fixedTimestep_;
+    if (timestepType == TimestepType::Fixed)
+        return requestedTimeStep;
 
     // Simple variable timestep
-    if (timestepType_ == TimestepType::Variable)
+    if (timestepType == TimestepType::Variable)
     {
         auto absFMax = 0.0;
         for (auto &&[inter, intra] : zip(fInter, fIntra))
@@ -53,9 +54,9 @@ std::optional<double> MDModule::determineTimeStep(const std::vector<Vec3<double>
             ->absMax();
 
     auto deltaT = 100.0 / absFMaxInter;
-    if (deltaT < (fixedTimestep_ / 100.0))
+    if (deltaT < (requestedTimeStep / 100.0))
         return {};
-    return deltaT > fixedTimestep_ ? fixedTimestep_ : deltaT;
+    return deltaT > requestedTimeStep ? requestedTimeStep : deltaT;
 }
 
 // Evolve Species coordinates, returning new coordinates
