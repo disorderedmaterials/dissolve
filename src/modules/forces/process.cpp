@@ -66,7 +66,6 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         double du_dphi;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
-        double scale;
 
         // Allocate the force vectors
         std::vector<Vec3<double>> fInter, fIntra, fRef, fInterCheck, fIntraCheck;

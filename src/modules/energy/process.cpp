@@ -73,7 +73,6 @@ bool EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         Vec3<double> vecji, vecjk, veckl;
         std::shared_ptr<Molecule> molN, molM;
         const auto *box = targetConfiguration_->box();
-        double scale;
         const auto cutoff = dissolve.potentialMap().range();
 
         Timer testTimer;

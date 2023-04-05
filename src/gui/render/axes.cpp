@@ -1017,13 +1017,6 @@ void Axes::updateAxisPrimitives()
     // Get view rotation inverse
     Matrix4 viewRotationInverse = parentView_.viewRotationInverse();
 
-    // Set axis for in-plane (in-screen) rotation
-    auto inPlaneAxis = 2;
-    if (parentView_.viewType() == View::FlatXZView)
-        inPlaneAxis = 1;
-    else if (parentView_.viewType() == View::FlatZYView)
-        inPlaneAxis = 0;
-
     // Set clip coordinates
     for (auto axis = 0; axis < 3; ++axis)
     {
