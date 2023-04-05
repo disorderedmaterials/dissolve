@@ -10,9 +10,9 @@
 #include "templates/algorithms.h"
 #include <numeric>
 
-SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), originMassWeighted_(false), type_(type) {}
+SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), type_(type), originMassWeighted_(false) {}
 SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
-    : name_(name), parent_(parent), originMassWeighted_(false), type_(type)
+    : name_(name), parent_(parent), type_(type), originMassWeighted_(false)
 {
 }
 
