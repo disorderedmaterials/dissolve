@@ -7,12 +7,12 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
+#include "keywords/nodevalue.h"
 #include "procedure/nodes/select.h"
 
-CalculateExpression::CalculateExpression()
-    : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateDistance, site0, site1)
+CalculateExpression::CalculateExpression() : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateExpression)
 {
-    keywords_.add<NodeValueKeyword>("Expression", "Expression to evaluate", );
+    keywords_.add<NodeValueKeyword>("Expression", "Expression to evaluate", expression_, this);
 }
 
 /*
@@ -30,4 +30,4 @@ int CalculateExpression::dimensionality() const { return 1; }
  */
 
 // Execute node
-double CalculateExpression::execute() { return (asDouble()); }
+double CalculateExpression::execute() { return (expression_.asDouble()); }
