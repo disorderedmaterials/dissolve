@@ -1,4 +1,4 @@
-# Input file written by Dissolve v1.0.0 at 09:47:55 on 16-02-2023.
+# Input file written by Dissolve v1.2.0 at 09:11:59 on 05-04-2023.
 
 #==============================================================================#
 #                                 Master Terms                                 #
@@ -144,9 +144,8 @@ Layer  'GR / Neutron S(Q)'
 
   Module  SQ  'SQ01'
     Frequency  1
-
     SourceGR  'GR01'
-    QBroadening  'OmegaDependentGaussian'  0.020000
+    Averaging  5
   EndModule
 
   Module  NeutronSQ  'H2O'
@@ -187,14 +186,15 @@ EndLayer
 
 Layer  'Refine (EPSR)'
   Frequency  5
-  Disabled
 
   Module  EPSR  'EPSR01'
     Frequency  1
     Target  'H2O'
     Target  'D2O'
     Target  'HDO'
-    EReq  6
+    EReq  3
+    ModifyPotential  5
+    Weighting  0.1
     ExpansionFunction  Poisson
     InpAFile  ''
     PCofFile  ''
