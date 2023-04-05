@@ -36,6 +36,8 @@ QVariant MasterAngleModel::getTermData(int row, MasterTermModelData::DataType da
             return QString::fromStdString(std::string(AngleFunctions::forms().keyword(t->interactionForm())));
         case (MasterTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
+        default:
+            return {};
     }
 
     return {};

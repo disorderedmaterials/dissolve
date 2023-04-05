@@ -36,6 +36,8 @@ QVariant MasterImproperModel::getTermData(int row, MasterTermModelData::DataType
             return QString::fromStdString(std::string(TorsionFunctions::forms().keyword(t->interactionForm())));
         case (MasterTermModelData::DataType::Parameters):
             return QString::fromStdString(t->interactionPotential().parametersAsString());
+        default:
+            return {};
     }
 
     return {};
