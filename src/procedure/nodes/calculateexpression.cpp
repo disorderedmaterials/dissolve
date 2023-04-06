@@ -30,4 +30,4 @@ int CalculateExpression::dimensionality() const { return 1; }
  */
 
 // Execute node
-double CalculateExpression::execute() { return (expression_.asDouble()); }
+bool CalculateExpression::execute(const ProcedureContext &procedureContext) { return (expression_.asDouble()); }

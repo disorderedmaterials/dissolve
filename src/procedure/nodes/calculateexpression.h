@@ -31,5 +31,5 @@ class CalculateExpression : public CalculateProcedureNodeBase
      */
     public:
     // Execute node
-    double execute();
+    bool execute(const ProcedureContext &procedureContext) override;
 };
