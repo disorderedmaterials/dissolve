@@ -168,6 +168,8 @@ class Species : public Serialisable
     void addMissingBonds(double tolerance = 1.1, bool preventMetallic = false);
     // Remove bonds crossing periodic boundaries
     void removePeriodicBonds();
+    // Remove all higher order intramolecular terms
+    void removeHigherOrderIntramolecularTerms();
     // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
     void updateIntramolecularTerms();
     // Add new SpeciesAngle definition
