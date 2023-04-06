@@ -87,7 +87,7 @@ Qt::ItemFlags SpeciesImproperModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexL)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::IndexL && impropers_[index.row()].masterTerm())
+    if (index.column() > DataType::Form && impropers_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
