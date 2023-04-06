@@ -6,9 +6,6 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodevalue.h"
 
-// Forward Declarations
-class SelectProcedureNode;
-
 // Calculate Expression
 class CalculateExpression : public CalculateProcedureNodeBase
 {
