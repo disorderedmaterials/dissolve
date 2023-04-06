@@ -10,11 +10,11 @@
 class SelectProcedureNode;
 
 // Calculate Expression
-class CalculateExpression : public CalculateProcedureNodeBase
+class CalculateExpressionProcedureNode : public CalculateProcedureNodeBase
 {
     public:
-    CalculateExpression();
-    ~CalculateExpression() override = default;
+    CalculateExpressionProcedureNode();
+    ~CalculateExpressionProcedureNode() override = default;
     NodeValue expression_{};
 
     /*
@@ -31,5 +31,5 @@ class CalculateExpression : public CalculateProcedureNodeBase
      */
     public:
     // Execute node
-    double execute();
+    bool execute();
 };

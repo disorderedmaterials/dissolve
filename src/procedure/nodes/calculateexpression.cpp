@@ -10,7 +10,8 @@
 #include "keywords/nodevalue.h"
 #include "procedure/nodes/select.h"
 
-CalculateExpression::CalculateExpression() : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateExpression)
+CalculateExpressionProcedureNode::CalculateExpressionProcedureNode()
+    : CalculateProcedureNodeBase(ProcedureNode::NodeType::CalculateExpression)
 {
     keywords_.add<NodeValueKeyword>("Expression", "Expression to evaluate", expression_, this);
 }
@@ -20,14 +21,18 @@ CalculateExpression::CalculateExpression() : CalculateProcedureNodeBase(Procedur
  */
 
 // Return number of sites required to calculate observable
-int CalculateExpression::nSitesRequired() const { return 0; }
+int CalculateExpressionProcedureNode::nSitesRequired() const { return 0; }
 
 // Return dimensionality of calculated observable
-int CalculateExpression::dimensionality() const { return 1; }
+int CalculateExpressionProcedureNode::dimensionality() const { return 1; }
 
 /*
  * Execute
  */
 
 // Execute node
-double CalculateExpression::execute() { return (expression_.asDouble()); }
+bool CalculateExpressionProcedureNode::execute()
+{
+    value_ = expression_.asDouble();
+    return true;
+}
