@@ -15,6 +15,7 @@ class CalculateExpression : public CalculateProcedureNodeBase
     public:
     CalculateExpression();
     ~CalculateExpression() override = default;
+    NodeValue expression_{};
 
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)
@@ -30,5 +31,5 @@ class CalculateExpression : public CalculateProcedureNodeBase
      */
     public:
     // Execute node
-    double execute() override;
+    double execute();
 };
