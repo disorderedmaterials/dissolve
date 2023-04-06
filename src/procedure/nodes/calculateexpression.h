@@ -15,11 +15,14 @@ class CalculateExpression : public CalculateProcedureNodeBase
     public:
     CalculateExpression();
     ~CalculateExpression() override = default;
-    NodeValue expression_;
 
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)
      */
+    private:
+    // Expression to evaluate
+    NodeValue expression_;
+
     public:
     // Return number of sites required to calculate observable
     int nSitesRequired() const override;
