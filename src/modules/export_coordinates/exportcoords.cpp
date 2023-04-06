@@ -10,7 +10,7 @@ ExportCoordinatesModule::ExportCoordinatesModule() : Module(ModuleTypes::ExportC
 {
     keywords_.addTarget<ConfigurationKeyword>("Configuration", "Set target configuration for the module", targetConfiguration_);
 
-    keywords_.setOrganisation("File");
+    keywords_.setOrganisation("Options", "File");
     keywords_.add<FileAndFormatKeyword>("Format", "File / format for coordinates", coordinatesFormat_, "EndFormat");
     keywords_.add<BoolKeyword>("TagWithIteration", "Whether to tag (suffix) the filename with the current iteration index",
                                tagWithIteration_);
