@@ -17,10 +17,12 @@ Installers for all major platforms can be found at (https://projectdissolve.com/
 
 ## Documentation
 
-Documentation is a work in progress, and is available [here](https://www.projectdissolve.com/docs/).
+Documentation is a work in progress, and is available [here](https://docs.projectdissolve.com/).
 
-Various tutorial material and examples for **Dissolve** can be [found here](https://www.projectdissolve.com/examples/).
+Various tutorial material and examples for **Dissolve** can be [found here](https://docs.projectdissolve.com/examples/).
+
+Compilation instructions focussing on Linux-based systems can be [found in the documentation](https://docs.projectdissolve.com/userguide/get/compilation/), including for an [HPC system (SCARF)](https://docs.projectdissolve.com/userguide/get/scarf-foss/).
 
 ## Support / Issues
 
-If you have discovered a definite bug or an "odd feature" with Dissolve that needs attention, please [submit an issue](https://github.com/disorderedmaterials/dissolve/issues/new/choose) here on GitHub. If you want to talk about usability, how to address specific problems with Dissolve, or aren't sure quite what you've found in the code, consider posting a question [on the forum](https://forum.projectdissolve.com).
+If you have discovered a definite bug or an "odd feature" with Dissolve that needs attention, please [submit an issue](https://github.com/disorderedmaterials/dissolve/issues/new/choose) here on GitHub. If you want to talk about usability, how to address specific problems with Dissolve, or aren't sure quite what you've found in the code, consider contacting the authors directly.
