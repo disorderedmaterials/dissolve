@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "math/data1d.h"
 #include "math/error.h"
+#include "math/filters.h"
 #include "math/mc.h"
 #include "math/praxis.h"
 #include "templates/algorithms.h"
@@ -388,57 +389,16 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 // Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin
 // will be zeroed)
 double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations,
-                                       double initialStepSize, bool reFitAtEnd)
+                                       double initialStepSize, std::optional<int> degreeOfSmoothing)
 {
-    // Clear any existing data
-    nPoissons_ = nPoissons;
-    C_.clear();
-    C_.resize(nPoissons_);
-    std::fill(C_.begin(), C_.end(), 0.0);
-    sigmaQ_ = sigmaQ;
-    sigmaR_ = sigmaR;
-    rMin_ = 0.0;
-    rMax_ = rMax;
-    rStep_ = rMax_ / nPoissons_;
-
-    // Pre-calculate the necessary terms and function data
-    preCalculateTerms();
-    alphaSpace_ = FunctionSpace::ReciprocalSpace;
-    updatePrecalculatedFunctions(alphaSpace_);
-
-    // Clear the approximate data
-    approximateData_.initialise(referenceData_);
-
-    // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser poissonMinimiser([this]() { return calculateReferenceError(); });
-
-    // Add coefficients for minimising
-    for (auto n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
-    {
-        if (((n + 1) * sigmaR_) < rMin)
-            continue;
-
-        poissonMinimiser.addTarget(&C_[n]);
-    }
-
-    poissonMinimiser.setMaxIterations(nIterations);
-    poissonMinimiser.setStepSize(initialStepSize);
-    currentError_ = poissonMinimiser.minimise();
-
-    // Perform a final grouped refit of the amplitudes
-    if (reFitAtEnd)
-        sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
-
-    // Regenerate approximation and calculate percentage error of fit
-    generateApproximation(FunctionSpace::ReciprocalSpace);
-    currentError_ = Error::percent(referenceData_, approximateData_, true);
-
-    return currentError_;
+    return constructReciprocal(rMin, rMax, std::vector<double>(nPoissons, 0.0), sigmaQ, sigmaR, nIterations, initialStepSize,
+                               degreeOfSmoothing);
 }
 
 // Construct suitable reciprocal-space representation using provided coefficients as a starting point
 double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vector<double> &coefficients, double sigmaQ,
-                                       double sigmaR, int nIterations, double initialStepSize, bool reFitAtEnd)
+                                       double sigmaR, int nIterations, double initialStepSize,
+                                       std::optional<int> degreeOfSmoothing)
 {
     // Set up data
     nPoissons_ = coefficients.size();
@@ -458,12 +418,17 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
     approximateData_.initialise(referenceData_);
 
     // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser poissonMinimiser([this]() { return calculateReferenceError(); });
+    MonteCarloMinimiser poissonMinimiser([this]() { return calculateReferenceError(); },
+                                         [degreeOfSmoothing](std::vector<double> &params)
+                                         {
+                                             if (degreeOfSmoothing)
+                                                 Filters::movingAverage(params, *degreeOfSmoothing);
+                                         });
 
     // Add coefficients for minimising
     for (auto n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
     {
-        if (((n + 1) * sigmaR_) < rMin)
+        if (((n + 1) * sigmaR_) < rMin_)
             continue;
 
         poissonMinimiser.addTarget(&C_[n]);
@@ -471,11 +436,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
 
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
+    poissonMinimiser.setSamplingFrequency(nIterations / 2.5);
     currentError_ = poissonMinimiser.minimise();
-
-    // Perform a final grouped refit of the amplitudes
-    if (reFitAtEnd)
-        sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
 
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);

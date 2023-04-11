@@ -248,8 +248,9 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Get difference data container and form the difference between the reference and calculated data
         auto &differenceData = dissolve.processingModuleData().realise<Data1D>(fmt::format("Difference//{}", module->name()),
                                                                                name(), GenericItem::InRestartFileFlag);
-        differenceData = originalReferenceData;
-        Interpolator::addInterpolated(weightedSQ.total(), differenceData, -1.0);
+        differenceData = weightedSQ.total();
+        differenceData *= -1.0;
+        Interpolator::addInterpolated(originalReferenceData, differenceData);
 
         // Calculate r-factor over fit range and store
         auto tempRefData = originalReferenceData;
@@ -269,10 +270,12 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto &deltaFQFit = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQFit//{}", module->name()), name_,
                                                                            GenericItem::InRestartFileFlag);
 
-        // Copy the original difference data and trim to the allowed range
+        // Copy the original difference data and "invert" it
         deltaFQ = differenceData;
-        Filters::trim(deltaFQ, qMin_, qMax_);
         deltaFQ *= -1.0;
+        for (auto &&[x, y] : zip(deltaFQ.xAxis(), deltaFQ.values()))
+            if (x < qMin_ || x > qMax_)
+                y = 0.0;
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
         auto [fitCoefficients, status] = dissolve.processingModuleData().realiseIf<std::vector<double>>(
@@ -286,7 +289,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             GaussFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01, false);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01,
+                                                              fluctuationSmoothing_);
             else
             {
                 if (fitCoefficients.size() != ncoeffp)
@@ -294,10 +298,12 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
                                     fitCoefficients.size(), module->name(), ncoeffp);
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01,
+                                                                  fluctuationSmoothing_);
                 }
                 else
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gSigma1_, nIterations, 0.01);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gSigma1_, nIterations, 0.01,
+                                                                  fluctuationSmoothing_);
             }
 
             // Store the new fit coefficients
@@ -311,8 +317,8 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             PoissonFit coeffMinimiser(deltaFQ);
 
             if (status == GenericItem::ItemStatus::Created)
-                fitError =
-                    coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.1, false);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.1,
+                                                              fluctuationSmoothing_);
             else
             {
                 if (fitCoefficients.size() != ncoeffp)
@@ -320,24 +326,16 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
                                     fitCoefficients.size(), module->name(), ncoeffp);
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.01);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.01,
+                                                                  fluctuationSmoothing_);
                 }
                 else
-                    fitError =
-                        coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, pSigma1_, pSigma2_, nIterations, 0.01);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, pSigma1_, pSigma2_, nIterations,
+                                                                  0.01, fluctuationSmoothing_);
             }
 
             // Store the new fit coefficients
             fitCoefficients = coeffMinimiser.C();
-
-            // Smooth coefficients?
-            if (fluctuationSmoothing_)
-            {
-                Filters::movingAverage(fitCoefficients, *fluctuationSmoothing_);
-
-                // Need to pass the smoothed parameters back into the minimiser so we generate the matching approximation
-                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, pSigma1_, pSigma2_, 0, 0.01);
-            }
 
             deltaFQFit = coeffMinimiser.approximation();
         }

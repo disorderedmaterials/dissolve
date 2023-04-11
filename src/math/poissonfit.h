@@ -105,9 +105,10 @@ class PoissonFit
     // Construct suitable reciprocal-space representation using given number of Poissons spaced evenly in real space up to
     // rMax (those below rMin will be ignored)
     double constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ = 0.02, double sigmaR = 0.08,
-                               int nIterations = 1000, double initialStepSize = 0.01, bool reFitAtEnd = false);
+                               int nIterations = 1000, double initialStepSize = 0.01,
+                               std::optional<int> degreeOfSmoothing = {});
     // Construct suitable reciprocal-space representation using provided coefficients as a starting point
     double constructReciprocal(double rMin, double rMax, const std::vector<double> &coefficients, double sigmaQ = 0.02,
                                double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01,
-                               bool reFitAtEnd = false);
+                               std::optional<int> degreeOfSmoothing = {});
 };

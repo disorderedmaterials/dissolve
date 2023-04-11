@@ -90,8 +90,9 @@ class GaussFit
     public:
     // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
     double constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ = 0.02, int nIterations = 1000,
-                               double initialStepSize = 0.01, bool reFitAtEnd = false);
+                               double initialStepSize = 0.01, std::optional<int> degreeOfSmoothing = {});
     // Construct function representation in reciprocal space using specified parameters as starting point
     double constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ = 0.02,
-                               int nIterations = 1000, double initialStepSize = 0.01, bool reFitAtEnd = false);
+                               int nIterations = 1000, double initialStepSize = 0.01,
+                               std::optional<int> degreeOfSmoothing = {});
 };
