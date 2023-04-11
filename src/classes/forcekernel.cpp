@@ -11,9 +11,18 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(const ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+ForceKernel::ForceKernel(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
                          std::optional<double> energyCutoff)
-    : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
+    : box_(cfg->box()), cellArray_(cfg->cells()), molecules_(cfg->molecules()), potentialMap_(potentialMap),
+      processPool_(procPool)
+{
+    cutoffDistanceSquared_ =
+        energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
+}
+
+ForceKernel::ForceKernel(const ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap,
+                         std::optional<double> energyCutoff)
+    : box_(box), potentialMap_(potentialMap), processPool_(procPool)
 {
     cutoffDistanceSquared_ =
         energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
@@ -165,9 +174,42 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
 // Calculate forces between Cell and its neighbours
 void ForceKernel::forces(const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
-    auto &neighbours = cellArray_.neighbours(*cell);
+    assert(cellArray_);
+
+    auto &neighbours = cellArray_->get().neighbours(*cell);
     for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
         forces(cell, &it->neighbour_, it->requiresMIM_, excludeIgeJ, strategy, f);
+}
+
+// Calculate total pairpotential forces between atoms in the world
+void ForceKernel::totalPairPotentialForces(std::vector<Vec3<double>> &f, ProcessPool::DivisionStrategy strategy) const
+{
+    assert(cellArray_);
+    auto &cellArray = cellArray_->get();
+
+    // Create a ForceKernel
+    auto combinableForces = createCombinableForces(f);
+
+    // Set start/stride for parallel loop
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
+
+    // algorithm parameters
+    auto unaryOp = [&, strategy](const int id)
+    {
+        auto *cellI = cellArray.cell(id);
+        auto &fLocal = combinableForces.local();
+        // This cell with itself
+        forces(cellI, cellI, false, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
+        // Interatomic interactions between atoms in this cell and its neighbours
+        forces(cellI, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
+    };
+
+    // Execute lambda operator for each cell
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin), dissolve::counting_iterator<int>(end),
+                       unaryOp);
+    combinableForces.finalize();
 }
 
 /*
@@ -391,7 +433,6 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom &i, const Ato
                          ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
-    Vec3<double> dcos_dxpj, dcos_dxpk;
     Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
 
     auto vecji = box_->minimumVector(i.r(), j.r());
@@ -505,4 +546,64 @@ void ForceKernel::forces(const SpeciesImproper &imp, const Vec3<double> &ri, con
     addTorsionForceJ(du_dphi, imp.j()->index(), torsionParameters, f);
     addTorsionForceK(du_dphi, imp.k()->index(), torsionParameters, f);
     addTorsionForceL(du_dphi, imp.l()->index(), torsionParameters, f);
+}
+
+// Calculate intramolecular forces within the specified molecule
+void ForceKernel::intramolecularForces(Molecule *mol, ForceVector &f, bool includePairPotentialTerms) const
+{
+    // Loop over bonds
+    for (const auto &bond : mol->species()->bonds())
+        forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), f);
+
+    // Loop over angles
+    for (const auto &angle : mol->species()->angles())
+        forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), f);
+
+    // Loop over torsions
+    for (const auto &torsion : mol->species()->torsions())
+        forces(torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
+               *mol->atom(torsion.indexL()), f);
+
+    // Loop over impropers
+    for (const auto &imp : mol->species()->impropers())
+        forces(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()), *mol->atom(imp.indexK()), *mol->atom(imp.indexL()), f);
+
+    // Pair potential interactions between atoms
+    if (includePairPotentialTerms)
+        dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
+                                [&](int indexI, const auto &i, int indexJ, const auto &j)
+                                {
+                                    if (indexI == indexJ)
+                                        return;
+                                    auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                        forcesWithMim(*i, *j, f);
+                                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                        forcesWithMim(*i, *j, f, elec14, vdw14);
+                                });
+}
+
+// Calculate total intramolecular forces in the world
+void ForceKernel::totalIntramolecularForces(ForceVector &f, bool includePairPotentialTerms,
+                                            ProcessPool::DivisionStrategy strategy) const
+{
+    assert(molecules_);
+    auto &molecules = molecules_->get();
+
+    auto combinable = createCombinableForces(f);
+
+    auto moleculeForceOperator = [&](const auto &mol)
+    {
+        auto &fLocal = combinable.local();
+
+        intramolecularForces(mol.get(), fLocal, includePairPotentialTerms);
+    };
+
+    // Set start/stride for parallel loop
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto [begin, end] = chop_range(molecules.begin(), molecules.end(), stride, start);
+    dissolve::for_each(ParallelPolicies::par, begin, end, moleculeForceOperator);
+
+    combinable.finalize();
 }

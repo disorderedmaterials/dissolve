@@ -307,28 +307,30 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Calculate interatomic forces
         if (testInter_)
         {
+            ForceKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap());
             Timer interTimer;
-            interTimer.start();
 
-            pairPotentialForces(procPool, targetConfiguration_, dissolve.potentialMap(), fInterCheck);
+            interTimer.start();
+            kernel.totalPairPotentialForces(fInterCheck, ProcessPool::PoolStrategy);
             if (!procPool.allSum(fInterCheck))
                 return false;
-
             interTimer.stop();
+
             Messenger::print("Time to do interatomic forces was {}.\n", interTimer.totalTimeString());
         }
 
         // Calculate intramolecular forces
         if (testIntra_)
         {
+            ForceKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap());
             Timer intraTimer;
-            intraTimer.start();
 
-            internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), false, fIntraCheck);
+            intraTimer.start();
+            kernel.totalIntramolecularForces(fIntraCheck, false, ProcessPool::PoolStrategy);
             if (!procPool.allSum(fIntraCheck))
                 return false;
-
             intraTimer.stop();
+
             Messenger::print("Time to do intramolecular forces was {}.\n", intraTimer.totalTimeString());
         }
 
@@ -502,7 +504,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         f.resize(targetConfiguration_->nAtoms());
 
         // Calculate forces
-        totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), f);
+        totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), f, f);
 
         // Convert forces to 10J/mol
         std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });

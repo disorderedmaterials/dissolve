@@ -104,7 +104,7 @@ std::vector<Vec3<double>> MDModule::evolve(const ProcessPool &procPool, const Po
     std::fill(fInter.begin(), fInter.end(), Vec3<double>());
     std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
 
-    ForcesModule::totalForces(procPool, sp, potentialMap, rInit, fInter, fIntra);
+    ForcesModule::totalForces(procPool, sp, potentialMap, fInter, fIntra, rInit);
 
     // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
     std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });

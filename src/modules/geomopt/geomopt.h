@@ -204,7 +204,7 @@ class GeometryOptimisationModule : public Module
 
         // Get the initial energy and forces of the Configuration
         auto oldEnergy = EnergyModule::totalEnergy(procPool, target, potentialMap);
-        ForcesModule::totalForces(procPool, target, potentialMap, f_);
+        ForcesModule::totalForces(procPool, target, potentialMap, f_, f_);
         auto oldRMSForce = rmsForce();
 
         // Set initial step size - the line minimiser will modify this as we proceed
@@ -226,7 +226,7 @@ class GeometryOptimisationModule : public Module
 
             // Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine
             // new step size
-            ForcesModule::totalForces(procPool, target, potentialMap, f_);
+            ForcesModule::totalForces(procPool, target, potentialMap, f_, f_);
             auto newRMSForce = rmsForce();
 
             // Calculate deltas
