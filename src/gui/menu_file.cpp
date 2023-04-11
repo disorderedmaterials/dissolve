@@ -148,6 +148,8 @@ void DissolveWindow::on_FileOpenAction_triggered(bool checked)
         return;
 
     loadInputFile(qPrintable(inputFile), true);
+
+    fullUpdate();
 }
 
 void DissolveWindow::recentFileSelected()
