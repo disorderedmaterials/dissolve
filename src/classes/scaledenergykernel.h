@@ -12,8 +12,6 @@ class ScaledEnergyKernel : public EnergyKernel
     ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool &procPool, const Box *box,
                        const CellArray &cells, const PotentialMap &potentialMap, double energyCutoff = -1.0);
     ~ScaledEnergyKernel() = default;
-    // Clear all data
-    void clear();
 
     /*
      * Scale Factor
