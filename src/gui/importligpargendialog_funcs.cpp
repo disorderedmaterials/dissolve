@@ -275,9 +275,10 @@ void ImportLigParGenDialog::on_ReduceToMasterTermsGroup_clicked(bool checked)
 // Attempt to manually apply our forcefield to the specified species
 bool ImportLigParGenDialog::applyForcefield(CoreData &coreData, Species *sp) const
 {
+    sp->clearAtomTypes();
+    sp->detachFromMasterTerms();
     coreData.clearAtomTypes();
     coreData.clearMasterTerms();
-    sp->clearAtomTypes();
 
     // Assign atomic charges from the original forcefield, based on the element/class atom types
     for (auto &&[i, classID] : zip(sp->atoms(), xyzClassIDs_))
