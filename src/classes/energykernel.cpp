@@ -25,22 +25,22 @@ EnergyKernel::EnergyKernel(const ProcessPool &procPool, const Box *box, const Ce
  */
 
 // Return PairPotential energy between atoms
-double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r) { return potentialMap_.energy(i, j, r); }
+double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r) const { return potentialMap_.energy(i, j, r); }
 
 // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale)
+double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const
 {
     return potentialMap_.energy(i, j, r, elecScale, vdwScale);
 }
 
 // Return PairPotential energy between atoms
-double EnergyKernel::energyWithoutMim(const Atom &i, const Atom &j)
+double EnergyKernel::energyWithoutMim(const Atom &i, const Atom &j) const
 {
     return pairPotentialEnergy(i, j, (i.r() - j.r()).magnitude());
 }
 
 // Return PairPotential energy between atoms provided
-double EnergyKernel::energyWithMim(const Atom &i, const Atom &j)
+double EnergyKernel::energyWithMim(const Atom &i, const Atom &j) const
 {
     return pairPotentialEnergy(i, j, box_->minimumDistance(j.r(), i.r()));
 }
@@ -50,7 +50,7 @@ double EnergyKernel::energyWithMim(const Atom &i, const Atom &j)
  */
 
 // Return PairPotential energy between atoms
-double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ)
+double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ) const
 {
     // If Atoms are the same, we refuse to calculate
     if (&i == &j)
@@ -66,8 +66,8 @@ double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool ex
         return energyWithoutMim(i, j);
 }
 
-// Return PairPotential energy of atoms in the supplied cell with all other cells
-double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular)
+// Return PairPotential energy of atoms in the supplied cell
+double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular) const
 {
     auto totalEnergy = 0.0;
     auto &atoms = cell.atoms();
@@ -106,7 +106,7 @@ double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular)
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular)
+double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular) const
 {
     auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell.atoms();
@@ -171,11 +171,12 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
             }
         }
     }
+
     return totalEnergy;
 }
 
 // Return PairPotential energy of Atom with world
-double EnergyKernel::energy(const Atom &i)
+double EnergyKernel::energy(const Atom &i) const
 {
     // Get cell neighbours for atom i's cell
     auto &neighbours = cellArray_.neighbours(*i.cell());
@@ -208,7 +209,7 @@ double EnergyKernel::energy(const Atom &i)
 }
 
 // Return PairPotential energy of Molecule with world
-double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy)
+double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
 {
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
@@ -283,7 +284,7 @@ double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, Pro
 }
 
 // Return molecular correction energy related to intramolecular terms involving supplied atom
-double EnergyKernel::correct(const Atom &i)
+double EnergyKernel::correct(const Atom &i) const
 {
     // Loop over atoms in molecule
     auto &atoms = i.molecule()->atoms();
@@ -309,7 +310,8 @@ double EnergyKernel::correct(const Atom &i)
 }
 
 // Return total interatomic PairPotential energy of the system
-double EnergyKernel::energy(const CellArray &cellArray, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy)
+double EnergyKernel::energy(const CellArray &cellArray, bool includeIntraMolecular,
+                            ProcessPool::DivisionStrategy strategy) const
 {
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cellArray.getCellNeighbourPairs();
@@ -341,33 +343,33 @@ double EnergyKernel::energy(const CellArray &cellArray, bool includeIntraMolecul
  */
 
 // Return SpeciesBond energy at Atoms specified
-double EnergyKernel::energy(const SpeciesBond &b, const Atom &i, const Atom &j)
+double EnergyKernel::energy(const SpeciesBond &b, const Atom &i, const Atom &j) const
 {
     return b.energy(box_->minimumDistance(i.r(), j.r()));
 }
 
 // Return SpeciesAngle energy at Atoms specified
-double EnergyKernel::energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k)
+double EnergyKernel::energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const
 {
     return a.energy(Box::angleInDegrees(box_->minimumVectorN(j.r(), i.r()), box_->minimumVectorN(j.r(), k.r())));
 }
 
 // Return SpeciesTorsion energy at Atoms specified
-double EnergyKernel::energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
+double EnergyKernel::energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const
 {
     return t.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
                                           box_->minimumVector(k.r(), l.r())));
 }
 
 // Return SpeciesImproper energy at Atoms specified
-double EnergyKernel::energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l)
+double EnergyKernel::energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const
 {
     return imp.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
                                             box_->minimumVector(k.r(), l.r())));
 }
 
 // Return intramolecular energy for the supplied Atom
-double EnergyKernel::intramolecularEnergy(const Molecule &mol, const Atom &i)
+double EnergyKernel::intramolecularEnergy(const Molecule &mol, const Atom &i) const
 {
     // Get the SpeciesAtom
     const auto *spAtom = i.speciesAtom();
@@ -410,7 +412,7 @@ double EnergyKernel::intramolecularEnergy(const Molecule &mol, const Atom &i)
 }
 
 // Return intramolecular energy for the supplied Molecule
-double EnergyKernel::intramolecularEnergy(const Molecule &mol)
+double EnergyKernel::intramolecularEnergy(const Molecule &mol) const
 {
     auto intraEnergy = 0.0;
 
