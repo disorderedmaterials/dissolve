@@ -219,8 +219,8 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
         std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
 
-        // If the strategy is Auto100 do a quick check on the timestep now
-        if (timestepType_ == TimestepType::Automatic && !determineTimeStep(fInter, fIntra))
+        // Check for suitable timestep
+        if (!determineTimeStep(timestepType_, fixedTimestep_, fInter, fIntra))
         {
             Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
             return true;
@@ -232,7 +232,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     for (step = 1; step <= nSteps_; ++step)
     {
         // Get timestep
-        auto optDT = determineTimeStep(fInter, fIntra);
+        auto optDT = determineTimeStep(timestepType_, fixedTimestep_, fInter, fIntra);
         if (!optDT)
         {
             Messenger::warn("A reasonable timestep could not be determined. Stopping evolution.\n");
