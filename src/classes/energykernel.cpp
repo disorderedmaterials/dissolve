@@ -147,7 +147,7 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
 }
 
 // Return PairPotential energy of Atom with world
-double EnergyKernel::energy(const Atom &i) const
+double EnergyKernel::pairPotentialEnergy(const Atom &i) const
 {
     // Get cell neighbours for atom i's cell
     auto &neighbours = cellArray_.neighbours(*i.cell());
@@ -180,7 +180,8 @@ double EnergyKernel::energy(const Atom &i) const
 }
 
 // Return PairPotential energy of Molecule with world
-double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
+double EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular,
+                                         ProcessPool::DivisionStrategy strategy) const
 {
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
@@ -254,8 +255,8 @@ double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, Pro
     return totalEnergy;
 }
 
-// Return total interatomic PairPotential energy of the system
-double EnergyKernel::energy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
+// Return total interatomic PairPotential energy of the world
+double EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
 {
     // List of cell neighbour pairs
     auto &cellNeighbourPairs = cellArray_.getCellNeighbourPairs();
