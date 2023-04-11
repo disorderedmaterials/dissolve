@@ -85,5 +85,6 @@ class ForcesModule : public Module
                             std::vector<Vec3<double>> &f);
     // Calculate total forces within the specified Species using the supplied reference coordinates
     static void totalForces(const ProcessPool &procPool, const Species *sp, const PotentialMap &potentialMap,
-                            const std::vector<Vec3<double>> &r, std::vector<Vec3<double>> &f);
+                            const std::vector<Vec3<double>> &r, std::vector<Vec3<double>> &fInter,
+                            std::vector<Vec3<double>> &fIntra);
 };
