@@ -83,7 +83,7 @@ Qt::ItemFlags SpeciesAngleModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexK)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::IndexK && angles_[index.row()].masterTerm())
+    if (index.column() > DataType::Form && angles_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }

@@ -78,7 +78,7 @@ Qt::ItemFlags SpeciesBondModel::flags(const QModelIndex &index) const
 {
     if (index.column() <= DataType::IndexJ)
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    if (index.column() > DataType::IndexJ && bonds_[index.row()].masterTerm())
+    if (index.column() > DataType::Form && bonds_[index.row()].masterTerm())
         return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
