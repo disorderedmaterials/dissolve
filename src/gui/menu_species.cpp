@@ -277,6 +277,7 @@ void DissolveWindow::on_SpeciesRegenerateIntraFromConnectivityAction_triggered(b
     if (ret != QMessageBox::Yes)
         return;
 
+    species->removeHigherOrderIntramolecularTerms();
     species->updateIntramolecularTerms();
 
     setModified();

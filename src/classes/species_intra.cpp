@@ -144,6 +144,16 @@ void Species::removePeriodicBonds()
         bonds_.erase(it, bonds_.end());
 }
 
+// Remove all higher order intramolecular terms
+void Species::removeHigherOrderIntramolecularTerms()
+{
+    angles_.clear();
+    torsions_.clear();
+    impropers_.clear();
+
+    ++version_;
+}
+
 // Add missing higher order intramolecular terms from current bond connectivity, and prune any that are now invalid
 void Species::updateIntramolecularTerms()
 {
