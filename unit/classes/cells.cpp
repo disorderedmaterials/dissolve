@@ -93,7 +93,7 @@ TEST(CellsTest, Basic)
         cfg->updateCellContents(true);
 
         // Calculate total Cell-based energy
-        EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->cells(), false, ProcessPool::PoolStrategy), 1.0e-4);
+        EXPECT_NEAR(refEnergy, energyKernel.energy(false, ProcessPool::PoolStrategy), 1.0e-4);
 
         // Calculate atomic energy from the Ar
         EXPECT_NEAR(refEnergy, energyKernel.energy(cfg->atom(0)), 1.0e-4);

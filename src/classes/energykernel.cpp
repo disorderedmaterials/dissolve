@@ -255,11 +255,10 @@ double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, Pro
 }
 
 // Return total interatomic PairPotential energy of the system
-double EnergyKernel::energy(const CellArray &cellArray, bool includeIntraMolecular,
-                            ProcessPool::DivisionStrategy strategy) const
+double EnergyKernel::energy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
 {
     // List of cell neighbour pairs
-    auto &cellNeighbourPairs = cellArray.getCellNeighbourPairs();
+    auto &cellNeighbourPairs = cellArray_.getCellNeighbourPairs();
 
     // Set start/stride for parallel loop
     auto offset = processPool_.interleavedLoopStart(strategy);

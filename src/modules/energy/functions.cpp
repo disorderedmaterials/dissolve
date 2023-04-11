@@ -48,8 +48,7 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Config
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    const auto &cellArray = cfg->cells();
-    double totalEnergy = kernel.energy(cellArray, true, strategy);
+    double totalEnergy = kernel.energy(true, strategy);
 
     // Print process-local energy
     Messenger::printVerbose("Interatomic Energy (Local) is {:15.9e}\n", totalEnergy);
@@ -118,8 +117,7 @@ double EnergyModule::interMolecularEnergy(const ProcessPool &procPool, const Con
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    const auto &cellArray = cfg->cells();
-    double totalEnergy = kernel.energy(cellArray, false, strategy);
+    double totalEnergy = kernel.energy(false, strategy);
 
     // Print process-local energy
     Messenger::printVerbose("Intermolecular Energy (Local) is {:15.9e}\n", totalEnergy);

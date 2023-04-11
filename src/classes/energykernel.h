@@ -65,7 +65,7 @@ class EnergyKernel
     // Return PairPotential energy of Molecule with world
     double energy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
     // Return total interatomic PairPotential energy of the system
-    double energy(const CellArray &cellArray, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
+    double energy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
 
     /*
      * Intramolecular Terms
