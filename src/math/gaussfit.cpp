@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "math/data1d.h"
 #include "math/error.h"
+#include "math/filters.h"
 #include "math/mc.h"
 #include "math/praxis.h"
 #include "templates/algorithms.h"
@@ -333,86 +334,21 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 
 // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
 double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ, int nIterations,
-                                     double initialStepSize, bool reFitAtEnd)
+                                     double initialStepSize, std::optional<int> degreeOfSmoothing)
 {
-    // Clear any existing data
-    x_.clear();
-    A_.clear();
-    fwhm_.clear();
-    nGaussians_ = nGaussians;
-    approximateData_.initialise(referenceData_);
-
-    double x, gDelta = rMax / nGaussians_;
-    for (auto n = 0; n < nGaussians_; ++n)
-    {
-        x = (n + 1) * gDelta;
-        x_.push_back(x);
-        A_.push_back(0.0);
-        fwhm_.push_back(sigmaQ);
-    }
-
-    // Update the tabulated functions
-    alphaSpace_ = FunctionSpace::ReciprocalSpace;
-    updatePrecalculatedFunctions(alphaSpace_);
-
-    // Perform Monte Carlo minimisation on the amplitudes
-    MonteCarloMinimiser gaussMinimiser(
-        [this]()
-        {
-            auto sose = 0.0;
-
-            // Loop over data points and sum contributions from tabulated functions on to the current approximate data
-            double y, dy;
-            for (auto i = 0; i < approximateData_.nValues(); ++i)
-            {
-                // Get approximate data x and y for this point
-                y = approximateData_.value(i);
-
-                // Add in contributions from our Gaussians
-                for (auto n = 0; n < A_.size(); ++n)
-                    y += functions_[{n, i}] * A_[n];
-
-                dy = referenceData_.value(i) - y;
-                sose += dy * dy;
-            }
-
-            return sose;
-        });
-
-    // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
-    for (auto n = 0; n < nGaussians_; ++n)
-    {
-        if (x_[n] < rMin)
-            continue;
-        gaussMinimiser.addTarget(&A_[n]);
-    }
-
-    // Optimise this set of Gaussians
-    gaussMinimiser.setMaxIterations(nIterations);
-    gaussMinimiser.setStepSize(initialStepSize);
-    currentError_ = gaussMinimiser.minimise();
-
-    // Perform a final grouped refit of the amplitudes
-    if (reFitAtEnd)
-        sweepFitA(FunctionSpace::ReciprocalSpace, rMin);
-
-    // Regenerate approximation and calculate percentage error of fit
-    generateApproximation(FunctionSpace::ReciprocalSpace);
-    currentError_ = Error::percent(referenceData_, approximateData_);
-
-    return currentError_;
+    return constructReciprocal(rMin, rMax, std::vector<double>(nGaussians, 0.0), sigmaQ, nIterations, initialStepSize,
+                               degreeOfSmoothing);
 }
 
 // Construct function representation in reciprocal space using specified parameters as starting point
 double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ, int nIterations,
-                                     double initialStepSize, bool reFitAtEnd)
+                                     double initialStepSize, std::optional<int> degreeOfSmoothing)
 {
     // Create the fitting functions
     A_ = A;
     x_.clear();
     fwhm_.clear();
     nGaussians_ = A_.size();
-    approximateData_.initialise(referenceData_);
     double x, gDelta = rMax / nGaussians_;
     for (auto n = 0; n < nGaussians_; ++n)
     {
@@ -424,6 +360,9 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     // Update the tabulated functions
     alphaSpace_ = FunctionSpace::ReciprocalSpace;
     updatePrecalculatedFunctions(alphaSpace_);
+
+    // Clear the approximate data
+    approximateData_.initialise(referenceData_);
 
     // Perform Monte Carlo minimisation on the amplitudes
     MonteCarloMinimiser gaussMinimiser(
@@ -447,6 +386,11 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
             }
 
             return sose;
+        },
+        [degreeOfSmoothing](std::vector<double> &params)
+        {
+            if (degreeOfSmoothing)
+                Filters::movingAverage(params, *degreeOfSmoothing);
         });
 
     // Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
@@ -460,11 +404,8 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
     // Optimise this set of Gaussians
     gaussMinimiser.setMaxIterations(nIterations);
     gaussMinimiser.setStepSize(initialStepSize);
+    gaussMinimiser.setSamplingFrequency(nIterations / 2.5);
     currentError_ = gaussMinimiser.minimise();
-
-    // Perform a final grouped refit of the amplitudes
-    if (reFitAtEnd)
-        sweepFitA(FunctionSpace::ReciprocalSpace, rMin);
 
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);
