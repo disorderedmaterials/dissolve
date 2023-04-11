@@ -33,38 +33,9 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r,
     return potentialMap_.energy(i, j, r, elecScale, vdwScale);
 }
 
-// Return PairPotential energy between atoms
-double EnergyKernel::energyWithoutMim(const Atom &i, const Atom &j) const
-{
-    return pairPotentialEnergy(i, j, (i.r() - j.r()).magnitude());
-}
-
-// Return PairPotential energy between atoms provided
-double EnergyKernel::energyWithMim(const Atom &i, const Atom &j) const
-{
-    return pairPotentialEnergy(i, j, box_->minimumDistance(j.r(), i.r()));
-}
-
 /*
  * PairPotential Terms
  */
-
-// Return PairPotential energy between atoms
-double EnergyKernel::energy(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ) const
-{
-    // If Atoms are the same, we refuse to calculate
-    if (&i == &j)
-        return 0.0;
-
-    // Check indices of Atoms if required
-    if (excludeIgeJ && (i.arrayIndex() >= j.arrayIndex()))
-        return 0.0;
-
-    if (applyMim)
-        return energyWithMim(i, j);
-    else
-        return energyWithoutMim(i, j);
-}
 
 // Return PairPotential energy of atoms in the supplied cell
 double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular) const
@@ -281,32 +252,6 @@ double EnergyKernel::energy(const Molecule &mol, bool includeIntraMolecular, Pro
         });
 
     return totalEnergy;
-}
-
-// Return molecular correction energy related to intramolecular terms involving supplied atom
-double EnergyKernel::correct(const Atom &i) const
-{
-    // Loop over atoms in molecule
-    auto &atoms = i.molecule()->atoms();
-    const auto &rI = i.r();
-
-    double correctionEnergy = dissolve::transform_reduce(
-        ParallelPolicies::par, atoms.begin(), atoms.end(), 0.0, std::plus<double>(),
-        [&](const auto &j) -> double
-        {
-            if (&i == j)
-                return 0.0;
-
-            auto &&[scalingType, elec14, vdw14] = i.scaling(j);
-            if (scalingType == SpeciesAtom::ScaledInteraction::Excluded)
-                return pairPotentialEnergy(i, *j, box_->minimumDistance(rI, j->r()));
-            else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                return pairPotentialEnergy(i, *j, box_->minimumDistance(rI, j->r()), 1.0 - elec14, 1.0 - vdw14);
-
-            return 0.0;
-        });
-
-    return -correctionEnergy;
 }
 
 // Return total interatomic PairPotential energy of the system

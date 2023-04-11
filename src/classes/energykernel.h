@@ -49,17 +49,11 @@ class EnergyKernel
     virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r) const;
     // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
     virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const;
-    // Return PairPotential energy between atoms provided
-    double energyWithoutMim(const Atom &i, const Atom &j) const;
-    // Return PairPotential energy between atoms provided
-    double energyWithMim(const Atom &i, const Atom &j) const;
 
     /*
      * PairPotential Terms
      */
     private:
-    // Return PairPotential energy between atoms
-    double energy(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ) const;
     // Return PairPotential energy of atoms in the supplied cell
     double energy(const Cell &cell, bool includeIntraMolecular) const;
     // Return PairPotential energy between two cells
@@ -68,8 +62,6 @@ class EnergyKernel
     public:
     // Return PairPotential energy of atom with world
     double energy(const Atom &i) const;
-    // Return molecular correction energy related to intramolecular terms involving supplied atom
-    double correct(const Atom &i) const;
     // Return PairPotential energy of Molecule with world
     double energy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
     // Return total interatomic PairPotential energy of the system
