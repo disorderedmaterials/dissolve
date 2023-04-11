@@ -11,7 +11,7 @@
 
 ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
                                              std::string_view blockKeyword)
-    : context_(context), owner_(owner), blockKeyword_(blockKeyword)
+    : owner_(owner), context_(context), blockKeyword_(blockKeyword)
 {
 }
 

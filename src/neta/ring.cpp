@@ -229,7 +229,6 @@ int NETARingNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
                 auto &totalRingMatch = matchedRings[&ring].second;
                 for (auto &jInfo : matchedRingAtoms)
                 {
-                    auto *j = jInfo.first;
                     auto &&[jScore, jMatchPath] = jInfo.second;
                     totalRingMatch.merge(jMatchPath);
                 }
