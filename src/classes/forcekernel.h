@@ -112,16 +112,11 @@ class ForceKernel
     // Calculate SpeciesBond forces
     void forces(const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const;
     void forces(const SpeciesBond &bond, const Vec3<double> &ri, const Vec3<double> &rj, ForceVector &f) const;
-    // Calculate SpeciesBond forces for specified Atom only
-    void forces(const Atom &onlyThis, const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const;
     // Calculate angle force parameters from supplied vectors
     static AngleParameters calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk);
     // Calculate SpeciesAngle forces
     void forces(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k, ForceVector &f) const;
     void forces(const SpeciesAngle &angle, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
-                ForceVector &f) const;
-    // Calculate SpeciesAngle forces for specified Atom only
-    void forces(const Atom &onlyThis, const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k,
                 ForceVector &f) const;
     // Calculate torsion force parameters from supplied vectors
     static TorsionParameters calculateTorsionParameters(const Vec3<double> &vecji, const Vec3<double> &vecjk,
@@ -131,17 +126,11 @@ class ForceKernel
                 ForceVector &f) const;
     void forces(const SpeciesTorsion &torsion, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
                 const Vec3<double> &rl, ForceVector &f) const;
-    // Calculate SpeciesTorsion forces for specified Atom only
-    void forces(const Atom &onlyThis, const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
-                ForceVector &f) const;
     // Calculate SpeciesImproper forces
     void forces(const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
                 ForceVector &f) const;
-    void forces(const SpeciesImproper &torsion, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
+    void forces(const SpeciesImproper &improper, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
                 const Vec3<double> &rl, ForceVector &f) const;
-    // Calculate SpeciesImproper forces for specified Atom only
-    void forces(const Atom &onlyThis, const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k,
-                const Atom &l, ForceVector &f) const;
     // Calculate intramolecular forces within the specified molecule
     void intramolecularForces(Molecule *mol, ForceVector &f, bool includePairPotentialTerms) const;
     // Calculate total intramolecular forces in the world
