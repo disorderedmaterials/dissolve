@@ -2,7 +2,7 @@ diff -git a/src/corelib/time/qtimezoneprivate_tz.cpp b/src/corelib/time/qtimezon
 index 627a4a81..a5f50acc 100644
 --- a/src/corelib/time/qtimezoneprivate_tz.cpp
 +++ b/src/corelib/time/qtimezoneprivate_tz.cpp
-@@ -84,9 +84,11 @@
+@@ -56,9 +56,11 @@
  // Parse zone.tab table, assume lists all installed zones, if not will need to read directories
  static QTzTimeZoneHash loadTzTimeZones()
  {
@@ -16,17 +16,17 @@ index 627a4a81..a5f50acc 100644
  
      QFile tzif(path);
      if (!tzif.open(QIODevice::ReadOnly))
-@@ -761,18 +764,22 @@
+@@ -729,18 +729,22 @@
          if (!tzif.open(QIODevice::ReadOnly))
              return ret;
      } else {
 -        // Open named tz, try modern path first, if fails try legacy path
--        tzif.setFileName(QLatin1String("/usr/share/zoneinfo/") + QString::fromLocal8Bit(ianaId));
+-        tzif.setFileName("/usr/share/zoneinfo/"_L1 + QString::fromLocal8Bit(ianaId));
 +        // Try TZDIR first, in case we're running on NixOS
 +        tzif.setFileName(QFile::decodeName(qgetenv("TZDIR")) + QStringLiteral("/") + QString::fromLocal8Bit(ianaId));
          if (!tzif.open(QIODevice::ReadOnly)) {
--            tzif.setFileName(QLatin1String("/usr/lib/zoneinfo/") + QString::fromLocal8Bit(ianaId));
-+            tzif.setFileName(QLatin1String("/usr/share/zoneinfo/") + QString::fromLocal8Bit(ianaId));
+-            tzif.setFileName("/usr/lib/zoneinfo/"_L1 + QString::fromLocal8Bit(ianaId));
++            tzif.setFileName("/usr/share/zoneinfo/"_L1 + QString::fromLocal8Bit(ianaId));
              if (!tzif.open(QIODevice::ReadOnly)) {
                  // ianaId may be a POSIX rule, taken from $TZ or /etc/TZ
                  auto check = validatePosixRule(ianaId);

@@ -7,7 +7,7 @@ inputs:
     default: 3.9
   qtVersion:
     type: string
-    default: 6.2.2
+    default: 6.4.2
   nixVersion:
     type: string
     default: 2.4
