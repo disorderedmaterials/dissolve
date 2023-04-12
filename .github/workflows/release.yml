@@ -13,12 +13,6 @@ on:
     - 'web/**'
     - 'README.md'
 
-env:
-  pythonVersion: 3.9
-  qtVersion: 6.4.2
-  nixVersion: 2.4
-  nixOSVersion: 22.11
-
 jobs:
 
   QC:
