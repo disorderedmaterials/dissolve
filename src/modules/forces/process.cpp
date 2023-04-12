@@ -490,12 +490,6 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     }
     else
     {
-        /*
-         * Calculates the total forces in the system.
-         *
-         * This is a serial routine (subroutines called from within are parallel).
-         */
-
         Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
 
         // Realise the force vector
@@ -504,7 +498,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         f.resize(targetConfiguration_->nAtoms());
 
         // Calculate forces
-        totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), f, f);
+        totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), ForcesModule::ForceCalculationType::Full, f, f);
 
         // Convert forces to 10J/mol
         std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });

@@ -204,16 +204,15 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
 
         if (targetMolecules.empty())
-            intramolecularForcesOnly_ ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_,
-                                                                             dissolve.potentialMap(), true, fInter, fIntra)
-                                      : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(),
-                                                                  fInter, fIntra, commsTimer);
+            ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(),
+                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
+                                                                : ForcesModule::ForceCalculationType::Full,
+                                      fInter, fIntra, commsTimer);
         else
-            intramolecularForcesOnly_
-                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, fInter,
-                                                       fIntra, targetMolecules)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), fInter,
-                                            fIntra, commsTimer);
+            ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(),
+                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
+                                                                : ForcesModule::ForceCalculationType::Full,
+                                      fInter, fIntra, commsTimer);
 
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
@@ -264,16 +263,15 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
-            intramolecularForcesOnly_
-                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, fInter,
-                                                       fIntra)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), fInter, fIntra);
+            ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(),
+                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
+                                                                : ForcesModule::ForceCalculationType::Full,
+                                      fInter, fIntra, commsTimer);
         else
-            intramolecularForcesOnly_
-                ? ForcesModule::internalMoleculeForces(procPool, targetConfiguration_, dissolve.potentialMap(), true, fInter,
-                                                       fIntra, targetMolecules)
-                : ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(), fInter,
-                                            fIntra);
+            ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(),
+                                      intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
+                                                                : ForcesModule::ForceCalculationType::Full,
+                                      fInter, fIntra, commsTimer);
         std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
         std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
 
