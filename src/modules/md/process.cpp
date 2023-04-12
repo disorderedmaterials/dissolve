@@ -68,7 +68,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Create arrays
     std::vector<double> mass(targetConfiguration_->nAtoms(), 0.0);
-    std::vector<Vec3<double>> fIntra(targetConfiguration_->nAtoms()), fInter(targetConfiguration_->nAtoms()),
+    std::vector<Vec3<double>> fBound(targetConfiguration_->nAtoms()), fUnbound(targetConfiguration_->nAtoms()),
         accelerations(targetConfiguration_->nAtoms());
 
     // Variables
@@ -200,26 +200,26 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (timestepType_ != TimestepType::Fixed)
     {
         // Zero force arrays
-        std::fill(fInter.begin(), fInter.end(), Vec3<double>());
-        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+        std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
+        std::fill(fBound.begin(), fBound.end(), Vec3<double>());
 
         if (targetMolecules.empty())
             ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fInter, fIntra, commsTimer);
+                                      fUnbound, fBound, commsTimer);
         else
             ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fInter, fIntra, commsTimer);
+                                      fUnbound, fBound, commsTimer);
 
         // Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
-        std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
-        std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
 
         // Check for suitable timestep
-        if (!determineTimeStep(timestepType_, fixedTimestep_, fInter, fIntra))
+        if (!determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound))
         {
             Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
             return true;
@@ -231,7 +231,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     for (step = 1; step <= nSteps_; ++step)
     {
         // Get timestep
-        auto optDT = determineTimeStep(timestepType_, fixedTimestep_, fInter, fIntra);
+        auto optDT = determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound);
         if (!optDT)
         {
             Messenger::warn("A reasonable timestep could not be determined. Stopping evolution.\n");
@@ -258,26 +258,26 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         targetConfiguration_->updateCellContents();
 
         // Zero force arrays
-        std::fill(fInter.begin(), fInter.end(), Vec3<double>());
-        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+        std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
+        std::fill(fBound.begin(), fBound.end(), Vec3<double>());
 
         // Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
         if (targetMolecules.empty())
             ForcesModule::totalForces(procPool, targetConfiguration_, dissolve.potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fInter, fIntra, commsTimer);
+                                      fUnbound, fBound, commsTimer);
         else
             ForcesModule::totalForces(procPool, targetConfiguration_, targetMolecules, dissolve.potentialMap(),
                                       intramolecularForcesOnly_ ? ForcesModule::ForceCalculationType::IntraMolecularFull
                                                                 : ForcesModule::ForceCalculationType::Full,
-                                      fInter, fIntra, commsTimer);
-        std::transform(fInter.begin(), fInter.end(), fInter.begin(), [](auto f) { return f * 100.0; });
-        std::transform(fIntra.begin(), fIntra.end(), fIntra.begin(), [](auto f) { return f * 100.0; });
+                                      fUnbound, fBound, commsTimer);
+        std::transform(fUnbound.begin(), fUnbound.end(), fUnbound.begin(), [](auto f) { return f * 100.0; });
+        std::transform(fBound.begin(), fBound.end(), fBound.begin(), [](auto f) { return f * 100.0; });
 
         // Cap forces
         if (capForces_)
-            nCapped = capForces(maxForce, fInter, fIntra);
+            nCapped = capForces(maxForce, fUnbound, fBound);
 
         // Velocity Verlet second stage (B) and velocity scaling
         // A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -285,7 +285,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // B:  a(t+dt) = F(t+dt)/m
         // B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
         ke = 0.0;
-        for (auto &&[f1, f2, v, a, m] : zip(fInter, fIntra, velocities, accelerations, mass))
+        for (auto &&[f1, f2, v, a, m] : zip(fUnbound, fBound, velocities, accelerations, mass))
         {
             // Determine new accelerations
             a = (f1 + f2) / m;

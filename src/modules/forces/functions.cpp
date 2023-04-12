@@ -1,27 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/forcekernel.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
 #include "modules/forces/forces.h"
-#include "templates/algorithms.h"
 
 // Calculate total forces within the supplied Configuration
 void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                               ForceCalculationType calculationType, std::vector<Vec3<double>> &fInter,
-                               std::vector<Vec3<double>> &fIntra, OptionalReferenceWrapper<Timer> commsTimer)
+                               ForceCalculationType calculationType, std::vector<Vec3<double>> &fUnbound,
+                               std::vector<Vec3<double>> &fBound, OptionalReferenceWrapper<Timer> commsTimer)
 {
     // Create a Timer
     Timer timer;
 
     // Zero force arrays
-    std::fill(fInter.begin(), fInter.end(), Vec3<double>());
-    if (&fInter != &fIntra)
-        std::fill(fIntra.begin(), fIntra.end(), Vec3<double>());
+    std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());
+    if (&fUnbound != &fBound)
+        std::fill(fBound.begin(), fBound.end(), Vec3<double>());
 
     // Create a ForceKernel
     ForceKernel kernel(procPool, cfg, potentialMap);
@@ -30,7 +28,7 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
     if (calculationType == ForceCalculationType::Full || calculationType == ForceCalculationType::PairPotentialOnly)
     {
         timer.start();
-        kernel.totalPairPotentialForces(fInter, ProcessPool::PoolStrategy);
+        kernel.totalPairPotentialForces(fUnbound, ProcessPool::PoolStrategy);
         timer.stop();
         Messenger::printVerbose("Time to do pair potential forces was {}.\n", timer.totalTimeString());
     }
@@ -41,26 +39,26 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
         // Only include intramolecular pairpotential terms if the calculation type is ForceCalculationType::IntraMolecularFull -
         // they will have already been calculated above in the case of ForceCalculationType::Full
         timer.start();
-        kernel.totalIntramolecularForces(fIntra, calculationType == ForceCalculationType::IntraMolecularFull,
+        kernel.totalIntramolecularForces(fBound, calculationType == ForceCalculationType::IntraMolecularFull,
                                          ProcessPool::PoolStrategy);
         timer.stop();
         Messenger::printVerbose("Time to do internal molecule forces was {}.\n", timer.totalTimeString());
     }
 
     // Gather forces together over all processes
-    procPool.allSum(fInter, ProcessPool::PoolProcessesCommunicator, commsTimer);
-    if (&fInter != &fIntra)
-        procPool.allSum(fIntra, ProcessPool::PoolProcessesCommunicator, commsTimer);
+    procPool.allSum(fUnbound, ProcessPool::PoolProcessesCommunicator, commsTimer);
+    if (&fUnbound != &fBound)
+        procPool.allSum(fBound, ProcessPool::PoolProcessesCommunicator, commsTimer);
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
 void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
                                const std::vector<const Molecule *> &targetMolecules, const PotentialMap &potentialMap,
-                               ForceCalculationType calculationType, std::vector<Vec3<double>> &fInter,
-                               std::vector<Vec3<double>> &fIntra, OptionalReferenceWrapper<Timer> commsTimer)
+                               ForceCalculationType calculationType, std::vector<Vec3<double>> &fUnbound,
+                               std::vector<Vec3<double>> &fBound, OptionalReferenceWrapper<Timer> commsTimer)
 {
-    std::vector<Vec3<double>> tempFInter(fInter.size(), Vec3<double>()), tempFIntra(fIntra.size(), Vec3<double>());
-    totalForces(procPool, cfg, potentialMap, calculationType, tempFInter, tempFIntra, commsTimer);
+    std::vector<Vec3<double>> tempFUnbound(fUnbound.size(), Vec3<double>()), tempFBound(fBound.size(), Vec3<double>());
+    totalForces(procPool, cfg, potentialMap, calculationType, tempFUnbound, tempFBound, commsTimer);
 
     // TODO Calculating forces for whole molecule at once may be more efficient
     // TODO Partitioning atoms of target molecules into cells and running a distributor may be more efficient
@@ -68,8 +66,8 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg,
     for (const auto *mol : targetMolecules)
         for (const auto &i : mol->atoms())
         {
-            fInter[i->arrayIndex()] = tempFInter[i->arrayIndex()];
-            fIntra[i->arrayIndex()] = tempFIntra[i->arrayIndex()];
+            fUnbound[i->arrayIndex()] = tempFUnbound[i->arrayIndex()];
+            fBound[i->arrayIndex()] = tempFBound[i->arrayIndex()];
         }
 }
 
