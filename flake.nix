@@ -6,9 +6,10 @@
     nixGL-src.flake = false;
     weggli.url = "github:googleprojectzero/weggli";
     weggli.flake = false;
+    qt-idaaas.url = "github:disorderedmaterials/qt-idaaas";
   };
-  outputs =
-    { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src, weggli }:
+  outputs = { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src
+    , qt-idaaas, weggli }:
     let
 
       toml = pkgs: ((import ./nix/toml11.nix) { inherit pkgs; });
@@ -36,17 +37,8 @@
           pugixml
           (toml pkgs)
         ];
-      gui_libs = pkgs:
-        let
-          q = import ./nix/qt {
-            inherit (pkgs)
-              newScope lib stdenv fetchurl fetchgit fetchpatch fetchFromGitHub
-              makeSetupHook makeWrapper bison cups harfbuzz libGL perl ninja
-              writeText gtk3 dconf libglvnd darwin buildPackages;
-            cmake = pkgs.cmake.overrideAttrs (attrs: {
-              patches = attrs.patches ++ [ ./nix/qt/patches/cmake.patch ];
-            });
-          };
+      gui_libs = system: pkgs:
+        let q = qt-idaaas.packages.${system};
         in with pkgs; [
           glib
           freetype
@@ -80,7 +72,7 @@
             };
             patches = [ ./nix/patches/ctest.patch ];
             buildInputs = base_libs pkgs ++ pkgs.lib.optional mpi pkgs.openmpi
-              ++ pkgs.lib.optionals gui (gui_libs pkgs)
+              ++ pkgs.lib.optionals gui (gui_libs system pkgs)
               ++ pkgs.lib.optionals checks (check_libs pkgs)
               ++ pkgs.lib.optional threading pkgs.tbb;
             nativeBuildInputs = pkgs.lib.optionals gui [ pkgs.wrapGAppsHook ];
@@ -150,7 +142,7 @@
 
         devShells.default = pkgs.stdenv.mkDerivation {
           name = "dissolve-shell";
-          buildInputs = base_libs pkgs ++ gui_libs pkgs ++ check_libs pkgs
+          buildInputs = base_libs pkgs ++ gui_libs system pkgs ++ check_libs pkgs
             ++ (with pkgs; [
               (pkgs.clang-tools.override {
                 llvmPackages = pkgs.llvmPackages_7;

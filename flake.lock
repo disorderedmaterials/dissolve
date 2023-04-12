@@ -160,6 +160,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_5": {
+      "locked": {
+        "lastModified": 1680334310,
+        "narHash": "sha256-ISWz16oGxBhF7wqAxefMPwFag6SlsA9up8muV79V9ck=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "884e3b68be02ff9d61a042bc9bd9dd2a358f95da",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-22.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "outdated": {
       "locked": {
         "lastModified": 1655034179,
@@ -176,6 +192,24 @@
         "type": "github"
       }
     },
+    "qt-idaaas": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_5"
+      },
+      "locked": {
+        "lastModified": 1680528871,
+        "narHash": "sha256-DPb7Z638N94c/4/cXzSx8BdxnxTPFj+QxA7tWIVaBZ4=",
+        "owner": "disorderedmaterials",
+        "repo": "qt-idaaas",
+        "rev": "3fb484d010b4efa7aa591e914cb990ba8704ba46",
+        "type": "github"
+      },
+      "original": {
+        "owner": "disorderedmaterials",
+        "repo": "qt-idaaas",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "bundlers": "bundlers",
@@ -183,6 +217,7 @@
         "nixGL-src": "nixGL-src",
         "nixpkgs": "nixpkgs_4",
         "outdated": "outdated",
+        "qt-idaaas": "qt-idaaas",
         "weggli": "weggli"
       }
     },
