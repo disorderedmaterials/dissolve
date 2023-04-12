@@ -6,9 +6,6 @@
 #include "procedure/nodes/calculatebase.h"
 #include "procedure/nodevalue.h"
 
-// Forward Declarations
-class SelectProcedureNode;
-
 // Calculate Expression
 class CalculateExpressionProcedureNode : public CalculateProcedureNodeBase
 {
@@ -20,6 +17,10 @@ class CalculateExpressionProcedureNode : public CalculateProcedureNodeBase
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)
      */
+    private:
+    // Expression to evaluate
+    NodeValue expression_;
+
     public:
     // Return number of sites required to calculate observable
     int nSitesRequired() const override;

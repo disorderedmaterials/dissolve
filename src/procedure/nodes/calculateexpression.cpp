@@ -36,3 +36,4 @@ bool CalculateExpressionProcedureNode::execute()
     value_ = expression_.asDouble();
     return true;
 }
+
