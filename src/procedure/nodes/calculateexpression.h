@@ -12,14 +12,13 @@ class CalculateExpressionProcedureNode : public CalculateProcedureNodeBase
     public:
     CalculateExpressionProcedureNode();
     ~CalculateExpressionProcedureNode() override = default;
-    NodeValue expression_{};
 
     /*
      * Observable Target (implements virtuals in CalculateProcedureNodeBase)
      */
     private:
     // Expression to evaluate
-    NodeValue expression_;
+    NodeValue expression_{};
 
     public:
     // Return number of sites required to calculate observable
