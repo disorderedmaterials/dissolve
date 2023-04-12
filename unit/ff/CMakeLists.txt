@@ -1,0 +1,1 @@
+dissolve_unit_test(forcesModule.cpp energyforce2)
