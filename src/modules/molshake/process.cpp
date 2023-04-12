@@ -57,7 +57,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Create a local ChangeStore and a suitable EnergyKernel
     ChangeStore changeStore(procPool, commsTimer);
-    EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
+    EnergyKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);

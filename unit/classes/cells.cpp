@@ -86,7 +86,7 @@ TEST(CellsTest, Basic)
         auto [rCut, cellSize, refEnergy] = state;
 
         // Initialise an EnergyKernel with the specified cutoff
-        EnergyKernel energyKernel(dissolve.worldPool(), cfg->box(), cfg->cells(), dissolve.potentialMap(), rCut);
+        EnergyKernel energyKernel(dissolve.worldPool(), cfg, dissolve.potentialMap(), rCut);
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve.pairPotentialRange());
