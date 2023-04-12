@@ -14,7 +14,7 @@ TEST(CalculateExpressionTest, Basic)
     Procedure procedure(ProcedureNode::AnalysisContext);
 
     // No expression set
-    auto expressionNode = procedure.createRootNode<CalculateExpression>("X");
+    auto expressionNode = procedure.createRootNode<CalculateExpressionProcedureNode>("X");
     EXPECT_TRUE(procedure.rootSequence().check());
 }
 
