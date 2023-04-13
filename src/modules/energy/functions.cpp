@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "classes/energykernel.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
+#include "kernels/energy.h"
 #include "math/combinations.h"
 #include "modules/energy/energy.h"
 #include "templates/algorithms.h"

@@ -3,8 +3,8 @@
 
 #include "classes/atomchangetoken.h"
 #include "classes/atomtype.h"
-#include "classes/energykernel.h"
 #include "classes/species.h"
+#include "kernels/energy.h"
 #include "main/dissolve.h"
 #include "templates/algorithms.h"
 #include <gtest/gtest.h>

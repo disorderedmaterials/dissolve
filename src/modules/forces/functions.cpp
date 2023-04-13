@@ -3,9 +3,9 @@
 
 #include "classes/cell.h"
 #include "classes/configuration.h"
-#include "classes/forcekernel.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
+#include "kernels/force.h"
 #include "modules/forces/forces.h"
 
 // Calculate total forces within the supplied Configuration

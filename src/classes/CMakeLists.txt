@@ -31,8 +31,6 @@ add_library(
   data2dstore.cpp
   data3dstore.cpp
   distributor.cpp
-  energykernel.cpp
-  forcekernel.cpp
   isotopedata.cpp
   isotopologue.cpp
   isotopologues.cpp
@@ -90,8 +88,6 @@ add_library(
   data3dstore.h
   distributor.h
   empiricalformula.h
-  energykernel.h
-  forcekernel.h
   interactionpotential.h
   isotopedata.h
   isotopologue.h

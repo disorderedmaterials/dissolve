@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 #include "benchmark/benchmark.h"
 #include "classes/cell.h"
-#include "classes/forcekernel.h"
+#include "kernels/force.h"
 #include "classes/species.h"
 #include "common/problems.h"
 #include "modules/forces/forces.h"

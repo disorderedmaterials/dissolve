@@ -6,8 +6,8 @@
 #include "classes/box.h"
 #include "classes/changestore.h"
 #include "classes/configuration.h"
-#include "classes/energykernel.h"
 #include "classes/regionaldistributor.h"
+#include "kernels/energy.h"
 #include "main/dissolve.h"
 #include "modules/atomshake/atomshake.h"
 

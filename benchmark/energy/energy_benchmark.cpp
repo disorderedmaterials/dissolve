@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 #include "benchmark/benchmark.h"
 #include "classes/cell.h"
-#include "classes/energykernel.h"
+#include "kernels/energy.h"
 #include "classes/species.h"
 #include "common/problems.h"
 
