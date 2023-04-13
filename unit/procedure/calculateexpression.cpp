@@ -16,6 +16,11 @@ TEST(CalculateExpressionTest, Basic)
     // No expression set
     auto expressionNode = procedure.createRootNode<CalculateExpressionProcedureNode>("X");
     EXPECT_TRUE(procedure.rootSequence().check());
+
+    // Simple number
+    expressionNode->keywords().set("Expression", NodeValue(4));
+    expressionNode->execute();
+    EXPECT_DOUBLE_EQ(expressionNode->value(0), 4.0);
 }
 
 } // namespace UnitTest
