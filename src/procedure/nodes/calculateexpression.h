@@ -18,7 +18,7 @@ class CalculateExpressionProcedureNode : public CalculateProcedureNodeBase
      */
     private:
     // Expression to evaluate
-    NodeValue expression_{};
+    NodeValue expression_;
 
     public:
     // Return number of sites required to calculate observable

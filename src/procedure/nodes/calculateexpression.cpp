@@ -33,6 +33,6 @@ int CalculateExpressionProcedureNode::dimensionality() const { return 1; }
 // Execute node
 bool CalculateExpressionProcedureNode::execute()
 {
-    value_ = expression_.asDouble();
+    value_.x = expression_.asDouble();
     return true;
 }
