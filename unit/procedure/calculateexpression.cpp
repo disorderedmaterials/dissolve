@@ -21,6 +21,11 @@ TEST(CalculateExpressionTest, Basic)
     expressionNode->keywords().set("Expression", NodeValue(4));
     expressionNode->execute();
     EXPECT_DOUBLE_EQ(expressionNode->value(0), 4.0);
+
+    // Expresssions
+    expressionNode->keywords().set("Expression", NodeValue(3.8 * sin(1.2)));
+    expressionNode->execute();
+    EXPECT_DOUBLE_EQ(expressionNode->value(0), 3.8 * sin(1.2));
 }
 
 } // namespace UnitTest
