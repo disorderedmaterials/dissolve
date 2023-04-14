@@ -12,12 +12,10 @@
 #include <iterator>
 #include <numeric>
 
-EnergyKernel::EnergyKernel(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
+EnergyKernel::EnergyKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
                            std::optional<double> energyCutoff)
-    : box_(cfg->box()), cellArray_(cfg->cells()), potentialMap_(potentialMap), processPool_(procPool)
+    : GeometryKernel(cfg, procPool, potentialMap, energyCutoff)
 {
-    cutoffDistanceSquared_ =
-        energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
 }
 
 /*
@@ -38,7 +36,7 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i, const Atom &j, double r,
  */
 
 // Return PairPotential energy of atoms in the supplied cell
-double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular) const
+double EnergyKernel::cellEnergy(const Cell &cell, bool includeIntraMolecular) const
 {
     auto totalEnergy = 0.0;
     auto &atoms = cell.atoms();
@@ -77,7 +75,8 @@ double EnergyKernel::energy(const Cell &cell, bool includeIntraMolecular) const
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular) const
+double EnergyKernel::cellToCellEnergy(const Cell &centralCell, const Cell &otherCell, bool applyMim,
+                                      bool includeIntraMolecular) const
 {
     auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell.atoms();
@@ -149,8 +148,11 @@ double EnergyKernel::energy(const Cell &centralCell, const Cell &otherCell, bool
 // Return PairPotential energy of Atom with world
 double EnergyKernel::pairPotentialEnergy(const Atom &i) const
 {
+    assert(cellArray_);
+    auto &cells = cellArray_->get();
+
     // Get cell neighbours for atom i's cell
-    auto &neighbours = cellArray_.neighbours(*i.cell());
+    auto &neighbours = cells.neighbours(*i.cell());
 
     return dissolve::transform_reduce(ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
                                       [&i, this](const auto &neighbour)
@@ -183,6 +185,9 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i) const
 double EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular,
                                          ProcessPool::DivisionStrategy strategy) const
 {
+    assert(cellArray_);
+    auto &cells = cellArray_->get();
+
     // Create a map of atoms in cells so we can treat all atoms with the same set of neighbours at once
     std::map<Cell *, std::vector<const Atom *>> locationMap;
     for (auto &i : mol.atoms())
@@ -195,7 +200,7 @@ double EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraM
             const auto &centralCellAtoms = location.second;
 
             // Get cell neighbours for the cell
-            auto &neighbours = cellArray_.neighbours(*location.first);
+            auto &neighbours = cells.neighbours(*location.first);
 
             auto localEnergy = dissolve::transform_reduce(
                 ParallelPolicies::par, neighbours.begin(), neighbours.end(), 0.0, std::plus<double>(),
@@ -258,8 +263,11 @@ double EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraM
 // Return total interatomic PairPotential energy of the world
 double EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
 {
+    assert(cellArray_);
+    auto &cells = cellArray_->get();
+
     // List of cell neighbour pairs
-    auto &cellNeighbourPairs = cellArray_.getCellNeighbourPairs();
+    auto &cellNeighbourPairs = cells.getCellNeighbourPairs();
 
     // Set start/stride for parallel loop
     auto offset = processPool_.interleavedLoopStart(strategy);
@@ -275,122 +283,10 @@ double EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular, Proces
                                                   auto &cellJ = pair.neighbour_;
                                                   auto mimRequired = pair.requiresMIM_;
                                                   if (&cellI == &cellJ)
-                                                      return energy(cellI, includeIntraMolecular);
+                                                      return cellEnergy(cellI, includeIntraMolecular);
                                                   else
-                                                      return energy(cellI, cellJ, mimRequired, includeIntraMolecular);
+                                                      return cellToCellEnergy(cellI, cellJ, mimRequired, includeIntraMolecular);
                                               });
 
     return totalEnergy;
-}
-
-/*
- * Intramolecular Terms
- */
-
-// Return SpeciesBond energy at Atoms specified
-double EnergyKernel::energy(const SpeciesBond &b, const Atom &i, const Atom &j) const
-{
-    return b.energy(box_->minimumDistance(i.r(), j.r()));
-}
-
-// Return SpeciesAngle energy at Atoms specified
-double EnergyKernel::energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const
-{
-    return a.energy(Box::angleInDegrees(box_->minimumVectorN(j.r(), i.r()), box_->minimumVectorN(j.r(), k.r())));
-}
-
-// Return SpeciesTorsion energy at Atoms specified
-double EnergyKernel::energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const
-{
-    return t.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
-                                          box_->minimumVector(k.r(), l.r())));
-}
-
-// Return SpeciesImproper energy at Atoms specified
-double EnergyKernel::energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const
-{
-    return imp.energy(Box::torsionInDegrees(box_->minimumVector(j.r(), i.r()), box_->minimumVector(j.r(), k.r()),
-                                            box_->minimumVector(k.r(), l.r())));
-}
-
-// Return intramolecular energy for the supplied Atom
-double EnergyKernel::intramolecularEnergy(const Molecule &mol, const Atom &i) const
-{
-    // Get the SpeciesAtom
-    const auto *spAtom = i.speciesAtom();
-    assert(spAtom);
-
-    // If no terms are present, return zero
-    if ((spAtom->nBonds() == 0) && (spAtom->nAngles() == 0) && (spAtom->nTorsions() == 0))
-        return 0.0;
-
-    auto intraEnergy = 0.0;
-
-    // Add energy from SpeciesAngle terms
-    intraEnergy += std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesBond &bond)
-                                   { return acc + energy(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ())); });
-
-    // Add energy from SpeciesAngle terms
-    intraEnergy += std::accumulate(
-        spAtom->angles().begin(), spAtom->angles().end(), 0.0,
-        [this, &mol](const auto acc, const SpeciesAngle &angle)
-        { return acc + energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
-
-    // Add energy from SpeciesTorsion terms
-    intraEnergy += std::accumulate(spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesTorsion &torsion)
-                                   {
-                                       return acc + energy(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()),
-                                                           *mol.atom(torsion.indexK()), *mol.atom(torsion.indexL()));
-                                   });
-
-    // Add energy from SpeciesImproper terms
-    intraEnergy += std::accumulate(spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
-                                   [this, &mol](const auto acc, const SpeciesImproper &improper)
-                                   {
-                                       return acc + energy(improper, *mol.atom(improper.indexI()), *mol.atom(improper.indexJ()),
-                                                           *mol.atom(improper.indexK()), *mol.atom(improper.indexL()));
-                                   });
-
-    return intraEnergy;
-}
-
-// Return intramolecular energy for the supplied Molecule
-double EnergyKernel::intramolecularEnergy(const Molecule &mol) const
-{
-    auto intraEnergy = 0.0;
-
-    // Loop over Bonds
-    intraEnergy = dissolve::transform_reduce(
-        ParallelPolicies::par, mol.species()->bonds().begin(), mol.species()->bonds().end(), intraEnergy, std::plus<double>(),
-        [&mol, this](const auto &bond) { return energy(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ())); });
-
-    // Loop over Angles
-    intraEnergy = dissolve::transform_reduce(
-        ParallelPolicies::seq, mol.species()->angles().begin(), mol.species()->angles().end(), intraEnergy, std::plus<double>(),
-        [&mol, this](const auto &angle) -> double
-        { return energy(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK())); });
-
-    // Loop over Torsions
-    intraEnergy =
-        dissolve::transform_reduce(ParallelPolicies::par, mol.species()->torsions().begin(), mol.species()->torsions().end(),
-                                   intraEnergy, std::plus<double>(),
-                                   [&mol, this](const auto &torsion) -> double
-                                   {
-                                       return energy(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()),
-                                                     *mol.atom(torsion.indexK()), *mol.atom(torsion.indexL()));
-                                   });
-
-    // Loop over Impropers
-    intraEnergy =
-        dissolve::transform_reduce(ParallelPolicies::par, mol.species()->impropers().begin(), mol.species()->impropers().end(),
-                                   intraEnergy, std::plus<double>(),
-                                   [&mol, this](const auto &improper) -> double
-                                   {
-                                       return energy(improper, *mol.atom(improper.indexI()), *mol.atom(improper.indexJ()),
-                                                     *mol.atom(improper.indexK()), *mol.atom(improper.indexL()));
-                                   });
-
-    return intraEnergy;
 }

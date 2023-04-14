@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/processpool.h"
+#include "kernels/geometry.h"
 #include <memory>
 #include <optional>
 
@@ -20,26 +21,16 @@ class SpeciesAngle;
 class SpeciesImproper;
 class SpeciesTorsion;
 
-// Energy Kernel
-class EnergyKernel
+// Standard Energy Kernel, inheriting GeometryKernel
+class EnergyKernel : public GeometryKernel
 {
-    public:
-    EnergyKernel(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
+    private:
+    friend class KernelProducer;
+    EnergyKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
                  std::optional<double> energyCutoff = {});
-    ~EnergyKernel() = default;
 
-    /*
-     * Source Data
-     */
-    protected:
-    // Source Box (from Configuration)
-    const Box *box_;
-    // Source CellArray (from Configuration)
-    const CellArray &cellArray_;
-    // Potential map to use
-    const PotentialMap &potentialMap_;
-    // Squared cutoff distance to use in calculation
-    double cutoffDistanceSquared_;
+    public:
+    ~EnergyKernel() = default;
 
     /*
      * Base Routines
@@ -55,9 +46,9 @@ class EnergyKernel
      */
     private:
     // Return PairPotential energy of atoms in the supplied cell
-    double energy(const Cell &cell, bool includeIntraMolecular) const;
+    double cellEnergy(const Cell &cell, bool includeIntraMolecular) const;
     // Return PairPotential energy between two cells
-    double energy(const Cell &cell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular) const;
+    double cellToCellEnergy(const Cell &cell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular) const;
 
     public:
     // Return PairPotential energy of atom with world
@@ -66,28 +57,4 @@ class EnergyKernel
     double pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
     // Return total interatomic PairPotential energy of the world
     double totalPairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
-
-    /*
-     * Intramolecular Terms
-     */
-    public:
-    // Return SpeciesBond energy at Atoms specified
-    double energy(const SpeciesBond &b, const Atom &i, const Atom &j) const;
-    // Return SpeciesAngle energy at Atoms specified
-    double energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const;
-    // Return SpeciesTorsion energy at Atoms specified
-    double energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
-    // Return SpeciesImproper energy at Atoms specified
-    double energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
-    // Return intramolecular energy for the supplied Atom
-    double intramolecularEnergy(const Molecule &mol, const Atom &i) const;
-    // Return intramolecular energy for the supplied Molecule
-    double intramolecularEnergy(const Molecule &mol) const;
-
-    /*
-     * Parallel Comms
-     */
-    private:
-    // Process pool over which this kernel operates
-    const ProcessPool &processPool_;
 };

@@ -7,7 +7,7 @@
 #include "classes/changestore.h"
 #include "classes/configuration.h"
 #include "classes/regionaldistributor.h"
-#include "kernels/energy.h"
+#include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "modules/atomshake/atomshake.h"
 
@@ -39,7 +39,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore(procPool, commsTimer);
-    EnergyKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap(), rCut);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, procPool, dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
@@ -84,8 +84,8 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             for (const auto &i : mol->atoms())
             {
                 // Calculate reference energies for the Atom
-                currentEnergy = kernel.pairPotentialEnergy(*i);
-                currentIntraEnergy = kernel.intramolecularEnergy(*mol, *i) * termScale;
+                currentEnergy = kernel->pairPotentialEnergy(*i);
+                currentIntraEnergy = kernel->totalGeometryEnergy(*mol, *i) * termScale;
 
                 // Loop over number of shakes per Atom
                 for (shake = 0; shake < nShakesPerAtom_; ++shake)
@@ -99,8 +99,8 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     targetConfiguration_->updateCellLocation(i);
 
                     // Calculate new energy
-                    newEnergy = kernel.pairPotentialEnergy(*i);
-                    newIntraEnergy = kernel.intramolecularEnergy(*mol, *i) * termScale;
+                    newEnergy = kernel->pairPotentialEnergy(*i);
+                    newIntraEnergy = kernel->totalGeometryEnergy(*mol, *i) * termScale;
 
                     // Trial the transformed Atom position
                     delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);

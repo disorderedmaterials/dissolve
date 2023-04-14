@@ -4,10 +4,12 @@ add_library(
   energy.cpp
   force.cpp
   geometry.cpp
+  producer.cpp
   base.h
   energy.h
   force.h
   geometry.h
+  producer.h
 )
 
 target_include_directories(kernels PRIVATE ${PROJECT_SOURCE_DIR}/src)

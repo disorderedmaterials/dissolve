@@ -5,7 +5,7 @@
 #include "classes/configuration.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
-#include "kernels/force.h"
+#include "kernels/producer.h"
 #include "modules/forces/forces.h"
 
 // Calculate total forces within the supplied Configuration
@@ -22,13 +22,13 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
         std::fill(fBound.begin(), fBound.end(), Vec3<double>());
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg, potentialMap);
+    auto kernel = KernelProducer::forceKernel(cfg, procPool, potentialMap);
 
     // Calculate pair potential forces between all atoms (including within molecules)
     if (calculationType == ForceCalculationType::Full || calculationType == ForceCalculationType::PairPotentialOnly)
     {
         timer.start();
-        kernel.totalPairPotentialForces(fUnbound, ProcessPool::PoolStrategy);
+        kernel->totalPairPotentialForces(fUnbound, ProcessPool::PoolStrategy);
         timer.stop();
         Messenger::printVerbose("Time to do pair potential forces was {}.\n", timer.totalTimeString());
     }
@@ -39,8 +39,8 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
         // Only include intramolecular pairpotential terms if the calculation type is ForceCalculationType::IntraMolecularFull -
         // they will have already been calculated above in the case of ForceCalculationType::Full
         timer.start();
-        kernel.totalIntramolecularForces(fBound, calculationType == ForceCalculationType::IntraMolecularFull,
-                                         ProcessPool::PoolStrategy);
+        kernel->totalIntramolecularForces(fBound, calculationType == ForceCalculationType::IntraMolecularFull,
+                                          ProcessPool::PoolStrategy);
         timer.stop();
         Messenger::printVerbose("Time to do internal molecule forces was {}.\n", timer.totalTimeString());
     }
@@ -136,25 +136,25 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
     if (calculationType != ForceCalculationType::PairPotentialOnly)
     {
         // Create a ForceKernel with a dummy CellArray - we only want it for the intramolecular force routines
-        ForceKernel kernel(procPool, sp->box(), potentialMap);
+        auto kernel = KernelProducer::forceKernel(sp->box(), procPool, potentialMap);
 
         // Loop over bonds
         for (const auto &b : sp->bonds())
-            kernel.forces(b, rFunction(b.i()->index(), b.i()), rFunction(b.j()->index(), b.j()), fBound);
+            kernel->bondForces(b, rFunction(b.i()->index(), b.i()), rFunction(b.j()->index(), b.j()), fBound);
 
         // Loop over angles
         for (const auto &a : sp->angles())
-            kernel.forces(a, rFunction(a.i()->index(), a.i()), rFunction(a.j()->index(), a.j()),
-                          rFunction(a.k()->index(), a.k()), fBound);
+            kernel->angleForces(a, rFunction(a.i()->index(), a.i()), rFunction(a.j()->index(), a.j()),
+                                rFunction(a.k()->index(), a.k()), fBound);
 
         // Loop over torsions
         for (const auto &t : sp->torsions())
-            kernel.forces(t, rFunction(t.i()->index(), t.i()), rFunction(t.j()->index(), t.j()),
-                          rFunction(t.k()->index(), t.k()), rFunction(t.l()->index(), t.l()), fBound);
+            kernel->torsionForces(t, rFunction(t.i()->index(), t.i()), rFunction(t.j()->index(), t.j()),
+                                  rFunction(t.k()->index(), t.k()), rFunction(t.l()->index(), t.l()), fBound);
 
         // Loop over impropers
         for (const auto &imp : sp->impropers())
-            kernel.forces(imp, rFunction(imp.i()->index(), imp.i()), rFunction(imp.j()->index(), imp.j()),
-                          rFunction(imp.k()->index(), imp.k()), rFunction(imp.l()->index(), imp.l()), fBound);
+            kernel->improperForces(imp, rFunction(imp.i()->index(), imp.i()), rFunction(imp.j()->index(), imp.j()),
+                                   rFunction(imp.k()->index(), imp.k()), rFunction(imp.l()->index(), imp.l()), fBound);
     }
 }
