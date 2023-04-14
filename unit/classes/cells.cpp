@@ -4,7 +4,7 @@
 #include "classes/atomchangetoken.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
-#include "kernels/energy.h"
+#include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "templates/algorithms.h"
 #include <gtest/gtest.h>
@@ -86,17 +86,17 @@ TEST(CellsTest, Basic)
         auto [rCut, cellSize, refEnergy] = state;
 
         // Initialise an EnergyKernel with the specified cutoff
-        EnergyKernel energyKernel(dissolve.worldPool(), cfg, dissolve.potentialMap(), rCut);
+        auto kernel = KernelProducer::energyKernel(cfg, dissolve.worldPool(), dissolve.potentialMap(), rCut);
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve.pairPotentialRange());
         cfg->updateCellContents(true);
 
         // Calculate total Cell-based energy
-        EXPECT_NEAR(refEnergy, energyKernel.totalPairPotentialEnergy(false, ProcessPool::PoolStrategy), 1.0e-4);
+        EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy), 1.0e-4);
 
         // Calculate atomic energy from the Ar
-        EXPECT_NEAR(refEnergy, energyKernel.pairPotentialEnergy(cfg->atom(0)), 1.0e-4);
+        EXPECT_NEAR(refEnergy, kernel->pairPotentialEnergy(cfg->atom(0)), 1.0e-4);
     }
 }
 

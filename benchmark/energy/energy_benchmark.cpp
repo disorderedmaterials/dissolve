@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
+
 #include "benchmark/benchmark.h"
 #include "classes/cell.h"
-#include "kernels/energy.h"
 #include "classes/species.h"
 #include "common/problems.h"
+#include "kernels/producer.h"
 
-template <ProblemType problem, Population population> EnergyKernel createEnergyKernel(Problem<problem, population> &problemDef)
+template <ProblemType problem, Population population>
+std::unique_ptr<EnergyKernel> createEnergyKernel(Problem<problem, population> &problemDef)
 {
 
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     auto *cfg = problemDef.cfg_;
-    EnergyKernel kernel(procPool, cfg, potentialMap);
-    return kernel;
+    return KernelProducer::energyKernel(cfg, procPool, potentialMap);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateEnergy_AtomicWorldEnergy(benchmark::State &state)
@@ -22,7 +23,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     auto energyKernel = createEnergyKernel(problemDef);
     auto &i = problemDef.cfg_->atom(0);
     for (auto _ : state)
-        energyKernel.pairPotentialEnergy(i);
+        energyKernel->pairPotentialEnergy(i);
 }
 
 template <ProblemType problem, Population population>
@@ -44,7 +45,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     const auto mol = problemDef.cfg_->molecules().front();
     for (auto _ : state)
     {
-        double molecularEnergy = energyKernel.pairPotentialEnergy(*mol, false, ProcessPool::PoolStrategy);
+        double molecularEnergy = energyKernel->pairPotentialEnergy(*mol, false, ProcessPool::PoolStrategy);
         benchmark::DoNotOptimize(molecularEnergy);
     }
 }
