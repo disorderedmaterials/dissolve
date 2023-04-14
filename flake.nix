@@ -149,6 +149,7 @@
               })
               ccache
               ccls
+              cmakeWithGui
               cmake-format
               cmake-language-server
               conan

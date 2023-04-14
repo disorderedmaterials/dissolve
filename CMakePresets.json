@@ -9,8 +9,9 @@
 	{
 	    "name": "base",
 	    "displayName": "Basic Config",
-	    "description": "The base from which all presets inherit"
-            "generator": "Ninja"
+	    "description": "The base from which all presets inherit",
+	    "hidden": true,
+            "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/",
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/",
@@ -21,6 +22,7 @@
 	    "name": "nix",
 	    "displayName": "Common settings for all Nix builds",
 	    "description": "Common settings for building on Nix systems",
+	    "hidden": true,
             "cacheVariables": {
                 "CONAN": "OFF",
                 "AntlrRuntime_INCLUDE_DIRS": "$env{AntlrRuntime_INCLUDE_DIRS}",
@@ -28,43 +30,51 @@
 	    }
 	},
 	{
+	    "name": "tests",
+	    "displayName": "Testing and benchmark settings",
+	    "description": "Common settings to build tests and benchmarks",
+	    "hidden": true,
+            "cacheVariables": {
+                "BUILD_SYSTEM_TESTS": "ON",
+                "BUILD_UNIT_TESTS": "ON",
+                "BUILD_BENCHMARKS": "ON"
+            }
+	},
+
+	{
             "name": "Release",
             "displayName": "Release build settings",
             "description": "Common settings for all release builds",
+	    "hidden": true,
             "cacheVariables": {
-                "GUI": "OFF",
-                "BUILD_SYSTEM_TESTS": "OFF",
-                "BUILD_UNIT_TESTS": "OFF",
-                "BUILD_BENCHMARKS": "OFF",
-                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_BUILD_TYPE": "Release"
             }
 	},
         {
             "name": "Debug",
             "displayName": "Debug build settings",
             "description": "Common settings for all debug builds",
+	    "hidden": true,
             "cacheVariables": {
-                "GUI": "ON",
-                "BUILD_SYSTEM_TESTS": "ON",
-                "BUILD_UNIT_TESTS": "ON",
-                "BUILD_BENCHMARKS": "ON",
-                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
 	{
 	    "name": "GUI-base",
 	    "displayName": "GUI build settings",
-	    "description": "Common settings for all GUI builds"
+	    "description": "Common settings for all GUI builds",
+	    "hidden": true,
             "cacheVariables": {
-                "GUI": "ON",
+                "GUI": "ON"
 	    }
 	},
 	{
 	    "name": "parallel-base",
 	    "displayName": "parallel build settings",
-	    "description": "Common settings for all GUI builds"
+	    "description": "Common settings for all GUI builds",
+	    "hidden": true,
             "cacheVariables": {
-                "PARALLEL": "ON",
+                "PARALLEL": "ON"
 	    }
 	},
 
@@ -72,58 +82,94 @@
 	{
 	    "name": "GUI",
 	    "displayName": "GUI Build",
-	    "description": "The preset for a GUI developer build, with tests and debugging enabled",
-	    "inherits": ["base", "Debug", "GUI-base"]
+	    "description": "The preset for a GUI developer build with tests",
+	    "inherits": ["base", "Release", "GUI-base", "tests"]
 	},
 	{
 	    "name": "GUI-Release",
 	    "displayName": "GUI Release Build",
-	    "description": "The preset for a GUI production build, with highest optimisations",
+	    "description": "The preset for a GUI production build without tests",
 	    "inherits": ["base", "Release", "GUI-base"]
+	},
+	{
+	    "name": "GUI-Debug",
+	    "displayName": "GUI Debug Build",
+	    "description": "The preset for a GUI debug build with tests",
+	    "inherits": ["base", "Debug", "GUI-base", "tests"]
 	},
 	{
 	    "name": "GUI-nix",
 	    "displayName": "GUI Nix Build",
-	    "description": "The preset for a GUI developer build on a Nix system, with tests and debugging enabled",
-	    "inherits": ["base", "Release", "GUI-base", "nix"]
+	    "description": "The preset for a GUI developer build on a Nix system with tests",
+	    "inherits": ["base", "Release", "GUI-base", "nix", "tests"]
+	},
+	{
+	    "name": "GUI-Debug-nix",
+	    "displayName": "GUI Debug Nix Build",
+	    "description": "The preset for a GUI debug build on a Nix system with tests",
+	    "inherits": ["base", "Debug", "GUI-base", "nix", "tests"]
 	},
 
 	{
 	    "name": "parallel",
 	    "displayName": "Parallel Build",
-	    "description": "The preset for a parallel developer build, with tests and debugging enabled",
-	    "inherits": ["base", "Debug", "parallel-base"]
+	    "description": "The preset for a parallel developer build, with tests",
+	    "inherits": ["base", "Release", "parallel-base", "tests"]
 	},
 	{
 	    "name": "parallel-Release",
 	    "displayName": "Parallel Release Build",
-	    "description": "The preset for a parallel production build, with highest optimisations",
+	    "description": "The preset for a parallel production build, with without tests",
 	    "inherits": ["base", "Release", "parallel-base"]
+	},
+	{
+	    "name": "parallel-Debug",
+	    "displayName": "Parallel Debug Build",
+	    "description": "The preset for a parallel debug build, with tests and debugging enabled",
+	    "inherits": ["base", "Debug", "parallel-base", "tests"]
 	},
 	{
 	    "name": "parallel-nix",
 	    "displayName": "Parallel Nix Build",
-	    "description": "The preset for a parallel developer build on a Nix system, with tests and debugging enabled",
+	    "description": "The preset for a parallel developer build on a Nix system, with tests",
 	    "inherits": ["base", "Release", "parallel-base", "nix"]
+	},
+	{
+	    "name": "parallel-Debug-nix",
+	    "displayName": "Parallel Debug Nix Build",
+	    "description": "The preset for a parallel debug build on a Nix system, with tests",
+	    "inherits": ["base", "Debug", "parallel-base", "nix"]
 	},
 
 	{
 	    "name": "cli",
 	    "displayName": "Cli Build",
-	    "description": "The preset for a cli developer build, with tests and debugging enabled",
-	    "inherits": ["base", "Debug"]
+	    "description": "The preset for a cli developer build with tests",
+	    "inherits": ["base", "Release"]
 	},
 	{
 	    "name": "cli-Release",
 	    "displayName": "Cli Release Build",
-	    "description": "The preset for a cli production build, with highest optimisations",
+	    "description": "The preset for a cli production build without tests",
 	    "inherits": ["base", "Release"]
+	},
+	{
+	    "name": "cli-Debug",
+	    "displayName": "Cli Debug Build",
+	    "description": "The preset for a cli debug build with tests",
+	    "inherits": ["base", "Debug"]
 	},
 	{
 	    "name": "cli-nix",
 	    "displayName": "Cli Nix Build",
-	    "description": "The preset for a cli developer build on a Nix system, with tests and debugging enabled",
+	    "description": "The preset for a cli developer build on a Nix system with tests",
 	    "inherits": ["base", "Release", "nix"]
+	},
+	{
+	    "name": "cli-Debug-nix",
+	    "displayName": "Cli Debug Nix Build",
+	    "description": "The preset for a cli debug build on a Nix system with tests",
+	    "inherits": ["base", "Debug", "nix"]
 	},
 
         {
@@ -131,6 +177,6 @@
             "displayName": "SCARF build",
             "description": "Best setup for SCARF",
 	    "inherits" : ["parallel-Release"]
-        },
+        }
     ]
 }
