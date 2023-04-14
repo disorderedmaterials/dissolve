@@ -6,49 +6,131 @@
         "patch": 0
     },
     "configurePresets": [
-        {
-            "name": "default",
-            "displayName": "Default Config",
-            "description": "Default build using Ninja",
-            "generator": "Ninja"
-        },
 	{
-            "name": "Release",
-            "displayName": "Custom configure preset",
-            "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+	    "name": "base",
+	    "displayName": "Basic Config",
+	    "description": "The base from which all presets inherit"
+            "generator": "Ninja"
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/",
+		"CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+	    }
+	},
+	{
+	    "name": "nix",
+	    "displayName": "Common settings for all Nix builds",
+	    "description": "Common settings for building on Nix systems",
             "cacheVariables": {
                 "CONAN": "OFF",
-                "GUI": "OFF",
-                "BUILD_SYSTEM_TESTS": "ON",
-                "BUILD_UNIT_TESTS": "ON",
-                "BUILD_BENCHMARKS": "ON",
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-		"CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "AntlrRuntime_INCLUDE_DIRS": "$env{AntlrRuntime_INCLUDE_DIRS}",
                 "AntlrRuntime_LINK_DIRS": "$env{AntlrRuntime_LINK_DIRS}"
+	    }
+	},
+	{
+            "name": "Release",
+            "displayName": "Release build settings",
+            "description": "Common settings for all release builds",
+            "cacheVariables": {
+                "GUI": "OFF",
+                "BUILD_SYSTEM_TESTS": "OFF",
+                "BUILD_UNIT_TESTS": "OFF",
+                "BUILD_BENCHMARKS": "OFF",
+                "CMAKE_BUILD_TYPE": "Release",
             }
 	},
         {
             "name": "Debug",
-            "displayName": "Custom configure preset",
-            "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "displayName": "Debug build settings",
+            "description": "Common settings for all debug builds",
             "cacheVariables": {
-                "CONAN": "OFF",
                 "GUI": "ON",
                 "BUILD_SYSTEM_TESTS": "ON",
                 "BUILD_UNIT_TESTS": "ON",
                 "BUILD_BENCHMARKS": "ON",
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-		"CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "AntlrRuntime_INCLUDE_DIRS": "$env{AntlrRuntime_INCLUDE_DIRS}",
-                "AntlrRuntime_LINK_DIRS": "$env{AntlrRuntime_LINK_DIRS}"
             }
-        }
+        },
+	{
+	    "name": "GUI-base",
+	    "displayName": "GUI build settings",
+	    "description": "Common settings for all GUI builds"
+            "cacheVariables": {
+                "GUI": "ON",
+	    }
+	},
+	{
+	    "name": "parallel-base",
+	    "displayName": "parallel build settings",
+	    "description": "Common settings for all GUI builds"
+            "cacheVariables": {
+                "PARALLEL": "ON",
+	    }
+	},
+
+
+	{
+	    "name": "GUI",
+	    "displayName": "GUI Build",
+	    "description": "The preset for a GUI developer build, with tests and debugging enabled",
+	    "inherits": ["base", "Debug", "GUI-base"]
+	},
+	{
+	    "name": "GUI-Release",
+	    "displayName": "GUI Release Build",
+	    "description": "The preset for a GUI production build, with highest optimisations",
+	    "inherits": ["base", "Release", "GUI-base"]
+	},
+	{
+	    "name": "GUI-nix",
+	    "displayName": "GUI Nix Build",
+	    "description": "The preset for a GUI developer build on a Nix system, with tests and debugging enabled",
+	    "inherits": ["base", "Release", "GUI-base", "nix"]
+	},
+
+	{
+	    "name": "parallel",
+	    "displayName": "Parallel Build",
+	    "description": "The preset for a parallel developer build, with tests and debugging enabled",
+	    "inherits": ["base", "Debug", "parallel-base"]
+	},
+	{
+	    "name": "parallel-Release",
+	    "displayName": "Parallel Release Build",
+	    "description": "The preset for a parallel production build, with highest optimisations",
+	    "inherits": ["base", "Release", "parallel-base"]
+	},
+	{
+	    "name": "parallel-nix",
+	    "displayName": "Parallel Nix Build",
+	    "description": "The preset for a parallel developer build on a Nix system, with tests and debugging enabled",
+	    "inherits": ["base", "Release", "parallel-base", "nix"]
+	},
+
+	{
+	    "name": "cli",
+	    "displayName": "Cli Build",
+	    "description": "The preset for a cli developer build, with tests and debugging enabled",
+	    "inherits": ["base", "Debug"]
+	},
+	{
+	    "name": "cli-Release",
+	    "displayName": "Cli Release Build",
+	    "description": "The preset for a cli production build, with highest optimisations",
+	    "inherits": ["base", "Release"]
+	},
+	{
+	    "name": "cli-nix",
+	    "displayName": "Cli Nix Build",
+	    "description": "The preset for a cli developer build on a Nix system, with tests and debugging enabled",
+	    "inherits": ["base", "Release", "nix"]
+	},
+
+        {
+            "name": "SCARF",
+            "displayName": "SCARF build",
+            "description": "Best setup for SCARF",
+	    "inherits" : ["parallel-Release"]
+        },
     ]
 }
