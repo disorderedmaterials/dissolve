@@ -149,5 +149,29 @@ bool Configuration::deserialise(LineParser &parser, const std::vector<std::uniqu
     // Update Cell locations for Atoms
     updateCellContents();
 
+    // If this an old-style configuration with no potentials we can end here
+    if (!hasPotentials)
+        return true;
+
+    // Read in global potentials
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    globalPotentials_.resize(parser.argi(0));
+    for (auto &pot : globalPotentials_)
+    {
+        // First line contains potential type
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        auto potentialType = ExternalPotentialTypes::isType(parser.argsv(0));
+        if (!potentialType)
+            return Messenger::error("Unrecognised external potential type '{}' found in Configuration '{}' in restart file.\n",
+                                    parser.argsv(0), name());
+
+        // Create new global potential
+        pot = ExternalPotentialProducer::create(*potentialType);
+        if (!pot->deserialise(parser, coreData))
+            return false;
+    }
+
     return true;
 }

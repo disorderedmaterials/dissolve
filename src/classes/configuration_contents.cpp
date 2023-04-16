@@ -17,6 +17,7 @@ void Configuration::empty()
     atomTypes_.clear();
     appliedSizeFactor_ = 1.0;
     speciesPopulations_.clear();
+    globalPotentials_.clear();
 
     ++contentsVersion_;
 }
