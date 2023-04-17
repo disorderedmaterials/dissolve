@@ -26,20 +26,12 @@ const std::vector<std::string> &ShortRangeFunctions::parameters(Form form)
 }
 
 // Return nth parameter for the given form
-std::string ShortRangeFunctions::parameter(Form form, int n)
-{
-    return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
-}
+std::string ShortRangeFunctions::parameter(Form form, int n) { return DissolveSys::stringAt(parameters(form), n); }
 
 // Return index of parameter in the given form
 std::optional<int> ShortRangeFunctions::parameterIndex(Form form, std::string_view name)
 {
-    auto it = std::find_if(parameters(form).begin(), parameters(form).end(),
-                           [name](const auto &param) { return DissolveSys::sameString(name, param); });
-    if (it == parameters(form).end())
-        return {};
-
-    return it - parameters(form).begin();
+    return DissolveSys::indexOf(parameters(form), name);
 }
 
 AtomType::AtomType(Elements::Element Z) : Z_(Z), interactionPotential_(ShortRangeFunctions::Form::None) {}
