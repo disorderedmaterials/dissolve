@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <fmt/core.h>
+#include <optional>
 #include <string_view>
 #include <vector>
 
