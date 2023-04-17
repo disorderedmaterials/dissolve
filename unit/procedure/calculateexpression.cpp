@@ -5,6 +5,7 @@
 #include "procedure/procedure.h"
 #include <gtest/gtest.h>
 #include <string>
+#include "src/math/constants.h"
 
 namespace UnitTest
 {
@@ -25,7 +26,7 @@ TEST(CalculateExpressionTest, Basic)
     // Expresssions
     expressionNode->keywords().set("Expression", NodeValue("3.8 * sin(1.2)"));
     expressionNode->execute();
-    EXPECT_DOUBLE_EQ(expressionNode->value(0), 3.8 * sin(1.2));
+    EXPECT_DOUBLE_EQ(expressionNode->value(0), 3.8 * sin(1/DEGRAD*1.2));
 }
 
 } // namespace UnitTest
