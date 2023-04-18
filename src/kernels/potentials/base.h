@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "kernels/potentials/types.h"
 #include "keywords/store.h"
 
 // Forward Declarations
@@ -14,8 +15,15 @@ class LineParser;
 class ExternalPotential
 {
     public:
-    AdditionalPotential();
-    ~AdditionalPotential() = default;
+    explicit ExternalPotential(ExternalPotentialTypes::ExternalPotentialType type);
+    ~ExternalPotential() = default;
+
+    /*
+     * Type
+     */
+    protected:
+    // Additional potential type
+    ExternalPotentialTypes::ExternalPotentialType type_;
 
     /*
      * Keywords

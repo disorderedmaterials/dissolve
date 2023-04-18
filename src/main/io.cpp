@@ -475,7 +475,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             processingModuleData_.deserialise(parser, coreData_, parser.args(1), parser.args(2), parser.argi(3),
                                               parser.hasArg(4) ? parser.argi(4) : 0);
         }
-        else if (DissolveSys::sameString(parser.argsv(0), "Configuration"))
+        else if (DissolveSys::startsWith(parser.argsv(0), "Configuration"))
         {
             // Let the user know what we are doing
             Messenger::print("Reading Configuration '{}'...\n", parser.argsv(1));
@@ -488,7 +488,8 @@ bool Dissolve::loadRestart(std::string_view filename)
                 error = true;
                 break;
             }
-            else if (!cfg->deserialise(parser, species(), pairPotentialRange_))
+            else if (!cfg->deserialise(parser, coreData_, pairPotentialRange_,
+                                       DissolveSys::sameString(parser.argsv(0), "ConfigurationWithPotentials")))
                 error = true;
         }
         else if (DissolveSys::sameString(parser.argsv(0), "Timing"))

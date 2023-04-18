@@ -249,8 +249,7 @@ class Configuration : public Serialisable
     // Write through specified LineParser
     bool serialise(LineParser &parser) const;
     // Read from specified LineParser
-    bool deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
-                     double pairPotentialRange);
+    bool deserialise(LineParser &parser, const CoreData &coreData, double pairPotentialRange, bool hasPotentials);
     // Express as a tree node
     SerialisedValue serialise() const override;
 };

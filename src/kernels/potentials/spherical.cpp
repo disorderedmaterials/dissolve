@@ -4,6 +4,7 @@
 #include "kernels/potentials/spherical.h"
 #include "classes/atom.h"
 #include "classes/box.h"
+#include "keywords/interactionpotential.h"
 #include "keywords/vec3double.h"
 
 // Return enum options for SphericalPotentialFunctions
@@ -39,9 +40,12 @@ std::optional<int> SphericalPotentialFunctions::parameterIndex(Form form, std::s
 }
 
 SphericalPotential::SphericalPotential()
-    : interactionPotential_(SphericalPotentialFunctions::Form::Harmonic), AdditionalPotential()
+    : interactionPotential_(SphericalPotentialFunctions::Form::Harmonic),
+      ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Spherical)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
+    keywords_.add<InteractionPotentialKeyword<SphericalPotentialFunctions>>(
+        "Form", "Functional form and parameters for the potential", interactionPotential_);
 }
 
 /*
