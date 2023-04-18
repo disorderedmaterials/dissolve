@@ -165,7 +165,12 @@
             ]);
           shellHook = ''
             export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
+            export LIBGL_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "lib" "lib/dri" [pkgs.mesa.drivers]}
+            export LIBVA_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "out" "lib/dri" [pkgs.mesa.drivers]}
+	    export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
+	    export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [pkgs.mesa.drivers]}:${pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau" [pkgs.libvdpau]}:${pkgs.lib.makeLibraryPath [pkgs.libglvnd]}"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
           '';
+
 
           AntlrRuntime_INCLUDE_DIRS =
             "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
