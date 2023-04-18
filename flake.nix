@@ -140,7 +140,7 @@
 
         defaultPackage = self.packages.${system}.dissolve;
 
-        devShells.default = pkgs.stdenv.mkDerivation {
+        devShells.default = pkgs.mkShell {
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs system pkgs ++ check_libs pkgs
             ++ (with pkgs; [
@@ -154,6 +154,7 @@
               conan
               distcc
               gdb
+              gtk3
               openmpi
               tbb
               valgrind
@@ -162,6 +163,10 @@
                 src = weggli;
               })
             ]);
+          shellHook = ''
+            export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
+          '';
+
           AntlrRuntime_INCLUDE_DIRS =
             "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
           AntlrRuntime_LINK_DIRS = "${pkgs.antlr4.runtime.cpp}/lib";
