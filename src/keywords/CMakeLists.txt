@@ -57,6 +57,7 @@ add_library(
   function1d.h
   geometrylist.h
   integer.h
+  interactionpotential.h
   isotopologueset.h
   module.h
   modulevector.h
