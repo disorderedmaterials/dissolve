@@ -142,33 +142,33 @@
 	},
 
 	{
-	    "name": "cli",
-	    "displayName": "Cli Build",
-	    "description": "The preset for a cli developer build with tests",
+	    "name": "CLI",
+	    "displayName": "CLI Build",
+	    "description": "The preset for a CLI developer build with tests",
 	    "inherits": ["base", "Release"]
 	},
 	{
-	    "name": "cli-Release",
-	    "displayName": "Cli Release Build",
-	    "description": "The preset for a cli production build without tests",
+	    "name": "CLI-Release",
+	    "displayName": "CLI Release Build",
+	    "description": "The preset for a CLI production build without tests",
 	    "inherits": ["base", "Release"]
 	},
 	{
-	    "name": "cli-Debug",
-	    "displayName": "Cli Debug Build",
-	    "description": "The preset for a cli debug build with tests",
+	    "name": "CLI-Debug",
+	    "displayName": "CLI Debug Build",
+	    "description": "The preset for a CLI debug build with tests",
 	    "inherits": ["base", "Debug"]
 	},
 	{
-	    "name": "cli-nix",
-	    "displayName": "Cli Nix Build",
-	    "description": "The preset for a cli developer build on a Nix system with tests",
+	    "name": "CLI-nix",
+	    "displayName": "CLI Nix Build",
+	    "description": "The preset for a CLI developer build on a Nix system with tests",
 	    "inherits": ["base", "Release", "nix"]
 	},
 	{
-	    "name": "cli-Debug-nix",
-	    "displayName": "Cli Debug Nix Build",
-	    "description": "The preset for a cli debug build on a Nix system with tests",
+	    "name": "CLI-Debug-nix",
+	    "displayName": "CLI Debug Nix Build",
+	    "description": "The preset for a CLI debug build on a Nix system with tests",
 	    "inherits": ["base", "Debug", "nix"]
 	},
 
