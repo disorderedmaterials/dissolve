@@ -69,8 +69,8 @@
 	    }
 	},
 	{
-	    "name": "parallel-base",
-	    "displayName": "parallel build settings",
+	    "name": "MPI-base",
+	    "displayName": "MPI build settings",
 	    "description": "Common settings for all GUI builds",
 	    "hidden": true,
             "cacheVariables": {
@@ -111,34 +111,34 @@
 	},
 
 	{
-	    "name": "parallel",
-	    "displayName": "Parallel Build",
-	    "description": "The preset for a parallel developer build, with tests",
-	    "inherits": ["base", "Release", "parallel-base", "tests"]
+	    "name": "MPI",
+	    "displayName": "MPI Build",
+	    "description": "The preset for a MPI developer build, with tests",
+	    "inherits": ["base", "Release", "MPI-base", "tests"]
 	},
 	{
-	    "name": "parallel-Release",
-	    "displayName": "Parallel Release Build",
-	    "description": "The preset for a parallel production build, with without tests",
-	    "inherits": ["base", "Release", "parallel-base"]
+	    "name": "MPI-Release",
+	    "displayName": "MPI Release Build",
+	    "description": "The preset for a MPI production build, with without tests",
+	    "inherits": ["base", "Release", "MPI-base"]
 	},
 	{
-	    "name": "parallel-Debug",
-	    "displayName": "Parallel Debug Build",
-	    "description": "The preset for a parallel debug build, with tests and debugging enabled",
-	    "inherits": ["base", "Debug", "parallel-base", "tests"]
+	    "name": "MPI-Debug",
+	    "displayName": "MPI Debug Build",
+	    "description": "The preset for a MPI debug build, with tests and debugging enabled",
+	    "inherits": ["base", "Debug", "MPI-base", "tests"]
 	},
 	{
-	    "name": "parallel-nix",
-	    "displayName": "Parallel Nix Build",
-	    "description": "The preset for a parallel developer build on a Nix system, with tests",
-	    "inherits": ["base", "Release", "parallel-base", "nix"]
+	    "name": "MPI-nix",
+	    "displayName": "MPI Nix Build",
+	    "description": "The preset for a MPI developer build on a Nix system, with tests",
+	    "inherits": ["base", "Release", "MPI-base", "nix"]
 	},
 	{
-	    "name": "parallel-Debug-nix",
-	    "displayName": "Parallel Debug Nix Build",
-	    "description": "The preset for a parallel debug build on a Nix system, with tests",
-	    "inherits": ["base", "Debug", "parallel-base", "nix"]
+	    "name": "MPI-Debug-nix",
+	    "displayName": "MPI Debug Nix Build",
+	    "description": "The preset for a MPI debug build on a Nix system, with tests",
+	    "inherits": ["base", "Debug", "MPI-base", "nix"]
 	},
 
 	{
