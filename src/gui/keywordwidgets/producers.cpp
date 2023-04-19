@@ -14,6 +14,7 @@
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/function1d.h"
 #include "gui/keywordwidgets/integer.hui"
+#include "gui/keywordwidgets/interactionpotential.h"
 #include "gui/keywordwidgets/isotopologueset.h"
 #include "gui/keywordwidgets/module.h"
 #include "gui/keywordwidgets/modulevector.h"
@@ -61,6 +62,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<FileAndFormatKeyword, FileAndFormatKeywordWidget>();
     registerProducer<Function1DKeyword, Function1DKeywordWidget>();
     registerProducer<IntegerKeyword, IntegerKeywordWidget>();
+    registerProducer<InteractionPotentialBaseKeyword, InteractionPotentialKeywordWidget>();
     registerProducer<IsotopologueSetKeyword, IsotopologueSetKeywordWidget>();
     registerProducer<ModuleKeywordBase, ModuleKeywordWidget>();
     registerProducer<ModuleVectorKeyword, ModuleVectorKeywordWidget>();

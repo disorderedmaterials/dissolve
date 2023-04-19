@@ -10,6 +10,7 @@ set(keywordwidgets_MOC_HDRS
     expressionvariablevector.h
     fileandformat.h
     function1d.h
+    interactionpotential.h
     isotopologueset.h
     module.h
     modulevector.h
@@ -49,6 +50,7 @@ set(keywordwidgets_UIS
     expressionvariablevector.ui
     fileandformat.ui
     function1d.ui
+    interactionpotential.ui
     isotopologueset.ui
     module.ui
     modulevector.ui
@@ -85,6 +87,7 @@ set(keywordwidgets_SRCS
     fileandformat_funcs.cpp
     function1d_funcs.cpp
     integer_funcs.cpp
+    interactionpotential_funcs.cpp
     isotopologueset_funcs.cpp
     module_funcs.cpp
     modulevector_funcs.cpp
