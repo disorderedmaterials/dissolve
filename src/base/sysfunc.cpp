@@ -366,6 +366,23 @@ std::string DissolveSys::doubleChars(const std::string_view s, const std::string
 }
 
 /*
+ * String Vectors
+ */
+
+// Return nth string from the given vector
+std::string DissolveSys::stringAt(const std::vector<std::string> &ss, int n) { return (n < 0 || n >= ss.size()) ? "" : ss[n]; }
+
+// Return index of string in the given vector
+std::optional<int> DissolveSys::indexOf(const std::vector<std::string> &ss, std::string_view s)
+{
+    auto it = std::find_if(ss.begin(), ss.end(), [s](const auto &t) { return DissolveSys::sameString(s, t); });
+    if (it == ss.end())
+        return {};
+
+    return it - ss.begin();
+}
+
+/*
  * Files
  */
 

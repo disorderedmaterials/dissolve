@@ -7,7 +7,6 @@
 #include "base/serialiser.h"
 #include "classes/interactionpotential.h"
 #include "data/elements.h"
-
 #include <map>
 #include <vector>
 

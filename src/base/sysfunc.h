@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <fmt/core.h>
+#include <optional>
 #include <string_view>
 #include <vector>
 
@@ -88,6 +89,15 @@ class DissolveSys
 
         return uniqueName;
     }
+
+    /*
+     * String Vectors
+     */
+    public:
+    // Return nth string from the given vector
+    static std::string stringAt(const std::vector<std::string> &ss, int n);
+    // Return index of string in the given vector
+    static std::optional<int> indexOf(const std::vector<std::string> &ss, std::string_view s);
 
     /*
      * Files
