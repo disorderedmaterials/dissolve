@@ -131,11 +131,11 @@
             runScript = if gui then
               "${nixGL.nixGLIntel}/bin/nixGLIntel ${
                 dissolve { inherit mpi gui threading; }
-              }/bin/${exe-name mpi gui}"
+              }/bin/${exe-name mpi gui} $@"
             else
               "${dissolve { inherit mpi gui threading; }}/bin/${
                 exe-name mpi gui
-              }";
+              } $@";
           };
       in {
         overlays = nixpkgs.lib.optional (system == "x86_64-linux") qtoverlay;
