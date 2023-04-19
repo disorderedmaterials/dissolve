@@ -71,7 +71,7 @@
 	{
 	    "name": "parallel-base",
 	    "displayName": "parallel build settings",
-	    "description": "Common settings for all GUI builds",
+	    "description": "Common settings for all MPI builds",
 	    "hidden": true,
             "cacheVariables": {
                 "PARALLEL": "ON"
