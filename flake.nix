@@ -115,11 +115,11 @@
             runScript = if gui then
               "${nixGL.nixGLIntel}/bin/nixGLIntel ${
                 dissolve { inherit mpi gui threading; }
-              }/bin/${exe-name mpi gui}"
+              }/bin/${exe-name mpi gui} $@"
             else
               "${dissolve { inherit mpi gui threading; }}/bin/${
                 exe-name mpi gui
-              }";
+              } $@";
           };
       in {
         checks.dissolve = dissolve { checks = true; };
