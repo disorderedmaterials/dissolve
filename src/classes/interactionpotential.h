@@ -37,7 +37,7 @@ template <class Functions> class InteractionPotential
         form_ = form;
 
         // Resize parameter vector if necessary
-        if (!Functions::forms().validNArgs(form_, parameters_.size()))
+        if (!Functions::forms().validNArgs(form_, parameters_.size(), true))
             parameters_.resize(Functions::forms().minArgs(form_).value_or(0), 0.0);
     }
     // Return functional form of interaction
