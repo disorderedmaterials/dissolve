@@ -2,11 +2,13 @@ add_library(
   kernels
   base.cpp
   energy.cpp
+  externalPotentials.cpp
   force.cpp
   geometry.cpp
   producer.cpp
   base.h
   energy.h
+  externalPotentials.h
   force.h
   geometry.h
   producer.h
