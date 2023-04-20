@@ -8,7 +8,7 @@
     weggli.flake = false;
     qt-idaaas.url = "github:disorderedmaterials/qt-idaaas";
   };
-  outputs = { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src
+  outputs = { self, nixpkgs, outdated, home-manager, flake-utils, bundlers, nixGL-src
     , qt-idaaas, weggli }:
     let
 
@@ -254,6 +254,19 @@
             config.ENTRYPOINT =
               [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
           };
+        };
+
+        homeConfigurations = {
+          "dissolve" = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = with self.homeManagerModules; [
+              user-env
+            ];
+          };
+        };
+
+        homeManagerModule = {
+          user-env = import ./nix/user-env.nix;
         };
       });
 }
