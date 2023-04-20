@@ -119,5 +119,5 @@ class GeometryKernel : public KernelBase
      */
     public:
     // Calculate total forces within the specified molecule arising from geometry terms
-    void totalGeometryForces(Molecule *mol, ForceVector &f) const;
+    void totalGeometryForces(const Molecule &mol, ForceVector &f) const;
 };
