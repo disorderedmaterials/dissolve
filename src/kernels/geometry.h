@@ -110,7 +110,7 @@ class GeometryKernel : public KernelBase
      */
     public:
     // Return total energy for the geometry terms involving the specified atom
-    double totalGeometryEnergy(const Molecule &mol, const Atom &i) const;
+    double totalGeometryEnergy(const Atom &i) const;
     // Return total energy for the geometry terms in the specified molecule
     double totalGeometryEnergy(const Molecule &mol) const;
 

@@ -85,7 +85,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 // Calculate reference energies for the Atom
                 currentEnergy = kernel->pairPotentialEnergy(*i);
-                currentIntraEnergy = kernel->totalGeometryEnergy(*mol, *i) * termScale;
+                currentIntraEnergy = kernel->totalGeometryEnergy(*i) * termScale;
 
                 // Loop over number of shakes per Atom
                 for (shake = 0; shake < nShakesPerAtom_; ++shake)
@@ -100,7 +100,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
                     // Calculate new energy
                     newEnergy = kernel->pairPotentialEnergy(*i);
-                    newIntraEnergy = kernel->totalGeometryEnergy(*mol, *i) * termScale;
+                    newIntraEnergy = kernel->totalGeometryEnergy(*i) * termScale;
 
                     // Trial the transformed Atom position
                     delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);

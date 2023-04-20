@@ -316,11 +316,12 @@ void GeometryKernel::improperForces(const SpeciesImproper &imp, const Vec3<doubl
  */
 
 // Return total energy for the geometry terms involving the specified atom
-double GeometryKernel::totalGeometryEnergy(const Molecule &mol, const Atom &i) const
+double GeometryKernel::totalGeometryEnergy(const Atom &i) const
 {
-    // Get the SpeciesAtom
+    // Get the SpeciesAtom and Molecule
     const auto *spAtom = i.speciesAtom();
     assert(spAtom);
+    const auto &mol = *i.molecule();
 
     // If no terms are present, return zero
     if ((spAtom->nBonds() == 0) && (spAtom->nAngles() == 0) && (spAtom->nTorsions() == 0))
