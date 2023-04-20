@@ -64,7 +64,7 @@ TEST(ForcesModuleTest, Unbound)
     std::vector<Vec3<double>> fReference(cfg->nAtoms());
     ASSERT_TRUE(importer.importData(fReference));
 
-    // Calculate full forces
+    // Calculate pair potential forces
     std::vector<Vec3<double>> fCalculated(cfg->nAtoms());
     ForcesModule::totalForces(dissolve.worldPool(), cfg.get(), dissolve.potentialMap(),
                               ForcesModule::ForceCalculationType::PairPotentialOnly, fCalculated, fCalculated);

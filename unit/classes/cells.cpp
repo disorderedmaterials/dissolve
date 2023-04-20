@@ -96,7 +96,7 @@ TEST(CellsTest, Basic)
         EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy), 1.0e-4);
 
         // Calculate atomic energy from the Ar
-        EXPECT_NEAR(refEnergy, kernel->pairPotentialEnergy(cfg->atom(0)), 1.0e-4);
+        EXPECT_NEAR(refEnergy, kernel->totalEnergy(cfg->atom(0)).total(), 1.0e-4);
     }
 }
 

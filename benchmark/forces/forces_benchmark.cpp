@@ -62,7 +62,7 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-        forceKernel->totalIntramolecularForces(forces, true, ProcessPool::PoolStrategy);
+        forceKernel->totalForces(forces, forces, ProcessPool::PoolStrategy, ForceKernel::ExcludePairPotential);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
@@ -83,7 +83,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-        forceKernel->totalPairPotentialForces(forces, ProcessPool::PoolStrategy);
+        forceKernel->totalForces(forces, forces, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalForces(benchmark::State &state)

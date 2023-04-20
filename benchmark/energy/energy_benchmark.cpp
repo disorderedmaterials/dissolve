@@ -23,7 +23,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     auto energyKernel = createEnergyKernel(problemDef);
     auto &i = problemDef.cfg_->atom(0);
     for (auto _ : state)
-        energyKernel->pairPotentialEnergy(i);
+        energyKernel->totalEnergy(i);
 }
 
 template <ProblemType problem, Population population>
@@ -45,7 +45,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     const auto mol = problemDef.cfg_->molecules().front();
     for (auto _ : state)
     {
-        double molecularEnergy = energyKernel->pairPotentialEnergy(*mol, false, ProcessPool::PoolStrategy);
+        double molecularEnergy = energyKernel->totalEnergy(*mol, ProcessPool::PoolStrategy).total();
         benchmark::DoNotOptimize(molecularEnergy);
     }
 }
