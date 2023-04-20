@@ -1,20 +1,20 @@
 ---
-title: Setting up your Dissolve development environment
+title: Developing on IDAaaS
 description: Instructions for creating a nix environment for developing Dissolve on IDAaaS
 ---
-# Introduction
+## Introduction
 
 The goal of this document is to enable you to setup a working
-development environment on IDAaaS. It isn\'t specific to IDAaaS and
+development environment on [IDAaaS](https://isis.analysis.stfc.ac.uk). It isn\'t specific to IDAaaS and
 should work on any Linux system to which you have sudo access.
 
-# Setting up nix
+## Setting up nix
 
 [Nix](http://nixos.org) is a distribution independent package manager
 which we will be using to install all of the libraries and tools needed
 for building Dissolve.
 
-## Install Nix
+### Install Nix
 
 First, we need to run the nix installer. It will ask a series of
 questions, to which the answer is always **yes**.
@@ -23,7 +23,7 @@ questions, to which the answer is always **yes**.
 sh <(curl -L https://nixos.org/nix/install) --daemon
 ```
 
-## Enable Flake support
+### Enable Flake support
 
 With the release of nix version 3.0, flakes will be the preferred method
 of handling nix packaging. However, version 2.0 isn\'t out yet, so we
@@ -35,14 +35,13 @@ First, we need to create the directory for the nix configuration file
 mkdir -p ~/.config/nix
 ```
 
-Now we need to add the `nix-command`{.verbatim} and `flakes`{.verbatim}
-features to nix
+Now we need to add the `nix-command` and `flakes` features to nix
 
 ``` shell
 echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
-## Trust ourselves
+### Trust ourselves
 
 So as not to waste hours recompiling code, we\'ll be downloading some of
 our dependencies from a cache. We will need to add our cache to the
@@ -54,13 +53,13 @@ echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQF
 sudo pkill nix-daemon
 ```
 
-# Setting up the environment
+## Setting up the environment
 
 If you have not done so already, close your terminal and start a new
-session. The [*nix installer*]{.spurious-link target="Install Nix"} does
+session. The [*nix installer*]({{< ref "idaaas#install-nix" >}}) does
 not take full effect until you start a fresh session.
 
-## Upgrade `git`{.verbatim}
+### Upgrade `git`
 
 IDAaaS has an outdated git version which runs into some issues with nix
 accessing the latest dissolve version.
@@ -69,22 +68,22 @@ accessing the latest dissolve version.
 nix-env -i git
 ```
 
-## Create an ssh key
+### Create an ssh key
 
-We\'ll need an ssh key to get the source from GitHub and push our
+We'll need an ssh key to get the source from GitHub and push our
 changes. If you have an existing key, you can put that in the standard
-place. Otherwise, you\'ll want to generate a new key.
+place. Otherwise, you'll want to generate a new key.
 
 ``` shell
 ssh-keygen -t ecdsa
 cat ~/.ssh/id_ecdsa.pub
 ```
 
-The `cat`{.verbatim} command will make the terminal print the public key
+The `cat` command will make the terminal print the public key
 for your GitHub key. You\'ll need to add this as a new key on the
 [GitHub new keys page](https://github.com/settings/keys).
 
-## Get Dissolve
+### Get Dissolve
 
 We download the source to Dissolve
 
@@ -92,12 +91,12 @@ We download the source to Dissolve
 git clone git@github.com:disorderedmaterials/dissolve.git
 ```
 
-## Load the Dissolve environment
+### Load the Dissolve environment
 
 We\'ll now load the dissolve development environment. This will give us
 access to all of the tools we need to build Dissolve.
 
-First, make sure that we\'re in the Dissolve source directory.
+First, make sure that we're in the Dissolve source directory.
 
 ``` shell
 cd dissolve
@@ -110,12 +109,12 @@ nix develop
 ```
 
 There is a chance that, while setting up the shell, you\'ll get a
-message about building `qtbase`{.verbatim}. If so, go grab a cup of tea.
-This means that one of our custom libraries hasn\'t been properly pulled
+message about building `qtbase`. If so, go grab a cup of tea.
+This means that one of our custom libraries hasn't been properly pulled
 from cache and it will need some time to compile. Thankfully, this will
 only ever need to happen once.
 
-## Build Dissolve
+### Build Dissolve
 
 We can now configure Dissolve.
 
@@ -137,8 +136,7 @@ Finally, test that Dissolve correctly compiled by running it
 ./build/bin/dissolve-gui
 ```
 
-We can also run the test framework. Below, we us `-j8`{.verbatim}
-because the default IDAaaS machine has eight cores. IF you\'re using a
+We can also run the test framework. Below, we use `-j8` because the default IDAaaS machine has eight cores. IF you're using a
 different machine, adjust the number to match the number of physical
 cores on your machine.
 
@@ -147,10 +145,10 @@ cd build
 ctest -j8
 ```
 
-# Optional - Home Manager Setup
+## Optional - Home Manager Setup
 
 [Home-manager](https://github.com/nix-community/home-manager) is a nix
-utility for configuring a user\'s home environment. It provides a
+utility for configuring a user's home environment. It provides a
 convenient, unified interface for managing the configuration of
 applications.
 
@@ -179,7 +177,7 @@ improvements for Dissolve development.
 
 [VS Code](https://code.visualstudio.com/)
 
-:   A popular, multi-language IDE. We\'ve pre-configured
+:   A popular, multi-language IDE. We've pre-configured
 
 [Ripgrep](https://github.com/BurntSushi/ripgrep)
 
