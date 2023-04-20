@@ -75,6 +75,15 @@ class EnergyKernel : public GeometryKernel
     double pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
 
     /*
+     * Extended Terms
+     */
+    private:
+    // Return energy of supplied atom from ad hoc extended terms
+    virtual double extendedEnergy(const Atom &i) const;
+    // Return energy of supplied molecule from ad hoc extended terms
+    virtual double extendedEnergy(const Molecule &mol) const;
+
+    /*
      * Totals
      */
     public:

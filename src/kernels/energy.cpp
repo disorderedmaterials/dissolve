@@ -261,6 +261,16 @@ double EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraM
 }
 
 /*
+ * Extended Terms
+ */
+
+// Return energy of supplied atom from ad hoc extended terms
+double EnergyKernel::extendedEnergy(const Atom &i) const { return 0.0; }
+
+// Return energy of supplied molecule from ad hoc extended terms
+double EnergyKernel::extendedEnergy(const Molecule &mol) const { return 0.0; }
+
+/*
  * Totals
  */
 
@@ -313,7 +323,10 @@ double EnergyKernel::totalMoleculePairPotentialEnergy(bool includeIntraMolecular
 }
 
 // Return total energy of supplied atom with the world
-EnergyResult EnergyKernel::totalEnergy(const Atom &i) const { return {pairPotentialEnergy(i), totalGeometryEnergy(i), 0.0}; }
+EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
+{
+    return {pairPotentialEnergy(i), totalGeometryEnergy(i), extendedEnergy(i)};
+}
 
 // Return total energy of supplied molecule with the world
 EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, ProcessPool::DivisionStrategy strategy,
@@ -322,5 +335,6 @@ EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, ProcessPool::Divisio
     return {flags.isSet(ExcludePairPotential)
                 ? 0.0
                 : pairPotentialEnergy(mol, !flags.isSet(ExcludeIntraMolecularPairPotential), strategy),
-            flags.isSet(ExcludeGeometry) ? 0.0 : totalGeometryEnergy(mol), 0.0};
+            flags.isSet(ExcludeGeometry) ? 0.0 : totalGeometryEnergy(mol),
+            flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }
