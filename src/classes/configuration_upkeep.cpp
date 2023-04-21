@@ -7,25 +7,31 @@
 #include "classes/changestore.h"
 #include "main/dissolve.h"
 
-// Update Cell contents
-void Configuration::updateCellContents(bool clearExistingLocations)
+// Rationalise object relationships between atoms, molecules, and cells
+void Configuration::updateObjectRelationships()
+{
+    for (auto &m : molecules_)
+        m->updateAtoms(atoms_);
+
+    updateAtomLocations(true);
+}
+
+// Update Cell location of all Atoms
+void Configuration::updateAtomLocations(bool clearExistingLocations)
 {
     if (clearExistingLocations)
     {
         for (auto &i : atoms_)
             i.setCell(nullptr);
         cells_.clearAtoms();
-
-        for (auto &m : molecules_)
-            m->updateAtoms(atoms_);
     }
 
     for (auto &i : atoms_)
-        updateCellLocation(&i);
+        updateAtomLocation(&i);
 }
 
 // Update Cell location of specified Atom
-void Configuration::updateCellLocation(Atom *i)
+void Configuration::updateAtomLocation(Atom *i)
 {
     // Fold Atom coordinates into Box
     i->setCoordinates(box_->fold(i->r()));
@@ -42,16 +48,16 @@ void Configuration::updateCellLocation(Atom *i)
     }
 }
 
-// Update Cell location of specified Molecule
-void Configuration::updateCellLocation(const std::shared_ptr<Molecule> &mol)
+// Update Cell locations of atoms within the specified Molecule
+void Configuration::updateAtomLocations(const std::shared_ptr<Molecule> &mol)
 {
     for (auto n = 0; n < mol->nAtoms(); ++n)
-        updateCellLocation(mol->atom(n));
+        updateAtomLocation(mol->atom(n));
 }
 
 // Update Cell location of specified Atom indices
-void Configuration::updateCellLocation(const std::vector<int> &targetAtoms, int indexOffset)
+void Configuration::updateAtomLocations(const std::vector<int> &targetAtoms, int indexOffset)
 {
     for (const auto i : targetAtoms)
-        updateCellLocation(&atoms_[i + indexOffset]);
+        updateAtomLocation(&atoms_[i + indexOffset]);
 }

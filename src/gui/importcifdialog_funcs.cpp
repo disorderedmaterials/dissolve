@@ -348,7 +348,7 @@ bool ImportCIFDialog::createStructuralSpecies()
 
     // Add the structural species to the configuration
     structureConfiguration_->addMolecule(crystalSpecies_);
-    structureConfiguration_->updateCellContents(true);
+    structureConfiguration_->updateObjectRelationships();
 
     ui_.StructureViewer->setConfiguration(structureConfiguration_);
 
@@ -473,7 +473,7 @@ bool ImportCIFDialog::createCleanedSpecies()
 
     // Add the structural species to the configuration
     cleanedConfiguration_->addMolecule(cleanedSpecies_);
-    cleanedConfiguration_->updateCellContents(true);
+    cleanedConfiguration_->updateObjectRelationships();
 
     ui_.CleanedViewer->setConfiguration(cleanedConfiguration_);
 
@@ -557,7 +557,7 @@ bool ImportCIFDialog::createSupercellSpecies()
 
     // Add the structural species to the configuration
     supercellConfiguration_->addMolecule(supercell);
-    supercellConfiguration_->updateCellContents(true);
+    supercellConfiguration_->updateObjectRelationships();
     ui_.SupercellViewer->setConfiguration(supercellConfiguration_);
 
     // Update the information panel
@@ -603,7 +603,7 @@ bool ImportCIFDialog::createPartitionedSpecies()
     {
         // Add the supercell species to the configuration
         partitioningConfiguration_->addMolecule(sp);
-        partitioningConfiguration_->updateCellContents(true);
+        partitioningConfiguration_->updateObjectRelationships();
 
         // Update the indicator and label
         sp->clearAtomSelection();

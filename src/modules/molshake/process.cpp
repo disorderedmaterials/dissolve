@@ -152,7 +152,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 }
 
                 // Update Cell positions of Atoms in the Molecule
-                targetConfiguration_->updateCellLocation(mol);
+                targetConfiguration_->updateAtomLocations(mol);
 
                 // Calculate new energy
                 newEnergy = kernel

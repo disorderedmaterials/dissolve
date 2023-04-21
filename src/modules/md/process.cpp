@@ -254,8 +254,8 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             v += a * 0.5 * dT;
         }
 
-        // Update Cell contents / Atom locations
-        targetConfiguration_->updateCellContents();
+        // Update Atom locations
+        targetConfiguration_->updateAtomLocations();
 
         // Zero force arrays
         std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());

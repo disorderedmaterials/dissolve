@@ -219,14 +219,16 @@ class Configuration : public Serialisable
      * Upkeep
      */
     public:
-    // Update Cell contents, optionally clearing all atom locations first
-    void updateCellContents(bool clearExistingLocations = false);
+    // Rationalise object relationships between atoms, molecules, and cells
+    void updateObjectRelationships();
+    // Update Cell location of all Atoms
+    void updateAtomLocations(bool clearExistingLocations = false);
     // Update Cell location of specified Atom
-    void updateCellLocation(Atom *i);
-    // Update Cell location of specified Molecule
-    void updateCellLocation(const std::shared_ptr<Molecule> &mol);
+    void updateAtomLocation(Atom *i);
+    // Update Cell locations of atoms within the specified Molecule
+    void updateAtomLocations(const std::shared_ptr<Molecule> &mol);
     // Update Cell location of specified Atom indices
-    void updateCellLocation(const std::vector<int> &targetAtoms, int indexOffset);
+    void updateAtomLocations(const std::vector<int> &targetAtoms, int indexOffset);
 
     /*
      * Site Stacks

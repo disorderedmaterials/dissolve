@@ -151,8 +151,8 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     // Scale box and cells according to the applied size factor
     scaleBox({appliedSizeFactor_, appliedSizeFactor_, appliedSizeFactor_});
 
-    // Update Cell locations for Atoms
-    updateCellContents(true);
+    // Update all relationships
+    updateObjectRelationships();
 
     // If this an old-style configuration with no potentials we can end here
     if (!hasPotentials)

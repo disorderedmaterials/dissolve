@@ -64,7 +64,7 @@ TEST(CellsTest, Basic)
         cfg->addMolecule(water);
     for (auto &&[i, r] : zip(cfg->atoms(), refCoords))
         i.setCoordinates(r);
-    cfg->updateCellContents();
+    cfg->updateObjectRelationships();
 
     // Prepare the main simulation, and update our specific Ar-OW potential
     EXPECT_TRUE(dissolve.prepare());
@@ -88,7 +88,7 @@ TEST(CellsTest, Basic)
 
         // Regenerate cells to new size spec and re-assign atoms
         cfg->cells().generate(cfg->box(), cellSize, dissolve.pairPotentialRange());
-        cfg->updateCellContents(true);
+        cfg->updateAtomLocations(true);
 
         // Calculate total Cell-based energy
         EXPECT_NEAR(refEnergy, kernel->totalPairPotentialEnergy(false, ProcessPool::PoolStrategy), 1.0e-4);
