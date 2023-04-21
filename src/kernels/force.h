@@ -63,6 +63,8 @@ class ForceKernel : public GeometryKernel
      * Extended Terms
      */
     private:
+    // Calculate extended forces on supplied atom
+    virtual void extendedForces(const Atom &i, Vec3<double> &fVec) const;
     // Calculate extended forces on supplied molecule
     virtual void extendedForces(const Molecule &mol, ForceVector &f) const;
 

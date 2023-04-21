@@ -83,6 +83,9 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
     // Finalise used AtomType list
     atomTypes_.finalise();
 
+    // Link targeted potentials to atoms
+    linkTargetedPotentials();
+
     ++contentsVersion_;
 
     // Sanity check the contents - if we have zero atoms then there's a problem!

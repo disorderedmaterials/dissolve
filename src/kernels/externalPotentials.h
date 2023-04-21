@@ -59,6 +59,8 @@ class ExternalPotentialsForceKernel : public ForceKernel
      * Extended Terms
      */
     private:
+    // Calculate extended forces on supplied atom
+    void extendedForces(const Atom &i, Vec3<double> &fVec) const override;
     // Calculate extended forces on supplied molecule
     void extendedForces(const Molecule &mol, ForceVector &f) const override;
 };

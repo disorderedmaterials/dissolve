@@ -11,7 +11,7 @@
 std::unique_ptr<EnergyKernel> KernelProducer::energyKernel(const Configuration *cfg, const ProcessPool &procPool,
                                                            const PotentialMap &potentialMap, std::optional<double> energyCutoff)
 {
-    if (!cfg->globalPotentials().empty())
+    if (!cfg->globalPotentials().empty() || !cfg->targetedPotentials().empty())
         return std::unique_ptr<EnergyKernel>(new ExternalPotentialsEnergyKernel(cfg, procPool, potentialMap, energyCutoff));
     else
         return std::unique_ptr<EnergyKernel>(new EnergyKernel(cfg, procPool, potentialMap, energyCutoff));
@@ -21,7 +21,7 @@ std::unique_ptr<EnergyKernel> KernelProducer::energyKernel(const Configuration *
 std::unique_ptr<ForceKernel> KernelProducer::forceKernel(const Configuration *cfg, const ProcessPool &procPool,
                                                          const PotentialMap &potentialMap, std::optional<double> energyCutoff)
 {
-    if (!cfg->globalPotentials().empty())
+    if (!cfg->globalPotentials().empty() || !cfg->targetedPotentials().empty())
         return std::unique_ptr<ForceKernel>(new ExternalPotentialsForceKernel(cfg, procPool, potentialMap, energyCutoff));
     else
         return std::unique_ptr<ForceKernel>(new ForceKernel(cfg, procPool, potentialMap, energyCutoff));

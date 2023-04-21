@@ -26,6 +26,37 @@ class ExternalPotential
     ExternalPotentialTypes::ExternalPotentialType type_;
 
     /*
+     * Target Information
+     */
+    protected:
+    // Atom indices targeted by the potential
+    std::vector<int> targetAtomIndices_;
+    // Atom types targeted by the potential
+    std::vector<std::shared_ptr<AtomType>> targetAtomTypes_;
+    // Species targeted by the potential
+    std::vector<const Species *> targetSpecies_;
+
+    public:
+    // Set atom indices targeted by the potential
+    void setTargetAtomIndices(const std::vector<int> &targets);
+    // Add target atom index
+    void addTargetAtomIndex(int index);
+    // Return atom indices targeted by the potential
+    const std::vector<int> &targetAtomIndices() const;
+    // Atom types targeted by the potential
+    void setTargetAtomTypes(const std::vector<std::shared_ptr<AtomType>> &targets);
+    // Add target atom type
+    void addTargetAtomType(std::shared_ptr<AtomType> target);
+    // Return atom types targeted by the potential
+    const std::vector<std::shared_ptr<AtomType>> &targetAtomTypes() const;
+    // Species targeted by the potential
+    void setTargetSpecies(const std::vector<const Species *> &targets);
+    // Add target species
+    void addTargetSpecies(const Species *target);
+    // Return species targeted by the potential
+    const std::vector<const Species *> &targetSpecies() const;
+
+    /*
      * Keywords
      */
     protected:

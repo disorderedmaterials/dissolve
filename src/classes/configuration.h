@@ -208,12 +208,20 @@ class Configuration : public Serialisable
     private:
     // Defined global potentials
     std::vector<std::unique_ptr<ExternalPotential>> globalPotentials_;
+    // Defined targeted potentials
+    std::vector<std::unique_ptr<ExternalPotential>> targetedPotentials_;
 
     public:
     // Add global potential
     void addGlobalPotential(std::unique_ptr<ExternalPotential> potential);
     // Return vector of defined global potentials
     const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials() const;
+    // Add targeted potential
+    void addTargetedPotential(std::unique_ptr<ExternalPotential> potential);
+    // Return vector of defined targeted potentials
+    const std::vector<std::unique_ptr<ExternalPotential>> &targetedPotentials() const;
+    // Link targeted potentials to atoms
+    void linkTargetedPotentials();
 
     /*
      * Upkeep
