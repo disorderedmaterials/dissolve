@@ -48,11 +48,9 @@ int Cell::nAtoms() const { return atoms_.size(); }
 void Cell::addAtom(Atom *atom)
 {
     assert(atom);
-    atoms_.push_back(atom);
+    assert(!atom->cell());
 
-    if (atom->cell())
-        Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n",
-                        atom->arrayIndex());
+    atoms_.push_back(atom);
     atom->setCell(this);
 }
 
