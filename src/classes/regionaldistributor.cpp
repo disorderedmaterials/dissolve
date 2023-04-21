@@ -417,8 +417,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(const Cell *cell, 
 
         if (debugDistributor)
             Messenger::print(
-                "  <> Molecule index is {} (from Atom index {}) and this molecule {} already in our list..\n",
-                mol->arrayIndex(), atom->arrayIndex(),
+                "  <> Molecule index is {} and this molecule {} already in our list..\n", mol->arrayIndex(),
                 std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end() ? "IS" : "IS NOT");
 
         // Have we already checked this Molecule?
