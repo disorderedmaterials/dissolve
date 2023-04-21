@@ -16,9 +16,6 @@ Cell::Cell(int index, Vec3<int> gridReference, Vec3<double> centre)
  * Identity
  */
 
-// Set grid reference
-void Cell::setGridReference(int x, int y, int z) { gridReference_.set(x, y, z); }
-
 // Return grid reference
 const Vec3<int> &Cell::gridReference() const { return gridReference_; }
 
@@ -33,9 +30,6 @@ void Cell::setIndex(int id)
 // Return unique index
 int Cell::index() const { return index_; }
 
-// Set real-space Cell centre
-void Cell::setCentre(Vec3<double> r) { centre_ = r; }
-
 // Return real-space Cell centre
 const Vec3<double> &Cell::centre() const { return centre_; }
 
@@ -43,7 +37,7 @@ const Vec3<double> &Cell::centre() const { return centre_; }
  * Contents
  */
 
-// Return array of contained Atoms
+// Return vector of contained Atoms
 std::vector<Atom *> &Cell::atoms() { return atoms_; }
 const std::vector<Atom *> &Cell::atoms() const { return atoms_; }
 

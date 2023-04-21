@@ -10,7 +10,6 @@
 
 // Forward Declarations
 class Box;
-class CellNeighbour;
 
 /*
  * Cell Definition
@@ -33,16 +32,12 @@ class Cell
     Vec3<double> centre_;
 
     public:
-    // Set grid reference
-    void setGridReference(int x, int y, int z);
     // Return grid reference
     const Vec3<int> &gridReference() const;
     // Set unique index
     void setIndex(int id);
     // Return unique index
     int index() const;
-    // Set real-space Cell centre
-    void setCentre(Vec3<double> r);
     // Return real-space Cell centre
     const Vec3<double> &centre() const;
 
@@ -50,7 +45,7 @@ class Cell
      * Contents
      */
     private:
-    // Array of Atoms contained in this Cell
+    // Vector of Atoms contained in this Cell
     std::vector<Atom *> atoms_;
 
     public:
