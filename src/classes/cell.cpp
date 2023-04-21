@@ -55,7 +55,6 @@ void Cell::addAtom(Atom *atom)
 {
     assert(atom);
     atoms_.push_back(atom);
-    atomIndices_.push_back(atom->arrayIndex());
 
     if (atom->cell())
         Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n",
@@ -67,25 +66,10 @@ void Cell::addAtom(Atom *atom)
 void Cell::removeAtom(Atom *atom)
 {
     auto it = std::find(atoms_.begin(), atoms_.end(), atom);
-    auto itIndex = std::find(atomIndices_.begin(), atomIndices_.end(), atom->arrayIndex());
     assert(it != atoms_.end());
-    assert(itIndex != atomIndices_.end());
     (*it)->setCell(nullptr);
     atoms_.erase(it);
-    atomIndices_.erase(itIndex);
 }
 
 // Clear all atoms from cell
-void Cell::clearAtoms()
-{
-    atoms_.clear();
-    atomIndices_.clear();
-}
-
-// Update array pointers after update
-void Cell::updateAtoms(std::vector<Atom> &source)
-{
-    if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
-        std::transform(atomIndices_.begin(), atomIndices_.end(), atoms_.begin(),
-                       [&source](const auto idx) { return &source[idx]; });
-}
+void Cell::clearAtoms() { atoms_.clear(); }
