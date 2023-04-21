@@ -5,16 +5,16 @@
 #include "classes/configuration.h"
 #include <numeric>
 
+/*
+ * Energy
+ */
+
 ExternalPotentialsEnergyKernel::ExternalPotentialsEnergyKernel(const Configuration *cfg, const ProcessPool &procPool,
                                                                const PotentialMap &potentialMap,
                                                                std::optional<double> energyCutoff)
     : EnergyKernel(cfg, procPool, potentialMap, energyCutoff), globalPotentials_(cfg->globalPotentials())
 {
 }
-
-/*
- * Extended Terms
- */
 
 // Return external energy of supplied atom
 double ExternalPotentialsEnergyKernel::extendedEnergy(const Atom &i) const
@@ -33,4 +33,23 @@ double ExternalPotentialsEnergyKernel::extendedEnergy(const Molecule &mol) const
                                                                  [&](const auto innerAcc, const auto &i)
                                                                  { return innerAcc + pot->energy(*i, box_); });
                            });
+}
+
+/*
+ * Force
+ */
+
+ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration *cfg, const ProcessPool &procPool,
+                                                             const PotentialMap &potentialMap,
+                                                             std::optional<double> energyCutoff)
+    : ForceKernel(cfg, procPool, potentialMap, energyCutoff), globalPotentials_(cfg->globalPotentials())
+{
+}
+
+// Calculate extended forces on supplied molecule
+void ExternalPotentialsForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const
+{
+    for (const auto &pot : globalPotentials_)
+        for (const auto &i : mol.atoms())
+            pot->force(*i, box_, f[i->arrayIndex()]);
 }
