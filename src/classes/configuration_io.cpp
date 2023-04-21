@@ -61,6 +61,17 @@ bool Configuration::serialise(LineParser &parser) const
             return false;
     }
 
+    // If there are no defined external potentials we are done
+    if (globalPotentials_.empty())
+        return true;
+
+    // Write global potentials
+    if (!parser.writeLineF("{}  # nGlobalPotentials\n", globalPotentials_.size()))
+        return false;
+    for (auto &pot : globalPotentials_)
+        if (!pot->serialise(parser, ""))
+            return false;
+
     return true;
 }
 

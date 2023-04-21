@@ -657,7 +657,8 @@ bool Dissolve::saveRestart(std::string_view filename)
     // Configurations
     for (const auto &cfg : configurations())
     {
-        if (!parser.writeLineF("Configuration  '{}'\n", cfg->name()))
+        if (!parser.writeLineF("{}  '{}'\n", cfg->globalPotentials().empty() ? "Configuration" : "ConfigurationWithPotentials",
+                               cfg->name()))
             return false;
         if (!cfg->serialise(parser))
             return false;
