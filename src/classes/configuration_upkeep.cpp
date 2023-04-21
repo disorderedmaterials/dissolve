@@ -10,8 +10,12 @@
 // Rationalise object relationships between atoms, molecules, and cells
 void Configuration::updateObjectRelationships()
 {
+    int offset = 0;
     for (auto &m : molecules_)
-        m->updateAtoms(atoms_);
+    {
+        m->updateAtoms(atoms_, offset);
+        offset += m->nAtoms();
+    }
 
     updateAtomLocations(true);
 }

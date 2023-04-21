@@ -21,32 +21,28 @@ const Species *Molecule::species() const { return species_; }
 // Add Atom to Molecule
 void Molecule::addAtom(Atom *atom)
 {
+    assert(atom->molecule() == nullptr);
     atoms_.push_back(atom);
-    atomIndices_.push_back(atom->arrayIndex());
 
-    if (atom->molecule() != nullptr)
-        Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n",
-                        atom->arrayIndex());
     std::shared_ptr<Molecule> parent = shared_from_this();
     atom->setMolecule(parent);
 }
 
-// Return size of Atom array
+// Return number of atoms in the molecule
 int Molecule::nAtoms() const { return atoms_.size(); }
 
-// Return atoms array
+// Return atoms vector
 std::vector<Atom *> &Molecule::atoms() { return atoms_; }
 const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
 Atom *Molecule::atom(int n) const { return atoms_[n]; }
 
-// Update atoms array from indices
-void Molecule::updateAtoms(std::vector<Atom> &source)
+// Update local atom pointers from main vector
+void Molecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
 {
-    if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
-        std::transform(atomIndices_.begin(), atomIndices_.end(), atoms_.begin(),
-                       [&source](const auto idx) { return &source[idx]; });
+    for (auto &i : atoms_)
+        i = &mainAtoms[offset++];
 }
 
 // Sets the index of the object within the parent DynamicArray
