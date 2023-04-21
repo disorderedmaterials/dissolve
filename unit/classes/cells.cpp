@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomchangetoken.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "kernels/producer.h"
@@ -58,12 +57,11 @@ TEST(CellsTest, Basic)
 
     // Setup Configuration
     auto *cfg = dissolve.addConfiguration();
-    AtomChangeToken lock(*cfg);
     cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, dissolve.pairPotentialRange());
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
-    cfg->addMolecule(lock, argon);
+    cfg->addMolecule(argon);
     for (auto n = 0; n < 267; ++n)
-        cfg->addMolecule(lock, water);
+        cfg->addMolecule(water);
     for (auto &&[i, r] : zip(cfg->atoms(), refCoords))
         i.setCoordinates(r);
     cfg->updateCellContents();

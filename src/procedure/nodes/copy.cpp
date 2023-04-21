@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/copy.h"
-#include "classes/atomchangetoken.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
@@ -70,17 +69,14 @@ bool CopyProcedureNode::execute(const ProcedureContext &procedureContext)
     procedureContext.configuration()->atoms().reserve(nAtoms);
 
     // Copy molecules
+    for (const auto &mol : source_->molecules())
     {
-        AtomChangeToken lock(*cfg);
-        for (const auto &mol : source_->molecules())
-        {
-            // Check for exclusion
-            if (std::find(excludedSpecies_.begin(), excludedSpecies_.end(), mol->species()) != excludedSpecies_.end())
-                continue;
+        // Check for exclusion
+        if (std::find(excludedSpecies_.begin(), excludedSpecies_.end(), mol->species()) != excludedSpecies_.end())
+            continue;
 
-            // Copy the molecule
-            cfg->copyMolecule(lock, mol);
-        }
+        // Copy the molecule
+        cfg->copyMolecule(mol);
     }
 
     return true;

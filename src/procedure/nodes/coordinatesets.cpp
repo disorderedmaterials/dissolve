@@ -5,7 +5,6 @@
 #include "base/lineparser.h"
 #include "base/randombuffer.h"
 #include "base/sysfunc.h"
-#include "classes/atomchangetoken.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "keywords/bool.h"

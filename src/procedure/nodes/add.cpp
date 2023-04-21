@@ -3,7 +3,6 @@
 
 #include "procedure/nodes/add.h"
 #include "base/randombuffer.h"
-#include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -287,25 +286,23 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
     {
         // Add the Molecule - use coordinate set if one is available
         std::shared_ptr<Molecule> mol;
-        {
-            // The atom pointers need to be updated before
-            // setCentreOfGeometry is called, or else there can be a
-            // segfault due to pointer invalidation.  It would be nice if
-            // we could have a single lock for the whole loop, but that
-            // will require some thought.
-            AtomChangeToken lock(*cfg);
-            if (hasCoordinateSets)
-            {
-                mol = cfg->addMolecule(lock, sp, coordinateSets_->set(coordinateSetIndex));
 
-                // Move to next coordinate set
-                ++coordinateSetIndex;
-                if (coordinateSetIndex == coordinateSets_->nSets())
-                    coordinateSetIndex = 0;
-            }
-            else
-                mol = cfg->addMolecule(lock, sp);
+        // The atom pointers need to be updated before
+        // setCentreOfGeometry is called, or else there can be a
+        // segfault due to pointer invalidation.  It would be nice if
+        // we could have a single lock for the whole loop, but that
+        // will require some thought.
+        if (hasCoordinateSets)
+        {
+            mol = cfg->addMolecule(sp, coordinateSets_->set(coordinateSetIndex));
+
+            // Move to next coordinate set
+            ++coordinateSetIndex;
+            if (coordinateSetIndex == coordinateSets_->nSets())
+                coordinateSetIndex = 0;
         }
+        else
+            mol = cfg->addMolecule(sp);
 
         // Set / generate position of Molecule
         switch (positioningType_)

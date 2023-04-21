@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomchangetoken.h"
 #include "classes/pair_iter.h"
 #include "classes/species.h"
 #include "gui/importcifdialog.h"
@@ -348,9 +347,8 @@ bool ImportCIFDialog::createStructuralSpecies()
         applyCIFBonding(crystalSpecies_);
 
     // Add the structural species to the configuration
-    AtomChangeToken lock(*structureConfiguration_);
-    structureConfiguration_->addMolecule(lock, crystalSpecies_);
-    structureConfiguration_->updateCellContents();
+    structureConfiguration_->addMolecule(crystalSpecies_);
+    structureConfiguration_->updateCellContents(true);
 
     ui_.StructureViewer->setConfiguration(structureConfiguration_);
 
@@ -474,9 +472,8 @@ bool ImportCIFDialog::createCleanedSpecies()
     }
 
     // Add the structural species to the configuration
-    AtomChangeToken lock(*cleanedConfiguration_);
-    cleanedConfiguration_->addMolecule(lock, cleanedSpecies_);
-    cleanedConfiguration_->updateCellContents();
+    cleanedConfiguration_->addMolecule(cleanedSpecies_);
+    cleanedConfiguration_->updateCellContents(true);
 
     ui_.CleanedViewer->setConfiguration(cleanedConfiguration_);
 
@@ -559,9 +556,8 @@ bool ImportCIFDialog::createSupercellSpecies()
         applyCIFBonding(supercell);
 
     // Add the structural species to the configuration
-    AtomChangeToken lock(*supercellConfiguration_);
-    supercellConfiguration_->addMolecule(lock, supercell);
-    supercellConfiguration_->updateCellContents();
+    supercellConfiguration_->addMolecule(supercell);
+    supercellConfiguration_->updateCellContents(true);
     ui_.SupercellViewer->setConfiguration(supercellConfiguration_);
 
     // Update the information panel
@@ -606,9 +602,8 @@ bool ImportCIFDialog::createPartitionedSpecies()
     if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
     {
         // Add the supercell species to the configuration
-        AtomChangeToken lock(*partitioningConfiguration_);
-        partitioningConfiguration_->addMolecule(lock, sp);
-        partitioningConfiguration_->updateCellContents();
+        partitioningConfiguration_->addMolecule(sp);
+        partitioningConfiguration_->updateCellContents(true);
 
         // Update the indicator and label
         sp->clearAtomSelection();

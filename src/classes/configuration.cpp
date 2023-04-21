@@ -78,7 +78,7 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
     cells_.generate(box_.get(), requestedCellDivisionLength_, context.potentialMap().range());
 
     // Make sure Cell contents / Atom locations are up-to-date
-    updateCellContents();
+    updateCellContents(true);
 
     // Finalise used AtomType list
     atomTypes_.finalise();
@@ -122,7 +122,7 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
                 return false;
 
             // Need to update cell locations now, as we have new atom positions
-            updateCellContents();
+            updateCellContents(true);
         }
         else
             return Messenger::error("Input coordinates file '{}' specified for Configuration '{}', but the "

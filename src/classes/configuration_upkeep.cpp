@@ -15,6 +15,9 @@ void Configuration::updateCellContents(bool clearExistingLocations)
         for (auto &i : atoms_)
             i.setCell(nullptr);
         cells_.clearAtoms();
+
+        for (auto &m : molecules_)
+            m->updateAtoms(atoms_);
     }
 
     for (auto &i : atoms_)
