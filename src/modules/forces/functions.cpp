@@ -77,7 +77,7 @@ void ForcesModule::totalForces(const ProcessPool &procPool, const Species *sp, c
                                std::vector<Vec3<double>> &fBound, OptionalReferenceWrapper<const std::vector<Vec3<double>>> r)
 {
     if (r)
-        assert(sp->nAtoms() == r.size());
+        assert(sp->nAtoms() == r->get().size());
 
     // Set position retrieval function
     std::function<Vec3<double>(int, const SpeciesAtom *)> rFunction;
