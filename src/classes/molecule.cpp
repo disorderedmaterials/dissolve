@@ -41,9 +41,16 @@ Atom *Molecule::atom(int n) const { return atoms_[n]; }
 // Update local atom pointers from main vector
 void Molecule::updateAtoms(std::vector<Atom> &mainAtoms, int offset)
 {
+    globalAtomOffset_ = offset;
     for (auto &i : atoms_)
         i = &mainAtoms[offset++];
 }
+
+// Return global atom offset
+int Molecule::globalAtomOffset() const { return globalAtomOffset_; }
+
+// Return global index of supplied atom
+int Molecule::globalAtomIndex(const Atom *i) const { return globalAtomOffset_ + (i - atoms_[0]); }
 
 // Sets the index of the object within the parent DynamicArray
 void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }

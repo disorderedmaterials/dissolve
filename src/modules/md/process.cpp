@@ -86,8 +86,9 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
             {
                 targetMolecules.push_back(mol.get());
+                auto offset = mol->globalAtomOffset();
                 for (const auto &i : mol->atoms())
-                    free[i->arrayIndex()] = 1;
+                    free[offset++] = 1;
             }
 
     /*

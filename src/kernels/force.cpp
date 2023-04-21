@@ -28,7 +28,7 @@ ForceKernel::ForceKernel(const Box *box, const ProcessPool &procPool, const Pote
  */
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f) const
+void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const
 {
     auto force = j.r() - i.r();
     auto distanceSq = force.magnitudeSq();
@@ -37,12 +37,13 @@ void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f)
     auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r);
-    f[i.arrayIndex()] += force;
-    f[j.arrayIndex()] -= force;
+    f[indexI] += force;
+    f[indexJ] -= force;
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const
+void ForceKernel::forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+                                   double vdwScale) const
 {
     auto force = j.r() - i.r();
     auto distanceSq = force.magnitudeSq();
@@ -51,12 +52,12 @@ void ForceKernel::forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f,
     auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r, elecScale, vdwScale);
-    f[i.arrayIndex()] += force;
-    f[j.arrayIndex()] -= force;
+    f[indexI] += force;
+    f[indexJ] -= force;
 }
 
 // Calculate PairPotential forces between Atoms provided
-void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f) const
+void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const
 {
     auto force = box_->minimumVector(i.r(), j.r());
     auto distanceSq = force.magnitudeSq();
@@ -65,13 +66,13 @@ void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f) co
     auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r);
-
-    f[i.arrayIndex()] += force;
-    f[j.arrayIndex()] -= force;
+    f[indexI] += force;
+    f[indexJ] -= force;
 }
 
 // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const
+void ForceKernel::forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+                                double vdwScale) const
 {
     auto force = box_->minimumVector(i.r(), j.r());
     auto distanceSq = force.magnitudeSq();
@@ -80,9 +81,8 @@ void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, do
     auto r = sqrt(distanceSq);
     force /= r;
     force *= potentialMap_.force(i, j, r, elecScale, vdwScale);
-
-    f[i.arrayIndex()] += force;
-    f[j.arrayIndex()] -= force;
+    f[indexI] += force;
+    f[indexJ] -= force;
 }
 
 /*
@@ -104,10 +104,11 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
         for (const auto &i : centralAtoms)
         {
             molI = i->molecule();
+            auto indexI = molI->globalAtomIndex(i);
 
             for (auto *j : otherAtoms)
                 if (molI != j->molecule())
-                    forcesWithMim(*i, *j, f);
+                    forcesWithMim(*i, indexI, *j, j->molecule()->globalAtomIndex(j), f);
         }
     }
     else
@@ -115,10 +116,11 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
         for (const auto &i : centralAtoms)
         {
             molI = i->molecule();
+            auto indexI = molI->globalAtomIndex(i);
 
             for (auto *j : otherAtoms)
                 if (molI != j->molecule())
-                    forcesWithoutMim(*i, *j, f);
+                    forcesWithoutMim(*i, indexI, *j, j->molecule()->globalAtomIndex(j), f);
         }
     }
 }
@@ -170,7 +172,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
                                             return;
                                         // Check for atoms in the same molecule
                                         if (i->molecule() != j->molecule())
-                                            forcesWithoutMim(*i, *j, fLocal);
+                                            forcesWithoutMim(*i, i->globalIndex(), *j, j->globalIndex(), fLocal);
                                     });
 
             // Interatomic interactions between atoms in this cell and its neighbours
@@ -195,6 +197,8 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
             auto &fLocalUnbound = combinableUnbound.local();
             auto &fLocalBound = combinableBound.local();
 
+            auto offset = mol->globalAtomOffset();
+
             // Geometric terms
             if (!flags.isSet(ExcludeGeometry))
                 totalGeometryForces(*mol.get(), fLocalBound);
@@ -208,9 +212,10 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
                                                 return;
                                             auto &&[scalingType, elec14, vdw14] = i->scaling(j);
                                             if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                                                forcesWithMim(*i, *j, fLocalUnbound);
+                                                forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound);
                                             else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                                                forcesWithMim(*i, *j, fLocalUnbound, elec14, vdw14);
+                                                forcesWithMim(*i, offset + indexI, *j, offset + indexJ, fLocalUnbound, elec14,
+                                                              vdw14);
                                         });
 
             // Extended forces

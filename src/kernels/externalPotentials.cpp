@@ -50,6 +50,9 @@ ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration
 void ExternalPotentialsForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const
 {
     for (const auto &pot : globalPotentials_)
+    {
+        auto offset = mol.globalAtomOffset();
         for (const auto &i : mol.atoms())
-            pot->force(*i, box_, f[i->arrayIndex()]);
+            pot->force(*i, box_, f[offset++]);
+    }
 }

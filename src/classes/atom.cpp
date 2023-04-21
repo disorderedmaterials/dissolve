@@ -3,6 +3,7 @@
 
 #include "classes/atom.h"
 #include "classes/atomtype.h"
+#include "classes/molecule.h"
 #include "classes/speciesatom.h"
 #include <utility>
 
@@ -35,6 +36,13 @@ void Atom::setMasterTypeIndex(int id) { masterTypeIndex_ = id; }
 
 // Return master AtomType index
 int Atom::masterTypeIndex() const { return masterTypeIndex_; }
+
+// Return global index of the atom
+int Atom::globalIndex() const
+{
+    assert(molecule_);
+    return molecule_->globalAtomIndex(this);
+}
 
 // Sets the index of the object within the parent array
 void Atom::setArrayIndex(int index) { arrayIndex_ = index; }

@@ -49,6 +49,8 @@ class Atom
     void setMasterTypeIndex(int id);
     // Return master AtomType index
     int masterTypeIndex() const;
+    // Return global index of the atom
+    int globalIndex() const;
     // Sets the index of the object within the parent DynamicArray
     void setArrayIndex(int index);
     // Gets the index of the object within the parent DynamicArray
