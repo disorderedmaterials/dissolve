@@ -327,7 +327,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             intraTimer.start();
             kernel->totalForces(fIntraCheck, fIntraCheck, ProcessPool::PoolStrategy,
-                                {ForceKernel::ExcludePairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
+                                {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
             if (!procPool.allSum(fIntraCheck))
                 return false;
             intraTimer.stop();

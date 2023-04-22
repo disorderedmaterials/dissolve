@@ -206,8 +206,8 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
     auto combinableUnbound = createCombinableForces(fUnbound);
     auto combinableBound = createCombinableForces(fBound);
 
-    // Pair potential forces
-    if (!flags.isSet(ExcludePairPotential))
+    // Pair potential forces between different molecules
+    if (!flags.isSet(ExcludeInterMolecularPairPotential))
     {
         auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
 
@@ -217,11 +217,9 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
             auto *cellI = cellArray.cell(id);
             auto &fLocal = combinableUnbound.local();
             // This cell with itself
-            cellToCellPairPotentialForces(cellI, cellI, false, true, !flags.isSet(ExcludeIntraMolecularPairPotential),
-                                          ProcessPool::subDivisionStrategy(strategy), fLocal);
+            cellToCellPairPotentialForces(cellI, cellI, false, true, false, ProcessPool::subDivisionStrategy(strategy), fLocal);
             // Interatomic interactions between atoms in this cell and its neighbours
-            cellPairPotentialForces(cellI, true, !flags.isSet(ExcludeIntraMolecularPairPotential),
-                                    ProcessPool::subDivisionStrategy(strategy), fLocal);
+            cellPairPotentialForces(cellI, true, false, ProcessPool::subDivisionStrategy(strategy), fLocal);
         };
 
         // Execute lambda operator for each cell
@@ -230,7 +228,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
     }
 
     // Other molecule forces
-    if (!(flags.isSet(ExcludeGeometry) && flags.isSet(ExcludePairPotential) && flags.isSet(ExcludeExtended)))
+    if (!(flags.isSet(ExcludeGeometry) && flags.isSet(ExcludeIntraMolecularPairPotential) && flags.isSet(ExcludeExtended)))
     {
         auto moleculeForceOperator = [&](const auto &mol)
         {
@@ -244,7 +242,7 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
             // Pair potential interactions between atoms within the molecule
             // Only include these terms if we haven't already included them in the cell-to-cell loop above
 
-            if (flags.isSet(ExcludePairPotential) && !flags.isSet(ExcludeIntraMolecularPairPotential))
+            if (!flags.isSet(ExcludeIntraMolecularPairPotential))
                 dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
                                         [&](int indexI, const auto &i, int indexJ, const auto &j)
                                         {

@@ -76,10 +76,10 @@ class ForceKernel : public GeometryKernel
     // Force calculation flags
     enum ForceCalculationFlags
     {
-        ExcludePairPotential,
+        ExcludeInterMolecularPairPotential,
+        ExcludeIntraMolecularPairPotential,
         ExcludeGeometry,
-        ExcludeExtended,
-        ExcludeIntraMolecularPairPotential
+        ExcludeExtended
     };
 
     public:
