@@ -34,9 +34,9 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
         kernel->totalForces(fUnbound, fBound, ProcessPool::PoolStrategy,
                             {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeExtended});
     else if (calculationType == ForceCalculationType::IntraMolecularGeometry)
-        kernel->totalForces(
-            fUnbound, fBound, ProcessPool::PoolStrategy,
-            {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential, ForceKernel::ExcludeExtended});
+        kernel->totalForces(fUnbound, fBound, ProcessPool::PoolStrategy,
+                            {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential,
+                             ForceKernel::ExcludeExtended});
 
     timer.stop();
     Messenger::printVerbose("Time to do forces was {}.\n", timer.totalTimeString());

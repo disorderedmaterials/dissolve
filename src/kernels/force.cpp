@@ -89,91 +89,36 @@ void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, do
  * PairPotential Terms
  */
 
-// Calculate forces between Cell and its neighbours
-void ForceKernel::cellPairPotentialForces(const Cell *cell, bool excludeIgeJ, bool includeIntraMolecular,
-                                          ProcessPool::DivisionStrategy strategy, ForceVector &f) const
-{
-    assert(cellArray_);
-
-    auto &neighbours = cellArray_->get().neighbours(*cell);
-    for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
-        cellToCellPairPotentialForces(cell, &it->neighbour_, it->requiresMIM_, excludeIgeJ, includeIntraMolecular, strategy, f);
-}
-
 // Calculate forces between atoms in supplied cells
-void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
-                                                bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy,
+void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const Cell *otherCell, bool applyMim,
                                                 ForceVector &f) const
 {
     assert(centralCell && otherCell);
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
-    Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
 
-    // Get start/stride for specified loop context
-    auto offset = processPool_.interleavedLoopStart(strategy);
-    auto nChunks = processPool_.interleavedLoopStride(strategy);
-
-    // Loop over central cell atoms
+    // Loop over all atom pairs excluding any within the same molecule
     if (applyMim)
     {
-        auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
-        for (auto indexI = begin; indexI < end; ++indexI)
+        for (const auto &i : centralAtoms)
         {
-            auto &ii = *indexI;
-            molI = ii->molecule();
-            rI = ii->r();
+            molI = i->molecule();
 
-            // Straight loop over other cell atoms
-            for (auto *jj : otherAtoms)
-            {
-                // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
-                    continue;
-
-                // Check for atoms in the same Molecule
-                if (molI != jj->molecule())
-                    forcesWithMim(*ii, *jj, f);
-                else if (includeIntraMolecular)
-                {
-                    auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
-                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        forcesWithMim(*ii, *jj, f);
-                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        forcesWithMim(*ii, *jj, f, elec14, vdw14);
-                }
-            }
+            for (auto *j : otherAtoms)
+                if (molI != j->molecule())
+                    forcesWithMim(*i, *j, f);
         }
     }
     else
     {
-        auto [begin, end] = chop_range(centralCell->atoms().begin(), centralCell->atoms().end(), nChunks, offset);
-        for (auto indexI = begin; indexI < end; ++indexI)
+        for (const auto &i : centralAtoms)
         {
-            auto &ii = *indexI;
-            molI = ii->molecule();
-            rI = ii->r();
+            molI = i->molecule();
 
-            // Straight loop over other cell atoms
-            for (auto &jj : otherAtoms)
-            {
-                // Check exclusion of I >= J
-                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
-                    continue;
-
-                // Check for atoms in the same molecule
-                if (molI != jj->molecule())
-                    forcesWithoutMim(*ii, *jj, f);
-                else if (includeIntraMolecular)
-                {
-                    auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
-                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                        forcesWithoutMim(*ii, *jj, f);
-                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                        forcesWithoutMim(*ii, *jj, f, elec14, vdw14);
-                }
-            }
+            for (auto *j : otherAtoms)
+                if (molI != j->molecule())
+                    forcesWithoutMim(*i, *j, f);
         }
     }
 }
@@ -212,14 +157,29 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
         auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
 
         // Force operator
-        auto unaryOp = [&, strategy](const int id)
+        auto unaryOp = [&](const int id)
         {
             auto *cellI = cellArray.cell(id);
             auto &fLocal = combinableUnbound.local();
-            // This cell with itself
-            cellToCellPairPotentialForces(cellI, cellI, false, true, false, ProcessPool::subDivisionStrategy(strategy), fLocal);
+
+            // Interatomic interactions between atoms in this cell, excluding those within the same molecule
+            dissolve::for_each_pair(ParallelPolicies::seq, cellI->atoms().begin(), cellI->atoms().end(),
+                                    [&](int indexI, const auto &i, int indexJ, const auto &j)
+                                    {
+                                        if (indexI == indexJ)
+                                            return;
+                                        // Check for atoms in the same molecule
+                                        if (i->molecule() != j->molecule())
+                                            forcesWithoutMim(*i, *j, fLocal);
+                                    });
+
             // Interatomic interactions between atoms in this cell and its neighbours
-            cellPairPotentialForces(cellI, true, false, ProcessPool::subDivisionStrategy(strategy), fLocal);
+            auto &neighbours = cellArray_->get().neighbours(*cellI);
+            for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
+            {
+                if (it->neighbour_.index() < cellI->index())
+                    cellToCellPairPotentialForces(cellI, &it->neighbour_, it->requiresMIM_, fLocal);
+            }
         };
 
         // Execute lambda operator for each cell
@@ -240,8 +200,6 @@ void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, Proces
                 totalGeometryForces(*mol.get(), fLocalBound);
 
             // Pair potential interactions between atoms within the molecule
-            // Only include these terms if we haven't already included them in the cell-to-cell loop above
-
             if (!flags.isSet(ExcludeIntraMolecularPairPotential))
                 dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
                                         [&](int indexI, const auto &i, int indexJ, const auto &j)

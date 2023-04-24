@@ -54,13 +54,8 @@ class ForceKernel : public GeometryKernel
     void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
     void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const;
-    // Calculate forces between Cell and its neighbours
-    void cellPairPotentialForces(const Cell *cell, bool excludeIgeJ, bool includeIntraMolecular,
-                                 ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between two cells
-    void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
-                                       bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy,
-                                       ForceVector &f) const;
+    void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, ForceVector &f) const;
 
     /*
      * Extended Terms
