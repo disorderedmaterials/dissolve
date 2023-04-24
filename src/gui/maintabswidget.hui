@@ -36,8 +36,9 @@ class MainTabsWidget : public QTabWidget
 
     public:
     // Set-up widget
-    DissolveWindow *dissolveWindow_{nullptr};
     void setUp();
+    // Add in reference to DissolveWindow for all functions to access
+    DissolveWindow *dissolveWindow_{nullptr};
 
     /*
      * Tab Data
