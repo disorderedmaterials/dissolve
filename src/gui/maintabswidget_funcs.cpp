@@ -37,10 +37,10 @@ MainTabsWidget::~MainTabsWidget()
  */
 
 // Set-up widget
-void MainTabsWidget::setUp()
+void MainTabsWidget::setUp(DissolveWindow *dissolveWindow)
 {
-    forcefieldTab_ = new ForcefieldTab(dissolveWindow_, dissolveWindow_->dissolve(), this, "Forcefield");
-    messagesTab_ = new MessagesTab(dissolveWindow_, dissolveWindow_->dissolve(), this, "Messages");
+    forcefieldTab_ = new ForcefieldTab(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
+    messagesTab_ = new MessagesTab(dissolveWindow, dissolveWindow->dissolve(), this, "Messages");
 }
 
 /*
@@ -159,9 +159,9 @@ void MainTabsWidget::clearTabs()
 }
 
 // Reconcile tabs, making them consistent with the provided data
-void MainTabsWidget::reconcileTabs()
+void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 {
-    auto &dissolve = dissolveWindow_->dissolve();
+    auto &dissolve = dissolveWindow->dissolve();
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
     auto currentTabIndex = 0;
@@ -186,7 +186,7 @@ void MainTabsWidget::reconcileTabs()
         if (currentTabIndex == speciesTabs_.size())
         {
             QString tabTitle = QString::fromStdString(std::string(sp->name()));
-            auto spTab = speciesTabs_.emplace_back(new SpeciesTab(dissolveWindow_, dissolve, this, tabTitle, sp.get()));
+            auto spTab = speciesTabs_.emplace_back(new SpeciesTab(dissolveWindow, dissolve, this, tabTitle, sp.get()));
 
             allTabs_.emplace_back(spTab.data());
             insertTab(baseIndex + currentTabIndex, spTab.data(), tabTitle);
@@ -220,7 +220,7 @@ void MainTabsWidget::reconcileTabs()
         {
             QString tabTitle = QString::fromStdString(std::string(cfg->name()));
             auto cfgTab =
-                configurationTabs_.emplace_back(new ConfigurationTab(dissolveWindow_, dissolve, this, tabTitle, cfg.get()));
+                configurationTabs_.emplace_back(new ConfigurationTab(dissolveWindow, dissolve, this, tabTitle, cfg.get()));
 
             allTabs_.push_back(cfgTab.data());
             insertTab(baseIndex + currentTabIndex, cfgTab.data(), tabTitle);
@@ -260,7 +260,7 @@ void MainTabsWidget::reconcileTabs()
         {
             QString tabTitle = QString::fromStdString(std::string(layer->name()));
             auto layerTab =
-                processingLayerTabs_.emplace_back(new LayerTab(dissolveWindow_, dissolve, this, tabTitle, layer.get()));
+                processingLayerTabs_.emplace_back(new LayerTab(dissolveWindow, dissolve, this, tabTitle, layer.get()));
 
             allTabs_.push_back(layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
@@ -467,7 +467,7 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
     auto *disableThisLayer = menu.addAction("&Disable this");
     auto *disableLayersToTheLeft = menu.addAction("Disable layers to the left");
     auto *disableLayersToTheRight = menu.addAction("Disable layers to the right");
-    auto *clearModuleData = menu.addAction("Clear all module data in associated layer");
+    auto *clearModuleData = menu.addAction("Clear all module data in layer");
     enableThisLayer->setEnabled(layerTab &&
                                 layerTab->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
     disableThisLayer->setEnabled(layerTab &&
