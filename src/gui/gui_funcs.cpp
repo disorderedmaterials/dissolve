@@ -28,7 +28,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     ui_.setupUi(this);
 
     // Set up the main tabs widget
-    ui_.MainTabs->setUp(this);
+    ui_.MainTabs->setUp();
 
     // Connect signals to thread controller
     connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
@@ -369,7 +369,7 @@ void DissolveWindow::fullUpdate()
     if (dissolve_.hasInputFilename())
         ui_.MainStack->setCurrentIndex(1);
 
-    ui_.MainTabs->reconcileTabs(this);
+    ui_.MainTabs->reconcileTabs();
     ui_.MainTabs->updateAllTabs();
 
     updateWindowTitle();

@@ -37,10 +37,10 @@ MainTabsWidget::~MainTabsWidget()
  */
 
 // Set-up widget
-void MainTabsWidget::setUp(DissolveWindow *dissolveWindow)
+void MainTabsWidget::setUp()
 {
-    forcefieldTab_ = new ForcefieldTab(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
-    messagesTab_ = new MessagesTab(dissolveWindow, dissolveWindow->dissolve(), this, "Messages");
+    forcefieldTab_ = new ForcefieldTab(dissolveWindow_, dissolveWindow_->dissolve(), this, "Forcefield");
+    messagesTab_ = new MessagesTab(dissolveWindow_, dissolveWindow_->dissolve(), this, "Messages");
 }
 
 /*
@@ -159,9 +159,9 @@ void MainTabsWidget::clearTabs()
 }
 
 // Reconcile tabs, making them consistent with the provided data
-void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
+void MainTabsWidget::reconcileTabs()
 {
-    auto &dissolve = dissolveWindow->dissolve();
+    auto &dissolve = dissolveWindow_->dissolve();
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
     auto currentTabIndex = 0;
@@ -186,7 +186,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         if (currentTabIndex == speciesTabs_.size())
         {
             QString tabTitle = QString::fromStdString(std::string(sp->name()));
-            auto spTab = speciesTabs_.emplace_back(new SpeciesTab(dissolveWindow, dissolve, this, tabTitle, sp.get()));
+            auto spTab = speciesTabs_.emplace_back(new SpeciesTab(dissolveWindow_, dissolve, this, tabTitle, sp.get()));
 
             allTabs_.emplace_back(spTab.data());
             insertTab(baseIndex + currentTabIndex, spTab.data(), tabTitle);
@@ -220,7 +220,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         {
             QString tabTitle = QString::fromStdString(std::string(cfg->name()));
             auto cfgTab =
-                configurationTabs_.emplace_back(new ConfigurationTab(dissolveWindow, dissolve, this, tabTitle, cfg.get()));
+                configurationTabs_.emplace_back(new ConfigurationTab(dissolveWindow_, dissolve, this, tabTitle, cfg.get()));
 
             allTabs_.push_back(cfgTab.data());
             insertTab(baseIndex + currentTabIndex, cfgTab.data(), tabTitle);
@@ -260,7 +260,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         {
             QString tabTitle = QString::fromStdString(std::string(layer->name()));
             auto layerTab =
-                processingLayerTabs_.emplace_back(new LayerTab(dissolveWindow, dissolve, this, tabTitle, layer.get()));
+                processingLayerTabs_.emplace_back(new LayerTab(dissolveWindow_, dissolve, this, tabTitle, layer.get()));
 
             allTabs_.push_back(layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
@@ -467,6 +467,7 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
     auto *disableThisLayer = menu.addAction("&Disable this");
     auto *disableLayersToTheLeft = menu.addAction("Disable layers to the left");
     auto *disableLayersToTheRight = menu.addAction("Disable layers to the right");
+    auto *clearModuleData = menu.addAction("Clear all module data in associated layer");
     enableThisLayer->setEnabled(layerTab &&
                                 layerTab->moduleLayer()->runControlFlags().isSet(ModuleLayer::RunControlFlag::Disabled));
     disableThisLayer->setEnabled(layerTab &&
@@ -518,6 +519,16 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
         layerTab->moduleLayer()->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
         layerTab->updateControls();
         updateRequired = true;
+    }
+    else if (action == clearModuleData)
+    {
+        for (auto &m : layerTab->moduleLayer()->modules())
+        {
+            Renderable::invalidateAll();
+            Renderable::setSourceDataAccessEnabled(false);
+            dissolveWindow_->dissolve().processingModuleData().removeWithPrefix(m->name());
+            Renderable::setSourceDataAccessEnabled(true);
+        }
     }
 
     if (updateRequired)
