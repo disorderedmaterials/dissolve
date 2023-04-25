@@ -86,7 +86,7 @@ class MainTabsWidget : public QTabWidget
     // Remove all tabs, including permanent tabs
     void clearTabs();
     // Reconcile tabs, making them consistent with the provided data
-    void reconcileTabs(DissolveWindow *dissolveWindow);
+    void reconcileTabs();
     // Remove tab containing the specified page widget
     void removeByPage(QWidget *page);
 
