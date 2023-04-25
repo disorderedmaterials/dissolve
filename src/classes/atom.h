@@ -25,8 +25,6 @@ class Atom
     int localTypeIndex_{-1};
     // Assigned master AtomType index (for pair potential indexing)
     int masterTypeIndex_{-1};
-    // Object's index within the parent DynamicArray
-    int arrayIndex_{-1};
 
     public:
     // Set coordinates
@@ -51,10 +49,6 @@ class Atom
     int masterTypeIndex() const;
     // Return global index of the atom
     int globalIndex() const;
-    // Sets the index of the object within the parent DynamicArray
-    void setArrayIndex(int index);
-    // Gets the index of the object within the parent DynamicArray
-    int arrayIndex() const;
 
     /*
      * Location

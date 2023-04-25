@@ -209,7 +209,6 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
 {
     // Create new Atom object and set its source pointer
     auto &newAtom = atoms_.emplace_back();
-    newAtom.setArrayIndex(atoms_.size() - 1);
     newAtom.setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)

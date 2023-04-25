@@ -44,12 +44,6 @@ int Atom::globalIndex() const
     return molecule_->globalAtomIndex(this);
 }
 
-// Sets the index of the object within the parent array
-void Atom::setArrayIndex(int index) { arrayIndex_ = index; }
-
-// Gets the index of the object within the parent array
-int Atom::arrayIndex() const { return arrayIndex_; }
-
 /*
  * Location
  */
