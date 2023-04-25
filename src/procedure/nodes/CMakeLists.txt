@@ -7,6 +7,7 @@ add_library(
   calculateaxisangle.cpp
   calculatebase.cpp
   calculatedistance.cpp
+  calculateexpression.cpp
   calculatevector.cpp
   collect1d.cpp
   collect2d.cpp
@@ -50,6 +51,7 @@ add_library(
   calculateaxisangle.h
   calculatebase.h
   calculatedistance.h
+  calculateexpression.h
   calculatevector.h
   collect1d.h
   collect2d.h
