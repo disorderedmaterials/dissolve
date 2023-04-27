@@ -31,7 +31,7 @@ int CalculateExpressionProcedureNode::dimensionality() const { return 1; }
  */
 
 // Execute node
-bool CalculateExpressionProcedureNode::execute()
+bool CalculateExpressionProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     value_.x = expression_.asDouble();
     return true;
