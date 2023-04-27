@@ -6,6 +6,7 @@
 #include "classes/coredata.h"
 #include "classes/sitereference.h"
 #include "classes/species.h"
+#include "expression/variable.h"
 #include "keywords/node.h"
 #include "keywords/nodebranch.h"
 #include "keywords/nodevector.h"
@@ -55,6 +56,7 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     nAvailableSites_ = 0;
     sameMolecule_ = nullptr;
     distanceReferenceSite_ = nullptr;
+    nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
 }
 
 /*
@@ -65,6 +67,36 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
     return (context == ProcedureNode::AnalysisContext);
+}
+
+// Set node name
+void SelectProcedureNode::setName(std::string_view name)
+{
+    name_ = DissolveSys::niceName(name);
+
+    // Update parameter names to match
+    nSelectedParameter_->setName(fmt::format("{}.nSelected", name_));
+}
+
+/*
+ * Parameters
+ */
+
+// Return the named parameter (if it exists)
+std::shared_ptr<ExpressionVariable> SelectProcedureNode::getParameter(std::string_view name,
+                                                                      std::shared_ptr<ExpressionVariable> excludeParameter)
+{
+    for (auto var : parameters_)
+        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
+            return var;
+
+    return nullptr;
+}
+
+// Return vector of all parameters for this node
+OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> SelectProcedureNode::parameters() const
+{
+    return parameters_;
 }
 
 /*
@@ -265,6 +297,9 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
                 return false;
         }
     }
+
+    // Update parameters
+    nSelectedParameter_->setValue(int(sites_.size()));
 
     return true;
 }

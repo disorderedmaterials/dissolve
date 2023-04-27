@@ -30,6 +30,26 @@ class SelectProcedureNode : public ProcedureNode
     public:
     // Return whether specified context is relevant for this node type
     bool isContextRelevant(ProcedureNode::NodeContext context) override;
+    // Set node name
+    void setName(std::string_view name) override;
+
+    /*
+     * Parameters
+     */
+    private:
+    // Defined parameters
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
+    // Pointers to individual parameters
+    std::shared_ptr<ExpressionVariable> nSelectedParameter_;
+
+    public:
+    // Add new parameter
+    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, ExpressionValue initialValue);
+    // Return the named parameter (if it exists)
+    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
+                                                     std::shared_ptr<ExpressionVariable> excludeParameter) override;
+    // Return vector of all parameters for this node
+    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;
 
     /*
      * Selection Targets
