@@ -47,4 +47,4 @@ Subtract: '-';
 Power: '^';
 
 // Named Token
-Name: LETTER+;
+Name: LETTER (LETTER | '.')*;
