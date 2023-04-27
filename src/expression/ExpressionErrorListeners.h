@@ -44,11 +44,11 @@ class ExpressionInternalErrorException : public std::exception
 class ExpressionLexerErrorListener : public antlr4::BaseErrorListener
 {
     public:
-    ExpressionLexerErrorListener(const Expression &expr);
+    ExpressionLexerErrorListener(std::string_view inputLine);
 
     private:
-    // Expression being constructed
-    const Expression &expression_;
+    // Input line for expression generation
+    std::string_view inputLine_;
 
     /*
      * BaseErrorListener Overrides
@@ -62,11 +62,11 @@ class ExpressionLexerErrorListener : public antlr4::BaseErrorListener
 class ExpressionParserErrorListener : public antlr4::BaseErrorListener
 {
     public:
-    ExpressionParserErrorListener(const Expression &expr);
+    ExpressionParserErrorListener(std::string_view inputLine);
 
     private:
-    // Expression being constructed
-    const Expression &expression_;
+    // Input line for expression generation
+    std::string_view inputLine_;
 
     /*
      * BaseErrorListener Overrides

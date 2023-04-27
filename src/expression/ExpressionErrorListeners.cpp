@@ -9,12 +9,12 @@
  * Expression Lexer Error Listener
  */
 
-ExpressionLexerErrorListener::ExpressionLexerErrorListener(const Expression &expr) : expression_(expr) {}
+ExpressionLexerErrorListener::ExpressionLexerErrorListener(std::string_view inputLine) : inputLine_(inputLine) {}
 
 void ExpressionLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
                                                size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
 {
-    Messenger::print("\nError in Expression definition '{}'\n", expression_.expressionString());
+    Messenger::print("\nError in Expression definition '{}'\n", inputLine_);
     std::string marker(32 + charPositionInLine, ' ');
     marker += '^';
     Messenger::print("{}\n", marker);
@@ -29,12 +29,12 @@ void ExpressionLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, a
  * Expression Parser Error Listener
  */
 
-ExpressionParserErrorListener::ExpressionParserErrorListener(const Expression &expr) : expression_(expr) {}
+ExpressionParserErrorListener::ExpressionParserErrorListener(std::string_view inputLine) : inputLine_(inputLine) {}
 
 void ExpressionParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
                                                 size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
 {
-    Messenger::print("\nError in Expression definition '{}'\n", expression_.expressionString());
+    Messenger::print("\nError in Expression definition '{}'\n", inputLine_);
     std::string marker(32 + charPositionInLine, ' ');
     marker += '^';
     Messenger::print("{}\n", marker);
