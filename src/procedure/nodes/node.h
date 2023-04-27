@@ -112,7 +112,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name
-    void setName(std::string_view name);
+    virtual void setName(std::string_view name);
     // Return node name
     std::string_view name() const;
 
@@ -167,6 +167,11 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     /*
      * Parameters
      */
+    protected:
+    // Set named parameter in supplied vector
+    bool setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
+                      ExpressionValue value);
+
     public:
     // Return the named parameter (if it exists)
     virtual std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
