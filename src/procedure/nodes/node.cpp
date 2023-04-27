@@ -31,6 +31,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::CalculateAngle, "CalculateAngle"},
                      {ProcedureNode::NodeType::CalculateAxisAngle, "CalculateAxisAngle"},
                      {ProcedureNode::NodeType::CalculateDistance, "CalculateDistance"},
+                     {ProcedureNode::NodeType::CalculateExpression, "CalculateExpression"},
                      {ProcedureNode::NodeType::CalculateVector, "CalculateVector"},
                      {ProcedureNode::NodeType::Collect1D, "Collect1D"},
                      {ProcedureNode::NodeType::Collect2D, "Collect2D"},
