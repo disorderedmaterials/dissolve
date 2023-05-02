@@ -30,6 +30,8 @@
 #include "modules/geomopt/gui/geomoptwidget.h"
 #include "modules/gr/gr.h"
 #include "modules/gr/gui/grwidget.h"
+#include "modules/histogramcn/histogramcn.h"
+#include "modules/histogramcn/gyu/histogramcnwidget.h
 #include "modules/intraangle/gui/intraanglewidget.h"
 #include "modules/intraangle/intraangle.h"
 #include "modules/intradistance/gui/intradistancewidget.h"

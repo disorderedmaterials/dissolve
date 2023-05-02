@@ -22,6 +22,7 @@
 #include "modules/forces/forces.h"
 #include "modules/geomopt/geomopt.h"
 #include "modules/gr/gr.h"
+#include "modules/histogramcn/histogramcn.h
 #include "modules/import_trajectory/importtraj.h"
 #include "modules/intraangle/intraangle.h"
 #include "modules/intradistance/intradistance.h"
