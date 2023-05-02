@@ -7,6 +7,7 @@
 #include "gui/maintabsbar.hui"
 #include "gui/maintabswidget.hui"
 #include "main/dissolve.h"
+#include <QMessageBox>
 #include <QToolButton>
 #include <memory>
 
@@ -523,12 +524,19 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
     }
     else if (action == clearModuleData)
     {
-        for (auto &m : layerTab->moduleLayer()->modules())
+        if (QMessageBox::warning(this, "Clear All Module Data",
+                                 "This will clear all generated module data in this layer. \n\n"
+                                 "This cannot be undone! Proceed?",
+                                 QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
+                                 QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
         {
-            Renderable::invalidateAll();
-            Renderable::setSourceDataAccessEnabled(false);
-            dissolveWindow_->dissolve().processingModuleData().removeWithPrefix(m->name());
-            Renderable::setSourceDataAccessEnabled(true);
+            for (auto &m : layerTab->moduleLayer()->modules())
+            {
+                Renderable::invalidateAll();
+                Renderable::setSourceDataAccessEnabled(false);
+                dissolveWindow_->dissolve().processingModuleData().removeWithPrefix(m->name());
+                Renderable::setSourceDataAccessEnabled(true);
+            }
         }
     }
 
