@@ -4,11 +4,9 @@
 #include "base/randombuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
-#include "classes/cell.h"
 #include "classes/changestore.h"
-#include "classes/configuration.h"
+#include "classes/energykernel.h"
 #include "classes/regionaldistributor.h"
-#include "classes/scaledenergykernel.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
 #include "modules/molshake/molshake.h"
@@ -59,7 +57,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Create a local ChangeStore and a suitable EnergyKernel
     ChangeStore changeStore(procPool, commsTimer);
-    EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
+    EnergyKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
@@ -110,8 +108,8 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // Set current atom targets in ChangeStore (whole Molecule)
             changeStore.add(mol);
 
-            // Calculate reference energy for Molecule, including intramolecular terms
-            currentEnergy = kernel.energy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
+            // Calculate reference pair potential energy for Molecule, excluding intramolecular contributions
+            currentEnergy = kernel.pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
 
             // Loop over number of shakes per atom
             for (shake = 0; shake < nShakesPerMolecule_; ++shake)
@@ -154,7 +152,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 targetConfiguration_->updateCellLocation(mol);
 
                 // Calculate new energy
-                newEnergy = kernel.energy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
+                newEnergy = kernel.pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
 
                 // Trial the transformed atom position
                 delta = newEnergy - currentEnergy;

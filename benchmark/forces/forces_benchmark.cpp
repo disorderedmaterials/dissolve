@@ -13,22 +13,8 @@ template <ProblemType problem, Population population> ForceKernel createForceKer
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     auto *cfg = problemDef.cfg_;
-    ForceKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
+    ForceKernel kernel(procPool, cfg, potentialMap);
     return kernel;
-}
-
-template <ProblemType problem, Population population> static void BM_CalculateForces_InterAtomic(benchmark::State &state)
-{
-    Problem<problem, population> problemDef;
-    auto *cfg = problemDef.cfg_;
-    std::vector<Vec3<double>> forces(cfg->nAtoms());
-    auto forceKernel = createForceKernel(problemDef);
-    const auto &cellArray = problemDef.cfg_->cells();
-    auto *cellI = cellArray.cell(1);
-    for (auto _ : state)
-    {
-        forceKernel.forces(cellI, true, ProcessPool::PoolStrategy, forces);
-    }
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesBond(benchmark::State &state)
@@ -73,10 +59,9 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
     Problem<problem, population> problemDef;
     auto *cfg = problemDef.cfg_;
     std::vector<Vec3<double>> forces(cfg->nAtoms());
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-        ForcesModule::internalMoleculeForces(procPool, cfg, potentialMap, true, forces);
+        forceKernel.totalIntramolecularForces(forces, true, ProcessPool::PoolStrategy);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
@@ -87,22 +72,17 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
-        ForcesModule::totalForces(procPool, sp.get(), potentialMap, forces);
+        ForcesModule::totalForces(procPool, sp.get(), potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalInterAtomic(benchmark::State &state)
 {
-
     Problem<problem, population> problemDef;
     auto *cfg = problemDef.cfg_;
     std::vector<Vec3<double>> forces(cfg->nAtoms());
-    auto &procPool = problemDef.dissolve_.worldPool();
-    const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
+    auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-    {
-        std::vector<Vec3<double>> forces(cfg->nAtoms());
-        ForcesModule::pairPotentialForces(procPool, cfg, potentialMap, forces);
-    }
+        forceKernel.totalPairPotentialForces(forces, ProcessPool::PoolStrategy);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalForces(benchmark::State &state)
@@ -114,14 +94,9 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     for (auto _ : state)
-    {
-        std::vector<Vec3<double>> forces(cfg->nAtoms());
-        ForcesModule::totalForces(procPool, cfg, potentialMap, forces);
-    }
+        ForcesModule::totalForces(procPool, cfg, potentialMap, ForcesModule::ForceCalculationType::Full, forces, forces);
 }
 // small molecule benchmarks
-BENCHMARK_TEMPLATE(BM_CalculateForces_InterAtomic, ProblemType::smallMolecule, Population::small)
-    ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, ProblemType::smallMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesAngle, ProblemType::smallMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateForces_TotalIntraMolecular, ProblemType::smallMolecule, Population::small)
@@ -135,8 +110,6 @@ BENCHMARK_TEMPLATE(BM_CalculateForces_TotalForces, ProblemType::smallMolecule, P
     ->Unit(benchmark::kMillisecond);
 
 // medium molecule benchmarks
-BENCHMARK_TEMPLATE(BM_CalculateForces_InterAtomic, ProblemType::mediumMolecule, Population::small)
-    ->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesAngle, ProblemType::mediumMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesBond, ProblemType::mediumMolecule, Population::small);
 BENCHMARK_TEMPLATE(BM_CalculateForces_SpeciesTorsion, ProblemType::mediumMolecule, Population::small);

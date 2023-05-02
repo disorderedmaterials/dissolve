@@ -24,11 +24,9 @@ class SpeciesTorsion;
 class EnergyKernel
 {
     public:
-    EnergyKernel(const ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
-                 std::optional<double> energyCutoff = std::nullopt);
+    EnergyKernel(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
+                 std::optional<double> energyCutoff = {});
     ~EnergyKernel() = default;
-    // Clear all data
-    void clear();
 
     /*
      * Source Data
@@ -48,51 +46,43 @@ class EnergyKernel
      */
     private:
     // Return PairPotential energy between atoms
-    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r);
+    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r) const;
     // Return PairPotential energy between atoms, scaling electrostatic and van der Waals components
-    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale);
-    // Return PairPotential energy between atoms provided
-    double energyWithoutMim(const Atom &i, const Atom &j);
-    // Return PairPotential energy between atoms provided
-    double energyWithMim(const Atom &i, const Atom &j);
+    virtual double pairPotentialEnergy(const Atom &i, const Atom &j, double r, double elecScale, double vdwScale) const;
 
     /*
      * PairPotential Terms
      */
     private:
-    // Return PairPotential energy between atoms
-    double energy(const Atom &i, const Atom &j, bool applyMim, bool excludeIgeJ);
-    // Return PairPotential energy of atoms in the supplied cell with all other cells
-    double energy(const Cell &cell, bool includeIntraMolecular);
+    // Return PairPotential energy of atoms in the supplied cell
+    double energy(const Cell &cell, bool includeIntraMolecular) const;
     // Return PairPotential energy between two cells
-    double energy(const Cell &cell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular);
+    double energy(const Cell &cell, const Cell &otherCell, bool applyMim, bool includeIntraMolecular) const;
 
     public:
     // Return PairPotential energy of atom with world
-    double energy(const Atom &i);
-    // Return molecular correction energy related to intramolecular terms involving supplied atom
-    double correct(const Atom &i);
+    double pairPotentialEnergy(const Atom &i) const;
     // Return PairPotential energy of Molecule with world
-    double energy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy);
-    // Return total interatomic PairPotential energy of the system
-    double energy(const CellArray &cellArray, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy);
+    double pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
+    // Return total interatomic PairPotential energy of the world
+    double totalPairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
 
     /*
      * Intramolecular Terms
      */
     public:
     // Return SpeciesBond energy at Atoms specified
-    double energy(const SpeciesBond &b, const Atom &i, const Atom &j);
+    double energy(const SpeciesBond &b, const Atom &i, const Atom &j) const;
     // Return SpeciesAngle energy at Atoms specified
-    double energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k);
+    double energy(const SpeciesAngle &a, const Atom &i, const Atom &j, const Atom &k) const;
     // Return SpeciesTorsion energy at Atoms specified
-    double energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l);
+    double energy(const SpeciesTorsion &t, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
     // Return SpeciesImproper energy at Atoms specified
-    double energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l);
+    double energy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
     // Return intramolecular energy for the supplied Atom
-    double intramolecularEnergy(const Molecule &mol, const Atom &i);
+    double intramolecularEnergy(const Molecule &mol, const Atom &i) const;
     // Return intramolecular energy for the supplied Molecule
-    double intramolecularEnergy(const Molecule &mol);
+    double intramolecularEnergy(const Molecule &mol) const;
 
     /*
      * Parallel Comms

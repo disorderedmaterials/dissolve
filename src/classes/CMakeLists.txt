@@ -50,7 +50,6 @@ add_library(
   partialsetaccumulator.cpp
   region.cpp
   regionaldistributor.cpp
-  scaledenergykernel.cpp
   scatteringmatrix.cpp
   serializablepairpotential.cpp
   site.cpp
@@ -109,7 +108,6 @@ add_library(
   partialsetaccumulator.h
   region.h
   regionaldistributor.h
-  scaledenergykernel.h
   scatteringmatrix.h
   serializablepairpotential.h
   site.h

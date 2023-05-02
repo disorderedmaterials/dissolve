@@ -42,14 +42,13 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Config
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
+    EnergyKernel kernel(procPool, cfg, potentialMap);
 
     // Set the strategy
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    const auto &cellArray = cfg->cells();
-    double totalEnergy = kernel.energy(cellArray, true, strategy);
+    double totalEnergy = kernel.totalPairPotentialEnergy(true, strategy);
 
     // Print process-local energy
     Messenger::printVerbose("Interatomic Energy (Local) is {:15.9e}\n", totalEnergy);
@@ -112,14 +111,13 @@ double EnergyModule::interMolecularEnergy(const ProcessPool &procPool, const Con
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
+    EnergyKernel kernel(procPool, cfg, potentialMap);
 
     // Set the strategy
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    const auto &cellArray = cfg->cells();
-    double totalEnergy = kernel.energy(cellArray, false, strategy);
+    double totalEnergy = kernel.totalPairPotentialEnergy(false, strategy);
 
     // Print process-local energy
     Messenger::printVerbose("Intermolecular Energy (Local) is {:15.9e}\n", totalEnergy);
@@ -153,7 +151,7 @@ double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Con
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg->box(), cfg->cells(), potentialMap);
+    EnergyKernel kernel(procPool, cfg, potentialMap);
 
     bondEnergy = 0;
     angleEnergy = 0;

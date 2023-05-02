@@ -11,9 +11,18 @@
 #include "templates/algorithms.h"
 #include <iterator>
 
-ForceKernel::ForceKernel(const ProcessPool &procPool, const Box *box, const CellArray &cells, const PotentialMap &potentialMap,
+ForceKernel::ForceKernel(const ProcessPool &procPool, const Configuration *cfg, const PotentialMap &potentialMap,
                          std::optional<double> energyCutoff)
-    : box_(box), cellArray_(cells), potentialMap_(potentialMap), processPool_(procPool)
+    : box_(cfg->box()), cellArray_(cfg->cells()), molecules_(cfg->molecules()), potentialMap_(potentialMap),
+      processPool_(procPool)
+{
+    cutoffDistanceSquared_ =
+        energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
+}
+
+ForceKernel::ForceKernel(const ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap,
+                         std::optional<double> energyCutoff)
+    : box_(box), potentialMap_(potentialMap), processPool_(procPool)
 {
     cutoffDistanceSquared_ =
         energyCutoff.has_value() ? energyCutoff.value() * energyCutoff.value() : potentialMap_.range() * potentialMap_.range();
@@ -165,9 +174,42 @@ void ForceKernel::forces(const Cell *centralCell, const Cell *otherCell, bool ap
 // Calculate forces between Cell and its neighbours
 void ForceKernel::forces(const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
-    auto &neighbours = cellArray_.neighbours(*cell);
+    assert(cellArray_);
+
+    auto &neighbours = cellArray_->get().neighbours(*cell);
     for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
         forces(cell, &it->neighbour_, it->requiresMIM_, excludeIgeJ, strategy, f);
+}
+
+// Calculate total pairpotential forces between atoms in the world
+void ForceKernel::totalPairPotentialForces(std::vector<Vec3<double>> &f, ProcessPool::DivisionStrategy strategy) const
+{
+    assert(cellArray_);
+    auto &cellArray = cellArray_->get();
+
+    // Create a ForceKernel
+    auto combinableForces = createCombinableForces(f);
+
+    // Set start/stride for parallel loop
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
+
+    // algorithm parameters
+    auto unaryOp = [&, strategy](const int id)
+    {
+        auto *cellI = cellArray.cell(id);
+        auto &fLocal = combinableForces.local();
+        // This cell with itself
+        forces(cellI, cellI, false, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
+        // Interatomic interactions between atoms in this cell and its neighbours
+        forces(cellI, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
+    };
+
+    // Execute lambda operator for each cell
+    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin), dissolve::counting_iterator<int>(end),
+                       unaryOp);
+    combinableForces.finalize();
 }
 
 /*
@@ -240,24 +282,6 @@ void ForceKernel::forces(const SpeciesBond &bond, const Atom &i, const Atom &j, 
     f[j.arrayIndex()] += vecji;
 }
 
-// Calculate SpeciesBond forces for specified Atom only
-void ForceKernel::forces(const Atom &onlyThis, const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const
-{
-    auto vecji = box_->minimumVector(i.r(), j.r());
-
-    // Get distance and normalise vector ready for force calculation
-    auto distance = vecji.magAndNormalise();
-
-    // Determine final forces
-    vecji *= bond.force(distance);
-
-    // Calculate forces
-    if (&onlyThis == &i)
-        f[onlyThis.arrayIndex()] -= vecji;
-    else
-        f[onlyThis.arrayIndex()] += vecji;
-}
-
 // Calculate SpeciesBond forces
 void ForceKernel::forces(const SpeciesBond &bond, const Vec3<double> &ri, const Vec3<double> &rj, ForceVector &f) const
 {
@@ -306,27 +330,6 @@ void ForceKernel::forces(const SpeciesAngle &angle, const Atom &i, const Atom &j
     f[i.arrayIndex()] += angleParameters.dfi_dtheta_;
     f[j.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
     f[k.arrayIndex()] += angleParameters.dfk_dtheta_;
-}
-
-// Calculate SpeciesAngle forces for specified Atom only
-void ForceKernel::forces(const Atom &onlyThis, const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k,
-                         ForceVector &f) const
-{
-    auto vecji = box_->minimumVector(j.r(), i.r());
-    auto vecjk = box_->minimumVector(j.r(), k.r());
-
-    auto angleParameters = calculateAngleParameters(vecji, vecjk);
-    const auto force = angle.force(angleParameters.theta_);
-    angleParameters.dfi_dtheta_ *= force;
-    angleParameters.dfk_dtheta_ *= force;
-
-    // Store forces
-    if (&onlyThis == &i)
-        f[onlyThis.arrayIndex()] += angleParameters.dfi_dtheta_;
-    else if (&onlyThis == &j)
-        f[onlyThis.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
-    else
-        f[onlyThis.arrayIndex()] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces
@@ -391,7 +394,6 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom &i, const Ato
                          ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
-    Vec3<double> dcos_dxpj, dcos_dxpk;
     Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
 
     auto vecji = box_->minimumVector(i.r(), j.r());
@@ -407,28 +409,6 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom &i, const Ato
     addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
     addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
     addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
-}
-
-// Calculate SpeciesTorsion forces for specified Atom only
-void ForceKernel::forces(const Atom &onlyThis, const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k,
-                         const Atom &l, ForceVector &f) const
-{
-    auto vecji = box_->minimumVector(i.r(), j.r());
-    auto vecjk = box_->minimumVector(k.r(), j.r());
-    auto veckl = box_->minimumVector(l.r(), k.r());
-
-    auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
-
-    // Sum forces for specified atom
-    if (&onlyThis == &i)
-        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
-    else if (&onlyThis == &j)
-        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
-    else if (&onlyThis == &k)
-        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
-    else
-        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces
@@ -467,28 +447,6 @@ void ForceKernel::forces(const SpeciesImproper &improper, const Atom &i, const A
     addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
 }
 
-// Calculate SpeciesImproper forces for specified Atom only
-void ForceKernel::forces(const Atom &onlyThis, const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k,
-                         const Atom &l, ForceVector &f) const
-{
-    auto vecji = box_->minimumVector(i.r(), j.r());
-    auto vecjk = box_->minimumVector(k.r(), j.r());
-    auto veckl = box_->minimumVector(l.r(), k.r());
-
-    auto torsionParameters = calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp.force(torsionParameters.phi_ * DEGRAD);
-
-    // Sum forces for specified atom
-    if (&onlyThis == &i)
-        addTorsionForceI(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
-    else if (&onlyThis == &j)
-        addTorsionForceJ(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
-    else if (&onlyThis == &k)
-        addTorsionForceK(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
-    else
-        addTorsionForceL(du_dphi, onlyThis.arrayIndex(), torsionParameters, f);
-}
-
 // Calculate SpeciesImproper forces
 void ForceKernel::forces(const SpeciesImproper &imp, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
                          const Vec3<double> &rl, ForceVector &f) const
@@ -505,4 +463,64 @@ void ForceKernel::forces(const SpeciesImproper &imp, const Vec3<double> &ri, con
     addTorsionForceJ(du_dphi, imp.j()->index(), torsionParameters, f);
     addTorsionForceK(du_dphi, imp.k()->index(), torsionParameters, f);
     addTorsionForceL(du_dphi, imp.l()->index(), torsionParameters, f);
+}
+
+// Calculate intramolecular forces within the specified molecule
+void ForceKernel::intramolecularForces(Molecule *mol, ForceVector &f, bool includePairPotentialTerms) const
+{
+    // Loop over bonds
+    for (const auto &bond : mol->species()->bonds())
+        forces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), f);
+
+    // Loop over angles
+    for (const auto &angle : mol->species()->angles())
+        forces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), f);
+
+    // Loop over torsions
+    for (const auto &torsion : mol->species()->torsions())
+        forces(torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
+               *mol->atom(torsion.indexL()), f);
+
+    // Loop over impropers
+    for (const auto &imp : mol->species()->impropers())
+        forces(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()), *mol->atom(imp.indexK()), *mol->atom(imp.indexL()), f);
+
+    // Pair potential interactions between atoms
+    if (includePairPotentialTerms)
+        dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
+                                [&](int indexI, const auto &i, int indexJ, const auto &j)
+                                {
+                                    if (indexI == indexJ)
+                                        return;
+                                    auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                        forcesWithMim(*i, *j, f);
+                                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                        forcesWithMim(*i, *j, f, elec14, vdw14);
+                                });
+}
+
+// Calculate total intramolecular forces in the world
+void ForceKernel::totalIntramolecularForces(ForceVector &f, bool includePairPotentialTerms,
+                                            ProcessPool::DivisionStrategy strategy) const
+{
+    assert(molecules_);
+    auto &molecules = molecules_->get();
+
+    auto combinable = createCombinableForces(f);
+
+    auto moleculeForceOperator = [&](const auto &mol)
+    {
+        auto &fLocal = combinable.local();
+
+        intramolecularForces(mol.get(), fLocal, includePairPotentialTerms);
+    };
+
+    // Set start/stride for parallel loop
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto [begin, end] = chop_range(molecules.begin(), molecules.end(), stride, start);
+    dissolve::for_each(ParallelPolicies::par, begin, end, moleculeForceOperator);
+
+    combinable.finalize();
 }

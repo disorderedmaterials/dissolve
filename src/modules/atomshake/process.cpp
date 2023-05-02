@@ -39,7 +39,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore(procPool, commsTimer);
-    EnergyKernel kernel(procPool, targetConfiguration_->box(), targetConfiguration_->cells(), dissolve.potentialMap(), rCut);
+    EnergyKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
@@ -83,8 +83,8 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // Loop over atoms in the Molecule
             for (const auto &i : mol->atoms())
             {
-                // Calculate reference energy for the Atom
-                currentEnergy = kernel.energy(*i);
+                // Calculate reference energies for the Atom
+                currentEnergy = kernel.pairPotentialEnergy(*i);
                 currentIntraEnergy = kernel.intramolecularEnergy(*mol, *i) * termScale;
 
                 // Loop over number of shakes per Atom
@@ -99,7 +99,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     targetConfiguration_->updateCellLocation(i);
 
                     // Calculate new energy
-                    newEnergy = kernel.energy(*i);
+                    newEnergy = kernel.pairPotentialEnergy(*i);
                     newIntraEnergy = kernel.intramolecularEnergy(*mol, *i) * termScale;
 
                     // Trial the transformed Atom position
