@@ -4,8 +4,8 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
-#include "classes/forcekernel.h"
 #include "classes/species.h"
+#include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "modules/forces/forces.h"
 #include "modules/import_trajectory/importtraj.h"
@@ -212,7 +212,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     veckl = box->minimumVector(l->r(), k->r());
 
                     // Calculate torsion force parameters
-                    auto tp = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
+                    auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
                     du_dphi = torsion.force(tp.phi_ * DEGRAD);
 
                     // Sum forces on Atoms
@@ -256,7 +256,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     veckl = box->minimumVector(l->r(), k->r());
 
                     // Calculate improper force parameters
-                    auto tp = ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl);
+                    auto tp = GeometryKernel::calculateTorsionForceParameters(vecji, vecjk, veckl);
                     du_dphi = imp.force(tp.phi_ * DEGRAD);
 
                     // Sum forces on Atoms
@@ -307,11 +307,11 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Calculate interatomic forces
         if (testInter_)
         {
-            ForceKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap());
+            auto kernel = KernelProducer::forceKernel(targetConfiguration_, procPool, dissolve.potentialMap());
             Timer interTimer;
 
             interTimer.start();
-            kernel.totalPairPotentialForces(fInterCheck, ProcessPool::PoolStrategy);
+            kernel->totalPairPotentialForces(fInterCheck, ProcessPool::PoolStrategy);
             if (!procPool.allSum(fInterCheck))
                 return false;
             interTimer.stop();
@@ -322,11 +322,11 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Calculate intramolecular forces
         if (testIntra_)
         {
-            ForceKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap());
+            auto kernel = KernelProducer::forceKernel(targetConfiguration_, procPool, dissolve.potentialMap());
             Timer intraTimer;
 
             intraTimer.start();
-            kernel.totalIntramolecularForces(fIntraCheck, false, ProcessPool::PoolStrategy);
+            kernel->totalIntramolecularForces(fIntraCheck, false, ProcessPool::PoolStrategy);
             if (!procPool.allSum(fIntraCheck))
                 return false;
             intraTimer.stop();

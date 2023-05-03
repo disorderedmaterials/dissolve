@@ -5,9 +5,9 @@
 #include "base/timer.h"
 #include "classes/box.h"
 #include "classes/changestore.h"
-#include "classes/energykernel.h"
 #include "classes/regionaldistributor.h"
 #include "classes/species.h"
+#include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "modules/molshake/molshake.h"
 
@@ -57,7 +57,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Create a local ChangeStore and a suitable EnergyKernel
     ChangeStore changeStore(procPool, commsTimer);
-    EnergyKernel kernel(procPool, targetConfiguration_, dissolve.potentialMap(), rCut);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, procPool, dissolve.potentialMap(), rCut);
 
     // Initialise the random number buffer
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
@@ -109,7 +109,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             changeStore.add(mol);
 
             // Calculate reference pair potential energy for Molecule, excluding intramolecular contributions
-            currentEnergy = kernel.pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
+            currentEnergy = kernel->pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
 
             // Loop over number of shakes per atom
             for (shake = 0; shake < nShakesPerMolecule_; ++shake)
@@ -152,7 +152,7 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 targetConfiguration_->updateCellLocation(mol);
 
                 // Calculate new energy
-                newEnergy = kernel.pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
+                newEnergy = kernel->pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
 
                 // Trial the transformed atom position
                 delta = newEnergy - currentEnergy;

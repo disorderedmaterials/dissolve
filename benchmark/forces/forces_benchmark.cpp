@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
+
 #include "benchmark/benchmark.h"
 #include "classes/cell.h"
-#include "classes/forcekernel.h"
 #include "classes/species.h"
 #include "common/problems.h"
+#include "kernels/producer.h"
 #include "modules/forces/forces.h"
 
-template <ProblemType problem, Population population> ForceKernel createForceKernel(Problem<problem, population> &problemDef)
+template <ProblemType problem, Population population>
+std::unique_ptr<ForceKernel> createForceKernel(Problem<problem, population> &problemDef)
 {
 
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
     auto *cfg = problemDef.cfg_;
-    ForceKernel kernel(procPool, cfg, potentialMap);
-    return kernel;
+    return KernelProducer::forceKernel(cfg, procPool, potentialMap);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesBond(benchmark::State &state)
@@ -27,7 +28,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     const auto &bond = mol->species()->bonds().back();
 
     for (auto _ : state)
-        forceKernel.forces(bond, bond.i()->r(), bond.j()->r(), forces);
+        forceKernel->bondForces(bond, bond.i()->r(), bond.j()->r(), forces);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesAngle(benchmark::State &state)
@@ -39,7 +40,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &angle = mol->species()->angles().back();
     for (auto _ : state)
-        forceKernel.forces(angle, angle.i()->r(), angle.j()->r(), angle.k()->r(), forces);
+        forceKernel->angleForces(angle, angle.i()->r(), angle.j()->r(), angle.k()->r(), forces);
 }
 template <ProblemType problem, Population population> static void BM_CalculateForces_SpeciesTorsion(benchmark::State &state)
 {
@@ -50,7 +51,7 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     const auto &mol = problemDef.cfg_->molecules().front();
     const auto &torsion = mol->species()->torsions().back();
     for (auto _ : state)
-        forceKernel.forces(torsion, torsion.i()->r(), torsion.j()->r(), torsion.k()->r(), torsion.l()->r(), forces);
+        forceKernel->torsionForces(torsion, torsion.i()->r(), torsion.j()->r(), torsion.k()->r(), torsion.l()->r(), forces);
 }
 
 template <ProblemType problem, Population population>
@@ -61,7 +62,7 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-        forceKernel.totalIntramolecularForces(forces, true, ProcessPool::PoolStrategy);
+        forceKernel->totalIntramolecularForces(forces, true, ProcessPool::PoolStrategy);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
@@ -82,12 +83,11 @@ template <ProblemType problem, Population population> static void BM_CalculateFo
     std::vector<Vec3<double>> forces(cfg->nAtoms());
     auto forceKernel = createForceKernel(problemDef);
     for (auto _ : state)
-        forceKernel.totalPairPotentialForces(forces, ProcessPool::PoolStrategy);
+        forceKernel->totalPairPotentialForces(forces, ProcessPool::PoolStrategy);
 }
 
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalForces(benchmark::State &state)
 {
-
     Problem<problem, population> problemDef;
     auto *cfg = problemDef.cfg_;
     std::vector<Vec3<double>> forces(cfg->nAtoms());

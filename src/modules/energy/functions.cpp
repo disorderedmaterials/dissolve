@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "classes/energykernel.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
+#include "kernels/producer.h"
 #include "math/combinations.h"
 #include "modules/energy/energy.h"
 #include "templates/algorithms.h"
@@ -42,13 +42,13 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Config
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg, potentialMap);
+    auto kernel = KernelProducer::energyKernel(cfg, procPool, potentialMap);
 
     // Set the strategy
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    double totalEnergy = kernel.totalPairPotentialEnergy(true, strategy);
+    double totalEnergy = kernel->totalPairPotentialEnergy(true, strategy);
 
     // Print process-local energy
     Messenger::printVerbose("Interatomic Energy (Local) is {:15.9e}\n", totalEnergy);
@@ -111,13 +111,13 @@ double EnergyModule::interMolecularEnergy(const ProcessPool &procPool, const Con
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg, potentialMap);
+    auto kernel = KernelProducer::energyKernel(cfg, procPool, potentialMap);
 
     // Set the strategy
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Grab the Cell array and calculate total energy
-    double totalEnergy = kernel.totalPairPotentialEnergy(false, strategy);
+    double totalEnergy = kernel->totalPairPotentialEnergy(false, strategy);
 
     // Print process-local energy
     Messenger::printVerbose("Intermolecular Energy (Local) is {:15.9e}\n", totalEnergy);
@@ -151,7 +151,7 @@ double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Con
      */
 
     // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg, potentialMap);
+    auto kernel = KernelProducer::energyKernel(cfg, procPool, potentialMap);
 
     bondEnergy = 0;
     angleEnergy = 0;
@@ -176,29 +176,29 @@ double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Con
         localEnergies.bondEnergy +=
             std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
-                            { return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
+                            { return acc + kernel->bondEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
 
         // Loop over Angle
         localEnergies.angleEnergy += std::accumulate(
             mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
             [&mol, &kernel](auto const acc, const auto &t)
-            { return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
+            { return acc + kernel->angleEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
 
         // Loop over Torsions
         localEnergies.torsionEnergy +=
             std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
                             {
-                                return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
-                                                           *mol->atom(t.indexK()), *mol->atom(t.indexL()));
+                                return acc + kernel->torsionEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
+                                                                   *mol->atom(t.indexK()), *mol->atom(t.indexL()));
                             });
 
         localEnergies.improperEnergy +=
             std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &imp)
                             {
-                                return acc + kernel.energy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
-                                                           *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
+                                return acc + kernel->improperEnergy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
+                                                                    *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
                             });
 
         return localEnergies;

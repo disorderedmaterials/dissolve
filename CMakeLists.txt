@@ -230,6 +230,7 @@ set(BASIC_LINK_LIBS
     # Main libs
     main
     classes
+    kernels
     module
     moduleregistry
     io
