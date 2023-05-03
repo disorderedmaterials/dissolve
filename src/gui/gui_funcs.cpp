@@ -369,7 +369,7 @@ void DissolveWindow::fullUpdate()
     if (dissolve_.hasInputFilename())
         ui_.MainStack->setCurrentIndex(1);
 
-    ui_.MainTabs->reconcileTabs(this);
+    ui_.MainTabs->reconcileTabs();
     ui_.MainTabs->updateAllTabs();
 
     updateWindowTitle();
