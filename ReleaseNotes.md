@@ -1,4 +1,13 @@
-Version 1.1.1 is a patch release addressing a handful of bugfixes in the code.
+Version 1.1.2 is a patch release addressing several bugfixes.
+
+## Major Changes in v1.1.2
+
+- Fix: EPSR module now correctly handles region below Qmin when fitting empirical potentials. This has been shown to resolve the generation of voids / component separation evident in some systems.
+
+## Minor Changes in v1.1.2
+
+- Fix: Singularity containers did not handle CLI arguments.
+- Feature: Add ability to clear module data from an entire layer (in tab context menu).
 
 ## Minor Changes in v1.1.1
 
