@@ -30,6 +30,9 @@ class HistogramCNModuleWidget : public ModuleWidget
     // Main form declaration
     Ui::HistogramCNModuleWidget ui_;
 
+    // DataViewer contained within this widget
+    DataViewer *cnGraph_;
+
     public:
     // Update controls within widget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;

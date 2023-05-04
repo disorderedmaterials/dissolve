@@ -22,7 +22,7 @@
 			</font>
 		</property>
 		<property name="windowTitle">
-			<string>SiteRDF Controls</string>
+			<string>HistogramCN Controls</string>
 		</property>
 		<layout class="QVBoxLayout" name="verticalLayout">
 			<property name="spacing">
