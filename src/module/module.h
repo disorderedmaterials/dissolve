@@ -40,6 +40,7 @@ enum ModuleType
     Forces,
     GeometryOptimisation,
     GR,
+    HistogramCN,
     ImportTrajectory,
     IntraAngle,
     IntraDistance,

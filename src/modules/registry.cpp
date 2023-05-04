@@ -22,7 +22,7 @@
 #include "modules/forces/forces.h"
 #include "modules/geomopt/geomopt.h"
 #include "modules/gr/gr.h"
-#include "modules/histogramcn/histogramcn.h
+#include "modules/histogramcn/histogramcn.h"
 #include "modules/import_trajectory/importtraj.h"
 #include "modules/intraangle/intraangle.h"
 #include "modules/intradistance/intradistance.h"
@@ -67,6 +67,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<GeometryOptimisationModule>(ModuleTypes::GeometryOptimisation,
                                                  "Optimise geometry with respect to energy (minimise)", "Optimisation");
     registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");
+    registerProducer<HistogramCNModule>(ModuleTypes::HistogramCN, "Produce a histogram of Coordination numbers of an atom",
+                                        "Analysis");
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");

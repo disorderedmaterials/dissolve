@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/hitogramcn/gui/ui_histogramcnwidget.h"
+#include "modules/histogramcn/gui/ui_histogramcnwidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations
@@ -29,8 +29,6 @@ class HistogramCNModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::HistogramCNModuleWidget ui_;
-    // DataViewer contained within this widget
-    DataViewer *rdfGraph_;
 
     public:
     // Update controls within widget
