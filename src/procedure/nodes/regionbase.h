@@ -47,8 +47,6 @@ class RegionProcedureNodeBase : public ProcedureNode
     public:
     // Return current region data
     const Region &region() const;
-    // Generate and return region data based on the supplied configuration
-    const Region generateRegion(const Configuration *cfg) const;
 
     /*
      * Execute

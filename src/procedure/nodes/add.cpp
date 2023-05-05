@@ -249,22 +249,21 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
     }
 
     // Get the positioningType_ type and rotation flag
-    Region region;
-
     Messenger::print("[Add] Positioning type is '{}' and rotation is {}.\n",
                      AddProcedureNode::positioningTypes().keyword(positioningType_), rotate_ ? "on" : "off");
+
+    // Checks for regional positioning
     if (positioningType_ == AddProcedureNode::PositioningType::Region)
     {
         if (!region_)
             return Messenger::error("Positioning type set to '{}' but no region was given.\n",
                                     AddProcedureNode::positioningTypes().keyword(positioningType_));
 
-        region = region_->generateRegion(procedureContext.configuration());
-        if (!region.isValid())
+        if (!region_->region().isValid())
             return Messenger::error("Region '{}' is invalid, probably because it contains no free space.\n", region_->name());
 
         Messenger::print("[Add] Target region ('{}') covers {:.2f}% of the box volume.\n", region_->name(),
-                         region.freeVoxelFraction() * 100.0);
+                         region_->region().freeVoxelFraction() * 100.0);
     }
 
     // Now we add the molecules
@@ -313,7 +312,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
                 mol->setCentreOfGeometry(box, newCentre);
                 break;
             case (AddProcedureNode::PositioningType::Region):
-                mol->setCentreOfGeometry(box, region.randomCoordinate());
+                mol->setCentreOfGeometry(box, region_->region().randomCoordinate());
                 break;
             case (AddProcedureNode::PositioningType::Central):
                 fr.set(0.5, 0.5, 0.5);

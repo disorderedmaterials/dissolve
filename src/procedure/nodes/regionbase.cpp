@@ -34,15 +34,6 @@ bool RegionProcedureNodeBase::mustBeNamed() const { return true; }
 // Return current region data
 const Region &RegionProcedureNodeBase::region() const { return region_; }
 
-// Regenerate and return region data
-const Region RegionProcedureNodeBase::generateRegion(const Configuration *cfg) const
-{
-    Region newRegion;
-    newRegion.generate(cfg, voxelSize_,
-                       [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) != invert_; });
-    return newRegion;
-}
-
 /*
  * Execute
  */

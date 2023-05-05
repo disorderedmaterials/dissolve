@@ -31,7 +31,7 @@ bool PickRegionProcedureNode::execute(const ProcedureContext &procedureContext)
     pickedMolecules_.clear();
 
     // Get the updated region
-    auto region = region_->generateRegion(procedureContext.configuration());
+    auto &region = region_->region();
     if (!region.isValid())
     {
         Messenger::warn("Region will not capture any molecules...\n");
