@@ -17,7 +17,9 @@ void Configuration::updateObjectRelationships()
         offset += m->nAtoms();
     }
 
-    updateAtomLocations(true);
+    // If we have a CellArray update the atom locations
+    if (cells_.nCells() != 0)
+        updateAtomLocations(true);
 }
 
 // Update Cell location of all Atoms
