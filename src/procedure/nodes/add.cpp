@@ -322,8 +322,8 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
             case (AddProcedureNode::PositioningType::Current):
                 break;
             default:
-                Messenger::error("Unrecognised positioningType_ type.\n");
-                break;
+                throw(std::runtime_error(
+                    fmt::format("Positioning type {} not handled.\n", positioningTypes().keyword(positioningType_))));
         }
 
         // Generate and apply a random rotation matrix

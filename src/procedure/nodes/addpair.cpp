@@ -280,8 +280,8 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
             case (AddPairProcedureNode::PositioningType::Current):
                 break;
             default:
-                Messenger::error("Unrecognised positioning type.\n");
-                break;
+                throw(std::runtime_error(
+                    fmt::format("Positioning type {} not handled.\n", positioningTypes().keyword(positioningType_))));
         }
 
         // Move the molecule pair
