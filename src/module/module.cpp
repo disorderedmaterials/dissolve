@@ -34,6 +34,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::Forces, "Forces"},
                                                                  {ModuleTypes::GeometryOptimisation, "GeometryOptimisation"},
                                                                  {ModuleTypes::GR, "GR"},
+                                                                 {ModuleTypes::HistogramCN, "HistogramCN"},
                                                                  {ModuleTypes::ImportTrajectory, "ImportTrajectory"},
                                                                  {ModuleTypes::IntraAngle, "IntraAngle"},
                                                                  {ModuleTypes::IntraDistance, "IntraDistance"},

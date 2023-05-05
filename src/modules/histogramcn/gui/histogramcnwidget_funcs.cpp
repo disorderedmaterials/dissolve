@@ -12,6 +12,20 @@ HistogramCNModuleWidget::HistogramCNModuleWidget(QWidget *parent, HistogramCNMod
 {
     // Set up user interface
     ui_.setupUi(this);
+
+    // Set up RDF graph
+    cnGraph_ = ui_.CNPlotWidget->dataViewer();
+
+    auto &view = cnGraph_->view();
+    view.setViewType(View::FlatXYView);
+    view.axes().setTitle(0, "\\Population \\sym{angstrom}");
+    view.axes().setMax(0, 10.0);
+    view.axes().setTitle(1, "Coordination Number");
+    view.axes().setMin(1, 0.0);
+    view.axes().setMax(1, 1.0);
+    view.setAutoFollowType(View::AllAutoFollow);
+
+    refreshing_ = false;
 }
 
 // Update controls within widget
