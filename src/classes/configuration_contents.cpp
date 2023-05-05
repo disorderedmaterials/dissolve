@@ -173,6 +173,8 @@ void Configuration::removeMolecules(const Species *sp)
                                             return false;
                                     }),
                      molecules_.end());
+
+    updateObjectRelationships();
 }
 
 // Remove specified Molecules from the Configuration
@@ -193,6 +195,8 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                                             return false;
                                     }),
                      molecules_.end());
+
+    updateObjectRelationships();
 }
 
 // Return number of Molecules in Configuration
