@@ -19,6 +19,7 @@ void Configuration::empty()
     speciesPopulations_.clear();
     globalPotentials_.clear();
     targetedPotentials_.clear();
+    cells_.clear();
 
     ++contentsVersion_;
 }
