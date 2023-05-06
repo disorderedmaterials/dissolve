@@ -3,7 +3,6 @@
 
 #include "benchmark/benchmark.h"
 #include "classes/cell.h"
-#include "classes/species.h"
 #include "common/problems.h"
 #include "kernels/producer.h"
 
