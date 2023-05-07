@@ -10,7 +10,7 @@
 PickProcedureNode::PickProcedureNode(std::vector<const Species *> species)
     : PickProcedureNodeBase(ProcedureNode::NodeType::Pick), speciesToPick_(std::move(species))
 {
-    keywords_.setOrganisation("Options", "Target");
+    keywords_.setOrganisation("Options", "Pick Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Add target species to pick", speciesToPick_);
 }
 
