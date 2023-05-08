@@ -49,6 +49,19 @@ SimplePotential::SimplePotential()
 }
 
 /*
+ * Definition
+ */
+
+// Set potential form
+void SimplePotential::setPotential(const InteractionPotential<SimplePotentialFunctions> &potential)
+{
+    interactionPotential_ = potential;
+}
+
+// Set coordinate origin of potential
+void SimplePotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
+
+/*
  * Potential Calculation
  */
 

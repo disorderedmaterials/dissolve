@@ -11,6 +11,7 @@
   <qresource prefix="nodes">
     <file>icons/nodes_add.svg</file>
     <file>icons/nodes_aliases.svg</file>
+    <file>icons/nodes_simpleglobalpotential.svg</file>
     <file>icons/nodes_box.svg</file>
     <file>icons/nodes_calculateangle.svg</file>
     <file>icons/nodes_calculateaxisangle.svg</file>

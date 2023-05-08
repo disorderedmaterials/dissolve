@@ -42,6 +42,7 @@ add_library(
   remove.cpp
   select.cpp
   sequence.cpp
+  simpleglobalpotential.cpp
   sum1d.cpp
   transmute.cpp
   add.h
@@ -87,6 +88,7 @@ add_library(
   transmute.h
   select.h
   sequence.h
+  simpleglobalpotential.h
   sum1d.h
 )
 

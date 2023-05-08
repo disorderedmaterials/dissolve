@@ -73,6 +73,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Remove,
         Select,
         Sequence,
+        SimpleGlobalPotential,
         Sum1D,
         Transmute
     };
