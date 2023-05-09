@@ -13,6 +13,7 @@
 #include "classes/sitestack.h"
 #include "genericitems/list.h"
 #include "io/import/coordinates.h"
+#include "kernels/potentials/base.h"
 #include "math/data1d.h"
 #include "math/histogram1d.h"
 #include "math/interpolator.h"
@@ -20,9 +21,8 @@
 #include "procedure/procedure.h"
 #include "templates/vector3.h"
 #include <deque>
-#include <memory>
-
 #include <map>
+#include <memory>
 #include <vector>
 
 // Forward Declarations
@@ -206,6 +206,19 @@ class Configuration : public Serialisable
     void applySizeFactor(const ProcessPool &procPool, const PotentialMap &potentialMap);
 
     /*
+     * External Potentials
+     */
+    private:
+    // Defined global potentials
+    std::vector<std::unique_ptr<ExternalPotential>> globalPotentials_;
+
+    public:
+    // Add global potential
+    void addGlobalPotential(std::unique_ptr<ExternalPotential> potential);
+    // Return vector of defined global potentials
+    const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials() const;
+
+    /*
      * Upkeep
      */
     public:
@@ -236,8 +249,7 @@ class Configuration : public Serialisable
     // Write through specified LineParser
     bool serialise(LineParser &parser) const;
     // Read from specified LineParser
-    bool deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
-                     double pairPotentialRange);
+    bool deserialise(LineParser &parser, const CoreData &coreData, double pairPotentialRange, bool hasPotentials);
     // Express as a tree node
     SerialisedValue serialise() const override;
 };

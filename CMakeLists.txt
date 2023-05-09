@@ -231,6 +231,7 @@ set(BASIC_LINK_LIBS
     main
     classes
     kernels
+    potentials
     module
     moduleregistry
     io

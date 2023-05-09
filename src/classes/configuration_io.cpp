@@ -6,7 +6,9 @@
 #include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
+#include "kernels/potentials/producer.h"
 #include <algorithm>
 
 // Write through specified LineParser
@@ -59,12 +61,22 @@ bool Configuration::serialise(LineParser &parser) const
             return false;
     }
 
+    // If there are no defined external potentials we are done
+    if (globalPotentials_.empty())
+        return true;
+
+    // Write global potentials
+    if (!parser.writeLineF("{}  # nGlobalPotentials\n", globalPotentials_.size()))
+        return false;
+    for (auto &pot : globalPotentials_)
+        if (!pot->serialise(parser, ""))
+            return false;
+
     return true;
 }
 
 // Read from specified LineParser
-bool Configuration::deserialise(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
-                                double pairPotentialRange)
+bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, double pairPotentialRange, bool hasPotentials)
 {
     // Clear current contents of Configuration
     empty();
@@ -106,20 +118,15 @@ bool Configuration::deserialise(LineParser &parser, const std::vector<std::uniqu
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
 
-        auto it = std::find_if(availableSpecies.cbegin(), availableSpecies.cend(),
-                               [&](const auto &sp) { return DissolveSys::sameString(sp->name(), parser.argsv(1)); });
-
-        if (it == availableSpecies.cend())
-        {
+        auto sp = coreData.findSpecies(parser.argsv(1));
+        if (!sp)
             return Messenger::error("Unrecognised Species '{}' found in Configuration '{}' in restart file.\n", parser.argsv(1),
                                     name());
-        }
-        auto &sp = *it;
 
         // Set Species pointers for this range of Molecules
         auto nMols = parser.argi(0);
         for (auto n = 0; n < nMols; ++n)
-            addMolecule(lock, sp.get());
+            addMolecule(lock, sp);
 
         // Increase our counter
         nMolsRead += parser.argi(0);
@@ -148,6 +155,30 @@ bool Configuration::deserialise(LineParser &parser, const std::vector<std::uniqu
 
     // Update Cell locations for Atoms
     updateCellContents();
+
+    // If this an old-style configuration with no potentials we can end here
+    if (!hasPotentials)
+        return true;
+
+    // Read in global potentials
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    globalPotentials_.resize(parser.argi(0));
+    for (auto &pot : globalPotentials_)
+    {
+        // First line contains potential type
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
+        auto potentialType = ExternalPotentialTypes::isType(parser.argsv(0));
+        if (!potentialType)
+            return Messenger::error("Unrecognised external potential type '{}' found in Configuration '{}' in restart file.\n",
+                                    parser.argsv(0), name());
+
+        // Create new global potential
+        pot = ExternalPotentialProducer::create(*potentialType);
+        if (!pot->deserialise(parser, coreData))
+            return false;
+    }
 
     return true;
 }

@@ -27,6 +27,7 @@ class ForceKernel : public GeometryKernel
 {
     private:
     friend class KernelProducer;
+    friend class ExternalPotentialsForceKernel;
     ForceKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
                 std::optional<double> energyCutoff = {});
     ForceKernel(const Box *box, const ProcessPool &procPool, const PotentialMap &potentialMap,

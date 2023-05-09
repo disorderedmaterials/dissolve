@@ -46,6 +46,7 @@ class EnergyKernel : public GeometryKernel
 {
     private:
     friend class KernelProducer;
+    friend class ExternalPotentialsEnergyKernel;
     EnergyKernel(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
                  std::optional<double> energyCutoff = {});
 
