@@ -108,8 +108,11 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // Set current atom targets in ChangeStore (whole Molecule)
             changeStore.add(mol);
 
-            // Calculate reference pair potential energy for Molecule, excluding intramolecular contributions
-            currentEnergy = kernel->pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
+            // Calculate reference pair potential energy for Molecule, excluding all intramolecular contributions
+            currentEnergy = kernel
+                                ->totalEnergy(*mol, ProcessPool::subDivisionStrategy(strategy),
+                                              {EnergyKernel::ExcludeGeometry, EnergyKernel::ExcludeIntraMolecularPairPotential})
+                                .total();
 
             // Loop over number of shakes per atom
             for (shake = 0; shake < nShakesPerMolecule_; ++shake)
@@ -152,7 +155,10 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 targetConfiguration_->updateCellLocation(mol);
 
                 // Calculate new energy
-                newEnergy = kernel->pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
+                newEnergy = kernel
+                                ->totalEnergy(*mol, ProcessPool::subDivisionStrategy(strategy),
+                                              {EnergyKernel::ExcludeGeometry, EnergyKernel::ExcludeIntraMolecularPairPotential})
+                                .total();
 
                 // Trial the transformed atom position
                 delta = newEnergy - currentEnergy;

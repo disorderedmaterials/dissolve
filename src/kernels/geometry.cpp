@@ -401,23 +401,23 @@ double GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
 }
 
 // Calculate total forces within the specified molecule arising from geometry terms
-void GeometryKernel::totalGeometryForces(Molecule *mol, ForceVector &f) const
+void GeometryKernel::totalGeometryForces(const Molecule &mol, ForceVector &f) const
 {
     // Loop over bonds
-    for (const auto &bond : mol->species()->bonds())
-        bondForces(bond, *mol->atom(bond.indexI()), *mol->atom(bond.indexJ()), f);
+    for (const auto &bond : mol.species()->bonds())
+        bondForces(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ()), f);
 
     // Loop over angles
-    for (const auto &angle : mol->species()->angles())
-        angleForces(angle, *mol->atom(angle.indexI()), *mol->atom(angle.indexJ()), *mol->atom(angle.indexK()), f);
+    for (const auto &angle : mol.species()->angles())
+        angleForces(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK()), f);
 
     // Loop over torsions
-    for (const auto &torsion : mol->species()->torsions())
-        torsionForces(torsion, *mol->atom(torsion.indexI()), *mol->atom(torsion.indexJ()), *mol->atom(torsion.indexK()),
-                      *mol->atom(torsion.indexL()), f);
+    for (const auto &torsion : mol.species()->torsions())
+        torsionForces(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()), *mol.atom(torsion.indexK()),
+                      *mol.atom(torsion.indexL()), f);
 
     // Loop over impropers
-    for (const auto &imp : mol->species()->impropers())
-        improperForces(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()), *mol->atom(imp.indexK()),
-                       *mol->atom(imp.indexL()), f);
+    for (const auto &imp : mol.species()->impropers())
+        improperForces(imp, *mol.atom(imp.indexI()), *mol.atom(imp.indexJ()), *mol.atom(imp.indexK()), *mol.atom(imp.indexL()),
+                       f);
 }

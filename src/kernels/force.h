@@ -7,6 +7,7 @@
 #include "classes/cellarray.h"
 #include "kernels/geometry.h"
 #include "templates/combinable.h"
+#include "templates/flags.h"
 #include <optional>
 
 // Forward Declarations
@@ -53,23 +54,35 @@ class ForceKernel : public GeometryKernel
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
     void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const;
     // Calculate forces between Cell and its neighbours
-    void cellPairPotentialForces(const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy,
-                                 ForceVector &f) const;
+    void cellPairPotentialForces(const Cell *cell, bool excludeIgeJ, bool includeIntraMolecular,
+                                 ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
     // Calculate forces between two cells
     void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
-                                       ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
-
-    public:
-    // Calculate total pairpotential forces between atoms in the world
-    void totalPairPotentialForces(ForceVector &f, ProcessPool::DivisionStrategy strategy) const;
+                                       bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy,
+                                       ForceVector &f) const;
 
     /*
-     * Intramolecular Terms
+     * Extended Terms
+     */
+    private:
+    // Calculate extended forces on supplied molecule
+    virtual void extendedForces(const Molecule &mol, ForceVector &f) const;
+
+    /*
+     * Totals
      */
     public:
-    // Calculate total (intramolecular) forces within the specified molecule
-    void totalIntramolecularForces(Molecule *mol, ForceVector &f, bool includePairPotentialTerms) const;
-    // Calculate total intramolecular forces in the world
-    void totalIntramolecularForces(ForceVector &f, bool includePairPotentialTerms,
-                                   ProcessPool::DivisionStrategy strategy) const;
+    // Force calculation flags
+    enum ForceCalculationFlags
+    {
+        ExcludePairPotential,
+        ExcludeGeometry,
+        ExcludeExtended,
+        ExcludeIntraMolecularPairPotential
+    };
+
+    public:
+    // Calculate total forces in the world
+    void totalForces(ForceVector &fUnbound, ForceVector &fBound, ProcessPool::DivisionStrategy strategy,
+                     Flags<ForceCalculationFlags> flags = {}) const;
 };

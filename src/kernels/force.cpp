@@ -90,19 +90,20 @@ void ForceKernel::forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, do
  */
 
 // Calculate forces between Cell and its neighbours
-void ForceKernel::cellPairPotentialForces(const Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy,
-                                          ForceVector &f) const
+void ForceKernel::cellPairPotentialForces(const Cell *cell, bool excludeIgeJ, bool includeIntraMolecular,
+                                          ProcessPool::DivisionStrategy strategy, ForceVector &f) const
 {
     assert(cellArray_);
 
     auto &neighbours = cellArray_->get().neighbours(*cell);
     for (auto it = std::next(neighbours.begin()); it != neighbours.end(); ++it)
-        cellToCellPairPotentialForces(cell, &it->neighbour_, it->requiresMIM_, excludeIgeJ, strategy, f);
+        cellToCellPairPotentialForces(cell, &it->neighbour_, it->requiresMIM_, excludeIgeJ, includeIntraMolecular, strategy, f);
 }
 
 // Calculate forces between atoms in supplied cells
 void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
-                                                ProcessPool::DivisionStrategy strategy, ForceVector &f) const
+                                                bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy,
+                                                ForceVector &f) const
 {
     assert(centralCell && otherCell);
     auto &centralAtoms = centralCell->atoms();
@@ -134,7 +135,7 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
                 // Check for atoms in the same Molecule
                 if (molI != jj->molecule())
                     forcesWithMim(*ii, *jj, f);
-                else
+                else if (includeIntraMolecular)
                 {
                     auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
@@ -164,7 +165,7 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
                 // Check for atoms in the same molecule
                 if (molI != jj->molecule())
                     forcesWithoutMim(*ii, *jj, f);
-                else
+                else if (includeIntraMolecular)
                 {
                     auto &&[scalingType, elec14, vdw14] = ii->scaling(jj);
                     if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
@@ -177,83 +178,94 @@ void ForceKernel::cellToCellPairPotentialForces(const Cell *centralCell, const C
     }
 }
 
-// Calculate total pairpotential forces between atoms in the world
-void ForceKernel::totalPairPotentialForces(std::vector<Vec3<double>> &f, ProcessPool::DivisionStrategy strategy) const
-{
-    assert(cellArray_);
-    auto &cellArray = cellArray_->get();
-
-    // Create a force combinable
-    auto combinableForces = createCombinableForces(f);
-
-    // Set start/stride for parallel loop
-    auto start = processPool_.interleavedLoopStart(strategy);
-    auto stride = processPool_.interleavedLoopStride(strategy);
-    auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
-
-    // algorithm parameters
-    auto unaryOp = [&, strategy](const int id)
-    {
-        auto *cellI = cellArray.cell(id);
-        auto &fLocal = combinableForces.local();
-        // This cell with itself
-        cellToCellPairPotentialForces(cellI, cellI, false, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
-        // Interatomic interactions between atoms in this cell and its neighbours
-        cellPairPotentialForces(cellI, true, ProcessPool::subDivisionStrategy(strategy), fLocal);
-    };
-
-    // Execute lambda operator for each cell
-    dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin), dissolve::counting_iterator<int>(end),
-                       unaryOp);
-    combinableForces.finalize();
-}
-
 /*
- * Intramolecular Terms
+ * Extended Terms
  */
 
-// Calculate total (intramolecular) forces within the specified molecule
-void ForceKernel::totalIntramolecularForces(Molecule *mol, ForceVector &f, bool includePairPotentialTerms) const
-{
-    totalGeometryForces(mol, f);
+// Calculate extended forces on supplied molecule
+void ForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const { return; }
 
-    // Pair potential interactions between atoms
-    if (includePairPotentialTerms)
-        dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
-                                [&](int indexI, const auto &i, int indexJ, const auto &j)
-                                {
-                                    if (indexI == indexJ)
-                                        return;
-                                    auto &&[scalingType, elec14, vdw14] = i->scaling(j);
-                                    if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
-                                        forcesWithMim(*i, *j, f);
-                                    else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
-                                        forcesWithMim(*i, *j, f, elec14, vdw14);
-                                });
-}
+/*
+ * Totals
+ */
 
-// Calculate total intramolecular forces in the world
-void ForceKernel::totalIntramolecularForces(ForceVector &f, bool includePairPotentialTerms,
-                                            ProcessPool::DivisionStrategy strategy) const
+// Calculate total forces in the world
+void ForceKernel::totalForces(ForceVector &fUnbound, ForceVector &fBound, ProcessPool::DivisionStrategy strategy,
+                              Flags<ForceCalculationFlags> flags) const
 {
     assert(molecules_);
+    assert(cellArray_);
 
     auto &molecules = molecules_->get();
-
-    auto combinable = createCombinableForces(f);
-
-    auto moleculeForceOperator = [&](const auto &mol)
-    {
-        auto &fLocal = combinable.local();
-
-        totalIntramolecularForces(mol.get(), fLocal, includePairPotentialTerms);
-    };
+    auto &cellArray = cellArray_->get();
 
     // Set start/stride for parallel loop
     auto start = processPool_.interleavedLoopStart(strategy);
     auto stride = processPool_.interleavedLoopStride(strategy);
-    auto [begin, end] = chop_range(molecules.begin(), molecules.end(), stride, start);
-    dissolve::for_each(ParallelPolicies::par, begin, end, moleculeForceOperator);
 
-    combinable.finalize();
+    auto combinableUnbound = createCombinableForces(fUnbound);
+    auto combinableBound = createCombinableForces(fBound);
+
+    // Pair potential forces
+    if (!flags.isSet(ExcludePairPotential))
+    {
+        auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
+
+        // Force operator
+        auto unaryOp = [&, strategy](const int id)
+        {
+            auto *cellI = cellArray.cell(id);
+            auto &fLocal = combinableUnbound.local();
+            // This cell with itself
+            cellToCellPairPotentialForces(cellI, cellI, false, true, !flags.isSet(ExcludeIntraMolecularPairPotential),
+                                          ProcessPool::subDivisionStrategy(strategy), fLocal);
+            // Interatomic interactions between atoms in this cell and its neighbours
+            cellPairPotentialForces(cellI, true, !flags.isSet(ExcludeIntraMolecularPairPotential),
+                                    ProcessPool::subDivisionStrategy(strategy), fLocal);
+        };
+
+        // Execute lambda operator for each cell
+        dissolve::for_each(ParallelPolicies::par, dissolve::counting_iterator<int>(begin),
+                           dissolve::counting_iterator<int>(end), unaryOp);
+    }
+
+    // Other molecule forces
+    if (!(flags.isSet(ExcludeGeometry) && flags.isSet(ExcludePairPotential) && flags.isSet(ExcludeExtended)))
+    {
+        auto moleculeForceOperator = [&](const auto &mol)
+        {
+            auto &fLocalUnbound = combinableUnbound.local();
+            auto &fLocalBound = combinableBound.local();
+
+            // Geometric terms
+            if (!flags.isSet(ExcludeGeometry))
+                totalGeometryForces(*mol.get(), fLocalBound);
+
+            // Pair potential interactions between atoms within the molecule
+            // Only include these terms if we haven't already included them in the cell-to-cell loop above
+
+            if (flags.isSet(ExcludePairPotential) && !flags.isSet(ExcludeIntraMolecularPairPotential))
+                dissolve::for_each_pair(ParallelPolicies::seq, mol->atoms().begin(), mol->atoms().end(),
+                                        [&](int indexI, const auto &i, int indexJ, const auto &j)
+                                        {
+                                            if (indexI == indexJ)
+                                                return;
+                                            auto &&[scalingType, elec14, vdw14] = i->scaling(j);
+                                            if (scalingType == SpeciesAtom::ScaledInteraction::NotScaled)
+                                                forcesWithMim(*i, *j, fLocalUnbound);
+                                            else if (scalingType == SpeciesAtom::ScaledInteraction::Scaled)
+                                                forcesWithMim(*i, *j, fLocalUnbound, elec14, vdw14);
+                                        });
+
+            // Extended forces
+            if (!flags.isSet(ExcludeExtended))
+                extendedForces(*mol.get(), fLocalUnbound);
+        };
+
+        auto [begin, end] = chop_range(molecules.begin(), molecules.end(), stride, start);
+        dissolve::for_each(ParallelPolicies::par, begin, end, moleculeForceOperator);
+    }
+
+    combinableUnbound.finalize();
+    combinableBound.finalize();
 }

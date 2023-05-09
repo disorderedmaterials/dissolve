@@ -224,13 +224,7 @@ bool EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Calculate total interatomic energy from molecules
         Timer moleculeTimer;
         auto kernel = KernelProducer::energyKernel(targetConfiguration_, procPool, dissolve.potentialMap(), cutoff);
-        auto molecularEnergy = 0.0;
-        for (const auto &mol : targetConfiguration_->molecules())
-            molecularEnergy += kernel->pairPotentialEnergy(*mol, false, ProcessPool::subDivisionStrategy(strategy));
-        // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
-        // pairpotential energy, and zero intramolecular energy
-        if (targetConfiguration_->nMolecules() > 1)
-            molecularEnergy *= 0.5;
+        auto molecularEnergy = kernel->totalMoleculePairPotentialEnergy(false, ProcessPool::subDivisionStrategy(strategy));
         molecularEnergy += correctSelfEnergy;
         moleculeTimer.stop();
 

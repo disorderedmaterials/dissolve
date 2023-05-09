@@ -49,6 +49,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     bool accept;
     double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
     Vec3<double> rDelta;
+    EnergyResult er;
 
     Timer timer;
     while (distributor.cycle())
@@ -84,8 +85,9 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             for (const auto &i : mol->atoms())
             {
                 // Calculate reference energies for the Atom
-                currentEnergy = kernel->pairPotentialEnergy(*i);
-                currentIntraEnergy = kernel->totalGeometryEnergy(*i) * termScale;
+                er = kernel->totalEnergy(*i);
+                currentEnergy = er.totalUnbound();
+                currentIntraEnergy = er.geometry() * termScale;
 
                 // Loop over number of shakes per Atom
                 for (shake = 0; shake < nShakesPerAtom_; ++shake)
@@ -99,8 +101,9 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     targetConfiguration_->updateCellLocation(i);
 
                     // Calculate new energy
-                    newEnergy = kernel->pairPotentialEnergy(*i);
-                    newIntraEnergy = kernel->totalGeometryEnergy(*i) * termScale;
+                    er = kernel->totalEnergy(*i);
+                    newEnergy = er.totalUnbound();
+                    newIntraEnergy = er.geometry() * termScale;
 
                     // Trial the transformed Atom position
                     delta = (newEnergy + newIntraEnergy) - (currentEnergy + currentIntraEnergy);

@@ -24,26 +24,22 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
     // Create a ForceKernel
     auto kernel = KernelProducer::forceKernel(cfg, procPool, potentialMap);
 
-    // Calculate pair potential forces between all atoms (including within molecules)
-    if (calculationType == ForceCalculationType::Full || calculationType == ForceCalculationType::PairPotentialOnly)
-    {
-        timer.start();
-        kernel->totalPairPotentialForces(fUnbound, ProcessPool::PoolStrategy);
-        timer.stop();
-        Messenger::printVerbose("Time to do pair potential forces was {}.\n", timer.totalTimeString());
-    }
+    timer.start();
+    if (calculationType == ForceCalculationType::Full)
+        kernel->totalForces(fUnbound, fBound, ProcessPool::PoolStrategy);
+    else if (calculationType == ForceCalculationType::PairPotentialOnly)
+        kernel->totalForces(fUnbound, fBound, ProcessPool::PoolStrategy,
+                            {ForceKernel::ExcludeGeometry, ForceKernel::ExcludeExtended});
+    else if (calculationType == ForceCalculationType::IntraMolecularFull)
+        kernel->totalForces(fUnbound, fBound, ProcessPool::PoolStrategy,
+                            {ForceKernel::ExcludePairPotential, ForceKernel::ExcludeExtended});
+    else if (calculationType == ForceCalculationType::IntraMolecularGeometry)
+        kernel->totalForces(
+            fUnbound, fBound, ProcessPool::PoolStrategy,
+            {ForceKernel::ExcludePairPotential, ForceKernel::ExcludeIntraMolecularPairPotential, ForceKernel::ExcludeExtended});
 
-    // Calculate internal molecule forces
-    if (calculationType != ForceCalculationType::PairPotentialOnly)
-    {
-        // Only include intramolecular pairpotential terms if the calculation type is ForceCalculationType::IntraMolecularFull -
-        // they will have already been calculated above in the case of ForceCalculationType::Full
-        timer.start();
-        kernel->totalIntramolecularForces(fBound, calculationType == ForceCalculationType::IntraMolecularFull,
-                                          ProcessPool::PoolStrategy);
-        timer.stop();
-        Messenger::printVerbose("Time to do internal molecule forces was {}.\n", timer.totalTimeString());
-    }
+    timer.stop();
+    Messenger::printVerbose("Time to do forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
     procPool.allSum(fUnbound, ProcessPool::PoolProcessesCommunicator, commsTimer);

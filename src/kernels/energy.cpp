@@ -260,6 +260,20 @@ double EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraM
     return totalEnergy;
 }
 
+/*
+ * Extended Terms
+ */
+
+// Return energy of supplied atom from ad hoc extended terms
+double EnergyKernel::extendedEnergy(const Atom &i) const { return 0.0; }
+
+// Return energy of supplied molecule from ad hoc extended terms
+double EnergyKernel::extendedEnergy(const Molecule &mol) const { return 0.0; }
+
+/*
+ * Totals
+ */
+
 // Return total interatomic PairPotential energy of the world
 double EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
 {
@@ -289,4 +303,38 @@ double EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular, Proces
                                               });
 
     return totalEnergy;
+}
+
+// Return total interatomic PairPotential energy from summation of molecules
+double EnergyKernel::totalMoleculePairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
+{
+    assert(molecules_);
+    auto &mols = molecules_->get();
+    auto molecularEnergy = 0.0;
+    for (const auto &mol : mols)
+        molecularEnergy += pairPotentialEnergy(*mol, includeIntraMolecular, ProcessPool::subDivisionStrategy(strategy));
+
+    // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
+    // pairpotential energy, and zero intramolecular energy
+    if (mols.size() > 1)
+        molecularEnergy *= 0.5;
+
+    return molecularEnergy;
+}
+
+// Return total energy of supplied atom with the world
+EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
+{
+    return {pairPotentialEnergy(i), totalGeometryEnergy(i), extendedEnergy(i)};
+}
+
+// Return total energy of supplied molecule with the world
+EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, ProcessPool::DivisionStrategy strategy,
+                                       Flags<EnergyCalculationFlags> flags) const
+{
+    return {flags.isSet(ExcludePairPotential)
+                ? 0.0
+                : pairPotentialEnergy(mol, !flags.isSet(ExcludeIntraMolecularPairPotential), strategy),
+            flags.isSet(ExcludeGeometry) ? 0.0 : totalGeometryEnergy(mol),
+            flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }
