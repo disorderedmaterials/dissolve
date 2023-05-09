@@ -64,7 +64,6 @@ add_library(
   integrate1d.h
   node.h
   nodereference.h
-  nodes.h
   operatebase.h
   operatedivide.h
   operateexpression.h
