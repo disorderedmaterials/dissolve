@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "kernels/potentials/producer.h"
-#include "kernels/potentials/spherical.h"
+#include "kernels/potentials/simple.h"
 
 // External Potential Producer
 namespace ExternalPotentialProducer
@@ -13,7 +13,7 @@ std::unique_ptr<ExternalPotential> create(ExternalPotentialTypes::ExternalPotent
     switch (type)
     {
         case (ExternalPotentialTypes::ExternalPotentialType::Spherical):
-            return std::make_unique<SphericalPotential>();
+            return std::make_unique<SimplePotential>();
         default:
             throw(std::runtime_error(fmt::format("Creation of external potential type '%s' not implemented.\n",
                                                  ExternalPotentialTypes::keyword(type))));

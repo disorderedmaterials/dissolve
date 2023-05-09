@@ -6,8 +6,8 @@
 #include "classes/interactionpotential.h"
 #include "kernels/potentials/base.h"
 
-// SphericalPotential functional forms
-class SphericalPotentialFunctions
+// SimplePotential functional forms
+class SimplePotentialFunctions
 {
     public:
     enum class Form
@@ -24,12 +24,12 @@ class SphericalPotentialFunctions
     static std::optional<int> parameterIndex(Form form, std::string_view name);
 };
 
-// Spherical Potential
-class SphericalPotential : public ExternalPotential
+// Simple Potential
+class SimplePotential : public ExternalPotential
 {
     public:
-    SphericalPotential();
-    ~SphericalPotential() = default;
+    SimplePotential();
+    ~SimplePotential() = default;
 
     /*
      * Definition
@@ -37,7 +37,7 @@ class SphericalPotential : public ExternalPotential
 
     private:
     // Potential form
-    InteractionPotential<SphericalPotentialFunctions> interactionPotential_;
+    InteractionPotential<SimplePotentialFunctions> interactionPotential_;
     // Coordinate origin of external potential
     Vec3<double> origin_;
 

@@ -1,35 +1,35 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "kernels/potentials/spherical.h"
+#include "kernels/potentials/simple.h"
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "keywords/interactionpotential.h"
 #include "keywords/vec3double.h"
 
-// Return enum options for SphericalPotentialFunctions
-EnumOptions<SphericalPotentialFunctions::Form> SphericalPotentialFunctions::forms()
+// Return enum options for SimplePotentialFunctions
+EnumOptions<SimplePotentialFunctions::Form> SimplePotentialFunctions::forms()
 {
-    return EnumOptions<SphericalPotentialFunctions::Form>("SphericalPotentialFunction",
-                                                          {{SphericalPotentialFunctions::Form::Harmonic, "Harmonic", 1}});
+    return EnumOptions<SimplePotentialFunctions::Form>("SimplePotentialFunction",
+                                                       {{SimplePotentialFunctions::Form::Harmonic, "Harmonic", 1}});
 }
 
 // Return parameters for specified form
-const std::vector<std::string> &SphericalPotentialFunctions::parameters(Form form)
+const std::vector<std::string> &SimplePotentialFunctions::parameters(Form form)
 {
-    static std::map<SphericalPotentialFunctions::Form, std::vector<std::string>> params_ = {
-        {SphericalPotentialFunctions::Form::Harmonic, {"k"}}};
+    static std::map<SimplePotentialFunctions::Form, std::vector<std::string>> params_ = {
+        {SimplePotentialFunctions::Form::Harmonic, {"k"}}};
     return params_[form];
 }
 
 // Return nth parameter for the given form
-std::string SphericalPotentialFunctions::parameter(Form form, int n)
+std::string SimplePotentialFunctions::parameter(Form form, int n)
 {
     return (n < 0 || n >= parameters(form).size()) ? "" : parameters(form)[n];
 }
 
 // Return index of parameter in the given form
-std::optional<int> SphericalPotentialFunctions::parameterIndex(Form form, std::string_view name)
+std::optional<int> SimplePotentialFunctions::parameterIndex(Form form, std::string_view name)
 {
     auto it = std::find_if(parameters(form).begin(), parameters(form).end(),
                            [name](const auto &param) { return DissolveSys::sameString(name, param); });
@@ -39,12 +39,12 @@ std::optional<int> SphericalPotentialFunctions::parameterIndex(Form form, std::s
     return it - parameters(form).begin();
 }
 
-SphericalPotential::SphericalPotential()
-    : interactionPotential_(SphericalPotentialFunctions::Form::Harmonic),
+SimplePotential::SimplePotential()
+    : interactionPotential_(SimplePotentialFunctions::Form::Harmonic),
       ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Spherical)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
-    keywords_.add<InteractionPotentialKeyword<SphericalPotentialFunctions>>(
+    keywords_.add<InteractionPotentialKeyword<SimplePotentialFunctions>>(
         "Form", "Functional form and parameters for the potential", interactionPotential_);
 }
 
@@ -53,20 +53,19 @@ SphericalPotential::SphericalPotential()
  */
 
 // Calculate energy on specified atom
-double SphericalPotential::energy(const Atom &i, const Box *box) const
+double SimplePotential::energy(const Atom &i, const Box *box) const
 {
     switch (interactionPotential_.form())
     {
-        case (SphericalPotentialFunctions::Form::Harmonic):
+        case (SimplePotentialFunctions::Form::Harmonic):
             return 0.5 * interactionPotential_.parameters()[0] * box->minimumDistanceSquared(i.r(), origin_);
         default:
-            throw(
-                std::runtime_error(fmt::format("Requested functional form of SphericalPotential has not been implemented.\n")));
+            throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
     }
 }
 
 // Calculate force on specified atom, summing in to supplied vector
-void SphericalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
+void SimplePotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
 {
     // Get normalised vector and distance
     auto vecji = box->minimumVector(i.r(), origin_);
@@ -76,12 +75,11 @@ void SphericalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) c
     auto forceMultiplier = 0.0;
     switch (interactionPotential_.form())
     {
-        case (SphericalPotentialFunctions::Form::Harmonic):
+        case (SimplePotentialFunctions::Form::Harmonic):
             forceMultiplier = -interactionPotential_.parameters()[0] * r;
             break;
         default:
-            throw(
-                std::runtime_error(fmt::format("Requested functional form of SphericalPotential has not been implemented.\n")));
+            throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
     }
 
     // Sum in forces on the atom

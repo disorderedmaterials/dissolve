@@ -2,11 +2,11 @@ add_library(
   potentials
   base.cpp
   producer.cpp
-  spherical.cpp
+  simple.cpp
   types.cpp
   base.h
   producer.h
-  spherical.h
+  simple.h
   types.h
 )
 
