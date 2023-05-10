@@ -7,7 +7,6 @@
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/calculateangle.h"
 #include "procedure/nodes/calculatedistance.h"
-#include "procedure/nodes/calculateexpression.h"
 #include "procedure/nodes/calculatevector.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
@@ -34,15 +33,25 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/remove.h"
 #include "procedure/nodes/select.h"
+#include "procedure/nodes/simpleglobalpotential.h"
 #include "procedure/nodes/sum1d.h"
 #include "procedure/nodes/transmute.h"
 
 ProcedureNodeRegistry::ProcedureNodeRegistry()
 {
+    // Build
     registerProducer<AddProcedureNode>(ProcedureNode::NodeType::Add, "Add molecules to a configuration", "Build");
     registerProducer<AddPairProcedureNode>(ProcedureNode::NodeType::AddPair,
                                            "Add a correlated molecule pair to a configuration", "Build");
     registerProducer<BoxProcedureNode>(ProcedureNode::NodeType::Box, "Define containing box for a configuration", "Build");
+    registerProducer<CoordinateSetsProcedureNode>(ProcedureNode::NodeType::CoordinateSets,
+                                                  "Generate coordinate sets for a species", "Build");
+    registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
+    registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
+    registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
+                                             "Turn molecules from one species type into another", "Build");
+
+    // Calculate
     registerProducer<CalculateAngleProcedureNode>(ProcedureNode::NodeType::CalculateAngle,
                                                   "Calculate angle between three sites", "Calculate");
     registerProducer<CalculateDistanceProcedureNode>(ProcedureNode::NodeType::CalculateDistance,
@@ -51,20 +60,36 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                                        "Evaluate an arbitrary expression", "Calculate");
     registerProducer<CalculateVectorProcedureNode>(ProcedureNode::NodeType::CalculateVector,
                                                    "Calculate vector between two sites", "Calculate");
+    registerProducer<SelectProcedureNode>(ProcedureNode::NodeType::Select, "Select sites for consideration", "Calculate");
+
+    // Data
     registerProducer<Collect1DProcedureNode>(ProcedureNode::NodeType::Collect1D, "Bin 1D quantity into a histogram", "Data");
     registerProducer<Collect2DProcedureNode>(ProcedureNode::NodeType::Collect2D, "Bin 2D quantity into a histogram", "Data");
     registerProducer<Collect3DProcedureNode>(ProcedureNode::NodeType::Collect3D, "Bin 3D quantity into a histogram", "Data");
-    registerProducer<CoordinateSetsProcedureNode>(ProcedureNode::NodeType::CoordinateSets,
-                                                  "Generate coordinate sets for a species", "Build");
-    registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
+    registerProducer<Integrate1DProcedureNode>(ProcedureNode::NodeType::Integrate1D, "Integrate the data in a 1D dataset",
+                                               "Data");
+    registerProducer<Process1DProcedureNode>(ProcedureNode::NodeType::Process1D, "Process 1D histogram data", "Data");
+    registerProducer<Process2DProcedureNode>(ProcedureNode::NodeType::Process2D, "Process 2D histogram data", "Data");
+    registerProducer<Process3DProcedureNode>(ProcedureNode::NodeType::Process3D, "Process 3D histogram data", "Data");
+    registerProducer<Sum1DProcedureNode>(ProcedureNode::NodeType::Sum1D, "Sum the data in a 1D dataset", "Data");
+
+    // General
+    registerProducer<ParametersProcedureNode>(ProcedureNode::NodeType::Parameters, "Define parameters for use in expressions",
+                                              "General");
+
+    // Regions
     registerProducer<CylindricalRegionProcedureNode>(ProcedureNode::NodeType::CylindricalRegion,
                                                      "Define a cylindrical region in a configuration", "Regions");
     registerProducer<GeneralRegionProcedureNode>(ProcedureNode::NodeType::GeneralRegion,
                                                  "Define a general region in a configuration", "Regions");
+
+    // Operate
     registerProducer<OperateDivideProcedureNode>(ProcedureNode::NodeType::OperateDivide, "Perform a division on data",
                                                  "Operate");
     registerProducer<OperateExpressionProcedureNode>(ProcedureNode::NodeType::OperateExpression, "Apply an expression to data",
                                                      "Operate");
+    registerProducer<OperateGridNormaliseProcedureNode>(ProcedureNode::NodeType::OperateGridNormalise,
+                                                        "Normalise data by bin widths, areas, or volumes", "Operate");
     registerProducer<OperateMultiplyProcedureNode>(ProcedureNode::NodeType::OperateMultiply, "Perform a multiplication on data",
                                                    "Operate");
     registerProducer<OperateNormaliseProcedureNode>(ProcedureNode::NodeType::OperateNormalise, "Normalise data to a value",
@@ -75,20 +100,17 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                                                   "Normalise data to a reference site population", "Operate");
     registerProducer<OperateSphericalShellNormaliseProcedureNode>(ProcedureNode::NodeType::OperateSphericalShellNormalise,
                                                                   "Normalise data to spherical shell volumes", "Operate");
-    registerProducer<ParametersProcedureNode>(ProcedureNode::NodeType::Parameters, "Define parameters for use in expressions",
-                                              "General");
+
+    // Pick
     registerProducer<PickProcedureNode>(ProcedureNode::NodeType::Pick, "Pick all molecules of a given species", "Pick");
     registerProducer<PickProximityProcedureNode>(ProcedureNode::NodeType::PickProximity,
                                                  "Pick molecules based on proximity to others", "Pick");
     registerProducer<PickRegionProcedureNode>(ProcedureNode::NodeType::PickRegion, "Pick molecules within a specific region",
                                               "Pick");
-    registerProducer<Process1DProcedureNode>(ProcedureNode::NodeType::Process1D, "Process 1D histogram data", "Data");
-    registerProducer<Process2DProcedureNode>(ProcedureNode::NodeType::Process2D, "Process 2D histogram data", "Data");
-    registerProducer<Process3DProcedureNode>(ProcedureNode::NodeType::Process3D, "Process 3D histogram data", "Data");
-    registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
-    registerProducer<SelectProcedureNode>(ProcedureNode::NodeType::Select, "Select sites for consideration", "Calculate");
-    registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
-                                             "Turn molecules from one species type into another", "Build");
+
+    // Potentials
+    registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,
+                                                         "Add a global potential affecting all atoms", "Potentials");
 }
 
 /*

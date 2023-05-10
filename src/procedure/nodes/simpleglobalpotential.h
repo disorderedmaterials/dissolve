@@ -14,8 +14,8 @@ class SimpleGlobalPotentialProcedureNode : public ProcedureNode
     ~SimpleGlobalPotentialProcedureNode() override = default;
 
     /*
-    * Identity
-    */
+     * Identity
+     */
     public:
     // Return whether specified context is relevant for this node type
     bool isContextRelevant(ProcedureNode::NodeContext context) override;
