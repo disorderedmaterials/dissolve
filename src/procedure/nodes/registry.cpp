@@ -34,6 +34,7 @@
 #include "procedure/nodes/remove.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleglobalpotential.h"
+#include "procedure/nodes/simplerestraintpotential.h"
 #include "procedure/nodes/sum1d.h"
 #include "procedure/nodes/transmute.h"
 
@@ -111,6 +112,9 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     // Potentials
     registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,
                                                          "Add a global potential affecting all atoms", "Potentials");
+    registerProducer<SimpleRestraintPotentialProcedureNode>(ProcedureNode::NodeType::SimpleRestraintPotential,
+                                                            "Restraint atoms of molecules to their current positions",
+                                                            "Potentials");
 }
 
 /*

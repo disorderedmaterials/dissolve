@@ -74,6 +74,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Select,
         Sequence,
         SimpleGlobalPotential,
+        SimpleRestraintPotential,
         Sum1D,
         Transmute
     };
