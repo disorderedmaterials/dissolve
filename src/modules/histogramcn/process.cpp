@@ -18,9 +18,21 @@ bool HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (!targetConfiguration_)
         return Messenger::error("No configuration target set for module '{}'.\n", name());
 
+    // Ensure any parameters in our nodes are set correctly
+    if (excludeSameMolecule_)
+        selectB_->setSameMoleculeExclusions({selectA_});
+    else
+        selectB_->setSameMoleculeExclusions({});
+
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
         return Messenger::error("HistogramCN experienced problems with its analysis.\n");
+
+    // Coordination Histogram
+    auto &forEachA = selectA_->branch()->get();
+    std::shared_ptr<CalculateExpressionProcedureNode> calcExpression_;
+    calcExpression_ = forEachA.create<CalculateExpressionProcedureNode>("B.nSelected");
+    collectCN_ = forEachA.create<Collect1DProcedureNode>("Histo-AB", calcExpression_);
 }

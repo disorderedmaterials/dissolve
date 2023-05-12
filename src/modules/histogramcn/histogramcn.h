@@ -8,6 +8,7 @@
 
 // Forward Declarations
 class Collect1DProcedureNode;
+class CalculateExpressionProcedureNode;
 class OperateSitePopulationNormaliseProcedureNode;
 class Process1DProcedureNode;
 class SelectProcedureNode;
@@ -27,6 +28,8 @@ class HistogramCNModule : public Module
     private:
     // Target configuration
     Configuration *targetConfiguration_{nullptr};
+    // Whether to exclude correlations between sites on the same molecule
+    bool excludeSameMolecule_{false};
     // Range (min, max, delta) of distance axis
     Vec3<double> distanceRange_{0.0, 10.0, 0.05};
     // Analysis procedure to be run
@@ -35,6 +38,9 @@ class HistogramCNModule : public Module
     std::shared_ptr<SelectProcedureNode> selectA_;
     // SelectNode for site B
     std::shared_ptr<SelectProcedureNode> selectB_;
+    // CalculateExpression Node for CN
+    std::shared_ptr<CalculateExpressionProcedureNode> calculateExpression_;
+    std::shared_ptr<Collect1DProcedureNode> collectCN_;
 
     public:
     /*
