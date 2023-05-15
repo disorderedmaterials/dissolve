@@ -31,9 +31,6 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
     auto &forEachB = selectB_->branch()->get();
 
-    // CalculateExpression 'B'
-    auto calcExpression = forEachB.create<CalculateExpressionProcedureNode>({}, selectA_, selectB_);
-
     /*
      * Keywords
      */

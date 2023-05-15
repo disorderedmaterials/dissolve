@@ -38,9 +38,6 @@ class HistogramCNModule : public Module
     std::shared_ptr<SelectProcedureNode> selectA_;
     // SelectNode for site B
     std::shared_ptr<SelectProcedureNode> selectB_;
-    // CalculateExpression Node for CN
-    std::shared_ptr<CalculateExpressionProcedureNode> calculateExpression_;
-    std::shared_ptr<Collect1DProcedureNode> collectCN_;
 
     public:
     /*
