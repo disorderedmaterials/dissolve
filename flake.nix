@@ -186,6 +186,8 @@
           CMAKE_C_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
+          QML_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
+          QML2_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
           THREADING_LINK_LIBS = "${pkgs.tbb}/lib/libtbb.so";
         };
 

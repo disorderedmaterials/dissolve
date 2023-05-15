@@ -22,7 +22,7 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     // For the QIcon theme
     // QIcon::setThemeName("personal");
 
-    QQuickWidget *view = new QQuickWidget(QUrl("main.qml"), this);
+    QQuickWidget *view = new QQuickWidget(QUrl("qrc:/dialogs/qml/AddForcefieldTermsDialog.qml"), this);
     AtomTypeModel atModel(dissolve.coreData());
 
     atModel.setData(dissolve.coreData().atomTypes());

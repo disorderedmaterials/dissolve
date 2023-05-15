@@ -214,13 +214,6 @@ target_include_directories(
 	      Qt6::Core
 )
 
-# qt_add_qml_module(gui
-#     URI gui
-#     VERSION 1.0
-#     QML_FILES
-#         main.qml
-# )
-
 target_link_libraries(
   gui
   PRIVATE

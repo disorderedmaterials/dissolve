@@ -202,4 +202,15 @@
     <file>icons/control_step.svg</file>
     <file>icons/control_play.svg</file>
   </qresource>
+  <qresource prefix="dialogs">
+    <file>qml/AddForcefieldTermsDialog.qml</file>
+    <file>qml/ForceFieldAssign.qml</file>
+    <file>qml/ForceFieldAtomTypes.qml</file>
+    <file>qml/ForceFieldIntra.qml</file>
+    <file>qml/ForceFieldMaster.qml</file>
+    <file>qml/ForceFieldPicker.qml</file>
+    <file>qml/IconListView.qml</file>
+    <file>qml/ImageRadio.qml</file>
+    <file>qml/PrettyListView.qml</file>
+  </qresource>
 </RCC>
