@@ -6,18 +6,12 @@
 #include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/fileandformat.h"
-#include "keywords/optionaldouble.h"
-#include "keywords/range.h"
 #include "keywords/speciessitevector.h"
 #include "keywords/vec3double.h"
-#include "procedure/nodes/calculatedistance.h"
+#include "procedure/nodes/calculateexpression.h"
 #include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/operatenumberdensitynormalise.h"
-#include "procedure/nodes/operatesitepopulationnormalise.h"
-#include "procedure/nodes/operatesphericalshellnormalise.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodes/sum1d.h"
 
 HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analyser_(ProcedureNode::AnalysisContext)
 {
@@ -29,7 +23,16 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     selectB_ = forEachA.create<SelectProcedureNode>("B");
     selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
     selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
+    selectB_->keywords().set("InclusiveRange", distanceRange_);
     auto &forEachB = selectB_->branch()->get();
+
+    // Coordination Histogram
+    auto calcExpression_ = forEachA.create<CalculateExpressionProcedureNode>({});
+    calcExpression_->keywords().set("Expression", NodeValue("B.nSelected"));
+
+    auto collectCN_ = forEachA.create<Collect1DProcedureNode>("Bins", calcExpression_);
+
+    auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN_);
 
     /*
      * Keywords
