@@ -8,7 +8,7 @@
     weggli.flake = false;
     qt-idaaas.url = "github:disorderedmaterials/qt-idaaas";
   };
-  outputs = { self, nixpkgs, outdated, flake-utils, bundlers, nixGL-src
+  outputs = { self, nixpkgs, outdated, home-manager, flake-utils, bundlers, nixGL-src
     , qt-idaaas, weggli }:
     let
 
@@ -140,7 +140,7 @@
 
         defaultPackage = self.packages.${system}.dissolve;
 
-        devShells.default = pkgs.stdenv.mkDerivation {
+        devShells.default = pkgs.mkShell {
           name = "dissolve-shell";
           buildInputs = base_libs pkgs ++ gui_libs system pkgs ++ check_libs pkgs
             ++ (with pkgs; [
@@ -155,6 +155,7 @@
               conan
               distcc
               gdb
+              gtk3
               openmpi
               tbb
               valgrind
@@ -163,6 +164,16 @@
                 src = weggli;
               })
             ]);
+          shellHook = ''
+            export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_DATA_DIRS
+            export LIBGL_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "lib" "lib/dri" [pkgs.mesa.drivers]}
+            export LIBVA_DRIVERS_PATH=${pkgs.lib.makeSearchPathOutput "out" "lib/dri" [pkgs.mesa.drivers]}
+            export __EGL_VENDOR_LIBRARY_FILENAMES=${pkgs.mesa.drivers}/share/glvnd/egl_vendor.d/50_mesa.json
+            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [pkgs.mesa.drivers]}:${pkgs.lib.makeSearchPathOutput "lib" "lib/vdpau" [pkgs.libvdpau]}:${pkgs.lib.makeLibraryPath [pkgs.libglvnd]}"''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+            export QT_PLUGIN_PATH="${qt-idaaas.packages.${system}.qtsvg}/lib/qt-6/plugins:$QT_PLUGIN_PATH"
+          '';
+
+
           AntlrRuntime_INCLUDE_DIRS =
             "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
           AntlrRuntime_LINK_DIRS = "${pkgs.antlr4.runtime.cpp}/lib";
@@ -244,6 +255,19 @@
             config.ENTRYPOINT =
               [ "${self.packages.${system}.dissolve-mpi}/bin/dissolve-mpi" ];
           };
+        };
+
+        homeConfigurations = {
+          "dissolve" = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = with self.homeManagerModules; [
+              user-env
+            ];
+          };
+        };
+
+        homeManagerModule = {
+          user-env = import ./nix/user-env.nix;
         };
       });
 }
