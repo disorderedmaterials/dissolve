@@ -8,10 +8,10 @@
 #include "procedure/nodes/calculateexpression.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
+#include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/nodes/sum1d.h"
-#include "procedure/nodes/process1d.h"
 
 // Run main processing
 bool HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
