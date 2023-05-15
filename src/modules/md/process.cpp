@@ -87,8 +87,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 targetMolecules.push_back(mol.get());
                 auto offset = mol->globalAtomOffset();
-                for (const auto &i : mol->atoms())
-                    free[offset++] = 1;
+                std::fill(free.begin() + offset, free.begin() + offset + mol->atoms().size(), 1);
             }
 
     /*
