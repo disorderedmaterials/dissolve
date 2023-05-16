@@ -23,7 +23,7 @@ TEST(CalculateExpressionTest, Basic)
     expressionNode->execute(ProcedureContext(ProcessPool()));
     EXPECT_DOUBLE_EQ(expressionNode->value(0), 4.0);
 
-    // Expresssions
+    // Expressions
     expressionNode->keywords().set("Expression", NodeValue("3.8 * sin(1.2)"));
     expressionNode->execute(ProcedureContext(ProcessPool()));
     EXPECT_DOUBLE_EQ(expressionNode->value(0), 3.8 * sin(1 / DEGRAD * 1.2));
