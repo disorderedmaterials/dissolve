@@ -86,8 +86,8 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
             {
                 targetMolecules.push_back(mol.get());
-                for (const auto &i : mol->atoms())
-                    free[i->arrayIndex()] = 1;
+                auto offset = mol->globalAtomOffset();
+                std::fill(free.begin() + offset, free.begin() + offset + mol->atoms().size(), 1);
             }
 
     /*
@@ -254,8 +254,8 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             v += a * 0.5 * dT;
         }
 
-        // Update Cell contents / Atom locations
-        targetConfiguration_->updateCellContents();
+        // Update Atom locations
+        targetConfiguration_->updateAtomLocations();
 
         // Zero force arrays
         std::fill(fUnbound.begin(), fUnbound.end(), Vec3<double>());

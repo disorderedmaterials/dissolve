@@ -30,7 +30,8 @@ double GeometryKernel::bondEnergy(const SpeciesBond &b, const Atom &i, const Ato
 }
 
 // Calculate SpeciesBond forces
-void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const
+void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ,
+                                ForceVector &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
 
@@ -41,8 +42,8 @@ void GeometryKernel::bondForces(const SpeciesBond &bond, const Atom &i, const At
     vecji *= bond.force(distance);
 
     // Calculate forces
-    f[i.arrayIndex()] -= vecji;
-    f[j.arrayIndex()] += vecji;
+    f[indexI] -= vecji;
+    f[indexJ] += vecji;
 }
 
 // Calculate SpeciesBond forces
@@ -89,7 +90,8 @@ GeometryKernel::AngleParameters GeometryKernel::calculateAngleForceParameters(Ve
 }
 
 // Calculate SpeciesAngle forces
-void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k, ForceVector &f) const
+void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
+                                 int indexK, ForceVector &f) const
 {
     auto vecji = box_->minimumVector(j.r(), i.r());
     auto vecjk = box_->minimumVector(j.r(), k.r());
@@ -100,9 +102,9 @@ void GeometryKernel::angleForces(const SpeciesAngle &angle, const Atom &i, const
     angleParameters.dfk_dtheta_ *= force;
 
     // Store forces
-    f[i.arrayIndex()] += angleParameters.dfi_dtheta_;
-    f[j.arrayIndex()] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
-    f[k.arrayIndex()] += angleParameters.dfk_dtheta_;
+    f[indexI] += angleParameters.dfi_dtheta_;
+    f[indexJ] -= angleParameters.dfi_dtheta_ + angleParameters.dfk_dtheta_;
+    f[indexK] += angleParameters.dfk_dtheta_;
 }
 
 // Calculate SpeciesAngle forces
@@ -224,8 +226,8 @@ GeometryKernel::calculateTorsionForceParameters(const Vec3<double> &vecji, const
 }
 
 // Calculate SpeciesTorsion forces
-void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
-                                   ForceVector &f) const
+void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ,
+                                   const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
 {
     // Calculate vectors, ensuring we account for minimum image
     Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
@@ -239,10 +241,10 @@ void GeometryKernel::torsionForces(const SpeciesTorsion &torsion, const Atom &i,
     const auto du_dphi = torsion.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, i.arrayIndex(), torsionParameters, f);
-    addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
-    addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
-    addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
+    addTorsionForceI(du_dphi, indexI, torsionParameters, f);
+    addTorsionForceJ(du_dphi, indexJ, torsionParameters, f);
+    addTorsionForceK(du_dphi, indexK, torsionParameters, f);
+    addTorsionForceL(du_dphi, indexL, torsionParameters, f);
 }
 
 // Calculate SpeciesTorsion forces
@@ -276,8 +278,8 @@ double GeometryKernel::improperEnergy(const SpeciesImproper &imp, const Atom &i,
 }
 
 // Calculate SpeciesImproper forces
-void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
-                                    ForceVector &f) const
+void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ,
+                                    const Atom &k, int indexK, const Atom &l, int indexL, ForceVector &f) const
 {
     auto vecji = box_->minimumVector(i.r(), j.r());
     auto vecjk = box_->minimumVector(k.r(), j.r());
@@ -287,10 +289,10 @@ void GeometryKernel::improperForces(const SpeciesImproper &improper, const Atom 
     const auto du_dphi = improper.force(torsionParameters.phi_ * DEGRAD);
 
     // Sum forces on atoms
-    addTorsionForceI(du_dphi, i.arrayIndex(), torsionParameters, f);
-    addTorsionForceJ(du_dphi, j.arrayIndex(), torsionParameters, f);
-    addTorsionForceK(du_dphi, k.arrayIndex(), torsionParameters, f);
-    addTorsionForceL(du_dphi, l.arrayIndex(), torsionParameters, f);
+    addTorsionForceI(du_dphi, indexI, torsionParameters, f);
+    addTorsionForceJ(du_dphi, indexJ, torsionParameters, f);
+    addTorsionForceK(du_dphi, indexK, torsionParameters, f);
+    addTorsionForceL(du_dphi, indexL, torsionParameters, f);
 }
 
 // Calculate SpeciesImproper forces
@@ -403,21 +405,25 @@ double GeometryKernel::totalGeometryEnergy(const Molecule &mol) const
 // Calculate total forces within the specified molecule arising from geometry terms
 void GeometryKernel::totalGeometryForces(const Molecule &mol, ForceVector &f) const
 {
+    const auto offset = mol.globalAtomOffset();
+
     // Loop over bonds
     for (const auto &bond : mol.species()->bonds())
-        bondForces(bond, *mol.atom(bond.indexI()), *mol.atom(bond.indexJ()), f);
+        bondForces(bond, *mol.atom(bond.indexI()), offset + bond.indexI(), *mol.atom(bond.indexJ()), offset + bond.indexJ(), f);
 
     // Loop over angles
     for (const auto &angle : mol.species()->angles())
-        angleForces(angle, *mol.atom(angle.indexI()), *mol.atom(angle.indexJ()), *mol.atom(angle.indexK()), f);
+        angleForces(angle, *mol.atom(angle.indexI()), offset + angle.indexI(), *mol.atom(angle.indexJ()),
+                    offset + angle.indexJ(), *mol.atom(angle.indexK()), offset + angle.indexK(), f);
 
     // Loop over torsions
     for (const auto &torsion : mol.species()->torsions())
-        torsionForces(torsion, *mol.atom(torsion.indexI()), *mol.atom(torsion.indexJ()), *mol.atom(torsion.indexK()),
-                      *mol.atom(torsion.indexL()), f);
+        torsionForces(torsion, *mol.atom(torsion.indexI()), offset + torsion.indexI(), *mol.atom(torsion.indexJ()),
+                      offset + torsion.indexJ(), *mol.atom(torsion.indexK()), offset + torsion.indexK(),
+                      *mol.atom(torsion.indexL()), offset + torsion.indexL(), f);
 
     // Loop over impropers
     for (const auto &imp : mol.species()->impropers())
-        improperForces(imp, *mol.atom(imp.indexI()), *mol.atom(imp.indexJ()), *mol.atom(imp.indexK()), *mol.atom(imp.indexL()),
-                       f);
+        improperForces(imp, *mol.atom(imp.indexI()), offset + imp.indexI(), *mol.atom(imp.indexJ()), offset + imp.indexJ(),
+                       *mol.atom(imp.indexK()), offset + imp.indexK(), *mol.atom(imp.indexL()), offset + imp.indexL(), f);
 }

@@ -32,7 +32,7 @@ class GeometryKernel : public KernelBase
     // Return SpeciesBond energy at Atoms specified
     double bondEnergy(const SpeciesBond &b, const Atom &i, const Atom &j) const;
     // Calculate SpeciesBond forces
-    void bondForces(const SpeciesBond &bond, const Atom &i, const Atom &j, ForceVector &f) const;
+    void bondForces(const SpeciesBond &bond, const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
     void bondForces(const SpeciesBond &bond, const Vec3<double> &ri, const Vec3<double> &rj, ForceVector &f) const;
 
     /*
@@ -53,7 +53,8 @@ class GeometryKernel : public KernelBase
     // Calculate angle force parameters from supplied vectors
     static AngleParameters calculateAngleForceParameters(Vec3<double> vecji, Vec3<double> vecjk);
     // Calculate SpeciesAngle forces
-    void angleForces(const SpeciesAngle &angle, const Atom &i, const Atom &j, const Atom &k, ForceVector &f) const;
+    void angleForces(const SpeciesAngle &angle, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k, int indexK,
+                     ForceVector &f) const;
     void angleForces(const SpeciesAngle &angle, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
                      ForceVector &f) const;
 
@@ -88,8 +89,8 @@ class GeometryKernel : public KernelBase
     static TorsionParameters calculateTorsionForceParameters(const Vec3<double> &vecji, const Vec3<double> &vecjk,
                                                              const Vec3<double> &veckl);
     // Calculate SpeciesTorsion forces
-    void torsionForces(const SpeciesTorsion &torsion, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
-                       ForceVector &f) const;
+    void torsionForces(const SpeciesTorsion &torsion, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
+                       int indexK, const Atom &l, int indexL, ForceVector &f) const;
     void torsionForces(const SpeciesTorsion &torsion, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
                        const Vec3<double> &rl, ForceVector &f) const;
 
@@ -100,8 +101,8 @@ class GeometryKernel : public KernelBase
     // Return SpeciesImproper energy at Atoms specified
     double improperEnergy(const SpeciesImproper &imp, const Atom &i, const Atom &j, const Atom &k, const Atom &l) const;
     // Calculate SpeciesImproper forces
-    void improperForces(const SpeciesImproper &improper, const Atom &i, const Atom &j, const Atom &k, const Atom &l,
-                        ForceVector &f) const;
+    void improperForces(const SpeciesImproper &improper, const Atom &i, int indexI, const Atom &j, int indexJ, const Atom &k,
+                        int indexK, const Atom &l, int indexL, ForceVector &f) const;
     void improperForces(const SpeciesImproper &improper, const Vec3<double> &ri, const Vec3<double> &rj, const Vec3<double> &rk,
                         const Vec3<double> &rl, ForceVector &f) const;
 

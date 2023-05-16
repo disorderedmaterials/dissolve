@@ -16,9 +16,6 @@ Cell::Cell(int index, Vec3<int> gridReference, Vec3<double> centre)
  * Identity
  */
 
-// Set grid reference
-void Cell::setGridReference(int x, int y, int z) { gridReference_.set(x, y, z); }
-
 // Return grid reference
 const Vec3<int> &Cell::gridReference() const { return gridReference_; }
 
@@ -33,9 +30,6 @@ void Cell::setIndex(int id)
 // Return unique index
 int Cell::index() const { return index_; }
 
-// Set real-space Cell centre
-void Cell::setCentre(Vec3<double> r) { centre_ = r; }
-
 // Return real-space Cell centre
 const Vec3<double> &Cell::centre() const { return centre_; }
 
@@ -43,7 +37,7 @@ const Vec3<double> &Cell::centre() const { return centre_; }
  * Contents
  */
 
-// Return array of contained Atoms
+// Return vector of contained Atoms
 std::vector<Atom *> &Cell::atoms() { return atoms_; }
 const std::vector<Atom *> &Cell::atoms() const { return atoms_; }
 
@@ -54,12 +48,9 @@ int Cell::nAtoms() const { return atoms_.size(); }
 void Cell::addAtom(Atom *atom)
 {
     assert(atom);
-    atoms_.push_back(atom);
-    atomIndices_.push_back(atom->arrayIndex());
+    assert(!atom->cell());
 
-    if (atom->cell())
-        Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n",
-                        atom->arrayIndex());
+    atoms_.push_back(atom);
     atom->setCell(this);
 }
 
@@ -67,25 +58,10 @@ void Cell::addAtom(Atom *atom)
 void Cell::removeAtom(Atom *atom)
 {
     auto it = std::find(atoms_.begin(), atoms_.end(), atom);
-    auto itIndex = std::find(atomIndices_.begin(), atomIndices_.end(), atom->arrayIndex());
     assert(it != atoms_.end());
-    assert(itIndex != atomIndices_.end());
     (*it)->setCell(nullptr);
     atoms_.erase(it);
-    atomIndices_.erase(itIndex);
 }
 
 // Clear all atoms from cell
-void Cell::clearAtoms()
-{
-    atoms_.clear();
-    atomIndices_.clear();
-}
-
-// Update array pointers after update
-void Cell::updateAtoms(std::vector<Atom> &source)
-{
-    if (!atoms_.empty() && atoms_[0] != &source[atomIndices_[0]])
-        std::transform(atomIndices_.begin(), atomIndices_.end(), atoms_.begin(),
-                       [&source](const auto idx) { return &source[idx]; });
-}
+void Cell::clearAtoms() { atoms_.clear(); }

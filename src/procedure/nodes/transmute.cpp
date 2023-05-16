@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/transmute.h"
-#include "classes/atomchangetoken.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
@@ -65,10 +64,9 @@ bool TransmuteProcedureNode::execute(const ProcedureContext &procedureContext)
 
     // Perform the magic
     const auto *box = procedureContext.configuration()->box();
-    AtomChangeToken lock(*procedureContext.configuration());
     for (const auto &mol : targets)
     {
-        auto newMol = procedureContext.configuration()->addMolecule(lock, targetSpecies_);
+        auto newMol = procedureContext.configuration()->addMolecule(targetSpecies_);
         newMol->setCentreOfGeometry(box, mol->centreOfGeometry(box));
     }
 

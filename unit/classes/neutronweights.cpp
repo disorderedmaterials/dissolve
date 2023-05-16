@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/neutronweights.h"
-#include "classes/atomchangetoken.h"
 #include "classes/atomtype.h"
 #include "classes/configuration.h"
 #include "classes/isotopologue.h"

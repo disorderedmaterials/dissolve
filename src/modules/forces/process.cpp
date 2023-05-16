@@ -80,6 +80,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         for (auto n = 0; n < targetConfiguration_->nMolecules(); ++n)
         {
             molN = targetConfiguration_->molecule(n);
+            auto offsetN = molN->globalAtomOffset();
 
             // Intramolecular forces (excluding bound terms) in molecule N
             if (testInter_)
@@ -113,8 +114,8 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                          ? potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r, elec14, vdw14)
                                          : potentialMap.force(*molN->atom(ii), *molN->atom(jj), r, elec14, vdw14);
 
-                        fInter[i->arrayIndex()] += vecji;
-                        fInter[j->arrayIndex()] -= vecji;
+                        fInter[offsetN + ii] += vecji;
+                        fInter[offsetN + jj] -= vecji;
                     }
                 }
 
@@ -123,6 +124,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 for (auto m = n + 1; m < targetConfiguration_->nMolecules(); ++m)
                 {
                     molM = targetConfiguration_->molecule(m);
+                    auto offsetM = molM->globalAtomOffset();
 
                     // Double loop over atoms
                     for (auto ii = 0; ii < molN->nAtoms(); ++ii)
@@ -146,8 +148,8 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                             else
                                 vecji *= potentialMap.force(*i, *j, r);
 
-                            fInter[i->arrayIndex()] += vecji;
-                            fInter[j->arrayIndex()] -= vecji;
+                            fInter[offsetN + ii] += vecji;
+                            fInter[offsetM + jj] -= vecji;
                         }
                     }
                 }
@@ -166,8 +168,8 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     r = vecji.magAndNormalise();
                     vecji *= bond.force(r);
 
-                    fIntra[i->arrayIndex()] -= vecji;
-                    fIntra[j->arrayIndex()] += vecji;
+                    fIntra[offsetN + bond.indexI()] -= vecji;
+                    fIntra[offsetN + bond.indexJ()] += vecji;
                 }
 
                 // Angle forces
@@ -192,9 +194,9 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     forcek *= force / magjk;
 
                     // Store forces
-                    fIntra[i->arrayIndex()] += forcei;
-                    fIntra[j->arrayIndex()] -= forcei + forcek;
-                    fIntra[k->arrayIndex()] += forcek;
+                    fIntra[offsetN + angle.indexI()] += forcei;
+                    fIntra[offsetN + angle.indexJ()] -= forcei + forcek;
+                    fIntra[offsetN + angle.indexK()] += forcek;
                 }
 
                 // Torsion forces
@@ -216,11 +218,11 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     du_dphi = torsion.force(tp.phi_ * DEGRAD);
 
                     // Sum forces on Atoms
-                    fIntra[i->arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
-                                                du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
-                                                du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
+                    fIntra[offsetN + torsion.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
+                                                           du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
+                                                           du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
-                    fIntra[j->arrayIndex()].add(
+                    fIntra[offsetN + torsion.indexJ()].add(
                         du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
                                    tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
                         du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
@@ -228,7 +230,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
                                    tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
 
-                    fIntra[k->arrayIndex()].add(
+                    fIntra[offsetN + torsion.indexK()].add(
                         du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
                                    tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
                         du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
@@ -236,9 +238,9 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
                                    tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
-                    fIntra[l->arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
-                                                du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
-                                                du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
+                    fIntra[offsetN + torsion.indexL()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
+                                                           du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
+                                                           du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
                 }
 
                 // Improper forces
@@ -260,11 +262,11 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     du_dphi = imp.force(tp.phi_ * DEGRAD);
 
                     // Sum forces on Atoms
-                    fIntra[i->arrayIndex()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
-                                                du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
-                                                du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
+                    fIntra[offsetN + imp.indexI()].add(du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(0)),
+                                                       du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(1)),
+                                                       du_dphi * tp.dcos_dxpj_.dp(tp.dxpj_dij_.columnAsVec3(2)));
 
-                    fIntra[j->arrayIndex()].add(
+                    fIntra[offsetN + imp.indexJ()].add(
                         du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(0) - tp.dxpj_dkj_.columnAsVec3(0)) -
                                    tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0))),
                         du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(1) - tp.dxpj_dkj_.columnAsVec3(1)) -
@@ -272,7 +274,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         du_dphi * (tp.dcos_dxpj_.dp(-tp.dxpj_dij_.columnAsVec3(2) - tp.dxpj_dkj_.columnAsVec3(2)) -
                                    tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2))));
 
-                    fIntra[k->arrayIndex()].add(
+                    fIntra[offsetN + imp.indexK()].add(
                         du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(0) - tp.dxpk_dlk_.columnAsVec3(0)) +
                                    tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(0))),
                         du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(1) - tp.dxpk_dlk_.columnAsVec3(1)) +
@@ -280,9 +282,9 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         du_dphi * (tp.dcos_dxpk_.dp(tp.dxpk_dkj_.columnAsVec3(2) - tp.dxpk_dlk_.columnAsVec3(2)) +
                                    tp.dcos_dxpj_.dp(tp.dxpj_dkj_.columnAsVec3(2))));
 
-                    fIntra[l->arrayIndex()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
-                                                du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
-                                                du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
+                    fIntra[offsetN + imp.indexL()].add(du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(0)),
+                                                       du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(1)),
+                                                       du_dphi * tp.dcos_dxpk_.dp(tp.dxpk_dlk_.columnAsVec3(2)));
                 }
             }
         }
@@ -326,8 +328,9 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             Timer intraTimer;
 
             intraTimer.start();
-            kernel->totalForces(fIntraCheck, fIntraCheck, ProcessPool::PoolStrategy,
-                                {ForceKernel::ExcludePairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
+            kernel->totalForces(
+                fIntraCheck, fIntraCheck, ProcessPool::PoolStrategy,
+                {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
             if (!procPool.allSum(fIntraCheck))
                 return false;
             intraTimer.stop();

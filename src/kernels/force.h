@@ -47,20 +47,17 @@ class ForceKernel : public GeometryKernel
      */
     private:
     // Calculate inter-particle forces between Atoms provided
-    void forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f) const;
+    void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-    void forcesWithoutMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const;
+    void forcesWithoutMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+                          double vdwScale) const;
     // Calculate inter-particle forces between Atoms provided
-    void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f) const;
+    void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f) const;
     // Calculate inter-particle forces between Atoms provided, scaling electrostatic and van der Waals components
-    void forcesWithMim(const Atom &i, const Atom &j, ForceVector &f, double elecScale, double vdwScale) const;
-    // Calculate forces between Cell and its neighbours
-    void cellPairPotentialForces(const Cell *cell, bool excludeIgeJ, bool includeIntraMolecular,
-                                 ProcessPool::DivisionStrategy strategy, ForceVector &f) const;
+    void forcesWithMim(const Atom &i, int indexI, const Atom &j, int indexJ, ForceVector &f, double elecScale,
+                       double vdwScale) const;
     // Calculate forces between two cells
-    void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, bool excludeIgeJ,
-                                       bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy,
-                                       ForceVector &f) const;
+    void cellToCellPairPotentialForces(const Cell *cell, const Cell *otherCell, bool applyMim, ForceVector &f) const;
 
     /*
      * Extended Terms
@@ -76,10 +73,10 @@ class ForceKernel : public GeometryKernel
     // Force calculation flags
     enum ForceCalculationFlags
     {
-        ExcludePairPotential,
+        ExcludeInterMolecularPairPotential,
+        ExcludeIntraMolecularPairPotential,
         ExcludeGeometry,
-        ExcludeExtended,
-        ExcludeIntraMolecularPairPotential
+        ExcludeExtended
     };
 
     public:

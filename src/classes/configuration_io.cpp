@@ -3,7 +3,6 @@
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -101,7 +100,6 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     const auto angles = parser.arg3d(0);
-    AtomChangeToken lock(*this);
 
     createBoxAndCells(lengths, angles, nonPeriodic, pairPotentialRange);
 
@@ -126,7 +124,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
         // Set Species pointers for this range of Molecules
         auto nMols = parser.argi(0);
         for (auto n = 0; n < nMols; ++n)
-            addMolecule(lock, sp);
+            addMolecule(sp);
 
         // Increase our counter
         nMolsRead += parser.argi(0);
@@ -153,8 +151,8 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     // Scale box and cells according to the applied size factor
     scaleBox({appliedSizeFactor_, appliedSizeFactor_, appliedSizeFactor_});
 
-    // Update Cell locations for Atoms
-    updateCellContents();
+    // Update all relationships
+    updateObjectRelationships();
 
     // If this an old-style configuration with no potentials we can end here
     if (!hasPotentials)

@@ -119,7 +119,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             // Get Molecule index and pointer
             std::shared_ptr<Molecule> mol = targetConfiguration_->molecule(molId);
-            const auto indexOffset = mol->atom(0)->arrayIndex();
+            const auto indexOffset = mol->globalAtomOffset();
 
             // Set current atom targets in ChangeStore (whole molecule)
             changeStore.add(mol);
@@ -158,7 +158,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         mol->translate(vji, bond.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
-                        targetConfiguration_->updateCellLocation(bond.attachedAtoms(terminus), indexOffset);
+                        targetConfiguration_->updateAtomLocations(bond.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
                         newPPEnergy = termEnergyOnly_ ? 0.0
@@ -218,7 +218,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         mol->transform(box, transform, j->r(), angle.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
-                        targetConfiguration_->updateCellLocation(angle.attachedAtoms(terminus), indexOffset);
+                        targetConfiguration_->updateAtomLocations(angle.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
                         newPPEnergy = termEnergyOnly_ ? 0.0
@@ -283,7 +283,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         mol->transform(box, transform, terminus == 0 ? j->r() : k->r(), torsion.attachedAtoms(terminus));
 
                         // Update Cell positions of the adjusted Atoms
-                        targetConfiguration_->updateCellLocation(torsion.attachedAtoms(terminus), indexOffset);
+                        targetConfiguration_->updateAtomLocations(torsion.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
                         newPPEnergy = termEnergyOnly_ ? 0.0

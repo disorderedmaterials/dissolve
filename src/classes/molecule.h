@@ -23,9 +23,10 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     private:
     // Species that this Molecule represents
     const Species *species_{nullptr};
-    // Array of pointers to Atoms that belong to this Molecule (stored in Configuration)
+    // Vector of pointers to Atoms that belong to this Molecule
     std::vector<Atom *> atoms_;
-    std::vector<int> atomIndices_;
+    // Offset of first Atom in main configuration vector
+    int globalAtomOffset_{0};
     // Object's index within the parent DynamicArray
     int arrayIndex_{-1};
 
@@ -36,16 +37,19 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     const Species *species() const;
     // Add Atom to Molecule
     void addAtom(Atom *i);
-    // Return size of Atom array
+    // Return number of atoms in the molecule
     int nAtoms() const;
-    // Return Atoms array
+    // Return Atoms vector
     std::vector<Atom *> &atoms();
-    // Return Atoms array
     const std::vector<Atom *> &atoms() const;
     // Return nth Atom pointer
     Atom *atom(int n) const;
-    // Update atoms array from indices
-    void updateAtoms(std::vector<Atom> &source);
+    // Update local atom pointers from main vector
+    void updateAtoms(std::vector<Atom> &mainAtoms, int offset);
+    // Return global atom offset of first atom
+    int globalAtomOffset() const;
+    // Return global index of supplied atom
+    int globalAtomIndex(const Atom *i) const;
     // Sets the index of the object within the parent DynamicArray
     void setArrayIndex(int index);
     // Gets the index of the object within the parent DynamicArray

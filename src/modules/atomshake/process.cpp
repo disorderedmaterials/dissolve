@@ -98,7 +98,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
                     // Translate Atom and update its Cell position
                     i->translateCoordinates(rDelta);
-                    targetConfiguration_->updateCellLocation(i);
+                    targetConfiguration_->updateAtomLocation(i);
 
                     // Calculate new energy
                     er = kernel->totalEnergy(*i);

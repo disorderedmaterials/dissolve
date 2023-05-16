@@ -52,7 +52,7 @@ void Configuration::createBoxAndCells(const Matrix3 axes, double pairPotentialRa
 void Configuration::updateCells(double pairPotentialRange)
 {
     cells_.generate(box_.get(), requestedCellDivisionLength_, pairPotentialRange);
-    updateCellContents(true);
+    updateAtomLocations(true);
 }
 
 // Return Box
@@ -110,7 +110,7 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             scaleBox({sizeFactorRatio, sizeFactorRatio, sizeFactorRatio});
 
             // Re-assign all Atoms to Cells
-            updateCellContents();
+            updateAtomLocations();
 
             // Store new size factors
             appliedSizeFactor_ = requestedSizeFactor_;

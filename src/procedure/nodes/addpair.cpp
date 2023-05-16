@@ -3,7 +3,6 @@
 
 #include "procedure/nodes/addpair.h"
 #include "base/randombuffer.h"
-#include "classes/atomchangetoken.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -255,13 +254,10 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
 
     // Add all molecule pairs
     const auto currentSize = cfg->molecules().size();
+    for (auto n = 0; n < ipop; ++n)
     {
-        AtomChangeToken lock(*cfg);
-        for (auto n = 0; n < ipop; ++n)
-        {
-            cfg->addMolecule(lock, speciesA_);
-            cfg->addMolecule(lock, speciesB_);
-        }
+        cfg->addMolecule(speciesA_);
+        cfg->addMolecule(speciesB_);
     }
 
     // Position all molecule pairs
