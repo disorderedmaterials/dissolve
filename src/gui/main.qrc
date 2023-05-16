@@ -204,6 +204,7 @@
   </qresource>
   <qresource prefix="dialogs">
     <file>qml/AddForcefieldTermsDialog.qml</file>
+    <file>qml/DropDownLabel.qml</file>
     <file>qml/ForceFieldAssign.qml</file>
     <file>qml/ForceFieldAtomTypes.qml</file>
     <file>qml/ForceFieldIntra.qml</file>

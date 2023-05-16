@@ -4,7 +4,7 @@ import QtQuick.Layouts 6.0
 
 Item {
     property variant dialogModel;
-    property int currentModel: -1;
+    property int currentModel: 0;
     /* property variant fullData: masterList.currentItem.fullData.raw; */
 
 
@@ -15,11 +15,10 @@ Item {
 	anchors.right: prefixButton.left;
 	clip: true;
 
-	Text {
-	    text: "Bonds";
-	    TapHandler {
-		onTapped: currentModel = 0;
-	    }
+	DropDownLabel {
+	    label: "Bonds";
+	    active: currentModel == 0;
+	    onActivated: currentModel = 0;
 	}
 
 	IconListView {
@@ -33,11 +32,10 @@ Item {
 	    onSelected: control.selected();
 	}
 
-	Text {
-	    text: "Angles";
-	    TapHandler {
-		onTapped: currentModel = 1;
-	    }
+	DropDownLabel {
+	    label: "Angles";
+	    active: currentModel == 1;
+	    onActivated: currentModel = 1;
 	}
 
 	IconListView {
@@ -51,11 +49,10 @@ Item {
 	    onSelected: control.selected();
 	}
 
-	Text {
-	    text: "Torsions";
-	    TapHandler {
-		onTapped: currentModel = 2;
-	    }
+	DropDownLabel {
+	    label: "Torsions";
+	    active: currentModel == 2;
+	    onActivated: currentModel = 2;
 	}
 
 	IconListView {
@@ -69,11 +66,10 @@ Item {
 	    onSelected: control.selected();
 	}
 
-	Text {
-	    text: "Impropers";
-	    TapHandler {
-		onTapped: currentModel = 3;
-	    }
+	DropDownLabel {
+	    label: "Impropers";
+	    active: currentModel == 3;
+	    onActivated: currentModel = 3;
 	}
 
 	IconListView {
