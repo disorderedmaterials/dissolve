@@ -29,4 +29,20 @@ TEST(CalculateExpressionTest, Basic)
     EXPECT_DOUBLE_EQ(expressionNode->value(0), 3.8 * sin(1 / DEGRAD * 1.2));
 }
 
+TEST(CalculateExpressionTest, NodeParameters)
+{
+    Procedure procedure(ProcedureNode::AnalysisContext);
+    auto A = procedure.createRootNode<SelectProcedureNode>("A");
+
+    // Create a CalculateExpression node to play with
+    auto expressionNode = procedure.createRootNode<CalculateExpressionProcedureNode>("X");
+    EXPECT_TRUE(procedure.rootSequence().check());
+
+    // Access parameter in Select node
+    EXPECT_TRUE(expressionNode->setExpression("A.nSelected"));
+
+    // Invalid parameter
+    EXPECT_FALSE(expressionNode->setExpression("B.nSelected"));
+}
+
 } // namespace UnitTest
