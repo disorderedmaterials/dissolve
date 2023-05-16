@@ -30,6 +30,7 @@ class RangeKeyword : public KeywordBase
     public:
     // Set data
     bool setData(double rangeMin, double rangeMax);
+    bool setData(const Range &range);
     // Set range minimum
     bool setMinimum(double rangeMin);
     // Set range maximum
