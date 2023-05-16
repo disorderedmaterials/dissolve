@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "math/range.h"
 #include "module/module.h"
 #include "procedure/procedure.h"
 
@@ -30,8 +31,8 @@ class HistogramCNModule : public Module
     Configuration *targetConfiguration_{nullptr};
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{false};
-    // Range (min, max, delta) of distance axis
-    Vec3<double> distanceRange_{0.0, 10.0, 0.05};
+    // Distance range for calculation
+    Range distanceRange_{0.0, 5.0};
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A

@@ -6,6 +6,7 @@
 #include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/fileandformat.h"
+#include "keywords/range.h"
 #include "keywords/speciessitevector.h"
 #include "keywords/vec3double.h"
 #include "procedure/nodes/calculateexpression.h"
@@ -48,6 +49,6 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
         selectB_->speciesSites(), selectB_->axesRequired());
 
     keywords_.setOrganisation("Options", "Ranges");
-    keywords_.add<Vec3DoubleKeyword>("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_,
-                                     Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<RangeKeyword>("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_, 0.0, std::nullopt,
+                                Vec3Labels::MinMaxDeltaLabels);
 }
