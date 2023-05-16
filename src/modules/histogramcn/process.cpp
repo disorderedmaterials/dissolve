@@ -29,4 +29,6 @@ bool HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
         return Messenger::error("HistogramCN experienced problems with its analysis.\n");
+
+    return true;
 }
