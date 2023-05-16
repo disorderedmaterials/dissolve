@@ -147,6 +147,11 @@ class AddForcefieldDialogModel : public QObject
     // Whether we are at the final page of the wizard
     bool atEnd() const;
 
+    // Add a suffix to the name of a master term
+    Q_INVOKABLE void addMasterSuffix(int type, int index, QString suffix);
+    // Add a prefix to the name of a master term
+    Q_INVOKABLE void addMasterPrefix(int type, int index, QString prefix);
+
     // Supply the main Dissolve instance
     void setDissolve(Dissolve &Dissolve);
     // Supply the species to operate on

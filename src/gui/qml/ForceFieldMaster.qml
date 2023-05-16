@@ -98,7 +98,22 @@ Item {
 	title: "Prefix Dialog"
 
 	standardButtons: Dialog.Ok | Dialog.Cancel
-	/* onAccepted: dialogModel.atomTypes.addPrefix(masterList.currentIndex , prefixField.text); */
+	onAccepted: {
+	    switch (currentModel) {
+	    case 0:
+		dialogModel.addMasterPrefix(currentModel, bonds.currentIndex , prefixField.text);
+		break;
+	    case 1:
+		dialogModel.addMasterPrefix(currentModel, angles.currentIndex , prefixField.text);
+		break;
+	    case 2:
+		dialogModel.addMasterPrefix(currentModel, torsions.currentIndex , prefixField.text);
+		break;
+	    case 3:
+		dialogModel.addMasterPrefix(currentModel, impropers.currentIndex , prefixField.text);
+		break;
+	    }
+	}
 
 	TextField {
 	    id: prefixField;
@@ -121,12 +136,26 @@ Item {
 	title: "Suffix Dialog"
 
 	standardButtons: Dialog.Ok | Dialog.Cancel
-	/* onAccepted: dialogModel.atomTypes.addSuffix(atList.currentIndex , suffixField.text); */
+	onAccepted: {
+	    switch (currentModel) {
+	    case 0:
+		dialogModel.addMasterSuffix(currentModel, bonds.currentIndex , suffixField.text);
+		break;
+	    case 1:
+		dialogModel.addMasterSuffix(currentModel, angles.currentIndex , suffixField.text);
+		break;
+	    case 2:
+		dialogModel.addMasterSuffix(currentModel, torsions.currentIndex , suffixField.text);
+		break;
+	    case 3:
+		dialogModel.addMasterSuffix(currentModel, impropers.currentIndex , suffixField.text);
+		break;
+	    }
+	}
 
 	TextField {
 	    id: suffixField;
 	    placeholderText: "Suffix";
 	}
-
     }
 }

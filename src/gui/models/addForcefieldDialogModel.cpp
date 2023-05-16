@@ -314,3 +314,70 @@ void AddForcefieldDialogModel::finalise()
     }
     accept();
 }
+
+
+void AddForcefieldDialogModel::addMasterSuffix(int type, int index, QString suffix) {
+  QVariant termData;
+  switch (type) {
+  case 0:
+    termData = masters_->bondModel_.getTermData(index, MasterTermModelData::DataType::Name);
+    break;
+  case 1:
+    termData = masters_->angleModel_.getTermData(index, MasterTermModelData::DataType::Name);
+    break;
+  case 2:
+    termData = masters_->torsionModel_.getTermData(index, MasterTermModelData::DataType::Name);
+    break;
+  case 3:
+    termData = masters_->improperModel_.getTermData(index, MasterTermModelData::DataType::Name);
+    break;
+  };
+  auto newName = termData.toString() + suffix;
+  switch (type) {
+  case 0:
+    termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+    break;
+  case 1:
+    termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+    break;
+  case 2:
+    termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+    break;
+  case 3:
+    termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+    break;
+  };
+}
+
+void AddForcefieldDialogModel::addMasterPrefix(int type, int index, QString prefix) {
+  QVariant termData;
+  switch (type) {
+  case 0:
+    termData = masters_->bondModel_.getTermData(index, MasterTermModelData::DataType::Name);
+    break;
+  case 1:
+    termData = masters_->angleModel_.getTermData(index, MasterTermModelData::DataType::Name);
+    break;
+  case 2:
+    termData = masters_->torsionModel_.getTermData(index, MasterTermModelData::DataType::Name);
+    break;
+  case 3:
+    termData = masters_->improperModel_.getTermData(index, MasterTermModelData::DataType::Name);
+    break;
+  };
+  auto newName = prefix + termData.toString();
+  switch (type) {
+  case 0:
+    termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+    break;
+  case 1:
+    termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+    break;
+  case 2:
+    termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+    break;
+  case 3:
+    termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+    break;
+  };
+}
