@@ -20,6 +20,14 @@ CalculateExpressionProcedureNode::CalculateExpressionProcedureNode()
  * Observable Target
  */
 
+// Set expression to evaluate
+bool CalculateExpressionProcedureNode::setExpression(std::string_view expression)
+{
+    auto vars = getParameters();
+
+    return expression_.set(expression, vars);
+}
+
 // Return number of sites required to calculate observable
 int CalculateExpressionProcedureNode::nSitesRequired() const { return 0; }
 

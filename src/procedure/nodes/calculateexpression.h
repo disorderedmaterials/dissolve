@@ -21,6 +21,10 @@ class CalculateExpressionProcedureNode : public CalculateProcedureNodeBase
     NodeValue expression_;
 
     public:
+    // Set expression to evaluate
+    bool setExpression(std::string_view expression);
+
+    public:
     // Return number of sites required to calculate observable
     int nSitesRequired() const override;
     // Return dimensionality of calculated observable
