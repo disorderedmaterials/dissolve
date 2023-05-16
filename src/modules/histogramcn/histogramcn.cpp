@@ -4,8 +4,6 @@
 #include "modules/histogramcn/histogramcn.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
-#include "keywords/double.h"
-#include "keywords/fileandformat.h"
 #include "keywords/range.h"
 #include "keywords/speciessitevector.h"
 #include "keywords/vec3double.h"
