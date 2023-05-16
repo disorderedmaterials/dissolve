@@ -4,91 +4,87 @@ import QtQuick.Layouts 6.0
 
 Item {
     property variant dialogModel;
+    property int currentModel: -1;
     /* property variant fullData: masterList.currentItem.fullData.raw; */
 
 
-    Grid {
-	columns: 2;
+    ColumnLayout {
 	anchors.top: parent.top;
 	anchors.bottom: parent.bottom;
 	anchors.left: parent.left;
 	anchors.right: prefixButton.left;
 	clip: true;
 
-	GroupBox {
-	    title: "Bonds";
-	    width: parent.width/2;
-	    height: parent.height/2;
-	    Rectangle {
-		anchors.fill: parent;
-		color: palette.active.base;
-		IconListView {
-		    id: bonds;
-		    anchors.fill: parent;
-		    clip: true;
-		    focus: true;
-		    currentIndex: -1;
-		    model: dialogModel.bonds;
-		    onSelected: control.selected();
-		}
+	Text {
+	    text: "Bonds";
+	    TapHandler {
+		onTapped: currentModel = 0;
 	    }
 	}
 
-	GroupBox {
-	    title: "Angles";
-	    width: parent.width/2;
-	    height: parent.height/2;
-	    Rectangle {
-		anchors.fill: parent;
-		color: palette.active.base;
-		IconListView {
-		    id: angles;
-		    clip: true;
-		    focus: true;
-		    anchors.fill: parent;
-		    currentIndex: -1;
-		    model: dialogModel.angles;
-		    onSelected: control.selected();
-		}
+	IconListView {
+	    id: bonds;
+	    Layout.fillWidth: true;
+	    Layout.fillHeight: currentModel == 0;
+	    clip: true;
+	    focus: true;
+	    currentIndex: -1;
+	    model: dialogModel.bonds;
+	    onSelected: control.selected();
+	}
+
+	Text {
+	    text: "Angles";
+	    TapHandler {
+		onTapped: currentModel = 1;
 	    }
 	}
 
-	GroupBox {
-	    title: "Torsions";
-	    width: parent.width/2;
-	    height: parent.height/2;
-	    Rectangle {
-		anchors.fill: parent;
-		color: palette.active.base;
-		IconListView {
-		    id: torsions;
-		    clip: true;
-		    focus: true;
-		    anchors.fill: parent;
-		    currentIndex: -1;
-		    model: dialogModel.torsions;
-		    onSelected: control.selected();
-		}
+	IconListView {
+	    id: angles;
+	    Layout.fillWidth: true;
+	    Layout.fillHeight: currentModel == 1;
+	    clip: true;
+	    focus: true;
+	    currentIndex: -1;
+	    model: dialogModel.angles;
+	    onSelected: control.selected();
+	}
+
+	Text {
+	    text: "Torsions";
+	    TapHandler {
+		onTapped: currentModel = 2;
 	    }
 	}
 
-	GroupBox {
-	    title: "Impropers";
-	    width: parent.width/2;
-	    height: parent.height/2;
-	    Rectangle {
-		anchors.fill: parent;
-		color: palette.active.base;
-		IconListView {
-		    id: impropers;
-		    clip: true;
-		    focus: true;
-		    anchors.fill: parent;
-		    currentIndex: -1;
-		    model: dialogModel.impropers;
-		    onSelected: control.selected();
-		}
+	IconListView {
+	    id: torsions;
+	    Layout.fillWidth: true;
+	    Layout.fillHeight: currentModel == 2;
+	    clip: true;
+	    focus: true;
+	    currentIndex: -1;
+	    model: dialogModel.torsions;
+	    onSelected: control.selected();
+	}
+
+	Text {
+	    text: "Impropers";
+	    TapHandler {
+		onTapped: currentModel = 3;
 	    }
+	}
+
+	IconListView {
+	    id: impropers;
+	    Layout.fillWidth: true;
+	    Layout.fillHeight: currentModel == 3;
+	    clip: true;
+	    focus: true;
+	    currentIndex: -1;
+	    model: dialogModel.impropers;
+	    onSelected: control.selected();
 	}
     }
 
