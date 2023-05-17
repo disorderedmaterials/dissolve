@@ -26,7 +26,7 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
 
     // Coordination Histogram
     auto calcExpression_ = forEachA.create<CalculateExpressionProcedureNode>({});
-    calcExpression_->keywords().set("Expression", NodeValue("B.nSelected"));
+    calcExpression_->setExpression("B.nSelected");
 
     auto collectCN_ = forEachA.create<Collect1DProcedureNode>("Bins", calcExpression_);
 
