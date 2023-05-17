@@ -34,8 +34,27 @@ TEST_F(AddForcefieldDialogModelTest, benzene)
     model.setSpecies(species);
     model.ready();
 
+    //ForceFieldPicker
     EXPECT_EQ(model.forcefields()->rowCount(), 8);
     auto ff_name = model.forcefields()->data(model.forcefields()->index(1, 0), Qt::DisplayRole).toString();
     EXPECT_EQ(ff_name.toStdString(), "OPLSAA2005/Aromatics");
+    model.setFf(model.forcefields()->data(model.forcefields()->index(1, 0), Qt::UserRole + 3).value<Forcefield*>());
+    model.next();
+
+    //ForceFieldAssign
+    // std::cout << (int) model.atomTypeRadio_ << std::endl;
+    model.next();
+
+    //ForceFieldAtomType
+    auto at_name = model.atomTypes()->data(model.atomTypes()->index(1, 0), Qt::DisplayRole).toString();
+    std::cout << model.atomTypes()->rowCount() << std::endl;
+    EXPECT_EQ(at_name.toStdString(), "HA");
+    model.next();
+
+    //ForceFieldIntra
+    model.next();
+
+    //ForceFieldMaster
+    model.next();
 }
 }

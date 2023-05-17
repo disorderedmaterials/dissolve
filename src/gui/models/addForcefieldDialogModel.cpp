@@ -381,3 +381,9 @@ void AddForcefieldDialogModel::addMasterPrefix(int type, int index, QString pref
     break;
   };
 }
+
+// The chosen forcefield
+Forcefield* AddForcefieldDialogModel::ff() const { return ff_; }
+
+// Update the chosen forcefield
+void AddForcefieldDialogModel::setFf(Forcefield *f) { ff_ = f; }

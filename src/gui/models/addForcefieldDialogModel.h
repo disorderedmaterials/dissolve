@@ -21,7 +21,7 @@ class AddForcefieldDialogModel : public QObject
     // The Atom Type Model
     Q_PROPERTY(AtomTypeModel *atomTypes READ atomTypes NOTIFY atomTypesChanged)
     // The chosen forcefield
-    Q_PROPERTY(Forcefield *ff MEMBER ff_ NOTIFY progressionAllowedChanged)
+    Q_PROPERTY(Forcefield *ff READ ff WRITE setFf NOTIFY progressionAllowedChanged)
     // The Master Bond Model
     Q_PROPERTY(const MasterBondModel *bonds READ bonds NOTIFY mastersChanged)
     // The Master Angle Model
@@ -139,6 +139,10 @@ class AddForcefieldDialogModel : public QObject
     const MasterTorsionModel *torsions() const;
     // The Master Improper Model
     const MasterImproperModel *impropers() const;
+    // The chosen forcefield
+    Forcefield* ff() const;
+    // Update the chosen forcefield
+    void setFf(Forcefield *f);
     int atomTypesIndicator() const;
     // Does the species have selected atoms
     bool speciesHasSelection() const;
