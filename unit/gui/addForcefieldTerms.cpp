@@ -47,11 +47,16 @@ TEST_F(AddForcefieldDialogModelTest, benzene)
 
     //ForceFieldAtomType
     auto at_name = model.atomTypes()->data(model.atomTypes()->index(1, 0), Qt::DisplayRole).toString();
-    std::cout << model.atomTypes()->rowCount() << std::endl;
     EXPECT_EQ(at_name.toStdString(), "HA");
     model.next();
 
     //ForceFieldIntra
+    EXPECT_EQ(model.bonds()->data(model.bonds()->index(1, 0), Qt::DisplayRole).toString().toStdString(),
+	      "CA-CA");
+    EXPECT_EQ(model.angles()->data(model.angles()->index(1, 0), Qt::DisplayRole).toString().toStdString(),
+	      "CA-CA-CA");
+    EXPECT_EQ(model.torsions()->data(model.torsions()->index(1, 0), Qt::DisplayRole).toString().toStdString(),
+	      "CA-CA-CA-HA");
     model.next();
 
     //ForceFieldMaster
