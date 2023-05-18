@@ -14,6 +14,6 @@ class AddForcefieldTermsDialog : public QDialog
 {
     Q_OBJECT
     public:
-    AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species* sp);
+    AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp);
     ~AddForcefieldTermsDialog() = default;
 };

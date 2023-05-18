@@ -50,19 +50,19 @@ class AddForcefieldDialogModel : public QObject
     public:
     enum class Radio
     {
-	All, // Act on all elements
-	Selected,
-	Empty, // Act on empty elements
-	None   // Do not act
+        All, // Act on all elements
+        Selected,
+        Empty, // Act on empty elements
+        None   // Do not act
     };
     Q_ENUM(Radio);
     enum class Page
     {
-	SelectForcefieldPage,   /* Select Forcefield to apply to Species */
-	AtomTypesPage,          /* AtomTypes page - select how / what to assign */
-	AtomTypesConflictsPage, /* AtomTypes conflicts page - check / re-map AtomTypes */
-	IntramolecularPage,     /* Select intramolecular terms to generate */
-	MasterTermsPage
+        SelectForcefieldPage,   /* Select Forcefield to apply to Species */
+        AtomTypesPage,          /* AtomTypes page - select how / what to assign */
+        AtomTypesConflictsPage, /* AtomTypes conflicts page - check / re-map AtomTypes */
+        IntramolecularPage,     /* Select intramolecular terms to generate */
+        MasterTermsPage
     };
     Q_ENUM(Page);
 
@@ -140,7 +140,7 @@ class AddForcefieldDialogModel : public QObject
     // The Master Improper Model
     const MasterImproperModel *impropers() const;
     // The chosen forcefield
-    Forcefield* ff() const;
+    Forcefield *ff() const;
     // Update the chosen forcefield
     void setFf(Forcefield *f);
     int atomTypesIndicator() const;

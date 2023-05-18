@@ -51,7 +51,9 @@ QVariant MasterTermModel::data(const QModelIndex &index, int role) const
         return iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString());
 
     if (role == MasterTermModelData::Roles::Icon && iconFunction_)
-      return QIcon(iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString()) ? ":/general/icons/general_warn.svg" : ":/general/icons/general_warn.svg");
+        return QIcon(iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString())
+                         ? ":/general/icons/general_warn.svg"
+                         : ":/general/icons/general_warn.svg");
 
     if (role == MasterTermModelData::Roles::Display || role == MasterTermModelData::Roles::Edit)
         return getTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()));
@@ -72,7 +74,8 @@ bool MasterTermModel::setData(const QModelIndex &index, const QVariant &value, i
     return true;
 }
 
-QHash<int, QByteArray> MasterTermModel::roleNames() const {
+QHash<int, QByteArray> MasterTermModel::roleNames() const
+{
     QHash<int, QByteArray> roles;
     roles[Qt::DisplayRole] = "display";
     roles[Qt::DecorationRole] = "icon";

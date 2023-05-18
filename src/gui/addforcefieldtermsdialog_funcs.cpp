@@ -7,14 +7,13 @@
 #include "gui/models/addForcefieldDialogModel.h"
 #include "templates/algorithms.h"
 #include <QInputDialog>
-#include <QQuickItem>
 #include <QMessageBox>
-#include <set>
-#include <QQuickWidget>
 #include <QQmlContext>
+#include <QQuickItem>
+#include <QQuickWidget>
+#include <set>
 
-AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp) :
-  QDialog(parent)
+AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp) : QDialog(parent)
 {
 
     qmlRegisterType<AddForcefieldDialogModel>("Dissolve", 1, 0, "AddForcefieldDialogModel");
@@ -32,7 +31,7 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     view->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
     auto root = view->rootObject();
-    auto model = root->findChild<AddForcefieldDialogModel*>("dialogModel");
+    auto model = root->findChild<AddForcefieldDialogModel *>("dialogModel");
 
     model->setDissolve(dissolve);
     model->setSpecies(sp);

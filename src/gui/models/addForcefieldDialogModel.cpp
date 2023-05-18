@@ -24,20 +24,20 @@ void AddForcefieldDialogModel::back()
 {
     switch (index_)
     {
-	case AddForcefieldDialogModel::Page::MasterTermsPage:
-	    index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
-	    break;
-	case AddForcefieldDialogModel::Page::IntramolecularPage:
-	    index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
-	    break;
-	case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
-	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
-	    break;
-	case AddForcefieldDialogModel::Page::AtomTypesPage:
-	    index_ = AddForcefieldDialogModel::Page::SelectForcefieldPage;
-	    break;
-	default:
-	    index_ = AddForcefieldDialogModel::Page::SelectForcefieldPage;
+        case AddForcefieldDialogModel::Page::MasterTermsPage:
+            index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
+            break;
+        case AddForcefieldDialogModel::Page::IntramolecularPage:
+            index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
+            break;
+        case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
+            index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
+            break;
+        case AddForcefieldDialogModel::Page::AtomTypesPage:
+            index_ = AddForcefieldDialogModel::Page::SelectForcefieldPage;
+            break;
+        default:
+            index_ = AddForcefieldDialogModel::Page::SelectForcefieldPage;
     }
     indexChanged();
 }
@@ -48,70 +48,70 @@ void AddForcefieldDialogModel::next()
     std::vector<int> assignErrs;
     switch (index_)
     {
-	case AddForcefieldDialogModel::Page::SelectForcefieldPage:
-	    index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
-	    emit assignErrors({});
-	    break;
-	case AddForcefieldDialogModel::Page::AtomTypesPage:
-	    if (!ff_) // No valud forcefield
-		return;
-	    modifiedSpecies_ = temporaryDissolve_->addSpecies();
-	    modifiedSpecies_->copyBasic(species_);
-	    originalAtomTypeNames_.clear();
+        case AddForcefieldDialogModel::Page::SelectForcefieldPage:
+            index_ = AddForcefieldDialogModel::Page::AtomTypesPage;
+            emit assignErrors({});
+            break;
+        case AddForcefieldDialogModel::Page::AtomTypesPage:
+            if (!ff_) // No valud forcefield
+                return;
+            modifiedSpecies_ = temporaryDissolve_->addSpecies();
+            modifiedSpecies_->copyBasic(species_);
+            originalAtomTypeNames_.clear();
 
-	    // Set selection status
-	    for (auto &&[targetI, modifiedI] : zip(species_->atoms(), modifiedSpecies_->atoms()))
-		modifiedI.setSelected(targetI.isSelected());
+            // Set selection status
+            for (auto &&[targetI, modifiedI] : zip(species_->atoms(), modifiedSpecies_->atoms()))
+                modifiedI.setSelected(targetI.isSelected());
 
-	    emit assignErrors({});
-	    // Determine atom types
-	    switch (atomTypeRadio_)
-	    {
-		case Radio::All:
-		    modifiedSpecies_->clearAtomTypes();
-		    temporaryDissolve_->clearAtomTypes();
+            emit assignErrors({});
+            // Determine atom types
+            switch (atomTypeRadio_)
+            {
+                case Radio::All:
+                    modifiedSpecies_->clearAtomTypes();
+                    temporaryDissolve_->clearAtomTypes();
 
-		    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
-						      !keepSpeciesAtomChargesCheck_);
-		    break;
-		case Radio::Selected:
-		    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
-						      !keepSpeciesAtomChargesCheck_);
-		    break;
-		case Radio::Empty:
-		    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
-						      !keepSpeciesAtomChargesCheck_);
-		default:
-		    break;
-	    }
+                    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
+                                                      !keepSpeciesAtomChargesCheck_);
+                    break;
+                case Radio::Selected:
+                    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeSelection,
+                                                      !keepSpeciesAtomChargesCheck_);
+                    break;
+                case Radio::Empty:
+                    assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeMissing,
+                                                      !keepSpeciesAtomChargesCheck_);
+                default:
+                    break;
+            }
 
-	    if (!assignErrs.empty())
-	    {
-		emit assignErrors({assignErrs.begin(), assignErrs.end()});
-		return;
-	    }
+            if (!assignErrs.empty())
+            {
+                emit assignErrors({assignErrs.begin(), assignErrs.end()});
+                return;
+            }
 
-	    for (auto &at : temporaryDissolve_->atomTypes())
-		originalAtomTypeNames_.emplace_back(std::string(at->name()));
+            for (auto &at : temporaryDissolve_->atomTypes())
+                originalAtomTypeNames_.emplace_back(std::string(at->name()));
 
-	    atomTypes_.setData(temporaryCoreData_.atomTypes());
-	    emit atomTypesIndicatorChanged();
+            atomTypes_.setData(temporaryCoreData_.atomTypes());
+            emit atomTypesIndicatorChanged();
 
-	    // checkAtomTypeConflicts();
-	    index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
-	    break;
-	case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
-	    index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
-	    break;
-	case AddForcefieldDialogModel::Page::IntramolecularPage:
-	    emit mastersChanged();
-	    index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
-	    break;
-	case AddForcefieldDialogModel::Page::MasterTermsPage:
-	    finalise();
-	    break;
-	default:
-	    index_ = AddForcefieldDialogModel::Page::SelectForcefieldPage;
+            // checkAtomTypeConflicts();
+            index_ = AddForcefieldDialogModel::Page::AtomTypesConflictsPage;
+            break;
+        case AddForcefieldDialogModel::Page::AtomTypesConflictsPage:
+            index_ = AddForcefieldDialogModel::Page::IntramolecularPage;
+            break;
+        case AddForcefieldDialogModel::Page::IntramolecularPage:
+            emit mastersChanged();
+            index_ = AddForcefieldDialogModel::Page::MasterTermsPage;
+            break;
+        case AddForcefieldDialogModel::Page::MasterTermsPage:
+            finalise();
+            break;
+        default:
+            index_ = AddForcefieldDialogModel::Page::SelectForcefieldPage;
     }
     indexChanged();
 }
@@ -126,17 +126,17 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     temporaryCoreData_.deserialiseMaster(node);
     masters_ = std::make_unique<MasterTermTreeModel>();
     masters_->setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(), temporaryCoreData_.masterTorsions(),
-		      temporaryCoreData_.masterImpropers());
+                      temporaryCoreData_.masterImpropers());
     // Set model and signals for the master terms tree
     atomTypes_.setIconFunction([this](const auto type) { return dissolve_->findAtomType(type->name()) != nullptr; });
     masters_->setBondIconFunction([this](std::string_view name)
-				  { return dissolve_->coreData().getMasterBond(name).has_value(); });
+                                  { return dissolve_->coreData().getMasterBond(name).has_value(); });
     masters_->setAngleIconFunction([this](std::string_view name)
-				   { return dissolve_->coreData().getMasterAngle(name).has_value(); });
+                                   { return dissolve_->coreData().getMasterAngle(name).has_value(); });
     masters_->setTorsionIconFunction([this](std::string_view name)
-				     { return dissolve_->coreData().getMasterTorsion(name).has_value(); });
+                                     { return dissolve_->coreData().getMasterTorsion(name).has_value(); });
     masters_->setImproperIconFunction([this](std::string_view name)
-				      { return dissolve_->coreData().getMasterImproper(name).has_value(); });
+                                      { return dissolve_->coreData().getMasterImproper(name).has_value(); });
 }
 
 // Supply the species to operate on
@@ -146,19 +146,16 @@ void AddForcefieldDialogModel::setSpecies(Species *sp)
     ffSort_.setSpecies(species_);
 }
 
-
 // Does the species have selected atoms
 bool AddForcefieldDialogModel::speciesHasSelection() const
 {
     if (!species_)
-	return false;
+        return false;
     return !species_->selectedAtoms().empty();
 }
 
-
 // The forcefield model
 const QAbstractItemModel *AddForcefieldDialogModel::forcefields() const { return &ffSort_; }
-
 
 // The Atom Type Model
 AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
@@ -167,7 +164,7 @@ AtomTypeModel *AddForcefieldDialogModel::atomTypes() { return &atomTypes_; }
 bool AddForcefieldDialogModel::progressionAllowed() const
 {
     if (index_ == Page::SelectForcefieldPage)
-	return ff_ != nullptr;
+        return ff_ != nullptr;
     return true;
 }
 
@@ -175,7 +172,7 @@ bool AddForcefieldDialogModel::progressionAllowed() const
 int AddForcefieldDialogModel::atomTypesIndicator() const
 {
     return std::count_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
-			 [&](const auto &atomType) { return dissolve_->findAtomType(atomType->name()); });
+                         [&](const auto &atomType) { return dissolve_->findAtomType(atomType->name()); });
 }
 
 // Whether we are at the final page of the wizard
@@ -185,7 +182,7 @@ bool AddForcefieldDialogModel::atEnd() const { return index_ == Page::MasterTerm
 const MasterBondModel *AddForcefieldDialogModel::bonds() const
 {
     if (!masters_)
-	return nullptr;
+        return nullptr;
     return &masters_->bondModel_;
 }
 
@@ -193,7 +190,7 @@ const MasterBondModel *AddForcefieldDialogModel::bonds() const
 const MasterAngleModel *AddForcefieldDialogModel::angles() const
 {
     if (!masters_)
-	return nullptr;
+        return nullptr;
     return &masters_->angleModel_;
 }
 
@@ -201,7 +198,7 @@ const MasterAngleModel *AddForcefieldDialogModel::angles() const
 const MasterTorsionModel *AddForcefieldDialogModel::torsions() const
 {
     if (!masters_)
-	return nullptr;
+        return nullptr;
     return &masters_->torsionModel_;
 }
 
@@ -209,7 +206,7 @@ const MasterTorsionModel *AddForcefieldDialogModel::torsions() const
 const MasterImproperModel *AddForcefieldDialogModel::impropers() const
 {
     if (!masters_)
-	return nullptr;
+        return nullptr;
     return &masters_->improperModel_;
 }
 
@@ -231,23 +228,23 @@ void AddForcefieldDialogModel::finalise()
     for (const auto &&[original, modified] : zip(species_->atoms(), modifiedSpecies_->atoms()))
     {
 
-	// Selection only?
-	if (typesSelectionOnly && (!original.isSelected()))
-	    continue;
+        // Selection only?
+        if (typesSelectionOnly && (!original.isSelected()))
+            continue;
 
-	// Copy AtomType
-	dissolve_->copyAtomType(&modified, &original);
+        // Copy AtomType
+        dissolve_->copyAtomType(&modified, &original);
 
-	// Overwrite existing parameters?
-	if (overwriteParametersCheck_)
-	{
-	    original.atomType()->interactionPotential() = modified.atomType()->interactionPotential();
-	    original.atomType()->setCharge(modified.atomType()->charge());
-	    dissolve_->coreData().bumpAtomTypesVersion();
-	}
+        // Overwrite existing parameters?
+        if (overwriteParametersCheck_)
+        {
+            original.atomType()->interactionPotential() = modified.atomType()->interactionPotential();
+            original.atomType()->setCharge(modified.atomType()->charge());
+            dissolve_->coreData().bumpAtomTypesVersion();
+        }
 
-	// Copy charge on species atom
-	original.setCharge(modified.charge());
+        // Copy charge on species atom
+        original.setCharge(modified.charge());
     }
 
     // Assign intramolecular terms if we need to
@@ -257,133 +254,138 @@ void AddForcefieldDialogModel::finalise()
     // Copy intramolecular terms
     if (intramolecularRadio_ != Radio::None)
     {
-	auto modifiedBond = modifiedSpecies_->bonds().cbegin();
-	for (auto &originalBond : species_->bonds())
-	{
-	    // Selection only?
-	    if (intraSelectionOnly && (!originalBond.isSelected()))
-		continue;
+        auto modifiedBond = modifiedSpecies_->bonds().cbegin();
+        for (auto &originalBond : species_->bonds())
+        {
+            // Selection only?
+            if (intraSelectionOnly && (!originalBond.isSelected()))
+                continue;
 
-	    dissolve_->copySpeciesBond(*modifiedBond, originalBond);
+            dissolve_->copySpeciesBond(*modifiedBond, originalBond);
 
-	    ++modifiedBond;
-	}
+            ++modifiedBond;
+        }
 
-	auto modifiedAngle = modifiedSpecies_->angles().cbegin();
-	for (auto &originalAngle : species_->angles())
-	{
-	    // Selection only?
-	    if (intraSelectionOnly && (!originalAngle.isSelected()))
-		continue;
+        auto modifiedAngle = modifiedSpecies_->angles().cbegin();
+        for (auto &originalAngle : species_->angles())
+        {
+            // Selection only?
+            if (intraSelectionOnly && (!originalAngle.isSelected()))
+                continue;
 
-	    dissolve_->copySpeciesAngle(*modifiedAngle, originalAngle);
+            dissolve_->copySpeciesAngle(*modifiedAngle, originalAngle);
 
-	    ++modifiedAngle;
-	}
+            ++modifiedAngle;
+        }
 
-	auto modifiedTorsion = modifiedSpecies_->torsions().cbegin();
-	for (auto &originalTorsion : species_->torsions())
-	{
-	    // Selection only?
-	    if (intraSelectionOnly && (!originalTorsion.isSelected()))
-		continue;
+        auto modifiedTorsion = modifiedSpecies_->torsions().cbegin();
+        for (auto &originalTorsion : species_->torsions())
+        {
+            // Selection only?
+            if (intraSelectionOnly && (!originalTorsion.isSelected()))
+                continue;
 
-	    dissolve_->copySpeciesTorsion(*modifiedTorsion, originalTorsion);
+            dissolve_->copySpeciesTorsion(*modifiedTorsion, originalTorsion);
 
-	    ++modifiedTorsion;
-	}
+            ++modifiedTorsion;
+        }
 
-	for (auto &modifiedImproper : modifiedSpecies_->impropers())
-	{
-	    // Selection only?
-	    if (intraSelectionOnly && (!modifiedImproper.isSelected()))
-		continue;
+        for (auto &modifiedImproper : modifiedSpecies_->impropers())
+        {
+            // Selection only?
+            if (intraSelectionOnly && (!modifiedImproper.isSelected()))
+                continue;
 
-	    // Find / create the improper in the target species
-	    auto optImproper = species_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
-						     modifiedImproper.indexK(), modifiedImproper.indexL());
-	    if (optImproper)
-		dissolve_->copySpeciesImproper(modifiedImproper, *optImproper);
-	    else
-	    {
-		auto &improper = species_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
-						       modifiedImproper.indexK(), modifiedImproper.indexL());
-		dissolve_->copySpeciesImproper(modifiedImproper, improper);
-	    }
-	}
+            // Find / create the improper in the target species
+            auto optImproper = species_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+                                                     modifiedImproper.indexK(), modifiedImproper.indexL());
+            if (optImproper)
+                dissolve_->copySpeciesImproper(modifiedImproper, *optImproper);
+            else
+            {
+                auto &improper = species_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+                                                       modifiedImproper.indexK(), modifiedImproper.indexL());
+                dissolve_->copySpeciesImproper(modifiedImproper, improper);
+            }
+        }
     }
     accept();
 }
 
-
-void AddForcefieldDialogModel::addMasterSuffix(int type, int index, QString suffix) {
-  QVariant termData;
-  switch (type) {
-  case 0:
-    termData = masters_->bondModel_.getTermData(index, MasterTermModelData::DataType::Name);
-    break;
-  case 1:
-    termData = masters_->angleModel_.getTermData(index, MasterTermModelData::DataType::Name);
-    break;
-  case 2:
-    termData = masters_->torsionModel_.getTermData(index, MasterTermModelData::DataType::Name);
-    break;
-  case 3:
-    termData = masters_->improperModel_.getTermData(index, MasterTermModelData::DataType::Name);
-    break;
-  };
-  auto newName = termData.toString() + suffix;
-  switch (type) {
-  case 0:
-    termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
-    break;
-  case 1:
-    termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
-    break;
-  case 2:
-    termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
-    break;
-  case 3:
-    termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
-    break;
-  };
+void AddForcefieldDialogModel::addMasterSuffix(int type, int index, QString suffix)
+{
+    QVariant termData;
+    switch (type)
+    {
+        case 0:
+            termData = masters_->bondModel_.getTermData(index, MasterTermModelData::DataType::Name);
+            break;
+        case 1:
+            termData = masters_->angleModel_.getTermData(index, MasterTermModelData::DataType::Name);
+            break;
+        case 2:
+            termData = masters_->torsionModel_.getTermData(index, MasterTermModelData::DataType::Name);
+            break;
+        case 3:
+            termData = masters_->improperModel_.getTermData(index, MasterTermModelData::DataType::Name);
+            break;
+    };
+    auto newName = termData.toString() + suffix;
+    switch (type)
+    {
+        case 0:
+            termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            break;
+        case 1:
+            termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            break;
+        case 2:
+            termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            break;
+        case 3:
+            termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            break;
+    };
 }
 
-void AddForcefieldDialogModel::addMasterPrefix(int type, int index, QString prefix) {
-  QVariant termData;
-  switch (type) {
-  case 0:
-    termData = masters_->bondModel_.getTermData(index, MasterTermModelData::DataType::Name);
-    break;
-  case 1:
-    termData = masters_->angleModel_.getTermData(index, MasterTermModelData::DataType::Name);
-    break;
-  case 2:
-    termData = masters_->torsionModel_.getTermData(index, MasterTermModelData::DataType::Name);
-    break;
-  case 3:
-    termData = masters_->improperModel_.getTermData(index, MasterTermModelData::DataType::Name);
-    break;
-  };
-  auto newName = prefix + termData.toString();
-  switch (type) {
-  case 0:
-    termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
-    break;
-  case 1:
-    termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
-    break;
-  case 2:
-    termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
-    break;
-  case 3:
-    termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
-    break;
-  };
+void AddForcefieldDialogModel::addMasterPrefix(int type, int index, QString prefix)
+{
+    QVariant termData;
+    switch (type)
+    {
+        case 0:
+            termData = masters_->bondModel_.getTermData(index, MasterTermModelData::DataType::Name);
+            break;
+        case 1:
+            termData = masters_->angleModel_.getTermData(index, MasterTermModelData::DataType::Name);
+            break;
+        case 2:
+            termData = masters_->torsionModel_.getTermData(index, MasterTermModelData::DataType::Name);
+            break;
+        case 3:
+            termData = masters_->improperModel_.getTermData(index, MasterTermModelData::DataType::Name);
+            break;
+    };
+    auto newName = prefix + termData.toString();
+    switch (type)
+    {
+        case 0:
+            termData = masters_->bondModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            break;
+        case 1:
+            termData = masters_->angleModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            break;
+        case 2:
+            termData = masters_->torsionModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            break;
+        case 3:
+            termData = masters_->improperModel_.setTermData(index, MasterTermModelData::DataType::Name, newName);
+            break;
+    };
 }
 
 // The chosen forcefield
-Forcefield* AddForcefieldDialogModel::ff() const { return ff_; }
+Forcefield *AddForcefieldDialogModel::ff() const { return ff_; }
 
 // Update the chosen forcefield
 void AddForcefieldDialogModel::setFf(Forcefield *f) { ff_ = f; }
