@@ -85,14 +85,14 @@ if(GUI)
                Widgets
                OpenGL
                OpenGLWidgets
-	       ShaderTools
-	       Qml
-	       QmlModels
-	       QmlTools
-	       Quick
-	       QuickWidgets
-	       QuickControls2
-               REQUIRED
+               ShaderTools
+               Qml
+               QmlModels
+               QmlTools
+               Quick
+               QuickWidgets
+               QuickControls2
+    REQUIRED
   )
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
