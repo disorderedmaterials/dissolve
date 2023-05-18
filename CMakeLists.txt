@@ -92,7 +92,7 @@ if(GUI)
                Quick
                QuickWidgets
                QuickControls2
-    REQUIRED
+	       REQUIRED
   )
   find_package(FTGL REQUIRED)
   find_package(Freetype REQUIRED)
