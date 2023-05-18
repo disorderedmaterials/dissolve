@@ -34,32 +34,29 @@ TEST_F(AddForcefieldDialogModelTest, benzene)
     model.setSpecies(species);
     model.ready();
 
-    //ForceFieldPicker
+    // ForceFieldPicker
     EXPECT_EQ(model.forcefields()->rowCount(), 8);
     auto ff_name = model.forcefields()->data(model.forcefields()->index(1, 0), Qt::DisplayRole).toString();
     EXPECT_EQ(ff_name.toStdString(), "OPLSAA2005/Aromatics");
-    model.setFf(model.forcefields()->data(model.forcefields()->index(1, 0), Qt::UserRole + 3).value<Forcefield*>());
+    model.setFf(model.forcefields()->data(model.forcefields()->index(1, 0), Qt::UserRole + 3).value<Forcefield *>());
     model.next();
 
-    //ForceFieldAssign
-    // std::cout << (int) model.atomTypeRadio_ << std::endl;
+    // ForceFieldAssign
+    //  std::cout << (int) model.atomTypeRadio_ << std::endl;
     model.next();
 
-    //ForceFieldAtomType
+    // ForceFieldAtomType
     auto at_name = model.atomTypes()->data(model.atomTypes()->index(1, 0), Qt::DisplayRole).toString();
     EXPECT_EQ(at_name.toStdString(), "HA");
     model.next();
 
-    //ForceFieldIntra
-    EXPECT_EQ(model.bonds()->data(model.bonds()->index(1, 0), Qt::DisplayRole).toString().toStdString(),
-	      "CA-CA");
-    EXPECT_EQ(model.angles()->data(model.angles()->index(1, 0), Qt::DisplayRole).toString().toStdString(),
-	      "CA-CA-CA");
-    EXPECT_EQ(model.torsions()->data(model.torsions()->index(1, 0), Qt::DisplayRole).toString().toStdString(),
-	      "CA-CA-CA-HA");
+    // ForceFieldIntra
+    EXPECT_EQ(model.bonds()->data(model.bonds()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA");
+    EXPECT_EQ(model.angles()->data(model.angles()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA-CA");
+    EXPECT_EQ(model.torsions()->data(model.torsions()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA-CA-HA");
     model.next();
 
-    //ForceFieldMaster
+    // ForceFieldMaster
     model.next();
 }
-}
+} // namespace UnitTest
