@@ -85,7 +85,6 @@ if(GUI)
                Widgets
                OpenGL
                OpenGLWidgets
-               ShaderTools
                Qml
                QmlModels
                QmlTools

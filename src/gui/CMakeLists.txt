@@ -232,7 +232,6 @@ target_link_libraries(
           Qt6::QuickControls2
           Qt6::Core
           Qt6::Gui
-          Qt6::ShaderTools
           Qt6::Qml
           Qt6::QmlModels
           Qt6::QuickWidgets
