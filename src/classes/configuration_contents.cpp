@@ -18,6 +18,7 @@ void Configuration::empty()
     appliedSizeFactor_ = 1.0;
     speciesPopulations_.clear();
     globalPotentials_.clear();
+    targetedPotentials_.clear();
 
     ++contentsVersion_;
 }

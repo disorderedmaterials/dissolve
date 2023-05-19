@@ -2,8 +2,48 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "kernels/potentials/base.h"
+#include "classes/atomtype.h"
+#include "classes/species.h"
+#include "templates/algorithms.h"
 
 ExternalPotential::ExternalPotential(ExternalPotentialTypes::ExternalPotentialType type) : type_(type) {}
+
+/*
+ * Target Information
+ */
+
+// Set atom indices targeted by the potential
+void ExternalPotential::setTargetAtomIndices(const std::vector<int> &targets) { targetAtomIndices_ = targets; }
+
+// Add target atom index
+void ExternalPotential::addTargetAtomIndex(int index) { targetAtomIndices_.push_back(index); }
+
+// Return atom indices targeted by the potential
+const std::vector<int> &ExternalPotential::targetAtomIndices() const { return targetAtomIndices_; }
+
+// Atom types targeted by the potential
+void ExternalPotential::setTargetAtomTypes(const std::vector<std::shared_ptr<AtomType>> &targets)
+{
+    targetAtomTypes_ = targets;
+}
+
+// Add target atom type
+void ExternalPotential::addTargetAtomType(std::shared_ptr<AtomType> target)
+{
+    targetAtomTypes_.emplace_back(std::move(target));
+}
+
+// Return atom types targeted by the potential
+const std::vector<std::shared_ptr<AtomType>> &ExternalPotential::targetAtomTypes() const { return targetAtomTypes_; }
+
+// Species targeted by the potential
+void ExternalPotential::setTargetSpecies(const std::vector<const Species *> &targets) { targetSpecies_ = targets; }
+
+// Add target species
+void ExternalPotential::addTargetSpecies(const Species *target) { targetSpecies_.emplace_back(target); }
+
+// Return species targeted by the potential
+const std::vector<const Species *> &ExternalPotential::targetSpecies() const { return targetSpecies_; }
 
 /*
  * Keywords
@@ -58,8 +98,17 @@ bool ExternalPotential::deserialise(LineParser &parser, const CoreData &coreData
 // Write data to specified LineParser
 bool ExternalPotential::serialise(LineParser &parser, std::string_view prefix) const
 {
+    // Assemble target strings
+    std::string targets;
+    if (!targetAtomIndices_.empty())
+        targets += fmt::format("  {}", joinStrings(targetAtomIndices_, " "));
+    if (!targetAtomTypes_.empty())
+        targets += fmt::format("  {}", joinStrings(targetAtomTypes_, " ", [](const auto &at) { return at->name(); }));
+    if (!targetSpecies_.empty())
+        targets += fmt::format("  {}", joinStrings(targetSpecies_, " ", [](const auto &sp) { return sp->name(); }));
+
     // Block Start
-    if (!parser.writeLineF("{}{}\n", prefix, ExternalPotentialTypes::keyword(type_)))
+    if (!parser.writeLineF("{}{}{}\n", prefix, ExternalPotentialTypes::keyword(type_), targets))
         return false;
 
     // Create new prefix

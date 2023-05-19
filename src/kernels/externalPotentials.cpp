@@ -20,19 +20,16 @@ ExternalPotentialsEnergyKernel::ExternalPotentialsEnergyKernel(const Configurati
 double ExternalPotentialsEnergyKernel::extendedEnergy(const Atom &i) const
 {
     return std::accumulate(globalPotentials_.begin(), globalPotentials_.end(), 0.0,
+                           [&](const auto acc, const auto &pot) { return acc + pot->energy(i, box_); }) +
+           std::accumulate(i.targetedPotentials().begin(), i.targetedPotentials().end(), 0.0,
                            [&](const auto acc, const auto &pot) { return acc + pot->energy(i, box_); });
 }
 
 // Return external energy of supplied molecule
 double ExternalPotentialsEnergyKernel::extendedEnergy(const Molecule &mol) const
 {
-    return std::accumulate(globalPotentials_.begin(), globalPotentials_.end(), 0.0,
-                           [&](const auto outerAcc, const auto &pot)
-                           {
-                               return outerAcc + std::accumulate(mol.atoms().begin(), mol.atoms().end(), 0.0,
-                                                                 [&](const auto innerAcc, const auto &i)
-                                                                 { return innerAcc + pot->energy(*i, box_); });
-                           });
+    return std::accumulate(mol.atoms().begin(), mol.atoms().end(), 0.0,
+                           [&](const auto acc, const auto &i) { return acc + extendedEnergy(*i); });
 }
 
 /*
@@ -46,13 +43,19 @@ ExternalPotentialsForceKernel::ExternalPotentialsForceKernel(const Configuration
 {
 }
 
+// Calculate extended forces on supplied atom
+void ExternalPotentialsForceKernel::extendedForces(const Atom &i, Vec3<double> &fVec) const
+{
+    for (const auto &pot : globalPotentials_)
+        pot->force(i, box_, fVec);
+    for (const auto &pot : i.targetedPotentials())
+        pot->force(i, box_, fVec);
+}
+
 // Calculate extended forces on supplied molecule
 void ExternalPotentialsForceKernel::extendedForces(const Molecule &mol, ForceVector &f) const
 {
-    for (const auto &pot : globalPotentials_)
-    {
-        auto offset = mol.globalAtomOffset();
-        for (const auto &i : mol.atoms())
-            pot->force(*i, box_, f[offset++]);
-    }
+    auto offset = mol.globalAtomOffset();
+    for (const auto &i : mol.atoms())
+        extendedForces(*i, f[offset++]);
 }
