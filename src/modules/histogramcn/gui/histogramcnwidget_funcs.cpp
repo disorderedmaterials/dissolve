@@ -18,9 +18,9 @@ HistogramCNModuleWidget::HistogramCNModuleWidget(QWidget *parent, HistogramCNMod
 
     auto &view = cnGraph_->view();
     view.setViewType(View::FlatXYView);
-    view.axes().setTitle(0, "\\Population \\sym{angstrom}");
+    view.axes().setTitle(0, "Coordination Number");
     view.axes().setMax(0, 10.0);
-    view.axes().setTitle(1, "Coordination Number");
+    view.axes().setTitle(1, "Population");
     view.axes().setMin(1, 0.0);
     view.axes().setMax(1, 1.0);
     view.setAutoFollowType(View::AllAutoFollow);

@@ -28,7 +28,8 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     auto calcExpression_ = forEachA.create<CalculateExpressionProcedureNode>({});
     calcExpression_->setExpression("B.nSelected");
 
-    auto collectCN_ = forEachA.create<Collect1DProcedureNode>("Bins", calcExpression_);
+    auto collectCN_ =
+        forEachA.create<Collect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext, 0.0, 10.0, 1);
 
     auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN_);
 
