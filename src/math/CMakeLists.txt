@@ -70,7 +70,7 @@ add_library(
   sampledvector.h
   svd.h
   transformer.h
-  windowfunction.h 
+  windowfunction.h
 )
 
 target_include_directories(math PRIVATE ${PROJECT_SOURCE_DIR}/src)
