@@ -19,9 +19,9 @@ IntegerHistogram1D::IntegerHistogram1D(const IntegerHistogram1D &source) { (*thi
 // Clear Data
 void IntegerHistogram1D::clear()
 {
-    minimum_ = 0.0;
-    maximum_ = 0.0;
-    binWidth_ = 0.0;
+    minimum_ = 0;
+    maximum_ = 0;
+    binWidth_ = 1;
     nBins_ = 0;
     nBinned_ = 0;
     nMissed_ = 0;
@@ -50,7 +50,7 @@ void IntegerHistogram1D::updateAccumulatedData()
 }
 
 // Initialise with specified bin range
-void IntegerHistogram1D::initialise(double xMin, double xMax, double binWidth)
+void IntegerHistogram1D::initialise(int xMin, int xMax, int binWidth)
 {
     clear();
 
@@ -76,12 +76,11 @@ void IntegerHistogram1D::zeroBins()
 }
 
 // Set up supplied axis
-void IntegerHistogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins,
-                                   std::vector<double> &binCentres)
+void IntegerHistogram1D::setUpAxis(int axisMin, int &axisMax, int binWidth, int &nBins, std::vector<int> &binCentres)
 {
     // Min, max, and bin width should be set to requested values initially
     // We will clamp the maximum to the nearest bin boundary (not less than the supplied axisMax)
-    double range = axisMax - axisMin;
+    int range = axisMax - axisMin;
     nBins = int(range / binWidth);
     if ((axisMin + nBins * binWidth) < axisMax)
     {
@@ -92,25 +91,25 @@ void IntegerHistogram1D::setUpAxis(double axisMin, double &axisMax, double binWi
     // Create centre-bin array
     binCentres.clear();
     binCentres.resize(nBins);
-    double centre = axisMin + binWidth * 0.5;
+    int centre = axisMin + binWidth * 0.5;
     for (auto n = 0; n < nBins; ++n, centre += binWidth)
         binCentres[n] = centre;
 }
 
 // Return minimum value for data (hard left-edge of first bin)
-double IntegerHistogram1D::minimum() const { return minimum_; }
+int IntegerHistogram1D::minimum() const { return minimum_; }
 
 // Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-double IntegerHistogram1D::maximum() const { return maximum_; }
+int IntegerHistogram1D::maximum() const { return maximum_; }
 
 // Return bin width
-double IntegerHistogram1D::binWidth() const { return binWidth_; }
+int IntegerHistogram1D::binWidth() const { return binWidth_; }
 
 // Return number of bins
 int IntegerHistogram1D::nBins() const { return nBins_; }
 
 // Bin specified value, returning success
-bool IntegerHistogram1D::bin(double x)
+bool IntegerHistogram1D::bin(int x)
 {
     // Calculate target bin
     auto bin = int((x - minimum_) / binWidth_);
@@ -135,14 +134,14 @@ long int IntegerHistogram1D::nBinned() const { return nBinned_; }
 void IntegerHistogram1D::accumulate()
 {
     for (auto n = 0; n < nBins_; ++n)
-        averages_[n] += double(bins_[n]);
+        averages_[n] += int(bins_[n]);
 
     // Update accumulated data
     updateAccumulatedData();
 }
 
 // Return Array of x centre-bin values
-const std::vector<double> &IntegerHistogram1D::binCentres() const { return binCentres_; }
+const std::vector<int> &IntegerHistogram1D::binCentres() const { return binCentres_; }
 
 // Return histogram data
 std::vector<long int> &IntegerHistogram1D::bins() { return bins_; }
@@ -243,19 +242,5 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
         if (!averages_.at(n).serialise(parser))
             return false;
 
-    return true;
-}
-
-/*
- * Parallel Comms
- */
-
-// Sum histogram data onto all processes
-bool IntegerHistogram1D::allSum(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer)
-{
-#ifdef PARALLEL
-    if (!procPool.allSum(bins_.data(), nBins_, ProcessPool::PoolProcessesCommunicator, commsTimer))
-        return false;
-#endif
     return true;
 }

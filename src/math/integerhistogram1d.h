@@ -21,17 +21,17 @@ class IntegerHistogram1D
      */
     private:
     // Minimum value for data (hard left-edge of first bin)
-    double minimum_;
+    int minimum_;
     // Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-    double maximum_;
+    int maximum_;
     // Bin width
-    double binWidth_;
+    int binWidth_;
     // Number of bins
     int nBins_;
     // Histogram bins
     std::vector<long int> bins_;
     // Array of bin centres
-    std::vector<double> binCentres_;
+    std::vector<int> binCentres_;
     // Accumulated averages
     std::vector<SampledDouble> averages_;
     // Number of values binned over all bins
@@ -47,27 +47,27 @@ class IntegerHistogram1D
 
     public:
     // Initialise with specified bin range
-    void initialise(double minimum, double maximum, double binWidth);
+    void initialise(int minimum, int maximum, int binWidth);
     // Zero histogram bins
     void zeroBins();
     // Set up supplied axis
-    static void setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, std::vector<double> &binCentres);
+    static void setUpAxis(int axisMin, int &axisMax, int binWidth, int &nBins, std::vector<int> &binCentres);
     // Return minimum value for data (hard left-edge of first bin)
-    double minimum() const;
+    int minimum() const;
     // Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-    double maximum() const;
+    int maximum() const;
     // Return bin width
-    double binWidth() const;
+    int binWidth() const;
     // Return number of bins
     int nBins() const;
     // Bin specified value, returning success
-    bool bin(double x);
+    bool bin(int x);
     // Return number of values binned over all bins
     long int nBinned() const;
     // Accumulate current histogram bins into averages
     void accumulate();
     // Return Array of x centre-bin values
-    const std::vector<double> &binCentres() const;
+    const std::vector<int> &binCentres() const;
     // Return histogram data
     std::vector<long int> &bins();
     const std::vector<long int> &bins() const;
