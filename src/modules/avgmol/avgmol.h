@@ -4,6 +4,7 @@
 #pragma once
 
 #include "classes/species.h"
+#include "io/export/species.h"
 #include "math/sampledvector.h"
 #include "module/module.h"
 
@@ -22,6 +23,8 @@ class AvgMolModule : public Module
     Configuration *targetConfiguration_{nullptr};
     // Target site
     const SpeciesSite *targetSite_{nullptr};
+    // Whether to save average coordinates to disk
+    SpeciesExportFileFormat exportFileAndFormat_;
     // Species targeted by module (derived from selected site)
     const Species *targetSpecies_{nullptr};
     // Local Species representing average of targeted Species

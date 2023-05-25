@@ -2,7 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "modules/avgmol/avgmol.h"
+#include "keywords/bool.h"
 #include "keywords/configuration.h"
+#include "keywords/fileandformat.h"
 #include "keywords/speciessite.h"
 
 AvgMolModule::AvgMolModule() : Module(ModuleTypes::AvgMol)
@@ -13,6 +15,10 @@ AvgMolModule::AvgMolModule() : Module(ModuleTypes::AvgMol)
     keywords_
         .add<SpeciesSiteKeyword>("Site", "Target site about which to calculate average species geometry", targetSite_, true)
         ->setEditSignals(KeywordBase::ReloadExternalData);
+
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("ExportCoordinates", "Whether to save average coordinates to disk",
+                                        exportFileAndFormat_, "EndExportCoordinates");
 
     targetSpecies_ = nullptr;
 }
