@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "io/import/coordinates.h"
+#include "io/import/configuration.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
 #include <vector>
@@ -50,7 +50,7 @@ class CoordinateSetsProcedureNode : public ProcedureNode
     // Whether to force recreation of the coordinate sets
     bool force_{false};
     // File / format of coordinate sets file, if provided
-    CoordinateImportFileFormat fileSource_;
+    ConfigurationImportFileFormat fileSource_;
     // Number of sets to generate
     NodeValue nSets_{100};
     // Number of MD steps to run between sets

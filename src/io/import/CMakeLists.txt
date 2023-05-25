@@ -27,11 +27,11 @@ add_library(
   import
   cif.cpp
   cifclasses.cpp
-  coordinates.cpp
-  coordinates_dlpoly.cpp
-  coordinates_epsr.cpp
-  coordinates_moscito.cpp
-  coordinates_xyz.cpp
+  configuration.cpp
+  configuration_dlpoly.cpp
+  configuration_epsr.cpp
+  configuration_moscito.cpp
+  configuration_xyz.cpp
   data1d.cpp
   data1d_histo.cpp
   data1d_mint.cpp
@@ -48,7 +48,7 @@ add_library(
   values.cpp
   cif.h
   cifclasses.h
-  coordinates.h
+  configuration.h
   data1d.h
   data2d.h
   data3d.h

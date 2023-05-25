@@ -12,7 +12,7 @@
 #include "classes/molecule.h"
 #include "classes/sitestack.h"
 #include "genericitems/list.h"
-#include "io/import/coordinates.h"
+#include "io/import/configuration.h"
 #include "kernels/potentials/base.h"
 #include "math/data1d.h"
 #include "math/histogram1d.h"
@@ -54,9 +54,9 @@ class Configuration : public Serialisable
     // Procedure to generate the Configuration
     Procedure generator_;
     // File / format of input coordinates file, if provided
-    CoordinateImportFileFormat inputCoordinates_;
-    static constexpr double defaultTemperature_ = 300.0;
+    ConfigurationImportFileFormat inputCoordinates_;
     // Temperature of this configuration (K)
+    static constexpr double defaultTemperature_ = 300.0;
     double temperature_{defaultTemperature_};
 
     public:
@@ -71,7 +71,7 @@ class Configuration : public Serialisable
     // Create the Configuration according to its generator Procedure
     bool generate(const ProcedureContext &procedureContext);
     // Return import coordinates file / format
-    CoordinateImportFileFormat &inputCoordinates();
+    ConfigurationImportFileFormat &inputCoordinates();
     // Initialise (generate or load) the basic contents of the Configuration
     bool initialiseContent(const ProcedureContext &procedureContext);
     // Set configuration temperature

@@ -14,7 +14,7 @@
 #include "classes/speciesimproper.h"
 #include "classes/speciessite.h"
 #include "classes/speciestorsion.h"
-#include "io/import/coordinates.h"
+#include "io/import/configuration.h"
 #include <list>
 #include <map>
 #include <memory>

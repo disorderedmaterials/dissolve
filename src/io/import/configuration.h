@@ -8,21 +8,21 @@
 // Forward Declarations
 class ProcessPool;
 
-// Coordinate Import Formats
-class CoordinateImportFileFormat : public FileAndFormat
+// Configuration Import Formats
+class ConfigurationImportFileFormat : public FileAndFormat
 {
     public:
-    // Coordinate Import Formats
-    enum class CoordinateImportFormat
+    // Configuration Import Formats
+    enum class ConfigurationImportFormat
     {
         DLPOLY,
         EPSR,
         Moscito,
         XYZ
     };
-    explicit CoordinateImportFileFormat(std::string_view filename = "",
-                                        CoordinateImportFormat format = CoordinateImportFormat::XYZ);
-    ~CoordinateImportFileFormat() override = default;
+    explicit ConfigurationImportFileFormat(std::string_view filename = "",
+                                           ConfigurationImportFormat format = ConfigurationImportFormat::XYZ);
+    ~ConfigurationImportFileFormat() override = default;
 
     /*
      * Keyword Options
@@ -36,7 +36,7 @@ class CoordinateImportFileFormat : public FileAndFormat
      */
     private:
     // Format enum options
-    EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> formats_;
+    EnumOptions<ConfigurationImportFileFormat::ConfigurationImportFormat> formats_;
 
     /*
      * Filename / Basename

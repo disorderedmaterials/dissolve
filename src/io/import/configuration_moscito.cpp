@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineparser.h"
-#include "io/import/coordinates.h"
+#include "io/import/configuration.h"
 
 // Import Moscito coordinates through specified parser
-bool CoordinateImportFileFormat::importMoscito(LineParser &parser, std::vector<Vec3<double>> &r)
+bool ConfigurationImportFileFormat::importMoscito(LineParser &parser, std::vector<Vec3<double>> &r)
 {
     /*
      * Import Moscito coordinate information through the specified line parser.
@@ -56,7 +56,7 @@ bool CoordinateImportFileFormat::importMoscito(LineParser &parser, std::vector<V
                 return false;
 
             // Read coordinates (in nm)
-            // Coordinates are in fixed format (15.8e) with *no spacing between values*
+            // Configurations are in fixed format (15.8e) with *no spacing between values*
             if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return false;
             std::string coords{parser.line()};

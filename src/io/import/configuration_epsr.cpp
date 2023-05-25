@@ -3,10 +3,10 @@
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "io/import/coordinates.h"
+#include "io/import/configuration.h"
 
 // Import EPSR ATO coordinates through specified parser
-bool CoordinateImportFileFormat::importEPSR(LineParser &parser, std::vector<Vec3<double>> &r)
+bool ConfigurationImportFileFormat::importEPSR(LineParser &parser, std::vector<Vec3<double>> &r)
 {
     // File header:
     // Either  1   : nmols, box length, temperature   (for cubic systems)

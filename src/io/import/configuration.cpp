@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "io/import/coordinates.h"
+#include "io/import/configuration.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
 #include "templates/algorithms.h"
 
-CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename,
-                                                       CoordinateImportFileFormat::CoordinateImportFormat format)
+ConfigurationImportFileFormat::ConfigurationImportFileFormat(std::string_view filename,
+                                                             ConfigurationImportFileFormat::ConfigurationImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)
 {
-    formats_ = EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
-        "CoordinateImportFileFormat", {{CoordinateImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
-                                       {CoordinateImportFormat::EPSR, "epsr", "EPSR ATO"},
-                                       {CoordinateImportFormat::Moscito, "moscito", "Moscito structure file"},
-                                       {CoordinateImportFormat::XYZ, "xyz", "Simple XYZ"}});
+    formats_ = EnumOptions<ConfigurationImportFileFormat::ConfigurationImportFormat>(
+        "ConfigurationImportFileFormat", {{ConfigurationImportFormat::DLPOLY, "dlpoly", "DL_POLY CONFIG"},
+                                          {ConfigurationImportFormat::EPSR, "epsr", "EPSR ATO"},
+                                          {ConfigurationImportFormat::Moscito, "moscito", "Moscito structure file"},
+                                          {ConfigurationImportFormat::XYZ, "xyz", "Simple XYZ"}});
 
     setUpKeywords();
 }
@@ -26,14 +26,14 @@ CoordinateImportFileFormat::CoordinateImportFileFormat(std::string_view filename
  */
 
 // Set up keywords for the format
-void CoordinateImportFileFormat::setUpKeywords() {}
+void ConfigurationImportFileFormat::setUpKeywords() {}
 
 /*
  * Import Functions
  */
 
 // Import coordinates using current filename and format
-bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, const ProcessPool *procPool)
+bool ConfigurationImportFileFormat::importData(std::vector<Vec3<double>> &r, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
@@ -49,7 +49,7 @@ bool CoordinateImportFileFormat::importData(std::vector<Vec3<double>> &r, const 
 }
 
 // Import coordinates direct to configuration using current filename and format
-bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPool *procPool)
+bool ConfigurationImportFileFormat::importData(Configuration *cfg, const ProcessPool *procPool)
 {
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
@@ -65,7 +65,7 @@ bool CoordinateImportFileFormat::importData(Configuration *cfg, const ProcessPoo
 }
 
 // Import coordinates using supplied parser and current format
-bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &r)
+bool ConfigurationImportFileFormat::importData(LineParser &parser, std::vector<Vec3<double>> &r)
 {
     // Check the format
     if (!formatIndex_)
@@ -75,20 +75,20 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
     auto result = false;
     switch (formats_.enumerationByIndex(*formatIndex_))
     {
-        case (CoordinateImportFormat::DLPOLY):
+        case (ConfigurationImportFormat::DLPOLY):
             result = importDLPOLY(parser, r);
             break;
-        case (CoordinateImportFormat::EPSR):
+        case (ConfigurationImportFormat::EPSR):
             result = importEPSR(parser, r);
             break;
-        case (CoordinateImportFormat::Moscito):
+        case (ConfigurationImportFormat::Moscito):
             result = importMoscito(parser, r);
             break;
-        case (CoordinateImportFormat::XYZ):
+        case (ConfigurationImportFormat::XYZ):
             result = importXYZ(parser, r);
             break;
         default:
-            throw(std::runtime_error(fmt::format("Coordinate format '{}' import has not been implemented.\n",
+            throw(std::runtime_error(fmt::format("Configuration format '{}' import has not been implemented.\n",
                                                  formats_.keywordByIndex(*formatIndex_))));
     }
 
@@ -96,7 +96,7 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
 }
 
 // Import coordinates direct to configuration using supplied parser and current format
-bool CoordinateImportFileFormat::importData(LineParser &parser, Configuration *cfg)
+bool ConfigurationImportFileFormat::importData(LineParser &parser, Configuration *cfg)
 {
     // Import the data
     std::vector<Vec3<double>> r;

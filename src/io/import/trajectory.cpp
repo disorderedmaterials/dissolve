@@ -4,7 +4,7 @@
 #include "io/import/trajectory.h"
 #include "base/lineparser.h"
 #include "classes/configuration.h"
-#include "io/import/coordinates.h"
+#include "io/import/configuration.h"
 #include "templates/algorithms.h"
 
 TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename,
@@ -37,7 +37,7 @@ bool TrajectoryImportFileFormat::importData(LineParser &parser, Configuration *c
             result = importDLPOLY(parser, r, unitCell);
             break;
         case (TrajectoryImportFormat::XYZ):
-            return CoordinateImportFileFormat("", CoordinateImportFileFormat::CoordinateImportFormat::XYZ)
+            return ConfigurationImportFileFormat("", ConfigurationImportFileFormat::ConfigurationImportFormat::XYZ)
                 .importData(parser, cfg);
         default:
             throw(std::runtime_error(fmt::format("Trajectory format '{}' import has not been implemented.\n",

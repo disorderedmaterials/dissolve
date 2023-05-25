@@ -96,7 +96,7 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
 }
 
 // Return import coordinates file / format
-CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
+ConfigurationImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
 
 // Initialise (generate or load) the basic contents of the Configuration
 bool Configuration::initialiseContent(const ProcedureContext &procedureContext)

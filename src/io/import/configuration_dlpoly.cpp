@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineparser.h"
-#include "io/import/coordinates.h"
+#include "io/import/configuration.h"
 
 // Import DL_POLY coordinates through specified parser
-bool CoordinateImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &r)
+bool ConfigurationImportFileFormat::importDLPOLY(LineParser &parser, std::vector<Vec3<double>> &r)
 {
     /*
      * Import DL_POLY coordinates information through the specified line parser.
