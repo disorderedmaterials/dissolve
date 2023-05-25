@@ -342,8 +342,6 @@ class Species : public Serialisable
     public:
     // Load Species information from XYZ file
     bool loadFromXYZ(std::string_view filename);
-    // Load Species from file
-    bool load(std::string_view filename);
 
     /*
      * Read / Write

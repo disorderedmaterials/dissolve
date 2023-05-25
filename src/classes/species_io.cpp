@@ -12,20 +12,6 @@
 #include "templates/algorithms.h"
 #include <string>
 
-// Load Species from file
-bool Species::load(std::string_view filename)
-{
-    // Grab extension from filename
-    std::string_view ext = DissolveSys::afterLastChar(filename, '.');
-
-    if (DissolveSys::sameString(ext, "xyz"))
-        return loadFromXYZ(filename);
-    else
-        Messenger::print("Can't load species - unknown extension for file '{}'.\n", filename);
-
-    return false;
-}
-
 // Load Species information from XYZ file
 bool Species::loadFromXYZ(std::string_view filename)
 {
