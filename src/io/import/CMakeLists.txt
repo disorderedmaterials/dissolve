@@ -43,6 +43,8 @@ add_library(
   forces_dlpoly.cpp
   forces_moscito.cpp
   forces_simple.cpp
+  species.cpp
+  species_xyz.cpp
   trajectory.cpp
   trajectory_dlpoly.cpp
   values.cpp
@@ -53,6 +55,7 @@ add_library(
   data2d.h
   data3d.h
   forces.h
+  species.h
   trajectory.h
   values.h
   CIFImportErrorListeners.cpp

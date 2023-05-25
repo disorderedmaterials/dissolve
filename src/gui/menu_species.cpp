@@ -13,6 +13,7 @@
 #include "gui/selectelementdialog.h"
 #include "gui/selectspeciesdialog.h"
 #include "gui/speciestab.h"
+#include "io/import/species.h"
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -107,7 +108,12 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
 
     // Add new species, load from the xyz, and create intramolecular terms
     auto *sp = dissolve_.addSpecies();
-    sp->loadFromXYZ(qPrintable(xyzFile));
+    SpeciesImportFileFormat importer(qPrintable(xyzFile));
+    if (!importer.importData(sp))
+    {
+        dissolve_.removeSpecies(sp);
+        return;
+    }
     sp->addMissingBonds();
 
     // Offer the species up for editing before finalising

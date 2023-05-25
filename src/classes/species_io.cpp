@@ -9,49 +9,7 @@
 #include "data/elements.h"
 #include "data/ff/library.h"
 #include "data/isotopes.h"
-#include "templates/algorithms.h"
 #include <string>
-
-// Load Species information from XYZ file
-bool Species::loadFromXYZ(std::string_view filename)
-{
-    Messenger::print("Loading XYZ data from file '{}'\n", filename);
-
-    // Open the specified file...
-    LineParser parser;
-    parser.openInput(filename);
-    if (!parser.isFileGoodForReading())
-    {
-        Messenger::error("Couldn't open XYZ file '{}'.\n", filename);
-        return false;
-    }
-
-    // Clear any existing data
-    clear();
-
-    // Simple format - first line is number of atoms, next line is title, then follow atoms/coordinates, one atom per line
-    parser.getArgsDelim(LineParser::Defaults);
-    auto nAtoms = parser.argi(0);
-    parser.readNextLine(LineParser::Defaults);
-    name_ = parser.line();
-    int success;
-    for (auto n = 0; n < nAtoms; ++n)
-    {
-        success = parser.getArgsDelim(LineParser::Defaults);
-        if (success != 0)
-        {
-            parser.closeFiles();
-            Messenger::error("Couldn't read Atom {} from file '{}'\n", n + 1, filename);
-            return false;
-        }
-        auto Z = Elements::element(parser.argsv(0));
-        addAtom(Z, parser.arg3d(1), parser.hasArg(4) ? parser.argd(4) : 0.0);
-    }
-
-    Messenger::print("Successfully loaded XYZ data from file '{}'.\n", filename);
-    parser.closeFiles();
-    return true;
-}
 
 /*
  * Read / Write
