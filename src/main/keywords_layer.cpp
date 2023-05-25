@@ -71,6 +71,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                         {"CalculateDAngle", ModuleTypes::DAngle},
                         {"CalculateRDF", ModuleTypes::SiteRDF},
                         {"CalculateSDF", ModuleTypes::SDF},
+                        {"ExportCoordinates", ModuleTypes::ExportConfiguration},
                         {"RDF", ModuleTypes::GR}};
 
                     auto legacyIt = legacyNameMap.find(parser.args(1));

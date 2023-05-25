@@ -34,7 +34,7 @@ enum ModuleType
     DataTest,
     Energy,
     EPSR,
-    ExportCoordinates,
+    ExportConfiguration,
     ExportPairPotentials,
     ExportTrajectory,
     Forces,

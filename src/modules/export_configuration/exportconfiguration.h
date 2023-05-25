@@ -6,12 +6,12 @@
 #include "io/export/configuration.h"
 #include "module/module.h"
 
-// Export Coordinates Module
-class ExportCoordinatesModule : public Module
+// Export Configuration Module
+class ExportConfigurationModule : public Module
 {
     public:
-    ExportCoordinatesModule();
-    ~ExportCoordinatesModule() override = default;
+    ExportConfigurationModule();
+    ~ExportConfigurationModule() override = default;
 
     /*
      * Definition

@@ -16,7 +16,7 @@
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
-#include "modules/export_coordinates/exportcoords.h"
+#include "modules/export_configuration/exportconfiguration.h"
 #include "modules/export_pairpotentials/exportpp.h"
 #include "modules/export_trajectory/exporttraj.h"
 #include "modules/forces/forces.h"
@@ -57,8 +57,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<EnergyModule>(ModuleTypes::Energy, "Calculate the total energy of a Configuration", "Forcefield");
     registerProducer<EPSRModule>(ModuleTypes::EPSR, "Refine interatomic potentials in a manner consistent with EPSR",
                                  "Forcefield");
-    registerProducer<ExportCoordinatesModule>(ModuleTypes::ExportCoordinates,
-                                              "Export coordinates for one or more Configurations", "Export");
+    registerProducer<ExportConfigurationModule>(ModuleTypes::ExportConfiguration, "Export configuration contents to disk",
+                                                "Export");
     registerProducer<ExportPairPotentialsModule>(ModuleTypes::ExportPairPotentials, "Export pair potentials", "Export");
     registerProducer<ExportTrajectoryModule>(ModuleTypes::ExportTrajectory, "Export trajectory for a Configuration", "Export");
     registerProducer<ForcesModule>(ModuleTypes::Forces, "Calculate the total atomic forces within a Configuration",

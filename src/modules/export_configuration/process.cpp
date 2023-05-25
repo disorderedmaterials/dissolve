@@ -5,10 +5,10 @@
 #include "classes/atom.h"
 #include "classes/atomtype.h"
 #include "main/dissolve.h"
-#include "modules/export_coordinates/exportcoords.h"
+#include "modules/export_configuration/exportconfiguration.h"
 
 // Run main processing
-bool ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+bool ExportConfigurationModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!coordinatesFormat_.hasFilename())
         Messenger::error("No valid file/format set for coordinate export.\n");

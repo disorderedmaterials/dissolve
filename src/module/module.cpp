@@ -28,7 +28,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::DataTest, "DataTest"},
                                                                  {ModuleTypes::Energy, "Energy"},
                                                                  {ModuleTypes::EPSR, "EPSR"},
-                                                                 {ModuleTypes::ExportCoordinates, "ExportCoordinates"},
+                                                                 {ModuleTypes::ExportConfiguration, "ExportConfiguration"},
                                                                  {ModuleTypes::ExportPairPotentials, "ExportPairPotentials"},
                                                                  {ModuleTypes::ExportTrajectory, "ExportTrajectory"},
                                                                  {ModuleTypes::Forces, "Forces"},
