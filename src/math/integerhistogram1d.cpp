@@ -28,6 +28,7 @@ void IntegerHistogram1D::clear()
     bins_.clear();
     binCentres_.clear();
     averages_.clear();
+    histMap_.clear();
 }
 
 /*
@@ -173,6 +174,14 @@ Data1D IntegerHistogram1D::data() const
 
 // Return accumulated (averaged) data
 const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedData_; }
+
+bool IntegerHistogram1D::insertIntoMap(int x)
+{
+    auto bin = int((x - minimum_));
+
+    ++histMap_[bin];
+    ++nBinned_;
+}
 
 /*
  * Operators

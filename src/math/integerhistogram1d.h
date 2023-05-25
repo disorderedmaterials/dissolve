@@ -5,6 +5,7 @@
 
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
+#include <map>
 
 // Pure Integer Histogram
 class IntegerHistogram1D
@@ -40,6 +41,8 @@ class IntegerHistogram1D
     long int nMissed_;
     // Accumulated data
     Data1D accumulatedData_;
+    // key is the bin and value is the count
+    std::map<int, long int> histMap_;
 
     private:
     // Update accumulated data
@@ -77,6 +80,8 @@ class IntegerHistogram1D
     Data1D data() const;
     // Return accumulated (averaged) data
     const Data1D &accumulatedData() const;
+    // insert value into map
+    bool insertIntoMap(int x);
 
     /*
      * Operators
@@ -93,11 +98,4 @@ class IntegerHistogram1D
     bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Sum histogram data onto all processes
-    bool allSum(const ProcessPool &procPool, OptionalReferenceWrapper<Timer> commsTimer = {});
 };
