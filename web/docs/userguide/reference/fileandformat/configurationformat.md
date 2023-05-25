@@ -1,6 +1,6 @@
 ---
-title: Coordinates
-description: Coordinate import/export
+title: Configuration
+description: Configuration import/export
 ---
 
 ## Known Formats
