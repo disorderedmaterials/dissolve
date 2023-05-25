@@ -5,7 +5,7 @@
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/selectspeciesdialog.h"
-#include "io/export/coordinates.h"
+#include "io/export/configuration.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"

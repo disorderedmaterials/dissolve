@@ -1,6 +1,6 @@
 add_library(
   export
-  coordinates.cpp
+  configuration.cpp
   data1d.cpp
   data2d.cpp
   data3d.cpp
@@ -8,7 +8,7 @@ add_library(
   pairpotential.cpp
   trajectory.cpp
   values.cpp
-  coordinates.h
+  configuration.h
   data1d.h
   data2d.h
   data3d.h

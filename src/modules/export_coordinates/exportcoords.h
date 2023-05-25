@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "io/export/coordinates.h"
+#include "io/export/configuration.h"
 #include "module/module.h"
 
 // Export Coordinates Module
