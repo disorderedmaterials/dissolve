@@ -1,4 +1,9 @@
-Version 1.1.2 is a patch release addressing several bugfixes.
+Version 1.1.3 is a patch release addressing some usability issues.
+
+## Minor Changes in v1.1.3
+
+- Feature: Export of calculated molecule in `AvgMol` module now possible.
+- Fix: Mitigate overflows in Select nodes.
 
 ## Major Changes in v1.1.2
 
