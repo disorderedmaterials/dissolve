@@ -176,7 +176,7 @@
             "name": "SCARF",
             "displayName": "SCARF build",
             "description": "Best setup for SCARF",
-	    "inherits" : ["parallel-Release"]
+	    "inherits" : ["MPI-Release"]
         }
     ]
 }
