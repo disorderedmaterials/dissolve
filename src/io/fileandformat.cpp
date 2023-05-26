@@ -148,3 +148,17 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
 {
     return keywords_.serialise(parser, fmt::format("{}  ", prefix));
 }
+
+SerialisedValue FileAndFormat::serialise() const {
+    SerialisedValue result;
+    result["filename"] = filename_;
+    result["format"] = formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???";
+    fromVector(keywords_.keywords(), "keywords", result, [](const auto k){ return k.keyword()->serialise();});
+    return result;
+}
+
+void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &coreData) {
+    filename_ = toml::find<std::string>(node, "filename");
+    formatIndex_ = formats_.keywordIndex(toml::find<std::string>(node, "format"));
+    //FIXME: Need to load keywords
+}
