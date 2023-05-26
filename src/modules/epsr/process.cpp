@@ -343,7 +343,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 Filters::movingAverage(fitCoefficients, *fluctuationSmoothing_);
 
                 // Need to pass the smoothed parameters back into the minimiser so we generate the matching approximation
-                fitError = coeffMinimiser.constructReciprocal(0.0, rMaxPT_, fitCoefficients, pSigma1_, pSigma2_, 0, 0.01);
+                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, pSigma1_, pSigma2_, 0, 0.01);
             }
 
             deltaFQFit = coeffMinimiser.approximation();

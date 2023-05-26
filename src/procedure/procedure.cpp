@@ -100,7 +100,7 @@ bool Procedure::deserialise(LineParser &parser, const CoreData &coreData)
 bool Procedure::serialise(LineParser &parser, std::string_view prefix) { return rootSequence_.serialise(parser, prefix); }
 
 // Express as a serialisable value
-SerialisedValue Procedure::serialise() const { return rootSequence_->serialise(); }
+SerialisedValue Procedure::serialise() const { return rootSequence_.serialise(); }
 
 // Read values from a serialisable value
-void Procedure::deserialise(const SerialisedValue &node, const CoreData &data) { rootSequence_->deserialise(node, data); }
+void Procedure::deserialise(const SerialisedValue &node, const CoreData &data) { rootSequence_.deserialise(node, data); }

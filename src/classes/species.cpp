@@ -271,5 +271,5 @@ void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 
     Serialisable::toMap(node, "sites",
                         [this, &coreData](const std::string &name, const SerialisedValue &site)
-                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
+                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site, coreData); });
 }

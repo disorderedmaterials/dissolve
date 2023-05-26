@@ -137,9 +137,6 @@ ProcedureNodeSequence::searchParameters(std::string_view name,
 // Return this sequence's owner
 OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { return owner_; }
 
-// Return this sequences owner
-NodeRef SequenceProcedureNode::owner() const { return owner_; }
-
 // Return the context of the sequence
 ProcedureNode::NodeContext ProcedureNodeSequence::sequenceContext() const { return context_; }
 
@@ -540,7 +537,7 @@ void ProcedureNodeSequence::deserialise(const SerialisedValue &node, const CoreD
     {
         ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(v.at("type"));
         auto result = ProcedureNodeRegistry::create(type);
-        addNode(result);
+        appendNode(result, {});
         result->deserialise(v, data);
         result->setName(k);
     }

@@ -176,47 +176,29 @@ double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Con
         localEnergies.bondEnergy +=
             std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
-<<<<<<< HEAD
                             { return acc + kernel->bondEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
-=======
-                            { return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ())); });
->>>>>>> origin/toml-fulltest
 
         // Loop over Angle
         localEnergies.angleEnergy += std::accumulate(
             mol->species()->angles().cbegin(), mol->species()->angles().cend(), 0.0,
             [&mol, &kernel](auto const acc, const auto &t)
-<<<<<<< HEAD
             { return acc + kernel->angleEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
-=======
-            { return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()), *mol->atom(t.indexK())); });
->>>>>>> origin/toml-fulltest
 
         // Loop over Torsions
         localEnergies.torsionEnergy +=
             std::accumulate(mol->species()->torsions().cbegin(), mol->species()->torsions().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &t)
                             {
-<<<<<<< HEAD
                                 return acc + kernel->torsionEnergy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
                                                                    *mol->atom(t.indexK()), *mol->atom(t.indexL()));
-=======
-                                return acc + kernel.energy(t, *mol->atom(t.indexI()), *mol->atom(t.indexJ()),
-                                                           *mol->atom(t.indexK()), *mol->atom(t.indexL()));
->>>>>>> origin/toml-fulltest
                             });
 
         localEnergies.improperEnergy +=
             std::accumulate(mol->species()->impropers().cbegin(), mol->species()->impropers().cend(), 0.0,
                             [&mol, &kernel](auto const acc, const auto &imp)
                             {
-<<<<<<< HEAD
                                 return acc + kernel->improperEnergy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
                                                                     *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
-=======
-                                return acc + kernel.energy(imp, *mol->atom(imp.indexI()), *mol->atom(imp.indexJ()),
-                                                           *mol->atom(imp.indexK()), *mol->atom(imp.indexL()));
->>>>>>> origin/toml-fulltest
                             });
 
         return localEnergies;

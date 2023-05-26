@@ -50,19 +50,20 @@ bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordNa
 }
 
 // Has not changed from initial value
-bool NodeBranchKeyword::isDefault() const { return !data_; }
+bool NodeBranchKeyword::isDefault() const {
+  return data_.nNodes() == 0;
+}
 
 // Express as a serialisable value
 SerialisedValue NodeBranchKeyword::serialise() const
 {
-    if (!data_)
+    if (isDefault())
         return {};
-    return data_->serialise();
+    return data_.serialise();
 }
 
 // Read values from a serialisable value
 void NodeBranchKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    data_ = std::make_shared<SequenceProcedureNode>(branchContext_, parentNode_->scope()->procedure(), parentNode_, name());
-    data_->deserialise(node, coreData);
+    data_.deserialise(node, coreData);
 }

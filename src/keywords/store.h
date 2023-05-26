@@ -114,16 +114,6 @@ class KeywordStore
 
         return k;
     }
-    // Add deprecated keyword
-    template <class K, typename... Args>
-    KeywordBase *addDeprecated(std::string_view name, std::string_view description, Args &&...args)
-    {
-        auto *k = addKeyword<K>(name, description, args...);
-
-        deprecatedKeywords_.emplace(name, k);
-
-        return k;
-    }
     // Find named keyword
     OptionalReferenceWrapper<KeywordStoreData> find(std::string_view name);
     OptionalReferenceWrapper<const KeywordStoreData> find(std::string_view name) const;

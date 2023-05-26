@@ -3,11 +3,12 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "expression/expression.h"
 #include "procedure/nodes/node.h"
 
 // ProcedureNode Sequence
-class ProcedureNodeSequence
+class ProcedureNodeSequence : public Serialisable<const CoreData&>
 {
     public:
     ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
@@ -143,7 +144,6 @@ class ProcedureNodeSequence
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write structure to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix);
-    bool serialise(LineParser &parser, std::string_view prefix) override;
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

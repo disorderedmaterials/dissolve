@@ -8,6 +8,7 @@
 #include "base/enumoption.h"
 #include "base/enumoptionsbase.h"
 #include "base/messenger.h"
+#include "base/serialiser.h"
 #include "base/sysfunc.h"
 #include <cassert>
 
@@ -215,5 +216,11 @@ template <class E> class EnumOptions : public EnumOptionsBase
         }
 
         return false;
+    }
+
+    SerialisedValue serialise(E value) const {return keyword(value);}
+
+    E deserialise(const SerialisedValue &node) {
+	return enumeration(std::string_view(std::string(node.as_string())));
     }
 };
