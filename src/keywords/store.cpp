@@ -263,10 +263,40 @@ std::vector<Configuration *> KeywordStore::getVectorConfiguration(std::string_vi
 }
 
 // Retrieve an Integer by keyword name
-int KeywordStore::getInt(std::string_view name) { return getKeyword<IntegerKeyword>(keywords_, name)->data(); }
+int KeywordStore::getInt(std::string_view name) const { return getKeyword<IntegerKeyword>(keywords_, name)->data(); }
 
 // Retrieve a vector of Modules by keyword name
 std::vector<Module *> KeywordStore::getVectorModule(std::string_view name) const
 {
     return getKeyword<ModuleVectorKeyword>(keywords_, name)->data();
+}
+
+// Turn first character of keyword label to lower case to match
+// convention with the rest of the file format.
+std::string toml_format(const std::string_view original)
+{
+    auto result = std::string(original);
+    result[0] = tolower(result[0]);
+    return result;
+}
+
+// Apply the terms in the keyword store to a node
+SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
+{
+    for (auto &[k, v] : keywords())
+        if (!v->isDefault())
+        {
+            auto value = v->serialise();
+            if (!value.is_uninitialized())
+                node[toml_format(k)] = value;
+        }
+    return node;
+}
+
+// Pull keywords from entries in table
+void KeywordStore::deserialiseFrom(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto &[k, v] : keywords())
+        if (node.contains(toml_format(k)))
+            v->deserialise(node.at(toml_format(k)), coreData);
 }

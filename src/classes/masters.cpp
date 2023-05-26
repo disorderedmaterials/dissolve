@@ -13,24 +13,24 @@ SerialisedValue CoreData::Masters::serialise() const
     return node;
 }
 
-void CoreData::Masters::deserialise(SerialisedValue &node)
+void CoreData::Masters::deserialise(const SerialisedValue &node)
 {
     Serialisable::toMap(node, "bonds",
-                        [this](const std::string &name, SerialisedValue &bond)
+                        [this](const std::string &name, const SerialisedValue &bond)
                         { bonds.emplace_back(std::make_unique<MasterBond>(name))->deserialise(bond); });
     Serialisable::toMap(node, "angles",
-                        [this](const std::string &name, SerialisedValue &angle)
+                        [this](const std::string &name, const SerialisedValue &angle)
                         { angles.emplace_back(std::make_unique<MasterAngle>(name))->deserialise(angle); });
     Serialisable::toMap(node, "torsions",
-                        [this](const std::string &name, SerialisedValue &torsion)
+                        [this](const std::string &name, const SerialisedValue &torsion)
                         { torsions.emplace_back(std::make_unique<MasterTorsion>(name))->deserialise(torsion); });
     Serialisable::toMap(node, "impropers",
-                        [this](const std::string &name, SerialisedValue &improper)
+                        [this](const std::string &name, const SerialisedValue &improper)
                         { impropers.emplace_back(std::make_unique<MasterImproper>(name))->deserialise(improper); });
     return;
 }
 
-// Express Master terms as tree node
+// Express Master terms as serialisable value
 SerialisedValue CoreData::serialiseMaster() const { return masters_.serialise(); }
-// Read Master values from tree node
-void CoreData::deserialiseMaster(SerialisedValue &node) { masters_.deserialise(node); }
+// Read Master values from serialisable value
+void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deserialise(node); }

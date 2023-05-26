@@ -43,3 +43,22 @@ bool StringPairVectorKeyword::serialise(LineParser &parser, std::string_view key
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue StringPairVectorKeyword::serialise() const
+{
+    SerialisedValue result;
+    for (auto &[key, value] : data_)
+        result[key] = value;
+    return result;
+}
+
+// Read values from a serialisable value
+void StringPairVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto &[key, value] : node.as_table())
+        data_.emplace_back(key, std::string(value.as_string()));
+}
+
+// Has not changed from initial value
+bool StringPairVectorKeyword::isDefault() const { return data_.empty(); }

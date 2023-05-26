@@ -25,7 +25,7 @@
 class Forcefield;
 
 // Species Definition
-class Species : public Serialisable
+class Species : public Serialisable<const CoreData &>
 {
     public:
     Species(std::string name = "Unnamed");
@@ -370,8 +370,8 @@ class Species : public Serialisable
     // Write Species definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
-    void deserialise(SerialisedValue &node, CoreData &coreData);
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, CoreData &coreData);
 };

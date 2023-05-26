@@ -65,7 +65,7 @@ class CoreData
      * Master Intramolecular Terms
      */
     private:
-    class Masters : public Serialisable
+    class Masters : public Serialisable<>
     {
         public:
         // Master Bond parameters for Species
@@ -79,16 +79,16 @@ class CoreData
 
         // Serialisation
         SerialisedValue serialise() const override;
-        void deserialise(SerialisedValue &node) override;
+        void deserialise(const SerialisedValue &node) override;
     };
     // Master terms
     Masters masters_;
 
     public:
-    // Express Master terms as tree node
+    // Express Master terms as serialisable value
     SerialisedValue serialiseMaster() const;
-    // Read Master values from tree node
-    void deserialiseMaster(SerialisedValue &node);
+    // Read Master values from serialisable value
+    void deserialiseMaster(const SerialisedValue &node);
     // Add new master Bond parameters
     MasterBond &addMasterBond(std::string_view name);
     // Return number of master Bond parameters in list

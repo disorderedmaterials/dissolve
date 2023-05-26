@@ -4,6 +4,8 @@
 #include "data/spacegroups.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
+#include <cassert>
+#include <stdio.h>
 
 namespace SpaceGroups
 {

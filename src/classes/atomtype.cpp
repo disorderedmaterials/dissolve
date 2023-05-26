@@ -87,12 +87,12 @@ bool AtomType::sameParametersAs(const AtomType *other, bool checkCharge)
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue AtomType::serialise() const
 {
     SerialisedValue atomType;
 
-    atomType["z"] = Elements::symbol(Z_).data();
+    atomType["z"] = Z_;
     atomType["charge"] = charge_;
     atomType["form"] = ShortRangeFunctions::forms().keyword(interactionPotential_.form());
 
@@ -111,10 +111,8 @@ SerialisedValue AtomType::serialise() const
 // This method populates the object's members with values read from an 'atomTypes' TOML node
 void AtomType::deserialise(toml::value node)
 {
-    if (node.contains("z"))
-        Z_ = Elements::element(std::string(node["z"].as_string()));
-    if (node.contains("charge"))
-        charge_ = node["charge"].as_floating();
+    Z_ = toml::find<Elements::Element>(node, "z");
+    charge_ = toml::find_or<double>(node, "charge", 0.0);
     if (node.contains("form"))
         interactionPotential_.setForm(ShortRangeFunctions::forms().enumeration(std::string(node["form"].as_string())));
 

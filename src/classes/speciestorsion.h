@@ -128,10 +128,11 @@ class SpeciesTorsion : public SpeciesIntra<SpeciesTorsion, TorsionFunctions>
     static double force(double angleInDegrees, TorsionFunctions::Form form, const std::vector<double> &params);
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
-    // Express as a tree node
+
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
-    void deserialise(SerialisedValue &node, CoreData &coreData);
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, CoreData &coreData);
 };
 
 // MasterTorsion Definition

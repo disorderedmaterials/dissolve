@@ -19,7 +19,7 @@ class CoreData;
 /*
  * Isotopologue Definition
  */
-class Isotopologue : public Serialisable
+class Isotopologue : public Serialisable<const CoreData &>
 {
     public:
     Isotopologue(std::string name = "");
@@ -64,7 +64,7 @@ class Isotopologue : public Serialisable
     std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes();
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &isotopes() const;
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    void deserialise(SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

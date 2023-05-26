@@ -58,3 +58,15 @@ bool Data1DStoreKeyword::serialise(LineParser &parser, std::string_view keywordN
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue Data1DStoreKeyword::serialise() const { return data_; }
+
+// Read values from a serialisable value
+void Data1DStoreKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_.deserialise(node, coreData);
+}
+
+// Has not changed from initial value
+bool Data1DStoreKeyword::isDefault() const { return data_.data().empty(); }

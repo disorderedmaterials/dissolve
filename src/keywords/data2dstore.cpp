@@ -53,3 +53,15 @@ bool Data2DStoreKeyword::serialise(LineParser &parser, std::string_view keywordN
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue Data2DStoreKeyword::serialise() const { return data_; }
+
+// Has not changed from initial value
+bool Data2DStoreKeyword::isDefault() const { return data_.data().empty(); }
+
+// Has not changed from initial value
+void Data2DStoreKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_.deserialise(node, coreData);
+}

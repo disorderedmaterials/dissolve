@@ -5,11 +5,14 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-BoolKeyword::BoolKeyword(bool &data) : KeywordBase(typeid(this)), data_(data) {}
+BoolKeyword::BoolKeyword(bool &data) : KeywordBase(typeid(this)), default_(data), data_(data) {}
 
 /*
  * Data
  */
+
+// Has not changed from initial value
+bool BoolKeyword::isDefault() const { return data_ == default_; }
 
 // Set data
 bool BoolKeyword::setData(bool value)
@@ -48,3 +51,9 @@ bool BoolKeyword::serialise(LineParser &parser, std::string_view keywordName, st
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }
+
+// Express as a serialisable value
+SerialisedValue BoolKeyword::serialise() const { return data_; }
+
+// Read values from a serialisable value
+void BoolKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = node.as_boolean(); }

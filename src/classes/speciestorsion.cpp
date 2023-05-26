@@ -30,7 +30,10 @@ const std::vector<std::string> &TorsionFunctions::parameters(Form form)
         {TorsionFunctions::Form::Cos3, {"k1", "k2", "k3"}},
         {TorsionFunctions::Form::Cos3C, {"k0", "k1", "k2", "k3"}},
         {TorsionFunctions::Form::Cos4, {"k1", "k2", "k3", "k4"}},
-        {TorsionFunctions::Form::UFFCosine, {"k", "n", "eq"}}};
+        {TorsionFunctions::Form::UFFCosine, {"k", "n", "eq"}},
+        {TorsionFunctions::Form::CosN, {}},
+        {TorsionFunctions::Form::CosNC, {}},
+        {TorsionFunctions::Form::FourierN, {}}};
     return params_[form];
 }
 
@@ -628,7 +631,7 @@ double SpeciesTorsion::force(double angleInDegrees) const
     return SpeciesTorsion::force(angleInDegrees, interactionForm(), interactionParameters());
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesTorsion::serialise() const
 {
     auto torsion = SpeciesIntra<SpeciesTorsion, TorsionFunctions>::serialise();
@@ -648,7 +651,7 @@ SerialisedValue SpeciesTorsion::serialise() const
 }
 
 // This method populates the object's members with values read from a 'torsion' TOML node
-void SpeciesTorsion::deserialise(SerialisedValue &node, CoreData &coreData)
+void SpeciesTorsion::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterTorsion(form); });
 

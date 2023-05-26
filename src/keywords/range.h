@@ -24,6 +24,8 @@ class RangeKeyword : public KeywordBase
     Range &data_;
     // Optional limits to apply
     std::optional<double> minimumLimit_, maximumLimit_;
+    // Initial Value
+    const Range default_;
     // Label type to display in GUI
     Vec3Labels::LabelType labelType_;
 
@@ -55,4 +57,10 @@ class RangeKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Has not changed from initial value
+    bool isDefault() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

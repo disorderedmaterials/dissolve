@@ -4,6 +4,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "data/ff/ff.h"
+#include "data/ff/library.h"
 #include "data/isotopes.h"
 
 Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false), forcefield_(nullptr)
@@ -204,7 +205,7 @@ void Species::print() const
 // Return version
 int Species::version() const { return version_; }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Species::serialise() const
 {
     SerialisedValue species;
@@ -217,53 +218,58 @@ SerialisedValue Species::serialise() const
     Serialisable::fromVector<>(torsions_, "torsions", species);
     Serialisable::fromVector<>(impropers_, "impropers", species);
     Serialisable::fromVector<>(isotopologues_, "isotopologues", species);
-    Serialisable::fromVector<>(sites_, "sites", species);
+    Serialisable::fromVectorToTable<>(sites_, "sites", species);
 
     return species;
 }
 
-// Read values from a tree node
-void Species::deserialise(SerialisedValue &node, CoreData &coreData)
+// Read values from a serialisable value
+void Species::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
-    auto tomlAtoms = toml::find(node, "atoms").as_array();
-    for (auto &tomlAtom : tomlAtoms)
-        atoms_.emplace_back().deserialise(tomlAtom);
+    atoms_ = toml::find<std::vector<SpeciesAtom>>(node, "atoms");
+    if (node.contains("forcefield"))
+        forcefield_ = ForcefieldLibrary::forcefield(toml::find<std::string>(node, "forcefield"));
 
-    Serialisable::toVector(node, "bonds",
-                           [this, &coreData](SerialisedValue &bond) {
-                               bonds_.emplace_back(&atoms_[bond["i"].as_integer() - 1], &atoms_[bond["j"].as_integer() - 1])
-                                   .deserialise(bond, coreData);
-                           });
+    Serialisable::toVector(
+        node, "bonds",
+        [this, &coreData](const SerialisedValue &bond)
+        {
+            bonds_.emplace_back(&atoms_.at(toml::find<int>(bond, "i") - 1), &atoms_.at(toml::find<int>(bond, "j") - 1))
+                .deserialise(bond, coreData);
+        });
     Serialisable::toVector(node, "angles",
-                           [this, &coreData](SerialisedValue &angle)
+                           [this, &coreData](const SerialisedValue &angle)
                            {
                                angles_
-                                   .emplace_back(&atoms_[angle["i"].as_integer() - 1], &atoms_[angle["j"].as_integer() - 1],
-                                                 &atoms_[angle["k"].as_integer() - 1])
+                                   .emplace_back(&atoms_.at(toml::find<int>(angle, "i") - 1),
+                                                 &atoms_.at(toml::find<int>(angle, "j") - 1),
+                                                 &atoms_.at(toml::find<int>(angle, "k") - 1))
                                    .deserialise(angle, coreData);
                            });
-    Serialisable::toVector(node, "impropers",
-                           [this, &coreData](SerialisedValue &improper)
-                           {
-                               impropers_
-                                   .emplace_back(
-                                       &atoms_[improper["i"].as_integer() - 1], &atoms_[improper["j"].as_integer() - 1],
-                                       &atoms_[improper["k"].as_integer() - 1], &atoms_[improper["l"].as_integer() - 1])
-                                   .deserialise(improper, coreData);
-                           });
-    Serialisable::toVector(node, "torsions",
-                           [this, &coreData](SerialisedValue &torsion)
-                           {
-                               torsions_
-                                   .emplace_back(&atoms_[torsion["i"].as_integer() - 1], &atoms_[torsion["j"].as_integer() - 1],
-                                                 &atoms_[torsion["k"].as_integer() - 1], &atoms_[torsion["l"].as_integer() - 1])
-                                   .deserialise(torsion, coreData);
-                           });
+    Serialisable::toVector(
+        node, "impropers",
+        [this, &coreData](const SerialisedValue &improper)
+        {
+            impropers_
+                .emplace_back(&atoms_.at(toml::find<int>(improper, "i") - 1), &atoms_.at(toml::find<int>(improper, "j") - 1),
+                              &atoms_.at(toml::find<int>(improper, "k") - 1), &atoms_.at(toml::find<int>(improper, "l") - 1))
+                .deserialise(improper, coreData);
+        });
+    Serialisable::toVector(
+        node, "torsions",
+        [this, &coreData](const SerialisedValue &torsion)
+        {
+            torsions_
+                .emplace_back(&atoms_.at(toml::find<int>(torsion, "i") - 1), &atoms_.at(toml::find<int>(torsion, "j") - 1),
+                              &atoms_.at(toml::find<int>(torsion, "k") - 1), &atoms_.at(toml::find<int>(torsion, "l") - 1))
+                .deserialise(torsion, coreData);
+        });
 
     Serialisable::toVector(node, "isotopologues",
-                           [this, &coreData](SerialisedValue &iso)
+                           [this, &coreData](const SerialisedValue &iso)
                            { isotopologues_.emplace_back(std::make_unique<Isotopologue>())->deserialise(iso, coreData); });
-    Serialisable::toVector(node, "sites",
-                           [this, &coreData](SerialisedValue &site)
-                           { sites_.emplace_back(std::make_unique<SpeciesSite>(this))->deserialise(site, coreData); });
+
+    Serialisable::toMap(node, "sites",
+                        [this, &coreData](const std::string &name, const SerialisedValue &site)
+                        { sites_.emplace_back(std::make_unique<SpeciesSite>(this, name))->deserialise(site); });
 }

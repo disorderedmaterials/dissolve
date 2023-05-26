@@ -52,4 +52,11 @@ class ModuleVectorKeyword : public KeywordBase
     protected:
     // Prune any references to the supplied Module in the contained data
     void removeReferencesTo(Module *module) override;
+
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    bool isDefault() const override;
 };

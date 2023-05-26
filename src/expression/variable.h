@@ -6,7 +6,7 @@
 #include "expression/value.h"
 
 // Variable
-class ExpressionVariable
+class ExpressionVariable : public Serialisable<>
 {
     public:
     ExpressionVariable(const ExpressionValue &value = ExpressionValue());
@@ -33,4 +33,8 @@ class ExpressionVariable
     const ExpressionValue &value() const;
     // Return pointer to value
     ExpressionValue *valuePointer();
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node);
 };

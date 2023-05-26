@@ -137,6 +137,9 @@ ProcedureNodeSequence::searchParameters(std::string_view name,
 // Return this sequence's owner
 OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { return owner_; }
 
+// Return this sequences owner
+NodeRef SequenceProcedureNode::owner() const { return owner_; }
+
 // Return the context of the sequence
 ProcedureNode::NodeContext ProcedureNodeSequence::sequenceContext() const { return context_; }
 
@@ -515,3 +518,30 @@ std::vector<NodeRef>::const_reverse_iterator ProcedureNodeSequence::QueryRange::
 std::vector<NodeRef>::const_reverse_iterator ProcedureNodeSequence::QueryRange::end() { return stop_; }
 bool ProcedureNodeSequence::QueryRange::empty() { return start_ == stop_; }
 void ProcedureNodeSequence::QueryRange::next() { start_++; }
+
+// Express as a serialisable value
+SerialisedValue ProcedureNodeSequence::serialise() const
+{
+    SerialisedValue node;
+    for (auto n : sequence_)
+    {
+        // node.push_back(n->serialise());
+        SerialisedValue inner = n->serialise();
+        inner["type"] = n->nodeTypes().serialise(n->type());
+        node[std::string(n->name())] = inner;
+    }
+    return node;
+}
+
+// Read values from a serialisable value
+void ProcedureNodeSequence::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    for (auto &[k, v] : node.as_table())
+    {
+        ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(v.at("type"));
+        auto result = ProcedureNodeRegistry::create(type);
+        addNode(result);
+        result->deserialise(v, data);
+        result->setName(k);
+    }
+}

@@ -3,11 +3,12 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "expression/expression.h"
 #include "templates/optionalref.h"
 
 // Node Value
-class NodeValue
+class NodeValue : public Serialisable<>
 {
     public:
     NodeValue();
@@ -18,6 +19,8 @@ class NodeValue
     ~NodeValue();
     void operator=(const int value);
     void operator=(const double value);
+    bool operator==(const NodeValue &value) const;
+    bool operator!=(const NodeValue &value) const;
     operator double();
 
     /*
@@ -63,4 +66,13 @@ class NodeValue
     double asDouble() const;
     // Return value represented as a string
     std::string asString(bool addQuotesIfRequired = false) const;
+
+    /*
+     * Serialisable
+     */
+    public:
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
 };

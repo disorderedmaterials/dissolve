@@ -32,7 +32,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration : public Serialisable
+class Configuration : public Serialisable<const CoreData &>
 {
     public:
     Configuration();
@@ -259,4 +259,6 @@ class Configuration : public Serialisable
     bool deserialise(LineParser &parser, const CoreData &coreData, double pairPotentialRange, bool hasPotentials);
     // Express as a tree node
     SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

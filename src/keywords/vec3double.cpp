@@ -5,7 +5,7 @@
 #include "base/lineparser.h"
 
 Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data), labelType_(labelType)
+    : KeywordBase(typeid(this)), data_(data), default_(data), labelType_(labelType)
 {
 }
 
@@ -96,3 +96,12 @@ bool Vec3DoubleKeyword::serialise(LineParser &parser, std::string_view keywordNa
 {
     return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
+
+// Has not changed from initial value
+bool Vec3DoubleKeyword::isDefault() const { return data_ == default_; }
+
+// Express as a serialisable value
+SerialisedValue Vec3DoubleKeyword::serialise() const { return data_.serialise(); }
+
+// Read values from a serialisable value
+void Vec3DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }

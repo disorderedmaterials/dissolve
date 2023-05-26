@@ -601,7 +601,7 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     return true;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesSite::serialise() const
 {
     SerialisedValue site;
@@ -616,7 +616,7 @@ SerialisedValue SpeciesSite::serialise() const
     return site;
 }
 
-void SpeciesSite::deserialise(SerialisedValue &node, CoreData &coreData)
+void SpeciesSite::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     if (node.contains("dynamic"))
         type_ = SiteType::Dynamic;
@@ -627,6 +627,5 @@ void SpeciesSite::deserialise(SerialisedValue &node, CoreData &coreData)
     toVector(node, "elements", [this](const auto &el) { addElement(Elements::element(std::string(el.as_string()))); });
     toVector(node, "atomTypes", [&, this](const auto &at) { addAtomType(coreData.findAtomType(std::string(at.as_string()))); });
 
-    if (node.contains("originMassWeighted"))
-        originMassWeighted_ = node["originMassWeighted"].as_boolean();
+    originMassWeighted_ = toml::find_or<bool>(node, "originMassWeighted", false);
 }

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "procedure/nodes/aliases.h"
 #include "templates/flags.h"
 #include <memory>
@@ -24,7 +25,7 @@ class Species;
 class SpeciesSite;
 
 // Keyword Base Class
-class KeywordBase
+class KeywordBase : public Serialisable<CoreData const &>
 {
     public:
     KeywordBase(const std::type_index typeIndex);
@@ -57,6 +58,8 @@ class KeywordBase
      * Arguments
      */
     public:
+    // Has not changed from initial value
+    virtual bool isDefault() const { return false; }
     // Return minimum number of arguments accepted
     virtual int minArguments() const;
     // Return maximum number of arguments accepted
@@ -67,6 +70,10 @@ class KeywordBase
     virtual bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) = 0;
     // Serialise data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
 
     /*
      * Parse Result

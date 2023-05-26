@@ -4,6 +4,7 @@
 #include "keywords/geometrylist.h"
 #include "base/lineparser.h"
 #include "classes/coredata.h"
+#include "templates/algorithms.h"
 
 GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> &data, Geometry::GeometryType geometryType)
     : KeywordBase(typeid(this)), data_(data), geometryType_(geometryType)
@@ -77,3 +78,73 @@ bool GeometryListKeyword::serialise(LineParser &parser, std::string_view keyword
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue GeometryListKeyword::serialise() const
+{
+    SerialisedValue result;
+    switch (geometryType_)
+    {
+        case Geometry::GeometryType::AngleType:
+            result["type"] = "angle";
+            break;
+        case Geometry::GeometryType::DistanceType:
+            result["type"] = "distance";
+            break;
+        case Geometry::GeometryType::TorsionType:
+        default:
+            result["type"] = "torsion";
+            break;
+    }
+    std::vector<SerialisedValue> geometries;
+    for (auto &ref : data_)
+    {
+        SerialisedValue item;
+        item["value"] = ref.value();
+        std::vector<SerialisedValue> indices;
+        for (auto n = 0; n < minArguments() - 1; ++n)
+            indices.emplace_back(ref.indices(n));
+        item["indices"] = indices;
+        geometries.push_back(item);
+    }
+    result["geometries"] = geometries;
+    return result;
+}
+
+// Read values from a serialisable value
+void GeometryListKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    auto typeString = toml::find<std::string>(node, "type");
+    if (typeString == "angle")
+        geometryType_ = Geometry::GeometryType::AngleType;
+    else if (typeString == "distance")
+        geometryType_ = Geometry::GeometryType::DistanceType;
+    else
+        geometryType_ = Geometry::GeometryType::TorsionType;
+
+    for (auto item : node.at("geometries").as_array())
+    {
+        auto value = toml::find<double>(item, "value");
+        auto indices = toml::find<std::vector<int>>(item, "indices");
+        Geometry geo;
+        switch (geometryType_)
+        {
+            case Geometry::GeometryType::AngleType:
+                geo.set(value, indices[0], indices[1], indices[2]);
+                break;
+            case Geometry::GeometryType::DistanceType:
+                geo.set(value, indices[0], indices[1]);
+                break;
+            case Geometry::GeometryType::TorsionType:
+                geo.set(value, indices[0], indices[1], indices[2], indices[3]);
+                break;
+            default:
+                throw toml::syntax_error(fmt::format("Cannot handle GeometryType {}", geometryType_), node.location());
+                break;
+        }
+        data_.push_back(geo);
+    }
+}
+
+// Has not changed from initial value
+bool GeometryListKeyword::isDefault() const { return data_.empty(); }

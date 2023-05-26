@@ -73,3 +73,38 @@ void AtomTypeVectorKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
     if (it != data_.end())
         data_.erase(it);
 }
+
+// Express as a serialisable value
+SerialisedValue AtomTypeVectorKeyword::serialise() const
+{
+    return fromVector(data_, [](const auto &item) { return item->name(); });
+}
+
+// Read values from a serialisable value
+void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (const auto &item : node.as_array())
+    {
+        auto it =
+            std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(),
+                         [&item](const auto atomType) {
+                             return DissolveSys::sameString(atomType->name(), std::string_view(std::string(item.as_string())));
+                         });
+        if (it == coreData.atomTypes().end())
+            throw toml::syntax_error(
+                fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n", std::string(item.as_string()), name()),
+                node.location());
+        auto atomType = *it;
+
+        // If the AtomType is already present, complain
+        if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
+            throw toml::syntax_error(
+                fmt::format("AtomType '{}' specified in selection twice.\n", std::string(item.as_string())), node.location());
+
+        // All OK - add it to our vector
+        data_.push_back(atomType);
+    }
+}
+
+// Has not changed from initial value
+bool AtomTypeVectorKeyword::isDefault() const { return data_.empty(); }

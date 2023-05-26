@@ -23,10 +23,14 @@ class Vec3IntegerKeyword : public KeywordBase
     private:
     // Reference to target data
     Vec3<int> &data_;
+    // Initial Value
+    const Vec3<int> default_;
     // Optional limits to apply
     std::optional<Vec3<int>> minimumLimit_, maximumLimit_;
 
     public:
+    // Has not changed from initial value
+    bool isDefault() const override;
     // Set data
     bool setData(Vec3<int> value);
     // Return data
@@ -59,4 +63,8 @@ class Vec3IntegerKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

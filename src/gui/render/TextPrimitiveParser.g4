@@ -34,4 +34,3 @@ frag: Text                                          #plainText
 | FormatterEscape OpenBrace frag* CloseBrace        #formatter
 | SymbolEscape OpenBrace Symbol CloseBrace          #symbol
 ;
-

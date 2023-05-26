@@ -6,7 +6,6 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "classes/speciesbond.h"
-#include "data/elements.h"
 #include <algorithm>
 
 SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }
@@ -478,31 +477,29 @@ int SpeciesAtom::guessOxidationState(const SpeciesAtom *i)
     return (nSameElement == i->nBonds() ? 0 : -osBound);
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesAtom::serialise() const
 {
     SerialisedValue atom;
     atom["index"] = userIndex();
-    atom["z"] = Elements::symbol(Z_).data();
-    atom["r"] = toml::array{r_.x, r_.y, r_.z};
+    atom["z"] = Z_;
+    atom["r"] = r_;
     atom["charge"] = charge_;
     atom["type"] = atomType_->name().data();
     return atom;
 }
-void SpeciesAtom::deserialise(SerialisedValue &node)
+void SpeciesAtom::deserialise(const SerialisedValue &node)
 {
-    index_ = node["index"].as_integer() - 1;
-    Z_ = Elements::element(std::string(node["z"].as_string()));
+    index_ = toml::find<int>(node, "index") - 1;
+    Z_ = toml::find<Elements::Element>(node, "z");
 
-    std::vector r = node["r"].as_array();
-    r_ = Vec3<double>(r[0].as_floating(), r[1].as_floating(), r[2].as_floating());
+    r_ = toml::find<Vec3<double>>(node, "r");
 
-    if (node.contains("charge"))
-        charge_ = node["charge"].as_floating();
+    charge_ = toml::find_or<double>(node, "charge", 0);
 
     if (node.contains("type") && Z_ != Elements::Unknown)
     {
         atomType_ = std::make_shared<AtomType>(AtomType(Z_));
-        atomType_->setName(std::string(node["type"].as_string()));
+        atomType_->setName(toml::find<std::string>(node, "type"));
     }
 }

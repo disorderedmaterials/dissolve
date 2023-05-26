@@ -12,13 +12,20 @@
 using SerialisedValue = toml::value;
 
 // An interface for classes that can be serialised into an input file
-class Serialisable
+template <typename... Contexts> class Serialisable
 {
     public:
-    // Express as a tree node
+    // Express as a serialisable value
     virtual SerialisedValue serialise() const = 0;
-    // Read values from a tree node
-    virtual void deserialise(SerialisedValue &node) { return; }
+    // Read values from a serialisable value
+    virtual void deserialise(const SerialisedValue &node, Contexts... context) { return; }
+
+    /* Functions that hook into the toml11 library */
+    // Wrapper for deserialise that toml11 will check for
+    void from_toml(const toml::value &node) { deserialise(node); }
+    // wrapper for serialise that toml11 will check for
+    toml::value into_toml() const { return serialise(); }
+
     // A helper function to add elements of a vector to a node under the named heading
     template <typename T>
     static void fromVectorToTable(const std::vector<std::shared_ptr<T>> &vector, std::string name, SerialisedValue &node)
@@ -65,25 +72,28 @@ class Serialisable
     {
         if (vector.empty())
             return;
-        toml::array result;
-        for (auto &item : vector)
-            result.push_back(toSerial(item));
-        node[name] = result;
+        node[name] = fromVector(vector, toSerial);
+    }
+    template <typename T, typename Lambda> static SerialisedValue fromVector(const std::vector<T> &vector, Lambda toSerial)
+    {
+        SerialisedValue result = toml::array{};
+        std::transform(vector.begin(), vector.end(), std::back_inserter(result), toSerial);
+        return result;
     }
 
     // Act over each value in a node table, if the key exists
-    template <typename Lambda> static void toMap(SerialisedValue &node, std::string key, Lambda action)
+    template <typename Lambda> static void toMap(const SerialisedValue &node, std::string key, Lambda action)
     {
         if (node.contains(key))
-            for (auto &[key, value] : node[key].as_table())
+            for (auto &[key, value] : toml::find<toml::table>(node, key))
                 action(key, value);
     }
 
     // Act over each value in a node table, if the key exists
-    template <typename Lambda> static void toVector(SerialisedValue &node, std::string key, Lambda action)
+    template <typename Lambda> static void toVector(const SerialisedValue &node, std::string key, Lambda action)
     {
         if (node.contains(key))
-            for (auto &item : node[key].as_array())
+            for (auto &item : toml::find<toml::array>(node, key))
                 action(item);
     }
 };

@@ -102,3 +102,6 @@ void KeywordBase::removeReferencesTo(NodeRef node)
 {
     // Default action - ignore
 }
+
+// Express as a serialisable value
+SerialisedValue KeywordBase::serialise() const { return "FIXME"; }
