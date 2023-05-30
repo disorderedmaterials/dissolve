@@ -48,6 +48,7 @@ bool Expression::create(std::string_view expressionString,
                         OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables)
 {
     clearNodes();
+
     // If the string is empty, can return now
     if (expressionString.empty())
         return true;
@@ -61,7 +62,7 @@ bool Expression::create(std::string_view expressionString,
 
     // Create ANTLR lexer and set-up error listener
     ExpressionLexer lexer(&input);
-    ExpressionLexerErrorListener lexerErrorListener(*this);
+    ExpressionLexerErrorListener lexerErrorListener(expressionString);
     lexer.removeErrorListeners();
     lexer.addErrorListener(&lexerErrorListener);
 
@@ -70,7 +71,7 @@ bool Expression::create(std::string_view expressionString,
 
     // Create ANTLR parser and set-up error listeners
     ExpressionParser parser(&tokens);
-    ExpressionParserErrorListener parserErrorListener(*this);
+    ExpressionParserErrorListener parserErrorListener(expressionString);
     parser.removeErrorListeners();
     parser.removeParseListeners();
     parser.addErrorListener(&lexerErrorListener);

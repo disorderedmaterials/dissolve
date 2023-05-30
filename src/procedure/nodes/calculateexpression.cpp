@@ -20,6 +20,14 @@ CalculateExpressionProcedureNode::CalculateExpressionProcedureNode()
  * Observable Target
  */
 
+// Set expression to evaluate
+bool CalculateExpressionProcedureNode::setExpression(std::string_view expression)
+{
+    auto vars = getParameters();
+
+    return expression_.set(expression, vars);
+}
+
 // Return number of sites required to calculate observable
 int CalculateExpressionProcedureNode::nSitesRequired() const { return 0; }
 
@@ -31,7 +39,7 @@ int CalculateExpressionProcedureNode::dimensionality() const { return 1; }
  */
 
 // Execute node
-bool CalculateExpressionProcedureNode::execute()
+bool CalculateExpressionProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     value_.x = expression_.asDouble();
     return true;

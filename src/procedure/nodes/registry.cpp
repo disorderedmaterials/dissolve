@@ -14,6 +14,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                                   "Calculate angle between three sites", "Calculate");
     registerProducer<CalculateDistanceProcedureNode>(ProcedureNode::NodeType::CalculateDistance,
                                                      "Calculate distance between two sites", "Calculate");
+    registerProducer<CalculateExpressionProcedureNode>(ProcedureNode::NodeType::CalculateExpression,
+                                                       "Evaluate an arbitrary expression", "Calculate");
     registerProducer<CalculateVectorProcedureNode>(ProcedureNode::NodeType::CalculateVector,
                                                    "Calculate vector between two sites", "Calculate");
     registerProducer<Collect1DProcedureNode>(ProcedureNode::NodeType::Collect1D, "Bin 1D quantity into a histogram", "Data");

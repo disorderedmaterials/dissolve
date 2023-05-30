@@ -7,9 +7,11 @@
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "classes/site.h"
+#include "expression/variable.h"
 #include "procedure/nodes/sequence.h"
 #include "procedure/procedure.h"
 #include <algorithm>
+#include <memory>
 #include <utility>
 
 // Return enum option info for NodeClass
@@ -31,6 +33,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::CalculateAngle, "CalculateAngle"},
                      {ProcedureNode::NodeType::CalculateAxisAngle, "CalculateAxisAngle"},
                      {ProcedureNode::NodeType::CalculateDistance, "CalculateDistance"},
+                     {ProcedureNode::NodeType::CalculateExpression, "CalculateExpression"},
                      {ProcedureNode::NodeType::CalculateVector, "CalculateVector"},
                      {ProcedureNode::NodeType::Collect1D, "Collect1D"},
                      {ProcedureNode::NodeType::Collect2D, "Collect2D"},
@@ -194,6 +197,20 @@ OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::branch() { return
 /*
  * Parameters
  */
+
+// Set named parameter in supplied vector
+bool ProcedureNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
+                                 ExpressionValue value)
+{
+    auto it = std::find_if(parameters.begin(), parameters.end(),
+                           [parameter](const auto &p) { return DissolveSys::sameString(p->name(), parameter); });
+    if (it == parameters.end())
+        return false;
+
+    (*it)->setValue(value);
+
+    return true;
+}
 
 // Return the named parameter (if it exists)
 std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view name,
