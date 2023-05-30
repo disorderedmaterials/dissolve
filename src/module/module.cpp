@@ -250,7 +250,7 @@ SerialisedValue Module::serialise() const
 void Module::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     name_ = toml::find<std::string>(node, "name");
-    enabled_ = toml::find_or<bool>(node, "disabled", false);
+    enabled_ = !toml::find_or<bool>(node, "disabled", false);
 
     keywords_.deserialiseFrom(node, data);
 }
