@@ -27,9 +27,11 @@ std::shared_ptr<ExpressionNode> ExpressionVisitor::currentContext() const
 // Construct description within supplied object, from given tree
 void ExpressionVisitor::create(
     Expression &expr, ExpressionParser::ExpressionContext *tree,
+    const std::vector<std::shared_ptr<ExpressionVariable>> &localVariables,
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables)
 {
     expression_ = &expr;
+    localVariables_ = localVariables;
     externalVariables_ = externalVariables;
 
     // Add the definition's root node as the topmost context in the stack
@@ -149,19 +151,27 @@ antlrcpp::Any ExpressionVisitor::visitFunction(ExpressionParser::FunctionContext
 
 antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext *ctx)
 {
-    // Do we have any external variables available?
-    if (!externalVariables_)
-        throw(ExpressionExceptions::ExpressionSyntaxException(fmt::format(
-            "Variable '{}' does not exist in this context (there are no variables defined).\n", ctx->Name()->getText())));
-
-    // Does the named variable exist?
-    const std::vector<std::shared_ptr<ExpressionVariable>> &vars = (*externalVariables_);
-    auto it = std::find_if(vars.begin(), vars.end(),
+    // Check local variables first
+    const std::vector<std::shared_ptr<ExpressionVariable>> &localVars = *localVariables_;
+    auto it = std::find_if(localVars.begin(), localVars.end(),
                            [ctx](auto var) { return DissolveSys::sameString(var->name(), ctx->Name()->getText()); });
-    if (it == vars.end())
-        throw(ExpressionExceptions::ExpressionSyntaxException(
-            fmt::format("Variable '{}' does not exist in this context.\n", ctx->Name()->getText())));
+    if (it == localVars.end())
+    {
+        // Do we have any external variables available?
+        if (!externalVariables_)
+            throw(ExpressionExceptions::ExpressionSyntaxException(fmt::format(
+                "Variable '{}' does not exist in this context (there are no variables defined).\n", ctx->Name()->getText())));
 
+        // Does the named variable exist?
+        const std::vector<std::shared_ptr<ExpressionVariable>> &extVars = *externalVariables_;
+        it = std::find_if(extVars.begin(), extVars.end(),
+                          [ctx](auto var) { return DissolveSys::sameString(var->name(), ctx->Name()->getText()); });
+        if (it == extVars.end())
+            throw(ExpressionExceptions::ExpressionSyntaxException(
+                fmt::format("Variable '{}' does not exist in this context.\n", ctx->Name()->getText())));
+    }
+
+    // Create the new node pointing to the variable
     auto node = std::make_shared<ExpressionReferenceNode>(*it);
 
     currentContext()->addChild(node);

@@ -13,7 +13,7 @@ class ExpressionVariable;
 class ExpressionKeyword : public KeywordBase
 {
     public:
-    ExpressionKeyword(Expression &data, const std::vector<std::shared_ptr<ExpressionVariable>> &variables);
+    ExpressionKeyword(Expression &data);
     ~ExpressionKeyword() override = default;
 
     /*
@@ -22,8 +22,6 @@ class ExpressionKeyword : public KeywordBase
     private:
     // Reference to data
     Expression &data_;
-    // Vector of variables available to the expression
-    const std::vector<std::shared_ptr<ExpressionVariable>> &variables_;
 
     public:
     // Return reference to data

@@ -19,9 +19,7 @@ class OperateExpressionProcedureNode : public OperateProcedureNodeBase
     private:
     // Expression
     Expression expression_;
-    // Vector of variables accessible by the transform equation
-    std::vector<std::shared_ptr<ExpressionVariable>> variables_;
-    // Variables accessible by the transform equation
+    // Local variables for the transform equation
     std::shared_ptr<ExpressionVariable> x_, y_, z_, xDelta_, yDelta_, zDelta_, value_;
 
     private:

@@ -9,9 +9,8 @@
 #include "expression/ExpressionErrorListeners.h"
 #include "expression/ExpressionVisitor.h"
 #include "expression/root.h"
+#include "expression/variable.h"
 #include <algorithm>
-#include <cstdarg>
-#include <cstring>
 
 Expression::Expression(std::string_view expressionText) : rootNode_(nullptr) { create(expressionText); }
 
@@ -30,6 +29,17 @@ void Expression::operator=(const Expression &source)
 /*
  * Data
  */
+
+// Add local variable
+std::shared_ptr<ExpressionVariable> Expression::addLocalVariable(std::string_view name)
+{
+    if (std::find_if(localVariables_.begin(), localVariables_.end(),
+                     [name](const auto &var) { return DissolveSys::sameString(name, var->name()); }) != localVariables_.end())
+        throw(std::runtime_error(
+            fmt::format("Tried to create local variable '{}' in Expression, but it already exists.\n", name)));
+
+    return localVariables_.emplace_back(std::make_shared<ExpressionVariable>(name));
+}
 
 // Clear node data
 void Expression::clearNodes()
@@ -94,7 +104,7 @@ bool Expression::create(std::string_view expressionString,
     ExpressionVisitor visitor;
     try
     {
-        visitor.create(*this, tree, externalVariables);
+        visitor.create(*this, tree, localVariables_, externalVariables);
     }
     catch (ExpressionExceptions::ExpressionSyntaxException &ex)
     {
