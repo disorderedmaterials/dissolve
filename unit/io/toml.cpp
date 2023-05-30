@@ -43,6 +43,7 @@ void runParse(std::string input)
         auto toml = initial.serialise();
         auto knownGood = initial.iterate(100);
         Dissolve repeat(coreData2);
+	repeat.setInputFilename(input);
         EXPECT_NO_THROW(repeat.deserialise(toml));
         auto toml2 = repeat.serialise();
 
