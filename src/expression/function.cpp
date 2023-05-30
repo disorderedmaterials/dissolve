@@ -17,7 +17,9 @@ EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::in
                                                                                       {LogFunction, "log", 1},
                                                                                       {SinFunction, "sin", 1},
                                                                                       {SqrtFunction, "sqrt", 1},
-                                                                                      {TanFunction, "tan", 1}});
+                                                                                      {PiFunction, "pi"},
+                                                                                      {TanFunction, "tan", 1},
+                                                                                      {TwoPiFunction, "twopi"}});
 }
 
 ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}
@@ -46,7 +48,7 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
 {
     // Number of required child nodes depends on the function
     const auto nArgs = internalFunctions().minArgs(function_);
-    if (children_.size() != nArgs)
+    if (children_.size() != nArgs.value_or(0))
         return std::nullopt;
 
     // Evaluate the arguments
@@ -96,8 +98,14 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
         case (SqrtFunction):
             result = sqrt(args[0].asDouble());
             break;
+        case (PiFunction):
+            result = M_PI;
+            break;
         case (TanFunction):
             result = tan(args[0].asDouble() / DEGRAD);
+            break;
+        case (TwoPiFunction):
+            result = 2.0 * M_PI;
             break;
     }
 
@@ -109,8 +117,11 @@ std::string ExpressionFunctionNode::asString() const
 {
     // Number of required child nodes depends on the function
     const auto nArgs = internalFunctions().minArgs(function_);
-    if (children_.size() != nArgs)
+    if (children_.size() != nArgs.value_or(0))
         return "";
+
+    if (!nArgs)
+        return fmt::format("{}()", internalFunctions().keyword(function_));
 
     // Evaluate the arguments
     std::vector<std::string> args;
