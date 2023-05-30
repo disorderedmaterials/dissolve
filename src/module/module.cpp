@@ -240,7 +240,7 @@ std::vector<Module *> Module::allOfType(std::vector<ModuleTypes::ModuleType> typ
 // Express as a serialisable value
 SerialisedValue Module::serialise() const
 {
-    SerialisedValue result = {{"name", name_}, {"type", type_}};
+    SerialisedValue result{{"name", name_}, {"type", ModuleTypes::moduleType(type_)}};
     if (!enabled_)
         result["disabled"] = true;
     return keywords_.serialiseOnto(result);
