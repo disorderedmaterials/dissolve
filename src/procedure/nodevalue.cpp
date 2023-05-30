@@ -101,7 +101,7 @@ bool NodeValue::isValid() const { return (type_ == ExpressionNodeValue ? express
  */
 
 // Return contained value as integer
-int NodeValue::asInteger()
+int NodeValue::asInteger() const
 {
     if (type_ == IntegerNodeValue)
         return valueI_;
@@ -112,7 +112,7 @@ int NodeValue::asInteger()
 }
 
 // Return contained value as double
-double NodeValue::asDouble()
+double NodeValue::asDouble() const
 {
     if (type_ == IntegerNodeValue)
         return (double)valueI_;

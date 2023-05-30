@@ -58,9 +58,9 @@ class NodeValue
      */
     public:
     // Return contained value as integer
-    int asInteger();
+    int asInteger() const;
     // Return contained value as double
-    double asDouble();
+    double asDouble() const;
     // Return value represented as a string
     std::string asString(bool addQuotesIfRequired = false) const;
 };
