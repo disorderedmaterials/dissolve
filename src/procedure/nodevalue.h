@@ -41,6 +41,8 @@ class NodeValue
     Expression expression_;
 
     public:
+    // Add local variable to expression
+    std::shared_ptr<ExpressionVariable> addLocalVariable(std::string_view name);
     // Set integer value
     bool set(int value);
     // Set double value

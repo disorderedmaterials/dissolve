@@ -46,6 +46,12 @@ NodeValue::operator double() { return asDouble(); }
  * Data
  */
 
+// Add local variable to expression
+std::shared_ptr<ExpressionVariable> NodeValue::addLocalVariable(std::string_view name)
+{
+    return expression_.addLocalVariable(name);
+}
+
 // Set integer value
 bool NodeValue::set(int value)
 {
