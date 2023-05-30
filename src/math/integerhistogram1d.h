@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "keywords/optionalint.h"
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
 #include <map>
@@ -21,18 +22,10 @@ class IntegerHistogram1D
      * Histogram Data
      */
     private:
-    // Minimum value for data (hard left-edge of first bin)
-    int minimum_;
+    // Minimum value for binning
+    std::optional<int> minimum_{0};
     // Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-    int maximum_;
-    // Bin width
-    int binWidth_;
-    // Number of bins
-    int nBins_;
-    // Histogram bins
-    std::vector<long int> bins_;
-    // Array of bin centres
-    std::vector<int> binCentres_;
+    std::optional<int> maximum_;
     // Accumulated averages
     std::vector<SampledDouble> averages_;
     // Number of values binned over all bins
@@ -41,8 +34,8 @@ class IntegerHistogram1D
     long int nMissed_;
     // Accumulated data
     Data1D accumulatedData_;
-    // key is the bin and value is the count
-    std::map<int, long int> histMap_;
+    // Map of histogram bin values to instantaneous counts and accumulated averages
+    std::map<int, std::pair<long int, std::vector<SampledDouble>>> bins_;
 
     private:
     // Update accumulated data
@@ -56,32 +49,24 @@ class IntegerHistogram1D
     // Set up supplied axis
     static void setUpAxis(int axisMin, int &axisMax, int binWidth, int &nBins, std::vector<int> &binCentres);
     // Return minimum value for data (hard left-edge of first bin)
-    int minimum() const;
+    std::optional<int> minimum() const;
     // Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
-    int maximum() const;
-    // Return bin width
-    int binWidth() const;
-    // Return number of bins
-    int nBins() const;
+    std::optional<int> maximum() const;
     // Bin specified value, returning success
     bool bin(int x);
     // Return number of values binned over all bins
     long int nBinned() const;
     // Accumulate current histogram bins into averages
     void accumulate();
-    // Return Array of x centre-bin values
-    const std::vector<int> &binCentres() const;
     // Return histogram data
-    std::vector<long int> &bins();
-    const std::vector<long int> &bins() const;
+    std::map<int, std::pair<long int, std::vector<SampledDouble>>> &bins();
+    const std::map<int, std::pair<long int, std::vector<SampledDouble>>> &bins() const;
     // Add source histogram data into local array
     void add(IntegerHistogram1D &other, int factor = 1);
     // Return current data
     Data1D data() const;
     // Return accumulated (averaged) data
     const Data1D &accumulatedData() const;
-    // insert value into map
-    bool insertIntoMap(int x);
 
     /*
      * Operators
