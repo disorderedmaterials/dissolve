@@ -15,6 +15,7 @@ add_library(
   context.cpp
   coordinatesets.cpp
   copy.cpp
+  customregion.cpp
   cylindricalregion.cpp
   generalregion.cpp
   integrate1d.cpp
@@ -61,6 +62,7 @@ add_library(
   context.h
   coordinatesets.h
   copy.h
+  customregion.h
   cylindricalregion.h
   generalregion.h
   integrate1d.h

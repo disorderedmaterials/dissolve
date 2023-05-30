@@ -14,6 +14,7 @@
 #include "procedure/nodes/collect3d.h"
 #include "procedure/nodes/coordinatesets.h"
 #include "procedure/nodes/copy.h"
+#include "procedure/nodes/customregion.h"
 #include "procedure/nodes/cylindricalregion.h"
 #include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/integrate1d.h"
@@ -80,6 +81,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                               "General");
 
     // Regions
+    registerProducer<CustomRegionProcedureNode>(ProcedureNode::NodeType::CustomRegion,
+                                                "Generate a custom region based on an expression", "Regions");
     registerProducer<CylindricalRegionProcedureNode>(ProcedureNode::NodeType::CylindricalRegion,
                                                      "Define a cylindrical region in a configuration", "Regions");
     registerProducer<GeneralRegionProcedureNode>(ProcedureNode::NodeType::GeneralRegion,

@@ -51,6 +51,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Collect3D,
         CoordinateSets,
         Copy,
+        CustomRegion,
         CylindricalRegion,
         DynamicSite,
         GeneralRegion,
