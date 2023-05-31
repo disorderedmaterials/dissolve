@@ -4,7 +4,7 @@ description: Pre-built packages for different operating systems
 weight: 2
 ---
 
-Dissolve is available in packaged / installable form for several common operating systems from the [packages]({{< ref "packages" >}}) page.  Note that these packages focus primarily on providing the GUI version of the code, which can be used for setting up / visualising simulations, as well as running smaller-scale simulations such as the [examples]({{< ref "examples" >}}).
+Dissolve is available in packaged / installable form for several common operating systems from the [packages](https://www.projectdissolve.com/packages) page.  Note that these packages focus primarily on providing the GUI version of the code, which can be used for setting up / visualising simulations, as well as running smaller-scale simulations such as the [examples]({{< ref "examples" >}}).
 
 ### Windows 10
 
