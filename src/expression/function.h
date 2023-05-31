@@ -24,6 +24,8 @@ class ExpressionFunctionNode : public ExpressionNode
         SinFunction,
         SqrtFunction,
         TanFunction,
+        ToDegreesFunction,
+        ToRadiansFunction,
         TwoPiFunction
     };
     // Return enum options for NodeTypes

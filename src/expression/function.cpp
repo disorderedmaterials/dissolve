@@ -19,6 +19,8 @@ EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::in
                                                                                       {SqrtFunction, "sqrt", 1},
                                                                                       {PiFunction, "pi"},
                                                                                       {TanFunction, "tan", 1},
+                                                                                      {ToDegreesFunction, "toDeg", 1},
+                                                                                      {ToRadiansFunction, "toRad", 1},
                                                                                       {TwoPiFunction, "twopi"}});
 }
 
@@ -72,16 +74,16 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
                 result = fabs(args[0].asDouble());
             break;
         case (ACosFunction):
-            result = acos(args[0].asDouble()) * DEGRAD;
+            result = acos(args[0].asDouble());
             break;
         case (ASinFunction):
-            result = asin(args[0].asDouble()) * DEGRAD;
+            result = asin(args[0].asDouble());
             break;
         case (ATanFunction):
-            result = atan(args[0].asDouble()) * DEGRAD;
+            result = atan(args[0].asDouble());
             break;
         case (CosFunction):
-            result = cos(args[0].asDouble() / DEGRAD);
+            result = cos(args[0].asDouble());
             break;
         case (ExpFunction):
             result = exp(args[0].asDouble());
@@ -93,7 +95,7 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             result = log10(args[0].asDouble());
             break;
         case (SinFunction):
-            result = sin(args[0].asDouble() / DEGRAD);
+            result = sin(args[0].asDouble());
             break;
         case (SqrtFunction):
             result = sqrt(args[0].asDouble());
@@ -102,7 +104,13 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             result = M_PI;
             break;
         case (TanFunction):
-            result = tan(args[0].asDouble() / DEGRAD);
+            result = tan(args[0].asDouble());
+            break;
+        case (ToDegreesFunction):
+            result = args[0].asDouble() * DEGRAD;
+            break;
+        case (ToRadiansFunction):
+            result = args[0].asDouble() / DEGRAD;
             break;
         case (TwoPiFunction):
             result = 2.0 * M_PI;
