@@ -105,108 +105,107 @@ bool IntegerHistogram1D::bin(int x)
 // Return number of values binned over all bins
 long int IntegerHistogram1D::nBinned() const { return nBinned_; }
 
-//
-//// Accumulate current histogram bins into averages
-// void IntegerHistogram1D::accumulate()
-//{
-//     for (auto n : bins_)
-//         averages_[n] += bins_[n];
-//
-//     // Update accumulated data
-//     updateAccumulatedData();
-// }
-//
+// Accumulate current histogram bins into averages
+void IntegerHistogram1D::accumulate()
+{
+    for (auto &[key, value] : bins_)
+        averages_[value.first] += bins_[value.first];
+
+    // Update accumulated data
+    updateAccumulatedData();
+}
+
 //  Return histogram data
 std::map<int, std::pair<long int, std::vector<SampledDouble>>> &IntegerHistogram1D::bins() { return bins_; }
 const std::map<int, std::pair<long int, std::vector<SampledDouble>>> &IntegerHistogram1D::bins() const { return bins_; }
 
-//// Add source histogram data into local array
-// void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
-//{
-//     if (bins_.size() != other.bins_.size())
-//     {
-//         Messenger::print("BAD_USAGE - Can't add IntegerHistogram1D data since arrays are not the same size ({} vs {}).\n",
-//                          bins_.size(), other.bins_.size());
-//         return;
-//     }
-//     for (auto n : bins_)
-//
-//         bins_[n] += other.bins_[n] * factor;
-// }
-//     // Return current data
-//     Data1D IntegerHistogram1D::data() const
-//     {
-//         Data1D result = accumulatedData_;
-//         std::copy(bins_.begin(), bins_.end(), result.values().begin());
-//         return result;
-//     }
-//
-//     // Return accumulated (averaged) data
-//     const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedData_; }
-//
-//     /*
-//      * Operators
-//      */
-//
-//     void IntegerHistogram1D::operator=(const IntegerHistogram1D &source)
-//     {
-//         minimum_ = source.minimum_;
-//         maximum_ = source.maximum_;
-//         nBinned_ = source.nBinned_;
-//         nMissed_ = source.nMissed_;
-//         bins_ = source.bins_;
-//         averages_ = source.averages_;
-//     }
-//
-//     IntegerHistogram1D IntegerHistogram1D::operator+(const IntegerHistogram1D &other) const
-//     {
-//         assert(bins_.size() == other.bins_.size());
-//
-//         IntegerHistogram1D ret = *this;
-//
-//         std::transform(other.bins_.cbegin(), other.bins_.cend(), ret.bins_.cbegin(), ret.bins_.begin(), std::plus<>());
-//
-//         ret.nBinned_ = this->nBinned_ + other.nBinned_;
-//         ret.nMissed_ = this->nMissed_ + other.nMissed_;
-//
-//         return ret;
-//     }
-//
-//     /*
-//      * Serialisation
-//      */
-//
-//     // Read data through specified LineParser
-//     bool IntegerHistogram1D::deserialise(LineParser & parser)
-//     {
-//         clear();
-//
-//         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-//             return false;
-//         initialise(parser.argd(0), parser.argd(1), parser.argd(2));
-//
-//         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-//             return false;
-//         nBinned_ = parser.argli(0);
-//         nMissed_ = parser.argli(1);
-//
-// for (auto n : bins_)
-//     if (!averages_[n].deserialise(parser))
-//         return false;
+// Add source histogram data into local array
+void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
+{
+    if (bins_.size() != other.bins_.size())
+    {
+        Messenger::print("BAD_USAGE - Can't add IntegerHistogram1D data since arrays are not the same size ({} vs {}).\n",
+                         bins_.size(), other.bins_.size());
+        return;
+    }
+    for (auto &[key, value] : bins_)
 
-// return true;
-//    }
+        bins_[value.first] += other.bins_[value.first] * factor;
+}
+// Return current data
+Data1D IntegerHistogram1D::data() const
+{
+    Data1D result = accumulatedData_;
+    std::copy(bins_.begin(), bins_.end(), result.values().begin());
+    return result;
+}
+
+// Return accumulated (averaged) data
+const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedData_; }
+
+/*
+ * Operators
+ */
+
+// void IntegerHistogram1D::operator=(const IntegerHistogram1D &source)
+//{
+//     minimum_ = source.minimum_;
+//     maximum_ = source.maximum_;
+//     nBinned_ = source.nBinned_;
+//     nMissed_ = source.nMissed_;
+//     bins_ = source.bins_;
+//     averages_ = source.averages_;
+// }
+
+// IntegerHistogram1D IntegerHistogram1D::operator+(const IntegerHistogram1D &other) const
+//{
+//     assert(bins_.size() == other.bins_.size());
 //
-//    // Write data through specified LineParser
-//    bool IntegerHistogram1D::serialise(LineParser & parser) const
-//    {
-//        if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, 1))
-//            return false;
-//        if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
-//            return false;
-//        // for (auto n : bins_)
-//        //     if (!averages_.at(n).serialise(parser))
-//        //         return false;
+//     IntegerHistogram1D ret = *this;
 //
-//        return true;
-//    }
+//     std::transform(other.bins_.cbegin(), other.bins_.cend(), ret.bins_.cbegin(), ret.bins_.begin(), std::plus<>());
+//
+//     ret.nBinned_ = this->nBinned_ + other.nBinned_;
+//     ret.nMissed_ = this->nMissed_ + other.nMissed_;
+//
+//     return ret;
+// }
+
+/*
+ * Serialisation
+ */
+
+// Read data through specified LineParser
+bool IntegerHistogram1D::deserialise(LineParser &parser)
+{
+    clear();
+
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    initialise(parser.argd(0), parser.argd(1), parser.argd(2));
+
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    nBinned_ = parser.argli(0);
+    nMissed_ = parser.argli(1);
+
+    for (auto &[key, value] : bins_)
+        if (!averages_[value.first].deserialise(parser))
+            return false;
+
+    return true;
+}
+
+// Write data through specified LineParser
+bool IntegerHistogram1D::serialise(LineParser &parser) const
+{
+    if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, 1))
+        return false;
+    if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
+        return false;
+    for (auto &[key, value] : bins_)
+        if (!averages_.at(value.first).serialise(parser))
+            return false;
+
+    return true;
+}

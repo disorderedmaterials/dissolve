@@ -71,9 +71,9 @@ class IntegerHistogram1D
     /*
      * Operators
      */
-    public:
-    void operator=(const IntegerHistogram1D &source);
-    IntegerHistogram1D operator+(const IntegerHistogram1D &other) const;
+    //public:
+    //void operator=(const IntegerHistogram1D &source);
+    //IntegerHistogram1D operator+(const IntegerHistogram1D &other) const;
 
     /*
      * Serialisation
