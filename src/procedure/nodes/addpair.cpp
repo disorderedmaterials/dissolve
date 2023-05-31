@@ -227,22 +227,21 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
     }
 
     // Get the positioningType_ type and rotation flag
-    Region region;
-
     Messenger::print("[AddPair] Positioning type is '{}' and rotation is {}.\n",
                      AddPairProcedureNode::positioningTypes().keyword(positioningType_), rotate_ ? "on" : "off");
+
+    // Checks for regional positioning
     if (positioningType_ == AddPairProcedureNode::PositioningType::Region)
     {
         if (!region_)
             return Messenger::error("Positioning type set to '{}' but no region was given.\n",
                                     AddPairProcedureNode::positioningTypes().keyword(positioningType_));
 
-        region = region_->generateRegion(procedureContext.configuration());
-        if (!region.isValid())
+        if (!region_->region().isValid())
             return Messenger::error("Region '{}' is invalid, probably because it contains no free space.\n", region_->name());
 
         Messenger::print("[AddPair] Target region ('{}') covers {:.2f}% of the box volume.\n", region_->name(),
-                         region.freeVoxelFraction() * 100.0);
+                         region_->region().freeVoxelFraction() * 100.0);
     }
 
     // Now we add the molecules
@@ -273,7 +272,7 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
                 newCentre = box->getReal({randomBuffer.random(), randomBuffer.random(), randomBuffer.random()});
                 break;
             case (AddPairProcedureNode::PositioningType::Region):
-                newCentre = region.randomCoordinate();
+                newCentre = region_->region().randomCoordinate();
                 break;
             case (AddPairProcedureNode::PositioningType::Central):
                 newCentre = box->getReal({0.5, 0.5, 0.5});
@@ -281,8 +280,8 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
             case (AddPairProcedureNode::PositioningType::Current):
                 break;
             default:
-                Messenger::error("Unrecognised positioning type.\n");
-                break;
+                throw(std::runtime_error(
+                    fmt::format("Positioning type {} not handled.\n", positioningTypes().keyword(positioningType_))));
         }
 
         // Move the molecule pair

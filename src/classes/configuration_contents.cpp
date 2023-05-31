@@ -19,6 +19,7 @@ void Configuration::empty()
     speciesPopulations_.clear();
     globalPotentials_.clear();
     targetedPotentials_.clear();
+    cells_.clear();
 
     ++contentsVersion_;
 }
@@ -163,9 +164,9 @@ void Configuration::removeMolecules(const Species *sp)
                                     {
                                         if (mol->species() == sp)
                                         {
-                                            for (auto &i : mol->atoms())
-                                                atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(),
-                                                                          [&i](const auto &at) { return i == &at; }));
+                                            auto offset = mol->globalAtomOffset();
+                                            for (auto i = 0; i < mol->nAtoms(); ++i)
+                                                atoms_[offset + i].setMolecule(nullptr);
                                             adjustSpeciesPopulation(mol->species(), -1);
                                             return true;
                                         }
@@ -173,6 +174,11 @@ void Configuration::removeMolecules(const Species *sp)
                                             return false;
                                     }),
                      molecules_.end());
+
+    // Now remove any atoms which have no molecule parent
+    atoms_.erase(std::remove_if(atoms_.begin(), atoms_.end(), [](const auto &atom) { return !atom.molecule(); }), atoms_.end());
+
+    updateObjectRelationships();
 }
 
 // Remove specified Molecules from the Configuration
@@ -183,9 +189,9 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                                     {
                                         if (std::find(molecules.begin(), molecules.end(), mol) != molecules.end())
                                         {
-                                            for (auto &i : mol->atoms())
-                                                atoms_.erase(std::find_if(atoms_.begin(), atoms_.end(),
-                                                                          [i](const auto &at) { return i == &at; }));
+                                            auto offset = mol->globalAtomOffset();
+                                            for (auto i = 0; i < mol->nAtoms(); ++i)
+                                                atoms_[offset + i].setMolecule(nullptr);
                                             adjustSpeciesPopulation(mol->species(), -1);
                                             return true;
                                         }
@@ -193,6 +199,11 @@ void Configuration::removeMolecules(const std::vector<std::shared_ptr<Molecule>>
                                             return false;
                                     }),
                      molecules_.end());
+
+    // Now remove any atoms which have no molecule parent
+    atoms_.erase(std::remove_if(atoms_.begin(), atoms_.end(), [](const auto &atom) { return !atom.molecule(); }), atoms_.end());
+
+    updateObjectRelationships();
 }
 
 // Return number of Molecules in Configuration

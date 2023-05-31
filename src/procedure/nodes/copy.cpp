@@ -79,5 +79,7 @@ bool CopyProcedureNode::execute(const ProcedureContext &procedureContext)
         cfg->copyMolecule(mol);
     }
 
+    cfg->updateObjectRelationships();
+
     return true;
 }

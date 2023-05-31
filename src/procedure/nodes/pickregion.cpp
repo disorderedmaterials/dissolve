@@ -19,11 +19,18 @@ PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionPro
  * Execute
  */
 
-// Execute node
-bool PickRegionProcedureNode::execute(const ProcedureContext &procedureContext)
+// Prepare any necessary data, ready for execution
+bool PickRegionProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     if (!region_)
         return Messenger::error("A region must be supplied to PickRegion.\n");
+
+    return true;
+}
+
+// Execute node
+bool PickRegionProcedureNode::execute(const ProcedureContext &procedureContext)
+{
     Messenger::print("[PickRegion] Molecules will be selected from {}.\n", moleculePoolName());
     Messenger::print("[PickRegion] Target region is '{}'.\n", region_->name());
 
@@ -31,7 +38,7 @@ bool PickRegionProcedureNode::execute(const ProcedureContext &procedureContext)
     pickedMolecules_.clear();
 
     // Get the updated region
-    auto region = region_->generateRegion(procedureContext.configuration());
+    auto &region = region_->region();
     if (!region.isValid())
     {
         Messenger::warn("Region will not capture any molecules...\n");
