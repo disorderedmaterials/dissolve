@@ -153,37 +153,6 @@ Data1D IntegerHistogram1D::data() const
 const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedData_; }
 
 /*
-<<<<<<< HEAD
-=======
- * Operators
- */
-
-// void IntegerHistogram1D::operator=(const IntegerHistogram1D &source)
-//{
-//     minimum_ = source.minimum_;
-//     maximum_ = source.maximum_;
-//     nBinned_ = source.nBinned_;
-//     nMissed_ = source.nMissed_;
-//     bins_ = source.bins_;
-//     averages_ = source.averages_;
-// }
-
-// IntegerHistogram1D IntegerHistogram1D::operator+(const IntegerHistogram1D &other) const
-//{
-//     assert(bins_.size() == other.bins_.size());
-//
-//     IntegerHistogram1D ret = *this;
-//
-//     std::transform(other.bins_.cbegin(), other.bins_.cend(), ret.bins_.cbegin(), ret.bins_.begin(), std::plus<>());
-//
-//     ret.nBinned_ = this->nBinned_ + other.nBinned_;
-//     ret.nMissed_ = this->nMissed_ + other.nMissed_;
-//
-//     return ret;
-// }
-
-/*
->>>>>>> abf1b949c (added in de/serialise and averages)
  * Serialisation
  */
 
