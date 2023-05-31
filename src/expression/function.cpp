@@ -115,6 +115,9 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
         case (TwoPiFunction):
             result = 2.0 * M_PI;
             break;
+        default:
+            throw(std::runtime_error(
+                fmt::format("Expression function '{}' has not been implemented.\n", internalFunctions().keyword(function_))));
     }
 
     return result;
