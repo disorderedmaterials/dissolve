@@ -109,7 +109,7 @@ long int IntegerHistogram1D::nBinned() const { return nBinned_; }
 void IntegerHistogram1D::accumulate()
 {
     for (auto &[key, value] : bins_)
-        averages_[value.first] += bins_[value.first];
+        averages_[value.first] += bins_[value.first].first;
 
     // Update accumulated data
     updateAccumulatedData();
@@ -130,7 +130,7 @@ void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
     }
     for (auto &[key, value] : bins_)
 
-        bins_[value.first] += other.bins_[value.first] * factor;
+        bins_[value.first].first += other.bins_[value.first].first * factor;
 }
 // Return current data
 Data1D IntegerHistogram1D::data() const
