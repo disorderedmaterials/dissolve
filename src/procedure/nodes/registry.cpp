@@ -7,6 +7,7 @@
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/calculateangle.h"
 #include "procedure/nodes/calculatedistance.h"
+#include "procedure/nodes/calculateexpression.h"
 #include "procedure/nodes/calculatevector.h"
 #include "procedure/nodes/collect1d.h"
 #include "procedure/nodes/collect2d.h"
