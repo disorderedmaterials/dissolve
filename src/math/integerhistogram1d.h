@@ -33,8 +33,12 @@ class IntegerHistogram1D
     // Accumulated data
     Data1D accumulatedData_;
     // Map of histogram bin values to instantaneous counts and accumulated averages
+<<<<<<< HEAD
     std::map<int, long int> raw_;
     std::map<int, SampledDouble> averages_;
+=======
+    std::map<int, std::pair<long int, SampledDouble>> bins_;
+>>>>>>> c273796a9 (modified accumulated data and bin)
 
     private:
     // Update accumulated data
@@ -57,6 +61,14 @@ class IntegerHistogram1D
     long int nBinned() const;
     // Accumulate current histogram bins into averages
     void accumulate();
+<<<<<<< HEAD
+=======
+    // Return histogram data
+    std::map<int, std::pair<long int, SampledDouble>> &bins();
+    const std::map<int, std::pair<long int, SampledDouble>> &bins() const;
+    // Add source histogram data into local array
+    void add(IntegerHistogram1D &other, int factor = 1);
+>>>>>>> c273796a9 (modified accumulated data and bin)
     // Return current data
     Data1D data() const;
     // Return accumulated (averaged) data
