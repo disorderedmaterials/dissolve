@@ -26,8 +26,6 @@ class IntegerHistogram1D
     std::optional<int> minimum_{0};
     // Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
     std::optional<int> maximum_;
-    // Accumulated averages
-    std::vector<SampledDouble> averages_;
     // Number of values binned over all bins
     long int nBinned_;
     // Number of points missed (out of bin range)
@@ -35,7 +33,7 @@ class IntegerHistogram1D
     // Accumulated data
     Data1D accumulatedData_;
     // Map of histogram bin values to instantaneous counts and accumulated averages
-    std::map<int, std::pair<long int, std::vector<SampledDouble>>> bins_;
+    std::map<int, std::pair<long int, SampledDouble>> bins_;
 
     private:
     // Update accumulated data
@@ -59,8 +57,8 @@ class IntegerHistogram1D
     // Accumulate current histogram bins into averages
     void accumulate();
     // Return histogram data
-    std::map<int, std::pair<long int, std::vector<SampledDouble>>> &bins();
-    const std::map<int, std::pair<long int, std::vector<SampledDouble>>> &bins() const;
+    std::map<int, std::pair<long int, SampledDouble>> &bins();
+    const std::map<int, std::pair<long int, SampledDouble>> &bins() const;
     // Add source histogram data into local array
     void add(IntegerHistogram1D &other, int factor = 1);
     // Return current data

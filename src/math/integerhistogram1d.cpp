@@ -4,6 +4,7 @@
 #include "math/integerhistogram1d.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
+#include "base/sysfunc.h"
 #include "templates/algorithms.h"
 #include <cassert>
 
@@ -24,7 +25,6 @@ void IntegerHistogram1D::clear()
     nBinned_ = 0;
     nMissed_ = 0;
     bins_.clear();
-    averages_.clear();
 }
 
 /*
@@ -41,8 +41,6 @@ void IntegerHistogram1D::updateAccumulatedData()
     for (auto n = 0; n < bins_.size(); ++n)
     {
         accumulatedData_.xAxis(n) = n;
-        accumulatedData_.value(n) = averages_[n];
-        accumulatedData_.error(n) = averages_[n].stDev();
     }
 }
 
@@ -57,8 +55,6 @@ void IntegerHistogram1D::initialise(int xMin, int xMax, int binWidth)
 
     // Create the arrays
     bins_.clear();
-    averages_.clear();
-    averages_.resize(bins_.size());
 }
 
 // Zero histogram bins
@@ -91,15 +87,8 @@ std::optional<int> IntegerHistogram1D::maximum() const { return maximum_; }
 // Bin specified value, returning success
 bool IntegerHistogram1D::bin(int x)
 {
-    auto bin = x;
-    if (bins_.find(bin) == bins_.end())
-        bins_[bin] = std::make_pair(1, averages_);
-    else
-    {
-        bins_[bin].first++;
-        bins_[bin].second = averages_;
-    }
-    ++nBinned_;
+    // check in range
+    bins_[x].first++;
 }
 
 // Return number of values binned over all bins
@@ -109,15 +98,15 @@ long int IntegerHistogram1D::nBinned() const { return nBinned_; }
 void IntegerHistogram1D::accumulate()
 {
     for (auto &[key, value] : bins_)
-        averages_[value.first] += bins_[value.first].first;
+        value.second += (SampledDouble)value.first;
 
     // Update accumulated data
     updateAccumulatedData();
 }
 
 //  Return histogram data
-std::map<int, std::pair<long int, std::vector<SampledDouble>>> &IntegerHistogram1D::bins() { return bins_; }
-const std::map<int, std::pair<long int, std::vector<SampledDouble>>> &IntegerHistogram1D::bins() const { return bins_; }
+std::map<int, std::pair<long int, SampledDouble>> &IntegerHistogram1D::bins() { return bins_; }
+const std::map<int, std::pair<long int, SampledDouble>> &IntegerHistogram1D::bins() const { return bins_; }
 
 // Add source histogram data into local array
 void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
@@ -136,7 +125,11 @@ void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
 Data1D IntegerHistogram1D::data() const
 {
     Data1D result = accumulatedData_;
-    std::copy(bins_.begin(), bins_.end(), result.values().begin());
+    for (auto &[key, value] : bins_)
+    {
+        result.values().push_back(value.first);
+    }
+    /*std::copy(bins_.begin(), bins_.end(), result.values().begin());*/
     return result;
 }
 
@@ -189,23 +182,17 @@ bool IntegerHistogram1D::deserialise(LineParser &parser)
     nBinned_ = parser.argli(0);
     nMissed_ = parser.argli(1);
 
-    for (auto &[key, value] : bins_)
-        if (!averages_[value.first].deserialise(parser))
-            return false;
-
     return true;
 }
 
 // Write data through specified LineParser
 bool IntegerHistogram1D::serialise(LineParser &parser) const
 {
-    if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, 1))
+    if (!parser.writeLineF("{} {} {} {}\n", DissolveSys::btoa(minimum_.has_value()), minimum_.value_or(0),
+                           DissolveSys::btoa(maximum_.has_value()), maximum_.value_or(0)))
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
-    for (auto &[key, value] : bins_)
-        if (!averages_.at(value.first).serialise(parser))
-            return false;
 
     return true;
 }
