@@ -3,6 +3,7 @@
 #pragma once
 
 #include "classes/pair_iter.h"
+#include "classes/triplet_iterator.h"
 #include "templates/parallel_defs.h"
 #include <fmt/format.h>
 #include <functional>
@@ -228,6 +229,18 @@ void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
              });
 }
 
+template <typename ParalellPolicy, class Lam>
+void for_each_triplet(ParalellPolicy policy, int sizeX, int sizeY, int sizeZ, Lam lambda)
+{
+    TripletIterator u(sizeX, sizeY, sizeZ);
+    for_each(policy, u.begin(), u.end(),
+             [&lambda](const auto triplet)
+             {
+                auto &[x,y,z] = triplet;
+                lambda(x,y,z);
+             });
+}
+
 // Perform an operation on every pair of elements in a range (begin <= i < end)
 template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy policy, int begin, int end, Lam lambda)
 {
@@ -239,6 +252,10 @@ template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy 
                  lambda(i, j);
              });
 }
+
+
+
+
 } // namespace dissolve
 
 // Join elements into a delimited string

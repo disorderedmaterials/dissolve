@@ -10,13 +10,13 @@ namespace UnitTest
 
 TEST(TripletIteratorTest, Triplets)
 {
-    int x, y, z, size = 100;
-    TripletIterator it(size);
-    for (x = 0; x < size; ++x)
+    int x, y, z, sizeX = 100, sizeY = 100, sizeZ = 100;
+    TripletIterator it(sizeX, sizeY, sizeZ);
+    for (x = 0; x < sizeX; ++x)
     {
-        for (y = x; y < size; ++y)
+        for (y = x; y < sizeY; ++y)
         {
-            for (z = y; z < size; ++z)
+            for (z = y; z < sizeZ; ++z)
             {
                 auto [i, j, k] = *it;
                 EXPECT_EQ(i, x);

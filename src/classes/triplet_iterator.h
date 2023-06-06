@@ -8,7 +8,9 @@
 class TripletIterator
 {
     private:
-    int size_;
+    int sizeX_;
+    int sizeY_;
+    int sizeZ_;
     int x_;
     int y_;
     int z_;
@@ -23,7 +25,7 @@ class TripletIterator
     using pointer = std::tuple<int, int, int> *;
     using iterator_category = std::random_access_iterator_tag;
 
-    TripletIterator(int size = 0, int index = 0);
+    TripletIterator(int sizeX = 0, int sizeY=0, int sizeZ=0, int index = 0);
 
     TripletIterator begin() const;
     TripletIterator end() const;
