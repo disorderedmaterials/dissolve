@@ -84,6 +84,7 @@ std::optional<int> IntegerHistogram1D::minimum() const { return minimum_; }
 
 // Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
 std::optional<int> IntegerHistogram1D::maximum() const { return maximum_; }
+
 // Bin specified value, returning success
 bool IntegerHistogram1D::bin(int x)
 {
@@ -106,7 +107,7 @@ void IntegerHistogram1D::accumulate()
     updateAccumulatedData();
 }
 
-//  Return histogram data
+// Return histogram data
 std::map<int, std::pair<long int, SampledDouble>> &IntegerHistogram1D::bins() { return bins_; }
 const std::map<int, std::pair<long int, SampledDouble>> &IntegerHistogram1D::bins() const { return bins_; }
 
@@ -123,6 +124,7 @@ void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
 
         bins_[value.first].first += other.bins_[value.first].first * factor;
 }
+
 // Return current data
 Data1D IntegerHistogram1D::data() const
 {
