@@ -11,7 +11,7 @@ namespace UnitTest
 TEST(TripletIteratorTest, Triplets)
 {
     int x, y, z, size = 100;
-    TripletIterator it(100);
+    TripletIterator it(size);
     for (x = 0; x < size; ++x)
     {
         for (y = x; y < size; ++y)
@@ -24,7 +24,9 @@ TEST(TripletIteratorTest, Triplets)
                 EXPECT_EQ(k, z);
                 ++it;
             }
+            
         }
+        
     }
 }
 } // namespace UnitTest

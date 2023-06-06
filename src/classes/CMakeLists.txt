@@ -44,6 +44,7 @@ add_library(
   pairpotential.cpp
   potentialmap.cpp
   pair_iter.cpp
+  triplet_iterator.cpp
   partialset.cpp
   partialsetaccumulator.cpp
   region.cpp
