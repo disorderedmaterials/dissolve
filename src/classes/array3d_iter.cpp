@@ -15,11 +15,10 @@ Array3DIterator::Array3DIterator(int sizeX, int sizeY, int sizeZ, int index) : s
 
 void Array3DIterator::fromIndex(int index)
 {
+
     x_ = index % sizeX_;
-    index/= sizeX_;
-    y_ = index % sizeY_;
-    index/=sizeY_;
-    z_ = index;
+    y_ = (index/sizeX_) % sizeY_;
+    z_ = (index/sizeX_)/sizeY_;
 }
 
 int Array3DIterator::toIndex() const
