@@ -110,9 +110,9 @@ class SelectProcedureNode : public ProcedureNode
     // Number of selections made by the node
     int nSelections_;
     // Cumulative number of sites ever selected
-    int nCumulativeSites_;
+    unsigned long int nCumulativeSites_;
     // Total number of sites available per selection
-    int nAvailableSites_;
+    unsigned long int nAvailableSites_;
 
     public:
     // Selection Populations
@@ -128,9 +128,9 @@ class SelectProcedureNode : public ProcedureNode
     // Return the average number of sites selected
     double nAverageSites() const;
     // Return the cumulative number of sites ever selected
-    int nCumulativeSites() const;
+    unsigned long int nCumulativeSites() const;
     // Return total number of sites available per selection
-    int nAvailableSites() const;
+    unsigned long int nAvailableSites() const;
     // Return current site
     const Site *currentSite() const;
 

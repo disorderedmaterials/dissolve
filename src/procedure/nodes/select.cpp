@@ -175,10 +175,10 @@ int SelectProcedureNode::nSitesInStack() const { return sites_.size(); }
 double SelectProcedureNode::nAverageSites() const { return double(nCumulativeSites_) / nSelections_; }
 
 // Return the cumulative number of sites ever selected
-int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
+unsigned long int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
 
 // Return total number of sites available per selection
-int SelectProcedureNode::nAvailableSites() const { return double(nAvailableSites_) / nSelections_; }
+unsigned long int SelectProcedureNode::nAvailableSites() const { return double(nAvailableSites_) / nSelections_; }
 
 // Return current site
 const Site *SelectProcedureNode::currentSite() const
