@@ -56,4 +56,37 @@ TEST(Array3DIteratorTest, SegFault)
                 EXPECT_EQ(true, flag);
             }
 }
+
+TEST(Array3DIteratorTest, Idx)
+{
+    int x, y, z, sizeX = 10, sizeY = 10, sizeZ = 10;
+    Array3D<std::pair<Vec3<int>, bool>> arr;
+    arr.initialise(sizeX, sizeY, sizeZ);
+
+    Array3DIterator it(sizeX, sizeY, sizeZ);
+    
+    for (auto i = it.begin(); i <= it.end(); ++i)
+    {
+        auto [x,y,z] = *i;
+        arr[{x,y,z}] = {Vec3<int>{x,y,z}, true};
+    }
+    for (x = 0; x < sizeX; ++x)
+        for (y=0; y< sizeY; ++y)
+            for (z=0; z<sizeZ; ++z)
+            {
+                auto vec = arr[{x,y,z}].first;
+                auto flag = arr[{x,y,z}].second;
+                EXPECT_EQ(x, vec.x);
+                EXPECT_EQ(y, vec.y);
+                EXPECT_EQ(z, vec.z);
+                EXPECT_EQ(flag, true);
+
+            }
+
+    
+
+    
+}
+
+
 } // namespace UnitTest

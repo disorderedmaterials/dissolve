@@ -12,16 +12,14 @@ Array3DIterator::Array3DIterator(int sizeX, int sizeY, int sizeZ, int index) : s
     else
         fromIndex(index);
 }
-
 void Array3DIterator::fromIndex(int index)
 {
-
     x_ = index % sizeX_;
-    y_ = (index / sizeX_) % sizeY_;
-    z_ = (index / sizeX_) / sizeY_;
+    index /= sizeX_;
+    y_ = index % sizeY_;
+    z_ = index / sizeY_;
 }
-
-int Array3DIterator::toIndex() const { return x_ + sizeX_ * y_ + sizeX_ * sizeY_ * z_; }
+int Array3DIterator::toIndex() const { return x_ + sizeX_ * (y_ + sizeY_ * z_); }
 
 bool Array3DIterator::operator<(const Array3DIterator &other) const
 {
@@ -50,12 +48,12 @@ Array3DIterator &Array3DIterator::operator++()
     if (z_ >= sizeZ_)
     {
         y_ += 1;
+        z_ = 0;
         if (y_ >= sizeY_)
         {
             x_ += 1;
             y_ = 0;
         }
-        z_ = 0;
     }
     return *this;
 }
@@ -79,4 +77,4 @@ Array3DIterator &Array3DIterator::operator+=(difference_type forward)
 Array3DIterator::value_type Array3DIterator::operator[](difference_type i) const { return *(*this + i); }
 
 Array3DIterator Array3DIterator::begin() const { return Array3DIterator(sizeX_, sizeY_, sizeZ_, 0); }
-Array3DIterator Array3DIterator::end() const { return Array3DIterator(sizeX_, sizeY_, sizeZ_, (sizeX_ * sizeY_ * sizeZ_)-1); }
+Array3DIterator Array3DIterator::end() const { return Array3DIterator(sizeX_, sizeY_, sizeZ_, (sizeX_ * sizeY_ * sizeZ_) - 1); }
