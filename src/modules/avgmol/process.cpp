@@ -68,6 +68,13 @@ bool AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (sp != targetSpecies_)
         return Messenger::error("Internal error - target site parent is not the same as the target species.\n");
 
+    Messenger::print("AvgMol: Target site (species) is {} ({}).\n", targetSite_->name(), targetSpecies_->name());
+    if (exportFileAndFormat_.hasFilename())
+        Messenger::print("AvgMol: Coordinates will be exported to '{}' ({}).\n", exportFileAndFormat_.filename(),
+                         exportFileAndFormat_.formatDescription());
+
+    Messenger::print("\n");
+
     // Update arrays
     updateArrays(dissolve);
 
@@ -107,6 +114,13 @@ bool AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     }
 
     updateSpecies(sampledX, sampledY, sampledZ);
+
+    // Export data?
+    if (exportFileAndFormat_.hasFilename())
+    {
+        if (!exportFileAndFormat_.exportData(&averageSpecies_))
+            return false;
+    }
 
     return true;
 }

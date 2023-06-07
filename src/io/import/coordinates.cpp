@@ -69,7 +69,7 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, std::vector<Vec3
 {
     // Check the format
     if (!formatIndex_)
-        return Messenger::error("No format set for TrajectoryImportFileFormat so can't import.\n");
+        return Messenger::error("No format set for ConfigurationImportFileFormat so can't import.\n");
 
     // Import the data
     auto result = false;

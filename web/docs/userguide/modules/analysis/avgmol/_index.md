@@ -24,3 +24,9 @@ Results of the average molecule calculation can be used as a display reference i
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`Site`|`Site`|--|{{< required-label >}}Target site about which to calculate the average species geometry. Must be an oriented site.|
+
+## Export
+
+|Keyword|Arguments|Default|Description|
+|:------|:--:|:-----:|-----------|
+|`ExportCoordinates`|[`SpeciesExportFileFormat`]({{< ref speciesformat >}})|--|File and format to export average species coordinates to.|

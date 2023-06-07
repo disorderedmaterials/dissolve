@@ -6,6 +6,7 @@ add_library(
   data3d.cpp
   forces.cpp
   pairpotential.cpp
+  species.cpp
   trajectory.cpp
   values.cpp
   coordinates.h
@@ -14,6 +15,7 @@ add_library(
   data3d.h
   forces.h
   pairpotential.h
+  species.h
   trajectory.h
   values.h
 )
