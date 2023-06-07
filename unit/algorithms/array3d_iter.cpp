@@ -40,13 +40,12 @@ TEST(Array3DIteratorTest, SegFault)
     Array3DIterator it(sizeX, sizeY, sizeZ);
     EXPECT_EQ(it.end(), it.begin()+ 999);
     dissolve::for_each_triplet(ParallelPolicies::seq, it.begin(), it.end(),
-                                [&](auto x1, auto y1, auto z1)
-                                {
-                                    arr[{x1,y1,z1}] = {Vec3<int>{x1,y1,z1}, true};
-                                });
+                               [&](auto x1, auto y1, auto z1) {
+                                   arr[{x1, y1, z1}] = {Vec3<int>{x1, y1, z1}, true};
+                               });
     for (x = 0; x < sizeX; ++x)
-        for (y=0; y< sizeY; ++y)
-            for (z=0; z<sizeZ; ++z)
+        for (y = 0; y < sizeY; ++y)
+            for (z = 0; z < sizeZ; ++z)
             {
                 Vec3<int> vec = arr[{x,y,z}].first;
                 bool flag = arr[{x,y,z}].second;
@@ -71,8 +70,8 @@ TEST(Array3DIteratorTest, Idx)
         arr[{x,y,z}] = {Vec3<int>{x,y,z}, true};
     }
     for (x = 0; x < sizeX; ++x)
-        for (y=0; y< sizeY; ++y)
-            for (z=0; z<sizeZ; ++z)
+        for (y = 0; y < sizeY; ++y)
+            for (z = 0; z < sizeZ; ++z)
             {
                 auto vec = arr[{x,y,z}].first;
                 auto flag = arr[{x,y,z}].second;
