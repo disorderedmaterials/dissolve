@@ -37,7 +37,7 @@ bool Array3DIterator::operator==(const Array3DIterator &other) const
     return x_ == other.x_ && y_ == other.y_ && z_ == other.z_;
 }
 
-bool Array3DIterator::operator!=(const Array3DIterator &other) const 
+bool Array3DIterator::operator!=(const Array3DIterator &other) const
 {
     return x_ != other.x_ || y_ != other.y_ || z_ != other.z_;
 }

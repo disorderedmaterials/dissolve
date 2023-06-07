@@ -235,8 +235,8 @@ void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
     for_each(policy, begin, end,
              [&lambda](const auto triplet)
              {
-                auto &[x, y, z] = triplet;
-                lambda(x, y, z);
+                 auto &[x, y, z] = triplet;
+                 lambda(x, y, z);
              });
 }
 
