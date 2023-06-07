@@ -3,16 +3,15 @@
 
 #pragma once
 
+#include "classes/array3d_iter.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "templates/algorithms.h"
 #include "templates/array3d.h"
 #include "templates/parallel_defs.h"
 #include "templates/vector3.h"
-#include "templates/algorithms.h"
-#include "array3d_iter.h"
 #include <vector>
-#include <iostream>
-#include <assert.h>
+
 // Forward Declarations
 class Configuration;
 
@@ -53,12 +52,14 @@ class Region
         Array3DIterator iterator(nVoxels_.x, nVoxels_.y, nVoxels_.z); 
 
         // Iterate voxels in parallel
-        dissolve::for_each_triplet(ParallelPolicies::par, iterator.begin(), iterator.end(),
-            [&](auto x, auto y, auto z) {
-                voxelMap_[{x, y, z}] = {
-                    Vec3<int>(x, y, z),
-                    voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
-                                                               (z + 0.5) * voxelSizeFrac_.z}))
+        dissolve::for_each_triplet(
+                ParallelPolicies::par, iterator.begin(), iterator.end(),
+                [&](auto x, auto y, auto z)
+                {
+                    voxelMap_[{x, y, z}] = {
+                        Vec3<int>(x, y, z),
+                        voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
+                                                                (z + 0.5) * voxelSizeFrac_.z}))
                     };}
         );
 

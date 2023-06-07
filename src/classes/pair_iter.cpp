@@ -4,6 +4,7 @@
 #include "classes/pair_iter.h"
 #include <cmath>
 
+
 PairIterator::PairIterator(int size, int index) : size_(size)
 {
     if (index == 0)
@@ -14,6 +15,11 @@ PairIterator::PairIterator(int size, int index) : size_(size)
 
 void PairIterator::fromIndex(int index)
 {
+    /*
+        Why not:
+            x_ = index / size
+            y_ = index % size
+    */
     double Np = size_ + 0.5;
     x_ = floor(Np - sqrt(Np * Np - 2 * index));
     y_ = x_ + index - (x_ * Np - 0.5 * x_ * x_);

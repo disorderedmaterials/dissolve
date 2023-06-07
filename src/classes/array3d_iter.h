@@ -25,7 +25,7 @@ class Array3DIterator
     using pointer = std::tuple<int, int, int> *;
     using iterator_category = std::random_access_iterator_tag;
 
-    Array3DIterator(int sizeX = 0, int sizeY=0, int sizeZ=0, int index = 0);
+    Array3DIterator(int sizeX = 0, int sizeY = 0, int sizeZ = 0, int index = 0);
 
     Array3DIterator begin() const;
     Array3DIterator end() const;
