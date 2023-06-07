@@ -53,9 +53,9 @@ Array3DIterator &Array3DIterator::operator++()
         if (y_ >= sizeY_)
         {
             x_ += 1;
-            y_ = x_;
+            y_ = 0;
         }
-        z_ = y_;
+        z_ = 0;
     }
     return *this;
 }
@@ -79,4 +79,4 @@ Array3DIterator &Array3DIterator::operator+=(difference_type forward)
 Array3DIterator::value_type Array3DIterator::operator[](difference_type i) const { return *(*this + i); }
 
 Array3DIterator Array3DIterator::begin() const { return Array3DIterator(sizeX_, sizeY_, sizeZ_, 0); }
-Array3DIterator Array3DIterator::end() const { return Array3DIterator(sizeX_, sizeY_, sizeZ_, (sizeX_ * sizeY_ * sizeZ_) - 1); }
+Array3DIterator Array3DIterator::end() const { return Array3DIterator(sizeX_, sizeY_, sizeZ_, (sizeX_ * sizeY_ * sizeZ_)-1); }

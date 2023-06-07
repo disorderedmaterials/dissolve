@@ -17,9 +17,9 @@ TEST(Array3DIteratorTest, Array3D)
     Array3DIterator it(sizeX, sizeY, sizeZ);
     for (x = 0; x < sizeX; ++x)
     {
-        for (y = x; y < sizeY; ++y)
+        for (y = 0; y < sizeY; ++y)
         {
-            for (z = y; z < sizeZ; ++z)
+            for (z = 0; z < sizeZ; ++z)
             {
                 auto [i, j, k] = *it;
                 EXPECT_EQ(i, x);
