@@ -3,7 +3,7 @@
 #pragma once
 
 #include "classes/pair_iter.h"
-#include "classes/triplet_iterator.h"
+#include "classes/array3d_iter.h"
 #include "templates/parallel_defs.h"
 #include <fmt/format.h>
 #include <functional>
@@ -236,7 +236,6 @@ void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
              [&lambda](const auto triplet)
              {
                 auto &[x,y,z] = triplet;
-                //if (x < sizeX && y < sizeY && z < sizeZ)
                 lambda(x,y,z);
              });
 }

@@ -9,7 +9,7 @@
 #include "templates/parallel_defs.h"
 #include "templates/vector3.h"
 #include "templates/algorithms.h"
-#include "triplet_iterator.h"
+#include "array3d_iter.h"
 #include <vector>
 #include <iostream>
 #include <assert.h>
@@ -50,15 +50,18 @@ class Region
         voxelMap_.initialise(nVoxels_.x, nVoxels_.y, nVoxels_.z);
 
         // Setup iterator for voxel map
-        TripletIterator iterator(nVoxels_.x, nVoxels_.y, nVoxels_.z); 
+        Array3DIterator iterator(nVoxels_.x, nVoxels_.y, nVoxels_.z); 
 
+        auto& box = box_;
+        auto& voxelSizeFrac = voxelSizeFrac_;
+        auto& voxelMap = voxelMap_;
         // Iterate voxels in parallel
-        dissolve::for_each_triplet(ParallelPolicies::seq, iterator.begin(), iterator.end(),
-            [this, &voxelCheckFunction, &cfg](auto x, auto y, auto z) {
-                voxelMap_[{x, y, z}] = {
+        dissolve::for_each_triplet(ParallelPolicies::par, iterator.begin(), iterator.end(),
+            [&box, &voxelMap, &voxelSizeFrac, &voxelCheckFunction, &cfg](auto x, auto y, auto z) {
+                voxelMap[{x, y, z}] = {
                     Vec3<int>(x, y, z),
-                    voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
-                                                               (z + 0.5) * voxelSizeFrac_.z}))
+                    voxelCheckFunction(cfg, box->getReal({(x + 0.5) * voxelSizeFrac.x, (y + 0.5) * voxelSizeFrac.y,
+                                                               (z + 0.5) * voxelSizeFrac.z}))
                     };}
         );
 
