@@ -38,8 +38,14 @@ class SimplePotential : public ExternalPotential
     private:
     // Potential form
     InteractionPotential<SimplePotentialFunctions> interactionPotential_;
-    // Coordinate origin of external potential
+    // Coordinate origin of potential
     Vec3<double> origin_;
+
+    public:
+    // Set potential form
+    void setPotential(const InteractionPotential<SimplePotentialFunctions> &potential);
+    // Set coordinate origin of potential
+    void setOrigin(Vec3<double> origin);
 
     /*
      * Potential Calculation

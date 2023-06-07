@@ -3,7 +3,10 @@
 
 #include "procedure/procedure.h"
 #include "keywords/node.h"
-#include "procedure/nodes/nodes.h"
+#include "procedure/nodes/add.h"
+#include "procedure/nodes/box.h"
+#include "procedure/nodes/parameters.h"
+#include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
 #include <string>
 

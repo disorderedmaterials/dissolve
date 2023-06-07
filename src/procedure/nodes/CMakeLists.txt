@@ -42,6 +42,8 @@ add_library(
   remove.cpp
   select.cpp
   sequence.cpp
+  simpleglobalpotential.cpp
+  simplerestraintpotential.cpp
   sum1d.cpp
   transmute.cpp
   add.h
@@ -64,7 +66,6 @@ add_library(
   integrate1d.h
   node.h
   nodereference.h
-  nodes.h
   operatebase.h
   operatedivide.h
   operateexpression.h
@@ -88,6 +89,8 @@ add_library(
   transmute.h
   select.h
   sequence.h
+  simpleglobalpotential.h
+  simplerestraintpotential.h
   sum1d.h
 )
 

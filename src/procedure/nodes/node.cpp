@@ -62,6 +62,8 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Remove, "Remove"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
+                     {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
+                     {ProcedureNode::NodeType::SimpleRestraintPotential, "SimpleRestraintPotential"},
                      {ProcedureNode::NodeType::Sum1D, "Sum1D"},
                      {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }

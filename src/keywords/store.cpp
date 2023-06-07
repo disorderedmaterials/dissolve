@@ -10,13 +10,16 @@
 #include "keywords/integer.h"
 #include "keywords/module.h"
 #include "keywords/modulevector.h"
+#include "keywords/node.h"
 #include "keywords/nodevalue.h"
 #include "keywords/nodevector.h"
 #include "keywords/species.h"
 #include "keywords/stdstring.h"
 #include "keywords/vec3double.h"
 #include "keywords/vec3nodevalue.h"
-#include "procedure/nodes/nodes.h"
+#include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/regionbase.h"
+#include "procedure/nodes/select.h"
 
 // Static Singletons
 std::vector<KeywordBase *> KeywordStore::allKeywords_;

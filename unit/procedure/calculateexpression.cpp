@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/nodes.h"
+#include "procedure/nodes/calculateexpression.h"
+#include "procedure/nodes/select.h"
 #include "procedure/procedure.h"
 #include "src/math/constants.h"
 #include <gtest/gtest.h>
