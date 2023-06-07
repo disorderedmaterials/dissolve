@@ -11,7 +11,7 @@
 #include <sstream>
 #include <tuple>
 #include <utility>
-
+#include <assert.h>
 // Cut a range into a smaller segment for MPI
 template <typename T> auto chop_range(const T begin, const T end, const int nChunks, const int index)
 {
@@ -229,14 +229,14 @@ void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
              });
 }
 
-template <typename ParalellPolicy, class Lam>
-void for_each_triplet(ParalellPolicy policy, int sizeX, int sizeY, int sizeZ, Lam lambda)
+template <typename ParalellPolicy, class Iter, class Lam>
+void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
 {
-    TripletIterator u(sizeX, sizeY, sizeZ);
-    for_each(policy, u.begin(), u.end(),
+    for_each(policy, begin, end,
              [&lambda](const auto triplet)
              {
                 auto &[x,y,z] = triplet;
+                //if (x < sizeX && y < sizeY && z < sizeZ)
                 lambda(x,y,z);
              });
 }
@@ -252,10 +252,6 @@ template <typename ParallelPolicy, class Lam> void for_each_pair(ParallelPolicy 
                  lambda(i, j);
              });
 }
-
-
-
-
 } // namespace dissolve
 
 // Join elements into a delimited string
