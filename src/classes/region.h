@@ -52,16 +52,13 @@ class Region
         // Setup iterator for voxel map
         Array3DIterator iterator(nVoxels_.x, nVoxels_.y, nVoxels_.z); 
 
-        auto& box = box_;
-        auto& voxelSizeFrac = voxelSizeFrac_;
-        auto& voxelMap = voxelMap_;
         // Iterate voxels in parallel
         dissolve::for_each_triplet(ParallelPolicies::par, iterator.begin(), iterator.end(),
-            [&box, &voxelMap, &voxelSizeFrac, &voxelCheckFunction, &cfg](auto x, auto y, auto z) {
-                voxelMap[{x, y, z}] = {
+            [&](auto x, auto y, auto z) {
+                voxelMap_[{x, y, z}] = {
                     Vec3<int>(x, y, z),
-                    voxelCheckFunction(cfg, box->getReal({(x + 0.5) * voxelSizeFrac.x, (y + 0.5) * voxelSizeFrac.y,
-                                                               (z + 0.5) * voxelSizeFrac.z}))
+                    voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
+                                                               (z + 0.5) * voxelSizeFrac_.z}))
                     };}
         );
 
