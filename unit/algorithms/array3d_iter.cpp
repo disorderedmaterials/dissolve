@@ -26,9 +26,8 @@ TEST(Array3DIteratorTest, Array3D)
                 EXPECT_EQ(j, y);
                 EXPECT_EQ(k, z);
                 ++it;
-            }   
+            }
         }
     }
 }
 } // namespace UnitTest
-

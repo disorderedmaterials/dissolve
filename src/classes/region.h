@@ -49,7 +49,7 @@ class Region
         voxelMap_.initialise(nVoxels_.x, nVoxels_.y, nVoxels_.z);
 
         // Setup iterator for voxel map
-        Array3DIterator iterator(nVoxels_.x, nVoxels_.y, nVoxels_.z); 
+        Array3DIterator iterator(nVoxels_.x, nVoxels_.y, nVoxels_.z);
 
         // Iterate voxels in parallel
         dissolve::for_each_triplet(
@@ -59,10 +59,8 @@ class Region
                 voxelMap_[{x, y, z}] = {
                     Vec3<int>(x, y, z),
                     voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
-                                                                (z + 0.5) * voxelSizeFrac_.z}))
-                };
-            }
-        );
+                                                           (z + 0.5) * voxelSizeFrac_.z}))};
+            });
         // Create linear vector of all available voxels
         auto nFreeVoxels = std::count_if(voxelMap_.begin(), voxelMap_.end(), [](const auto &voxel) { return voxel.second; });
         freeVoxels_.clear();

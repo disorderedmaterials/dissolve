@@ -4,7 +4,6 @@
 #include "classes/pair_iter.h"
 #include <cmath>
 
-
 PairIterator::PairIterator(int size, int index) : size_(size)
 {
     if (index == 0)

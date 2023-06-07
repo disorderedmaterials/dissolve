@@ -41,6 +41,7 @@ bool Array3DIterator::operator!=(const Array3DIterator &other) const
 {
     return x_ != other.x_ || y_ != other.y_ || z_ != other.z_;
 }
+
 Array3DIterator::value_type Array3DIterator::operator*() { return {x_, y_, z_}; }
 
 Array3DIterator &Array3DIterator::operator++()
@@ -48,8 +49,7 @@ Array3DIterator &Array3DIterator::operator++()
     z_++;
     if (z_ >= sizeZ_)
     {
-
-        y_ += 1;    
+        y_ += 1;
         if (y_ >= sizeY_)
         {
             x_ += 1;
