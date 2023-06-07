@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 #pragma once
 
-#include "classes/pair_iter.h"
 #include "classes/array3d_iter.h"
+#include "classes/pair_iter.h"
 #include "templates/parallel_defs.h"
 #include <fmt/format.h>
 #include <functional>
@@ -11,7 +11,7 @@
 #include <sstream>
 #include <tuple>
 #include <utility>
-#include <assert.h>
+
 // Cut a range into a smaller segment for MPI
 template <typename T> auto chop_range(const T begin, const T end, const int nChunks, const int index)
 {

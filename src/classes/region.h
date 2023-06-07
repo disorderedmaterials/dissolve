@@ -53,16 +53,16 @@ class Region
 
         // Iterate voxels in parallel
         dissolve::for_each_triplet(
-                ParallelPolicies::par, iterator.begin(), iterator.end(),
-                [&](auto x, auto y, auto z)
-                {
-                    voxelMap_[{x, y, z}] = {
-                        Vec3<int>(x, y, z),
-                        voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
+            ParallelPolicies::par, iterator.begin(), iterator.end(),
+            [&](auto x, auto y, auto z)
+            {
+                voxelMap_[{x, y, z}] = {
+                    Vec3<int>(x, y, z),
+                    voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
                                                                 (z + 0.5) * voxelSizeFrac_.z}))
-                    };}
+                };
+            }
         );
-
         // Create linear vector of all available voxels
         auto nFreeVoxels = std::count_if(voxelMap_.begin(), voxelMap_.end(), [](const auto &voxel) { return voxel.second; });
         freeVoxels_.clear();
