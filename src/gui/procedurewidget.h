@@ -6,6 +6,7 @@
 #include "gui/models/nodePaletteModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_procedurewidget.h"
+#include <qabstractitemmodel.h>
 
 // Forward Declarations
 class DissolveWindow;
@@ -50,7 +51,7 @@ class ProcedureWidget : public QWidget
     void removeControlWidget(ConstNodeRef node);
 
     private slots:
-    void selectedNodeChanged(const QModelIndex &);
+    void selectedNodeChanged(const QModelIndex &, const QModelIndex &);
     void on_ExpandAllButton_clicked(bool checked);
     void on_CollapseAllButton_clicked(bool checked);
     void on_ShowContextButton_clicked(bool checked);

@@ -7,6 +7,7 @@
 #include "gui/procedurewidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
+#include <qfiledialog.h>
 
 ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
 {
@@ -14,10 +15,12 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
 
     // Set up the procedure model
     ui_.NodesTree->setModel(&procedureModel_);
-    connect(ui_.NodesTree, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedNodeChanged(const QModelIndex &)));
+    //connect(ui_.NodesTree, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectedNodeChanged(const QModelIndex &)));
+    connect(ui_.NodesTree->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(selectedNodeChanged(const QModelIndex &, const QModelIndex&))); 
+
+    //connect(ui_.NodesTree, SIGNAL(currentChanged(const QModelIndex &)), this, SLOT(selectedNodeChanged(const QModelIndex &)));
     connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
-
     // Set up the available nodes tree
     ui_.AvailableNodesTree->setModel(&nodePaletteModel_);
     ui_.AvailableNodesTree->expandAll();
@@ -74,7 +77,7 @@ void ProcedureWidget::removeControlWidget(ConstNodeRef node)
     }
 }
 
-void ProcedureWidget::selectedNodeChanged(const QModelIndex &index)
+void ProcedureWidget::selectedNodeChanged(const QModelIndex &index, const QModelIndex& prev)
 {
     // Get the selected node
     auto node = procedureModel_.data(index, Qt::UserRole).value<std::shared_ptr<ProcedureNode>>();
