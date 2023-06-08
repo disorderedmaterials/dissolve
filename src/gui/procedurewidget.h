@@ -51,7 +51,7 @@ class ProcedureWidget : public QWidget
     void removeControlWidget(ConstNodeRef node);
 
     private slots:
-    void selectedNodeChanged(const QModelIndex &, const QModelIndex &);
+    void selectedNodeChanged(const QModelIndex &);
     void on_ExpandAllButton_clicked(bool checked);
     void on_CollapseAllButton_clicked(bool checked);
     void on_ShowContextButton_clicked(bool checked);
