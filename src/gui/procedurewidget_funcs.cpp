@@ -15,7 +15,8 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
 
     // Set up the procedure model
     ui_.NodesTree->setModel(&procedureModel_);
-    connect(ui_.NodesTree->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(selectedNodeChanged(const QModelIndex &))); 
+    connect(ui_.NodesTree->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(selectedNodeChanged(const QModelIndex &)));
     connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     // Set up the available nodes tree
