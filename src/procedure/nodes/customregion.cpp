@@ -41,8 +41,5 @@ bool CustomRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec
     // Assess expression
     auto x = expression_.asDouble();
 
-    if (x < minimumValue_ || x > maximumValue_)
-        return false;
-
-    return true;
+    return (x >= minimumValue_ && x <= maximumValue_);
 }
