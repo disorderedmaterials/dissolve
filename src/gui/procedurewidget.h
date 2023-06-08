@@ -6,7 +6,6 @@
 #include "gui/models/nodePaletteModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_procedurewidget.h"
-#include <qabstractitemmodel.h>
 
 // Forward Declarations
 class DissolveWindow;

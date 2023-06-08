@@ -7,7 +7,6 @@
 #include "gui/procedurewidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
-#include <qfiledialog.h>
 
 ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
 {
