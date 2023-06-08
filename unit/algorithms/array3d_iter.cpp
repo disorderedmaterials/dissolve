@@ -43,7 +43,7 @@ TEST(Array3DIteratorTest, Iterator)
     arr.initialise(sizeX, sizeY, sizeZ);
 
     Array3DIterator it(sizeX, sizeY, sizeZ);
-    
+
     for (auto i = it.begin(), end = it.end(); i != end; ++i)
     {
         auto [x, y, z] = *i;
