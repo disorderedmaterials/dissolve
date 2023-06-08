@@ -57,4 +57,3 @@ class Array3DIterator
     bool operator<=(const Array3DIterator &other) const;
     bool operator>=(const Array3DIterator &other) const;
 };
-

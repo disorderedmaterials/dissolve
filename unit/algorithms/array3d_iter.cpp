@@ -27,8 +27,8 @@ TEST(Array3DIteratorTest, ForEach)
         for (y = 0; y < sizeY; ++y)
             for (z = 0; z < sizeZ; ++z)
             {
-                Vec3<int> vec = arr[{x,y,z}].first;
-                bool flag = arr[{x,y,z}].second;
+                Vec3<int> vec = arr[{x, y, z}].first;
+                bool flag = arr[{x, y, z}].second;
                 EXPECT_EQ(x, vec.x);
                 EXPECT_EQ(y, vec.y);
                 EXPECT_EQ(z, vec.z);
@@ -46,26 +46,20 @@ TEST(Array3DIteratorTest, Iterator)
     
     for (auto i = it.begin(), end = it.end(); i != end; ++i)
     {
-        auto [x,y,z] = *i;
-        arr[{x,y,z}] = {Vec3<int>{x,y,z}, true};
+        auto [x, y, z] = *i;
+        arr[{x, y, z}] = {Vec3<int>{x, y, z}, true};
     }
     for (x = 0; x < sizeX; ++x)
         for (y = 0; y < sizeY; ++y)
             for (z = 0; z < sizeZ; ++z)
             {
-                auto vec = arr[{x,y,z}].first;
-                auto flag = arr[{x,y,z}].second;
+                auto vec = arr[{x, y, z}].first;
+                auto flag = arr[{x, y, z}].second;
                 EXPECT_EQ(x, vec.x);
                 EXPECT_EQ(y, vec.y);
                 EXPECT_EQ(z, vec.z);
                 EXPECT_EQ(flag, true);
 
-            }
-
-    
-
-    
+            } 
 }
-
-
 } // namespace UnitTest
