@@ -59,7 +59,6 @@ TEST(Array3DIteratorTest, Iterator)
                 EXPECT_EQ(y, vec.y);
                 EXPECT_EQ(z, vec.z);
                 EXPECT_EQ(flag, true);
-
-            } 
+            }
 }
 } // namespace UnitTest
