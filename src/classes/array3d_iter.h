@@ -11,11 +11,11 @@ class Array3DIterator
     int sizeX_;
     int sizeY_;
     int sizeZ_;
+    int index_;
     int x_;
     int y_;
     int z_;
-    int toIndex() const;
-    void fromIndex(int);
+    void fromIndex();
 
     public:
     using value = std::tuple<int, int, int>;
@@ -57,3 +57,4 @@ class Array3DIterator
     bool operator<=(const Array3DIterator &other) const;
     bool operator>=(const Array3DIterator &other) const;
 };
+

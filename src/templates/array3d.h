@@ -8,6 +8,7 @@
 #include <cassert>
 #include <numeric>
 #include <vector>
+#include <iostream>
 
 // Array3D
 template <class A> class Array3D
@@ -122,7 +123,7 @@ template <class A> class Array3D
     // Return address of specified element
     A *ptr(int x, int y, int z)
     {
-        assert(x >= 0 && x < nX_);
+        assert(x >= 0 && x < nX_ || !(std::cerr << "False: " << x << ">" << nX_));
         assert(y >= 0 && y < nY_);
         assert(z >= 0 && z < nZ_);
 
