@@ -106,7 +106,7 @@ bool Expression::create(std::string_view expressionString,
     {
         visitor.create(*this, tree, localVariables_, externalVariables);
     }
-    catch (ExpressionExceptions::ExpressionSyntaxException &ex)
+    catch (std::exception &ex)
     {
         fmt::print(ex.what());
         clearNodes();

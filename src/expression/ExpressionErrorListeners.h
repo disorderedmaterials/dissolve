@@ -15,7 +15,21 @@ namespace ExpressionExceptions
 class ExpressionSyntaxException : public std::exception
 {
     public:
-    ExpressionSyntaxException(std::string_view message = "Undefined Expression Syntax Exception") : message_{message} {}
+    explicit ExpressionSyntaxException(std::string_view message = "Undefined Expression Syntax Exception") : message_{message} {}
+
+    private:
+    // Error message
+    std::string message_;
+
+    public:
+    const char *what() const noexcept override { return message_.c_str(); }
+};
+
+// Expression Semantic Exception
+class ExpressionSemanticException : public std::exception
+{
+    public:
+    explicit ExpressionSemanticException(std::string_view message = "Undefined Expression Semantic Exception") : message_{message} {}
 
     private:
     // Error message
@@ -29,7 +43,7 @@ class ExpressionSyntaxException : public std::exception
 class ExpressionInternalErrorException : public std::exception
 {
     public:
-    ExpressionInternalErrorException(std::string_view message = "Expression internal error.") : message_{message} {}
+    explicit ExpressionInternalErrorException(std::string_view message = "Expression internal error.") : message_{message} {}
 
     private:
     // Error message

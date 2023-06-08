@@ -159,7 +159,7 @@ antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext
     {
         // Do we have any external variables available?
         if (!externalVariables_)
-            throw(ExpressionExceptions::ExpressionSyntaxException(fmt::format(
+            throw(ExpressionExceptions::ExpressionSemanticException(fmt::format(
                 "Variable '{}' does not exist in this context (there are no variables defined).\n", ctx->Name()->getText())));
 
         // Does the named variable exist?
@@ -167,7 +167,7 @@ antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext
         it = std::find_if(extVars.begin(), extVars.end(),
                           [ctx](auto var) { return DissolveSys::sameString(var->name(), ctx->Name()->getText()); });
         if (it == extVars.end())
-            throw(ExpressionExceptions::ExpressionSyntaxException(
+            throw(ExpressionExceptions::ExpressionSemanticException(
                 fmt::format("Variable '{}' does not exist in this context.\n", ctx->Name()->getText())));
     }
 
