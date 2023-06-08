@@ -21,7 +21,7 @@ IntegerHistogram1D::IntegerHistogram1D(const IntegerHistogram1D &source) { (*thi
 void IntegerHistogram1D::clear()
 {
     minimum_ = 0;
-    maximum_ = 0;
+    maximum_ = std::nullopt;
     nBinned_ = 0;
     nMissed_ = 0;
     bins_.clear();
@@ -34,18 +34,30 @@ void IntegerHistogram1D::clear()
 // Update accumulated data
 void IntegerHistogram1D::updateAccumulatedData()
 {
+    // Determine whether the accumulated data in the supplied histogram is consistent with the source data
+    int expectedMinimum = *std::min_element(accumulatedData_.values().begin(), accumulatedData_.values().end());
+    if (minimum())
+        expectedMinimum = std::min(*minimum(), expectedMinimum);
+    int expectedMaximum = *std::max_element(accumulatedData_.values().begin(), accumulatedData_.values().end());
+    if (maximum())
+        expectedMaximum = std::min(*maximum(), expectedMaximum);
+
+    auto expectedNBins = (expectedMaximum - expectedMinimum) + 1;
+
     // Set up arrays
-    accumulatedData_.initialise(bins_.size(), true);
+    accumulatedData_.initialise(expectedNBins, true);
 
     // Store bin centres and accumulated averages in the object
-    for (auto n = 0; n < bins_.size(); ++n)
+    for (auto n = expectedMinimum; n <= expectedMaximum; n++)
     {
         accumulatedData_.xAxis(n) = n;
+        accumulatedData_.value(n) = bins_[n].second;
+        accumulatedData_.error(n) = bins_[n].second.stDev();
     }
 }
 
 // Initialise with specified bin range
-void IntegerHistogram1D::initialise(int xMin, int xMax, int binWidth)
+void IntegerHistogram1D::initialise(std::optional<int> xMin, std::optional<int> xMax)
 {
     clear();
 
@@ -63,20 +75,6 @@ void IntegerHistogram1D::zeroBins()
     bins_.clear();
     nBinned_ = 0;
     nMissed_ = 0;
-}
-
-// Set up supplied axis
-void IntegerHistogram1D::setUpAxis(int axisMin, int &axisMax, int binWidth, int &nBins, std::vector<int> &binCentres)
-{
-    // Min, max, and bin width should be set to requested values initially
-    // We will clamp the maximum to the nearest bin boundary (not less than the supplied axisMax)
-    int range = axisMax - axisMin;
-    nBins = range;
-    if ((axisMin + nBins * binWidth) < axisMax)
-    {
-        ++nBins;
-        axisMax = axisMin + nBins * binWidth;
-    }
 }
 
 // Return minimum value for data (hard left-edge of first bin)
@@ -179,7 +177,7 @@ bool IntegerHistogram1D::deserialise(LineParser &parser)
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    initialise(parser.argd(0), parser.argd(1), parser.argd(2));
+    initialise(parser.argd(0), parser.argd(1));
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

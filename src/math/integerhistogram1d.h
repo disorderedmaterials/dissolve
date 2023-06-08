@@ -41,11 +41,9 @@ class IntegerHistogram1D
 
     public:
     // Initialise with specified bin range
-    void initialise(int minimum, int maximum, int binWidth);
+    void initialise(std::optional<int> xMin, std::optional<int> xMax);
     // Zero histogram bins
     void zeroBins();
-    // Set up supplied axis
-    static void setUpAxis(int axisMin, int &axisMax, int binWidth, int &nBins, std::vector<int> &binCentres);
     // Return minimum value for data (hard left-edge of first bin)
     std::optional<int> minimum() const;
     // Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
