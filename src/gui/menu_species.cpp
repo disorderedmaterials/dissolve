@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "base/messenger.h"
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/copyspeciestermsdialog.h"
@@ -19,6 +20,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <qmessagebox.h>
+#include <qpushbutton.h>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
@@ -395,14 +397,32 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
             }
         }
     }
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Copy Charges from Atom Types");
+    msgBox.setText("This will replace the species charges "
+                   "with those of the corresponding Atom Types.\n\n"
+                   "This cannot be undone! Proceed?");
+    msgBox.addButton(QMessageBox::Yes);
+    msgBox.addButton(QMessageBox::No);
+    QPushButton *testButton = msgBox.addButton("Test", QMessageBox::ActionRole);
 
-    for (auto const&x : charges)
+    auto result = msgBox.exec();
+
+    if (result == QMessageBox::Yes)
     {
-        x.first->setCharge(x.second.value());
+        for (auto const&x : charges)
+            x.first->setCharge(x.second.value());
     }
-    
-
-
+    else if (result == QMessageBox::No)
+    {
+        ;
+    }
+    else {
+        for (auto const&x : charges)
+        {    
+            Messenger::print("{}: {} -> {}", x.first->name(), x.first->charge(), x.second.value());
+        }
+    }
 }
 
 void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
