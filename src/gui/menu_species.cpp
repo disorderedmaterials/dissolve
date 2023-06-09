@@ -17,6 +17,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <qmessagebox.h>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
@@ -347,25 +348,32 @@ void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool che
     auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
-    auto atomTypes = dissolve().coreData().atomTypes();
-    for (auto& atom : species->atoms())
+    
+    if (QMessageBox::warning(this, "Copy Charges from Atom Types",
+                             "This will replace the species charges "
+                             "with those of the corresponding Atom Types.\n\n"
+                             "This cannot be undone! Proceed?",
+                             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No, QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
     {
-        bool found = false;
-        for (auto& at : atomTypes)
+        auto atomTypes = dissolve().coreData().atomTypes();
+        for (auto& atom : species->atoms())
         {
-            if (at == atom.atomType())
+            bool found = false;
+            for (auto& at : atomTypes)
             {
-                found = true;
-                atom.setCharge(at->charge());
+                if (at == atom.atomType())
+                {
+                    found = true;
+                    atom.setCharge(at->charge());
+                }
             }
-            //at->setName(fmt::format("{}{}", prefix.toStdString(), at->name()));
         }
+
+        setModified();
+
+        fullUpdate();
+
     }
-
-
-    setModified();
-
-    fullUpdate();
 }
 
 void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
