@@ -30,6 +30,7 @@ set(gui_MOC_HDRS
     # Dialogs
     addconfigurationdialog.h
     addforcefieldtermsdialog.h
+    chargesmoothingdialog.h
     copyspeciestermsdialog.h
     datamanagerdialog.h
     editspeciesdialog.h
@@ -83,6 +84,7 @@ set(gui_UIS
     # Dialogs
     addconfigurationdialog.ui
     addforcefieldtermsdialog.ui
+    chargesmoothingdialog.ui
     copyspeciestermsdialog.ui
     datamanagerdialog.ui
     editspeciesdialog.ui
@@ -156,6 +158,7 @@ set(gui_SRCS
     # Dialogs
     addconfigurationdialog_funcs.cpp
     addforcefieldtermsdialog_funcs.cpp
+    chargesmoothingdialog_funcs.cpp
     copyspeciestermsdialog_funcs.cpp
     datamanagerdialog_funcs.cpp
     editspeciesdialog_funcs.cpp
