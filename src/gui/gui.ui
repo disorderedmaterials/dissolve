@@ -237,6 +237,7 @@
     <addaction name="SpeciesSetChargesInSelectionAction"/>
     <addaction name="SpeciesScaleChargesAction"/>
     <addaction name="SpeciesCopyChargesFromAtomTypesAction"/>
+    <addaction name="SpeciesSetAtomTypeChargesFromSpeciesAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRegenerateIntraFromConnectivityAction"/>
    </widget>
@@ -726,6 +727,11 @@
   <action name="SpeciesCopyChargesFromAtomTypesAction">
    <property name="text">
     <string>Copy Atom C&amp;harges from Atom Types.</string>
+   </property>
+  </action>
+  <action name="SpeciesSetAtomTypeChargesFromSpeciesAction">
+   <property name="text">
+    <string> Set Atom Type C&amp;harges from Species.</string>
    </property>
   </action>
   <action name="SimulationCheckAction">

@@ -14,6 +14,7 @@
 #include "gui/selectspeciesdialog.h"
 #include "gui/speciestab.h"
 #include "io/import/species.h"
+#include "math/sampleddouble.h"
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -374,6 +375,34 @@ void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool che
         fullUpdate();
 
     }
+}
+
+void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+    std::map<std::shared_ptr<AtomType>, SampledDouble> charges;
+    auto atomTypes = dissolve().coreData().atomTypes();
+    for (auto& atom : species->atoms())
+    {
+        for (auto& at : atomTypes)
+        {
+            if (at == atom.atomType())
+            {
+                charges[at]+=atom.charge();
+            }
+        }
+    }
+
+    for (auto const&x : charges)
+    {
+        x.first->setCharge(x.second.value());
+    }
+    
+
+
 }
 
 void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
