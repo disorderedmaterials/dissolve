@@ -341,6 +341,33 @@ void DissolveWindow::on_SpeciesSetChargesInSelectionAction_triggered(bool checke
     fullUpdate();
 }
 
+void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+    auto atomTypes = dissolve().coreData().atomTypes();
+    for (auto& atom : species->atoms())
+    {
+        bool found = false;
+        for (auto& at : atomTypes)
+        {
+            if (at == atom.atomType())
+            {
+                found = true;
+                atom.setCharge(at->charge());
+            }
+            //at->setName(fmt::format("{}{}", prefix.toStdString(), at->name()));
+        }
+    }
+
+
+    setModified();
+
+    fullUpdate();
+}
+
 void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
 {
     // Get the current Species (if a SpeciesTab is selected)
