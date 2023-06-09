@@ -14,6 +14,15 @@ runs:
   using: "composite"
   steps:
 
+  - name: Free Space
+    shell: bash
+    run: |
+      set -ex
+      df -mh .
+      sudo rm -rf /usr/share/dotnet
+      sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+      df -mh .
+
   - name: Install nix
     uses: "./.github/workflows/get-nix"
     with:
