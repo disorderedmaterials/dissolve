@@ -1,4 +1,4 @@
-name: Generate Caches
+name: Generate Conan Caches
 
 on:
   workflow_dispatch:
@@ -6,16 +6,15 @@ on:
     branches:
     - 'develop'
     paths:
-    - 'flake.lock'
-    - 'flake.nix'
+    - 'conanfile.txt'
 
 jobs:
 
-  Cache:
+  CacheConan:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [macos-latest, windows-latest]
         target: [dissolve-gui]
     runs-on: ${{ matrix.os }}
     steps:
