@@ -20,6 +20,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    - name: Setup
+      uses: "./.github/workflows/setup"
     - name: Quality Control
       uses: "./.github/workflows/qc"
 
