@@ -400,17 +400,19 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
 
     auto result = msgBox.exec();
 
-    if (result == QMessageBox::Yes)
+    if (result == QMessageBox::No)
+        return;
+    
+    Messenger::banner("Proposed atom type charges, averaged from {}", species->name());
+    auto atomTypes = dissolve().coreData().atomTypes();
+    for (auto &atomType : atomTypes)
     {
-        for (auto const &x : charges)
-            x.first->setCharge(x.second.value());
-    }
-    else if (result != QMessageBox::No)
-    {
-        for (auto const &atomType : atomTypes)
-        {
-            Messenger::print("{}: {} -> {} \u00b1 {}", atomType->name(), atomType->charge(), charges[atomType].value(),
-                             charges[atomType].stDev());
+        if (charges[atomType].count() > 0)
+        {    
+            Messenger::print("{}: {} -> {} \u00b1 {} [Averaged from {} atoms]", atomType->name(), atomType->charge(), charges[atomType].value(),
+                            charges[atomType].stDev(), charges[atomType].count());
+            if (result == QMessageBox::Yes)
+                atomType->setCharge(charges[atomType].value());
         }
     }
 }
@@ -454,3 +456,4 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
 
     for (auto &atom : species->atoms())
         atom.setCharge(std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
+}
