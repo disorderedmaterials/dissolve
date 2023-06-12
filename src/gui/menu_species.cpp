@@ -453,8 +453,4 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
         return;
 
     for (auto &atom : species->atoms())
-    {
-        double rounded = std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures);
-        atom.setCharge(rounded);
-    }
-}
+        atom.setCharge(std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
