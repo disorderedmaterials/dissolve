@@ -85,7 +85,17 @@ template <class A> class Array3D
         if ((nX > 0) && (nY > 0) && (nZ > 0))
             resize(nX, nY, nZ);
     }
+
     // Return specified element as modifiable reference
+    A &operator[](std::tuple<int, int, int> index)
+    {
+        auto [x, y, z] = index;
+        assert(x >= 0 && x < nX_);
+        assert(y >= 0 && y < nY_);
+        assert(z >= 0 && z < nZ_);
+
+        return array_[sliceOffsets_[x] + y * nZ_ + z];
+    }
     A &operator[](Array3DIterator it)
     {
         auto [x, y, z] = *it;
@@ -96,6 +106,15 @@ template <class A> class Array3D
         return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
     // Return specified element as const-reference
+    const A &operator[](std::tuple<int, int, int> index) const
+    {
+        auto [x, y, z] = index;
+        assert(x >= 0 && x < nX_);
+        assert(y >= 0 && y < nY_);
+        assert(z >= 0 && z < nZ_);
+
+        return array_[sliceOffsets_[x] + y * nZ_ + z];
+    }
     const A &operator[](Array3DIterator it) const
     {
         auto [x, y, z] = *it;
@@ -104,23 +123,21 @@ template <class A> class Array3D
         assert(z >= 0 && z < nZ_);
 
         return array_[sliceOffsets_[x] + y * nZ_ + z];
+    }
 
-    }
     // Return array range for a given x and y value
-    std::pair<typename std::vector<A>::iterator, typename std::vector<A>::iterator> operator[](std::tuple<int, int> index)
+    std::pair<Array3DIterator, Array3DIterator> operator[](std::tuple<int, int> index)
     {
         auto [x, y] = index;
-        auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
-        return {begin, begin + nZ_};
+        return { Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_) };
     }
     // Return array range for a given x and y value
-    std::pair<typename std::vector<A>::const_iterator, typename std::vector<A>::const_iterator>
-    operator[](std::tuple<int, int> index) const
+    std::pair<const Array3DIterator, const Array3DIterator> operator[](std::tuple<int, int> index) const
     {
         auto [x, y] = index;
-        auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
-        return {begin, begin + nZ_};
+        return { Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_) };
     }
+
     // Return address of specified element
     A *ptr(int x, int y, int z)
     {
