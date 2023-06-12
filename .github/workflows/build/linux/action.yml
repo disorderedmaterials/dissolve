@@ -33,7 +33,7 @@ runs:
     id: nix-cache
     with:
       path: /tmp/nixcache
-      key: ${{ runner.os }}-nix-cache
+      key: ${{ runner.os }}-${{ env.nixHash }}-nix-cache
 
   - name: Import Nix Store Cache
     if: "steps.nix-cache.outputs.cache-hit == 'true'"
