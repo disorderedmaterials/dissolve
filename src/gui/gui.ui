@@ -727,12 +727,12 @@
   </action>
   <action name="SpeciesCopyChargesFromAtomTypesAction">
    <property name="text">
-    <string>Copy Atom C&amp;harges from Atom Types.</string>
+    <string>Copy Atom C&amp;harges from Atom Types...</string>
    </property>
   </action>
   <action name="SpeciesSetAtomTypeChargesFromSpeciesAction">
    <property name="text">
-    <string> Set Atom Type C&amp;harges from Species.</string>
+    <string> Set Atom Type C&amp;harges from Species...</string>
    </property>
   </action>
   <action name="SimulationCheckAction">
