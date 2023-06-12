@@ -399,9 +399,9 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
     }
 
     QMessageBox msgBox(this);
-    msgBox.setWindowTitle("Copy Charges from Atom Types");
-    msgBox.setText("This will replace the species charges "
-                   "with those of the corresponding Atom Types.\n\n"
+    msgBox.setWindowTitle("Set Atom Type Charges from Species Atoms");
+    msgBox.setText("This will replace the current atom type charges "
+                   "with the average charge of relevant species atoms.\n\n"
                    "This cannot be undone! Proceed?");
     msgBox.addButton(QMessageBox::Yes);
     msgBox.addButton(QMessageBox::No);
