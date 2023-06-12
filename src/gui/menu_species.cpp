@@ -363,22 +363,20 @@ void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool che
                              "This cannot be undone! Proceed?",
                              QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No, QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
     {
-        auto atomTypes = dissolve().coreData().atomTypes();
+        const auto atomTypes = dissolve().coreData().atomTypes();
         for (auto& atom : species->atoms())
         {
-            bool found = false;
-            for (auto& at : atomTypes)
+            for (auto& atomType : atomTypes)
             {
-                if (at == atom.atomType())
+                if (atomType == atom.atomType())
                 {
-                    found = true;
-                    atom.setCharge(at->charge());
+                    atom.setCharge(atomType->charge());
+                    break;
                 }
             }
         }
 
         setModified();
-
         fullUpdate();
 
     }
@@ -393,16 +391,18 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
 
     std::map<std::shared_ptr<AtomType>, SampledDouble> charges;
     auto atomTypes = dissolve().coreData().atomTypes();
-    for (auto& atom : species->atoms())
+    for (auto & atomType : atomTypes)
     {
-        for (auto& at : atomTypes)
+        for (auto& atom : species->atoms())
         {
-            if (at == atom.atomType())
+            if (atom.atomType() == atomType)
             {
-                charges[at]+=atom.charge();
+                charges[atomType]+=atom.charge();
             }
+
         }
     }
+
     QMessageBox msgBox(this);
     msgBox.setWindowTitle("Copy Charges from Atom Types");
     msgBox.setText("This will replace the species charges "
@@ -419,10 +419,10 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
         for (auto const&x : charges)
             x.first->setCharge(x.second.value());
     }
-    else if (result == QMessageBox::ActionRole) {
-        for (auto const&x : charges)
+    else if (result != QMessageBox::No) {
+        for (auto const&atomType : atomTypes)
         {    
-            Messenger::print("{}: {} -> {}", x.first->name(), x.first->charge(), x.second.value());
+            Messenger::print("{}: {} -> {}", atomType->name(), atomType->charge(), charges[atomType].value());
         }
     }
 }
