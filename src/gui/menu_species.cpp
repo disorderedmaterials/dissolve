@@ -455,7 +455,7 @@ void DissolveWindow::on_SpeciesScaleChargesToAction_triggered(bool checked)
     auto ok = false;
     static auto scaleTarget = 1.0;
     auto newScaleTarget = QInputDialog::getDouble(this, "Scale atom charges", "Enter the target sum to scale all atoms to",
-                                                    scaleTarget, -100.0, 100.0, 2, &ok);
+                                                  scaleTarget, -100.0, 100.0, 2, &ok);
     if (!ok)
         return;
 
@@ -469,9 +469,9 @@ void DissolveWindow::on_SpeciesScaleChargesToAction_triggered(bool checked)
 
     double sum = 0.0;
     for (auto &atom : species->atoms())
-        sum+=atom.charge();
+        sum += atom.charge();
 
-    double scaleFactor = scaleTarget / sum;    
+    double scaleFactor = scaleTarget / sum;
     for (auto &atom : species->atoms())
         atom.setCharge(atom.charge() * scaleFactor);
 
@@ -496,7 +496,7 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
 
     for (auto &atom : species->atoms())
         atom.setCharge(std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
-    
+
     setModified();
 
     fullUpdate();
