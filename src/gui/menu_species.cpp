@@ -386,17 +386,8 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
         return;
 
     std::map<std::shared_ptr<AtomType>, SampledDouble> charges;
-    auto atomTypes = dissolve().coreData().atomTypes();
-    for (auto &atomType : atomTypes)
-    {
-        for (auto &atom : species->atoms())
-        {
-            if (atom.atomType() == atomType)
-            {
-                charges[atomType] += atom.charge();
-            }
-        }
-    }
+    for (auto &atom : species->atoms())
+        charges[atom.atomType()] += atom.charge();
 
     QMessageBox msgBox(this);
     msgBox.setWindowTitle("Set Atom Type Charges from Species Atoms");
