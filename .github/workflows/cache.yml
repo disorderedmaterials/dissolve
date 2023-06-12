@@ -2,6 +2,12 @@ name: Generate Caches
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+    - 'develop'
+    paths:
+    - 'flake.lock'
+    - 'flake.nix'
 
 jobs:
 
