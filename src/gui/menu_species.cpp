@@ -448,7 +448,7 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
     auto ok = false;
     auto significantFigures =
         QInputDialog::getInt(this, "Reduce Signficant Figures in Charges",
-                             "Enter the number of significant figures to use for all atoms", 1, 1, 100, 1, &ok);
+                             "Enter the number of significant figures to use for all atoms", 3, 1, 100, 1, &ok);
     if (!ok)
         return;
 
