@@ -418,7 +418,8 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
     {
         for (auto const &atomType : atomTypes)
         {
-            Messenger::print("{}: {} -> {} \u00b1 {}", atomType->name(), atomType->charge(), charges[atomType].value(), charges[atomType].stDev());
+            Messenger::print("{}: {} -> {} \u00b1 {}", atomType->name(), atomType->charge(), charges[atomType].value(),
+                             charges[atomType].stDev());
         }
     }
 }

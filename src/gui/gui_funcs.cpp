@@ -354,7 +354,6 @@ void DissolveWindow::updateMenus()
     ui_.SpeciesReduceChargesSigFigsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
 
-
     // Configuration Menu
     ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
     ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
