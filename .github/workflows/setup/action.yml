@@ -50,3 +50,11 @@ runs:
         NIX_HASH=`cat flake.lock flake.nix | sha256sum | sed "s/\(.*\)  -/\1/g"`
         echo "Hash of nix files (flake.lock and flake.nix) is ${NIX_HASH}"
         echo "nixHash=${NIX_HASH}" >> ${GITHUB_ENV}
+
+    - name: Get conan hash
+      shell: bash
+      run: |
+        set -ex
+        CONAN_HASH=`sha256sum conanfile.txt | sed "s/\(.*\)  -/\1/g"`
+        echo "Hash of conanfile.txt is ${CONAN_HASH}"
+        echo "conanHash=${CONAN_HASH}" >> ${GITHUB_ENV}
