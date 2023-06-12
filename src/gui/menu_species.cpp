@@ -500,5 +500,4 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
     setModified();
 
     fullUpdate();
-
 }
