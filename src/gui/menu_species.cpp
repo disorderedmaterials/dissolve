@@ -13,7 +13,6 @@
 #include "gui/selectatomtypedialog.h"
 #include "gui/selectelementdialog.h"
 #include "gui/selectspeciesdialog.h"
-#include "gui/chargesmoothingdialog.h"
 #include "gui/speciestab.h"
 #include "io/import/species.h"
 #include "math/sampleddouble.h"
@@ -22,6 +21,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <algorithm>
+#include <qinputdialog.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <iostream>
@@ -390,6 +390,7 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
     auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
+
     std::map<std::shared_ptr<AtomType>, SampledDouble> charges;
     auto atomTypes = dissolve().coreData().atomTypes();
     for (auto& atom : species->atoms())
@@ -418,11 +419,7 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
         for (auto const&x : charges)
             x.first->setCharge(x.second.value());
     }
-    else if (result == QMessageBox::No)
-    {
-        ;
-    }
-    else {
+    else if (result == QMessageBox::ActionRole) {
         for (auto const&x : charges)
         {    
             Messenger::print("{}: {} -> {}", x.first->name(), x.first->charge(), x.second.value());
@@ -453,66 +450,22 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     fullUpdate();
 }
 
-void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
+void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked)
 {
     // Get the current Species (if a SpeciesTab is selected)
     auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
 
-    ChargeSmoothingDialog chargeSmoothingDialog(this);
+    auto ok = false;
+    auto significantFigures = QInputDialog::getInt(this, "Reduce Signficant Figures in Charges", "Enter the number of significant figures to use for all atoms",
+                                                   1, 1, 100, 1, &ok);
+    if (!ok)
+        return;
 
-    if (chargeSmoothingDialog.exec() == QDialog::Accepted)
+    for (auto &atom : species->atoms())
     {
-        if (chargeSmoothingDialog.roundOff())
-        {
-            int significiantFigures = chargeSmoothingDialog.significantFigures();
-            for (auto &i : species->atoms())
-            {
-                std::ostringstream oss;
-                oss << std::setprecision(significiantFigures) << std::fixed << i.charge();
-                std::istringstream iss(oss.str());
-                double rounded;
-                iss >> rounded;
-                i.setCharge(rounded);
-            }
-        }
-        if (chargeSmoothingDialog.normalise())
-        {
-            double sum = 0;
-            for (auto &i : species->atoms())
-            {
-                sum+=i.charge();
-            }
-            for (auto &i : species->atoms())
-            {
-                i.setCharge(i.charge() * chargeSmoothingDialog.normalisationTarget() / sum);
-            }
-
-            /*switch(chargeSmoothingDialog.normalisationTarget())
-            {
-                case 0:
-                    {
-                    double sum = 0;
-                    std::vector<double> charges;
-                    for (auto &i : species->atoms())
-                        charges.emplace_back(i.charge());
-                    double min = *std::min_element(charges.begin(), charges.end());
-                    double max = *std::max_element(charges.begin(), charges.end());
-                    for (auto &i : species->atoms())
-                        i.setCharge((i.charge() - min) / (max-min));
-                    break;
-                    }
-                case 1:
-                    break;
-                case -1:
-                    break;
-            }*/
-        }
-        // Fully update GUI
-        setModified();
-        fullUpdate();
+        double rounded = std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures); 
+        atom.setCharge(rounded);
     }
-
-
 }

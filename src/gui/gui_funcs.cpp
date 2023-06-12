@@ -9,6 +9,7 @@
 #include "gui/selectrestartfiledialog.h"
 #include "main/dissolve.h"
 #include "main/version.h"
+#include "maintab.h"
 #include <QCloseEvent>
 #include <QDir>
 #include <QDirIterator>
@@ -350,8 +351,9 @@ void DissolveWindow::updateMenus()
     ui_.SpeciesCopyChargesFromAtomTypesAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesSetAtomTypeChargesFromSpeciesAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesScaleChargesAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
-    ui_.SpeciesSmoothChargesAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+    ui_.SpeciesReduceChargesSigFigsAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
     ui_.SpeciesRegenerateIntraFromConnectivityAction->setEnabled(activeTab->type() == MainTab::TabType::Species);
+
 
     // Configuration Menu
     ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
