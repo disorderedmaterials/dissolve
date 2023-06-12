@@ -402,15 +402,15 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
 
     if (result == QMessageBox::No)
         return;
-    
+
     Messenger::banner("Proposed atom type charges, averaged from {}", species->name());
     auto atomTypes = dissolve().coreData().atomTypes();
     for (auto &atomType : atomTypes)
     {
         if (charges[atomType].count() > 0)
-        {    
-            Messenger::print("{}: {} -> {} \u00b1 {} [Averaged from {} atoms]", atomType->name(), atomType->charge(), charges[atomType].value(),
-                            charges[atomType].stDev(), charges[atomType].count());
+        {
+            Messenger::print("{}: {} -> {} \u00b1 {} [Averaged from {} atoms]", atomType->name(), atomType->charge(),
+                             charges[atomType].value(), charges[atomType].stDev(), charges[atomType].count());
             if (result == QMessageBox::Yes)
                 atomType->setCharge(charges[atomType].value());
         }
