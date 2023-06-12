@@ -354,8 +354,8 @@ void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool che
         return;
 
     if (QMessageBox::warning(this, "Copy Charges from Atom Types",
-                             "This will replace the species charges "
-                             "with those of the corresponding Atom Types.\n\n"
+                             "This will replace the species atom charges "
+                             "with those of the assigned atom types.\n\n"
                              "This cannot be undone! Proceed?",
                              QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
                              QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
