@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/array3d_iter.h"
 #include "base/messenger.h"
 #include "templates/vector3.h"
 #include <cassert>
@@ -85,9 +86,9 @@ template <class A> class Array3D
             resize(nX, nY, nZ);
     }
     // Return specified element as modifiable reference
-    A &operator[](std::tuple<int, int, int> index)
+    A &operator[](Array3DIterator it)
     {
-        auto [x, y, z] = index;
+        auto [x, y, z] = *it;
         assert(x >= 0 && x < nX_);
         assert(y >= 0 && y < nY_);
         assert(z >= 0 && z < nZ_);
@@ -95,14 +96,15 @@ template <class A> class Array3D
         return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
     // Return specified element as const-reference
-    const A &operator[](std::tuple<int, int, int> index) const
+    const A &operator[](Array3DIterator it) const
     {
-        auto [x, y, z] = index;
+        auto [x, y, z] = *it;
         assert(x >= 0 && x < nX_);
         assert(y >= 0 && y < nY_);
         assert(z >= 0 && z < nZ_);
 
         return array_[sliceOffsets_[x] + y * nZ_ + z];
+
     }
     // Return array range for a given x and y value
     std::pair<typename std::vector<A>::iterator, typename std::vector<A>::iterator> operator[](std::tuple<int, int> index)
@@ -141,13 +143,13 @@ template <class A> class Array3D
     // Return linear array
     const std::vector<A> &linearArray() const { return array_; }
     // Beginning of the underlying array
-    typename std::vector<A>::iterator begin() { return array_.begin(); }
+    Array3DIterator begin() { return Array3DIterator(nX_, nY_, nZ_, 0); }
     // End of the underlying array
-    typename std::vector<A>::iterator end() { return array_.end(); }
+    Array3DIterator end() { return Array3DIterator(nX_, nY_, nZ_, nX_ * nY_ * nZ_); }
     // Beginning of the underlying array
-    typename std::vector<A>::const_iterator begin() const { return array_.cbegin(); }
+    const Array3DIterator begin() const { return Array3DIterator(nX_, nY_, nZ_, 0);  }
     // End of the underlying array
-    typename std::vector<A>::const_iterator end() const { return array_.cend(); }
+    const Array3DIterator end() const { return Array3DIterator(nX_, nY_, nZ_, nX_ * nY_ * nZ_); }
     bool empty() const { return array_.empty(); }
     // Return linear value
     A &linearValue(int index) { return array_[index]; }
