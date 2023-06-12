@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "algorithm"
 #include "base/messenger.h"
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
@@ -16,15 +17,14 @@
 #include "gui/speciestab.h"
 #include "io/import/species.h"
 #include "math/sampleddouble.h"
-#include "algorithm"
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <algorithm>
+#include <iostream>
 #include <qinputdialog.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
-#include <iostream>
 #include <sstream>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
@@ -38,9 +38,9 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
     // Create the new Species, and add a single atom at {0,0,0}
     auto *newSpecies = dissolve_.addSpecies();
     newSpecies->addAtom(Z, Vec3<double>());
-    newSpecies->setName(DissolveSys::uniqueName(Elements::symbol(Z), dissolve().coreData().species(),
-                                                [&](const auto &sp)
-                                                { return newSpecies == sp.get() ? std::string() : sp->name(); }));
+    newSpecies->setName(DissolveSys::uniqueName(Elements::symbol(Z), dissolve().coreData().species(), [&](const auto &sp) {
+        return newSpecies == sp.get() ? std::string() : sp->name();
+    }));
 
     setModified();
     fullUpdate();
@@ -356,17 +356,18 @@ void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool che
     auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
-    
+
     if (QMessageBox::warning(this, "Copy Charges from Atom Types",
                              "This will replace the species charges "
                              "with those of the corresponding Atom Types.\n\n"
                              "This cannot be undone! Proceed?",
-                             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No, QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
+                             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
+                             QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
     {
         const auto atomTypes = dissolve().coreData().atomTypes();
-        for (auto& atom : species->atoms())
+        for (auto &atom : species->atoms())
         {
-            for (auto& atomType : atomTypes)
+            for (auto &atomType : atomTypes)
             {
                 if (atomType == atom.atomType())
                 {
@@ -378,7 +379,6 @@ void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool che
 
         setModified();
         fullUpdate();
-
     }
 }
 
@@ -391,15 +391,14 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
 
     std::map<std::shared_ptr<AtomType>, SampledDouble> charges;
     auto atomTypes = dissolve().coreData().atomTypes();
-    for (auto & atomType : atomTypes)
+    for (auto &atomType : atomTypes)
     {
-        for (auto& atom : species->atoms())
+        for (auto &atom : species->atoms())
         {
             if (atom.atomType() == atomType)
             {
-                charges[atomType]+=atom.charge();
+                charges[atomType] += atom.charge();
             }
-
         }
     }
 
@@ -416,13 +415,14 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
 
     if (result == QMessageBox::Yes)
     {
-        for (auto const&x : charges)
+        for (auto const &x : charges)
             x.first->setCharge(x.second.value());
     }
-    else if (result != QMessageBox::No) {
-        for (auto const&atomType : atomTypes)
-        {    
-            Messenger::print("{}: {} -> {}", atomType->name(), atomType->charge(), charges[atomType].value());
+    else if (result != QMessageBox::No)
+    {
+        for (auto const &atomType : atomTypes)
+        {
+            Messenger::print("{}: {} -> {} \u00b1 {}", atomType->name(), atomType->charge(), charges[atomType].value(), charges[atomType].stDev());
         }
     }
 }
@@ -458,14 +458,15 @@ void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked
         return;
 
     auto ok = false;
-    auto significantFigures = QInputDialog::getInt(this, "Reduce Signficant Figures in Charges", "Enter the number of significant figures to use for all atoms",
-                                                   1, 1, 100, 1, &ok);
+    auto significantFigures =
+        QInputDialog::getInt(this, "Reduce Signficant Figures in Charges",
+                             "Enter the number of significant figures to use for all atoms", 1, 1, 100, 1, &ok);
     if (!ok)
         return;
 
     for (auto &atom : species->atoms())
     {
-        double rounded = std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures); 
+        double rounded = std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures);
         atom.setCharge(rounded);
     }
 }
