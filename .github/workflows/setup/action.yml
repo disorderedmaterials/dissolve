@@ -44,7 +44,7 @@ runs:
         echo "dissolvePatchVersion=${DISSOLVE_PATCH}" >> ${GITHUB_ENV}
 
     - name: Install sha256sum (OSX)
-      if: runner.os == "macos"
+      if: ${{ runner.os == 'macos' }}
       shell: bash
       run: sudo brew install coreutils
 
