@@ -131,6 +131,12 @@ class SpeciesSite : public Serialisable
     // Target atom types for selection as sites
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
+    /*
+     * Fragment Site Definition
+     */
+    private:
+    NETADefinition fragment_;
+
     public:
     // Add target elements for selection as sites
     bool addElement(Elements::Element el);
@@ -171,8 +177,13 @@ class SpeciesSite : public Serialisable
         AtomTypeKeyword,           /* 'AtomType' - Specify allowed atom type(s) for dynamic sites */
         DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
         ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
+<<<<<<< HEAD
         FragmentKeyword,           /* 'Fragment' - States that this is a fragment site */
         DescriptionKeyword,        /* 'Description' - Defines the NETA description for fragment sites */
+=======
+        FragmentKeyword,
+        DescriptionKeyword,
+>>>>>>> 311e90c0b (Parse Fragment from NETA description.)
         EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
         OriginKeyword,             /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
         OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with

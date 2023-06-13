@@ -594,6 +594,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     Messenger::error("Failed to parse NETA description for site '{}'.\n", name());
                     error = true;
                 }
+                fragment_.create(parser.args(1));
                 break;
             case (SpeciesSite::EndSiteKeyword):
                 Messenger::print("Found end of Site '{}'.\n", name());
