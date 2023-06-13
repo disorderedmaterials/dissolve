@@ -8,6 +8,7 @@
 #include "base/version.h"
 #include "classes/atomtype.h"
 #include "data/elements.h"
+#include "neta/neta.h"
 #include "templates/vector3.h"
 
 #include <map>
@@ -27,7 +28,8 @@ class SpeciesSite : public Serialisable
     enum class SiteType
     {
         Static, /* Site is based on fixed atom indices within the species */
-        Dynamic /* Site is atomic and based on elements and atom types */
+        Dynamic, /* Site is atomic and based on elements and atom types */
+        Fragment
     };
     explicit SpeciesSite(const Species *parent, SiteType type = SiteType::Static);
     SpeciesSite(const Species *parent, std::string name, SiteType type = SiteType::Static);
@@ -129,6 +131,12 @@ class SpeciesSite : public Serialisable
     // Target atom types for selection as sites
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
+    /*
+     * Fragment Site Definition
+     */
+    private:
+    NETADefinition fragment_;
+
     public:
     // Add target elements for selection as sites
     bool addElement(Elements::Element el);
@@ -160,6 +168,8 @@ class SpeciesSite : public Serialisable
         AtomTypeKeyword,           /* 'AtomType' - Specify allowed atom type(s) for dynamic sites */
         DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
         ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
+        FragmentKeyword,
+        DescriptionKeyword,
         EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
         OriginKeyword,             /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
         OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with

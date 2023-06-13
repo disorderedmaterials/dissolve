@@ -424,6 +424,8 @@ EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
                                                  {{SpeciesSite::AtomTypeKeyword, "AtomType", OptionArguments::OneOrMore},
                                                   {SpeciesSite::DynamicKeyword, "Dynamic"},
                                                   {SpeciesSite::ElementKeyword, "Element", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::FragmentKeyword, "Fragment"},
+                                                  {SpeciesSite::DescriptionKeyword, "Description", 1},
                                                   {SpeciesSite::EndSiteKeyword, "EndSite"},
                                                   {SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore},
                                                   {SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1},
@@ -487,6 +489,12 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                         break;
                     }
                 }
+                break;
+            case (SpeciesSite::FragmentKeyword):
+                type_ = SiteType::Fragment;
+                break;
+            case (SpeciesSite::DescriptionKeyword):
+                fragment_.create(parser.args(1));
                 break;
             case (SpeciesSite::EndSiteKeyword):
                 Messenger::print("Found end of Site '{}'.\n", name());
