@@ -26,4 +26,3 @@ class ScaleChargesDialog : public QDialog
     void on_ScaleButton_clicked(bool checked);
     void on_ScaleToButton_clicked(bool checked);
 };
-

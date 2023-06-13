@@ -421,7 +421,7 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
-    
+ 
     static ScaleChargesDialog scaleChargesDialog(this);
     double scaleFactor = 1.0;
     if (scaleChargesDialog.exec() == QDialog::Accepted)
@@ -433,7 +433,8 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
             double scaleTarget = scaleChargesDialog.scaleValue();
             if (scaleTarget == 0.0)
             {
-                QMessageBox::warning(this, "Scale atom charges", "Cannot scale atom charges so they sum to 0.", QMessageBox::StandardButton::Ok);
+                QMessageBox::warning(this, "Scale atom charges", "Cannot scale atom charges so they sum to 0.",
+                                     QMessageBox::StandardButton::Ok);
                 return;
             }
 
@@ -441,7 +442,6 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
             for (auto &atom : species->atoms())
                 sum += atom.charge();
             scaleFactor = scaleTarget / sum;
-
         }
         for (auto &atom : species->atoms())
             atom.setCharge(atom.charge() * scaleFactor);

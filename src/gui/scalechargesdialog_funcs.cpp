@@ -9,11 +9,13 @@ ScaleChargesDialog::~ScaleChargesDialog() {}
 double ScaleChargesDialog::scaleValue() const { return ui_.ScaleSpinBox->value(); }
 
 void ScaleChargesDialog::on_CancelButton_clicked(bool checked) { reject(); }
-void ScaleChargesDialog::on_ScaleButton_clicked(bool checked) {
+void ScaleChargesDialog::on_ScaleButton_clicked(bool checked)
+{
     scale_ = true;
     accept();
 }
-void ScaleChargesDialog::on_ScaleToButton_clicked(bool checked) {
+void ScaleChargesDialog::on_ScaleToButton_clicked(bool checked)
+{
     scaleTo_ = true;
     accept();
 }
