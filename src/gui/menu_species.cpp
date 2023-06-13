@@ -360,18 +360,9 @@ void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool che
                              QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
                              QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
     {
-        const auto atomTypes = dissolve().coreData().atomTypes();
         for (auto &atom : species->atoms())
-        {
-            for (auto &atomType : atomTypes)
-            {
-                if (atomType == atom.atomType())
-                {
-                    atom.setCharge(atomType->charge());
-                    break;
-                }
-            }
-        }
+            if (atom.atomType())
+                atom.setCharge(atomType->charge());
 
         setModified();
 
