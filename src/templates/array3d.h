@@ -126,13 +126,28 @@ template <class A> class Array3D
     }
 
     // Return array range for a given x and y value
-    std::pair<Array3DIterator, Array3DIterator> operator[](std::tuple<int, int> index)
+    std::pair<typename std::vector<A>::iterator, typename std::vector<A>::iterator> operator[](std::tuple<int, int> index)
+    {
+        auto [x, y] = index;
+        auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
+        return {begin, begin + nZ_};
+
+    }
+    std::pair<typename std::vector<A>::const_iterator, typename std::vector<A>::const_iterator>
+    operator[](std::tuple<int, int> index) const
+    {
+        auto [x, y] = index;
+        auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
+        return {begin, begin + nZ_};
+    }
+
+    // Return index range for a given x and y value
+    std::pair<Array3DIterator, Array3DIterator> index_range(std::tuple<int, int> index)
     {
         auto [x, y] = index;
         return { Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_) };
     }
-    // Return array range for a given x and y value
-    std::pair<const Array3DIterator, const Array3DIterator> operator[](std::tuple<int, int> index) const
+    std::pair<const Array3DIterator, const Array3DIterator> index_range(std::tuple<int, int> index) const
     {
         auto [x, y] = index;
         return { Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_) };
@@ -160,13 +175,21 @@ template <class A> class Array3D
     // Return linear array
     const std::vector<A> &linearArray() const { return array_; }
     // Beginning of the underlying array
-    Array3DIterator begin() { return Array3DIterator(nX_, nY_, nZ_, 0); }
+    typename std::vector<A>::iterator begin() { return array_.begin(); }
     // End of the underlying array
-    Array3DIterator end() { return Array3DIterator(nX_, nY_, nZ_, nX_ * nY_ * nZ_); }
+    typename std::vector<A>::iterator end() { return array_.end(); }
     // Beginning of the underlying array
-    const Array3DIterator begin() const { return Array3DIterator(nX_, nY_, nZ_, 0);  }
+    typename std::vector<A>::const_iterator begin() const { return array_.cbegin(); }
     // End of the underlying array
-    const Array3DIterator end() const { return Array3DIterator(nX_, nY_, nZ_, nX_ * nY_ * nZ_); }
+    typename std::vector<A>::const_iterator end() const { return array_.cend(); }
+    // Beginning of indices
+    Array3DIterator beginIndices() { return Array3DIterator(nX_, nY_, nZ_, 0); }
+    // End of indices
+    Array3DIterator endIndices() { return Array3DIterator(nX_, nY_, nZ_, nX_ * nY_ * nZ_); }
+    // Beginning of indices
+    const Array3DIterator beginIndices() const { return Array3DIterator(nX_, nY_, nZ_, 0); }
+    // End of indices
+    const Array3DIterator endIndices() const { return Array3DIterator(nX_, nY_, nZ_, nX_ * nY_ * nZ_); }
     bool empty() const { return array_.empty(); }
     // Return linear value
     A &linearValue(int index) { return array_[index]; }
