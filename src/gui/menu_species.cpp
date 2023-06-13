@@ -10,6 +10,7 @@
 #include "gui/importcifdialog.h"
 #include "gui/importligpargendialog.h"
 #include "gui/importspeciesdialog.h"
+#include "gui/scalechargesdialog.h"
 #include "gui/selectatomtypedialog.h"
 #include "gui/selectelementdialog.h"
 #include "gui/selectspeciesdialog.h"
@@ -19,6 +20,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <qdialog.h>
 #include <qinputdialog.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
@@ -362,7 +364,7 @@ void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool che
     {
         for (auto &atom : species->atoms())
             if (atom.atomType())
-                atom.setCharge(atomType->charge());
+                atom.setCharge(atom.atomType()->charge());
 
         setModified();
 
@@ -419,56 +421,33 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
-
-    auto ok = false;
-    static auto scaleFactor = 1.0;
-    auto newScaleFactor = QInputDialog::getDouble(this, "Scale atom charges", "Enter the scale factor to apply to all atoms",
-                                                  scaleFactor, -100.0, 100.0, 5, &ok);
-    if (!ok)
-        return;
-
-    scaleFactor = newScaleFactor;
-    for (auto &i : species->atoms())
-        i.setCharge(scaleFactor * i.charge());
-
-    setModified();
-
-    fullUpdate();
-}
-
-void DissolveWindow::on_SpeciesScaleChargesToAction_triggered(bool checked)
-{
-    // Get the current Species (if a SpeciesTab is selected)
-    auto species = ui_.MainTabs->currentSpecies();
-    if (!species)
-        return;
-
-    auto ok = false;
-    static auto scaleTarget = 1.0;
-    auto newScaleTarget = QInputDialog::getDouble(this, "Scale atom charges", "Enter the target sum to scale all atoms to",
-                                                  scaleTarget, -100.0, 100.0, 2, &ok);
-    if (!ok)
-        return;
-
-    scaleTarget = newScaleTarget;
-    if (scaleTarget == 0.0)
+    
+    static ScaleChargesDialog scaleChargesDialog(this);
+    double scaleFactor = 1.0;
+    if (scaleChargesDialog.exec() == QDialog::Accepted)
     {
-        QMessageBox::warning(this, "Scale atom charges", "Cannot scale atom charges so they sum to 0.",
-                             QMessageBox::StandardButton::Ok);
-        return;
+        if (scaleChargesDialog.scale_)
+            scaleFactor = scaleChargesDialog.scaleValue();
+        else
+        {
+            double scaleTarget = scaleChargesDialog.scaleValue();
+            if (scaleTarget == 0.0)
+            {
+                QMessageBox::warning(this, "Scale atom charges", "Cannot scale atom charges so they sum to 0.", QMessageBox::StandardButton::Ok);
+                return;
+            }
+
+            double sum = 0.0;
+            for (auto &atom : species->atoms())
+                sum += atom.charge();
+            scaleFactor = scaleTarget / sum;
+
+        }
+        for (auto &atom : species->atoms())
+            atom.setCharge(atom.charge() * scaleFactor);
+        setModified();
+        fullUpdate();
     }
-
-    double sum = 0.0;
-    for (auto &atom : species->atoms())
-        sum += atom.charge();
-
-    double scaleFactor = scaleTarget / sum;
-    for (auto &atom : species->atoms())
-        atom.setCharge(atom.charge() * scaleFactor);
-
-    setModified();
-
-    fullUpdate();
 }
 
 void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked)

@@ -40,6 +40,7 @@ set(gui_MOC_HDRS
     importligpargendialog.h
     importcifdialog.h
     importspeciesdialog.h
+    scalechargesdialog.h
     selectatomtypedialog.h
     selectconfigurationdialog.h
     selectelementdialog.h
@@ -93,6 +94,7 @@ set(gui_UIS
     importligpargendialog.ui
     importcifdialog.ui
     importspeciesdialog.ui
+    scalechargesdialog.ui
     selectatomtypedialog.ui
     selectconfigurationdialog.ui
     selectelementdialog.ui
@@ -166,6 +168,7 @@ set(gui_SRCS
     importligpargendialog_funcs.cpp
     importcifdialog_funcs.cpp
     importspeciesdialog_funcs.cpp
+    scalechargesdialog_funcs.cpp
     selectatomtypedialog_funcs.cpp
     selectconfigurationdialog_funcs.cpp
     selectelementdialog_funcs.cpp
