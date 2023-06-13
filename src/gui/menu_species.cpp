@@ -421,7 +421,7 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     auto species = ui_.MainTabs->currentSpecies();
     if (!species)
         return;
- 
+
     static ScaleChargesDialog scaleChargesDialog(this);
     double scaleFactor = 1.0;
     if (scaleChargesDialog.exec() == QDialog::Accepted)
