@@ -131,7 +131,6 @@ template <class A> class Array3D
         auto [x, y] = index;
         auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
         return {begin, begin + nZ_};
-
     }
     std::pair<typename std::vector<A>::const_iterator, typename std::vector<A>::const_iterator>
     operator[](std::tuple<int, int> index) const
@@ -145,12 +144,12 @@ template <class A> class Array3D
     std::pair<Array3DIterator, Array3DIterator> index_range(std::tuple<int, int> index)
     {
         auto [x, y] = index;
-        return { Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_) };
+        return {Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_)};
     }
     std::pair<const Array3DIterator, const Array3DIterator> index_range(std::tuple<int, int> index) const
     {
         auto [x, y] = index;
-        return { Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_) };
+        return {Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_)};
     }
 
     // Return address of specified element
