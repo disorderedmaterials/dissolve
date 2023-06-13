@@ -11,11 +11,11 @@ class Array3DIterator
     int sizeX_;
     int sizeY_;
     int sizeZ_;
-    int index_;
     int x_;
     int y_;
     int z_;
-    void fromIndex();
+    int toIndex() const;
+    void fromIndex(int);
 
     public:
     using value = std::tuple<int, int, int>;
