@@ -98,12 +98,7 @@ template <class A> class Array3D
     }
     A &operator[](Array3DIterator it)
     {
-        auto [x, y, z] = *it;
-        assert(x >= 0 && x < nX_);
-        assert(y >= 0 && y < nY_);
-        assert(z >= 0 && z < nZ_);
-
-        return array_[sliceOffsets_[x] + y * nZ_ + z];
+        return (*this)[*it];
     }
     // Return specified element as const-reference
     const A &operator[](std::tuple<int, int, int> index) const
