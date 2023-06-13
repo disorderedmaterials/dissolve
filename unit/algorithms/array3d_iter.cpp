@@ -21,14 +21,14 @@ TEST(Array3DIteratorTest, ForEach)
 
     dissolve::for_each_triplet(ParallelPolicies::par, it.begin(), it.end(),
                                [&](auto x1, auto y1, auto z1) {
-                                   arr[{x1, y1, z1}] = {Vec3<int>{x1, y1, z1}, true};
+                                   arr[std::tuple{x1, y1, z1}] = {Vec3<int>{x1, y1, z1}, true};
                                });
     for (x = 0; x < sizeX; ++x)
         for (y = 0; y < sizeY; ++y)
             for (z = 0; z < sizeZ; ++z)
             {
-                Vec3<int> vec = arr[{x, y, z}].first;
-                bool flag = arr[{x, y, z}].second;
+                Vec3<int> vec = arr[std::tuple{x, y, z}].first;
+                bool flag = arr[std::tuple{x, y, z}].second;
                 EXPECT_EQ(x, vec.x);
                 EXPECT_EQ(y, vec.y);
                 EXPECT_EQ(z, vec.z);
@@ -47,14 +47,14 @@ TEST(Array3DIteratorTest, Iterator)
     for (auto i = it.begin(), end = it.end(); i != end; ++i)
     {
         auto [x, y, z] = *i;
-        arr[{x, y, z}] = {Vec3<int>{x, y, z}, true};
+        arr[std::tuple{x, y, z}] = {Vec3<int>{x, y, z}, true};
     }
     for (x = 0; x < sizeX; ++x)
         for (y = 0; y < sizeY; ++y)
             for (z = 0; z < sizeZ; ++z)
             {
-                auto vec = arr[{x, y, z}].first;
-                auto flag = arr[{x, y, z}].second;
+                auto vec = arr[std::tuple{x, y, z}].first;
+                auto flag = arr[std::tuple{x, y, z}].second;
                 EXPECT_EQ(x, vec.x);
                 EXPECT_EQ(y, vec.y);
                 EXPECT_EQ(z, vec.z);

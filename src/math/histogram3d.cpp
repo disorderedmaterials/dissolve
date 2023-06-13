@@ -61,8 +61,8 @@ void Histogram3D::updateAccumulatedData()
                 if (x == 0)
                     accumulatedData_.zAxis(z) = zBinCentres_[z];
 
-                accumulatedData_.value(x, y, z) = averages_[{x, y, z}];
-                accumulatedData_.error(x, y, z) = averages_[{x, y, z}].stDev();
+                accumulatedData_.value(x, y, z) = averages_[std::tuple{x, y, z}];
+                accumulatedData_.error(x, y, z) = averages_[std::tuple{x, y, z}].stDev();
             }
         }
     }
@@ -162,7 +162,7 @@ bool Histogram3D::bin(double x, double y, double z)
         return false;
     }
 
-    ++bins_[{xBin, yBin, zBin}];
+    ++bins_[std::tuple{xBin, yBin, zBin}];
     ++nBinned_;
 
     return true;

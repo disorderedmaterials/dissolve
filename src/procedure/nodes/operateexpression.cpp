@@ -159,10 +159,10 @@ bool OperateExpressionProcedureNode::operateData3D(const ProcessPool &procPool, 
                 z_->setValue(z[k]);
                 // TODO: Convert to a single loop when we have the
                 // iterator combiner
-                value_->setValue(values[{i, j, k}]);
+                value_->setValue(values[std::tuple{i, j, k}]);
 
                 // Evaluate and store new value
-                values[{i, j, k}] = expression_.asDouble();
+                values[std::tuple{i, j, k}] = expression_.asDouble();
             }
         }
     }

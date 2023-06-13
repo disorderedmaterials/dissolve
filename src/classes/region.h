@@ -56,7 +56,7 @@ class Region
             ParallelPolicies::par, iterator.begin(), iterator.end(),
             [&](auto x, auto y, auto z)
             {
-                voxelMap_[{x, y, z}] = {
+                voxelMap_[std::tuple{x, y, z}] = {
                     Vec3<int>(x, y, z),
                     voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
                                                            (z + 0.5) * voxelSizeFrac_.z}))};

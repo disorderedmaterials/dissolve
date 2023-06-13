@@ -31,5 +31,5 @@ Vec3<double> Region::randomCoordinate() const
 bool Region::validCoordinate(Vec3<double> r) const
 {
     box_->toFractional(r);
-    return voxelMap_[{r.x / voxelSizeFrac_.x, r.y / voxelSizeFrac_.y, r.z / voxelSizeFrac_.z}].second;
+    return voxelMap_[std::tuple{r.x / voxelSizeFrac_.x, r.y / voxelSizeFrac_.y, r.z / voxelSizeFrac_.z}].second;
 }
