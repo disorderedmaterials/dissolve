@@ -54,7 +54,7 @@ class Region
         // Iterate voxels in parallel
         dissolve::for_each_triplet(
             ParallelPolicies::par, iterator.begin(), iterator.end(),
-            [&](auto x, auto y, auto z)
+            [&](auto triplet, auto x, auto y, auto z)
             {
                 voxelMap_[std::tuple{x, y, z}] = {
                     Vec3<int>(x, y, z),

@@ -236,7 +236,7 @@ void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
              [&lambda](const auto triplet)
              {
                  auto [x, y, z] = triplet;
-                 lambda(x, y, z);
+                 lambda(triplet, x, y, z);
              });
 }
 
