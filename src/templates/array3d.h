@@ -96,10 +96,8 @@ template <class A> class Array3D
 
         return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
-    A &operator[](Array3DIterator it)
-    {
-        return (*this)[*it];
-    }
+    A &operator[](Array3DIterator it) { return (*this)[*it]; }
+
     // Return specified element as const-reference
     const A &operator[](std::tuple<int, int, int> index) const
     {
@@ -110,10 +108,7 @@ template <class A> class Array3D
 
         return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
-    const A &operator[](Array3DIterator it) const
-    {
-        return (*this)[*it];
-    }
+    const A &operator[](Array3DIterator it) const { return (*this)[*it]; }
 
     // Return array range for a given x and y value
     std::pair<typename std::vector<A>::iterator, typename std::vector<A>::iterator> operator[](std::tuple<int, int> index)

@@ -5,8 +5,7 @@
 #include <cmath>
 #include <iostream>
 
-Array3DIterator::Array3DIterator(int sizeX, int sizeY, int sizeZ, int index)
-    : sizeX_(sizeX), sizeY_(sizeY), sizeZ_(sizeZ)
+Array3DIterator::Array3DIterator(int sizeX, int sizeY, int sizeZ, int index) : sizeX_(sizeX), sizeY_(sizeY), sizeZ_(sizeZ)
 {
     if (index == 0)
         x_ = y_ = z_ = 0;
@@ -21,7 +20,6 @@ void Array3DIterator::fromIndex(int index)
 }
 
 int Array3DIterator::toIndex() const { return x_ + sizeX_ * y_ + sizeX_ * sizeY_ * z_; }
-
 
 bool Array3DIterator::operator<(const Array3DIterator &other) const
 {
@@ -55,7 +53,6 @@ Array3DIterator &Array3DIterator::operator++()
             z_ += 1;
             y_ = 0;
         }
-
     }
     return *this;
 }
