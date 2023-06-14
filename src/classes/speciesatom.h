@@ -14,13 +14,14 @@
 
 // Forward Declarations
 class AtomType;
+class CoreData;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Serialisable<>
+class SpeciesAtom : public Serialisable<CoreData &>
 {
     public:
     SpeciesAtom() = default;
@@ -201,5 +202,5 @@ class SpeciesAtom : public Serialisable<>
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };

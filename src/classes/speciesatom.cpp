@@ -4,6 +4,7 @@
 #include "classes/speciesatom.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
+#include "classes/coredata.h"
 #include "classes/species.h"
 #include "classes/speciesbond.h"
 #include <algorithm>
@@ -219,13 +220,12 @@ void SpeciesAtom::setScaledInteractions()
     scaledInteractions_.clear();
 
     std::function<void(SpeciesAtom *, SpeciesAtom::ScaledInteraction, double, double)> addInteractionFunction =
-        [&](SpeciesAtom *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double vdwScale)
-    {
-        auto it =
-            std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(), [j](const auto &p) { return p.first == j; });
-        if (it == scaledInteractions_.end())
-            scaledInteractions_.emplace_back(j, ScaledInteractionDefinition{scaledType, elecScale, vdwScale});
-    };
+        [&](SpeciesAtom *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double vdwScale) {
+            auto it = std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(),
+                                   [j](const auto &p) { return p.first == j; });
+            if (it == scaledInteractions_.end())
+                scaledInteractions_.emplace_back(j, ScaledInteractionDefinition{scaledType, elecScale, vdwScale});
+        };
 
     /*
      * Add atoms to our scaledInteractions_ vector with appropriate scaling factors based on the intramolecular term in which
@@ -488,7 +488,7 @@ SerialisedValue SpeciesAtom::serialise() const
     atom["type"] = atomType_->name().data();
     return atom;
 }
-void SpeciesAtom::deserialise(const SerialisedValue &node)
+void SpeciesAtom::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     index_ = toml::find<int>(node, "index") - 1;
     Z_ = toml::find<Elements::Element>(node, "z");
@@ -499,7 +499,12 @@ void SpeciesAtom::deserialise(const SerialisedValue &node)
 
     if (node.contains("type") && Z_ != Elements::Unknown)
     {
-        atomType_ = std::make_shared<AtomType>(AtomType(Z_));
-        atomType_->setName(toml::find<std::string>(node, "type"));
+        std::string name = toml::find<std::string>(node, "type");
+        atomType_ = coreData.findAtomType(name);
+        if (atomType_ == nullptr)
+        {
+            atomType_ = coreData.addAtomType(Z_);
+            atomType_->setName(name);
+        }
     }
 }
