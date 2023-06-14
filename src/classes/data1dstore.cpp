@@ -53,7 +53,7 @@ SerialisedValue Data1DStore::serialise() const
     SerialisedValue result = toml::array{};
     std::transform(data_.begin(), data_.end(), std::back_inserter(result),
                    [](const auto &item) -> SerialisedValue {
-                       return {{"data", item->first}, {"format", item->second}};
+		       return item->second;
                    });
     return result;
 }
@@ -66,8 +66,8 @@ void Data1DStore::deserialise(const SerialisedValue &node, const CoreData &coreD
                    [&coreData](const auto &item)
                    {
                        auto pair = std::make_shared<std::pair<Data1D, Data1DImportFileFormat>>();
-                       pair->first.deserialise(item.at("data"));
-                       pair->second.deserialise(item.at("format"), coreData);
+                       pair->second.deserialise(item, coreData);
+		       pair->second.importData(pair->first);
                        return pair;
                    });
 }
