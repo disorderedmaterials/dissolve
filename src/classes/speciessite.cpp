@@ -9,7 +9,9 @@
 #include "data/atomicmasses.h"
 #include "neta/matchedgroup.h"
 #include "neta/neta.h"
-#include <memory>
+#include "neta/neta.h"
+#include "templates/algorithms.h"
+>>>>>>> 72cd25c09 (Return fragment definition and generate site stack from fragment definition.)
 #include <numeric>
 
 SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), type_(type), originMassWeighted_(false) {}

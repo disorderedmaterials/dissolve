@@ -224,6 +224,12 @@ bool SiteStack::createFragment()
         }
     }
 
+    for (auto &i : targetSpecies->atoms())
+    {
+        // Valid element or atom type?
+        if (fragment.matches(&i)) 
+            siteIndices.push_back(i.index());
+    }
     if (siteIndices.empty())
         return true;
 
@@ -348,6 +354,13 @@ bool SiteStack::createFragmentOriented()
     }
 
     return true;
+=======
+            sites_.emplace_back(molecule, atoms[id]->r());
+    }
+
+    return true;
+
+>>>>>>> 72cd25c09 (Return fragment definition and generate site stack from fragment definition.)
 }
 
 // Create stack for specified Configuration and site
@@ -376,7 +389,11 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
         case (SpeciesSite::SiteType::Dynamic):
             return createDynamic();
         case (SpeciesSite::SiteType::Fragment):
+<<<<<<< HEAD
             return sitesHaveOrientation_ ? createFragmentOriented() : createFragment();
+=======
+            return createFragment();
+>>>>>>> 72cd25c09 (Return fragment definition and generate site stack from fragment definition.)
         default:
             return Messenger::error("Species site type not handled in stack generation.\n");
     }
