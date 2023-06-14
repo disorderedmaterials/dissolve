@@ -188,6 +188,46 @@ bool SiteStack::createDynamic()
     return true;
 }
 
+bool SiteStack::createFragment()
+{
+    auto *targetSpecies = speciesSite_->parent();
+    const auto &fragment = speciesSite_->fragment();
+
+    auto spPop = configuration_->speciesPopulation(targetSpecies);
+    if (spPop == 0)
+        return true;
+
+    // Determine matching atom indices for the species
+    std::vector<int> siteIndices;
+    for (auto &i : targetSpecies->atoms())
+    {
+        // Valid element or atom type?
+        if (fragment.matches(&i)) 
+            siteIndices.push_back(i.index());
+    }
+    if (siteIndices.empty())
+        return true;
+
+    // Resize our array
+    sites_.reserve(siteIndices.size() * spPop);
+
+    // Get Molecule array from Configuration and search for the target Species
+    for (const auto &molecule : configuration_->molecules())
+    {
+        if (molecule->species() != targetSpecies)
+            continue;
+
+        auto &atoms = molecule->atoms();
+
+        // Loop over site indices
+        for (auto id : siteIndices)
+            sites_.emplace_back(molecule, atoms[id]->r());
+    }
+
+    return true;
+
+}
+
 // Create stack for specified Configuration and site
 bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 {
@@ -213,6 +253,8 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
             return sitesHaveOrientation_ ? createStaticOriented() : createStatic();
         case (SpeciesSite::SiteType::Dynamic):
             return createDynamic();
+        case (SpeciesSite::SiteType::Fragment):
+            return createFragment();
         default:
             return Messenger::error("Species site type not handled in stack generation.\n");
     }

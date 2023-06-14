@@ -131,12 +131,6 @@ class SpeciesSite : public Serialisable
     // Target atom types for selection as sites
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
-    /*
-     * Fragment Site Definition
-     */
-    private:
-    NETADefinition fragment_;
-
     public:
     // Add target elements for selection as sites
     bool addElement(Elements::Element el);
@@ -150,6 +144,15 @@ class SpeciesSite : public Serialisable
     bool setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types);
     // Return atom types for selection as sites
     const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
+
+    /*
+     * Fragment Site Definition
+     */
+    private:
+    NETADefinition fragment_;
+
+    public:
+    const NETADefinition fragment() const;
 
     /*
      * Generation from Parent

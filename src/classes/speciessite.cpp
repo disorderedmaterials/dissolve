@@ -7,6 +7,7 @@
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
+#include "neta/neta.h"
 #include "templates/algorithms.h"
 #include <numeric>
 
@@ -320,6 +321,9 @@ bool SpeciesSite::setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &typ
 
 // Return atom types for selection as sites
 const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { return atomTypes_; }
+
+// Return fragment definition
+const NETADefinition SpeciesSite::fragment() const { return fragment_; }
 
 /*
  * Generation from Parent
