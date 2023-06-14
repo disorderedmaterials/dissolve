@@ -44,9 +44,9 @@ class IntegerHistogram1D
     void initialise(std::optional<int> xMin, std::optional<int> xMax);
     // Zero histogram bins
     void zeroBins();
-    // Return minimum value for data (hard left-edge of first bin)
+    // Return minimum value for data
     std::optional<int> minimum() const;
-    // Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
+    // Return maximum value for data
     std::optional<int> maximum() const;
     // Bin specified value, returning success
     bool bin(int x);

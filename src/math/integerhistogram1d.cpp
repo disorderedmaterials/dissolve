@@ -74,11 +74,9 @@ void IntegerHistogram1D::initialise(std::optional<int> xMin, std::optional<int> 
 {
     clear();
 
-    // Store axis limits and binWidth, and then clamp as necessary
     minimum_ = xMin;
     maximum_ = xMax;
 
-    // Create the arrays
     bins_.clear();
 }
 
@@ -90,10 +88,10 @@ void IntegerHistogram1D::zeroBins()
     nMissed_ = 0;
 }
 
-// Return minimum value for data (hard left-edge of first bin)
+// Return minimum value for data
 std::optional<int> IntegerHistogram1D::minimum() const { return minimum_; }
 
-// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
+// Return maximum value for data
 std::optional<int> IntegerHistogram1D::maximum() const { return maximum_; }
 
 // Bin specified value, returning success
