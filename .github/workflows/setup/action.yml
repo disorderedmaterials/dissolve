@@ -46,7 +46,7 @@ runs:
     - name: Install sha256sum (OSX)
       if: ${{ runner.os == 'macos' }}
       shell: bash
-      run: sudo brew install coreutils
+      run: brew install coreutils
 
     - name: Get nix hash
       shell: bash
