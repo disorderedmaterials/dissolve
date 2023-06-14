@@ -32,25 +32,40 @@ void IntegerHistogram1D::clear()
 // Update accumulated data
 void IntegerHistogram1D::updateAccumulatedData()
 {
-    // Determine whether the accumulated data in the supplied histogram is consistent with the source data
-    int expectedMinimum = *std::min_element(accumulatedData_.values().begin(), accumulatedData_.values().end());
-    if (minimum())
-        expectedMinimum = std::min(*minimum(), expectedMinimum);
-    int expectedMaximum = *std::max_element(accumulatedData_.values().begin(), accumulatedData_.values().end());
-    if (maximum())
-        expectedMaximum = std::min(*maximum(), expectedMaximum);
+    // Get limiting key values
+    std::optional<int> expectedMinimum = bins_.empty() ? std::nullopt : std::optional<int>(bins_.begin()->first);
+    if (minimum_)
+        expectedMinimum = expectedMinimum ? std::min(*minimum_, *expectedMinimum) : *minimum_;
 
-    auto expectedNBins = (expectedMaximum - expectedMinimum) + 1;
+    std::optional<int> expectedMaximum = bins_.empty() ? std::nullopt : std::optional<int>(std::prev(bins_.end())->first);
+    if (maximum_)
+        expectedMaximum = expectedMaximum ? std::max(*maximum_, *expectedMaximum) : *maximum_;
 
-    // Set up arrays
-    accumulatedData_.initialise(expectedNBins, true);
-
-    // Store bin centres and accumulated averages in the object
-    for (auto n = expectedMinimum; n <= expectedMaximum; n++)
+    // Need to check on null values - set to zeroes if both null, or if one is null set it to match the other
+    if (!expectedMinimum && !expectedMaximum)
     {
-        accumulatedData_.xAxis(n) = n;
-        accumulatedData_.value(n) = bins_[n].second;
-        accumulatedData_.error(n) = bins_[n].second.stDev();
+        expectedMinimum = 0;
+        expectedMaximum = 0;
+    }
+    else if (!expectedMinimum)
+        expectedMinimum = expectedMaximum;
+    else if (!expectedMaximum)
+        expectedMaximum = expectedMinimum;
+
+    auto expectedNBins = (*expectedMaximum - *expectedMinimum) + 1;
+
+    // Set up data
+    accumulatedData_.initialise(expectedNBins, true);
+    auto x = *expectedMinimum;
+    for (auto n = 0; n < expectedNBins; n++)
+        accumulatedData_.xAxis(n) = x++;
+
+    // Poke bin values and errors into array
+    for (const auto &[key, value] : bins_)
+    {
+        auto n = key - *expectedMinimum;
+        accumulatedData_.value(n) = value.second.value();
+        accumulatedData_.error(n) = value.second.stDev();
     }
 }
 
