@@ -24,6 +24,7 @@
 #include <qinputdialog.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
+#include <valarray>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
@@ -448,6 +449,31 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
         setModified();
         fullUpdate();
     }
+}
+
+void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    auto ok = false;
+    auto targetSum = QInputDialog::getDouble(this, "Smooth atom charges", "Enter the target sum to smooth atom charges to.", 0.0,
+                                     -100.0, 100.0, 5, &ok);
+    
+    if (!ok)
+        return;
+
+    double sum = 0.0, shiftVal = 0.0;
+    for (auto &atom : species->atoms())
+        sum += atom.charge();
+    shiftVal = std::abs(targetSum - sum) / species->nAtoms();
+    for (auto &atom : species->atoms())
+        atom.setCharge(atom.charge() - shiftVal);
+
+    setModified();
+    fullUpdate();
 }
 
 void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked)

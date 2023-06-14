@@ -236,6 +236,7 @@
     <addaction name="SpeciesSetAtomTypesInSelectionAction"/>
     <addaction name="SpeciesSetChargesInSelectionAction"/>
     <addaction name="SpeciesScaleChargesAction"/>
+    <addaction name="SpeciesSmoothChargesAction"/>
     <addaction name="SpeciesReduceChargesSigFigsAction"/>
     <addaction name="SpeciesCopyChargesFromAtomTypesAction"/>
     <addaction name="SpeciesSetAtomTypeChargesFromSpeciesAction"/>
@@ -773,6 +774,11 @@
   <action name="SpeciesScaleChargesAction">
    <property name="text">
     <string>Sc&amp;ale Charges...</string>
+   </property>
+  </action>
+  <action name="SpeciesSmoothChargesAction">
+   <property name="text">
+    <string>S&amp;mooth Charges...</string>
    </property>
   </action>
   <action name="SpeciesReduceChargesSigFigsAction">
