@@ -236,6 +236,9 @@
     <addaction name="SpeciesSetAtomTypesInSelectionAction"/>
     <addaction name="SpeciesSetChargesInSelectionAction"/>
     <addaction name="SpeciesScaleChargesAction"/>
+    <addaction name="SpeciesReduceChargesSigFigsAction"/>
+    <addaction name="SpeciesCopyChargesFromAtomTypesAction"/>
+    <addaction name="SpeciesSetAtomTypeChargesFromSpeciesAction"/>
     <addaction name="separator"/>
     <addaction name="SpeciesRegenerateIntraFromConnectivityAction"/>
    </widget>
@@ -722,6 +725,16 @@
     <string>Set Atom C&amp;harges in Selection...</string>
    </property>
   </action>
+  <action name="SpeciesCopyChargesFromAtomTypesAction">
+   <property name="text">
+    <string>Copy Atom C&amp;harges from Atom Types...</string>
+   </property>
+  </action>
+  <action name="SpeciesSetAtomTypeChargesFromSpeciesAction">
+   <property name="text">
+    <string> Set Atom Type Charges from &amp;Species...</string>
+   </property>
+  </action>
   <action name="SimulationCheckAction">
    <property name="text">
     <string>Prepare / Check</string>
@@ -760,6 +773,11 @@
   <action name="SpeciesScaleChargesAction">
    <property name="text">
     <string>Sc&amp;ale Charges...</string>
+   </property>
+  </action>
+  <action name="SpeciesReduceChargesSigFigsAction">
+   <property name="text">
+    <string>Reduce Sig. Figs in Charges...</string>
    </property>
   </action>
   <action name="ConfigurationCreateAction">

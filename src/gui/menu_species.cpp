@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "base/messenger.h"
 #include "classes/species.h"
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/copyspeciestermsdialog.h"
@@ -9,14 +10,20 @@
 #include "gui/importcifdialog.h"
 #include "gui/importligpargendialog.h"
 #include "gui/importspeciesdialog.h"
+#include "gui/scalechargesdialog.h"
 #include "gui/selectatomtypedialog.h"
 #include "gui/selectelementdialog.h"
 #include "gui/selectspeciesdialog.h"
 #include "gui/speciestab.h"
 #include "io/import/species.h"
+#include "math/sampleddouble.h"
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <qdialog.h>
+#include <qinputdialog.h>
+#include <qmessagebox.h>
+#include <qpushbutton.h>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
@@ -341,6 +348,73 @@ void DissolveWindow::on_SpeciesSetChargesInSelectionAction_triggered(bool checke
     fullUpdate();
 }
 
+void DissolveWindow::on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    if (QMessageBox::warning(this, "Copy Charges from Atom Types",
+                             "This will replace the species atom charges "
+                             "with those of the assigned atom types.\n\n"
+                             "This cannot be undone! Proceed?",
+                             QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
+                             QMessageBox::StandardButton::No) == QMessageBox::StandardButton::Yes)
+    {
+        for (auto &atom : species->atoms())
+            if (atom.atomType())
+                atom.setCharge(atom.atomType()->charge());
+
+        setModified();
+
+        fullUpdate();
+    }
+}
+
+void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
+    std::map<std::shared_ptr<AtomType>, SampledDouble> charges;
+    for (auto &atom : species->atoms())
+        charges[atom.atomType()] += atom.charge();
+
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Set Atom Type Charges from Species Atoms");
+    msgBox.setText("This will replace the current atom type charges "
+                   "with the average charge of relevant species atoms.\n\n"
+                   "This cannot be undone! Proceed?");
+    msgBox.addButton(QMessageBox::Yes);
+    msgBox.addButton(QMessageBox::No);
+    QPushButton *testButton = msgBox.addButton("Test", QMessageBox::ActionRole);
+
+    auto result = msgBox.exec();
+
+    if (result == QMessageBox::No)
+        return;
+
+    Messenger::banner("Proposed atom type charges, averaged from {}", species->name());
+    auto atomTypes = dissolve().coreData().atomTypes();
+    for (auto &atomType : atomTypes)
+    {
+        if (charges[atomType].count() > 0)
+        {
+            Messenger::print("{}: {} -> {} \u00b1 {} [Averaged from {} atoms]", atomType->name(), atomType->charge(),
+                             charges[atomType].value(), charges[atomType].stDev(), charges[atomType].count());
+            if (result == QMessageBox::Yes)
+                atomType->setCharge(charges[atomType].value());
+        }
+    }
+
+    if (result == QMessageBox::Yes)
+        setModified();
+    fullUpdate();
+}
+
 void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
 {
     // Get the current Species (if a SpeciesTab is selected)
@@ -348,16 +422,50 @@ void DissolveWindow::on_SpeciesScaleChargesAction_triggered(bool checked)
     if (!species)
         return;
 
+    static ScaleChargesDialog scaleChargesDialog(this);
+    double scaleFactor = 1.0;
+    if (scaleChargesDialog.exec() == QDialog::Accepted)
+    {
+        if (scaleChargesDialog.scale_)
+            scaleFactor = scaleChargesDialog.scaleValue();
+        else
+        {
+            double scaleTarget = scaleChargesDialog.scaleValue();
+            if (scaleTarget == 0.0)
+            {
+                QMessageBox::warning(this, "Scale atom charges", "Cannot scale atom charges so they sum to 0.",
+                                     QMessageBox::StandardButton::Ok);
+                return;
+            }
+
+            double sum = 0.0;
+            for (auto &atom : species->atoms())
+                sum += atom.charge();
+            scaleFactor = scaleTarget / sum;
+        }
+        for (auto &atom : species->atoms())
+            atom.setCharge(atom.charge() * scaleFactor);
+        setModified();
+        fullUpdate();
+    }
+}
+
+void DissolveWindow::on_SpeciesReduceChargesSigFigsAction_triggered(bool checked)
+{
+    // Get the current Species (if a SpeciesTab is selected)
+    auto species = ui_.MainTabs->currentSpecies();
+    if (!species)
+        return;
+
     auto ok = false;
-    static auto scaleFactor = 1.0;
-    auto newScaleFactor = QInputDialog::getDouble(this, "Scale atom charges", "Enter the scale factor to apply to all atoms",
-                                                  scaleFactor, -100.0, 100.0, 5, &ok);
+    auto significantFigures =
+        QInputDialog::getInt(this, "Reduce Signficant Figures in Charges",
+                             "Enter the number of significant figures to use for all atoms", 3, 1, 100, 1, &ok);
     if (!ok)
         return;
 
-    scaleFactor = newScaleFactor;
-    for (auto &i : species->atoms())
-        i.setCharge(scaleFactor * i.charge());
+    for (auto &atom : species->atoms())
+        atom.setCharge(std::round(atom.charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
 
     setModified();
 

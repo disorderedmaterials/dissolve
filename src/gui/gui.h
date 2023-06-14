@@ -166,7 +166,10 @@ class DissolveWindow : public QMainWindow
     void on_SpeciesRegenerateIntraFromConnectivityAction_triggered(bool checked);
     void on_SpeciesSetAtomTypesInSelectionAction_triggered(bool checked);
     void on_SpeciesSetChargesInSelectionAction_triggered(bool checked);
+    void on_SpeciesCopyChargesFromAtomTypesAction_triggered(bool checked);
+    void on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(bool checked);
     void on_SpeciesScaleChargesAction_triggered(bool checked);
+    void on_SpeciesReduceChargesSigFigsAction_triggered(bool checked);
     // Configuration
     void on_ConfigurationCreateAction_triggered(bool checked);
     void on_ConfigurationRenameAction_triggered(bool checked);
