@@ -226,8 +226,7 @@ bool SiteStack::createFragment()
 
     for (auto &i : targetSpecies->atoms())
     {
-        // Valid element or atom type?
-        if (fragment.matches(&i)) 
+        if (fragment.matches(&i))
             siteIndices.push_back(i.index());
     }
     if (siteIndices.empty())
