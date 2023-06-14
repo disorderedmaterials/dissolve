@@ -732,7 +732,7 @@
   </action>
   <action name="SpeciesSetAtomTypeChargesFromSpeciesAction">
    <property name="text">
-    <string> Set Atom Type C&amp;harges from Species...</string>
+    <string> Set Atom Type Charges from &amp;Species...</string>
    </property>
   </action>
   <action name="SimulationCheckAction">
