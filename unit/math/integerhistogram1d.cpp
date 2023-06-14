@@ -55,7 +55,7 @@ TEST(IntegerHistogram1D, Basic)
 
 TEST(IntegerHistogram1D, Negatives)
 {
-    std::vector<int> data{2, -5, 7, -1};
+    std::vector<int> data{2, -5, 7, -1}, binnedData{2, 7};
     IntegerHistogram1D h;
 
     // Add data to histogram and accumulate
@@ -64,21 +64,52 @@ TEST(IntegerHistogram1D, Negatives)
     h.accumulate();
 
     // Check accumulated data
-    testHistogram(h, data);
+    testHistogram(h, binnedData);
 }
 
 TEST(IntegerHistogram1D, Limits1)
 {
-    //    std::vector<int> data{2,-5,7,-1};
-    //    IntegerHistogram1D h;
-    //
-    //    // Add data to histogram and accumulate
-    //    for (auto x : data)
-    //        h.bin(x);
-    //    h.accumulate();
-    //
-    //    // Check accumulated data
-    //    testHistogram(h, data);
+    std::vector<int> data{2, -5, 7, -1}, binnedData{-1, 2, 7};
+    IntegerHistogram1D h;
+    h.initialise(-3, {});
+
+    // Add data to histogram and accumulate
+    for (auto x : data)
+        h.bin(x);
+    h.accumulate();
+
+    // Check accumulated data
+    testHistogram(h, binnedData);
+}
+
+TEST(IntegerHistogram1D, Limits2)
+{
+    std::vector<int> data{2, -5, 7, -1}, binnedData{-1, 2};
+    IntegerHistogram1D h;
+    h.initialise(-3, 2);
+
+    // Add data to histogram and accumulate
+    for (auto x : data)
+        h.bin(x);
+    h.accumulate();
+
+    // Check accumulated data
+    testHistogram(h, binnedData);
+}
+
+TEST(IntegerHistogram1D, Duplicates)
+{
+    std::vector<int> data{2, -5, 7, -1, 7, 7, -1, 2, 2, 2}, binnedData{-1, -1, 2, 2, 2, 2};
+    IntegerHistogram1D h;
+    h.initialise(-3, 2);
+
+    // Add data to histogram and accumulate
+    for (auto x : data)
+        h.bin(x);
+    h.accumulate();
+
+    // Check accumulated data
+    testHistogram(h, binnedData);
 }
 
 } // namespace UnitTest
