@@ -20,8 +20,6 @@ IntegerHistogram1D::IntegerHistogram1D(const IntegerHistogram1D &source) { (*thi
 // Clear Data
 void IntegerHistogram1D::clear()
 {
-    minimum_ = 0;
-    maximum_ = std::nullopt;
     nBinned_ = 0;
     nMissed_ = 0;
     bins_.clear();
