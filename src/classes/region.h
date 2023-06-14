@@ -49,11 +49,9 @@ class Region
         voxelMap_.initialise(nVoxels_.x, nVoxels_.y, nVoxels_.z);
 
         // Setup iterator for voxel map
-        Array3DIterator iterator(nVoxels_.x, nVoxels_.y, nVoxels_.z);
-
         // Iterate voxels in parallel
         dissolve::for_each_triplet(
-            ParallelPolicies::par, iterator.begin(), iterator.end(),
+            ParallelPolicies::par, voxelMap.beginIndices(), voxelMap.endIndices(),
             [&](auto triplet, auto x, auto y, auto z)
             {
                 voxelMap_[triplet] = {
