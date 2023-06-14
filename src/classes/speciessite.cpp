@@ -413,7 +413,17 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
         }
         return sites;
     }
-
+    else if (type_ == SiteType::Fragment)
+    {
+        Messenger::print("Fragment is here!");
+        std::vector<std::shared_ptr<Site>> sites;
+        for (auto &i : parent_->atoms())
+        {
+            if (fragment_.matches(&i))
+                sites.push_back(std::make_shared<Site>(nullptr, i.r()));
+        }
+        return sites; 
+    }
     return {};
 }
 
