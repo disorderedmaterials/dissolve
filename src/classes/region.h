@@ -51,7 +51,7 @@ class Region
         // Setup iterator for voxel map
         // Iterate voxels in parallel
         dissolve::for_each_triplet(
-            ParallelPolicies::par, voxelMap.beginIndices(), voxelMap.endIndices(),
+            ParallelPolicies::par, voxelMap_.beginIndices(), voxelMap_.endIndices(),
             [&](auto triplet, auto x, auto y, auto z)
             {
                 voxelMap_[triplet] = {
