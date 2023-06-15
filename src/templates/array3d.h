@@ -125,13 +125,6 @@ template <class A> class Array3D
         return {begin, begin + nZ_};
     }
 
-    // Return index range for a given x and y value
-    std::pair<Array3DIterator, Array3DIterator> index_range(std::tuple<int, int> index) const
-    {
-        auto [x, y] = index;
-        return {Array3DIterator(nX_, nY_, nZ_, x * y), Array3DIterator(nX_, nY_, nZ_, x * y * nZ_)};
-    }
-
     // Return address of specified element
     A *ptr(int x, int y, int z)
     {
