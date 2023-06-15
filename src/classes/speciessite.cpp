@@ -440,13 +440,25 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                 
                 auto identifiers = fragment_.matchedPath(&i).identifiers();
                 auto originAtoms = identifiers["origin"];
-                double massNorm = 0.0;
-                for (const auto &atom : originAtoms)
+                if (originMassWeighted_)
                 {
-                    origin += atom->r();
+                    double massNorm = 0.0;
+                    for (const auto &atom : originAtoms)
+                    {
+                        mass = AtomicMass::mass(atom->Z());
+                        origin += atom->r() * mass;
+                        massNorm += mass;
+                    }
+                    origin /= massNorm; 
                 }
-                origin /= originAtoms.size();
-                
+                else
+                {
+                    for (const auto &atom : originAtoms)
+                    {
+                        origin += atom->r();
+                    }
+                    origin /= originAtoms.size();
+                } 
                 auto xAxisAtoms = identifiers["x"];
                 auto yAxisAtoms = identifiers["y"];
                 
