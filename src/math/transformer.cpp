@@ -145,11 +145,11 @@ void Transformer::transformValues(Data3D &data)
             // Loop over z values
             for (auto k = 0; k < zAxis.size(); ++k)
             {
-                z_->setValue(values[{i, j, k}]);
-                value_->setValue(values[{i, j, k}]);
+                z_->setValue(values[std::tuple{i, j, k}]);
+                value_->setValue(values[std::tuple{i, j, k}]);
 
                 // Perform transform
-                values[{i, j, k}] = equation_.asDouble();
+                values[std::tuple{i, j, k}] = equation_.asDouble();
             }
         }
     }

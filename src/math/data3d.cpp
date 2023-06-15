@@ -161,10 +161,10 @@ double &Data3D::value(int xIndex, int yIndex, int zIndex)
 {
     ++version_;
 
-    return values_[{xIndex, yIndex, zIndex}];
+    return values_[std::tuple{xIndex, yIndex, zIndex}];
 }
 
-const double &Data3D::value(int xIndex, int yIndex, int zIndex) const { return values_[{xIndex, yIndex, zIndex}]; }
+const double &Data3D::value(int xIndex, int yIndex, int zIndex) const { return values_[std::tuple{xIndex, yIndex, zIndex}]; }
 
 // Return three-dimensional values Array
 Array3D<double> &Data3D::values()
@@ -220,14 +220,14 @@ double &Data3D::error(int xIndex, int yIndex, int zIndex)
 
     ++version_;
 
-    return errors_[{xIndex, yIndex, zIndex}];
+    return errors_[std::tuple{xIndex, yIndex, zIndex}];
 }
 
 const double &Data3D::error(int xIndex, int yIndex, int zIndex) const
 {
     assert(hasError_);
 
-    return errors_[{xIndex, yIndex, zIndex}];
+    return errors_[std::tuple{xIndex, yIndex, zIndex}];
 }
 
 // Return three-dimensional errors Array

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/messenger.h"
+#include "classes/array3d_iter.h"
 #include "templates/vector3.h"
 #include <cassert>
 #include <numeric>
@@ -84,6 +85,7 @@ template <class A> class Array3D
         if ((nX > 0) && (nY > 0) && (nZ > 0))
             resize(nX, nY, nZ);
     }
+
     // Return specified element as modifiable reference
     A &operator[](std::tuple<int, int, int> index)
     {
@@ -94,6 +96,8 @@ template <class A> class Array3D
 
         return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
+    A &operator[](Array3DIterator it) { return (*this)[*it]; }
+
     // Return specified element as const-reference
     const A &operator[](std::tuple<int, int, int> index) const
     {
@@ -104,6 +108,8 @@ template <class A> class Array3D
 
         return array_[sliceOffsets_[x] + y * nZ_ + z];
     }
+    const A &operator[](Array3DIterator it) const { return (*this)[*it]; }
+
     // Return array range for a given x and y value
     std::pair<typename std::vector<A>::iterator, typename std::vector<A>::iterator> operator[](std::tuple<int, int> index)
     {
@@ -111,7 +117,6 @@ template <class A> class Array3D
         auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
         return {begin, begin + nZ_};
     }
-    // Return array range for a given x and y value
     std::pair<typename std::vector<A>::const_iterator, typename std::vector<A>::const_iterator>
     operator[](std::tuple<int, int> index) const
     {
@@ -119,6 +124,7 @@ template <class A> class Array3D
         auto begin = array_.begin() + sliceOffsets_[x] + y * nZ_;
         return {begin, begin + nZ_};
     }
+
     // Return address of specified element
     A *ptr(int x, int y, int z)
     {
@@ -148,6 +154,10 @@ template <class A> class Array3D
     typename std::vector<A>::const_iterator begin() const { return array_.cbegin(); }
     // End of the underlying array
     typename std::vector<A>::const_iterator end() const { return array_.cend(); }
+    // Beginning of indices
+    Array3DIterator beginIndices() const { return Array3DIterator(nX_, nY_, nZ_, 0); }
+    // End of indices
+    Array3DIterator endIndices() const { return Array3DIterator(nX_, nY_, nZ_, nX_ * nY_ * nZ_); }
     bool empty() const { return array_.empty(); }
     // Return linear value
     A &linearValue(int index) { return array_[index]; }

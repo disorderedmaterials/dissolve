@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 #pragma once
 
+#include "classes/array3d_iter.h"
 #include "classes/pair_iter.h"
 #include "templates/parallel_defs.h"
 #include <fmt/format.h>
@@ -225,6 +226,17 @@ void for_each_pair(ParallelPolicy policy, Iter begin, Iter end, Lam lambda)
              {
                  auto &[i, j] = pair;
                  lambda(i, begin[i], j, begin[j]);
+             });
+}
+
+template <typename ParalellPolicy, class Iter, class Lam>
+void for_each_triplet(ParalellPolicy policy, Iter begin, Iter end, Lam lambda)
+{
+    for_each(policy, begin, end,
+             [&lambda](const auto triplet)
+             {
+                 auto [x, y, z] = triplet;
+                 lambda(triplet, x, y, z);
              });
 }
 

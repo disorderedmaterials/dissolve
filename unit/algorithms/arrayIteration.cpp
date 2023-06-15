@@ -26,7 +26,7 @@ TEST(ArrayIterationTest, IndexIterator)
     for (auto i = 0; i < array3.nX(); ++i)
         for (auto j = 0; j < array3.nY(); ++j)
             for (auto k = 0; k < array3.nZ(); ++k)
-                array3[{i, j, k}] = i * array3.nY() + j * array3.nZ() + k;
+                array3[std::tuple{i, j, k}] = i * array3.nY() + j * array3.nZ() + k;
 
     EXPECT_EQ(*(ArrayIndex2D(array2).begin()), std::make_tuple(0, 0));
     EXPECT_EQ(*(ArrayIndex2D(array2).end()), std::make_tuple(x, 0));

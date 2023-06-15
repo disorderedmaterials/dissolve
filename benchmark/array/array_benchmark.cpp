@@ -59,7 +59,7 @@ static void BM_Array_3d(benchmark::State &state)
     for (int i = 0; i < array.nX(); ++i)
         for (int j = 0; j < array.nY(); ++j)
             for (int k = 0; k < array.nZ(); ++k)
-                array[{i, j, k}] = distribution(generator);
+                array[std::tuple{i, j, k}] = distribution(generator);
 
     for (auto _ : state)
     {
@@ -69,7 +69,7 @@ static void BM_Array_3d(benchmark::State &state)
             int i = idx / (dim * dim);
             int j = (idx - i * (dim * dim)) / dim;
             int k = idx - i * (dim * dim) - j * dim;
-            sum += array[{i, j, k}];
+            sum += array[std::tuple{i, j, k}];
         }
         benchmark::DoNotOptimize(sum);
     }

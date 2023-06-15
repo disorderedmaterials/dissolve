@@ -1,5 +1,6 @@
 add_library(
   classes
+  array3d_iter.cpp
   atom.cpp
   atomtype.cpp
   atomtypedata.cpp
@@ -70,6 +71,7 @@ add_library(
   speciestorsion.cpp
   valuestore.cpp
   xrayweights.cpp
+  array3d_iter.h
   atom.h
   atomtypedata.h
   atomtype.h

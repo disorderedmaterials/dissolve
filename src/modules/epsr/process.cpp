@@ -647,7 +647,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     weight *= 0.5;
 
                 // Store fluctuation coefficients ready for addition to potential coefficients later on.
-                auto [begin, end] = fluctuationCoefficients[{i, j}];
+                auto [begin, end] = fluctuationCoefficients[std::tuple{i, j}];
                 std::transform(fitCoefficients.begin(), fitCoefficients.end(), begin, begin,
                                [weight, this](auto coeff, auto result) { return result + weight * feedback_ * coeff; });
             });
@@ -672,7 +672,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                         std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
                                     // Add in fluctuation coefficients
-                                    auto [begin, end] = fluctuationCoefficients[{i, j}];
+                                    auto [begin, end] = fluctuationCoefficients[std::tuple{i, j}];
                                     std::transform(potCoeff.begin(), potCoeff.end(), begin, potCoeff.begin(),
                                                    [this](auto pot, auto fluct) { return pot + weighting_ * fluct; });
 

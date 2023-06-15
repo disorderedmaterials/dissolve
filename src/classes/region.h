@@ -3,9 +3,12 @@
 
 #pragma once
 
+#include "classes/array3d_iter.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
+#include "templates/algorithms.h"
 #include "templates/array3d.h"
+#include "templates/parallel_defs.h"
 #include "templates/vector3.h"
 #include <vector>
 
@@ -44,14 +47,18 @@ class Region
 
         // Initialise 3D map and determine valid voxels
         voxelMap_.initialise(nVoxels_.x, nVoxels_.y, nVoxels_.z);
-        for (auto x = 0; x < nVoxels_.x; ++x)
-            for (auto y = 0; y < nVoxels_.y; ++y)
-                for (auto z = 0; z < nVoxels_.z; ++z)
-                    voxelMap_[{x, y, z}] = {
-                        Vec3<int>(x, y, z),
-                        voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
-                                                               (z + 0.5) * voxelSizeFrac_.z}))};
 
+        // Setup iterator for voxel map
+        // Iterate voxels in parallel
+        dissolve::for_each_triplet(
+            ParallelPolicies::par, voxelMap_.beginIndices(), voxelMap_.endIndices(),
+            [&](auto triplet, auto x, auto y, auto z)
+            {
+                voxelMap_[triplet] = {
+                    Vec3<int>(x, y, z),
+                    voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
+                                                           (z + 0.5) * voxelSizeFrac_.z}))};
+            });
         // Create linear vector of all available voxels
         auto nFreeVoxels = std::count_if(voxelMap_.begin(), voxelMap_.end(), [](const auto &voxel) { return voxel.second; });
         freeVoxels_.clear();
