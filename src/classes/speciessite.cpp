@@ -446,7 +446,6 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 
                 // Compute the origin.
                 auto originAtoms = identifiers["origin"];
-
                 if (originMassWeighted_)
                 {
                     double massNorm = 0.0;
