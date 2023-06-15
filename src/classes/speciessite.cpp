@@ -3,6 +3,7 @@
 
 #include "classes/speciessite.h"
 #include "base/lineparser.h"
+#include "base/messenger.h"
 #include "classes/coredata.h"
 #include "classes/site.h"
 #include "classes/species.h"
@@ -11,7 +12,6 @@
 #include "neta/neta.h"
 #include "neta/neta.h"
 #include "templates/algorithms.h"
->>>>>>> 72cd25c09 (Return fragment definition and generate site stack from fragment definition.)
 #include <numeric>
 
 SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), type_(type), originMassWeighted_(false) {}
@@ -418,6 +418,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
     {
         std::vector<std::shared_ptr<Site>> sites;
         double mass;
+<<<<<<< HEAD
         std::vector<std::vector<int>> matchedIndices;
         for (auto &i : parent_->atoms())
         {
@@ -474,6 +475,35 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                     auto xAxisAtoms = identifiers["x"];
                     auto yAxisAtoms = identifiers["y"];
 
+=======
+        Vec3<double> origin, x, y, z;
+        for (auto &i : parent_->atoms())
+        {
+            std::vector<int> xAxisIndices, yAxisIndices;
+            Vec3<double> v;
+            if (fragment_.matches(&i))
+            {
+                auto identifiers = fragment_.matchedPath(&i).identifiers();
+                auto originAtoms = identifiers["origin"];
+                double massNorm = 0.0;
+                for (const auto &atom : originAtoms)
+                {
+                    mass = AtomicMass::mass(atom->Z());
+                    origin += atom->r() * mass;
+                    massNorm += mass;
+                }
+                origin /= massNorm;
+
+                auto xAxisAtoms = identifiers["x"];
+                auto yAxisAtoms = identifiers["y"];
+                
+                if (xAxisAtoms.empty() || yAxisAtoms.empty())
+                {
+                    sites.push_back(std::make_shared<Site>(nullptr, origin));
+                }
+                else
+                { 
+>>>>>>> 3717b6463 (Orient fragment sites.)
                     Vec3<double> v;
 
                     // Get average position of supplied x-axis atoms
@@ -495,6 +525,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                     auto y = v - origin;
                     y.orthogonalise(x);
                     y.normalise();
+<<<<<<< HEAD
 
                     // Calculate z vector from cross product of x and y
                     auto z = x * y;
@@ -503,6 +534,13 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                 }
                 else
                     sites.push_back(std::make_shared<Site>(nullptr, origin));
+=======
+                    // Calculate z vector from cross product of x and y
+                    auto z = x * y;
+                    //sites.push_back(std::make_shared<Site>(nullptr, origin));    
+                    sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
+                }
+>>>>>>> 3717b6463 (Orient fragment sites.)
             }
         }
         return sites;
