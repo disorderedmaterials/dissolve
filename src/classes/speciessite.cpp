@@ -3,12 +3,15 @@
 
 #include "classes/speciessite.h"
 #include "base/lineparser.h"
+#include "base/messenger.h"
 #include "classes/coredata.h"
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
+#include "neta/matchedgroup.h"
 #include "neta/neta.h"
 #include "templates/algorithms.h"
+#include <memory>
 #include <numeric>
 
 SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), type_(type), originMassWeighted_(false) {}
@@ -415,12 +418,62 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
     }
     else if (type_ == SiteType::Fragment)
     {
-        Messenger::print("Fragment is here!");
         std::vector<std::shared_ptr<Site>> sites;
+        double mass;
+        Vec3<double> origin, x, y, z;
         for (auto &i : parent_->atoms())
         {
+            std::vector<int> xAxisIndices, yAxisIndices;
+            Vec3<double> v;
             if (fragment_.matches(&i))
-                sites.push_back(std::make_shared<Site>(nullptr, i.r()));
+            {
+                auto identifiers = fragment_.matchedPath(&i).identifiers();
+                auto originAtoms = identifiers["origin"];
+                double massNorm = 0.0;
+                for (const auto &atom : originAtoms)
+                {
+                    mass = AtomicMass::mass(atom->Z());
+                    origin += atom->r() * mass;
+                    massNorm += mass;
+                }
+                origin /= massNorm;
+
+                auto xAxisAtoms = identifiers["x"];
+                auto yAxisAtoms = identifiers["y"];
+                
+                if (xAxisAtoms.empty() || yAxisAtoms.empty())
+                {
+                    sites.push_back(std::make_shared<Site>(nullptr, origin));
+                }
+                else
+                { 
+                    Vec3<double> v;
+
+                    // Get average position of supplied x-axis atoms
+                    for (const auto &atom : xAxisAtoms)
+                        v += atom->r();
+                    v /= xAxisAtoms.size();
+
+                    // Get vector from site origin and normalise it
+                    auto x = v - origin;
+                    x.normalise();
+
+                    // Get average position of supplied y-axis atoms
+                    v.zero();
+                    for (const auto &atom : yAxisAtoms)
+                        v += atom->r();
+                    v /= yAxisAtoms.size();
+
+                    // Get vector from site origin, normalise it, and orthogonalise
+                    auto y = v - origin;
+                    y.orthogonalise(x);
+                    y.normalise();
+                    // Calculate z vector from cross product of x and y
+                    auto z = x * y;
+                    //sites.push_back(std::make_shared<Site>(nullptr, origin));    
+                    sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
+                }
+            }
         }
         return sites; 
     }
