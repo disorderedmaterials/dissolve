@@ -420,24 +420,33 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
     {
         std::vector<std::shared_ptr<Site>> sites;
         double mass;
-        Vec3<double> origin, x, y, z;
+        std::vector<std::vector<int>> matchedIndices;
         for (auto &i : parent_->atoms())
         {
             std::vector<int> xAxisIndices, yAxisIndices;
-            Vec3<double> v;
+            Vec3<double> v, origin, x, y, z;
             if (fragment_.matches(&i))
             {
+                auto matchedAtoms = fragment_.matchedPath(&i).set();
+                std::vector<int> matchedAtomIndices;
+                for (auto& atom : matchedAtoms)
+                    matchedAtomIndices.push_back(atom->index());
+
+                std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
+                
+                if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                    continue;
+                matchedIndices.push_back(std::move(matchedAtomIndices));
+                
                 auto identifiers = fragment_.matchedPath(&i).identifiers();
                 auto originAtoms = identifiers["origin"];
                 double massNorm = 0.0;
                 for (const auto &atom : originAtoms)
                 {
-                    mass = AtomicMass::mass(atom->Z());
-                    origin += atom->r() * mass;
-                    massNorm += mass;
+                    origin += atom->r();
                 }
-                origin /= massNorm;
-
+                origin /= originAtoms.size();
+                
                 auto xAxisAtoms = identifiers["x"];
                 auto yAxisAtoms = identifiers["y"];
                 
