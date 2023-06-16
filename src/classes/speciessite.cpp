@@ -135,9 +135,9 @@ std::vector<int> SpeciesSite::originAtomIndices() const
 // Set whether the origin should be calculated with mass-weighted positions
 void SpeciesSite::setOriginMassWeighted(bool b)
 {
-    if (type_ != SpeciesSite::SiteType::Static)
+    if (type_ != SpeciesSite::SiteType::Static && type_ != SpeciesSite::SiteType::Fragment)
     {
-        Messenger::error("Setting mass weighting for a non-static site is not permitted.\n");
+        Messenger::error("Setting mass weighting for a non-static or non-fragment site is not permitted.\n");
         return;
     }
 
@@ -440,6 +440,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                 
                 auto identifiers = fragment_.matchedPath(&i).identifiers();
                 auto originAtoms = identifiers["origin"];
+
                 if (originMassWeighted_)
                 {
                     double massNorm = 0.0;
@@ -458,7 +459,8 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                         origin += atom->r();
                     }
                     origin /= originAtoms.size();
-                } 
+                }
+
                 auto xAxisAtoms = identifiers["x"];
                 auto yAxisAtoms = identifiers["y"];
                 
@@ -657,12 +659,23 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // Site type
-    if (type_ == SiteType::Dynamic && !parser.writeLineF("{}  {}\n", prefix, keywords().keyword(DynamicKeyword)))
-        return false;
+    if (type_ == SiteType::Dynamic)
+    {
+        if (!parser.writeLineF("{}  {}\n", prefix, keywords().keyword(DynamicKeyword)))
+            return false;
+    }
+    else if (type_ == SiteType::Fragment)
+    {
+        if (!parser.writeLineF("{}  {}\n", prefix, keywords().keyword(FragmentKeyword)))
+            return false;
+    }   
 
     // Origin atom indices
     if (!originAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
                                                     joinStrings(originAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+        return false;
+
+    if (!fragment_.definitionString().empty() && !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
         return false;
 
     // Origin mass weighted?
