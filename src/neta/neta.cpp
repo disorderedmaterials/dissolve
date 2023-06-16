@@ -146,6 +146,9 @@ std::string_view NETADefinition::definitionString() const { return definitionStr
 // Return whether the definition is valid
 bool NETADefinition::isValid() const { return valid_; }
 
+void NETADefinition::setIdentifiers(std::vector<std::string> identifiers) { identifiers_ = identifiers; }
+std::vector<std::string> NETADefinition::identifiers() { return identifiers_; }
+
 /*
  * Matching
  */

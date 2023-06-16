@@ -64,7 +64,12 @@ void SpeciesSite::setType(SpeciesSite::SiteType type)
 SpeciesSite::SiteType SpeciesSite::type() const { return type_; }
 
 // Return whether the site has defined axes sites
-bool SpeciesSite::hasAxes() const { return type_ == SiteType::Static && !(xAxisAtoms_.empty() || yAxisAtoms_.empty()); }
+bool SpeciesSite::hasAxes() const {
+    return
+        (type_ == SiteType::Static && (xAxisAtoms_.empty() && yAxisAtoms_.empty()))
+        || (type_ == SiteType::Fragment && (
+        // std::find
+}
 
 /*
  * Static Site Definition
@@ -584,7 +589,11 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                 type_ = SiteType::Fragment;
                 break;
             case (SpeciesSite::DescriptionKeyword):
-                fragment_.create(parser.args(1));
+                if (fragment_.create(parser.args(1)))
+                {
+                    Messenger::error("Failed to parse NETA description for site '{}'.\n", name());
+                    error = true;
+                }
                 break;
             case (SpeciesSite::EndSiteKeyword):
                 Messenger::print("Found end of Site '{}'.\n", name());

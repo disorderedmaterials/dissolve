@@ -188,6 +188,65 @@ bool SiteStack::createDynamic()
     return true;
 }
 
+bool SiteStack::createFragmentOriented()
+{
+    auto *targetSpecies = speciesSite_->parent();
+    const auto &fragment = speciesSite_->fragment();
+
+    auto spPop = configuration_->speciesPopulation(targetSpecies);
+    if (spPop == 0)
+        return true;
+
+    // Determine matching atom indices for the species
+    std::vector<int> siteIndices;
+    for (auto &i : targetSpecies->atoms())
+    {
+        if (fragment.matches(&i))
+            siteIndices.push_back(i.index());
+    }
+    if (siteIndices.empty())
+        return true;
+
+    // Resize our array
+    orientedSites_.reserve(siteIndices.size() * spPop);
+    const auto *box = configuration_->box();
+    Vec3<double> origin, x, y, z;
+    // Get Molecule array from Configuration and search for the target Species
+    for (const auto &molecule : configuration_->molecules())
+    {
+        if (molecule->species() != targetSpecies)
+            continue;
+
+        auto &atoms = molecule->atoms();
+
+        // Loop over site indices
+        for (auto id : siteIndices)
+        {
+            std::vector<int> originAtomIndices, xAtomIndices, yAtomIndices;
+            auto identifiers = fragment.matchedPath(atoms[id]);
+            for (auto& at : identifiers["origin"])
+                originAtomIndices.push_back(at.index());
+            for (auto& at : identifiers["x"])
+                xAtomIndices.push_back(at.index());
+            for (auto& at : identifiers["y"])
+               yAtomIndices.push_back(at.index()); 
+            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices) : centreOfGeometry(*molecule, box, originAtomIndices);
+            x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAtomIndices));
+            x.normalise();
+
+            y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAtomIndices));
+            y.orthogonalise(x);
+            y.normalise();
+
+            z = x * y;
+
+            orientedSites_.emplace_back(molecule, origin, x, y, z);
+        }
+    }
+
+    return true;
+}
+
 bool SiteStack::createFragment()
 {
     auto *targetSpecies = speciesSite_->parent();
@@ -253,7 +312,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
         case (SpeciesSite::SiteType::Dynamic):
             return createDynamic();
         case (SpeciesSite::SiteType::Fragment):
-            return createFragment();
+            return sitesHaveOrientation_ ? createFragmentOriented() : createFragment();
         default:
             return Messenger::error("Species site type not handled in stack generation.\n");
     }

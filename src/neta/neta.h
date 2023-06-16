@@ -29,6 +29,8 @@ class NETADefinition
     std::string definitionString_;
     // Whether the current definition is valid
     bool valid_;
+    // Identifiers (#)
+    std::vector<std::string> identifiers_;
 
     public:
     // Return root node pointer
@@ -45,6 +47,10 @@ class NETADefinition
     std::string_view definitionString() const;
     // Return whether the definition is valid
     bool isValid() const;
+    // Set identifiers
+    void setIdentifiers(std::vector<std::string> identifiers);
+    // Return identifiers from definition
+    std::vector<std::string> identifiers();
 
     /*
      * Matching
