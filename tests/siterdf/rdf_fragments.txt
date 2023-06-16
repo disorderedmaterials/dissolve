@@ -1,300 +1,294 @@
-# Bulk Water Properties
-# Trajectory calculated using DL_POLY Classic v1.9
+# Input file written by Dissolve v1.2.0 at 13:28:28 on 16-06-2023.
 
-# Potential uses SPC/Fw parameters:
-# 
-# Yujie Wu, Harald L. Tepper and Gregory A. Voth
-# "Flexible simple point-charge water model with improved liquid-state properties", Journal of Chemical Physics 124 024503 (2006)
-# http://dx.doi.org/10.1063/1.2136877
-# 
-#	  sigma(O) =    3.165492 Angstroms
-#	epsilon(O) =    0.6503	 kJ/mol
-#	 charge(O) =   -0.82	 e
-#	 charge(H) =    0.41	 e
-#	    k(O-H) = 4431.53	 kJ mol-1 Angstrom-2
-#	    r(O-H) =    1.0	 Angstroms
-#	  k(H-O-H) =  317.5656	 kJ mol-1 radian-2
-#     theta(H-O-H) =  113.24	 degrees
-
-#------------------------#
-#  Define Master Terms   #
-#------------------------#
+#==============================================================================#
+#                                 Master Terms                                 #
+#==============================================================================#
 
 Master
-  Bond   OH   Harmonic  4431.53  1.0
-  Angle  HOH  Harmonic  317.5656 113.24
+  Bond  'OH'  Harmonic  k=4431.53 eq=1
+  Angle  'HOH'  Harmonic  k=317.5656 eq=113.24
 EndMaster
 
-#------------------------#
-#     Define Species     #
-#------------------------#
+#==============================================================================#
+#                                   Species                                    #
+#==============================================================================#
 
 Species 'Water'
   # Atoms
-  Atom    1    H     0.757    0.013    0.217   'HW'
-  Atom    2    O     0.015   -0.009   -0.373   'OW'
-  Atom    3    H    -0.771   -0.003    0.157   'HW'
+  NAtoms  3
+  Atom    1  H    7.570000e-01  1.300000e-02  2.170000e-01  'HW'  0.000000e+00
+  Atom    2  O    1.500000e-02  -9.000000e-03  -3.730000e-01  'OW'  0.000000e+00
+  Atom    3  H    -7.710000e-01  -3.000000e-03  1.570000e-01  'HW'  0.000000e+00
 
-  # Intramolecular Terms
-  Bond  1    2  @OH
-  Bond  3    2  @OH
-  Angle 1    2    3  @HOH
+  # Bonds
+  NBonds  2
+  Bond    1    2  @OH
+  Bond    3    2  @OH
+
+  # Angles
+  NAngles  1
+  Angle    1    2    3  @HOH
 
   # Isotopologues
-  Isotopologue  'Deuteriated'  OW=0  HW=2
+  Isotopologue  'Deuteriated'  HW=2
 
-  # Analysis Sites
+  # Sites
   Site  'origin'
     Fragment
     Description  "?O, #origin, -H(#x), -H(#x, #y)"
   EndSite
   Site  'O'
     Fragment
-    Description  "?O, #origin, -H(n=2)"
+    Description  "?O, #origin"
   EndSite
-  Site  'H1'
+  Site  'H'
     Fragment
-    Description  "?H, #origin, -O(-H)"
-  EndSite
-  Site  'H2'
-    Fragment
-    Description  "?H, #origin, -O(-H)"
+    Description  "?H, #origin"
   EndSite
   Site  'COM'
     Fragment
     Description  "?O, #origin, -H(#origin), -H(#origin)"
+    OriginMassWeighted  True
   EndSite
 EndSpecies
 
-#------------------------#
-#     Pair Potentials    #
-#------------------------#
+#==============================================================================#
+#                               Pair Potentials                                #
+#==============================================================================#
 
 PairPotentials
-  Range  9.000000
-  Delta  0.050000
-  Parameters  'OW'  O  -0.82  LJGeometric    0.65	3.165492
-  Parameters  'HW'  H  0.41   LJGeometric    0.0      0.0
+  # Atom Type Parameters
+  Parameters  HW  H  4.100000e-01  LJGeometric  epsilon=0 sigma=0
+  Parameters  OW  O  -8.200000e-01  LJGeometric  epsilon=0.65 sigma=3.165492
+  Range  9
+  Delta  0.05
 EndPairPotentials
 
-#------------------------#
-#  Define Configuration  #
-#------------------------#
+#==============================================================================#
+#                                Configurations                                #
+#==============================================================================#
 
 Configuration  'Bulk'
+
+  # Generator
   Generator
-    Add
-      Density  9.99999642E-02 atoms/A3
-      Population  267
+    Add  'Add01'
       Species  'Water'
+      Population  '267'
+      Density  '0.0999999642'  atoms/A3
     EndAdd
   EndGenerator
 EndConfiguration
 
-#------------------------#
-#   Define Processing    #
-#------------------------#
+#==============================================================================#
+#                              Processing Layers                               #
+#==============================================================================#
 
 Layer  'Processing'
+  Frequency  1
 
-# Trajectory Processing
-Module  ImportTrajectory  'ImportTrajectory01'
-  Configuration  'Bulk'
+  Module  ImportTrajectory  'ImportTrajectory01'
+    Configuration  'Bulk'
+    Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+    EndFormat
+  EndModule
 
-  # Trajectory file contains 95 frames
-  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
-  EndFormat
-EndModule
+  Module  SiteRDF  'RDF(OW-OW)'
+    Configuration  'Bulk'
+    SiteA  'Water'  'O'
+    SiteB  'Water'  'O'
+    DistanceRange  0.000000e+00  2.000000e+01  1.000000e-02
+  EndModule
 
-# Oxygen-oxygen radial distribution function
-Module  SiteRDF  'RDF(OW-OW)'
-  Configuration  'Bulk'
-  SiteA  Water  'O'
-  SiteB  Water  'O'
-  DistanceRange  0.0  20.0  0.01
-EndModule
+  Module  Analyse  'RDF(OW-OW)-Analyser'
+    Configuration  'Bulk'
+    Analyser
+      Select  'O1'
+        Site  'Water'  'O'
+        ForEach
+          Select  'O2'
+            Site  'Water'  'O'
+            ExcludeSameMolecule  'O1'
+            ForEach
+              CalculateDistance  'rOO'
+                I  'O1'
+                J  'O2'
+              EndCalculateDistance
+              Collect1D  'HistoOO'
+                QuantityX  'rOO'  0
+                RangeX  0.000000e+00  2.000000e+01  1.000000e-02
+              EndCollect1D
+            EndForEach
+          EndSelect
+        EndForEach
+      EndSelect
+      Process1D  'RDF'
+        SourceData  'HistoOO'
+        LabelValue  'gOO(r)'
+        LabelX  'r, Angstroms'
+        Normalisation
+          OperateSitePopulationNormalise  'OperateSitePopulationNormalise01'
+            Site  'O1'
+          EndOperateSitePopulationNormalise
+          OperateNumberDensityNormalise  'OperateNumberDensityNormalise01'
+            Site  'O2'
+            Population  Available
+          EndOperateNumberDensityNormalise
+          OperateSphericalShellNormalise  'OperateSphericalShellNormalise01'
+          EndOperateSphericalShellNormalise
+        EndNormalisation
+      EndProcess1D
+    EndAnalyser
+  EndModule
 
-# Oxygen-oxygen radial distribution function (using Analysis module)
-Module  Analyse  'RDF(OW-OW)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'O1'
-      Site  Water  'O'
-      ForEach
-        Select  'O2'
-          Site  Water  'O'
-          ExcludeSameMolecule  'O1'
-          ForEach
-            CalculateDistance  'rOO'
-              I  'O1'
-              J  'O2'
-            EndCalculateDistance
-            Collect1D  'HistoOO'
-              QuantityX  'rOO'
-              RangeX  0.0  20.0  0.01
-            EndCollect1D
-          EndForEach
-        EndSelect
-      EndForEach
-    EndSelect
-    Process1D  'RDF'
-      SourceData  'HistoOO'
-      LabelValue  'gOO(r)'
-      LabelX  'r, Angstroms'
-      Normalisation
-        OperateSitePopulationNormalise
-          Site  'O1'
-        EndOperateSitePopulationNormalise
-        OperateNumberDensityNormalise
-          Site  'O2'
-        EndOperateNumberDensityNormalise
-        OperateSphericalShellNormalise
-        EndOperateSphericalShellNormalise
-      EndNormalisation
-    EndProcess1D
-  EndAnalyser
-EndModule
+  Module  DataTest  'DataTest'
+    Frequency  95
+    Data1D  'RDF(OW-OW)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
+    EndData1D
+    ErrorType  Euclidean
+    Threshold  9.0e-3
+  EndModule
 
-Module DataTest
-  Frequency  95
-  Threshold  9.0e-3
-  Data1D  'RDF(OW-OW)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
-  EndData1D
-EndModule
+  Module  DataTest  'DataTest01'
+    Frequency  95
+    Data1D  'RDF(OW-OW)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
+    EndData1D
+    ErrorType  Euclidean
+    Threshold  9.0e-3
+  EndModule
 
-Module DataTest
-  Frequency  95
-  Threshold  9.0e-3
-  Data1D  'RDF(OW-OW)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
-  EndData1D
-EndModule
+  Module  SiteRDF  'RDF(H1-H2)'
+    Frequency  1
+    Configuration  'Bulk'
+    SiteA  'Water'  'H'
+    SiteB  'Water'  'H'
+    ExcludeSameMolecule  True
+  EndModule
 
-# Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations
-Module  SiteRDF  'RDF(H1-H2)'
-  Configuration  'Bulk'
-  SiteA  Water  'H1'
-  SiteB  Water  'H2'
-  ExcludeSameMolecule  On
-  DistanceRange  0.0  20.0  0.01
-EndModule
+  Module  Analyse  'RDF(H1-H2)-Analyser'
+    Frequency  1
+    Configuration  'Bulk'
+    Analyser
+      Select  'A'
+        Site  'Water'  'H'
+        InclusiveRange  0.000000e+00  5.000000e+00
+        ForEach
+          Select  'B'
+            Site  'Water'  'H'
+            ExcludeSameMolecule  'A'
+            InclusiveRange  0.000000e+00  5.000000e+00
+            ForEach
+              CalculateDistance  'rHH'
+                I  'A'
+                J  'B'
+              EndCalculateDistance
+              Collect1D  'HistoHH'
+                QuantityX  'rHH'  0
+                RangeX  0.000000e+00  2.000000e+01  1.000000e-02
+              EndCollect1D
+            EndForEach
+          EndSelect
+        EndForEach
+      EndSelect
+      Process1D  'RDF'
+        SourceData  'HistoHH'
+        LabelValue  'gHH(r)'
+        LabelX  'r, Angstroms'
+        Normalisation
+          OperateSitePopulationNormalise  'OperateSitePopulationNormalise01'
+            Site  'A'
+          EndOperateSitePopulationNormalise
+          OperateNumberDensityNormalise  'OperateNumberDensityNormalise01'
+            Site  'B'
+            Population  Available
+          EndOperateNumberDensityNormalise
+          OperateSphericalShellNormalise  'OperateSphericalShellNormalise01'
+          EndOperateSphericalShellNormalise
+        EndNormalisation
+      EndProcess1D
+    EndAnalyser
+  EndModule
 
-# Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations, using analyser
-Module  Analyse  'RDF(H1-H2)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'A'
-      Site  Water  'H1'
-      ForEach
-        Select  'B'
-          Site  Water  'H2'
-          ExcludeSameMolecule  'A'
-          ForEach
-            CalculateDistance  'rHH'
-              I  'A'
-              J  'B'
-            EndCalculateDistance
-            Collect1D  'HistoHH'
-              QuantityX  'rHH'
-              RangeX  0.0  20.0  0.01
-            EndCollect1D
-          EndForEach
-        EndSelect
-      EndForEach
-    EndSelect
-    Process1D  'RDF'
-      SourceData  'HistoHH'
-      LabelValue  'gHH(r)'
-      LabelX  'r, Angstroms'
-      Normalisation
-        OperateSitePopulationNormalise
-          Site  'A'
-        EndOperateSitePopulationNormalise
-        OperateNumberDensityNormalise
-          Site  'B'
-        EndOperateNumberDensityNormalise
-        OperateSphericalShellNormalise
-        EndOperateSphericalShellNormalise
-      EndNormalisation
-    EndProcess1D
-  EndAnalyser
-EndModule
+  Module  DataTest  'DataTest02'
+    Frequency  95
+    Data1D  'RDF(H1-H2)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
+    EndData1D
+    ErrorType  Euclidean
+    Threshold  6.0e-3
+  EndModule
 
-Module DataTest
-  Frequency  95
-  Threshold  6.0e-3
-  Data1D  'RDF(H1-H2)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
-  EndData1D
-EndModule
+  Module  DataTest  'DataTest03'
+    Frequency  95
+    Data1D  'RDF(H1-H2)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
+    EndData1D
+    ErrorType  Euclidean
+    Threshold  6.0e-3
+  EndModule
 
-Module DataTest
-  Frequency  95
-  Threshold  6.0e-3
-  Data1D  'RDF(H1-H2)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
-  EndData1D
-EndModule
+  Module  SiteRDF  'RDF(COM-COM)'
+    Frequency  1
+    Configuration  'Bulk'
+    SiteA  'Water'  'COM'
+    SiteB  'Water'  'COM'
+    DistanceRange  0.000000e+00  2.000000e+01  5.000000e-02
+    ExcludeSameMolecule  True
+  EndModule
 
-# Center-of-mass radial distribution function
-Module  SiteRDF  'RDF(COM-COM)'
-  Configuration  'Bulk'
-  SiteA  Water  'COM'
-  SiteB  Water  'COM'
-  ExcludeSameMolecule  On
-  DistanceRange  0.0  20.0  0.05
-EndModule
+  Module  Analyse  'RDF(COM-COM)-Analyser'
+    Frequency  1
+    Configuration  'Bulk'
+    Analyser
+      Select  'A'
+        Site  'Water'  'COM'
+        ForEach
+          Select  'B'
+            Site  'Water'  'COM'
+            ExcludeSameMolecule  'A'
+            ForEach
+              CalculateDistance  'rCOMCOM'
+                I  'A'
+                J  'B'
+              EndCalculateDistance
+              Collect1D  'HistoCOMCOM'
+                QuantityX  'rCOMCOM'  0
+                RangeX  0.000000e+00  2.000000e+01  5.000000e-02
+              EndCollect1D
+            EndForEach
+          EndSelect
+        EndForEach
+      EndSelect
+      Process1D  'RDF'
+        SourceData  'HistoCOMCOM'
+        LabelValue  'gCOMCOM(r)'
+        LabelX  'r, Angstroms'
+        Normalisation
+          OperateSitePopulationNormalise  'OperateSitePopulationNormalise01'
+            Site  'A'
+          EndOperateSitePopulationNormalise
+          OperateNumberDensityNormalise  'OperateNumberDensityNormalise01'
+            Site  'B'
+            Population  Available
+          EndOperateNumberDensityNormalise
+          OperateSphericalShellNormalise  'OperateSphericalShellNormalise01'
+          EndOperateSphericalShellNormalise
+        EndNormalisation
+      EndProcess1D
+    EndAnalyser
+  EndModule
 
-# Center-of-mass radial distribution function, with analyser
-Module  Analyse  'RDF(COM-COM)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'A'
-      Site  Water  'COM'
-      ForEach
-        Select  'B'
-          Site  Water  'COM'
-          ExcludeSameMolecule  'A'
-          ForEach
-            CalculateDistance  'rCOMCOM'
-              I  'A'
-              J  'B'
-            EndCalculateDistance
-            Collect1D  'HistoCOMCOM'
-              QuantityX  'rCOMCOM'
-              RangeX  0.0  20.0  0.05
-            EndCollect1D
-          EndForEach
-        EndSelect
-      EndForEach
-    EndSelect
-    Process1D  'RDF'
-      SourceData  'HistoCOMCOM'
-      LabelValue  'gCOMCOM(r)'
-      LabelX  'r, Angstroms'
-      Normalisation
-        OperateSitePopulationNormalise
-          Site  'A'
-        EndOperateSitePopulationNormalise
-        OperateNumberDensityNormalise
-          Site  'B'
-        EndOperateNumberDensityNormalise
-        OperateSphericalShellNormalise
-        EndOperateSphericalShellNormalise
-      EndNormalisation
-    EndProcess1D
-  EndAnalyser
-EndModule
+  Module  DataTest  'DataTest04'
+    Frequency  95
+    Data1D  'RDF(COM-COM)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
+    EndData1D
+    ErrorType  Euclidean
+    Threshold  0.0005
+  EndModule
 
-Module DataTest
-  Frequency  95
-  Data1D  'RDF(COM-COM)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
-  EndData1D
-  Threshold  5.0e-4
-EndModule
-
-Module DataTest
-  Frequency  95
-  Data1D  'RDF(COM-COM)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
-  EndData1D
-  Threshold  5.0e-4
-EndModule
-
+  Module  DataTest  'DataTest05'
+    Frequency  95
+    Data1D  'RDF(COM-COM)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
+    EndData1D
+    ErrorType  Euclidean
+    Threshold  0.0005
+  EndModule
 EndLayer
