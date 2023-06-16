@@ -6,7 +6,8 @@ on:
     - '*'
     paths-ignore:
     - '.github/workflows/benchmarks.yml'
-    - '.github/workflows/cache.yml'
+    - '.github/workflows/cacheConan.yml'
+    - '.github/workflows/cacheNix.yml'
     - '.github/workflows/continuous.yml'
     - '.github/workflows/release.yml'
     - '.github/workflows/web**'
