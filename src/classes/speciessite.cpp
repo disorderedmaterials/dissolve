@@ -139,15 +139,6 @@ std::vector<int> SpeciesSite::originAtomIndices() const
 // Set whether the origin should be calculated with mass-weighted positions
 void SpeciesSite::setOriginMassWeighted(bool b)
 {
-<<<<<<< HEAD
-=======
-    if (type_ != SpeciesSite::SiteType::Static && type_ != SpeciesSite::SiteType::Fragment)
-    {
-        Messenger::error("Setting mass weighting for a non-static or non-fragment site is not permitted.\n");
-        return;
-    }
-
->>>>>>> 348b4ee25 (Write out Fragment information.)
     originMassWeighted_ = b;
 
     ++version_;
@@ -605,7 +596,6 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     Messenger::error("Failed to parse NETA description for site '{}'.\n", name());
                     error = true;
                 }
-                fragment_.create(parser.args(1));
                 break;
             case (SpeciesSite::EndSiteKeyword):
                 Messenger::print("Found end of Site '{}'.\n", name());
