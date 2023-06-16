@@ -9,7 +9,6 @@
 #include "classes/site.h"
 #include "expression/variable.h"
 #include "procedure/nodes/sequence.h"
-#include "procedure/procedure.h"
 #include <algorithm>
 #include <memory>
 #include <utility>
