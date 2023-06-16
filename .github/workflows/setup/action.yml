@@ -43,10 +43,10 @@ runs:
         echo "dissolveMinorVersion=${DISSOLVE_MINOR}" >> ${GITHUB_ENV}
         echo "dissolvePatchVersion=${DISSOLVE_PATCH}" >> ${GITHUB_ENV}
 
-    - name: Install sha256sum (OSX)
+    - name: Install Dependencies (OSX)
       if: ${{ runner.os == 'macos' }}
       shell: bash
-      run: brew install coreutils
+      run: brew install coreutils gawk
 
     - name: Get nix hash
       shell: bash
