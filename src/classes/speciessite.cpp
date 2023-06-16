@@ -139,6 +139,15 @@ std::vector<int> SpeciesSite::originAtomIndices() const
 // Set whether the origin should be calculated with mass-weighted positions
 void SpeciesSite::setOriginMassWeighted(bool b)
 {
+<<<<<<< HEAD
+=======
+    if (type_ != SpeciesSite::SiteType::Static && type_ != SpeciesSite::SiteType::Fragment)
+    {
+        Messenger::error("Setting mass weighting for a non-static or non-fragment site is not permitted.\n");
+        return;
+    }
+
+>>>>>>> 348b4ee25 (Write out Fragment information.)
     originMassWeighted_ = b;
 
     ++version_;
@@ -446,6 +455,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 
                 // Compute the origin.
                 auto originAtoms = identifiers["origin"];
+
                 if (originMassWeighted_)
                 {
                     double massNorm = 0.0;
