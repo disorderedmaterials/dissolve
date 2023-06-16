@@ -31,7 +31,7 @@ Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedur
                                         exportFileAndFormat_, "EndExport");
 
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
-                                           normalisationBranch_, this, ProcedureNode::OperateContext);
+                                           normalisationBranch_);
 
     // Initialise data pointer
     processedData_ = nullptr;

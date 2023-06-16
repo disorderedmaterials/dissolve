@@ -34,7 +34,7 @@ Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedur
                                         exportFileAndFormat_, "EndExport");
 
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
-                                           normalisationBranch_, this, ProcedureNode::OperateContext);
+                                           normalisationBranch_);
 
     // Initialise data pointer
     processedData_ = nullptr;

@@ -25,7 +25,7 @@ Collect1DProcedureNode::Collect1DProcedureNode(std::shared_ptr<CalculateProcedur
                                      Vec3<double>(0.0, 0.0, 1.0e-5), std::nullopt, Vec3Labels::MinMaxBinwidthlabels);
 
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantity was binned successfully",
-                                           subCollectBranch_, this, ProcedureNode::AnalysisContext);
+                                           subCollectBranch_);
 }
 
 /*

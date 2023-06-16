@@ -29,7 +29,7 @@ Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedur
                                         exportFileAndFormat_, "EndExport");
 
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
-                                           normalisationBranch_, this, ProcedureNode::OperateContext);
+                                           normalisationBranch_);
 
     // Initialise data pointer
     processedData_ = nullptr;
