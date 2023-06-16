@@ -58,6 +58,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         GeneralRegion,
         ImportCoordinates,
         IntegerCollect1D,
+        IfValueInRange,
         Integrate1D,
         OperateDivide,
         OperateExpression,
