@@ -103,6 +103,8 @@ class Box : public Serialisable
     Vec3<double> getReal(Vec3<double> r) const;
     // Convert specified real-space coordinates to fractional coordinates
     inline virtual void toFractional(Vec3<double> &r) const = 0;
+    // Return specified real coordinates converted to fractional coordinates
+    Vec3<double> getFractional(Vec3<double> r) const;
 
     /*
      * Minimum Image Calculation

@@ -17,7 +17,11 @@ EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::in
                                                                                       {LogFunction, "log", 1},
                                                                                       {SinFunction, "sin", 1},
                                                                                       {SqrtFunction, "sqrt", 1},
-                                                                                      {TanFunction, "tan", 1}});
+                                                                                      {PiFunction, "pi"},
+                                                                                      {TanFunction, "tan", 1},
+                                                                                      {ToDegreesFunction, "toDeg", 1},
+                                                                                      {ToRadiansFunction, "toRad", 1},
+                                                                                      {TwoPiFunction, "twopi"}});
 }
 
 ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}
@@ -46,7 +50,7 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
 {
     // Number of required child nodes depends on the function
     const auto nArgs = internalFunctions().minArgs(function_);
-    if (children_.size() != nArgs)
+    if (children_.size() != nArgs.value_or(0))
         return std::nullopt;
 
     // Evaluate the arguments
@@ -70,16 +74,16 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
                 result = fabs(args[0].asDouble());
             break;
         case (ACosFunction):
-            result = acos(args[0].asDouble()) * DEGRAD;
+            result = acos(args[0].asDouble());
             break;
         case (ASinFunction):
-            result = asin(args[0].asDouble()) * DEGRAD;
+            result = asin(args[0].asDouble());
             break;
         case (ATanFunction):
-            result = atan(args[0].asDouble()) * DEGRAD;
+            result = atan(args[0].asDouble());
             break;
         case (CosFunction):
-            result = cos(args[0].asDouble() / DEGRAD);
+            result = cos(args[0].asDouble());
             break;
         case (ExpFunction):
             result = exp(args[0].asDouble());
@@ -91,14 +95,29 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             result = log10(args[0].asDouble());
             break;
         case (SinFunction):
-            result = sin(args[0].asDouble() / DEGRAD);
+            result = sin(args[0].asDouble());
             break;
         case (SqrtFunction):
             result = sqrt(args[0].asDouble());
             break;
-        case (TanFunction):
-            result = tan(args[0].asDouble() / DEGRAD);
+        case (PiFunction):
+            result = M_PI;
             break;
+        case (TanFunction):
+            result = tan(args[0].asDouble());
+            break;
+        case (ToDegreesFunction):
+            result = args[0].asDouble() * DEGRAD;
+            break;
+        case (ToRadiansFunction):
+            result = args[0].asDouble() / DEGRAD;
+            break;
+        case (TwoPiFunction):
+            result = 2.0 * M_PI;
+            break;
+        default:
+            throw(std::runtime_error(
+                fmt::format("Expression function '{}' has not been implemented.\n", internalFunctions().keyword(function_))));
     }
 
     return result;
@@ -109,8 +128,11 @@ std::string ExpressionFunctionNode::asString() const
 {
     // Number of required child nodes depends on the function
     const auto nArgs = internalFunctions().minArgs(function_);
-    if (children_.size() != nArgs)
+    if (children_.size() != nArgs.value_or(0))
         return "";
+
+    if (!nArgs)
+        return fmt::format("{}()", internalFunctions().keyword(function_));
 
     // Evaluate the arguments
     std::vector<std::string> args;

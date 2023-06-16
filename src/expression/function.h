@@ -20,9 +20,13 @@ class ExpressionFunctionNode : public ExpressionNode
         ExpFunction,
         LnFunction,
         LogFunction,
+        PiFunction,
         SinFunction,
         SqrtFunction,
-        TanFunction
+        TanFunction,
+        ToDegreesFunction,
+        ToRadiansFunction,
+        TwoPiFunction
     };
     // Return enum options for NodeTypes
     static EnumOptions<ExpressionFunctionNode::InternalFunction> internalFunctions();

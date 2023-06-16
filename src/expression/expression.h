@@ -24,8 +24,12 @@ class Expression
     private:
     // Root node for the expression
     std::shared_ptr<ExpressionNode> rootNode_;
+    // Local expression variables
+    std::vector<std::shared_ptr<ExpressionVariable>> localVariables_;
 
     public:
+    // Add local variable
+    std::shared_ptr<ExpressionVariable> addLocalVariable(std::string_view name);
     // Clear node data
     void clearNodes();
     // Return whether current expression is valid (contains at least one node)

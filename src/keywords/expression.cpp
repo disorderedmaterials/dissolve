@@ -5,10 +5,7 @@
 #include "base/lineparser.h"
 #include "expression/expression.h"
 
-ExpressionKeyword::ExpressionKeyword(Expression &data, const std::vector<std::shared_ptr<ExpressionVariable>> &variables)
-    : KeywordBase(typeid(this)), data_(data), variables_(variables)
-{
-}
+ExpressionKeyword::ExpressionKeyword(Expression &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data
@@ -18,13 +15,7 @@ ExpressionKeyword::ExpressionKeyword(Expression &data, const std::vector<std::sh
 const Expression &ExpressionKeyword::data() const { return data_; }
 
 // Set data
-bool ExpressionKeyword::setData(std::string_view expressionText)
-{
-    if (!data_.create(expressionText, variables_))
-        return false;
-
-    return true;
-}
+bool ExpressionKeyword::setData(std::string_view expressionText) { return data_.create(expressionText); }
 
 /*
  * Arguments

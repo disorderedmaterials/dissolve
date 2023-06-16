@@ -232,6 +232,13 @@ Vec3<double> Box::getReal(Vec3<double> r) const
     return r;
 }
 
+// Return specified real coordinates converted to fractional coordinates
+Vec3<double> Box::getFractional(Vec3<double> r) const
+{
+    toFractional(r);
+    return r;
+}
+
 /*
  * Geometry
  */

@@ -17,7 +17,8 @@ class ExpressionVisitor : ExpressionParserBaseVisitor
     private:
     // Target Expression
     Expression *expression_;
-    // External variables available to this expression
+    // Variables available to this expression
+    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> localVariables_;
     OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables_;
     // Context stack
     std::vector<std::shared_ptr<ExpressionNode>> contextStack_;
@@ -29,6 +30,7 @@ class ExpressionVisitor : ExpressionParserBaseVisitor
     public:
     // Construct description within supplied object, from given tree
     void create(Expression &expr, ExpressionParser::ExpressionContext *tree,
+                const std::vector<std::shared_ptr<ExpressionVariable>> &localVariables,
                 OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables);
 
     /*

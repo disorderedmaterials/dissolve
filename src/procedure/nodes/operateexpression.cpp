@@ -13,38 +13,36 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view 
     : OperateProcedureNodeBase(ProcedureNode::NodeType::OperateExpression)
 {
     // Create variables, and add them to the vector
-    x_ = std::make_shared<ExpressionVariable>("x");
-    variables_.emplace_back(x_);
-    y_ = std::make_shared<ExpressionVariable>("y");
-    variables_.emplace_back(y_);
-    z_ = std::make_shared<ExpressionVariable>("z");
-    variables_.emplace_back(z_);
-    xDelta_ = std::make_shared<ExpressionVariable>("xDelta");
-    variables_.emplace_back(xDelta_);
-    yDelta_ = std::make_shared<ExpressionVariable>("yDelta");
-    variables_.emplace_back(yDelta_);
-    zDelta_ = std::make_shared<ExpressionVariable>("zDelta");
-    variables_.emplace_back(zDelta_);
-    value_ = std::make_shared<ExpressionVariable>("value");
-    variables_.emplace_back(value_);
+    x_ = expression_.addLocalVariable("x");
+    y_ = expression_.addLocalVariable("y");
+    z_ = expression_.addLocalVariable("z");
+    xDelta_ = expression_.addLocalVariable("xDelta");
+    yDelta_ = expression_.addLocalVariable("yDelta");
+    zDelta_ = expression_.addLocalVariable("zDelta");
+    value_ = expression_.addLocalVariable("value");
 
-    expression_.create(expressionText, variables_);
+    expression_.create(expressionText);
 
     keywords_.setOrganisation("Options", "Inputs");
-    keywords_.add<ExpressionKeyword>("Expression", "Expression to apply to values", expression_, variables_);
+    keywords_.add<ExpressionKeyword>("Expression", "Expression to apply to values", expression_);
 }
 
 // Set the expression
 bool OperateExpressionProcedureNode::setExpression(std::string_view expressionText)
 {
-    return expression_.create(expressionText, variables_);
+    return expression_.create(expressionText);
 }
 
 // Zero all variables
 void OperateExpressionProcedureNode::zeroVariables()
 {
-    for (auto &v : variables_)
-        v->setValue(0.0);
+    x_->setValue(0.0);
+    y_->setValue(0.0);
+    z_->setValue(0.0);
+    xDelta_->setValue(0.0);
+    yDelta_->setValue(0.0);
+    zDelta_->setValue(0.0);
+    value_->setValue(0.0);
 }
 
 /*

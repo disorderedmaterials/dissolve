@@ -46,6 +46,12 @@ NodeValue::operator double() { return asDouble(); }
  * Data
  */
 
+// Add local variable to expression
+std::shared_ptr<ExpressionVariable> NodeValue::addLocalVariable(std::string_view name)
+{
+    return expression_.addLocalVariable(name);
+}
+
 // Set integer value
 bool NodeValue::set(int value)
 {
@@ -95,7 +101,7 @@ bool NodeValue::isValid() const { return (type_ == ExpressionNodeValue ? express
  */
 
 // Return contained value as integer
-int NodeValue::asInteger()
+int NodeValue::asInteger() const
 {
     if (type_ == IntegerNodeValue)
         return valueI_;
@@ -106,7 +112,7 @@ int NodeValue::asInteger()
 }
 
 // Return contained value as double
-double NodeValue::asDouble()
+double NodeValue::asDouble() const
 {
     if (type_ == IntegerNodeValue)
         return (double)valueI_;

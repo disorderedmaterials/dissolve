@@ -72,7 +72,7 @@ DAngleModule::DAngleModule() : Module(ModuleTypes::DAngle), analyser_(ProcedureN
     processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
     processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
     auto &angleNormalisation = processAngle_->branch()->get();
-    angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(x)");
+    angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(toRad(x))");
     angleNormalisation.create<OperateNormaliseProcedureNode>({}, 1.0);
 
     // Process2D: 'DAngle'

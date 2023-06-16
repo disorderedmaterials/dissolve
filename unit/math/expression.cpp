@@ -84,9 +84,9 @@ TEST_F(ExpressionTest, BasicFloatMath)
     exprTest("1+24*3.4", 1.0 + 24 * 3.4, false);
     exprTest("(9.231-4*89.4)/76.92+7", (9.231 - 4 * 89.4) / 76.92 + 7, false);
     exprTest("-3^3", DissolveMath::power(-3, 3), false);
-    exprTest("cos(45)", cos(M_PI_4), false);
-    exprTest("exp(cos(45))", exp(cos(M_PI_4)), false);
-    exprTest("sqrt(sin(78.9)*cos(45))", sqrt(sin(78.9 * M_PI / 180.0) * cos(M_PI_4)), false);
+    exprTest("cos(toRad(45))", cos(M_PI_4), false);
+    exprTest("exp(cos(toRad(45)))", exp(cos(M_PI_4)), false);
+    exprTest("sqrt(sin(toRad(78.9))*cos(toRad(45)))", sqrt(sin(78.9 * M_PI / 180.0) * cos(M_PI_4)), false);
     exprTest("atan()", 0, true);
     exprTest("ln(0.0, 1.0)", 0, true);
 }
