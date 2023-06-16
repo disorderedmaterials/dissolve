@@ -52,7 +52,7 @@ runs:
       shell: bash
       run: |
         set -ex
-        NIX_HASH=`sha256sum flake.lock | sed "s/\(.*\)  -/\1/g"`
+        NIX_HASH=`sha256sum flake.lock | gawk '{print $1}'`
         echo "Hash of nix files (flake.lock and flake.nix) is ${NIX_HASH}"
         echo "nixHash=${NIX_HASH}" >> ${GITHUB_ENV}
 
@@ -60,6 +60,6 @@ runs:
       shell: bash
       run: |
         set -ex
-        CONAN_HASH=`sha256sum conanfile.txt | sed "s/\(.*\)  -/\1/g"`
+        CONAN_HASH=`sha256sum conanfile.txt | gawk '{print $1}'`
         echo "Hash of conanfile.txt is ${CONAN_HASH}"
         echo "conanHash=${CONAN_HASH}" >> ${GITHUB_ENV}
