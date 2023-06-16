@@ -6,6 +6,7 @@
 #include "procedure/nodes/addpair.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/calculateangle.h"
+#include "procedure/nodes/calculateaxisangle.h"
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/calculateexpression.h"
 #include "procedure/nodes/calculatevector.h"
@@ -57,6 +58,9 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     // Calculate
     registerProducer<CalculateAngleProcedureNode>(ProcedureNode::NodeType::CalculateAngle,
                                                   "Calculate angle between three sites", "Calculate");
+    registerProducer<CalculateAxisAngleProcedureNode>(ProcedureNode::NodeType::CalculateAxisAngle,
+                                                      "Calculate angle between specified axes of two oriented sites",
+                                                      "Calculate");
     registerProducer<CalculateDistanceProcedureNode>(ProcedureNode::NodeType::CalculateDistance,
                                                      "Calculate distance between two sites", "Calculate");
     registerProducer<CalculateExpressionProcedureNode>(ProcedureNode::NodeType::CalculateExpression,
