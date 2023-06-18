@@ -14,7 +14,7 @@ Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedur
                                                std::shared_ptr<CalculateProcedureNodeBase> yObservable,
                                                ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect2D), xObservable_{xObservable, 0},
+    : ProcedureNode(ProcedureNode::NodeType::Collect2D, {ProcedureNode::AnalysisContext}), xObservable_{xObservable, 0},
       yObservable_{yObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth},
       subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
@@ -32,16 +32,6 @@ Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedur
 
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
                                            subCollectBranch_);
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool Collect2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

@@ -17,8 +17,8 @@
 
 SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, ProcedureNode::NodeContext forEachContext,
                                          bool axesRequired)
-    : ProcedureNode(ProcedureNode::NodeType::Select), speciesSites_(std::move(sites)), axesRequired_(axesRequired),
-      forEachBranch_(forEachContext, *this, "ForEach")
+    : ProcedureNode(ProcedureNode::NodeType::Select, {ProcedureNode::AnalysisContext}), speciesSites_(std::move(sites)),
+      axesRequired_(axesRequired), forEachBranch_(forEachContext, *this, "ForEach")
 {
     inclusiveDistanceRange_.set(0.0, 5.0);
 
@@ -61,12 +61,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
-}
 
 // Set node name
 void SelectProcedureNode::setName(std::string_view name)

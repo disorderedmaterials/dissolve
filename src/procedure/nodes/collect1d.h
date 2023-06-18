@@ -21,13 +21,6 @@ class Collect1DProcedureNode : public ProcedureNode
     ~Collect1DProcedureNode() override = default;
 
     /*
-     * Identity
-     */
-    public:
-    // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context) override;
-
-    /*
      * Data
      */
     private:

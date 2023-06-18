@@ -15,8 +15,8 @@
 Collect1DProcedureNode::Collect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable,
                                                ProcedureNode::NodeContext subCollectContext, double rMin, double rMax,
                                                double binWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect1D), xObservable_{observable, 0}, rangeX_{rMin, rMax, binWidth},
-      subCollectBranch_(subCollectContext, *this, "SubCollect")
+    : ProcedureNode(ProcedureNode::NodeType::Collect1D, {ProcedureNode::AnalysisContext}),
+      xObservable_{observable, 0}, rangeX_{rMin, rMax, binWidth}, subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.setOrganisation("Options", "Quantity / Range");
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
@@ -26,16 +26,6 @@ Collect1DProcedureNode::Collect1DProcedureNode(std::shared_ptr<CalculateProcedur
 
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantity was binned successfully",
                                            subCollectBranch_);
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool Collect1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

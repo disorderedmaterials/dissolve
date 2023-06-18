@@ -18,10 +18,9 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                                ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
                                                double zMax, double zBinWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect3D), xObservable_{xObservable, 0}, yObservable_{yObservable, 0},
-      zObservable_{zObservable, 0}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax,
-                                                                                                            zBinWidth},
-      subCollectBranch_(subCollectContext, *this, "SubCollect")
+    : ProcedureNode(ProcedureNode::NodeType::Collect3D, {ProcedureNode::AnalysisContext}), xObservable_{xObservable, 0},
+      yObservable_{yObservable, 0}, zObservable_{zObservable, 0}, rangeX_{xMin, xMax, xBinWidth},
+      rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax, zBinWidth}, subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.setOrganisation("Options", "Quantities / Ranges");
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityX", "Calculated observable to collect for x axis",
@@ -47,10 +46,9 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                                ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
                                                double zMax, double zBinWidth)
-    : ProcedureNode(ProcedureNode::NodeType::Collect3D), xObservable_{xyzObservable, 0}, yObservable_{xyzObservable, 1},
-      zObservable_{xyzObservable, 2}, rangeX_{xMin, xMax, xBinWidth}, rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax,
-                                                                                                              zBinWidth},
-      subCollectBranch_(subCollectContext, *this, "SubCollect")
+    : ProcedureNode(ProcedureNode::NodeType::Collect3D, {ProcedureNode::AnalysisContext}), xObservable_{xyzObservable, 0},
+      yObservable_{xyzObservable, 1}, zObservable_{xyzObservable, 2}, rangeX_{xMin, xMax, xBinWidth},
+      rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax, zBinWidth}, subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.setOrganisation("Options", "Quantities / Ranges");
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityX", "Calculated observable to collect for x axis",
@@ -71,16 +69,6 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
 
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantities were binned successfully",
                                            subCollectBranch_);
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool Collect3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

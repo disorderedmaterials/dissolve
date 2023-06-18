@@ -73,11 +73,14 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
     return EnumOptions<ProcedureNode::NodeContext>("NodeContext", {{ProcedureNode::NoContext, "None"},
                                                                    {ProcedureNode::AnalysisContext, "Analysis"},
                                                                    {ProcedureNode::GenerationContext, "Generation"},
-                                                                   {ProcedureNode::OperateContext, "Operate"}});
+                                                                   {ProcedureNode::OperateContext, "Operate"},
+                                                                   {ProcedureNode::OperateContext, "Any"},
+                                                                   {ProcedureNode::ParentProcedureContext, "ParentProcedure"}});
 }
 
-ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, ProcedureNode::NodeClass classType)
-    : class_(classType), type_(nodeType)
+ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeContext> relevantContexts,
+                             ProcedureNode::NodeClass classType)
+    : class_(classType), type_(nodeType), relevantContexts_(std::move(relevantContexts))
 {
 }
 
@@ -91,8 +94,29 @@ ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
 // Return whether the node is of the specified class
 ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 
-// Return whether specified context is relevant for this node type
-bool ProcedureNode::isContextRelevant(NodeContext context) { return false; }
+// Return whether the supplied context is relevant for the current node
+bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
+{
+    // If the node is suitable in Any context return immediately
+    if (std::find(relevantContexts_.begin(), relevantContexts_.end(), ProcedureNode::NodeContext::AnyContext) !=
+        relevantContexts_.end())
+        return true;
+
+    // If the node is relevant in the context, check that against the supplied one. Otherwise, search for it in our vector
+    if (std::find(relevantContexts_.begin(), relevantContexts_.end(), ProcedureNode::NodeContext::ParentProcedureContext) !=
+        relevantContexts_.end())
+    {
+        if (!scope_)
+            throw(
+                std::runtime_error(fmt::format("Node type '{}' requires check for parent scope context, but it has no scope.\n",
+                                               ProcedureNode::nodeTypes().keyword(type_))));
+        auto &seq = *scope_;
+        return std::find(relevantContexts_.begin(), relevantContexts_.end(), seq.get().sequenceContext()) !=
+               relevantContexts_.end();
+    }
+    else
+        return std::find(relevantContexts_.begin(), relevantContexts_.end(), targetContext) != relevantContexts_.end();
+}
 
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }

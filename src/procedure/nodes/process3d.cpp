@@ -13,7 +13,7 @@
 
 Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedureNode> target,
                                                ProcedureNode::NodeContext normalisationContext)
-    : ProcedureNode(ProcedureNode::NodeType::Process3D), sourceData_(target),
+    : ProcedureNode(ProcedureNode::NodeType::Process3D, {ProcedureNode::AnalysisContext}), sourceData_(target),
       normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
     keywords_.setOrganisation("Options", "Control");
@@ -35,16 +35,6 @@ Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedur
 
     // Initialise data pointer
     processedData_ = nullptr;
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool Process3DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

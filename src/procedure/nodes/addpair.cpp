@@ -16,8 +16,8 @@
 
 AddPairProcedureNode::AddPairProcedureNode(const Species *spA, const Species *spB, const NodeValue &population,
                                            const NodeValue &density, Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::AddPair), density_{density, densityUnits}, population_(population), speciesA_(spA),
-      speciesB_(spB)
+    : ProcedureNode(ProcedureNode::NodeType::AddPair, {ProcedureNode::GenerationContext}), density_{density, densityUnits},
+      population_(population), speciesA_(spA), speciesB_(spB)
 {
     setUpKeywords();
 }
@@ -50,12 +50,6 @@ void AddPairProcedureNode::setUpKeywords()
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool AddPairProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
-}
 
 // Return whether a name for the node must be provided
 bool AddPairProcedureNode::mustBeNamed() const { return false; }
