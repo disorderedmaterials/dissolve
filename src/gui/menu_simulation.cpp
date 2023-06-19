@@ -73,3 +73,24 @@ void DissolveWindow::on_SimulationClearAdditionalPotentialsAction_triggered(bool
 }
 
 void DissolveWindow::on_SimulationClearModuleDataAction_triggered(bool checked) { clearModuleData(); }
+
+void DissolveWindow::on_SimulationReduceChargesSigFigsAction_triggered(bool checked)
+{
+    // Get Atom Types
+    auto atomTypes = dissolve().coreData().atomTypes();
+
+    auto ok = false;
+    auto significantFigures =
+        QInputDialog::getInt(this, "Reduce Signficant Figures in Charges",
+                             "Enter the number of significant figures to use for all atom types", 3, 1, 100, 1, &ok);
+    if (!ok)
+        return;
+
+    for (auto &atomType : atomTypes)
+        atomType->setCharge(std::round(atomType->charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
+
+    setModified();
+
+    fullUpdate();
+}
+

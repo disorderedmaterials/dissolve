@@ -149,6 +149,7 @@ class DissolveWindow : public QMainWindow
     void on_SimulationDataManagerAction_triggered(bool checked);
     void on_SimulationClearAdditionalPotentialsAction_triggered(bool checked);
     void on_SimulationClearModuleDataAction_triggered(bool checked);
+    void on_SimulationReduceChargesSigFigsAction_triggered(bool checked);
     // Species
     void on_SpeciesCreateAtomicAction_triggered(bool checked);
     void on_SpeciesCreateDrawAction_triggered(bool checked);

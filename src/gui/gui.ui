@@ -159,6 +159,7 @@
     <addaction name="separator"/>
     <addaction name="SimulationClearAdditionalPotentialsAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
+    <addaction name="SimulationReduceChargesSigFigsAction"/>
    </widget>
    <widget class="QMenu" name="HelpMenu">
     <property name="font">
@@ -784,6 +785,11 @@
   <action name="SpeciesReduceChargesSigFigsAction">
    <property name="text">
     <string>Reduce Sig. Figs in Charges...</string>
+   </property>
+  </action>
+  <action name="SimulationReduceChargesSigFigsAction">
+   <property name="text">
+    <string>Reduce Sig. Figs in Atom Type Charges...</string>
    </property>
   </action>
   <action name="ConfigurationCreateAction">
