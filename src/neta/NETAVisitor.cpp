@@ -377,8 +377,8 @@ void NETAVisitor::visitIdentifier(NETAParser::IdentifierContext *context, NETANo
     {
         if (!contextNode->addIdentifier(name->getText()))
             throw(NETAExceptions::NETASyntaxException(fmt::format("Failed to add identifier '{}' to the current context ({}).",
-                                                              name->getText(),
-                                                             NETANode::nodeTypes().keyword(contextNode->nodeType()))));
+                                                                  name->getText(),
+                                                                  NETANode::nodeTypes().keyword(contextNode->nodeType()))));
         else
             neta_->addIdentifier(name->getText());
     }
