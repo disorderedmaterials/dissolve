@@ -64,10 +64,10 @@ void SpeciesSite::setType(SpeciesSite::SiteType type)
 SpeciesSite::SiteType SpeciesSite::type() const { return type_; }
 
 // Return whether the site has defined axes sites
-bool SpeciesSite::hasAxes() const {
-    return
-        (type_ == SiteType::Static && (xAxisAtoms_.empty() && yAxisAtoms_.empty()))
-        || (type_ == SiteType::Fragment && fragment_.hasAxes());
+bool SpeciesSite::hasAxes() const
+{
+    return (type_ == SiteType::Static && (xAxisAtoms_.empty() && yAxisAtoms_.empty())) ||
+           (type_ == SiteType::Fragment && fragment_.hasAxes());
 }
 
 /*
@@ -332,7 +332,6 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { r
 // Return fragment definition
 const NETADefinition SpeciesSite::fragment() const { return fragment_; }
 
-
 /*
  * Generation from Parent
  */
@@ -432,13 +431,14 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
             Vec3<double> v, origin, x, y, z;
             if (fragment_.matches(&i))
             {
-                // Determine the path of matched atoms - i.e. the atoms in the fragment. 
+                // Determine the path of matched atoms - i.e. the atoms in the fragment.
                 auto matchedAtoms = fragment_.matchedPath(&i).set();
-                
+
                 // Create vector of indices of the matched atoms.
                 std::vector<int> matchedAtomIndices(matchedAtoms.size());
-                std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(), [](const auto& atom) { return atom->index(); });
-               
+                std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
+                               [](const auto &atom) { return atom->index(); });
+
                 // Check if the fragment we have found is unique.
                 std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
                 if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
@@ -446,10 +446,10 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 
                 // If it's unique, remember it and proceed.
                 matchedIndices.push_back(std::move(matchedAtomIndices));
-                
+
                 // Identifiers which label origin, x and y axis atoms.
                 auto identifiers = fragment_.matchedPath(&i).identifiers();
-                
+
                 // Compute the origin.
                 auto originAtoms = identifiers["origin"];
 
@@ -462,7 +462,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                         origin += atom->r() * mass;
                         massNorm += mass;
                     }
-                    origin /= massNorm; 
+                    origin /= massNorm;
                 }
                 else
                 {
@@ -472,7 +472,6 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                     }
                     origin /= originAtoms.size();
                 }
-                
 
                 // Fragment site definition has orientation.
                 if (hasAxes())
@@ -502,18 +501,17 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                     auto y = v - origin;
                     y.orthogonalise(x);
                     y.normalise();
-                    
+
                     // Calculate z vector from cross product of x and y
                     auto z = x * y;
-                    
-                    sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
 
+                    sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
                 }
                 else
                     sites.push_back(std::make_shared<Site>(nullptr, origin));
             }
         }
-        return sites; 
+        return sites;
     }
     return {};
 }
@@ -687,14 +685,15 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     {
         if (!parser.writeLineF("{}  {}\n", prefix, keywords().keyword(FragmentKeyword)))
             return false;
-    }   
+    }
 
     // Origin atom indices
     if (!originAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
                                                     joinStrings(originAtomIndices(), "  ", [](const auto i) { return i + 1; })))
         return false;
 
-    if (!fragment_.definitionString().empty() && !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
+    if (!fragment_.definitionString().empty() &&
+        !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
         return false;
 
     // Origin mass weighted?
