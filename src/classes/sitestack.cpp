@@ -188,6 +188,74 @@ bool SiteStack::createDynamic()
     return true;
 }
 
+bool SiteStack::createFragment()
+{
+    auto *targetSpecies = speciesSite_->parent();
+    const auto &fragment = speciesSite_->fragment();
+    const auto *box = configuration_->box();
+
+    auto spPop = configuration_->speciesPopulation(targetSpecies);
+    if (spPop == 0)
+        return true;
+
+    // Determine matching atom indices for the species
+    std::vector<int> siteIndices;
+    std::vector<std::vector<int>> matchedIndices;
+    for (auto &i : targetSpecies->atoms())
+    {
+        if (fragment.matches(&i))
+        {
+            // Determine the path of matched atoms - i.e. the atoms in the fragment.
+            auto matchedAtoms = fragment.matchedPath(&i).set();
+
+            // Create vector of indices of the matched atoms.
+            std::vector<int> matchedAtomIndices(matchedAtoms.size());
+            std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
+                           [](const auto &atom) { return atom->index(); });
+
+            // Check if the fragment we have found is unique.
+            std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
+            if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                continue;
+
+            // If it's unique, remember it and proceed.
+            matchedIndices.push_back(std::move(matchedAtomIndices));
+            siteIndices.push_back(i.index());
+        }
+    }
+
+    if (siteIndices.empty())
+        return true;
+
+    // Resize our array
+    sites_.reserve(siteIndices.size() * spPop);
+
+    // Get Molecule array from Configuration and search for the target Species
+    for (const auto &molecule : configuration_->molecules())
+    {
+        if (molecule->species() != targetSpecies)
+            continue;
+
+        auto &atoms = molecule->atoms();
+
+        // Loop over site indices
+        for (auto id : siteIndices)
+        {
+            // Determine orgin atoms.
+            auto identifiers = fragment.matchedPath(&targetSpecies->atoms()[id]).identifiers();
+            std::vector<int> originAtomIndices(identifiers["origin"].size());
+            std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), originAtomIndices.begin(),
+                           [](const auto &at) { return at->index(); });
+
+            sites_.emplace_back(molecule, speciesSite_->originMassWeighted()
+                                              ? centreOfMass(*molecule, box, originAtomIndices)
+                                              : centreOfGeometry(*molecule, box, originAtomIndices));
+        }
+    }
+
+    return true;
+}
+
 bool SiteStack::createFragmentOriented()
 {
     auto *targetSpecies = speciesSite_->parent();
