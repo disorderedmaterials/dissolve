@@ -152,7 +152,11 @@ class SpeciesSite : public Serialisable
     NETADefinition fragment_;
 
     public:
+<<<<<<< HEAD
     const NETADefinition &fragment() const;
+=======
+    const NETADefinition& fragment() const;
+>>>>>>> 1a6418eed (Fix some definitions.)
 
     /*
      * Generation from Parent
