@@ -328,7 +328,7 @@ bool SpeciesSite::setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &typ
 const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { return atomTypes_; }
 
 // Return fragment definition
-const NETADefinition SpeciesSite::fragment() const { return fragment_; }
+const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 
 /*
  * Generation from Parent
