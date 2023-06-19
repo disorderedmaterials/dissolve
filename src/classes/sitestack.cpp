@@ -37,8 +37,9 @@ Vec3<double> SiteStack::centreOfGeometry(const Molecule &mol, const Box *box, co
 {
     const auto ref = mol.atom(indices.front())->r();
     return std::accumulate(std::next(indices.begin()), indices.end(), ref,
-                           [&ref, &mol, box](const auto &acc, const auto idx)
-                           { return acc + box->minimumImage(mol.atom(idx)->r(), ref); }) /
+                           [&ref, &mol, box](const auto &acc, const auto idx) {
+                               return acc + box->minimumImage(mol.atom(idx)->r(), ref);
+                           }) /
            indices.size();
 }
 
@@ -48,8 +49,7 @@ Vec3<double> SiteStack::centreOfMass(const Molecule &mol, const Box *box, const 
     auto mass = AtomicMass::mass(mol.atom(indices.front())->speciesAtom()->Z());
     const auto ref = mol.atom(indices.front())->r();
     auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
-                                [&ref, &mol, box](const auto &acc, const auto idx)
-                                {
+                                [&ref, &mol, box](const auto &acc, const auto idx) {
                                     auto mass = AtomicMass::mass(mol.atom(idx)->speciesAtom()->Z());
                                     return std::pair<Vec3<double>, double>(
                                         acc.first + box->minimumImage(mol.atom(idx)->r(), ref) * mass, acc.second + mass);
@@ -204,13 +204,14 @@ bool SiteStack::createFragmentOriented()
     {
         if (fragment.matches(&i))
         {
-            // Determine the path of matched atoms - i.e. the atoms in the fragment. 
+            // Determine the path of matched atoms - i.e. the atoms in the fragment.
             auto matchedAtoms = fragment.matchedPath(&i).set();
-            
+
             // Create vector of indices of the matched atoms.
             std::vector<int> matchedAtomIndices(matchedAtoms.size());
-            std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(), [](const auto& atom) { return atom->index(); });
-           
+            std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
+                           [](const auto &atom) { return atom->index(); });
+
             // Check if the fragment we have found is unique.
             std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
             if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
@@ -227,7 +228,7 @@ bool SiteStack::createFragmentOriented()
 
     // Resize our array
     orientedSites_.reserve(siteIndices.size() * spPop);
-    
+
     const auto *box = configuration_->box();
     Vec3<double> origin, x, y, z;
 
@@ -246,15 +247,18 @@ bool SiteStack::createFragmentOriented()
 
             // Determine origin atoms
             std::vector<int> originAtomIndices(identifiers["origin"].size());
-            std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), originAtomIndices.begin(), [](const auto& at) { return at->index(); });
+            std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), originAtomIndices.begin(),
+                           [](const auto &at) { return at->index(); });
 
             // Determine x axis atoms.
             std::vector<int> xAxisAtomIndices(identifiers["x"].size());
-            std::transform(identifiers["x"].begin(), identifiers["x"].end(), xAxisAtomIndices.begin(), [](const auto& at) { return at->index(); });
+            std::transform(identifiers["x"].begin(), identifiers["x"].end(), xAxisAtomIndices.begin(),
+                           [](const auto &at) { return at->index(); });
 
             // Determine y axis atoms.
             std::vector<int> yAxisAtomIndices(identifiers["y"].size());
-            std::transform(identifiers["y"].begin(), identifiers["y"].end(), yAxisAtomIndices.begin(), [](const auto& at) { return at->index(); });
+            std::transform(identifiers["y"].begin(), identifiers["y"].end(), yAxisAtomIndices.begin(),
+                           [](const auto &at) { return at->index(); });
 
             origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices)
                                                         : centreOfGeometry(*molecule, box, originAtomIndices);
@@ -272,7 +276,6 @@ bool SiteStack::createFragmentOriented()
             z = x * y;
 
             orientedSites_.emplace_back(molecule, origin, x, y, z);
-
         }
     }
 
@@ -315,28 +318,6 @@ bool SiteStack::createFragment()
         }
     }
 
-    for (auto &i : targetSpecies->atoms())
-    {
-        if (fragment.matches(&i))
-        {
-            // Determine the path of matched atoms - i.e. the atoms in the fragment. 
-            auto matchedAtoms = fragment.matchedPath(&i).set();
-            
-            // Create vector of indices of the matched atoms.
-            std::vector<int> matchedAtomIndices(matchedAtoms.size());
-            std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(), [](const auto& atom) { return atom->index(); });
-           
-            // Check if the fragment we have found is unique.
-            std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
-            if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
-                continue;
-
-            // If it's unique, remember it and proceed.
-            matchedIndices.push_back(std::move(matchedAtomIndices));
-            siteIndices.push_back(i.index());
-        }
-    }
-
     if (siteIndices.empty())
         return true;
 
@@ -367,6 +348,7 @@ bool SiteStack::createFragment()
     }
 
     return true;
+<<<<<<< HEAD
 }
 
 bool SiteStack::createFragmentOriented()
@@ -466,6 +448,8 @@ bool SiteStack::createFragmentOriented()
     return true;
 
 >>>>>>> 72cd25c09 (Return fragment definition and generate site stack from fragment definition.)
+=======
+>>>>>>> e42c7367f (Some formatting.)
 }
 
 // Create stack for specified Configuration and site
