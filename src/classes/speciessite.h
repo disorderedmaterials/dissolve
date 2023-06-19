@@ -153,6 +153,7 @@ class SpeciesSite : public Serialisable
 
     public:
     const NETADefinition fragment() const;
+    bool insertIfUnique(std::vector<std::vector<int>> &uniqueMatchedIndices, std::vector<int> &matchedIndices); 
 
     /*
      * Generation from Parent

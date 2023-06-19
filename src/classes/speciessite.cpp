@@ -332,6 +332,7 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { r
 // Return fragment definition
 const NETADefinition SpeciesSite::fragment() const { return fragment_; }
 
+
 /*
  * Generation from Parent
  */
@@ -431,18 +432,25 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
             Vec3<double> v, origin, x, y, z;
             if (fragment_.matches(&i))
             {
+                // Determine the path of matched atoms - i.e. the atoms in the fragment. 
                 auto matchedAtoms = fragment_.matchedPath(&i).set();
-                std::vector<int> matchedAtomIndices;
-                for (auto& atom : matchedAtoms)
-                    matchedAtomIndices.push_back(atom->index());
-
-                std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
                 
+                // Create vector of indices of the matched atoms.
+                std::vector<int> matchedAtomIndices(matchedAtoms.size());
+                std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(), [](const auto& atom) { return atom->index(); });
+               
+                // Check if the fragment we have found is unique.
+                std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
                 if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
                     continue;
+
+                // If it's unique, remember it and proceed.
                 matchedIndices.push_back(std::move(matchedAtomIndices));
                 
+                // Identifiers which label origin, x and y axis atoms.
                 auto identifiers = fragment_.matchedPath(&i).identifiers();
+                
+                // Compute the origin.
                 auto originAtoms = identifiers["origin"];
 
                 if (originMassWeighted_)
@@ -464,16 +472,15 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                     }
                     origin /= originAtoms.size();
                 }
-
-                auto xAxisAtoms = identifiers["x"];
-                auto yAxisAtoms = identifiers["y"];
                 
-                if (xAxisAtoms.empty() || yAxisAtoms.empty())
+
+                // Fragment site definition has orientation.
+                if (hasAxes())
                 {
-                    sites.push_back(std::make_shared<Site>(nullptr, origin));
-                }
-                else
-                { 
+
+                    auto xAxisAtoms = identifiers["x"];
+                    auto yAxisAtoms = identifiers["y"];
+
                     Vec3<double> v;
 
                     // Get average position of supplied x-axis atoms
@@ -495,11 +502,15 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                     auto y = v - origin;
                     y.orthogonalise(x);
                     y.normalise();
+                    
                     // Calculate z vector from cross product of x and y
                     auto z = x * y;
-                    //sites.push_back(std::make_shared<Site>(nullptr, origin));    
+                    
                     sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
+
                 }
+                else
+                    sites.push_back(std::make_shared<Site>(nullptr, origin));
             }
         }
         return sites; 

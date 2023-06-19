@@ -199,18 +199,38 @@ bool SiteStack::createFragmentOriented()
 
     // Determine matching atom indices for the species
     std::vector<int> siteIndices;
+    std::vector<std::vector<int>> matchedIndices;
     for (auto &i : targetSpecies->atoms())
     {
         if (fragment.matches(&i))
+        {
+            // Determine the path of matched atoms - i.e. the atoms in the fragment. 
+            auto matchedAtoms = fragment.matchedPath(&i).set();
+            
+            // Create vector of indices of the matched atoms.
+            std::vector<int> matchedAtomIndices(matchedAtoms.size());
+            std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(), [](const auto& atom) { return atom->index(); });
+           
+            // Check if the fragment we have found is unique.
+            std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
+            if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                continue;
+
+            // If it's unique, remember it and proceed.
+            matchedIndices.push_back(std::move(matchedAtomIndices));
             siteIndices.push_back(i.index());
+        }
     }
+
     if (siteIndices.empty())
         return true;
 
     // Resize our array
     orientedSites_.reserve(siteIndices.size() * spPop);
+    
     const auto *box = configuration_->box();
     Vec3<double> origin, x, y, z;
+
     // Get Molecule array from Configuration and search for the target Species
     for (const auto &molecule : configuration_->molecules())
     {
@@ -222,25 +242,33 @@ bool SiteStack::createFragmentOriented()
         // Loop over site indices
         for (auto id : siteIndices)
         {
-            std::vector<int> originAtomIndices, xAtomIndices, yAtomIndices;
             auto identifiers = fragment.matchedPath(&targetSpecies->atoms()[id]).identifiers();
-            for (auto& at : identifiers["origin"])
-                originAtomIndices.push_back(at->index());
-            for (auto& at : identifiers["x"])
-                xAtomIndices.push_back(at->index());
-            for (auto& at : identifiers["y"])
-               yAtomIndices.push_back(at->index()); 
-            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices) : centreOfGeometry(*molecule, box, originAtomIndices);
-            x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAtomIndices));
+            std::vector<int> originAtomIndices(identifiers["origin"].size());
+            std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), originAtomIndices.begin(), [](const auto& at) { return at->index(); });
+
+            std::vector<int> xAxisAtomIndices(identifiers["x"].size());
+            std::transform(identifiers["x"].begin(), identifiers["x"].end(), xAxisAtomIndices.begin(), [](const auto& at) { return at->index(); });
+
+            std::vector<int> yAxisAtomIndices(identifiers["y"].size());
+            std::transform(identifiers["y"].begin(), identifiers["y"].end(), yAxisAtomIndices.begin(), [](const auto& at) { return at->index(); });
+
+            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices)
+                                                        : centreOfGeometry(*molecule, box, originAtomIndices);
+
+            // Get vector from site origin to x-axis reference point and normalise it
+            x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAxisAtomIndices));
             x.normalise();
 
-            y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAtomIndices));
+            // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
+            y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAxisAtomIndices));
             y.orthogonalise(x);
             y.normalise();
 
+            // Calculate z vector from cross product of x and y
             z = x * y;
 
             orientedSites_.emplace_back(molecule, origin, x, y, z);
+
         }
     }
 
@@ -259,11 +287,29 @@ bool SiteStack::createFragment()
 
     // Determine matching atom indices for the species
     std::vector<int> siteIndices;
+    std::vector<std::vector<int>> matchedIndices;
     for (auto &i : targetSpecies->atoms())
     {
         if (fragment.matches(&i))
+        {
+            // Determine the path of matched atoms - i.e. the atoms in the fragment. 
+            auto matchedAtoms = fragment.matchedPath(&i).set();
+            
+            // Create vector of indices of the matched atoms.
+            std::vector<int> matchedAtomIndices(matchedAtoms.size());
+            std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(), [](const auto& atom) { return atom->index(); });
+           
+            // Check if the fragment we have found is unique.
+            std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
+            if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                continue;
+
+            // If it's unique, remember it and proceed.
+            matchedIndices.push_back(std::move(matchedAtomIndices));
             siteIndices.push_back(i.index());
+        }
     }
+
     if (siteIndices.empty())
         return true;
 
@@ -280,16 +326,14 @@ bool SiteStack::createFragment()
 
         // Loop over site indices
         for (auto id : siteIndices)
-            {
+        {
+            // Determine orgin atoms.
             std::vector<int> originAtomIndices;
-            Vec3<double> origin;
-            //sites_.emplace_back(molecule, atoms[id]->r());
             auto identifiers = fragment.matchedPath(&targetSpecies->atoms()[id]).identifiers();
             for (auto& at : identifiers["origin"])
                 originAtomIndices.push_back(at->index());
             
-            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices) : centreOfGeometry(*molecule, box, originAtomIndices);
-            sites_.emplace_back(molecule, origin);
+            sites_.emplace_back(molecule, speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices) : centreOfGeometry(*molecule, box, originAtomIndices));
         }
     }
 
