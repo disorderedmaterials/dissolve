@@ -50,7 +50,7 @@ class NETADefinition
     // Add identifiers
     void addIdentifier(std::string identifier);
     // Return identifiers from definition
-    std::set<std::string> identifiers();
+    const std::set<std::string> &identifiers() const;
 
     /*
      * Matching
