@@ -47,17 +47,10 @@ class NETADefinition
     std::string_view definitionString() const;
     // Return whether the definition is valid
     bool isValid() const;
-<<<<<<< HEAD
     // Add identifiers
     void addIdentifier(std::string identifier);
     // Return identifiers from definition
     const std::set<std::string> &identifiers() const;
-=======
-    // Set identifiers
-    void setIdentifiers(std::vector<std::string> identifiers);
-    // Return identifiers from definition
-    std::vector<std::string> identifiers();
->>>>>>> 95a36202b (WIP: oriented fragment site stacks, collect identifiers)
 
     /*
      * Matching

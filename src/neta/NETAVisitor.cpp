@@ -39,7 +39,6 @@ void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
     if (tree->RootNodes)
     {
         neta_->rootNode()->setNodes(visit(tree->RootNodes).as<NETANode::NETASequence>());
-        neta_->setIdentifiers(visit(tree->RootNodes).identifiers());
     }
 }
 
