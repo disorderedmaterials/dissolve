@@ -223,13 +223,13 @@ bool SiteStack::createFragmentOriented()
         for (auto id : siteIndices)
         {
             std::vector<int> originAtomIndices, xAtomIndices, yAtomIndices;
-            auto identifiers = fragment.matchedPath(atoms[id]);
+            auto identifiers = fragment.matchedPath(&targetSpecies->atoms()[id]).identifiers();
             for (auto& at : identifiers["origin"])
-                originAtomIndices.push_back(at.index());
+                originAtomIndices.push_back(at->index());
             for (auto& at : identifiers["x"])
-                xAtomIndices.push_back(at.index());
+                xAtomIndices.push_back(at->index());
             for (auto& at : identifiers["y"])
-               yAtomIndices.push_back(at.index()); 
+               yAtomIndices.push_back(at->index()); 
             origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices) : centreOfGeometry(*molecule, box, originAtomIndices);
             x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAtomIndices));
             x.normalise();
@@ -412,8 +412,6 @@ bool SiteStack::createFragmentOriented()
     }
 
     return true;
-=======
-            sites_.emplace_back(molecule, atoms[id]->r());
     }
 
     return true;
