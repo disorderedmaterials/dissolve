@@ -38,6 +38,7 @@ class IntegerHistogram1D
     private:
     // Update accumulated data
     void updateAccumulatedData();
+    const Data1D createDisplayData();
 
     public:
     // Initialise with specified bin range
@@ -63,13 +64,6 @@ class IntegerHistogram1D
     Data1D data() const;
     // Return accumulated (averaged) data
     const Data1D &accumulatedData() const;
-
-    /*
-     * Operators
-     */
-    // public:
-    // void operator=(const IntegerHistogram1D &source);
-    // IntegerHistogram1D operator+(const IntegerHistogram1D &other) const;
 
     /*
      * Serialisation

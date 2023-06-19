@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
+#include "math/mathfunc.h"
 #include "templates/algorithms.h"
 #include <cassert>
 
@@ -32,6 +33,21 @@ void IntegerHistogram1D::clear()
 // Update accumulated data
 void IntegerHistogram1D::updateAccumulatedData()
 {
+    accumulatedData_ = createDisplayData();
+    auto minBin = DissolveMath::nInt(accumulatedData_.xAxis().front());
+    // Poke bin values and errors into array
+    for (const auto &[key, value] : bins_)
+    {
+        auto n = key - minBin;
+        accumulatedData_.value(n) = value.second.value();
+        accumulatedData_.error(n) = value.second.stDev();
+    }
+}
+
+// Create dsiplay data
+const Data1D IntegerHistogram1D::createDisplayData()
+{
+    Data1D data;
     // Get limiting key values
     std::optional<int> expectedMinimum = bins_.empty() ? std::nullopt : std::optional<int>(bins_.begin()->first);
     if (minimum_)
@@ -55,18 +71,11 @@ void IntegerHistogram1D::updateAccumulatedData()
     auto expectedNBins = (*expectedMaximum - *expectedMinimum) + 1;
 
     // Set up data
-    accumulatedData_.initialise(expectedNBins, true);
+    data.initialise(expectedNBins, true);
     auto x = *expectedMinimum;
     for (auto n = 0; n < expectedNBins; n++)
-        accumulatedData_.xAxis(n) = x++;
-
-    // Poke bin values and errors into array
-    for (const auto &[key, value] : bins_)
-    {
-        auto n = key - *expectedMinimum;
-        accumulatedData_.value(n) = value.second.value();
-        accumulatedData_.error(n) = value.second.stDev();
-    }
+        data.xAxis(n) = x++;
+    return data;
 }
 
 // Initialise with specified bin range
@@ -145,42 +154,13 @@ Data1D IntegerHistogram1D::data() const
     Data1D result = accumulatedData_;
     for (auto &[key, value] : bins_)
     {
-        result.values().push_back(value.first);
+        result.values()[(key)] = value.first;
     }
-    /*std::copy(bins_.begin(), bins_.end(), result.values().begin());*/
     return result;
 }
 
 // Return accumulated (averaged) data
 const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedData_; }
-
-/*
- * Operators
- */
-
-// void IntegerHistogram1D::operator=(const IntegerHistogram1D &source)
-//{
-//     minimum_ = source.minimum_;
-//     maximum_ = source.maximum_;
-//     nBinned_ = source.nBinned_;
-//     nMissed_ = source.nMissed_;
-//     bins_ = source.bins_;
-//     averages_ = source.averages_;
-// }
-
-// IntegerHistogram1D IntegerHistogram1D::operator+(const IntegerHistogram1D &other) const
-//{
-//     assert(bins_.size() == other.bins_.size());
-//
-//     IntegerHistogram1D ret = *this;
-//
-//     std::transform(other.bins_.cbegin(), other.bins_.cend(), ret.bins_.cbegin(), ret.bins_.begin(), std::plus<>());
-//
-//     ret.nBinned_ = this->nBinned_ + other.nBinned_;
-//     ret.nMissed_ = this->nMissed_ + other.nMissed_;
-//
-//     return ret;
-// }
 
 /*
  * Serialisation
@@ -190,16 +170,29 @@ const Data1D &IntegerHistogram1D::accumulatedData() const { return accumulatedDa
 bool IntegerHistogram1D::deserialise(LineParser &parser)
 {
     clear();
-
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    initialise(parser.argd(0), parser.argd(1));
+    std::optional<int> minLim = parser.argb(0) ? std::optional<int>(parser.argi(1)) : std::nullopt;
+    std::optional<int> maxLim = parser.argb(2) ? std::optional<int>(parser.argi(3)) : std::nullopt;
+    initialise(minLim, maxLim);
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     nBinned_ = parser.argli(0);
     nMissed_ = parser.argli(1);
 
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+
+    auto nBins = parser.argli(0);
+
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
+    for (int n; n <= nBins; n++)
+    {
+        bins_[parser.argli(0)].first = parser.argli(1);
+        bins_[parser.argli(0)].second.deserialise(parser);
+    }
     return true;
 }
 
@@ -209,8 +202,20 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
     if (!parser.writeLineF("{} {} {} {}\n", DissolveSys::btoa(minimum_.has_value()), minimum_.value_or(0),
                            DissolveSys::btoa(maximum_.has_value()), maximum_.value_or(0)))
         return false;
-    if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
+    if (!parser.writeLineF("{}  {} \n", nBinned_, nMissed_))
         return false;
+
+    if (!parser.writeLineF("{} \n", bins_.size()))
+        return false;
+
+    for (auto &[key, value] : bins_)
+    {
+        auto &[count, average] = value;
+        if (!parser.writeLineF("{} {} \n", key, count))
+            return false;
+        if (!average.serialise(parser))
+            return false;
+    }
 
     return true;
 }
