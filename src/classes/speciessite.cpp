@@ -68,7 +68,6 @@ bool SpeciesSite::hasAxes() const {
     return
         (type_ == SiteType::Static && (xAxisAtoms_.empty() && yAxisAtoms_.empty()))
         || (type_ == SiteType::Fragment && fragment_.hasAxes());
-        // std::find
 }
 
 /*
