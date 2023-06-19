@@ -89,9 +89,6 @@ void SpeciesTab::on_SiteTypeCombo_currentIndexChanged(int index)
         case (1):
             site->setType(SpeciesSite::SiteType::Dynamic);
             break;
-        case (2):
-            site->setType(SpeciesSite::SiteType::Fragment);
-            break;
         default:
             Messenger::error("Type combo index '{}' not handled.\n", index);
     }
@@ -183,12 +180,6 @@ void SpeciesTab::updateSitesTab()
         // Set atom types
         ui_.SiteAtomTypesEdit->setText(
             QString::fromStdString(joinStrings(site->atomTypes(), " ", [](const auto &at) { return at->name(); })));
-    }
-    else if (site->type() == SpeciesSite::SiteType::Fragment)
-    {
-        ui_.SiteTypeCombo->setCurrentIndex(2);
-        ui_.SiteDefinitionStack->setCurrentIndex(2);
-        ui_.SiteFragmentDescriptionEdit->setText(QString::fromStdString(std::string(site->fragment().definitionString())));
     }
 
     // If the current site has changed, also regenerate the SpeciesSite renderable

@@ -10,7 +10,6 @@
 #include "data/atomicmasses.h"
 #include "neta/matchedgroup.h"
 #include "neta/neta.h"
-#include "templates/algorithms.h"
 #include <memory>
 #include <numeric>
 
