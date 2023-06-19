@@ -80,7 +80,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeContext> relevantContexts,
                              ProcedureNode::NodeClass classType)
-    : class_(classType), type_(nodeType), relevantContexts_(std::move(relevantContexts))
+    : type_(nodeType), relevantContexts_(std::move(relevantContexts)), class_(classType)
 {
 }
 
