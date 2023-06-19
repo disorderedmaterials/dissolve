@@ -98,22 +98,22 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
      * Identity
      */
     protected:
-    // Node class
-    NodeClass class_;
     // Node type
     NodeType type_;
-    // Node name
-    std::string name_;
     // Relevant contexts for node
     std::vector<NodeContext> relevantContexts_;
+    // Node class
+    NodeClass class_;
+    // Node name
+    std::string name_;
 
     public:
-    // Return node class
-    NodeClass nodeClass() const;
     // Return node type
     NodeType type() const;
     // Return whether the supplied context is relevant for the current node
     bool isContextRelevant(NodeContext targetContext) const;
+    // Return node class
+    NodeClass nodeClass() const;
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name

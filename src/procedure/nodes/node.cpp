@@ -91,9 +91,6 @@ ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeC
 // Return node type
 ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
 
-// Return whether the node is of the specified class
-ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
-
 // Return whether the supplied context is relevant for the current node
 bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
 {
@@ -117,6 +114,9 @@ bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
     else
         return std::find(relevantContexts_.begin(), relevantContexts_.end(), targetContext) != relevantContexts_.end();
 }
+
+// Return whether the node is of the specified class
+ProcedureNode::NodeClass ProcedureNode::nodeClass() const { return class_; }
 
 // Return whether a name for the node must be provided
 bool ProcedureNode::mustBeNamed() const { return true; }
