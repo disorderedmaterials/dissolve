@@ -243,12 +243,16 @@ bool SiteStack::createFragmentOriented()
         for (auto id : siteIndices)
         {
             auto identifiers = fragment.matchedPath(&targetSpecies->atoms()[id]).identifiers();
+
+            // Determine origin atoms
             std::vector<int> originAtomIndices(identifiers["origin"].size());
             std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), originAtomIndices.begin(), [](const auto& at) { return at->index(); });
 
+            // Determine x axis atoms.
             std::vector<int> xAxisAtomIndices(identifiers["x"].size());
             std::transform(identifiers["x"].begin(), identifiers["x"].end(), xAxisAtomIndices.begin(), [](const auto& at) { return at->index(); });
 
+            // Determine y axis atoms.
             std::vector<int> yAxisAtomIndices(identifiers["y"].size());
             std::transform(identifiers["y"].begin(), identifiers["y"].end(), yAxisAtomIndices.begin(), [](const auto& at) { return at->index(); });
 
