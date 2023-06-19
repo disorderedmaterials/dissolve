@@ -87,10 +87,10 @@ void DissolveWindow::on_SimulationReduceChargesSigFigsAction_triggered(bool chec
         return;
 
     for (auto &atomType : atomTypes)
-        atomType->setCharge(std::round(atomType->charge() * std::pow(10, significantFigures)) / std::pow(10, significantFigures));
+        atomType->setCharge(std::round(atomType->charge() * std::pow(10, significantFigures)) /
+                            std::pow(10, significantFigures));
 
     setModified();
 
     fullUpdate();
 }
-

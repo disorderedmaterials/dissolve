@@ -459,9 +459,9 @@ void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
         return;
 
     auto ok = false;
-    auto targetSum = QInputDialog::getDouble(this, "Smooth atom charges", "Enter the target sum to smooth atom charges to.", 0.0,
-                                     -100.0, 100.0, 5, &ok);
-    
+    auto targetSum = QInputDialog::getDouble(this, "Smooth atom charges", "Enter the target sum to smooth atom charges to.",
+                                            0.0, -100.0, 100.0, 5, &ok);
+
     if (!ok)
         return;
 
