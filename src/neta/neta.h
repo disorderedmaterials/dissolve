@@ -30,7 +30,7 @@ class NETADefinition
     // Whether the current definition is valid
     bool valid_;
     // Identifiers (#)
-    std::vector<std::string> identifiers_;
+    std::set<std::string> identifiers_;
 
     public:
     // Return root node pointer
@@ -47,10 +47,10 @@ class NETADefinition
     std::string_view definitionString() const;
     // Return whether the definition is valid
     bool isValid() const;
-    // Set identifiers
-    void setIdentifiers(std::vector<std::string> identifiers);
+    // Add identifiers
+    void addIdentifier(std::string identifier);
     // Return identifiers from definition
-    std::vector<std::string> identifiers();
+    std::set<std::string> identifiers();
 
     /*
      * Matching
@@ -62,4 +62,12 @@ class NETADefinition
     bool matches(const SpeciesAtom *i) const;
     // Return the path of matched atoms, including the target atom, if the definition matches
     NETAMatchedGroup matchedPath(const SpeciesAtom *i) const;
+
+    /*
+        *
+        * Axes
+        */
+    public:
+    // Return whether axes are defined or not
+    bool hasAxes() const;
 };

@@ -39,7 +39,7 @@ void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
     if (tree->RootNodes)
     {
         neta_->rootNode()->setNodes(visit(tree->RootNodes).as<NETANode::NETASequence>());
-        neta_->setIdentifiers(visit(tree->RootNodes).identifiers());
+        //neta_->setIdentifiers(visit(tree->RootNodes).identifiers());
     }
 }
 
@@ -377,8 +377,12 @@ void NETAVisitor::visitFlag(NETAParser::FlagContext *context, NETANode *contextN
 void NETAVisitor::visitIdentifier(NETAParser::IdentifierContext *context, NETANode *contextNode)
 {
     for (auto name : context->names)
-        if (!contextNode->addIdentifier(name->getText()))
-            throw(NETAExceptions::NETASyntaxException(fmt::format("Failed to add identifier '{}' to the current context ({}).",
+        {
+            if (!contextNode->addIdentifier(name->getText()))
+                throw(NETAExceptions::NETASyntaxException(fmt::format("Failed to add identifier '{}' to the current context ({}).",
                                                                   name->getText(),
-                                                                  NETANode::nodeTypes().keyword(contextNode->nodeType()))));
+                                                                 NETANode::nodeTypes().keyword(contextNode->nodeType()))));
+            else
+                neta_->addIdentifier(name->getText());
+        }
 }
