@@ -149,7 +149,7 @@ bool NETADefinition::isValid() const { return valid_; }
 // Add an identifier
 void NETADefinition::addIdentifier(std::string identifier) { identifiers_.insert(identifier); }
 // Return identifiers
-std::set<std::string> NETADefinition::identifiers() { return identifiers_; }
+const std::set<std::string> &NETADefinition::identifiers() const { return identifiers_; }
 
 /*
  * Matching
