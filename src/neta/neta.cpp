@@ -82,7 +82,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
 
     valid_ = true;
-    
+
     return true;
 }
 
