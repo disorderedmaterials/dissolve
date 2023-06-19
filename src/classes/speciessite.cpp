@@ -326,6 +326,7 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { r
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 
+
 /*
  * Generation from Parent
  */
@@ -500,6 +501,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                     auto z = x * y;
 
                     sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
+
                 }
                 else
                     sites.push_back(std::make_shared<Site>(nullptr, origin));

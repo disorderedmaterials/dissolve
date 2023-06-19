@@ -152,11 +152,7 @@ class SpeciesSite : public Serialisable
     NETADefinition fragment_;
 
     public:
-<<<<<<< HEAD
     const NETADefinition &fragment() const;
-=======
-    const NETADefinition fragment() const;
->>>>>>> 72cd25c09 (Return fragment definition and generate site stack from fragment definition.)
 
     /*
      * Generation from Parent
@@ -175,13 +171,8 @@ class SpeciesSite : public Serialisable
         AtomTypeKeyword,           /* 'AtomType' - Specify allowed atom type(s) for dynamic sites */
         DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
         ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
-<<<<<<< HEAD
         FragmentKeyword,           /* 'Fragment' - States that this is a fragment site */
         DescriptionKeyword,        /* 'Description' - Defines the NETA description for fragment sites */
-=======
-        FragmentKeyword,
-        DescriptionKeyword,
->>>>>>> 311e90c0b (Parse Fragment from NETA description.)
         EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
         OriginKeyword,             /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
         OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with
