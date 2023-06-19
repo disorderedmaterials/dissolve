@@ -82,7 +82,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
 
     valid_ = true;
-    
+
     return true;
 }
 
@@ -180,5 +180,6 @@ NETAMatchedGroup NETADefinition::matchedPath(const SpeciesAtom *i) const
  */
 bool NETADefinition::hasAxes() const
 {
-    return (std::find(identifiers_.begin(), identifiers_.end(), "x") != identifiers_.end()) && (std::find(identifiers_.begin(), identifiers_.end(), "y") != identifiers_.end());
+    return (std::find(identifiers_.begin(), identifiers_.end(), "x") != identifiers_.end()) &&
+           (std::find(identifiers_.begin(), identifiers_.end(), "y") != identifiers_.end());
 }

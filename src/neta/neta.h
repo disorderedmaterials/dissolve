@@ -64,9 +64,8 @@ class NETADefinition
     NETAMatchedGroup matchedPath(const SpeciesAtom *i) const;
 
     /*
-        *
-        * Axes
-        */
+    * Axes
+    */
     public:
     // Return whether axes are defined or not
     bool hasAxes() const;

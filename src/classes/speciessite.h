@@ -27,9 +27,9 @@ class SpeciesSite : public Serialisable
     // Site Type
     enum class SiteType
     {
-        Static, /* Site is based on fixed atom indices within the species */
+        Static,  /* Site is based on fixed atom indices within the species */
         Dynamic, /* Site is atomic and based on elements and atom types */
-        Fragment
+        Fragment /* Site is based on a NETA description */
     };
     explicit SpeciesSite(const Species *parent, SiteType type = SiteType::Static);
     SpeciesSite(const Species *parent, std::string name, SiteType type = SiteType::Static);
@@ -153,7 +153,6 @@ class SpeciesSite : public Serialisable
 
     public:
     const NETADefinition fragment() const;
-    bool insertIfUnique(std::vector<std::vector<int>> &uniqueMatchedIndices, std::vector<int> &matchedIndices); 
 
     /*
      * Generation from Parent
@@ -172,8 +171,8 @@ class SpeciesSite : public Serialisable
         AtomTypeKeyword,           /* 'AtomType' - Specify allowed atom type(s) for dynamic sites */
         DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
         ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
-        FragmentKeyword,
-        DescriptionKeyword,
+        FragmentKeyword,           /* 'Fragment' - States that this is a fragment site */
+        DescriptionKeyword,        /* 'Description' - Defines the NETA description for fragment sites */
         EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
         OriginKeyword,             /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
         OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with

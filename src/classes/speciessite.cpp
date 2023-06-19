@@ -3,7 +3,6 @@
 
 #include "classes/speciessite.h"
 #include "base/lineparser.h"
-#include "base/messenger.h"
 #include "classes/coredata.h"
 #include "classes/site.h"
 #include "classes/species.h"

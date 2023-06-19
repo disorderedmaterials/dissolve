@@ -37,9 +37,8 @@ Vec3<double> SiteStack::centreOfGeometry(const Molecule &mol, const Box *box, co
 {
     const auto ref = mol.atom(indices.front())->r();
     return std::accumulate(std::next(indices.begin()), indices.end(), ref,
-                           [&ref, &mol, box](const auto &acc, const auto idx) {
-                               return acc + box->minimumImage(mol.atom(idx)->r(), ref);
-                           }) /
+                           [&ref, &mol, box](const auto &acc, const auto idx)
+                           { return acc + box->minimumImage(mol.atom(idx)->r(), ref); }) /
            indices.size();
 }
 
@@ -49,7 +48,8 @@ Vec3<double> SiteStack::centreOfMass(const Molecule &mol, const Box *box, const 
     auto mass = AtomicMass::mass(mol.atom(indices.front())->speciesAtom()->Z());
     const auto ref = mol.atom(indices.front())->r();
     auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
-                                [&ref, &mol, box](const auto &acc, const auto idx) {
+                                [&ref, &mol, box](const auto &acc, const auto idx)
+                                {
                                     auto mass = AtomicMass::mass(mol.atom(idx)->speciesAtom()->Z());
                                     return std::pair<Vec3<double>, double>(
                                         acc.first + box->minimumImage(mol.atom(idx)->r(), ref) * mass, acc.second + mass);
