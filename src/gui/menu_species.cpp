@@ -468,7 +468,7 @@ void DissolveWindow::on_SpeciesSmoothChargesAction_triggered(bool checked)
     double sum = 0.0, shiftVal = 0.0;
     for (auto &atom : species->atoms())
         sum += atom.charge();
-    shiftVal = std::abs(targetSum - sum) / species->nAtoms();
+    shiftVal = (sum - targetSum) / species->nAtoms();
     for (auto &atom : species->atoms())
         atom.setCharge(atom.charge() - shiftVal);
 
