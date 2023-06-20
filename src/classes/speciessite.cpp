@@ -330,7 +330,14 @@ bool SpeciesSite::generateUniqueSites()
 {
     if (type_ == SiteType::Dynamic)
     {
-        ;
+        for (auto &i : parent_->atoms())
+        {
+            // Valid element or atom type?
+            if ((std::find(elements_.begin(), elements_.end(), i.Z()) != elements_.end()) ||
+                std::find(atomTypes_.begin(), atomTypes_.end(), i.atomType()) != atomTypes_.end())
+                sitesOriginAtoms_.push_back({&i});
+        }
+        return true;
     }
     else if (type_ == SiteType::Fragment)
     {
@@ -628,15 +635,18 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     Messenger::error("Failed to parse NETA description for site '{}'.\n", name());
                     error = true;
                 }
-                else if (!generateUniqueSites())
-                {
-                    Messenger::error("Failed to generate unique sites for site '{}'.\n", name());
-                    error = true;
-                }
                 break;
             case (SpeciesSite::EndSiteKeyword):
-                Messenger::print("Found end of Site '{}'.\n", name());
-                blockDone = true;
+                if (type_ == SiteType::Fragment || type_ == SiteType::Dynamic)
+                {
+                    if (!generateUniqueSites())
+                    {
+                        Messenger::error("Failed to generate unique sites for site '{}'.\n", name());
+                        error = true;
+                    }
+                }
+                    Messenger::print("Found end of Site '{}'.\n", name());
+                    blockDone = true;
                 break;
             case (SpeciesSite::OriginKeyword):
                 for (auto n = 1; n < parser.nArgs(); ++n)
