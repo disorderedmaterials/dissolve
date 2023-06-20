@@ -37,5 +37,5 @@ double sgn(double a, double signOf);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i);
 // Return the nearest whole integer value
-int nInt(int x);
+int nInt(double x);
 }; // namespace DissolveMath
