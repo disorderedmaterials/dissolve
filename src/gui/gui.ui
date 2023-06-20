@@ -157,9 +157,10 @@
     <addaction name="separator"/>
     <addaction name="SimulationDataManagerAction"/>
     <addaction name="separator"/>
+    <addaction name="SimulationReduceChargesSigFigsAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationClearAdditionalPotentialsAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
-    <addaction name="SimulationReduceChargesSigFigsAction"/>
    </widget>
    <widget class="QMenu" name="HelpMenu">
     <property name="font">
