@@ -47,7 +47,7 @@ void IntegerHistogram1D::updateAccumulatedData()
 // Create dsiplay data
 const Data1D IntegerHistogram1D::createDisplayData()
 {
-    Data1D data;
+
     // Get limiting key values
     std::optional<int> expectedMinimum = bins_.empty() ? std::nullopt : std::optional<int>(bins_.begin()->first);
     if (minimum_)
@@ -71,9 +71,10 @@ const Data1D IntegerHistogram1D::createDisplayData()
     auto expectedNBins = (*expectedMaximum - *expectedMinimum) + 1;
 
     // Set up data
+    Data1D data;
     data.initialise(expectedNBins, true);
     auto x = *expectedMinimum;
-    for (auto n = 0; n < expectedNBins; n++)
+    for (auto n = 0; n < expectedNBins; ++n)
         data.xAxis(n) = x++;
     return data;
 }
@@ -143,6 +144,7 @@ void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
                          bins_.size(), other.bins_.size());
         return;
     }
+
     for (auto &[key, value] : bins_)
 
         bins_[value.first].first += other.bins_[value.first].first * factor;
@@ -188,10 +190,11 @@ bool IntegerHistogram1D::deserialise(LineParser &parser)
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    for (int n; n <= nBins; n++)
+    for (int n = 0; n <= nBins; ++n)
     {
-        bins_[parser.argli(0)].first = parser.argli(1);
-        bins_[parser.argli(0)].second.deserialise(parser);
+        auto bin = parser.argi(0);
+        bins_[bin].first = parser.argli(1);
+        bins_[bin].second.deserialise(parser);
     }
     return true;
 }
