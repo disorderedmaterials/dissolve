@@ -136,6 +136,7 @@ void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
                          bins_.size(), other.bins_.size());
         return;
     }
+
     for (auto &[key, value] : bins_)
 
 // Return current data
