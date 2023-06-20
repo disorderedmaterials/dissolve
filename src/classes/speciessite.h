@@ -150,16 +150,12 @@ class SpeciesSite : public Serialisable
      */
     private:
     NETADefinition fragment_;
-    // Vector of {origin indices, x indices, y indices} tuples
-    std::vector<std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>> uniqueMatches_; 
-        //std::vector<std::pair<std::vector<const SpeciesAtom*>, const std::set<std::string>>> uniqueMatches_; 
 
     public:
     const NETADefinition &fragment() const;
-    const std::vector<std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>> &uniqueMatches() const;
 
     /*
-     * Advances Sites
+     * Advanced Sites
      */
     private:
     // Species atoms whose average position is the oriin of the site
