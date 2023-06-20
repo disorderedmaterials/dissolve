@@ -382,14 +382,23 @@ bool SpeciesSite::generateUniqueSites()
 }
 
 // Return number of unique sites
-const int SpeciesSite::nSites() const { return sitesOriginAtoms_.size(); }
+const int SpeciesSite::nSites() const
+{
+    return type_ == SiteType::Static ? 1 : sitesOriginAtoms_.size();
+}
 
-const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesOriginAtoms() const { return sitesOriginAtoms_; }
+const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesOriginAtoms() const
+{
+    return sitesOriginAtoms_;
+}
 
-const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesXAxisAtoms() const { return sitesXAxisAtoms_; }
+const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesXAxisAtoms() const
+{ return sitesXAxisAtoms_; }
 
-const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesYAxisAtoms() const { return sitesYAxisAtoms_; }
-
+const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesYAxisAtoms() const
+{
+    return sitesYAxisAtoms_;
+}
 
 /*
  * Generation from Parent
