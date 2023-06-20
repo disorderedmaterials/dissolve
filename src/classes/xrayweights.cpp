@@ -213,7 +213,7 @@ double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<double> &Q) const
 {
     // Initialise results array
-    std::vector<double> bbar(Q.size());
+    std::vector<double> bbar(Q.size(), 0.0);
 
     for (auto typeI = 0; typeI < atomTypeMix_.nItems(); ++typeI)
     {
@@ -240,7 +240,7 @@ double XRayWeights::boundCoherentAverageOfSquares(double Q) const
 std::vector<double> XRayWeights::boundCoherentAverageOfSquares(const std::vector<double> &Q) const
 {
     // Initialise results array
-    std::vector<double> bbar(Q.size());
+    std::vector<double> bbar(Q.size(), 0.0);
 
     for (auto typeI = 0; typeI < atomTypeMix_.nItems(); ++typeI)
     {
