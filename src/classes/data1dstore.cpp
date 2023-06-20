@@ -50,24 +50,20 @@ SerialisedValue Data1DStore::serialise() const
 {
     if (data_.empty())
         return {};
-    SerialisedValue result = toml::array{};
-    std::transform(data_.begin(), data_.end(), std::back_inserter(result),
-                   [](const auto &item) -> SerialisedValue {
-		       return item->second;
-                   });
+    SerialisedValue result;
+    for (auto it = data_.rbegin(); it < data_.rend(); ++it)
+      result[std::string((*it)->first.tag())] = (*it)->second;
     return result;
 }
 
 // Read values from a serialisable value
 void Data1DStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    auto &arr = node.as_array();
-    std::transform(arr.begin(), arr.end(), std::back_inserter(data_),
-                   [&coreData](const auto &item)
-                   {
-                       auto pair = std::make_shared<std::pair<Data1D, Data1DImportFileFormat>>();
-                       pair->second.deserialise(item, coreData);
-		       pair->second.importData(pair->first);
-                       return pair;
-                   });
+    Serialisable::toMap(node, [this, &coreData](const auto key, const auto value) {
+      auto pair = std::make_shared<std::pair<Data1D, Data1DImportFileFormat>>();
+      pair->first.setTag(key);
+      pair->second.deserialise(value, coreData);
+      pair->second.importData(pair->first);
+      data_.push_back(pair);
+    });
 }
