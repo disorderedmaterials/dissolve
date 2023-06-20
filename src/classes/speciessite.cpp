@@ -283,8 +283,8 @@ bool SpeciesSite::addElement(Elements::Element el)
         return Messenger::error("Element '{}' is already defined as a target for site '{}'.\n", Elements::symbol(el), name_);
 
     elements_.push_back(el);
-
-    return true;
+    
+    return generateUniqueSites();
 }
 
 // Set target Elements for selection as sites
@@ -292,7 +292,10 @@ bool SpeciesSite::setElements(const std::vector<Elements::Element> &els)
 {
     elements_.clear();
 
-    return std::all_of(els.begin(), els.end(), [&](const auto el) { return addElement(el); });
+    if (std::all_of(els.begin(), els.end(), [&](const auto el) { return addElement(el); }))
+        return generateUniqueSites();
+    else
+        return false;
 }
 
 // Return elements for selection as sites
@@ -309,7 +312,7 @@ bool SpeciesSite::addAtomType(const std::shared_ptr<AtomType> &at)
 
     atomTypes_.push_back(at);
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Set target atom types for selection as sites
@@ -317,7 +320,10 @@ bool SpeciesSite::setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &typ
 {
     atomTypes_.clear();
 
-    return std::all_of(types.begin(), types.end(), [&](const auto &at) { return addAtomType(at); });
+    if (std::all_of(types.begin(), types.end(), [&](const auto &at) { return addAtomType(at); }))
+        return generateUniqueSites();
+    else
+     return false;
 }
 
 // Return atom types for selection as sites
@@ -328,6 +334,10 @@ const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 
 bool SpeciesSite::generateUniqueSites()
 {
+    sitesOriginAtoms_.clear();
+    xAxisAtoms_.clear();
+    yAxisAtoms_.clear();
+
     if (type_ == SiteType::Dynamic)
     {
         for (auto &i : parent_->atoms())
@@ -479,13 +489,8 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
     else if (type_ == SiteType::Dynamic)
     {
         std::vector<std::shared_ptr<Site>> sites;
-        for (auto &i : parent_->atoms())
-        {
-            // Valid element or atom type?
-            if ((std::find(elements_.begin(), elements_.end(), i.Z()) != elements_.end()) ||
-                std::find(atomTypes_.begin(), atomTypes_.end(), i.atomType()) != atomTypes_.end())
-                sites.push_back(std::make_shared<Site>(nullptr, i.r()));
-        }
+        for (int i = 0; i < nSites(); ++i)
+            sites.push_back(std::make_shared<Site>(nullptr, sitesOriginAtoms_.at(i).at(0)->r()));
         return sites;
     }
     else if (type_ == SiteType::Fragment)
