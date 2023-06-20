@@ -62,6 +62,8 @@ class SpeciesSite : public Serialisable
     private:
     // Type of site
     SiteType type_;
+    // Whether the origin should be calculated with mass-weighted positions
+    bool originMassWeighted_;
 
     public:
     // Clear definition data from site
@@ -72,6 +74,10 @@ class SpeciesSite : public Serialisable
     SiteType type() const;
     // Return whether the site has defined axes
     bool hasAxes() const;
+    // Set whether the origin should be calculated with mass-weighted positions
+    void setOriginMassWeighted(bool b);
+    // Return whether the origin should be calculated with mass-weighted positions
+    bool originMassWeighted() const;
 
     /*
      * Static Site Definition
@@ -79,8 +85,6 @@ class SpeciesSite : public Serialisable
     private:
     // Species atoms whose average position is the origin of the site
     std::vector<const SpeciesAtom *> originAtoms_;
-    // Whether the origin should be calculated with mass-weighted positions
-    bool originMassWeighted_;
     // Species atom(s) that indicate the x axis with the origin
     std::vector<const SpeciesAtom *> xAxisAtoms_;
     // Species atom(s) that indicate the y axis with the origin, after orthogonalisation
@@ -97,10 +101,6 @@ class SpeciesSite : public Serialisable
     const std::vector<const SpeciesAtom *> &originAtoms() const;
     // Return integer array of indices from which the origin should be formed
     std::vector<int> originAtomIndices() const;
-    // Set whether the origin should be calculated with mass-weighted positions
-    void setOriginMassWeighted(bool b);
-    // Return whether the origin should be calculated with mass-weighted positions
-    bool originMassWeighted() const;
     // Add x-axis atom
     bool addXAxisAtom(const SpeciesAtom *xAxisAtom);
     // Add x-axis atom from index
@@ -157,6 +157,26 @@ class SpeciesSite : public Serialisable
     public:
     const NETADefinition &fragment() const;
     const std::vector<std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>> &uniqueMatches() const;
+
+    /*
+     * Advances Sites
+     */
+    private:
+    // Species atoms whose average position is the oriin of the site
+    std::vector<std::vector<const SpeciesAtom *>> sitesOriginAtoms_;
+    // Species atom(s) that indicate the x axis with the origin
+    std::vector<std::vector<const SpeciesAtom *>> sitesXAxisAtoms_;
+    // Species atom(s) that indicate the y axis with the origin, after orthogonalisation
+    std::vector<std::vector<const SpeciesAtom *>> sitesYAxisAtoms_;
+    
+    public:
+    // Generate unique sites
+    bool generateUniqueSites();
+    // Number of unique sites
+    const int nSites() const;
+    const std::vector<std::vector<const SpeciesAtom *>> &sitesOriginAtoms() const;
+    const std::vector<std::vector<const SpeciesAtom *>> &sitesXAxisAtoms() const;
+    const std::vector<std::vector<const SpeciesAtom *>> &sitesYAxisAtoms() const;    
 
     /*
      * Generation from Parent

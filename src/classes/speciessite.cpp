@@ -326,7 +326,62 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { r
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 
-const std::vector<std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>> &SpeciesSite::uniqueMatches() const { return uniqueMatches_; }
+bool SpeciesSite::generateUniqueSites()
+{
+    if (type_ == SiteType::Dynamic)
+    {
+        ;
+    }
+    else if (type_ == SiteType::Fragment)
+    {
+        std::vector<std::vector<int>> matchedIndices;
+        for (auto &i : parent_->atoms())
+        {
+            if (fragment_.matches(&i))
+            {
+                // Determine the path of matched atoms - i.e. the atoms in the fragment.
+                auto matchedGroup = fragment_.matchedPath(&i);
+                auto matchedAtoms = matchedGroup.set();
+
+                // Create vector of indices of the matched atoms.
+                std::vector<int> matchedAtomIndices(matchedAtoms.size());
+                std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
+                               [](const auto &atom) { return atom->index(); });
+
+                // Check if the fragment we have found is unique.
+                std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
+                if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                    continue;
+
+                // If it's unique, remember it and proceed.
+                matchedIndices.push_back(std::move(matchedAtomIndices));
+                
+                auto identifiers = matchedGroup.identifiers();
+
+                // Determine origin atoms
+                sitesOriginAtoms_.push_back({identifiers["origin"].begin(), identifiers["origin"].end()});
+                
+                if (hasAxes())
+                {
+                    // Determine x axis atoms.
+                    sitesXAxisAtoms_.push_back({identifiers["x"].begin(), identifiers["x"].end()});
+                    // Determine y axis atoms.
+                    sitesYAxisAtoms_.push_back({identifiers["y"].begin(), identifiers["y"].end()});
+                }
+            }
+        }
+        return true;
+    }   
+}
+
+// Return number of unique sites
+const int SpeciesSite::nSites() const { return sitesOriginAtoms_.size(); }
+
+const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesOriginAtoms() const { return sitesOriginAtoms_; }
+
+const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesXAxisAtoms() const { return sitesXAxisAtoms_; }
+
+const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesYAxisAtoms() const { return sitesYAxisAtoms_; }
 
 
 /*
@@ -420,93 +475,67 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
     else if (type_ == SiteType::Fragment)
     {
         std::vector<std::shared_ptr<Site>> sites;
-        double mass;
-        std::vector<std::vector<int>> matchedIndices;
-        for (auto &i : parent_->atoms())
+        
+        for (int i = 0; i < nSites(); ++i)
         {
-            std::vector<int> xAxisIndices, yAxisIndices;
             Vec3<double> v, origin, x, y, z;
-            if (fragment_.matches(&i))
+            double mass;
+            auto originAtoms = sitesOriginAtoms_.at(i);
+            if (originMassWeighted_)
             {
-                // Determine the path of matched atoms - i.e. the atoms in the fragment.
-                auto matchedAtoms = fragment_.matchedPath(&i).set();
-
-                // Create vector of indices of the matched atoms.
-                std::vector<int> matchedAtomIndices(matchedAtoms.size());
-                std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
-                               [](const auto &atom) { return atom->index(); });
-
-                // Check if the fragment we have found is unique.
-                std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
-                if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
-                    continue;
-
-                // If it's unique, remember it and proceed.
-                matchedIndices.push_back(std::move(matchedAtomIndices));
-
-                // Identifiers which label origin, x and y axis atoms.
-                auto identifiers = fragment_.matchedPath(&i).identifiers();
-
-                // Compute the origin.
-                auto originAtoms = identifiers["origin"];
-
-                if (originMassWeighted_)
+                double massNorm = 0.0;
+                for (const auto &atom : originAtoms)
                 {
-                    double massNorm = 0.0;
-                    for (const auto &atom : originAtoms)
-                    {
-                        mass = AtomicMass::mass(atom->Z());
-                        origin += atom->r() * mass;
-                        massNorm += mass;
-                    }
-                    origin /= massNorm;
+                    mass = AtomicMass::mass(atom->Z());
+                    origin += atom->r() * mass;
+                    massNorm += mass;
                 }
-                else
-                {
-                    for (const auto &atom : originAtoms)
-                    {
-                        origin += atom->r();
-                    }
-                    origin /= originAtoms.size();
-                }
-
-                // Fragment site definition has orientation.
-                if (hasAxes())
-                {
-
-                    auto xAxisAtoms = identifiers["x"];
-                    auto yAxisAtoms = identifiers["y"];
-
-                    Vec3<double> v;
-
-                    // Get average position of supplied x-axis atoms
-                    for (const auto &atom : xAxisAtoms)
-                        v += atom->r();
-                    v /= xAxisAtoms.size();
-
-                    // Get vector from site origin and normalise it
-                    auto x = v - origin;
-                    x.normalise();
-
-                    // Get average position of supplied y-axis atoms
-                    v.zero();
-                    for (const auto &atom : yAxisAtoms)
-                        v += atom->r();
-                    v /= yAxisAtoms.size();
-
-                    // Get vector from site origin, normalise it, and orthogonalise
-                    auto y = v - origin;
-                    y.orthogonalise(x);
-                    y.normalise();
-
-                    // Calculate z vector from cross product of x and y
-                    auto z = x * y;
-
-                    sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
-                }
-                else
-                    sites.push_back(std::make_shared<Site>(nullptr, origin));
+                origin /= massNorm;
             }
+            else
+            {
+                for (const auto &atom : originAtoms)
+                {
+                    origin += atom->r();
+                }
+                origin /= originAtoms.size();
+            }
+            // Fragment site definition has orientation.
+            if (hasAxes())
+            {
+
+                auto xAxisAtoms = sitesXAxisAtoms_.at(i);
+                auto yAxisAtoms = sitesYAxisAtoms_.at(i);
+
+                Vec3<double> v;
+
+                // Get average position of supplied x-axis atoms
+                for (const auto &atom : xAxisAtoms)
+                    v += atom->r();
+                v /= xAxisAtoms.size();
+
+                // Get vector from site origin and normalise it
+                auto x = v - origin;
+                x.normalise();
+
+                // Get average position of supplied y-axis atoms
+                v.zero();
+                for (const auto &atom : yAxisAtoms)
+                    v += atom->r();
+                v /= yAxisAtoms.size();
+
+                // Get vector from site origin, normalise it, and orthogonalise
+                auto y = v - origin;
+                y.orthogonalise(x);
+                y.normalise();
+
+                // Calculate z vector from cross product of x and y
+                auto z = x * y;
+
+                sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
+            }
+            else
+                sites.push_back(std::make_shared<Site>(nullptr, origin));
         }
         return sites;
     }
@@ -599,51 +628,10 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     Messenger::error("Failed to parse NETA description for site '{}'.\n", name());
                     error = true;
                 }
-                else
+                else if (!generateUniqueSites())
                 {
-                    std::vector<std::vector<int>> matchedIndices;
-                    for (auto &i : parent_->atoms())
-                    {
-                        if (fragment_.matches(&i))
-                        {
-                            // Determine the path of matched atoms - i.e. the atoms in the fragment.
-                            auto matchedGroup = fragment_.matchedPath(&i);
-                            auto matchedAtoms = matchedGroup.set();
-
-                            // Create vector of indices of the matched atoms.
-                            std::vector<int> matchedAtomIndices(matchedAtoms.size());
-                            std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
-                                           [](const auto &atom) { return atom->index(); });
-
-                            // Check if the fragment we have found is unique.
-                            std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
-                            if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
-                                continue;
-
-                            // If it's unique, remember it and proceed.
-                            matchedIndices.push_back(std::move(matchedAtomIndices));
-                            
-                            auto identifiers = matchedGroup.identifiers();
-
-                            // Determine origin atoms
-                            std::vector<int> originAtomIndices(identifiers["origin"].size());
-                            std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), originAtomIndices.begin(),
-                                           [](const auto &at) { return at->index(); });
-
-                            // Determine x axis atoms.
-                            std::vector<int> xAxisAtomIndices(identifiers["x"].size());
-                            std::transform(identifiers["x"].begin(), identifiers["x"].end(), xAxisAtomIndices.begin(),
-                                           [](const auto &at) { return at->index(); });
-
-                            // Determine y axis atoms.
-                            std::vector<int> yAxisAtomIndices(identifiers["y"].size());
-                            std::transform(identifiers["y"].begin(), identifiers["y"].end(), yAxisAtomIndices.begin(),
-                                           [](const auto &at) { return at->index(); });
-
-                            uniqueMatches_.push_back({std::move(originAtomIndices), std::move(xAxisAtomIndices), std::move(yAxisAtomIndices)});
-
-                        }
-                    }
+                    Messenger::error("Failed to generate unique sites for site '{}'.\n", name());
+                    error = true;
                 }
                 break;
             case (SpeciesSite::EndSiteKeyword):
