@@ -30,6 +30,7 @@ void SpeciesSite::setName(std::string_view newName) { name_ = newName; }
 std::string_view SpeciesSite::name() const { return name_; }
 
 // Return species parent
+
 const Species *SpeciesSite::parent() const { return parent_; }
 
 // Return version
@@ -325,6 +326,9 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { r
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 
+const std::vector<std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>> &SpeciesSite::uniqueMatches() const { return uniqueMatches_; }
+
+
 /*
  * Generation from Parent
  */
@@ -594,6 +598,52 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                 {
                     Messenger::error("Failed to parse NETA description for site '{}'.\n", name());
                     error = true;
+                }
+                else
+                {
+                    std::vector<std::vector<int>> matchedIndices;
+                    for (auto &i : parent_->atoms())
+                    {
+                        if (fragment_.matches(&i))
+                        {
+                            // Determine the path of matched atoms - i.e. the atoms in the fragment.
+                            auto matchedGroup = fragment_.matchedPath(&i);
+                            auto matchedAtoms = matchedGroup.set();
+
+                            // Create vector of indices of the matched atoms.
+                            std::vector<int> matchedAtomIndices(matchedAtoms.size());
+                            std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
+                                           [](const auto &atom) { return atom->index(); });
+
+                            // Check if the fragment we have found is unique.
+                            std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
+                            if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                                continue;
+
+                            // If it's unique, remember it and proceed.
+                            matchedIndices.push_back(std::move(matchedAtomIndices));
+                            
+                            auto identifiers = matchedGroup.identifiers();
+
+                            // Determine origin atoms
+                            std::vector<int> originAtomIndices(identifiers["origin"].size());
+                            std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), originAtomIndices.begin(),
+                                           [](const auto &at) { return at->index(); });
+
+                            // Determine x axis atoms.
+                            std::vector<int> xAxisAtomIndices(identifiers["x"].size());
+                            std::transform(identifiers["x"].begin(), identifiers["x"].end(), xAxisAtomIndices.begin(),
+                                           [](const auto &at) { return at->index(); });
+
+                            // Determine y axis atoms.
+                            std::vector<int> yAxisAtomIndices(identifiers["y"].size());
+                            std::transform(identifiers["y"].begin(), identifiers["y"].end(), yAxisAtomIndices.begin(),
+                                           [](const auto &at) { return at->index(); });
+
+                            uniqueMatches_.push_back({std::move(originAtomIndices), std::move(xAxisAtomIndices), std::move(yAxisAtomIndices)});
+
+                        }
+                    }
                 }
                 break;
             case (SpeciesSite::EndSiteKeyword):
