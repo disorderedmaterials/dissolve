@@ -79,9 +79,9 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     std::vector<std::vector<const SpeciesAtom*>> originAtoms, xAxisAtoms, yAxisAtoms;
     if (site->type() == SpeciesSite::SiteType::Static)
     {
-        originAtoms.push_back(site->originAtoms());
-        xAxisAtoms.push_back(site->xAxisAtoms());
-        yAxisAtoms.push_back(site->yAxisAtoms());
+        originAtoms.push_back(site->staticOriginAtoms());
+        xAxisAtoms.push_back(site->staticXAxisAtoms());
+        yAxisAtoms.push_back(site->staticYAxisAtoms());
     }
     else
     {
@@ -117,19 +117,19 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 
             if (sitesHaveOrientation_)
             {
-                std::vector<int> xAxisAtomIndices(xAxisAtoms.at(i).size());
-                std::transform(xAxisAtoms.at(i).begin(), xAxisAtoms.at(i).end(), xAxisAtomIndices.begin(), [](const auto &atom) { return atom->index(); });
+                std::vector<int> staticXAxisAtomIndices(xAxisAtoms.at(i).size());
+                std::transform(xAxisAtoms.at(i).begin(), xAxisAtoms.at(i).end(), staticXAxisAtomIndices.begin(), [](const auto &atom) { return atom->index(); });
      
 
                 // Get vector from site origin to x-axis reference point and normalise it
-                x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAxisAtomIndices));
+                x = box->minimumVector(origin, centreOfGeometry(*molecule, box, staticXAxisAtomIndices));
                 x.normalise();
 
-                std::vector<int> yAxisAtomIndices(yAxisAtoms.at(i).size());
-                std::transform(yAxisAtoms.at(i).begin(), yAxisAtoms.at(i).end(), yAxisAtomIndices.begin(), [](const auto &atom) { return atom->index(); });
+                std::vector<int> staticYAxisAtomIndices(yAxisAtoms.at(i).size());
+                std::transform(yAxisAtoms.at(i).begin(), yAxisAtoms.at(i).end(), staticYAxisAtomIndices.begin(), [](const auto &atom) { return atom->index(); });
 
                 // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-                y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAxisAtomIndices));
+                y = box->minimumVector(origin, centreOfGeometry(*molecule, box, staticYAxisAtomIndices));
                 y.orthogonalise(x);
                 y.normalise();
 
