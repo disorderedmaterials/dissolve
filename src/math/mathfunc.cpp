@@ -89,7 +89,4 @@ double sgn(double a, double signOf) { return signOf >= 0.0 ? fabs(a) : -fabs(a);
 // Return the cyclic permutation of the integer 'i', span 3
 int cp3(int i) { return (i % 3); }
 
-// Nearest Integer Function
-int nInt(double x) { return (int)(x >= 0.0 ? (x + 0.5) : (x - 0.5)); }
-
 } // namespace DissolveMath

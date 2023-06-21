@@ -39,8 +39,12 @@ class IntegerHistogram1D
     private:
     // Update accumulated data
     void updateAccumulatedData();
+<<<<<<< HEAD
     // Create display data object covering extents of current bins
     const std::pair<Data1D, int> createDisplayData();
+=======
+    const std::pair<Data1D, std::optional<int>> createDisplayData();
+>>>>>>> 5697347ef (separate map added for averages and suggested changes made)
 
     public:
     // Initialise with specified bin range

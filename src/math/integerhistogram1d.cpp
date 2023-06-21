@@ -209,5 +209,10 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
             return false;
     }
 
+    for (auto &[key, value] : averages_)
+    {
+        if (!value.serialise(parser))
+            return false;
+    }
     return true;
 }
