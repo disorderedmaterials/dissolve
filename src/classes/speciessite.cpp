@@ -496,7 +496,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
     {
         std::vector<std::shared_ptr<Site>> sites;
         
-        for (int i = 0; i < nSites(); ++i)
+        for (auto i = 0; i < nSites(); ++i)
         {
             Vec3<double> v, origin, x, y, z;
             double mass;
