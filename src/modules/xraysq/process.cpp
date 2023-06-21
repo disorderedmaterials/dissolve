@@ -46,26 +46,41 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
         if (!grModule)
             return Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
 
-        // Remove normalisation factor from data
-        if (referenceNormalisation_ != StructureFactors::NoNormalisation)
+        // Normalise reference data to be consistent with the calculated data
+        if (referenceNormalisedTo_ != normaliseTo_)
         {
             // We need the x-ray weights in order to do the normalisation
             XRayWeights weights;
             calculateWeights(grModule, weights, formFactors_);
+            auto bBarSquareOfAverage = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
+            auto bBarAverageOfSquares = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
+            std::vector<double> factors;
 
-            // Remove normalisation from the data
-            if (referenceNormalisation_ == StructureFactors::SquareOfAverageNormalisation)
+            // Set up the multiplication factors
+            if (referenceNormalisedTo_ == StructureFactors::NoNormalisation)
             {
-                auto bbar = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
-                std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
-                               [](auto b, auto ref) { return ref * b; });
+                factors =
+                    normaliseTo_ == StructureFactors::SquareOfAverageNormalisation ? bBarSquareOfAverage : bBarAverageOfSquares;
+                std::transform(factors.begin(), factors.end(), factors.begin(), [](const auto factor) { return 1.0 / factor; });
             }
-            else if (referenceNormalisation_ == StructureFactors::AverageOfSquaresNormalisation)
+            else if (referenceNormalisedTo_ == StructureFactors::SquareOfAverageNormalisation)
             {
-                auto bbar = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
-                std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
-                               [](auto b, auto ref) { return ref * b; });
+                factors = bBarSquareOfAverage;
+                if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
+                    std::transform(bBarAverageOfSquares.begin(), bBarAverageOfSquares.end(), factors.begin(), factors.begin(),
+                                   [](auto b, auto ref) { return ref / b; });
             }
+            else if (referenceNormalisedTo_ == StructureFactors::AverageOfSquaresNormalisation)
+            {
+                factors = bBarAverageOfSquares;
+                if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+                    std::transform(bBarSquareOfAverage.begin(), bBarSquareOfAverage.end(), factors.begin(), factors.begin(),
+                                   [](auto b, auto ref) { return ref / b; });
+            }
+
+            // Apply normalisation factors to the data
+            std::transform(factors.begin(), factors.end(), referenceData.values().begin(), referenceData.values().begin(),
+                           [](auto factor, auto ref) { return ref * factor; });
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
