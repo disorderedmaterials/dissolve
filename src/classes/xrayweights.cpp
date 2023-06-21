@@ -220,7 +220,8 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
         const double ci = concentrations_[typeI];
         auto &fi = formFactorData_[typeI].get();
 
-        std::transform(Q.begin(), Q.end(), bbar.begin(), [ci, &fi](auto q) { return ci * fi.magnitude(q); });
+        std::transform(Q.begin(), Q.end(), bbar.begin(), bbar.begin(),
+                       [ci, &fi](auto q, auto b) { return b + ci * fi.magnitude(q); });
     }
 
     // Square the averages
