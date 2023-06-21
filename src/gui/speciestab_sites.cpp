@@ -174,8 +174,8 @@ void SpeciesTab::updateSitesTab()
         ui_.SiteDefinitionStack->setCurrentIndex(1);
 
         // Set elements
-        ui_.SiteElementsEdit->setText(
-            QString::fromStdString(joinStrings(site->dynamicElements(), " ", [](const auto &el) { return Elements::symbol(el); })));
+        ui_.SiteElementsEdit->setText(QString::fromStdString(
+                joinStrings(site->dynamicElements(), " ", [](const auto &el) { return Elements::symbol(el); })));
 
         // Set atom types
         ui_.SiteAtomTypesEdit->setText(
