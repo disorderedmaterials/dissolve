@@ -175,7 +175,7 @@ void SpeciesTab::updateSitesTab()
 
         // Set elements
         ui_.SiteElementsEdit->setText(QString::fromStdString(
-                joinStrings(site->dynamicElements(), " ", [](const auto &el) { return Elements::symbol(el); })));
+            joinStrings(site->dynamicElements(), " ", [](const auto &el) { return Elements::symbol(el); })));
 
         // Set atom types
         ui_.SiteAtomTypesEdit->setText(
