@@ -5,6 +5,7 @@
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/speciestab.h"
 #include "templates/algorithms.h"
+#include <string>
 
 /*
  * Private Functions
@@ -114,6 +115,17 @@ void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
     site->setOriginMassWeighted(checked);
 
     ui_.SiteViewerWidget->postRedisplay();
+
+    dissolveWindow_->setModified();
+}
+
+void SpeciesTab::on_SiteFragmentDescriptionEdit_textChanged(QString text)
+{
+    auto *site = currentSite();
+    if (refreshLock_.isLocked() || (!site))
+        return;
+    
+    site->setFragmentDefinitionString(std::string_view(text.toStdString()));
 
     dissolveWindow_->setModified();
 }

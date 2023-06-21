@@ -11,6 +11,7 @@
 #include "neta/neta.h"
 #include <memory>
 #include <numeric>
+#include <string_view>
 
 SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), type_(type), originMassWeighted_(false) {}
 SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
@@ -323,6 +324,9 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { r
 
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
+
+// Update fragment definition
+bool SpeciesSite::setFragmentDefinitionString(std::string_view definitionString) { return fragment_.create(definitionString); }
 
 /*
  * Generation from Parent

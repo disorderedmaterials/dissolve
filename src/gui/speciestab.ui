@@ -37,7 +37,7 @@
    <item>
     <widget class="QTabWidget" name="Tabs">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="StructureTab">
       <attribute name="title">
@@ -1846,9 +1846,12 @@
                       <bool>true</bool>
                      </property>
                      <property name="toolTip">
-                      <string>Elements which identify a suitable site in the species</string>
+                      <string>NETA description of fragments</string>
                      </property>
                      <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                     <property name="clearButtonEnabled">
                       <bool>false</bool>
                      </property>
                     </widget>
