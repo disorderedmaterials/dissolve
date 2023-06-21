@@ -30,7 +30,6 @@ void SpeciesSite::setName(std::string_view newName) { name_ = newName; }
 std::string_view SpeciesSite::name() const { return name_; }
 
 // Return species parent
-
 const Species *SpeciesSite::parent() const { return parent_; }
 
 // Return version
