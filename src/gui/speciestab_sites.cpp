@@ -126,6 +126,7 @@ void SpeciesTab::on_SiteFragmentDescriptionEdit_textChanged(QString text)
         return;
     
     site->setFragmentDefinitionString(std::string_view(text.toStdString()));
+    ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
 
     dissolveWindow_->setModified();
 }
@@ -201,6 +202,7 @@ void SpeciesTab::updateSitesTab()
         ui_.SiteTypeCombo->setCurrentIndex(2);
         ui_.SiteDefinitionStack->setCurrentIndex(2);
         ui_.SiteFragmentDescriptionEdit->setText(QString::fromStdString(std::string(site->fragment().definitionString())));
+        ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
     }
 
     // If the current site has changed, also regenerate the SpeciesSite renderable

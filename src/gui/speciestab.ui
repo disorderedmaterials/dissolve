@@ -1824,22 +1824,7 @@
                   <property name="title">
                    <string>Fragment (NETA) Description</string>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_27">
-                   <property name="spacing">
-                    <number>4</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>4</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>4</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>4</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>4</number>
-                   </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <item>
                     <widget class="QLineEdit" name="SiteFragmentDescriptionEdit">
                      <property name="enabled">
@@ -1853,6 +1838,13 @@
                      </property>
                      <property name="clearButtonEnabled">
                       <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="CheckIndicator" name="DescriptionValidIndicator">
+                     <property name="text">
+                      <string/>
                      </property>
                     </widget>
                    </item>
