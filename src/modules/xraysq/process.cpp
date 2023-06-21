@@ -141,12 +141,12 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
-    if (normalisation_ == StructureFactors::NoNormalisation)
+    if (normaliseTo_ == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
-    else if (normalisation_ == StructureFactors::AverageOfSquaresNormalisation)
-        Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
-    else if (normalisation_ == StructureFactors::SquareOfAverageNormalisation)
+    else if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
+    else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+        Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
     if (referenceWindowFunction_ == WindowFunction::Form::None)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");
     else
@@ -184,7 +184,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation_);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
@@ -246,7 +246,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         weightedGR.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation_);
+    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
