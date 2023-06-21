@@ -64,6 +64,7 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
                                       .arg(QString::fromStdString(ModuleTypes::moduleType(module->type())).toLower()))));
         default:
             return {};
+    }
 }
 
 bool ModuleLayerModel::setData(const QModelIndex &index, const QVariant &value, int role)

@@ -24,8 +24,6 @@ class ExpressionKeyword : public KeywordBase
     Expression &data_;
     // Initial Value
     const std::string default_;
-    // Vector of variables available to the expression
-    const std::vector<std::shared_ptr<ExpressionVariable>> &variables_;
 
     public:
     // Return reference to data

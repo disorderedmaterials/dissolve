@@ -41,7 +41,7 @@ class Dissolve : public Serialisable<>
     const CoreData &coreData() const;
     // Clear all data
     void clear();
-    static constexpr bool toml_testing_flag = true;
+    static constexpr bool toml_testing_flag = false;
 
     /*
      * Atom Types
