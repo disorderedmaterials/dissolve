@@ -71,13 +71,13 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
     weightedsq.formTotals(false);
     if (normalisation == StructureFactors::SquareOfAverageNormalisation)
     {
-        auto bbar = weights.boundCoherentSquareOfAverage(unweightedsq.boundPartial(0, 0).xAxis());
+        auto bbar = weights.boundCoherentSquareOfAverage(weightedsq.total().xAxis());
         for (auto n = 0; n < bbar.size(); ++n)
             weightedsq.total().value(n) /= bbar[n];
     }
     else if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
     {
-        auto bbar = weights.boundCoherentAverageOfSquares(unweightedsq.boundPartial(0, 0).xAxis());
+        auto bbar = weights.boundCoherentAverageOfSquares(weightedsq.total().xAxis());
         for (auto n = 0; n < bbar.size(); ++n)
             weightedsq.total().value(n) /= bbar[n];
     }
