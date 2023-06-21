@@ -151,9 +151,9 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
 
 SerialisedValue FileAndFormat::serialise() const
 {
-    SerialisedValue result, keywords;
-    result["filename"] = filename_;
-    result["format"] = formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???";
+    SerialisedValue result = {{"filename", filename_},
+                              {"format", formatIndex_ ? formats_.keywordByIndex(*formatIndex_) : "???"}};
+    SerialisedValue keywords;
     keywords = keywords_.serialiseOnto(keywords);
     if (!keywords.is_uninitialized())
         result["keywords"] = keywords;
