@@ -334,8 +334,8 @@ const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 bool SpeciesSite::generateUniqueSites()
 {
     sitesOriginAtoms_.clear();
-    xAxisAtoms_.clear();
-    yAxisAtoms_.clear();
+    sitesXAxisAtoms_.clear();
+    sitesYAxisAtoms_.clear();
 
     if (type_ == SiteType::Dynamic)
     {
