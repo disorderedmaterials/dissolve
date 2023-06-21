@@ -158,7 +158,7 @@ class SpeciesSite : public Serialisable
      * Advanced Sites
      */
     private:
-    // Species atoms whose average position is the oriin of the site
+    // Species atoms whose average position is the origin of the site
     std::vector<std::vector<const SpeciesAtom *>> sitesOriginAtoms_;
     // Species atom(s) that indicate the x axis with the origin
     std::vector<std::vector<const SpeciesAtom *>> sitesXAxisAtoms_;
