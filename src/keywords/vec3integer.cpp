@@ -6,7 +6,8 @@
 
 Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> &data, std::optional<Vec3<int>> minValue, std::optional<Vec3<int>> maxValue,
                                        Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data), default_(data), minimumLimit_(minValue), maximumLimit_(maxValue), labelType_(labelType)
+    : KeywordBase(typeid(this)), data_(data), default_(data), minimumLimit_(minValue), maximumLimit_(maxValue),
+      labelType_(labelType)
 {
 }
 

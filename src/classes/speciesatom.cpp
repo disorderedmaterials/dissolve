@@ -220,12 +220,13 @@ void SpeciesAtom::setScaledInteractions()
     scaledInteractions_.clear();
 
     std::function<void(SpeciesAtom *, SpeciesAtom::ScaledInteraction, double, double)> addInteractionFunction =
-        [&](SpeciesAtom *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double vdwScale) {
-            auto it = std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(),
-                                   [j](const auto &p) { return p.first == j; });
-            if (it == scaledInteractions_.end())
-                scaledInteractions_.emplace_back(j, ScaledInteractionDefinition{scaledType, elecScale, vdwScale});
-        };
+        [&](SpeciesAtom *j, SpeciesAtom::ScaledInteraction scaledType, double elecScale, double vdwScale)
+    {
+        auto it =
+            std::find_if(scaledInteractions_.begin(), scaledInteractions_.end(), [j](const auto &p) { return p.first == j; });
+        if (it == scaledInteractions_.end())
+            scaledInteractions_.emplace_back(j, ScaledInteractionDefinition{scaledType, elecScale, vdwScale});
+    };
 
     /*
      * Add atoms to our scaledInteractions_ vector with appropriate scaling factors based on the intramolecular term in which

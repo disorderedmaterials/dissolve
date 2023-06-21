@@ -8,7 +8,7 @@
 #include "procedure/nodes/node.h"
 
 // ProcedureNode Sequence
-class ProcedureNodeSequence : public Serialisable<const CoreData&>
+class ProcedureNodeSequence : public Serialisable<const CoreData &>
 {
     public:
     ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,

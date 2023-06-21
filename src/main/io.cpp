@@ -142,8 +142,8 @@ SerialisedValue Dissolve::serialise() const
     // If TOML is disabled,
     if constexpr (!toml_testing_flag)
     {
-      Messenger::error("This build does not support TOML.");
-      return root;
+        Messenger::error("This build does not support TOML.");
+        return root;
     }
 
     if (!coreData_.masterBonds().empty() || !coreData_.masterAngles().empty() || !coreData_.masterTorsions().empty() ||
@@ -166,7 +166,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
 {
     // If TOML is disabled,
     if constexpr (!toml_testing_flag)
-      Messenger::error("This build does not support TOML.");
+        Messenger::error("This build does not support TOML.");
 
     if (node.contains("pairPotentials"))
     {

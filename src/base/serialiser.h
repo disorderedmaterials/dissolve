@@ -45,8 +45,8 @@ template <typename... Contexts> class Serialisable
         if (vector.empty())
             return;
         SerialisedValue group;
-	for(auto it = vector.rbegin(); it < vector.rend(); it++)
-	    group[getName(*it)] = (*it)->serialise();
+        for (auto it = vector.rbegin(); it < vector.rend(); it++)
+            group[getName(*it)] = (*it)->serialise();
         node[name] = group;
     };
     // A helper function to add the elements of a vector to a node under a name
@@ -84,8 +84,8 @@ template <typename... Contexts> class Serialisable
     // Act over each value in a node table, if the key exists
     template <typename Lambda> static void toMap(const SerialisedValue &node, Lambda action)
     {
-      for (auto &[key, value] : node.as_table())
-	action(key, value);
+        for (auto &[key, value] : node.as_table())
+            action(key, value);
     }
 
     // Act over each value in a node table, if the key exists

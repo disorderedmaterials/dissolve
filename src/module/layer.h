@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "module/module.h"
 #include "base/serialiser.h"
 #include "classes/coredata.h"
+#include "module/module.h"
 #include "templates/flags.h"
 #include <map>
 #include <memory>

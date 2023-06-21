@@ -50,9 +50,7 @@ bool NodeBranchKeyword::serialise(LineParser &parser, std::string_view keywordNa
 }
 
 // Has not changed from initial value
-bool NodeBranchKeyword::isDefault() const {
-  return data_.nNodes() == 0;
-}
+bool NodeBranchKeyword::isDefault() const { return data_.nNodes() == 0; }
 
 // Express as a serialisable value
 SerialisedValue NodeBranchKeyword::serialise() const

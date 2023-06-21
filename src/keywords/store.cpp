@@ -286,9 +286,9 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
     for (auto &k : keywords())
         if (!k.keyword()->isDefault())
         {
-	    auto value = k.keyword()->serialise();
+            auto value = k.keyword()->serialise();
             if (!value.is_uninitialized())
-	        node[toml_format(k.keyword()->name())] = value;
+                node[toml_format(k.keyword()->name())] = value;
         }
     return node;
 }
@@ -297,6 +297,6 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
 void KeywordStore::deserialiseFrom(const SerialisedValue &node, const CoreData &coreData)
 {
     for (auto &k : keywords_)
-      if (node.contains(toml_format(k.keyword()->name())))
-	  k.keyword()->deserialise(node.at(toml_format(k.keyword()->name())), coreData);
+        if (node.contains(toml_format(k.keyword()->name())))
+            k.keyword()->deserialise(node.at(toml_format(k.keyword()->name())), coreData);
 }
