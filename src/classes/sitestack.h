@@ -43,6 +43,7 @@ class SiteStack
     Vec3<double> centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices);
     // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
     Vec3<double> centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices);
+
     public:
     // Create stack for specified Configuration and site
     bool create(Configuration *cfg, const SpeciesSite *site);

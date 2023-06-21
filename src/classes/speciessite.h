@@ -164,7 +164,7 @@ class SpeciesSite : public Serialisable
     std::vector<std::vector<const SpeciesAtom *>> sitesXAxisAtoms_;
     // Species atom(s) that indicate the y axis with the origin, after orthogonalisation
     std::vector<std::vector<const SpeciesAtom *>> sitesYAxisAtoms_;
-    
+
     public:
     // Generate unique sites
     bool generateUniqueSites();
@@ -172,7 +172,7 @@ class SpeciesSite : public Serialisable
     const int nSites() const;
     const std::vector<std::vector<const SpeciesAtom *>> &sitesOriginAtoms() const;
     const std::vector<std::vector<const SpeciesAtom *>> &sitesXAxisAtoms() const;
-    const std::vector<std::vector<const SpeciesAtom *>> &sitesYAxisAtoms() const;    
+    const std::vector<std::vector<const SpeciesAtom *>> &sitesYAxisAtoms() const;
 
     /*
      * Generation from Parent
