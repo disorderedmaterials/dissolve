@@ -503,7 +503,7 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
             auto originAtoms = sitesOriginAtoms_.at(i);
             if (originMassWeighted_)
             {
-                double massNorm = 0.0;
+                auto massNorm = 0.0;
                 for (const auto &atom : originAtoms)
                 {
                     mass = AtomicMass::mass(atom->Z());
