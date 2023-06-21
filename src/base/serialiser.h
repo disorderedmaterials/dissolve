@@ -40,14 +40,20 @@ template <typename... Contexts> class Serialisable
     }
     // A helper function to add elements of a vector to a node under the named heading
     template <typename T, typename Lambda>
-    static void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node, Lambda getName)
+    static SerialisedValue fromVectorToTable(const std::vector<T> &vector, Lambda getName)
     {
-        if (vector.empty())
-            return;
         SerialisedValue group;
         for (auto it = vector.rbegin(); it < vector.rend(); it++)
             group[getName(*it)] = (*it)->serialise();
-        node[name] = group;
+	return group;
+    };
+    // A helper function to add elements of a vector to a node under the named heading
+    template <typename T, typename Lambda>
+    static void fromVectorToTable(const std::vector<T> &vector, std::string name, SerialisedValue &node, Lambda getName)
+    {
+	if (vector.empty())
+	    return;
+        node[name] = fromVectorToTable(vector, getName);
     };
     // A helper function to add the elements of a vector to a node under a name
     template <typename T>
