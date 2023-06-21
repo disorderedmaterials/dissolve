@@ -21,16 +21,18 @@ NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
         "Exchangeable", "A set of atom types in the system that are exchangeable with each other", exchangeable_);
     keywords_.add<IsotopologueSetKeyword>("Isotopologue", "Set/add an isotopologue and its population for a particular species",
                                           isotopologueSet_);
-    keywords_.add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
-        "Normalisation", "Normalisation to apply to total weighted F(Q)", normalisation_,
-        StructureFactors::normalisationTypes());
+    keywords_
+        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("Normalisation",
+                                                                      "Normalisation to apply to total weighted F(Q)",
+                                                                      normaliseTo_, StructureFactors::normalisationTypes())
+        ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Reference Data");
     keywords_.add<FileAndFormatKeyword>("Reference", "F(Q) reference data", referenceFQ_, "EndReference")
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
         .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
-            "ReferenceNormalisation", "Normalisation to remove from reference data before use", referenceNormalisation_,
+            "ReferenceNormalisation", "Normalisation that has been applied to the reference data", referenceNormalisedTo_,
             StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
@@ -60,6 +62,13 @@ NeutronSQModule::NeutronSQModule() : Module(ModuleTypes::NeutronSQ)
                                "Save representative G(r), obtained from Fourier transform of the calculated F(Q)",
                                saveRepresentativeGR_);
     keywords_.add<BoolKeyword>("SaveSQ", "Save weighted partial and total structure factors", saveSQ_);
+
+    // Deprecated keywords
+    keywords_.addDeprecated<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
+        "Normalisation", "Normalisation to apply to total weighted F(Q)", normaliseTo_, StructureFactors::normalisationTypes());
+    keywords_.addDeprecated<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
+        "ReferenceNormalisation", "Normalisation to remove from reference data before use", referenceNormalisedTo_,
+        StructureFactors::normalisationTypes());
 }
 
 // Return file and format for reference total F(Q)

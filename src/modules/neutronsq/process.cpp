@@ -42,26 +42,34 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
         if (!rdfModule)
             return Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
 
-        // Remove normalisation_ factor from data
-        if (referenceNormalisation_ != StructureFactors::NoNormalisation)
+        // Normalise reference data to be consistent with the calculated data
+        if (referenceNormalisedTo_ != normaliseTo_)
         {
-            // We need the neutron weights in order to do the normalisation_
+            // We need the neutron weights in order to do the normalisation
             NeutronWeights weights;
             calculateWeights(rdfModule, weights);
+            auto factor = 1.0;
 
-            // Remove normalisation_ of data
-            if (referenceNormalisation_ == StructureFactors::AverageOfSquaresNormalisation)
+            // Set up the multiplication factors
+            if (referenceNormalisedTo_ == StructureFactors::NoNormalisation)
+                factor = 1.0 / normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
+                             ? weights.boundCoherentSquareOfAverage()
+                             : weights.boundCoherentAverageOfSquares();
+            else if (referenceNormalisedTo_ == StructureFactors::SquareOfAverageNormalisation)
             {
-                referenceData *= weights.boundCoherentAverageOfSquares();
-                Messenger::print("[SETUP {}] Removed <b>**2 normalisation from reference data ('{}'), factor = {}.\n", name_,
-                                 name(), weights.boundCoherentAverageOfSquares());
+                factor = weights.boundCoherentSquareOfAverage();
+                if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
+                    factor /= weights.boundCoherentAverageOfSquares();
             }
-            else if (referenceNormalisation_ == StructureFactors::SquareOfAverageNormalisation)
+            else if (referenceNormalisedTo_ == StructureFactors::AverageOfSquaresNormalisation)
             {
-                referenceData *= weights.boundCoherentSquareOfAverage();
-                Messenger::print("[SETUP {}] Removed <b**2> normalisation from reference data ('{}'), factor = {}.\n", name_,
-                                 name(), weights.boundCoherentSquareOfAverage());
+                factor = weights.boundCoherentAverageOfSquares();
+                if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+                    factor /= weights.boundCoherentSquareOfAverage();
             }
+
+            // Apply normalisation factors to the data
+            referenceData *= factor;
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
@@ -141,12 +149,12 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     else
         Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is {}.",
                          WindowFunction::forms().keyword(referenceWindowFunction_));
-    if (normalisation_ == StructureFactors::NoNormalisation)
+    if (normaliseTo_ == StructureFactors::NoNormalisation)
         Messenger::print("NeutronSQ: No normalisation will be applied to total F(Q).\n");
-    else if (normalisation_ == StructureFactors::AverageOfSquaresNormalisation)
-        Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b>**2");
-    else if (normalisation_ == StructureFactors::SquareOfAverageNormalisation)
+    else if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
+    else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+        Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b>**2");
     if (saveSQ_)
         Messenger::print("NeutronSQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
     if (saveGR_)
@@ -178,7 +186,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation_);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
@@ -200,7 +208,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         weightedGR.setUpPartials(unweightedGR.atomTypeMix());
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation_);
+    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
 
     // Save data if requested
     if (saveGR_ && (!MPIRunMaster(procPool, weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))))
