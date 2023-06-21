@@ -160,7 +160,7 @@ void SiteWidget::on_SiteCreateButton_clicked(bool checked)
 
     // Create the new site, using the empirical formula of the selection as the base name
     auto *site = sp->addSite(EmpiricalFormula::formula(sp->selectedAtoms(), [](const auto &i) { return i->Z(); }));
-    site->setOriginAtoms(sp->selectedAtoms());
+    site->setStaticOriginAtoms(sp->selectedAtoms());
 
     // Update the siteViewer
     siteViewer()->setSite(site);
@@ -178,7 +178,7 @@ void SiteWidget::on_SiteSetOriginButton_clicked(bool checked)
         return;
 
     // Get current atom selection from Species
-    site->setOriginAtoms(sp->selectedAtoms());
+    site->setStaticOriginAtoms(sp->selectedAtoms());
 
     siteViewer()->postRedisplay();
 
@@ -194,7 +194,7 @@ void SiteWidget::on_SiteSetXAxisButton_clicked(bool checked)
         return;
 
     // Get current atom selection from Species
-    site->setXAxisAtoms(sp->selectedAtoms());
+    site->setStaticXAxisAtoms(sp->selectedAtoms());
 
     siteViewer()->postRedisplay();
 
@@ -210,7 +210,7 @@ void SiteWidget::on_SiteSetYAxisButton_clicked(bool checked)
         return;
 
     // Get current atom selection from Species
-    site->setYAxisAtoms(sp->selectedAtoms());
+    site->setStaticYAxisAtoms(sp->selectedAtoms());
 
     siteViewer()->postRedisplay();
 
@@ -227,7 +227,7 @@ void SiteWidget::on_SiteSetElementsButton_clicked(bool checked)
 
     // Get current atom selection from Species
     for (auto &i : sp->selectedAtoms())
-        site->addElement(i->Z());
+        site->addDynamicElement(i->Z());
 
     siteViewer()->postRedisplay();
 
@@ -245,7 +245,7 @@ void SiteWidget::on_SiteSetAtomTypesButton_clicked(bool checked)
     // Get current atom selection from Species
     for (auto &i : sp->selectedAtoms())
         if (i->atomType())
-            site->addAtomType(i->atomType());
+            site->addDynamicAtomType(i->atomType());
 
     siteViewer()->postRedisplay();
 
