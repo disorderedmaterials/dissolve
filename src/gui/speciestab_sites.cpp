@@ -119,17 +119,33 @@ void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void SpeciesTab::on_SiteFragmentDescriptionEdit_textChanged(QString text)
+void SpeciesTab::on_SiteFragmentDescriptionEdit_editingFinished()
 {
     auto *site = currentSite();
     if (refreshLock_.isLocked() || (!site))
         return;
     
-    site->setFragmentDefinitionString(std::string_view(text.toStdString()));
+    site->setFragmentDefinitionString(std::string_view(ui_.SiteFragmentDescriptionEdit->text().toStdString()));
     ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
+
+    ui_.SiteViewerWidget->postRedisplay();
 
     dissolveWindow_->setModified();
 }
+
+void SpeciesTab::on_SiteFragmentDescriptionEdit_returnPressed()
+{
+    auto *site = currentSite();
+    if (refreshLock_.isLocked() || (!site))
+        return;
+    site->setFragmentDefinitionString(std::string_view(ui_.SiteFragmentDescriptionEdit->text().toStdString())); 
+    ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
+
+    ui_.SiteViewerWidget->postRedisplay();
+
+    dissolveWindow_->setModified();
+}
+
 
 /*
  * Public Functions
