@@ -335,6 +335,7 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::dynamicAtomTypes() co
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 
+// Generate unique sites
 bool SpeciesSite::generateUniqueSites()
 {
     sitesOriginAtomsIndices_.clear();
@@ -409,12 +410,11 @@ bool SpeciesSite::generateUniqueSites()
 
 // Return number of unique sites
 const int SpeciesSite::nSites() const { sitesOriginAtomsIndices_.size(); }
-
-// Return atoms representing unique site origins
+// Return atom indices contributing to unique site origins
 const std::vector<std::vector<int>> &SpeciesSite::sitesOriginAtomsIndices() const { return sitesOriginAtomsIndices_; }
-
+// Return atom indices indicating the x axis with the origins of unique sites.
 const std::vector<std::vector<int>> &SpeciesSite::sitesXAxisAtomsIndices() const { return sitesXAxisAtomsIndices_; }
-
+// Return atom indices indicating the y axis with the origins of unique sites.
 const std::vector<std::vector<int>> &SpeciesSite::sitesYAxisAtomsIndices() const { return sitesYAxisAtomsIndices_; }
 
 /*
