@@ -85,12 +85,12 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
                         ? weights.boundCoherentSquareOfAverage(weightedsq.total().xAxis())
                         : weights.boundCoherentAverageOfSquares(weightedsq.total().xAxis());
 
-        for (auto n = 0; n < bbar.size(); ++n)
-        {
-            weightedsq.total().value(n) /= bbar[n];
-            weightedsq.boundTotal().value(n) /= bbar[n];
-            weightedsq.unboundTotal().value(n) /= bbar[n];
-        }
+        std::transform(weightedsq.total().values().begin(), weightedsq.total().values().end(), bbar.begin(),
+                       weightedsq.total().values().begin(), std::divides<>());
+        std::transform(weightedsq.boundTotal().values().begin(), weightedsq.boundTotal().values().end(), bbar.begin(),
+                       weightedsq.boundTotal().values().begin(), std::divides<>());
+        std::transform(weightedsq.unboundTotal().values().begin(), weightedsq.unboundTotal().values().end(), bbar.begin(),
+                       weightedsq.unboundTotal().values().begin(), std::divides<>());
     }
 
     return true;

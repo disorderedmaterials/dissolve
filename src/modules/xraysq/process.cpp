@@ -67,20 +67,20 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
             {
                 factors = bBarSquareOfAverage;
                 if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
-                    std::transform(bBarAverageOfSquares.begin(), bBarAverageOfSquares.end(), factors.begin(), factors.begin(),
-                                   [](auto b, auto ref) { return ref / b; });
+                    std::transform(factors.begin(), factors.end(), bBarAverageOfSquares.begin(), factors.begin(),
+                                   std::divides<>());
             }
             else if (referenceNormalisedTo_ == StructureFactors::AverageOfSquaresNormalisation)
             {
                 factors = bBarAverageOfSquares;
                 if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
-                    std::transform(bBarSquareOfAverage.begin(), bBarSquareOfAverage.end(), factors.begin(), factors.begin(),
-                                   [](auto b, auto ref) { return ref / b; });
+                    std::transform(factors.begin(), factors.end(), bBarSquareOfAverage.begin(), factors.begin(),
+                                   std::divides<>());
             }
 
             // Apply normalisation factors to the data
-            std::transform(factors.begin(), factors.end(), referenceData.values().begin(), referenceData.values().begin(),
-                           [](auto factor, auto ref) { return ref * factor; });
+            std::transform(referenceData.values().begin(), referenceData.values().end(), factors.begin(),
+                           referenceData.values().begin(), std::multiplies<>());
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
