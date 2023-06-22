@@ -99,7 +99,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
         if (molecule->species() != targetSpecies)
             continue;
 
-        for (int i = 0; i < site->nSites(); ++i)
+        for (auto i = 0; i < site->nSites(); ++i)
         {
             std::vector<int> originAtomIndices(originAtoms.at(i).size());
             std::transform(originAtoms.at(i).begin(), originAtoms.at(i).end(), originAtomIndices.begin(),
