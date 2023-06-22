@@ -125,7 +125,11 @@ long int IntegerHistogram1D::nBinned() const { return nBinned_; }
 void IntegerHistogram1D::accumulate()
 {
     for (auto &[key, value] : raw_)
+<<<<<<< HEAD
         averages_[key] += (double)raw_[key];
+=======
+        averages_[key] += (SampledDouble)raw_[key];
+>>>>>>> 54565cd05 (accumulate() should be over raw_)
 
 // Add source histogram data into local array
 void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
