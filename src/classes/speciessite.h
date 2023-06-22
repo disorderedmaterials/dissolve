@@ -170,6 +170,7 @@ class SpeciesSite : public Serialisable
     bool generateUniqueSites();
     // Number of unique sites
     const int nSites() const;
+    // Return atoms representing unique site origins
     const std::vector<std::vector<const SpeciesAtom *>> &sitesOriginAtoms() const;
     const std::vector<std::vector<const SpeciesAtom *>> &sitesXAxisAtoms() const;
     const std::vector<std::vector<const SpeciesAtom *>> &sitesYAxisAtoms() const;
