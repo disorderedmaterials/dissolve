@@ -337,15 +337,6 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // Store the new fit coefficients
             fitCoefficients = coeffMinimiser.C();
 
-            // Smooth coefficients?
-            if (fluctuationSmoothing_)
-            {
-                Filters::movingAverage(fitCoefficients, *fluctuationSmoothing_);
-
-                // Need to pass the smoothed parameters back into the minimiser so we generate the matching approximation
-                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, pSigma1_, pSigma2_, 0, 0.01);
-            }
-
             deltaFQFit = coeffMinimiser.approximation();
         }
         Messenger::print("Error between delta F(Q) and fit function is {:.2f}%.\n", fitError);
