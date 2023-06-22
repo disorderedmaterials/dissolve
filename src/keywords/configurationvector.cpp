@@ -77,21 +77,20 @@ SerialisedValue ConfigurationVectorKeyword::serialise() const
 // Read values from a serialisable value
 void ConfigurationVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    for (auto &name : node.as_array())
-    {
+    toVector(node, [&coreData, this](const auto &name) {
         auto *cfg = coreData.findConfiguration(std::string_view(std::string(name.as_string())));
         if (!cfg)
             throw toml::syntax_error(fmt::format("Error defining Configuration targets - no Configuration named '{}' exists.\n",
                                                  std::string(name.as_string())),
-                                     node.location());
+                                     name.location());
 
         // Check that the configuration isn't already present
         if (std::find(data_.begin(), data_.end(), cfg) != data_.end())
             throw toml::syntax_error(fmt::format("Configuration '{}' has already been referenced.\n", cfg->name()),
-                                     node.location());
+                                     name.location());
 
         data_.push_back(cfg);
-    }
+    });
 }
 
 // Has not changed from initial value
