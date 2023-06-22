@@ -138,6 +138,7 @@ SerialisedValue IsotopologueSet::serialise() const { return isotopologues_; }
 // Read values from a serialisable value
 void IsotopologueSet::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    for (auto &item : node.as_array())
+    Serialisable::toVector(node, [this, &coreData](const auto &item) {
         isotopologues_.emplace_back().deserialise(item, coreData);
+    });
 }
