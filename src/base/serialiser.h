@@ -80,6 +80,7 @@ template <typename... Contexts> class Serialisable
             return;
         node[name] = fromVector(vector, toSerial);
     }
+    // A helper function to add the elements of a vector to a node under a name
     template <typename T, typename Lambda> static SerialisedValue fromVector(const std::vector<T> &vector, Lambda toSerial)
     {
         SerialisedValue result = toml::array{};
@@ -102,11 +103,17 @@ template <typename... Contexts> class Serialisable
                 action(key, value);
     }
 
+    // Act over each value in a node array
+    template <typename Lambda> static void toVector(const SerialisedValue &node, Lambda action)
+    {
+      for (auto &item : node.as_array())
+	    action(item);
+    }
+
     // Act over each value in a node table, if the key exists
     template <typename Lambda> static void toVector(const SerialisedValue &node, std::string key, Lambda action)
     {
         if (node.contains(key))
-            for (auto &item : toml::find<toml::array>(node, key))
-                action(item);
+	    toVector(node.at(key), action); 
     }
 };
