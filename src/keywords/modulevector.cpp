@@ -96,12 +96,11 @@ SerialisedValue ModuleVectorKeyword::serialise() const
 // Read values from a serialisable value
 void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    for (auto item : node.as_array())
-    {
+    Serialisable::toVector(node, [this, &coreData](const auto &item) {
         auto title = toml::get<std::string>(item);
         auto *module = Module::find(title);
         if (!module)
-            throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", title), node.location());
+            throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", title), item.location());
 
         // Check the module's type if we can
         if (!moduleTypes_.empty() &&
@@ -110,9 +109,9 @@ void ModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreDat
             throw toml::syntax_error(
                 fmt::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n", title,
                             module->type(), name(), joinStrings(moduleTypes_)),
-                node.location());
+                item.location());
         data_.push_back(module);
-    }
+    });
 }
 
 // Has not changed from initial value
