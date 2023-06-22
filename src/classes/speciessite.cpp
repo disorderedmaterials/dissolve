@@ -93,7 +93,7 @@ bool SpeciesSite::addStaticOriginAtom(const SpeciesAtom *originAtom)
 
     ++version_;
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Add origin atom from index
@@ -124,7 +124,7 @@ bool SpeciesSite::setStaticOriginAtoms(const std::vector<const SpeciesAtom *> &a
             return false;
         }
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Return origin atom vector
@@ -166,7 +166,7 @@ bool SpeciesSite::addStaticXAxisAtom(const SpeciesAtom *xAxisAtom)
 
     ++version_;
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Add x-axis atom from index
@@ -196,7 +196,7 @@ bool SpeciesSite::setStaticXAxisAtoms(const std::vector<const SpeciesAtom *> &at
         return false;
     }
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Return x-axis atom vector
@@ -227,7 +227,7 @@ bool SpeciesSite::addStaticYAxisAtom(const SpeciesAtom *yAxisAtom)
 
     ++version_;
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Add y-axis atom from index
@@ -257,7 +257,7 @@ bool SpeciesSite::setStaticYAxisAtoms(const std::vector<const SpeciesAtom *> &at
         return false;
     }
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Return y-axis atom vector
@@ -388,19 +388,25 @@ bool SpeciesSite::generateUniqueSites()
                     auto identifiers = matchedGroup.identifiers();
 
                     // Determine origin atoms
+                    sitesOriginAtomsIndices_.emplace_back(identifiers["origin"].size());
                     std::transform(identifiers["origin"].begin(), identifiers["origin"].end(),
-                                   std::back_inserter(sitesOriginAtomsIndices_), [](const auto &atom) { return atom.index(); });
-
+                                   sitesOriginAtomsIndices_.back().begin(), [](const auto& atom) {
+                                       return atom->index();
+                                   });
                     if (hasAxes())
                     {
                         // Determine x axis atoms.
+                        sitesXAxisAtomsIndices_.emplace_back(identifiers["x"].size());
                         std::transform(identifiers["x"].begin(), identifiers["x"].end(),
-                                       std::back_inserter(sitesXAxisAtomsIndices_),
-                                       [](const auto &atom) { return atom.index(); });
+                                       sitesXAxisAtomsIndices_.back().begin(), [](const auto& atom) {
+                                           return atom->index();
+                                       });
                         // Determine y axis atoms.
+                        sitesYAxisAtomsIndices_.emplace_back(identifiers["y"].size());
                         std::transform(identifiers["y"].begin(), identifiers["y"].end(),
-                                       std::back_inserter(sitesYAxisAtomsIndices_),
-                                       [](const auto &atom) { return atom.index(); });
+                                       sitesYAxisAtomsIndices_.back().begin(), [](const auto& atom) {
+                                           return atom->index();
+                                       });
                     }
                 }
             }
@@ -409,12 +415,13 @@ bool SpeciesSite::generateUniqueSites()
         default:
         {
             Messenger::print("Can't generate unique sites for site '{}'.", name());
+            return false;
         }
     }
 }
 
 // Return number of unique sites
-const int SpeciesSite::nSites() const { sitesOriginAtomsIndices_.size(); }
+const int SpeciesSite::nSites() const { return sitesOriginAtomsIndices_.size(); }
 // Return atom indices contributing to unique site origins
 const std::vector<std::vector<int>> &SpeciesSite::sitesOriginAtomsIndices() const { return sitesOriginAtomsIndices_; }
 // Return atom indices indicating the x axis with the origins of unique sites.
