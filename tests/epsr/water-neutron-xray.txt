@@ -239,13 +239,12 @@ Layer  'RDF / Neutron / XRay'
 
   Module  XRaySQ  'H2Ox'
     Frequency  1
-
     SourceSQs  'SQs'
-    Normalisation  AverageOfSquares
     Reference  xy  '../_data/epsr25/water1000-neutron-xray/PCCPfofq.txt'
     EndReference
+    NormaliseTo  AverageOfSquares
+    ReferenceNormalisedTo  AverageOfSquares
     ReferenceFTQMin  0.5
-    SaveRepresentativeGR  On
   EndModule
 
   Module  DataTest  'F(Q) H2Ox'

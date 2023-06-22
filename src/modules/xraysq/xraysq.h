@@ -31,7 +31,7 @@ class XRaySQModule : public Module
     // Atomic form factors to use for weighting
     XRayFormFactors::XRayFormFactorData formFactors_{XRayFormFactors::WaasmaierKirfel1995};
     // Normalisation to apply to calculated total F(Q)
-    StructureFactors::NormalisationType normalisation_{StructureFactors::NoNormalisation};
+    StructureFactors::NormalisationType normaliseTo_{StructureFactors::NoNormalisation};
     // Reference F(Q) file and format
     Data1DImportFileFormat referenceFQ_;
     // Minimum Q value to use when Fourier-transforming the data
@@ -41,7 +41,7 @@ class XRaySQModule : public Module
     // Spacing in r to use when generating the Fourier-transformed data
     double referenceFTDeltaR_{0.05};
     // Normalisation to remove from reference total F(Q)
-    StructureFactors::NormalisationType referenceNormalisation_{StructureFactors::NoNormalisation};
+    StructureFactors::NormalisationType referenceNormalisedTo_{StructureFactors::NoNormalisation};
     // Window function to use when Fourier transforming reference total F(Q) into g(r)
     WindowFunction::Form referenceWindowFunction_{WindowFunction::Form::Lorch0};
     // Whether to save combined form factor weightings for atomtype pairs

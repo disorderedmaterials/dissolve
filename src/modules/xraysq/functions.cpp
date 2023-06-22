@@ -35,10 +35,18 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
 
     // Form total G(r)
     weightedgr.formTotals(false);
-    if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
-        weightedgr.total() /= weights.boundCoherentAverageOfSquares(0.0);
-    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
-        weightedgr.total() /= weights.boundCoherentSquareOfAverage(0.0);
+
+    // Normalise to Q=0.0 form factor if requested
+    if (normalisation != StructureFactors::NoNormalisation)
+    {
+        auto norm = normalisation == StructureFactors::AverageOfSquaresNormalisation
+                        ? weights.boundCoherentAverageOfSquares(0.0)
+                        : weights.boundCoherentSquareOfAverage(0.0);
+
+        weightedgr.total() /= norm;
+        weightedgr.boundTotal() /= norm;
+        weightedgr.unboundTotal() /= norm;
+    }
 
     return true;
 }
@@ -69,17 +77,20 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
 
     // Form total structure factor
     weightedsq.formTotals(false);
-    if (normalisation == StructureFactors::SquareOfAverageNormalisation)
+
+    // Apply normalisation to all totals
+    if (normalisation != StructureFactors::NoNormalisation)
     {
-        auto bbar = weights.boundCoherentSquareOfAverage(unweightedsq.boundPartial(0, 0).xAxis());
-        for (auto n = 0; n < bbar.size(); ++n)
-            weightedsq.total().value(n) /= bbar[n];
-    }
-    else if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
-    {
-        auto bbar = weights.boundCoherentAverageOfSquares(unweightedsq.boundPartial(0, 0).xAxis());
-        for (auto n = 0; n < bbar.size(); ++n)
-            weightedsq.total().value(n) /= bbar[n];
+        auto bbar = normalisation == StructureFactors::SquareOfAverageNormalisation
+                        ? weights.boundCoherentSquareOfAverage(weightedsq.total().xAxis())
+                        : weights.boundCoherentAverageOfSquares(weightedsq.total().xAxis());
+
+        std::transform(weightedsq.total().values().begin(), weightedsq.total().values().end(), bbar.begin(),
+                       weightedsq.total().values().begin(), std::divides<>());
+        std::transform(weightedsq.boundTotal().values().begin(), weightedsq.boundTotal().values().end(), bbar.begin(),
+                       weightedsq.boundTotal().values().begin(), std::divides<>());
+        std::transform(weightedsq.unboundTotal().values().begin(), weightedsq.unboundTotal().values().end(), bbar.begin(),
+                       weightedsq.unboundTotal().values().begin(), std::divides<>());
     }
 
     return true;
