@@ -40,13 +40,13 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
 // Express as a serialisable value
 SerialisedValue SerializablePairPotential::serialise() const
 {
-    SerialisedValue pairPotentials;
-    pairPotentials["range"] = range_;
-    pairPotentials["delta"] = delta_;
-    pairPotentials["includeCoulomb"] = atomTypeChargeSource_;
-    pairPotentials["coulombTruncation"] = PairPotential::coulombTruncationSchemes().serialise(coulombTruncationScheme_);
-    pairPotentials["shortRangeTruncation"] =
-        PairPotential::shortRangeTruncationSchemes().serialise(shortRangeTruncationScheme_);
+  SerialisedValue pairPotentials = {
+      {"range", range_},
+      {"delta", range_},
+      {"includeCoulomb", atomTypeChargeSource_},
+      {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(coulombTruncationScheme_)},
+      {"shortRangeTruncation",
+       PairPotential::shortRangeTruncationSchemes().serialise(shortRangeTruncationScheme_)}};
     for (auto &atomType : atomTypes_)
         pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialise();
     return pairPotentials;
@@ -64,7 +64,7 @@ void SerializablePairPotential::deserialise(const SerialisedValue &node)
     shortRangeTruncationScheme_ = PairPotential::shortRangeTruncationSchemes().deserialise(
         toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted"));
 
-    if (node.contains("atomTypes"))
-        for (auto &[name, data] : toml::find(node, "atomTypes").as_table())
+    Serialisable::toMap(node, "atomTypes", [this](const auto &name, const auto &data){
             atomTypes_.emplace_back(std::make_unique<AtomType>(name))->deserialise(data);
+    });
 }
