@@ -58,8 +58,9 @@ SerialisedValue StringDoubleVectorKeyword::serialise() const
 // Read values from a serialisable value
 void StringDoubleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    for (auto item : node.as_array())
+    toVector(node, [this](const auto& item) {
         data_.emplace_back(toml::find<std::string>(item, "name"), toml::find<double>(item, "value"));
+    });
 }
 
 // Has not changed from initial value
