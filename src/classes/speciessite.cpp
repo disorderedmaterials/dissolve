@@ -47,6 +47,9 @@ void SpeciesSite::clearDefinition()
     staticYAxisAtoms_.clear();
     dynamicElements_.clear();
     dynamicAtomTypes_.clear();
+    sitesOriginAtomsIndices_.clear();
+    sitesXAxisAtomsIndices_.clear();
+    sitesYAxisAtomsIndices_.clear();
     fragment_ = NETADefinition{};
 
     ++version_;
