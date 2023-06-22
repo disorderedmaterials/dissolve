@@ -407,6 +407,7 @@ bool SpeciesSite::generateUniqueSites()
 // Return number of unique sites
 const int SpeciesSite::nSites() const { return type_ == SiteType::Static ? 1 : sitesOriginAtoms_.size(); }
 
+// Return atoms representing unique site origins
 const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesOriginAtoms() const { return sitesOriginAtoms_; }
 
 const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesXAxisAtoms() const { return sitesXAxisAtoms_; }
