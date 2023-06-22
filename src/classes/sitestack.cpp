@@ -127,8 +127,6 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
                 y.orthogonalise(x);
                 y.normalise();
 
-                // Calculate z vector from cross product of x and y
-                z = x * y;
 
                 orientedSites_.emplace_back(molecule, origin, x, y, x * y);
             }
