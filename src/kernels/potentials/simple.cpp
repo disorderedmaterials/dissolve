@@ -13,7 +13,8 @@ EnumOptions<SimplePotentialFunctions::Form> SimplePotentialFunctions::forms()
     return EnumOptions<SimplePotentialFunctions::Form>("SimplePotentialFunction",
                                                        {{SimplePotentialFunctions::Form::Harmonic, "Harmonic", 1},
                                                         {SimplePotentialFunctions::Form::SoftSphere, "SoftSphere", 3},
-                                                        {SimplePotentialFunctions::Form::LJ, "LJ", 2}
+                                                        {SimplePotentialFunctions::Form::LJSphere, "LJSphere", 2},
+                                                       {SimplePotentialFunctions::Form::LJCylinder, "LJCylinder", 2}
                                                        });
 }
 
@@ -23,7 +24,8 @@ const std::vector<std::string> &SimplePotentialFunctions::parameters(Form form)
     static std::map<SimplePotentialFunctions::Form, std::vector<std::string>> params_ = {
         {SimplePotentialFunctions::Form::Harmonic, {"k"}},
         {SimplePotentialFunctions::Form::SoftSphere, {"epsilon", "sigma", "N"}},
-        {SimplePotentialFunctions::Form::LJ, {"epsilon", "sigma"}}};
+        {SimplePotentialFunctions::Form::LJSphere, {"epsilon", "sigma"}},
+        {SimplePotentialFunctions::Form::LJCylinder, {"epsilon", "sigma"}}};
     return params_[form];
 }
 
@@ -79,8 +81,16 @@ double SimplePotential::energy(const Atom &i, const Box *box) const
             return 0.5 * interactionPotential_.parameters()[0] * box->minimumDistanceSquared(i.r(), origin_);
         case (SimplePotentialFunctions::Form::SoftSphere):
             return interactionPotential_.parameters()[0] * pow(interactionPotential_.parameters()[1] / box->minimumDistance(i.r(), origin_), interactionPotential_.parameters()[2]);
-        case (SimplePotentialFunctions::Form::LJ):
-            return 4.0 * interactionPotential_.parameters()[0] * ((pow(interactionPotential_.parameters()[1] / box->minimumDistance(i.r(), origin_), 12.0)) - (pow(interactionPotential_.parameters()[1] / box->minimumDistance(i.r(), origin_), 6.0)));
+        case (SimplePotentialFunctions::Form::LJSphere):
+            {
+                auto r = box->minimumDistance(i.r(), origin_);
+                //auto r = vecji.magAndNormalise();
+                auto epsilon = interactionPotential_.parameters()[0];
+                auto sigma = interactionPotential_.parameters()[1];
+                return 4.0 * epsilon * (pow(sigma / r, 12) - pow(sigma / r, 6));
+            }
+        case (SimplePotentialFunctions::Form::LJCylinder):
+            break;
         default:
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
     }
@@ -100,8 +110,13 @@ void SimplePotential::force(const Atom &i, const Box *box, Vec3<double> &f) cons
         case (SimplePotentialFunctions::Form::Harmonic):
             forceMultiplier = -interactionPotential_.parameters()[0] * r;
             break;
-        case (SimplePotentialFunctions::Form::LJ):
-            forceMultiplier = -48.0  * interactionPotential_.parameters()[0] * ((pow(interactionPotential_.parameters()[1], 12.0) / pow(box->minimumDistance(i.r(), origin_), 13.0)) - (0.5 * (pow(interactionPotential_.parameters()[1], 6.0) / pow(box->minimumDistance(i.r(), origin_), 7.0))));
+        case (SimplePotentialFunctions::Form::LJSphere):
+            {
+            auto epsilon = interactionPotential_.parameters()[0];
+            auto sigma = interactionPotential_.parameters()[1];
+            forceMultiplier = -48.0 * epsilon * (pow(r, 12) - 0.5 * pow(r, 6)) / (r * sigma);        
+        }
+        case (SimplePotentialFunctions::Form::LJCylinder):
             break;
         default:
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
