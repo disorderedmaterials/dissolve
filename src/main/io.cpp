@@ -165,8 +165,10 @@ SerialisedValue Dissolve::serialise() const
 void Dissolve::deserialise(const SerialisedValue &node)
 {
     // If TOML is disabled,
-    if constexpr (!toml_testing_flag)
+    if constexpr (!toml_testing_flag) {
         Messenger::error("This build does not support TOML.");
+	return;
+    }
 
     if (node.contains("pairPotentials"))
     {
@@ -181,11 +183,11 @@ void Dissolve::deserialise(const SerialisedValue &node)
             coreData_.deserialiseMaster(mastersNode);
     }
 
-    Serialisable::toMap(node, "species",
+    toMap(node, "species",
                         [this](const std::string &name, const SerialisedValue &data)
                         { species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
 
-    Serialisable::toMap(node, "configurations",
+    toMap(node, "configurations",
                         [this](const std::string &name, const SerialisedValue &data)
                         {
                             auto *cfg = addConfiguration();
@@ -193,7 +195,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
                             cfg->deserialise(data, coreData_);
                         });
 
-    Serialisable::toMap(node, "layers",
+    toMap(node, "layers",
                         [this](const std::string &name, const SerialisedValue &data)
                         {
                             auto *layer = addProcessingLayer();
