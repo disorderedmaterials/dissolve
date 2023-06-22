@@ -433,11 +433,7 @@ void Data1D::deserialise(const SerialisedValue &node)
     tag_ = toml::find<std::string>(node, "tag");
     x_ = toml::find<std::vector<double>>(node, "x");
     values_ = toml::find<std::vector<double>>(node, "y");
-    if (node.contains("errors"))
-    {
-        hasError_ = true;
+    hasError_ = node.contains("errors");
+    if (hasError_)
         errors_ = toml::find<std::vector<double>>(node, "errors");
-    }
-    else
-        hasError_ = false;
 }
