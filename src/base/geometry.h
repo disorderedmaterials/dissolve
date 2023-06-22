@@ -40,20 +40,20 @@ class Geometry
     bool operator!=(const Geometry &rhs) const;
 };
 
-
 // TOML Conversion
 namespace toml
 {
 template <> struct from<Geometry::GeometryType>
 {
-    static Geometry::GeometryType from_toml(const toml::value &node) {
-      auto typeString = node.as_string();
-      if (typeString == "angle")
-	return Geometry::GeometryType::AngleType;
-      else if (typeString == "distance")
-	return Geometry::GeometryType::DistanceType;
-      else
-	return Geometry::GeometryType::TorsionType;
+    static Geometry::GeometryType from_toml(const toml::value &node)
+    {
+        auto typeString = node.as_string();
+        if (typeString == "angle")
+            return Geometry::GeometryType::AngleType;
+        else if (typeString == "distance")
+            return Geometry::GeometryType::DistanceType;
+        else
+            return Geometry::GeometryType::TorsionType;
     }
 };
 
@@ -61,14 +61,15 @@ template <> struct into<Geometry::GeometryType>
 {
     static toml::basic_value<toml::preserve_comments> into_toml(const Geometry::GeometryType &e)
     {
-      switch (e) {
-      case Geometry::GeometryType::AngleType:
-	return "angle";
-      case Geometry::GeometryType::DistanceType:
-	return "distance";
-      case Geometry::GeometryType::TorsionType:
-	return "torsion";
-      }
+        switch (e)
+        {
+            case Geometry::GeometryType::AngleType:
+                return "angle";
+            case Geometry::GeometryType::DistanceType:
+                return "distance";
+            case Geometry::GeometryType::TorsionType:
+                return "torsion";
+        }
     }
 };
 } // namespace toml

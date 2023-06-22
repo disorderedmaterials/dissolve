@@ -174,7 +174,7 @@ template <class Intra, class Functions> class SpeciesIntra : public Serialisable
                                    [&map](const auto &name) { return map[name]; });
                     break;
                 default:
-		    throw toml::syntax_error("Cannot understand parameter value", node.location());
+                    throw toml::syntax_error("Cannot understand parameter value", node.location());
             }
             setInteractionFormAndParameters(interactionForm(), values);
         }

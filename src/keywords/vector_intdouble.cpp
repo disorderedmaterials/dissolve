@@ -98,9 +98,11 @@ SerialisedValue IntegerDoubleVectorKeyword::serialise() const
 // Read values from a serialisable value
 void IntegerDoubleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-      Serialisable::toVector(node, [this](const auto& item) {
-        data_.emplace_back(toml::find<std::vector<int>>(item, "indices"), toml::find<std::vector<double>>(item, "values"));
-      });
+    toVector(node,
+             [this](const auto &item) {
+                 data_.emplace_back(toml::find<std::vector<int>>(item, "indices"),
+                                    toml::find<std::vector<double>>(item, "values"));
+             });
 }
 
 // Has not changed from initial value

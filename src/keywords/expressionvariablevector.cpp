@@ -96,9 +96,8 @@ SerialisedValue ExpressionVariableVectorKeyword::serialise() const
 void ExpressionVariableVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_.clear();
-    toMap(node, [this](const auto& key, const auto& value) {
-        data_.push_back(std::make_shared<ExpressionVariable>(key, toml::get<ExpressionValue>(value)));
-    });
+    toMap(node, [this](const auto &key, const auto &value)
+          { data_.push_back(std::make_shared<ExpressionVariable>(key, toml::get<ExpressionValue>(value))); });
 }
 
 /*

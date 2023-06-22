@@ -56,9 +56,7 @@ SerialisedValue StringPairVectorKeyword::serialise() const
 // Read values from a serialisable value
 void StringPairVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    toMap(node, [this](const auto& key, const auto& value) {
-      data_.emplace_back(key, std::string(value.as_string()));
-    });
+    toMap(node, [this](const auto &key, const auto &value) { data_.emplace_back(key, std::string(value.as_string())); });
 }
 
 // Has not changed from initial value

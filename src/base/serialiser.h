@@ -106,14 +106,14 @@ template <typename... Contexts> class Serialisable
     // Act over each value in a node array
     template <typename Lambda> static void toVector(const SerialisedValue &node, Lambda action)
     {
-      for (auto &item : node.as_array())
-	    action(item);
+        for (auto &item : node.as_array())
+            action(item);
     }
 
     // Act over each value in a node table, if the key exists
     template <typename Lambda> static void toVector(const SerialisedValue &node, std::string key, Lambda action)
     {
         if (node.contains(key))
-	    toVector(node.at(key), action); 
+            toVector(node.at(key), action);
     }
 };

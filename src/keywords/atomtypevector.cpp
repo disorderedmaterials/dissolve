@@ -83,26 +83,28 @@ SerialisedValue AtomTypeVectorKeyword::serialise() const
 // Read values from a serialisable value
 void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    Serialisable::toVector(node, [this, &coreData](const auto &item) {
-        auto it =
-            std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(),
-                         [&item](const auto atomType) {
-                             return DissolveSys::sameString(atomType->name(), std::string_view(std::string(item.as_string())));
-                         });
-        if (it == coreData.atomTypes().end())
-            throw toml::syntax_error(
-                fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n", std::string(item.as_string()), name()),
-                node.location());
-        auto atomType = *it;
+    toVector(node,
+             [this, &coreData](const auto &item)
+             {
+                 auto it = std::find_if(
+                     coreData.atomTypes().begin(), coreData.atomTypes().end(),
+                     [&item](const auto atomType)
+                     { return DissolveSys::sameString(atomType->name(), std::string_view(std::string(item.as_string()))); });
+                 if (it == coreData.atomTypes().end())
+                     throw toml::syntax_error(fmt::format("Unrecognised AtomType '{}' given to '{}' keyword.\n",
+                                                          std::string(item.as_string()), name()),
+                                              node.location());
+                 auto atomType = *it;
 
-        // If the AtomType is already present, complain
-        if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
-            throw toml::syntax_error(
-                fmt::format("AtomType '{}' specified in selection twice.\n", std::string(item.as_string())), node.location());
+                 // If the AtomType is already present, complain
+                 if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
+                     throw toml::syntax_error(
+                         fmt::format("AtomType '{}' specified in selection twice.\n", std::string(item.as_string())),
+                         node.location());
 
-        // All OK - add it to our vector
-        data_.push_back(atomType);
-    });
+                 // All OK - add it to our vector
+                 data_.push_back(atomType);
+             });
 }
 
 // Has not changed from initial value

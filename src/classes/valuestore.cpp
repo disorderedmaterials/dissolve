@@ -47,7 +47,7 @@ const std::list<std::tuple<std::string, std::vector<double>, ValueImportFileForm
 // Express as a serialisable value
 SerialisedValue ValueStore::serialise() const
 {
-    SerialisedValue result= toml::array{};
+    SerialisedValue result = toml::array{};
     for (auto &[tag, data, format] : data_)
         result.push_back({{"tag", tag}, {"values", data}, {"format", format}});
     return result;
@@ -56,10 +56,12 @@ SerialisedValue ValueStore::serialise() const
 // Read values from a serialisable value
 void ValueStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-  Serialisable::toVector(node, [this, &coreData](const auto& item) {
-        auto &[tag, data, format] = data_.emplace_back();
-        tag = toml::find<std::string>(item, "tag");
-        data = toml::find<std::vector<double>>(item, "values");
-        format.deserialise(item.at("format"), coreData);
-    });
+    toVector(node,
+             [this, &coreData](const auto &item)
+             {
+                 auto &[tag, data, format] = data_.emplace_back();
+                 tag = toml::find<std::string>(item, "tag");
+                 data = toml::find<std::vector<double>>(item, "values");
+                 format.deserialise(item.at("format"), coreData);
+             });
 }

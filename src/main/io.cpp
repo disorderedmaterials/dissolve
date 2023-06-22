@@ -165,9 +165,10 @@ SerialisedValue Dissolve::serialise() const
 void Dissolve::deserialise(const SerialisedValue &node)
 {
     // If TOML is disabled,
-    if constexpr (!toml_testing_flag) {
+    if constexpr (!toml_testing_flag)
+    {
         Messenger::error("This build does not support TOML.");
-	return;
+        return;
     }
 
     if (node.contains("pairPotentials"))
@@ -184,24 +185,24 @@ void Dissolve::deserialise(const SerialisedValue &node)
     }
 
     toMap(node, "species",
-                        [this](const std::string &name, const SerialisedValue &data)
-                        { species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
+          [this](const std::string &name, const SerialisedValue &data)
+          { species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
 
     toMap(node, "configurations",
-                        [this](const std::string &name, const SerialisedValue &data)
-                        {
-                            auto *cfg = addConfiguration();
-                            cfg->setName(name);
-                            cfg->deserialise(data, coreData_);
-                        });
+          [this](const std::string &name, const SerialisedValue &data)
+          {
+              auto *cfg = addConfiguration();
+              cfg->setName(name);
+              cfg->deserialise(data, coreData_);
+          });
 
     toMap(node, "layers",
-                        [this](const std::string &name, const SerialisedValue &data)
-                        {
-                            auto *layer = addProcessingLayer();
-                            layer->setName(name);
-                            layer->deserialise(data, coreData_);
-                        });
+          [this](const std::string &name, const SerialisedValue &data)
+          {
+              auto *layer = addProcessingLayer();
+              layer->setName(name);
+              layer->deserialise(data, coreData_);
+          });
 }
 
 // Load input from supplied file

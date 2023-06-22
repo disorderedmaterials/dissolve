@@ -69,15 +69,16 @@ SerialisedValue SpeciesVectorKeyword::serialise() const
 // Read values from a serialisable value
 void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    Serialisable::toVector(node, [&coreData, this](const auto& item)
-    {
-        auto title = toml::get<std::string>(item);
-        auto *species = coreData.findSpecies(title);
-        if (!species)
-            throw toml::syntax_error(fmt::format("No Species named '{}' exists.\n", title), item.location());
+    toVector(node,
+             [&coreData, this](const auto &item)
+             {
+                 auto title = toml::get<std::string>(item);
+                 auto *species = coreData.findSpecies(title);
+                 if (!species)
+                     throw toml::syntax_error(fmt::format("No Species named '{}' exists.\n", title), item.location());
 
-        data_.push_back(species);
-    });
+                 data_.push_back(species);
+             });
 }
 
 // Has not changed from initial value
