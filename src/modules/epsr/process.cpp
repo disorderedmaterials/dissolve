@@ -385,34 +385,27 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency in
             // terms of magnitude with any neutron data. If the calculated data have not been normalised, or were normalised to
             // something else, we correct it before adding.
-            auto normalisedRef = originalReferenceData;
+            auto refMinusIntra = originalReferenceData;
+            Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
+
             auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
                 // Remove square of average normalisation, and apply average of squares
-                auto bSqOfAv = weights.boundCoherentSquareOfAverage(normalisedRef.xAxis());
-                auto bAvOfSq = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
-                for (auto &&[val, bOld, bNew] : zip(normalisedRef.values(), bSqOfAv, bAvOfSq))
+                auto bSqOfAv = weights.boundCoherentSquareOfAverage(refMinusIntra.xAxis());
+                auto bAvOfSq = weights.boundCoherentAverageOfSquares(refMinusIntra.xAxis());
+                for (auto &&[val, bOld, bNew] : zip(refMinusIntra.values(), bSqOfAv, bAvOfSq))
                     val *= bOld / bNew;
             }
             else if (normType == StructureFactors::NoNormalisation)
             {
-                auto bbar = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
-                std::transform(normalisedRef.values().begin(), normalisedRef.values().end(), bbar.begin(),
-                               normalisedRef.values().begin(), std::divides<>());
+                auto bbar = weights.boundCoherentAverageOfSquares(refMinusIntra.xAxis());
+                std::transform(refMinusIntra.values().begin(), refMinusIntra.values().end(), bbar.begin(),
+                               refMinusIntra.values().begin(), std::divides<>());
             }
 
-            // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
-            // Our reference data is normalised to AverageOfSquares at this point, so must do the same to the
-            // bound total before subtracting it.
-            auto boundTotal = weightedSQ.boundTotal();
-            auto bbar = weights.boundCoherentAverageOfSquares(boundTotal.xAxis());
-            std::transform(boundTotal.values().begin(), boundTotal.values().end(), bbar.begin(), boundTotal.values().begin(),
-                           std::divides<>());
-            Interpolator::addInterpolated(boundTotal, normalisedRef, -1.0);
-
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(normalisedRef, feedback_)
-                                      : !scatteringMatrix_.addReferenceData(normalisedRef, weights, feedback_))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, feedback_)
+                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
         }
         else
