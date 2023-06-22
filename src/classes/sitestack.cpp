@@ -79,7 +79,7 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     auto originAtomsIndices = site->sitesOriginAtomsIndices();
     auto xAxisAtomsIndices = site->sitesXAxisAtomsIndices();
     auto yAxisAtomsIndices = site->sitesYAxisAtomsIndices();
-    
+
     auto *targetSpecies = site->parent();
 
     auto sPop = configuration_->speciesPopulation(targetSpecies);

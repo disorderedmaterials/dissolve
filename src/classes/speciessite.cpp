@@ -341,8 +341,8 @@ bool SpeciesSite::generateUniqueSites()
     sitesOriginAtomsIndices_.clear();
     sitesXAxisAtomsIndices_.clear();
     sitesYAxisAtomsIndices_.clear();
-    
-    switch(type_)
+
+    switch (type_)
     {
         case (SiteType::Static):
         {
@@ -388,14 +388,19 @@ bool SpeciesSite::generateUniqueSites()
                     auto identifiers = matchedGroup.identifiers();
 
                     // Determine origin atoms
-                    std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), std::back_inserter(sitesOriginAtomsIndices_), [](const auto& atom) { return atom.index(); });
+                    std::transform(identifiers["origin"].begin(), identifiers["origin"].end(),
+                                   std::back_inserter(sitesOriginAtomsIndices_), [](const auto &atom) { return atom.index(); });
 
                     if (hasAxes())
                     {
                         // Determine x axis atoms.
-                        std::transform(identifiers["x"].begin(), identifiers["x"].end(), std::back_inserter(sitesXAxisAtomsIndices_), [](const auto& atom) { return atom.index(); });
+                        std::transform(identifiers["x"].begin(), identifiers["x"].end(),
+                                       std::back_inserter(sitesXAxisAtomsIndices_),
+                                       [](const auto &atom) { return atom.index(); });
                         // Determine y axis atoms.
-                        std::transform(identifiers["y"].begin(), identifiers["y"].end(), std::back_inserter(sitesYAxisAtomsIndices_), [](const auto& atom) { return atom.index(); });
+                        std::transform(identifiers["y"].begin(), identifiers["y"].end(),
+                                       std::back_inserter(sitesYAxisAtomsIndices_),
+                                       [](const auto &atom) { return atom.index(); });
                     }
                 }
             }
