@@ -85,8 +85,10 @@ class PartialSet
     Data1D &total();
     const Data1D &total() const;
     // Return total bound function
+    Data1D &boundTotal();
     const Data1D &boundTotal() const;
     // Return total unbound function
+    Data1D &unboundTotal();
     const Data1D &unboundTotal() const;
     // Save all partials and total
     bool save(std::string_view prefix, std::string_view tag, std::string_view suffix, std::string_view abscissaUnits) const;
