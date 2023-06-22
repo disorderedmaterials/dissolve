@@ -76,19 +76,10 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     sites_.clear();
     orientedSites_.clear();
 
-    std::vector<std::vector<const SpeciesAtom *>> originAtoms, xAxisAtoms, yAxisAtoms;
-    if (site->type() == SpeciesSite::SiteType::Static)
-    {
-        originAtoms.push_back(site->staticOriginAtoms());
-        xAxisAtoms.push_back(site->staticXAxisAtoms());
-        yAxisAtoms.push_back(site->staticYAxisAtoms());
-    }
-    else
-    {
-        originAtoms = site->sitesOriginAtoms();
-        xAxisAtoms = site->sitesXAxisAtoms();
-        yAxisAtoms = site->sitesYAxisAtoms();
-    }
+    auto originAtoms = site->sitesOriginAtoms();
+    auto xAxisAtoms = site->sitesXAxisAtoms();
+    auto yAxisAtoms = site->sitesYAxisAtoms();
+    
     auto *targetSpecies = site->parent();
 
     auto sPop = configuration_->speciesPopulation(targetSpecies);
