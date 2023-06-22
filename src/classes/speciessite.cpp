@@ -390,23 +390,17 @@ bool SpeciesSite::generateUniqueSites()
                     // Determine origin atoms
                     sitesOriginAtomsIndices_.emplace_back(identifiers["origin"].size());
                     std::transform(identifiers["origin"].begin(), identifiers["origin"].end(),
-                                   sitesOriginAtomsIndices_.back().begin(), [](const auto& atom) {
-                                       return atom->index();
-                                   });
+                                   sitesOriginAtomsIndices_.back().begin(), [](const auto &atom) { return atom->index(); });
                     if (hasAxes())
                     {
                         // Determine x axis atoms.
                         sitesXAxisAtomsIndices_.emplace_back(identifiers["x"].size());
-                        std::transform(identifiers["x"].begin(), identifiers["x"].end(),
-                                       sitesXAxisAtomsIndices_.back().begin(), [](const auto& atom) {
-                                           return atom->index();
-                                       });
+                        std::transform(identifiers["x"].begin(), identifiers["x"].end(), sitesXAxisAtomsIndices_.back().begin(),
+                                       [](const auto &atom) { return atom->index(); });
                         // Determine y axis atoms.
                         sitesYAxisAtomsIndices_.emplace_back(identifiers["y"].size());
-                        std::transform(identifiers["y"].begin(), identifiers["y"].end(),
-                                       sitesYAxisAtomsIndices_.back().begin(), [](const auto& atom) {
-                                           return atom->index();
-                                       });
+                        std::transform(identifiers["y"].begin(), identifiers["y"].end(), sitesYAxisAtomsIndices_.back().begin(),
+                                       [](const auto &atom) { return atom->index(); });
                     }
                 }
             }
