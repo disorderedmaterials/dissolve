@@ -82,25 +82,11 @@ bool GeometryListKeyword::serialise(LineParser &parser, std::string_view keyword
 // Express as a serialisable value
 SerialisedValue GeometryListKeyword::serialise() const
 {
-    SerialisedValue result;
-    switch (geometryType_)
-    {
-        case Geometry::GeometryType::AngleType:
-            result["type"] = "angle";
-            break;
-        case Geometry::GeometryType::DistanceType:
-            result["type"] = "distance";
-            break;
-        case Geometry::GeometryType::TorsionType:
-        default:
-            result["type"] = "torsion";
-            break;
-    }
+    SerialisedValue result = {{"type", geometryType_}};
     std::vector<SerialisedValue> geometries;
     for (auto &ref : data_)
     {
-        SerialisedValue item;
-        item["value"] = ref.value();
+        SerialisedValue item = {{"value", ref.value()}};
         std::vector<SerialisedValue> indices;
         for (auto n = 0; n < minArguments() - 1; ++n)
             indices.emplace_back(ref.indices(n));
@@ -114,13 +100,7 @@ SerialisedValue GeometryListKeyword::serialise() const
 // Read values from a serialisable value
 void GeometryListKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    auto typeString = toml::find<std::string>(node, "type");
-    if (typeString == "angle")
-        geometryType_ = Geometry::GeometryType::AngleType;
-    else if (typeString == "distance")
-        geometryType_ = Geometry::GeometryType::DistanceType;
-    else
-        geometryType_ = Geometry::GeometryType::TorsionType;
+    Geometry::GeometryType typeString = toml::find<Geometry::GeometryType>(node, "type");
 
     for (auto item : node.at("geometries").as_array())
     {
