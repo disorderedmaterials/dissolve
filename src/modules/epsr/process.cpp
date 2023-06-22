@@ -368,7 +368,7 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
             // normalisation from the reference data (we assume that the two are consistent)
-            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("Normalisation");
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
             if (normType == StructureFactors::AverageOfSquaresNormalisation)
                 refMinusIntra *= weights.boundCoherentAverageOfSquares();
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
@@ -386,14 +386,14 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // terms of magnitude with any neutron data. If the calculated data have not been normalised, or were normalised to
             // something else, we correct it before adding.
             auto normalisedRef = originalReferenceData;
-            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("Normalisation");
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
                 // Remove square of average normalisation, and apply average of squares
-                auto bbarOld = weights.boundCoherentSquareOfAverage(normalisedRef.xAxis());
-                auto bbarNew = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
-                for (auto &&[val, old, nw] : zip(normalisedRef.values(), bbarOld, bbarNew))
-                    val *= old / nw;
+                auto bSqOfAv = weights.boundCoherentSquareOfAverage(normalisedRef.xAxis());
+                auto bAvOfSq = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
+                for (auto &&[val, bOld, bNew] : zip(normalisedRef.values(), bSqOfAv, bAvOfSq))
+                    val *= bOld / bNew;
             }
             else if (normType == StructureFactors::NoNormalisation)
             {
