@@ -334,17 +334,17 @@ const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 
 bool SpeciesSite::generateUniqueSites()
 {
-    sitesOriginAtoms_.clear();
-    sitesXAxisAtoms_.clear();
-    sitesYAxisAtoms_.clear();
+    sitesOriginAtomsIndices_.clear();
+    sitesXAxisAtomsIndices_.clear();
+    sitesYAxisAtomsIndices_.clear();
     
     switch(type_)
     {
         case (SiteType::Static):
         {
-            sitesOriginAtoms_.push_back(staticOriginAtoms_);
-            sitesXAxisAtoms_.push_back(staticXAxisAtoms_);
-            sitesYAxisAtoms_.push_back(staticYAxisAtoms_);
+            sitesOriginAtomsIndices_.push_back(staticOriginAtomIndices());
+            sitesXAxisAtomsIndices_.push_back(staticXAxisAtomIndices());
+            sitesYAxisAtomsIndices_.push_back(staticYAxisAtomIndices());
         }
         case (SiteType::Dynamic):
         {
@@ -353,7 +353,7 @@ bool SpeciesSite::generateUniqueSites()
                 // Valid element or atom type?
                 if ((std::find(dynamicElements_.begin(), dynamicElements_.end(), i.Z()) != dynamicElements_.end()) ||
                     std::find(dynamicAtomTypes_.begin(), dynamicAtomTypes_.end(), i.atomType()) != dynamicAtomTypes_.end())
-                    sitesOriginAtoms_.push_back({&i});
+                    sitesOriginAtomsIndices_.push_back({i.index()});
             }
             return true;
         }
@@ -384,14 +384,14 @@ bool SpeciesSite::generateUniqueSites()
                     auto identifiers = matchedGroup.identifiers();
 
                     // Determine origin atoms
-                    sitesOriginAtoms_.push_back({identifiers["origin"].begin(), identifiers["origin"].end()});
+                    std::transform(identifiers["origin"].begin(), identifiers["origin"].end(), std::back_inserter(sitesOriginAtomsIndices_), [](const auto& atom) { return atom.index(); });
 
                     if (hasAxes())
                     {
                         // Determine x axis atoms.
-                        sitesXAxisAtoms_.push_back({identifiers["x"].begin(), identifiers["x"].end()});
+                        std::transform(identifiers["x"].begin(), identifiers["x"].end(), std::back_inserter(sitesXAxisAtomsIndices_), [](const auto& atom) { return atom.index(); });
                         // Determine y axis atoms.
-                        sitesYAxisAtoms_.push_back({identifiers["y"].begin(), identifiers["y"].end()});
+                        std::transform(identifiers["y"].begin(), identifiers["y"].end(), std::back_inserter(sitesYAxisAtomsIndices_), [](const auto& atom) { return atom.index(); });
                     }
                 }
             }
@@ -405,14 +405,14 @@ bool SpeciesSite::generateUniqueSites()
 }
 
 // Return number of unique sites
-const int SpeciesSite::nSites() const { return type_ == SiteType::Static ? 1 : sitesOriginAtoms_.size(); }
+const int SpeciesSite::nSites() const { sitesOriginAtomsIndices_.size(); }
 
 // Return atoms representing unique site origins
-const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesOriginAtoms() const { return sitesOriginAtoms_; }
+const std::vector<std::vector<int>> &SpeciesSite::sitesOriginAtomsIndices() const { return sitesOriginAtomsIndices_; }
 
-const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesXAxisAtoms() const { return sitesXAxisAtoms_; }
+const std::vector<std::vector<int>> &SpeciesSite::sitesXAxisAtomsIndices() const { return sitesXAxisAtomsIndices_; }
 
-const std::vector<std::vector<const SpeciesAtom *>> &SpeciesSite::sitesYAxisAtoms() const { return sitesYAxisAtoms_; }
+const std::vector<std::vector<int>> &SpeciesSite::sitesYAxisAtomsIndices() const { return sitesYAxisAtomsIndices_; }
 
 /*
  * Generation from Parent
@@ -423,9 +423,9 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 {
     std::vector<std::shared_ptr<Site>> sites;
 
-    auto originAtoms = sitesOriginAtoms();
-    auto xAxisAtoms = sitesXAxisAtoms();
-    auto yAxisAtoms = sitesYAxisAtoms();
+    auto originAtomsIndices = sitesOriginAtomsIndices();
+    auto xAxisAtomsIndices = sitesXAxisAtomsIndices();
+    auto yAxisAtomsIndices = sitesYAxisAtomsIndices();
 
     for (auto i = 0; i < nSites(); ++i)
     {
@@ -433,35 +433,35 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
         if (originMassWeighted_)
         {
             auto massNorm = 0.0;
-            for (const auto &atom : originAtoms.at(i))
+            for (const auto &idx : originAtomsIndices.at(i))
             {
-                auto mass = AtomicMass::mass(parent_->atom(atom->index()).Z());
-                origin += parent_->atom(atom->index()).r() * mass;
+                auto mass = AtomicMass::mass(parent_->atom(idx).Z());
+                origin += parent_->atom(idx).r() * mass;
                 massNorm += mass;
             }
             origin /= massNorm;
         }
         else
         {
-            for (const auto &atom : originAtoms.at(i))
-                origin += parent_->atom(atom->index()).r();
-            origin /= originAtoms.at(i).size();
+            for (const auto &idx : originAtomsIndices.at(i))
+                origin += parent_->atom(idx).r();
+            origin /= originAtomsIndices.at(i).size();
         }
 
         if (hasAxes())
         {
             Vec3<double> v;
-            for (const auto &atom : xAxisAtoms.at(i))
-                v += parent_->atom(atom->index()).r();
-            v /= xAxisAtoms.at(i).size();
+            for (const auto &idx : xAxisAtomsIndices.at(i))
+                v += parent_->atom(idx).r();
+            v /= xAxisAtomsIndices.at(i).size();
 
             auto x = v - origin;
             x.normalise();
 
             v.zero();
-            for (const auto &atom : yAxisAtoms.at(i))
-                v += parent_->atom(atom->index()).r();
-            v /= yAxisAtoms.at(i).size();
+            for (const auto &idx : yAxisAtomsIndices.at(i))
+                v += parent_->atom(idx).r();
+            v /= yAxisAtomsIndices.at(i).size();
 
             auto y = v - origin;
             y.orthogonalise(x);

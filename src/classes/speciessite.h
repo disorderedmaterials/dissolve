@@ -159,11 +159,11 @@ class SpeciesSite : public Serialisable
      */
     private:
     // Species atoms whose average position is the origin of the site
-    std::vector<std::vector<const SpeciesAtom *>> sitesOriginAtoms_;
+    std::vector<std::vector<int>> sitesOriginAtomsIndices_;
     // Species atom(s) that indicate the x axis with the origin
-    std::vector<std::vector<const SpeciesAtom *>> sitesXAxisAtoms_;
+    std::vector<std::vector<int>> sitesXAxisAtomsIndices_;
     // Species atom(s) that indicate the y axis with the origin, after orthogonalisation
-    std::vector<std::vector<const SpeciesAtom *>> sitesYAxisAtoms_;
+    std::vector<std::vector<int>> sitesYAxisAtomsIndices_;
 
     public:
     // Generate unique sites
@@ -171,9 +171,9 @@ class SpeciesSite : public Serialisable
     // Number of unique sites
     const int nSites() const;
     // Return atoms representing unique site origins
-    const std::vector<std::vector<const SpeciesAtom *>> &sitesOriginAtoms() const;
-    const std::vector<std::vector<const SpeciesAtom *>> &sitesXAxisAtoms() const;
-    const std::vector<std::vector<const SpeciesAtom *>> &sitesYAxisAtoms() const;
+    const std::vector<std::vector<int>> &sitesOriginAtomsIndices() const;
+    const std::vector<std::vector<int>> &sitesXAxisAtomsIndices() const;
+    const std::vector<std::vector<int>> &sitesYAxisAtomsIndices() const;
 
     /*
      * Generation from Parent

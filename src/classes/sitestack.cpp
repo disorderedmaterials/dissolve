@@ -76,9 +76,9 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
     sites_.clear();
     orientedSites_.clear();
 
-    auto originAtoms = site->sitesOriginAtoms();
-    auto xAxisAtoms = site->sitesXAxisAtoms();
-    auto yAxisAtoms = site->sitesYAxisAtoms();
+    auto originAtomsIndices = site->sitesOriginAtomsIndices();
+    auto xAxisAtomsIndices = site->sitesXAxisAtomsIndices();
+    auto yAxisAtomsIndices = site->sitesYAxisAtomsIndices();
     
     auto *targetSpecies = site->parent();
 
@@ -101,32 +101,20 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 
         for (auto i = 0; i < site->nSites(); ++i)
         {
-            std::vector<int> originAtomIndices(originAtoms.at(i).size());
-            std::transform(originAtoms.at(i).begin(), originAtoms.at(i).end(), originAtomIndices.begin(),
-                           [](const auto &atom) { return atom->index(); });
 
-            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomIndices)
-                                                        : centreOfGeometry(*molecule, box, originAtomIndices);
+            origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomsIndices.at(i))
+                                                        : centreOfGeometry(*molecule, box, originAtomsIndices.at(i));
 
             if (sitesHaveOrientation_)
             {
-                std::vector<int> staticXAxisAtomIndices(xAxisAtoms.at(i).size());
-                std::transform(xAxisAtoms.at(i).begin(), xAxisAtoms.at(i).end(), staticXAxisAtomIndices.begin(),
-                               [](const auto &atom) { return atom->index(); });
-
                 // Get vector from site origin to x-axis reference point and normalise it
-                x = box->minimumVector(origin, centreOfGeometry(*molecule, box, staticXAxisAtomIndices));
+                x = box->minimumVector(origin, centreOfGeometry(*molecule, box, xAxisAtomsIndices.at(i)));
                 x.normalise();
 
-                std::vector<int> staticYAxisAtomIndices(yAxisAtoms.at(i).size());
-                std::transform(yAxisAtoms.at(i).begin(), yAxisAtoms.at(i).end(), staticYAxisAtomIndices.begin(),
-                               [](const auto &atom) { return atom->index(); });
-
                 // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-                y = box->minimumVector(origin, centreOfGeometry(*molecule, box, staticYAxisAtomIndices));
+                y = box->minimumVector(origin, centreOfGeometry(*molecule, box, yAxisAtomsIndices.at(i)));
                 y.orthogonalise(x);
                 y.normalise();
-
 
                 orientedSites_.emplace_back(molecule, origin, x, y, x * y);
             }
