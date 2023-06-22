@@ -130,8 +130,8 @@ long int IntegerHistogram1D::nBinned() const { return nBinned_; }
 // Accumulate current histogram bins into averages
 void IntegerHistogram1D::accumulate()
 {
-    for (auto &[key, value] : averages_)
-        value += (SampledDouble)raw_[key];
+    for (auto &[key, value] : raw_)
+        averages_[key] += (SampledDouble)raw_[key];
 
     // Update accumulated data
     updateAccumulatedData();
