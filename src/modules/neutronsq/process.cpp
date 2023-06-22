@@ -51,21 +51,27 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
             auto factor = 1.0;
 
             // Set up the multiplication factors
-            if (referenceNormalisedTo_ == StructureFactors::NoNormalisation)
-                factor = 1.0 / normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
-                             ? weights.boundCoherentSquareOfAverage()
-                             : weights.boundCoherentAverageOfSquares();
-            else if (referenceNormalisedTo_ == StructureFactors::SquareOfAverageNormalisation)
+            switch (referenceNormalisedTo_)
             {
-                factor = weights.boundCoherentSquareOfAverage();
-                if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
-                    factor /= weights.boundCoherentAverageOfSquares();
-            }
-            else if (referenceNormalisedTo_ == StructureFactors::AverageOfSquaresNormalisation)
-            {
-                factor = weights.boundCoherentAverageOfSquares();
-                if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
-                    factor /= weights.boundCoherentSquareOfAverage();
+                case (StructureFactors::NoNormalisation):
+                    factor = 1.0 / normaliseTo_ == StructureFactors::SquareOfAverageNormalisation
+                                 ? weights.boundCoherentSquareOfAverage()
+                                 : weights.boundCoherentAverageOfSquares();
+                    break;
+                case (StructureFactors::SquareOfAverageNormalisation):
+                    factor = weights.boundCoherentSquareOfAverage();
+                    if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
+                        factor /= weights.boundCoherentAverageOfSquares();
+                    break;
+                case (StructureFactors::AverageOfSquaresNormalisation):
+                    factor = weights.boundCoherentAverageOfSquares();
+                    if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+                        factor /= weights.boundCoherentSquareOfAverage();
+                    break;
+                default:
+                    throw(std::runtime_error(
+                        fmt::format("Unhandled StructureFactor::NormalisationType ({}).\n",
+                                    StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_))));
             }
 
             // Apply normalisation factors to the data

@@ -57,25 +57,30 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
             std::vector<double> factors;
 
             // Set up the multiplication factors
-            if (referenceNormalisedTo_ == StructureFactors::NoNormalisation)
+            switch (referenceNormalisedTo_)
             {
-                factors =
-                    normaliseTo_ == StructureFactors::SquareOfAverageNormalisation ? bBarSquareOfAverage : bBarAverageOfSquares;
-                std::transform(factors.begin(), factors.end(), factors.begin(), [](const auto factor) { return 1.0 / factor; });
-            }
-            else if (referenceNormalisedTo_ == StructureFactors::SquareOfAverageNormalisation)
-            {
-                factors = bBarSquareOfAverage;
-                if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
-                    std::transform(factors.begin(), factors.end(), bBarAverageOfSquares.begin(), factors.begin(),
-                                   std::divides<>());
-            }
-            else if (referenceNormalisedTo_ == StructureFactors::AverageOfSquaresNormalisation)
-            {
-                factors = bBarAverageOfSquares;
-                if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
-                    std::transform(factors.begin(), factors.end(), bBarSquareOfAverage.begin(), factors.begin(),
-                                   std::divides<>());
+                case (StructureFactors::NoNormalisation):
+                    factors = normaliseTo_ == StructureFactors::SquareOfAverageNormalisation ? bBarSquareOfAverage
+                                                                                             : bBarAverageOfSquares;
+                    std::transform(factors.begin(), factors.end(), factors.begin(),
+                                   [](const auto factor) { return 1.0 / factor; });
+                    break;
+                case (StructureFactors::SquareOfAverageNormalisation):
+                    factors = bBarSquareOfAverage;
+                    if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
+                        std::transform(factors.begin(), factors.end(), bBarAverageOfSquares.begin(), factors.begin(),
+                                       std::divides<>());
+                    break;
+                case (StructureFactors::AverageOfSquaresNormalisation):
+                    factors = bBarAverageOfSquares;
+                    if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+                        std::transform(factors.begin(), factors.end(), bBarSquareOfAverage.begin(), factors.begin(),
+                                       std::divides<>());
+                    break;
+                default:
+                    throw(std::runtime_error(
+                        fmt::format("Unhandled StructureFactor::NormalisationType ({}).\n",
+                                    StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_))));
             }
 
             // Apply normalisation factors to the data
