@@ -83,8 +83,7 @@ SerialisedValue AtomTypeVectorKeyword::serialise() const
 // Read values from a serialisable value
 void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    for (const auto &item : node.as_array())
-    {
+    Serialisable::toVector(node, [this, &coreData](const auto &item) {
         auto it =
             std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(),
                          [&item](const auto atomType) {
@@ -103,7 +102,7 @@ void AtomTypeVectorKeyword::deserialise(const SerialisedValue &node, const CoreD
 
         // All OK - add it to our vector
         data_.push_back(atomType);
-    }
+    });
 }
 
 // Has not changed from initial value
