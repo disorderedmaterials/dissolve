@@ -36,7 +36,7 @@ void IntegerHistogram1D::updateAccumulatedData()
 {
     auto average = createDisplayData();
     accumulatedData_ = average.first;
-    auto minBin = average.second.value_or(0);
+    auto minBin = average.second;
     // Poke bin values and errors into array
     for (const auto &[key, value] : averages_)
     {
@@ -79,7 +79,7 @@ const std::pair<Data1D, int> IntegerHistogram1D::createDisplayData()
     for (auto n = 0; n < expectedNBins; ++n)
         data.xAxis(n) = x++;
 
-    return std::make_pair(data, expectedMinimum);
+    return std::make_pair(data, expectedMinimum.value());
 }
 
 // Initialise with specified bin range
@@ -199,7 +199,7 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
     {
         if (!parser.writeLineF("{} {} \n", key, value))
             return false;
-        if (!averages_[key].serialise(parser))
+        if (!averages_.at(key).serialise(parser))
             return false;
     }
 
