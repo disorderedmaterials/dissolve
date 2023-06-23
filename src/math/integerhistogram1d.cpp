@@ -34,7 +34,7 @@ void IntegerHistogram1D::clear()
 // Update accumulated data
 void IntegerHistogram1D::updateAccumulatedData()
 {
-    std::pair<Data1D, std::optional<int>> average = createDisplayData();
+    auto average = createDisplayData();
     accumulatedData_ = average.first;
     auto minBin = average.second.value_or(0);
     // Poke bin values and errors into array
@@ -46,8 +46,8 @@ void IntegerHistogram1D::updateAccumulatedData()
     }
 }
 
-// Create dsiplay data
-const std::pair<Data1D, std::optional<int>> IntegerHistogram1D::createDisplayData()
+// Create dsiplay data object covering extents of current bins
+const std::pair<Data1D, int> IntegerHistogram1D::createDisplayData()
 {
 
     // Get limiting key values
@@ -89,16 +89,12 @@ void IntegerHistogram1D::initialise(std::optional<int> xMin, std::optional<int> 
 
     minimum_ = xMin;
     maximum_ = xMax;
-
-    raw_.clear();
-    averages_.clear();
 }
 
 // Zero histogram bins
 void IntegerHistogram1D::zeroBins()
 {
     raw_.clear();
-    averages_.clear();
     nBinned_ = 0;
     nMissed_ = 0;
 }
@@ -131,7 +127,7 @@ long int IntegerHistogram1D::nBinned() const { return nBinned_; }
 void IntegerHistogram1D::accumulate()
 {
     for (auto &[key, value] : raw_)
-        averages_[key] += (SampledDouble)raw_[key];
+        averages_[key] += (double)raw_[key];
 
     // Update accumulated data
     updateAccumulatedData();
@@ -143,7 +139,7 @@ Data1D IntegerHistogram1D::data() const
     Data1D result = accumulatedData_;
     for (auto &[key, value] : raw_)
     {
-        result.values()[(key)] = value;
+        result.values()[key] = value;
     }
     return result;
 }
@@ -175,10 +171,11 @@ bool IntegerHistogram1D::deserialise(LineParser &parser)
 
     auto nBins = parser.argli(0);
 
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
     for (int n = 0; n <= nBins; ++n)
+
     {
+        if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            return false;
         auto bin = parser.argi(0);
         raw_[bin] = parser.argli(1);
         averages_[bin].deserialise(parser);
@@ -202,12 +199,9 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
     {
         if (!parser.writeLineF("{} {} \n", key, value))
             return false;
-    }
-
-    for (auto &[key, value] : averages_)
-    {
-        if (!value.serialise(parser))
+        if (!averages_[key].serialise(parser))
             return false;
     }
+
     return true;
 }
