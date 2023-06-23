@@ -301,5 +301,8 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
     Messenger::print("[AddPair] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n", cfg->atomicDensity().value_or(0.0),
                      cfg->chemicalDensity().value_or(0.0));
 
+    // We've added new content to the box, so Need to update our object relationships
+    cfg->updateObjectRelationships();
+
     return true;
 }
