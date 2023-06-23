@@ -36,10 +36,17 @@ bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Partia
 
     // Calculate and normalise total to form factor if requested
     weightedgr.formTotals(false);
-    if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
-        weightedgr.total() /= weights.boundCoherentAverageOfSquares();
-    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
-        weightedgr.total() /= weights.boundCoherentSquareOfAverage();
+
+    // Normalise to Q=0.0 form factor if requested
+    if (normalisation != StructureFactors::NoNormalisation)
+    {
+        auto norm = normalisation == StructureFactors::AverageOfSquaresNormalisation ? weights.boundCoherentAverageOfSquares()
+                                                                                     : weights.boundCoherentSquareOfAverage();
+
+        weightedgr.total() /= norm;
+        weightedgr.boundTotal() /= norm;
+        weightedgr.unboundTotal() /= norm;
+    }
 
     return true;
 }
@@ -71,12 +78,19 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
         }
     }
 
-    // Calculate and normalise total to form factor if requested
+    // Form total structure factor
     weightedsq.formTotals(false);
-    if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
-        weightedsq.total() /= weights.boundCoherentAverageOfSquares();
-    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
-        weightedsq.total() /= weights.boundCoherentSquareOfAverage();
+
+    // Apply normalisation to all totals
+    if (normalisation != StructureFactors::NoNormalisation)
+    {
+        auto norm = normalisation == StructureFactors::AverageOfSquaresNormalisation ? weights.boundCoherentAverageOfSquares()
+                                                                                     : weights.boundCoherentSquareOfAverage();
+
+        weightedsq.total() /= norm;
+        weightedsq.boundTotal() /= norm;
+        weightedsq.unboundTotal() /= norm;
+    }
 
     return true;
 }

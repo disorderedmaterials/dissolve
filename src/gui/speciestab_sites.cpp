@@ -188,16 +188,16 @@ void SpeciesTab::updateSitesTab()
 
         // Set origin atom indices
         ui_.SiteOriginAtomsEdit->setText(
-            QString::fromStdString(joinStrings(site->originAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+            QString::fromStdString(joinStrings(site->staticOriginAtoms(), " ", [](const auto &i) { return siteName(*i); })));
         ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
         // Set x axis atom indices
         ui_.SiteXAxisAtomsEdit->setText(
-            QString::fromStdString(joinStrings(site->xAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+            QString::fromStdString(joinStrings(site->staticXAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
 
         // Set y axis atom indices
         ui_.SiteYAxisAtomsEdit->setText(
-            QString::fromStdString(joinStrings(site->yAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+            QString::fromStdString(joinStrings(site->staticYAxisAtoms(), " ", [](const auto &i) { return siteName(*i); })));
     }
     else if (site->type() == SpeciesSite::SiteType::Dynamic)
     {
@@ -205,12 +205,12 @@ void SpeciesTab::updateSitesTab()
         ui_.SiteDefinitionStack->setCurrentIndex(1);
 
         // Set elements
-        ui_.SiteElementsEdit->setText(
-            QString::fromStdString(joinStrings(site->elements(), " ", [](const auto &el) { return Elements::symbol(el); })));
+        ui_.SiteElementsEdit->setText(QString::fromStdString(
+            joinStrings(site->dynamicElements(), " ", [](const auto &el) { return Elements::symbol(el); })));
 
         // Set atom types
         ui_.SiteAtomTypesEdit->setText(
-            QString::fromStdString(joinStrings(site->atomTypes(), " ", [](const auto &at) { return at->name(); })));
+            QString::fromStdString(joinStrings(site->dynamicAtomTypes(), " ", [](const auto &at) { return at->name(); })));
     }
     else if (site->type() == SpeciesSite::SiteType::Fragment)
     {

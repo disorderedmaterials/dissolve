@@ -6,21 +6,11 @@
 #include "keywords/node.h"
 
 PickProcedureNodeBase::PickProcedureNodeBase(ProcedureNode::NodeType nodeType)
-    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Pick), selection_(nullptr)
+    : ProcedureNode(nodeType, {ProcedureNode::GenerationContext}, ProcedureNode::NodeClass::Pick), selection_(nullptr)
 {
     keywords_.setOrganisation("Options", "Restrictions");
     keywords_.add<NodeKeyword<PickProcedureNodeBase>>("From", "Existing picked selection of molecules from which to pick",
                                                       selection_, this, ProcedureNode::NodeClass::Pick, true);
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool PickProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return context == ProcedureNode::GenerationContext;
 }
 
 /*

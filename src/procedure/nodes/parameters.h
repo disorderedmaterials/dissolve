@@ -20,8 +20,6 @@ class ParametersProcedureNode : public ProcedureNode
      * Identity
      */
     public:
-    // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context) override;
     // Return whether a name for the node must be provided
     bool mustBeNamed() const override;
 

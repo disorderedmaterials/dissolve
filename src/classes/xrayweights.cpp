@@ -213,14 +213,15 @@ double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<double> &Q) const
 {
     // Initialise results array
-    std::vector<double> bbar(Q.size());
+    std::vector<double> bbar(Q.size(), 0.0);
 
     for (auto typeI = 0; typeI < atomTypeMix_.nItems(); ++typeI)
     {
         const double ci = concentrations_[typeI];
         auto &fi = formFactorData_[typeI].get();
 
-        std::transform(Q.begin(), Q.end(), bbar.begin(), [ci, &fi](auto q) { return ci * fi.magnitude(q); });
+        std::transform(Q.begin(), Q.end(), bbar.begin(), bbar.begin(),
+                       [ci, &fi](auto q, auto b) { return b + ci * fi.magnitude(q); });
     }
 
     // Square the averages
@@ -240,7 +241,7 @@ double XRayWeights::boundCoherentAverageOfSquares(double Q) const
 std::vector<double> XRayWeights::boundCoherentAverageOfSquares(const std::vector<double> &Q) const
 {
     // Initialise results array
-    std::vector<double> bbar(Q.size());
+    std::vector<double> bbar(Q.size(), 0.0);
 
     for (auto typeI = 0; typeI < atomTypeMix_.nItems(); ++typeI)
     {

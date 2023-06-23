@@ -8,7 +8,8 @@
 #include "keywords/speciesvector.h"
 
 SimpleRestraintPotentialProcedureNode::SimpleRestraintPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::SimpleRestraintPotential), potential_(SimplePotentialFunctions::Form::Harmonic)
+    : ProcedureNode(ProcedureNode::NodeType::SimpleRestraintPotential, {ProcedureNode::GenerationContext}),
+      potential_(SimplePotentialFunctions::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<SimplePotentialFunctions>>("Potential", "Potential to apply to individual atoms",
@@ -19,16 +20,6 @@ SimpleRestraintPotentialProcedureNode::SimpleRestraintPotentialProcedureNode()
     keywords_.add<NodeKeyword<PickProcedureNodeBase>>("Selection",
                                                       "Picked selection of molecules to apply atomic restraints to",
                                                       selectionToRestrain_, this, ProcedureNode::NodeClass::Pick, true);
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool SimpleRestraintPotentialProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
 }
 
 /*

@@ -19,7 +19,7 @@
         else
           (if gui then "dissolve-gui" else "dissolve");
       cmake-bool = x: if x then "ON" else "OFF";
-      version = "1.2.0";
+      version = "1.3.0";
       base_libs = pkgs:
         with pkgs; [
           antlr4
@@ -145,7 +145,7 @@
           buildInputs = base_libs pkgs ++ gui_libs system pkgs ++ check_libs pkgs
             ++ (with pkgs; [
               (pkgs.clang-tools.override {
-                llvmPackages = pkgs.llvmPackages_7;
+                llvmPackages = pkgs.llvmPackages_13;
               })
               ccache
               ccls

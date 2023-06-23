@@ -9,7 +9,8 @@
 #include "data/atomicmasses.h"
 #include "neta/matchedgroup.h"
 #include "neta/neta.h"
-#include <memory>
+#include "neta/neta.h"
+#include "templates/algorithms.h"
 #include <numeric>
 #include <string_view>
 
@@ -42,11 +43,15 @@ int SpeciesSite::version() const { return version_; }
 // Clear definition data from site
 void SpeciesSite::clearDefinition()
 {
-    originAtoms_.clear();
-    xAxisAtoms_.clear();
-    yAxisAtoms_.clear();
-    elements_.clear();
-    atomTypes_.clear();
+    staticOriginAtoms_.clear();
+    staticXAxisAtoms_.clear();
+    staticYAxisAtoms_.clear();
+    dynamicElements_.clear();
+    dynamicAtomTypes_.clear();
+    sitesOriginAtomsIndices_.clear();
+    sitesXAxisAtomsIndices_.clear();
+    sitesYAxisAtomsIndices_.clear();
+    fragment_ = NETADefinition{};
 
     ++version_;
 }
@@ -65,7 +70,7 @@ SpeciesSite::SiteType SpeciesSite::type() const { return type_; }
 // Return whether the site has defined axes sites
 bool SpeciesSite::hasAxes() const
 {
-    return (type_ == SiteType::Static && !(xAxisAtoms_.empty() && yAxisAtoms_.empty())) ||
+    return (type_ == SiteType::Static && !(staticXAxisAtoms_.empty() && staticYAxisAtoms_.empty())) ||
            (type_ == SiteType::Fragment && fragment_.hasAxes());
 }
 
@@ -74,7 +79,7 @@ bool SpeciesSite::hasAxes() const
  */
 
 // Add origin atom
-bool SpeciesSite::addOriginAtom(const SpeciesAtom *originAtom)
+bool SpeciesSite::addStaticOriginAtom(const SpeciesAtom *originAtom)
 {
     assert(originAtom);
 
@@ -82,55 +87,55 @@ bool SpeciesSite::addOriginAtom(const SpeciesAtom *originAtom)
         return Messenger::error("Setting origin atoms for a non-static site is not permitted.\n");
 
     // If the SpeciesAtom already exists in the vector, complain
-    if (std::find(originAtoms_.begin(), originAtoms_.end(), originAtom) != originAtoms_.end())
+    if (std::find(staticOriginAtoms_.begin(), staticOriginAtoms_.end(), originAtom) != staticOriginAtoms_.end())
         return Messenger::error("Origin atom index {} specified twice for site '{}'.\n", originAtom->index(), name_);
 
-    originAtoms_.push_back(originAtom);
+    staticOriginAtoms_.push_back(originAtom);
 
     ++version_;
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Add origin atom from index
-bool SpeciesSite::addOriginAtom(int atomIndex)
+bool SpeciesSite::addStaticOriginAtom(int atomIndex)
 {
     assert(parent_);
 
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting origin atoms for a non-static site is not permitted.\n");
 
-    return addOriginAtom(&parent_->atom(atomIndex));
+    return addStaticOriginAtom(&parent_->atom(atomIndex));
 }
 
 // Set origin atoms
-bool SpeciesSite::setOriginAtoms(const std::vector<const SpeciesAtom *> &atoms)
+bool SpeciesSite::setStaticOriginAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting origin atoms for a non-static site is not permitted.\n");
 
-    originAtoms_.clear();
+    staticOriginAtoms_.clear();
 
     ++version_;
 
     for (auto *i : atoms)
-        if (!addOriginAtom(i))
+        if (!addStaticOriginAtom(i))
         {
-            originAtoms_.clear();
+            staticOriginAtoms_.clear();
             return false;
         }
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Return origin atom vector
-const std::vector<const SpeciesAtom *> &SpeciesSite::originAtoms() const { return originAtoms_; }
+const std::vector<const SpeciesAtom *> &SpeciesSite::staticOriginAtoms() const { return staticOriginAtoms_; }
 
 // Return integer array of indices from which the origin should be formed
-std::vector<int> SpeciesSite::originAtomIndices() const
+std::vector<int> SpeciesSite::staticOriginAtomIndices() const
 {
     std::vector<int> indices;
-    std::transform(originAtoms_.begin(), originAtoms_.end(), std::back_inserter(indices),
+    std::transform(staticOriginAtoms_.begin(), staticOriginAtoms_.end(), std::back_inserter(indices),
                    [](auto *atom) { return atom->index(); });
     return indices;
 }
@@ -147,7 +152,7 @@ void SpeciesSite::setOriginMassWeighted(bool b)
 bool SpeciesSite::originMassWeighted() const { return originMassWeighted_; }
 
 // Add x-axis atom
-bool SpeciesSite::addXAxisAtom(const SpeciesAtom *xAxisAtom)
+bool SpeciesSite::addStaticXAxisAtom(const SpeciesAtom *xAxisAtom)
 {
     assert(xAxisAtom);
 
@@ -155,60 +160,60 @@ bool SpeciesSite::addXAxisAtom(const SpeciesAtom *xAxisAtom)
         return Messenger::error("Setting x-axis atoms for a non-static site is not permitted.\n");
 
     // If the SpeciesAtom already exists in the vector, complain
-    if (std::find(xAxisAtoms_.begin(), xAxisAtoms_.end(), xAxisAtom) != xAxisAtoms_.end())
+    if (std::find(staticXAxisAtoms_.begin(), staticXAxisAtoms_.end(), xAxisAtom) != staticXAxisAtoms_.end())
         return Messenger::error("X-axis atom index {} specified twice for site '{}'.\n", xAxisAtom->index(), name_);
 
-    xAxisAtoms_.push_back(xAxisAtom);
+    staticXAxisAtoms_.push_back(xAxisAtom);
 
     ++version_;
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Add x-axis atom from index
-bool SpeciesSite::addXAxisAtom(int atomIndex)
+bool SpeciesSite::addStaticXAxisAtom(int atomIndex)
 {
     assert(parent_);
 
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting x-axis atoms for a non-static site is not permitted.\n");
 
-    return addXAxisAtom(&parent_->atom(atomIndex));
+    return addStaticXAxisAtom(&parent_->atom(atomIndex));
 }
 
 // Set x-axis atoms
-bool SpeciesSite::setXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
+bool SpeciesSite::setStaticXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting x-axis atoms for a non-static site is not permitted.\n");
 
-    xAxisAtoms_.clear();
+    staticXAxisAtoms_.clear();
 
     ++version_;
 
-    if (!std::all_of(atoms.begin(), atoms.end(), [&](const auto *i) { return addXAxisAtom(i); }))
+    if (!std::all_of(atoms.begin(), atoms.end(), [&](const auto *i) { return addStaticXAxisAtom(i); }))
     {
-        xAxisAtoms_.clear();
+        staticXAxisAtoms_.clear();
         return false;
     }
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Return x-axis atom vector
-const std::vector<const SpeciesAtom *> &SpeciesSite::xAxisAtoms() const { return xAxisAtoms_; }
+const std::vector<const SpeciesAtom *> &SpeciesSite::staticXAxisAtoms() const { return staticXAxisAtoms_; }
 
 // Return integer array of indices from which x-axis should be formed
-std::vector<int> SpeciesSite::xAxisAtomIndices() const
+std::vector<int> SpeciesSite::staticXAxisAtomIndices() const
 {
     std::vector<int> indices;
-    std::transform(xAxisAtoms_.begin(), xAxisAtoms_.end(), std::back_inserter(indices),
+    std::transform(staticXAxisAtoms_.begin(), staticXAxisAtoms_.end(), std::back_inserter(indices),
                    [](auto *atom) { return atom->index(); });
     return indices;
 }
 
 // Add y-axis atom
-bool SpeciesSite::addYAxisAtom(const SpeciesAtom *yAxisAtom)
+bool SpeciesSite::addStaticYAxisAtom(const SpeciesAtom *yAxisAtom)
 {
     assert(yAxisAtom);
 
@@ -216,54 +221,54 @@ bool SpeciesSite::addYAxisAtom(const SpeciesAtom *yAxisAtom)
         return Messenger::error("Setting y-axis atoms for a non-static site is not permitted.\n");
 
     // If the SpeciesAtom already exists in the vector, complain
-    if (std::find(yAxisAtoms_.begin(), yAxisAtoms_.end(), yAxisAtom) != yAxisAtoms_.end())
+    if (std::find(staticYAxisAtoms_.begin(), staticYAxisAtoms_.end(), yAxisAtom) != staticYAxisAtoms_.end())
         return Messenger::error("Y-axis atom index {} specified twice for site '{}'.\n", yAxisAtom->index(), name_);
 
-    yAxisAtoms_.push_back(yAxisAtom);
+    staticYAxisAtoms_.push_back(yAxisAtom);
 
     ++version_;
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Add y-axis atom from index
-bool SpeciesSite::addYAxisAtom(int atomIndex)
+bool SpeciesSite::addStaticYAxisAtom(int atomIndex)
 {
     assert(parent_);
 
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting y-axis atoms for a non-static site is not permitted.\n");
 
-    return addYAxisAtom(&parent_->atom(atomIndex));
+    return addStaticYAxisAtom(&parent_->atom(atomIndex));
 }
 
 // Set y-axis atoms
-bool SpeciesSite::setYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
+bool SpeciesSite::setStaticYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms)
 {
     if (type_ != SpeciesSite::SiteType::Static)
         return Messenger::error("Setting y-axis atoms for a non-static site is not permitted.\n");
 
-    yAxisAtoms_.clear();
+    staticYAxisAtoms_.clear();
 
     ++version_;
 
-    if (!std::all_of(atoms.begin(), atoms.end(), [&](const auto *i) { return addYAxisAtom(i); }))
+    if (!std::all_of(atoms.begin(), atoms.end(), [&](const auto *i) { return addStaticYAxisAtom(i); }))
     {
-        yAxisAtoms_.clear();
+        staticYAxisAtoms_.clear();
         return false;
     }
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Return y-axis atom vector
-const std::vector<const SpeciesAtom *> &SpeciesSite::yAxisAtoms() const { return yAxisAtoms_; }
+const std::vector<const SpeciesAtom *> &SpeciesSite::staticYAxisAtoms() const { return staticYAxisAtoms_; }
 
 // Return integer array of indices from which y-axis should be formed
-std::vector<int> SpeciesSite::yAxisAtomIndices() const
+std::vector<int> SpeciesSite::staticYAxisAtomIndices() const
 {
     std::vector<int> indices;
-    std::transform(yAxisAtoms_.begin(), yAxisAtoms_.end(), std::back_inserter(indices),
+    std::transform(staticYAxisAtoms_.begin(), staticYAxisAtoms_.end(), std::back_inserter(indices),
                    [](auto *atom) { return atom->index(); });
     return indices;
 }
@@ -273,54 +278,151 @@ std::vector<int> SpeciesSite::yAxisAtomIndices() const
  */
 
 // Add target Elements for selection as sites
-bool SpeciesSite::addElement(Elements::Element el)
+bool SpeciesSite::addDynamicElement(Elements::Element el)
 {
     if (type_ != SiteType::Dynamic)
         return Messenger::error("Setting element targets for a non-dynamic site is not permitted.\n");
 
-    if (std::find(elements_.begin(), elements_.end(), el) != elements_.end())
+    if (std::find(dynamicElements_.begin(), dynamicElements_.end(), el) != dynamicElements_.end())
         return Messenger::error("Element '{}' is already defined as a target for site '{}'.\n", Elements::symbol(el), name_);
 
-    elements_.push_back(el);
+    dynamicElements_.push_back(el);
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Set target Elements for selection as sites
-bool SpeciesSite::setElements(const std::vector<Elements::Element> &els)
+bool SpeciesSite::setDynamicElements(const std::vector<Elements::Element> &els)
 {
-    elements_.clear();
+    dynamicElements_.clear();
 
-    return std::all_of(els.begin(), els.end(), [&](const auto el) { return addElement(el); });
+    if (std::all_of(els.begin(), els.end(), [&](const auto el) { return addDynamicElement(el); }))
+        return generateUniqueSites();
+    else
+        return false;
 }
 
 // Return elements for selection as sites
-const std::vector<Elements::Element> SpeciesSite::elements() const { return elements_; }
+const std::vector<Elements::Element> SpeciesSite::dynamicElements() const { return dynamicElements_; }
 
 // Add target atom type for selection as sites
-bool SpeciesSite::addAtomType(const std::shared_ptr<AtomType> &at)
+bool SpeciesSite::addDynamicAtomType(const std::shared_ptr<AtomType> &at)
 {
     if (type_ != SiteType::Dynamic)
         return Messenger::error("Setting atom type targets for a non-dynamic site is not permitted.\n");
 
-    if (std::find(atomTypes_.begin(), atomTypes_.end(), at) != atomTypes_.end())
+    if (std::find(dynamicAtomTypes_.begin(), dynamicAtomTypes_.end(), at) != dynamicAtomTypes_.end())
         return Messenger::error("Atom type '{}' is already defined as a target for site '{}'.\n", at->name(), name_);
 
-    atomTypes_.push_back(at);
+    dynamicAtomTypes_.push_back(at);
 
-    return true;
+    return generateUniqueSites();
 }
 
 // Set target atom types for selection as sites
-bool SpeciesSite::setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types)
+bool SpeciesSite::setDynamicAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types)
 {
-    atomTypes_.clear();
+    dynamicAtomTypes_.clear();
 
-    return std::all_of(types.begin(), types.end(), [&](const auto &at) { return addAtomType(at); });
+    if (std::all_of(types.begin(), types.end(), [&](const auto &at) { return addDynamicAtomType(at); }))
+        return generateUniqueSites();
+    else
+        return false;
 }
 
 // Return atom types for selection as sites
-const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { return atomTypes_; }
+const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::dynamicAtomTypes() const { return dynamicAtomTypes_; }
+
+// Return fragment definition
+const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
+
+// Generate unique sites
+bool SpeciesSite::generateUniqueSites()
+{
+    sitesOriginAtomsIndices_.clear();
+    sitesXAxisAtomsIndices_.clear();
+    sitesYAxisAtomsIndices_.clear();
+
+    switch (type_)
+    {
+        case (SiteType::Static):
+        {
+            sitesOriginAtomsIndices_.push_back(staticOriginAtomIndices());
+            sitesXAxisAtomsIndices_.push_back(staticXAxisAtomIndices());
+            sitesYAxisAtomsIndices_.push_back(staticYAxisAtomIndices());
+        }
+        case (SiteType::Dynamic):
+        {
+            for (auto &i : parent_->atoms())
+            {
+                // Valid element or atom type?
+                if ((std::find(dynamicElements_.begin(), dynamicElements_.end(), i.Z()) != dynamicElements_.end()) ||
+                    std::find(dynamicAtomTypes_.begin(), dynamicAtomTypes_.end(), i.atomType()) != dynamicAtomTypes_.end())
+                    sitesOriginAtomsIndices_.push_back({i.index()});
+            }
+            return true;
+        }
+        case (SiteType::Fragment):
+        {
+            std::vector<std::vector<int>> matchedIndices;
+            for (auto &i : parent_->atoms())
+            {
+                if (fragment_.matches(&i))
+                {
+                    // Determine the path of matched atoms - i.e. the atoms in the fragment.
+                    auto matchedGroup = fragment_.matchedPath(&i);
+                    auto matchedAtoms = matchedGroup.set();
+
+                    // Create vector of indices of the matched atoms.
+                    std::vector<int> matchedAtomIndices(matchedAtoms.size());
+                    std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
+                                   [](const auto &atom) { return atom->index(); });
+
+                    // Check if the fragment we have found is unique.
+                    std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
+                    if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                        continue;
+
+                    // If it's unique, remember it and proceed.
+                    matchedIndices.push_back(std::move(matchedAtomIndices));
+
+                    auto identifiers = matchedGroup.identifiers();
+
+                    // Determine origin atoms
+                    sitesOriginAtomsIndices_.emplace_back(identifiers["origin"].size());
+                    std::transform(identifiers["origin"].begin(), identifiers["origin"].end(),
+                                   sitesOriginAtomsIndices_.back().begin(), [](const auto &atom) { return atom->index(); });
+                    if (hasAxes())
+                    {
+                        // Determine x axis atoms.
+                        sitesXAxisAtomsIndices_.emplace_back(identifiers["x"].size());
+                        std::transform(identifiers["x"].begin(), identifiers["x"].end(), sitesXAxisAtomsIndices_.back().begin(),
+                                       [](const auto &atom) { return atom->index(); });
+                        // Determine y axis atoms.
+                        sitesYAxisAtomsIndices_.emplace_back(identifiers["y"].size());
+                        std::transform(identifiers["y"].begin(), identifiers["y"].end(), sitesYAxisAtomsIndices_.back().begin(),
+                                       [](const auto &atom) { return atom->index(); });
+                    }
+                }
+            }
+            return true;
+        }
+        default:
+        {
+            Messenger::print("Can't generate unique sites for site '{}'.", name());
+            return false;
+        }
+    }
+}
+
+// Return number of unique sites
+const int SpeciesSite::nSites() const { return sitesOriginAtomsIndices_.size(); }
+// Return atom indices contributing to unique site origins
+const std::vector<std::vector<int>> &SpeciesSite::sitesOriginAtomsIndices() const { return sitesOriginAtomsIndices_; }
+// Return atom indices indicating the x axis with the origins of unique sites.
+const std::vector<std::vector<int>> &SpeciesSite::sitesXAxisAtomsIndices() const { return sitesXAxisAtomsIndices_; }
+// Return atom indices indicating the y axis with the origins of unique sites.
+const std::vector<std::vector<int>> &SpeciesSite::sitesYAxisAtomsIndices() const { return sitesYAxisAtomsIndices_; }
 
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
@@ -335,86 +437,56 @@ bool SpeciesSite::setFragmentDefinitionString(std::string_view definitionString)
 // Create and return site description from parent Species
 std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 {
-    if (type_ == SiteType::Static)
-    {
-        // Get origin atom indices from site
-        std::vector<int> originIndices = originAtomIndices();
-        if (originIndices.empty())
-            return {};
+    std::vector<std::shared_ptr<Site>> sites;
 
-        // Calculate origin
-        Vec3<double> origin;
-        double mass;
+    auto originAtomsIndices = sitesOriginAtomsIndices();
+    auto xAxisAtomsIndices = sitesXAxisAtomsIndices();
+    auto yAxisAtomsIndices = sitesYAxisAtomsIndices();
+
+    for (auto i = 0; i < nSites(); ++i)
+    {
+        Vec3<double> origin, x, y, z;
         if (originMassWeighted_)
         {
-            double massNorm = 0.0;
-            for (const auto &index : originIndices)
+            auto massNorm = 0.0;
+            for (const auto &idx : originAtomsIndices.at(i))
             {
-                mass = AtomicMass::mass(parent_->atom(index).Z());
-                origin += parent_->atom(index).r() * mass;
+                auto mass = AtomicMass::mass(parent_->atom(idx).Z());
+                origin += parent_->atom(idx).r() * mass;
                 massNorm += mass;
             }
             origin /= massNorm;
         }
         else
         {
-            for (const auto &index : originIndices)
-                origin += parent_->atom(index).r();
-            origin /= originIndices.size();
+            for (const auto &idx : originAtomsIndices.at(i))
+                origin += parent_->atom(idx).r();
+            origin /= originAtomsIndices.at(i).size();
         }
 
-        // Calculate axes and store data if required
         if (hasAxes())
         {
-            // If the site has axes, grab the atom indices involved
-            std::vector<int> xAxisIndices, yAxisIndices;
-            if (hasAxes())
-            {
-                xAxisIndices = xAxisAtomIndices();
-                yAxisIndices = yAxisAtomIndices();
-            }
-
             Vec3<double> v;
+            for (const auto &idx : xAxisAtomsIndices.at(i))
+                v += parent_->atom(idx).r();
+            v /= xAxisAtomsIndices.at(i).size();
 
-            // Get average position of supplied x-axis atoms
-            for (const auto &index : xAxisIndices)
-                v += parent_->atom(index).r();
-            v /= xAxisIndices.size();
-
-            // Get vector from site origin and normalise it
             auto x = v - origin;
             x.normalise();
 
-            // Get average position of supplied y-axis atoms
             v.zero();
-            for (const auto &index : yAxisIndices)
-                v += parent_->atom(index).r();
-            v /= yAxisIndices.size();
+            for (const auto &idx : yAxisAtomsIndices.at(i))
+                v += parent_->atom(idx).r();
+            v /= yAxisAtomsIndices.at(i).size();
 
-            // Get vector from site origin, normalise it, and orthogonalise
             auto y = v - origin;
             y.orthogonalise(x);
             y.normalise();
 
-            // Calculate z vector from cross product of x and y
-            auto z = x * y;
-
-            return {std::make_shared<OrientedSite>(nullptr, origin, x, y, z)};
+            sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, x * y));
         }
         else
-            return {std::make_shared<Site>(nullptr, origin)};
-    }
-    else if (type_ == SiteType::Dynamic)
-    {
-        std::vector<std::shared_ptr<Site>> sites;
-        for (auto &i : parent_->atoms())
-        {
-            // Valid element or atom type?
-            if ((std::find(elements_.begin(), elements_.end(), i.Z()) != elements_.end()) ||
-                std::find(atomTypes_.begin(), atomTypes_.end(), i.atomType()) != atomTypes_.end())
-                sites.push_back(std::make_shared<Site>(nullptr, i.r()));
-        }
-        return sites;
+            sites.push_back(std::make_shared<Site>(nullptr, origin));
     }
     else if (type_ == SiteType::Fragment)
     {
@@ -468,48 +540,10 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
                     }
                     origin /= originAtoms.size();
                 }
-
-                // Fragment site definition has orientation.
-                if (hasAxes())
-                {
-
-                    auto xAxisAtoms = identifiers["x"];
-                    auto yAxisAtoms = identifiers["y"];
-
-                    Vec3<double> v;
-
-                    // Get average position of supplied x-axis atoms
-                    for (const auto &atom : xAxisAtoms)
-                        v += atom->r();
-                    v /= xAxisAtoms.size();
-
-                    // Get vector from site origin and normalise it
-                    auto x = v - origin;
-                    x.normalise();
-
-                    // Get average position of supplied y-axis atoms
-                    v.zero();
-                    for (const auto &atom : yAxisAtoms)
-                        v += atom->r();
-                    v /= yAxisAtoms.size();
-
-                    // Get vector from site origin, normalise it, and orthogonalise
-                    auto y = v - origin;
-                    y.orthogonalise(x);
-                    y.normalise();
-
-                    // Calculate z vector from cross product of x and y
-                    auto z = x * y;
-
-                    sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
-                }
-                else
-                    sites.push_back(std::make_shared<Site>(nullptr, origin));
             }
         }
-        return sites;
     }
-    return {};
+    return sites;
 }
 
 /*
@@ -559,7 +593,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                 for (auto n = 1; n < parser.nArgs(); ++n)
                 {
                     auto at = coreData.findAtomType(parser.args(n));
-                    if (!at || !addAtomType(at))
+                    if (!at || !addDynamicAtomType(at))
                     {
                         Messenger::error("Failed to add target atom type for site '{}'.\n", name());
                         error = true;
@@ -568,7 +602,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                 }
                 break;
             case (SpeciesSite::DynamicKeyword):
-                if (originAtoms_.empty() && xAxisAtoms_.empty() && yAxisAtoms_.empty())
+                if (staticOriginAtoms_.empty() && staticXAxisAtoms_.empty() && staticYAxisAtoms_.empty())
                     type_ = SiteType::Dynamic;
                 else
                 {
@@ -581,7 +615,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                 for (auto n = 1; n < parser.nArgs(); ++n)
                 {
                     auto el = Elements::element(parser.args(n));
-                    if (el == Elements::Unknown || !addElement(el))
+                    if (el == Elements::Unknown || !addDynamicElement(el))
                     {
                         Messenger::error("Failed to add target element for site '{}'.\n", name());
                         error = true;
@@ -600,13 +634,21 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                 }
                 break;
             case (SpeciesSite::EndSiteKeyword):
+                if (type_ == SiteType::Fragment || type_ == SiteType::Dynamic)
+                {
+                    if (!generateUniqueSites())
+                    {
+                        Messenger::error("Failed to generate unique sites for site '{}'.\n", name());
+                        error = true;
+                    }
+                }
                 Messenger::print("Found end of Site '{}'.\n", name());
                 blockDone = true;
                 break;
             case (SpeciesSite::OriginKeyword):
                 for (auto n = 1; n < parser.nArgs(); ++n)
                 {
-                    if (!addOriginAtom(parser.argi(n) - 1))
+                    if (!addStaticOriginAtom(parser.argi(n) - 1))
                     {
                         Messenger::error("Failed to add origin atom for site '{}'.\n", name());
                         error = true;
@@ -620,7 +662,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
             case (SpeciesSite::XAxisKeyword):
                 for (int n = 1; n < parser.nArgs(); ++n)
                 {
-                    if (!addXAxisAtom(parser.argi(n) - 1))
+                    if (!addStaticXAxisAtom(parser.argi(n) - 1))
                     {
                         Messenger::error("Failed to add x-axis atom for site '{}'.\n", name());
                         error = true;
@@ -631,7 +673,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
             case (SpeciesSite::YAxisKeyword):
                 for (int n = 1; n < parser.nArgs(); ++n)
                 {
-                    if (!addYAxisAtom(parser.argi(n) - 1))
+                    if (!addStaticYAxisAtom(parser.argi(n) - 1))
                     {
                         Messenger::error("Failed to add y-axis atom for site '{}'.\n", name());
                         error = true;
@@ -684,8 +726,13 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     }
 
     // Origin atom indices
-    if (!originAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
-                                                    joinStrings(originAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+    if (!staticOriginAtoms_.empty() &&
+        !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
+                           joinStrings(staticOriginAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+        return false;
+
+    if (!fragment_.definitionString().empty() &&
+        !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
         return false;
 
     if (!fragment_.definitionString().empty() &&
@@ -697,24 +744,27 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // X-Axis atom indices
-    if (!xAxisAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(XAxisKeyword),
-                                                   joinStrings(xAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+    if (!staticXAxisAtoms_.empty() &&
+        !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(XAxisKeyword),
+                           joinStrings(staticXAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
         return false;
 
     // Y-Axis atom indices
-    if (!yAxisAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(YAxisKeyword),
-                                                   joinStrings(yAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+    if (!staticYAxisAtoms_.empty() &&
+        !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(YAxisKeyword),
+                           joinStrings(staticYAxisAtomIndices(), "  ", [](const auto i) { return i + 1; })))
         return false;
 
     // Elements
-    if (!elements_.empty() &&
+    if (!dynamicElements_.empty() &&
         !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(ElementKeyword),
-                           joinStrings(elements_, "  ", [](const auto el) { return Elements::symbol(el); })))
+                           joinStrings(dynamicElements_, "  ", [](const auto el) { return Elements::symbol(el); })))
         return false;
 
     // Atom Types
-    if (!atomTypes_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(AtomTypeKeyword),
-                                                  joinStrings(atomTypes_, "  ", [](const auto &at) { return at->name(); })))
+    if (!dynamicAtomTypes_.empty() &&
+        !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(AtomTypeKeyword),
+                           joinStrings(dynamicAtomTypes_, "  ", [](const auto &at) { return at->name(); })))
         return false;
 
     // Write end of site definition
@@ -730,11 +780,11 @@ SerialisedValue SpeciesSite::serialise() const
     SerialisedValue site;
     if (type_ == SiteType::Dynamic)
         site["dynamic"] = true;
-    Serialisable::fromVector(originAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(xAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(yAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
-    Serialisable::fromVector(elements_, "elements", site, [](const auto &item) { return Elements::symbol(item); });
-    Serialisable::fromVector(atomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
+    Serialisable::fromVector(staticOriginAtoms_, "originAtoms", site, [](const auto &item) { return item->index(); });
+    Serialisable::fromVector(staticXAxisAtoms_, "xAxisAtoms", site, [](const auto &item) { return item->index(); });
+    Serialisable::fromVector(staticYAxisAtoms_, "yAxisAtoms", site, [](const auto &item) { return item->index(); });
+    Serialisable::fromVector(dynamicElements_, "elements", site, [](const auto &item) { return Elements::symbol(item); });
+    Serialisable::fromVector(dynamicAtomTypes_, "atomTypes", site, [](const auto &item) { return item->name(); });
     site["originMassWeighted"] = originMassWeighted_;
     return site;
 }
@@ -744,11 +794,12 @@ void SpeciesSite::deserialise(SerialisedValue &node, CoreData &coreData)
     if (node.contains("dynamic"))
         type_ = SiteType::Dynamic;
 
-    toVector(node, "originAtoms", [this](const auto &originAtom) { addOriginAtom(originAtom.as_integer()); });
-    toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addXAxisAtom(xAxisAtom.as_integer()); });
-    toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addYAxisAtom(yAxisAtom.as_integer()); });
-    toVector(node, "elements", [this](const auto &el) { addElement(Elements::element(std::string(el.as_string()))); });
-    toVector(node, "atomTypes", [&, this](const auto &at) { addAtomType(coreData.findAtomType(std::string(at.as_string()))); });
+    toVector(node, "originAtoms", [this](const auto &originAtom) { addStaticOriginAtom(originAtom.as_integer()); });
+    toVector(node, "xAxisAtoms", [this](const auto &xAxisAtom) { addStaticXAxisAtom(xAxisAtom.as_integer()); });
+    toVector(node, "yAxisAtoms", [this](const auto &yAxisAtom) { addStaticYAxisAtom(yAxisAtom.as_integer()); });
+    toVector(node, "elements", [this](const auto &el) { addDynamicElement(Elements::element(std::string(el.as_string()))); });
+    toVector(node, "atomTypes",
+             [&, this](const auto &at) { addDynamicAtomType(coreData.findAtomType(std::string(at.as_string()))); });
 
     if (node.contains("originMassWeighted"))
         originMassWeighted_ = node["originMassWeighted"].as_boolean();

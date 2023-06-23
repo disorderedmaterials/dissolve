@@ -17,15 +17,16 @@
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::Add), density_{density, densityUnits}, population_(population), species_(sp)
+    : ProcedureNode(ProcedureNode::NodeType::Add, {ProcedureNode::GenerationContext}), density_{density, densityUnits},
+      population_(population), species_(sp)
 {
     setUpKeywords();
 }
 
 AddProcedureNode::AddProcedureNode(std::shared_ptr<const CoordinateSetsProcedureNode> sets, const NodeValue &population,
                                    const NodeValue &density, Units::DensityUnits densityUnits)
-    : ProcedureNode(ProcedureNode::NodeType::Add), coordinateSets_(std::move(sets)), density_{density, densityUnits},
-      population_(population)
+    : ProcedureNode(ProcedureNode::NodeType::Add, {ProcedureNode::GenerationContext}),
+      coordinateSets_(std::move(sets)), density_{density, densityUnits}, population_(population)
 {
     setUpKeywords();
 }
@@ -59,12 +60,6 @@ void AddProcedureNode::setUpKeywords()
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool AddProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
-}
 
 // Return whether a name for the node must be provided
 bool AddProcedureNode::mustBeNamed() const { return false; }
@@ -336,6 +331,9 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
 
     Messenger::print("[Add] New box density is {:e} atoms/Angstrom**3 ({} g/cm3).\n", cfg->atomicDensity().value_or(0.0),
                      cfg->chemicalDensity().value_or(0.0));
+
+    // We've added new content to the box, so Need to update our object relationships
+    cfg->updateObjectRelationships();
 
     return true;
 }

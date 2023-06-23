@@ -46,26 +46,46 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
         if (!grModule)
             return Messenger::error("[SETUP {}] A source GR module (in the SQ module) must be provided.\n", name_);
 
-        // Remove normalisation factor from data
-        if (referenceNormalisation_ != StructureFactors::NoNormalisation)
+        // Normalise reference data to be consistent with the calculated data
+        if (referenceNormalisedTo_ != normaliseTo_)
         {
             // We need the x-ray weights in order to do the normalisation
             XRayWeights weights;
             calculateWeights(grModule, weights, formFactors_);
+            auto bBarSquareOfAverage = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
+            auto bBarAverageOfSquares = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
+            std::vector<double> factors;
 
-            // Remove normalisation from the data
-            if (referenceNormalisation_ == StructureFactors::SquareOfAverageNormalisation)
+            // Set up the multiplication factors
+            switch (referenceNormalisedTo_)
             {
-                auto bbar = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
-                std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
-                               [](auto b, auto ref) { return ref / b; });
+                case (StructureFactors::NoNormalisation):
+                    factors = normaliseTo_ == StructureFactors::SquareOfAverageNormalisation ? bBarSquareOfAverage
+                                                                                             : bBarAverageOfSquares;
+                    std::transform(factors.begin(), factors.end(), factors.begin(),
+                                   [](const auto factor) { return 1.0 / factor; });
+                    break;
+                case (StructureFactors::SquareOfAverageNormalisation):
+                    factors = bBarSquareOfAverage;
+                    if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
+                        std::transform(factors.begin(), factors.end(), bBarAverageOfSquares.begin(), factors.begin(),
+                                       std::divides<>());
+                    break;
+                case (StructureFactors::AverageOfSquaresNormalisation):
+                    factors = bBarAverageOfSquares;
+                    if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+                        std::transform(factors.begin(), factors.end(), bBarSquareOfAverage.begin(), factors.begin(),
+                                       std::divides<>());
+                    break;
+                default:
+                    throw(std::runtime_error(
+                        fmt::format("Unhandled StructureFactor::NormalisationType ({}).\n",
+                                    StructureFactors::normalisationTypes().keyword(referenceNormalisedTo_))));
             }
-            else if (referenceNormalisation_ == StructureFactors::AverageOfSquaresNormalisation)
-            {
-                auto bbar = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
-                std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
-                               [](auto b, auto ref) { return ref / b; });
-            }
+
+            // Apply normalisation factors to the data
+            std::transform(referenceData.values().begin(), referenceData.values().end(), factors.begin(),
+                           referenceData.values().begin(), std::multiplies<>());
         }
 
         // Get Q-range and window function to use for transformation of F(Q) to G(r)
@@ -141,12 +161,12 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
-    if (normalisation_ == StructureFactors::NoNormalisation)
+    if (normaliseTo_ == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
-    else if (normalisation_ == StructureFactors::AverageOfSquaresNormalisation)
-        Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
-    else if (normalisation_ == StructureFactors::SquareOfAverageNormalisation)
+    else if (normaliseTo_ == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
+    else if (normaliseTo_ == StructureFactors::SquareOfAverageNormalisation)
+        Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
     if (referenceWindowFunction_ == WindowFunction::Form::None)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");
     else
@@ -184,7 +204,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted S(Q)
-    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation_);
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normaliseTo_);
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
@@ -246,7 +266,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         weightedGR.setUpPartials(unweightedSQ.atomTypeMix());
 
     // Calculate weighted g(r)
-    calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation_);
+    calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =

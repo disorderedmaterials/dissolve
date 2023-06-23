@@ -11,18 +11,9 @@ CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType n
                                                        std::shared_ptr<SelectProcedureNode> site1,
                                                        std::shared_ptr<SelectProcedureNode> site2,
                                                        std::shared_ptr<SelectProcedureNode> site3)
-    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Calculate), sites_{site0, site1, site2, site3}, value_{0.0, 0.0, 0.0}
+    : ProcedureNode(nodeType, {ProcedureNode::AnalysisContext}, ProcedureNode::NodeClass::Calculate),
+      sites_{site0, site1, site2, site3}, value_{0.0, 0.0, 0.0}
 {
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool CalculateProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

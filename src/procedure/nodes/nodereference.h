@@ -6,8 +6,9 @@
 #include "procedure/nodes/node.h"
 
 // Forward Declarations
-class CoreData;
 class AnalyseModule;
+class CoreData;
+class Procedure;
 
 // Procedure Node Reference
 class ProcedureNodeReference

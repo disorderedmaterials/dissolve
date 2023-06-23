@@ -13,7 +13,7 @@
 
 Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedureNode> target,
                                                ProcedureNode::NodeContext normalisationContext)
-    : ProcedureNode(ProcedureNode::NodeType::Process2D), sourceData_(target),
+    : ProcedureNode(ProcedureNode::NodeType::Process2D, {ProcedureNode::AnalysisContext}), sourceData_(target),
       normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
     keywords_.setOrganisation("Options", "Control");
@@ -29,20 +29,10 @@ Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedur
                                         exportFileAndFormat_, "EndExport");
 
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
-                                           normalisationBranch_, this, ProcedureNode::OperateContext);
+                                           normalisationBranch_);
 
     // Initialise data pointer
     processedData_ = nullptr;
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool Process2DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

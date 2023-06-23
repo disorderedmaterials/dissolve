@@ -10,7 +10,8 @@
 #include "keywords/speciesvector.h"
 #include "procedure/nodes/pick.h"
 
-TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Transmute)
+TransmuteProcedureNode::TransmuteProcedureNode()
+    : ProcedureNode(ProcedureNode::NodeType::Transmute, {ProcedureNode::GenerationContext})
 {
     keywords_.setOrganisation("Options", "Source");
     keywords_.add<SpeciesVectorKeyword>("Species", "Species types to transmute into the target species", speciesToTransmute_);
@@ -24,12 +25,6 @@ TransmuteProcedureNode::TransmuteProcedureNode() : ProcedureNode(ProcedureNode::
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool TransmuteProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
-}
 
 // Return whether a name for the node must be provided
 bool TransmuteProcedureNode::mustBeNamed() const { return false; }

@@ -15,7 +15,7 @@
 
 Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
                                                ProcedureNode::NodeContext normalisationContext)
-    : ProcedureNode(ProcedureNode::NodeType::Process1D), sourceData_(target),
+    : ProcedureNode(ProcedureNode::NodeType::Process1D, {ProcedureNode::AnalysisContext}), sourceData_(target),
       normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
     keywords_.setOrganisation("Options", "Source");
@@ -34,20 +34,10 @@ Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedur
                                         exportFileAndFormat_, "EndExport");
 
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
-                                           normalisationBranch_, this, ProcedureNode::OperateContext);
+                                           normalisationBranch_);
 
     // Initialise data pointer
     processedData_ = nullptr;
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

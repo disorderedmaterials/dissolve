@@ -43,16 +43,6 @@ class SiteStack
     Vec3<double> centreOfGeometry(const Molecule &mol, const Box *box, const std::vector<int> &indices);
     // Calculate (mass-weighted) coordinate centre of atoms in the given molecule
     Vec3<double> centreOfMass(const Molecule &mol, const Box *box, const std::vector<int> &indices);
-    // Create stack of static, unoriented sites
-    bool createStatic();
-    // Create stack of static, oriented sites
-    bool createStaticOriented();
-    // Create stack from dynamic site definition
-    bool createDynamic();
-    // Create stack from fragment
-    bool createFragment();
-    // Create stack of fragment, oriented sites
-    bool createFragmentOriented();
 
     public:
     // Create stack for specified Configuration and site
