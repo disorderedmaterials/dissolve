@@ -1,3 +1,4 @@
+- [Version 1.1.3, released 26 May 2023](https://github.com/disorderedmaterials/dissolve/releases/tag/1.1.3)
 - [Version 1.1.2, released 3 May 2023](https://github.com/disorderedmaterials/dissolve/releases/tag/1.1.2)
 - [Version 1.1.1, released 13 April 2023](https://github.com/disorderedmaterials/dissolve/releases/tag/1.1.1)
 - [Version 1.1.0, released 22 March 2023](https://github.com/disorderedmaterials/dissolve/releases/tag/1.1.0)
@@ -25,4 +26,3 @@
 - [Version 0.8.5, released 21 October 2021](https://github.com/disorderedmaterials/dissolve/releases/tag/0.8.5)
 - [Version 0.8.4, released 18 October 2021](https://github.com/disorderedmaterials/dissolve/releases/tag/0.8.4)
 - [Version 0.8.3, released 13 September 2021](https://github.com/disorderedmaterials/dissolve/releases/tag/0.8.3)
-- [Version 0.8.2, released 20 July 2021](https://github.com/disorderedmaterials/dissolve/releases/tag/0.8.2)
