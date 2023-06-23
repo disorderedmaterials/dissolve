@@ -14,8 +14,7 @@ class SimplePotentialFunctions
     {
         Harmonic,  /* Harmonic well potential */
         SoftSphere, /* Soft sphere (power law) potential */
-        LJSphere,
-        LJCylinder
+        LJSphere /* Lennard-Jones spherical potential */
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
