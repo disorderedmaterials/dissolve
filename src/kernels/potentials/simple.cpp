@@ -77,14 +77,16 @@ double SimplePotential::energy(const Atom &i, const Box *box) const
         case (SimplePotentialFunctions::Form::Harmonic):
             return 0.5 * interactionPotential_.parameters()[0] * box->minimumDistanceSquared(i.r(), origin_);
         case (SimplePotentialFunctions::Form::SoftSphere):
-            return interactionPotential_.parameters()[0] * pow(interactionPotential_.parameters()[1] / box->minimumDistance(i.r(), origin_), interactionPotential_.parameters()[2]);
+            return interactionPotential_.parameters()[0] *
+                   pow(interactionPotential_.parameters()[1] / box->minimumDistance(i.r(), origin_),
+                       interactionPotential_.parameters()[2]);
         case (SimplePotentialFunctions::Form::LJSphere):
-            {
-                auto r = box->minimumDistance(i.r(), origin_);
-                auto epsilon = interactionPotential_.parameters()[0];
-                auto sigma = interactionPotential_.parameters()[1];
-                return 4.0 * epsilon * (pow(sigma / r, 12) - pow(sigma / r, 6));
-            }
+        {
+            auto r = box->minimumDistance(i.r(), origin_);
+            auto epsilon = interactionPotential_.parameters()[0];
+            auto sigma = interactionPotential_.parameters()[1];
+            return 4.0 * epsilon * (pow(sigma / r, 12) - pow(sigma / r, 6));
+        }
         default:
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
     }
@@ -108,7 +110,7 @@ void SimplePotential::force(const Atom &i, const Box *box, Vec3<double> &f) cons
         {
             auto epsilon = interactionPotential_.parameters()[0];
             auto sigma = interactionPotential_.parameters()[1];
-            forceMultiplier = -48.0 * epsilon * (pow(r, 12) - 0.5 * pow(r, 6)) / (r * sigma);        
+            forceMultiplier = -48.0 * epsilon * (pow(r, 12) - 0.5 * pow(r, 6)) / (r * sigma);
             break;
         }
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
