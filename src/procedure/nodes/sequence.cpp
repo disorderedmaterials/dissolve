@@ -531,14 +531,14 @@ SerialisedValue ProcedureNodeSequence::serialise() const
 }
 
 // Read values from a serialisable value
-void ProcedureNodeSequence::deserialise(const SerialisedValue &node, const CoreData &data)
+void ProcedureNodeSequence::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    for (auto &[k, v] : node.as_table())
+    toMap(node, [this, &coreData](const auto& key, const auto& value) 
     {
-        ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(v.at("type"));
+        ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(value.at("type"));
         auto result = ProcedureNodeRegistry::create(type);
         appendNode(result, {});
-        result->deserialise(v, data);
-        result->setName(k);
-    }
+        result->deserialise(value, coreData);
+        result->setName(key);
+    });
 }
