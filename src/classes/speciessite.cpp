@@ -675,14 +675,6 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
                            joinStrings(staticOriginAtomIndices(), "  ", [](const auto i) { return i + 1; })))
         return false;
 
-    if (!fragment_.definitionString().empty() &&
-        !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
-        return false;
-
-    if (!fragment_.definitionString().empty() &&
-        !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
-        return false;
-
     // Origin mass weighted?
     if (originMassWeighted_ && (!parser.writeLineF("{}  {}  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
         return false;
@@ -709,6 +701,11 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     if (!dynamicAtomTypes_.empty() &&
         !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(AtomTypeKeyword),
                            joinStrings(dynamicAtomTypes_, "  ", [](const auto &at) { return at->name(); })))
+        return false;
+
+    // Fragment definition string
+    if (!fragment_.definitionString().empty() &&
+        !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
         return false;
 
     // Write end of site definition
