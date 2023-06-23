@@ -73,7 +73,10 @@ SerialisedValue ParametersProcedureNode::serialise() const
 // Read values from a serialisable value
 void ParametersProcedureNode::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    for (auto &[k, v] : node.as_table())
-        if (k != "type")
-            parameters_.push_back(std::make_shared<ExpressionVariable>(k, toml::get<ExpressionValue>(v)));
+    toMap(node,
+          [this](const auto &key, const auto &value)
+          {
+              if (key != "type")
+                  parameters_.push_back(std::make_shared<ExpressionVariable>(key, toml::get<ExpressionValue>(value)));
+          });
 }
