@@ -153,6 +153,7 @@ class SpeciesSite : public Serialisable
 
     public:
     const NETADefinition &fragment() const;
+    bool setFragmentDefinitionString(std::string_view definitionString);
 
     /*
      * Advanced Sites
@@ -176,16 +177,6 @@ class SpeciesSite : public Serialisable
     const std::vector<std::vector<int>> &sitesXAxisAtomsIndices() const;
     // Return atom indices indicating the y axis with the origins of unique sites.
     const std::vector<std::vector<int>> &sitesYAxisAtomsIndices() const;
-
-    /*
-     * Fragment Site Definition
-     */
-    private:
-    NETADefinition fragment_;
-
-    public:
-    const NETADefinition &fragment() const;
-    bool setFragmentDefinitionString(std::string_view definitionString);
 
     /*
      * Generation from Parent
