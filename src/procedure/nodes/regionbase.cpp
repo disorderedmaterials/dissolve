@@ -6,7 +6,7 @@
 #include "keywords/double.h"
 
 RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeType)
-    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Region)
+    : ProcedureNode(nodeType, {ProcedureNode::GenerationContext}, ProcedureNode::NodeClass::Region)
 {
     keywords_.setOrganisation("Options", "Grid");
     keywords_.add<DoubleKeyword>("VoxelSize", "Voxel size (length) guiding the coarseness / detail of the region", voxelSize_,
@@ -17,12 +17,6 @@ RegionProcedureNodeBase::RegionProcedureNodeBase(ProcedureNode::NodeType nodeTyp
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool RegionProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
-}
 
 // Return whether a name for the node must be provided
 bool RegionProcedureNodeBase::mustBeNamed() const { return true; }

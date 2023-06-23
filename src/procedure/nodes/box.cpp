@@ -10,8 +10,8 @@
 #include "keywords/vec3nodevalue.h"
 
 BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
-    : ProcedureNode(ProcedureNode::NodeType::Box), angles_(std::move(angles)), lengths_(std::move(lengths)),
-      nonPeriodic_(nonPeriodic)
+    : ProcedureNode(ProcedureNode::NodeType::Box, {ProcedureNode::GenerationContext}), angles_(std::move(angles)),
+      lengths_(std::move(lengths)), nonPeriodic_(nonPeriodic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<Vec3NodeValueKeyword>("Lengths", "Box lengths", lengths_, this, Vec3Labels::ABCLabels);
@@ -22,12 +22,6 @@ BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angl
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool BoxProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
-}
 
 // Return whether a name for the node must be provided
 bool BoxProcedureNode::mustBeNamed() const { return false; }

@@ -28,8 +28,6 @@ class SelectProcedureNode : public ProcedureNode
      * Identity
      */
     public:
-    // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context) override;
     // Set node name
     void setName(std::string_view name) override;
 

@@ -14,7 +14,7 @@ class NodeValue;
 class NodeBranchKeyword : public KeywordBase
 {
     public:
-    NodeBranchKeyword(ProcedureNodeSequence &data, ProcedureNode *parentNode, ProcedureNode::NodeContext branchContext);
+    NodeBranchKeyword(ProcedureNodeSequence &data);
     ~NodeBranchKeyword() override = default;
 
     /*
@@ -23,10 +23,6 @@ class NodeBranchKeyword : public KeywordBase
     private:
     // Reference to data
     ProcedureNodeSequence &data_;
-    // Parent ProcedureNode
-    NodeRef parentNode_;
-    // Context for the target branch
-    ProcedureNode::NodeContext branchContext_;
 
     /*
      * Arguments

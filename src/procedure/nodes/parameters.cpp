@@ -5,7 +5,8 @@
 #include "expression/variable.h"
 #include "keywords/expressionvariablevector.h"
 
-ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Parameters)
+ParametersProcedureNode::ParametersProcedureNode()
+    : ProcedureNode(ProcedureNode::NodeType::Parameters, {ProcedureNode::AnyContext})
 {
     keywords_.setOrganisation("Options", "Data");
     keywords_.add<ExpressionVariableVectorKeyword>("Parameter", "Defined parameters", parameters_, this);
@@ -14,12 +15,6 @@ ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool ParametersProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context != ProcedureNode::NoContext);
-}
 
 // Return whether a name for the node must be provided
 bool ParametersProcedureNode::mustBeNamed() const { return false; }
