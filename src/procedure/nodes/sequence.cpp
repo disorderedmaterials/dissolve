@@ -533,12 +533,13 @@ SerialisedValue ProcedureNodeSequence::serialise() const
 // Read values from a serialisable value
 void ProcedureNodeSequence::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    toMap(node, [this, &coreData](const auto& key, const auto& value) 
-    {
-        ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(value.at("type"));
-        auto result = ProcedureNodeRegistry::create(type);
-        appendNode(result, {});
-        result->deserialise(value, coreData);
-        result->setName(key);
-    });
+    toMap(node,
+          [this, &coreData](const auto &key, const auto &value)
+          {
+              ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(value.at("type"));
+              auto result = ProcedureNodeRegistry::create(type);
+              appendNode(result, {});
+              result->deserialise(value, coreData);
+              result->setName(key);
+          });
 }

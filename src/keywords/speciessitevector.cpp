@@ -107,20 +107,21 @@ SerialisedValue SpeciesSiteVectorKeyword::serialise() const
 // Read values from a serialisable value
 void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    toVector(node, [this,&coreData](const auto &item)
-    {
-        auto species = coreData.findSpecies(toml::find<std::string>(item, "species"));
-        if (species)
-        {
-            auto site = species->findSite(toml::find<std::string>(item, "site"));
-            if (site)
-                data_.push_back(site);
-            else
-                Messenger::error("Cannot find Site {}", toml::find<std::string>(item, "site"));
-        }
-        else
-            Messenger::error("Cannot find Species {}", toml::find<std::string>(item, "species"));
-    });
+    toVector(node,
+             [this, &coreData](const auto &item)
+             {
+                 auto species = coreData.findSpecies(toml::find<std::string>(item, "species"));
+                 if (species)
+                 {
+                     auto site = species->findSite(toml::find<std::string>(item, "site"));
+                     if (site)
+                         data_.push_back(site);
+                     else
+                         Messenger::error("Cannot find Site {}", toml::find<std::string>(item, "site"));
+                 }
+                 else
+                     Messenger::error("Cannot find Species {}", toml::find<std::string>(item, "species"));
+             });
 }
 
 // Has not changed from initial value

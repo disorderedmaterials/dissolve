@@ -191,7 +191,7 @@ std::vector<Configuration *> ModuleLayer::allTargetedConfigurations() const
 // Express as a serialisable value
 SerialisedValue ModuleLayer::serialise() const
 {
-  SerialisedValue result = {{"frequency", frequency_}};
+    SerialisedValue result = {{"frequency", frequency_}};
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
         result["disabled"] = true;
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::EnergyStability))

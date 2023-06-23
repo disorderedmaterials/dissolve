@@ -167,23 +167,24 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
-	toVector(node, [this](const auto &item)
-        {
-            // Locate the named node - don't prune by type yet (we'll check that in setNode())
-            // ConstNodeRef noderef = findNode(std::string(n.as_string()));
-            std::string nodeName = item.as_string();
+        toVector(node,
+                 [this](const auto &item)
+                 {
+                     // Locate the named node - don't prune by type yet (we'll check that in setNode())
+                     // ConstNodeRef noderef = findNode(std::string(n.as_string()));
+                     std::string nodeName = item.as_string();
 
-            ConstNodeRef noderef = findNode(nodeName);
-            if (!noderef)
-                throw toml::syntax_error(
-                    fmt::format("Node '{}' given to keyword {} doesn't exist.\n", std::string(item.as_string()), name()),
-                    item.location());
+                     ConstNodeRef noderef = findNode(nodeName);
+                     if (!noderef)
+                         throw toml::syntax_error(fmt::format("Node '{}' given to keyword {} doesn't exist.\n",
+                                                              std::string(item.as_string()), name()),
+                                                  item.location());
 
-            if (!validNode(noderef.get(), name()))
-                throw toml::syntax_error(fmt::format("Invalid node: {}", name()), item.location());
+                     if (!validNode(noderef.get(), name()))
+                         throw toml::syntax_error(fmt::format("Invalid node: {}", name()), item.location());
 
-            data_.push_back(std::dynamic_pointer_cast<const N>(noderef));
-        });
+                     data_.push_back(std::dynamic_pointer_cast<const N>(noderef));
+                 });
     }
 
     /*
