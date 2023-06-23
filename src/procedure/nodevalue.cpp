@@ -170,8 +170,6 @@ void NodeValue::deserialise(const SerialisedValue &node)
             else if constexpr (std::is_same_v<T, toml::string>)
             {
                 type_ = ExpressionNodeValue;
-                // FIXME: This needs to be handled properly when we
-                // start serialising expression
                 expression_.create(std::string_view(std::string(arg)), {});
             }
         },
