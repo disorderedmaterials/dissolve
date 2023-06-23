@@ -7,7 +7,9 @@
 #include "classes/site.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
-#include "templates/algorithms.h"
+#include "neta/matchedgroup.h"
+#include "neta/neta.h"
+#include <memory>
 #include <numeric>
 
 SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), type_(type), originMassWeighted_(false) {}
@@ -60,7 +62,11 @@ void SpeciesSite::setType(SpeciesSite::SiteType type)
 SpeciesSite::SiteType SpeciesSite::type() const { return type_; }
 
 // Return whether the site has defined axes sites
-bool SpeciesSite::hasAxes() const { return type_ == SiteType::Static && !(xAxisAtoms_.empty() || yAxisAtoms_.empty()); }
+bool SpeciesSite::hasAxes() const
+{
+    return (type_ == SiteType::Static && !(xAxisAtoms_.empty() && yAxisAtoms_.empty())) ||
+           (type_ == SiteType::Fragment && fragment_.hasAxes());
+}
 
 /*
  * Static Site Definition
@@ -131,12 +137,6 @@ std::vector<int> SpeciesSite::originAtomIndices() const
 // Set whether the origin should be calculated with mass-weighted positions
 void SpeciesSite::setOriginMassWeighted(bool b)
 {
-    if (type_ != SpeciesSite::SiteType::Static)
-    {
-        Messenger::error("Setting mass weighting for a non-static site is not permitted.\n");
-        return;
-    }
-
     originMassWeighted_ = b;
 
     ++version_;
@@ -321,6 +321,9 @@ bool SpeciesSite::setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &typ
 // Return atom types for selection as sites
 const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::atomTypes() const { return atomTypes_; }
 
+// Return fragment definition
+const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
+
 /*
  * Generation from Parent
  */
@@ -409,7 +412,99 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
         }
         return sites;
     }
+    else if (type_ == SiteType::Fragment)
+    {
+        std::vector<std::shared_ptr<Site>> sites;
+        double mass;
+        std::vector<std::vector<int>> matchedIndices;
+        for (auto &i : parent_->atoms())
+        {
+            std::vector<int> xAxisIndices, yAxisIndices;
+            Vec3<double> v, origin, x, y, z;
+            if (fragment_.matches(&i))
+            {
+                // Determine the path of matched atoms - i.e. the atoms in the fragment.
+                auto matchedAtoms = fragment_.matchedPath(&i).set();
 
+                // Create vector of indices of the matched atoms.
+                std::vector<int> matchedAtomIndices(matchedAtoms.size());
+                std::transform(matchedAtoms.begin(), matchedAtoms.end(), matchedAtomIndices.begin(),
+                               [](const auto &atom) { return atom->index(); });
+
+                // Check if the fragment we have found is unique.
+                std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
+                if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                    continue;
+
+                // If it's unique, remember it and proceed.
+                matchedIndices.push_back(std::move(matchedAtomIndices));
+
+                // Identifiers which label origin, x and y axis atoms.
+                auto identifiers = fragment_.matchedPath(&i).identifiers();
+
+                // Compute the origin.
+                auto originAtoms = identifiers["origin"];
+
+                if (originMassWeighted_)
+                {
+                    double massNorm = 0.0;
+                    for (const auto &atom : originAtoms)
+                    {
+                        mass = AtomicMass::mass(atom->Z());
+                        origin += atom->r() * mass;
+                        massNorm += mass;
+                    }
+                    origin /= massNorm;
+                }
+                else
+                {
+                    for (const auto &atom : originAtoms)
+                    {
+                        origin += atom->r();
+                    }
+                    origin /= originAtoms.size();
+                }
+
+                // Fragment site definition has orientation.
+                if (hasAxes())
+                {
+
+                    auto xAxisAtoms = identifiers["x"];
+                    auto yAxisAtoms = identifiers["y"];
+
+                    Vec3<double> v;
+
+                    // Get average position of supplied x-axis atoms
+                    for (const auto &atom : xAxisAtoms)
+                        v += atom->r();
+                    v /= xAxisAtoms.size();
+
+                    // Get vector from site origin and normalise it
+                    auto x = v - origin;
+                    x.normalise();
+
+                    // Get average position of supplied y-axis atoms
+                    v.zero();
+                    for (const auto &atom : yAxisAtoms)
+                        v += atom->r();
+                    v /= yAxisAtoms.size();
+
+                    // Get vector from site origin, normalise it, and orthogonalise
+                    auto y = v - origin;
+                    y.orthogonalise(x);
+                    y.normalise();
+
+                    // Calculate z vector from cross product of x and y
+                    auto z = x * y;
+
+                    sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, z));
+                }
+                else
+                    sites.push_back(std::make_shared<Site>(nullptr, origin));
+            }
+        }
+        return sites;
+    }
     return {};
 }
 
@@ -424,6 +519,8 @@ EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
                                                  {{SpeciesSite::AtomTypeKeyword, "AtomType", OptionArguments::OneOrMore},
                                                   {SpeciesSite::DynamicKeyword, "Dynamic"},
                                                   {SpeciesSite::ElementKeyword, "Element", OptionArguments::OneOrMore},
+                                                  {SpeciesSite::FragmentKeyword, "Fragment"},
+                                                  {SpeciesSite::DescriptionKeyword, "Description", 1},
                                                   {SpeciesSite::EndSiteKeyword, "EndSite"},
                                                   {SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore},
                                                   {SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1},
@@ -486,6 +583,16 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                         error = true;
                         break;
                     }
+                }
+                break;
+            case (SpeciesSite::FragmentKeyword):
+                type_ = SiteType::Fragment;
+                break;
+            case (SpeciesSite::DescriptionKeyword):
+                if (!fragment_.create(parser.args(1)))
+                {
+                    Messenger::error("Failed to parse NETA description for site '{}'.\n", name());
+                    error = true;
                 }
                 break;
             case (SpeciesSite::EndSiteKeyword):
@@ -561,12 +668,24 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // Site type
-    if (type_ == SiteType::Dynamic && !parser.writeLineF("{}  {}\n", prefix, keywords().keyword(DynamicKeyword)))
-        return false;
+    if (type_ == SiteType::Dynamic)
+    {
+        if (!parser.writeLineF("{}  {}\n", prefix, keywords().keyword(DynamicKeyword)))
+            return false;
+    }
+    else if (type_ == SiteType::Fragment)
+    {
+        if (!parser.writeLineF("{}  {}\n", prefix, keywords().keyword(FragmentKeyword)))
+            return false;
+    }
 
     // Origin atom indices
     if (!originAtoms_.empty() && !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(OriginKeyword),
                                                     joinStrings(originAtomIndices(), "  ", [](const auto i) { return i + 1; })))
+        return false;
+
+    if (!fragment_.definitionString().empty() &&
+        !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
         return false;
 
     // Origin mass weighted?

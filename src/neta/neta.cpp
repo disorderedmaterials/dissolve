@@ -146,6 +146,11 @@ std::string_view NETADefinition::definitionString() const { return definitionStr
 // Return whether the definition is valid
 bool NETADefinition::isValid() const { return valid_; }
 
+// Add an identifier
+void NETADefinition::addIdentifier(std::string identifier) { identifiers_.insert(identifier); }
+// Return identifiers
+const std::set<std::string> &NETADefinition::identifiers() const { return identifiers_; }
+
 /*
  * Matching
  */
@@ -168,4 +173,13 @@ NETAMatchedGroup NETADefinition::matchedPath(const SpeciesAtom *i) const
         return {};
 
     return matchPath;
+}
+
+/*
+ * Axes
+ */
+bool NETADefinition::hasAxes() const
+{
+    return (std::find(identifiers_.begin(), identifiers_.end(), "x") != identifiers_.end()) &&
+           (std::find(identifiers_.begin(), identifiers_.end(), "y") != identifiers_.end());
 }

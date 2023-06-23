@@ -49,6 +49,10 @@ class SiteStack
     bool createStaticOriented();
     // Create stack from dynamic site definition
     bool createDynamic();
+    // Create stack from fragment
+    bool createFragment();
+    // Create stack of fragment, oriented sites
+    bool createFragmentOriented();
 
     public:
     // Create stack for specified Configuration and site
