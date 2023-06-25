@@ -403,10 +403,7 @@ bool SpeciesSite::generateUniqueSites()
             break;
         }
         default:
-        {
-            Messenger::print("Can't generate unique sites for site '{}'.", name());
-            return false;
-        }
+            return Messenger::error("Can't generate unique sites for site '{}'.", name());
     }
 
     return true;
