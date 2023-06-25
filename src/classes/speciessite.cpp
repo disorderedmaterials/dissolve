@@ -400,7 +400,7 @@ bool SpeciesSite::generateUniqueSites()
                     }
                 }
             }
-            return true;
+            break;
         }
         default:
         {
