@@ -410,6 +410,8 @@ bool SpeciesSite::generateUniqueSites()
             return false;
         }
     }
+
+    return true;
 }
 
 // Return number of unique sites
