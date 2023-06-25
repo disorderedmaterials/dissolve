@@ -344,11 +344,10 @@ bool SpeciesSite::generateUniqueSites()
     switch (type_)
     {
         case (SiteType::Static):
-        {
             sitesOriginAtomsIndices_.push_back(staticOriginAtomIndices());
             sitesXAxisAtomsIndices_.push_back(staticXAxisAtomIndices());
             sitesYAxisAtomsIndices_.push_back(staticYAxisAtomIndices());
-        }
+            break;
         case (SiteType::Dynamic):
         {
             for (auto &i : parent_->atoms())
