@@ -349,7 +349,6 @@ bool SpeciesSite::generateUniqueSites()
             sitesYAxisAtomsIndices_.push_back(staticYAxisAtomIndices());
             break;
         case (SiteType::Dynamic):
-        {
             for (auto &i : parent_->atoms())
             {
                 // Valid element or atom type?
@@ -357,8 +356,7 @@ bool SpeciesSite::generateUniqueSites()
                     std::find(dynamicAtomTypes_.begin(), dynamicAtomTypes_.end(), i.atomType()) != dynamicAtomTypes_.end())
                     sitesOriginAtomsIndices_.push_back({i.index()});
             }
-            return true;
-        }
+            break;
         case (SiteType::Fragment):
         {
             std::vector<std::vector<int>> matchedIndices;
