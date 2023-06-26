@@ -41,6 +41,7 @@ add_library(
   regionbase.cpp
   registry.cpp
   remove.cpp
+  rotate.cpp
   select.cpp
   sequence.cpp
   simpleglobalpotential.cpp
@@ -88,6 +89,7 @@ add_library(
   regionbase.h
   registry.h
   remove.h
+  rotate.h
   transmute.h
   select.h
   sequence.h

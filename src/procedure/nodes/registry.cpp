@@ -34,6 +34,7 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/remove.h"
+#include "procedure/nodes/rotate.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleglobalpotential.h"
 #include "procedure/nodes/simplerestraintpotential.h"
@@ -119,6 +120,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<SimpleRestraintPotentialProcedureNode>(ProcedureNode::NodeType::SimpleRestraintPotential,
                                                             "Restraint atoms of molecules to their current positions",
                                                             "Potentials");
+    // Fragments
+    registerProducer<RotateNode>(ProcedureNode::NodeType::Rotate, "Rotate fragment sites" "Fragments");
 }
 
 /*

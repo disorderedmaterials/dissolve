@@ -71,6 +71,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Process2D,
         Process3D,
         Remove,
+        Rotate,
         Select,
         Sequence,
         SimpleGlobalPotential,

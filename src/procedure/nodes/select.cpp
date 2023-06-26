@@ -17,7 +17,7 @@
 
 SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites, ProcedureNode::NodeContext forEachContext,
                                          bool axesRequired)
-    : ProcedureNode(ProcedureNode::NodeType::Select, {ProcedureNode::AnalysisContext}), speciesSites_(std::move(sites)),
+    : ProcedureNode(ProcedureNode::NodeType::Select, {ProcedureNode::AnalysisContext, ProcedureNode::GenerationContext}), speciesSites_(std::move(sites)),
       axesRequired_(axesRequired), forEachBranch_(forEachContext, *this, "ForEach")
 {
     inclusiveDistanceRange_.set(0.0, 5.0);

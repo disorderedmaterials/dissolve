@@ -60,6 +60,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Process2D, "Process2D"},
                      {ProcedureNode::NodeType::Process3D, "Process3D"},
                      {ProcedureNode::NodeType::Remove, "Remove"},
+                     {ProcedureNode::NodeType::Rotate, "Rotate"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
