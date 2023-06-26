@@ -179,6 +179,29 @@ class SpeciesSite : public Serialisable
     const std::vector<std::vector<int>> &sitesYAxisAtomsIndices() const;
 
     /*
+     * Advanced Sites
+     */
+    private:
+    // For each unique site, indices of atoms in the species which contribute to the origin of the site
+    std::vector<std::vector<int>> sitesOriginAtomsIndices_;
+    // For each unique site, indices of atoms in the species which indicate the x axis with the origin
+    std::vector<std::vector<int>> sitesXAxisAtomsIndices_;
+    // For each unique site, indices of atoms in the species which indicate the y axis with the origin, after orthogonalisation
+    std::vector<std::vector<int>> sitesYAxisAtomsIndices_;
+
+    public:
+    // Generate unique sites
+    bool generateUniqueSites();
+    // Number of unique sites
+    const int nSites() const;
+    // Return atom indices contributing to unique site origins
+    const std::vector<std::vector<int>> &sitesOriginAtomsIndices() const;
+    // Return atom indices indicating the x axis with the origins of unique sites.
+    const std::vector<std::vector<int>> &sitesXAxisAtomsIndices() const;
+    // Return atom indices indicating the y axis with the origins of unique sites.
+    const std::vector<std::vector<int>> &sitesYAxisAtomsIndices() const;
+
+    /*
      * Generation from Parent
      */
     public:
