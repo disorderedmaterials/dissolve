@@ -111,7 +111,6 @@ void SimplePotential::force(const Atom &i, const Box *box, Vec3<double> &f) cons
         {
             auto sigmar = interactionPotential_.parameters()[1] / r;
             auto sigmar6 = pow(sigmar, 6.0);
-            auto sigmar12 = sigmar6 * sigmar6;
             forceMultiplier = -48.0 * interactionPotential_.parameters()[0] * sigmar6 * (-sigmar6 + 0.5) / r;
             break;
         }
