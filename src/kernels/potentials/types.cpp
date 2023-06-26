@@ -7,7 +7,8 @@
 namespace ExternalPotentialTypes
 {
 // External Potential Types
-EnumOptions<ExternalPotentialType> types_("ExternalPotential", {{ExternalPotentialType::Spherical, "Spherical"}, {ExternalPotentialType::LJ, "LJ"}});
+EnumOptions<ExternalPotentialType> types_("ExternalPotential",
+                                          {{ExternalPotentialType::Spherical, "Spherical"}, {ExternalPotentialType::LJ, "LJ"}});
 
 // Return whether the supplied external potential type is valid
 std::optional<ExternalPotentialType> isType(std::string_view name)
