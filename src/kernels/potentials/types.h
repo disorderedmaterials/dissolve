@@ -12,7 +12,8 @@ namespace ExternalPotentialTypes
 // External Potential Types
 enum class ExternalPotentialType
 {
-    Spherical
+    Spherical,
+    Cylindrical
 };
 // Return whether the supplied external potential type is valid
 std::optional<ExternalPotentialType> isType(std::string_view name);

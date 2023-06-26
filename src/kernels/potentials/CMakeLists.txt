@@ -1,10 +1,12 @@
 add_library(
   potentials
   base.cpp
+  directional.cpp
   producer.cpp
   simple.cpp
   types.cpp
   base.h
+  directional.h
   producer.h
   simple.h
   types.h
