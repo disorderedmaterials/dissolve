@@ -180,16 +180,16 @@ void SpeciesTab::updateSitesTab()
         ui_.SiteAtomTypesEdit->clear();
         return;
     }
-    
-    switch(site->type())
+
+    switch (site->type())
     {
         case (SpeciesSite::SiteType::Static):
             ui_.SiteTypeCombo->setCurrentIndex(0);
             ui_.SiteDefinitionStack->setCurrentIndex(0);
 
             // Set origin atom indices
-            ui_.SiteOriginAtomsEdit->setText(
-                QString::fromStdString(joinStrings(site->staticOriginAtoms(), " ", [](const auto &i) { return siteName(*i); })));
+            ui_.SiteOriginAtomsEdit->setText(QString::fromStdString(
+                joinStrings(site->staticOriginAtoms(), " ", [](const auto &i) { return siteName(*i); })));
             ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
             // Set x axis atom indices
@@ -218,10 +218,10 @@ void SpeciesTab::updateSitesTab()
 
             // Set NETA description of fragment
             ui_.SiteFragmentDescriptionEdit->setText(QString::fromStdString(std::string(site->fragment().definitionString())));
-            
+
             // Determine if description is valid
             ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
-            break; 
+            break;
     }
     // If the current site has changed, also regenerate the SpeciesSite renderable
     if (ui_.SiteViewerWidget->siteViewer()->speciesSite() != site)
