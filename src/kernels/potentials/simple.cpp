@@ -115,6 +115,7 @@ void SimplePotential::force(const Atom &i, const Box *box, Vec3<double> &f) cons
             forceMultiplier = -48.0 * interactionPotential_.parameters()[0] * sigmar6 * (-sigmar6 + 0.5) / r;
             break;
         }
+        default:
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
     }
 
