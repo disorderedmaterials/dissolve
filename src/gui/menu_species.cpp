@@ -20,12 +20,12 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QQuickView>
 #include <qdialog.h>
 #include <qinputdialog.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <valarray>
-#include <QQuickView>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
