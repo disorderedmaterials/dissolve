@@ -337,7 +337,8 @@ const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
 // Update fragment definition
 bool SpeciesSite::setFragmentDefinitionString(std::string_view definitionString)
 {
-    fragment_.create(definitionString);
+    if (!fragment_.create(definitionString))
+        return false;
     return generateUniqueSites();
 }
 
