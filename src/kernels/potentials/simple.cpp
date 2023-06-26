@@ -83,9 +83,10 @@ double SimplePotential::energy(const Atom &i, const Box *box) const
         case (SimplePotentialFunctions::Form::LJSphere):
         {
             auto r = box->minimumDistance(i.r(), origin_);
-            auto epsilon = interactionPotential_.parameters()[0];
-            auto sigma = interactionPotential_.parameters()[1];
-            return 4.0 * epsilon * (pow(sigma / r, 12) - pow(sigma / r, 6));
+            auto sigmar = interactionPotential_.parameters()[1] / r;
+            auto sigmar6 = pow(sigmar, 6);
+            auto sigmar12 = sigmar6 * sigmar6;
+            return 4.0 * interactionPotential_.parameters()[0] * (sigmar12 - sigmar6);
         }
         default:
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
@@ -108,9 +109,10 @@ void SimplePotential::force(const Atom &i, const Box *box, Vec3<double> &f) cons
             break;
         case (SimplePotentialFunctions::Form::LJSphere):
         {
-            auto epsilon = interactionPotential_.parameters()[0];
-            auto sigma = interactionPotential_.parameters()[1];
-            forceMultiplier = -48.0 * epsilon * (pow(r, 12) - 0.5 * pow(r, 6)) / (r * sigma);
+            auto sigmar = interactionPotential_.parameters()[1] / r;
+            auto sigmar6 = pow(sigmar, 6.0);
+            auto sigmar12 = sigmar6 * sigmar6;
+            forceMultiplier = -48.0 * interactionPotential_.parameters()[0] * sigmar6 * (-sigmar6 + 0.5) / r;
             break;
         }
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
