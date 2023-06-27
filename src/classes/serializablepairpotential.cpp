@@ -42,7 +42,7 @@ SerialisedValue SerializablePairPotential::serialise() const
 {
     SerialisedValue pairPotentials = {
         {"range", range_},
-        {"delta", range_},
+        {"delta", delta_},
         {"includeCoulomb", atomTypeChargeSource_},
         {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(coulombTruncationScheme_)},
         {"shortRangeTruncation", PairPotential::shortRangeTruncationSchemes().serialise(shortRangeTruncationScheme_)}};
