@@ -302,6 +302,7 @@ bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
     return true;
 }
 
+// Express as a serialisable value
 SerialisedValue ProcedureNode::serialise() const
 {
     SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
