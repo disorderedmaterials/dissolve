@@ -74,10 +74,25 @@ void DirectionalPotential::setVector(Vec3<double> vector) { vector_ = vector; }
 // Calculate energy on specified atom
 double DirectionalPotential::energy(const Atom &i, const Box *box) const
 {
+    auto v = box->minimumVector(i.r(), origin_);
+    double xyyx, xzzx, yzzy, dist;
+    xyyx = vector_.x*v.y - vector_.y*v.x;
+    xzzx = vector_.x*v.z - vector_.z*v.x;
+    yzzy = vector_.y*v.z - vector_.z*v.y;
+    v.x = vector_.y*xyyx + vector_.z*xzzx;
+    v.y = vector_.z*yzzy - vector_.x*xyyx;
+    v.z = -vector_.x*xzzx - vector_.y*yzzy;
+    auto vecji = box->minimumImage(v, Vec3<double>{0.,0.,0.});
+    auto r = vecji.magnitude();
     switch (interactionPotential_.form())
     {
         case (DirectionalPotentialFunctions::Form::LJCylinder):
-            return 0.0;
+            {
+                auto sigmar = interactionPotential_.parameters()[1] / r;
+                auto sigmar6 = pow(sigmar, 6);
+                auto sigmar12 = sigmar6 * sigmar6;
+                return 4.0 * interactionPotential_.parameters()[0] * (sigmar12 - sigmar6);
+            }
         default:
             throw(std::runtime_error(fmt::format("Requested functional form of DirectionalPotential has not been implemented.\n")));
     }
@@ -87,16 +102,29 @@ double DirectionalPotential::energy(const Atom &i, const Box *box) const
 void DirectionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
 {
     // Get normalised vector and distance
-    auto vecji = box->minimumVector(i.r(), origin_);
-    auto r = vecji.magAndNormalise();
+
+    auto v = box->minimumVector(i.r(), origin_);
+    double xyyx, xzzx, yzzy, dist;
+    xyyx = vector_.x*v.y - vector_.y*v.x;
+    xzzx = vector_.x*v.z - vector_.z*v.x;
+    yzzy = vector_.y*v.z - vector_.z*v.y;
+    v.x = vector_.y*xyyx + vector_.z*xzzx;
+    v.y = vector_.z*yzzy - vector_.x*xyyx;
+    v.z = -vector_.x*xzzx - vector_.y*yzzy;
+    auto vecji = box->minimumImage(v, Vec3<double>{0.,0.,0.});
+    auto r = vecji.magnitude();
 
     // Calculate final force multiplier
     auto forceMultiplier = 0.0;
     switch (interactionPotential_.form())
     {
         case (DirectionalPotentialFunctions::Form::LJCylinder):
-            forceMultiplier = 1.0;
-            break;
+            {
+                auto sigmar = interactionPotential_.parameters()[1] / r;
+                auto sigmar6 = pow(sigmar, 6.0);
+                forceMultiplier = -48.0 * interactionPotential_.parameters()[0] * sigmar6 * (-sigmar6 + 0.5) / r;
+                break;
+            }
         default:
             throw(std::runtime_error(fmt::format("Requested functional form of DirectionalPotential has not been implemented.\n")));
     }
