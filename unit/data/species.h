@@ -163,4 +163,30 @@ const Species &geometricSpecies()
     }
     return geometric_;
 }
+
+// Return benzene test species
+const Species& benzeneSpecies()
+{
+    static Species benzene_;
+    if (benzene_.nAtoms() == 0)
+    {
+        benzene_.setName("Benzene");
+        benzene_.addAtom(Elements::C, {0.000000, 0.000000, 0.000000});
+        benzene_.addAtom(Elements::C, {1.400000, 0.000000, 0.000000});
+        benzene_.addAtom(Elements::C, {2.100000, 1.214000, 0.000000});
+        benzene_.addAtom(Elements::C, {1.400000, 2.428000, 0.000000});
+        benzene_.addAtom(Elements::C, {0.000000, 2.428000, 0.000000});
+        benzene_.addAtom(Elements::C, {-0.700000, 1.214000, 0.000000});
+        benzene_.addAtom(Elements::H, {0.000000, -1.080000, 0.000000});
+        benzene_.addAtom(Elements::H, {1.868000, -1.080000, 0.000000});
+        benzene_.addAtom(Elements::H, {3.004000, 0.134000, 0.000000});
+        benzene_.addAtom(Elements::H, {1.868000, 1.348000, 0.000000});
+        benzene_.addAtom(Elements::H, {0.000000, 1.348000, 0.000000});
+        benzene_.addAtom(Elements::H, {-1.136000, 0.134000, 0.000000});
+        benzene_.addMissingBonds();
+    }
+    return benzene_;
+}
+
+
 } // namespace UnitTest
