@@ -118,7 +118,7 @@ void Matrix3::print() const
 void Matrix3::zero() { std::fill(matrix_.begin(), matrix_.end(), 0.0); }
 
 // Return transpose of current matrix
-Matrix3 &Matrix3::transpose()
+Matrix3 &Matrix3::transpose() const
 {
     static Matrix3 A;
     A.matrix_[0] = matrix_[0];
