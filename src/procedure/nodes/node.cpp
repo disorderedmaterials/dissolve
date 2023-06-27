@@ -43,6 +43,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::CylindricalRegion, "CylindricalRegion"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
+                     {ProcedureNode::NodeType::IntegerCollect1D, "IntegerHistogram1D"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
                      {ProcedureNode::NodeType::OperateDivide, "OperateDivide"},
                      {ProcedureNode::NodeType::OperateExpression, "OperateExpression"},

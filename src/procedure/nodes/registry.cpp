@@ -17,6 +17,7 @@
 #include "procedure/nodes/customregion.h"
 #include "procedure/nodes/cylindricalregion.h"
 #include "procedure/nodes/generalregion.h"
+#include "procedure/nodes/integercollect1d.h"
 #include "procedure/nodes/integrate1d.h"
 #include "procedure/nodes/operatedivide.h"
 #include "procedure/nodes/operateexpression.h"
@@ -69,6 +70,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<Collect1DProcedureNode>(ProcedureNode::NodeType::Collect1D, "Bin 1D quantity into a histogram", "Data");
     registerProducer<Collect2DProcedureNode>(ProcedureNode::NodeType::Collect2D, "Bin 2D quantity into a histogram", "Data");
     registerProducer<Collect3DProcedureNode>(ProcedureNode::NodeType::Collect3D, "Bin 3D quantity into a histogram", "Data");
+    registerProducer<IntegerCollect1DProcedureNode>(ProcedureNode::NodeType::IntegerCollect1D,
+                                                    "Bin integer 1D value into a histogram", "Data");
     registerProducer<Integrate1DProcedureNode>(ProcedureNode::NodeType::Integrate1D, "Integrate the data in a 1D dataset",
                                                "Data");
     registerProducer<Process1DProcedureNode>(ProcedureNode::NodeType::Process1D, "Process 1D histogram data", "Data");
