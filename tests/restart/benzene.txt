@@ -187,9 +187,9 @@ Layer  'Analysis'
     Configuration  'Bulk'
     AngleRange  0.000000e+00  9.000000e+01  1.000000e+01
     SiteA  'Benzene'  'COG'
-    AxisA  ZAxis
+    AxisA  Z
     SiteB  'Benzene'  'COG'
-    AxisB  ZAxis
+    AxisB  Z
     ExcludeSameMolecule  True
   EndModule
 EndLayer
