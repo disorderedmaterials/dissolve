@@ -47,6 +47,7 @@ void SpeciesSite::clearDefinition()
     staticYAxisAtoms_.clear();
     dynamicElements_.clear();
     dynamicAtomTypes_.clear();
+    sitesAllAtomsIndices_.clear();
     sitesOriginAtomsIndices_.clear();
     sitesXAxisAtomsIndices_.clear();
     sitesYAxisAtomsIndices_.clear();
@@ -344,6 +345,7 @@ bool SpeciesSite::setFragmentDefinitionString(std::string_view definitionString)
 // Generate unique sites
 bool SpeciesSite::generateUniqueSites()
 {
+    sitesAllAtomsIndices_.clear();
     sitesOriginAtomsIndices_.clear();
     sitesXAxisAtomsIndices_.clear();
     sitesYAxisAtomsIndices_.clear();
@@ -351,6 +353,9 @@ bool SpeciesSite::generateUniqueSites()
     switch (type_)
     {
         case (SiteType::Static):
+            sitesAllAtomsIndices_.push_back(staticOriginAtomIndices());
+            sitesAllAtomsIndices_.back().insert(sitesAllAtomsIndices_.back().begin(), staticXAxisAtomIndices().begin(), staticXAxisAtomIndices().end());
+            sitesAllAtomsIndices_.back().insert(sitesAllAtomsIndices_.back().begin(), staticYAxisAtomIndices().begin(), staticYAxisAtomIndices().end());
             sitesOriginAtomsIndices_.push_back(staticOriginAtomIndices());
             sitesXAxisAtomsIndices_.push_back(staticXAxisAtomIndices());
             sitesYAxisAtomsIndices_.push_back(staticYAxisAtomIndices());
@@ -362,11 +367,11 @@ bool SpeciesSite::generateUniqueSites()
                 if ((std::find(dynamicElements_.begin(), dynamicElements_.end(), i.Z()) != dynamicElements_.end()) ||
                     std::find(dynamicAtomTypes_.begin(), dynamicAtomTypes_.end(), i.atomType()) != dynamicAtomTypes_.end())
                     sitesOriginAtomsIndices_.push_back({i.index()});
+                    sitesOriginAtomsIndices_.push_back({i.index()});
             }
             break;
         case (SiteType::Fragment):
         {
-            std::vector<std::vector<int>> matchedIndices;
             for (auto &i : parent_->atoms())
             {
                 if (fragment_.matches(&i))
@@ -382,11 +387,11 @@ bool SpeciesSite::generateUniqueSites()
 
                     // Check if the fragment we have found is unique.
                     std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
-                    if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                    if (std::find(sitesAllAtomsIndices_.begin(), sitesAllAtomsIndices_.end(), matchedAtomIndices) != sitesAllAtomsIndices_.end())
                         continue;
 
                     // If it's unique, remember it and proceed.
-                    matchedIndices.push_back(std::move(matchedAtomIndices));
+                    sitesAllAtomsIndices_.push_back(std::move(matchedAtomIndices));
 
                     auto identifiers = matchedGroup.identifiers();
 
@@ -417,7 +422,9 @@ bool SpeciesSite::generateUniqueSites()
 }
 
 // Return number of unique sites
-const int SpeciesSite::nSites() const { return sitesOriginAtomsIndices_.size(); }
+const int SpeciesSite::nSites() const { return sitesAllAtomsIndices_.size(); }
+// Return atom indices corresponding to unique sites
+const std::vector<std::vector<int>> &SpeciesSite::sitesAllAtomsIndices() const { return sitesAllAtomsIndices_; }
 // Return atom indices contributing to unique site origins
 const std::vector<std::vector<int>> &SpeciesSite::sitesOriginAtomsIndices() const { return sitesOriginAtomsIndices_; }
 // Return atom indices indicating the x axis with the origins of unique sites.
@@ -478,10 +485,10 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
             y.orthogonalise(x);
             y.normalise();
 
-            sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, x * y));
+            sites.push_back(std::make_shared<OrientedSite>(this, i, nullptr, origin, x, y, x * y));
         }
         else
-            sites.push_back(std::make_shared<Site>(nullptr, origin));
+            sites.push_back(std::make_shared<Site>(this, i, nullptr, origin));
     }
     return sites;
 }
