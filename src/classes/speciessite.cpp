@@ -353,21 +353,30 @@ bool SpeciesSite::generateUniqueSites()
     switch (type_)
     {
         case (SiteType::Static):
-            sitesAllAtomsIndices_.push_back(staticOriginAtomIndices());
-            sitesAllAtomsIndices_.back().insert(sitesAllAtomsIndices_.back().begin(), staticXAxisAtomIndices().begin(), staticXAxisAtomIndices().end());
-            sitesAllAtomsIndices_.back().insert(sitesAllAtomsIndices_.back().begin(), staticYAxisAtomIndices().begin(), staticYAxisAtomIndices().end());
-            sitesOriginAtomsIndices_.push_back(staticOriginAtomIndices());
-            sitesXAxisAtomsIndices_.push_back(staticXAxisAtomIndices());
-            sitesYAxisAtomsIndices_.push_back(staticYAxisAtomIndices());
-            break;
+            {
+                std::vector<int> atomIndices;
+                auto originAtomIndices = staticOriginAtomIndices();
+                auto xAxisAtomIndices = staticXAxisAtomIndices();
+                auto yAxisAtomIndices = staticYAxisAtomIndices();
+                atomIndices.insert(atomIndices.end(), originAtomIndices.begin(), originAtomIndices.end());
+                atomIndices.insert(atomIndices.end(), xAxisAtomIndices.begin(), xAxisAtomIndices.end());
+                atomIndices.insert(atomIndices.end(), yAxisAtomIndices.begin(), yAxisAtomIndices.end());
+                sitesAllAtomsIndices_.push_back(std::move(atomIndices));
+                sitesOriginAtomsIndices_.push_back(std::move(originAtomIndices));
+                sitesXAxisAtomsIndices_.push_back(std::move(xAxisAtomIndices));
+                sitesYAxisAtomsIndices_.push_back(std::move(yAxisAtomIndices));
+                break;
+            }
         case (SiteType::Dynamic):
             for (auto &i : parent_->atoms())
             {
                 // Valid element or atom type?
                 if ((std::find(dynamicElements_.begin(), dynamicElements_.end(), i.Z()) != dynamicElements_.end()) ||
                     std::find(dynamicAtomTypes_.begin(), dynamicAtomTypes_.end(), i.atomType()) != dynamicAtomTypes_.end())
+                {
+                    sitesAllAtomsIndices_.push_back({i.index()});
                     sitesOriginAtomsIndices_.push_back({i.index()});
-                    sitesOriginAtomsIndices_.push_back({i.index()});
+                }
             }
             break;
         case (SiteType::Fragment):
