@@ -43,6 +43,8 @@ class Matrix3
     void zero();
     // Return transpose of current matrix
     Matrix3 &transpose() const;
+    // Transform the supplied vector by the transpose of the current matrix
+    Vec3<double> transposeMultiply(const Vec3<double> &v) const;
     // Calculate determinant
     double determinant() const;
     // Invert matrix

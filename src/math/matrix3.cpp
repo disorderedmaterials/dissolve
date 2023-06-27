@@ -133,6 +133,13 @@ Matrix3 &Matrix3::transpose() const
     return A;
 }
 
+// Transform the supplied vector by the transpose of the current matrix
+Vec3<double> Matrix3::transposeMultiply(const Vec3<double> &v) const
+{
+    return {v.x * matrix_[0] + v.y * matrix_[1] + v.z * matrix_[2], v.x * matrix_[3] + v.y * matrix_[4] + v.z * matrix_[5],
+            v.x * matrix_[6] + v.y * matrix_[7] + v.z * matrix_[8]};
+}
+
 // Calculate determinant
 double Matrix3::determinant() const
 {
