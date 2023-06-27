@@ -138,6 +138,7 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
     }
 }
 
+// Express as a serialisable value
 SerialisedValue NodeValue::serialise() const
 {
     switch (type_)
