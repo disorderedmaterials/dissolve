@@ -41,11 +41,10 @@ TEST(CalculateExpressionTest, NodeParameters)
 
     // Access parameter in Select node
     EXPECT_TRUE(expressionNode->setExpression("A.nSelected"));
+    EXPECT_DOUBLE_EQ(expressionNode->value(0), 0);
 
     // Invalid parameter
     EXPECT_FALSE(expressionNode->setExpression("B.nSelected"));
-
-    EXPECT_DOUBLE_EQ(expressionNode->value(0), 3.8 * sin(1 / DEGRAD * 1.2));
 }
 
 } // namespace UnitTest
