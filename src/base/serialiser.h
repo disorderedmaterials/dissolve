@@ -23,7 +23,7 @@ template <typename... Contexts> class Serialisable
     /* Functions that hook into the toml11 library */
     // Wrapper for deserialise that toml11 will check for
     void from_toml(const toml::value &node) { deserialise(node); }
-    // wrapper for serialise that toml11 will check for
+    // Wrapper for serialise that toml11 will check for
     toml::value into_toml() const { return serialise(); }
 
     // A helper function to add elements of a vector to a node under the named heading
