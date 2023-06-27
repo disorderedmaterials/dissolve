@@ -49,7 +49,6 @@ class ProcedureNodeRegistry
 
         if (!category.empty())
             categories_[category].emplace_back(ProcedureNodeInfoData(nodeType, brief));
-        Messenger::print("Produced {} for {}", ProcedureNode::nodeTypes().keyword(nodeType), category);
     }
     // Produce node of specified type
     std::shared_ptr<ProcedureNode> produce(ProcedureNode::NodeType nodeType) const;
