@@ -152,6 +152,7 @@ SerialisedValue NodeValue::serialise() const
     }
 }
 
+// Read values from a serialisable value
 void NodeValue::deserialise(const SerialisedValue &node)
 {
     toml::visit(
