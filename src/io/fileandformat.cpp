@@ -161,6 +161,7 @@ SerialisedValue FileAndFormat::serialise() const
     return result;
 }
 
+// Read values from a serialisable value
 void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     filename_ = toml::find<std::string>(node, "filename");
