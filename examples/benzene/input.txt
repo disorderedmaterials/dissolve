@@ -203,8 +203,8 @@ Layer  'Analysis'
   Module  AxisAngle  'AxisAngle01'
     Frequency  1
     AngleRange  0.000000e+00  9.000000e+01  1.000000e+01
-    AxisA  ZAxis
-    AxisB  ZAxis
+    AxisA  Z
+    AxisB  Z
     Configuration  'Bulk'
     DistanceRange  0.000000e+00  1.000000e+01  1.000000e-01
     ExcludeSameMolecule  True
