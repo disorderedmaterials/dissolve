@@ -66,5 +66,6 @@ class Isotopologue : public Serialisable<const CoreData &>
 
     // Express as a serialisable value
     SerialisedValue serialise() const override;
+    // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };
