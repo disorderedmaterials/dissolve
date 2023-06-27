@@ -76,6 +76,9 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<Process2DProcedureNode>(ProcedureNode::NodeType::Process2D, "Process 2D histogram data", "Data");
     registerProducer<Process3DProcedureNode>(ProcedureNode::NodeType::Process3D, "Process 3D histogram data", "Data");
     registerProducer<Sum1DProcedureNode>(ProcedureNode::NodeType::Sum1D, "Sum the data in a 1D dataset", "Data");
+    
+    // Fragments
+    registerProducer<RotateProcedureNode>(ProcedureNode::NodeType::Rotate, "Rotate fragment sites", "Fragments");
 
     // General
     registerProducer<ParametersProcedureNode>(ProcedureNode::NodeType::Parameters, "Define parameters for use in expressions",
@@ -92,7 +95,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     // Operate
     registerProducer<OperateDivideProcedureNode>(ProcedureNode::NodeType::OperateDivide, "Perform a division on data",
                                                  "Operate");
-    registerProducer<OperateExpressionProcedureNode>(ProcedureNode::NodeType::OperateExpression, "Apply an expression to data",
+    registerProducer<OperateExpressionProcedureNode>(ProcedureNode::NodeType::OperateExpression, "Apply an expression to data"
                                                      "Operate");
     registerProducer<OperateGridNormaliseProcedureNode>(ProcedureNode::NodeType::OperateGridNormalise,
                                                         "Normalise data by bin widths, areas, or volumes", "Operate");
@@ -120,8 +123,6 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<SimpleRestraintPotentialProcedureNode>(ProcedureNode::NodeType::SimpleRestraintPotential,
                                                             "Restraint atoms of molecules to their current positions",
                                                             "Potentials");
-    // Fragments
-    registerProducer<RotateNode>(ProcedureNode::NodeType::Rotate, "Rotate fragment sites" "Fragments");
 }
 
 /*

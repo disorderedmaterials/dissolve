@@ -4,16 +4,18 @@
 #pragma once
 
 #include "procedure/nodes/node.h"
-class RotateNode : public ProcedureNode
+class RotateProcedureNode : public ProcedureNode
 {
     public:
-    RotateNode();
-    ~RotateNode() override = default;
+    RotateProcedureNode(std::shared_ptr<SelectProcedureNode> site = nullptr);
+    ~RotateProcedureNode() override = default;
 
     /*
      * Control
      */ 
     private:
+    // Site to be rotated
+    std::shared_ptr<const SelectProcedureNode> site_;
     // Origin to rotate to.
     Vec3<NodeValue> origin_;
     
