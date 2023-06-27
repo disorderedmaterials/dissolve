@@ -83,6 +83,25 @@ bool DataTestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         return Messenger::error("Error calculation between 2D datasets is not yet implemented.\n");
     }
 
+    // Loop over reference three-dimensional data supplied
+    for (auto &sharedDataPointer : test3DData_.data())
+    {
+        auto &[referenceData, format] = *sharedDataPointer.get();
+        // Locate the target reference data
+        auto optData = dissolve.processingModuleData().search<const Data3D>(referenceData.tag());
+        if (!optData)
+            return Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
+        const Data3D &data = *optData;
+        Messenger::print("Located reference data '{}'.\n", referenceData.tag());
+
+        // Generate the error estimate and compare against the threshold value
+        auto error = Error::error(errorType_, data.values().linearArray(), referenceData.values().linearArray(), true);
+        Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold is {:6.3e})\n\n",
+                         referenceData.tag(), error, isnan(error) || error > threshold_ ? "NOT OK" : "OK", threshold_);
+        if (isnan(error) || error > threshold_)
+            return false;
+    }
+
     // Loop over reference values supplied for SampledDouble objects
     for (auto &[tag, value] : testSampledDoubleData_)
     {
