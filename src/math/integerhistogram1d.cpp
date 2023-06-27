@@ -116,6 +116,8 @@ bool IntegerHistogram1D::bin(int x)
 
     raw_[x]++;
     ++nBinned_;
+
+    return true;
 }
 
 // Return number of values binned over all bins
@@ -127,17 +129,9 @@ void IntegerHistogram1D::accumulate()
     for (auto &[key, value] : raw_)
         averages_[key] += (double)raw_[key];
 
-// Add source histogram data into local array
-void IntegerHistogram1D::add(IntegerHistogram1D &other, int factor)
-{
-    if (bins_.size() != other.bins_.size())
-    {
-        Messenger::print("BAD_USAGE - Can't add IntegerHistogram1D data since arrays are not the same size ({} vs {}).\n",
-                         bins_.size(), other.bins_.size());
-        return;
-    }
-
-    for (auto &[key, value] : bins_)
+    // Update accumulated data
+    updateAccumulatedData();
+}
 
 // Return current data
 Data1D IntegerHistogram1D::data() const
@@ -206,12 +200,6 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
         if (!parser.writeLineF("{} {} \n", key, value))
             return false;
         if (!averages_.at(key).serialise(parser))
-            return false;
-    }
-
-    for (auto &[key, value] : averages_)
-    {
-        if (!value.serialise(parser))
             return false;
     }
 
