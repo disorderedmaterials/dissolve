@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "classes/site.h"
 #include "procedure/nodes/node.h"
 class RotateProcedureNode : public ProcedureNode
 {
@@ -16,8 +17,10 @@ class RotateProcedureNode : public ProcedureNode
     private:
     // Site to be rotated
     std::shared_ptr<const SelectProcedureNode> site_;
-    // Origin to rotate to.
-    Vec3<NodeValue> origin_;
+    // Rotation
+    NodeValue rotation_;
+    // Axis
+    OrientedSite::SiteAxis axis_{OrientedSite::SiteAxis::XAxis};
     
     public:
     // Execute node
