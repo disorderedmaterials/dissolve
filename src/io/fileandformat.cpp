@@ -149,6 +149,7 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
     return keywords_.serialise(parser, fmt::format("{}  ", prefix));
 }
 
+// Express as a serialisable value
 SerialisedValue FileAndFormat::serialise() const
 {
     SerialisedValue result = {{"filename", filename_},
