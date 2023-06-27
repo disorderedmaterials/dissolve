@@ -220,5 +220,5 @@ template <class E> class EnumOptions : public EnumOptionsBase
 
     SerialisedValue serialise(E value) const { return keyword(value); }
 
-    E deserialise(const SerialisedValue &node) { return enumeration(std::string_view(std::string(node.as_string()))); }
+    E deserialise(const SerialisedValue &node) { return enumeration(std::string(node.as_string())); }
 };
