@@ -95,7 +95,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     // Operate
     registerProducer<OperateDivideProcedureNode>(ProcedureNode::NodeType::OperateDivide, "Perform a division on data",
                                                  "Operate");
-    registerProducer<OperateExpressionProcedureNode>(ProcedureNode::NodeType::OperateExpression, "Apply an expression to data"
+    registerProducer<OperateExpressionProcedureNode>(ProcedureNode::NodeType::OperateExpression, "Apply an expression to data",
                                                      "Operate");
     registerProducer<OperateGridNormaliseProcedureNode>(ProcedureNode::NodeType::OperateGridNormalise,
                                                         "Normalise data by bin widths, areas, or volumes", "Operate");
