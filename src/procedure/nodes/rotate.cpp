@@ -14,7 +14,7 @@
 #include "classes/molecule.h"
 #include "classes/atom.h"
 RotateProcedureNode::RotateProcedureNode(std::shared_ptr<SelectProcedureNode> site)
-: ProcedureNode(ProcedureNode::NodeType::Rotate, {ProcedureNode::AnalysisContext}), site_(site)
+: ProcedureNode(ProcedureNode::NodeType::Rotate, {ProcedureNode::GenerationContext, ProcedureNode::AnalysisContext}), site_(site)
 {
     keywords_.setOrganisation("Options", "Site");
     keywords_.add<NodeKeyword<SelectProcedureNode>>("Site", "Site to be rotated", site_, this, ProcedureNode::NodeType::Select, true);
