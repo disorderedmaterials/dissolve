@@ -48,6 +48,7 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
         selectB_->speciesSites(), selectB_->axesRequired());
 
     keywords_.setOrganisation("Options", "Ranges");
-    keywords_.add<RangeKeyword>("DistanceRange", "Range (min, max, delta) of distance axis", distanceRange_, 0.0, std::nullopt,
-                                Vec3Labels::MinMaxDeltaLabels);
+    keywords_.add<RangeKeyword>("DistanceRange",
+                                "Distance range (min, max) over which to calculate coordination number from central site",
+                                distanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
 }
