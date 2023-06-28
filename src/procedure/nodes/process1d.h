@@ -17,7 +17,7 @@ class LineParser;
 class Process1DProcedureNode : public ProcedureNode
 {
     public:
-    Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
+    Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target = nullptr,
                            ProcedureNode::NodeContext normalisationContext = ProcedureNode::OperateContext);
     Process1DProcedureNode(std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
                            ProcedureNode::NodeContext normalisationContext = ProcedureNode::OperateContext);
