@@ -12,8 +12,8 @@
 // Return enum options for DirectionalPotentialFunctions
 EnumOptions<DirectionalPotentialFunctions::Form> DirectionalPotentialFunctions::forms()
 {
-    return EnumOptions<DirectionalPotentialFunctions::Form>("DirectionalPotentialFunction",
-                                                       {{DirectionalPotentialFunctions::Form::LJCylinder, "LJCylinder", 2}});
+    return EnumOptions<DirectionalPotentialFunctions::Form>(
+        "DirectionalPotentialFunction", {{DirectionalPotentialFunctions::Form::LJCylinder, "LJCylinder", 2}});
 }
 
 // Return parameters for specified form
@@ -74,44 +74,66 @@ void DirectionalPotential::setVector(Vec3<double> vector) { vector_ = vector; }
 // Calculate energy on specified atom
 double DirectionalPotential::energy(const Atom &i, const Box *box) const
 {
+    // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);
-    double xyyx, xzzx, yzzy, dist;
-    xyyx = vector_.x*v.y - vector_.y*v.x;
-    xzzx = vector_.x*v.z - vector_.z*v.x;
-    yzzy = vector_.y*v.z - vector_.z*v.y;
-    v.x = vector_.y*xyyx + vector_.z*xzzx;
-    v.y = vector_.z*yzzy - vector_.x*xyyx;
-    v.z = -vector_.x*xzzx - vector_.y*yzzy;
-    auto vecji = box->minimumImage(v, Vec3<double>{0.,0.,0.});
+
+    // See: A Programmers Geometry, Bowyer and Woodwark, Butterworths (pub.), 1983, p99
+
+    // Cross product between the line and the position of the atom in the xy plane
+    auto xyyx = vector_.x * v.y - vector_.y * v.x;
+    // Cross product between the line and the position of the atom in the xz plane
+    auto xzzx = vector_.x * v.z - vector_.z * v.x;
+    // Cross product between the line and the position of the atom in the yz plane
+    auto yzzy = vector_.y * v.z - vector_.z * v.y;
+
+    // Compute new components
+    v.x = vector_.y * xyyx + vector_.z * xzzx;
+    v.y = vector_.z * yzzy - vector_.x * xyyx;
+    v.z = -vector_.x * xzzx - vector_.y * yzzy;
+
+    auto vecji = box->minimumImage(v, Vec3<double>{0., 0., 0.});
+
+    // Minimum distance between the atom and a point on the line
     auto r = vecji.magnitude();
+
     switch (interactionPotential_.form())
     {
         case (DirectionalPotentialFunctions::Form::LJCylinder):
-            {
-                auto sigmar = interactionPotential_.parameters()[1] / r;
-                auto sigmar6 = pow(sigmar, 6);
-                auto sigmar12 = sigmar6 * sigmar6;
-                return 4.0 * interactionPotential_.parameters()[0] * (sigmar12 - sigmar6);
-            }
+        {
+            auto sigmar = interactionPotential_.parameters()[1] / r;
+            auto sigmar6 = pow(sigmar, 6);
+            auto sigmar12 = sigmar6 * sigmar6;
+            return 4.0 * interactionPotential_.parameters()[0] * (sigmar12 - sigmar6);
+        }
         default:
-            throw(std::runtime_error(fmt::format("Requested functional form of DirectionalPotential has not been implemented.\n")));
+            throw(std::runtime_error(
+                fmt::format("Requested functional form of DirectionalPotential has not been implemented.\n")));
     }
 }
 
 // Calculate force on specified atom, summing in to supplied vector
 void DirectionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f) const
 {
-    // Get normalised vector and distance
-
+    // Vector between the position of the atom and the origin
     auto v = box->minimumVector(i.r(), origin_);
-    double xyyx, xzzx, yzzy, dist;
-    xyyx = vector_.x*v.y - vector_.y*v.x;
-    xzzx = vector_.x*v.z - vector_.z*v.x;
-    yzzy = vector_.y*v.z - vector_.z*v.y;
-    v.x = vector_.y*xyyx + vector_.z*xzzx;
-    v.y = vector_.z*yzzy - vector_.x*xyyx;
-    v.z = -vector_.x*xzzx - vector_.y*yzzy;
-    auto vecji = box->minimumImage(v, Vec3<double>{0.,0.,0.});
+
+    // See: A Programmers Geometry, Bowyer and Woodwark, Butterworths (pub.), 1983, p99
+
+    // Cross product between the line and the position of the atom in the xy plane
+    auto xyyx = vector_.x * v.y - vector_.y * v.x;
+    // Cross product between the line and the position of the atom in the xz plane
+    auto xzzx = vector_.x * v.z - vector_.z * v.x;
+    // Cross product between the line and the position of the atom in the yz plane
+    auto yzzy = vector_.y * v.z - vector_.z * v.y;
+
+    // Compute new components
+    v.x = vector_.y * xyyx + vector_.z * xzzx;
+    v.y = vector_.z * yzzy - vector_.x * xyyx;
+    v.z = -vector_.x * xzzx - vector_.y * yzzy;
+
+    auto vecji = box->minimumImage(v, Vec3<double>{0., 0., 0.});
+
+    // Minimum distance between the atom and a point on the line
     auto r = vecji.magnitude();
 
     // Calculate final force multiplier
@@ -119,17 +141,17 @@ void DirectionalPotential::force(const Atom &i, const Box *box, Vec3<double> &f)
     switch (interactionPotential_.form())
     {
         case (DirectionalPotentialFunctions::Form::LJCylinder):
-            {
-                auto sigmar = interactionPotential_.parameters()[1] / r;
-                auto sigmar6 = pow(sigmar, 6.0);
-                forceMultiplier = -48.0 * interactionPotential_.parameters()[0] * sigmar6 * (-sigmar6 + 0.5) / r;
-                break;
-            }
+        {
+            auto sigmar = interactionPotential_.parameters()[1] / r;
+            auto sigmar6 = pow(sigmar, 6.0);
+            forceMultiplier = -48.0 * interactionPotential_.parameters()[0] * sigmar6 * (-sigmar6 + 0.5) / r;
+            break;
+        }
         default:
-            throw(std::runtime_error(fmt::format("Requested functional form of DirectionalPotential has not been implemented.\n")));
+            throw(std::runtime_error(
+                fmt::format("Requested functional form of DirectionalPotential has not been implemented.\n")));
     }
-    
+
     // Sum in forces on the atom
     f -= vecji * forceMultiplier;
 }
-
