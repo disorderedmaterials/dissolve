@@ -22,7 +22,6 @@ class DirectionalGlobalPotentialProcedureNode : public ProcedureNode
     Vec3<NodeValue> origin_;
     Vec3<NodeValue> vector_;
 
-
     /*
      * Execute
      */
@@ -30,4 +29,3 @@ class DirectionalGlobalPotentialProcedureNode : public ProcedureNode
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
 };
-

@@ -12,8 +12,8 @@ DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode
       potential_(DirectionalPotentialFunctions::Form::LJCylinder)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>("Potential", "Form of directional global potential to apply ",
-                                                                         potential_);
+    keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>(
+        "Potential", "Form of directional global potential to apply ", potential_);
     keywords_.add<Vec3NodeValueKeyword>("Origin", "Origin of global potential", origin_, this);
     keywords_.add<Vec3NodeValueKeyword>("Vector", "Vector of global potential", vector_, this);
 }
@@ -36,4 +36,3 @@ bool DirectionalGlobalPotentialProcedureNode::execute(const ProcedureContext &pr
 
     return true;
 }
-
