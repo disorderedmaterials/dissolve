@@ -16,9 +16,9 @@ class Data3DImportFileFormat : public FileAndFormat
     // Available Data3D formats
     enum class Data3DImportFormat
     {
-        Cartesian
+        PDens
     };
-    explicit Data3DImportFileFormat(std::string_view filename = "", Data3DImportFormat format = Data3DImportFormat::Cartesian);
+    explicit Data3DImportFileFormat(std::string_view filename = "", Data3DImportFormat format = Data3DImportFormat::PDens);
     ~Data3DImportFileFormat() override = default;
 
     /*
@@ -46,8 +46,8 @@ class Data3DImportFileFormat : public FileAndFormat
      * Data Import
      */
     private:
-    // Import cartesian data from supplied parser
-    bool importCartesian(LineParser &parser, Data3D &data);
+    // Import pdens data from supplied parser
+    bool importPDens(LineParser &parser, Data3D &data);
 
     public:
     // Import Data3D using current filename and format
