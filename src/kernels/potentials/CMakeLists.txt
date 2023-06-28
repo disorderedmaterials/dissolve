@@ -3,10 +3,12 @@ add_library(
   base.cpp
   producer.cpp
   simple.cpp
+  simplerestraint.cpp
   types.cpp
   base.h
   producer.h
   simple.h
+  simplerestraint.h
   types.h
 )
 

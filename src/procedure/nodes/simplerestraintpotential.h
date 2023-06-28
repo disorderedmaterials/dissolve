@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "kernels/potentials/simple.h"
+#include "kernels/potentials/simplerestraint.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/pickbase.h"
 
@@ -30,7 +30,7 @@ class SimpleRestraintPotentialProcedureNode : public ProcedureNode
     // Species to remove
     std::vector<const Species *> speciesToRestrain_;
     // Potential form
-    InteractionPotential<SimplePotentialFunctions> potential_;
+    InteractionPotential<SimpleRestraintPotentialFunctions> potential_;
 
     /*
      * Execute

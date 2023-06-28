@@ -3,15 +3,16 @@
 
 #include "procedure/nodes/simplerestraintpotential.h"
 #include "classes/configuration.h"
+#include "kernels/potentials/simplerestraint.h"
 #include "keywords/interactionpotential.h"
 #include "keywords/node.h"
 #include "keywords/speciesvector.h"
 
 SimpleRestraintPotentialProcedureNode::SimpleRestraintPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::SimpleRestraintPotential), potential_(SimplePotentialFunctions::Form::Harmonic)
+    : ProcedureNode(ProcedureNode::NodeType::SimpleRestraintPotential), potential_(SimpleRestraintPotentialFunctions::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<SimplePotentialFunctions>>("Potential", "Potential to apply to individual atoms",
+    keywords_.add<InteractionPotentialKeyword<SimpleRestraintPotentialFunctions>>("Potential", "Potential to apply to individual atoms",
                                                                          potential_);
 
     keywords_.setOrganisation("Options", "Targets");
@@ -40,7 +41,7 @@ void SimpleRestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration 
 {
     for (auto &i : mol->atoms())
     {
-        auto pot = std::make_unique<SimplePotential>();
+        auto pot = std::make_unique<SimpleRestraintPotential>();
         pot->setPotential(potential_);
         pot->setTargetAtomIndices({i->globalIndex()});
         pot->setOrigin(i->r());
