@@ -30,7 +30,7 @@ bool RotateProcedureNode::execute(const ProcedureContext &procedureContext)
     auto parent = site->parent();
     auto parentIndex = site->uniqueSiteIndex();
     auto molecule = site->molecule();
-    
+
     Matrix3 rotationMatrix;
     switch (axis_)
     {
