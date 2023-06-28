@@ -144,6 +144,8 @@ class SpeciesTab : public QWidget, public MainTab
     void on_SiteTypeCombo_currentIndexChanged(int index);
     void siteSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void on_SiteOriginMassWeightedCheck_clicked(bool checked);
+    void on_SiteFragmentDescriptionEdit_editingFinished();
+    void on_SiteFragmentDescriptionEdit_returnPressed();
 
     public slots:
     // Update sites tab

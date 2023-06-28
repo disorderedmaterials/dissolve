@@ -18,16 +18,18 @@ XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)
     keywords_.setOrganisation("Options", "Form Factors & Normalisation");
     keywords_.add<EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>>(
         "FormFactors", "Atomic form factors to use for weighting", formFactors_, XRayFormFactors::xRayFormFactorData());
-    keywords_.add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
-        "Normalisation", "Normalisation to apply to total weighted F(Q)", normalisation_,
-        StructureFactors::normalisationTypes());
+    keywords_
+        .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>("NormaliseTo",
+                                                                      "Normalisation to apply to total weighted F(Q)",
+                                                                      normaliseTo_, StructureFactors::normalisationTypes())
+        ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
 
     keywords_.setOrganisation("Options", "Reference Data");
     keywords_.add<FileAndFormatKeyword>("Reference", "F(Q) reference data", referenceFQ_, "EndReference")
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
         .add<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
-            "ReferenceNormalisation", "Normalisation to remove from reference data before use", referenceNormalisation_,
+            "ReferenceNormalisedTo", "Normalisation that has been applied to the reference data", referenceNormalisedTo_,
             StructureFactors::normalisationTypes())
         ->setEditSignals({KeywordBase::ReloadExternalData, KeywordBase::RecreateRenderables});
     keywords_
@@ -59,6 +61,13 @@ XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)
                                "Save representative G(r), obtained from Fourier transform of the calculated F(Q)",
                                saveRepresentativeGR_);
     keywords_.add<BoolKeyword>("SaveSQ", "Whether to save weighted S(Q) and F(Q) to disk after calculation", saveSQ_);
+
+    // Deprecated keywords
+    keywords_.addDeprecated<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
+        "Normalisation", "Normalisation to apply to total weighted F(Q)", normaliseTo_, StructureFactors::normalisationTypes());
+    keywords_.addDeprecated<EnumOptionsKeyword<StructureFactors::NormalisationType>>(
+        "ReferenceNormalisation", "Normalisation to remove from reference data before use", referenceNormalisedTo_,
+        StructureFactors::normalisationTypes());
 }
 
 // Return file and format for reference total F(Q)

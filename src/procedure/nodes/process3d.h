@@ -22,13 +22,6 @@ class Process3DProcedureNode : public ProcedureNode
     ~Process3DProcedureNode() override = default;
 
     /*
-     * Identity
-     */
-    public:
-    // Return whether specified context is relevant for this node type
-    bool isContextRelevant(ProcedureNode::NodeContext context) override;
-
-    /*
      * Data
      */
     private:

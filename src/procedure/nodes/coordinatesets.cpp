@@ -15,7 +15,7 @@
 #include "modules/md/md.h"
 
 CoordinateSetsProcedureNode::CoordinateSetsProcedureNode(const Species *sp)
-    : ProcedureNode(ProcedureNode::NodeType::CoordinateSets), species_(sp)
+    : ProcedureNode(ProcedureNode::NodeType::CoordinateSets, {ProcedureNode::GenerationContext}), species_(sp)
 {
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<SpeciesKeyword>("Species", "Target species", species_);
@@ -35,12 +35,6 @@ CoordinateSetsProcedureNode::CoordinateSetsProcedureNode(const Species *sp)
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool CoordinateSetsProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
-}
 
 // Return whether a name for the node must be provided
 bool CoordinateSetsProcedureNode::mustBeNamed() const { return true; }

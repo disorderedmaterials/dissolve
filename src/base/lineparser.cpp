@@ -418,7 +418,7 @@ bool LineParser::eofOrBlank() const
 bool LineParser::getNextArg(int optionMask, std::string &arg)
 {
     // Get the next input chunk from the internal string and put into argument specified.
-    auto done = false, hadquotes = false, failed = false;
+    auto done = false, hadquotes = false, failed = false, quoting = false;
     char c, quotechar = '\0';
     endOfLine_ = false;
 
@@ -455,12 +455,16 @@ bool LineParser::getNextArg(int optionMask, std::string &arg)
                 if (optionMask & LineParser::IgnoreQuotes)
                     break;
                 if (quotechar == '\0')
+                {
                     quotechar = c;
+                    quoting = true;
+                }
                 else if (quotechar == c)
                 {
                     quotechar = '\0';
                     hadquotes = true;
                     done = true;
+                    quoting = false;
                 }
                 else
                     arg += c;
@@ -498,6 +502,11 @@ bool LineParser::getNextArg(int optionMask, std::string &arg)
                 break;
             // Comment markers
             case ('#'): // "#" Rest/all of line is a comment
+                if (quoting)
+                {
+                    arg += c;
+                    break;
+                }
                 endOfLine_ = true;
                 done = true;
                 break;

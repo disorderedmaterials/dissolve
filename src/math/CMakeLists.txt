@@ -16,6 +16,7 @@ add_library(
   histogram1d.cpp
   histogram2d.cpp
   histogram3d.cpp
+  integerhistogram1d.cpp
   integrator.cpp
   interpolator.cpp
   mathfunc.cpp
@@ -53,6 +54,7 @@ add_library(
   histogram1d.h
   histogram2d.h
   histogram3d.h
+  integerhistogram1d.h
   integrator.h
   interpolator.h
   mathfunc.h

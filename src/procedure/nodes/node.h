@@ -15,7 +15,6 @@ class CoreData;
 class ExpressionVariable;
 class GenericList;
 class LineParser;
-class Procedure;
 class ProcedureNodeSequence;
 class ProcessPool;
 class Site;
@@ -87,31 +86,35 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         NoContext = 0,
         AnalysisContext = 1,
         GenerationContext = 2,
-        OperateContext = 4
+        OperateContext = 4,
+        AnyContext = 8,
+        ParentProcedureContext = 16
     };
     // Return enum option info for NodeContext
     static EnumOptions<NodeContext> nodeContexts();
-    ProcedureNode(NodeType nodeType, NodeClass nodeClass = NodeClass::None);
+    ProcedureNode(NodeType nodeType, std::vector<NodeContext> relevantContexts, NodeClass nodeClass = NodeClass::None);
     virtual ~ProcedureNode() = default;
 
     /*
      * Identity
      */
     protected:
-    // Node class
-    NodeClass class_;
     // Node type
     NodeType type_;
+    // Relevant contexts for node
+    std::vector<NodeContext> relevantContexts_;
+    // Node class
+    NodeClass class_;
     // Node name
     std::string name_;
 
     public:
-    // Return node class
-    NodeClass nodeClass() const;
     // Return node type
     NodeType type() const;
-    // Return whether specified context is relevant for this node type
-    virtual bool isContextRelevant(NodeContext context);
+    // Return whether the supplied context is relevant for the current node
+    bool isContextRelevant(NodeContext targetContext) const;
+    // Return node class
+    NodeClass nodeClass() const;
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name

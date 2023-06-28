@@ -48,6 +48,9 @@ class Data3D : public Data3DBase
     std::string_view tag() const;
     // Initialise arrays to specified size
     void initialise(int xSize, int ySize, int zSize, bool withError = false);
+    // Initialise bins and axes simultaneously
+    void initialise(int nx, double xMin, double xDelta, int ny, double yMin, double yDelta, int nz, double zMin, double zDelta,
+                    bool withError = false);
     // Initialise to be consistent in size and axes with supplied object
     void initialise(const Data3D &source);
     // Copy arrays from supplied object

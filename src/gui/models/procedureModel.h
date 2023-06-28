@@ -3,11 +3,10 @@
 
 #pragma once
 
-#include "procedure/nodes/node.h"
+#include "procedure/procedure.h"
 #include "templates/optionalref.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>
-
 #include <vector>
 
 class ProcedureModel : public QAbstractItemModel

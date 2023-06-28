@@ -212,9 +212,11 @@ Data1D &PartialSet::total() { return total_; }
 const Data1D &PartialSet::total() const { return total_; }
 
 // Return total bound function
+Data1D &PartialSet::boundTotal() { return boundTotal_; }
 const Data1D &PartialSet::boundTotal() const { return boundTotal_; }
 
 // Return total unbound function
+Data1D &PartialSet::unboundTotal() { return unboundTotal_; }
 const Data1D &PartialSet::unboundTotal() const { return unboundTotal_; }
 
 // Save all partials and total

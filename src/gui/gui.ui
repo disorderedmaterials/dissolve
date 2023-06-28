@@ -157,6 +157,8 @@
     <addaction name="separator"/>
     <addaction name="SimulationDataManagerAction"/>
     <addaction name="separator"/>
+    <addaction name="SimulationReduceChargesSigFigsAction"/>
+    <addaction name="separator"/>
     <addaction name="SimulationClearAdditionalPotentialsAction"/>
     <addaction name="SimulationClearModuleDataAction"/>
    </widget>
@@ -236,6 +238,7 @@
     <addaction name="SpeciesSetAtomTypesInSelectionAction"/>
     <addaction name="SpeciesSetChargesInSelectionAction"/>
     <addaction name="SpeciesScaleChargesAction"/>
+    <addaction name="SpeciesSmoothChargesAction"/>
     <addaction name="SpeciesReduceChargesSigFigsAction"/>
     <addaction name="SpeciesCopyChargesFromAtomTypesAction"/>
     <addaction name="SpeciesSetAtomTypeChargesFromSpeciesAction"/>
@@ -775,9 +778,19 @@
     <string>Sc&amp;ale Charges...</string>
    </property>
   </action>
+  <action name="SpeciesSmoothChargesAction">
+   <property name="text">
+    <string>S&amp;mooth Charges...</string>
+   </property>
+  </action>
   <action name="SpeciesReduceChargesSigFigsAction">
    <property name="text">
     <string>Reduce Sig. Figs in Charges...</string>
+   </property>
+  </action>
+  <action name="SimulationReduceChargesSigFigsAction">
+   <property name="text">
+    <string>Reduce Sig. Figs in Atom Type Charges...</string>
    </property>
   </action>
   <action name="ConfigurationCreateAction">

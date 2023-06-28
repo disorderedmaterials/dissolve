@@ -6,11 +6,7 @@
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 
-NodeBranchKeyword::NodeBranchKeyword(ProcedureNodeSequence &data, ProcedureNode *parentNode,
-                                     ProcedureNode::NodeContext branchContext)
-    : KeywordBase(typeid(this)), data_(data), parentNode_(parentNode), branchContext_(branchContext)
-{
-}
+NodeBranchKeyword::NodeBranchKeyword(ProcedureNodeSequence &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Arguments

@@ -8,6 +8,7 @@
 #include "base/version.h"
 #include "classes/atomtype.h"
 #include "data/elements.h"
+#include "neta/neta.h"
 #include "templates/vector3.h"
 
 #include <map>
@@ -26,8 +27,9 @@ class SpeciesSite : public Serialisable
     // Site Type
     enum class SiteType
     {
-        Static, /* Site is based on fixed atom indices within the species */
-        Dynamic /* Site is atomic and based on elements and atom types */
+        Static,  /* Site is based on fixed atom indices within the species */
+        Dynamic, /* Site is atomic and based on elements and atom types */
+        Fragment /* Site is based on a NETA description */
     };
     explicit SpeciesSite(const Species *parent, SiteType type = SiteType::Static);
     SpeciesSite(const Species *parent, std::string name, SiteType type = SiteType::Static);
@@ -60,6 +62,8 @@ class SpeciesSite : public Serialisable
     private:
     // Type of site
     SiteType type_;
+    // Whether the origin should be calculated with mass-weighted positions
+    bool originMassWeighted_;
 
     public:
     // Clear definition data from site
@@ -70,78 +74,109 @@ class SpeciesSite : public Serialisable
     SiteType type() const;
     // Return whether the site has defined axes
     bool hasAxes() const;
+    // Set whether the origin should be calculated with mass-weighted positions
+    void setOriginMassWeighted(bool b);
+    // Return whether the origin should be calculated with mass-weighted positions
+    bool originMassWeighted() const;
 
     /*
      * Static Site Definition
      */
     private:
     // Species atoms whose average position is the origin of the site
-    std::vector<const SpeciesAtom *> originAtoms_;
-    // Whether the origin should be calculated with mass-weighted positions
-    bool originMassWeighted_;
+    std::vector<const SpeciesAtom *> staticOriginAtoms_;
     // Species atom(s) that indicate the x axis with the origin
-    std::vector<const SpeciesAtom *> xAxisAtoms_;
+    std::vector<const SpeciesAtom *> staticXAxisAtoms_;
     // Species atom(s) that indicate the y axis with the origin, after orthogonalisation
-    std::vector<const SpeciesAtom *> yAxisAtoms_;
+    std::vector<const SpeciesAtom *> staticYAxisAtoms_;
 
     public:
     // Add origin atom
-    bool addOriginAtom(const SpeciesAtom *originAtom);
+    bool addStaticOriginAtom(const SpeciesAtom *originAtom);
     // Add origin atom from index
-    bool addOriginAtom(int atomIndex);
+    bool addStaticOriginAtom(int atomIndex);
     // Set origin atoms
-    bool setOriginAtoms(const std::vector<const SpeciesAtom *> &atoms);
+    bool setStaticOriginAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return origin atom vector
-    const std::vector<const SpeciesAtom *> &originAtoms() const;
+    const std::vector<const SpeciesAtom *> &staticOriginAtoms() const;
     // Return integer array of indices from which the origin should be formed
-    std::vector<int> originAtomIndices() const;
-    // Set whether the origin should be calculated with mass-weighted positions
-    void setOriginMassWeighted(bool b);
-    // Return whether the origin should be calculated with mass-weighted positions
-    bool originMassWeighted() const;
+    std::vector<int> staticOriginAtomIndices() const;
     // Add x-axis atom
-    bool addXAxisAtom(const SpeciesAtom *xAxisAtom);
+    bool addStaticXAxisAtom(const SpeciesAtom *xAxisAtom);
     // Add x-axis atom from index
-    bool addXAxisAtom(int atomIndex);
+    bool addStaticXAxisAtom(int atomIndex);
     // Set x-axis atoms
-    bool setXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
+    bool setStaticXAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return x-axis atom vector
-    const std::vector<const SpeciesAtom *> &xAxisAtoms() const;
+    const std::vector<const SpeciesAtom *> &staticXAxisAtoms() const;
     // Return integer array of indices from which x-axis should be formed
-    std::vector<int> xAxisAtomIndices() const;
+    std::vector<int> staticXAxisAtomIndices() const;
     // Add y-axis atom
-    bool addYAxisAtom(const SpeciesAtom *yAxisAtom);
+    bool addStaticYAxisAtom(const SpeciesAtom *yAxisAtom);
     // Add y-axis atom from index
-    bool addYAxisAtom(int atomIndex);
+    bool addStaticYAxisAtom(int atomIndex);
     // Set y-axis atoms
-    bool setYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
+    bool setStaticYAxisAtoms(const std::vector<const SpeciesAtom *> &atoms);
     // Return y-axis atom vector
-    const std::vector<const SpeciesAtom *> &yAxisAtoms() const;
+    const std::vector<const SpeciesAtom *> &staticYAxisAtoms() const;
     // Return integer array of indices from which y-axis should be formed
-    std::vector<int> yAxisAtomIndices() const;
+    std::vector<int> staticYAxisAtomIndices() const;
 
     /*
      * Dynamic Site Definition
      */
     private:
     // Target elements for selection as sites
-    std::vector<Elements::Element> elements_;
+    std::vector<Elements::Element> dynamicElements_;
     // Target atom types for selection as sites
-    std::vector<std::shared_ptr<AtomType>> atomTypes_;
+    std::vector<std::shared_ptr<AtomType>> dynamicAtomTypes_;
 
     public:
     // Add target elements for selection as sites
-    bool addElement(Elements::Element el);
+    bool addDynamicElement(Elements::Element el);
     // Set target elements for selection as sites
-    bool setElements(const std::vector<Elements::Element> &els);
+    bool setDynamicElements(const std::vector<Elements::Element> &els);
     // Return elements for selection as sites
-    const std::vector<Elements::Element> elements() const;
+    const std::vector<Elements::Element> dynamicElements() const;
     // Add target atom type for selection as sites
-    bool addAtomType(const std::shared_ptr<AtomType> &at);
+    bool addDynamicAtomType(const std::shared_ptr<AtomType> &at);
     // Set target atom types for selection as sites
-    bool setAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types);
+    bool setDynamicAtomTypes(const std::vector<std::shared_ptr<AtomType>> &types);
     // Return atom types for selection as sites
-    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
+    const std::vector<std::shared_ptr<AtomType>> &dynamicAtomTypes() const;
+
+    /*
+     * Fragment Site Definition
+     */
+    private:
+    NETADefinition fragment_;
+
+    public:
+    const NETADefinition &fragment() const;
+    bool setFragmentDefinitionString(std::string_view definitionString);
+
+    /*
+     * Advanced Sites
+     */
+    private:
+    // For each unique site, indices of atoms in the species which contribute to the origin of the site
+    std::vector<std::vector<int>> sitesOriginAtomsIndices_;
+    // For each unique site, indices of atoms in the species which indicate the x axis with the origin
+    std::vector<std::vector<int>> sitesXAxisAtomsIndices_;
+    // For each unique site, indices of atoms in the species which indicate the y axis with the origin, after orthogonalisation
+    std::vector<std::vector<int>> sitesYAxisAtomsIndices_;
+
+    public:
+    // Generate unique sites
+    bool generateUniqueSites();
+    // Number of unique sites
+    const int nSites() const;
+    // Return atom indices contributing to unique site origins
+    const std::vector<std::vector<int>> &sitesOriginAtomsIndices() const;
+    // Return atom indices indicating the x axis with the origins of unique sites.
+    const std::vector<std::vector<int>> &sitesXAxisAtomsIndices() const;
+    // Return atom indices indicating the y axis with the origins of unique sites.
+    const std::vector<std::vector<int>> &sitesYAxisAtomsIndices() const;
 
     /*
      * Generation from Parent
@@ -160,6 +195,8 @@ class SpeciesSite : public Serialisable
         AtomTypeKeyword,           /* 'AtomType' - Specify allowed atom type(s) for dynamic sites */
         DynamicKeyword,            /* 'Dynamic' - States that this is a dynamic site */
         ElementKeyword,            /* 'Element' - Specify allowed element(s) for dynamic sites */
+        FragmentKeyword,           /* 'Fragment' - States that this is a fragment site */
+        DescriptionKeyword,        /* 'Description' - Defines the NETA description for fragment sites */
         EndSiteKeyword,            /* 'EndSite' - Signals the end of the Site */
         OriginKeyword,             /* 'Origin' - Set the atom indices whose average coordinates reflect the site origin */
         OriginMassWeightedKeyword, /* 'OriginMassWeighted' - Control whether the origin should be calculated with

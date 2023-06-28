@@ -12,7 +12,7 @@
 #include "procedure/nodes/process1d.h"
 
 Sum1DProcedureNode::Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target)
-    : ProcedureNode(ProcedureNode::NodeType::Sum1D), sourceData_(target)
+    : ProcedureNode(ProcedureNode::NodeType::Sum1D, {ProcedureNode::AnalysisContext}), sourceData_(target)
 {
     keywords_.setOrganisation("Options", "Source");
     keywords_.add<NodeKeyword<Process1DProcedureNode>>("SourceData", "Process1D node containing the data to sum", sourceData_,
@@ -25,16 +25,6 @@ Sum1DProcedureNode::Sum1DProcedureNode(std::shared_ptr<Process1DProcedureNode> t
     keywords_.add<RangeKeyword>("RangeB", "X range for second summation region", range_[1], Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<BoolKeyword>("RangeCEnabled", "Whether the second summation region is enabled", rangeEnabled_[2]);
     keywords_.add<RangeKeyword>("RangeC", "X range for third summation region", range_[2], Vec3Labels::MinMaxDeltaLabels);
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool Sum1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

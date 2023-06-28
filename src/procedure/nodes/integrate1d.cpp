@@ -12,7 +12,7 @@
 #include "procedure/nodes/process1d.h"
 
 Integrate1DProcedureNode::Integrate1DProcedureNode(std::shared_ptr<Process1DProcedureNode> target)
-    : ProcedureNode(ProcedureNode::NodeType::Integrate1D), sourceData_(target)
+    : ProcedureNode(ProcedureNode::NodeType::Integrate1D, {ProcedureNode::AnalysisContext}), sourceData_(target)
 {
     keywords_.setOrganisation("Options", "Target");
     keywords_.add<NodeKeyword<Process1DProcedureNode>>("SourceData", "Process1D node containing the data to integrate",
@@ -22,16 +22,6 @@ Integrate1DProcedureNode::Integrate1DProcedureNode(std::shared_ptr<Process1DProc
     keywords_.add<RangeKeyword>("RangeA", "X range for first integration region", range_[0], Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<RangeKeyword>("RangeB", "X range for second integration region", range_[1], Vec3Labels::MinMaxDeltaLabels);
     keywords_.add<RangeKeyword>("RangeC", "X range for third integration region", range_[2], Vec3Labels::MinMaxDeltaLabels);
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool Integrate1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::AnalysisContext);
 }
 
 /*

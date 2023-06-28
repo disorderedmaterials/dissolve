@@ -4,6 +4,7 @@
 #include "modules/datatest/datatest.h"
 #include "keywords/data1dstore.h"
 #include "keywords/data2dstore.h"
+#include "keywords/data3dstore.h"
 #include "keywords/double.h"
 #include "keywords/enumoptions.h"
 #include "keywords/valuestore.h"
@@ -15,6 +16,7 @@ DataTestModule::DataTestModule() : Module(ModuleTypes::DataTest)
     keywords_.setOrganisation("Test");
     keywords_.add<Data1DStoreKeyword>("Data1D", "Specify one-dimensional test reference data", test1DData_);
     keywords_.add<Data2DStoreKeyword>("Data2D", "Specify two-dimensional test reference data", test2DData_);
+    keywords_.add<Data3DStoreKeyword>("Data3D", "Specify three-dimensional test reference data", test3DData_);
     keywords_.add<EnumOptionsKeyword<Error::ErrorType>>("ErrorType", "Type of error calculation to use", errorType_,
                                                         Error::errorTypes());
     keywords_.add<StringPairVectorKeyword>("InternalData1D", "Specify one-dimensional internal reference and test data",

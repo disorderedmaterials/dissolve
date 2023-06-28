@@ -7,22 +7,13 @@
 #include "keywords/vec3nodevalue.h"
 
 SimpleGlobalPotentialProcedureNode::SimpleGlobalPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::SimpleGlobalPotential), potential_(SimplePotentialFunctions::Form::Harmonic)
+    : ProcedureNode(ProcedureNode::NodeType::SimpleGlobalPotential, {ProcedureNode::GenerationContext}),
+      potential_(SimplePotentialFunctions::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<SimplePotentialFunctions>>("Potential", "Form of global potential to apply ",
                                                                          potential_);
     keywords_.add<Vec3NodeValueKeyword>("Origin", "Origin of global potential", origin_, this);
-}
-
-/*
- * Identity
- */
-
-// Return whether specified context is relevant for this node type
-bool SimpleGlobalPotentialProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
 }
 
 /*

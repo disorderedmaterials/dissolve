@@ -54,6 +54,30 @@ void Data3D::initialise(int xSize, int ySize, int zSize, bool withError)
     ++version_;
 }
 
+// Initialise bins and axes simultaneously
+void Data3D::initialise(int nx, double xMin, double xDelta, int ny, double yMin, double yDelta, int nz, double zMin,
+                        double zDelta, bool withError)
+{
+    // Set up bins
+    initialise(nx, ny, nz, withError);
+
+    // Set up axes
+    x_.resize(nx);
+    x_[0] = xMin + xDelta * 0.5;
+    for (auto n = 1; n < nx; ++n)
+        x_[n] = x_[n - 1] + xDelta;
+
+    y_.resize(ny);
+    y_[0] = yMin + yDelta * 0.5;
+    for (auto n = 1; n < ny; ++n)
+        y_[n] = y_[n - 1] + yDelta;
+
+    z_.resize(nz);
+    z_[0] = zMin + zDelta * 0.5;
+    for (auto n = 1; n < nz; ++n)
+        z_[n] = z_[n - 1] + zDelta;
+}
+
 // Initialise to be consistent in size and x axis with supplied object
 void Data3D::initialise(const Data3D &source)
 {

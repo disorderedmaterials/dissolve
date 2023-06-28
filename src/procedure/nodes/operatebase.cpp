@@ -6,7 +6,7 @@
 #include "base/sysfunc.h"
 
 OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeType)
-    : ProcedureNode(nodeType, ProcedureNode::NodeClass::Operate)
+    : ProcedureNode(nodeType, {ProcedureNode::OperateContext}, ProcedureNode::NodeClass::Operate)
 {
     targetData1D_ = nullptr;
     targetData2D_ = nullptr;
@@ -16,12 +16,6 @@ OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeT
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool OperateProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::OperateContext);
-}
 
 // Return whether a name for the node must be provided
 bool OperateProcedureNodeBase::mustBeNamed() const { return false; }

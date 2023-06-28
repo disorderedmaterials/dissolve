@@ -9,7 +9,7 @@
 #include "keywords/speciesvector.h"
 #include "procedure/nodes/pick.h"
 
-RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Remove)
+RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Remove, {ProcedureNode::GenerationContext})
 {
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to remove", speciesToRemove_);
@@ -20,12 +20,6 @@ RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeTy
 /*
  * Identity
  */
-
-// Return whether specified context is relevant for this node type
-bool RemoveProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-    return (context == ProcedureNode::GenerationContext);
-}
 
 // Return whether a name for the node must be provided
 bool RemoveProcedureNode::mustBeNamed() const { return false; }
