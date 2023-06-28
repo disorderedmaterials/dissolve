@@ -57,11 +57,8 @@ Matrix3 Matrix3::operator-(const Matrix3 &B) const
 
 Vec3<double> Matrix3::operator*(const Vec3<double> &v) const
 {
-    Vec3<double> result;
-    result.x = v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6];
-    result.y = v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7];
-    result.z = v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8];
-    return result;
+    return {v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6], v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7],
+            v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8]};
 }
 
 // Matrix3 multiply (operator *=)
@@ -118,7 +115,7 @@ void Matrix3::print() const
 void Matrix3::zero() { std::fill(matrix_.begin(), matrix_.end(), 0.0); }
 
 // Return transpose of current matrix
-Matrix3 &Matrix3::transpose()
+Matrix3 &Matrix3::transpose() const
 {
     static Matrix3 A;
     A.matrix_[0] = matrix_[0];
@@ -131,6 +128,13 @@ Matrix3 &Matrix3::transpose()
     A.matrix_[7] = matrix_[5];
     A.matrix_[8] = matrix_[8];
     return A;
+}
+
+// Transform the supplied vector by the transpose of the current matrix
+Vec3<double> Matrix3::transposeMultiply(const Vec3<double> &v) const
+{
+    return {v.x * matrix_[0] + v.y * matrix_[1] + v.z * matrix_[2], v.x * matrix_[3] + v.y * matrix_[4] + v.z * matrix_[5],
+            v.x * matrix_[6] + v.y * matrix_[7] + v.z * matrix_[8]};
 }
 
 // Calculate determinant

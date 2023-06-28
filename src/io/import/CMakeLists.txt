@@ -39,6 +39,7 @@ add_library(
   data2d.cpp
   data2d_cartesian.cpp
   data3d.cpp
+  data3d_pdens.cpp
   forces.cpp
   forces_dlpoly.cpp
   forces_moscito.cpp

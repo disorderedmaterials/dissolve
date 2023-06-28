@@ -9,7 +9,7 @@ Data3DImportFileFormat::Data3DImportFileFormat(std::string_view filename, Data3D
     : FileAndFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<Data3DImportFileFormat::Data3DImportFormat>(
-        "Data3DImportFileFormat", {{Data3DImportFormat::Cartesian, "cartesian", "Cartesian X,Y,Z,f(x,y,z) data"}});
+        "Data3DImportFileFormat", {{Data3DImportFormat::PDens, "pdens", "dlputils-style pdens format"}});
 
     setUpKeywords();
 }
@@ -52,6 +52,9 @@ bool Data3DImportFileFormat::importData(LineParser &parser, Data3D &data)
     auto result = false;
     switch (formats_.enumerationByIndex(*formatIndex_))
     {
+        case (Data3DImportFormat::PDens):
+            result = importPDens(parser, data);
+            break;
         default:
             throw(std::runtime_error(
                 fmt::format("Data3D format '{}' import has not been implemented.\n", formats_.keywordByIndex(*formatIndex_))));
