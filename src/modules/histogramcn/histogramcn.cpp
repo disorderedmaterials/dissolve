@@ -9,6 +9,7 @@
 #include "keywords/vec3double.h"
 #include "procedure/nodes/calculateexpression.h"
 #include "procedure/nodes/integercollect1d.h"
+#include "procedure/nodes/operatenormalise.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
@@ -33,6 +34,8 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
         forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext, 0, 10);
 
     auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN_);
+    auto &normalisation = process1D->branch()->get();
+    auto norm = normalisation.create<OperateNormaliseProcedureNode>({});
 
     /*
      * Keywords
