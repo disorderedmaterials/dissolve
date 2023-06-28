@@ -76,7 +76,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<Process2DProcedureNode>(ProcedureNode::NodeType::Process2D, "Process 2D histogram data", "Data");
     registerProducer<Process3DProcedureNode>(ProcedureNode::NodeType::Process3D, "Process 3D histogram data", "Data");
     registerProducer<Sum1DProcedureNode>(ProcedureNode::NodeType::Sum1D, "Sum the data in a 1D dataset", "Data");
-    
+
     // Fragments
     registerProducer<RotateProcedureNode>(ProcedureNode::NodeType::Rotate, "Rotate fragment sites", "Fragments");
 

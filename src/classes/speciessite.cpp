@@ -353,20 +353,20 @@ bool SpeciesSite::generateUniqueSites()
     switch (type_)
     {
         case (SiteType::Static):
-            {
-                std::vector<int> atomIndices;
-                auto originAtomIndices = staticOriginAtomIndices();
-                auto xAxisAtomIndices = staticXAxisAtomIndices();
-                auto yAxisAtomIndices = staticYAxisAtomIndices();
-                atomIndices.insert(atomIndices.end(), originAtomIndices.begin(), originAtomIndices.end());
-                atomIndices.insert(atomIndices.end(), xAxisAtomIndices.begin(), xAxisAtomIndices.end());
-                atomIndices.insert(atomIndices.end(), yAxisAtomIndices.begin(), yAxisAtomIndices.end());
-                sitesAllAtomsIndices_.push_back(std::move(atomIndices));
-                sitesOriginAtomsIndices_.push_back(std::move(originAtomIndices));
-                sitesXAxisAtomsIndices_.push_back(std::move(xAxisAtomIndices));
-                sitesYAxisAtomsIndices_.push_back(std::move(yAxisAtomIndices));
-                break;
-            }
+        {
+            std::vector<int> atomIndices;
+            auto originAtomIndices = staticOriginAtomIndices();
+            auto xAxisAtomIndices = staticXAxisAtomIndices();
+            auto yAxisAtomIndices = staticYAxisAtomIndices();
+            atomIndices.insert(atomIndices.end(), originAtomIndices.begin(), originAtomIndices.end());
+            atomIndices.insert(atomIndices.end(), xAxisAtomIndices.begin(), xAxisAtomIndices.end());
+            atomIndices.insert(atomIndices.end(), yAxisAtomIndices.begin(), yAxisAtomIndices.end());
+            sitesAllAtomsIndices_.push_back(std::move(atomIndices));
+            sitesOriginAtomsIndices_.push_back(std::move(originAtomIndices));
+            sitesXAxisAtomsIndices_.push_back(std::move(xAxisAtomIndices));
+            sitesYAxisAtomsIndices_.push_back(std::move(yAxisAtomIndices));
+            break;
+        }
         case (SiteType::Dynamic):
             for (auto &i : parent_->atoms())
             {
@@ -396,7 +396,8 @@ bool SpeciesSite::generateUniqueSites()
 
                     // Check if the fragment we have found is unique.
                     std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
-                    if (std::find(sitesAllAtomsIndices_.begin(), sitesAllAtomsIndices_.end(), matchedAtomIndices) != sitesAllAtomsIndices_.end())
+                    if (std::find(sitesAllAtomsIndices_.begin(), sitesAllAtomsIndices_.end(), matchedAtomIndices) !=
+                        sitesAllAtomsIndices_.end())
                         continue;
 
                     // If it's unique, remember it and proceed.

@@ -165,7 +165,7 @@ const Species &geometricSpecies()
 }
 
 // Return benzene test species
-const Species& benzeneSpecies()
+const Species &benzeneSpecies()
 {
     static Species benzene_;
     if (benzene_.nAtoms() == 0)
@@ -187,6 +187,5 @@ const Species& benzeneSpecies()
     }
     return benzene_;
 }
-
 
 } // namespace UnitTest

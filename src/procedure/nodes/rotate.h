@@ -13,7 +13,7 @@ class RotateProcedureNode : public ProcedureNode
 
     /*
      * Control
-     */ 
+     */
     private:
     // Site to be rotated
     std::shared_ptr<const SelectProcedureNode> site_;
@@ -21,7 +21,7 @@ class RotateProcedureNode : public ProcedureNode
     NodeValue rotation_;
     // Axis
     OrientedSite::SiteAxis axis_{OrientedSite::SiteAxis::XAxis};
-    
+
     public:
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;

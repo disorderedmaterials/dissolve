@@ -15,7 +15,8 @@ class SpeciesSite;
 class Site
 {
     public:
-    Site(const SpeciesSite* parent = nullptr, int uniqueSiteIndex = -1, std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>());
+    Site(const SpeciesSite *parent = nullptr, int uniqueSiteIndex = -1, std::shared_ptr<const Molecule> molecule = nullptr,
+         Vec3<double> origin = Vec3<double>());
     virtual ~Site();
     Site &operator=(const Site &source) = default;
     Site(const Site &source) = default;
@@ -26,7 +27,7 @@ class Site
      */
     protected:
     // Site definition used to generate site
-    const SpeciesSite* parent_;
+    const SpeciesSite *parent_;
     // Unique site index in the parent
     int uniqueSiteIndex_;
     // Site origin
@@ -36,7 +37,7 @@ class Site
 
     public:
     // Return the parent
-    const SpeciesSite* parent() const;
+    const SpeciesSite *parent() const;
     // Return the unique site index in the parent
     int uniqueSiteIndex() const;
     // Return site origin
@@ -53,7 +54,8 @@ class Site
 class OrientedSite : public Site
 {
     public:
-    OrientedSite(const SpeciesSite* parent = nullptr,int uniqueSiteIndex = -1, std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>(),
+    OrientedSite(const SpeciesSite *parent = nullptr, int uniqueSiteIndex = -1,
+                 std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>(),
                  Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
     ~OrientedSite() override;
     OrientedSite &operator=(const OrientedSite &source) = default;
