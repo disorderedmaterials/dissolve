@@ -22,8 +22,6 @@ bool Data3DImportFileFormat::importPDens(LineParser &parser, Data3D &data)
     if (parser.getArgsDelim() != LineParser::Success)
         return false;
     auto N = parser.argi(0);
-    auto iMin = parser.arg3i(3);
-    auto iMax = parser.arg3i(6);
 
     // Get voxel sizes, assuming cubic grid
     if (parser.getArgsDelim() != LineParser::Success)
