@@ -17,15 +17,18 @@ class LineParser;
 class Process1DProcedureNode : public ProcedureNode
 {
     public:
-    Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target = nullptr,
-                           std::shared_ptr<IntegerCollect1DProcedureNode> intTarget = nullptr,
+    Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
+                           ProcedureNode::NodeContext normalisationContext = ProcedureNode::OperateContext);
+    Process1DProcedureNode(std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
                            ProcedureNode::NodeContext normalisationContext = ProcedureNode::OperateContext);
     ~Process1DProcedureNode() override = default;
 
+    private:
+    // Set up keywords for node
+    void setUpKeywords();
     /*
      * Data
      */
-    private:
     // Whether to use only the current binned data of the histogram, rather than the accumulated average
     bool instantaneous_{false};
     // Collect1D node that we are processing
@@ -38,7 +41,7 @@ class Process1DProcedureNode : public ProcedureNode
     // Label for the x axis
     std::string labelX_{"X"};
     // Pointer to processed data (stored in processing data list)
-    Data1D *processedData_;
+    Data1D *processedData_{nullptr};
 
     public:
     // Return whether processed data exists

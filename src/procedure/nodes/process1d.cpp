@@ -15,10 +15,23 @@
 #include "procedure/nodes/operatebase.h"
 
 Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
-                                               std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
                                                ProcedureNode::NodeContext normalisationContext)
     : ProcedureNode(ProcedureNode::NodeType::Process1D, {ProcedureNode::AnalysisContext}), sourceData_(target),
-      sourceIntegerData_(intTarget), normalisationBranch_(normalisationContext, *this, "Normalisation")
+      normalisationBranch_(normalisationContext, *this, "Normalisation")
+{
+    setUpKeywords();
+}
+
+Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
+                                               ProcedureNode::NodeContext normalisationContext)
+    : ProcedureNode(ProcedureNode::NodeType::Process1D, {ProcedureNode::AnalysisContext}), sourceIntegerData_(intTarget),
+      normalisationBranch_(normalisationContext, *this, "Normalisation")
+{
+    setUpKeywords();
+}
+
+// Set up keywords for node
+void Process1DProcedureNode::setUpKeywords()
 {
     keywords_.setOrganisation("Options", "Source");
     keywords_.add<NodeKeyword<Collect1DProcedureNode>>("SourceData", "Collect1D node containing the histogram data to process",
@@ -40,9 +53,6 @@ Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedur
 
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
                                            normalisationBranch_);
-
-    // Initialise data pointer
-    processedData_ = nullptr;
 }
 
 /*
