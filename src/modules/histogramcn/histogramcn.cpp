@@ -8,7 +8,7 @@
 #include "keywords/speciessitevector.h"
 #include "keywords/vec3double.h"
 #include "procedure/nodes/calculateexpression.h"
-#include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/integercollect1d.h"
 #include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
@@ -29,7 +29,7 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     calcExpression_->setExpression("B.nSelected");
 
     auto collectCN_ =
-        forEachA.create<Collect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext, 0.0, 10.0, 1);
+        forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext, 0, 10);
 
     auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN_);
 

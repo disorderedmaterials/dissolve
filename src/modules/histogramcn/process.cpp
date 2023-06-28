@@ -5,7 +5,7 @@
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
 #include "modules/histogramcn/histogramcn.h"
-#include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/integercollect1d.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"

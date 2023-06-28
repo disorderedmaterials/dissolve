@@ -10,6 +10,7 @@
 // Forward Declarations
 class Collect1DProcedureNode;
 class Data1D;
+class IntegerCollect1DProcedureNode;
 class LineParser;
 
 // Procedure Node - Process1D
@@ -17,6 +18,7 @@ class Process1DProcedureNode : public ProcedureNode
 {
     public:
     Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target = nullptr,
+                           std::shared_ptr<IntegerCollect1DProcedureNode> intTarget = nullptr,
                            ProcedureNode::NodeContext normalisationContext = ProcedureNode::OperateContext);
     ~Process1DProcedureNode() override = default;
 
@@ -28,6 +30,7 @@ class Process1DProcedureNode : public ProcedureNode
     bool instantaneous_{false};
     // Collect1D node that we are processing
     std::shared_ptr<const Collect1DProcedureNode> sourceData_;
+    std::shared_ptr<const IntegerCollect1DProcedureNode> sourceIntegerData_;
     // Export file and format for processed data
     Data1DExportFileFormat exportFileAndFormat_;
     // Label for the value axis

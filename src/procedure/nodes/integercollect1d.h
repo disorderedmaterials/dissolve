@@ -16,8 +16,8 @@ class IntegerCollect1DProcedureNode : public ProcedureNode
 {
     public:
     IntegerCollect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable = nullptr,
-                                  ProcedureNode::NodeContext subCollectContext = ProcedureNode::AnalysisContext, int rMin = 0.0,
-                                  int rMax = 10.0);
+                                  ProcedureNode::NodeContext subCollectContext = ProcedureNode::AnalysisContext, int rMin = 0,
+                                  int rMax = 10);
     ~IntegerCollect1DProcedureNode() override = default;
 
     /*

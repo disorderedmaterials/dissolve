@@ -8,7 +8,7 @@
 #include "procedure/procedure.h"
 
 // Forward Declarations
-class Collect1DProcedureNode;
+class IntegerCollect1DProcedureNode;
 class CalculateExpressionProcedureNode;
 class OperateSitePopulationNormaliseProcedureNode;
 class Process1DProcedureNode;

@@ -11,16 +11,21 @@
 #include "math/integrator.h"
 #include "modules/analyse/analyse.h"
 #include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/integercollect1d.h"
 #include "procedure/nodes/operatebase.h"
 
 Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
+                                               std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
                                                ProcedureNode::NodeContext normalisationContext)
     : ProcedureNode(ProcedureNode::NodeType::Process1D, {ProcedureNode::AnalysisContext}), sourceData_(target),
-      normalisationBranch_(normalisationContext, *this, "Normalisation")
+      sourceIntegerData_(intTarget), normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
     keywords_.setOrganisation("Options", "Source");
     keywords_.add<NodeKeyword<Collect1DProcedureNode>>("SourceData", "Collect1D node containing the histogram data to process",
                                                        sourceData_, this, ProcedureNode::NodeType::Collect1D, false);
+    keywords_.add<NodeKeyword<IntegerCollect1DProcedureNode>>(
+        "SourceIntegerData", "IntegerCollect1D node containing the histogram data to process", sourceIntegerData_, this,
+        ProcedureNode::NodeType::IntegerCollect1D, false);
     keywords_.add<BoolKeyword>(
         "Instantaneous", "Whether to use only the current binned data of the histogram, rather than the accumulated average",
         instantaneous_);
@@ -83,12 +88,18 @@ OptionalReferenceWrapper<ProcedureNodeSequence> Process1DProcedureNode::branch()
 // Prepare any necessary data, ready for execution
 bool Process1DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
-    if (!sourceData_)
-        return Messenger::error("No source Collect1D node set in '{}'.\n", name());
+    if (sourceData_ && sourceIntegerData_)
+    {
+        return Messenger::error("Too many arguments passed to process1d\n");
+    }
+    else if (sourceData_ || sourceIntegerData_)
+    {
+        normalisationBranch_.prepare(procedureContext);
 
-    normalisationBranch_.prepare(procedureContext);
-
-    return true;
+        return true;
+    }
+    else
+        return Messenger::error("No source Collect1D or IntegerCollect1D node set in '{}'.\n", name());
 }
 
 // Finalise any necessary data after execution
@@ -101,10 +112,20 @@ bool Process1DProcedureNode::finalise(const ProcedureContext &procedureContext)
     data.setTag(name());
 
     // Copy the averaged data from the associated Process1D node
-    if (instantaneous_)
-        data = sourceData_->data();
-    else
-        data = sourceData_->accumulatedData();
+    if (sourceData_)
+    {
+        if (instantaneous_)
+            data = sourceData_->data();
+        else
+            data = sourceData_->accumulatedData();
+    }
+    else if (sourceIntegerData_)
+    {
+        if (instantaneous_)
+            data = sourceIntegerData_->data();
+        else
+            data = sourceIntegerData_->accumulatedData();
+    }
 
     // Run normalisation on the data
     // Set data targets in the normalisation nodes
