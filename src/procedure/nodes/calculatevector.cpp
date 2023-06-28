@@ -61,7 +61,7 @@ bool CalculateVectorProcedureNode::execute(const ProcedureContext &procedureCont
 
     // Rotate the vector into the local frame defined on the first site?
     if (rotateIntoFrame_)
-        value_ = sites_[0]->currentSite()->axes() * value_;
+        value_ = sites_[0]->currentSite()->axes().transposeMultiply(value_);
 
     return true;
 }

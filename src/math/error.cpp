@@ -38,7 +38,9 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
     else if (errorType == EuclideanError)
         return euclidean(A, B, quiet);
 
-    Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
+    throw(
+        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+                                       errorTypes().keyword(errorType))));
     return 0.0;
 }
 
