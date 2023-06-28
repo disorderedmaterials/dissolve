@@ -60,6 +60,7 @@ class ProcedureWidget : public QWidget
     void updateNodeTree();
     void on_NodesTree_customContextMenuRequested(const QPoint &pos);
     void on_AvailableNodesTree_doubleClicked(const QModelIndex &index);
+    void on_DeleteNodeButton_clicked(bool checked);
 
     public:
     // Remove all node control widgets

@@ -175,6 +175,11 @@ void ProcedureWidget::on_AvailableNodesTree_doubleClicked(const QModelIndex &ind
     //    nodeLayerModel_.appendNew(nodePaletteModel_.data(index, Qt::DisplayRole).toString());
 }
 
+void ProcedureWidget::on_DeleteNodeButton_clicked(bool checked)
+{
+    procedure_.removeNode(
+}
+
 // Remove all node control widgets
 void ProcedureWidget::removeControlWidgets()
 {

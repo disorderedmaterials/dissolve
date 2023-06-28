@@ -84,6 +84,10 @@ bool Procedure::execute(const ProcedureContext &context)
     return true;
 }
 
+bool Procedure::removeNode(NodeRef node)
+{
+    return rootSequence_.removeNode(node);
+}
 /*
  * Read / Write
  */
