@@ -57,11 +57,8 @@ Matrix3 Matrix3::operator-(const Matrix3 &B) const
 
 Vec3<double> Matrix3::operator*(const Vec3<double> &v) const
 {
-    Vec3<double> result;
-    result.x = v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6];
-    result.y = v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7];
-    result.z = v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8];
-    return result;
+    return {v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6], v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7],
+            v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8]};
 }
 
 // Matrix3 multiply (operator *=)
