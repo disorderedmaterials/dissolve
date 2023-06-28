@@ -16,6 +16,7 @@
 #include "math/histogram1d.h"
 #include "math/histogram2d.h"
 #include "math/histogram3d.h"
+#include "math/integerhistogram1d.h"
 
 GenericItemDeserialiser::GenericItemDeserialiser()
 {
@@ -163,6 +164,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<Histogram1D>(simpleDeserialise<Histogram1D>);
     registerDeserialiser<Histogram2D>(simpleDeserialise<Histogram2D>);
     registerDeserialiser<Histogram3D>(simpleDeserialise<Histogram3D>);
+    registerDeserialiser<IntegerHistogram1D>(simpleDeserialise<IntegerHistogram1D>);
     registerDeserialiser<NeutronWeights>(simpleDeserialiseCore<NeutronWeights>);
     registerDeserialiser<PartialSet>(simpleDeserialiseCore<PartialSet>);
     registerDeserialiser<PartialSetAccumulator>(simpleDeserialise<PartialSetAccumulator>);
