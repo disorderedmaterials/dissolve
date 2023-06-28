@@ -26,6 +26,7 @@ class Process1DProcedureNode : public ProcedureNode
     private:
     // Set up keywords for node
     void setUpKeywords();
+
     /*
      * Data
      */
