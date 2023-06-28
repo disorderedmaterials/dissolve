@@ -10,7 +10,7 @@
 
 SimpleRestraintPotentialProcedureNode::SimpleRestraintPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::SimpleRestraintPotential, {ProcedureNode::GenerationContext}),
-      potential_(SimplePotentialFunctions::Form::Harmonic)
+      potential_(SimpleRestraintPotentialFunctions::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<SimpleRestraintPotentialFunctions>>(
