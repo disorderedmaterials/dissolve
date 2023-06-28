@@ -22,6 +22,7 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     selectB_ = forEachA.create<SelectProcedureNode>("B");
     selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
     selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
+    selectB_->keywords().set("ReferenceSite", selectA_);
     selectB_->keywords().set("InclusiveRange", distanceRange_);
 
     // Coordination Histogram
