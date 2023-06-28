@@ -23,6 +23,7 @@ bool HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         selectB_->setSameMoleculeExclusions({selectA_});
     else
         selectB_->setSameMoleculeExclusions({});
+    selectB_->keywords().set("InclusiveRange", distanceRange_);
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
