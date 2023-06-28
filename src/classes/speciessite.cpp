@@ -11,6 +11,7 @@
 #include "neta/neta.h"
 #include "templates/algorithms.h"
 #include <numeric>
+#include <string_view>
 
 SpeciesSite::SpeciesSite(const Species *parent, SiteType type) : parent_(parent), type_(type), originMassWeighted_(false) {}
 SpeciesSite::SpeciesSite(const Species *parent, std::string name, SiteType type)
@@ -333,6 +334,13 @@ const std::vector<std::shared_ptr<AtomType>> &SpeciesSite::dynamicAtomTypes() co
 
 // Return fragment definition
 const NETADefinition &SpeciesSite::fragment() const { return fragment_; }
+// Update fragment definition
+bool SpeciesSite::setFragmentDefinitionString(std::string_view definitionString)
+{
+    if (!fragment_.create(definitionString))
+        return false;
+    return generateUniqueSites();
+}
 
 // Generate unique sites
 bool SpeciesSite::generateUniqueSites()
@@ -476,7 +484,6 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
         else
             sites.push_back(std::make_shared<Site>(nullptr, origin));
     }
-
     return sites;
 }
 
@@ -665,10 +672,6 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
                            joinStrings(staticOriginAtomIndices(), "  ", [](const auto i) { return i + 1; })))
         return false;
 
-    if (!fragment_.definitionString().empty() &&
-        !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
-        return false;
-
     // Origin mass weighted?
     if (originMassWeighted_ && (!parser.writeLineF("{}  {}  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
         return false;
@@ -695,6 +698,11 @@ bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
     if (!dynamicAtomTypes_.empty() &&
         !parser.writeLineF("{}  {}  {}\n", prefix, keywords().keyword(AtomTypeKeyword),
                            joinStrings(dynamicAtomTypes_, "  ", [](const auto &at) { return at->name(); })))
+        return false;
+
+    // Fragment definition string
+    if (!fragment_.definitionString().empty() &&
+        !parser.writeLineF("{}  {}  \"{}\"\n", prefix, keywords().keyword(DescriptionKeyword), fragment_.definitionString()))
         return false;
 
     // Write end of site definition

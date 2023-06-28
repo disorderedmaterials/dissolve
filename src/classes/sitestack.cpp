@@ -101,10 +101,8 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
 
         for (auto i = 0; i < site->nSites(); ++i)
         {
-
             origin = speciesSite_->originMassWeighted() ? centreOfMass(*molecule, box, originAtomsIndices.at(i))
                                                         : centreOfGeometry(*molecule, box, originAtomsIndices.at(i));
-
             if (sitesHaveOrientation_)
             {
                 // Get vector from site origin to x-axis reference point and normalise it

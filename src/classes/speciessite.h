@@ -153,6 +153,7 @@ class SpeciesSite : public Serialisable
 
     public:
     const NETADefinition &fragment() const;
+    bool setFragmentDefinitionString(std::string_view definitionString);
 
     /*
      * Advanced Sites
