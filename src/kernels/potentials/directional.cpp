@@ -91,10 +91,8 @@ double DirectionalPotential::energy(const Atom &i, const Box *box) const
     v.y = vector_.z * yzzy - vector_.x * xyyx;
     v.z = -vector_.x * xzzx - vector_.y * yzzy;
 
-    auto vecji = box->minimumImage(v, Vec3<double>{0., 0., 0.});
-
     // Minimum distance between the atom and a point on the line
-    auto r = vecji.magnitude();
+    auto r = v.magnitude();
 
     switch (interactionPotential_.form())
     {
