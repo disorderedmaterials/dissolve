@@ -10,8 +10,8 @@
 // Return enum options for SimpleRestraintPotentialFunctions
 EnumOptions<SimpleRestraintPotentialFunctions::Form> SimpleRestraintPotentialFunctions::forms()
 {
-    return EnumOptions<SimpleRestraintPotentialFunctions::Form>("SimpleRestraintPotentialFunction",
-                                                       {{SimpleRestraintPotentialFunctions::Form::Harmonic, "Harmonic", 1}});
+    return EnumOptions<SimpleRestraintPotentialFunctions::Form>(
+        "SimpleRestraintPotentialFunction", {{SimpleRestraintPotentialFunctions::Form::Harmonic, "Harmonic", 1}});
 }
 
 // Return parameters for specified form
@@ -73,7 +73,8 @@ double SimpleRestraintPotential::energy(const Atom &i, const Box *box) const
         case (SimpleRestraintPotentialFunctions::Form::Harmonic):
             return 0.5 * interactionPotential_.parameters()[0] * box->minimumDistanceSquared(i.r(), origin_);
         default:
-            throw(std::runtime_error(fmt::format("Requested functional form of SimpleRestraintPotential has not been implemented.\n")));
+            throw(std::runtime_error(
+                fmt::format("Requested functional form of SimpleRestraintPotential has not been implemented.\n")));
     }
 }
 
@@ -92,10 +93,10 @@ void SimpleRestraintPotential::force(const Atom &i, const Box *box, Vec3<double>
             forceMultiplier = -interactionPotential_.parameters()[0] * r;
             break;
         default:
-            throw(std::runtime_error(fmt::format("Requested functional form of SimpleRestraintPotential has not been implemented.\n")));
+            throw(std::runtime_error(
+                fmt::format("Requested functional form of SimpleRestraintPotential has not been implemented.\n")));
     }
 
     // Sum in forces on the atom
     f -= vecji * forceMultiplier;
 }
-

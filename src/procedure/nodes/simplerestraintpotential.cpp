@@ -9,11 +9,12 @@
 #include "keywords/speciesvector.h"
 
 SimpleRestraintPotentialProcedureNode::SimpleRestraintPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::SimpleRestraintPotential), potential_(SimpleRestraintPotentialFunctions::Form::Harmonic)
+    : ProcedureNode(ProcedureNode::NodeType::SimpleRestraintPotential),
+      potential_(SimpleRestraintPotentialFunctions::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<SimpleRestraintPotentialFunctions>>("Potential", "Potential to apply to individual atoms",
-                                                                         potential_);
+    keywords_.add<InteractionPotentialKeyword<SimpleRestraintPotentialFunctions>>(
+        "Potential", "Potential to apply to individual atoms", potential_);
 
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<SpeciesVectorKeyword>("Species", "Target species to apply atomic restraints to", speciesToRestrain_);

@@ -10,17 +10,16 @@
 // Return enum options for SimplePotentialFunctions
 EnumOptions<SimplePotentialFunctions::Form> SimplePotentialFunctions::forms()
 {
-    return EnumOptions<SimplePotentialFunctions::Form>("SimplePotentialFunction",
-                                                       {{SimplePotentialFunctions::Form::Harmonic, "Harmonic", 1},
-                                                        {SimplePotentialFunctions::Form::LJSphere, "LJSphere", 2}});
+    return EnumOptions<SimplePotentialFunctions::Form>(
+        "SimplePotentialFunction",
+        {{SimplePotentialFunctions::Form::Harmonic, "Harmonic", 1}, {SimplePotentialFunctions::Form::LJSphere, "LJSphere", 2}});
 }
 
 // Return parameters for specified form
 const std::vector<std::string> &SimplePotentialFunctions::parameters(Form form)
 {
     static std::map<SimplePotentialFunctions::Form, std::vector<std::string>> params_ = {
-        {SimplePotentialFunctions::Form::Harmonic, {"k"}},
-        {SimplePotentialFunctions::Form::LJSphere, {"epsilon", "sigma"}}};
+        {SimplePotentialFunctions::Form::Harmonic, {"k"}}, {SimplePotentialFunctions::Form::LJSphere, {"epsilon", "sigma"}}};
     return params_[form];
 }
 

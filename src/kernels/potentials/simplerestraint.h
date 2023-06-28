@@ -12,7 +12,7 @@ class SimpleRestraintPotentialFunctions
     public:
     enum class Form
     {
-        Harmonic,   /* Harmonic well potential */
+        Harmonic, /* Harmonic well potential */
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
@@ -56,4 +56,3 @@ class SimpleRestraintPotential : public ExternalPotential
     // Calculate force on specified atom, summing in to supplied vector
     void force(const Atom &i, const Box *box, Vec3<double> &f) const override;
 };
-
