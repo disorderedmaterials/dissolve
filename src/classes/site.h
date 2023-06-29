@@ -6,6 +6,7 @@
 #include "base/enumoptions.h"
 #include "math/matrix3.h"
 #include <memory>
+#include <optional>
 
 // Forward Declarations
 class Molecule;
@@ -15,9 +16,9 @@ class SpeciesSite;
 class Site
 {
     public:
-    Site(const SpeciesSite *parent = nullptr, int uniqueSiteIndex = -1, std::shared_ptr<const Molecule> molecule = nullptr,
+    Site(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {}, std::shared_ptr<const Molecule> molecule = nullptr,
          Vec3<double> origin = Vec3<double>());
-    virtual ~Site();
+    ~Site() = default;
     Site &operator=(const Site &source) = default;
     Site(const Site &source) = default;
     Site(Site &&source) = default;
@@ -39,7 +40,7 @@ class Site
     // Return the parent
     const SpeciesSite *parent() const;
     // Return the unique site index in the parent
-    int uniqueSiteIndex() const;
+    std::optional<int> uniqueSiteIndex() const;
     // Return site origin
     const Vec3<double> &origin() const;
     // Return Molecule to which site is related (if relevant)
@@ -54,10 +55,9 @@ class Site
 class OrientedSite : public Site
 {
     public:
-    OrientedSite(const SpeciesSite *parent = nullptr, int uniqueSiteIndex = -1,
+    OrientedSite(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {},
                  std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>(),
                  Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
-    ~OrientedSite() override;
     OrientedSite &operator=(const OrientedSite &source) = default;
     OrientedSite(const OrientedSite &source) = default;
     OrientedSite(OrientedSite &&source) = default;

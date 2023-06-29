@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/rotate.h"
+#include "procedure/nodes/rotatefragment.h"
 #include "classes/atom.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
@@ -14,8 +14,8 @@
 #include "math/matrix3.h"
 #include "procedure/nodes/select.h"
 
-RotateProcedureNode::RotateProcedureNode(std::shared_ptr<SelectProcedureNode> site)
-    : ProcedureNode(ProcedureNode::NodeType::Rotate, {ProcedureNode::GenerationContext, ProcedureNode::AnalysisContext}),
+RotateFragmentProcedureNode::RotateFragmentProcedureNode(std::shared_ptr<SelectProcedureNode> site)
+    : ProcedureNode(ProcedureNode::NodeType::RotateFragment, {ProcedureNode::GenerationContext, ProcedureNode::AnalysisContext}),
       site_(site)
 {
     keywords_.setOrganisation("Options", "Site");
@@ -25,12 +25,19 @@ RotateProcedureNode::RotateProcedureNode(std::shared_ptr<SelectProcedureNode> si
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Axis", "Axis for rotation", axis_, OrientedSite::siteAxis());
 }
 
-bool RotateProcedureNode::execute(const ProcedureContext &procedureContext)
+bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto site = site_->currentSite();
     auto parent = site->parent();
-    auto parentIndex = site->uniqueSiteIndex();
     auto molecule = site->molecule();
+
+    if (!site->uniqueSiteIndex().has_value())
+    {
+        Messenger::warn("Parent index not set for for site generated from FragmentSite '{}', so cannot rotate.", parent->name());
+        return false;
+    }
+
+    auto parentIndex = site->uniqueSiteIndex().value(); 
 
     Matrix3 rotationMatrix;
     switch (axis_)

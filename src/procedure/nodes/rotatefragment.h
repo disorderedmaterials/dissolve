@@ -5,11 +5,11 @@
 
 #include "classes/site.h"
 #include "procedure/nodes/node.h"
-class RotateProcedureNode : public ProcedureNode
+class RotateFragmentProcedureNode : public ProcedureNode
 {
     public:
-    RotateProcedureNode(std::shared_ptr<SelectProcedureNode> site = nullptr);
-    ~RotateProcedureNode() override = default;
+    RotateFragmentProcedureNode(std::shared_ptr<SelectProcedureNode> site = nullptr);
+    ~RotateFragmentProcedureNode() override = default;
 
     /*
      * Control

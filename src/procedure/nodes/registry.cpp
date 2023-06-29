@@ -34,7 +34,7 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/remove.h"
-#include "procedure/nodes/rotate.h"
+#include "procedure/nodes/rotatefragment.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleglobalpotential.h"
 #include "procedure/nodes/simplerestraintpotential.h"
@@ -122,7 +122,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                                             "Potentials");
 
     // Sites
-    registerProducer<RotateProcedureNode>(ProcedureNode::NodeType::Rotate, "Rotate fragment sites", "Sites");
+    registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
 }
 
 /*
