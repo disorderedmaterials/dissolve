@@ -67,7 +67,7 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<GeometryOptimisationModule>(ModuleTypes::GeometryOptimisation,
                                                  "Optimise geometry with respect to energy (minimise)", "Optimisation");
     registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");
-    registerProducer<HistogramCNModule>(ModuleTypes::HistogramCN, "Produce a histogram of Coordination numbers of an atom",
+    registerProducer<HistogramCNModule>(ModuleTypes::HistogramCN, "Produce a histogram of Coordination numbers between sites",
                                         "Analysis");
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",

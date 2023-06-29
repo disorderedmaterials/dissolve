@@ -100,7 +100,7 @@ bool Process1DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     if (sourceData_ && sourceIntegerData_)
     {
-        return Messenger::error("Too many arguments passed to process1d\n");
+        return Messenger::error("Specify either SourceData or SourceIntegerData, not both.\n");
     }
     else if (sourceData_ || sourceIntegerData_)
     {
@@ -109,7 +109,7 @@ bool Process1DProcedureNode::prepare(const ProcedureContext &procedureContext)
         return true;
     }
     else
-        return Messenger::error("No source Collect1D or IntegerCollect1D node set in '{}'.\n", name());
+        return Messenger::error("No source data node set in '{}'.\n", name());
 }
 
 // Finalise any necessary data after execution
@@ -122,20 +122,10 @@ bool Process1DProcedureNode::finalise(const ProcedureContext &procedureContext)
     data.setTag(name());
 
     // Copy the averaged data from the associated Process1D node
-    if (sourceData_)
-    {
-        if (instantaneous_)
-            data = sourceData_->data();
-        else
-            data = sourceData_->accumulatedData();
-    }
-    else if (sourceIntegerData_)
-    {
-        if (instantaneous_)
-            data = sourceIntegerData_->data();
-        else
-            data = sourceIntegerData_->accumulatedData();
-    }
+    if (instantaneous_)
+        data = sourceData_ ? sourceData_->data() : sourceIntegerData_->data();
+    else
+        data = sourceData_ ? sourceData_->accumulatedData() : sourceIntegerData_->accumulatedData();
 
     // Run normalisation on the data
     // Set data targets in the normalisation nodes
