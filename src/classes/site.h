@@ -29,7 +29,7 @@ class Site
     // Site definition used to generate site
     const SpeciesSite *parent_;
     // Unique site index in the parent
-    int uniqueSiteIndex_;
+    std::optional<int> uniqueSiteIndex_;
     // Site origin
     Vec3<double> origin_;
     // Molecule to which site is related (if relevant)
