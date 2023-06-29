@@ -41,6 +41,12 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
 
     auto parentIndex = site->uniqueSiteIndex().value();
 
+    if (!site->hasAxes())
+    {
+        Messenger::warn("FragmentSite '{}' has no axes to rotate about.", parent->name());
+        return false;
+    }
+
     Matrix3 rotationMatrix;
     switch (axis_)
     {
@@ -54,11 +60,13 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
             rotationMatrix.createRotationZ(rotation_);
             break;
     }
+    rotationMatrix *= site->axes();
 
     for (auto index : parent->sitesAllAtomsIndices().at(parentIndex))
     {
         auto atom = molecule->atom(index);
         atom->set(rotationMatrix.transform(atom->r()));
     }
+
     return true;
 }
