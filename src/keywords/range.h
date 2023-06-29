@@ -59,8 +59,8 @@ class RangeKeyword : public KeywordBase
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
     // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Has not changed from initial value
-    bool isDefault() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    // Has not changed from initial value
+    bool isDefault() const override;
 };
