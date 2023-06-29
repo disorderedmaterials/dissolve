@@ -155,9 +155,6 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
         return true;
     }
 
-    // Has not changed from initial value
-    bool isDefault() const override { return data_.empty(); }
-
     // Express as a serialisable value
     SerialisedValue serialise() const override
     {
@@ -186,6 +183,9 @@ template <class N> class NodeVectorKeyword : public NodeVectorKeywordBase
                      data_.push_back(std::dynamic_pointer_cast<const N>(noderef));
                  });
     }
+
+    // Has not changed from initial value
+    bool isDefault() const override { return data_.empty(); }
 
     /*
      * Object Management
