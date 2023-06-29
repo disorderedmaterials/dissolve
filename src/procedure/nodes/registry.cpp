@@ -120,6 +120,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<SimpleRestraintPotentialProcedureNode>(ProcedureNode::NodeType::SimpleRestraintPotential,
                                                             "Restraint atoms of molecules to their current positions",
                                                             "Potentials");
+
     // Sites
     registerProducer<RotateProcedureNode>(ProcedureNode::NodeType::Rotate, "Rotate fragment sites", "Sites");
 }
