@@ -19,7 +19,7 @@ EnumOptions<SimplePotentialFunctions::Form> SimplePotentialFunctions::forms()
 const std::vector<std::string> &SimplePotentialFunctions::parameters(Form form)
 {
     static std::map<SimplePotentialFunctions::Form, std::vector<std::string>> params_ = {
-        {SimplePotentialFunctions::Form::Harmonic, {"k"}}, {SimplePotentialFunctions::Form::LJSphere, {"epsilon", "sigma"}}};
+        {SimplePotentialFunctions::Form::Harmonic, {"k"}}, {SimplePotentialFunctions::Form::LJ, {"epsilon", "sigma"}}};
     return params_[form];
 }
 
