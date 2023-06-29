@@ -12,7 +12,6 @@ class OptionalIntegerKeyword : public KeywordBase
     public:
     explicit OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue, int valueDelta,
                                     std::string_view textWhenNull);
-    bool isDefault() const override;
     ~OptionalIntegerKeyword() override = default;
 
     /*
