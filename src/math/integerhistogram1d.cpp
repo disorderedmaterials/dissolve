@@ -135,7 +135,10 @@ void IntegerHistogram1D::accumulate()
     // Update accumulated data
     updateAccumulatedData();
 
-    // Accumulate zero counter
+    /*
+     * Accumulate zero counter - this is to keep track of the number of accumulations made
+     * and allow us to "pad" the statistics of new keys added to the averages_ map
+     */
     zeroCounter_ += 0.0;
 }
 
