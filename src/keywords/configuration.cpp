@@ -65,4 +65,3 @@ void ConfigurationKeyword::deserialise(const SerialisedValue &node, const CoreDa
 {
     data_ = coreData.findConfiguration(std::string_view(std::string(node.as_string())));
 }
-bool ConfigurationKeyword::isDefault() const { return !data_; }
