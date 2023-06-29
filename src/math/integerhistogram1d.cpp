@@ -177,11 +177,8 @@ bool IntegerHistogram1D::deserialise(LineParser &parser)
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-
     auto nBins = parser.argli(0);
-
-    for (int n = 0; n <= nBins; ++n)
-
+    for (auto n = 0; n < nBins; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -189,6 +186,7 @@ bool IntegerHistogram1D::deserialise(LineParser &parser)
         raw_[bin] = parser.argli(1);
         averages_[bin].deserialise(parser);
     }
+
     return true;
 }
 
