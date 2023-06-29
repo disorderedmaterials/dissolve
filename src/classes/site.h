@@ -16,8 +16,8 @@ class SpeciesSite;
 class Site
 {
     public:
-    Site(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {}, std::shared_ptr<const Molecule> molecule = nullptr,
-         Vec3<double> origin = Vec3<double>());
+    Site(const SpeciesSite *parent = nullptr, std::optional<int> uniqueSiteIndex = {},
+         std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>());
     ~Site() = default;
     Site &operator=(const Site &source) = default;
     Site(const Site &source) = default;

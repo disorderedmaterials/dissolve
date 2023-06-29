@@ -15,7 +15,8 @@
 #include "procedure/nodes/select.h"
 
 RotateFragmentProcedureNode::RotateFragmentProcedureNode(std::shared_ptr<SelectProcedureNode> site)
-    : ProcedureNode(ProcedureNode::NodeType::RotateFragment, {ProcedureNode::GenerationContext, ProcedureNode::AnalysisContext}),
+    : ProcedureNode(ProcedureNode::NodeType::RotateFragment,
+                    {ProcedureNode::GenerationContext, ProcedureNode::AnalysisContext}),
       site_(site)
 {
     keywords_.setOrganisation("Options", "Site");
@@ -33,11 +34,12 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
 
     if (!site->uniqueSiteIndex().has_value())
     {
-        Messenger::warn("Parent index not set for for site generated from FragmentSite '{}', so cannot rotate.", parent->name());
+        Messenger::warn("Parent index not set for for site generated from FragmentSite '{}', so cannot rotate.",
+                        parent->name());
         return false;
     }
 
-    auto parentIndex = site->uniqueSiteIndex().value(); 
+    auto parentIndex = site->uniqueSiteIndex().value();
 
     Matrix3 rotationMatrix;
     switch (axis_)
