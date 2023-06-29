@@ -20,7 +20,7 @@ HistogramCNModuleWidget::HistogramCNModuleWidget(QWidget *parent, HistogramCNMod
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "Coordination Number");
     view.axes().setMax(0, 10.0);
-    view.axes().setTitle(1, "Population");
+    view.axes().setTitle(1, "Normalised Frequency");
     view.axes().setMin(1, 0.0);
     view.axes().setMax(1, 1.0);
     view.setAutoFollowType(View::AllAutoFollow);
@@ -29,4 +29,19 @@ HistogramCNModuleWidget::HistogramCNModuleWidget(QWidget *parent, HistogramCNMod
 }
 
 // Update controls within widget
-void HistogramCNModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags) {}
+void HistogramCNModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
+{
+
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
+        cnGraph_->clearRenderables();
+
+    if (cnGraph_->renderables().empty())
+        cnGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Histogram", module_->name()), "CN");
+
+    // Validate renderables if they need it
+    cnGraph_->validateRenderables(dissolve_.processingModuleData());
+
+    ui_.CNPlotWidget->updateToolbar();
+
+    cnGraph_->postRedisplay();
+}
