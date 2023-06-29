@@ -100,7 +100,7 @@ void SimplePotential::force(const Atom &i, const Box *box, Vec3<double> &f) cons
         case (SimplePotentialFunctions::Form::Harmonic):
             forceMultiplier = -interactionPotential_.parameters()[0] * r;
             break;
-        case (SimplePotentialFunctions::Form::LJSphere):
+        case (SimplePotentialFunctions::Form::LJ):
         {
             auto sigmar = interactionPotential_.parameters()[1] / r;
             auto sigmar6 = pow(sigmar, 6.0);

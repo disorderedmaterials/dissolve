@@ -2,13 +2,13 @@ add_library(
   potentials
   base.cpp
   producer.cpp
+  restraint.cpp
   simple.cpp
-  simplerestraint.cpp
   types.cpp
   base.h
   producer.h
+  restraint.h
   simple.h
-  simplerestraint.h
   types.h
 )
 

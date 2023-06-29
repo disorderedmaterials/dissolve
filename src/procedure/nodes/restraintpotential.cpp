@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/simplerestraintpotential.h"
+#include "procedure/nodes/restraintpotential.h"
 #include "classes/configuration.h"
-#include "kernels/potentials/simplerestraint.h"
+#include "kernels/potentials/restraint.h"
 #include "keywords/interactionpotential.h"
 #include "keywords/node.h"
 #include "keywords/speciesvector.h"
 
-SimpleRestraintPotentialProcedureNode::SimpleRestraintPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::SimpleRestraintPotential, {ProcedureNode::GenerationContext}),
-      potential_(SimpleRestraintPotentialFunctions::Form::Harmonic)
+RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
+    : ProcedureNode(ProcedureNode::NodeType::RestraintPotential, {ProcedureNode::GenerationContext}),
+      potential_(RestraintPotentialFunctions::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<InteractionPotentialKeyword<SimpleRestraintPotentialFunctions>>(
+    keywords_.add<InteractionPotentialKeyword<RestraintPotentialFunctions>>(
         "Potential", "Potential to apply to individual atoms", potential_);
 
     keywords_.setOrganisation("Options", "Targets");
@@ -27,12 +27,12 @@ SimpleRestraintPotentialProcedureNode::SimpleRestraintPotentialProcedureNode()
  * Execute
  */
 
-void SimpleRestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg,
+void RestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg,
                                                                   const std::shared_ptr<Molecule> &mol) const
 {
     for (auto &i : mol->atoms())
     {
-        auto pot = std::make_unique<SimpleRestraintPotential>();
+        auto pot = std::make_unique<RestraintPotential>();
         pot->setPotential(potential_);
         pot->setTargetAtomIndices({i->globalIndex()});
         pot->setOrigin(i->r());
@@ -41,7 +41,7 @@ void SimpleRestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration 
 }
 
 // Execute node
-bool SimpleRestraintPotentialProcedureNode::execute(const ProcedureContext &procedureContext)
+bool RestraintPotentialProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
 

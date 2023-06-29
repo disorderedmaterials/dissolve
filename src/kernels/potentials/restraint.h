@@ -6,8 +6,8 @@
 #include "classes/interactionpotential.h"
 #include "kernels/potentials/base.h"
 
-// SimpleRestraintPotential functional forms
-class SimpleRestraintPotentialFunctions
+// RestraintPotential functional forms
+class RestraintPotentialFunctions
 {
     public:
     enum class Form
@@ -25,11 +25,11 @@ class SimpleRestraintPotentialFunctions
 };
 
 // Simple Restraint Potential
-class SimpleRestraintPotential : public ExternalPotential
+class RestraintPotential : public ExternalPotential
 {
     public:
-    SimpleRestraintPotential();
-    ~SimpleRestraintPotential() = default;
+    RestraintPotential();
+    ~RestraintPotential() = default;
 
     /*
      * Definition
@@ -37,13 +37,13 @@ class SimpleRestraintPotential : public ExternalPotential
 
     private:
     // Potential form
-    InteractionPotential<SimpleRestraintPotentialFunctions> interactionPotential_;
+    InteractionPotential<RestraintPotentialFunctions> interactionPotential_;
     // Coordinate origin of potential
     Vec3<double> origin_;
 
     public:
     // Set potential form
-    void setPotential(const InteractionPotential<SimpleRestraintPotentialFunctions> &potential);
+    void setPotential(const InteractionPotential<RestraintPotentialFunctions> &potential);
     // Set coordinate origin of potential
     void setOrigin(Vec3<double> origin);
 
