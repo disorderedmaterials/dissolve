@@ -34,7 +34,6 @@ class RestraintPotential : public ExternalPotential
     /*
      * Definition
      */
-
     private:
     // Potential form
     InteractionPotential<RestraintPotentialFunctions> interactionPotential_;
