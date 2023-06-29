@@ -85,6 +85,14 @@ class SpeciesTab : public QWidget, public MainTab
     // Return displayed Species
     Species *species() const;
 
+
+    /*
+     * Tabs
+     */
+    private slots:
+    void on_StructureTabWidget_currentChanged(int index);
+    void on_StructureTabWidget_tabBarClicked(int index);
+
     /*
      * Widget Functions - Structure
      */

@@ -13,6 +13,7 @@
 #include "gui/speciestab.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
+#include <qlayoutitem.h>
 
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                        Species *species)
@@ -120,6 +121,45 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(updateIsotopologuesTab()));
+}
+
+/*
+ * Tabs
+ */
+void SpeciesTab::on_StructureTabWidget_currentChanged(int index)
+{
+    if (index == -1)
+        index = 0;
+    ui_.ViewerStackedWidget->setCurrentIndex(index);
+}
+
+void SpeciesTab::on_StructureTabWidget_tabBarClicked(int index)
+{
+    if (index == ui_.StructureTabWidget->currentIndex())
+    {
+        if (index == 0)
+        {
+            auto newHidden = !ui_.IsotopologueTab->isHidden();
+            ui_.IsotopologueTab->setHidden(newHidden);
+            if (newHidden)
+                ui_.StructureTabWidget->setCurrentIndex(-1);
+            //if (newHidden)
+            //   ui_.IsotopologueTab->setMaximumSize(0, QLAYOUTSIZE_MAX);
+            //else
+            //   ui_.IsotopologueTab->setMaximumSize(QLAYOUTSIZE_MAX, QLAYOUTSIZE_MAX);
+        }
+        //ui_.IsotopologueGroup->setHidden(!ui_.IsotopologueGroup->isHidden());
+        else if (index == 1)
+        {
+            auto newHidden = !ui_.SitesTab->isHidden();
+            ui_.SitesTab->setHidden(newHidden);
+            if (newHidden)
+                ui_.StructureTabWidget->setCurrentIndex(-1);
+            //ui_.SitesGroup->setHidden(!ui_.SitesGroup->isHidden());
+            //ui_.SiteTypeGroup->setHidden(!ui_.SiteTypeGroup->isHidden());
+            //ui_.SiteDefinitionGroup->setHidden(!ui_.SiteDefinitionGroup->isHidden());
+        }
+    }
 }
 
 /*
