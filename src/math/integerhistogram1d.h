@@ -35,6 +35,8 @@ class IntegerHistogram1D
     // Map of histogram bin values to instantaneous counts and accumulated averages
     std::map<int, long int> raw_;
     std::map<int, SampledDouble> averages_;
+    // Zero-valued sampling counter
+    SampledDouble zeroCounter_;
 
     private:
     // Update accumulated data
