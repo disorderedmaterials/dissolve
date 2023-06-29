@@ -120,7 +120,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<DirectionalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::DirectionalGlobalPotential,
                                                               "Add a directional global potential affecting all atoms",
                                                               "Potentials");
-    registerProducer<SimpleRestraintPotentialProcedureNode>(ProcedureNode::NodeType::SimpleRestraintPotential,
+    registerProducer<RestraintPotentialProcedureNode>(ProcedureNode::NodeType::RestraintPotential,
                                                             "Restraint atoms of molecules to their current positions",
                                                             "Potentials");
 }
