@@ -13,6 +13,7 @@
 #include "keywords/vec3nodevalue.h"
 #include "math/matrix3.h"
 #include "procedure/nodes/select.h"
+
 RotateProcedureNode::RotateProcedureNode(std::shared_ptr<SelectProcedureNode> site)
     : ProcedureNode(ProcedureNode::NodeType::Rotate, {ProcedureNode::GenerationContext, ProcedureNode::AnalysisContext}),
       site_(site)
