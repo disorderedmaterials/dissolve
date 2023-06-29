@@ -128,9 +128,8 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
  */
 void SpeciesTab::on_StructureTabWidget_currentChanged(int index)
 {
-    if (index == -1)
-        index = 0;
-    ui_.ViewerStackedWidget->setCurrentIndex(index);
+    if (index > 0)
+        ui_.ViewerStackedWidget->setCurrentIndex(index-1);
 }
 
 void SpeciesTab::on_StructureTabWidget_tabBarClicked(int index)
@@ -191,6 +190,7 @@ void SpeciesTab::updateControls()
 
     // Structure Tab
     ui_.BoxWidget->setVisible(species_->box()->type() != Box::BoxType::NonPeriodic);
+    ui_.StructureTabWidget->setTabVisible(0, species_->box()->type() != Box::BoxType::NonPeriodic); 
     if (species_->box()->type() != Box::BoxType::NonPeriodic)
     {
         const auto *box = species_->box();
