@@ -13,7 +13,7 @@ class SimplePotentialFunctions
     enum class Form
     {
         Harmonic, /* Harmonic well potential */
-        LJSphere  /* Lennard-Jones spherical potential */
+        LJ        /* Lennard-Jones potential */
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
