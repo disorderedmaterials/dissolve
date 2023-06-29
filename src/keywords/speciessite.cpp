@@ -120,6 +120,3 @@ void SpeciesSiteKeyword::deserialise(const SerialisedValue &node, const CoreData
                         data_->name(), name()),
             node.location());
 }
-
-// Has not changed from initial value
-bool SpeciesSiteKeyword::isDefault() const { return !data_; }
