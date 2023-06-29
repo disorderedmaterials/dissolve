@@ -23,7 +23,7 @@ class NodeValueKeyword : public KeywordBase
     private:
     // Reference to data
     NodeValue &data_;
-    // initial value
+    // Initial value
     const NodeValue default_;
     // Parent ProcedureNode
     ProcedureNode *parentNode_;
