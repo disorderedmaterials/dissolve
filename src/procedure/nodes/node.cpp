@@ -311,6 +311,7 @@ SerialisedValue ProcedureNode::serialise() const
     return keywords_.serialiseOnto(result);
 }
 
+// Read values from a serialisable value
 void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     if (mustBeNamed())
