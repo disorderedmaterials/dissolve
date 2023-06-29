@@ -137,9 +137,9 @@ bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValu
 SerialisedValue ExpressionValue::serialise() const
 {
     if (type_ == ValueType::Integer)
-	return valueI_;
+        return valueI_;
     else
-	return valueD_;
+        return valueD_;
 }
 
 // Read values from a serialisable value
