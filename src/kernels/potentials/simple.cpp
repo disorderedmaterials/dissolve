@@ -12,7 +12,7 @@ EnumOptions<SimplePotentialFunctions::Form> SimplePotentialFunctions::forms()
 {
     return EnumOptions<SimplePotentialFunctions::Form>(
         "SimplePotentialFunction",
-        {{SimplePotentialFunctions::Form::Harmonic, "Harmonic", 1}, {SimplePotentialFunctions::Form::LJSphere, "LJSphere", 2}});
+        {{SimplePotentialFunctions::Form::Harmonic, "Harmonic", 1}, {SimplePotentialFunctions::Form::LJ, "LJ", 2}});
 }
 
 // Return parameters for specified form
