@@ -110,10 +110,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
 
     // Has not changed from initial value
     bool isDefault() const override { return data_ == default_; }
-
     // Express as a serialisable value
     SerialisedValue serialise() const override { return optionData_.keyword(data_); }
-
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = optionData_.deserialise(node); }
 };
