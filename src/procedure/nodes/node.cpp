@@ -42,6 +42,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Copy, "Copy"},
                      {ProcedureNode::NodeType::CustomRegion, "CustomRegion"},
                      {ProcedureNode::NodeType::CylindricalRegion, "CylindricalRegion"},
+                     {ProcedureNode::NodeType::DirectionalGlobalPotential, "DirectionalGlobalPotential"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
