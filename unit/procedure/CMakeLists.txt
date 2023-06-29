@@ -1,3 +1,3 @@
 dissolve_unit_test(calculateexpression.cpp)
 dissolve_unit_test(procedure.cpp)
-dissolve_unit_test(rotate.cpp)
+dissolve_unit_test(rotatefragment.cpp)

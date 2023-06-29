@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/rotate.h"
+#include "procedure/nodes/rotatefragment.h"
 #include "classes/configuration.h"
 #include "keywords/enumoptions.h"
 #include "keywords/nodevalue.h"
@@ -38,7 +38,7 @@ TEST(RotateTest, Benzene)
     add->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Central);
 
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
-    auto rotate = procedure.createRootNode<RotateProcedureNode>("RotateBenzene", select);
+    auto rotate = procedure.createRootNode<RotateFragmentProcedureNode>("RotateBenzene", select);
 
     for (auto x = 0.0; x <= 360.0; ++x)
     {
