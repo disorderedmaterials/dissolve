@@ -5,6 +5,7 @@
 
 #include "classes/site.h"
 #include "procedure/nodes/node.h"
+
 class RotateFragmentProcedureNode : public ProcedureNode
 {
     public:
@@ -18,7 +19,7 @@ class RotateFragmentProcedureNode : public ProcedureNode
     // Site to be rotated
     std::shared_ptr<const SelectProcedureNode> site_;
     // Rotation
-    NodeValue rotation_;
+    NodeValue rotation_{90.0};
     // Axis
     OrientedSite::SiteAxis axis_{OrientedSite::SiteAxis::XAxis};
 
