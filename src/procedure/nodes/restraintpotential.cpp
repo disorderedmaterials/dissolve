@@ -27,8 +27,7 @@ RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
  * Execute
  */
 
-void RestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg,
-                                                                  const std::shared_ptr<Molecule> &mol) const
+void RestraintPotentialProcedureNode::restrainMoleculeAtoms(Configuration *cfg, const std::shared_ptr<Molecule> &mol) const
 {
     for (auto &i : mol->atoms())
     {
