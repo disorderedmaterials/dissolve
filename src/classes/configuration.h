@@ -257,7 +257,7 @@ class Configuration : public Serialisable<const CoreData &>
     bool serialise(LineParser &parser) const;
     // Read from specified LineParser
     bool deserialise(LineParser &parser, const CoreData &coreData, double pairPotentialRange, bool hasPotentials);
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &data) override;

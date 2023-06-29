@@ -136,13 +136,10 @@ bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValu
 // Express as a serialisable value
 SerialisedValue ExpressionValue::serialise() const
 {
-    switch (type_)
-    {
-        case ValueType::Integer:
-            return valueI_;
-        case ValueType::Double:
-            return valueD_;
-    }
+    if (type_ == ValueType::Integer)
+	return valueI_;
+    else
+	return valueD_;
 }
 
 // Read values from a serialisable value

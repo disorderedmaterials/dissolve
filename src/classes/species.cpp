@@ -208,19 +208,19 @@ int Species::version() const { return version_; }
 // Express as a serialisable value
 SerialisedValue Species::serialise() const
 {
-    SerialisedValue species;
+    SerialisedValue result;
     if (forcefield_ != nullptr)
-        species["forcefield"] = forcefield_->name().data();
+        result["forcefield"] = forcefield_->name().data();
 
-    Serialisable::fromVector<>(atoms_, "atoms", species);
-    Serialisable::fromVector<>(bonds_, "bonds", species);
-    Serialisable::fromVector<>(angles_, "angles", species);
-    Serialisable::fromVector<>(torsions_, "torsions", species);
-    Serialisable::fromVector<>(impropers_, "impropers", species);
-    Serialisable::fromVector<>(isotopologues_, "isotopologues", species);
-    Serialisable::fromVectorToTable<>(sites_, "sites", species);
+    Serialisable::fromVector<>(atoms_, "atoms", result);
+    Serialisable::fromVector<>(bonds_, "bonds", result);
+    Serialisable::fromVector<>(angles_, "angles", result);
+    Serialisable::fromVector<>(torsions_, "torsions", result);
+    Serialisable::fromVector<>(impropers_, "impropers", result);
+    Serialisable::fromVector<>(isotopologues_, "isotopologues", result);
+    Serialisable::fromVectorToTable<>(sites_, "sites", result);
 
-    return species;
+    return result;
 }
 
 // Read values from a serialisable value

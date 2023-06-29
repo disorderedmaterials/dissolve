@@ -108,7 +108,8 @@ SerialisedValue AtomType::serialise() const
 
     return atomType;
 }
-// This method populates the object's members with values read from an 'atomTypes' TOML node
+
+// Read values from a serialisable value
 void AtomType::deserialise(toml::value node)
 {
     Z_ = toml::find<Elements::Element>(node, "z");

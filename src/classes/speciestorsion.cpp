@@ -655,8 +655,7 @@ void SpeciesTorsion::deserialise(const SerialisedValue &node, CoreData &coreData
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterTorsion(form); });
 
-    if (node.contains("q14"))
-        electrostatic14Scaling_ = node.at("q14").as_floating();
+    electrostatic14Scaling_ = toml::find_or<double>(node, "q14", 0.5);
 
     if (node.contains("v14"))
         vdw14Scaling_ = node.at("v14").as_floating();
