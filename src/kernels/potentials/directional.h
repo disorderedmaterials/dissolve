@@ -41,7 +41,7 @@ class DirectionalPotential : public ExternalPotential
     // Coordinate origin of potential
     Vec3<double> origin_;
     // Direction of potential
-    Vec3<double> vector_{0.0,0.0,1.0};
+    Vec3<double> vector_{0.0, 0.0, 1.0};
 
     public:
     // Set potential form
