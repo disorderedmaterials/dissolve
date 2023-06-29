@@ -16,6 +16,7 @@
 #include "procedure/nodes/copy.h"
 #include "procedure/nodes/customregion.h"
 #include "procedure/nodes/cylindricalregion.h"
+#include "procedure/nodes/directionalglobalpotential.h"
 #include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/integrate1d.h"
 #include "procedure/nodes/operatedivide.h"
@@ -116,8 +117,12 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     // Potentials
     registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,
                                                          "Add a global potential affecting all atoms", "Potentials");
-    registerProducer<RestraintPotentialProcedureNode>(ProcedureNode::NodeType::RestraintPotential,
-                                                      "Restrain atoms of molecules to their current positions", "Potentials");
+    registerProducer<DirectionalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::DirectionalGlobalPotential,
+                                                              "Add a directional global potential affecting all atoms",
+                                                              "Potentials");
+    registerProducer<SimpleRestraintPotentialProcedureNode>(ProcedureNode::NodeType::SimpleRestraintPotential,
+                                                            "Restraint atoms of molecules to their current positions",
+                                                            "Potentials");
 }
 
 /*

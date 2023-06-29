@@ -42,7 +42,7 @@ std::optional<int> SimplePotentialFunctions::parameterIndex(Form form, std::stri
 
 SimplePotential::SimplePotential()
     : interactionPotential_(SimplePotentialFunctions::Form::Harmonic),
-      ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Spherical)
+      ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Simple)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
     keywords_.add<InteractionPotentialKeyword<SimplePotentialFunctions>>(

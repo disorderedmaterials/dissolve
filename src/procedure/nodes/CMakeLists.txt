@@ -17,6 +17,7 @@ add_library(
   copy.cpp
   customregion.cpp
   cylindricalregion.cpp
+  directionalglobalpotential.cpp
   generalregion.cpp
   integrate1d.cpp
   node.cpp
@@ -64,6 +65,7 @@ add_library(
   copy.h
   customregion.h
   cylindricalregion.h
+  directionalglobalpotential.h
   generalregion.h
   integrate1d.h
   node.h
