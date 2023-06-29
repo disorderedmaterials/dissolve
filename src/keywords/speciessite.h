@@ -18,8 +18,6 @@ class SpeciesSiteKeyword : public KeywordBase
     /*
      * Data
      */
-    bool isDefault() const override;
-
     private:
     // Reference to data
     const SpeciesSite *&data_;
