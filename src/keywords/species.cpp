@@ -51,9 +51,6 @@ void SpeciesKeyword::removeReferencesTo(Species *sp)
         data_ = nullptr;
 }
 
-// There cannot eb a default species
-bool SpeciesKeyword::isDefault() const { return false; }
-
 // Express as a serialisable value
 SerialisedValue SpeciesKeyword::serialise() const { return data_->name(); }
 
