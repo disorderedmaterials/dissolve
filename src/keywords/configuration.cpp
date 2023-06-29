@@ -51,6 +51,7 @@ void ConfigurationKeyword::removeReferencesTo(Configuration *cfg)
         data_ = nullptr;
 }
 
+// Express as a serialisable value
 SerialisedValue ConfigurationKeyword::serialise() const
 {
     // isDefault is checked before serialisation of keywords
