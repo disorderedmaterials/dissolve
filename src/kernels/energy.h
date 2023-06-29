@@ -73,7 +73,7 @@ class EnergyKernel : public GeometryKernel
     // Return PairPotential energy of atom with world
     double pairPotentialEnergy(const Atom &i) const;
     // Return PairPotential energy of Molecule with world
-    double pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
+    double pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular) const;
 
     /*
      * Extended Terms
@@ -101,10 +101,9 @@ class EnergyKernel : public GeometryKernel
     // Return total interatomic PairPotential energy of the world
     double totalPairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
     // Return total interatomic PairPotential energy from summation of molecules
-    double totalMoleculePairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const;
+    double totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const;
     // Return total energy of supplied atom with the world
     EnergyResult totalEnergy(const Atom &i) const;
     // Return total energy of supplied molecule with the world
-    EnergyResult totalEnergy(const Molecule &mol, ProcessPool::DivisionStrategy strategy,
-                             Flags<EnergyCalculationFlags> flags = {}) const;
+    EnergyResult totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags = {}) const;
 };
