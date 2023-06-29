@@ -87,7 +87,7 @@ bool ExpressionVariableVectorKeyword::isDefault() const { return data_.empty(); 
 SerialisedValue ExpressionVariableVectorKeyword::serialise() const
 {
     SerialisedValue result;
-    for (auto i : data_)
+    for (auto &i : data_)
         result[std::string(i->name())] = i->value();
     return result;
 }
