@@ -119,7 +119,6 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     /*
      * Object Management
      */
-
     protected:
     // Prune any references to the supplied Module in the contained data
     void removeReferencesTo(Module *module) override
