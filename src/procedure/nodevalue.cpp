@@ -138,6 +138,7 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
     }
 }
 
+// Express as a serialisable value
 SerialisedValue NodeValue::serialise() const
 {
     switch (type_)
@@ -151,6 +152,7 @@ SerialisedValue NodeValue::serialise() const
     }
 }
 
+// Read values from a serialisable value
 void NodeValue::deserialise(const SerialisedValue &node)
 {
     toml::visit(

@@ -51,6 +51,7 @@ void ConfigurationKeyword::removeReferencesTo(Configuration *cfg)
         data_ = nullptr;
 }
 
+// Express as a serialisable value
 SerialisedValue ConfigurationKeyword::serialise() const
 {
     // isDefault is checked before serialisation of keywords
@@ -59,6 +60,7 @@ SerialisedValue ConfigurationKeyword::serialise() const
     return data_->name();
 }
 
+// Read values from a serialisable value
 void ConfigurationKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_ = coreData.findConfiguration(std::string_view(std::string(node.as_string())));

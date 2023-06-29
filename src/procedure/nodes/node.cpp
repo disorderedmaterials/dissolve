@@ -302,6 +302,7 @@ bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
     return true;
 }
 
+// Express as a serialisable value
 SerialisedValue ProcedureNode::serialise() const
 {
     SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
@@ -310,6 +311,7 @@ SerialisedValue ProcedureNode::serialise() const
     return keywords_.serialiseOnto(result);
 }
 
+// Read values from a serialisable value
 void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
 {
     if (mustBeNamed())

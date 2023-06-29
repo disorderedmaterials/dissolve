@@ -149,6 +149,7 @@ bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix) cons
     return keywords_.serialise(parser, fmt::format("{}  ", prefix));
 }
 
+// Express as a serialisable value
 SerialisedValue FileAndFormat::serialise() const
 {
     SerialisedValue result = {{"filename", filename_},
@@ -160,6 +161,7 @@ SerialisedValue FileAndFormat::serialise() const
     return result;
 }
 
+// Read values from a serialisable value
 void FileAndFormat::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     filename_ = toml::find<std::string>(node, "filename");
