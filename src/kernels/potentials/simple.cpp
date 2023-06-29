@@ -73,7 +73,7 @@ double SimplePotential::energy(const Atom &i, const Box *box) const
     {
         case (SimplePotentialFunctions::Form::Harmonic):
             return 0.5 * interactionPotential_.parameters()[0] * box->minimumDistanceSquared(i.r(), origin_);
-        case (SimplePotentialFunctions::Form::LJSphere):
+        case (SimplePotentialFunctions::Form::LJ):
         {
             auto r = box->minimumDistance(i.r(), origin_);
             auto sigmar = interactionPotential_.parameters()[1] / r;
