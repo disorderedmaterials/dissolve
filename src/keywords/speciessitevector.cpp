@@ -117,10 +117,11 @@ void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node, const Co
                      if (site)
                          data_.push_back(site);
                      else
-                         Messenger::error("Cannot find Site {}", toml::find<std::string>(item, "site"));
+                         throw
+			   toml::syntax_error(fmt::format("Cannot find Site {}", toml::find<std::string>(item, "site")), item.location());
                  }
                  else
-                     Messenger::error("Cannot find Species {}", toml::find<std::string>(item, "species"));
+		   toml::syntax_error(fmt::format("Cannot find Species {}", toml::find<std::string>(item, "species")), item.location());
              });
 }
 
