@@ -224,7 +224,7 @@ bool EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Calculate total interatomic energy from molecules
         Timer moleculeTimer;
         auto kernel = KernelProducer::energyKernel(targetConfiguration_, procPool, dissolve.potentialMap(), cutoff);
-        auto molecularEnergy = kernel->totalMoleculePairPotentialEnergy(false, ProcessPool::subDivisionStrategy(strategy));
+        auto molecularEnergy = kernel->totalMoleculePairPotentialEnergy(false);
         molecularEnergy += correctSelfEnergy;
         moleculeTimer.stop();
 

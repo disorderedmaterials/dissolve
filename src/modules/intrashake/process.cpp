@@ -125,11 +125,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             changeStore.add(mol);
 
             // Calculate reference non-geometry energy for Molecule
-            ppEnergy =
-                termEnergyOnly_
-                    ? 0.0
-                    : kernel->totalEnergy(*mol, ProcessPool::subDivisionStrategy(strategy), EnergyKernel::ExcludeGeometry)
-                          .total();
+            ppEnergy = termEnergyOnly_ ? 0.0 : kernel->totalEnergy(*mol, EnergyKernel::ExcludeGeometry).total();
 
             // Loop over defined bonds
             if (adjustBonds_)
@@ -161,11 +157,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         targetConfiguration_->updateAtomLocations(bond.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0
-                                                      : kernel
-                                                            ->totalEnergy(*mol, ProcessPool::subDivisionStrategy(strategy),
-                                                                          EnergyKernel::ExcludeGeometry)
-                                                            .total();
+                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel->totalEnergy(*mol, EnergyKernel::ExcludeGeometry).total();
                         newIntraEnergy = bond.inCycle() ? kernel->totalGeometryEnergy(*mol) : kernel->bondEnergy(bond, *i, *j);
 
                         // Trial the transformed Molecule
@@ -221,11 +213,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         targetConfiguration_->updateAtomLocations(angle.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0
-                                                      : kernel
-                                                            ->totalEnergy(*mol, ProcessPool::subDivisionStrategy(strategy),
-                                                                          EnergyKernel::ExcludeGeometry)
-                                                            .total();
+                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel->totalEnergy(*mol, EnergyKernel::ExcludeGeometry).total();
                         newIntraEnergy =
                             angle.inCycle() ? kernel->totalGeometryEnergy(*mol) : kernel->angleEnergy(angle, *i, *j, *k);
 
@@ -286,11 +274,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         targetConfiguration_->updateAtomLocations(torsion.attachedAtoms(terminus), indexOffset);
 
                         // Calculate new energy
-                        newPPEnergy = termEnergyOnly_ ? 0.0
-                                                      : kernel
-                                                            ->totalEnergy(*mol, ProcessPool::subDivisionStrategy(strategy),
-                                                                          EnergyKernel::ExcludeGeometry)
-                                                            .total();
+                        newPPEnergy = termEnergyOnly_ ? 0.0 : kernel->totalEnergy(*mol, EnergyKernel::ExcludeGeometry).total();
                         newIntraEnergy = kernel->torsionEnergy(torsion, *i, *j, *k, *l);
 
                         // Trial the transformed Molecule
