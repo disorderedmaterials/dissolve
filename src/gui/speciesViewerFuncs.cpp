@@ -3,14 +3,17 @@
 
 #include "classes/species.h"
 #include "data/elements.h"
-#include "gui/render/renderableSpecies.h"
-#include "gui/speciesViewer.hui"
+#include "gui/render/renderablespecies.h"
+#include "gui/render/renderablespeciessite.h"
+#include "gui/speciesviewer.hui"
 
 SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
 {
     // Source data
     species_ = nullptr;
+    site_ = nullptr;
     speciesRenderable_ = nullptr;
+    siteRenderable_ = nullptr;
 
     // Interaction
     setInteractionMode(SpeciesViewer::InteractionMode::Select);
@@ -28,13 +31,15 @@ SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
 }
 
 /*
- * Target Species
+ * Source Species and Site
  */
 
 // Set target Species
 void SpeciesViewer::setSpecies(Species *sp)
 {
     species_ = sp;
+    if (speciesRenderable_ != nullptr)
+        removeRenderable(speciesRenderable_);
     speciesRenderable_ = nullptr;
 
     // Clear Renderables
@@ -44,6 +49,7 @@ void SpeciesViewer::setSpecies(Species *sp)
     if (species_)
     {
         speciesRenderable_ = createRenderable<RenderableSpecies, Species>(species_, species_->name());
+        addRenderable(speciesRenderable_);
 
         view_.showAllData();
     }
@@ -54,6 +60,29 @@ void SpeciesViewer::setSpecies(Species *sp)
 
 // Return target Species
 Species *SpeciesViewer::species() const { return species_; }
+
+// Set target SpeciesSite
+void SpeciesViewer::setSite(SpeciesSite *site)
+{
+    site_ = site;
+    if (siteRenderable_ != nullptr)
+        removeRenderable(siteRenderable_);
+    siteRenderable_ = nullptr;
+
+    // Create a new Renderable for the SpeciesSite
+    if (site_)
+    {
+        siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
+        siteRenderable_->setName("Site");
+        addRenderable(siteRenderable_);
+
+        view_.showAllData();
+    }
+}
+
+// Return target site
+SpeciesSite *SpeciesViewer::speciesSite() const { return site_; }
+
 
 /*
  * Renderable

@@ -24,7 +24,7 @@ SpeciesSite *SpeciesTab::currentSite()
 void SpeciesTab::setCurrentSiteFromViewer()
 {
     // Get the currently-displayed site in the SiteViewer - if different from ours, change our controls to reflect it
-    auto *displayedSite = ui_.SiteViewerWidget->siteViewer()->speciesSite();
+    auto *displayedSite = ui_.ViewerWidget->speciesViewer()->speciesSite();
     if (!displayedSite)
         return;
 
@@ -64,7 +64,7 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
 
     // Remove references to the site, and invalidate our site renderable
     dissolveWindow_->dissolve().removeReferencesTo(site);
-    ui_.SiteViewerWidget->setSite(nullptr);
+    ui_.ViewerWidget->setSite(nullptr);
 
     // Remove the site proper
     dissolve_.removeReferencesTo(site);
@@ -99,7 +99,7 @@ void SpeciesTab::on_SiteTypeCombo_currentIndexChanged(int index)
 
     updateSitesTab();
 
-    ui_.SiteViewerWidget->postRedisplay();
+    ui_.ViewerWidget->postRedisplay();
 
     dissolveWindow_->setModified();
 }
@@ -114,7 +114,7 @@ void SpeciesTab::on_SiteOriginMassWeightedCheck_clicked(bool checked)
 
     site->setOriginMassWeighted(checked);
 
-    ui_.SiteViewerWidget->postRedisplay();
+    ui_.ViewerWidget->postRedisplay();
 
     dissolveWindow_->setModified();
 }
@@ -128,7 +128,7 @@ void SpeciesTab::on_SiteFragmentDescriptionEdit_editingFinished()
     site->setFragmentDefinitionString(std::string_view(ui_.SiteFragmentDescriptionEdit->text().toStdString()));
     ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
 
-    ui_.SiteViewerWidget->postRedisplay();
+    ui_.ViewerWidget->postRedisplay();
 
     dissolveWindow_->setModified();
 }
@@ -141,7 +141,7 @@ void SpeciesTab::on_SiteFragmentDescriptionEdit_returnPressed()
     site->setFragmentDefinitionString(std::string_view(ui_.SiteFragmentDescriptionEdit->text().toStdString()));
     ui_.DescriptionValidIndicator->setOK(site->fragment().isValid());
 
-    ui_.SiteViewerWidget->postRedisplay();
+    ui_.ViewerWidget->postRedisplay();
 
     dissolveWindow_->setModified();
 }
@@ -224,6 +224,6 @@ void SpeciesTab::updateSitesTab()
             break;
     }
     // If the current site has changed, also regenerate the SpeciesSite renderable
-    if (ui_.SiteViewerWidget->siteViewer()->speciesSite() != site)
-        ui_.SiteViewerWidget->setSite(site);
+    if (ui_.StructureToolBox->currentIndex() == 2 && ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
+        ui_.ViewerWidget->setSite(site);
 }

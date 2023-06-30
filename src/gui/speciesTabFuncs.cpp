@@ -94,18 +94,14 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.ViewerWidget->setDissolve(&dissolve);
     ui_.ViewerWidget->setSpecies(species_);
 
-    // Set up SiteViewer
-    ui_.SiteViewerWidget->setCoreData(&dissolve.coreData());
-    ui_.SiteViewerWidget->setSpecies(species_);
-
     // Connect signals / slots
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
     connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), dissolveWindow_, SLOT(updateMenus()));
     connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), this, SLOT(updateAtomTableSelection()));
-    connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
-    connect(ui_.SiteViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
-    connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+    connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
+    connect(ui_.ViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
+    connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
 
     connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(atomTableDataChanged(const QModelIndex &, const QModelIndex &)));
@@ -127,17 +123,10 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
  */
 void SpeciesTab::on_StructureToolBox_currentChanged(int index)
 {
-    switch(index)
-    {
-        case(0):
-        case(1):
-            ui_.ViewStackedWidget->setCurrentIndex(0);
-            break;
-        case(2):
-            ui_.ViewStackedWidget->setCurrentIndex(1);
-            break;
-    }
-    ui_.StructureToolBox->currentWidget()->setHidden(true);
+    if (index != 2)
+        ui_.ViewerWidget->setSite(nullptr);
+    else
+        ui_.ViewerWidget->setSite(currentSite());
 }
 
 /*

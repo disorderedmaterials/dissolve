@@ -43,7 +43,7 @@
       <attribute name="title">
        <string>Structure</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_18">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QToolBox" name="StructureToolBox">
          <property name="sizePolicy">
@@ -56,7 +56,7 @@
           <enum>QFrame::NoFrame</enum>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="BoxPage">
           <property name="geometry">
@@ -1263,56 +1263,13 @@
         </widget>
        </item>
        <item>
-        <widget class="QStackedWidget" name="ViewStackedWidget">
+        <widget class="SpeciesWidget" name="ViewerWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>3</horstretch>
-           <verstretch>0</verstretch>
+           <verstretch>2</verstretch>
           </sizepolicy>
          </property>
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <widget class="QWidget" name="page_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_19">
-           <item>
-            <widget class="SpeciesWidget" name="ViewerWidget" native="true">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>2</horstretch>
-               <verstretch>2</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="page_3">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_20">
-           <item>
-            <widget class="SiteWidget" name="SiteViewerWidget" native="true">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>2</horstretch>
-               <verstretch>2</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
         </widget>
        </item>
       </layout>
@@ -1957,12 +1914,6 @@
    <class>SpeciesWidget</class>
    <extends>QWidget</extends>
    <header>gui/speciesWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SiteWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/siteWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
