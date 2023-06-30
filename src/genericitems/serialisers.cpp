@@ -15,6 +15,7 @@
 #include "math/histogram1d.h"
 #include "math/histogram2d.h"
 #include "math/histogram3d.h"
+#include "math/integerhistogram1d.h"
 
 GenericItemSerialiser::GenericItemSerialiser()
 {
@@ -106,6 +107,7 @@ GenericItemSerialiser::GenericItemSerialiser()
     registerSerialiser<Histogram1D>(simpleSerialise<Histogram1D>);
     registerSerialiser<Histogram2D>(simpleSerialise<Histogram2D>);
     registerSerialiser<Histogram3D>(simpleSerialise<Histogram3D>);
+    registerSerialiser<IntegerHistogram1D>(simpleSerialise<IntegerHistogram1D>);
     registerSerialiser<NeutronWeights>(simpleSerialise<NeutronWeights>);
     registerSerialiser<PartialSet>(simpleSerialise<PartialSet>);
     registerSerialiser<PartialSetAccumulator>(simpleSerialise<PartialSetAccumulator>);

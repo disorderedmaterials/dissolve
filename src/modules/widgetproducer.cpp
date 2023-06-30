@@ -30,6 +30,8 @@
 #include "modules/geomopt/gui/geomoptwidget.h"
 #include "modules/gr/gr.h"
 #include "modules/gr/gui/grwidget.h"
+#include "modules/histogramcn/gui/histogramcnwidget.h"
+#include "modules/histogramcn/histogramcn.h"
 #include "modules/intraangle/gui/intraanglewidget.h"
 #include "modules/intraangle/intraangle.h"
 #include "modules/intradistance/gui/intradistancewidget.h"
@@ -66,6 +68,7 @@ ModuleWidgetProducer::ModuleWidgetProducer()
     registerProducer<EPSRModule, EPSRModuleWidget>();
     registerProducer<GeometryOptimisationModule, GeometryOptimisationModuleWidget>();
     registerProducer<GRModule, GRModuleWidget>();
+    registerProducer<HistogramCNModule, HistogramCNModuleWidget>();
     registerProducer<IntraAngleModule, IntraAngleModuleWidget>();
     registerProducer<IntraDistanceModule, IntraDistanceModuleWidget>();
     registerProducer<NeutronSQModule, NeutronSQModuleWidget>();

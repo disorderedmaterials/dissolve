@@ -13,6 +13,7 @@
 #include "keywords/node.h"
 #include "keywords/nodevalue.h"
 #include "keywords/nodevector.h"
+#include "keywords/range.h"
 #include "keywords/species.h"
 #include "keywords/stdstring.h"
 #include "keywords/vec3double.h"
@@ -242,6 +243,10 @@ bool KeywordStore::set(std::string_view name, const Vec3<double> value)
 bool KeywordStore::set(std::string_view name, const Vec3<NodeValue> value)
 {
     return getKeyword<Vec3NodeValueKeyword>(keywords_, name)->setData(value);
+}
+bool KeywordStore::set(std::string_view name, const Range value)
+{
+    return getKeyword<RangeKeyword>(keywords_, name)->setData(value);
 }
 
 // Retrieve a Configuration by keyword name

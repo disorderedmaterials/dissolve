@@ -25,6 +25,7 @@ void IntegerHistogram1D::clear()
     nMissed_ = 0;
     raw_.clear();
     averages_.clear();
+    zeroCounter_.clear();
 }
 
 /*
@@ -37,6 +38,7 @@ void IntegerHistogram1D::updateAccumulatedData()
     auto average = createDisplayData();
     accumulatedData_ = average.first;
     auto minBin = average.second;
+
     // Poke bin values and errors into array
     for (const auto &[key, value] : averages_)
     {
@@ -94,7 +96,8 @@ void IntegerHistogram1D::initialise(std::optional<int> xMin, std::optional<int> 
 // Zero histogram bins
 void IntegerHistogram1D::zeroBins()
 {
-    raw_.clear();
+    for (auto &[key, count] : raw_)
+        count = 0;
     nBinned_ = 0;
     nMissed_ = 0;
 }
@@ -127,10 +130,16 @@ long int IntegerHistogram1D::nBinned() const { return nBinned_; }
 void IntegerHistogram1D::accumulate()
 {
     for (auto &[key, value] : raw_)
-        averages_[key] += (double)raw_[key];
+        averages_.try_emplace(key, zeroCounter_).first->second += (double)raw_[key];
 
     // Update accumulated data
     updateAccumulatedData();
+
+    /*
+     * Accumulate zero counter - this is to keep track of the number of accumulations made
+     * and allow us to "pad" the statistics of new keys added to the averages_ map
+     */
+    zeroCounter_ += 0.0;
 }
 
 // Return current data
@@ -166,13 +175,13 @@ bool IntegerHistogram1D::deserialise(LineParser &parser)
     nBinned_ = parser.argli(0);
     nMissed_ = parser.argli(1);
 
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+    if (!zeroCounter_.deserialise(parser))
         return false;
 
+    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+        return false;
     auto nBins = parser.argli(0);
-
-    for (int n = 0; n <= nBins; ++n)
-
+    for (auto n = 0; n < nBins; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -180,6 +189,7 @@ bool IntegerHistogram1D::deserialise(LineParser &parser)
         raw_[bin] = parser.argli(1);
         averages_[bin].deserialise(parser);
     }
+
     return true;
 }
 
@@ -189,7 +199,11 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
     if (!parser.writeLineF("{} {} {} {}\n", DissolveSys::btoa(minimum_.has_value()), minimum_.value_or(0),
                            DissolveSys::btoa(maximum_.has_value()), maximum_.value_or(0)))
         return false;
+
     if (!parser.writeLineF("{}  {} \n", nBinned_, nMissed_))
+        return false;
+
+    if (!zeroCounter_.serialise(parser))
         return false;
 
     if (!parser.writeLineF("{} \n", raw_.size()))

@@ -33,6 +33,7 @@ bool RangeKeyword::setData(double rangeMin, double rangeMax)
 
     return true;
 }
+bool RangeKeyword::setData(const Range &range) { return setData(range.minimum(), range.maximum()); }
 
 // Set range minimum
 bool RangeKeyword::setMinimum(double rangeMin)

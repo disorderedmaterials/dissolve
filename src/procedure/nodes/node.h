@@ -55,6 +55,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         DirectionalGlobalPotential,
         DynamicSite,
         GeneralRegion,
+        IntegerCollect1D,
         Integrate1D,
         OperateDivide,
         OperateExpression,

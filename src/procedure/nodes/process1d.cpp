@@ -11,6 +11,7 @@
 #include "math/integrator.h"
 #include "modules/analyse/analyse.h"
 #include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/integercollect1d.h"
 #include "procedure/nodes/operatebase.h"
 
 Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
@@ -18,9 +19,26 @@ Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedur
     : ProcedureNode(ProcedureNode::NodeType::Process1D, {ProcedureNode::AnalysisContext}), sourceData_(target),
       normalisationBranch_(normalisationContext, *this, "Normalisation")
 {
+    setUpKeywords();
+}
+
+Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
+                                               ProcedureNode::NodeContext normalisationContext)
+    : ProcedureNode(ProcedureNode::NodeType::Process1D, {ProcedureNode::AnalysisContext}), sourceIntegerData_(intTarget),
+      normalisationBranch_(normalisationContext, *this, "Normalisation")
+{
+    setUpKeywords();
+}
+
+// Set up keywords for node
+void Process1DProcedureNode::setUpKeywords()
+{
     keywords_.setOrganisation("Options", "Source");
     keywords_.add<NodeKeyword<Collect1DProcedureNode>>("SourceData", "Collect1D node containing the histogram data to process",
                                                        sourceData_, this, ProcedureNode::NodeType::Collect1D, false);
+    keywords_.add<NodeKeyword<IntegerCollect1DProcedureNode>>(
+        "SourceIntegerData", "IntegerCollect1D node containing the histogram data to process", sourceIntegerData_, this,
+        ProcedureNode::NodeType::IntegerCollect1D, false);
     keywords_.add<BoolKeyword>(
         "Instantaneous", "Whether to use only the current binned data of the histogram, rather than the accumulated average",
         instantaneous_);
@@ -35,9 +53,6 @@ Process1DProcedureNode::Process1DProcedureNode(std::shared_ptr<Collect1DProcedur
 
     keywords_.addHidden<NodeBranchKeyword>("Normalisation", "Branch providing normalisation operations for the data",
                                            normalisationBranch_);
-
-    // Initialise data pointer
-    processedData_ = nullptr;
 }
 
 /*
@@ -83,12 +98,18 @@ OptionalReferenceWrapper<ProcedureNodeSequence> Process1DProcedureNode::branch()
 // Prepare any necessary data, ready for execution
 bool Process1DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
-    if (!sourceData_)
-        return Messenger::error("No source Collect1D node set in '{}'.\n", name());
+    if (sourceData_ && sourceIntegerData_)
+    {
+        return Messenger::error("Specify either SourceData or SourceIntegerData, not both.\n");
+    }
+    else if (sourceData_ || sourceIntegerData_)
+    {
+        normalisationBranch_.prepare(procedureContext);
 
-    normalisationBranch_.prepare(procedureContext);
-
-    return true;
+        return true;
+    }
+    else
+        return Messenger::error("No source data node set in '{}'.\n", name());
 }
 
 // Finalise any necessary data after execution
@@ -102,9 +123,9 @@ bool Process1DProcedureNode::finalise(const ProcedureContext &procedureContext)
 
     // Copy the averaged data from the associated Process1D node
     if (instantaneous_)
-        data = sourceData_->data();
+        data = sourceData_ ? sourceData_->data() : sourceIntegerData_->data();
     else
-        data = sourceData_->accumulatedData();
+        data = sourceData_ ? sourceData_->accumulatedData() : sourceIntegerData_->accumulatedData();
 
     // Run normalisation on the data
     // Set data targets in the normalisation nodes

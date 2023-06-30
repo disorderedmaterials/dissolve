@@ -15,6 +15,7 @@
 #include "math/histogram1d.h"
 #include "math/histogram2d.h"
 #include "math/histogram3d.h"
+#include "math/integerhistogram1d.h"
 #include <ios>
 
 GenericItemProducer::GenericItemProducer()
@@ -41,6 +42,7 @@ GenericItemProducer::GenericItemProducer()
     registerProducer<Histogram1D>("Histogram1D");
     registerProducer<Histogram2D>("Histogram2D");
     registerProducer<Histogram3D>("Histogram3D");
+    registerProducer<IntegerHistogram1D>("IntegerHistogram1D");
     registerProducer<NeutronWeights>("NeutronWeights");
     registerProducer<PartialSet>("PartialSet");
     registerProducer<PartialSetAccumulator>("PartialSetAccumulator");

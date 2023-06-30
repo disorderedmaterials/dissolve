@@ -19,6 +19,7 @@ add_library(
   cylindricalregion.cpp
   directionalglobalpotential.cpp
   generalregion.cpp
+  integercollect1d.cpp
   integrate1d.cpp
   node.cpp
   nodereference.cpp
@@ -67,6 +68,7 @@ add_library(
   cylindricalregion.h
   directionalglobalpotential.h
   generalregion.h
+  integercollect1d.h
   integrate1d.h
   node.h
   nodereference.h

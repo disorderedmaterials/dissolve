@@ -6,6 +6,7 @@
 #include "keywords/base.h"
 #include "keywords/enumoptions.h"
 #include "keywords/storedata.h"
+#include "math/range.h"
 #include "procedure/nodevalue.h"
 #include "templates/optionalref.h"
 #include <any>
@@ -146,6 +147,7 @@ class KeywordStore
     bool set(std::string_view name, const NodeValue value);
     bool set(std::string_view name, const Vec3<double> value);
     bool set(std::string_view name, const Vec3<NodeValue> value);
+    bool set(std::string_view name, const Range value);
     bool set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
     bool set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value);
     bool set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
