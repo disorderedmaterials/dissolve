@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "classes/speciessite.h"
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "classes/site.h"
 #include "classes/species.h"
-#include "classes/speciessite.h"
 #include "data/atomicmasses.h"
 #include "neta/matchedgroup.h"
 #include "neta/neta.h"
@@ -462,13 +462,13 @@ Vec3<double> SpeciesSite::centreOfMass(std::vector<int> &indices) const
 {
     auto mass = AtomicMass::mass(parent_->atom(indices.front()).Z());
     const auto ref = parent_->atom(indices.front()).r();
-    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
-                                [&ref, this](const auto &acc, const auto idx)
-                                {
-                                    auto mass = AtomicMass::mass(parent_->atom(idx).Z());
-                                    return {acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass,
-                                        acc.second + mass};
-                                });
+    auto sums = std::accumulate(
+        std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+        [&ref, this](const auto &acc, const auto idx)
+        {
+            auto mass = AtomicMass::mass(parent_->atom(idx).Z());
+            return {acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass, acc.second + mass};
+        });
     return sums.first / sums.second;
 }
 
