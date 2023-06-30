@@ -98,6 +98,21 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
         return true;
     }
 
+    // Express as a serialisable value
+    SerialisedValue serialise() const override { return data_->name(); }
+
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override
+    {
+        auto *module = Module::find(std::string(node.as_string()));
+        if (!module)
+            throw toml::syntax_error(fmt::format("Module '{}' given to keyword {} doesn't exist.\n",
+                                                 std::string(node.as_string()), KeywordBase::name()),
+                                     node.location());
+
+        setData(module);
+    }
+
     /*
      * Object Management
      */

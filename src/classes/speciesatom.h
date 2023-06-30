@@ -14,13 +14,14 @@
 
 // Forward Declarations
 class AtomType;
+class CoreData;
 class SpeciesAngle;
 class SpeciesBond;
 class SpeciesImproper;
 class SpeciesTorsion;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public Serialisable
+class SpeciesAtom : public Serialisable<CoreData &>
 {
     public:
     SpeciesAtom() = default;
@@ -198,8 +199,8 @@ class SpeciesAtom : public Serialisable
     // Guess and return oxidation state for the specified SpeciesAtom
     static int guessOxidationState(const SpeciesAtom *i);
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
-    void deserialise(SerialisedValue &node) override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };

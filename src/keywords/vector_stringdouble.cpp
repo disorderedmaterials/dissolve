@@ -45,3 +45,22 @@ bool StringDoubleVectorKeyword::serialise(LineParser &parser, std::string_view k
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue StringDoubleVectorKeyword::serialise() const
+{
+    return fromVector(data_,
+                      [](const auto &item) -> SerialisedValue {
+                          return {{"name", item.first}, {"value", item.second}};
+                      });
+}
+
+// Read values from a serialisable value
+void StringDoubleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    toVector(node, [this](const auto &item)
+             { data_.emplace_back(toml::find<std::string>(item, "name"), toml::find<double>(item, "value")); });
+}
+
+// Has not changed from initial value
+bool StringDoubleVectorKeyword::isDefault() const { return data_.empty(); }

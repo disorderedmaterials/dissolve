@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "base/serialiser.h"
+#include "classes/coredata.h"
 #include "module/module.h"
 #include "templates/flags.h"
 #include <map>
@@ -17,7 +19,7 @@ class GenericList;
 class ProcessPool;
 
 // Module Layer
-class ModuleLayer
+class ModuleLayer : public Serialisable<const CoreData &>
 {
     public:
     ModuleLayer() = default;
@@ -100,4 +102,8 @@ class ModuleLayer
     bool setUpAll(Dissolve &dissolve, const ProcessPool &procPool);
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

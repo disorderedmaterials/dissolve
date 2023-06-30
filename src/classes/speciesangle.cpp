@@ -354,7 +354,7 @@ double SpeciesAngle::force(double angleInDegrees) const
                                          AngleFunctions::forms().keyword(angleForm))));
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesAngle::serialise() const
 {
     auto angle = SpeciesIntra<SpeciesAngle, AngleFunctions>::serialise();
@@ -368,7 +368,7 @@ SerialisedValue SpeciesAngle::serialise() const
     return angle;
 }
 // This method populates the object's members with values read from an 'angle' TOML node
-void SpeciesAngle::deserialise(SerialisedValue &node, CoreData &coreData)
+void SpeciesAngle::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterAngle(form); });
 }

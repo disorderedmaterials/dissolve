@@ -3,13 +3,14 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "io/import/data2d.h"
 #include "math/data2d.h"
 #include "templates/optionalref.h"
 #include <list>
 
 // Data2D Store
-class Data2DStore
+class Data2DStore : public Serialisable<const CoreData &>
 {
     public:
     Data2DStore() = default;
@@ -32,4 +33,8 @@ class Data2DStore
     OptionalReferenceWrapper<const Data2D> data(std::string_view name) const;
     // Return vector of all data
     const std::vector<std::shared_ptr<std::pair<Data2D, Data2DImportFileFormat>>> &data() const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

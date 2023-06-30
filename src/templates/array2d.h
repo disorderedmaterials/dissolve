@@ -201,6 +201,7 @@ template <class A> class Array2D
     // Does the array have contents?
     bool empty() const { return array_.empty(); }
     std::vector<A> &linearArray() { return array_; }
+    const std::vector<A> &linearArray() const { return array_; }
 
     /*
      * Operators

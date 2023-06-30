@@ -87,3 +87,25 @@ bool IntegerStringVectorKeyword::serialise(LineParser &parser, std::string_view 
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue IntegerStringVectorKeyword::serialise() const
+{
+    return fromVector(data_,
+                      [](auto pair) -> SerialisedValue {
+                          return {{"indices", std::get<0>(pair)}, {"values", std::get<1>(pair)}};
+                      });
+}
+
+// Read values from a serialisable value
+void IntegerStringVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    toVector(node,
+             [this](const auto &item) {
+                 data_.emplace_back(toml::find<std::vector<int>>(item, "indices"),
+                                    toml::find<std::vector<std::string>>(item, "values"));
+             });
+}
+
+// Has not changed from initial value
+bool IntegerStringVectorKeyword::isDefault() const { return data_.empty(); }

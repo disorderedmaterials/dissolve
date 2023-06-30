@@ -13,6 +13,7 @@
 #include "keywords/nodevalueenumoptions.h"
 #include "keywords/species.h"
 #include "procedure/nodes/coordinatesets.h"
+#include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/regionbase.h"
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,

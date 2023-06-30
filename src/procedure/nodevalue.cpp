@@ -137,3 +137,61 @@ std::string NodeValue::asString(bool addQuotesIfRequired) const
             return fmt::format("{}", expression_.expressionString());
     }
 }
+
+// Express as a serialisable value
+SerialisedValue NodeValue::serialise() const
+{
+    switch (type_)
+    {
+        case IntegerNodeValue:
+            return valueI_;
+        case DoubleNodeValue:
+            return valueD_;
+        case ExpressionNodeValue:
+            return expression_.expressionString();
+    }
+}
+
+// Read values from a serialisable value
+void NodeValue::deserialise(const SerialisedValue &node)
+{
+    toml::visit(
+        [this](auto &arg)
+        {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, toml::integer>)
+            {
+                type_ = IntegerNodeValue;
+                valueI_ = arg;
+            }
+            else if constexpr (std::is_same_v<T, toml::floating>)
+            {
+                type_ = DoubleNodeValue;
+                valueD_ = arg;
+            }
+            else if constexpr (std::is_same_v<T, toml::string>)
+            {
+                type_ = ExpressionNodeValue;
+                expression_.create(std::string_view(std::string(arg)), {});
+            }
+        },
+        node);
+}
+
+bool NodeValue::operator==(const NodeValue &value) const
+{
+    if (type_ != value.type_)
+        return false;
+    switch (type_)
+    {
+        case IntegerNodeValue:
+            return valueI_ == value.asInteger();
+        case DoubleNodeValue:
+            return valueD_ == value.asDouble();
+        case ExpressionNodeValue:
+            return expression_.expressionString() == value.expression_.expressionString();
+    }
+    return false;
+}
+
+bool NodeValue::operator!=(const NodeValue &value) const { return !(*this == value); }

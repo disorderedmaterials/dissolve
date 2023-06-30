@@ -187,3 +187,38 @@ std::vector<Configuration *> ModuleLayer::allTargetedConfigurations() const
 
     return result;
 }
+
+// Express as a serialisable value
+SerialisedValue ModuleLayer::serialise() const
+{
+    SerialisedValue result = {{"frequency", frequency_}};
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::Disabled))
+        result["disabled"] = true;
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::EnergyStability))
+        result["requireEnergyStability"] = true;
+    if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
+        result["requireSizeFactors"] = true;
+    Serialisable::fromVectorToTable(modules_, "modules", result);
+    return result;
+}
+
+// Read values from a serialisable value
+void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    frequency_ = toml::find_or<int>(node, "frequency", 1);
+    if (toml::find_or<bool>(node, "disabled", false))
+        runControlFlags_.setFlag(ModuleLayer::RunControlFlag::Disabled);
+    if (toml::find_or<bool>(node, "requireEnergyStability", false))
+        runControlFlags_.setFlag(ModuleLayer::RunControlFlag::EnergyStability);
+    if (toml::find_or<bool>(node, "requireSizeFactors", false))
+        runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
+    Serialisable::toMap(
+        node, "modules",
+        [&coreData, this](const auto &key, const SerialisedValue &data)
+        {
+            auto *module =
+                append(*ModuleTypes::moduleType(std::string_view(std::string(toml::find<std::string>(data, "type"), {}))), {});
+            module->setName(key);
+            module->deserialise(data, coreData);
+        });
+}

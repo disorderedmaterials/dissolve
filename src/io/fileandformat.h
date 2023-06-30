@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "keywords/store.h"
 
 // Forward Declarations
@@ -10,7 +11,7 @@ class CoreData;
 class LineParser;
 
 // File / Format Base
-class FileAndFormat
+class FileAndFormat : public Serialisable<const CoreData &>
 {
     public:
     FileAndFormat(EnumOptionsBase &formats, std::string_view filename = "", std::optional<int> formatIndex = {});
@@ -94,4 +95,8 @@ class FileAndFormat
     bool writeFilenameAndFormat(LineParser &parser, std::string_view prefix) const;
     // Write options and end block
     bool writeBlock(LineParser &parser, std::string_view prefix) const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

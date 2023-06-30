@@ -18,6 +18,8 @@ class StringKeyword : public KeywordBase
     private:
     // Reference to data
     std::string &data_;
+    // Initial data
+    const std::string default_;
 
     public:
     // Return reference to data
@@ -32,4 +34,10 @@ class StringKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    // Has not changed from initial value
+    bool isDefault() const override;
 };

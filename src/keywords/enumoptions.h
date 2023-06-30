@@ -39,7 +39,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
 {
     public:
     explicit EnumOptionsKeyword(E &data, EnumOptions<E> optionData)
-        : EnumOptionsBaseKeyword(optionData_), data_(data), optionData_(optionData)
+        : EnumOptionsBaseKeyword(optionData_), data_(data), default_(data), optionData_(optionData)
     {
         // Set our array of valid values
         for (auto n = 0; n < optionData_.nOptions(); ++n)
@@ -53,6 +53,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     private:
     // Reference to data
     E &data_;
+    // Initial value
+    const E default_;
     // Related EnumOptions data
     EnumOptions<E> optionData_;
     // List of valid keyword values
@@ -105,4 +107,11 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword
     };
     // Set new option index
     void setEnumerationByIndex(int optionIndex) override { data_ = optionData_.enumerationByIndex(optionIndex); }
+
+    // Has not changed from initial value
+    bool isDefault() const override { return data_ == default_; }
+    // Express as a serialisable value
+    SerialisedValue serialise() const override { return optionData_.keyword(data_); }
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = optionData_.deserialise(node); }
 };

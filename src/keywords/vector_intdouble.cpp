@@ -4,6 +4,7 @@
 #include "keywords/vector_intdouble.h"
 #include "base/lineparser.h"
 #include "classes/coredata.h"
+#include <algorithm>
 
 IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data,
                                                                                    int nRequiredIntegers,
@@ -84,3 +85,25 @@ bool IntegerDoubleVectorKeyword::serialise(LineParser &parser, std::string_view 
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue IntegerDoubleVectorKeyword::serialise() const
+{
+    return fromVector(data_,
+                      [](auto pair) -> SerialisedValue {
+                          return {{"indices", std::get<0>(pair)}, {"values", std::get<1>(pair)}};
+                      });
+}
+
+// Read values from a serialisable value
+void IntegerDoubleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    toVector(node,
+             [this](const auto &item) {
+                 data_.emplace_back(toml::find<std::vector<int>>(item, "indices"),
+                                    toml::find<std::vector<double>>(item, "values"));
+             });
+}
+
+// Has not changed from initial value
+bool IntegerDoubleVectorKeyword::isDefault() const { return data_.empty(); }

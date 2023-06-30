@@ -31,7 +31,7 @@ class ShortRangeFunctions
 };
 
 // AtomType Definition
-class AtomType : public Serialisable
+class AtomType : public Serialisable<>
 {
     public:
     AtomType(Elements::Element Z = Elements::Unknown);
@@ -83,8 +83,8 @@ class AtomType : public Serialisable
     // Return whether our parameters are the same as those provided
     bool sameParametersAs(const AtomType *other, bool checkCharge = false);
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
+    // Read values from a serialisable value
     void deserialise(SerialisedValue node);
 };

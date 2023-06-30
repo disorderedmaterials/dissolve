@@ -80,6 +80,26 @@ bool ExpressionVariableVectorKeyword::serialise(LineParser &parser, std::string_
     return true;
 }
 
+// Has not changed from initial value
+bool ExpressionVariableVectorKeyword::isDefault() const { return data_.empty(); }
+
+// Express as a serialisable value
+SerialisedValue ExpressionVariableVectorKeyword::serialise() const
+{
+    SerialisedValue result;
+    for (auto &i : data_)
+        result[std::string(i->name())] = i->value();
+    return result;
+}
+
+// Read values from a serialisable value
+void ExpressionVariableVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_.clear();
+    toMap(node, [this](const auto &key, const auto &value)
+          { data_.push_back(std::make_shared<ExpressionVariable>(key, toml::get<ExpressionValue>(value))); });
+}
+
 /*
  * Object Management
  */

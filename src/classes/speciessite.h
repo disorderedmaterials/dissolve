@@ -21,7 +21,7 @@ class Species;
 class SpeciesAtom;
 
 // Species Site Definition
-class SpeciesSite : public Serialisable
+class SpeciesSite : public Serialisable<CoreData &>
 {
     public:
     // Site Type
@@ -214,5 +214,5 @@ class SpeciesSite : public Serialisable
     bool write(LineParser &parser, std::string_view prefix);
 
     SerialisedValue serialise() const override;
-    void deserialise(SerialisedValue &node, CoreData &coreData);
+    void deserialise(const SerialisedValue &node, CoreData &coreData) override;
 };

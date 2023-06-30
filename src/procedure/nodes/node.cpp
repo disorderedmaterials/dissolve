@@ -326,3 +326,20 @@ bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue ProcedureNode::serialise() const
+{
+    SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
+    if (mustBeNamed())
+        result["name"] = name_;
+    return keywords_.serialiseOnto(result);
+}
+
+// Read values from a serialisable value
+void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    if (mustBeNamed())
+        name_ = toml::find<std::string>(node, "name");
+    keywords_.deserialiseFrom(node, data);
+}

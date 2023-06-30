@@ -59,3 +59,27 @@ void SpeciesVectorKeyword::removeReferencesTo(Species *sp)
 {
     data_.erase(std::remove(data_.begin(), data_.end(), sp), data_.end());
 }
+
+// Express as a serialisable value
+SerialisedValue SpeciesVectorKeyword::serialise() const
+{
+    return fromVector(data_, [](const auto *item) { return item->name(); });
+}
+
+// Read values from a serialisable value
+void SpeciesVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    toVector(node,
+             [&coreData, this](const auto &item)
+             {
+                 auto title = toml::get<std::string>(item);
+                 auto *species = coreData.findSpecies(title);
+                 if (!species)
+                     throw toml::syntax_error(fmt::format("No Species named '{}' exists.\n", title), item.location());
+
+                 data_.push_back(species);
+             });
+}
+
+// Has not changed from initial value
+bool SpeciesVectorKeyword::isDefault() const { return data_.empty(); }

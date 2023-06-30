@@ -23,6 +23,8 @@ class Vec3NodeValueKeyword : public KeywordBase
      * Data
      */
     private:
+    // Initial value
+    Vec3<NodeValue> default_;
     // Reference to data
     Vec3<NodeValue> &data_;
     // Parent ProcedureNode
@@ -31,6 +33,8 @@ class Vec3NodeValueKeyword : public KeywordBase
     Vec3Labels::LabelType labelType_;
 
     public:
+    // Has not changed from initial value
+    bool isDefault() const override;
     // Return reference to data
     const Vec3<NodeValue> &data() const;
     // Set data
@@ -52,4 +56,8 @@ class Vec3NodeValueKeyword : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

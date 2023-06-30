@@ -89,3 +89,12 @@ bool OptionalIntegerKeyword::serialise(LineParser &parser, std::string_view keyw
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_.value_or(minimumLimit_));
 }
+
+// Express as a serialisable value
+SerialisedValue OptionalIntegerKeyword::serialise() const { return data_.value_or(minimumLimit_); }
+
+// Read values from a serialisable value
+void OptionalIntegerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    setData(toml::get<int>(node));
+}

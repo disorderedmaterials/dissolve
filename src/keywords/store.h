@@ -16,6 +16,8 @@
 class SelectProcedureNode;
 class Collect1DProcedureNode;
 class RegionProcedureNodeBase;
+class SQModule;
+class RDFModule;
 class Configuration;
 
 // Keyword Store
@@ -195,7 +197,7 @@ class KeywordStore
     // Retrieve a vector of Modules by keyword name
     std::vector<Module *> getVectorModule(std::string_view name) const;
     // Retrieve an Integer by keyword name
-    int getInt(std::string_view name);
+    int getInt(std::string_view name) const;
 
     // Get specified keyword data, casting as necessary
     template <class D, class K> OptionalReferenceWrapper<const D> get(std::string_view name) const
@@ -248,6 +250,10 @@ class KeywordStore
     KeywordBase::ParseResult deserialise(LineParser &parser, const CoreData &coreData, int startArg = 0);
     // Write all keywords to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
+    // Apply the terms in the keyword store to a node
+    SerialisedValue serialiseOnto(SerialisedValue node) const;
+    // Pull keywords from entries in table
+    void deserialiseFrom(const SerialisedValue &node, const CoreData &coreData);
 
     /*
      * Object Management

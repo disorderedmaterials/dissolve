@@ -37,40 +37,33 @@ const PairPotential::ShortRangeTruncationScheme &SerializablePairPotential::shor
     return shortRangeTruncationScheme_;
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SerializablePairPotential::serialise() const
 {
-    SerialisedValue pairPotentials;
-    pairPotentials["range"] = range_;
-    pairPotentials["delta"] = delta_;
-    pairPotentials["includeCoulomb"] = atomTypeChargeSource_;
-    pairPotentials["coulombTruncation"] = PairPotential::coulombTruncationSchemes().keyword(coulombTruncationScheme_);
-    pairPotentials["shortRangeTruncation"] = PairPotential::shortRangeTruncationSchemes().keyword(shortRangeTruncationScheme_);
+    SerialisedValue pairPotentials = {
+        {"range", range_},
+        {"delta", delta_},
+        {"includeCoulomb", atomTypeChargeSource_},
+        {"coulombTruncation", PairPotential::coulombTruncationSchemes().serialise(coulombTruncationScheme_)},
+        {"shortRangeTruncation", PairPotential::shortRangeTruncationSchemes().serialise(shortRangeTruncationScheme_)}};
     for (auto &atomType : atomTypes_)
         pairPotentials["atomTypes"][atomType->name().data()] = atomType->serialise();
     return pairPotentials;
 }
 
 // This method populates the object's members with values read from a 'pairPotentials' TOML node
-void SerializablePairPotential::deserialise(SerialisedValue &node)
+void SerializablePairPotential::deserialise(const SerialisedValue &node)
 {
-    if (node.contains("range"))
-        range_ = node["range"].as_floating();
-    if (node.contains("delta"))
-        delta_ = node["delta"].as_floating();
-    if (node.contains("includeCoulomb"))
-        atomTypeChargeSource_ = node["includeCoulomb"].as_boolean();
-    if (node.contains("coulombTruncation"))
-        coulombTruncationScheme_ =
-            PairPotential::coulombTruncationSchemes().enumeration(std::string(node["coulombTruncation"].as_string()));
-    if (node.contains("shortRangeTruncation"))
-        shortRangeTruncationScheme_ =
-            PairPotential::shortRangeTruncationSchemes().enumeration(std::string(node["shortRangeTruncation"].as_string()));
+    range_ = toml::find_or<double>(node, "range", 15.0);
+    delta_ = toml::find_or<double>(node, "delta", 0.005);
+    atomTypeChargeSource_ = toml::find_or<bool>(node, "includeCoulomb", false);
 
-    if (node.contains("atomTypes"))
-    {
-        toml::value atomTypesNode = node["atomTypes"];
-        for (auto &[name, data] : atomTypesNode.as_table())
-            atomTypes_.emplace_back(std::make_unique<AtomType>(name))->deserialise(data);
-    }
+    coulombTruncationScheme_ =
+        PairPotential::coulombTruncationSchemes().deserialise(toml::find_or<std::string>(node, "coulombTruncation", "Shifted"));
+    shortRangeTruncationScheme_ = PairPotential::shortRangeTruncationSchemes().deserialise(
+        toml::find_or<std::string>(node, "shortRangeTruncation", "Shifted"));
+
+    toMap(node, "atomTypes",
+          [this](const auto &name, const auto &data)
+          { atomTypes_.emplace_back(std::make_unique<AtomType>(name))->deserialise(data); });
 }

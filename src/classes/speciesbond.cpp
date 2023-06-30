@@ -352,7 +352,7 @@ double SpeciesBond::force(double distance) const
                                          BondFunctions::forms().keyword(bondForm))));
 }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue SpeciesBond::serialise() const
 {
     auto bond = SpeciesIntra<SpeciesBond, BondFunctions>::serialise();
@@ -363,8 +363,9 @@ SerialisedValue SpeciesBond::serialise() const
 
     return bond;
 }
+
 // This method populates the object's members with values read from a 'bond' TOML node
-void SpeciesBond::deserialise(SerialisedValue &node, CoreData &coreData)
+void SpeciesBond::deserialise(const SerialisedValue &node, CoreData &coreData)
 {
     deserialiseForm(node, [&coreData](auto &form) { return coreData.getMasterBond(form); });
 }

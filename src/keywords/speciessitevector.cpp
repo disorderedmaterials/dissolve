@@ -94,3 +94,37 @@ void SpeciesSiteVectorKeyword::removeReferencesTo(SpeciesSite *spSite)
 {
     data_.erase(std::remove(data_.begin(), data_.end(), spSite), data_.end());
 }
+
+// Express as a serialisable value
+SerialisedValue SpeciesSiteVectorKeyword::serialise() const
+{
+    return fromVector(data_,
+                      [](const auto item) -> SerialisedValue {
+                          return {{"site", item->name()}, {"species", item->parent()->name()}};
+                      });
+}
+
+// Read values from a serialisable value
+void SpeciesSiteVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    toVector(node,
+             [this, &coreData](const auto &item)
+             {
+                 auto species = coreData.findSpecies(toml::find<std::string>(item, "species"));
+                 if (species)
+                 {
+                     auto site = species->findSite(toml::find<std::string>(item, "site"));
+                     if (site)
+                         data_.push_back(site);
+                     else
+                         throw toml::syntax_error(fmt::format("Cannot find Site {}", toml::find<std::string>(item, "site")),
+                                                  item.location());
+                 }
+                 else
+                     toml::syntax_error(fmt::format("Cannot find Species {}", toml::find<std::string>(item, "species")),
+                                        item.location());
+             });
+}
+
+// Has not changed from initial value
+bool SpeciesSiteVectorKeyword::isDefault() const { return data_.empty(); }
