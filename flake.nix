@@ -19,7 +19,7 @@
         else
           (if gui then "dissolve-gui" else "dissolve");
       cmake-bool = x: if x then "ON" else "OFF";
-      version = "1.2.1";
+      version = "1.2.2";
       base_libs = pkgs:
         with pkgs; [
           antlr4
