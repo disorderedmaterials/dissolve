@@ -67,7 +67,7 @@ template <typename... Contexts> class Serialisable
     {
         SerialisedValue group;
         for (auto it = vector.rbegin(); it < vector.rend(); it++)
-	    group[getName(*it)] = getValue(*it);
+            group[getName(*it)] = getValue(*it);
         return group;
     };
     // A helper function to add the elements of a vector to a node under a name
