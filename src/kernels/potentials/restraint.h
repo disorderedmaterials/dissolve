@@ -6,14 +6,13 @@
 #include "classes/interactionpotential.h"
 #include "kernels/potentials/base.h"
 
-// SimplePotential functional forms
-class SimplePotentialFunctions
+// RestraintPotential functional forms
+class RestraintPotentialFunctions
 {
     public:
     enum class Form
     {
         Harmonic, /* Harmonic well potential */
-        LJ        /* Lennard-Jones potential */
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
@@ -25,26 +24,25 @@ class SimplePotentialFunctions
     static std::optional<int> parameterIndex(Form form, std::string_view name);
 };
 
-// Simple Potential
-class SimplePotential : public ExternalPotential
+// Simple Restraint Potential
+class RestraintPotential : public ExternalPotential
 {
     public:
-    SimplePotential();
-    ~SimplePotential() = default;
+    RestraintPotential();
+    ~RestraintPotential() = default;
 
     /*
      * Definition
      */
-
     private:
     // Potential form
-    InteractionPotential<SimplePotentialFunctions> interactionPotential_;
+    InteractionPotential<RestraintPotentialFunctions> interactionPotential_;
     // Coordinate origin of potential
     Vec3<double> origin_;
 
     public:
     // Set potential form
-    void setPotential(const InteractionPotential<SimplePotentialFunctions> &potential);
+    void setPotential(const InteractionPotential<RestraintPotentialFunctions> &potential);
     // Set coordinate origin of potential
     void setOrigin(Vec3<double> origin);
 

@@ -3,16 +3,16 @@
 
 #pragma once
 
-#include "kernels/potentials/simple.h"
+#include "kernels/potentials/restraint.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/pickbase.h"
 
-// Simple Restraint Potential Procedure Node
-class SimpleRestraintPotentialProcedureNode : public ProcedureNode
+// Restraint Potential Procedure Node
+class RestraintPotentialProcedureNode : public ProcedureNode
 {
     public:
-    SimpleRestraintPotentialProcedureNode();
-    ~SimpleRestraintPotentialProcedureNode() override = default;
+    RestraintPotentialProcedureNode();
+    ~RestraintPotentialProcedureNode() override = default;
 
     /*
      * Identity
@@ -30,7 +30,7 @@ class SimpleRestraintPotentialProcedureNode : public ProcedureNode
     // Species to remove
     std::vector<const Species *> speciesToRestrain_;
     // Potential form
-    InteractionPotential<SimplePotentialFunctions> potential_;
+    InteractionPotential<RestraintPotentialFunctions> potential_;
 
     /*
      * Execute

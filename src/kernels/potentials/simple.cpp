@@ -10,15 +10,16 @@
 // Return enum options for SimplePotentialFunctions
 EnumOptions<SimplePotentialFunctions::Form> SimplePotentialFunctions::forms()
 {
-    return EnumOptions<SimplePotentialFunctions::Form>("SimplePotentialFunction",
-                                                       {{SimplePotentialFunctions::Form::Harmonic, "Harmonic", 1}});
+    return EnumOptions<SimplePotentialFunctions::Form>(
+        "SimplePotentialFunction",
+        {{SimplePotentialFunctions::Form::Harmonic, "Harmonic", 1}, {SimplePotentialFunctions::Form::LJ, "LJ", 2}});
 }
 
 // Return parameters for specified form
 const std::vector<std::string> &SimplePotentialFunctions::parameters(Form form)
 {
     static std::map<SimplePotentialFunctions::Form, std::vector<std::string>> params_ = {
-        {SimplePotentialFunctions::Form::Harmonic, {"k"}}};
+        {SimplePotentialFunctions::Form::Harmonic, {"k"}}, {SimplePotentialFunctions::Form::LJ, {"epsilon", "sigma"}}};
     return params_[form];
 }
 
@@ -72,6 +73,14 @@ double SimplePotential::energy(const Atom &i, const Box *box) const
     {
         case (SimplePotentialFunctions::Form::Harmonic):
             return 0.5 * interactionPotential_.parameters()[0] * box->minimumDistanceSquared(i.r(), origin_);
+        case (SimplePotentialFunctions::Form::LJ):
+        {
+            auto r = box->minimumDistance(i.r(), origin_);
+            auto sigmar = interactionPotential_.parameters()[1] / r;
+            auto sigmar6 = pow(sigmar, 6);
+            auto sigmar12 = sigmar6 * sigmar6;
+            return 4.0 * interactionPotential_.parameters()[0] * (sigmar12 - sigmar6);
+        }
         default:
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
     }
@@ -91,6 +100,13 @@ void SimplePotential::force(const Atom &i, const Box *box, Vec3<double> &f) cons
         case (SimplePotentialFunctions::Form::Harmonic):
             forceMultiplier = -interactionPotential_.parameters()[0] * r;
             break;
+        case (SimplePotentialFunctions::Form::LJ):
+        {
+            auto sigmar = interactionPotential_.parameters()[1] / r;
+            auto sigmar6 = pow(sigmar, 6.0);
+            forceMultiplier = -48.0 * interactionPotential_.parameters()[0] * sigmar6 * (-sigmar6 + 0.5) / r;
+            break;
+        }
         default:
             throw(std::runtime_error(fmt::format("Requested functional form of SimplePotential has not been implemented.\n")));
     }

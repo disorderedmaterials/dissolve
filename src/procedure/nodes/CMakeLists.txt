@@ -42,10 +42,10 @@ add_library(
   regionbase.cpp
   registry.cpp
   remove.cpp
+  restraintpotential.cpp
   select.cpp
   sequence.cpp
   simpleglobalpotential.cpp
-  simplerestraintpotential.cpp
   sum1d.cpp
   transmute.cpp
   add.h
@@ -90,11 +90,11 @@ add_library(
   regionbase.h
   registry.h
   remove.h
+  restraintpotential.h
   transmute.h
   select.h
   sequence.h
   simpleglobalpotential.h
-  simplerestraintpotential.h
   sum1d.h
 )
 
