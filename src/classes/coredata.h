@@ -77,8 +77,9 @@ class CoreData
         // Master Improper parameters for Species
         std::vector<std::shared_ptr<MasterImproper>> impropers;
 
-        // Serialisation
+	// Express as a serialisable value
         SerialisedValue serialise() const override;
+	// Read values from a serialisable value
         void deserialise(const SerialisedValue &node) override;
     };
     // Master terms
