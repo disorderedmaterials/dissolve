@@ -41,6 +41,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Copy, "Copy"},
                      {ProcedureNode::NodeType::CustomRegion, "CustomRegion"},
                      {ProcedureNode::NodeType::CylindricalRegion, "CylindricalRegion"},
+                     {ProcedureNode::NodeType::DirectionalGlobalPotential, "DirectionalGlobalPotential"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
@@ -60,11 +61,11 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Process2D, "Process2D"},
                      {ProcedureNode::NodeType::Process3D, "Process3D"},
                      {ProcedureNode::NodeType::Remove, "Remove"},
+                     {ProcedureNode::NodeType::RestraintPotential, "RestraintPotential"},
                      {ProcedureNode::NodeType::RotateFragment, "RotateFragment"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
-                     {ProcedureNode::NodeType::SimpleRestraintPotential, "SimpleRestraintPotential"},
                      {ProcedureNode::NodeType::Sum1D, "Sum1D"},
                      {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }

@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "kernels/potentials/producer.h"
+#include "kernels/potentials/directional.h"
 #include "kernels/potentials/simple.h"
 
 // External Potential Producer
@@ -12,10 +13,12 @@ std::unique_ptr<ExternalPotential> create(ExternalPotentialTypes::ExternalPotent
 {
     switch (type)
     {
-        case (ExternalPotentialTypes::ExternalPotentialType::Spherical):
+        case (ExternalPotentialTypes::ExternalPotentialType::Simple):
             return std::make_unique<SimplePotential>();
+        case (ExternalPotentialTypes::ExternalPotentialType::Directional):
+            return std::make_unique<DirectionalPotential>();
         default:
-            throw(std::runtime_error(fmt::format("Creation of external potential type '%s' not implemented.\n",
+            throw(std::runtime_error(fmt::format("Creation of external potential type '{}' not implemented.\n",
                                                  ExternalPotentialTypes::keyword(type))));
     }
 }

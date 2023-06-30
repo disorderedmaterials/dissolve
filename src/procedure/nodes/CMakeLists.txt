@@ -17,6 +17,7 @@ add_library(
   copy.cpp
   customregion.cpp
   cylindricalregion.cpp
+  directionalglobalpotential.cpp
   generalregion.cpp
   integrate1d.cpp
   node.cpp
@@ -41,11 +42,11 @@ add_library(
   regionbase.cpp
   registry.cpp
   remove.cpp
+  restraintpotential.cpp
   rotatefragment.cpp
   select.cpp
   sequence.cpp
   simpleglobalpotential.cpp
-  simplerestraintpotential.cpp
   sum1d.cpp
   transmute.cpp
   add.h
@@ -65,6 +66,7 @@ add_library(
   copy.h
   customregion.h
   cylindricalregion.h
+  directionalglobalpotential.h
   generalregion.h
   integrate1d.h
   node.h
@@ -89,12 +91,12 @@ add_library(
   regionbase.h
   registry.h
   remove.h
+  restraintpotential.h
   rotatefragment.h
   transmute.h
   select.h
   sequence.h
   simpleglobalpotential.h
-  simplerestraintpotential.h
   sum1d.h
 )
 

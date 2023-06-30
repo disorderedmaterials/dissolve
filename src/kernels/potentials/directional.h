@@ -6,14 +6,13 @@
 #include "classes/interactionpotential.h"
 #include "kernels/potentials/base.h"
 
-// SimplePotential functional forms
-class SimplePotentialFunctions
+// DirectionalPotential functional forms
+class DirectionalPotentialFunctions
 {
     public:
     enum class Form
     {
-        Harmonic, /* Harmonic well potential */
-        LJ        /* Lennard-Jones potential */
+        LJCylinder /* Lennard-Jones cylindrical potential */
     };
     // Return enum options for form
     static EnumOptions<Form> forms();
@@ -25,12 +24,12 @@ class SimplePotentialFunctions
     static std::optional<int> parameterIndex(Form form, std::string_view name);
 };
 
-// Simple Potential
-class SimplePotential : public ExternalPotential
+// Directional Potential
+class DirectionalPotential : public ExternalPotential
 {
     public:
-    SimplePotential();
-    ~SimplePotential() = default;
+    DirectionalPotential();
+    ~DirectionalPotential() = default;
 
     /*
      * Definition
@@ -38,15 +37,19 @@ class SimplePotential : public ExternalPotential
 
     private:
     // Potential form
-    InteractionPotential<SimplePotentialFunctions> interactionPotential_;
+    InteractionPotential<DirectionalPotentialFunctions> interactionPotential_;
     // Coordinate origin of potential
     Vec3<double> origin_;
+    // Direction of potential
+    Vec3<double> vector_{0.0, 0.0, 1.0};
 
     public:
     // Set potential form
-    void setPotential(const InteractionPotential<SimplePotentialFunctions> &potential);
+    void setPotential(const InteractionPotential<DirectionalPotentialFunctions> &potential);
     // Set coordinate origin of potential
     void setOrigin(Vec3<double> origin);
+    // Set vector of potential
+    void setVector(Vec3<double> vector);
 
     /*
      * Potential Calculation

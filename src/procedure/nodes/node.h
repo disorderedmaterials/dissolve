@@ -52,6 +52,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Copy,
         CustomRegion,
         CylindricalRegion,
+        DirectionalGlobalPotential,
         DynamicSite,
         GeneralRegion,
         Integrate1D,
@@ -71,11 +72,11 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Process2D,
         Process3D,
         Remove,
+        RestraintPotential,
         RotateFragment,
         Select,
         Sequence,
         SimpleGlobalPotential,
-        SimpleRestraintPotential,
         Sum1D,
         Transmute
     };

@@ -16,6 +16,7 @@
 #include "procedure/nodes/copy.h"
 #include "procedure/nodes/customregion.h"
 #include "procedure/nodes/cylindricalregion.h"
+#include "procedure/nodes/directionalglobalpotential.h"
 #include "procedure/nodes/generalregion.h"
 #include "procedure/nodes/integrate1d.h"
 #include "procedure/nodes/operatedivide.h"
@@ -34,10 +35,10 @@
 #include "procedure/nodes/process2d.h"
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/remove.h"
+#include "procedure/nodes/restraintpotential.h"
 #include "procedure/nodes/rotatefragment.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleglobalpotential.h"
-#include "procedure/nodes/simplerestraintpotential.h"
 #include "procedure/nodes/sum1d.h"
 #include "procedure/nodes/transmute.h"
 
@@ -115,11 +116,13 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                               "Pick");
 
     // Potentials
+    registerProducer<DirectionalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::DirectionalGlobalPotential,
+                                                              "Add a directional global potential affecting all atoms",
+                                                              "Potentials");
+    registerProducer<RestraintPotentialProcedureNode>(ProcedureNode::NodeType::RestraintPotential,
+                                                      "Restraint atoms of molecules to their current positions", "Potentials");
     registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,
                                                          "Add a global potential affecting all atoms", "Potentials");
-    registerProducer<SimpleRestraintPotentialProcedureNode>(ProcedureNode::NodeType::SimpleRestraintPotential,
-                                                            "Restraint atoms of molecules to their current positions",
-                                                            "Potentials");
 
     // Sites
     registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
