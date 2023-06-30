@@ -38,7 +38,7 @@ template <typename... Contexts> class Serialisable
     {
         fromVectorToTable(vector, name, node, [](const auto &item) { return item->name().data(); });
     }
-    // A helper function to add elements of a vector to a node under the named heading
+    // A helper function to add elements of a vector to a node
     template <typename T, typename Lambda>
     static SerialisedValue fromVectorToTable(const std::vector<T> &vector, Lambda getName)
     {
@@ -54,6 +54,21 @@ template <typename... Contexts> class Serialisable
         if (vector.empty())
             return;
         node[name] = fromVectorToTable(vector, getName);
+    };
+    // A helper function to add elements of a vector to a node.  This
+    // is more generic than fromVectorToTable and the later could be
+    // be implemented in terms of this function, but the two template
+    // types conflict with the resolution of other overloads.  While
+    // this could be solved with C++20 Concepts, it's probably better
+    // to just remove the other overloads.  That should be another
+    // issue before TOML is merged.
+    template <typename T, typename Lambda, typename Lambda2>
+    static SerialisedValue fromVectorToMap(const std::vector<T> &vector, Lambda getName, Lambda2 getValue)
+    {
+        SerialisedValue group;
+        for (auto it = vector.rbegin(); it < vector.rend(); it++)
+	    group[getName(*it)] = getValue(*it);
+        return group;
     };
     // A helper function to add the elements of a vector to a node under a name
     template <typename T>
