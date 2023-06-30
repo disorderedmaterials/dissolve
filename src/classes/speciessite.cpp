@@ -485,16 +485,18 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 
     for (auto i = 0; i < nSites(); ++i)
     {
-        Vec3<double> origin, x, y, z;
-        origin = originMassWeighted_ ? centreOfMass(originAtomsIndices.at(i)) : centreOfGeometry(originAtomsIndices.at(i));
+
+        // Determine origin
+        auto origin = originMassWeighted_ ? centreOfMass(originAtomsIndices.at(i)) : centreOfGeometry(originAtomsIndices.at(i));
+
         if (hasAxes())
         {
             // Get vector from site origin to x-axis reference point and normalise it
-            x = parent_->box()->minimumVector(origin, centreOfGeometry(xAxisAtomsIndices.at(i)));
+            auto x = parent_->box()->minimumVector(origin, centreOfGeometry(xAxisAtomsIndices.at(i)));
             x.normalise();
 
             // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
-            y = parent_->box()->minimumVector(origin, centreOfGeometry(yAxisAtomsIndices.at(i)));
+            auto y = parent_->box()->minimumVector(origin, centreOfGeometry(yAxisAtomsIndices.at(i)));
             y.orthogonalise(x);
             y.normalise();
 
