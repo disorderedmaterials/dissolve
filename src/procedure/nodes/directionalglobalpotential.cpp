@@ -8,7 +8,7 @@
 #include "keywords/vec3nodevalue.h"
 
 DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::DirectionalGlobalPotential, {ProcedureNode::GenerationContext}),
+    : ProcedureNode(ProcedureNode::NodeType::DirectionalGlobalPotential),
       potential_(DirectionalPotentialFunctions::Form::LJCylinder)
 {
     keywords_.setOrganisation("Options", "Definition");
@@ -16,6 +16,16 @@ DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode
         "Potential", "Form of directional global potential to apply ", potential_);
     keywords_.add<Vec3NodeValueKeyword>("Origin", "Origin of global potential", origin_, this);
     keywords_.add<Vec3NodeValueKeyword>("Vector", "Vector of global potential", vector_, this);
+}
+
+/*
+ * Identity
+ */
+
+// Return whether specified context is relevant for this node type
+bool DirectionalGlobalPotentialProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+{
+    return (context == ProcedureNode::GenerationContext);
 }
 
 /*

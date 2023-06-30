@@ -9,8 +9,7 @@
 #include "keywords/speciesvector.h"
 
 RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
-    : ProcedureNode(ProcedureNode::NodeType::RestraintPotential, {ProcedureNode::GenerationContext}),
-      potential_(RestraintPotentialFunctions::Form::Harmonic)
+    : ProcedureNode(ProcedureNode::NodeType::RestraintPotential), potential_(RestraintPotentialFunctions::Form::Harmonic)
 {
     keywords_.setOrganisation("Options", "Definition");
     keywords_.add<InteractionPotentialKeyword<RestraintPotentialFunctions>>(
@@ -28,7 +27,7 @@ RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
  */
 
 // Return whether specified context is relevant for this node type
-bool SimpleRestraintPotentialProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
+bool RestraintPotentialProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 {
     return (context == ProcedureNode::GenerationContext);
 }

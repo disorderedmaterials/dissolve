@@ -14,6 +14,13 @@ class DirectionalGlobalPotentialProcedureNode : public ProcedureNode
     ~DirectionalGlobalPotentialProcedureNode() override = default;
 
     /*
+     * Identity
+     */
+    public:
+    // Return whether specified context is relevant for this node type
+    bool isContextRelevant(ProcedureNode::NodeContext context) override;
+
+    /*
      * Potential Function
      */
     private:
