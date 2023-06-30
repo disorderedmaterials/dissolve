@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+#include "classes/molecule.h"
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/speciessite.h"
@@ -443,9 +444,36 @@ const std::vector<std::vector<int>> &SpeciesSite::sitesXAxisAtomsIndices() const
 // Return atom indices indicating the y axis with the origins of unique sites.
 const std::vector<std::vector<int>> &SpeciesSite::sitesYAxisAtomsIndices() const { return sitesYAxisAtomsIndices_; }
 
+
 /*
- * Generation from Parent
+ * Generation
  */
+
+// Calculate geometric centre of atoms in the given molecule
+Vec3<double> SpeciesSite::centreOfGeometry(std::vector<int> &indices) const
+{
+    const auto ref = parent_->atom(indices.front()).r();
+    return std::accumulate(std::next(indices.begin()), indices.end(), ref,
+                           [&ref, this](const auto &acc, const auto idx)
+                           { return acc + parent_->box()->minimumImage(parent_->atom(idx).r(), ref); }) /
+           indices.size();
+}
+
+// Calculate (mass-weighted) coordinate centre of atoms in the given molecule
+Vec3<double> SpeciesSite::centreOfMass(std::vector<int> &indices) const
+{
+    auto mass = AtomicMass::mass(parent_->atom(indices.front()).Z());
+    const auto ref = parent_->atom(indices.front()).r();
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+                                [&ref, this](const auto &acc, const auto idx)
+                                {
+                                    auto mass = AtomicMass::mass(parent_->atom(idx).Z());
+                                    return std::pair<Vec3<double>, double>(
+                                        acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass, acc.second + mass);
+                                });
+    return sums.first / sums.second;
+}
+
 
 // Create and return site description from parent Species
 std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
@@ -459,40 +487,15 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
     for (auto i = 0; i < nSites(); ++i)
     {
         Vec3<double> origin, x, y, z;
-        if (originMassWeighted_)
-        {
-            auto massNorm = 0.0;
-            for (const auto &idx : originAtomsIndices.at(i))
-            {
-                auto mass = AtomicMass::mass(parent_->atom(idx).Z());
-                origin += parent_->atom(idx).r() * mass;
-                massNorm += mass;
-            }
-            origin /= massNorm;
-        }
-        else
-        {
-            for (const auto &idx : originAtomsIndices.at(i))
-                origin += parent_->atom(idx).r();
-            origin /= originAtomsIndices.at(i).size();
-        }
-
+        origin = originMassWeighted_ ? centreOfMass(originAtomsIndices.at(i)) : centreOfGeometry(originAtomsIndices.at(i));
         if (hasAxes())
         {
-            Vec3<double> v;
-            for (const auto &idx : xAxisAtomsIndices.at(i))
-                v += parent_->atom(idx).r();
-            v /= xAxisAtomsIndices.at(i).size();
-
-            auto x = v - origin;
+            // Get vector from site origin to x-axis reference point and normalise it
+            x = parent_->box()->minimumVector(origin, centreOfGeometry(xAxisAtomsIndices.at(i)));
             x.normalise();
 
-            v.zero();
-            for (const auto &idx : yAxisAtomsIndices.at(i))
-                v += parent_->atom(idx).r();
-            v /= yAxisAtomsIndices.at(i).size();
-
-            auto y = v - origin;
+            // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
+            y = parent_->box()->minimumVector(origin, centreOfGeometry(yAxisAtomsIndices.at(i)));
             y.orthogonalise(x);
             y.normalise();
 

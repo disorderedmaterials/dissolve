@@ -7,6 +7,7 @@
 #include "base/serialiser.h"
 #include "base/version.h"
 #include "classes/atomtype.h"
+#include "classes/box.h"
 #include "data/elements.h"
 #include "neta/neta.h"
 #include "templates/vector3.h"
@@ -183,11 +184,17 @@ class SpeciesSite : public Serialisable
     const std::vector<std::vector<int>> &sitesYAxisAtomsIndices() const;
 
     /*
-     * Generation from Parent
+     * Generation
      */
     public:
     // Create and return Site description from parent Species
     std::vector<std::shared_ptr<Site>> createFromParent() const;
+    
+    private:
+    // Calculate geometric centre of atoms in the parent Species
+    Vec3<double> centreOfGeometry(std::vector<int> &indices) const;
+    // Calculate (mass-weighted) coordinate centre of atoms in the parent Species
+    Vec3<double> centreOfMass(std::vector<int> &indices) const;
 
     /*
      * Read / Write
