@@ -1,4 +1,9 @@
-Version 1.2.1 is a patch release addressing a significant issue with the `SDF` module.
+Version 1.2.2 is a patch release adding new external potential options.
+
+## Major Changes in v1.2.2
+
+- Add: `LJ` global potential style, mimicking Q-atom role in EPSR.
+- Add: `LJCylinder` directional potential, creating repulsive cylinder with LJ form through a specific direction (e.g. for pore creation).
 
 ## Major Changes in v1.2.1
 
