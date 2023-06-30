@@ -462,13 +462,14 @@ Vec3<double> SpeciesSite::centreOfMass(std::vector<int> &indices) const
 {
     auto mass = AtomicMass::mass(parent_->atom(indices.front()).Z());
     const auto ref = parent_->atom(indices.front()).r();
-    auto sums = std::accumulate(
-        std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
-        [&ref, this](const auto &acc, const auto idx)
-        {
-            auto mass = AtomicMass::mass(parent_->atom(idx).Z());
-            return {acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass, acc.second + mass};
-        });
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+                                [&ref, this](const auto &acc, const auto idx)
+                                {
+                                    auto mass = AtomicMass::mass(parent_->atom(idx).Z());
+                                    return std::pair<Vec3<double>, double>(
+                                        acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass,
+                                        acc.second + mass);
+                                });
     return sums.first / sums.second;
 }
 
