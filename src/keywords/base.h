@@ -71,7 +71,7 @@ class KeywordBase : public Serialisable<CoreData const &>
     // Serialise data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") const = 0;
     // Express as a serialisable value
-    SerialisedValue serialise() const override;
+    virtual SerialisedValue serialise() const override = 0;
     // Read values from a serialisable value
     virtual void deserialise(const SerialisedValue &node, const CoreData &coreData) override{};
 

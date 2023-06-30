@@ -37,6 +37,8 @@ class InteractionPotentialBaseKeyword : public KeywordBase
     virtual std::string parametersAsString() const = 0;
     // Set parameters from supplied string
     virtual bool setParameters(std::string parameters) = 0;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override { throw std::runtime_error("Cannot serialise InteractionPotentialBaseKeyword"); }
 };
 
 // Keyword based on InteractionPotential

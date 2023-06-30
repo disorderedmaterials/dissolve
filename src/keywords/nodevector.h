@@ -45,6 +45,7 @@ class NodeVectorKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 
         return oldData.size() == nodes().size();
     }
+    SerialisedValue serialise() const override { throw std::runtime_error("Cannot serialise NodeVectorKeywordBase"); }
 };
 
 // Keyword managing vector of ProcedureNode

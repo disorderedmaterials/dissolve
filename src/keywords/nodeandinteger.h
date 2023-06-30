@@ -45,6 +45,8 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
 
         return false;
     }
+    // Express as a serialisable value
+    SerialisedValue serialise() const override { throw std::runtime_error("Cannot serialise NodeAndIntegerKeywordBase"); }
 };
 
 // Keyword managing ProcedureNode and integer index
