@@ -485,7 +485,6 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 
     for (auto i = 0; i < nSites(); ++i)
     {
-
         // Determine origin
         auto origin = originMassWeighted_ ? centreOfMass(originAtomsIndices.at(i)) : centreOfGeometry(originAtomsIndices.at(i));
 
