@@ -189,7 +189,7 @@ class SpeciesSite : public Serialisable
     public:
     // Create and return Site description from parent Species
     std::vector<std::shared_ptr<Site>> createFromParent() const;
-    
+
     private:
     // Calculate geometric centre of atoms in the parent Species
     Vec3<double> centreOfGeometry(std::vector<int> &indices) const;

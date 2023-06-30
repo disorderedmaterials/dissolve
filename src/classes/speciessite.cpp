@@ -2,11 +2,11 @@
 #include "classes/molecule.h"
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/speciessite.h"
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "classes/site.h"
 #include "classes/species.h"
+#include "classes/speciessite.h"
 #include "data/atomicmasses.h"
 #include "neta/matchedgroup.h"
 #include "neta/neta.h"
@@ -444,7 +444,6 @@ const std::vector<std::vector<int>> &SpeciesSite::sitesXAxisAtomsIndices() const
 // Return atom indices indicating the y axis with the origins of unique sites.
 const std::vector<std::vector<int>> &SpeciesSite::sitesYAxisAtomsIndices() const { return sitesYAxisAtomsIndices_; }
 
-
 /*
  * Generation
  */
@@ -469,11 +468,11 @@ Vec3<double> SpeciesSite::centreOfMass(std::vector<int> &indices) const
                                 {
                                     auto mass = AtomicMass::mass(parent_->atom(idx).Z());
                                     return std::pair<Vec3<double>, double>(
-                                        acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass, acc.second + mass);
+                                        acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass,
+                                        acc.second + mass);
                                 });
     return sums.first / sums.second;
 }
-
 
 // Create and return site description from parent Species
 std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
