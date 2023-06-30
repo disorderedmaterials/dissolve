@@ -123,6 +123,24 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 }
 
 /*
+ * Widget Functions - tool box
+ */
+void SpeciesTab::on_StructureToolBox_currentChanged(int index)
+{
+    switch(index)
+    {
+        case(0):
+        case(1):
+            ui_.ViewStackedWidget->setCurrentIndex(0);
+            break;
+        case(2):
+            ui_.ViewStackedWidget->setCurrentIndex(1);
+            break;
+    }
+    ui_.StructureToolBox->currentWidget()->setHidden(true);
+}
+
+/*
  * Widget Functions - Structure
  */
 
