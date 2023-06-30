@@ -383,7 +383,6 @@ void CoreData::setInputFilename(std::string_view filename) { inputFilename_ = fi
 // Return the current input filename
 std::string_view CoreData::inputFilename() const { return inputFilename_; }
 
-
 // Express as a serialisable value
 SerialisedValue CoreData::Masters::serialise() const
 {
