@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "classes/molecule.h"
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineparser.h"
