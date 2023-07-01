@@ -1,1 +1,1 @@
-dissolve_add_module_gui(braggmodule)
+dissolve_add_module_gui(bragg)

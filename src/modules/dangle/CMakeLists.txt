@@ -1,1 +1,1 @@
-dissolve_add_module(dangle.h calculatedangle)
+dissolve_add_module(dAngle.h dAngle)

@@ -1,1 +1,1 @@
-dissolve_add_module_gui(danglemodule)
+dissolve_add_module_gui(dAngle)

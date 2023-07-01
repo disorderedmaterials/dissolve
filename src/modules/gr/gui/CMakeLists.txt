@@ -1,1 +1,1 @@
-dissolve_add_module_gui(grmodule)
+dissolve_add_module_gui(gr)

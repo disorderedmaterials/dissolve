@@ -1,1 +1,1 @@
-dissolve_add_module_gui(sqmodule)
+dissolve_add_module_gui(sq)

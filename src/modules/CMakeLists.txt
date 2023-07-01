@@ -126,16 +126,16 @@ target_include_directories(
 )
 
 if(GUI)
-  add_library(modulewidgetproducer widget.cpp widgetproducer.cpp widget.h widgetproducer.h)
-  add_dependencies(modulewidgetproducer ${MODULEGUI_LINK_LIBS})
+  add_library(moduleWidgetProducer widget.cpp widgetProducer.cpp widget.h widgetProducer.h)
+  add_dependencies(moduleWidgetProducer ${MODULEGUI_LINK_LIBS})
 
   # Because Qt has its own way of checking for C++17
   if(MSVC)
-    target_compile_options(modulewidgetproducer PUBLIC /Zc:__cplusplus)
+    target_compile_options(moduleWidgetProducer PUBLIC /Zc:__cplusplus)
   endif(MSVC)
 
   target_include_directories(
-    modulewidgetproducer
+    moduleWidgetProducer
     PRIVATE ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_BINARY_DIR}/src
             ${PROJECT_SOURCE_DIR}

@@ -1,1 +1,1 @@
-dissolve_add_module_gui(analysemodule)
+dissolve_add_module_gui(analyse)
