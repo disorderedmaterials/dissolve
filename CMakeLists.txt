@@ -239,7 +239,7 @@ set(BASIC_LINK_LIBS
     import
     neta
     procedure
-    procedurenodes
+    procedureNodes
     keywords
     expression
     items

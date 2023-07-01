@@ -1,106 +1,106 @@
 add_library(
-  procedurenodes
+  procedureNodes
   add.cpp
   addpair.cpp
   box.cpp
-  calculateangle.cpp
-  calculateaxisangle.cpp
-  calculatebase.cpp
-  calculatedistance.cpp
-  calculateexpression.cpp
-  calculatevector.cpp
-  collect1d.cpp
-  collect2d.cpp
-  collect3d.cpp
+  calculateAngle.cpp
+  calculateAxisAngle.cpp
+  calculateBase.cpp
+  calculateDistance.cpp
+  calculateExpression.cpp
+  calculateVector.cpp
+  collect1D.cpp
+  collect2D.cpp
+  collect3D.cpp
   context.cpp
-  coordinatesets.cpp
+  coordinateSets.cpp
   copy.cpp
-  customregion.cpp
-  cylindricalregion.cpp
-  directionalglobalpotential.cpp
-  generalregion.cpp
-  integercollect1d.cpp
-  integrate1d.cpp
+  customRegion.cpp
+  cylindricalRegion.cpp
+  directionalGlobalPotential.cpp
+  generalRegion.cpp
+  integerCollect1D.cpp
+  integrate1D.cpp
   node.cpp
-  nodereference.cpp
-  operatebase.cpp
-  operatedivide.cpp
-  operateexpression.cpp
-  operategridnormalise.cpp
-  operatemultiply.cpp
-  operatenormalise.cpp
-  operatenumberdensitynormalise.cpp
-  operatesitepopulationnormalise.cpp
-  operatesphericalshellnormalise.cpp
+  nodeReference.cpp
+  operateBase.cpp
+  operateDivide.cpp
+  operateExpression.cpp
+  operateGridNormalise.cpp
+  operateMultiply.cpp
+  operateNormalise.cpp
+  operateNumberDensityNormalise.cpp
+  operateSitePopulationNormalise.cpp
+  operateSphericalShellNormalise.cpp
   parameters.cpp
   pick.cpp
-  pickbase.cpp
-  pickproximity.cpp
-  pickregion.cpp
-  process1d.cpp
-  process2d.cpp
-  process3d.cpp
-  regionbase.cpp
+  pickBase.cpp
+  pickProximity.cpp
+  pickRegion.cpp
+  process1D.cpp
+  process2D.cpp
+  process3D.cpp
+  regionBase.cpp
   registry.cpp
   remove.cpp
-  restraintpotential.cpp
-  rotatefragment.cpp
+  rotateFragment.cpp
+  restraintPotential.cpp
   select.cpp
   sequence.cpp
-  simpleglobalpotential.cpp
+  simpleGlobalPotential.cpp
   sum1d.cpp
   transmute.cpp
   add.h
   addpair.h
   box.h
-  calculateangle.h
-  calculateaxisangle.h
-  calculatebase.h
-  calculatedistance.h
-  calculateexpression.h
-  calculatevector.h
-  collect1d.h
-  collect2d.h
-  collect3d.h
+  calculateAngle.h
+  calculateAxisAngle.h
+  calculateBase.h
+  calculateDistance.h
+  calculateExpression.h
+  calculateVector.h
+  collect1D.h
+  collect2D.h
+  collect3D.h
   context.h
-  coordinatesets.h
+  coordinateSets.h
   copy.h
-  customregion.h
-  cylindricalregion.h
-  directionalglobalpotential.h
-  generalregion.h
-  integercollect1d.h
-  integrate1d.h
+  customRegion.h
+  cylindricalRegion.h
+  directionalGlobalPotential.h
+  generalRegion.h
+  integerCollect1D.h
+  integrate1D.h
   node.h
-  nodereference.h
-  operatebase.h
-  operatedivide.h
-  operateexpression.h
-  operategridnormalise.h
-  operatemultiply.h
-  operatenormalise.h
-  operatenumberdensitynormalise.h
-  operatesitepopulationnormalise.h
-  operatesphericalshellnormalise.h
+  nodeReference.h
+  operateBase.h
+  operateDivide.h
+  operateExpression.h
+  operateGridNormalise.h
+  operateMultiply.h
+  operateNormalise.h
+  operateNumberDensityNormalise.h
+  operateSitePopulationNormalise.h
+  operateSphericalShellNormalise.h
   parameters.h
   pick.h
-  pickbase.h
-  pickproximity.h
-  pickregion.h
-  process1d.h
-  process2d.h
-  process3d.h
-  regionbase.h
+  pickBase.h
+  pickProximity.h
+  pickRegion.h
+  process1D.h
+  process2D.h
+  process3D.h
+  regionBase.h
   registry.h
   remove.h
-  restraintpotential.h
-  rotatefragment.h
+  rotateFragment.h
+  restraintPotential.h
   transmute.h
   select.h
   sequence.h
-  simpleglobalpotential.h
-  sum1d.h
+  simpleGlobalPotential.h
+  sum1D.h
 )
 
-target_include_directories(procedurenodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(procedurenodes PRIVATE base)
+target_include_directories(procedureNodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(procedureNodes PRIVATE base)
