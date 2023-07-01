@@ -3,6 +3,7 @@
 
 #include "procedure/nodes/rotatefragment.h"
 #include "classes/atom.h"
+#include "classes/configuration.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
 #include "classes/speciessite.h"
@@ -10,7 +11,6 @@
 #include "keywords/node.h"
 #include "keywords/nodevalue.h"
 #include "keywords/nodevalueenumoptions.h"
-#include "keywords/vec3nodevalue.h"
 #include "math/matrix3.h"
 #include "procedure/nodes/select.h"
 
@@ -42,6 +42,7 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
     auto site = site_->currentSite();
     auto parent = site->parent();
     auto molecule = site->molecule();
+    auto box = procedureContext.configuration()->box();
 
     if (!site->uniqueSiteIndex().has_value())
     {
@@ -76,7 +77,7 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
     for (auto index : parent->sitesAllAtomsIndices().at(parentIndex))
     {
         auto atom = molecule->atom(index);
-        atom->set(rotationMatrix.transform(atom->r()));
+        atom->set(rotationMatrix.transform(box->minimumVector(site->origin(), atom->r())) + site->origin());
     }
 
     return true;
