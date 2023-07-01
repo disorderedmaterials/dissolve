@@ -26,6 +26,17 @@ RotateFragmentProcedureNode::RotateFragmentProcedureNode(std::shared_ptr<SelectP
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("Axis", "Axis for rotation", axis_, OrientedSite::siteAxis());
 }
 
+/*
+ * Identity
+ */
+
+// Return whether a name for the node must be provided
+bool RotateFragmentProcedureNode::mustBeNamed() const { return false; }
+
+/*
+ * Execute
+ */
+
 bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto site = site_->currentSite();

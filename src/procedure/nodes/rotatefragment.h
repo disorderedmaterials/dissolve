@@ -13,6 +13,13 @@ class RotateFragmentProcedureNode : public ProcedureNode
     ~RotateFragmentProcedureNode() override = default;
 
     /*
+     * Identity
+     */
+    private:
+    // Return whether a name for the node must be provided
+    bool mustBeNamed() const override;
+
+    /*
      * Control
      */
     private:
@@ -23,6 +30,9 @@ class RotateFragmentProcedureNode : public ProcedureNode
     // Axis
     OrientedSite::SiteAxis axis_{OrientedSite::SiteAxis::XAxis};
 
+    /*
+     * Execute
+     */
     public:
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
