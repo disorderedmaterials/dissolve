@@ -1,5 +1,5 @@
 add_library(
-  genericitems
+  items
   deserialisers.cpp
   legacy.cpp
   list.cpp
@@ -13,5 +13,5 @@ add_library(
   serialisers.h
 )
 
-target_include_directories(genericitems PRIVATE ${PROJECT_SOURCE_DIR}/src)
-target_link_libraries(genericitems PRIVATE base)
+target_include_directories(items PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(items PRIVATE base)

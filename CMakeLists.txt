@@ -242,7 +242,7 @@ set(BASIC_LINK_LIBS
     procedurenodes
     keywords
     expression
-    genericitems
+    items
     base
     math
     data
