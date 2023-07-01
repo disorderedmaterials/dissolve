@@ -1,27 +1,27 @@
 add_library(
   data
-  atomicmasses.cpp
-  atomicradii.cpp
-  elementcolours.cpp
+  atomicMasses.cpp
+  atomicRadii.cpp
+  elementColours.cpp
   elements.cpp
-  formfactordata.cpp
-  formfactors.cpp
-  formfactors_dummy.cpp
-  formfactors_wk1995.cpp
+  formFactorData.cpp
+  formFactors.cpp
+  formFactors_dummy.cpp
+  formFactors_WK1995.cpp
   isotopes.cpp
-  spacegroups.cpp
-  structurefactors.cpp
-  atomicmasses.h
-  atomicradii.h
-  elementcolours.h
+  spaceGroups.cpp
+  structureFactors.cpp
+  atomicMasses.h
+  atomicRadii.h
+  elementColours.h
   elements.h
-  formfactordata.h
-  formfactors.h
-  formfactors_dummy.h
-  formfactors_wk1995.h
+  formFactorData.h
+  formFactors.h
+  formFactors_dummy.h
+  formFactors_WK1995.h
   isotopes.h
-  spacegroups.h
-  structurefactors.h
+  spaceGroups.h
+  structureFactors.h
 )
 
 target_include_directories(data PRIVATE ${PROJECT_SOURCE_DIR}/src)
