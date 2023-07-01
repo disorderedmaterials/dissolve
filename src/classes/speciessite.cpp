@@ -434,12 +434,16 @@ bool SpeciesSite::generateUniqueSites()
 
 // Return number of unique sites
 const int SpeciesSite::nSites() const { return sitesAllAtomsIndices_.size(); }
+
 // Return atom indices corresponding to unique sites
 const std::vector<std::vector<int>> &SpeciesSite::sitesAllAtomsIndices() const { return sitesAllAtomsIndices_; }
+
 // Return atom indices contributing to unique site origins
 const std::vector<std::vector<int>> &SpeciesSite::sitesOriginAtomsIndices() const { return sitesOriginAtomsIndices_; }
+
 // Return atom indices indicating the x axis with the origins of unique sites.
 const std::vector<std::vector<int>> &SpeciesSite::sitesXAxisAtomsIndices() const { return sitesXAxisAtomsIndices_; }
+
 // Return atom indices indicating the y axis with the origins of unique sites.
 const std::vector<std::vector<int>> &SpeciesSite::sitesYAxisAtomsIndices() const { return sitesYAxisAtomsIndices_; }
 
