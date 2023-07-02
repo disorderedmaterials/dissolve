@@ -20,15 +20,15 @@ qt6_wrap_ui(widgets_UIS_H ${widgets_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 set(widgets_SRCS
-    checkindicatorFuncs.cpp
-    colourbuttonFuncs.cpp
-    elementselectorFuncs.cpp
-    exponentialspinFuncs.cpp
-    gradientbarFuncs.cpp
-    integerspinFuncs.cpp
-    nocontrolsFuncs.cpp
-    sampleddoublelabelFuncs.cpp
-    superstackedwidgetFuncs.cpp
+    checkIndicatorFuncs.cpp
+    colourButtonFuncs.cpp
+    elementSelectorFuncs.cpp
+    exponentialSpinFuncs.cpp
+    gradientBarFuncs.cpp
+    integerSpinFuncs.cpp
+    noControlsFuncs.cpp
+    sampledDoubleLabelFuncs.cpp
+    superStackedWidgetFuncs.cpp
 )
 
 # Target 'gui'

@@ -3,74 +3,74 @@ add_library(
   averaging.cpp
   combinations.cpp
   cuboid.cpp
-  data1d.cpp
-  data2d.cpp
-  data3d.cpp
-  doubleexp.cpp
+  data1D.cpp
+  data2D.cpp
+  data3D.cpp
+  doubleExp.cpp
   error.cpp
   filters.cpp
   ft.cpp
-  function1d.cpp
-  gaussfit.cpp
+  function1D.cpp
+  gaussFit.cpp
   gj.cpp
-  histogram1d.cpp
-  histogram2d.cpp
-  histogram3d.cpp
-  integerhistogram1d.cpp
+  histogram1D.cpp
+  histogram2D.cpp
+  histogram3D.cpp
+  integerHistogram1D.cpp
   integrator.cpp
   interpolator.cpp
-  mathfunc.cpp
+  mathFunc.cpp
   matrix3.cpp
   matrix4.cpp
   mc.cpp
   praxis.cpp
-  poissonfit.cpp
+  poissonFit.cpp
   range.cpp
   regression.cpp
-  sampleddata1d.cpp
-  sampleddouble.cpp
-  sampledvector.cpp
+  sampledData1D.cpp
+  sampledDouble.cpp
+  sampledVector.cpp
   svd.cpp
   transformer.cpp
-  windowfunction.cpp
+  windowFunction.cpp
   averaging.h
   combinations.h
   constants.h
   cuboid.h
-  data1d.h
-  data1dbase.h
-  data2d.h
-  data2dbase.h
-  data3d.h
-  data3dbase.h
-  doubleexp.h
+  data1D.h
+  data1DBase.h
+  data2D.h
+  data2DBase.h
+  data3D.h
+  data3DBase.h
+  doubleExp.h
   error.h
   filters.h
   ft.h
-  function1d.h
-  functionspace.h
-  gaussfit.h
+  function1D.h
+  functionSpace.h
+  gaussFit.h
   gj.h
-  histogram1d.h
-  histogram2d.h
-  histogram3d.h
-  integerhistogram1d.h
+  histogram1D.h
+  histogram2D.h
+  histogram3D.h
+  integerHistogram1D.h
   integrator.h
   interpolator.h
-  mathfunc.h
+  mathFunc.h
   matrix3.h
   matrix4.h
   mc.h
-  poissonfit.h
+  poissonFit.h
   praxis.h
   range.h
   regression.h
-  sampleddata1d.h
-  sampleddouble.h
-  sampledvector.h
+  sampledData1D.h
+  sampledDouble.h
+  sampledVector.h
   svd.h
   transformer.h
-  windowfunction.h
+  windowFunction.h
 )
 
 target_include_directories(math PRIVATE ${PROJECT_SOURCE_DIR}/src)

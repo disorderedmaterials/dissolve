@@ -29,7 +29,7 @@ set(gui_MOC_HDRS
     wizard.hui
     # Dialogs
     addConfigurationDialog.h
-    addForcefieldtermsDialog.h
+    addForcefieldTermsDialog.h
     copySpeciesTermsDialog.h
     dataManagerDialog.h
     editSpeciesDialog.h
@@ -58,7 +58,7 @@ set(gui_MOC_HDRS
     outputHandler.hui
     thread.hui
     mainTabsBar.hui
-    mainTabswidget.hui
+    mainTabsWidget.hui
 )
 qt6_wrap_cpp(gui_MOC_SRCS ${gui_MOC_HDRS})
 
@@ -83,7 +83,7 @@ set(gui_UIS
     wizardHeader.ui
     # Dialogs
     addConfigurationDialog.ui
-    addForcefieldtermsDialog.ui
+    addForcefieldTermsDialog.ui
     copySpeciesTermsDialog.ui
     dataManagerDialog.ui
     editSpeciesDialog.ui
@@ -119,11 +119,11 @@ set(gui_SRCS
     configurationViewer_input.cpp
     configurationViewer_interaction.cpp
     configurationViewer_render.cpp
-    configurationViewerwidgetFuncs.cpp
-    dataviewerFuncs.cpp
+    configurationViewerWidgetFuncs.cpp
+    dataViewerFuncs.cpp
     dataViewer_input.cpp
     dataViewer_interaction.cpp
-    dataViewer_contextmenu.cpp
+    dataViewer_contextMenu.cpp
     dataViewer_render.cpp
     dataWidgetFuncs.cpp
     selectSymbolFuncs.cpp
@@ -147,17 +147,17 @@ set(gui_SRCS
     viewer_renderables.cpp
     viewer_view.cpp
     # Widgets and Wizards
-    moduleControlwidgetFuncs.cpp
-    nodeControlwidgetFuncs.cpp
+    moduleControlWidgetFuncs.cpp
+    nodeControlWidgetFuncs.cpp
     procedureWidgetFuncs.cpp
-    selectAtomTypewidgetFuncs.cpp
-    selectConfigurationwidgetFuncs.cpp
-    selectForcefieldwidgetFuncs.cpp
-    selectSpecieswidgetFuncs.cpp
+    selectAtomTypeWidgetFuncs.cpp
+    selectConfigurationWidgetFuncs.cpp
+    selectForcefieldWidgetFuncs.cpp
+    selectSpeciesWidgetFuncs.cpp
     wizardFuncs.cpp
     # Dialogs
     addConfigurationDialogFuncs.cpp
-    addForcefieldtermsDialogFuncs.cpp
+    addForcefieldTermsDialogFuncs.cpp
     copySpeciesTermsDialogFuncs.cpp
     dataManagerDialogFuncs.cpp
     editSpeciesDialogFuncs.cpp
@@ -181,13 +181,13 @@ set(gui_SRCS
     layerTabFuncs.cpp
     mainTab.cpp
     mainTabsBarFuncs.cpp
-    mainTabswidgetFuncs.cpp
+    mainTabsWidgetFuncs.cpp
     messagesTabFuncs.cpp
     speciesTabFuncs.cpp
     speciesTab_geometry.cpp
     speciesTab_isotopologues.cpp
     speciesTab_sites.cpp
-    maintab.h
+    mainTab.h
     # Main UI
     guiFuncs.cpp
     gui_simulation.cpp

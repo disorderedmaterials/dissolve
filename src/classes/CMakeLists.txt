@@ -95,7 +95,7 @@ add_library(
   isotopologues.h
   isotopologueSet.h
   isotopologueWeight.h
-  kvector.h
+  kVector.h
   molecule.h
   moleculeDistributor.h
   neutronWeights.h

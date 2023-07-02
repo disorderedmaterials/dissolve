@@ -58,7 +58,7 @@ set(keywordWidgets_UIS
     nodeAndInteger.ui
     nodeValue.ui
     nodeValueEnumOptions.ui
-    nodevector.ui
+    nodeVector.ui
     range.ui
     sectionHeader.ui
     species.ui

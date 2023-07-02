@@ -1,7 +1,7 @@
 add_library(
   procedureNodes
   add.cpp
-  addpair.cpp
+  addPair.cpp
   box.cpp
   calculateAngle.cpp
   calculateAxisAngle.cpp
@@ -48,10 +48,10 @@ add_library(
   select.cpp
   sequence.cpp
   simpleGlobalPotential.cpp
-  sum1d.cpp
+  sum1D.cpp
   transmute.cpp
   add.h
-  addpair.h
+  addPair.h
   box.h
   calculateAngle.h
   calculateAxisAngle.h
