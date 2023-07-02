@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/keywordwidgets/producers.h"
-#include "gui/nodecontrolwidget.h"
+#include "gui/keywordWidgets/producers.h"
+#include "gui/nodeControlWidget.h"
 
 NodeControlWidget::NodeControlWidget(DissolveWindow *dissolveWindow, NodeRef node)
     : dissolve_(dissolveWindow->dissolve()), node_(node)

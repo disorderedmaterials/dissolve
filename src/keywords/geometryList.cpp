@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/geometrylist.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "keywords/geometryList.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "templates/algorithms.h"
 
 GeometryListKeyword::GeometryListKeyword::GeometryListKeyword(std::vector<Geometry> &data, Geometry::GeometryType geometryType)

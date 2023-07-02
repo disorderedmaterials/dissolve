@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/formfactors.h"
-#include "data/formfactors_dummy.h"
+#include "data/formFactors.h"
+#include "data/formFactors_dummy.h"
 #include <functional>
 #include <optional>
 

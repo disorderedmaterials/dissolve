@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/integercollect1d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "procedure/nodes/integerCollect1D.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/configuration.h"
-#include "keywords/nodeandinteger.h"
-#include "keywords/nodebranch.h"
-#include "keywords/optionalint.h"
-#include "math/data1d.h"
-#include "procedure/nodes/calculatebase.h"
+#include "keywords/nodeAndInteger.h"
+#include "keywords/nodeBranch.h"
+#include "keywords/optionalInt.h"
+#include "math/data1D.h"
+#include "procedure/nodes/calculateBase.h"
 #include "procedure/nodes/sequence.h"
 
 IntegerCollect1DProcedureNode::IntegerCollect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable,

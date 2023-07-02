@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "math/data3d.h"
-#include "math/sampleddouble.h"
-#include "templates/array3d.h"
+#include "math/data3D.h"
+#include "math/sampledDouble.h"
+#include "templates/array3D.h"
 
 // Three-Dimensional Histogram
 class Histogram3D

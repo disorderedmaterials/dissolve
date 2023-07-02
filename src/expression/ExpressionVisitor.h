@@ -5,7 +5,7 @@
 
 #include "ExpressionParserBaseVisitor.h"
 #include "expression/expression.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <antlr4-runtime.h>
 
 // Expression Visitor for ANTLR

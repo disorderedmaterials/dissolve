@@ -3,7 +3,7 @@
 
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
-#include "modules/geomopt/geomopt.h"
+#include "modules/geomOpt/geomOpt.h"
 
 // Run main processing
 bool GeometryOptimisationModule::process(Dissolve &dissolve, const ProcessPool &procPool)

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
+#include "gui/keywordWidgets/base.h"
 #include "keywords/integer.h"
 #include <QSpinBox>
 

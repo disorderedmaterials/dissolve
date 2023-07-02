@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/enumOptionsModel.h"
-#include "base/enumoptionsbase.h"
+#include "base/enumOptionsBase.h"
 
 // Set source AtomType data
 void EnumOptionsModel::setData(const EnumOptionsBase &options)

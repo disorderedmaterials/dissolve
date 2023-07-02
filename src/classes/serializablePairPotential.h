@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #pragma once
 
 #include "base/serialiser.h"
-#include "pairpotential.h"
-
+#include "classes/pairPotential.h"
 #include <map>
 #include <memory>
 #include <string>

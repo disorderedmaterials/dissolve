@@ -2,12 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/box.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "keywords/bool.h"
-#include "keywords/vec3nodevalue.h"
+#include "keywords/vec3NodeValue.h"
 
 BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
     : ProcedureNode(ProcedureNode::NodeType::Box, {ProcedureNode::GenerationContext}), angles_(std::move(angles)),

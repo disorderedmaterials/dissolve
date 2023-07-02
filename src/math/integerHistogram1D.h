@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "keywords/optionalint.h"
-#include "math/data1d.h"
-#include "math/sampleddouble.h"
+#include "keywords/optionalInt.h"
+#include "math/data1D.h"
+#include "math/sampledDouble.h"
 #include <map>
 
 // Pure Integer Histogram

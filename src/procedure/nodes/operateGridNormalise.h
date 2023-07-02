@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "procedure/nodes/operatebase.h"
+#include "procedure/nodes/operateBase.h"
 
 // Operate Grid Normalise Node
 class OperateGridNormaliseProcedureNode : public OperateProcedureNodeBase

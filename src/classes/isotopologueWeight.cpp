@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/isotopologueweight.h"
+#include "classes/isotopologueWeight.h"
 
 IsotopologueWeight::IsotopologueWeight(const Isotopologue *iso, double weight) : isotopologue_(iso), weight_(weight) {}
 

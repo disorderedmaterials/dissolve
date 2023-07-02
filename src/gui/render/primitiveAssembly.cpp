@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/primitiveassembly.h"
+#include "gui/render/primitiveAssembly.h"
 #include <array>
 
 PrimitiveAssembly::PrimitiveAssembly() {}

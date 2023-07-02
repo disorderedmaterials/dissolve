@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciestorsion.h"
+#include "classes/speciesTorsion.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <vector>

@@ -5,7 +5,7 @@
 
 #include "base/serialiser.h"
 #include "classes/isotopologues.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <vector>
 
 // Forward Declarations

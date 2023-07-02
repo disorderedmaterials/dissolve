@@ -4,11 +4,11 @@
 // This include must come before the others
 #include "TextPrimitiveLexer.h"
 
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "gui/render/TextPrimitiveErrorListeners.h"
 #include "gui/render/TextPrimitiveVisitor.h"
-#include "gui/render/fontinstance.h"
-#include "gui/render/textprimitive.h"
+#include "gui/render/fontInstance.h"
+#include "gui/render/textPrimitive.h"
 #include <QtGui/qopengl.h>
 
 // Return enum options for TextAnchor

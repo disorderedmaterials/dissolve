@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "procedure/nodes/calculatebase.h"
-#include "procedure/nodevalue.h"
+#include "procedure/nodeValue.h"
+#include "procedure/nodes/calculateBase.h"
 
 // Calculate Expression
 class CalculateExpressionProcedureNode : public CalculateProcedureNodeBase

@@ -237,13 +237,13 @@
   <customwidget>
    <class>SampledDoubleLabel</class>
    <extends>QFrame</extends>
-   <header>gui/widgets/sampleddoublelabel.h</header>
+   <header>gui/widgets/sampledDoubleLabel.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/datawidget.h</header>
+   <header>gui/dataWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

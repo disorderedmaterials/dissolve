@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/ui_wizardfooter.h"
-#include "gui/ui_wizardheader.h"
+#include "gui/ui_wizardFooter.h"
+#include "gui/ui_wizardHeader.h"
 #include <QDialog>
 #include <QStackedWidget>
 #include <optional>

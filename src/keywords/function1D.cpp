@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/function1d.h"
-#include "base/lineparser.h"
+#include "keywords/function1D.h"
+#include "base/lineParser.h"
 #include "templates/algorithms.h"
 
 Function1DKeyword::Function1DKeyword(Functions::Function1DWrapper &data, int functionProperties)

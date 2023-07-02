@@ -2,11 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "gui/render/renderabledata1d.h"
-#include "gui/render/renderabledata2d.h"
+#include "gui/render/renderableData1D.h"
+#include "gui/render/renderableData2D.h"
 #include "main/dissolve.h"
-#include "modules/dangle/dangle.h"
-#include "modules/dangle/gui/danglewidget.h"
+#include "modules/dAngle/dAngle.h"
+#include "modules/dAngle/gui/widget.h"
 
 DAngleModuleWidget::DAngleModuleWidget(QWidget *parent, DAngleModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

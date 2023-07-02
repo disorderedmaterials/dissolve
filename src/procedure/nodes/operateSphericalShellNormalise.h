@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "procedure/nodes/operatebase.h"
+#include "procedure/nodes/operateBase.h"
 
 // Operate Spherical Shell Normalise Node
 class OperateSphericalShellNormaliseProcedureNode : public OperateProcedureNodeBase

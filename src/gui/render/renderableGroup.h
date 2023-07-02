@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "gui/render/colourdefinition.h"
-#include "gui/render/linestipple.h"
-#include "gui/stockcolours.h"
+#include "gui/render/colourDefinition.h"
+#include "gui/render/lineStipple.h"
+#include "gui/stockColours.h"
 #include <array>
 
 // Forward declarations

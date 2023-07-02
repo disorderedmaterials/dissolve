@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/valuestore.h"
-#include "base/lineparser.h"
-#include "classes/valuestore.h"
+#include "keywords/valueStore.h"
+#include "base/lineParser.h"
+#include "classes/valueStore.h"
 #include "io/export/values.h"
 
 ValueStoreKeyword::ValueStoreKeyword(ValueStore &data) : KeywordBase(typeid(this)), data_(data) {}

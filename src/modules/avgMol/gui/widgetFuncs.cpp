@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "main/dissolve.h"
-#include "modules/avgmol/avgmol.h"
-#include "modules/avgmol/gui/avgmolwidget.h"
+#include "modules/avgMol/avgMol.h"
+#include "modules/avgMol/gui/widget.h"
 
 AvgMolModuleWidget::AvgMolModuleWidget(QWidget *parent, AvgMolModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/export_coordinates/exportcoords.h"
+#include "modules/exportCoordinates/exportCoordinates.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
-#include "keywords/fileandformat.h"
+#include "keywords/fileAndFormat.h"
 
 ExportCoordinatesModule::ExportCoordinatesModule() : Module(ModuleTypes::ExportCoordinates)
 {

@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/cuboid.h"
-#include "math/mathfunc.h"
+#include "math/mathFunc.h"
 
 Cuboid::Cuboid()
 {

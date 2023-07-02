@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/data3d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 
 Data3DImportFileFormat::Data3DImportFileFormat(std::string_view filename, Data3DImportFileFormat::Data3DImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

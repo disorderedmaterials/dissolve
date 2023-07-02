@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/range.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 
 RangeKeyword::RangeKeyword(Range &data, Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), default_(data), labelType_(labelType)

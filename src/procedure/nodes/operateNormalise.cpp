@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/operatenormalise.h"
+#include "procedure/nodes/operateNormalise.h"
 #include "keywords/bool.h"
-#include "keywords/nodevalue.h"
-#include "math/data1d.h"
-#include "math/data2d.h"
-#include "math/data3d.h"
+#include "keywords/nodeValue.h"
+#include "math/data1D.h"
+#include "math/data2D.h"
+#include "math/data3D.h"
 #include "math/integrator.h"
 
 OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)

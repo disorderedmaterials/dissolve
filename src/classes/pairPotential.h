@@ -4,7 +4,7 @@
 #pragma once
 
 #include "data/ff/ff.h"
-#include "math/data1d.h"
+#include "math/data1D.h"
 #include "math/interpolator.h"
 #include <memory>
 

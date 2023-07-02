@@ -4,7 +4,7 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/changestore.h"
+#include "classes/changeStore.h"
 #include "main/dissolve.h"
 
 // Rationalise object relationships between atoms, molecules, and cells

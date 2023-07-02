@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/histogram3d.h"
-#include "base/lineparser.h"
+#include "math/histogram3D.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "math/histogram1d.h"
+#include "math/histogram1D.h"
 
 Histogram3D::Histogram3D()
 {

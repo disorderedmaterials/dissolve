@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/textprimitive.h"
+#include "gui/render/textPrimitive.h"
 #include "math/cuboid.h"
 #include "math/matrix4.h"
 #include "templates/vector3.h"

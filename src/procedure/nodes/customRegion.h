@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "procedure/nodes/regionbase.h"
-#include "procedure/nodevalue.h"
+#include "procedure/nodeValue.h"
+#include "procedure/nodes/regionBase.h"
 
 // Custom Region
 class CustomRegionProcedureNode : public RegionProcedureNodeBase

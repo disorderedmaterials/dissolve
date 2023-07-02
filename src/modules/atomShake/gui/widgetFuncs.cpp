@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/atomshake/atomshake.h"
-#include "modules/atomshake/gui/atomshakewidget.h"
+#include "modules/atomShake/atomShake.h"
+#include "modules/atomShake/gui/widget.h"
 
 AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

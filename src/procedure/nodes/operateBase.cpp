@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/operatebase.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "procedure/nodes/operateBase.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 
 OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeType)
     : ProcedureNode(nodeType, {ProcedureNode::OperateContext}, ProcedureNode::NodeClass::Operate)

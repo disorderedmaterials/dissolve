@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/colourscale.h"
+#include "gui/render/colourScale.h"
 #include <QWidget>
 
 // Gradient Bar

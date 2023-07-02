@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/molshake/molshake.h"
+#include "modules/molShake/molShake.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "keywords/optionaldouble.h"
-#include "keywords/speciesvector.h"
+#include "keywords/optionalDouble.h"
+#include "keywords/speciesVector.h"
 
 MolShakeModule::MolShakeModule() : Module(ModuleTypes::MolShake)
 {

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_selectatomtypedialog.h"
+#include "gui/ui_selectAtomTypeDialog.h"
 #include <QDialog>
 
 // Forward Declarations

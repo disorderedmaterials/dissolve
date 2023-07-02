@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/data2d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "keywords/vec3double.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "keywords/vec3Double.h"
 
 Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2DImportFileFormat::Data2DImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

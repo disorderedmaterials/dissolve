@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/speciesangle.h"
-#include "classes/coredata.h"
-#include "classes/speciesatom.h"
+#include "classes/speciesAngle.h"
+#include "classes/coreData.h"
+#include "classes/speciesAtom.h"
 #include <map>
 
 // Return enum options for AngleFunction

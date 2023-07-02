@@ -4,7 +4,7 @@
 #pragma once
 
 #include "data/ff/library.h"
-#include "gui/ui_selectconfigurationwidget.h"
+#include "gui/ui_selectConfigurationWidget.h"
 #include <QWidget>
 
 // Forward Declarations

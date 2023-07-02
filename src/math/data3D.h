@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/version.h"
-#include "math/data3dbase.h"
-#include "templates/array3d.h"
+#include "math/data3DBase.h"
+#include "templates/array3D.h"
 
 // Forward Declarations
 class Histogram3D;

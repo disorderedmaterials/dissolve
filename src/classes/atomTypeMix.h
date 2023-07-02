@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/atomtypedata.h"
-#include "templates/optionalref.h"
+#include "classes/atomTypeData.h"
+#include "templates/optionalRef.h"
 #include <tuple>
 #include <vector>
 

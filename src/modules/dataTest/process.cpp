@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
-#include "keywords/vector_stringdouble.h"
-#include "keywords/vector_stringpair.h"
+#include "base/sysFunc.h"
+#include "keywords/vectorStringDouble.h"
+#include "keywords/vectorStringPair.h"
 #include "main/dissolve.h"
 #include "math/error.h"
-#include "math/sampleddata1d.h"
-#include "modules/datatest/datatest.h"
+#include "math/sampledData1D.h"
+#include "modules/dataTest/dataTest.h"
 
 // Run main processing
 bool DataTestModule::process(Dissolve &dissolve, const ProcessPool &procPool)

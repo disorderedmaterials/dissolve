@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/optionalint.h"
+#include "keywords/optionalInt.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

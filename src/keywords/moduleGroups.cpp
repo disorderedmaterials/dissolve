@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/modulegroups.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/coredata.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "classes/coreData.h"
 #include "module/group.h"
 #include "module/groups.h"
 #include "module/module.h"

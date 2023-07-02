@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_selectsymbol.h"
+#include "gui/ui_selectSymbol.h"
 #include <QDialog>
 #include <QObject>
 

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/renderabledata1d.h"
-#include "base/lineparser.h"
-#include "genericitems/list.h"
-#include "gui/render/renderablegroupmanager.h"
+#include "gui/render/renderableData1D.h"
+#include "base/lineParser.h"
+#include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
-#include "math/sampleddata1d.h"
+#include "items/list.h"
+#include "math/sampledData1D.h"
 
 RenderableData1D::RenderableData1D(const Data1DBase &source)
     : Renderable(Renderable::Data1DRenderable, ""), source_(source), displayStyle_(LinesStyle)

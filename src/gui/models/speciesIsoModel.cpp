@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/speciesIsoModel.h"
-#include "classes/atomtype.h"
-#include "gui/delegates/isotopecombo.hui"
+#include "classes/atomType.h"
+#include "gui/delegates/isotopeCombo.hui"
 
 SpeciesIsoModel::SpeciesIsoModel(Species &species) : species_(species) {}
 

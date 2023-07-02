@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/speciesimproper.h"
-#include "classes/coredata.h"
-#include "classes/speciesatom.h"
-#include "classes/speciestorsion.h"
+#include "classes/speciesImproper.h"
+#include "classes/coreData.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesTorsion.h"
 
 SpeciesImproper::SpeciesImproper() : SpeciesIntra(TorsionFunctions::Form::None) {}
 

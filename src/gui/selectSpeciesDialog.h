@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/models/speciesFilterProxy.h"
-#include "gui/ui_selectspeciesdialog.h"
+#include "gui/ui_selectSpeciesDialog.h"
 #include <QDialog>
 
 // Forward Declarations

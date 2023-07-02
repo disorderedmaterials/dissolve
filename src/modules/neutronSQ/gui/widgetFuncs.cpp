@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
-#include "classes/isotopedata.h"
-#include "gui/dataviewer.hui"
-#include "gui/render/renderabledata1d.h"
+#include "classes/atomType.h"
+#include "classes/isotopeData.h"
+#include "gui/dataViewer.hui"
+#include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/neutronsq/gui/neutronsqwidget.h"
-#include "modules/neutronsq/neutronsq.h"
+#include "modules/neutronSQ/gui/widget.h"
+#include "modules/neutronSQ/neutronSQ.h"
 #include "templates/algorithms.h"
 
 NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve)

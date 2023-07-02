@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/elementvector.h"
-#include "base/lineparser.h"
+#include "keywords/elementVector.h"
+#include "base/lineParser.h"
 #include "data/elements.h"
 #include "templates/algorithms.h"
 

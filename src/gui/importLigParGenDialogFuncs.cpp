@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/ff/library.h"
-#include "gui/importligpargendialog.h"
+#include "gui/importLigParGenDialog.h"
 #include "templates/algorithms.h"
 #include <QFileDialog>
 #include <QFileInfo>

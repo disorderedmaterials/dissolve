@@ -3,10 +3,10 @@
 
 #include "procedure/nodes/copy.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "keywords/configuration.h"
-#include "keywords/speciesvector.h"
+#include "keywords/speciesVector.h"
 #include <algorithm>
 
 CopyProcedureNode::CopyProcedureNode(Configuration *cfg)

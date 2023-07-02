@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/data1dstore.h"
-#include "base/lineparser.h"
+#include "classes/data1DStore.h"
+#include "base/lineParser.h"
 #include "io/import/data1d.h"
 #include <algorithm>
 

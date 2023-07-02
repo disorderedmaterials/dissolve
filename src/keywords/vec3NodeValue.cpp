@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/vec3nodevalue.h"
-#include "base/lineparser.h"
+#include "keywords/vec3NodeValue.h"
+#include "base/lineParser.h"
 #include "procedure/nodes/node.h"
 
 Vec3NodeValueKeyword::Vec3NodeValueKeyword(Vec3<NodeValue> &data, ProcedureNode *parentNode, Vec3Labels::LabelType labelType)

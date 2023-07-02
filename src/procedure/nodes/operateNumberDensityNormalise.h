@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "procedure/nodes/operatebase.h"
+#include "procedure/nodes/operateBase.h"
 #include "procedure/nodes/select.h"
 
 // Operate Number Density Normalise Node

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/helpers/mousewheeladjustmentguard.h"
-#include "gui/keywordwidgets/node.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
+#include "gui/keywordWidgets/node.h"
 
 NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, NodeKeywordBase *keyword, const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)

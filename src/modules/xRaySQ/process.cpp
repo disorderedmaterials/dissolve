@@ -4,14 +4,14 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "classes/xrayweights.h"
+#include "classes/xRayWeights.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
 #include "modules/gr/gr.h"
 #include "modules/sq/sq.h"
-#include "modules/xraysq/xraysq.h"
+#include "modules/xRaySQ/xRaySQ.h"
 #include "templates/algorithms.h"
 
 // Set target data

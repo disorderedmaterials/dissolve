@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/randombuffer.h"
-#include "base/sysfunc.h"
+#include "base/randomBuffer.h"
+#include "base/sysFunc.h"
 #include "classes/box.h"
-#include "classes/changestore.h"
-#include "classes/regionaldistributor.h"
+#include "classes/changeStore.h"
+#include "classes/regionalDistributor.h"
 #include "classes/species.h"
-#include "classes/speciesangle.h"
-#include "classes/speciesbond.h"
-#include "classes/speciestorsion.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesTorsion.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "modules/intrashake/intrashake.h"
+#include "modules/intraShake/intraShake.h"
 
 // Run main processing
 bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)

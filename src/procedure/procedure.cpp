@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/procedure.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/configuration.h"
 
 Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockKeyword)

@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/ui_vec3integer.h"
-#include "keywords/vec3integer.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/ui_vec3Integer.h"
+#include "keywords/vec3Integer.h"
 #include <QWidget>
 
 class Vec3IntegerKeywordWidget : public QWidget, public KeywordWidgetBase

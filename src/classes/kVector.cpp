@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/kvector.h"
-#include "classes/braggreflection.h"
+#include "classes/kVector.h"
+#include "classes/braggReflection.h"
 #include "templates/algorithms.h"
 
 KVector::KVector(int h, int k, int l, int reflectionIndex, int nAtomTypes) { initialise(h, k, l, reflectionIndex, nAtomTypes); }

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/datamanagerdialog.h"
+#include "gui/dataManagerDialog.h"
 #include "main/dissolve.h"
-#include "templates/variantpointer.h"
+#include "templates/variantPointer.h"
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>

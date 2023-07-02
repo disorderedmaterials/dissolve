@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/isotopologueset.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "keywords/isotopologueSet.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 
 IsotopologueSetKeyword::IsotopologueSetKeyword(IsotopologueSet &data) : KeywordBase(typeid(this)), data_(data) {}

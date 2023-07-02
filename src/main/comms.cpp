@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/processpool.h"
+#include "base/processPool.h"
 #include "main/dissolve.h"
 #include <numeric>
 

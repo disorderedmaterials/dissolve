@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/regression.h"
-#include "math/data1d.h"
+#include "math/data1D.h"
 
 namespace Regression
 {

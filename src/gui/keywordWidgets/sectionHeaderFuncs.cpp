@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/keywordwidgets/sectionHeader.h"
+#include "gui/keywordWidgets/sectionHeader.h"
 
 SectionHeaderWidget::SectionHeaderWidget(QString sectionLabel) : QWidget()
 {

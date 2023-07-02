@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/datatest/datatest.h"
-#include "keywords/data1dstore.h"
-#include "keywords/data2dstore.h"
-#include "keywords/data3dstore.h"
+#include "modules/dataTest/dataTest.h"
+#include "keywords/data1DStore.h"
+#include "keywords/data2DStore.h"
+#include "keywords/data3DStore.h"
 #include "keywords/double.h"
-#include "keywords/enumoptions.h"
-#include "keywords/valuestore.h"
-#include "keywords/vector_stringdouble.h"
-#include "keywords/vector_stringpair.h"
+#include "keywords/enumOptions.h"
+#include "keywords/valueStore.h"
+#include "keywords/vectorStringDouble.h"
+#include "keywords/vectorStringPair.h"
 
 DataTestModule::DataTestModule() : Module(ModuleTypes::DataTest)
 {

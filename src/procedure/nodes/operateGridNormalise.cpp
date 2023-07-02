@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/operategridnormalise.h"
-#include "base/lineparser.h"
+#include "procedure/nodes/operateGridNormalise.h"
+#include "base/lineParser.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "math/data2d.h"
-#include "math/data3d.h"
+#include "math/data2D.h"
+#include "math/data3D.h"
 #include "procedure/nodes/select.h"
 
 OperateGridNormaliseProcedureNode::OperateGridNormaliseProcedureNode()

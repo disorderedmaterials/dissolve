@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/pickbase.h"
+#include "procedure/nodes/pickBase.h"
 #include "classes/configuration.h"
 #include "keywords/node.h"
 

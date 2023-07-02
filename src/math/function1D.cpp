@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
-#include "math/function1d.h"
+#include "math/function1D.h"
 #include "templates/algorithms.h"
 #include <math.h>
 

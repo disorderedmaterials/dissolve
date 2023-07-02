@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "classes/speciesangle.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
-#include "classes/speciestorsion.h"
-#include "gui/maintab.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesTorsion.h"
+#include "gui/mainTab.h"
 #include "gui/models/speciesAngleModel.h"
 #include "gui/models/speciesAtomModel.h"
 #include "gui/models/speciesBondModel.h"
@@ -16,7 +16,7 @@
 #include "gui/models/speciesSiteFilterProxy.h"
 #include "gui/models/speciesSiteModel.h"
 #include "gui/models/speciesTorsionModel.h"
-#include "gui/ui_speciestab.h"
+#include "gui/ui_speciesTab.h"
 
 // Forward Declarations
 class AtomType;

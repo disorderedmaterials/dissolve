@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/atomtypevector.h"
-#include "base/lineparser.h"
-#include "classes/atomtype.h"
-#include "classes/coredata.h"
+#include "keywords/atomTypeVector.h"
+#include "base/lineParser.h"
+#include "classes/atomType.h"
+#include "classes/coreData.h"
 #include "templates/algorithms.h"
 
 AtomTypeVectorKeyword::AtomTypeVectorKeyword(std::vector<std::shared_ptr<AtomType>> &data)

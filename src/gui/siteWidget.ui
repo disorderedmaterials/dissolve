@@ -820,7 +820,7 @@
   <customwidget>
    <class>SiteViewer</class>
    <extends>QWidget</extends>
-   <header>gui/siteviewer.hui</header>
+   <header>gui/siteViewer.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

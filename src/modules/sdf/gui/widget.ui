@@ -250,13 +250,13 @@
   <customwidget>
    <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/datawidget.h</header>
+   <header>gui/dataWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/exponentialspin.hui</header>
+   <header>gui/widgets/exponentialSpin.hui</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/atomtypemix.h"
-#include "templates/array2d.h"
+#include "classes/atomTypeMix.h"
+#include "templates/array2D.h"
 
 // Forward Declarations
 class PairPotential;

@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_speciessitevector.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/dropDown.h"
+#include "gui/keywordWidgets/ui_speciesSiteVector.h"
 #include "gui/models/sitesFilterProxy.h"
 #include "gui/models/sitesModel.h"
-#include "keywords/speciessitevector.h"
+#include "keywords/speciesSiteVector.h"
 #include <QWidget>
 
 // Forward Declarations

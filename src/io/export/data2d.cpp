@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/export/data2d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "math/data2d.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "math/data2D.h"
 
 Data2DExportFileFormat::Data2DExportFileFormat(std::string_view filename, Data2DExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

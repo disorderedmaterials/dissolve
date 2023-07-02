@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/simpleglobalpotential.h"
+#include "procedure/nodes/simpleGlobalPotential.h"
 #include "classes/configuration.h"
-#include "keywords/interactionpotential.h"
-#include "keywords/vec3nodevalue.h"
+#include "keywords/interactionPotential.h"
+#include "keywords/vec3NodeValue.h"
 
 SimpleGlobalPotentialProcedureNode::SimpleGlobalPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::SimpleGlobalPotential, {ProcedureNode::GenerationContext}),

@@ -4,11 +4,11 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "keywords/enumoptions.h"
-#include "keywords/storedata.h"
+#include "keywords/enumOptions.h"
+#include "keywords/storeData.h"
 #include "math/range.h"
-#include "procedure/nodevalue.h"
-#include "templates/optionalref.h"
+#include "procedure/nodeValue.h"
+#include "templates/optionalRef.h"
 #include <any>
 #include <map>
 #include <typeindex>

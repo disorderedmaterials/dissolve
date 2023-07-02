@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "io/import/forces.h"
 
 // Import DL_POLY forces through specified parser

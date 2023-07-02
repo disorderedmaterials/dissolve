@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "classes/speciessite.h"
-#include "gui/keywordwidgets/speciessitevector.h"
+#include "gui/keywordWidgets/speciesSiteVector.h"
 #include "templates/algorithms.h"
 
 SpeciesSiteVectorKeywordWidget::SpeciesSiteVectorKeywordWidget(QWidget *parent, SpeciesSiteVectorKeyword *keyword,

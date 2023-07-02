@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/helpers/mousewheeladjustmentguard.h"
-#include "gui/keywordwidgets/nodeandinteger.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
+#include "gui/keywordWidgets/nodeAndInteger.h"
 
 NodeAndIntegerKeywordWidget::NodeAndIntegerKeywordWidget(QWidget *parent, NodeAndIntegerKeywordBase *keyword,
                                                          const CoreData &coreData)

@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "classes/atomtypemix.h"
-#include "data/formfactors.h"
-#include "templates/array2d.h"
+#include "classes/atomTypeMix.h"
+#include "data/formFactors.h"
+#include "templates/array2D.h"
 #include <functional>
 #include <vector>
 

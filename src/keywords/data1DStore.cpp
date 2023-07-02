@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/data1dstore.h"
-#include "base/lineparser.h"
-#include "classes/data1dstore.h"
+#include "keywords/data1DStore.h"
+#include "base/lineParser.h"
+#include "classes/data1DStore.h"
 #include "io/import/data1d.h"
 
 Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data) : KeywordBase(typeid(this)), data_(data) {}

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/isotopedata.h"
-#include "gui/dataviewer.hui"
-#include "gui/helpers/comboboxcontroller.h"
-#include "gui/render/renderabledata1d.h"
+#include "classes/isotopeData.h"
+#include "gui/dataViewer.hui"
+#include "gui/helpers/comboBoxController.h"
+#include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/gr/gr.h"
-#include "modules/gr/gui/grwidget.h"
+#include "modules/gr/gui/widget.h"
 #include "templates/algorithms.h"
 
 Q_DECLARE_METATYPE(Configuration *);

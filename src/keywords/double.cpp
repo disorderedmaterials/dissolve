@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/double.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 
 DoubleKeyword::DoubleKeyword(double &data, std::optional<double> minValue, std::optional<double> maxValue)
     : KeywordBase(typeid(this)), data_(data), default_(data), minimumLimit_(minValue), maximumLimit_(maxValue)

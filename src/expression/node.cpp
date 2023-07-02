@@ -3,7 +3,7 @@
 
 #include "expression/node.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 
 ExpressionNode::~ExpressionNode() { clear(); }
 

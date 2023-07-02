@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/sq/gui/ui_sqwidget.h"
+#include "modules/sq/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

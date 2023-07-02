@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/textformat.h"
+#include "gui/render/textFormat.h"
 
 TextFormat::TextFormat() : y_(0.0), scale_(1.0), isItalic_(false), isBold_(false), isSymbol_(false) {}
 

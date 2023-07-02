@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/keywordwidgets/producers.h"
-#include "gui/keywordwidgets/sectionHeader.h"
-#include "gui/keywordwidgets/widget.hui"
+#include "gui/keywordWidgets/producers.h"
+#include "gui/keywordWidgets/sectionHeader.h"
+#include "gui/keywordWidgets/widget.hui"
 #include "gui/signals.h"
 #include "main/dissolve.h"
 #include "module/module.h"

@@ -2,15 +2,15 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/layertab.h"
-#include "gui/selectconfigurationdialog.h"
+#include "gui/layerTab.h"
+#include "gui/selectConfigurationDialog.h"
 #include "main/dissolve.h"
-#include "modules/avgmol/avgmol.h"
+#include "modules/avgMol/avgMol.h"
 #include "modules/epsr/epsr.h"
 #include "modules/gr/gr.h"
 #include "modules/registry.h"
 #include "modules/sdf/sdf.h"
-#include "modules/siterdf/siterdf.h"
+#include "modules/siteRDF/siteRDF.h"
 #include "modules/sq/sq.h"
 
 void DissolveWindow::on_LayerCreateEmptyAction_triggered(bool checked)

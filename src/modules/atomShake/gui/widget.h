@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/atomshake/gui/ui_atomshakewidget.h"
+#include "modules/atomShake/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

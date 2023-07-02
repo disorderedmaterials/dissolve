@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/data2d.h"
-#include "base/lineparser.h"
+#include "math/data2D.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
-#include "math/data1d.h"
-#include "math/histogram2d.h"
-#include "templates/arrayIndex2d.h"
+#include "base/sysFunc.h"
+#include "math/data1D.h"
+#include "math/histogram2D.h"
+#include "templates/arrayIndex2D.h"
 #include <algorithm>
 #include <cassert>
 

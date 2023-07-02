@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "gui/maintab.h"
-#include "gui/outputhandler.hui"
-#include "gui/ui_messagestab.h"
+#include "gui/mainTab.h"
+#include "gui/outputHandler.hui"
+#include "gui/ui_messagesTab.h"
 
 // Messages Tab
 class MessagesTab : public QWidget, public MainTab

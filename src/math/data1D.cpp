@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/data1d.h"
-#include "base/lineparser.h"
+#include "math/data1D.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "templates/algorithms.h"
 #include <cassert>
 

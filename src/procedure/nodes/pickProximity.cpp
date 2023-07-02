@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/pickproximity.h"
+#include "procedure/nodes/pickProximity.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "keywords/integer.h"
-#include "keywords/optionaldouble.h"
-#include "keywords/optionalint.h"
-#include "keywords/speciesvector.h"
+#include "keywords/optionalDouble.h"
+#include "keywords/optionalInt.h"
+#include "keywords/speciesVector.h"
 #include "templates/algorithms.h"
 
 PickProximityProcedureNode::PickProximityProcedureNode() : PickProcedureNodeBase(ProcedureNode::NodeType::PickProximity)

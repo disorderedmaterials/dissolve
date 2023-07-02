@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/speciesviewer.hui"
+#include "gui/speciesViewer.hui"
 #include "neta/neta.h"
 #include <QtGui/QMouseEvent>
 

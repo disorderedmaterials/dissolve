@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/restraintpotential.h"
+#include "procedure/nodes/restraintPotential.h"
 #include "classes/configuration.h"
 #include "kernels/potentials/restraint.h"
-#include "keywords/interactionpotential.h"
+#include "keywords/interactionPotential.h"
 #include "keywords/node.h"
-#include "keywords/speciesvector.h"
+#include "keywords/speciesVector.h"
 
 RestraintPotentialProcedureNode::RestraintPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::RestraintPotential, {ProcedureNode::GenerationContext}),

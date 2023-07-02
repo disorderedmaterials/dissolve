@@ -90,7 +90,7 @@
   <customwidget>
    <class>SelectAtomTypeWidget</class>
    <extends>QWidget</extends>
-   <header>gui/selectatomtypewidget.h</header>
+   <header>gui/selectAtomTypeWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

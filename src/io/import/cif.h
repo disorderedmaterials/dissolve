@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/spacegroups.h"
+#include "data/spaceGroups.h"
 #include "io/import/cifclasses.h"
 #include "math/matrix4.h"
 #include <map>

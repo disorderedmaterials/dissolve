@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "gui/gui.h"
-#include "gui/helpers/mousewheeladjustmentguard.h"
-#include "gui/keywordwidgets/producers.h"
-#include "gui/keywordwidgets/widget.hui"
-#include "gui/modulecontrolwidget.h"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
+#include "gui/keywordWidgets/producers.h"
+#include "gui/keywordWidgets/widget.hui"
+#include "gui/moduleControlWidget.h"
 #include "keywords/procedure.h"
 #include "module/module.h"
 #include "modules/widget.h"
-#include "modules/widgetproducer.h"
+#include "modules/widgetProducer.h"
 
 ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module *module) : dissolve_(dissolveWindow->dissolve())
 {

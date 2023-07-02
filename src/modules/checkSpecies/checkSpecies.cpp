@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/checkspecies/checkspecies.h"
+#include "modules/checkSpecies/checkSpecies.h"
 #include "keywords/double.h"
-#include "keywords/optionaldouble.h"
+#include "keywords/optionalDouble.h"
 #include "keywords/species.h"
-#include "keywords/vector_intdouble.h"
-#include "keywords/vector_intstring.h"
+#include "keywords/vectorIntDouble.h"
+#include "keywords/vectorIntString.h"
 
 CheckSpeciesModule::CheckSpeciesModule() : Module(ModuleTypes::CheckSpecies)
 {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/elementcolours.h"
+#include "data/elementColours.h"
 #include <array>
 
 namespace ElementColours

@@ -3,18 +3,18 @@
 
 #pragma once
 
-#include "classes/atomtype.h"
-#include "classes/speciesangle.h"
-#include "classes/speciesbond.h"
-#include "classes/speciesimproper.h"
-#include "classes/speciestorsion.h"
+#include "classes/atomType.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesImproper.h"
+#include "classes/speciesTorsion.h"
 #include "data/elements.h"
 #include "data/ff/angleterm.h"
 #include "data/ff/atomtype.h"
 #include "data/ff/bondterm.h"
 #include "data/ff/improperterm.h"
 #include "data/ff/torsionterm.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <algorithm>
 #include <functional>
 #include <tuple>

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/modulevector.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "keywords/moduleVector.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "module/module.h"
 #include "templates/algorithms.h"
 #include <utility>

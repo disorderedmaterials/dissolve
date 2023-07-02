@@ -4,8 +4,8 @@
 #pragma once
 
 #include "io/import/coordinates.h"
+#include "procedure/nodeValue.h"
 #include "procedure/nodes/node.h"
-#include "procedure/nodevalue.h"
 #include <vector>
 
 // Forward Declarations

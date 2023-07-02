@@ -3,9 +3,9 @@
 
 #include "base/messenger.h"
 #include "gui/gui.h"
-#include "gui/maintab.h"
-#include "gui/maintabsbar.hui"
-#include "gui/maintabswidget.hui"
+#include "gui/mainTab.h"
+#include "gui/mainTabsBar.hui"
+#include "gui/mainTabsWidget.hui"
 #include "main/dissolve.h"
 #include <QMessageBox>
 #include <QToolButton>

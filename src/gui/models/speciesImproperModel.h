@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciesimproper.h"
+#include "classes/speciesImproper.h"
 #include "data/ff/improperterm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>

@@ -6,7 +6,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/speciessite.h"
-#include "data/atomicmasses.h"
+#include "data/atomicMasses.h"
 #include <algorithm>
 #include <numeric>
 

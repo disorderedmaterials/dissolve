@@ -6,7 +6,7 @@
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/molecule.h"
-#include "classes/potentialmap.h"
+#include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
 #include <iterator>

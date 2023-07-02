@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "base/enumoptionsbase.h"
-#include "templates/variantpointer.h"
+#include "base/enumOptionsBase.h"
+#include "templates/variantPointer.h"
 #include <QComboBox>
 
 // ComboBox Populator from EnumOptions

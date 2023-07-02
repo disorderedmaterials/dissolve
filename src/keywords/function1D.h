@@ -4,7 +4,7 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "math/function1d.h"
+#include "math/function1D.h"
 
 // Keyword managing Function1D data
 class Function1DKeyword : public KeywordBase

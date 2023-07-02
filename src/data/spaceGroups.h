@@ -5,7 +5,7 @@
 
 #include "math/matrix4.h"
 #include "sginfo/sginfo.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <string>
 #include <vector>
 

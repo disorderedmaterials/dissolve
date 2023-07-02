@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
-#include "base/lineparser.h"
-#include "classes/interactionpotential.h"
+#include "base/enumOptions.h"
+#include "base/lineParser.h"
+#include "classes/interactionPotential.h"
 #include "keywords/base.h"
 
 // InteractionPotentialKeyword base class

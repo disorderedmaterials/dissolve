@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/vector_stringpair.h"
-#include "base/lineparser.h"
+#include "keywords/vectorStringPair.h"
+#include "base/lineParser.h"
 
 StringPairVectorKeyword::StringPairVectorKeyword(StringPairVectorKeywordData &data) : KeywordBase(typeid(this)), data_(data) {}
 

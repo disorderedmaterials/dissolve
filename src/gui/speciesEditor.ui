@@ -817,7 +817,7 @@
   <customwidget>
    <class>SpeciesViewer</class>
    <extends>QWidget</extends>
-   <header>gui/speciesviewer.hui</header>
+   <header>gui/speciesViewer.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

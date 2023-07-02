@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "math/data1d.h"
-#include "math/functionspace.h"
-#include "templates/array2d.h"
+#include "math/data1D.h"
+#include "math/functionSpace.h"
+#include "templates/array2D.h"
 
 // Poisson Function Approximation to Q-Space Data (replicating EPSR's methodology)
 class PoissonFit

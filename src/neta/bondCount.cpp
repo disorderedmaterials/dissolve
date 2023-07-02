@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "neta/bondcount.h"
-#include "classes/speciesatom.h"
+#include "neta/bondCount.h"
+#include "classes/speciesAtom.h"
 
 NETABondCountNode::NETABondCountNode(NETADefinition *parent, NETANode::ComparisonOperator op, std::optional<int> value)
     : NETANode(parent, NETANode::NodeType::BondCount), value_(value), operator_(op)

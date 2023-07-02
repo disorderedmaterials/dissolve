@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/ui_nodeandinteger.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/ui_nodeAndInteger.h"
 #include "gui/models/procedureNodeModel.h"
-#include "keywords/nodeandinteger.h"
+#include "keywords/nodeAndInteger.h"
 #include <QWidget>
 
 class NodeAndIntegerKeywordWidget : public QWidget, public KeywordWidgetBase

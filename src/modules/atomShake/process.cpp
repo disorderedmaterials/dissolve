@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/randombuffer.h"
+#include "base/randomBuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
-#include "classes/changestore.h"
+#include "classes/changeStore.h"
 #include "classes/configuration.h"
-#include "classes/regionaldistributor.h"
+#include "classes/regionalDistributor.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "modules/atomshake/atomshake.h"
+#include "modules/atomShake/atomShake.h"
 
 // Run main processing
 bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)

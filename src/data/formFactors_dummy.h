@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/formfactordata.h"
+#include "data/formFactorData.h"
 #include <vector>
 
 // Dummy Form Factor Data

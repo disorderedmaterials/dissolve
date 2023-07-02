@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/pair_iter.h"
+#include "classes/pairIterator.h"
 
 #include <gtest/gtest.h>
 

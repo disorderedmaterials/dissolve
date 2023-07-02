@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/export/data1d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "math/sampleddata1d.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "math/sampledData1D.h"
 #include "templates/algorithms.h"
 
 Data1DExportFileFormat::Data1DExportFileFormat(std::string_view filename, Data1DExportFormat format)

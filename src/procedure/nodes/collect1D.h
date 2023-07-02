@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "math/histogram1d.h"
+#include "math/histogram1D.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 

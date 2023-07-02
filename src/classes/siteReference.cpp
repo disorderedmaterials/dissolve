@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/sitereference.h"
+#include "classes/siteReference.h"
 
 SiteReference::SiteReference(SiteStack &siteStack, std::string_view name) : siteStack_(siteStack), name_{name} {}
 

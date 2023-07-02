@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
-#include "modules/histogramcn/histogramcn.h"
-#include "procedure/nodes/integercollect1d.h"
-#include "procedure/nodes/operatesitepopulationnormalise.h"
+#include "modules/histogramCN/histogramCN.h"
+#include "procedure/nodes/integerCollect1D.h"
+#include "procedure/nodes/operateSitePopulationNormalise.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
-#include "procedure/nodes/sum1d.h"
+#include "procedure/nodes/sum1D.h"
 
 // Run main processing
 bool HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)

@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "classes/partialset.h"
-#include "math/sampleddata1d.h"
-#include "templates/array2d.h"
+#include "classes/partialSet.h"
+#include "math/sampledData1D.h"
+#include "templates/array2D.h"
 
 // Accumulator for PartialSet
 class PartialSetAccumulator

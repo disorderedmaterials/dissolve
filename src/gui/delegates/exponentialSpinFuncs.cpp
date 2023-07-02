@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/delegates/exponentialspin.hui"
+#include "gui/delegates/exponentialSpin.hui"
 
 ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, int nDecimals)
     : QItemDelegate(parent)

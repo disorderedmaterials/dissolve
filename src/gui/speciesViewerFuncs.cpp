@@ -3,8 +3,8 @@
 
 #include "classes/species.h"
 #include "data/elements.h"
-#include "gui/render/renderablespecies.h"
-#include "gui/speciesviewer.hui"
+#include "gui/render/renderableSpecies.h"
+#include "gui/speciesViewer.hui"
 
 SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
 {

@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/species.h"
-#include "base/lineparser.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/processPool.h"
+#include "base/sysFunc.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
 

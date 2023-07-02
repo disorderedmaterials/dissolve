@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/ff/strader2002/dmso.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
+#include "classes/speciesAtom.h"
 
 /*
  * Implements "A Flexible All-Atom Model of Dimethyl Sulfoxide"

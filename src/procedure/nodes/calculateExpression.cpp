@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/calculateexpression.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "procedure/nodes/calculateExpression.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "keywords/nodevalue.h"
+#include "keywords/nodeValue.h"
 #include "procedure/nodes/select.h"
 
 CalculateExpressionProcedureNode::CalculateExpressionProcedureNode()

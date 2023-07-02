@@ -4,7 +4,7 @@
 #pragma once
 
 #include "procedure/nodes/node.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <memory>
 
 // Forward Declarations

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/widgets/checkindicator.hui"
+#include "gui/widgets/checkIndicator.hui"
 #include <QLabel>
 #include <QPixmap>
 #include <QSizePolicy>

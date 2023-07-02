@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_selectrestartfiledialog.h"
+#include "gui/ui_selectRestartFileDialog.h"
 #include <QDialog>
 #include <QFileSystemModel>
 

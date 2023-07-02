@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "gui/maintab.h"
+#include "gui/mainTab.h"
 #include "gui/models/moduleLayerModel.h"
 #include "gui/models/modulePaletteModel.h"
-#include "gui/ui_layertab.h"
+#include "gui/ui_layerTab.h"
 
 // Forward Declarations
 class ModuleControlWidget;

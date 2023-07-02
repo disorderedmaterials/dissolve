@@ -3,12 +3,12 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "gui/helpers/comboboxupdater.h"
-#include "gui/render/renderabledata3d.h"
-#include "gui/render/renderablespecies.h"
+#include "gui/helpers/comboBoxUpdater.h"
+#include "gui/render/renderableData3D.h"
+#include "gui/render/renderableSpecies.h"
 #include "main/dissolve.h"
-#include "modules/avgmol/avgmol.h"
-#include "modules/sdf/gui/sdfwidget.h"
+#include "modules/avgMol/avgMol.h"
+#include "modules/sdf/gui/widget.h"
 #include "modules/sdf/sdf.h"
 
 SDFModuleWidget::SDFModuleWidget(QWidget *parent, SDFModule *module, Dissolve &dissolve)

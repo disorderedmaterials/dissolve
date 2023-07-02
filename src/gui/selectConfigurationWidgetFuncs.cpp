@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "classes/coredata.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "gui/selectconfigurationwidget.h"
-#include "templates/variantpointer.h"
+#include "classes/coreData.h"
+#include "gui/helpers/listWidgetUpdater.h"
+#include "gui/selectConfigurationWidget.h"
+#include "templates/variantPointer.h"
 
 SelectConfigurationWidget::SelectConfigurationWidget(QWidget *parent) : QWidget(parent)
 {

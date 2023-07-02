@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/transformer.h"
-#include "data3d.h"
 #include "expression/variable.h"
-#include "math/data1d.h"
-#include "math/data2d.h"
+#include "math/data1D.h"
+#include "math/data2D.h"
+#include "math/data3D.h"
 
 Transformer::Transformer()
 {

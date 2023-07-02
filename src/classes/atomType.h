@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "base/serialiser.h"
-#include "classes/interactionpotential.h"
+#include "classes/interactionPotential.h"
 #include "data/elements.h"
 #include <map>
 #include <vector>

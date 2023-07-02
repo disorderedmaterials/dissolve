@@ -2,12 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/speciessite.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "classes/site.h"
 #include "classes/species.h"
-#include "data/atomicmasses.h"
-#include "neta/matchedgroup.h"
+#include "data/atomicMasses.h"
+#include "neta/matchedGroup.h"
 #include "neta/neta.h"
 #include "templates/algorithms.h"
 #include <numeric>

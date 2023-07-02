@@ -4,7 +4,7 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "keywords/vec3labels.h"
+#include "keywords/vec3Labels.h"
 #include "templates/vector3.h"
 #include <optional>
 

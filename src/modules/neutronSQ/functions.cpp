@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "classes/isotopologueset.h"
+#include "classes/isotopologueSet.h"
 #include "classes/species.h"
 #include "modules/gr/gr.h"
-#include "modules/neutronsq/neutronsq.h"
+#include "modules/neutronSQ/neutronSQ.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
 bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,

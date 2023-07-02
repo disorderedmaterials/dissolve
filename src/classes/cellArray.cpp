@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/cellarray.h"
+#include "classes/cellArray.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 

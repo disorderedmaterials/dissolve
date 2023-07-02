@@ -3,7 +3,7 @@
 
 #include "data/elements.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include <cassert>
 #include <cctype>
 

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "main/dissolve.h"
-#include "modules/dangle/dangle.h"
-#include "procedure/nodes/calculateangle.h"
-#include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/collect2d.h"
-#include "procedure/nodes/operateexpression.h"
+#include "modules/dAngle/dAngle.h"
+#include "procedure/nodes/calculateAngle.h"
+#include "procedure/nodes/collect1D.h"
+#include "procedure/nodes/collect2D.h"
+#include "procedure/nodes/operateExpression.h"
 #include "procedure/nodes/select.h"
 
 // Run main processing

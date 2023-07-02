@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/selectelementdialog.h"
+#include "gui/selectElementDialog.h"
 
 SelectElementDialog::SelectElementDialog(QWidget *parent) { ui_.setupUi(this); }
 

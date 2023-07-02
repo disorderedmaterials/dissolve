@@ -5,7 +5,7 @@
 
 #include "base/serialiser.h"
 #include "math/constants.h"
-#include "math/mathfunc.h"
+#include "math/mathFunc.h"
 #include <cmath>
 #include <fmt/format.h>
 #include <stdexcept>

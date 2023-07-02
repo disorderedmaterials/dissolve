@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/isotopedata.h"
+#include "classes/isotopeData.h"
 #include <memory>
 
 // Forward Declarations

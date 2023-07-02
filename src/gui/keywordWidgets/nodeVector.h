@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_nodevector.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/dropDown.h"
+#include "gui/keywordWidgets/ui_nodeVector.h"
 #include "gui/models/procedureNodeModel.h"
-#include "keywords/nodevector.h"
+#include "keywords/nodeVector.h"
 #include <QWidget>
 
 class NodeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase

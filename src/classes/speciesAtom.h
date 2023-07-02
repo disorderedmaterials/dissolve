@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "data/elements.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include "templates/vector3.h"
 #include <map>
 #include <memory>

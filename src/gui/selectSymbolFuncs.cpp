@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/render/symbol.h"
-#include "gui/selectsymbol.h"
+#include "gui/selectSymbol.h"
 #include <QScrollBar>
 
 SelectSymbolDialog::SelectSymbolDialog(QWidget *parent) : QDialog(parent), itemSize_(32)

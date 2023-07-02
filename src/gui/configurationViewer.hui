@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/renderableconfiguration.h"
+#include "gui/render/renderableConfiguration.h"
 #include "gui/viewer.hui"
 
 // Forward Declarations

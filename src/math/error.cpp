@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/error.h"
-#include "base/enumoptions.h"
-#include "math/data1d.h"
+#include "base/enumOptions.h"
+#include "math/data1D.h"
 #include "math/interpolator.h"
 #include <algorithm>
 #include <templates/algorithms.h>

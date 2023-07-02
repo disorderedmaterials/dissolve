@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/collect3d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "procedure/nodes/collect3D.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/configuration.h"
-#include "keywords/nodeandinteger.h"
-#include "keywords/nodebranch.h"
-#include "keywords/vec3double.h"
-#include "math/data3d.h"
-#include "procedure/nodes/calculatebase.h"
+#include "keywords/nodeAndInteger.h"
+#include "keywords/nodeBranch.h"
+#include "keywords/vec3Double.h"
+#include "math/data3D.h"
+#include "procedure/nodes/calculateBase.h"
 #include "procedure/nodes/sequence.h"
 
 Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable,

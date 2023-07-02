@@ -7,7 +7,7 @@
 #include "gui/models/masterBondModel.h"
 #include "gui/models/masterImproperModel.h"
 #include "gui/models/masterTorsionModel.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>

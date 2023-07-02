@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "base/serialiser.h"
-#include "classes/speciesintra.h"
-#include "classes/speciestorsion.h"
+#include "classes/speciesIntra.h"
+#include "classes/speciesTorsion.h"
 
 #include <map>
 #include <vector>

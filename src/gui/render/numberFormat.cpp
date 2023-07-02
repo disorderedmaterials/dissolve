@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/numberformat.h"
+#include "gui/render/numberFormat.h"
+#include "math/doubleExp.h"
 #include <QString>
-#include <math/doubleexp.h>
 
 NumberFormat::NumberFormat(FormatType type, int nDecimals)
     : type_(type), nDecimals_(nDecimals), forcePrecedingPlus_(false), useUpperCaseExponent_(true), useENotation_(true)

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
-#include "gui/getmodulelayernamedialog.h"
+#include "base/lineParser.h"
+#include "gui/getModuleLayerNameDialog.h"
 #include "gui/gui.h"
-#include "gui/layertab.h"
-#include "gui/maintabswidget.hui"
-#include "gui/modulecontrolwidget.h"
+#include "gui/layerTab.h"
+#include "gui/mainTabsWidget.hui"
+#include "gui/moduleControlWidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 

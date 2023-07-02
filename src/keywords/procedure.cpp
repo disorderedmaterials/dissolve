@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/procedure.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "keywords/vec3labels.h"
+#include "keywords/vec3Labels.h"
 #include <QLabel>
 
 // Vec3 Widget Labels

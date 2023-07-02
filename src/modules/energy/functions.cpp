@@ -2,13 +2,13 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "classes/potentialmap.h"
+#include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "math/combinations.h"
 #include "modules/energy/energy.h"
 #include "templates/algorithms.h"
-#include "templates/parallel_defs.h"
+#include "templates/parallelDefs.h"
 #include <atomic>
 #include <numeric>
 

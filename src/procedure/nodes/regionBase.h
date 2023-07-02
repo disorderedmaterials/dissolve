@@ -6,7 +6,7 @@
 #include "classes/region.h"
 #include "math/matrix3.h"
 #include "procedure/nodes/node.h"
-#include "templates/array3d.h"
+#include "templates/array3D.h"
 #include <random>
 
 // Forward Declarations

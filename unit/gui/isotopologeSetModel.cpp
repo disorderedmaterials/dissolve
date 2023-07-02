@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/isotopologueSetModel.h"
-#include "keywords/isotopologueset.h"
+#include "keywords/isotopologueSet.h"
 #include "main/dissolve.h"
-#include "modules/neutronsq/neutronsq.h"
+#include "modules/neutronSQ/neutronSQ.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

@@ -3,7 +3,7 @@
 
 #include <utility>
 
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "main/dissolve.h"
 
 // Set maximum distance for tabulated PairPotentials

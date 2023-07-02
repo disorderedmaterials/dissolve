@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_specieswidget.h"
+#include "gui/ui_speciesWidget.h"
 
 // Forward Declarations
 class Dissolve;

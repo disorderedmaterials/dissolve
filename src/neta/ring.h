@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciesring.h"
+#include "classes/speciesRing.h"
 #include "neta/node.h"
 #include <vector>
 

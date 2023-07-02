@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/maintab.h"
+#include "gui/mainTab.h"
 #include "base/messenger.h"
 #include "gui/gui.h"
 #include "module/module.h"

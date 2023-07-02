@@ -5,8 +5,8 @@
 
 #include "base/serialiser.h"
 #include "io/import/data1d.h"
-#include "math/data1d.h"
-#include "templates/optionalref.h"
+#include "math/data1D.h"
+#include "templates/optionalRef.h"
 #include <list>
 
 // Data1D Store

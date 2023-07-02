@@ -5,7 +5,7 @@
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
-#include "keywords/fileandformat.h"
+#include "keywords/fileAndFormat.h"
 
 ForcesModule::ForcesModule() : Module(ModuleTypes::Forces)
 {

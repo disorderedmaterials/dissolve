@@ -839,12 +839,12 @@ Existing data will remain unchanged</string>
   <customwidget>
    <class>CheckIndicator</class>
    <extends>QLabel</extends>
-   <header>gui/widgets/checkindicator.hui</header>
+   <header>gui/widgets/checkIndicator.hui</header>
   </customwidget>
   <customwidget>
    <class>SelectForcefieldWidget</class>
    <extends>QWidget</extends>
-   <header>gui/selectforcefieldwidget.h</header>
+   <header>gui/selectForcefieldWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

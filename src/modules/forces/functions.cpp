@@ -3,7 +3,7 @@
 
 #include "classes/cell.h"
 #include "classes/configuration.h"
-#include "classes/potentialmap.h"
+#include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "modules/forces/forces.h"

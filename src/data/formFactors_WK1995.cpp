@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #define _USE_MATH_DEFINES
-#include "data/formfactors_wk1995.h"
-#include "data/formfactors.h"
+#include "data/formFactors_WK1995.h"
+#include "data/formFactors.h"
 #include <algorithm>
 #include <functional>
 #include <math.h>

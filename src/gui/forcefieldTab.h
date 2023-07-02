@@ -3,16 +3,16 @@
 
 #pragma once
 
-#include "classes/atomtype.h"
-#include "classes/pairpotential.h"
-#include "gui/maintab.h"
+#include "classes/atomType.h"
+#include "classes/pairPotential.h"
+#include "gui/mainTab.h"
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/masterAngleModel.h"
 #include "gui/models/masterBondModel.h"
 #include "gui/models/masterImproperModel.h"
 #include "gui/models/masterTorsionModel.h"
 #include "gui/models/pairPotentialModel.h"
-#include "gui/ui_forcefieldtab.h"
+#include "gui/ui_forcefieldTab.h"
 
 // Forcefield Tab
 class ForcefieldTab : public QWidget, public MainTab

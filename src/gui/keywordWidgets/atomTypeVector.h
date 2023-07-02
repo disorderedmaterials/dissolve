@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_atomtypevector.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/dropDown.h"
+#include "gui/keywordWidgets/ui_atomTypeVector.h"
 #include "gui/models/atomTypeModel.h"
-#include "keywords/atomtypevector.h"
+#include "keywords/atomTypeVector.h"
 #include <QWidget>
 #include <memory>
 #include <vector>

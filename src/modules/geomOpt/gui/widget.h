@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/geomopt/gui/ui_geomoptwidget.h"
+#include "modules/geomOpt/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

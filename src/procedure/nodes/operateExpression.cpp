@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/operateexpression.h"
+#include "procedure/nodes/operateExpression.h"
 #include "expression/variable.h"
 #include "keywords/expression.h"
-#include "math/data1d.h"
-#include "math/data2d.h"
-#include "math/data3d.h"
+#include "math/data1D.h"
+#include "math/data2D.h"
+#include "math/data3D.h"
 #include "math/integrator.h"
 
 OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view expressionText)

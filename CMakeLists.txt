@@ -308,11 +308,11 @@ if(GUI)
            ${BASIC_LINK_LIBS}
            # Module gui libs
            ${MODULEGUI_LINK_LIBS}
-           modulewidgetproducer
+           moduleWidgetProducer
            # Main gui libs
            render
            widgets
-           keywordwidgets
+           keywordWidgets
            delegates
            models
            gui

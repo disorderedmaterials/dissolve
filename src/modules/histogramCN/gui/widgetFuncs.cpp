@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/histogramcn/gui/histogramcnwidget.h"
-#include "modules/histogramcn/histogramcn.h"
+#include "modules/histogramCN/gui/widget.h"
+#include "modules/histogramCN/histogramCN.h"
 
 HistogramCNModuleWidget::HistogramCNModuleWidget(QWidget *parent, HistogramCNModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

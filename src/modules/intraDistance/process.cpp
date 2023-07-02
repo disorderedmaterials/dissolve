@@ -3,11 +3,11 @@
 
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
-#include "modules/intradistance/intradistance.h"
-#include "procedure/nodes/collect1d.h"
+#include "modules/intraDistance/intraDistance.h"
+#include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
-#include "procedure/nodes/sum1d.h"
+#include "procedure/nodes/sum1D.h"
 
 // Run main processing
 bool IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPool)

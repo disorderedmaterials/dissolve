@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/kvector.h"
-#include "gui/dataviewer.hui"
-#include "gui/render/renderabledata1d.h"
+#include "classes/kVector.h"
+#include "gui/dataViewer.hui"
+#include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/bragg/bragg.h"
-#include "modules/bragg/gui/braggwidget.h"
+#include "modules/bragg/gui/widget.h"
 #include "templates/algorithms.h"
 
 BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module, Dissolve &dissolve)

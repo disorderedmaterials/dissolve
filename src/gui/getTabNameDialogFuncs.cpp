@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
-#include "gui/gettabnamedialog.h"
-#include "gui/maintab.h"
+#include "base/sysFunc.h"
+#include "gui/getTabNameDialog.h"
+#include "gui/mainTab.h"
 #include <QPointer>
 
 GetTabNameDialog::GetTabNameDialog(QWidget *parent, const std::vector<MainTab *> &currentTabs) : currentTabs_(currentTabs)

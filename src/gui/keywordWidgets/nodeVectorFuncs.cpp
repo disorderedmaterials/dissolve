@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/coredata.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "gui/keywordwidgets/nodevector.h"
+#include "classes/coreData.h"
+#include "gui/helpers/listWidgetUpdater.h"
+#include "gui/keywordWidgets/nodeVector.h"
 #include "procedure/procedure.h"
 #include "templates/algorithms.h"
 #include <QLabel>

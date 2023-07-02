@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/potentialmap.h"
+#include "classes/potentialMap.h"
 #include "base/messenger.h"
 #include "classes/atom.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "classes/molecule.h"
-#include "classes/pairpotential.h"
+#include "classes/pairPotential.h"
 #include "classes/species.h"
 #include "math/constants.h"
 #include <cmath>

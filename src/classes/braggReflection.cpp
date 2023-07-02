@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/braggreflection.h"
-#include "base/lineparser.h"
-#include "genericitems/deserialisers.h"
-#include "genericitems/serialisers.h"
+#include "classes/braggReflection.h"
+#include "base/lineParser.h"
+#include "items/deserialisers.h"
+#include "items/serialisers.h"
 
 BraggReflection::BraggReflection() {}
 

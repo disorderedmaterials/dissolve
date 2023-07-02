@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/regionbase.h"
+#include "procedure/nodes/regionBase.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
 

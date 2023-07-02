@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "classes/braggreflection.h"
+#include "classes/braggReflection.h"
 #include "gui/models/braggReflectionFilterProxy.h"
 #include "gui/models/braggReflectionModel.h"
-#include "modules/bragg/gui/ui_braggwidget.h"
+#include "modules/bragg/gui/ui_widget.h"
 #include "modules/widget.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // Forward Declarations
 class AtomTypeMix;

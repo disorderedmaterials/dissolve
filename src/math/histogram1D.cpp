@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/histogram1d.h"
-#include "base/lineparser.h"
+#include "math/histogram1D.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
 #include "templates/algorithms.h"
 #include <cassert>

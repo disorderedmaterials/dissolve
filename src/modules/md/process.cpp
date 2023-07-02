@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
-#include "base/randombuffer.h"
+#include "base/lineParser.h"
+#include "base/randomBuffer.h"
 #include "base/timer.h"
-#include "data/atomicmasses.h"
+#include "data/atomicMasses.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"

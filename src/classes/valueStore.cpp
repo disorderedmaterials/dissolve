@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/valuestore.h"
-#include "base/lineparser.h"
+#include "classes/valueStore.h"
+#include "base/lineParser.h"
 #include "io/import/values.h"
 
 /*

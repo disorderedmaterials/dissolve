@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/spacegroups.h"
+#include "data/spaceGroups.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include <cassert>
 #include <stdio.h>
 

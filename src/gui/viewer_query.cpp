@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "gui/dataviewer.hui"
+#include "gui/dataViewer.hui"
 #include <QOpenGLFramebufferObject>
 
 // ViewerObject Keywords

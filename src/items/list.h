@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "genericitems/item.h"
-#include "genericitems/producers.h"
-#include "genericitems/searchers.h"
-#include "templates/optionalref.h"
+#include "base/enumOptions.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "items/item.h"
+#include "items/producers.h"
+#include "items/searchers.h"
+#include "templates/optionalRef.h"
 #include <any>
 #include <map>
 #include <typeindex>

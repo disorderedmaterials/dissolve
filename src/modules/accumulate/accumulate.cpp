@@ -3,8 +3,8 @@
 
 #include "modules/accumulate/accumulate.h"
 #include "keywords/bool.h"
-#include "keywords/enumoptions.h"
-#include "keywords/modulevector.h"
+#include "keywords/enumOptions.h"
+#include "keywords/moduleVector.h"
 
 AccumulateModule::AccumulateModule() : Module(ModuleTypes::Accumulate)
 {

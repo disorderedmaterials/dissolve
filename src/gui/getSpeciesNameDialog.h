@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_getspeciesnamedialog.h"
+#include "gui/ui_getSpeciesNameDialog.h"
 #include <QDialog>
 
 // Forward Declarations

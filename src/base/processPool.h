@@ -6,9 +6,9 @@
 // Random number buffer size
 #define RANDBUFFERSIZE 16172
 
-#include "base/processgroup.h"
+#include "base/processGroup.h"
 #include "base/timer.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include "templates/vector3.h"
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL

@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_function1d.h"
-#include "keywords/function1d.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/dropDown.h"
+#include "gui/keywordWidgets/ui_function1D.h"
+#include "keywords/function1D.h"
 #include <QWidget>
 
 class Function1DKeywordWidget : public KeywordDropDown, public KeywordWidgetBase

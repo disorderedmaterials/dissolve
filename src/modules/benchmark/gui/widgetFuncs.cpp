@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "modules/benchmark/benchmark.h"
-#include "modules/benchmark/gui/benchmarkwidget.h"
+#include "modules/benchmark/gui/widget.h"
 
 BenchmarkModuleWidget::BenchmarkModuleWidget(QWidget *parent, BenchmarkModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
-#include "genericitems/list.h"
+#include "base/enumOptions.h"
+#include "items/list.h"
 #include "templates/algorithms.h"
 
 // Data Averaging

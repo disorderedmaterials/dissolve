@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/isotopologueset.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "classes/isotopologueSet.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include <algorithm>
 

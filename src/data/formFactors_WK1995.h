@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/formfactordata.h"
+#include "data/formFactorData.h"
 #include <vector>
 
 // Waasmaier & Kirfel '95 Form Factor Data

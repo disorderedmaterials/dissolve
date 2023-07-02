@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/ft.h"
-#include "math/data1d.h"
+#include "math/data1D.h"
 #include "templates/algorithms.h"
-#include "templates/parallel_defs.h"
+#include "templates/parallelDefs.h"
 #include <algorithm>
 #include <functional>
 #include <numeric>

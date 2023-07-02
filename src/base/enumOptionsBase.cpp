@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/enumoptionsbase.h"
-#include "base/sysfunc.h"
+#include "base/enumOptionsBase.h"
+#include "base/sysFunc.h"
 
 /*
  * Search

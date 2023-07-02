@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_scalechargesdialog.h"
+#include "gui/ui_scaleChargesDialog.h"
 #include <QDialog>
 
 class ScaleChargesDialog : public QDialog

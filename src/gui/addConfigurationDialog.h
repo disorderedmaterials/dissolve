@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/models/addSpeciesInfoModel.h"
-#include "gui/ui_addconfigurationdialog.h"
+#include "gui/ui_addConfigurationDialog.h"
 #include "gui/wizard.hui"
 #include "main/dissolve.h"
 

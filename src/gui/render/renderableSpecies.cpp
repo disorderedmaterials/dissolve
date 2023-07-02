@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/renderablespecies.h"
-#include "base/lineparser.h"
+#include "gui/render/renderableSpecies.h"
+#include "base/lineParser.h"
 #include "classes/atom.h"
-#include "data/elementcolours.h"
-#include "gui/render/renderableconfiguration.h"
-#include "gui/render/renderablegroupmanager.h"
+#include "data/elementColours.h"
+#include "gui/render/renderableConfiguration.h"
+#include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
 
 RenderableSpecies::RenderableSpecies(const Species *source, std::string_view name)

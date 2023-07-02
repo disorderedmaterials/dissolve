@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/keywordwidgets/vec3labels.h"
-#include "gui/keywordwidgets/vec3nodevalue.h"
+#include "gui/keywordWidgets/vec3Labels.h"
+#include "gui/keywordWidgets/vec3NodeValue.h"
 
 Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget *parent, Vec3NodeValueKeyword *keyword, const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)

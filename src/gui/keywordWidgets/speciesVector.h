@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_speciesvector.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/dropDown.h"
+#include "gui/keywordWidgets/ui_speciesVector.h"
 #include "gui/models/speciesModel.h"
-#include "keywords/speciesvector.h"
+#include "keywords/speciesVector.h"
 #include <QWidget>
 
 // Forward Declarations

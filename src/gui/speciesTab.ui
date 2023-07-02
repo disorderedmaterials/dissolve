@@ -1893,19 +1893,19 @@
   <customwidget>
    <class>SpeciesWidget</class>
    <extends>QWidget</extends>
-   <header>gui/specieswidget.h</header>
+   <header>gui/speciesWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SiteWidget</class>
    <extends>QWidget</extends>
-   <header>gui/sitewidget.h</header>
+   <header>gui/siteWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CheckIndicator</class>
    <extends>QLabel</extends>
-   <header>gui/widgets/checkindicator.hui</header>
+   <header>gui/widgets/checkIndicator.hui</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -3,7 +3,7 @@
 
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
-#include "modules/analyse/gui/analysewidget.h"
+#include "modules/analyse/gui/widget.h"
 
 AnalyseModuleWidget::AnalyseModuleWidget(QWidget *parent, AnalyseModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

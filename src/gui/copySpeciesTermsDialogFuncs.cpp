@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "classes/species.h"
-#include "gui/copyspeciestermsdialog.h"
+#include "gui/copySpeciesTermsDialog.h"
 
 CopySpeciesTermsDialog::CopySpeciesTermsDialog(QWidget *parent, Dissolve &dissolve, Species *sp)
     : WizardDialog(parent), dissolve_(dissolve), temporaryDissolve_(temporaryCoreData_), targetSpecies_(sp)

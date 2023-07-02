@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/sampleddata1d.h"
-#include "math/sampleddouble.h"
-#include "math/sampledvector.h"
+#include "math/sampledData1D.h"
+#include "math/sampledDouble.h"
+#include "math/sampledVector.h"
 #include "templates/algorithms.h"
 #include <cmath>
 #include <gtest/gtest.h>

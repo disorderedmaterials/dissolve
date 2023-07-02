@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/renderablespecies.h"
+#include "gui/render/renderableSpecies.h"
 #include "gui/viewer.hui"
 
 // Forward Declarations

@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/ff/ff.h"
-#include "gui/selectconfigurationdialog.h"
-#include "gui/selectconfigurationwidget.h"
+#include "gui/selectConfigurationDialog.h"
+#include "gui/selectConfigurationWidget.h"
 
 SelectConfigurationDialog::SelectConfigurationDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)
 {

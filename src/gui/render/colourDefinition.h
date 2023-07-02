@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "base/version.h"
-#include "gui/render/colourscale.h"
+#include "gui/render/colourScale.h"
 
 // Colour Definition
 class ColourDefinition

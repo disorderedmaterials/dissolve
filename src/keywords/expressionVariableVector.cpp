@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/expressionvariablevector.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "keywords/expressionVariableVector.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "expression/variable.h"
 #include "procedure/nodes/node.h"
 #include <memory>

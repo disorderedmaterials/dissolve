@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "genericitems/legacy.h"
+#include "items/legacy.h"
 
 // AtomTypeList (removed in 0.9.0)
 bool LegacyAtomTypeListItem::deserialise(LineParser &parser, const CoreData &coreData)

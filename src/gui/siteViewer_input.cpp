@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/species.h"
-#include "gui/render/renderablespecies.h"
-#include "gui/siteviewer.hui"
+#include "gui/render/renderableSpecies.h"
+#include "gui/siteViewer.hui"
 #include <QtGui/QMouseEvent>
 
 // Mouse moved

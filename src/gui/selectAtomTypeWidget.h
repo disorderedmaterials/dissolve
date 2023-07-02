@@ -5,7 +5,7 @@
 
 #include "gui/models/atomTypeFilterProxy.h"
 #include "gui/models/atomTypeModel.h"
-#include "gui/ui_selectatomtypewidget.h"
+#include "gui/ui_selectAtomTypeWidget.h"
 #include <QWidget>
 
 // Forward Declarations

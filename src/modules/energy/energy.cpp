@@ -6,7 +6,7 @@
 #include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "keywords/optionaldouble.h"
+#include "keywords/optionalDouble.h"
 
 EnergyModule::EnergyModule() : Module(ModuleTypes::Energy)
 {

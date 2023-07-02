@@ -3,7 +3,7 @@
 
 #include "gui/render/TextPrimitiveErrorListeners.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 
 /*
  * TextPrimitive Lexer Error Listener

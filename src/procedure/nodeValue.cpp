@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodevalue.h"
-#include "base/sysfunc.h"
+#include "procedure/nodeValue.h"
+#include "base/sysFunc.h"
 #include <string>
 
 NodeValue::NodeValue()

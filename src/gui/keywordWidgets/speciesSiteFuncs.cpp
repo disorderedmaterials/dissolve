@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "classes/speciessite.h"
-#include "gui/keywordwidgets/speciessite.h"
-#include "templates/variantpointer.h"
+#include "gui/keywordWidgets/speciesSite.h"
+#include "templates/variantPointer.h"
 #include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QLabel>

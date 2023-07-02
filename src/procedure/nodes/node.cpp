@@ -3,9 +3,9 @@
 
 #include "procedure/nodes/node.h"
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "classes/site.h"
 #include "expression/variable.h"
 #include "procedure/nodes/sequence.h"

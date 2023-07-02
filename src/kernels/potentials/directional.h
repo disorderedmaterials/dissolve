@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/interactionpotential.h"
+#include "classes/interactionPotential.h"
 #include "kernels/potentials/base.h"
 
 // DirectionalPotential functional forms

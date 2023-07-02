@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
-#include "gui/getconfigurationnamedialog.h"
+#include "classes/coreData.h"
+#include "gui/getConfigurationNameDialog.h"
 
 GetConfigurationNameDialog::GetConfigurationNameDialog(QWidget *parent, const CoreData &coreData) : coreData_(coreData)
 {

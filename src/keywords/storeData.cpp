@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/storedata.h"
+#include "keywords/storeData.h"
 
 KeywordStoreData::KeywordStoreData(KeywordBase *keyword, KeywordType type, std::string_view group, std::string_view section)
     : keyword_(keyword), type_(type), groupName_(group), sectionName_(section)

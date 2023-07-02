@@ -4,10 +4,10 @@
 #pragma once
 
 #include "base/units.h"
-#include "gui/maintab.h"
+#include "gui/mainTab.h"
 #include "gui/models/enumOptionsModel.h"
 #include "gui/models/procedureModel.h"
-#include "gui/ui_configurationtab.h"
+#include "gui/ui_configurationTab.h"
 #include <map>
 
 // Forward Declarations

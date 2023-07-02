@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/integerhistogram1d.h"
+#include "math/integerHistogram1D.h"
 #include "templates/algorithms.h"
 #include <gtest/gtest.h>
 #include <vector>

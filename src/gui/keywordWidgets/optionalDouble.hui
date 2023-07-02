@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/widgets/exponentialspin.hui"
-#include "keywords/optionaldouble.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/widgets/exponentialSpin.hui"
+#include "keywords/optionalDouble.h"
 
 class OptionalDoubleKeywordWidget : public ExponentialSpin, public KeywordWidgetBase
 {

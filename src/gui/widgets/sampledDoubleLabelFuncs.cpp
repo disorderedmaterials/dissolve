@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/widgets/sampleddoublelabel.h"
-#include "math/sampleddouble.h"
+#include "gui/widgets/sampledDoubleLabel.h"
+#include "math/sampledDouble.h"
 
 SampledDoubleLabel::SampledDoubleLabel(QWidget *parent) : QLabel(parent) { ui_.setupUi(this); }
 

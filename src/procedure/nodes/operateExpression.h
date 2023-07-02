@@ -4,7 +4,7 @@
 #pragma once
 
 #include "expression/expression.h"
-#include "procedure/nodes/operatebase.h"
+#include "procedure/nodes/operateBase.h"
 
 // Operate Expression Node
 class OperateExpressionProcedureNode : public OperateProcedureNodeBase

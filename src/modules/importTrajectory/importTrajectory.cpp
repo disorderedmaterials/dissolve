@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/import_trajectory/importtraj.h"
+#include "modules/importTrajectory/importTrajectory.h"
 #include "keywords/configuration.h"
-#include "keywords/fileandformat.h"
+#include "keywords/fileAndFormat.h"
 
 ImportTrajectoryModule::ImportTrajectoryModule() : Module(ModuleTypes::ImportTrajectory)
 {

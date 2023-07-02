@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/coredata.h"
-#include "gui/keywordwidgets/optionaldouble.hui"
+#include "classes/coreData.h"
+#include "gui/keywordWidgets/optionalDouble.hui"
 #include <QApplication>
 #include <gtest/gtest.h>
 

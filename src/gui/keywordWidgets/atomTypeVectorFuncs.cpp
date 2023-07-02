@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
-#include "classes/atomtypemix.h"
-#include "classes/coredata.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "gui/keywordwidgets/atomtypevector.h"
-#include "gui/keywordwidgets/dropdown.h"
+#include "classes/atomType.h"
+#include "classes/atomTypeMix.h"
+#include "classes/coreData.h"
+#include "gui/helpers/listWidgetUpdater.h"
+#include "gui/keywordWidgets/atomTypeVector.h"
+#include "gui/keywordWidgets/dropDown.h"
 #include "templates/algorithms.h"
 #include <QComboBox>
 #include <QHBoxLayout>

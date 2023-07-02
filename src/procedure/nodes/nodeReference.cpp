@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/nodereference.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/coredata.h"
+#include "procedure/nodes/nodeReference.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "classes/coreData.h"
 #include "modules/analyse/analyse.h"
 
 ProcedureNodeReference::ProcedureNodeReference(ConstNodeRef node)

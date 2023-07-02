@@ -5,11 +5,11 @@
 
 #include <utility>
 
-#include "base/enumoption.h"
-#include "base/enumoptionsbase.h"
+#include "base/enumOption.h"
+#include "base/enumOptionsBase.h"
 #include "base/messenger.h"
 #include "base/serialiser.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include <cassert>
 
 // Enum Options

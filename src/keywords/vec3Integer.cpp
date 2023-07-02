@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/vec3integer.h"
-#include "base/lineparser.h"
+#include "keywords/vec3Integer.h"
+#include "base/lineParser.h"
 
 Vec3IntegerKeyword::Vec3IntegerKeyword(Vec3<int> &data, std::optional<Vec3<int>> minValue, std::optional<Vec3<int>> maxValue,
                                        Vec3Labels::LabelType labelType)

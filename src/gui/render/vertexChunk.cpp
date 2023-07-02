@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/vertexchunk.h"
+#include "gui/render/vertexChunk.h"
 #include "base/messenger.h"
 
 VertexChunk::VertexChunk()

@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/export/trajectory.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/configuration.h"
-#include "classes/speciesatom.h"
+#include "classes/speciesAtom.h"
 #include "data/elements.h"
 
 TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename, TrajectoryExportFormat format)

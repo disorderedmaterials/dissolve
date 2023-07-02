@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/vector_intdouble.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "keywords/vectorIntDouble.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include <algorithm>
 
 IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data,

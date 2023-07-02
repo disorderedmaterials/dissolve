@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "classes/atomtypemix.h"
-#include "classes/neutronweights.h"
-#include "math/data1d.h"
-#include "math/histogram1d.h"
-#include "templates/array2d.h"
+#include "classes/atomTypeMix.h"
+#include "classes/neutronWeights.h"
+#include "math/data1D.h"
+#include "math/histogram1D.h"
+#include "templates/array2D.h"
 
 // Forward Declarations
 class Configuration;

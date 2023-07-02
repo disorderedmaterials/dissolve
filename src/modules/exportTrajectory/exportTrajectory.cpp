@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/export_trajectory/exporttraj.h"
+#include "modules/exportTrajectory/exportTrajectory.h"
 #include "keywords/configuration.h"
-#include "keywords/fileandformat.h"
+#include "keywords/fileAndFormat.h"
 
 ExportTrajectoryModule::ExportTrajectoryModule() : Module(ModuleTypes::ExportTrajectory)
 {

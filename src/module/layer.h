@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "module/module.h"
 #include "templates/flags.h"
 #include <map>

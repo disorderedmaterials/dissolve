@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "gui/render/renderabledata1d.h"
-#include "gui/render/renderabledata2d.h"
-#include "modules/intraangle/gui/intraanglewidget.h"
-#include "modules/intraangle/intraangle.h"
+#include "gui/render/renderableData1D.h"
+#include "gui/render/renderableData2D.h"
+#include "modules/intraAngle/gui/widget.h"
+#include "modules/intraAngle/intraAngle.h"
 
 IntraAngleModuleWidget::IntraAngleModuleWidget(QWidget *parent, IntraAngleModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

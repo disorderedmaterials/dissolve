@@ -222,7 +222,7 @@
   <customwidget>
    <class>DataWidget</class>
    <extends>QWidget</extends>
-   <header>gui/datawidget.h</header>
+   <header>gui/dataWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

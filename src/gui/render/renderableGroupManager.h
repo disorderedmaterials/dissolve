@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/render/renderablegroup.h"
-#include "templates/optionalref.h"
+#include "gui/render/renderableGroup.h"
+#include "templates/optionalRef.h"
 
 // Renderable Group Manager
 class RenderableGroupManager

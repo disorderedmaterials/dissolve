@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/cylindricalregion.h"
+#include "procedure/nodes/cylindricalRegion.h"
 #include "classes/configuration.h"
 #include "keywords/double.h"
-#include "keywords/vec3double.h"
+#include "keywords/vec3Double.h"
 
 CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
     : RegionProcedureNodeBase(ProcedureNode::NodeType::CylindricalRegion)

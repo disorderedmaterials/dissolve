@@ -4,10 +4,10 @@
 #pragma once
 
 #include "classes/configuration.h"
-#include "classes/data1dstore.h"
-#include "classes/data2dstore.h"
-#include "classes/data3dstore.h"
-#include "classes/valuestore.h"
+#include "classes/data1DStore.h"
+#include "classes/data2DStore.h"
+#include "classes/data3DStore.h"
+#include "classes/valueStore.h"
 #include "io/import/values.h"
 #include "math/error.h"
 #include "module/module.h"

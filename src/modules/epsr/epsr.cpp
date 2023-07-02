@@ -3,13 +3,13 @@
 
 #include "modules/epsr/epsr.h"
 #include "keywords/bool.h"
-#include "keywords/data1dstore.h"
+#include "keywords/data1DStore.h"
 #include "keywords/double.h"
-#include "keywords/modulevector.h"
-#include "keywords/optionaldouble.h"
-#include "keywords/optionalint.h"
-#include "keywords/stdstring.h"
-#include "keywords/vector_stringdouble.h"
+#include "keywords/moduleVector.h"
+#include "keywords/optionalDouble.h"
+#include "keywords/optionalInt.h"
+#include "keywords/stdString.h"
+#include "keywords/vectorStringDouble.h"
 
 EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
 {

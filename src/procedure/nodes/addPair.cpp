@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/addpair.h"
-#include "base/randombuffer.h"
+#include "procedure/nodes/addPair.h"
+#include "base/randomBuffer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "keywords/bool.h"
 #include "keywords/node.h"
-#include "keywords/nodevalue.h"
-#include "keywords/nodevalueenumoptions.h"
+#include "keywords/nodeValue.h"
+#include "keywords/nodeValueEnumOptions.h"
 #include "keywords/species.h"
-#include "procedure/nodes/regionbase.h"
+#include "procedure/nodes/regionBase.h"
 
 AddPairProcedureNode::AddPairProcedureNode(const Species *spA, const Species *spB, const NodeValue &population,
                                            const NodeValue &density, Units::DensityUnits densityUnits)

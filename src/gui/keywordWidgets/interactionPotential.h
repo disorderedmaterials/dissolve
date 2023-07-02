@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/ui_interactionpotential.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/ui_interactionPotential.h"
 #include "gui/models/enumOptionsModel.h"
-#include "keywords/interactionpotential.h"
+#include "keywords/interactionPotential.h"
 #include <QWidget>
 
 class InteractionPotentialKeywordWidget : public QWidget, public KeywordWidgetBase

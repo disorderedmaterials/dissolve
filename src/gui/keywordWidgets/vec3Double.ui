@@ -95,7 +95,7 @@
   <customwidget>
    <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/exponentialspin.hui</header>
+   <header>gui/widgets/exponentialSpin.hui</header>
   </customwidget>
  </customwidgets>
  <resources>

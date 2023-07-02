@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "classes/partialset.h"
-#include "genericitems/item.h"
-#include "math/data1d.h"
-#include "templates/optionalref.h"
+#include "classes/partialSet.h"
+#include "items/item.h"
+#include "math/data1D.h"
+#include "templates/optionalRef.h"
 #include <any>
 #include <functional>
 #include <typeindex>

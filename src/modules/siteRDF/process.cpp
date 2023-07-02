@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
-#include "modules/siterdf/siterdf.h"
-#include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/operatesitepopulationnormalise.h"
+#include "modules/siteRDF/siteRDF.h"
+#include "procedure/nodes/collect1D.h"
+#include "procedure/nodes/operateSitePopulationNormalise.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
-#include "procedure/nodes/sum1d.h"
+#include "procedure/nodes/sum1D.h"
 
 // Run main processing
 bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)

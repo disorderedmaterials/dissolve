@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/optionalint.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "keywords/optionalInt.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "keywords/base.h"
 
 OptionalIntegerKeyword::OptionalIntegerKeyword(std::optional<int> &data, int minValue, std::optional<int> maxValue,

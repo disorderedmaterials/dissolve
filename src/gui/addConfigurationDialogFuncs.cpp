@@ -3,12 +3,12 @@
 
 #include "base/units.h"
 #include "classes/configuration.h"
-#include "gui/addconfigurationdialog.h"
-#include "gui/helpers/combopopulator.h"
+#include "gui/addConfigurationDialog.h"
+#include "gui/helpers/comboPopulator.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinatesets.h"
-#include "procedure/nodes/generalregion.h"
+#include "procedure/nodes/coordinateSets.h"
+#include "procedure/nodes/generalRegion.h"
 #include "procedure/nodes/parameters.h"
 #include <QInputDialog>
 #include <QMessageBox>

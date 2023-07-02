@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/primitiveinfo.h"
+#include "gui/render/primitiveInfo.h"
 #include <deque>
 #include <vector>
 

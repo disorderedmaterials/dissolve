@@ -2,15 +2,15 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "gui/dataviewer.hui"
-#include "gui/render/renderabledata1d.h"
-#include "gui/render/renderabledata2d.h"
-#include "gui/render/renderabledata3d.h"
-#include "gui/selectgenericitemdialog.h"
+#include "gui/dataViewer.hui"
+#include "gui/render/renderableData1D.h"
+#include "gui/render/renderableData2D.h"
+#include "gui/render/renderableData3D.h"
+#include "gui/selectGenericItemDialog.h"
 #include "io/export/data1d.h"
 #include "io/export/data2d.h"
 #include "io/export/data3d.h"
-#include "math/data2d.h"
+#include "math/data2D.h"
 #include <QFileDialog>
 
 /*

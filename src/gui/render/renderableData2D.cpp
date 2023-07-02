@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/renderabledata2d.h"
-#include "base/lineparser.h"
-#include "genericitems/list.h"
-#include "gui/render/renderablegroupmanager.h"
+#include "gui/render/renderableData2D.h"
+#include "base/lineParser.h"
+#include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
-#include "math/data2d.h"
-#include "templates/array2d.h"
+#include "items/list.h"
+#include "math/data2D.h"
+#include "templates/array2D.h"
 
 RenderableData2D::RenderableData2D(const Data2D &source)
     : Renderable(Renderable::Data2DRenderable, ""), source_(source), displayStyle_(LinesStyle)

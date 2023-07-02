@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include <any>
 #include <fmt/format.h>
 #include <functional>

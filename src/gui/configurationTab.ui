@@ -692,18 +692,18 @@
   <customwidget>
    <class>ExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/exponentialspin.hui</header>
+   <header>gui/widgets/exponentialSpin.hui</header>
   </customwidget>
   <customwidget>
    <class>ConfigurationViewerWidget</class>
    <extends>QWidget</extends>
-   <header>gui/configurationviewerwidget.h</header>
+   <header>gui/configurationViewerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ProcedureWidget</class>
    <extends>QWidget</extends>
-   <header>gui/procedurewidget.h</header>
+   <header>gui/procedureWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

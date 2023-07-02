@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/export/data3d.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "math/data3d.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "math/data3D.h"
 
 Data3DExportFileFormat::Data3DExportFileFormat(std::string_view filename, Data3DExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

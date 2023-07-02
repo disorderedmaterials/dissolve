@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/collect2d.h"
+#include "procedure/nodes/collect2D.h"
 #include "classes/configuration.h"
-#include "keywords/nodeandinteger.h"
-#include "keywords/nodebranch.h"
-#include "keywords/vec3double.h"
-#include "math/data2d.h"
-#include "procedure/nodes/calculatebase.h"
+#include "keywords/nodeAndInteger.h"
+#include "keywords/nodeBranch.h"
+#include "keywords/vec3Double.h"
+#include "math/data2D.h"
+#include "procedure/nodes/calculateBase.h"
 #include "procedure/nodes/sequence.h"
 
 Collect2DProcedureNode::Collect2DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable,

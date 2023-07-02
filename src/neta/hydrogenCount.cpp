@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "neta/hydrogencount.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
+#include "neta/hydrogenCount.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 
 NETAHydrogenCountNode::NETAHydrogenCountNode(NETADefinition *parent, NETANode::ComparisonOperator op, std::optional<int> value)
     : NETANode(parent, NETANode::NodeType::HydrogenCount), value_(value), operator_(op)

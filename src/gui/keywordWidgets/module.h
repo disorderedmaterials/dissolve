@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/ui_module.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/ui_module.h"
 #include "gui/models/moduleModel.h"
 #include "keywords/module.h"
 #include <QWidget>

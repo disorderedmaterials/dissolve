@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/elements.h"
-#include "gui/widgets/elementselector.hui"
+#include "gui/widgets/elementSelector.hui"
 #include <QApplication>
 #include <QDialog>
 #include <QDialogButtonBox>

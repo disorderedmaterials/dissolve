@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "main/dissolve.h"
-#include "modules/avgmol/avgmol.h"
+#include "modules/avgMol/avgMol.h"
 #include "templates/algorithms.h"
 
 /*

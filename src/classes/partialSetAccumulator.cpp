@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/partialsetaccumulator.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "classes/partialSetAccumulator.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "io/export/data1d.h"
 #include "templates/algorithms.h"
 

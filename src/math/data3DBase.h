@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "templates/array3d.h"
+#include "templates/array3D.h"
 
 // Data 3D Base
 class Data3DBase

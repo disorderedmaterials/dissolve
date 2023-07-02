@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "procedure/nodes/regionbase.h"
+#include "procedure/nodes/regionBase.h"
 
 // General Region
 class GeneralRegionProcedureNode : public RegionProcedureNodeBase

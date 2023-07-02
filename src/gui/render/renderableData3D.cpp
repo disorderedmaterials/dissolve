@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/renderabledata3d.h"
-#include "base/lineparser.h"
-#include "genericitems/list.h"
-#include "gui/render/renderablegroupmanager.h"
+#include "gui/render/renderableData3D.h"
+#include "base/lineParser.h"
+#include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
-#include "math/data3d.h"
-#include "templates/array2d.h"
-#include "templates/array3d.h"
+#include "items/list.h"
+#include "math/data3D.h"
+#include "templates/array2D.h"
+#include "templates/array3D.h"
 
 RenderableData3D::RenderableData3D(const Data3D &source)
     : Renderable(Renderable::Data3DRenderable, ""), source_(source), displayStyle_(SolidStyle), lowerCutoff_(0.0),

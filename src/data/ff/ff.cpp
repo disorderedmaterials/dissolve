@@ -2,12 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/ff/ff.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "classes/box.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "data/ff/angleterm.h"
 #include "data/ff/atomtype.h"
 #include "data/ff/bondterm.h"

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/operatesitepopulationnormalise.h"
+#include "procedure/nodes/operateSitePopulationNormalise.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "keywords/nodevector.h"
-#include "math/data2d.h"
-#include "math/data3d.h"
+#include "keywords/nodeVector.h"
+#include "math/data2D.h"
+#include "math/data3D.h"
 #include "procedure/nodes/select.h"
 
 OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(

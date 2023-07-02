@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include <QColor>
 
 // Stock Colours

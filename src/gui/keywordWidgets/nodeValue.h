@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/ui_nodevalue.h"
-#include "keywords/nodevalue.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/ui_nodeValue.h"
+#include "keywords/nodeValue.h"
 #include <QWidget>
 
 class NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase

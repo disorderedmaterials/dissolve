@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/xrayweights.h"
-#include "base/lineparser.h"
-#include "classes/atomtype.h"
+#include "classes/xRayWeights.h"
+#include "base/lineParser.h"
+#include "classes/atomType.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
 #include <functional>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/keywordwidgets/vec3labels.h"
+#include "gui/keywordWidgets/vec3Labels.h"
 
 // Set/hide/show label according to labelling type
 void Vec3WidgetLabels::set(QLabel *label, Vec3Labels::LabelType labelType, int index)

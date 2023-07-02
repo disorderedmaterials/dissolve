@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/randombuffer.h"
+#include "base/randomBuffer.h"
 
 RandomBuffer::RandomBuffer(const ProcessPool &procPool, ProcessPool::CommunicatorType commType,
                            OptionalReferenceWrapper<Timer> commsTimer)

@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "gui/configurationviewer.hui"
-#include "gui/render/renderableconfiguration.h"
+#include "gui/configurationViewer.hui"
+#include "gui/render/renderableConfiguration.h"
 
 /*
  * Private Functions

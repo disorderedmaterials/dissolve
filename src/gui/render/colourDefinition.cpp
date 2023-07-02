@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/colourdefinition.h"
-#include "base/sysfunc.h"
+#include "gui/render/colourDefinition.h"
+#include "base/sysFunc.h"
 
 ColourDefinition::ColourDefinition()
 {

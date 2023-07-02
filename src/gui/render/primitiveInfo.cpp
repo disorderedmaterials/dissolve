@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/primitiveinfo.h"
+#include "gui/render/primitiveInfo.h"
 #include "gui/render/primitive.h"
 
 /*

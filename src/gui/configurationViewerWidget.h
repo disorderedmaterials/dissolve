@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_configurationviewerwidget.h"
+#include "gui/ui_configurationViewerWidget.h"
 
 // Configuration Widget
 class ConfigurationViewerWidget : public QWidget

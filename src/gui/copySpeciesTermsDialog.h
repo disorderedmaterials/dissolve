@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_copyspeciestermsdialog.h"
+#include "gui/ui_copySpeciesTermsDialog.h"
 #include "gui/wizard.hui"
 #include "main/dissolve.h"
 

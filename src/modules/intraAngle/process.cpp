@@ -3,10 +3,10 @@
 
 #include "expression/variable.h"
 #include "main/dissolve.h"
-#include "modules/intraangle/intraangle.h"
-#include "procedure/nodes/calculateangle.h"
-#include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/operateexpression.h"
+#include "modules/intraAngle/intraAngle.h"
+#include "procedure/nodes/calculateAngle.h"
+#include "procedure/nodes/collect1D.h"
+#include "procedure/nodes/operateExpression.h"
 #include "procedure/nodes/select.h"
 
 // Run main processing

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/messenger.h"
-#include "classes/array3d_iter.h"
+#include "classes/array3DIterator.h"
 #include "templates/vector3.h"
 #include <cassert>
 #include <numeric>

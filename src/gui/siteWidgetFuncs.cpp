@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/coredata.h"
-#include "classes/empiricalformula.h"
+#include "classes/coreData.h"
+#include "classes/empiricalFormula.h"
 #include "classes/species.h"
-#include "gui/sitewidget.h"
-#include "gui/widgets/elementselector.hui"
+#include "gui/siteWidget.h"
+#include "gui/widgets/elementSelector.hui"
 #include "main/dissolve.h"
 #include <QButtonGroup>
 

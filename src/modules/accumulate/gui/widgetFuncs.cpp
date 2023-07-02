@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/partialsetaccumulator.h"
-#include "gui/dataviewer.hui"
-#include "gui/render/renderabledata1d.h"
+#include "classes/partialSetAccumulator.h"
+#include "gui/dataViewer.hui"
+#include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/accumulate/accumulate.h"
-#include "modules/accumulate/gui/accumulatewidget.h"
+#include "modules/accumulate/gui/widget.h"
 #include "templates/algorithms.h"
 
 AccumulateModuleWidget::AccumulateModuleWidget(QWidget *parent, AccumulateModule *module, Dissolve &dissolve)

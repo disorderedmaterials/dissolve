@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "keywords/enumoptions.h"
+#include "gui/keywordWidgets/base.h"
+#include "keywords/enumOptions.h"
 #include <QComboBox>
 
 class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase

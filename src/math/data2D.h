@@ -5,8 +5,8 @@
 
 #include "base/serialiser.h"
 #include "base/version.h"
-#include "math/data2dbase.h"
-#include "templates/array2d.h"
+#include "math/data2DBase.h"
+#include "templates/array2D.h"
 
 // Forward Declarations
 class Histogram2D;

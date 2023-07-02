@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/configuration.h"
 #include "main/dissolve.h"
-#include "modules/import_trajectory/importtraj.h"
+#include "modules/importTrajectory/importTrajectory.h"
 
 // Run main processing
 bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)

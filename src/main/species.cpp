@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/species.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
 #include "main/dissolve.h"
 #include <cstring>
 

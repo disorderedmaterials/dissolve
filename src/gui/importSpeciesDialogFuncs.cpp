@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "classes/species.h"
-#include "gui/importspeciesdialog.h"
+#include "gui/importSpeciesDialog.h"
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>

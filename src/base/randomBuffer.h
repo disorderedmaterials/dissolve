@@ -6,8 +6,8 @@
 // Random number buffer size
 #define RANDBUFFERSIZE 16172
 
-#include "base/processpool.h"
-#include "templates/optionalref.h"
+#include "base/processPool.h"
+#include "templates/optionalRef.h"
 #include <array>
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL

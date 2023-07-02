@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/windowfunction.h"
-#include "base/lineparser.h"
-#include "math/data1d.h"
+#include "math/windowFunction.h"
+#include "base/lineParser.h"
+#include "math/data1D.h"
 
 WindowFunction::WindowFunction(WindowFunction::Form function) : form_(function) {}
 

@@ -4,7 +4,7 @@
 #include "modules/checks/checks.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
-#include "keywords/geometrylist.h"
+#include "keywords/geometryList.h"
 
 ChecksModule::ChecksModule() : Module(ModuleTypes::Checks)
 {

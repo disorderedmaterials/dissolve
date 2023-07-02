@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "keywords/base.h"
+#include "procedure/nodeValue.h"
 #include "procedure/nodes/node.h"
-#include "procedure/nodevalue.h"
 
 // Forward Declarations
 class ProcedureNode;

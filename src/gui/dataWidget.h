@@ -5,7 +5,7 @@
 
 #include "base/lock.h"
 #include "gui/models/renderableGroupManagerModel.h"
-#include "gui/ui_datawidget.h"
+#include "gui/ui_dataWidget.h"
 
 // Data Widget
 class DataWidget : public QWidget

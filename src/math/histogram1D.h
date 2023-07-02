@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "math/data1d.h"
-#include "math/sampleddouble.h"
+#include "math/data1D.h"
+#include "math/sampledDouble.h"
 
 // One-Dimensional Histogram
 class Histogram1D

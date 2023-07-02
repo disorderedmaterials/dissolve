@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/neutronweights.h"
-#include "classes/partialset.h"
-#include "classes/partialsetaccumulator.h"
-#include "genericitems/list.h"
-#include "math/data1d.h"
-#include "math/data2d.h"
-#include "math/data3d.h"
-#include "math/sampleddata1d.h"
+#include "classes/neutronWeights.h"
+#include "classes/partialSet.h"
+#include "classes/partialSetAccumulator.h"
+#include "items/list.h"
+#include "math/data1D.h"
+#include "math/data2D.h"
+#include "math/data3D.h"
+#include "math/sampledData1D.h"
 
 /*
  * Data1D

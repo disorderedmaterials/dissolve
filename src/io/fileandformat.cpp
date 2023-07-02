@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/fileandformat.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 
 FileAndFormat::FileAndFormat(EnumOptionsBase &formats, std::string_view filename, std::optional<int> formatIndex)
     : formats_(formats), formatIndex_(formatIndex), filename_{filename}

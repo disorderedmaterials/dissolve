@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/customregion.h"
+#include "procedure/nodes/customRegion.h"
 #include "classes/configuration.h"
 #include "expression/variable.h"
 #include "keywords/double.h"
-#include "keywords/nodevalue.h"
+#include "keywords/nodeValue.h"
 
 CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::CustomRegion)
 {

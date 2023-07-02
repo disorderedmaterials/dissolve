@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/changedata.h"
-#include "templates/optionalref.h"
+#include "classes/changeData.h"
+#include "templates/optionalRef.h"
 #include <memory>
 #include <vector>
 

@@ -5,7 +5,7 @@
 
 #include "classes/species.h"
 #include "io/export/species.h"
-#include "math/sampledvector.h"
+#include "math/sampledVector.h"
 #include "module/module.h"
 
 // Calculate Average Molecule Module

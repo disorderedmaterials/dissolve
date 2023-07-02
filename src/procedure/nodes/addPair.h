@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/units.h"
+#include "procedure/nodeValue.h"
 #include "procedure/nodes/node.h"
-#include "procedure/nodevalue.h"
 
 // Forward Declarations
 class Species;

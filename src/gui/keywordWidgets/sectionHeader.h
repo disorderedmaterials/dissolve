@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/ui_sectionHeader.h"
+#include "gui/keywordWidgets/ui_sectionHeader.h"
 #include <QWidget>
 
 class SectionHeaderWidget : public QWidget

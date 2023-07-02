@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_sitewidget.h"
+#include "gui/ui_siteWidget.h"
 
 // Forward Declarations
 class CoreData;

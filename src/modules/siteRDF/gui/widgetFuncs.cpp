@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/siterdf/gui/siterdfwidget.h"
-#include "modules/siterdf/siterdf.h"
+#include "modules/siteRDF/gui/widget.h"
+#include "modules/siteRDF/siteRDF.h"
 
 SiteRDFModuleWidget::SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

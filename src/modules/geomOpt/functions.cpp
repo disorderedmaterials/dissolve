@@ -5,7 +5,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
-#include "modules/geomopt/geomopt.h"
+#include "modules/geomOpt/geomOpt.h"
 #include "templates/algorithms.h"
 #include <numeric>
 

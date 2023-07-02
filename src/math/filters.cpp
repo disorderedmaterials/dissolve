@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/filters.h"
-#include "math/data1d.h"
+#include "math/data1D.h"
 #include "math/integrator.h"
 #include "templates/algorithms.h"
 

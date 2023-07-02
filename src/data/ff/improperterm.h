@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciesimproper.h"
+#include "classes/speciesImproper.h"
 
 // Forward Declarations
 class Forcefield;

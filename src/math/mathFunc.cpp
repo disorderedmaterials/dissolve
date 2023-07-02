@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/mathfunc.h"
+#include "math/mathFunc.h"
 #include "math/constants.h"
 #include <cmath>
 #include <cstdlib>

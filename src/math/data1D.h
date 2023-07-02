@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "base/lineparser.h"
-#include "base/processpool.h"
+#include "base/lineParser.h"
+#include "base/processPool.h"
 #include "base/serialiser.h"
 #include "base/version.h"
-#include "math/data1dbase.h"
+#include "math/data1DBase.h"
 #include <string>
 
 // One-Dimensional Data

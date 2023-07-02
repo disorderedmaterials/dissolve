@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "classes/speciesimproper.h"
+#include "classes/speciesImproper.h"
 #include "gui/models/masterTermModel.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // MasterImproper model
 class MasterImproperModel : public MasterTermModel

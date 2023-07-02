@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/ff/ff.h"
-#include "gui/selectforcefieldwidget.h"
+#include "gui/selectForcefieldWidget.h"
 #include <QRegularExpression>
 
 SelectForcefieldWidget::SelectForcefieldWidget(QWidget *parent, const std::vector<std::shared_ptr<Forcefield>> &forcefields)

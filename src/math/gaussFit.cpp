@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/gaussfit.h"
-#include "base/lineparser.h"
-#include "math/data1d.h"
+#include "math/gaussFit.h"
+#include "base/lineParser.h"
+#include "math/data1D.h"
 #include "math/error.h"
 #include "math/filters.h"
 #include "math/mc.h"

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/export_pairpotentials/exportpp.h"
-#include "keywords/fileandformat.h"
+#include "modules/exportPairPotentials/exportPairPotentials.h"
+#include "keywords/fileAndFormat.h"
 
 ExportPairPotentialsModule::ExportPairPotentialsModule() : Module(ModuleTypes::ExportPairPotentials)
 {

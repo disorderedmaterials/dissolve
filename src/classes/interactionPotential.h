@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "templates/algorithms.h"
 #include <string>
 #include <vector>

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/render/colourscaledelta.h"
-#include "gui/render/colourscalepoint.h"
+#include "gui/render/colourScaleDelta.h"
+#include "gui/render/colourScalePoint.h"
 #include "templates/vector4.h"
 #include <QColor>
 #include <QOpenGLFunctions>

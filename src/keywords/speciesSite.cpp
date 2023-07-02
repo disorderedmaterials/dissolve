@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/speciessite.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "keywords/speciesSite.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 
 SpeciesSiteKeyword::SpeciesSiteKeyword(const SpeciesSite *&data, bool axesRequired)

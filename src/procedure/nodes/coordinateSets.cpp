@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/coordinatesets.h"
-#include "base/lineparser.h"
-#include "base/randombuffer.h"
-#include "base/sysfunc.h"
+#include "procedure/nodes/coordinateSets.h"
+#include "base/lineParser.h"
+#include "base/randomBuffer.h"
+#include "base/sysFunc.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "keywords/bool.h"
-#include "keywords/fileandformat.h"
+#include "keywords/fileAndFormat.h"
 #include "keywords/node.h"
-#include "keywords/nodevalue.h"
+#include "keywords/nodeValue.h"
 #include "keywords/species.h"
 #include "modules/md/md.h"
 

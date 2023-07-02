@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/helpers/mousewheeladjustmentguard.h"
-#include "gui/keywordwidgets/optionalint.hui"
+#include "gui/helpers/mouseWheelAdjustmentGuard.h"
+#include "gui/keywordWidgets/optionalInt.hui"
 
 OptionalIntegerKeywordWidget::OptionalIntegerKeywordWidget(QWidget *parent, OptionalIntegerKeyword *keyword,
                                                            const CoreData &coreData)

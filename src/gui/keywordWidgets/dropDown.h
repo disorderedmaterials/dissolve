@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/dropwidget.hui"
-#include "gui/keywordwidgets/ui_dropdown.h"
+#include "gui/keywordWidgets/dropWidget.hui"
+#include "gui/keywordWidgets/ui_dropDown.h"
 #include <QWidget>
 
 // Forward Declarations

@@ -2,14 +2,14 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "modules/gr/gr.h"
-#include "keywords/atomtypevector.h"
+#include "keywords/atomTypeVector.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
-#include "keywords/function1d.h"
+#include "keywords/function1D.h"
 #include "keywords/integer.h"
 #include "keywords/module.h"
-#include "keywords/optionaldouble.h"
-#include "keywords/optionalint.h"
+#include "keywords/optionalDouble.h"
+#include "keywords/optionalInt.h"
 
 GRModule::GRModule() : Module(ModuleTypes::GR)
 {

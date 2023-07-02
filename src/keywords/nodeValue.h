@@ -4,7 +4,7 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "procedure/nodevalue.h"
+#include "procedure/nodeValue.h"
 
 // Forward Declarations
 class NodeValue;

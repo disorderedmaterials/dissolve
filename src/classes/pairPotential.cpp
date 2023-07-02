@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/pairpotential.h"
-#include "base/lineparser.h"
+#include "classes/pairPotential.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/coredata.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
+#include "classes/coreData.h"
 #include "math/constants.h"
 #include <cmath>
 

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/sampledvector.h"
-#include "base/lineparser.h"
+#include "math/sampledVector.h"
+#include "base/lineParser.h"
 #include "templates/algorithms.h"
 #include <cmath>
 

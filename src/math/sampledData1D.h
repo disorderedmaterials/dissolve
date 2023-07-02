@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/version.h"
-#include "math/data1dbase.h"
-#include "math/sampledvector.h"
+#include "math/data1DBase.h"
+#include "math/sampledVector.h"
 #include <string>
 
 // Forward Declarations

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/keywordwidgets/dialog.h"
-#include "gui/keywordwidgets/fileandformat.h"
+#include "gui/keywordWidgets/dialog.h"
+#include "gui/keywordWidgets/fileAndFormat.h"
 #include "io/fileandformat.h"
 #include "main/dissolve.h"
 #include <QComboBox>

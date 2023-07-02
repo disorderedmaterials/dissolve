@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/linestyle.h"
+#include "gui/render/lineStyle.h"
 #include "math/matrix4.h"
 
 // Forward Declarations

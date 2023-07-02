@@ -2,7 +2,7 @@
 
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/serializablepairpotential.h"
+#include "classes/serializablePairPotential.h"
 
 SerializablePairPotential::SerializablePairPotential(double &range, double &delta, bool &source,
                                                      std::vector<std::shared_ptr<AtomType>> &types)

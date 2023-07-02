@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/linestyle.h"
+#include "gui/render/lineStyle.h"
 
 LineStyle::LineStyle(double width, LineStipple::StippleType stipple, double r, double g, double b, double a)
 {

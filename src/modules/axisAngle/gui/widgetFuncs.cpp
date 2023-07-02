@@ -2,11 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "gui/render/renderabledata1d.h"
-#include "gui/render/renderabledata2d.h"
+#include "gui/render/renderableData1D.h"
+#include "gui/render/renderableData2D.h"
 #include "main/dissolve.h"
-#include "modules/axisangle/axisangle.h"
-#include "modules/axisangle/gui/axisanglewidget.h"
+#include "modules/axisAngle/axisAngle.h"
+#include "modules/axisAngle/gui/widget.h"
 
 AxisAngleModuleWidget::AxisAngleModuleWidget(QWidget *parent, AxisAngleModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

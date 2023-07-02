@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/keywordwidgets/widget.hui"
-#include "gui/nodecontrolwidget.h"
-#include "gui/procedurewidget.h"
+#include "gui/keywordWidgets/widget.hui"
+#include "gui/nodeControlWidget.h"
+#include "gui/procedureWidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 

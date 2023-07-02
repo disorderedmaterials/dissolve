@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/configuration.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 
 ConfigurationKeyword::ConfigurationKeyword(Configuration *&data) : KeywordBase(typeid(this)), data_(data) {}
 

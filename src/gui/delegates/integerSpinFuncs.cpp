@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/delegates/integerspin.hui"
-#include "gui/widgets/integerspin.hui"
+#include "gui/delegates/integerSpin.hui"
+#include "gui/widgets/integerSpin.hui"
 
 IntegerSpinDelegate::IntegerSpinDelegate(QObject *parent, int vmin, int vmax, int vstep) : QItemDelegate(parent)
 {

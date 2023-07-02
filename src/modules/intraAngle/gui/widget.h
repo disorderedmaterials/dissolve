@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/intraangle/gui/ui_intraanglewidget.h"
+#include "modules/intraAngle/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

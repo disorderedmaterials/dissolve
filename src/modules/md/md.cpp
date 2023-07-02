@@ -6,9 +6,9 @@
 #include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "keywords/optionaldouble.h"
-#include "keywords/optionalint.h"
-#include "keywords/speciesvector.h"
+#include "keywords/optionalDouble.h"
+#include "keywords/optionalInt.h"
+#include "keywords/speciesVector.h"
 
 MDModule::MDModule() : Module(ModuleTypes::MD)
 {

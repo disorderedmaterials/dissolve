@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_getmodulelayernamedialog.h"
+#include "gui/ui_getModuleLayerNameDialog.h"
 #include <QDialog>
 
 // Forward Declarations

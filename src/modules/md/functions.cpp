@@ -3,7 +3,7 @@
 
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "data/atomicmasses.h"
+#include "data/atomicMasses.h"
 #include "modules/forces/forces.h"
 #include "modules/md/md.h"
 

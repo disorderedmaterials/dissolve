@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "gui/keywordwidgets/speciesvector.h"
+#include "gui/helpers/listWidgetUpdater.h"
+#include "gui/keywordWidgets/speciesVector.h"
 #include "templates/algorithms.h"
 #include <QComboBox>
 #include <QHBoxLayout>

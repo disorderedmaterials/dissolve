@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/renderablespeciessite.h"
-#include "base/lineparser.h"
+#include "gui/render/renderableSpeciesSite.h"
+#include "base/lineParser.h"
 #include "classes/atom.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
-#include "data/elementcolours.h"
-#include "gui/render/renderablegroupmanager.h"
+#include "data/elementColours.h"
+#include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
 
 RenderableSpeciesSite::RenderableSpeciesSite(const Species *sp, const SpeciesSite *site)

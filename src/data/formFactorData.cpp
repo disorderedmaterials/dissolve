@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/formfactordata.h"
+#include "data/formFactorData.h"
 
 FormFactorData::FormFactorData(Elements::Element Z, int formalCharge) : Z_(Z), formalCharge_(formalCharge) {}
 

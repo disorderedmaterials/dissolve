@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/atomshake/atomshake.h"
+#include "modules/atomShake/atomShake.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "keywords/optionaldouble.h"
+#include "keywords/optionalDouble.h"
 
 AtomShakeModule::AtomShakeModule() : Module(ModuleTypes::AtomShake)
 {

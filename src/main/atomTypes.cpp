@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
 #include "main/dissolve.h"
 
 // Add AtomType with specified Element

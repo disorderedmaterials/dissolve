@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/intradistance/gui/ui_intradistancewidget.h"
+#include "modules/intraDistance/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

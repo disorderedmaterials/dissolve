@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "classes/coredata.h"
-#include "gui/helpers/listwidgetupdater.h"
-#include "gui/keywordwidgets/configurationvector.h"
+#include "classes/coreData.h"
+#include "gui/helpers/listWidgetUpdater.h"
+#include "gui/keywordWidgets/configurationVector.h"
 #include "module/module.h"
 #include "templates/algorithms.h"
 #include <QComboBox>

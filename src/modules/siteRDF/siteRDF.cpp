@@ -1,23 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/siterdf/siterdf.h"
+#include "modules/siteRDF/siteRDF.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
-#include "keywords/fileandformat.h"
-#include "keywords/optionaldouble.h"
+#include "keywords/fileAndFormat.h"
+#include "keywords/optionalDouble.h"
 #include "keywords/range.h"
-#include "keywords/speciessitevector.h"
-#include "keywords/vec3double.h"
-#include "procedure/nodes/calculatedistance.h"
-#include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/operatenumberdensitynormalise.h"
-#include "procedure/nodes/operatesitepopulationnormalise.h"
-#include "procedure/nodes/operatesphericalshellnormalise.h"
-#include "procedure/nodes/process1d.h"
+#include "keywords/speciesSiteVector.h"
+#include "keywords/vec3Double.h"
+#include "procedure/nodes/calculateDistance.h"
+#include "procedure/nodes/collect1D.h"
+#include "procedure/nodes/operateNumberDensityNormalise.h"
+#include "procedure/nodes/operateSitePopulationNormalise.h"
+#include "procedure/nodes/operateSphericalShellNormalise.h"
+#include "procedure/nodes/process1D.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodes/sum1d.h"
+#include "procedure/nodes/sum1D.h"
 
 SiteRDFModule::SiteRDFModule() : Module(ModuleTypes::SiteRDF), analyser_(ProcedureNode::AnalysisContext)
 {

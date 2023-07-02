@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "procedure/nodes/operatebase.h"
-#include "procedure/nodevalue.h"
+#include "procedure/nodeValue.h"
+#include "procedure/nodes/operateBase.h"
 
 // Operate Multiply Node
 class OperateMultiplyProcedureNode : public OperateProcedureNodeBase

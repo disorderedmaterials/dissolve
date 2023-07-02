@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/cellneighbour.h"
+#include "classes/cellNeighbour.h"
 #include "math/matrix3.h"
 
 // Forward Declarations

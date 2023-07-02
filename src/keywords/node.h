@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "keywords/base.h"
-#include "keywords/nodeunderlay.h"
+#include "keywords/nodeUnderlay.h"
 #include "procedure/nodes/node.h"
 
 // Base class for NodeKeyword

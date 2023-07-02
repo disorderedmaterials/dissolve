@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/nodeunderlay.h"
+#include "keywords/nodeUnderlay.h"
 #include "procedure/procedure.h"
 
 NodeKeywordUnderlay::NodeKeywordUnderlay(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope)

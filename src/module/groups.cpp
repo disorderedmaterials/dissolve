@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "module/groups.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "module/group.h"
 #include <algorithm>
 

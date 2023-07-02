@@ -3,9 +3,9 @@
 
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "classes/xrayweights.h"
+#include "classes/xRayWeights.h"
 #include "modules/gr/gr.h"
-#include "modules/xraysq/xraysq.h"
+#include "modules/xRaySQ/xRaySQ.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
 bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,

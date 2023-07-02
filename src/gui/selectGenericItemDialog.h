@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_selectgenericitemdialog.h"
+#include "gui/ui_selectGenericItemDialog.h"
 #include "main/dissolve.h"
 #include <QDialog>
 

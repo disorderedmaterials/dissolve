@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "classes/coredata.h"
-#include "classes/empiricalformula.h"
-#include "gui/configurationviewerwidget.h"
-#include "gui/widgets/elementselector.hui"
+#include "classes/coreData.h"
+#include "classes/empiricalFormula.h"
+#include "gui/configurationViewerWidget.h"
+#include "gui/widgets/elementSelector.hui"
 #include "main/dissolve.h"
 #include <QButtonGroup>
 

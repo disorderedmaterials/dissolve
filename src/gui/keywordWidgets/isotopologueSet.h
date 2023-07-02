@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_isotopologueset.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/dropDown.h"
+#include "gui/keywordWidgets/ui_isotopologueSet.h"
 #include "gui/models/isotopologueSetModel.h"
-#include "keywords/isotopologueset.h"
+#include "keywords/isotopologueSet.h"
 #include <QWidget>
 
 class IsotopologueSetKeywordWidget : public KeywordDropDown, public KeywordWidgetBase

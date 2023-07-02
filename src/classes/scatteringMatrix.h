@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "classes/neutronweights.h"
-#include "classes/xrayweights.h"
-#include "data/formfactors.h"
-#include "data/structurefactors.h"
-#include "math/data1d.h"
-#include "templates/array2d.h"
+#include "classes/neutronWeights.h"
+#include "classes/xRayWeights.h"
+#include "data/formFactors.h"
+#include "data/structureFactors.h"
+#include "math/data1D.h"
+#include "templates/array2D.h"
 #include <memory>
 #include <tuple>
 #include <vector>

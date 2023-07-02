@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/vector_stringdouble.h"
-#include "base/lineparser.h"
+#include "keywords/vectorStringDouble.h"
+#include "base/lineParser.h"
 
 StringDoubleVectorKeyword::StringDoubleVectorKeyword(StringDoubleVectorKeywordData &data)
     : KeywordBase(typeid(this)), data_(data)

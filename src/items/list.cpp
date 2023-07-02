@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "genericitems/list.h"
-#include "genericitems/deserialisers.h"
-#include "genericitems/serialisers.h"
+#include "items/list.h"
+#include "items/deserialisers.h"
+#include "items/serialisers.h"
 #include "main/version.h"
 #include <cassert>
 #include <fmt/format.h>

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "math/data3d.h"
-#include "base/lineparser.h"
+#include "math/data3D.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
-#include "math/histogram3d.h"
-#include "templates/array3d.h"
-#include "templates/arrayIndex3d.h"
+#include "base/sysFunc.h"
+#include "math/histogram3D.h"
+#include "templates/array3D.h"
+#include "templates/arrayIndex3D.h"
 
 Data3D::Data3D() {}
 

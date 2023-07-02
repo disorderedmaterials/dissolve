@@ -4,11 +4,11 @@
 #include "base/units.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "gui/configurationtab.h"
-#include "gui/getconfigurationnamedialog.h"
+#include "gui/configurationTab.h"
+#include "gui/getConfigurationNameDialog.h"
 #include "gui/gui.h"
-#include "gui/helpers/combopopulator.h"
-#include "gui/keywordwidgets/producers.h"
+#include "gui/helpers/comboPopulator.h"
+#include "gui/keywordWidgets/producers.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 

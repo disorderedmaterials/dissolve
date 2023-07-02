@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "genericitems/list.h"
 #include "gui/models/dataManagerSimulationModel.h"
-#include "gui/ui_datamanagerdialog.h"
+#include "gui/ui_dataManagerDialog.h"
+#include "items/list.h"
 #include <QDialog>
 #include <QSortFilterProxyModel>
 #include <vector>

@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "main/dissolve.h"
-#include "math/gaussfit.h"
-#include "math/poissonfit.h"
+#include "math/gaussFit.h"
+#include "math/poissonFit.h"
 #include "modules/epsr/epsr.h"
 #include "templates/algorithms.h"
 

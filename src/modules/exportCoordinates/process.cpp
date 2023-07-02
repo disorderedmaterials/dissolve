@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "classes/atom.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "main/dissolve.h"
-#include "modules/export_coordinates/exportcoords.h"
+#include "modules/exportCoordinates/exportCoordinates.h"
 
 // Run main processing
 bool ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &procPool)

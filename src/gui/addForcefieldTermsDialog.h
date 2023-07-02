@@ -5,7 +5,7 @@
 
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/masterTermTreeModel.h"
-#include "gui/ui_addforcefieldtermsdialog.h"
+#include "gui/ui_addForcefieldTermsDialog.h"
 #include "gui/wizard.hui"
 #include "main/dissolve.h"
 

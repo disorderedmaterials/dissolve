@@ -334,7 +334,7 @@
   <customwidget>
    <class>ConfigurationViewer</class>
    <extends>QWidget</extends>
-   <header>gui/configurationviewer.hui</header>
+   <header>gui/configurationViewer.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

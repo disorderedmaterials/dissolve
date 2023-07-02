@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/linestipple.h"
+#include "gui/render/lineStipple.h"
 #include <QColor>
 
 // Line Style

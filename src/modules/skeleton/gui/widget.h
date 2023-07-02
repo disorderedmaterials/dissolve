@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/skeleton/gui/ui_skeletonwidget.h"
+#include "modules/skeleton/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

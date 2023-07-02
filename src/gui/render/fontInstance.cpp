@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/fontinstance.h"
+#include "gui/render/fontInstance.h"
 #include "base/messenger.h"
 #include <QtGui/qopengl.h>
 

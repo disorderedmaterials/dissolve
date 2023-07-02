@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/addconfigurationdialog.h"
-#include "gui/configurationtab.h"
+#include "gui/addConfigurationDialog.h"
+#include "gui/configurationTab.h"
 #include "gui/gui.h"
-#include "gui/selectspeciesdialog.h"
+#include "gui/selectSpeciesDialog.h"
 #include "io/export/coordinates.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinatesets.h"
-#include "procedure/nodes/generalregion.h"
+#include "procedure/nodes/coordinateSets.h"
+#include "procedure/nodes/generalRegion.h"
 #include "procedure/nodes/parameters.h"
 #include <QFileDialog>
 #include <QMessageBox>

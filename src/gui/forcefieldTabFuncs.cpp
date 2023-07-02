@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
-#include "classes/speciesangle.h"
-#include "classes/speciesbond.h"
-#include "classes/speciesimproper.h"
-#include "classes/speciestorsion.h"
-#include "gui/delegates/combolist.hui"
-#include "gui/delegates/exponentialspin.hui"
-#include "gui/forcefieldtab.h"
+#include "classes/atomType.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesImproper.h"
+#include "classes/speciesTorsion.h"
+#include "gui/delegates/comboList.hui"
+#include "gui/delegates/exponentialSpin.hui"
+#include "gui/forcefieldTab.h"
 #include "gui/gui.h"
-#include "gui/helpers/combopopulator.h"
-#include "gui/render/renderabledata1d.h"
-#include "gui/widgets/elementselector.hui"
+#include "gui/helpers/comboPopulator.h"
+#include "gui/render/renderableData1D.h"
+#include "gui/widgets/elementSelector.hui"
 #include "main/dissolve.h"
 #include <QListWidgetItem>
 

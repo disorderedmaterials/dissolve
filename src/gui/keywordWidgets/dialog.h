@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/ui_dialog.h"
+#include "gui/keywordWidgets/ui_dialog.h"
 #include "keywords/base.h"
 #include <QDialog>
 

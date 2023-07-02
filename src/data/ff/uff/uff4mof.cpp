@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/ff/uff/uff4mof.h"
-#include "classes/atomtype.h"
-#include "classes/coredata.h"
+#include "classes/atomType.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "data/elements.h"
 

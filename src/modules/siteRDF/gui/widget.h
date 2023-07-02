@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/siterdf/gui/ui_siterdfwidget.h"
+#include "modules/siteRDF/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

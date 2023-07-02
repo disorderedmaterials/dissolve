@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/textfragment.h"
+#include "gui/render/textFragment.h"
 
 TextFragment::TextFragment(std::string_view text, double scale, Vec3<double> translation, bool isItalic, bool isBold)
     : text_(text), scale_(scale), translation_(translation), isItalic_(isItalic), isBold_(isBold)

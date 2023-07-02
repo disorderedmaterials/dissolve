@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/isotopedata.h"
-#include "base/lineparser.h"
+#include "classes/isotopeData.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
 #include "data/elements.h"
 #include "data/isotopes.h"

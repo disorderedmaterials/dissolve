@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/renderableconfiguration.h"
-#include "base/lineparser.h"
+#include "gui/render/renderableConfiguration.h"
+#include "base/lineParser.h"
 #include "classes/box.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
-#include "data/elementcolours.h"
-#include "gui/render/renderablegroupmanager.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
+#include "data/elementColours.h"
+#include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
 
 RenderableConfiguration::RenderableConfiguration(const Configuration *source)

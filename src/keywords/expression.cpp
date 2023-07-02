@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/expression.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "expression/expression.h"
 
 ExpressionKeyword::ExpressionKeyword(Expression &data)

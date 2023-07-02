@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/nodevalue.h"
-#include "base/lineparser.h"
+#include "keywords/nodeValue.h"
+#include "base/lineParser.h"
 #include "procedure/nodes/node.h"
 
 NodeValueKeyword::NodeValueKeyword(NodeValue &data, ProcedureNode *parentNode)

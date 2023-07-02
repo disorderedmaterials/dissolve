@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/models/cifAssemblyModel.h"
-#include "gui/ui_importcifdialog.h"
+#include "gui/ui_importCIFDialog.h"
 #include "gui/wizard.hui"
 #include "io/import/cif.h"
 #include "main/dissolve.h"

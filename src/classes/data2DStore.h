@@ -5,8 +5,8 @@
 
 #include "base/serialiser.h"
 #include "io/import/data2d.h"
-#include "math/data2d.h"
-#include "templates/optionalref.h"
+#include "math/data2D.h"
+#include "templates/optionalRef.h"
 #include <list>
 
 // Data2D Store

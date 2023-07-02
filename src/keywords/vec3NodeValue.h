@@ -4,8 +4,8 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "keywords/vec3labels.h"
-#include "procedure/nodevalue.h"
+#include "keywords/vec3Labels.h"
+#include "procedure/nodeValue.h"
 #include "templates/vector3.h"
 
 // Forward Declarations

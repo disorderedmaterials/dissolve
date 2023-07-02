@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/intradistance/intradistance.h"
+#include "modules/intraDistance/intraDistance.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
-#include "keywords/fileandformat.h"
-#include "keywords/speciessitevector.h"
-#include "keywords/vec3double.h"
-#include "procedure/nodes/calculatedistance.h"
-#include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/operatenormalise.h"
-#include "procedure/nodes/process1d.h"
+#include "keywords/fileAndFormat.h"
+#include "keywords/speciesSiteVector.h"
+#include "keywords/vec3Double.h"
+#include "procedure/nodes/calculateDistance.h"
+#include "procedure/nodes/collect1D.h"
+#include "procedure/nodes/operateNormalise.h"
+#include "procedure/nodes/process1D.h"
 #include "procedure/nodes/select.h"
 
 IntraDistanceModule::IntraDistanceModule() : Module(ModuleTypes::IntraDistance), analyser_(ProcedureNode::AnalysisContext)

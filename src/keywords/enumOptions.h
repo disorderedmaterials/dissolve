@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
-#include "base/lineparser.h"
+#include "base/enumOptions.h"
+#include "base/lineParser.h"
 #include "keywords/base.h"
 
 // EnumOptionsKeyword base class

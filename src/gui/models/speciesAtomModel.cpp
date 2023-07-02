@@ -1,5 +1,5 @@
 #include "gui/models/speciesAtomModel.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 
 SpeciesAtomModel::SpeciesAtomModel(Species &species, Dissolve &dissolve) : species_(species), dissolve_(dissolve) {}
 

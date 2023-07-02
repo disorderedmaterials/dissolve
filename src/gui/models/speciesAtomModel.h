@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciesatom.h"
+#include "classes/speciesAtom.h"
 #include "main/dissolve.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>

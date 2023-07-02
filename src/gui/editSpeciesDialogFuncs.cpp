@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/editspeciesdialog.h"
+#include "gui/editSpeciesDialog.h"
 
 EditSpeciesDialog::EditSpeciesDialog(QWidget *parent, Species *sp)
 {

@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "classes/atomtypemix.h"
+#include "classes/atomTypeMix.h"
 #include "classes/isotopologues.h"
-#include "templates/array2d.h"
+#include "templates/array2D.h"
 #include <vector>
 
 // Neutron Weights Container

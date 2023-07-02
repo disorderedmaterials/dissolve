@@ -3,7 +3,7 @@
 
 #include "classes/box.h"
 #include "main/dissolve.h"
-#include "modules/avgmol/avgmol.h"
+#include "modules/avgMol/avgMol.h"
 #include "templates/algorithms.h"
 
 // Run set-up stage

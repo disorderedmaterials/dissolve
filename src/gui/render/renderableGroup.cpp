@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/renderablegroup.h"
+#include "gui/render/renderableGroup.h"
 #include "gui/render/renderable.h"
 
 RenderableGroup::RenderableGroup(std::string_view name, StockColours::StockColour colour)

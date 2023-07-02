@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "base/serialiser.h"
-#include "classes/speciesintra.h"
+#include "classes/speciesIntra.h"
 
 #include <map>
 #include <vector>

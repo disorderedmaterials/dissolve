@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "classes/speciesintra.h"
+#include "classes/speciesIntra.h"
 #include "module/module.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <fmt/ranges.h>
 #include <tuple>
 #include <vector>

@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "base/version.h"
-#include "gui/render/linestyle.h"
-#include "gui/render/numberformat.h"
+#include "gui/render/lineStyle.h"
+#include "gui/render/numberFormat.h"
 #include "gui/render/primitive.h"
-#include "gui/render/textprimitivelist.h"
+#include "gui/render/textPrimitiveList.h"
 #include "templates/vector3.h"
 #include "templates/vector4.h"
 #include <vector>

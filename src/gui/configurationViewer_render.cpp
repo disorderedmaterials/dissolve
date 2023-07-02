@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/configurationviewer.hui"
+#include "gui/configurationViewer.hui"
 
 // Perform post-initialisation operations
 void ConfigurationViewer::postInitialiseGL() {}

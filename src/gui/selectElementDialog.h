@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_selectelementdialog.h"
+#include "gui/ui_selectElementDialog.h"
 #include <QDialog>
 
 // Forward Declarations

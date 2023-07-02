@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/render/renderable.h"
-#include "math/data1d.h"
+#include "math/data1D.h"
 
 // Forward Declarations
 class Axes;

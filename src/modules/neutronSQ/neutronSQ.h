@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "classes/data1dstore.h"
-#include "classes/isotopologueset.h"
-#include "classes/partialset.h"
-#include "data/structurefactors.h"
+#include "classes/data1DStore.h"
+#include "classes/isotopologueSet.h"
+#include "classes/partialSet.h"
+#include "data/structureFactors.h"
 #include "io/import/data1d.h"
-#include "math/windowfunction.h"
+#include "math/windowFunction.h"
 #include "module/module.h"
 
 // Forward Declarations

@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "data/elements.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <list>
 #include <memory>
 #include <optional>

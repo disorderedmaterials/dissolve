@@ -3,12 +3,12 @@
 
 #include "neta/node.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "neta/character.h"
 #include "neta/connection.h"
 #include "neta/or.h"
 #include "neta/ring.h"
-#include "neta/ringatom.h"
+#include "neta/ringAtom.h"
 
 // Return enum options for NodeTypes
 EnumOptions<NETANode::NodeType> NETANode::nodeTypes()

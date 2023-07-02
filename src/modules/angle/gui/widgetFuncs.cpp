@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "gui/render/renderabledata1d.h"
-#include "gui/render/renderabledata2d.h"
+#include "gui/render/renderableData1D.h"
+#include "gui/render/renderableData2D.h"
 #include "modules/angle/angle.h"
-#include "modules/angle/gui/anglewidget.h"
+#include "modules/angle/gui/widget.h"
 
 AngleModuleWidget::AngleModuleWidget(QWidget *parent, AngleModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
-#include "gui/delegates/combolist.hui"
-#include "gui/delegates/customcombodelegate.h"
-#include "gui/delegates/exponentialspin.hui"
-#include "gui/delegates/intraformcombo.h"
-#include "gui/delegates/isotopecombo.hui"
+#include "classes/atomType.h"
+#include "gui/delegates/comboList.hui"
+#include "gui/delegates/customComboDelegate.h"
+#include "gui/delegates/exponentialSpin.hui"
+#include "gui/delegates/intraFormCombo.h"
+#include "gui/delegates/isotopeCombo.hui"
 #include "gui/delegates/null.h"
-#include "gui/getspeciesnamedialog.h"
+#include "gui/getSpeciesNameDialog.h"
 #include "gui/gui.h"
-#include "gui/speciestab.h"
+#include "gui/speciesTab.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 

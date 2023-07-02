@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/export/pairpotential.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/pairpotential.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "classes/pairPotential.h"
 
 PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view filename, PairPotentialExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

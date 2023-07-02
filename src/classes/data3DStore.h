@@ -4,8 +4,8 @@
 #pragma once
 
 #include "io/import/data3d.h"
-#include "math/data3d.h"
-#include "templates/optionalref.h"
+#include "math/data3D.h"
+#include "templates/optionalRef.h"
 #include <list>
 
 // Data3D Store

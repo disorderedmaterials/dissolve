@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/sdf/gui/ui_sdfwidget.h"
+#include "modules/sdf/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

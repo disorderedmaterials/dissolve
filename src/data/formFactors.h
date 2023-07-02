@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "data/elements.h"
-#include "data/formfactordata.h"
-#include "templates/optionalref.h"
+#include "data/formFactorData.h"
+#include "templates/optionalRef.h"
 #include <tuple>
 
 // X-Ray Form Factors

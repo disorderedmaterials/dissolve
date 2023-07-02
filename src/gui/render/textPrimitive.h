@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
-#include "gui/render/textfragment.h"
+#include "base/enumOptions.h"
+#include "gui/render/textFragment.h"
 #include "math/matrix4.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include "templates/vector3.h"
 #include <QString>
 

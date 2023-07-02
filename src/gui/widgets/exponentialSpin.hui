@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "math/doubleexp.h"
+#include "math/doubleExp.h"
 #include <QAbstractSpinBox>
 
 // Spinbox with Exponential Notation

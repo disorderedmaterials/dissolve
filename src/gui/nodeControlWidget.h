@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/lock.h"
-#include "gui/ui_nodecontrolwidget.h"
-#include "procedure/nodes/nodereference.h"
+#include "gui/ui_nodeControlWidget.h"
+#include "procedure/nodes/nodeReference.h"
 
 // Forward Declarations
 class Dissolve;

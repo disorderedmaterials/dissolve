@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/speciesring.h"
-#include "classes/speciesatom.h"
+#include "classes/speciesRing.h"
+#include "classes/speciesAtom.h"
 #include "data/elements.h"
 
 SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> &atoms) : atoms_(atoms){};

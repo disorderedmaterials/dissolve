@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/render/linestipple.h"
-#include "base/sysfunc.h"
+#include "gui/render/lineStipple.h"
+#include "base/sysFunc.h"
 #include <QComboBox>
 #include <QPainter>
 #include <QVector>

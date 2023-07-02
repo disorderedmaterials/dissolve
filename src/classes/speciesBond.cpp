@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/speciesbond.h"
-#include "base/sysfunc.h"
-#include "classes/coredata.h"
-#include "classes/speciesatom.h"
-#include "data/atomicmasses.h"
+#include "classes/speciesBond.h"
+#include "base/sysFunc.h"
+#include "classes/coreData.h"
+#include "classes/speciesAtom.h"
+#include "data/atomicMasses.h"
 #include <map>
 
 // Return enum options for BondFunction

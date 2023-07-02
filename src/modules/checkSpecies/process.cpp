@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
 #include "classes/species.h"
-#include "keywords/vector_intdouble.h"
-#include "keywords/vector_intstring.h"
+#include "keywords/vectorIntDouble.h"
+#include "keywords/vectorIntString.h"
 #include "main/dissolve.h"
-#include "modules/checkspecies/checkspecies.h"
+#include "modules/checkSpecies/checkSpecies.h"
 #include <numeric>
 
 // Run main processing

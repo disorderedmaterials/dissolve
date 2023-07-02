@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/keywordwidgets/bool.hui"
+#include "gui/keywordWidgets/bool.hui"
 
 BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, BoolKeyword *keyword, const CoreData &coreData)
     : QCheckBox(parent), KeywordWidgetBase(coreData), keyword_(keyword)

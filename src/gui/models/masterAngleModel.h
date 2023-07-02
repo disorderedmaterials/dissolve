@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "classes/speciesangle.h"
+#include "classes/speciesAngle.h"
 #include "gui/models/masterTermModel.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // MasterAngle model
 class MasterAngleModel : public MasterTermModel

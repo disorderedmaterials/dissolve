@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/intrashake/intrashake.h"
+#include "modules/intraShake/intraShake.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
-#include "keywords/optionaldouble.h"
-#include "keywords/speciesvector.h"
+#include "keywords/optionalDouble.h"
+#include "keywords/speciesVector.h"
 
 IntraShakeModule::IntraShakeModule() : Module(ModuleTypes::IntraShake)
 {

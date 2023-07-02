@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/process2d.h"
+#include "procedure/nodes/process2D.h"
 #include "classes/configuration.h"
 #include "io/export/data2d.h"
-#include "keywords/fileandformat.h"
-#include "keywords/nodebranch.h"
-#include "keywords/stdstring.h"
+#include "keywords/fileAndFormat.h"
+#include "keywords/nodeBranch.h"
+#include "keywords/stdString.h"
 #include "math/integrator.h"
-#include "procedure/nodes/collect2d.h"
-#include "procedure/nodes/operatebase.h"
+#include "procedure/nodes/collect2D.h"
+#include "procedure/nodes/operateBase.h"
 
 Process2DProcedureNode::Process2DProcedureNode(std::shared_ptr<Collect2DProcedureNode> target,
                                                ProcedureNode::NodeContext normalisationContext)

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/keywordwidgets/interactionpotential.h"
+#include "gui/keywordWidgets/interactionPotential.h"
 #include "main/dissolve.h"
 #include <QComboBox>
 

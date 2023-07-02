@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "classes/array3d_iter.h"
+#include "classes/array3DIterator.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "templates/algorithms.h"
-#include "templates/array3d.h"
-#include "templates/parallel_defs.h"
+#include "templates/array3D.h"
+#include "templates/parallelDefs.h"
 #include "templates/vector3.h"
 #include <vector>
 

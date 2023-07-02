@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/xraysq/xraysq.h"
-#include "keywords/atomtypevector.h"
+#include "modules/xRaySQ/xRaySQ.h"
+#include "keywords/atomTypeVector.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
-#include "keywords/fileandformat.h"
+#include "keywords/fileAndFormat.h"
 #include "keywords/module.h"
-#include "keywords/optionaldouble.h"
+#include "keywords/optionalDouble.h"
 #include "modules/sq/sq.h"
 
 XRaySQModule::XRaySQModule() : Module(ModuleTypes::XRaySQ)

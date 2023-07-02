@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/vec3double.h"
-#include "base/lineparser.h"
+#include "keywords/vec3Double.h"
+#include "base/lineParser.h"
 
 Vec3DoubleKeyword::Vec3DoubleKeyword(Vec3<double> &data, Vec3Labels::LabelType labelType)
     : KeywordBase(typeid(this)), data_(data), default_(data), labelType_(labelType)

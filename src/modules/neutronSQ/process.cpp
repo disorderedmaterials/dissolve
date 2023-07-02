@@ -3,14 +3,14 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/neutronweights.h"
+#include "classes/neutronWeights.h"
 #include "classes/species.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
 #include "modules/gr/gr.h"
-#include "modules/neutronsq/neutronsq.h"
+#include "modules/neutronSQ/neutronSQ.h"
 #include "modules/sq/sq.h"
 
 // Set target data

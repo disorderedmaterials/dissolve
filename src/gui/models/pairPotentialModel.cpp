@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/pairPotentialModel.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "templates/algorithms.h"
 
 PairPotentialModel::PairPotentialModel(const std::vector<std::unique_ptr<PairPotential>> &pairs) : pairs_(pairs) {}

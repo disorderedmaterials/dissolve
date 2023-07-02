@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/ui_expressionvariablevector.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/ui_expressionVariableVector.h"
 #include "gui/models/expressionVariableVectorModel.h"
-#include "keywords/expressionvariablevector.h"
+#include "keywords/expressionVariableVector.h"
 
 // Forward Declarations
 class QWidget;

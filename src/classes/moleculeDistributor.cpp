@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/moleculedistributor.h"
+#include "classes/moleculeDistributor.h"
 #include "classes/atom.h"
 
 MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray,

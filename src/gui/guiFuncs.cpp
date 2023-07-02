@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "gui/configurationtab.h"
+#include "gui/configurationTab.h"
 #include "gui/gui.h"
-#include "gui/layertab.h"
-#include "gui/selectrestartfiledialog.h"
+#include "gui/layerTab.h"
+#include "gui/mainTab.h"
+#include "gui/selectRestartFileDialog.h"
 #include "main/dissolve.h"
 #include "main/version.h"
-#include "maintab.h"
 #include <QCloseEvent>
 #include <QDir>
 #include <QDirIterator>

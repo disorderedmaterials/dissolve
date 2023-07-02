@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/dataviewer.hui"
-#include "gui/render/renderabledata1d.h"
+#include "gui/dataViewer.hui"
+#include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
-#include "modules/energy/gui/energywidget.h"
+#include "modules/energy/gui/widget.h"
 
 Q_DECLARE_METATYPE(Configuration *);
 

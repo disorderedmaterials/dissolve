@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/widgets/integerspin.hui"
-#include "keywords/optionalint.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/widgets/integerSpin.hui"
+#include "keywords/optionalInt.h"
 
 class OptionalIntegerKeywordWidget : public IntegerSpin, public KeywordWidgetBase
 {

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "math/range.h"
-#include "math/sampleddouble.h"
+#include "math/sampledDouble.h"
 #include "procedure/nodes/node.h"
 
 // Forward Declarations

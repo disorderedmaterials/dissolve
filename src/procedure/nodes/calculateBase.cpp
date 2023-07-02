@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/calculatebase.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "procedure/nodes/calculateBase.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "procedure/nodes/select.h"
 
 CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType,

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "keywords/stdstring.h"
+#include "gui/keywordWidgets/base.h"
+#include "keywords/stdString.h"
 #include <QLineEdit>
 
 class StringKeywordWidget : public QLineEdit, public KeywordWidgetBase

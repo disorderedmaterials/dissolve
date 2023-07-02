@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "genericitems/serialisers.h"
-#include "base/lineparser.h"
-#include "classes/braggreflection.h"
-#include "classes/kvector.h"
-#include "classes/neutronweights.h"
-#include "classes/partialset.h"
-#include "classes/partialsetaccumulator.h"
-#include "classes/xrayweights.h"
-#include "math/data1d.h"
-#include "math/data2d.h"
-#include "math/data3d.h"
-#include "math/histogram1d.h"
-#include "math/histogram2d.h"
-#include "math/histogram3d.h"
-#include "math/integerhistogram1d.h"
+#include "items/serialisers.h"
+#include "base/lineParser.h"
+#include "classes/braggReflection.h"
+#include "classes/kVector.h"
+#include "classes/neutronWeights.h"
+#include "classes/partialSet.h"
+#include "classes/partialSetAccumulator.h"
+#include "classes/xRayWeights.h"
+#include "math/data1D.h"
+#include "math/data2D.h"
+#include "math/data3D.h"
+#include "math/histogram1D.h"
+#include "math/histogram2D.h"
+#include "math/histogram3D.h"
+#include "math/integerHistogram1D.h"
 
 GenericItemSerialiser::GenericItemSerialiser()
 {

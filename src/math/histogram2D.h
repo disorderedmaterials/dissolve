@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "math/data2d.h"
-#include "math/sampleddouble.h"
-#include "templates/array2d.h"
+#include "math/data2D.h"
+#include "math/sampledDouble.h"
+#include "templates/array2D.h"
 
 // Two-Dimensional Histogram
 class Histogram2D

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/avgmol/avgmol.h"
+#include "modules/avgMol/avgMol.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
-#include "keywords/fileandformat.h"
-#include "keywords/speciessite.h"
+#include "keywords/fileAndFormat.h"
+#include "keywords/speciesSite.h"
 
 AvgMolModule::AvgMolModule() : Module(ModuleTypes::AvgMol)
 {

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/epsr/gui/ui_epsrwidget.h"
+#include "modules/epsr/gui/ui_widget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

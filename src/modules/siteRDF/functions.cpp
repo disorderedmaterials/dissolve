@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/siterdf/siterdf.h"
-#include "procedure/nodes/process1d.h"
-#include "procedure/nodes/sum1d.h"
+#include "modules/siteRDF/siteRDF.h"
+#include "procedure/nodes/process1D.h"
+#include "procedure/nodes/sum1D.h"
 
 // Return Collect1DNode for A-B RDF
 std::shared_ptr<Collect1DProcedureNode> SiteRDFModule::collectDistanceNode() const { return collectDistance_; }

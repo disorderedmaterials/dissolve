@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/randombuffer.h"
+#include "base/randomBuffer.h"
 #include "base/timer.h"
 #include "classes/box.h"
-#include "classes/changestore.h"
-#include "classes/regionaldistributor.h"
+#include "classes/changeStore.h"
+#include "classes/regionalDistributor.h"
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
-#include "modules/molshake/molshake.h"
+#include "modules/molShake/molShake.h"
 
 // Run main processing
 bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)

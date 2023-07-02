@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/ui_getconfigurationnamedialog.h"
+#include "gui/ui_getConfigurationNameDialog.h"
 #include <QDialog>
 
 // Forward Declarations

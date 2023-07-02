@@ -5,7 +5,7 @@
 
 #include "gui/render/axes.h"
 #include "gui/render/renderable.h"
-#include "gui/render/renderablegroup.h"
+#include "gui/render/renderableGroup.h"
 #include "math/matrix4.h"
 
 // Forward Declarations

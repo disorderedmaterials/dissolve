@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/directionalglobalpotential.h"
+#include "procedure/nodes/directionalGlobalPotential.h"
 #include "classes/configuration.h"
 #include "kernels/potentials/directional.h"
-#include "keywords/interactionpotential.h"
-#include "keywords/vec3nodevalue.h"
+#include "keywords/interactionPotential.h"
+#include "keywords/vec3NodeValue.h"
 
 DirectionalGlobalPotentialProcedureNode::DirectionalGlobalPotentialProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::DirectionalGlobalPotential, {ProcedureNode::GenerationContext}),

@@ -5,7 +5,7 @@
 
 #include "base/serialiser.h"
 #include "expression/expression.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // Node Value
 class NodeValue : public Serialisable<>

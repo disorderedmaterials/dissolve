@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "keywords/base.h"
 
 // Keyword managing vector of AtomType pointers

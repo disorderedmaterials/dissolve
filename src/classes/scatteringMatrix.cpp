@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/scatteringmatrix.h"
-#include "classes/atomtype.h"
-#include "classes/neutronweights.h"
-#include "classes/xrayweights.h"
+#include "classes/scatteringMatrix.h"
+#include "classes/atomType.h"
+#include "classes/neutronWeights.h"
+#include "classes/xRayWeights.h"
 #include "math/interpolator.h"
 #include "math/svd.h"
 #include "templates/algorithms.h"

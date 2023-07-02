@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/process3d.h"
+#include "procedure/nodes/process3D.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "keywords/fileandformat.h"
-#include "keywords/nodebranch.h"
-#include "keywords/stdstring.h"
-#include "procedure/nodes/collect3d.h"
-#include "procedure/nodes/operatebase.h"
+#include "keywords/fileAndFormat.h"
+#include "keywords/nodeBranch.h"
+#include "keywords/stdString.h"
+#include "procedure/nodes/collect3D.h"
+#include "procedure/nodes/operateBase.h"
 #include "procedure/nodes/select.h"
 
 Process3DProcedureNode::Process3DProcedureNode(std::shared_ptr<Collect3DProcedureNode> target,

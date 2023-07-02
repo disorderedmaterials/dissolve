@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/lock.h"
-#include "gui/ui_modulecontrolwidget.h"
+#include "gui/ui_moduleControlWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

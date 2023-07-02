@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/pickregion.h"
+#include "procedure/nodes/pickRegion.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "keywords/node.h"
-#include "procedure/nodes/regionbase.h"
+#include "procedure/nodes/regionBase.h"
 
 PickRegionProcedureNode::PickRegionProcedureNode(std::shared_ptr<const RegionProcedureNodeBase> region)
     : PickProcedureNodeBase(ProcedureNode::NodeType::PickRegion), region_(region)

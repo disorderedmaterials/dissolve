@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/ui_fileandformat.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/ui_fileAndFormat.h"
 #include "gui/models/enumOptionsModel.h"
-#include "keywords/fileandformat.h"
+#include "keywords/fileAndFormat.h"
 #include <QWidget>
 
 class FileAndFormatKeywordWidget : public QWidget, public KeywordWidgetBase

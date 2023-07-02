@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "keywords/speciessitevector.h"
-#include "base/lineparser.h"
+#include "keywords/speciesSiteVector.h"
+#include "base/lineParser.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 
 SpeciesSiteVectorKeyword::SpeciesSiteVectorKeyword(std::vector<const SpeciesSite *> &data, bool axesRequired)

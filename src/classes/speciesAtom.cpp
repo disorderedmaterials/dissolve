@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/speciesatom.h"
-#include "classes/atomtype.h"
+#include "classes/speciesAtom.h"
+#include "classes/atomType.h"
 #include "classes/box.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
-#include "classes/speciesbond.h"
+#include "classes/speciesBond.h"
 #include <algorithm>
 
 SpeciesAtom::SpeciesAtom(SpeciesAtom &&source) noexcept { move(source); }

@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_configurationvector.h"
+#include "gui/keywordWidgets/base.h"
+#include "gui/keywordWidgets/dropDown.h"
+#include "gui/keywordWidgets/ui_configurationVector.h"
 #include "gui/models/configurationModel.h"
-#include "keywords/configurationvector.h"
+#include "keywords/configurationVector.h"
 #include <QWidget>
 
 // Forward Declarations

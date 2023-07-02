@@ -5,7 +5,7 @@
 
 #include "kernels/potentials/restraint.h"
 #include "procedure/nodes/node.h"
-#include "procedure/nodes/pickbase.h"
+#include "procedure/nodes/pickBase.h"
 
 // Restraint Potential Procedure Node
 class RestraintPotentialProcedureNode : public ProcedureNode

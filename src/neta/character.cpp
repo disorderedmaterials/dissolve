@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "neta/character.h"
-#include "classes/speciesatom.h"
+#include "classes/speciesAtom.h"
 #include "data/ff/atomtype.h"
 #include <algorithm>
 #include <map>

@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "gui/configurationtab.h"
-#include "gui/forcefieldtab.h"
-#include "gui/layertab.h"
-#include "gui/messagestab.h"
-#include "gui/speciestab.h"
+#include "gui/configurationTab.h"
+#include "gui/forcefieldTab.h"
+#include "gui/layerTab.h"
+#include "gui/messagesTab.h"
+#include "gui/speciesTab.h"
 #include <QPointer>
 #include <QTabWidget>
 #include <memory>
