@@ -2,33 +2,33 @@
 
 # Meta-Objects
 set(widgets_MOC_HDRS
-    nocontrols.h
-    sampleddoublelabel.h
-    checkindicator.hui
-    colourbutton.hui
-    elementselector.hui
-    exponentialspin.hui
-    gradientbar.hui
-    integerspin.hui
-    superstackedwidget.hui
+    noControls.h
+    sampledDoubleLabel.h
+    checkIndicator.hui
+    colourButton.hui
+    elementSelector.hui
+    exponentialSpin.hui
+    gradientBar.hui
+    integerSpin.hui
+    superStackedWidget.hui
 )
 qt6_wrap_cpp(widgets_MOC_SRCS ${widgets_MOC_HDRS})
 
 # User Interface Files
-set(widgets_UIS nocontrols.ui sampleddoublelabel.ui)
+set(widgets_UIS noControls.ui sampledDoubleLabel.ui)
 qt6_wrap_ui(widgets_UIS_H ${widgets_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 set(widgets_SRCS
-    checkindicator_funcs.cpp
-    colourbutton_funcs.cpp
-    elementselector_funcs.cpp
-    exponentialspin_funcs.cpp
-    gradientbar_funcs.cpp
-    integerspin_funcs.cpp
-    nocontrols_funcs.cpp
-    sampleddoublelabel_funcs.cpp
-    superstackedwidget_funcs.cpp
+    checkindicatorFuncs.cpp
+    colourbuttonFuncs.cpp
+    elementselectorFuncs.cpp
+    exponentialspinFuncs.cpp
+    gradientbarFuncs.cpp
+    integerspinFuncs.cpp
+    nocontrolsFuncs.cpp
+    sampleddoublelabelFuncs.cpp
+    superstackedwidgetFuncs.cpp
 )
 
 # Target 'gui'
