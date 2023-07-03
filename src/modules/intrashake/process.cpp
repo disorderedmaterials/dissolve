@@ -276,8 +276,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         vjk = box->minimumVector(j->r(), k->r());
 
                         // Create suitable transformation matrix
-                        transform.createRotationAxis(vjk, randomBuffer.randomPlusMinusOne() * torsionStepSize_,
-                                                     true);
+                        transform.createRotationAxis(vjk, randomBuffer.randomPlusMinusOne() * torsionStepSize_, true);
 
                         // Adjust the Atoms attached to the selected terminus
                         mol->transform(box, transform, terminus == 0 ? j->r() : k->r(), torsion.attachedAtoms(terminus));
