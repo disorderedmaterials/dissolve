@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/widgets/ui_nocontrols.h"
+#include "gui/widgets/ui_noControls.h"
 
 // No Controls Widget
 class NoControlsWidget : public QWidget
