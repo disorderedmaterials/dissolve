@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/speciessite.h"
+#include "classes/speciesSite.h"
 #include "base/lineParser.h"
 #include "classes/coreData.h"
 #include "classes/site.h"

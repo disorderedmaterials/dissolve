@@ -10,7 +10,7 @@
 #include "classes/box.h"
 #include "classes/cellArray.h"
 #include "classes/molecule.h"
-#include "classes/sitestack.h"
+#include "classes/siteStack.h"
 #include "io/import/coordinates.h"
 #include "items/list.h"
 #include "kernels/potentials/base.h"

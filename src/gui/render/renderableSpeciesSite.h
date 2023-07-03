@@ -4,7 +4,7 @@
 #pragma once
 
 #include "classes/species.h"
-#include "classes/speciessite.h"
+#include "classes/speciesSite.h"
 #include "gui/render/renderable.h"
 
 // Forward Declarations

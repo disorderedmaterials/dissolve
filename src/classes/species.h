@@ -12,8 +12,8 @@
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesImproper.h"
+#include "classes/speciesSite.h"
 #include "classes/speciesTorsion.h"
-#include "classes/speciessite.h"
 #include "io/import/coordinates.h"
 #include <list>
 #include <map>

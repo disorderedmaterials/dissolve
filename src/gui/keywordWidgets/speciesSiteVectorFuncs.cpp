@@ -3,7 +3,7 @@
 
 #include "classes/coreData.h"
 #include "classes/species.h"
-#include "classes/speciessite.h"
+#include "classes/speciesSite.h"
 #include "gui/keywordWidgets/speciesSiteVector.h"
 #include "templates/algorithms.h"
 

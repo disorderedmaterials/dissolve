@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/rotatefragment.h"
+#include "procedure/nodes/rotateFragment.h"
 #include "classes/atom.h"
 #include "classes/configuration.h"
 #include "classes/molecule.h"
 #include "classes/site.h"
-#include "classes/speciessite.h"
-#include "keywords/enumoptions.h"
+#include "classes/speciesSite.h"
+#include "keywords/enumOptions.h"
 #include "keywords/node.h"
-#include "keywords/nodevalue.h"
-#include "keywords/nodevalueenumoptions.h"
+#include "keywords/nodeValue.h"
+#include "keywords/nodeValueEnumOptions.h"
 #include "math/matrix3.h"
 #include "procedure/nodes/select.h"
 

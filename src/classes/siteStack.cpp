@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/sitestack.h"
+#include "classes/siteStack.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "classes/speciessite.h"
+#include "classes/speciesSite.h"
 #include "data/atomicMasses.h"
 #include <algorithm>
 #include <numeric>

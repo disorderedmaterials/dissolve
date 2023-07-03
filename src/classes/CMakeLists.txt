@@ -52,7 +52,7 @@ add_library(
   serializablePairPotential.cpp
   site.cpp
   siteReference.cpp
-  sitestack.cpp
+  siteStack.cpp
   speciesAngle.cpp
   speciesAtom.cpp
   speciesBond.cpp
@@ -66,7 +66,7 @@ add_library(
   species_transform.cpp
   speciesImproper.cpp
   speciesRing.cpp
-  speciessite.cpp
+  speciesSite.cpp
   speciesTorsion.cpp
   valueStore.cpp
   xRayWeights.cpp
@@ -109,7 +109,7 @@ add_library(
   serializablePairPotential.h
   site.h
   siteReference.h
-  sitestack.h
+  siteStack.h
   species.h
   speciesAngle.h
   speciesAtom.h
@@ -117,7 +117,7 @@ add_library(
   speciesImproper.h
   speciesIntra.h
   speciesRing.h
-  speciessite.h
+  speciesSite.h
   speciesTorsion.h
   valueStore.h
   xRayWeights.h
