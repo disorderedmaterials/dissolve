@@ -67,14 +67,13 @@ void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDef
             // Plot origin
             A.setTranslation(site->origin());
             if (site->hasAxes())
-                A.applyRotation(site->axes());
+                A.setRotation(site->axes());
             siteAssembly_.add(originPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
             siteAssembly_.add(crossPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
 
             // Plot axes?
             if (site->hasAxes())
             {
-                A.setRotation(site->axes());
                 siteAssembly_.add(axesPrimitive_, A);
             }
         }
