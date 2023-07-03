@@ -25,7 +25,7 @@ EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::in
                                                                                       {ToDegreesFunction, "toDeg", 1},
                                                                                       {ToRadiansFunction, "toRad", 1},
                                                                                       {TwoPiFunction, "twopi"},
-                                                  {UnitRandomFunction, "rand"}});
+                                                                                      {UnitRandomFunction, "rand"}});
 }
 
 ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}
