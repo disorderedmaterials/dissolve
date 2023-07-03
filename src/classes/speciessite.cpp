@@ -47,6 +47,7 @@ void SpeciesSite::clearDefinition()
     staticYAxisAtoms_.clear();
     dynamicElements_.clear();
     dynamicAtomTypes_.clear();
+    sitesAllAtomsIndices_.clear();
     sitesOriginAtomsIndices_.clear();
     sitesXAxisAtomsIndices_.clear();
     sitesYAxisAtomsIndices_.clear();
@@ -345,6 +346,7 @@ bool SpeciesSite::setFragmentDefinitionString(std::string_view definitionString)
 // Generate unique sites
 bool SpeciesSite::generateUniqueSites()
 {
+    sitesAllAtomsIndices_.clear();
     sitesOriginAtomsIndices_.clear();
     sitesXAxisAtomsIndices_.clear();
     sitesYAxisAtomsIndices_.clear();
@@ -352,22 +354,34 @@ bool SpeciesSite::generateUniqueSites()
     switch (type_)
     {
         case (SiteType::Static):
-            sitesOriginAtomsIndices_.push_back(staticOriginAtomIndices());
-            sitesXAxisAtomsIndices_.push_back(staticXAxisAtomIndices());
-            sitesYAxisAtomsIndices_.push_back(staticYAxisAtomIndices());
+        {
+            std::vector<int> atomIndices;
+            auto originAtomIndices = staticOriginAtomIndices();
+            auto xAxisAtomIndices = staticXAxisAtomIndices();
+            auto yAxisAtomIndices = staticYAxisAtomIndices();
+            atomIndices.insert(atomIndices.end(), originAtomIndices.begin(), originAtomIndices.end());
+            atomIndices.insert(atomIndices.end(), xAxisAtomIndices.begin(), xAxisAtomIndices.end());
+            atomIndices.insert(atomIndices.end(), yAxisAtomIndices.begin(), yAxisAtomIndices.end());
+            sitesAllAtomsIndices_.push_back(std::move(atomIndices));
+            sitesOriginAtomsIndices_.push_back(std::move(originAtomIndices));
+            sitesXAxisAtomsIndices_.push_back(std::move(xAxisAtomIndices));
+            sitesYAxisAtomsIndices_.push_back(std::move(yAxisAtomIndices));
             break;
+        }
         case (SiteType::Dynamic):
             for (auto &i : parent_->atoms())
             {
                 // Valid element or atom type?
                 if ((std::find(dynamicElements_.begin(), dynamicElements_.end(), i.Z()) != dynamicElements_.end()) ||
                     std::find(dynamicAtomTypes_.begin(), dynamicAtomTypes_.end(), i.atomType()) != dynamicAtomTypes_.end())
+                {
+                    sitesAllAtomsIndices_.push_back({i.index()});
                     sitesOriginAtomsIndices_.push_back({i.index()});
+                }
             }
             break;
         case (SiteType::Fragment):
         {
-            std::vector<std::vector<int>> matchedIndices;
             for (auto &i : parent_->atoms())
             {
                 if (fragment_.matches(&i))
@@ -383,11 +397,12 @@ bool SpeciesSite::generateUniqueSites()
 
                     // Check if the fragment we have found is unique.
                     std::sort(matchedAtomIndices.begin(), matchedAtomIndices.end());
-                    if (std::find(matchedIndices.begin(), matchedIndices.end(), matchedAtomIndices) != matchedIndices.end())
+                    if (std::find(sitesAllAtomsIndices_.begin(), sitesAllAtomsIndices_.end(), matchedAtomIndices) !=
+                        sitesAllAtomsIndices_.end())
                         continue;
 
                     // If it's unique, remember it and proceed.
-                    matchedIndices.push_back(std::move(matchedAtomIndices));
+                    sitesAllAtomsIndices_.push_back(std::move(matchedAtomIndices));
 
                     auto identifiers = matchedGroup.identifiers();
 
@@ -418,17 +433,49 @@ bool SpeciesSite::generateUniqueSites()
 }
 
 // Return number of unique sites
-const int SpeciesSite::nSites() const { return sitesOriginAtomsIndices_.size(); }
+const int SpeciesSite::nSites() const { return sitesAllAtomsIndices_.size(); }
+
+// Return atom indices corresponding to unique sites
+const std::vector<std::vector<int>> &SpeciesSite::sitesAllAtomsIndices() const { return sitesAllAtomsIndices_; }
+
 // Return atom indices contributing to unique site origins
 const std::vector<std::vector<int>> &SpeciesSite::sitesOriginAtomsIndices() const { return sitesOriginAtomsIndices_; }
+
 // Return atom indices indicating the x axis with the origins of unique sites.
 const std::vector<std::vector<int>> &SpeciesSite::sitesXAxisAtomsIndices() const { return sitesXAxisAtomsIndices_; }
+
 // Return atom indices indicating the y axis with the origins of unique sites.
 const std::vector<std::vector<int>> &SpeciesSite::sitesYAxisAtomsIndices() const { return sitesYAxisAtomsIndices_; }
 
 /*
- * Generation from Parent
+ * Generation
  */
+
+// Calculate geometric centre of atoms in the given molecule
+Vec3<double> SpeciesSite::centreOfGeometry(std::vector<int> &indices) const
+{
+    const auto ref = parent_->atom(indices.front()).r();
+    return std::accumulate(std::next(indices.begin()), indices.end(), ref,
+                           [&ref, this](const auto &acc, const auto idx)
+                           { return acc + parent_->box()->minimumImage(parent_->atom(idx).r(), ref); }) /
+           indices.size();
+}
+
+// Calculate (mass-weighted) coordinate centre of atoms in the given molecule
+Vec3<double> SpeciesSite::centreOfMass(std::vector<int> &indices) const
+{
+    auto mass = AtomicMass::mass(parent_->atom(indices.front()).Z());
+    const auto ref = parent_->atom(indices.front()).r();
+    auto sums = std::accumulate(std::next(indices.begin()), indices.end(), std::pair<Vec3<double>, double>(ref * mass, mass),
+                                [&ref, this](const auto &acc, const auto idx)
+                                {
+                                    auto mass = AtomicMass::mass(parent_->atom(idx).Z());
+                                    return std::pair<Vec3<double>, double>(
+                                        acc.first + parent_->box()->minimumImage(parent_->atom(idx).r(), ref) * mass,
+                                        acc.second + mass);
+                                });
+    return sums.first / sums.second;
+}
 
 // Create and return site description from parent Species
 std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
@@ -441,48 +488,24 @@ std::vector<std::shared_ptr<Site>> SpeciesSite::createFromParent() const
 
     for (auto i = 0; i < nSites(); ++i)
     {
-        Vec3<double> origin, x, y, z;
-        if (originMassWeighted_)
-        {
-            auto massNorm = 0.0;
-            for (const auto &idx : originAtomsIndices.at(i))
-            {
-                auto mass = AtomicMass::mass(parent_->atom(idx).Z());
-                origin += parent_->atom(idx).r() * mass;
-                massNorm += mass;
-            }
-            origin /= massNorm;
-        }
-        else
-        {
-            for (const auto &idx : originAtomsIndices.at(i))
-                origin += parent_->atom(idx).r();
-            origin /= originAtomsIndices.at(i).size();
-        }
+        // Determine origin
+        auto origin = originMassWeighted_ ? centreOfMass(originAtomsIndices.at(i)) : centreOfGeometry(originAtomsIndices.at(i));
 
         if (hasAxes())
         {
-            Vec3<double> v;
-            for (const auto &idx : xAxisAtomsIndices.at(i))
-                v += parent_->atom(idx).r();
-            v /= xAxisAtomsIndices.at(i).size();
-
-            auto x = v - origin;
+            // Get vector from site origin to x-axis reference point and normalise it
+            auto x = parent_->box()->minimumVector(origin, centreOfGeometry(xAxisAtomsIndices.at(i)));
             x.normalise();
 
-            v.zero();
-            for (const auto &idx : yAxisAtomsIndices.at(i))
-                v += parent_->atom(idx).r();
-            v /= yAxisAtomsIndices.at(i).size();
-
-            auto y = v - origin;
+            // Get vector from site origin to y-axis reference point, normalise it, and orthogonalise
+            auto y = parent_->box()->minimumVector(origin, centreOfGeometry(yAxisAtomsIndices.at(i)));
             y.orthogonalise(x);
             y.normalise();
 
-            sites.push_back(std::make_shared<OrientedSite>(nullptr, origin, x, y, x * y));
+            sites.push_back(std::make_shared<OrientedSite>(this, i, nullptr, origin, x, y, x * y));
         }
         else
-            sites.push_back(std::make_shared<Site>(nullptr, origin));
+            sites.push_back(std::make_shared<Site>(this, i, nullptr, origin));
     }
     return sites;
 }

@@ -441,30 +441,30 @@ void Matrix3::createRotationZ(double angle)
 }
 
 // Create axis rotation quaternion
-void Matrix3::createRotationAxis(double ax, double ay, double az, double angle, bool normalise)
+void Matrix3::createRotationAxis(Vec3<double> axis, double angle, bool normalise)
 {
     double cosx, sinx, theta = angle / DEGRAD, oneMcosx;
     if (normalise)
     {
-        double mag = sqrt(ax * ax + ay * ay + az * az);
-        ax /= mag;
-        ay /= mag;
-        az /= mag;
+        double mag = sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+        axis.x /= mag;
+        axis.y /= mag;
+        axis.z /= mag;
     }
     cosx = cos(theta);
     sinx = sin(theta);
     oneMcosx = 1.0 - cosx;
-    matrix_[0] = ax * ax * oneMcosx + cosx;
-    matrix_[1] = ax * ay * oneMcosx - az * sinx;
-    matrix_[2] = ax * az * oneMcosx + ay * sinx;
+    matrix_[0] = axis.x * axis.x * oneMcosx + cosx;
+    matrix_[1] = axis.x * axis.y * oneMcosx - axis.z * sinx;
+    matrix_[2] = axis.x * axis.z * oneMcosx + axis.y * sinx;
 
-    matrix_[3] = ax * ay * oneMcosx + az * sinx;
-    matrix_[4] = ay * ay * oneMcosx + cosx;
-    matrix_[5] = ay * az * oneMcosx - ax * sinx;
+    matrix_[3] = axis.x * axis.y * oneMcosx + axis.z * sinx;
+    matrix_[4] = axis.y * axis.y * oneMcosx + cosx;
+    matrix_[5] = axis.y * axis.z * oneMcosx - axis.x * sinx;
 
-    matrix_[6] = ax * az * oneMcosx - ay * sinx;
-    matrix_[7] = ay * az * oneMcosx + ax * sinx;
-    matrix_[8] = az * az * oneMcosx + cosx;
+    matrix_[6] = axis.x * axis.z * oneMcosx - axis.y * sinx;
+    matrix_[7] = axis.y * axis.z * oneMcosx + axis.x * sinx;
+    matrix_[8] = axis.z * axis.z * oneMcosx + cosx;
 }
 
 // Apply rotation about X axis

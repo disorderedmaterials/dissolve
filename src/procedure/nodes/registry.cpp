@@ -37,6 +37,7 @@
 #include "procedure/nodes/process3d.h"
 #include "procedure/nodes/remove.h"
 #include "procedure/nodes/restraintpotential.h"
+#include "procedure/nodes/rotatefragment.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleglobalpotential.h"
 #include "procedure/nodes/sum1d.h"
@@ -118,13 +119,16 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                               "Pick");
 
     // Potentials
-    registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,
-                                                         "Add a global potential affecting all atoms", "Potentials");
     registerProducer<DirectionalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::DirectionalGlobalPotential,
                                                               "Add a directional global potential affecting all atoms",
                                                               "Potentials");
     registerProducer<RestraintPotentialProcedureNode>(ProcedureNode::NodeType::RestraintPotential,
                                                       "Restraint atoms of molecules to their current positions", "Potentials");
+    registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,
+                                                         "Add a global potential affecting all atoms", "Potentials");
+
+    // Sites
+    registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
 }
 
 /*

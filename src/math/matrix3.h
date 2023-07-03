@@ -96,7 +96,7 @@ class Matrix3
     // Create rotation matrix about Z
     void createRotationZ(double angle);
     // Create axis rotation quaternion
-    void createRotationAxis(double ax, double ay, double az, double angle, bool normalise);
+    void createRotationAxis(Vec3<double> axis, double angle, bool normalise);
     // Apply rotation about X axis
     void applyRotationX(double angle);
     // Apply axis rotation quaternion

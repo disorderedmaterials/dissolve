@@ -114,10 +114,10 @@ bool SiteStack::create(Configuration *cfg, const SpeciesSite *site)
                 y.orthogonalise(x);
                 y.normalise();
 
-                orientedSites_.emplace_back(molecule, origin, x, y, x * y);
+                orientedSites_.emplace_back(speciesSite_, i, molecule, origin, x, y, x * y);
             }
             else
-                sites_.emplace_back(molecule, origin);
+                sites_.emplace_back(speciesSite_, i, molecule, origin);
         }
     }
     return true;

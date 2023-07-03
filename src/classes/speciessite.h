@@ -159,6 +159,8 @@ class SpeciesSite : public Serialisable<CoreData &>
      * Advanced Sites
      */
     private:
+    // For each unique site, indices of atoms in the species that correspond to that site
+    std::vector<std::vector<int>> sitesAllAtomsIndices_;
     // For each unique site, indices of atoms in the species which contribute to the origin of the site
     std::vector<std::vector<int>> sitesOriginAtomsIndices_;
     // For each unique site, indices of atoms in the species which indicate the x axis with the origin
@@ -171,6 +173,8 @@ class SpeciesSite : public Serialisable<CoreData &>
     bool generateUniqueSites();
     // Number of unique sites
     const int nSites() const;
+    // Return atom indices corresponding to unique sites
+    const std::vector<std::vector<int>> &sitesAllAtomsIndices() const;
     // Return atom indices contributing to unique site origins
     const std::vector<std::vector<int>> &sitesOriginAtomsIndices() const;
     // Return atom indices indicating the x axis with the origins of unique sites.
@@ -179,11 +183,17 @@ class SpeciesSite : public Serialisable<CoreData &>
     const std::vector<std::vector<int>> &sitesYAxisAtomsIndices() const;
 
     /*
-     * Generation from Parent
+     * Generation
      */
     public:
     // Create and return Site description from parent Species
     std::vector<std::shared_ptr<Site>> createFromParent() const;
+
+    private:
+    // Calculate geometric centre of atoms in the parent Species
+    Vec3<double> centreOfGeometry(std::vector<int> &indices) const;
+    // Calculate (mass-weighted) coordinate centre of atoms in the parent Species
+    Vec3<double> centreOfMass(std::vector<int> &indices) const;
 
     /*
      * Read / Write

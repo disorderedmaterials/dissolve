@@ -44,6 +44,7 @@ add_library(
   registry.cpp
   remove.cpp
   restraintpotential.cpp
+  rotatefragment.cpp
   select.cpp
   sequence.cpp
   simpleglobalpotential.cpp
@@ -93,6 +94,7 @@ add_library(
   registry.h
   remove.h
   restraintpotential.h
+  rotatefragment.h
   transmute.h
   select.h
   sequence.h
