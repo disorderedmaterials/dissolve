@@ -166,7 +166,7 @@ runs:
       # Build
       cd build
       cmake ../ -G Ninja -DCMAKE_BUILD_TYPE:STRING="Release" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DMULTI_THREADING:bool=${{ inputs.threading }} -DGUI:bool=true ${{ inputs.extraCMakeFlags }}
-      cmake --build . --config Release --target keywordwidgets
+      cmake --build . --config Release --target keywordWidgets
       cmake --build . --config Release
       cd ../
 
