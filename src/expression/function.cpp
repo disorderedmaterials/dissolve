@@ -3,6 +3,7 @@
 
 #include "expression/function.h"
 #include "math/constants.h"
+#include "math/mathfunc.h"
 
 // Return enum options for NodeTypes
 EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::internalFunctions()
@@ -15,13 +16,15 @@ EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::in
                                                                                       {ExpFunction, "exp", 1},
                                                                                       {LnFunction, "ln", 1},
                                                                                       {LogFunction, "log", 1},
+                                                                                      {PiFunction, "pi"},
+                                                                                      {RandIntRangeFunction, "randomi", 1},
                                                                                       {SinFunction, "sin", 1},
                                                                                       {SqrtFunction, "sqrt", 1},
-                                                                                      {PiFunction, "pi"},
                                                                                       {TanFunction, "tan", 1},
                                                                                       {ToDegreesFunction, "toDeg", 1},
                                                                                       {ToRadiansFunction, "toRad", 1},
-                                                                                      {TwoPiFunction, "twopi"}});
+                                                                                      {TwoPiFunction, "twopi"},
+                                                                                      {UnitRandomFunction, "random"}});
 }
 
 ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}
@@ -94,14 +97,17 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
         case (LogFunction):
             result = log10(args[0].asDouble());
             break;
+        case (PiFunction):
+            result = M_PI;
+            break;
+        case (RandIntRangeFunction):
+            result = DissolveMath::randomi(args[0].asInteger());
+            break;
         case (SinFunction):
             result = sin(args[0].asDouble());
             break;
         case (SqrtFunction):
             result = sqrt(args[0].asDouble());
-            break;
-        case (PiFunction):
-            result = M_PI;
             break;
         case (TanFunction):
             result = tan(args[0].asDouble());
@@ -114,6 +120,9 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             break;
         case (TwoPiFunction):
             result = 2.0 * M_PI;
+            break;
+        case (UnitRandomFunction):
+            result = DissolveMath::random();
             break;
         default:
             throw(std::runtime_error(
