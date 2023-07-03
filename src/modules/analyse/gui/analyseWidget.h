@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/analyse/gui/ui_widget.h"
+#include "modules/analyse/gui/ui_analyseWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

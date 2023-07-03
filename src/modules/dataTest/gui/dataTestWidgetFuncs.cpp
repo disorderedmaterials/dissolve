@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "modules/dataTest/dataTest.h"
-#include "modules/dataTest/gui/widget.h"
+#include "modules/dataTest/gui/dataTestWidget.h"
 
 DataTestModuleWidget::DataTestModuleWidget(QWidget *parent, DataTestModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

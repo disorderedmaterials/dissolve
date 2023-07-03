@@ -4,7 +4,7 @@
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/histogramCN/gui/widget.h"
+#include "modules/histogramCN/gui/histogramCNWidget.h"
 #include "modules/histogramCN/histogramCN.h"
 
 HistogramCNModuleWidget::HistogramCNModuleWidget(QWidget *parent, HistogramCNModule *module, Dissolve &dissolve)

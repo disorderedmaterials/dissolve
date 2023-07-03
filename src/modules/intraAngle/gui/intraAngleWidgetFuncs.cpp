@@ -4,7 +4,7 @@
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
 #include "gui/render/renderableData2D.h"
-#include "modules/intraAngle/gui/widget.h"
+#include "modules/intraAngle/gui/intraAngleWidget.h"
 #include "modules/intraAngle/intraAngle.h"
 
 IntraAngleModuleWidget::IntraAngleModuleWidget(QWidget *parent, IntraAngleModule *module, Dissolve &dissolve)

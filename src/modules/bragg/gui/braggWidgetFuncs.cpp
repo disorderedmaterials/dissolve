@@ -6,7 +6,7 @@
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/bragg/bragg.h"
-#include "modules/bragg/gui/widget.h"
+#include "modules/bragg/gui/braggWidget.h"
 #include "templates/algorithms.h"
 
 BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module, Dissolve &dissolve)

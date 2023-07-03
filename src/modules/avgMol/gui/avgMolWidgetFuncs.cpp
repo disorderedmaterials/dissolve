@@ -3,7 +3,7 @@
 
 #include "main/dissolve.h"
 #include "modules/avgMol/avgMol.h"
-#include "modules/avgMol/gui/widget.h"
+#include "modules/avgMol/gui/avgMolWidget.h"
 
 AvgMolModuleWidget::AvgMolModuleWidget(QWidget *parent, AvgMolModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

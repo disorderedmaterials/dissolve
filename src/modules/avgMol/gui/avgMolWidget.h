@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/avgMol/gui/ui_widget.h"
+#include "modules/avgMol/gui/ui_avgMolWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

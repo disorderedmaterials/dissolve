@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "modules/atomShake/atomShake.h"
-#include "modules/atomShake/gui/widget.h"
+#include "modules/atomShake/gui/atomShakeWidget.h"
 
 AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

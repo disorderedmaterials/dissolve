@@ -6,7 +6,7 @@
 #include "classes/braggReflection.h"
 #include "gui/models/braggReflectionFilterProxy.h"
 #include "gui/models/braggReflectionModel.h"
-#include "modules/bragg/gui/ui_widget.h"
+#include "modules/bragg/gui/ui_braggWidget.h"
 #include "modules/widget.h"
 #include "templates/optionalRef.h"
 

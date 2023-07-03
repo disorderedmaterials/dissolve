@@ -6,7 +6,7 @@
 #include "gui/render/renderableData2D.h"
 #include "main/dissolve.h"
 #include "modules/axisAngle/axisAngle.h"
-#include "modules/axisAngle/gui/widget.h"
+#include "modules/axisAngle/gui/axisAngleWidget.h"
 
 AxisAngleModuleWidget::AxisAngleModuleWidget(QWidget *parent, AxisAngleModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

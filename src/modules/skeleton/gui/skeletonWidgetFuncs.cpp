@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "modules/skeleton/gui/widget.h"
+#include "modules/skeleton/gui/skeletonWidget.h"
 #include "modules/skeleton/skeleton.h"
 
 SkeletonModuleWidget::SkeletonModuleWidget(QWidget *parent, SkeletonModule *module, Dissolve &dissolve)

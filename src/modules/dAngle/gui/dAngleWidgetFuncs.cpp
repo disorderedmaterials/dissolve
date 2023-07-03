@@ -6,7 +6,7 @@
 #include "gui/render/renderableData2D.h"
 #include "main/dissolve.h"
 #include "modules/dAngle/dAngle.h"
-#include "modules/dAngle/gui/widget.h"
+#include "modules/dAngle/gui/dAngleWidget.h"
 
 DAngleModuleWidget::DAngleModuleWidget(QWidget *parent, DAngleModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

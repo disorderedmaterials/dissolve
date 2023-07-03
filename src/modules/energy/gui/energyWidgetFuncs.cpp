@@ -5,7 +5,7 @@
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
-#include "modules/energy/gui/widget.h"
+#include "modules/energy/gui/energyWidget.h"
 
 Q_DECLARE_METATYPE(Configuration *);
 

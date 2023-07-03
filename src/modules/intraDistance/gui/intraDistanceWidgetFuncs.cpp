@@ -3,7 +3,7 @@
 
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/intraDistance/gui/widget.h"
+#include "modules/intraDistance/gui/intraDistanceWidget.h"
 #include "modules/intraDistance/intraDistance.h"
 
 IntraDistanceModuleWidget::IntraDistanceModuleWidget(QWidget *parent, IntraDistanceModule *module, Dissolve &dissolve)

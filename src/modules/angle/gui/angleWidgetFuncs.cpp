@@ -5,7 +5,7 @@
 #include "gui/render/renderableData1D.h"
 #include "gui/render/renderableData2D.h"
 #include "modules/angle/angle.h"
-#include "modules/angle/gui/widget.h"
+#include "modules/angle/gui/angleWidget.h"
 
 AngleModuleWidget::AngleModuleWidget(QWidget *parent, AngleModule *module, Dissolve &dissolve)
     : ModuleWidget(parent, dissolve), module_(module)

@@ -6,7 +6,7 @@
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/accumulate/accumulate.h"
-#include "modules/accumulate/gui/widget.h"
+#include "modules/accumulate/gui/accumulateWidget.h"
 #include "templates/algorithms.h"
 
 AccumulateModuleWidget::AccumulateModuleWidget(QWidget *parent, AccumulateModule *module, Dissolve &dissolve)

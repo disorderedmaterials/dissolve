@@ -6,7 +6,7 @@
 #include "gui/dataViewer.hui"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/sq/gui/widget.h"
+#include "modules/sq/gui/sqWidget.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 

@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "modules/geomOpt/geomOpt.h"
-#include "modules/geomOpt/gui/widget.h"
+#include "modules/geomOpt/gui/geomOptWidget.h"
 
 GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget *parent, GeometryOptimisationModule *module,
                                                                    Dissolve &dissolve)

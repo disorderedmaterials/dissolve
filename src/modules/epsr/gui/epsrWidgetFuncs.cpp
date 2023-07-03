@@ -8,7 +8,7 @@
 #include "main/dissolve.h"
 #include "module/group.h"
 #include "modules/epsr/epsr.h"
-#include "modules/epsr/gui/widget.h"
+#include "modules/epsr/gui/epsrWidget.h"
 #include "modules/gr/gr.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"

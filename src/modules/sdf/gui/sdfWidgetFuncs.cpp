@@ -8,7 +8,7 @@
 #include "gui/render/renderableSpecies.h"
 #include "main/dissolve.h"
 #include "modules/avgMol/avgMol.h"
-#include "modules/sdf/gui/widget.h"
+#include "modules/sdf/gui/sdfWidget.h"
 #include "modules/sdf/sdf.h"
 
 SDFModuleWidget::SDFModuleWidget(QWidget *parent, SDFModule *module, Dissolve &dissolve)

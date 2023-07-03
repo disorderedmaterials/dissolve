@@ -4,7 +4,7 @@
 #include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/siteRDF/gui/widget.h"
+#include "modules/siteRDF/gui/siteRDFWidget.h"
 #include "modules/siteRDF/siteRDF.h"
 
 SiteRDFModuleWidget::SiteRDFModuleWidget(QWidget *parent, SiteRDFModule *module, Dissolve &dissolve)

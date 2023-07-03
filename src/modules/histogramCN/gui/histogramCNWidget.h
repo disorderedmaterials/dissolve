@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/histogramCN/gui/ui_widget.h"
+#include "modules/histogramCN/gui/ui_histogramCNWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

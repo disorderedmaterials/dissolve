@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/energy/gui/ui_widget.h"
+#include "modules/energy/gui/ui_energyWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

@@ -7,7 +7,7 @@
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
 #include "modules/gr/gr.h"
-#include "modules/gr/gui/widget.h"
+#include "modules/gr/gui/grWidget.h"
 #include "templates/algorithms.h"
 
 Q_DECLARE_METATYPE(Configuration *);

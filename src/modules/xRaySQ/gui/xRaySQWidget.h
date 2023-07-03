@@ -4,7 +4,7 @@
 #pragma once
 
 #include "modules/widget.h"
-#include "modules/xRaySQ/gui/ui_widget.h"
+#include "modules/xRaySQ/gui/ui_xRaySQWidget.h"
 
 // Forward Declarations
 class Dissolve;

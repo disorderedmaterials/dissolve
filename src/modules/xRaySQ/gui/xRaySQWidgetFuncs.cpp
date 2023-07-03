@@ -6,7 +6,7 @@
 #include "gui/dataViewer.hui"
 #include "gui/render/renderableData1D.h"
 #include "main/dissolve.h"
-#include "modules/xRaySQ/gui/widget.h"
+#include "modules/xRaySQ/gui/xRaySQWidget.h"
 #include "modules/xRaySQ/xRaySQ.h"
 #include "templates/algorithms.h"
 

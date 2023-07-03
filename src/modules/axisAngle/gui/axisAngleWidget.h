@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/axisAngle/gui/ui_widget.h"
+#include "modules/axisAngle/gui/ui_axisAngleWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

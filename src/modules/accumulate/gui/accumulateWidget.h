@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/accumulate/gui/ui_widget.h"
+#include "modules/accumulate/gui/ui_accumulateWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations

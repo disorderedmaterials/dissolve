@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "modules/neutronSQ/gui/ui_widget.h"
+#include "modules/neutronSQ/gui/ui_neutronSQWidget.h"
 #include "modules/widget.h"
 
 // Forward Declarations
