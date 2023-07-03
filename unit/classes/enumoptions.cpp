@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/enumOptions.h"
-#include "base/enumoption.h"
+#include "base/enumOption.h"
 #include <gtest/gtest.h>
 
 TEST(EnumOptionsTest, EnumOptions)
