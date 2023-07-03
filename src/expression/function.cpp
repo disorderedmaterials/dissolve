@@ -126,6 +126,7 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             result = 2.0 * M_PI;
             break;
         case (UnitRandomFunction):
+            result = DissolveMath::random();
             break;
         default:
             throw(std::runtime_error(
