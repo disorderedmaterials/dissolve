@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineParser.h"
-#include "io/import/data1d.h"
+#include "io/import/data1D.h"
 #include "math/data1D.h"
 
 // Read simple XY data using specified parser

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "io/export/pairpotential.h"
+#include "io/export/pairPotential.h"
 #include "module/module.h"
 
 // Export PairPotentials Module

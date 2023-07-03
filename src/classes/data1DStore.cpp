@@ -3,7 +3,7 @@
 
 #include "classes/data1DStore.h"
 #include "base/lineParser.h"
-#include "io/import/data1d.h"
+#include "io/import/data1D.h"
 #include <algorithm>
 
 /*

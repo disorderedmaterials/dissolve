@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineParser.h"
-#include "io/import/data3d.h"
+#include "io/import/data3D.h"
 #include "math/data3D.h"
 
 // Read pdens data from specified file

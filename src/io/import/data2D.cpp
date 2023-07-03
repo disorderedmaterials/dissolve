@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "io/import/data2d.h"
+#include "io/import/data2D.h"
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "keywords/vec3Double.h"

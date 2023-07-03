@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "io/fileandformat.h"
+#include "io/fileAndFormat.h"
 #include "templates/vector3.h"
 
 // Forward Declarations

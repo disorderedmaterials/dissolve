@@ -3,7 +3,7 @@
 
 #include "procedure/nodes/process1D.h"
 #include "classes/configuration.h"
-#include "io/export/data1d.h"
+#include "io/export/data1D.h"
 #include "keywords/bool.h"
 #include "keywords/fileAndFormat.h"
 #include "keywords/nodeBranch.h"

@@ -7,7 +7,7 @@
 #include "classes/isotopologueSet.h"
 #include "classes/partialSet.h"
 #include "data/structureFactors.h"
-#include "io/import/data1d.h"
+#include "io/import/data1D.h"
 #include "math/windowFunction.h"
 #include "module/module.h"
 

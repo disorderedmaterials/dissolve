@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/lineParser.h"
-#include "io/import/data2d.h"
+#include "io/import/data2D.h"
 #include "math/data2D.h"
 #include "math/filters.h"
 

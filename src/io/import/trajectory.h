@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "io/fileandformat.h"
+#include "io/fileAndFormat.h"
 #include "math/matrix3.h"
 
 // Forward Declarations

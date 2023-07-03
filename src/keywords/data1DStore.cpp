@@ -4,7 +4,7 @@
 #include "keywords/data1DStore.h"
 #include "base/lineParser.h"
 #include "classes/data1DStore.h"
-#include "io/import/data1d.h"
+#include "io/import/data1D.h"
 
 Data1DStoreKeyword::Data1DStoreKeyword(Data1DStore &data) : KeywordBase(typeid(this)), data_(data) {}
 

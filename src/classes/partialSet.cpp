@@ -6,7 +6,7 @@
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "io/export/data1d.h"
+#include "io/export/data1D.h"
 #include "items/deserialisers.h"
 #include "items/serialisers.h"
 #include "templates/algorithms.h"

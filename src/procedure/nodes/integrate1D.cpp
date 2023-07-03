@@ -4,7 +4,7 @@
 #include "procedure/nodes/integrate1D.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "io/export/data1d.h"
+#include "io/export/data1D.h"
 #include "keywords/range.h"
 #include "math/integrator.h"
 #include "modules/analyse/analyse.h"

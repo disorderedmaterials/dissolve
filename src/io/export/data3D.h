@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "io/fileandformat.h"
+#include "io/fileAndFormat.h"
 #include "templates/array3D.h"
 #include "templates/optionalRef.h"
 

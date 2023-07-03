@@ -4,7 +4,7 @@
 #include "classes/partialSetAccumulator.h"
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
-#include "io/export/data1d.h"
+#include "io/export/data1D.h"
 #include "templates/algorithms.h"
 
 PartialSetAccumulator::PartialSetAccumulator() {}
