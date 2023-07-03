@@ -72,7 +72,6 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
             rotationMatrix.createRotationAxis(site->axes().columnAsVec3(2), rotation_, false);
             break;
     }
-    rotationMatrix *= site->axes();
 
     for (auto index : parent->sitesAllAtomsIndices().at(parentIndex))
     {
