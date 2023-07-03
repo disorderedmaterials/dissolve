@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/widgets/ui_sampleddoublelabel.h"
+#include "gui/widgets/ui_sampledDoubleLabel.h"
 
 // Forward Declarations
 class SampledDouble;
