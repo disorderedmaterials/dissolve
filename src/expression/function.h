@@ -21,7 +21,6 @@ class ExpressionFunctionNode : public ExpressionNode
         LnFunction,
         LogFunction,
         PiFunction,
-        RandIntFunction,
         RandIntRangeFunction,
         SinFunction,
         SqrtFunction,

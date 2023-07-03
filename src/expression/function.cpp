@@ -17,15 +17,14 @@ EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::in
                                                                                       {LnFunction, "ln", 1},
                                                                                       {LogFunction, "log", 1},
                                                                                       {PiFunction, "pi"},
-                                                                                      {RandIntFunction, "randint"},
-                                                                                      {RandIntRangeFunction, "randintrange", 1},
+                                                                                      {RandIntRangeFunction, "randomi", 1},
                                                                                       {SinFunction, "sin", 1},
                                                                                       {SqrtFunction, "sqrt", 1},
                                                                                       {TanFunction, "tan", 1},
                                                                                       {ToDegreesFunction, "toDeg", 1},
                                                                                       {ToRadiansFunction, "toRad", 1},
                                                                                       {TwoPiFunction, "twopi"},
-                                                                                      {UnitRandomFunction, "rand"}});
+                                                                                      {UnitRandomFunction, "random"}});
 }
 
 ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}
@@ -100,9 +99,6 @@ std::optional<ExpressionValue> ExpressionFunctionNode::evaluate() const
             break;
         case (PiFunction):
             result = M_PI;
-            break;
-        case (RandIntFunction):
-            result = DissolveMath::randomimax();
             break;
         case (RandIntRangeFunction):
             result = DissolveMath::randomi(args[0].asInteger());
