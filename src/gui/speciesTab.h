@@ -3,20 +3,30 @@
 
 #pragma once
 
+<<<<<<< HEAD:src/gui/speciesTab.h
 #include "classes/speciesAngle.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
 #include "gui/mainTab.h"
 #include "gui/models/speciesAngleModel.h"
+=======
+#include "classes/speciesangle.h"
+#include "classes/speciesatom.h"
+#include "classes/speciesbond.h"
+#include "classes/speciestorsion.h"
+#include "gui/maintab.h"
+>>>>>>> b5c895eb4 (WIP geometry dialog):src/gui/speciestab.h
 #include "gui/models/speciesAtomModel.h"
-#include "gui/models/speciesBondModel.h"
-#include "gui/models/speciesImproperModel.h"
 #include "gui/models/speciesIsoModel.h"
 #include "gui/models/speciesSiteFilterProxy.h"
 #include "gui/models/speciesSiteModel.h"
+<<<<<<< HEAD:src/gui/speciesTab.h
 #include "gui/models/speciesTorsionModel.h"
 #include "gui/ui_speciesTab.h"
+=======
+#include "gui/ui_speciestab.h"
+>>>>>>> b5c895eb4 (WIP geometry dialog):src/gui/speciestab.h
 
 // Forward Declarations
 class AtomType;
@@ -40,10 +50,6 @@ class SpeciesTab : public QWidget, public MainTab
     // Main form declaration
     Ui::SpeciesTab ui_;
     SpeciesAtomModel atoms_;
-    SpeciesAngleModel angles_;
-    SpeciesBondModel bonds_;
-    SpeciesTorsionModel torsions_;
-    SpeciesImproperModel impropers_;
     SpeciesIsoModel isos_;
     SpeciesSiteModel sites_;
 
@@ -135,6 +141,11 @@ class SpeciesTab : public QWidget, public MainTab
     public slots:
     // Update Isotopologues tab
     void updateIsotopologuesTab();
+
+    /*
+     * Widget Functions - Geometry
+     */
+    void on_GeometryButton_clicked(bool checked);
 
     /*
      * Widget Functions - Sites

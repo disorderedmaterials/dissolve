@@ -37,6 +37,7 @@ set(gui_MOC_HDRS
     getModuleLayerNameDialog.h
     getSpeciesNameDialog.h
     getTabNameDialog.h
+    geometryDialog.h
     importLigParGenDialog.h
     importCIFDialog.h
     importSpeciesDialog.h
@@ -91,6 +92,7 @@ set(gui_UIS
     getModuleLayerNameDialog.ui
     getSpeciesNameDialog.ui
     getTabNameDialog.ui
+    geometryDialog.ui
     importLigParGenDialog.ui
     importCIFDialog.ui
     importSpeciesDialog.ui
@@ -156,6 +158,7 @@ set(gui_SRCS
     selectSpeciesWidgetFuncs.cpp
     wizardFuncs.cpp
     # Dialogs
+<<<<<<< HEAD
     addConfigurationDialogFuncs.cpp
     addForcefieldTermsDialogFuncs.cpp
     copySpeciesTermsDialogFuncs.cpp
@@ -175,6 +178,28 @@ set(gui_SRCS
     selectGenericItemDialogFuncs.cpp
     selectRestartFileDialogFuncs.cpp
     selectSpeciesDialogFuncs.cpp
+=======
+    addconfigurationdialog_funcs.cpp
+    addforcefieldtermsdialog_funcs.cpp
+    copyspeciestermsdialog_funcs.cpp
+    datamanagerdialog_funcs.cpp
+    editspeciesdialog_funcs.cpp
+    getconfigurationnamedialog_funcs.cpp
+    getmodulelayernamedialog_funcs.cpp
+    getspeciesnamedialog_funcs.cpp
+    gettabnamedialog_funcs.cpp
+    geometrydialog_funcs.cpp
+    importligpargendialog_funcs.cpp
+    importcifdialog_funcs.cpp
+    importspeciesdialog_funcs.cpp
+    scalechargesdialog_funcs.cpp
+    selectatomtypedialog_funcs.cpp
+    selectconfigurationdialog_funcs.cpp
+    selectelementdialog_funcs.cpp
+    selectgenericitemdialog_funcs.cpp
+    selectrestartfiledialog_funcs.cpp
+    selectspeciesdialog_funcs.cpp
+>>>>>>> b5c895eb4 (WIP geometry dialog)
     # Main Tabs
     configurationTabFuncs.cpp
     forcefieldTabFuncs.cpp

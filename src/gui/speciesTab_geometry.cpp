@@ -3,7 +3,12 @@
 
 #include "classes/atomType.h"
 #include "gui/gui.h"
+<<<<<<< HEAD:src/gui/speciesTab_geometry.cpp
 #include "gui/speciesTab.h"
+=======
+#include "gui/speciestab.h"
+#include "gui/geometrydialog.h"
+>>>>>>> b5c895eb4 (WIP geometry dialog):src/gui/speciestab_geometry.cpp
 #include "main/dissolve.h"
 #include <QMessageBox>
 
@@ -118,16 +123,13 @@ void SpeciesTab::updateTotalCharges()
 // Update Geometry tables
 void SpeciesTab::updateGeometryTables()
 {
-    // If the Species version has changed, re-set the model data
-    if (speciesVersion_ != species_->version())
-    {
-        bonds_.reset();
-        angles_.reset();
-        torsions_.reset();
-        impropers_.reset();
-    }
-    ui_.BondTable->resizeColumnsToContents();
-    ui_.AngleTable->resizeColumnsToContents();
-    ui_.TorsionTable->resizeColumnsToContents();
-    ui_.ImproperTable->resizeColumnsToContents();
+}
+
+void SpeciesTab::on_GeometryButton_clicked(bool checked)
+{
+    auto geometryDialog = GeometryDialog(this, dissolve_, species_);
+    geometryDialog.exec();
+
+    if (geometryDialog.modified())
+        dissolveWindow_->setModified();
 }

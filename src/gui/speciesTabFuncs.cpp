@@ -16,10 +16,7 @@
 
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                        Species *species)
-    : MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this), atoms_(*species, dissolve),
-      angles_(species->angles(), dissolve.coreData()), bonds_(species->bonds(), dissolve.coreData()),
-      torsions_(species->torsions(), dissolve.coreData()), impropers_(species->impropers(), dissolve.coreData()),
-      isos_(*species), sites_(species->sites())
+    : MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this), atoms_(*species, dissolve), isos_(*species), sites_(species->sites())
 {
     ui_.setupUi(this);
 
@@ -39,21 +36,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.AtomTable->setItemDelegateForColumn(1, new CustomComboDelegate<SpeciesTab>(this, &SpeciesTab::validAtomTypeNames));
     for (auto n = 2; n < 6; ++n)
         ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-    // -- Geometry tables
-    ui_.BondTable->setItemDelegateForColumn(
-        2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<BondFunctions::Form>(BondFunctions::forms()),
-                                      dissolve.coreData().masterBonds()));
-    ui_.AngleTable->setItemDelegateForColumn(
-        3, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<AngleFunctions::Form>(AngleFunctions::forms()),
-                                      dissolve.coreData().masterAngles()));
-    ui_.TorsionTable->setItemDelegateForColumn(
-        4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
-                                      dissolve.coreData().masterTorsions()));
-    ui_.TorsionTable->setItemDelegateForColumn(6, new ExponentialSpinDelegate(this));
-    ui_.TorsionTable->setItemDelegateForColumn(7, new ExponentialSpinDelegate(this));
-    ui_.ImproperTable->setItemDelegateForColumn(
-        4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
-                                      dissolve.coreData().masterImpropers()));
+
     // -- Isotopologues Tree
     ui_.IsotopologuesTree->setModel(&isos_);
     connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
@@ -69,18 +52,6 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.AtomTable->horizontalHeader()->setVisible(true);
     ui_.AtomTable->verticalHeader()->setFont(font());
     ui_.AtomTable->verticalHeader()->setVisible(true);
-    ui_.BondTable->setModel(&bonds_);
-    ui_.BondTable->horizontalHeader()->setFont(font());
-    ui_.BondTable->horizontalHeader()->setVisible(true);
-    ui_.AngleTable->setModel(&angles_);
-    ui_.AngleTable->horizontalHeader()->setFont(font());
-    ui_.AngleTable->horizontalHeader()->setVisible(true);
-    ui_.TorsionTable->setModel(&torsions_);
-    ui_.TorsionTable->horizontalHeader()->setFont(font());
-    ui_.TorsionTable->horizontalHeader()->setVisible(true);
-    ui_.ImproperTable->setModel(&impropers_);
-    ui_.ImproperTable->horizontalHeader()->setFont(font());
-    ui_.ImproperTable->horizontalHeader()->setVisible(true);
 
     // Set sites model and connect signals
     ui_.SiteList->setModel(&sites_);
@@ -108,10 +79,6 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(&atoms_, SIGNAL(atomTypeChanged()), this, SLOT(updateIsotopologuesTab()));
     connect(ui_.AtomTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(updateUnderlyingAtomSelection()));
-    connect(&bonds_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
-    connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
-    connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
-    connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
     connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
 
     connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
@@ -123,7 +90,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
  */
 void SpeciesTab::on_StructureToolBox_currentChanged(int index)
 {
-    if (index != 2)
+    if (index != 3)
         ui_.ViewerWidget->setSite(nullptr);
     else
         ui_.ViewerWidget->setSite(currentSite());
