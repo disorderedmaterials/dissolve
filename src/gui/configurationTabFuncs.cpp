@@ -145,7 +145,7 @@ void ConfigurationTab::updateControls()
 // Prevent editing within tab
 void ConfigurationTab::preventEditing()
 {
-    ui_.GeneratorGroup->setEnabled(false);
+    ui_.GeneratorPage->setEnabled(false);
     ui_.TemperatureGroup->setEnabled(false);
     ui_.SizeFactorGroup->setEnabled(false);
 }
@@ -153,7 +153,7 @@ void ConfigurationTab::preventEditing()
 // Allow editing within tab
 void ConfigurationTab::allowEditing()
 {
-    ui_.GeneratorGroup->setEnabled(true);
+    ui_.GeneratorPage->setEnabled(true);
     ui_.TemperatureGroup->setEnabled(true);
     ui_.SizeFactorGroup->setEnabled(true);
 }
