@@ -86,6 +86,7 @@ bool Procedure::execute(const ProcedureContext &context)
 
 bool Procedure::removeNode(NodeRef node)
 {
+    Messenger::print("Removing node {}", node->name());
     return rootSequence_.removeNode(node);
 }
 /*

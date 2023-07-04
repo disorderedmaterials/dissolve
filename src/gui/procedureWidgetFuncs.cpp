@@ -177,7 +177,14 @@ void ProcedureWidget::on_AvailableNodesTree_doubleClicked(const QModelIndex &ind
 
 void ProcedureWidget::on_DeleteNodeButton_clicked(bool checked)
 {
-    procedure_.removeNode(
+    auto selected = ui_.NodesTree->selectionModel()->selectedIndexes();
+    if (selected.size() > 0)
+    {
+        auto node = procedureModel_.data(selected.at(0), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>();
+        assert(node);
+        procedure_.value().get().removeNode(node);
+        updateNodeTree();
+    }
 }
 
 // Remove all node control widgets

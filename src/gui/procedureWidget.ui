@@ -132,7 +132,7 @@
           <item>
            <widget class="QToolButton" name="DeleteNodeButton">
             <property name="toolTip">
-             <string>Show context information</string>
+             <string>Remove node</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -142,7 +142,7 @@
               <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
             </property>
             <property name="checkable">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
