@@ -39,6 +39,9 @@ std::vector<ConstNodeRef> Procedure::nodes(std::optional<ProcedureNode::NodeType
     return rootSequence_.nodes(optNodeType, optNodeClass);
 }
 
+// Remove a node
+bool Procedure::removeNode(NodeRef node) { return rootSequence_.removeNode(node); }
+
 /*
  * Execute
  */
@@ -84,11 +87,6 @@ bool Procedure::execute(const ProcedureContext &context)
     return true;
 }
 
-bool Procedure::removeNode(NodeRef node)
-{
-    Messenger::print("Removing node {}", node->name());
-    return rootSequence_.removeNode(node);
-}
 /*
  * Read / Write
  */
