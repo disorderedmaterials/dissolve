@@ -13,6 +13,7 @@ add_library(
   collect2D.cpp
   collect3D.cpp
   context.cpp
+  coordinates.cpp
   coordinateSets.cpp
   copy.cpp
   customRegion.cpp
@@ -48,8 +49,10 @@ add_library(
   select.cpp
   sequence.cpp
   simpleGlobalPotential.cpp
+  sizeFactor.cpp
   sum1D.cpp
   transmute.cpp
+  temperature.cpp
   add.h
   addPair.h
   box.h
@@ -63,6 +66,7 @@ add_library(
   collect2D.h
   collect3D.h
   context.h
+  coordinates.h
   coordinateSets.h
   copy.h
   customRegion.h
@@ -95,10 +99,12 @@ add_library(
   remove.h
   rotateFragment.h
   restraintPotential.h
+  temperature.h
   transmute.h
   select.h
   sequence.h
   simpleGlobalPotential.h
+  sizeFactor.h
   sum1D.h
 )
 

@@ -12,6 +12,7 @@
 #include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/collect2D.h"
 #include "procedure/nodes/collect3D.h"
+#include "procedure/nodes/coordinates.h"
 #include "procedure/nodes/coordinateSets.h"
 #include "procedure/nodes/copy.h"
 #include "procedure/nodes/customRegion.h"
@@ -40,7 +41,9 @@
 #include "procedure/nodes/rotateFragment.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleGlobalPotential.h"
+#include "procedure/nodes/sizeFactor.h"
 #include "procedure/nodes/sum1D.h"
+#include "procedure/nodes/temperature.h"
 #include "procedure/nodes/transmute.h"
 
 ProcedureNodeRegistry::ProcedureNodeRegistry()
@@ -50,10 +53,14 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<AddPairProcedureNode>(ProcedureNode::NodeType::AddPair,
                                            "Add a correlated molecule pair to a configuration", "Build");
     registerProducer<BoxProcedureNode>(ProcedureNode::NodeType::Box, "Define containing box for a configuration", "Build");
+    
+    registerProducer<CoordinatesProcedureNode>(ProcedureNode::NodeType::Coordinates, "Load coordinates", "Build");
     registerProducer<CoordinateSetsProcedureNode>(ProcedureNode::NodeType::CoordinateSets,
                                                   "Generate coordinate sets for a species", "Build");
     registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
     registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
+    registerProducer<SizeFactorProcedureNode>(ProcedureNode::NodeType::SizeFactor, "Set size factor scaling", "Build");
+    registerProducer<TemperatureProcedureNode>(ProcedureNode::NodeType::Temperature, "Set temperature", "Build");
     registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
                                              "Turn molecules from one species type into another", "Build");
 
