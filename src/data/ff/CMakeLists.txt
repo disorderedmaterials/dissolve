@@ -27,20 +27,20 @@ endmacro()
 # Main Forcefield Library
 add_library(
   ff
-  angleterm.cpp
-  atomtype.cpp
-  bondterm.cpp
+  angleTerm.cpp
+  atomType.cpp
+  bondTerm.cpp
   ff.cpp
-  improperterm.cpp
+  improperTerm.cpp
   library.cpp
-  torsionterm.cpp
-  angleterm.h
-  atomtype.h
-  bondterm.h
+  torsionTerm.cpp
+  angleTerm.h
+  atomType.h
+  bondTerm.h
   ff.h
-  improperterm.h
+  improperTerm.h
   library.h
-  torsionterm.h
+  torsionTerm.h
 )
 
 target_include_directories(ff PRIVATE ${PROJECT_SOURCE_DIR}/src)

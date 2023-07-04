@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/ff/torsionterm.h"
+#include "data/ff/torsionTerm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <pugixml.hpp>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/ff/oplsaa2005/noblegases.h"
+#include "data/ff/oplsaa2005/nobleGases.h"
 
 /*
  * Set Up

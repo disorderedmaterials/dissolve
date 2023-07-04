@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/ff/spcfw/spcfw.h"
+#include "data/ff/spcFW/spcFW.h"
 #include "base/sysFunc.h"
 #include "classes/atomType.h"
 #include "classes/speciesAtom.h"
-#include "data/ff/angleterm.h"
-#include "data/ff/atomtype.h"
-#include "data/ff/bondterm.h"
+#include "data/ff/angleTerm.h"
+#include "data/ff/atomType.h"
+#include "data/ff/bondTerm.h"
 
 /*
  * Implements "Flexible simple point-charge water model with improved liquid-state properties"

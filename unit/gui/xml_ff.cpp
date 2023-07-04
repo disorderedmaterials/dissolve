@@ -3,7 +3,7 @@
 
 #include "classes/atomType.h"
 #include "data/elements.h"
-#include "data/ff/atomtype.h"
+#include "data/ff/atomType.h"
 #include "data/ff/library.h"
 #include "data/ff/xml/base.h"
 #include "gui/models/xmlAngleModel.h"

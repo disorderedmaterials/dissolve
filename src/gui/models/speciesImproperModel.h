@@ -4,7 +4,7 @@
 #pragma once
 
 #include "classes/speciesImproper.h"
-#include "data/ff/improperterm.h"
+#include "data/ff/improperTerm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <vector>

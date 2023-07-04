@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/ff/atomtype.h"
+#include "data/ff/atomType.h"
 #include "data/ff/oplsaa2005/base.h"
 
 /*

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/ff/angleterm.h"
-#include "data/ff/bondterm.h"
-#include "data/ff/improperterm.h"
+#include "data/ff/angleTerm.h"
+#include "data/ff/bondTerm.h"
+#include "data/ff/improperTerm.h"
 #include "data/ff/oplsaa2005/base.h"
-#include "data/ff/torsionterm.h"
+#include "data/ff/torsionTerm.h"
 #include <algorithm>
 #include <functional>
 #include <optional>

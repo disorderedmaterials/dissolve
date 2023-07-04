@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "data/ff/torsionterm.h"
-#include "data/ff/atomtype.h"
+#include "data/ff/torsionTerm.h"
+#include "data/ff/atomType.h"
 #include "data/ff/ff.h"
 
 ForcefieldTorsionTerm::ForcefieldTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
