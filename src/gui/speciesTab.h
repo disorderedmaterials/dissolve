@@ -52,6 +52,8 @@ class SpeciesTab : public QWidget, public MainTab
     SpeciesAtomModel atoms_;
     SpeciesIsoModel isos_;
     SpeciesSiteModel sites_;
+    // Box information
+    QWidget* boxPage_;
 
     private:
     // Update density label

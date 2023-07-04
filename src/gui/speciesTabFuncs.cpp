@@ -83,6 +83,8 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(updateIsotopologuesTab()));
+
+    boxPage_ = ui_.BoxPage;
 }
 
 /*
@@ -124,9 +126,11 @@ void SpeciesTab::updateControls()
     Locker refreshLocker(refreshLock_);
 
     // Structure Tab
-    ui_.BoxWidget->setVisible(species_->box()->type() != Box::BoxType::NonPeriodic);
     if (species_->box()->type() != Box::BoxType::NonPeriodic)
     {
+        if (ui_.StructureToolBox->count() == 3)
+            ui_.StructureToolBox->insertItem(0, boxPage_, QString("Box"));
+        boxPage_->setHidden(false);
         const auto *box = species_->box();
         ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
         ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
@@ -135,6 +139,15 @@ void SpeciesTab::updateControls()
         ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
         ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
         ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
+    }
+    else
+    {
+        if (ui_.StructureToolBox->count() == 4)
+        {
+            ui_.StructureToolBox->removeItem(0);
+            ui_.StructureToolBox->setCurrentIndex(0);
+        }
+        boxPage_->setHidden(true);
     }
     ui_.ViewerWidget->postRedisplay();
 
