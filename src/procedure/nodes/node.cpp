@@ -37,6 +37,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Collect1D, "Collect1D"},
                      {ProcedureNode::NodeType::Collect2D, "Collect2D"},
                      {ProcedureNode::NodeType::Collect3D, "Collect3D"},
+                     {ProcedureNode::NodeType::Coordinates, "Coordinates"},
                      {ProcedureNode::NodeType::CoordinateSets, "CoordinateSets"},
                      {ProcedureNode::NodeType::Copy, "Copy"},
                      {ProcedureNode::NodeType::CustomRegion, "CustomRegion"},
@@ -67,7 +68,9 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
+                     {ProcedureNode::NodeType::SizeFactor, "SizeFactor"},
                      {ProcedureNode::NodeType::Sum1D, "Sum1D"},
+                     {ProcedureNode::NodeType::Temperature, "Temperature"},
                      {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }
 

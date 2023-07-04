@@ -99,13 +99,13 @@ add_library(
   remove.h
   rotateFragment.h
   restraintPotential.h
-  temperature.h
-  transmute.h
   select.h
   sequence.h
   simpleGlobalPotential.h
   sizeFactor.h
   sum1D.h
+  temperature.h
+  transmute.h
 )
 
 target_include_directories(procedureNodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
