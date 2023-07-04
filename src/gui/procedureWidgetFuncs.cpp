@@ -175,6 +175,7 @@ void ProcedureWidget::on_AvailableNodesTree_doubleClicked(const QModelIndex &ind
     //    nodeLayerModel_.appendNew(nodePaletteModel_.data(index, Qt::DisplayRole).toString());
 }
 
+// Delete the currently selected node, and its children
 void ProcedureWidget::on_DeleteNodeButton_clicked(bool checked)
 {
     auto selectedIndex = ui_.NodesTree->selectionModel()->selectedIndexes().front();
