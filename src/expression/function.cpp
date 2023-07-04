@@ -3,7 +3,7 @@
 
 #include "expression/function.h"
 #include "math/constants.h"
-#include "math/mathfunc.h"
+#include "math/mathFunc.h"
 
 // Return enum options for NodeTypes
 EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::internalFunctions()
