@@ -59,8 +59,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                                   "Generate coordinate sets for a species", "Build");
     registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
     registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
-    registerProducer<SizeFactorProcedureNode>(ProcedureNode::NodeType::SizeFactor, "Set size factor scaling", "Build");
-    registerProducer<TemperatureProcedureNode>(ProcedureNode::NodeType::Temperature, "Set temperature", "Build");
+    //registerProducer<SizeFactorProcedureNode>(ProcedureNode::NodeType::SizeFactor, "Set size factor scaling", "Build");
+    //registerProducer<TemperatureProcedureNode>(ProcedureNode::NodeType::Temperature, "Set temperature", "Build");
     registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
                                              "Turn molecules from one species type into another", "Build");
 
