@@ -6,8 +6,8 @@
 #include "gui/models/procedureModel.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
-#include "procedure/nodes/calculatedistance.h"
-#include "procedure/nodes/collect1d.h"
+#include "procedure/nodes/calculateDistance.h"
+#include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
 

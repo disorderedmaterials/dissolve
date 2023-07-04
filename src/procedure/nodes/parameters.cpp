@@ -3,7 +3,7 @@
 
 #include "procedure/nodes/parameters.h"
 #include "expression/variable.h"
-#include "keywords/expressionvariablevector.h"
+#include "keywords/expressionVariableVector.h"
 
 ParametersProcedureNode::ParametersProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::Parameters, {ProcedureNode::AnyContext})

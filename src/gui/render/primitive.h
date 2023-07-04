@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/primitiveinstance.h"
+#include "gui/render/primitiveInstance.h"
 #include "math/matrix4.h"
 #include <QOpenGLFunctions>
 

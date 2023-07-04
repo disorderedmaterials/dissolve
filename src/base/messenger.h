@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/outputhandler.h"
+#include "base/outputHandler.h"
 #include <fmt/format.h>
 #include <functional>
 

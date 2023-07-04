@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "genericitems/list.h"
-#include "math/data1d.h"
+#include "items/list.h"
+#include "math/data1D.h"
 #include <gtest/gtest.h>
 #include <string>
 #include <templates/algorithms.h>

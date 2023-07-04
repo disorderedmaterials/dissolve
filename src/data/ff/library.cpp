@@ -3,7 +3,7 @@
 
 #include "data/ff/library.h"
 
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "data/ff/kulmala2010/kulmala2010.h"
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py4oh.h"

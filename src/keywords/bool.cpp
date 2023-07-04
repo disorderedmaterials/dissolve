@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/bool.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 
 BoolKeyword::BoolKeyword(bool &data) : KeywordBase(typeid(this)), default_(data), data_(data) {}
 

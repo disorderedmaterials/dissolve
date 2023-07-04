@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "classes/isotopologueweight.h"
+#include "classes/isotopologueWeight.h"
 #include <vector>
 
 // Forward Declarations

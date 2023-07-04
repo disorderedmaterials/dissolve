@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "gui/maintab.h"
-#include "gui/outputhandler.hui"
+#include "gui/mainTab.h"
+#include "gui/outputHandler.hui"
 #include "gui/signals.h"
 #include "gui/thread.hui"
 #include "gui/ui_gui.h"

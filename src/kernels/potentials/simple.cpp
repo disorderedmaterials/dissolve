@@ -4,8 +4,8 @@
 #include "kernels/potentials/simple.h"
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "keywords/interactionpotential.h"
-#include "keywords/vec3double.h"
+#include "keywords/interactionPotential.h"
+#include "keywords/vec3Double.h"
 
 // Return enum options for SimplePotentialFunctions
 EnumOptions<SimplePotentialFunctions::Form> SimplePotentialFunctions::forms()

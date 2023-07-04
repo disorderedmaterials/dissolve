@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/speciesImproperModel.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 
 SpeciesImproperModel::SpeciesImproperModel(std::vector<SpeciesImproper> &impropers, const CoreData &coreData)
     : impropers_(impropers), coreData_(coreData)

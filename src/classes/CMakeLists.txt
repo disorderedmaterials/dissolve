@@ -1,25 +1,25 @@
 add_library(
   classes
-  array3d_iter.cpp
+  array3DIterator.cpp
   atom.cpp
-  atomtype.cpp
-  atomtypedata.cpp
-  atomtypemix.cpp
+  atomType.cpp
+  atomTypeData.cpp
+  atomTypeMix.cpp
   box.cpp
-  box_cubic.cpp
-  box_monoclinicalpha.cpp
-  box_monoclinicbeta.cpp
-  box_monoclinicgamma.cpp
-  box_nonperiodic.cpp
-  box_orthorhombic.cpp
-  box_singleimage.cpp
-  box_triclinic.cpp
-  braggreflection.cpp
+  boxCubic.cpp
+  boxMonoclinicAlpha.cpp
+  boxMonoclinicBeta.cpp
+  boxMonoclinicGamma.cpp
+  boxNonPeriodic.cpp
+  boxOrthorhombic.cpp
+  boxSingleImage.cpp
+  boxTriclinic.cpp
+  braggReflection.cpp
   cell.cpp
-  cellarray.cpp
-  celldistributor.cpp
-  changedata.cpp
-  changestore.cpp
+  cellArray.cpp
+  cellDistributor.cpp
+  changeData.cpp
+  changeStore.cpp
   configuration.cpp
   configuration_box.cpp
   configuration_contents.cpp
@@ -27,35 +27,35 @@ add_library(
   configuration_potentials.cpp
   configuration_sites.cpp
   configuration_upkeep.cpp
-  coredata.cpp
-  data1dstore.cpp
-  data2dstore.cpp
-  data3dstore.cpp
+  coreData.cpp
+  data1DStore.cpp
+  data2DStore.cpp
+  data3DStore.cpp
   distributor.cpp
-  isotopedata.cpp
+  isotopeData.cpp
   isotopologue.cpp
   isotopologues.cpp
-  isotopologueset.cpp
-  isotopologueweight.cpp
-  kvector.cpp
+  isotopologueSet.cpp
+  isotopologueWeight.cpp
+  kVector.cpp
   molecule.cpp
-  moleculedistributor.cpp
-  neutronweights.cpp
-  pairpotential.cpp
-  potentialmap.cpp
-  pair_iter.cpp
-  partialset.cpp
-  partialsetaccumulator.cpp
+  moleculeDistributor.cpp
+  neutronWeights.cpp
+  pairPotential.cpp
+  potentialMap.cpp
+  pairIterator.cpp
+  partialSet.cpp
+  partialSetAccumulator.cpp
   region.cpp
-  regionaldistributor.cpp
-  scatteringmatrix.cpp
-  serializablepairpotential.cpp
+  regionalDistributor.cpp
+  scatteringMatrix.cpp
+  serializablePairPotential.cpp
   site.cpp
-  sitereference.cpp
-  sitestack.cpp
-  speciesangle.cpp
-  speciesatom.cpp
-  speciesbond.cpp
+  siteReference.cpp
+  siteStack.cpp
+  speciesAngle.cpp
+  speciesAtom.cpp
+  speciesBond.cpp
   species.cpp
   species_atomic.cpp
   species_ff.cpp
@@ -64,63 +64,63 @@ add_library(
   species_isotopologues.cpp
   species_site.cpp
   species_transform.cpp
-  speciesimproper.cpp
-  speciesring.cpp
-  speciessite.cpp
-  speciestorsion.cpp
-  valuestore.cpp
-  xrayweights.cpp
-  array3d_iter.h
+  speciesImproper.cpp
+  speciesRing.cpp
+  speciesSite.cpp
+  speciesTorsion.cpp
+  valueStore.cpp
+  xRayWeights.cpp
+  array3DIterator.h
   atom.h
-  atomtypedata.h
-  atomtype.h
-  atomtypemix.h
+  atomTypeData.h
+  atomType.h
+  atomTypeMix.h
   box.h
-  braggreflection.h
+  braggReflection.h
   cell.h
-  cellarray.h
-  celldistributor.h
-  changedata.h
-  changestore.h
+  cellArray.h
+  cellDistributor.h
+  changeData.h
+  changeStore.h
   configuration.h
-  coredata.h
-  data1dstore.h
-  data2dstore.h
-  data3dstore.h
+  coreData.h
+  data1DStore.h
+  data2DStore.h
+  data3DStore.h
   distributor.h
-  empiricalformula.h
-  interactionpotential.h
-  isotopedata.h
+  empiricalFormula.h
+  interactionPotential.h
+  isotopeData.h
   isotopologue.h
   isotopologues.h
-  isotopologueset.h
-  isotopologueweight.h
-  kvector.h
+  isotopologueSet.h
+  isotopologueWeight.h
+  kVector.h
   molecule.h
-  moleculedistributor.h
-  neutronweights.h
-  pairpotential.h
-  potentialmap.h
-  partialset.h
-  partialsetaccumulator.h
+  moleculeDistributor.h
+  neutronWeights.h
+  pairPotential.h
+  potentialMap.h
+  partialSet.h
+  partialSetAccumulator.h
   region.h
-  regionaldistributor.h
-  scatteringmatrix.h
-  serializablepairpotential.h
+  regionalDistributor.h
+  scatteringMatrix.h
+  serializablePairPotential.h
   site.h
-  sitereference.h
-  sitestack.h
+  siteReference.h
+  siteStack.h
   species.h
-  speciesangle.h
-  speciesatom.h
-  speciesbond.h
-  speciesimproper.h
-  speciesintra.h
-  speciesring.h
-  speciessite.h
-  speciestorsion.h
-  valuestore.h
-  xrayweights.h
+  speciesAngle.h
+  speciesAtom.h
+  speciesBond.h
+  speciesImproper.h
+  speciesIntra.h
+  speciesRing.h
+  speciesSite.h
+  speciesTorsion.h
+  valueStore.h
+  xRayWeights.h
 )
 
 target_include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "io/import/data3d.h"
-#include "math/data3d.h"
+#include "math/data3D.h"
 
 // Read pdens data from specified file
 bool Data3DImportFileFormat::importPDens(LineParser &parser, Data3D &data)

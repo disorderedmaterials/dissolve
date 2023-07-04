@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "data3d.h"
 #include "expression/expression.h"
-#include "templates/array2d.h"
+#include "math/data3D.h"
+#include "templates/array2D.h"
 
 // Forward Declarations
 class Data1D;

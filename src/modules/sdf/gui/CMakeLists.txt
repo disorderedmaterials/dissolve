@@ -1,1 +1,1 @@
-dissolve_add_module_gui(sdfmodule)
+dissolve_add_module_gui(sdf)

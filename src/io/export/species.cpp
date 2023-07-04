@@ -2,11 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/export/species.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
 #include "classes/species.h"
-#include "data/atomicmasses.h"
+#include "data/atomicMasses.h"
 
 SpeciesExportFileFormat::SpeciesExportFileFormat(std::string_view filename, SpeciesExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

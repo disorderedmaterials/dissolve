@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/speciesAngleModel.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 
 SpeciesAngleModel::SpeciesAngleModel(std::vector<SpeciesAngle> &angles, const CoreData &coreData)
     : angles_(angles), coreData_(coreData)

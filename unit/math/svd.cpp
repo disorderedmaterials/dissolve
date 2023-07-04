@@ -3,7 +3,7 @@
 
 #include "math/svd.h"
 #include "templates/algorithms.h"
-#include "templates/array2d.h"
+#include "templates/array2D.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

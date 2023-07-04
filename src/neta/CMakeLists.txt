@@ -27,30 +27,30 @@ add_library(
   neta
   ${ANTLR_NETAGrammarLexer_CXX_OUTPUTS}
   ${ANTLR_NETAGrammarParser_CXX_OUTPUTS}
-  bondcount.cpp
+  bondCount.cpp
   character.cpp
   connection.cpp
   geometry.cpp
-  hydrogencount.cpp
-  matchedgroup.cpp
+  hydrogenCount.cpp
+  matchedGroup.cpp
   neta.cpp
   node.cpp
   or.cpp
   ring.cpp
-  ringatom.cpp
+  ringAtom.cpp
   NETAErrorListeners.cpp
   NETAVisitor.cpp
-  bondcount.h
+  bondCount.h
   character.h
   connection.h
   geometry.h
-  hydrogencount.h
-  matchedgroup.h
+  hydrogenCount.h
+  matchedGroup.h
   neta.h
   node.h
   or.h
   ring.h
-  ringatom.h
+  ringAtom.h
   NETAErrorListeners.h
   NETAVisitor.h
 )

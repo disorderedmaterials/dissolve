@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/export/values.h"
-#include "base/lineparser.h"
-#include "templates/optionalref.h"
+#include "base/lineParser.h"
+#include "templates/optionalRef.h"
 
 ValueExportFileFormat::ValueExportFileFormat(std::string_view filename, ValueExportFileFormat::ValueExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

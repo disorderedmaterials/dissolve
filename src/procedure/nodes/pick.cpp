@@ -3,9 +3,9 @@
 
 #include "procedure/nodes/pick.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
-#include "keywords/speciesvector.h"
+#include "keywords/speciesVector.h"
 
 PickProcedureNode::PickProcedureNode(std::vector<const Species *> species)
     : PickProcedureNodeBase(ProcedureNode::NodeType::Pick), speciesToPick_(std::move(species))

@@ -4,10 +4,10 @@
 #pragma once
 
 #include "base/messenger.h"
-#include "genericitems/list.h"
-#include "keywords/configurationvector.h"
+#include "items/list.h"
+#include "keywords/configurationVector.h"
 #include "keywords/store.h"
-#include "math/sampleddouble.h"
+#include "math/sampledDouble.h"
 
 // Forward Declarations
 class Dissolve;

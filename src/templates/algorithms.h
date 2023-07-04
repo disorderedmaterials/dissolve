@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 #pragma once
 
-#include "classes/array3d_iter.h"
-#include "classes/pair_iter.h"
-#include "templates/parallel_defs.h"
+#include "classes/array3DIterator.h"
+#include "classes/pairIterator.h"
+#include "templates/parallelDefs.h"
 #include <fmt/format.h>
 #include <functional>
 #include <optional>

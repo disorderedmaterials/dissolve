@@ -3,14 +3,14 @@
 
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "classes/braggreflection.h"
+#include "classes/braggReflection.h"
 #include "classes/cell.h"
 #include "classes/configuration.h"
-#include "classes/kvector.h"
+#include "classes/kVector.h"
 #include "classes/species.h"
 #include "modules/bragg/bragg.h"
 #include "templates/algorithms.h"
-#include "templates/array3d.h"
+#include "templates/array3D.h"
 
 /*
  * Private Functions

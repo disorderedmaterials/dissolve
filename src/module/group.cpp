@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "module/group.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include <algorithm>
 
 ModuleGroup::ModuleGroup(std::string_view name) : name_{name} {}

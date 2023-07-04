@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/render/axes.h"
-#include "base/sysfunc.h"
-#include "gui/render/fontinstance.h"
+#include "base/sysFunc.h"
+#include "gui/render/fontInstance.h"
 #include "gui/render/view.h"
-#include "math/doubleexp.h"
+#include "math/doubleExp.h"
 
 Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), fontInstance_(fontInstance)
 {

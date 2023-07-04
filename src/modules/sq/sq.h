@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "classes/data1dstore.h"
-#include "classes/partialset.h"
+#include "classes/data1DStore.h"
+#include "classes/partialSet.h"
 #include "math/averaging.h"
-#include "math/function1d.h"
-#include "math/windowfunction.h"
+#include "math/function1D.h"
+#include "math/windowFunction.h"
 #include "module/module.h"
 
 // Forward Declarations

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/neutronweights.h"
-#include "classes/atomtype.h"
+#include "classes/neutronWeights.h"
+#include "classes/atomType.h"
 #include "classes/configuration.h"
 #include "classes/isotopologue.h"
 #include "classes/species.h"

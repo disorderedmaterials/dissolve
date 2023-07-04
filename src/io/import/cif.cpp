@@ -4,7 +4,7 @@
 #include "io/import/cif.h"
 #include "CIFImportLexer.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "io/import/CIFImportErrorListeners.h"
 #include "io/import/CIFImportVisitor.h"
 #include "templates/algorithms.h"

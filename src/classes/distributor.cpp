@@ -3,7 +3,7 @@
 
 #include "classes/distributor.h"
 #include "base/messenger.h"
-#include "base/processpool.h"
+#include "base/processPool.h"
 #include "classes/cell.h"
 
 Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool,

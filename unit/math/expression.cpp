@@ -7,7 +7,7 @@
 #include "expression/expression.h"
 #include "expression/reference.h"
 #include "expression/variable.h"
-#include "math/mathfunc.h"
+#include "math/mathFunc.h"
 #include <fmt/format.h>
 #include <gtest/gtest.h>
 #include <string_view>

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "io/fileandformat.h"
 #include "templates/vector3.h"
 

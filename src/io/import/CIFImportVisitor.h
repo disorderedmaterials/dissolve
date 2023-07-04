@@ -5,7 +5,7 @@
 
 #include "CIFImportParserBaseVisitor.h"
 #include "io/import/cif.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <antlr4-runtime.h>
 
 // CIFImport Visitor for ANTLR

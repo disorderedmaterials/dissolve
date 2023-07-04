@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "neta/connection.h"
-#include "neta/matchedgroup.h"
+#include "neta/matchedGroup.h"
 
 // Forward Declarations
 class Forcefield;

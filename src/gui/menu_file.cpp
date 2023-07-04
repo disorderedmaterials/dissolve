@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/selectrestartfiledialog.h"
+#include "gui/selectRestartFileDialog.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>

@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/trajectory.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "classes/configuration.h"
 #include "io/import/coordinates.h"
 #include "templates/algorithms.h"

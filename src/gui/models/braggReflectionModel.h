@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/braggreflection.h"
-#include "templates/optionalref.h"
+#include "classes/braggReflection.h"
+#include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 

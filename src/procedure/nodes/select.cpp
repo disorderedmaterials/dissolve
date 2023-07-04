@@ -3,15 +3,15 @@
 
 #include "procedure/nodes/select.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
-#include "classes/sitereference.h"
+#include "classes/coreData.h"
+#include "classes/siteReference.h"
 #include "classes/species.h"
 #include "expression/variable.h"
 #include "keywords/node.h"
-#include "keywords/nodebranch.h"
-#include "keywords/nodevector.h"
+#include "keywords/nodeBranch.h"
+#include "keywords/nodeVector.h"
 #include "keywords/range.h"
-#include "keywords/speciessitevector.h"
+#include "keywords/speciesSiteVector.h"
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 

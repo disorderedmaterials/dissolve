@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
-#include "classes/speciestorsion.h"
+#include "classes/atomType.h"
+#include "classes/speciesTorsion.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

@@ -2,12 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "base/lineparser.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
+#include "base/lineParser.h"
+#include "base/processPool.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
 #include "classes/cell.h"
-#include "classes/potentialmap.h"
+#include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 

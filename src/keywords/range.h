@@ -4,8 +4,8 @@
 #pragma once
 
 #include "keywords/base.h"
+#include "keywords/vec3Labels.h"
 #include "math/range.h"
-#include "vec3labels.h"
 
 // Keyword managing Range data
 class RangeKeyword : public KeywordBase

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "module/module.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <QAbstractListModel>
 #include <QModelIndex>
 

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "io/import/data2d.h"
-#include "math/data2d.h"
+#include "math/data2D.h"
 #include "math/filters.h"
 
 // Read cartesian data from specified file

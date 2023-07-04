@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/pairpotential.h"
+#include "classes/pairPotential.h"
 #include <QAbstractTableModel>
 #include <QIcon>
 #include <QModelIndex>

@@ -27,66 +27,66 @@ set(ANTLR_OUTPUT_DIRS
 add_library(
   render
   axes.h
-  colourdefinition.h
-  colourscaledelta.h
-  colourscale.h
-  colourscalepoint.h
-  fontinstance.h
-  linestipple.h
-  linestyle.h
-  numberformat.h
-  primitiveassembly.h
+  colourDefinition.h
+  colourScaleDelta.h
+  colourScale.h
+  colourScalePoint.h
+  fontInstance.h
+  lineStipple.h
+  lineStyle.h
+  numberFormat.h
+  primitiveAssembly.h
   primitive.h
-  primitiveinfo.h
-  primitiveinstance.h
-  primitivelist.h
+  primitiveInfo.h
+  primitiveInstance.h
+  primitiveList.h
   renderable.h
-  renderableconfiguration.h
-  renderabledata1d.h
-  renderabledata2d.h
-  renderabledata3d.h
-  renderablegroup.h
-  renderablegroupmanager.h
-  renderablespecies.h
-  renderablespeciessite.h
+  renderableConfiguration.h
+  renderableData1D.h
+  renderableData2D.h
+  renderableData3D.h
+  renderableGroup.h
+  renderableGroupManager.h
+  renderableSpecies.h
+  renderableSpeciesSite.h
   symbol.h
-  textformat.h
-  textfragment.h
-  textprimitive.h
-  textprimitivelist.h
-  vertexchunk.h
+  textFormat.h
+  textFragment.h
+  textPrimitive.h
+  textPrimitiveList.h
+  vertexChunk.h
   view.h
   TextPrimitiveErrorListeners.h
   TextPrimitiveVisitor.h
   axes.cpp
-  colourdefinition.cpp
-  colourscale.cpp
-  colourscaledelta.cpp
-  colourscalepoint.cpp
-  fontinstance.cpp
-  linestipple.cpp
-  linestyle.cpp
-  numberformat.cpp
-  primitiveassembly.cpp
+  colourDefinition.cpp
+  colourScale.cpp
+  colourScaleDelta.cpp
+  colourScalePoint.cpp
+  fontInstance.cpp
+  lineStipple.cpp
+  lineStyle.cpp
+  numberFormat.cpp
+  primitiveAssembly.cpp
   primitive.cpp
-  primitiveinfo.cpp
-  primitiveinstance.cpp
-  primitivelist.cpp
+  primitiveInfo.cpp
+  primitiveInstance.cpp
+  primitiveList.cpp
   renderable.cpp
-  renderableconfiguration.cpp
-  renderabledata1d.cpp
-  renderabledata2d.cpp
-  renderabledata3d.cpp
-  renderablegroup.cpp
-  renderablegroupmanager.cpp
-  renderablespecies.cpp
-  renderablespeciessite.cpp
+  renderableConfiguration.cpp
+  renderableData1D.cpp
+  renderableData2D.cpp
+  renderableData3D.cpp
+  renderableGroup.cpp
+  renderableGroupManager.cpp
+  renderableSpecies.cpp
+  renderableSpeciesSite.cpp
   symbol.cpp
-  textformat.cpp
-  textfragment.cpp
-  textprimitive.cpp
-  textprimitivelist.cpp
-  vertexchunk.cpp
+  textFormat.cpp
+  textFragment.cpp
+  textPrimitive.cpp
+  textPrimitiveList.cpp
+  vertexChunk.cpp
   view.cpp
   TextPrimitiveErrorListeners.cpp
   TextPrimitiveVisitor.cpp

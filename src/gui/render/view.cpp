@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/render/view.h"
-#include "gui/render/fontinstance.h"
+#include "gui/render/fontInstance.h"
 #include "gui/render/renderable.h"
 #include "math/cuboid.h"
 #include <algorithm>

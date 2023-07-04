@@ -1,1 +1,1 @@
-dissolve_add_module_gui(energymodule)
+dissolve_add_module_gui(energy)

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/enumoptions.h"
-#include "base/enumoption.h"
+#include "base/enumOptions.h"
+#include "base/enumOption.h"
 #include <gtest/gtest.h>
 
 TEST(EnumOptionsTest, EnumOptions)

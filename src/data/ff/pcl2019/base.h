@@ -4,7 +4,7 @@
 #pragma once
 
 #include "data/ff/ff.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // Padual & Canongia Lopes IL (2019) Base Forcefield
 class PCL2019BaseForcefield : public Forcefield

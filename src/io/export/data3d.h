@@ -4,8 +4,8 @@
 #pragma once
 
 #include "io/fileandformat.h"
-#include "templates/array3d.h"
-#include "templates/optionalref.h"
+#include "templates/array3D.h"
+#include "templates/optionalRef.h"
 
 // Forward Declarations
 class Data3DBase;

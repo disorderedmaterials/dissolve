@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "kernels/potentials/base.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
 

@@ -3,7 +3,7 @@
 
 #include "main/keywords.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 
 /*
  * Block Keywords

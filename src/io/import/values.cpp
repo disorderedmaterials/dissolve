@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/values.h"
-#include "base/lineparser.h"
-#include "templates/optionalref.h"
+#include "base/lineParser.h"
+#include "templates/optionalRef.h"
 
 ValueImportFileFormat::ValueImportFileFormat(std::string_view filename, ValueImportFileFormat::ValueImportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

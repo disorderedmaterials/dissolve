@@ -4,9 +4,9 @@
 #include "kernels/potentials/directional.h"
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "keywords/interactionpotential.h"
-#include "keywords/vec3double.h"
-#include "keywords/vec3labels.h"
+#include "keywords/interactionPotential.h"
+#include "keywords/vec3Double.h"
+#include "keywords/vec3Labels.h"
 #include "types.h"
 
 // Return enum options for DirectionalPotentialFunctions

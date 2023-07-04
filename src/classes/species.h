@@ -4,16 +4,16 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "classes/atomtypemix.h"
+#include "classes/atomTypeMix.h"
 #include "classes/box.h"
-#include "classes/cellarray.h"
+#include "classes/cellArray.h"
 #include "classes/isotopologue.h"
-#include "classes/speciesangle.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
-#include "classes/speciesimproper.h"
-#include "classes/speciessite.h"
-#include "classes/speciestorsion.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesImproper.h"
+#include "classes/speciesSite.h"
+#include "classes/speciesTorsion.h"
 #include "io/import/coordinates.h"
 #include <list>
 #include <map>

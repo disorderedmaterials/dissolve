@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/atomTypeFilterProxy.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "data/elements.h"
 
 // Set filter element

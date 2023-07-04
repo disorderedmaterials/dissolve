@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
-#include "keywords/storedata.h"
+#include "keywords/storeData.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"

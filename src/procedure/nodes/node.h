@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "keywords/store.h"
 #include "procedure/nodes/aliases.h"
 #include "procedure/nodes/context.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // Forward Declarations
 class Configuration;

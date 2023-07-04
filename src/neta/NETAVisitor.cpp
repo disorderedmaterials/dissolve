@@ -4,14 +4,14 @@
 #include "neta/NETAVisitor.h"
 #include "data/ff/ff.h"
 #include "neta/NETAErrorListeners.h"
-#include "neta/bondcount.h"
+#include "neta/bondCount.h"
 #include "neta/character.h"
 #include "neta/geometry.h"
-#include "neta/hydrogencount.h"
+#include "neta/hydrogenCount.h"
 #include "neta/or.h"
 #include "neta/ring.h"
-#include "neta/ringatom.h"
-#include "templates/optionalref.h"
+#include "neta/ringAtom.h"
+#include "templates/optionalRef.h"
 
 /*
  * Creation Entry Point

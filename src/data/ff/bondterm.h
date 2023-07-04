@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciesbond.h"
+#include "classes/speciesBond.h"
 
 // Forward Declarations
 class Forcefield;

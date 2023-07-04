@@ -1,6 +1,6 @@
 add_library(
   main
-  atomtypes.cpp
+  atomTypes.cpp
   comms.cpp
   configurations.cpp
   cli.cpp
@@ -11,10 +11,10 @@ add_library(
   keywords_layer.cpp
   keywords_master.cpp
   keywords_module.cpp
-  keywords_pairpotentials.cpp
+  keywords_pairPotentials.cpp
   layers.cpp
   objects.cpp
-  pairpotentials.cpp
+  pairPotentials.cpp
   simulation.cpp
   species.cpp
   version.cpp

@@ -6,7 +6,7 @@
 #include "data/ff/improperterm.h"
 #include "data/ff/pcl2019/base.h"
 #include "data/ff/torsionterm.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <vector>
 
 /*

@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/speciesTorsionModel.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 
 SpeciesTorsionModel::SpeciesTorsionModel(std::vector<SpeciesTorsion> &torsions, const CoreData &coreData)
     : torsions_(torsions), coreData_(coreData)

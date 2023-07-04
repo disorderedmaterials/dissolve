@@ -4,9 +4,9 @@
 #include "modules/sq/sq.h"
 #include "keywords/bool.h"
 #include "keywords/double.h"
-#include "keywords/function1d.h"
+#include "keywords/function1D.h"
 #include "keywords/module.h"
-#include "keywords/optionalint.h"
+#include "keywords/optionalInt.h"
 #include "modules/bragg/bragg.h"
 #include "modules/gr/gr.h"
 

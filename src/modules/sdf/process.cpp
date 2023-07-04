@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "main/dissolve.h"
 #include "modules/sdf/sdf.h"
-#include "procedure/nodes/collect3d.h"
-#include "procedure/nodes/process3d.h"
+#include "procedure/nodes/collect3D.h"
+#include "procedure/nodes/process3D.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 

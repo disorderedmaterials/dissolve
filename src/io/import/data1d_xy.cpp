@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "io/import/data1d.h"
-#include "math/data1d.h"
+#include "math/data1D.h"
 
 // Read simple XY data using specified parser
 bool Data1DImportFileFormat::importXY(LineParser &parser, Data1D &data)

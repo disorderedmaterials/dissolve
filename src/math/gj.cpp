@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/gj.h"
-#include "templates/array2d.h"
+#include "templates/array2D.h"
 
 namespace GaussJordan
 {

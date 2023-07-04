@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "base/serialiser.h"
 #include "math/matrix3.h"
 

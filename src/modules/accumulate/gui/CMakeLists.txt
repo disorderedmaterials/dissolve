@@ -1,1 +1,1 @@
-dissolve_add_module_gui(accumulatemodule)
+dissolve_add_module_gui(accumulate)

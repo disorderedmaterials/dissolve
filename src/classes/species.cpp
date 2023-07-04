@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/species.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "data/ff/ff.h"
 #include "data/ff/library.h"
 #include "data/isotopes.h"

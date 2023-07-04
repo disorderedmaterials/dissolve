@@ -1,1 +1,1 @@
-dissolve_add_module_gui(epsrmodule)
+dissolve_add_module_gui(epsr)

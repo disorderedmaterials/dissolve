@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "data/elements.h"
 #include "neta/neta.h"
 

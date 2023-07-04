@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "classes/speciestorsion.h"
+#include "classes/speciesTorsion.h"
 #include "gui/models/masterTermModel.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // MasterTorsion model
 class MasterTorsionModel : public MasterTermModel

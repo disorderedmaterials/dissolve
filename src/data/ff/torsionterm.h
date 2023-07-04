@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciestorsion.h"
+#include "classes/speciesTorsion.h"
 
 // Forward Declarations
 class Forcefield;

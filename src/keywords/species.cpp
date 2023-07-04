@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/species.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 
 SpeciesKeyword::SpeciesKeyword(const Species *&data) : KeywordBase(typeid(this)), data_(data) {}

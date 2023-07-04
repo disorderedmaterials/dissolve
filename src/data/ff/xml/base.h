@@ -4,7 +4,7 @@
 #pragma once
 
 #include "data/ff/ff.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <string_view>
 
 // Forcefield whose terms are supplied by a user supplied OpenMM xml file
