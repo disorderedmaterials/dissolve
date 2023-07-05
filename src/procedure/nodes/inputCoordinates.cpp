@@ -9,7 +9,7 @@ InputCoordinatesProcedureNode::InputCoordinatesProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::InputCoordinates, {ProcedureNode::GenerationContext})
 {
     keywords_.setOrganisation("Options", "Source Data");
-    keywords_.add<FileAndFormatKeyword>("File", "File / format for coordinate sets to read in", fileSource_, "EndFile");
+    keywords_.add<FileAndFormatKeyword>("File", "File / format for initial coordinate to read in", fileSource_, "EndFile");
 }
 
 /*
