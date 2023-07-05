@@ -61,7 +61,7 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Realise the accumulated partial set
         auto &accumulated = dissolve.processingModuleData().realise<PartialSetAccumulator>(
-            "Accumulation", name(), GenericItem::ItemFlag::InRestartFileFlag);
+            targetModule->name(), name(), GenericItem::ItemFlag::InRestartFileFlag);
 
         accumulated += *targetSet;
 
