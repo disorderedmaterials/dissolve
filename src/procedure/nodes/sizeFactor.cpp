@@ -11,6 +11,18 @@ SizeFactorProcedureNode::SizeFactorProcedureNode()
     keywords_.add<NodeValueKeyword>("SizeFactor", "Size factor for scaling", sizeFactor_, this);
 }
 
+/*
+ * Identity
+ */
+
+// Return whether a name for the node must be provided
+bool SizeFactorProcedureNode::mustBeNamed() const { return true; }
+
+/*
+ * Execute
+ */
+
+// Execute node
 bool SizeFactorProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();

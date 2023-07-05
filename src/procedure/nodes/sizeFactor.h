@@ -10,6 +10,16 @@ class SizeFactorProcedureNode : public ProcedureNode
     SizeFactorProcedureNode();
     ~SizeFactorProcedureNode() override = default;
 
+    /*
+     * Identity
+     */
+    public:
+    // Return whether a name for the node must be provided
+    bool mustBeNamed() const override;
+    
+    /*
+     * Node Data
+     */
     private:
     NodeValue sizeFactor_{1.0};
 
