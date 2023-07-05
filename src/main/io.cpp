@@ -388,9 +388,6 @@ bool Dissolve::saveInput(std::string_view filename)
 
         if (!parser.writeLineF("\n"))
             return false;
-        if (!parser.writeLineF("  {}  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::SizeFactorKeyword),
-                               cfg->requestedSizeFactor()))
-            return false;
 
         if (!parser.writeLineF("{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::EndConfigurationKeyword)))
             return false;

@@ -16,7 +16,6 @@ EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywor
                                  {ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration"},
                                  {ConfigurationBlock::GeneratorKeyword, "Generator"},
                                  {ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2},
-                                 {ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1},
                                  {ConfigurationBlock::TemperatureKeyword, "Temperature", 1}});
 }
 
@@ -72,9 +71,6 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                 }
                 Messenger::printVerbose("Initial coordinates will be loaded from file '{}' ({})\n",
                                         cfg->inputCoordinates().filename(), cfg->inputCoordinates().formatKeyword());
-                break;
-            case (ConfigurationBlock::SizeFactorKeyword):
-                cfg->setRequestedSizeFactor(parser.argd(1));
                 break;
             case (ConfigurationBlock::TemperatureKeyword):
                 cfg->setTemperature(parser.argd(1));
