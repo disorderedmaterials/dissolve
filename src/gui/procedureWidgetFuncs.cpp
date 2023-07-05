@@ -144,7 +144,7 @@ void ProcedureWidget::procedureDataChanged(const QModelIndex &, const QModelInde
 
     // Node order may have changed, or node may have been deleted, so validate related data
     procedure_.value().get().rootSequence().validateNodeKeywords();
-    
+
     updateControls();
     dissolveWindow_->setModified();
 }
