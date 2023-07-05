@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "base/messenger.h"
 #include "gui/gui.h"
 #include "gui/keywordWidgets/widget.hui"
 #include "gui/nodeControlWidget.h"
@@ -14,8 +15,8 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
 
     // Set up the procedure model
     ui_.NodesTree->setModel(&procedureModel_);
-    connect(ui_.NodesTree->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this,
-            SLOT(selectedNodeChanged(const QModelIndex &)));
+    connect(ui_.NodesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+            SLOT(selectedNodeChanged(const QItemSelection &)));
     connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     // Set up the available nodes tree
@@ -74,15 +75,28 @@ void ProcedureWidget::removeControlWidget(ConstNodeRef node)
     }
 }
 
-void ProcedureWidget::selectedNodeChanged(const QModelIndex &index)
+void ProcedureWidget::selectedNodeChanged(const QItemSelection &selected)
 {
+    // For some reason the selection passed is actually out of daate when a row has been removed.
+    auto actualSelected = ui_.NodesTree->selectionModel()->selection();
+    if (actualSelected.indexes().empty())
+    {
+        ui_.DeleteNodeButton->setEnabled(false);
+        ui_.NodeControlsStack->setCurrentIndex(0);
+        return;
+    }
+
+    auto selectedIndex = actualSelected.indexes().front();
+
     // Get the selected node
-    auto node = procedureModel_.data(index, Qt::UserRole).value<std::shared_ptr<ProcedureNode>>();
+    auto node = procedureModel_.data(selectedIndex, Qt::UserRole).value<std::shared_ptr<ProcedureNode>>();
     if (!node)
     {
         ui_.NodeControlsStack->setCurrentIndex(0);
         return;
     }
+
+    ui_.DeleteNodeButton->setEnabled(true);
 
     // See if our stack already contains a control widget for the node - if not, create one
     auto *ncw = getControlWidget(node, true);
@@ -130,7 +144,8 @@ void ProcedureWidget::procedureDataChanged(const QModelIndex &, const QModelInde
 
     // Node order may have changed, or node may have been deleted, so validate related data
     procedure_.value().get().rootSequence().validateNodeKeywords();
-
+    
+    updateControls();
     dissolveWindow_->setModified();
 }
 

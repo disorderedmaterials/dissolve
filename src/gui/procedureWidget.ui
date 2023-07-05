@@ -131,6 +131,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="DeleteNodeButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="toolTip">
              <string>Remove node</string>
             </property>
