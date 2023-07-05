@@ -38,13 +38,13 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         Messenger::print("Accumulating data from module '{}'...\n", targetModule->name());
 
         // Is the target module / data type a valid combination?
-        auto targetModule_It =
-            std::find_if(validTargets.begin(), validTargets.end(),
-                         [targetModule](const auto &target) { return target.first == targetModule->type(); });
-        if (targetModule_It == validTargets.end())
+        auto targetDataIt = std::find_if(validTargets.begin(), validTargets.end(),
+                                         [targetModule](const auto &target) { return target.first == targetModule->type(); });
+        if (targetDataIt == validTargets.end())
             return Messenger::error("Module of type '{}' is not a valid target.\n",
                                     ModuleTypes::moduleType(targetModule->type()));
-        auto dataName = targetModule_It->second[targetPartialSet_];
+
+        auto dataName = targetDataIt->second[targetPartialSet_];
         if (dataName.empty())
             return Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
                                     targetPartialSet().keyword(targetPartialSet_),
