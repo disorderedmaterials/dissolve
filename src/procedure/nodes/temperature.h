@@ -19,8 +19,6 @@ class TemperatureProcedureNode : public ProcedureNode
      * Execute
      */
     public:
-    // Prepare any necessary data, ready for execution
-    bool prepare(const ProcedureContext &procedureContext) override;
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
 };
