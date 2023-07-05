@@ -3,7 +3,6 @@
 
 #pragma once
 
-
 #include "io/import/coordinates.h"
 #include "procedure/nodes/node.h"
 
@@ -15,6 +14,13 @@ class InputCoordinatesProcedureNode : public ProcedureNode
 
     private:
     CoordinateImportFileFormat fileSource_;
+
+    /*
+     * Identity
+     */
+    public:
+    // Return whether a name for the node must be provided
+    bool mustBeNamed() const override;
 
     /*
      * Execute

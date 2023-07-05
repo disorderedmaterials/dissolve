@@ -107,7 +107,7 @@ void ConfigurationTab::updateDensityLabel()
 void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
-    
+
     // Temperature
     ui_.TemperatureSpin->setValue(configuration_->temperature());
 
@@ -184,7 +184,7 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
 
     // Update
     updateControls();
-    dissolveWindow_->updateStatusBar(); 
+    dissolveWindow_->updateStatusBar();
 }
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
