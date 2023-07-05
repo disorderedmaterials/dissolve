@@ -37,9 +37,5 @@ bool ImportCoordinatesProcedureNode::prepare(const ProcedureContext &procedureCo
 bool ImportCoordinatesProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
-    if (!fileSource_.importData(cfg, &procedureContext.processPool()))
-        return false;
-    cfg->updateAtomLocations(true);
-    
-    return true;
+    return fileSource_.importData(cfg, &procedureContext.processPool());
 }

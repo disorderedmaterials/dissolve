@@ -107,6 +107,8 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
     if (!generate(procedureContext))
         return false;
 
+    updateAtomLocations(true);
+
     // If there are still no atoms, complain.
     if (nAtoms() == 0)
         return false;
