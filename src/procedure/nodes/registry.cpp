@@ -12,13 +12,13 @@
 #include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/collect2D.h"
 #include "procedure/nodes/collect3D.h"
-#include "procedure/nodes/coordinates.h"
 #include "procedure/nodes/coordinateSets.h"
 #include "procedure/nodes/copy.h"
 #include "procedure/nodes/customRegion.h"
 #include "procedure/nodes/cylindricalRegion.h"
 #include "procedure/nodes/directionalGlobalPotential.h"
 #include "procedure/nodes/generalRegion.h"
+#include "procedure/nodes/inputCoordinates.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/integrate1D.h"
 #include "procedure/nodes/operateDivide.h"
@@ -51,10 +51,10 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<AddPairProcedureNode>(ProcedureNode::NodeType::AddPair,
                                            "Add a correlated molecule pair to a configuration", "Build");
     registerProducer<BoxProcedureNode>(ProcedureNode::NodeType::Box, "Define containing box for a configuration", "Build"); 
-    registerProducer<CoordinatesProcedureNode>(ProcedureNode::NodeType::Coordinates, "Initial coordinates for configuration", "Build");
     registerProducer<CoordinateSetsProcedureNode>(ProcedureNode::NodeType::CoordinateSets,
                                                   "Generate coordinate sets for a species", "Build");
     registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
+    registerProducer<InputCoordinatesProcedureNode>(ProcedureNode::NodeType::InputCoordinates, "Initial coordinates for configuration", "Build");
     registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
     registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
                                              "Turn molecules from one species type into another", "Build");

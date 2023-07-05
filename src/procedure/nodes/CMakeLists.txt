@@ -13,13 +13,13 @@ add_library(
   collect2D.cpp
   collect3D.cpp
   context.cpp
-  coordinates.cpp
   coordinateSets.cpp
   copy.cpp
   customRegion.cpp
   cylindricalRegion.cpp
   directionalGlobalPotential.cpp
   generalRegion.cpp
+  inputCoordinates.cpp
   integerCollect1D.cpp
   integrate1D.cpp
   node.cpp
@@ -64,13 +64,13 @@ add_library(
   collect2D.h
   collect3D.h
   context.h
-  coordinates.h
   coordinateSets.h
   copy.h
   customRegion.h
   cylindricalRegion.h
   directionalGlobalPotential.h
   generalRegion.h
+  inputCoordinates.h
   integerCollect1D.h
   integrate1D.h
   node.h
