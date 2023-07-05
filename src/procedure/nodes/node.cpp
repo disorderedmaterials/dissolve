@@ -68,6 +68,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
                      {ProcedureNode::NodeType::Sum1D, "Sum1D"},
+                     {ProcedureNode::NodeType::Temperature, "Temperature"},
                      {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }
 

@@ -49,6 +49,7 @@ add_library(
   sequence.cpp
   simpleGlobalPotential.cpp
   sum1D.cpp
+  temperature.cpp
   transmute.cpp
   add.h
   addPair.h
@@ -95,11 +96,12 @@ add_library(
   remove.h
   rotateFragment.h
   restraintPotential.h
-  transmute.h
   select.h
   sequence.h
   simpleGlobalPotential.h
   sum1D.h
+  temperature.h
+  transmute.h
 )
 
 target_include_directories(procedureNodes PRIVATE ${PROJECT_SOURCE_DIR}/src)
