@@ -476,5 +476,6 @@ bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
         scope->get().removeNode(data(index(row + i, 0), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>());
     endRemoveRows();
 
+    emit(dataChanged(QModelIndex(), QModelIndex());
     return true;
 }
