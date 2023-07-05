@@ -87,6 +87,4 @@ class ConfigurationTab : public QWidget, public MainTab
     // Initial Coordinates
     void on_CoordinatesFileEdit_textChanged(QString text);
     void on_CoordinatesFileSelectButton_clicked(bool checked);
-    // Size Factor Scaling
-    void on_RequestedSizeFactorSpin_valueChanged(double value);
 };

@@ -134,10 +134,6 @@ void ConfigurationTab::updateControls()
     ui_.CoordinatesFileEdit->setText(QString::fromStdString(std::string(configuration_->inputCoordinates().filename())));
     ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 
-    // Size Factor
-    ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
-    ui_.AppliedSizeFactorLabel->setText(QString::number(configuration_->appliedSizeFactor()));
-
     // Viewer
     ui_.ViewerWidget->postRedisplay();
 }
@@ -147,7 +143,6 @@ void ConfigurationTab::preventEditing()
 {
     ui_.GeneratorGroup->setEnabled(false);
     ui_.TemperatureGroup->setEnabled(false);
-    ui_.SizeFactorGroup->setEnabled(false);
 }
 
 // Allow editing within tab
@@ -155,7 +150,6 @@ void ConfigurationTab::allowEditing()
 {
     ui_.GeneratorGroup->setEnabled(true);
     ui_.TemperatureGroup->setEnabled(true);
-    ui_.SizeFactorGroup->setEnabled(true);
 }
 
 /*
@@ -219,15 +213,4 @@ void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 {
     if (refreshLock_.isLocked())
         return;
-}
-
-// Size Factor Scaling
-void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    configuration_->setRequestedSizeFactor(value);
-
-    dissolveWindow_->setModified();
 }
