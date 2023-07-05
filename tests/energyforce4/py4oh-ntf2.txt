@@ -335,10 +335,10 @@ Configuration  'Py4OH-NTf2'
       Rotate  True
       Positioning  Random
     EndAdd
-    InputCoordinates  'InputCoordinates01'
+    ImportCoordinates  'InputCoordinates01'
       File    moscito  '../_data/moscito/py4oh_impropers/py4oh-ntf2-final.str'
       EndFile
-    EndInputCoordinates
+    EndImportCoordinates
   EndGenerator
 
   Temperature  298.150000

@@ -21,10 +21,10 @@ Configuration  'Bulk'
       Population  1000
       Species  'Water'
     EndAdd
-    InputCoordinates  'InputCoordinates01'
+    ImportCoordinates  'InputCoordinates01'
       File  dlpoly  '../_data/dlpoly/water3000_elec/CONFIG'
       EndFile
-    EndInputCoordinates
+    EndImportCoordinates
   EndGenerator
 
 EndConfiguration

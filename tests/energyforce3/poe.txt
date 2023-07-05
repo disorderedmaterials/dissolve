@@ -73,10 +73,10 @@ Configuration  'POE'
       Species  'POE'
       BoxAction  None
     EndAdd
-    InputCoordinates  'InputCoordinates01'
+    ImportCoordinates  'InputCoordinates01'
       File   moscito  '../_data/moscito/poe64_torsions/torsions-final.str'
       EndFile
-    EndInputCoordinates
+    EndImportCoordinates
   EndGenerator
 EndConfiguration
 

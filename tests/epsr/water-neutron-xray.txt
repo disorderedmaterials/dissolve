@@ -84,10 +84,10 @@ Configuration  'Bulk'
       Rotate  True
       Positioning  Random
     EndAdd
-    InputCoordinates  'InputCoordinates01'
+    ImportCoordinates  'InputCoordinates01'
       File  epsr  '../_data/epsr25/water1000-neutron-xray/waterbox.ato'
       EndFile
-    EndInputCoordinates
+    EndImportCoordinates
   EndGenerator
 
   Temperature  300.000000

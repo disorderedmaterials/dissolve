@@ -141,10 +141,10 @@ Configuration  'Liquid'
       Species  'Hexane'
       BoxAction  None
     EndAdd
-    InputCoordinates  'InputCoordinates01'
+    ImportCoordinates  'InputCoordinates01'
       File  dlpoly  '../_data/dlpoly/hexane200_torsions/CONFIG'
       EndFile
-    EndInputCoordinates
+    EndImportCoordinates
   EndGenerator
 EndConfiguration
 

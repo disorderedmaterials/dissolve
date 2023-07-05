@@ -116,10 +116,10 @@ Configuration  'Liquid'
       Population  200
       Species  'Benzene'
     EndAdd
-    InputCoordinates  'InputCoordinates01'
+    ImportCoordinates  'InputCoordinates01'
       File  epsr  '../_data/epsr25/benzene200-neutron/boxbenz.ato'
       EndFile
-    EndInputCoordinates
+    EndImportCoordinates
   EndGenerator
 EndConfiguration
 

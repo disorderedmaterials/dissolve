@@ -56,10 +56,10 @@ Configuration  'Crystal'
       BoxAction  None
       Positioning  Random
     EndAdd
-    InputCoordinates  'InputCoordinates01'
+    ImportCoordinates  'InputCoordinates01'
       File  epsr  '../_data/epsr25/mgo500-555/mgo.ato'
       EndFile
-    EndInputCoordinates
+    EndImportCoordinates
   EndGenerator
 
   Temperature  300

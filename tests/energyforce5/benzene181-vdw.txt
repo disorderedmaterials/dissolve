@@ -133,10 +133,10 @@ Configuration  'Bulk'
       Positioning  Random
       Rotate  True
     EndAdd
-    InputCoordinates  'InputCoordinates01'
+    ImportCoordinates  'InputCoordinates01'
       File dlpoly  '../_data/dlpoly/benzene181/benzene181.CONFIG'
       EndFile
-    EndInputCoordinates
+    EndImportCoordinates
   EndGenerator
 
   Temperature  300
