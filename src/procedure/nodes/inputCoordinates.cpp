@@ -17,7 +17,7 @@ InputCoordinatesProcedureNode::InputCoordinatesProcedureNode()
  */
 
 // Return whether a name for the node must be provided
-bool CoordinateSetsProcedureNode::mustBeNamed() const { return false; }
+bool InputCoordinatesProcedureNode::mustBeNamed() const { return false; }
 
 /*
  * Execute
