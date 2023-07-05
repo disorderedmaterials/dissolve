@@ -131,6 +131,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -144,6 +145,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -157,6 +159,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -198,6 +201,7 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -220,6 +224,7 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -239,6 +244,7 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -261,6 +267,7 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -296,6 +303,7 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -318,6 +326,7 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
+              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
@@ -366,6 +375,7 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -385,6 +395,7 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -435,6 +446,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -445,59 +457,6 @@
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="CoordinatesFromFileGroup">
-       <property name="title">
-        <string>Coordinates From File</string>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
-        <property name="spacing">
-         <number>4</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLineEdit" name="CoordinatesFileEdit"/>
-        </item>
-        <item row="0" column="1">
-         <widget class="QToolButton" name="CoordinatesFileSelectButton">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="main.qrc">
-            <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QComboBox" name="CoordinatesFileFormatCombo"/>
         </item>
        </layout>
       </widget>

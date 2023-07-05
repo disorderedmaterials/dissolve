@@ -37,6 +37,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Collect1D, "Collect1D"},
                      {ProcedureNode::NodeType::Collect2D, "Collect2D"},
                      {ProcedureNode::NodeType::Collect3D, "Collect3D"},
+                     {ProcedureNode::NodeType::Coordinates, "Coordinates"},
                      {ProcedureNode::NodeType::CoordinateSets, "CoordinateSets"},
                      {ProcedureNode::NodeType::Copy, "Copy"},
                      {ProcedureNode::NodeType::CustomRegion, "CustomRegion"},

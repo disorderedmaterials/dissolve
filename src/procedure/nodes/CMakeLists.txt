@@ -13,6 +13,7 @@ add_library(
   collect2D.cpp
   collect3D.cpp
   context.cpp
+  coordinates.cpp
   coordinateSets.cpp
   copy.cpp
   customRegion.cpp
@@ -63,6 +64,7 @@ add_library(
   collect2D.h
   collect3D.h
   context.h
+  coordinates.h
   coordinateSets.h
   copy.h
   customRegion.h
@@ -95,11 +97,11 @@ add_library(
   remove.h
   rotateFragment.h
   restraintPotential.h
-  transmute.h
   select.h
   sequence.h
   simpleGlobalPotential.h
   sum1D.h
+  transmute.h
 )
 
 target_include_directories(procedureNodes PRIVATE ${PROJECT_SOURCE_DIR}/src)

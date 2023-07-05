@@ -23,10 +23,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     configuration_ = cfg;
 
-    // Set model for input file coordinates
-    importEnumOptionsModel_.setData(cfg->inputCoordinates().formats());
-    ui_.CoordinatesFileFormatCombo->setModel(&importEnumOptionsModel_);
-
     // Populate density units combo
     ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
@@ -111,7 +107,7 @@ void ConfigurationTab::updateDensityLabel()
 void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
-
+    return;
     // Temperature
     ui_.TemperatureSpin->setValue(configuration_->temperature());
 
@@ -129,10 +125,6 @@ void ConfigurationTab::updateControls()
     ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
     ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
     updateDensityLabel();
-
-    // Input Coordinates
-    ui_.CoordinatesFileEdit->setText(QString::fromStdString(std::string(configuration_->inputCoordinates().filename())));
-    ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 
     // Size Factor
     ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
@@ -192,7 +184,7 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
 
     // Update
     updateControls();
-    dissolveWindow_->updateStatusBar();
+    dissolveWindow_->updateStatusBar(); 
 }
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
@@ -207,19 +199,6 @@ void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 
 // Current Box
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
-
-// Initial Coordinates
-void ConfigurationTab::on_CoordinatesFileEdit_textChanged(QString text)
-{
-    if (refreshLock_.isLocked())
-        return;
-}
-
-void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
-{
-    if (refreshLock_.isLocked())
-        return;
-}
 
 // Size Factor Scaling
 void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
