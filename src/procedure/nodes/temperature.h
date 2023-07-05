@@ -25,7 +25,6 @@ class TemperatureProcedureNode : public ProcedureNode
     // Temperature for configuration
     NodeValue temperature_{300.0};
 
-
     /*
      * Execute
      */
