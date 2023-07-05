@@ -112,9 +112,6 @@ void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
-    // Temperature
-    ui_.TemperatureSpin->setValue(configuration_->temperature());
-
     // Populations
     ui_.AtomPopulation->setText(QString::number(configuration_->nAtoms()));
     ui_.MolPopulation->setText(QString::number(configuration_->nMolecules()));
@@ -146,7 +143,6 @@ void ConfigurationTab::updateControls()
 void ConfigurationTab::preventEditing()
 {
     ui_.GeneratorGroup->setEnabled(false);
-    ui_.TemperatureGroup->setEnabled(false);
     ui_.SizeFactorGroup->setEnabled(false);
 }
 
@@ -154,7 +150,6 @@ void ConfigurationTab::preventEditing()
 void ConfigurationTab::allowEditing()
 {
     ui_.GeneratorGroup->setEnabled(true);
-    ui_.TemperatureGroup->setEnabled(true);
     ui_.SizeFactorGroup->setEnabled(true);
 }
 
@@ -193,16 +188,6 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     // Update
     updateControls();
     dissolveWindow_->updateStatusBar();
-}
-
-void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    configuration_->setTemperature(value);
-
-    dissolveWindow_->setModified();
 }
 
 // Current Box

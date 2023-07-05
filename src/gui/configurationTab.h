@@ -80,8 +80,6 @@ class ConfigurationTab : public QWidget, public MainTab
     private slots:
     // Content
     void on_GenerateButton_clicked(bool checked);
-    // Definition
-    void on_TemperatureSpin_valueChanged(double value);
     // Current Box
     void on_DensityUnitsCombo_currentIndexChanged(int index);
     // Initial Coordinates
