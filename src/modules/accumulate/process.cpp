@@ -70,8 +70,8 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Save data if requested
         std::vector<std::string> suffixes = {"gr", "sq", "gr"};
         std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
-        if (save_ &&
-            (!MPIRunMaster(procPool, accumulated.save(name_, dataName, suffixes[targetPartialSet_], units[targetPartialSet_]))))
+        if (save_ && (!MPIRunMaster(procPool, accumulated.save(fmt::format("{}-{}", name(), targetModule->name()), dataName,
+                                                               suffixes[targetPartialSet_], units[targetPartialSet_]))))
             return false;
     }
 
