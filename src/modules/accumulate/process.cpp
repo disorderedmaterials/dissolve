@@ -25,14 +25,14 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Get the module and decide on the PartialSet data name we're looking for
-    if (targetModule_.empty())
+    if (targetModules_.empty())
         return Messenger::error("No target module set.");
 
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
     Messenger::print("\n");
 
-    for (const auto *targetModule : targetModule_)
+    for (const auto *targetModule : targetModules_)
     {
         // Print summary of parameters
         Messenger::print("Accumulating data from module '{}'...\n", targetModule->name());

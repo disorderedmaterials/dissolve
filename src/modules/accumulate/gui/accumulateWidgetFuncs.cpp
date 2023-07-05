@@ -77,6 +77,9 @@ void AccumulateModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
 {
     refreshing_ = true;
 
+    // Update model
+    moduleModel_.setData(module_->keywords().getVectorModule("Targets"));
+
     // Set button texts
     auto hasSQ = module_->keywords().getEnumeration<AccumulateModule::TargetPartialSet>("Data") ==
                  AccumulateModule::TargetPartialSet::SQ;
