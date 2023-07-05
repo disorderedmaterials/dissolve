@@ -19,7 +19,7 @@ add_library(
   cylindricalRegion.cpp
   directionalGlobalPotential.cpp
   generalRegion.cpp
-  inputCoordinates.cpp
+  importCoordinates.cpp
   integerCollect1D.cpp
   integrate1D.cpp
   node.cpp
@@ -70,7 +70,7 @@ add_library(
   cylindricalRegion.h
   directionalGlobalPotential.h
   generalRegion.h
-  inputCoordinates.h
+  importCoordinates.h
   integerCollect1D.h
   integrate1D.h
   node.h

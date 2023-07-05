@@ -6,11 +6,11 @@
 #include "io/import/coordinates.h"
 #include "procedure/nodes/node.h"
 
-class InputCoordinatesProcedureNode : public ProcedureNode
+class ImportCoordinatesProcedureNode : public ProcedureNode
 {
     public:
-    InputCoordinatesProcedureNode();
-    ~InputCoordinatesProcedureNode() override = default;
+    ImportCoordinatesProcedureNode();
+    ~ImportCoordinatesProcedureNode() override = default;
 
     private:
     CoordinateImportFileFormat fileSource_;
