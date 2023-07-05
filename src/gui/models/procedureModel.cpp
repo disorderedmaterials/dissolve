@@ -5,7 +5,6 @@
 #include "gui/models/procedureModelMimeData.h"
 #include "procedure/nodes/registry.h"
 #include "procedure/procedure.h"
-#include "qabstractitemmodel.h"
 #include <QIODevice>
 #include <QIcon>
 #include <QMimeData>
