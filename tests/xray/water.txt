@@ -62,10 +62,11 @@ Configuration  'Bulk'
       Population  1000
       Species  'Water'
     EndAdd
+    InputCoordinates  'InputCoordinates01'
+      File  epsr  '../_data/epsr25/water1000-neutron-xray/waterbox.ato'
+      EndFile
+    EndInputCoordinates
   EndGenerator
-
-  InputCoordinates  epsr  '../_data/epsr25/water1000-neutron-xray/waterbox.ato'
-  EndInputCoordinates
 
 EndConfiguration
 

@@ -20,9 +20,11 @@ Configuration 'liquid'
       Population  10000
       BoxAction  None
     EndAdd
+    InputCoordinates  'InputCoordinates01'
+      File  epsr  '../_data/epsr25/argon10000_qdep0.1/argonbox.ato'
+      EndFile
+    EndInputCoordinates
   EndGenerator
-  InputCoordinates  epsr  '../_data/epsr25/argon10000_qdep0.1/argonbox.ato'
-  EndInputCoordinates
 EndConfiguration
 
 Layer  'Processing'

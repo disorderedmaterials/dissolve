@@ -67,12 +67,13 @@ Configuration  'Bulk'
       BoxAction  None
       Positioning  Random
     EndAdd
+    InputCoordinates  'InputCoordinates01'
+      File  xyz  './simple.xyz'
+      EndFile
+    EndInputCoordinates
   EndGenerator
 
   Temperature  298
-
-  InputCoordinates  xyz  './simple.xyz'
-  EndInputCoordinates
 
 EndConfiguration
 

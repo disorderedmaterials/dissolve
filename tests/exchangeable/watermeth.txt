@@ -61,9 +61,11 @@ Configuration  'Mix'
      Population  600
      Species  'Methanol'
     EndAdd
+    InputCoordinates  'InputCoordinates01'
+      File  epsr  '../_data/epsr25/water300methanol600/watermeth.ato'
+      EndFile
+    EndInputCoordinates
   EndGenerator
-  InputCoordinates  epsr  '../_data/epsr25/water300methanol600/watermeth.ato'
-  EndInputCoordinates
 EndConfiguration
 
 Layer  'Correlations'

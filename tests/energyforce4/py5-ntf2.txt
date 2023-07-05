@@ -355,9 +355,11 @@ Configuration  'Py5-NTf2'
       Rotate  True
       Positioning  Random
     EndAdd
-  EndGenerator
-    InputCoordinates  moscito  '../_data/moscito/py5_impropers/py5-ntf2-final.str'
+    InputCoordinates  'InputCoordinates01'
+      File    moscito  '../_data/moscito/py5_impropers/py5-ntf2-final.str'
+      EndFile
     EndInputCoordinates
+  EndGenerator
   Temperature  300.000000
 
   # Modules
