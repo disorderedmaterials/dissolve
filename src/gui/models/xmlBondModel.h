@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/ff/bondterm.h"
+#include "data/ff/bondTerm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <pugixml.hpp>

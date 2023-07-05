@@ -4,7 +4,7 @@
 #pragma once
 
 #include "data/spaceGroups.h"
-#include "io/import/cifclasses.h"
+#include "io/import/cifClasses.h"
 #include "math/matrix4.h"
 #include <map>
 

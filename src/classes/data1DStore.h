@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "io/import/data1d.h"
+#include "io/import/data1D.h"
 #include "math/data1D.h"
 #include "templates/optionalRef.h"
 #include <list>

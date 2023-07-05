@@ -3,7 +3,7 @@
 
 #include "gui/keywordWidgets/dialog.h"
 #include "gui/keywordWidgets/fileAndFormat.h"
-#include "io/fileandformat.h"
+#include "io/fileAndFormat.h"
 #include "main/dissolve.h"
 #include <QComboBox>
 #include <QFile>

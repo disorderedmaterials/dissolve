@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/ff/angleterm.h"
+#include "data/ff/angleTerm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <pugixml.hpp>

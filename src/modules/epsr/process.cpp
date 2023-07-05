@@ -8,7 +8,7 @@
 #include "classes/scatteringMatrix.h"
 #include "classes/xRayWeights.h"
 #include "data/isotopes.h"
-#include "io/export/data1d.h"
+#include "io/export/data1D.h"
 #include "keywords/module.h"
 #include "main/dissolve.h"
 #include "math/error.h"

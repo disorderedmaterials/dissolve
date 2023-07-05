@@ -8,11 +8,11 @@
 #include "classes/species.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
-#include "data/ff/angleterm.h"
-#include "data/ff/atomtype.h"
-#include "data/ff/bondterm.h"
-#include "data/ff/improperterm.h"
-#include "data/ff/torsionterm.h"
+#include "data/ff/angleTerm.h"
+#include "data/ff/atomType.h"
+#include "data/ff/bondTerm.h"
+#include "data/ff/improperTerm.h"
+#include "data/ff/torsionTerm.h"
 
 /*
  * Set Up

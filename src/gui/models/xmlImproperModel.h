@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/ff/improperterm.h"
+#include "data/ff/improperTerm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <pugixml.hpp>

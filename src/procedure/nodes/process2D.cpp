@@ -3,7 +3,7 @@
 
 #include "procedure/nodes/process2D.h"
 #include "classes/configuration.h"
-#include "io/export/data2d.h"
+#include "io/export/data2D.h"
 #include "keywords/fileAndFormat.h"
 #include "keywords/nodeBranch.h"
 #include "keywords/stdString.h"

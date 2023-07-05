@@ -7,9 +7,9 @@
 #include "gui/render/renderableData2D.h"
 #include "gui/render/renderableData3D.h"
 #include "gui/selectGenericItemDialog.h"
-#include "io/export/data1d.h"
-#include "io/export/data2d.h"
-#include "io/export/data3d.h"
+#include "io/export/data1D.h"
+#include "io/export/data2D.h"
+#include "io/export/data3D.h"
 #include "math/data2D.h"
 #include <QFileDialog>
 

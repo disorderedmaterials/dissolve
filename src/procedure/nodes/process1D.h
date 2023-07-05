@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "io/export/data1d.h"
+#include "io/export/data1D.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 

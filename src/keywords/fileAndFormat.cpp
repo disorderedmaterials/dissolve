@@ -3,7 +3,7 @@
 
 #include "keywords/fileAndFormat.h"
 #include "base/lineParser.h"
-#include "io/fileandformat.h"
+#include "io/fileAndFormat.h"
 
 FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &data, std::string_view endKeyword)
     : KeywordBase(typeid(this)), data_(data), endKeyword_{endKeyword}

@@ -1,20 +1,20 @@
 add_library(
   export
   coordinates.cpp
-  data1d.cpp
-  data2d.cpp
-  data3d.cpp
+  data1D.cpp
+  data2D.cpp
+  data3D.cpp
   forces.cpp
-  pairpotential.cpp
+  pairPotential.cpp
   species.cpp
   trajectory.cpp
   values.cpp
   coordinates.h
-  data1d.h
-  data2d.h
-  data3d.h
+  data1D.h
+  data2D.h
+  data3D.h
   forces.h
-  pairpotential.h
+  pairPotential.h
   species.h
   trajectory.h
   values.h

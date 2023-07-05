@@ -3,7 +3,7 @@
 
 #include "classes/data2DStore.h"
 #include "base/lineParser.h"
-#include "io/import/data2d.h"
+#include "io/import/data2D.h"
 
 /*
  * Data

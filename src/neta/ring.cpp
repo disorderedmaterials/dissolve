@@ -3,7 +3,7 @@
 
 #include "neta/ring.h"
 #include "classes/speciesAtom.h"
-#include "data/ff/atomtype.h"
+#include "data/ff/atomType.h"
 #include "neta/ringAtom.h"
 #include <algorithm>
 #include <numeric>

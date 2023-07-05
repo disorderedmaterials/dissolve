@@ -5,7 +5,7 @@
 #include "classes/configuration.h"
 #include "classes/neutronWeights.h"
 #include "classes/species.h"
-#include "io/export/data1d.h"
+#include "io/export/data1D.h"
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"

@@ -9,11 +9,11 @@
 #include "classes/speciesImproper.h"
 #include "classes/speciesTorsion.h"
 #include "data/elements.h"
-#include "data/ff/angleterm.h"
-#include "data/ff/atomtype.h"
-#include "data/ff/bondterm.h"
-#include "data/ff/improperterm.h"
-#include "data/ff/torsionterm.h"
+#include "data/ff/angleTerm.h"
+#include "data/ff/atomType.h"
+#include "data/ff/bondTerm.h"
+#include "data/ff/improperTerm.h"
+#include "data/ff/torsionTerm.h"
 #include "templates/optionalRef.h"
 #include <algorithm>
 #include <functional>

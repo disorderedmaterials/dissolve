@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/ff/atomtype.h"
+#include "data/ff/atomType.h"
 #include "main/dissolve.h"
 
 #include <QAbstractTableModel>

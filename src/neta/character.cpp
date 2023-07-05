@@ -3,7 +3,7 @@
 
 #include "neta/character.h"
 #include "classes/speciesAtom.h"
-#include "data/ff/atomtype.h"
+#include "data/ff/atomType.h"
 #include <algorithm>
 #include <map>
 #include <utility>
