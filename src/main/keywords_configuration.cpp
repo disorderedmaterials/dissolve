@@ -15,7 +15,6 @@ EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywor
         "ConfigurationKeyword", {{ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1},
                                  {ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration"},
                                  {ConfigurationBlock::GeneratorKeyword, "Generator"},
-                                 {ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2},
                                  {ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1},
                                  {ConfigurationBlock::TemperatureKeyword, "Temperature", 1}});
 }
