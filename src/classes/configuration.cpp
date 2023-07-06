@@ -136,6 +136,9 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
     // Create cell array
     updateCells(procedureContext.potentialMap().range());
 
+    // Apply size factor scaling if required
+    applySizeFactor(procedureContext.processPool(), procedureContext.potentialMap());
+
     return true;
 }
 

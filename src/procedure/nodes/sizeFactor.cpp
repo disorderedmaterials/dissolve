@@ -27,6 +27,5 @@ bool SizeFactorProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     auto *cfg = procedureContext.configuration();
     cfg->setRequestedSizeFactor(sizeFactor_.asDouble());
-    cfg->applySizeFactor(procedureContext.processPool(), procedureContext.potentialMap());
     return true;
 }
