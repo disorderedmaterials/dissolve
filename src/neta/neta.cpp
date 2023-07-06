@@ -37,6 +37,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     rootNode_ = std::make_shared<NETANode>(this);
     valid_ = false;
 
+    // Check for empty definition string
     if (definitionString_.empty())
         return false;
 
