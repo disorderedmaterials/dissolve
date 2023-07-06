@@ -12,15 +12,19 @@ class ImportCoordinatesProcedureNode : public ProcedureNode
     ImportCoordinatesProcedureNode();
     ~ImportCoordinatesProcedureNode() override = default;
 
-    private:
-    CoordinateImportFileFormat fileSource_;
-
     /*
      * Identity
      */
     public:
     // Return whether a name for the node must be provided
     bool mustBeNamed() const override;
+
+    /*
+     * Node Data
+     */
+    private:
+    // Import Coordinates source file and format
+    CoordinateImportFileFormat fileSource_;
 
     /*
      * Execute
