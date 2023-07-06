@@ -5,6 +5,7 @@
 #include "classes/configuration.h"
 #include "keywords/nodeValue.h"
 #include "procedure/nodes/node.h"
+
 TemperatureProcedureNode::TemperatureProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::Temperature, {ProcedureNode::GenerationContext})
 {
@@ -15,6 +16,7 @@ TemperatureProcedureNode::TemperatureProcedureNode()
  * Identity
  */
 
+// Return whether a name for the node must be provided
 bool TemperatureProcedureNode::mustBeNamed() const { return false; }
 
 /*

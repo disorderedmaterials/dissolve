@@ -806,7 +806,7 @@
   </action>
   <action name="ConfigurationAdjustTemperatureAction">
    <property name="text">
-    <string>Adjust Temperature...</string>
+    <string>Adjust &amp;Temperature...</string>
    </property>
   </action>
  </widget>

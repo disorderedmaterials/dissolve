@@ -182,7 +182,7 @@ void AddConfigurationDialog::finalise()
     auto &generator = newConfiguration->generator();
 
     // Add Temperature node, by default
-    generator.createRootNode<TemperatureProcedureNode>("Temperature");
+    generator.createRootNode<TemperatureProcedureNode>({});
 
     std::shared_ptr<GeneralRegionProcedureNode> regionNode;
 

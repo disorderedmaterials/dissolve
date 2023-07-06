@@ -5,6 +5,7 @@
 
 #include "keywords/nodeValue.h"
 #include "procedure/nodes/node.h"
+
 class TemperatureProcedureNode : public ProcedureNode
 {
     public:
