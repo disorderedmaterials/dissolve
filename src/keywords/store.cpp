@@ -271,7 +271,7 @@ std::vector<Configuration *> KeywordStore::getVectorConfiguration(std::string_vi
 int KeywordStore::getInt(std::string_view name) const { return getKeyword<IntegerKeyword>(keywords_, name)->data(); }
 
 // Retrieve a vector of Modules by keyword name
-std::vector<Module *> KeywordStore::getVectorModule(std::string_view name) const
+const std::vector<Module *> &KeywordStore::getVectorModule(std::string_view name) const
 {
     return getKeyword<ModuleVectorKeyword>(keywords_, name)->data();
 }

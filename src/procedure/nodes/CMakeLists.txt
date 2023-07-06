@@ -19,6 +19,7 @@ add_library(
   cylindricalRegion.cpp
   directionalGlobalPotential.cpp
   generalRegion.cpp
+  importCoordinates.cpp
   integerCollect1D.cpp
   integrate1D.cpp
   node.cpp
@@ -70,6 +71,7 @@ add_library(
   cylindricalRegion.h
   directionalGlobalPotential.h
   generalRegion.h
+  importCoordinates.h
   integerCollect1D.h
   integrate1D.h
   node.h
@@ -96,12 +98,12 @@ add_library(
   remove.h
   rotateFragment.h
   restraintPotential.h
-  transmute.h
   select.h
   sequence.h
   simpleGlobalPotential.h
   sizeFactor.h
   sum1D.h
+  transmute.h
 )
 
 target_include_directories(procedureNodes PRIVATE ${PROJECT_SOURCE_DIR}/src)

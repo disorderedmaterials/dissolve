@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "gui/models/moduleModel.h"
 #include "modules/accumulate/gui/ui_accumulateWidget.h"
 #include "modules/widget.h"
 
@@ -26,6 +27,8 @@ class AccumulateModuleWidget : public ModuleWidget
     private:
     // Associated Module
     AccumulateModule *module_;
+    // Current Module target
+    const Module *currentTargetModule_{nullptr};
     // Target partial data being displayed (if any)
     OptionalReferenceWrapper<const PartialSetAccumulator> targetPartials_;
 
@@ -35,6 +38,8 @@ class AccumulateModuleWidget : public ModuleWidget
     private:
     // Main form declaration
     Ui::AccumulateModuleWidget ui_;
+    // Model for module
+    ModuleModel moduleModel_;
     // DataViewer contained within this widget
     DataViewer *graph_;
 
@@ -52,4 +57,7 @@ class AccumulateModuleWidget : public ModuleWidget
     private slots:
     void on_PartialsButton_clicked(bool checked);
     void on_TotalButton_clicked(bool checked);
+    void on_ModuleTargetCombo_currentIndexChanged(int index);
+    void on_FilterEdit_textChanged(QString text);
+    void on_ClearFilterButton_clicked(bool checked);
 };

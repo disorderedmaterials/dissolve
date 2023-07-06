@@ -18,6 +18,7 @@
 #include "procedure/nodes/cylindricalRegion.h"
 #include "procedure/nodes/directionalGlobalPotential.h"
 #include "procedure/nodes/generalRegion.h"
+#include "procedure/nodes/importCoordinates.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/integrate1D.h"
 #include "procedure/nodes/operateDivide.h"
@@ -54,6 +55,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<CoordinateSetsProcedureNode>(ProcedureNode::NodeType::CoordinateSets,
                                                   "Generate coordinate sets for a species", "Build");
     registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
+    registerProducer<ImportCoordinatesProcedureNode>(ProcedureNode::NodeType::ImportCoordinates,
+                                                     "Import coordinates into a configuration", "Build");
     registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
     registerProducer<SizeFactorProcedureNode>(ProcedureNode::NodeType::SizeFactor,
                                               "Scale a configuration's contents with a size factor", "Build");
