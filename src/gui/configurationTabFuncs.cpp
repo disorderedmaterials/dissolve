@@ -128,16 +128,10 @@ void ConfigurationTab::updateControls()
 }
 
 // Prevent editing within tab
-void ConfigurationTab::preventEditing()
-{
-    ui_.GeneratorGroup->setEnabled(false);
-}
+void ConfigurationTab::preventEditing() { ui_.GeneratorGroup->setEnabled(false); }
 
 // Allow editing within tab
-void ConfigurationTab::allowEditing()
-{
-    ui_.GeneratorGroup->setEnabled(true);
-}
+void ConfigurationTab::allowEditing() { ui_.GeneratorGroup->setEnabled(true); }
 
 /*
  * Signals / Slots
