@@ -21,7 +21,7 @@ class SizeFactorProcedureNode : public ProcedureNode
      * Node Data
      */
     private:
-    NodeValue sizeFactor_{1.0};
+    NodeValue sizeFactor_{10.0};
 
     /*
      * Execute
