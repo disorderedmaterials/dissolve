@@ -41,6 +41,7 @@
 #include "procedure/nodes/rotateFragment.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleGlobalPotential.h"
+#include "procedure/nodes/sizeFactor.h"
 #include "procedure/nodes/sum1D.h"
 #include "procedure/nodes/transmute.h"
 
@@ -57,6 +58,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<ImportCoordinatesProcedureNode>(ProcedureNode::NodeType::ImportCoordinates,
                                                      "Import coordinates into a configuration", "Build");
     registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
+    registerProducer<SizeFactorProcedureNode>(ProcedureNode::NodeType::SizeFactor,
+                                              "Scale a configuration's contents with a size factor", "Build");
     registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
                                              "Turn molecules from one species type into another", "Build");
 

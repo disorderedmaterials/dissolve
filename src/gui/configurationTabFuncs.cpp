@@ -126,10 +126,6 @@ void ConfigurationTab::updateControls()
     ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
     updateDensityLabel();
 
-    // Size Factor
-    ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
-    ui_.AppliedSizeFactorLabel->setText(QString::number(configuration_->appliedSizeFactor()));
-
     // Viewer
     ui_.ViewerWidget->postRedisplay();
 }
@@ -139,7 +135,6 @@ void ConfigurationTab::preventEditing()
 {
     ui_.GeneratorGroup->setEnabled(false);
     ui_.TemperatureGroup->setEnabled(false);
-    ui_.SizeFactorGroup->setEnabled(false);
 }
 
 // Allow editing within tab
@@ -147,7 +142,6 @@ void ConfigurationTab::allowEditing()
 {
     ui_.GeneratorGroup->setEnabled(true);
     ui_.TemperatureGroup->setEnabled(true);
-    ui_.SizeFactorGroup->setEnabled(true);
 }
 
 /*
@@ -199,14 +193,3 @@ void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 
 // Current Box
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
-
-// Size Factor Scaling
-void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    configuration_->setRequestedSizeFactor(value);
-
-    dissolveWindow_->setModified();
-}

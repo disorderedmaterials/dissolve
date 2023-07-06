@@ -82,6 +82,4 @@ class ConfigurationTab : public QWidget, public MainTab
     void on_TemperatureSpin_valueChanged(double value);
     // Current Box
     void on_DensityUnitsCombo_currentIndexChanged(int index);
-    // Size Factor Scaling
-    void on_RequestedSizeFactorSpin_valueChanged(double value);
 };

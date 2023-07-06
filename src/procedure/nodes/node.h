@@ -80,6 +80,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         Select,
         Sequence,
         SimpleGlobalPotential,
+        SizeFactor,
         Sum1D,
         Transmute
     };
