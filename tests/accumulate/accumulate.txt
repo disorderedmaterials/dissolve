@@ -97,7 +97,7 @@ Layer  'Processing'
 
   # Accumulate RDFs
   Module  Accumulate  'Accumulate01'
-    Target  'GR01'
+    Targets  'GR01'
     Data  'GR'
   EndModule
 
@@ -138,14 +138,14 @@ Layer  'Processing'
   EndModule
 
   Module  DataTest  'Totals'
-    InternalData1D  'Accumulate01//Accumulation//Total'  'AveragedRDF//UnweightedGR//Total'
-    InternalData1D  'Accumulate01//Accumulation//HW-HW//Full'  'AveragedRDF//UnweightedGR//HW-HW//Full'
-    InternalData1D  'Accumulate01//Accumulation//HW-OW//Full'  'AveragedRDF//UnweightedGR//HW-OW//Full'
-    InternalData1D  'Accumulate01//Accumulation//OW-OW//Full'  'AveragedRDF//UnweightedGR//OW-OW//Full'
-    InternalData1D  'Accumulate01//Accumulation//OW-OW//Full'  'RDF(OW-OW)//Process1D//RDF'
-    InternalData1D  'Accumulate01//Accumulation//OW-OW//Unbound'  'RDF(OW-OW)//Process1D//RDF'
-    InternalData1D  'Accumulate01//Accumulation//HW-OW//Unbound'  'RDF(O-H1_H2)//Process1D//RDF'
-    InternalData1D  'Accumulate01//Accumulation//HW-HW//Unbound'  'RDF(H1-H2)//Process1D//RDF'
+    InternalData1D  'Accumulate01//GR01//Total'  'AveragedRDF//UnweightedGR//Total'
+    InternalData1D  'Accumulate01//GR01//HW-HW//Full'  'AveragedRDF//UnweightedGR//HW-HW//Full'
+    InternalData1D  'Accumulate01//GR01//HW-OW//Full'  'AveragedRDF//UnweightedGR//HW-OW//Full'
+    InternalData1D  'Accumulate01//GR01//OW-OW//Full'  'AveragedRDF//UnweightedGR//OW-OW//Full'
+    InternalData1D  'Accumulate01//GR01//OW-OW//Full'  'RDF(OW-OW)//Process1D//RDF'
+    InternalData1D  'Accumulate01//GR01//OW-OW//Unbound'  'RDF(OW-OW)//Process1D//RDF'
+    InternalData1D  'Accumulate01//GR01//HW-OW//Unbound'  'RDF(O-H1_H2)//Process1D//RDF'
+    InternalData1D  'Accumulate01//GR01//HW-HW//Unbound'  'RDF(H1-H2)//Process1D//RDF'
   EndModule
 
 EndLayer
