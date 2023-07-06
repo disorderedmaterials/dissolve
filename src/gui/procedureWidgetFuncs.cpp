@@ -76,7 +76,8 @@ void ProcedureWidget::removeControlWidget(ConstNodeRef node)
 
 void ProcedureWidget::selectedNodeChanged(const QItemSelection &selected)
 {
-    // For some reason the selection passed is actually out of daate when a row has been removed.
+    // In the case a row has been removed, the selection is out-of-date
+    // For sanity, get the selection again.
     auto actualSelected = ui_.NodesTree->selectionModel()->selection();
     if (actualSelected.indexes().empty())
     {
