@@ -146,8 +146,9 @@ void DissolveWindow::on_ConfigurationAdjustTemperatureAction_triggered(bool chec
         return;
 
     auto ok = false;
-    auto temperature = QInputDialog::getDouble(this, "Set temperature for configuration", "Enter the temperature (K) to apply to this configuration", cfg->temperature(),
-                                     -10000.0, 10000.0, 3, &ok);
+    auto temperature = QInputDialog::getDouble(this, "Set temperature for configuration",
+                                               "Enter the temperature (K) to apply to this configuration", cfg->temperature(),
+                                               -10000.0, 10000.0, 3, &ok);
     if (!ok)
         return;
 
