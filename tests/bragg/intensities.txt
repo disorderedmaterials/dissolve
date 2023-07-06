@@ -1,85 +1,57 @@
-# Input file written by Dissolve v1.3.0 at 13:20:46 on 05-07-2023.
-
-#==============================================================================#
-#                                   Species                                    #
-#==============================================================================#
-
 Species 'Mg'
-  # Atoms
-  NAtoms  1
-  Atom    1  Mg   0.000000e+00  0.000000e+00  0.000000e+00  'Mg'  0.000000e+00
+  Atom    1    Mg     0.0  0.0  0.0  'Mg'
 EndSpecies
 
 Species 'O'
-  # Atoms
-  NAtoms  1
-  Atom    1  O    0.000000e+00  0.000000e+00  0.000000e+00  'OX'  0.000000e+00
+  Atom    1    O      0.0  0.0  0.0  'OX'
 EndSpecies
 
-#==============================================================================#
-#                               Pair Potentials                                #
-#==============================================================================#
-
-PairPotentials
-  # Atom Type Parameters
-  Parameters  Mg  Mg  2.000000e+00  LJGeometric  epsilon=1 sigma=2
-  Parameters  OX  O  -2.000000e+00  LJGeometric  epsilon=0.6503 sigma=3.165492
-  Range  10
-  Delta  0.05
-  CoulombTruncation  Shifted
-  ShortRangeTruncation  Shifted
-EndPairPotentials
-
-#==============================================================================#
-#                                Configurations                                #
-#==============================================================================#
-
 Configuration  'Crystal'
-
-  # Generator
   Generator
-    Box  'Box01'
+    Box
       Lengths  21.085  21.085  21.085
-      Angles  90  90  90
     EndBox
-    Add  'Add01'
+    Add
+      Population  500
+      BoxAction  None
       Species  'Mg'
-      Population  '500'
-      Density  '0.1'  atoms/A3
-      BoxAction  None
-      Positioning  Random
     EndAdd
-    Add  'Add02'
+    Add
+      Population  500
+      BoxAction  None
       Species  'O'
-      Population  '500'
-      Density  '0.1'  atoms/A3
-      BoxAction  None
-      Positioning  Random
     EndAdd
-    ImportCoordinates  'InputCoordinates01'
-      File  epsr  '../_data/epsr25/mgo500-555/mgo.ato'
+    ImportCoordinates
+      File  epsr '../_data/epsr25/mgo500-555/mgo.ato'
       EndFile
     EndImportCoordinates
   EndGenerator
 
-  Temperature  300
-
-  SizeFactor  1
+  Temperature  300.000000
 EndConfiguration
 
-#==============================================================================#
+#------------------------------------------------------------------------------#
 #                              Processing Layers                               #
-#==============================================================================#
+#------------------------------------------------------------------------------#
 
 Layer  'Main Processing'
-  Frequency  1
 
   Module  Bragg  'Bragg01'
     Frequency  1
+
     Configuration  'Crystal'
-    QMax  20
-    Multiplicity  5  5  5
-    AveragingScheme  Linear
+
+    Multiplicity  5  5  5 
+    QMax  20.0
     TestReflections  'intensities.reference'
   EndModule
+
 EndLayer
+
+# Pair Potentials
+PairPotentials
+  Range  10.000000
+  Delta  0.050000
+    Parameters  'OX'  O  -2.0   LJGeometric    0.6503    3.165492
+    Parameters  'Mg'  Mg  2.0    LJGeometric    1.0  2.0
+EndPairPotentials
