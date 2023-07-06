@@ -23,10 +23,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     configuration_ = cfg;
 
-    // Set model for input file coordinates
-    importEnumOptionsModel_.setData(cfg->inputCoordinates().formats());
-    ui_.CoordinatesFileFormatCombo->setModel(&importEnumOptionsModel_);
-
     // Populate density units combo
     ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
@@ -127,14 +123,6 @@ void ConfigurationTab::updateControls()
     ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
     updateDensityLabel();
 
-    // Input Coordinates
-    ui_.CoordinatesFileEdit->setText(QString::fromStdString(std::string(configuration_->inputCoordinates().filename())));
-    ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
-
-    // Size Factor
-    ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
-    ui_.AppliedSizeFactorLabel->setText(QString::number(configuration_->appliedSizeFactor()));
-
     // Viewer
     ui_.ViewerWidget->postRedisplay();
 }
@@ -143,14 +131,12 @@ void ConfigurationTab::updateControls()
 void ConfigurationTab::preventEditing()
 {
     ui_.GeneratorGroup->setEnabled(false);
-    ui_.SizeFactorGroup->setEnabled(false);
 }
 
 // Allow editing within tab
 void ConfigurationTab::allowEditing()
 {
     ui_.GeneratorGroup->setEnabled(true);
-    ui_.SizeFactorGroup->setEnabled(true);
 }
 
 /*
@@ -192,27 +178,3 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
 
 // Current Box
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
-
-// Initial Coordinates
-void ConfigurationTab::on_CoordinatesFileEdit_textChanged(QString text)
-{
-    if (refreshLock_.isLocked())
-        return;
-}
-
-void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
-{
-    if (refreshLock_.isLocked())
-        return;
-}
-
-// Size Factor Scaling
-void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    configuration_->setRequestedSizeFactor(value);
-
-    dissolveWindow_->setModified();
-}

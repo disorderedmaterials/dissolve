@@ -95,9 +95,6 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
     return true;
 }
 
-// Return import coordinates file / format
-CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
-
 // Initialise (generate or load) the basic contents of the Configuration
 bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
 {
@@ -106,35 +103,21 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
 
     appliedSizeFactor_ = 1.0;
 
-    // Run the generator Procedure and potentially load coordinates from file
-    // Run the generator procedure (we will need species / atom info to load any coordinates in)
+    // Run the generator Procedure
     if (!generate(procedureContext))
         return false;
+
+    updateAtomLocations(true);
 
     // If there are still no atoms, complain.
     if (nAtoms() == 0)
         return false;
 
-    // If an input file was specified, try to load it
-    if (inputCoordinates_.hasFilename())
-    {
-        if (DissolveSys::fileExists(inputCoordinates_.filename()))
-        {
-            Messenger::print("Loading initial coordinates from file '{}'...\n", inputCoordinates_.filename());
-            if (!inputCoordinates_.importData(this, &procedureContext.processPool()))
-                return false;
-
-            // Need to update cell locations now, as we have new atom positions
-            updateAtomLocations(true);
-        }
-        else
-            return Messenger::error("Input coordinates file '{}' specified for Configuration '{}', but the "
-                                    "file doesn't exist.\n",
-                                    name(), inputCoordinates_.filename());
-    }
-
     // Create cell array
     updateCells(procedureContext.potentialMap().range());
+
+    // Apply size factor scaling if required
+    applySizeFactor(procedureContext.processPool(), procedureContext.potentialMap());
 
     return true;
 }

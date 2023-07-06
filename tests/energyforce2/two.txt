@@ -141,9 +141,12 @@ Configuration  'Liquid'
       Species  'Hexane'
       BoxAction  None
     EndAdd
+    ImportCoordinates  'InputCoordinates01'
+      File  dlpoly  '../_data/dlpoly/hexane2/CONFIG'
+      EndFile
+    EndImportCoordinates
   EndGenerator
-  InputCoordinates  dlpoly  '../_data/dlpoly/hexane2/CONFIG'
-  EndInputCoordinates
+
 EndConfiguration
 
 Layer  'Processing'

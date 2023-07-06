@@ -21,10 +21,12 @@ Configuration  'Crystal'
       BoxAction  None
       Species  'O'
     EndAdd
+    ImportCoordinates
+      File  epsr '../_data/epsr25/mgo500-555/mgo.ato'
+      EndFile
+    EndImportCoordinates
   EndGenerator
 
-  InputCoordinates  epsr  ../_data/epsr25/mgo500-555/mgo.ato
-  EndInputCoordinates
   Temperature  300.000000
 EndConfiguration
 

@@ -71,13 +71,17 @@ Configuration  'Bulk'
       Rotate  True
       Species  'Water'
     EndAdd
+    SizeFactor  'SizeFactor01'
+      SizeFactor  '1.0'
+    EndSizeFactor
+    ImportCoordinates  'InputCoordinates01'
+      File  epsr  '../_data/epsr25/water1000-neutron/waterbox.ato'
+      EndFile
+    EndImportCoordinates
   EndGenerator
-  InputCoordinates  epsr  '../_data/epsr25/water1000-neutron/waterbox.ato'
-  EndInputCoordinates
 
   Temperature  300.0
 
-  SizeFactor  1.0
 EndConfiguration
 
 #==============================================================================#

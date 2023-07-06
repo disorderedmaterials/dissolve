@@ -415,147 +415,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="CoordinatesFromFileGroup">
-       <property name="title">
-        <string>Coordinates From File</string>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
-        <property name="spacing">
-         <number>4</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLineEdit" name="CoordinatesFileEdit"/>
-        </item>
-        <item row="0" column="1">
-         <widget class="QToolButton" name="CoordinatesFileSelectButton">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="main.qrc">
-            <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QComboBox" name="CoordinatesFileFormatCombo"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="SizeFactorGroup">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title">
-        <string>Size Factor Scaling</string>
-       </property>
-       <layout class="QFormLayout" name="formLayout">
-        <property name="horizontalSpacing">
-         <number>4</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>4</number>
-        </property>
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
-         <number>4</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_15">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Requested</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="ExponentialSpin" name="RequestedSizeFactorSpin">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Requested size factor scaling for the Configuration's Box and contents (will be applied at start of next iteration)</string>
-          </property>
-          <property name="minimum">
-           <double>1.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_16">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Applied</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="AppliedSizeFactorLabel">
-          <property name="text">
-           <string>0.0</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -655,11 +514,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ExponentialSpin</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>gui/widgets/exponentialSpin.hui</header>
-  </customwidget>
-  <customwidget>
    <class>ConfigurationViewerWidget</class>
    <extends>QWidget</extends>
    <header>gui/configurationViewerWidget.h</header>
@@ -670,6 +524,11 @@
    <extends>QWidget</extends>
    <header>gui/procedureWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ExponentialSpin</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>gui/widgets/exponentialSpin.hui</header>
   </customwidget>
  </customwidgets>
  <resources>

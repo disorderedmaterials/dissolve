@@ -15,6 +15,9 @@ AccumulateModuleWidget::AccumulateModuleWidget(QWidget *parent, AccumulateModule
     // Set up user interface
     ui_.setupUi(this);
 
+    // Set model for module selector
+    ui_.ModuleTargetCombo->setModel(&moduleModel_);
+
     // Set up S(Q) graph
     graph_ = ui_.PlotWidget->dataViewer();
     auto hasSQ = module_->keywords().getEnumeration<AccumulateModule::TargetPartialSet>("Data") ==
@@ -53,10 +56,19 @@ void AccumulateModuleWidget::createPartialSetRenderables(std::string_view target
 
     const PartialSetAccumulator &ps = *targetPartials_;
 
+    // Get the filter text (if there is any)
+    std::optional<std::string> filterText;
+    if (!ui_.FilterEdit->text().isEmpty())
+        filterText = ui_.FilterEdit->text().toStdString();
+
     for (auto &&[full, bound, unbound] : zip(ps.partials(), ps.boundPartials(), ps.unboundPartials()))
     {
         // Get atom type pair id from the full partial tag
         auto id = DissolveSys::beforeChar(full.tag(), '/');
+
+        // Filtering - does this 'id' match our filter?
+        if (filterText && id.find(filterText.value()) == std::string::npos)
+            continue;
 
         // Full partial
         graph_->createRenderable<RenderableData1D>(fmt::format("{}//{}//{}", module_->name(), targetPrefix, full.tag()),
@@ -77,26 +89,45 @@ void AccumulateModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlag
 {
     refreshing_ = true;
 
-    // Set button texts
-    auto hasSQ = module_->keywords().getEnumeration<AccumulateModule::TargetPartialSet>("Data") ==
-                 AccumulateModule::TargetPartialSet::SQ;
-    ui_.TotalButton->setText(hasSQ ? "Total F(Q)" : "Total G(r)");
-    ui_.PartialsButton->setText(hasSQ ? "Partial S(Q)" : "Partial g(r)");
+    // Update model
+    auto &moduleTargets = module_->keywords().getVectorModule("Targets");
+    moduleModel_.setData(moduleTargets);
 
-    // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet and have just
-    // located it
-    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || (!ui_.TotalButton->isChecked() && !targetPartials_))
+    // Find the previously selected module in the vector
+    auto moduleIt = std::find(moduleTargets.begin(), moduleTargets.end(), currentTargetModule_);
+    if (moduleIt == moduleTargets.end())
+        currentTargetModule_ = ui_.ModuleTargetCombo->currentData().value<Module *>();
+    else
+        ui_.ModuleTargetCombo->setCurrentIndex(moduleIt - moduleTargets.begin());
+
+    if (!currentTargetModule_)
     {
+        targetPartials_ = std::nullopt;
         ui_.PlotWidget->clearRenderableData();
+    }
+    else
+    {
+        // Set button texts
+        auto hasSQ = module_->keywords().getEnumeration<AccumulateModule::TargetPartialSet>("Data") ==
+                     AccumulateModule::TargetPartialSet::SQ;
+        ui_.TotalButton->setText(hasSQ ? "Total F(Q)" : "Total G(r)");
+        ui_.PartialsButton->setText(hasSQ ? "Partial S(Q)" : "Partial g(r)");
 
-        if (ui_.PartialsButton->isChecked())
+        // Need to recreate renderables if requested as the updateType, or if we previously had no target PartialSet
+        if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag) || (!ui_.TotalButton->isChecked() && !targetPartials_))
         {
-            targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSetAccumulator>("Accumulation", module_->name());
-            createPartialSetRenderables("Accumulation");
+            ui_.PlotWidget->clearRenderableData();
+
+            if (ui_.PartialsButton->isChecked())
+            {
+                targetPartials_ = dissolve_.processingModuleData().valueIf<PartialSetAccumulator>(currentTargetModule_->name(),
+                                                                                                  module_->name());
+                createPartialSetRenderables(currentTargetModule_->name());
+            }
+            else
+                graph_->createRenderable<RenderableData1D>(
+                    fmt::format("{}//{}//Total", module_->name(), currentTargetModule_->name()), "Total", "Calc");
         }
-        else
-            graph_->createRenderable<RenderableData1D>(fmt::format("{}//Accumulation//Total", module_->name()), "Total",
-                                                       "Calc");
     }
 
     // Validate renderables if they need it
@@ -138,6 +169,25 @@ void AccumulateModuleWidget::on_PartialsButton_clicked(bool checked)
     graph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
     graph_->view().axes().setTitle(0, hasSQ ? "\\it{Q}, \\sym{angstrom}\\sup{-1}" : "\\it{r}, \\sym{angstrom}");
     graph_->view().axes().setTitle(1, hasSQ ? "S(Q)" : "g(r)");
+
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
+}
+
+void AccumulateModuleWidget::on_ModuleTargetCombo_currentIndexChanged(int index)
+{
+    if (refreshing_)
+        return;
+
+    currentTargetModule_ = ui_.ModuleTargetCombo->currentData().value<Module *>();
+
+    updateControls(ModuleWidget::RecreateRenderablesFlag);
+}
+
+void AccumulateModuleWidget::on_FilterEdit_textChanged(QString text) { updateControls(ModuleWidget::RecreateRenderablesFlag); }
+
+void AccumulateModuleWidget::on_ClearFilterButton_clicked(bool checked)
+{
+    ui_.FilterEdit->clear();
 
     updateControls(ModuleWidget::RecreateRenderablesFlag);
 }
