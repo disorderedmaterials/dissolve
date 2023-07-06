@@ -8,7 +8,7 @@
 TemperatureProcedureNode::TemperatureProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::Temperature, {ProcedureNode::GenerationContext})
 {
-    keywords_.add<NodeValueKeyword>("Temperature", "Temperature in K", temperature_, this);
+    keywords_.add<NodeValueKeyword>("Temperature", "Temperature (K)", temperature_, this);
 }
 
 /*
