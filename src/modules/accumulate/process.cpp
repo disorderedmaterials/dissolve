@@ -26,7 +26,7 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Get the modules and decide on the PartialSet data name we're looking for
     if (targetModules_.empty())
-        return Messenger::error("No target module set.");
+        return Messenger::error("No target modules set.");
 
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
