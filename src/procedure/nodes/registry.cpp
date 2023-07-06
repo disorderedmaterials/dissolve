@@ -55,7 +55,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                                   "Generate coordinate sets for a species", "Build");
     registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
     registerProducer<ImportCoordinatesProcedureNode>(ProcedureNode::NodeType::ImportCoordinates,
-                                                     "Initial coordinates for configuration", "Build");
+                                                     "Import coordinates into a configuration", "Build");
     registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
     registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
                                              "Turn molecules from one species type into another", "Build");

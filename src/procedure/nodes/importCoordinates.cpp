@@ -9,7 +9,7 @@ ImportCoordinatesProcedureNode::ImportCoordinatesProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::ImportCoordinates, {ProcedureNode::GenerationContext})
 {
     keywords_.setOrganisation("Options", "Source Data");
-    keywords_.add<FileAndFormatKeyword>("File", "File / format for initial coordinate to read in", fileSource_, "EndFile");
+    keywords_.add<FileAndFormatKeyword>("File", "File / format for coordinates to read in", fileSource_, "EndFile");
 }
 
 /*
@@ -29,13 +29,12 @@ bool ImportCoordinatesProcedureNode::prepare(const ProcedureContext &procedureCo
     if (!fileSource_.hasFilename())
         return Messenger::error("A suitable coordinate file and format must be supplied.\n");
     if (!fileSource_.fileExists())
-        return Messenger::error("Specified coordinate file to import '{}' doesn't exist\n", fileSource_.filename());
+        return Messenger::error("Specified coordinate file '{}' doesn't exist.\n", fileSource_.filename());
     return true;
 }
 
 // Execute node
 bool ImportCoordinatesProcedureNode::execute(const ProcedureContext &procedureContext)
 {
-    auto *cfg = procedureContext.configuration();
-    return fileSource_.importData(cfg, &procedureContext.processPool());
+    return fileSource_.importData(procedureContext.configuration(), &procedureContext.processPool());
 }
