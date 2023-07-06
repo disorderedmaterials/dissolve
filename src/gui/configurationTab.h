@@ -30,8 +30,6 @@ class ConfigurationTab : public QWidget, public MainTab
     private:
     // Main form declaration
     Ui::ConfigurationTab ui_;
-    // Model for import file format
-    EnumOptionsModel importEnumOptionsModel_;
 
     /*
      * MainTab Reimplementations
@@ -84,9 +82,6 @@ class ConfigurationTab : public QWidget, public MainTab
     void on_TemperatureSpin_valueChanged(double value);
     // Current Box
     void on_DensityUnitsCombo_currentIndexChanged(int index);
-    // Initial Coordinates
-    void on_CoordinatesFileEdit_textChanged(QString text);
-    void on_CoordinatesFileSelectButton_clicked(bool checked);
     // Size Factor Scaling
     void on_RequestedSizeFactorSpin_valueChanged(double value);
 };
