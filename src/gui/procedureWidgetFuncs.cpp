@@ -79,6 +79,8 @@ void ProcedureWidget::selectedNodeChanged(const QItemSelection &selected)
     // In the case a row has been removed, the selection is out-of-date
     // For sanity, get the selection again.
     auto actualSelected = ui_.NodesTree->selectionModel()->selection();
+
+    // Check if a node is actually selected
     if (actualSelected.indexes().empty())
     {
         ui_.DeleteNodeButton->setEnabled(false);
