@@ -270,6 +270,8 @@
     <addaction name="ConfigurationDeleteAction"/>
     <addaction name="separator"/>
     <addaction name="ConfigurationExportToMenu"/>
+    <addaction name="separator"/>
+    <addaction name="ConfigurationAdjustTemperatureAction"/>
    </widget>
    <widget class="QMenu" name="LayerMenu">
     <property name="font">
@@ -800,6 +802,11 @@
    </property>
    <property name="text">
     <string>Create...</string>
+   </property>
+  </action>
+  <action name="ConfigurationAdjustTemperatureAction">
+   <property name="text">
+    <string>Adjust Temperature...</string>
    </property>
   </action>
  </widget>

@@ -177,6 +177,7 @@ class DissolveWindow : public QMainWindow
     void on_ConfigurationRenameAction_triggered(bool checked);
     void on_ConfigurationDeleteAction_triggered(bool checked);
     void on_ConfigurationExportToXYZAction_triggered(bool checked);
+    void on_ConfigurationAdjustTemperatureAction_triggered(bool checked);
     // Layer
     void on_LayerCreateEmptyAction_triggered(bool checked);
     void on_LayerCreateEvolveBasicAtomicAction_triggered(bool checked);
