@@ -40,7 +40,7 @@ class SpeciesTab : public QWidget, public MainTab
     SpeciesIsoModel isos_;
     SpeciesSiteModel sites_;
     // Box information
-    QWidget* boxPage_;
+    QWidget *boxPage_;
 
     private:
     // Update density label

@@ -83,7 +83,6 @@ void SpeciesViewer::setSite(SpeciesSite *site)
 // Return target site
 SpeciesSite *SpeciesViewer::speciesSite() const { return site_; }
 
-
 /*
  * Renderable
  */

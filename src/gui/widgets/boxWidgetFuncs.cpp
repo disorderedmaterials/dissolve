@@ -2,11 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/units.h"
-#include "gui/widgets/boxWidget.h"
 #include "classes/box.h"
 #include "gui/helpers/comboPopulator.h"
+#include "gui/widgets/boxWidget.h"
 
-BoxWidget::BoxWidget(QWidget *parent, Configuration* cfg) : QWidget(parent), configuration_(cfg)
+BoxWidget::BoxWidget(QWidget *parent, Configuration *cfg) : QWidget(parent), configuration_(cfg)
 {
     ui_.setupUi(this);
 
@@ -14,9 +14,6 @@ BoxWidget::BoxWidget(QWidget *parent, Configuration* cfg) : QWidget(parent), con
     ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
 
     installEventFilter(this);
-
-
-
 }
 
 BoxWidget::~BoxWidget() {}

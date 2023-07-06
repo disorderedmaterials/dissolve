@@ -49,8 +49,9 @@ class ConfigurationTab : public QWidget, public MainTab
      * StatusBar
      */
     private:
-    QLabel* boxIcon_;
-    BoxWidget* boxWidget_;
+    QLabel *boxIcon_;
+    BoxWidget *boxWidget_;
+
     private:
     // Add icon to status bar
     QLabel *addStatusBarIcon(QString resource, bool permanent = true);
@@ -71,7 +72,6 @@ class ConfigurationTab : public QWidget, public MainTab
      * Update
      */
     private:
-
     public:
     // Update controls in tab
     void updateControls() override;

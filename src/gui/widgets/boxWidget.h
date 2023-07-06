@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include "gui/widgets/ui_boxWidget.h"
 #include "classes/configuration.h"
+#include "gui/widgets/ui_boxWidget.h"
 
 class BoxWidget : public QWidget
 {
     Q_OBJECT
 
     public:
-    BoxWidget(QWidget *parent, Configuration* cfg);
+    BoxWidget(QWidget *parent, Configuration *cfg);
     virtual ~BoxWidget();
 
     /*

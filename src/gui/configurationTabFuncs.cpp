@@ -103,7 +103,6 @@ QLabel *ConfigurationTab::addStatusBarIcon(QString resource, bool permanent)
     return label;
 }
 
-
 /*
  * Configuration Target
  */
@@ -125,16 +124,10 @@ void ConfigurationTab::updateControls()
 }
 
 // Prevent editing within tab
-void ConfigurationTab::preventEditing()
-{
-    ui_.GeneratorWidget->setEnabled(false);
-}
+void ConfigurationTab::preventEditing() { ui_.GeneratorWidget->setEnabled(false); }
 
 // Allow editing within tab
-void ConfigurationTab::allowEditing()
-{
-    ui_.GeneratorWidget->setEnabled(true);
-}
+void ConfigurationTab::allowEditing() { ui_.GeneratorWidget->setEnabled(true); }
 
 /*
  * Signals / Slots
@@ -183,10 +176,10 @@ bool ConfigurationTab::eventFilter(QObject *obj, QEvent *event)
     {
         boxWidget_->update();
         boxWidget_->setHidden(false);
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-        boxWidget_->move(mapToGlobal(mouseEvent->pos()));// + QPoint(0, 25));
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        boxWidget_->move(mapToGlobal(mouseEvent->pos())); // + QPoint(0, 25));
     }
-    //else if (event->type() == QEvent::Leave)
-     //   boxWidget_->setHidden(true);
+    // else if (event->type() == QEvent::Leave)
+    //    boxWidget_->setHidden(true);
     return QObject::eventFilter(obj, event);
 }

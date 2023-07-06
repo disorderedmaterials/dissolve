@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include <QDialog>
-#include "gui/ui_geometryDialog.h"
 #include "gui/models/speciesAngleModel.h"
 #include "gui/models/speciesBondModel.h"
 #include "gui/models/speciesImproperModel.h"
 #include "gui/models/speciesTorsionModel.h"
+#include "gui/ui_geometryDialog.h"
+#include <QDialog>
 
 // Forward Declarations
 class Dissolve;
@@ -21,7 +21,6 @@ class GeometryDialog : public QDialog
     public:
     GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species);
     ~GeometryDialog() = default;
-
 
     /*
      * UI
@@ -52,5 +51,4 @@ class GeometryDialog : public QDialog
     private slots:
     void on_OKButton_clicked(bool checked);
     void setModified();
-
 };

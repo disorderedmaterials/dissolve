@@ -3,14 +3,16 @@
 
 #pragma once
 
-#include "geometryDialog.h"
-#include "gui/delegates/intraFormCombo.h"
-#include "gui/delegates/exponentialSpin.hui"
-#include "main/dissolve.h"
 #include "classes/species.h"
+#include "geometryDialog.h"
+#include "gui/delegates/exponentialSpin.hui"
+#include "gui/delegates/intraFormCombo.h"
+#include "main/dissolve.h"
 #include <QWidget>
 
-GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species) : dissolve_(dissolve), bonds_(species->bonds(), dissolve.coreData()), torsions_(species->torsions(), dissolve.coreData()), impropers_(species->impropers(), dissolve.coreData()), angles_(species->angles(), dissolve.coreData())
+GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species)
+    : dissolve_(dissolve), bonds_(species->bonds(), dissolve.coreData()), torsions_(species->torsions(), dissolve.coreData()),
+      impropers_(species->impropers(), dissolve.coreData()), angles_(species->angles(), dissolve.coreData())
 {
 
     ui_.setupUi(this);
@@ -28,7 +30,7 @@ GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *spe
     ui_.ImproperTable->horizontalHeader()->setFont(parent->font());
     ui_.ImproperTable->horizontalHeader()->setVisible(true);
 
-        // -- Geometry tables
+    // -- Geometry tables
     ui_.BondTable->setItemDelegateForColumn(
         2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<BondFunctions::Form>(BondFunctions::forms()),
                                       dissolve_.coreData().masterBonds()));
@@ -48,8 +50,6 @@ GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *spe
     connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(setModified()));
     connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(setModified()));
     connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(setModified()));
-
-
 }
 
 void GeometryDialog::setModified() { modified_ = true; }

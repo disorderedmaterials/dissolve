@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomType.h"
+#include "gui/geometryDialog.h"
 #include "gui/gui.h"
 #include "gui/speciesTab.h"
-#include "gui/geometryDialog.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 
@@ -117,9 +117,7 @@ void SpeciesTab::updateTotalCharges()
 }
 
 // Update Geometry tables
-void SpeciesTab::updateGeometryTables()
-{
-}
+void SpeciesTab::updateGeometryTables() {}
 
 void SpeciesTab::on_GeometryButton_clicked(bool checked)
 {
