@@ -19,6 +19,7 @@ bool TemperatureProcedureNode::mustBeNamed() const { return false; }
 /*
  * Execute
  */
+
 // Execute node
 bool TemperatureProcedureNode::execute(const ProcedureContext &procedureContext)
 {
