@@ -563,13 +563,13 @@
   <customwidget>
    <class>ConfigurationViewerWidget</class>
    <extends>QWidget</extends>
-   <header>gui/configurationviewerwidget.h</header>
+   <header>gui/configurationViewerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ProcedureWidget</class>
    <extends>QWidget</extends>
-   <header>gui/procedurewidget.h</header>
+   <header>gui/procedureWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

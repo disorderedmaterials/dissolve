@@ -193,5 +193,3 @@ void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 
 // Current Box
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
-
-}
