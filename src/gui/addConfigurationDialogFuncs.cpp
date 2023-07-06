@@ -180,7 +180,10 @@ void AddConfigurationDialog::finalise()
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
+
+    // Add Temperature node, by default
     generator.createRootNode<TemperatureProcedureNode>("Temperature");
+
     std::shared_ptr<GeneralRegionProcedureNode> regionNode;
 
     // Add the framework species if present
