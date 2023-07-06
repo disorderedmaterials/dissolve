@@ -14,6 +14,7 @@ TemperatureProcedureNode::TemperatureProcedureNode()
 /*
  * Identity
  */
+
 bool TemperatureProcedureNode::mustBeNamed() const { return false; }
 
 /*
