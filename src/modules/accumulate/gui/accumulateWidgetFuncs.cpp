@@ -187,7 +187,7 @@ void AccumulateModuleWidget::on_FilterEdit_textChanged(QString text) { updateCon
 
 void AccumulateModuleWidget::on_ClearFilterButton_clicked(bool checked)
 {
-    ui_.FilterEdit->setText("");
+    ui_.FilterEdit->clear();
 
     updateControls(ModuleWidget::RecreateRenderablesFlag);
 }

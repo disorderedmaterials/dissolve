@@ -24,7 +24,7 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 // Run main processing
 bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
-    // Get the module and decide on the PartialSet data name we're looking for
+    // Get the modules and decide on the PartialSet data name we're looking for
     if (targetModules_.empty())
         return Messenger::error("No target module set.");
 
@@ -70,7 +70,7 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Save data if requested
         std::vector<std::string> suffixes = {"gr", "sq", "gr"};
         std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
-        if (save_ && (!MPIRunMaster(procPool, accumulated.save(fmt::format("{}-{}", name(), targetModule->name()), dataName,
+        if (save_ && !(MPIRunMaster(procPool, accumulated.save(fmt::format("{}-{}", name(), targetModule->name()), dataName,
                                                                suffixes[targetPartialSet_], units[targetPartialSet_]))))
             return false;
     }
