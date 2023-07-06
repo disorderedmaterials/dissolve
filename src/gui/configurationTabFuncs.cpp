@@ -7,10 +7,17 @@
 #include "gui/configurationTab.h"
 #include "gui/getConfigurationNameDialog.h"
 #include "gui/gui.h"
+<<<<<<< HEAD:src/gui/configurationTabFuncs.cpp
 #include "gui/helpers/comboPopulator.h"
 #include "gui/keywordWidgets/producers.h"
+=======
+#include "gui/helpers/combopopulator.h"
+#include "gui/keywordwidgets/producers.h"
+#include "gui/widgets/boxwidget.h"
+>>>>>>> 2815c5525 (WIP status bar.):src/gui/configurationtab_funcs.cpp
 #include "main/dissolve.h"
 #include <QMessageBox>
+#include <QMouseEvent>
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
@@ -31,6 +38,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     boxIcon_ = addStatusBarIcon(":/tabs/icons/tabs_configuration.svg", true);
     boxIcon_->installEventFilter(this);
+    boxWidget_ = new BoxWidget(nullptr, configuration_);
+    boxWidget_->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    boxWidget_->setHidden(true);
 }
 
 /*
@@ -176,9 +186,12 @@ bool ConfigurationTab::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::Enter)
     {
-        Messenger::print("Enter");
+        boxWidget_->update();
+        boxWidget_->setHidden(false);
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+        boxWidget_->move(mapToGlobal(mouseEvent->pos()));// + QPoint(0, 25));
     }
-    else if (event->type() == QEvent::Leave)
-        Messenger::print("Leave");
+    //else if (event->type() == QEvent::Leave)
+     //   boxWidget_->setHidden(true);
     return QObject::eventFilter(obj, event);
 }

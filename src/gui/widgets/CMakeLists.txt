@@ -2,6 +2,7 @@
 
 # Meta-Objects
 set(widgets_MOC_HDRS
+    boxWidget.h
     noControls.h
     sampledDoubleLabel.h
     checkIndicator.hui
@@ -15,11 +16,12 @@ set(widgets_MOC_HDRS
 qt6_wrap_cpp(widgets_MOC_SRCS ${widgets_MOC_HDRS})
 
 # User Interface Files
-set(widgets_UIS noControls.ui sampledDoubleLabel.ui)
+set(widgets_UIS boxWidget.ui noControls.ui sampledDoubleLabel.ui)
 qt6_wrap_ui(widgets_UIS_H ${widgets_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 set(widgets_SRCS
+    boxWidgetFuncs.cpp
     checkIndicatorFuncs.cpp
     colourButtonFuncs.cpp
     elementSelectorFuncs.cpp

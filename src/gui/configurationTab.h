@@ -8,6 +8,7 @@
 #include "gui/models/enumOptionsModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_configurationTab.h"
+#include "gui/widgets/boxWidget.h"
 #include <map>
 
 // Forward Declarations
@@ -49,6 +50,7 @@ class ConfigurationTab : public QWidget, public MainTab
      */
     private:
     QLabel* boxIcon_;
+    BoxWidget* boxWidget_;
     private:
     // Add icon to status bar
     QLabel *addStatusBarIcon(QString resource, bool permanent = true);
