@@ -28,6 +28,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     // Set-up the generator procedure editor
     ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator());
+
+    boxIcon_ = addStatusBarIcon(":/tabs/icons/tabs_configuration.svg", true);
+    boxIcon_->installEventFilter(this);
 }
 
 /*
@@ -75,6 +78,26 @@ bool ConfigurationTab::canClose() const
 
     return true;
 }
+
+/*
+ * Statusbar
+ */
+
+// Add icon to status bar
+QLabel *ConfigurationTab::addStatusBarIcon(QString resource, bool permanent)
+{
+    const auto iconSize = ui_.statusBar->font().pointSize() * 1.75;
+    auto *label = new QLabel;
+    label->setPixmap(QPixmap(resource));
+    label->setMaximumSize(QSize(iconSize, iconSize));
+    label->setScaledContents(true);
+    if (permanent)
+        ui_.statusBar->addPermanentWidget(label);
+    else
+        ui_.statusBar->addWidget(label);
+    return label;
+}
+
 
 /*
  * Configuration Target
@@ -145,3 +168,17 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolveWindow_->updateStatusBar();
 }
 
+/*
+ * Event filer
+ */
+
+bool ConfigurationTab::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::Enter)
+    {
+        Messenger::print("Enter");
+    }
+    else if (event->type() == QEvent::Leave)
+        Messenger::print("Leave");
+    return QObject::eventFilter(obj, event);
+}

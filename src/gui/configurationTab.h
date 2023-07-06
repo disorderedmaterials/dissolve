@@ -45,6 +45,14 @@ class ConfigurationTab : public QWidget, public MainTab
     bool canClose() const override;
 
     /*
+     * StatusBar
+     */
+    private:
+    QLabel* boxIcon_;
+    private:
+    // Add icon to status bar
+    QLabel *addStatusBarIcon(QString resource, bool permanent = true);
+    /*
      * Configuration Target
      */
     private:
@@ -76,4 +84,10 @@ class ConfigurationTab : public QWidget, public MainTab
     private slots:
     // Content
     void on_GenerateButton_clicked(bool checked);
+
+    /*
+     * Event filer
+     */
+    protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 };
