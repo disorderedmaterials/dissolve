@@ -23,13 +23,6 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     configuration_ = cfg;
 
-    // Set model for input file coordinates
-    importEnumOptionsModel_.setData(cfg->inputCoordinates().formats());
-    ui_.CoordinatesFileFormatCombo->setModel(&importEnumOptionsModel_);
-
-    // Populate density units combo
-    ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
-
     // Set target for ConfigurationViewer
     ui_.ViewerWidget->setConfiguration(configuration_);
 
@@ -94,49 +87,10 @@ Configuration *ConfigurationTab::configuration() const { return configuration_; 
  * Update
  */
 
-// Update density label
-void ConfigurationTab::updateDensityLabel()
-{
-    if (!configuration_)
-        ui_.DensityUnitsLabel->setText("N/A");
-    else
-    {
-        auto rho =
-            ui_.DensityUnitsCombo->currentIndex() == 0 ? configuration_->atomicDensity() : configuration_->chemicalDensity();
-        ui_.DensityUnitsLabel->setText(rho ? QString::number(*rho) : "--");
-    }
-}
-
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
-
-    // Temperature
-    ui_.TemperatureSpin->setValue(configuration_->temperature());
-
-    // Populations
-    ui_.AtomPopulation->setText(QString::number(configuration_->nAtoms()));
-    ui_.MolPopulation->setText(QString::number(configuration_->nMolecules()));
-
-    // Current Box
-    const auto *box = configuration_->box();
-    ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
-    ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
-    ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
-    ui_.CurrentBoxCLabel->setText(QString::number(box->axisLengths().z));
-    ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
-    ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
-    ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
-    updateDensityLabel();
-
-    // Input Coordinates
-    ui_.CoordinatesFileEdit->setText(QString::fromStdString(std::string(configuration_->inputCoordinates().filename())));
-    ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
-
-    // Size Factor
-    ui_.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor());
-    ui_.AppliedSizeFactorLabel->setText(QString::number(configuration_->appliedSizeFactor()));
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
@@ -145,17 +99,13 @@ void ConfigurationTab::updateControls()
 // Prevent editing within tab
 void ConfigurationTab::preventEditing()
 {
-    ui_.GeneratorPage->setEnabled(false);
-    ui_.TemperatureGroup->setEnabled(false);
-    ui_.SizeFactorGroup->setEnabled(false);
+    ui_.GeneratorWidget->setEnabled(false);
 }
 
 // Allow editing within tab
 void ConfigurationTab::allowEditing()
 {
-    ui_.GeneratorPage->setEnabled(true);
-    ui_.TemperatureGroup->setEnabled(true);
-    ui_.SizeFactorGroup->setEnabled(true);
+    ui_.GeneratorWidget->setEnabled(true);
 }
 
 /*
@@ -195,39 +145,3 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolveWindow_->updateStatusBar();
 }
 
-void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    configuration_->setTemperature(value);
-
-    dissolveWindow_->setModified();
-}
-
-// Current Box
-void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
-
-// Initial Coordinates
-void ConfigurationTab::on_CoordinatesFileEdit_textChanged(QString text)
-{
-    if (refreshLock_.isLocked())
-        return;
-}
-
-void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
-{
-    if (refreshLock_.isLocked())
-        return;
-}
-
-// Size Factor Scaling
-void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
-{
-    if (refreshLock_.isLocked())
-        return;
-
-    configuration_->setRequestedSizeFactor(value);
-
-    dissolveWindow_->setModified();
-}
