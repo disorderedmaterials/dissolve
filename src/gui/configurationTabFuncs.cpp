@@ -7,14 +7,9 @@
 #include "gui/configurationTab.h"
 #include "gui/getConfigurationNameDialog.h"
 #include "gui/gui.h"
-<<<<<<< HEAD:src/gui/configurationTabFuncs.cpp
 #include "gui/helpers/comboPopulator.h"
 #include "gui/keywordWidgets/producers.h"
-=======
-#include "gui/helpers/combopopulator.h"
-#include "gui/keywordwidgets/producers.h"
-#include "gui/widgets/boxwidget.h"
->>>>>>> 2815c5525 (WIP status bar.):src/gui/configurationtab_funcs.cpp
+#include "gui/widgets/boxWidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 #include <QMouseEvent>

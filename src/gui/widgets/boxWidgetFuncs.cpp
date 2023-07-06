@@ -4,7 +4,7 @@
 #include "base/units.h"
 #include "gui/widgets/boxWidget.h"
 #include "classes/box.h"
-#include "gui/helpers/combopopulator.h"
+#include "gui/helpers/comboPopulator.h"
 
 BoxWidget::BoxWidget(QWidget *parent, Configuration* cfg) : QWidget(parent), configuration_(cfg)
 {

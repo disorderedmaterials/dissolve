@@ -3,30 +3,17 @@
 
 #pragma once
 
-<<<<<<< HEAD:src/gui/speciesTab.h
 #include "classes/speciesAngle.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
 #include "gui/mainTab.h"
-#include "gui/models/speciesAngleModel.h"
-=======
-#include "classes/speciesangle.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
-#include "classes/speciestorsion.h"
-#include "gui/maintab.h"
->>>>>>> b5c895eb4 (WIP geometry dialog):src/gui/speciestab.h
 #include "gui/models/speciesAtomModel.h"
 #include "gui/models/speciesIsoModel.h"
 #include "gui/models/speciesSiteFilterProxy.h"
 #include "gui/models/speciesSiteModel.h"
-<<<<<<< HEAD:src/gui/speciesTab.h
 #include "gui/models/speciesTorsionModel.h"
 #include "gui/ui_speciesTab.h"
-=======
-#include "gui/ui_speciestab.h"
->>>>>>> b5c895eb4 (WIP geometry dialog):src/gui/speciestab.h
 
 // Forward Declarations
 class AtomType;

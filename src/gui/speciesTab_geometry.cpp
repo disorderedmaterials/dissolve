@@ -3,12 +3,8 @@
 
 #include "classes/atomType.h"
 #include "gui/gui.h"
-<<<<<<< HEAD:src/gui/speciesTab_geometry.cpp
 #include "gui/speciesTab.h"
-=======
-#include "gui/speciestab.h"
-#include "gui/geometrydialog.h"
->>>>>>> b5c895eb4 (WIP geometry dialog):src/gui/speciestab_geometry.cpp
+#include "gui/geometryDialog.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
 

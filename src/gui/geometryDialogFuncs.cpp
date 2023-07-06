@@ -4,8 +4,8 @@
 #pragma once
 
 #include "geometryDialog.h"
-#include "gui/delegates/intraformcombo.h"
-#include "gui/delegates/exponentialspin.hui"
+#include "gui/delegates/intraFormCombo.h"
+#include "gui/delegates/exponentialSpin.hui"
 #include "main/dissolve.h"
 #include "classes/species.h"
 #include <QWidget>
