@@ -116,14 +116,9 @@ void SpeciesTab::updateTotalCharges()
     ui_.TotalAtomTypeChargeIndicator->setHidden(atomTypeChargeOK);
 }
 
-// Update Geometry tables
-void SpeciesTab::updateGeometryTables() {}
-
+// Show geometry dialog
 void SpeciesTab::on_GeometryButton_clicked(bool checked)
 {
-    auto geometryDialog = GeometryDialog(this, dissolve_, species_);
+    auto geometryDialog = GeometryDialog(this, dissolve_, species_, dissolveWindow_);
     geometryDialog.exec();
-
-    if (geometryDialog.modified())
-        dissolveWindow_->setModified();
 }

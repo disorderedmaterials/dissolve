@@ -159,7 +159,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
 
             auto dynamicSiteMenu = siteMenu->addMenu("Dynamic");
             dynamicSiteMenu->setFont(font());
-            if (nSelected > 0) 
+            if (nSelected > 0)
             {
                 actionMap[dynamicSiteMenu->addAction("Create from Elements")] = "CreateDynamicElements";
                 actionMap[dynamicSiteMenu->addAction("Create from Atom Types")] = "CreateDynamicAtomTypes";
@@ -246,7 +246,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
     else if (actionMap[selectedAction] == "CreateDynamicAtomTypes")
     {
         auto *site =
-            species_->addSite(joinStrings(species_->selectedAtoms(), " ", [](const auto& i) { return i->atomType()->name();}));
+            species_->addSite(joinStrings(species_->selectedAtoms(), " ", [](const auto &i) { return i->atomType()->name(); }));
         site->setType(SpeciesSite::SiteType::Dynamic);
         std::vector<std::shared_ptr<AtomType>> atomTypes;
         for (const auto &i : species_->selectedAtoms())

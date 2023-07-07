@@ -10,12 +10,10 @@ set(gui_MOC_HDRS
     configurationViewerWidget.h
     dataWidget.h
     selectSymbol.h
-    siteWidget.h
     speciesEditor.h
     speciesWidget.h
     configurationViewer.hui
     dataViewer.hui
-    siteViewer.hui
     speciesViewer.hui
     viewer.hui
     # Widgets and Wizards
@@ -69,7 +67,6 @@ set(gui_UIS
     configurationViewerWidget.ui
     dataWidget.ui
     selectSymbol.ui
-    siteWidget.ui
     speciesEditor.ui
     speciesWidget.ui
     # Widgets and Wizards
@@ -129,11 +126,6 @@ set(gui_SRCS
     dataViewer_render.cpp
     dataWidgetFuncs.cpp
     selectSymbolFuncs.cpp
-    siteViewerFuncs.cpp
-    siteViewer_input.cpp
-    siteViewer_interaction.cpp
-    siteViewer_render.cpp
-    siteWidgetFuncs.cpp
     speciesEditorFuncs.cpp
     speciesViewerFuncs.cpp
     speciesViewer_input.cpp

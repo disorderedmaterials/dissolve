@@ -108,21 +108,20 @@ void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
+    // Temperature
     ui_.TemperatureLabel->setText(QString::number(configuration_->temperature()).append(QString(" K")));
 
+    // Current Box
     const auto *box = configuration_->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
-
-    updateDensityLabel();
-
     QString boxInfo =
         QString("A  %1      %2  %3\n").arg(box->axisLengths().x).arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
     boxInfo +=
         QString("B  %1      %2  %3\n").arg(box->axisLengths().y).arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
     boxInfo +=
         QString("C  %1      %2  %3\n").arg(box->axisLengths().z).arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
-
     ui_.CurrentBoxTypeLabel->setToolTip(boxInfo);
+    updateDensityLabel();
 
     // Populations
     ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));
@@ -132,16 +131,17 @@ void ConfigurationTab::updateControls()
     ui_.ViewerWidget->postRedisplay();
 }
 
-// Prevent editing within tab
+// Prevent editing of the generator
 void ConfigurationTab::preventEditing() { ui_.GeneratorWidget->setEnabled(false); }
 
-// Allow editing within tab
+// Allow editing of the generator
 void ConfigurationTab::allowEditing() { ui_.GeneratorWidget->setEnabled(true); }
 
 /*
  * Signals / Slots
  */
 
+// Generate
 void ConfigurationTab::on_GenerateButton_clicked(bool checked)
 {
     auto proceed = true;
@@ -175,5 +175,5 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolveWindow_->updateStatusBar();
 }
 
-// Current Box
+// Density units changed
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }

@@ -20,7 +20,7 @@ class GeometryDialog : public QDialog
     Q_OBJECT
 
     public:
-    GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species, DissolveWindow* dissolveWindow);
+    GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species, DissolveWindow *dissolveWindow);
     ~GeometryDialog() = default;
 
     /*

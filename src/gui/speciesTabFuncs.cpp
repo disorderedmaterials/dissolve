@@ -125,12 +125,14 @@ void SpeciesTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
-    // Structure Tab
     if (species_->box()->type() != Box::BoxType::NonPeriodic)
     {
+        //  Ensure the Box tab exists and is visible
         if (ui_.StructureToolBox->count() == 3)
             ui_.StructureToolBox->insertItem(0, boxPage_, QString("Box"));
         boxPage_->setHidden(false);
+
+        // Current Box
         const auto *box = species_->box();
         ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
         ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
@@ -142,6 +144,7 @@ void SpeciesTab::updateControls()
     }
     else
     {
+        // Make sure the Box tab doesn't exist and is not visible
         if (ui_.StructureToolBox->count() == 4)
         {
             ui_.StructureToolBox->removeItem(0);
@@ -149,11 +152,11 @@ void SpeciesTab::updateControls()
         }
         boxPage_->setHidden(true);
     }
+
     ui_.ViewerWidget->postRedisplay();
 
     // Contents / Forcefield Tab
     updateTotalCharges();
-    updateGeometryTables();
 
     // Isotopologues Tab
     updateIsotopologuesTab();

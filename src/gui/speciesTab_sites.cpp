@@ -197,6 +197,7 @@ void SpeciesTab::updateSitesTab()
             break;
     }
     // If the current site has changed, also regenerate the SpeciesSite renderable
-    if (ui_.StructureToolBox->currentIndex() == ui_.StructureToolBox->count() - 1 && ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
+    if (ui_.StructureToolBox->currentIndex() == ui_.StructureToolBox->count() - 1 &&
+        ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
         ui_.ViewerWidget->setSite(site);
 }

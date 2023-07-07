@@ -122,6 +122,7 @@ class SpeciesViewer : public BaseViewer
     void setSite(SpeciesSite *site);
     // Return target SpeciesSite
     SpeciesSite *speciesSite() const;
+    // Toggle site visibility
     void setSiteVisible(bool visible);
 
     /*
@@ -149,6 +150,6 @@ class SpeciesViewer : public BaseViewer
     void atomsChanged();
     // Site created
     void siteCreatedAndShown();
-    // Sites changes
+    // Site changes
     void sitesChanged();
 };
