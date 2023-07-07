@@ -124,7 +124,7 @@ void ConfigurationTab::updateControls()
     // Populations
     ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));
     ui_.MoleculePopulationLabel->setText(QString::number(configuration_->nMolecules()));
-
+    
     // Viewer
     ui_.ViewerWidget->postRedisplay();
 }
@@ -171,7 +171,6 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     updateControls();
     dissolveWindow_->updateStatusBar();
 }
-
 
 // Current Box
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }

@@ -365,21 +365,6 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
         if (!parser.writeLineF("  End{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::GeneratorKeyword)))
             return false;
-
-        // Input Coordinates
-        if (cfg->inputCoordinates().hasFilename())
-        {
-            if (!cfg->inputCoordinates().writeFilenameAndFormat(
-                    parser,
-                    fmt::format("  {}  ", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword))))
-                return false;
-            if (!cfg->inputCoordinates().writeBlock(parser, "    "))
-                return false;
-            if (!parser.writeLineF("  End{}\n",
-                                   ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)))
-                return false;
-        }
-
         if (!parser.writeLineF("\n"))
             return false;
         if (!parser.writeLineF("  {}  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::TemperatureKeyword),
@@ -387,9 +372,6 @@ bool Dissolve::saveInput(std::string_view filename)
             return false;
 
         if (!parser.writeLineF("\n"))
-            return false;
-        if (!parser.writeLineF("  {}  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::SizeFactorKeyword),
-                               cfg->requestedSizeFactor()))
             return false;
 
         if (!parser.writeLineF("{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::EndConfigurationKeyword)))

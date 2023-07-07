@@ -56,6 +56,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         DirectionalGlobalPotential,
         DynamicSite,
         GeneralRegion,
+        ImportCoordinates,
         IntegerCollect1D,
         Integrate1D,
         OperateDivide,
@@ -79,7 +80,9 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         Select,
         Sequence,
         SimpleGlobalPotential,
+        SizeFactor,
         Sum1D,
+        Temperature,
         Transmute
     };
     // Return enum option info for NodeType

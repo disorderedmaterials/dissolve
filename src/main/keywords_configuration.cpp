@@ -15,7 +15,6 @@ EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywor
         "ConfigurationKeyword", {{ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1},
                                  {ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration"},
                                  {ConfigurationBlock::GeneratorKeyword, "Generator"},
-                                 {ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2},
                                  {ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1},
                                  {ConfigurationBlock::TemperatureKeyword, "Temperature", 1}});
 }
@@ -60,23 +59,12 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                     error = true;
                 }
                 break;
-            case (ConfigurationBlock::InputCoordinatesKeyword):
-                if (cfg->inputCoordinates().read(parser, 1,
-                                                 fmt::format("End{}", ConfigurationBlock::keywords().keyword(
-                                                                          ConfigurationBlock::InputCoordinatesKeyword)),
-                                                 dissolve->coreData()) != FileAndFormat::ReadResult::Success)
-                {
-                    Messenger::error("Failed to set input coordinates file / format.\n");
-                    error = true;
-                    break;
-                }
-                Messenger::printVerbose("Initial coordinates will be loaded from file '{}' ({})\n",
-                                        cfg->inputCoordinates().filename(), cfg->inputCoordinates().formatKeyword());
-                break;
             case (ConfigurationBlock::SizeFactorKeyword):
+                Messenger::warn("The 'SizeFactor' keyword will be deprecated in a future version.\n");
                 cfg->setRequestedSizeFactor(parser.argd(1));
                 break;
             case (ConfigurationBlock::TemperatureKeyword):
+                Messenger::warn("The 'Temperature' keyword will be deprecated in a future version.\n");
                 cfg->setTemperature(parser.argd(1));
                 break;
             default:

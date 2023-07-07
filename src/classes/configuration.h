@@ -53,8 +53,6 @@ class Configuration : public Serialisable<const CoreData &>
     std::string niceName_;
     // Procedure to generate the Configuration
     Procedure generator_;
-    // File / format of input coordinates file, if provided
-    CoordinateImportFileFormat inputCoordinates_;
     static constexpr double defaultTemperature_ = 300.0;
     // Temperature of this configuration (K)
     double temperature_{defaultTemperature_};
@@ -70,8 +68,6 @@ class Configuration : public Serialisable<const CoreData &>
     Procedure &generator();
     // Create the Configuration according to its generator Procedure
     bool generate(const ProcedureContext &procedureContext);
-    // Return import coordinates file / format
-    CoordinateImportFileFormat &inputCoordinates();
     // Initialise (generate or load) the basic contents of the Configuration
     bool initialiseContent(const ProcedureContext &procedureContext);
     // Set configuration temperature

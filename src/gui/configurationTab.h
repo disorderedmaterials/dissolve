@@ -75,7 +75,8 @@ class ConfigurationTab : public QWidget, public MainTab
      * Signals / Slots
      */
     private slots:
-    // Content
+    // Generate
     void on_GenerateButton_clicked(bool checked);
+    // Density units changed
     void on_DensityUnitsCombo_currentIndexChanged(int index);
 };

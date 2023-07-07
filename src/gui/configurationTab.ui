@@ -333,6 +333,11 @@
    <header>gui/procedureWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>ExponentialSpin</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>gui/widgets/exponentialSpin.hui</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="main.qrc"/>

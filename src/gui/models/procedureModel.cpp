@@ -461,3 +461,20 @@ bool ProcedureModel::insertRows(int row, int count, const QModelIndex &parent)
 
     return true;
 }
+
+bool ProcedureModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    if (!procedure_)
+        return false;
+
+    // Get the scope associated to the parent index
+    auto scope = getScope(parent);
+
+    beginRemoveRows(parent, row, row + count - 1);
+    for (auto i = 0; i < count; ++i)
+        scope->get().removeNode(data(index(row + i, 0), Qt::UserRole).value<std::shared_ptr<ProcedureNode>>());
+    endRemoveRows();
+
+    emit(dataChanged(QModelIndex(), QModelIndex()));
+    return true;
+}

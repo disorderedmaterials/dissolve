@@ -44,6 +44,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::DirectionalGlobalPotential, "DirectionalGlobalPotential"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
+                     {ProcedureNode::NodeType::ImportCoordinates, "ImportCoordinates"},
                      {ProcedureNode::NodeType::IntegerCollect1D, "IntegerCollect1D"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
                      {ProcedureNode::NodeType::OperateDivide, "OperateDivide"},
@@ -67,7 +68,9 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
+                     {ProcedureNode::NodeType::SizeFactor, "SizeFactor"},
                      {ProcedureNode::NodeType::Sum1D, "Sum1D"},
+                     {ProcedureNode::NodeType::Temperature, "Temperature"},
                      {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }
 
