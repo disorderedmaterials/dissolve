@@ -145,21 +145,25 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         if (nSelected > 0)
         {
             actionMap[staticSiteMenu->addAction("Create")] = "CreateStatic";
-            actionMap[staticSiteMenu->addAction("Set Origin Atoms")] = "SetOriginStatic";
-            actionMap[staticSiteMenu->addAction("Set X-Axis Atoms")] = "SetXStatic";
-            actionMap[staticSiteMenu->addAction("Set Y-Axis Atoms")] = "SetYStatic";
+            if (site_->type() == SpeciesSite::SiteType::Static)
+            {
+                actionMap[staticSiteMenu->addAction("Set Origin Atoms")] = "SetOriginStatic";
+                actionMap[staticSiteMenu->addAction("Set X-Axis Atoms")] = "SetXStatic";
+                actionMap[staticSiteMenu->addAction("Set Y-Axis Atoms")] = "SetYStatic";
+            }
         }
         else
             staticSiteMenu->setEnabled(false);
         
         auto dynamicSiteMenu = siteMenu->addMenu("Dynamic");
         dynamicSiteMenu->setFont(font());
-        if (nSelected > 0)
+        if (nSelected > 0 && site_ && site_->type() == SpeciesSite::SiteType::Dynamic)
         {
-            //actionMap[dynamicSiteMenu->addAction("Create")] = "CreateDynamic";
             actionMap[dynamicSiteMenu->addAction("Set Elements")] = "SetDynamicElements";
             actionMap[dynamicSiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
         }
+        else
+            dynamicSiteMenu->setEnabled(false);
 
         // Set menu (only if DissolveWindow is set)
         if (dissolveWindow_)
@@ -190,7 +194,6 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         copyViewToClipboard(true);
     else if (actionMap[selectedAction] == "CreateStatic")
     {
-        // Create the new site, using the empirical formula of the selection as the base name
         auto *site = species_->addSite(EmpiricalFormula::formula(species_->selectedAtoms(), [](const auto &i) { return i->Z(); }));
         site->setStaticOriginAtoms(species_->selectedAtoms());
         setSite(site);
@@ -202,18 +205,15 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         site_->setStaticOriginAtoms(species_->selectedAtoms());
         postRedisplay();
         emit(sitesChanged());
-        // Change the origin of the current site to the selected atoms
     }
     else if (actionMap[selectedAction] == "SetXStatic")
     {
         site_->setStaticXAxisAtoms(species_->selectedAtoms());
         postRedisplay();
         emit(sitesChanged());
-        // Set the x-axis atoms of the current site to the selected atoms
     }
     else if (actionMap[selectedAction] == "SetXStatic")
     {
-        // Set the y-axis atoms of the current site to the selected atoms
         site_->setStaticYAxisAtoms(species_->selectedAtoms());
         postRedisplay();
         emit(sitesChanged());

@@ -110,7 +110,6 @@ class SpeciesViewer : public BaseViewer
     Species *species_;
     // Source SpeciesSite to display
     SpeciesSite *site_;
-    bool siteVisible_;
 
     public:
     // Set target Species
@@ -139,8 +138,6 @@ class SpeciesViewer : public BaseViewer
     RenderableSpecies::SpeciesDisplayStyle renderableDrawStyle() const;
     // Recreate selection primitive
     void recreateSelectionPrimitive();
-    // Update renderables
-    void updateRenderables();
 
     /*
      * Signals
