@@ -8,7 +8,6 @@
 #include "gui/models/enumOptionsModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_configurationTab.h"
-#include "gui/widgets/boxWidget.h"
 #include <map>
 
 // Forward Declarations
@@ -46,16 +45,6 @@ class ConfigurationTab : public QWidget, public MainTab
     bool canClose() const override;
 
     /*
-     * StatusBar
-     */
-    private:
-    QLabel *boxIcon_;
-    BoxWidget *boxWidget_;
-
-    private:
-    // Add icon to status bar
-    QLabel *addStatusBarIcon(QString resource, bool permanent = true);
-    /*
      * Configuration Target
      */
     private:
@@ -72,6 +61,8 @@ class ConfigurationTab : public QWidget, public MainTab
      * Update
      */
     private:
+    // Update density label
+    void updateDensityLabel();
     public:
     // Update controls in tab
     void updateControls() override;
@@ -86,10 +77,5 @@ class ConfigurationTab : public QWidget, public MainTab
     private slots:
     // Content
     void on_GenerateButton_clicked(bool checked);
-
-    /*
-     * Event filer
-     */
-    protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
+   void on_DensityUnitsCombo_currentIndexChanged(int index);
 };

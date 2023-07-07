@@ -9,10 +9,8 @@
 #include "gui/gui.h"
 #include "gui/helpers/comboPopulator.h"
 #include "gui/keywordWidgets/producers.h"
-#include "gui/widgets/boxWidget.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
-#include <QMouseEvent>
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
@@ -25,17 +23,14 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     configuration_ = cfg;
 
+    // Populate density units combo
+    ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
+
     // Set target for ConfigurationViewer
     ui_.ViewerWidget->setConfiguration(configuration_);
 
     // Set-up the generator procedure editor
     ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator());
-
-    boxIcon_ = addStatusBarIcon(":/tabs/icons/tabs_configuration.svg", true);
-    boxIcon_->installEventFilter(this);
-    boxWidget_ = new BoxWidget(nullptr, configuration_);
-    boxWidget_->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-    boxWidget_->setHidden(true);
 }
 
 /*
@@ -85,25 +80,6 @@ bool ConfigurationTab::canClose() const
 }
 
 /*
- * Statusbar
- */
-
-// Add icon to status bar
-QLabel *ConfigurationTab::addStatusBarIcon(QString resource, bool permanent)
-{
-    const auto iconSize = ui_.statusBar->font().pointSize() * 1.75;
-    auto *label = new QLabel;
-    label->setPixmap(QPixmap(resource));
-    label->setMaximumSize(QSize(iconSize, iconSize));
-    label->setScaledContents(true);
-    if (permanent)
-        ui_.statusBar->addPermanentWidget(label);
-    else
-        ui_.statusBar->addWidget(label);
-    return label;
-}
-
-/*
  * Configuration Target
  */
 
@@ -114,10 +90,34 @@ Configuration *ConfigurationTab::configuration() const { return configuration_; 
  * Update
  */
 
+// Update density label
+void ConfigurationTab::updateDensityLabel()
+{
+    if (!configuration_)
+        ui_.DensityUnitsLabel->setText("N/A");
+    else
+    {
+        auto rho =
+            ui_.DensityUnitsCombo->currentIndex() == 0 ? configuration_->atomicDensity() : configuration_->chemicalDensity();
+        ui_.DensityUnitsLabel->setText(rho ? QString::number(*rho) : "--");
+    }
+}
+
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
+
+    ui_.TemperatureLabel->setText(QString::number(configuration_->temperature()).append(QString(" K")));
+
+    const auto *box = configuration_->box();
+    ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
+
+    updateDensityLabel();
+
+    // Populations
+    ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));
+    ui_.MoleculePopulationLabel->setText(QString::number(configuration_->nMolecules()));
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
@@ -166,20 +166,6 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolveWindow_->updateStatusBar();
 }
 
-/*
- * Event filer
- */
 
-bool ConfigurationTab::eventFilter(QObject *obj, QEvent *event)
-{
-    if (event->type() == QEvent::Enter)
-    {
-        boxWidget_->update();
-        boxWidget_->setHidden(false);
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-        boxWidget_->move(mapToGlobal(mouseEvent->pos())); // + QPoint(0, 25));
-    }
-    // else if (event->type() == QEvent::Leave)
-    //    boxWidget_->setHidden(true);
-    return QObject::eventFilter(obj, event);
-}
+// Current Box
+void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
