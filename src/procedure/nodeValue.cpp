@@ -73,12 +73,6 @@ bool NodeValue::set(double value)
 // Set from expression text
 bool NodeValue::set(std::string_view expressionText, std::optional<std::vector<std::shared_ptr<ExpressionVariable>>> parameters)
 {
-    // Check for empty expression
-    if (expressionText.empty())
-    {
-        type_ = ExpressionNodeValue;
-        return false;
-    }
     // Is this just a plain number, rather than an equation.
     bool isFloatingPoint;
     if (DissolveSys::isNumber(expressionText, isFloatingPoint))
