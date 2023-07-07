@@ -401,6 +401,11 @@ bool ProcedureNodeSequence::check() const
         // Check node branch if present
         if (node->branch() && !node->branch()->get().check())
             return false;
+
+        // Check validity of NodeValue-based keywords
+        for (auto &kwd : node->keywords().allOfType<NodeValue>())
+            if (!kwd->isValid())
+                return false;
     }
 
     return true;
