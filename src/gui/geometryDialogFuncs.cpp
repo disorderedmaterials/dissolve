@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "gui.h"
 #include "classes/species.h"
 #include "geometryDialog.h"
 #include "gui/delegates/exponentialSpin.hui"
@@ -10,7 +11,7 @@
 #include "main/dissolve.h"
 #include <QWidget>
 
-GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species)
+GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species, DissolveWindow* dissolveWindow)
     : dissolve_(dissolve), bonds_(species->bonds(), dissolve.coreData()), torsions_(species->torsions(), dissolve.coreData()),
       impropers_(species->impropers(), dissolve.coreData()), angles_(species->angles(), dissolve.coreData())
 {
@@ -46,13 +47,10 @@ GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *spe
         4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
                                       dissolve_.coreData().masterImpropers()));
 
-    connect(&bonds_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(setModified()));
-    connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(setModified()));
-    connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(setModified()));
-    connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(setModified()));
+    connect(&bonds_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
+    connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
+    connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
+    connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
 }
-
-void GeometryDialog::setModified() { modified_ = true; }
-bool GeometryDialog::modified() { return modified_; }
 
 void GeometryDialog::on_OKButton_clicked(bool checked) { accept(); }

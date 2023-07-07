@@ -13,13 +13,14 @@
 // Forward Declarations
 class Dissolve;
 class Species;
+class DissolveWindow;
 
 class GeometryDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-    GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species);
+    GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species, DissolveWindow* dissolveWindow);
     ~GeometryDialog() = default;
 
     /*
@@ -42,13 +43,7 @@ class GeometryDialog : public QDialog
     SpeciesTorsionModel torsions_;
     SpeciesImproperModel impropers_;
 
-    private:
-    bool modified_{false};
-
-    public:
-    bool modified();
-
     private slots:
+    // Finish
     void on_OKButton_clicked(bool checked);
-    void setModified();
 };
