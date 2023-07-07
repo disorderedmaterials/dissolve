@@ -70,13 +70,11 @@ void SpeciesViewer::setSite(SpeciesSite *site)
     siteRenderable_ = nullptr;
 
     // Create a new Renderable for the SpeciesSite
-    if (site_)
+    if (site_ && sitesVisible_)
     {
         siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
         siteRenderable_->setName("Site");
         addRenderable(siteRenderable_);
-
-        //view_.showAllData();
     }
 }
 
@@ -86,20 +84,18 @@ SpeciesSite *SpeciesViewer::speciesSite() const { return site_; }
 // Toggle visibility of target site, if there is one being rendered
 void SpeciesViewer::setSiteVisible(bool visible)
 {
-    if (site_)
+    sitesVisible_ = visible;
+    if (visible && site_ && !siteRenderable_)
     {
-        if (visible && !siteRenderable_)
-        {
-            siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
-            siteRenderable_->setName("Site");
-            addRenderable(siteRenderable_);
+        siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
+        siteRenderable_->setName("Site");
+        addRenderable(siteRenderable_);
 
-        }
-        else if (!visible && siteRenderable_)
-        {
-            removeRenderable(siteRenderable_);
-            siteRenderable_ = nullptr;
-        }
+    }
+    else if (!visible && siteRenderable_)
+    {
+        removeRenderable(siteRenderable_);
+        siteRenderable_ = nullptr;
     }
 }
 

@@ -110,6 +110,8 @@ class SpeciesViewer : public BaseViewer
     Species *species_;
     // Source SpeciesSite to display
     SpeciesSite *site_;
+    // Sites are visible
+    bool sitesVisible_;
 
     public:
     // Set target Species
