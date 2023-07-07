@@ -114,7 +114,11 @@ void ConfigurationTab::updateControls()
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
 
     updateDensityLabel();
-    QString boxInfo = QString::number(box->axisLengths().x).append(QString("\n")).append(QString::number(box->axisLengths().y)).append(QString("\n")).append(QString::number(box->axisLengths().z));
+
+    QString boxInfo = QString("A  %1      %2  %3\n").arg(box->axisLengths().x).arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
+    boxInfo += QString("B  %1      %2  %3\n").arg(box->axisLengths().y).arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
+    boxInfo += QString("C  %1      %2  %3\n").arg(box->axisLengths().z).arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
+
     ui_.CurrentBoxTypeLabel->setToolTip(boxInfo);
 
     // Populations
