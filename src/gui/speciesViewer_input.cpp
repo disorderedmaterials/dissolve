@@ -3,6 +3,7 @@
 
 #include "gui/gui.h"
 #include "gui/speciesViewer.hui"
+#include "classes/empiricalFormula.h"
 #include "neta/neta.h"
 #include <QtGui/QMouseEvent>
 
@@ -136,6 +137,29 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         }
         else
             selectMenu->setEnabled(false);
+        
+        auto *siteMenu = menu.addMenu("Create and modify sites...");
+        siteMenu->setFont(font());
+        auto staticSiteMenu = siteMenu->addMenu("Static");
+        staticSiteMenu->setFont(font());
+        if (nSelected > 0)
+        {
+            actionMap[staticSiteMenu->addAction("Create")] = "CreateStatic";
+            actionMap[staticSiteMenu->addAction("Set Origin Atoms")] = "SetOriginStatic";
+            actionMap[staticSiteMenu->addAction("Set X-Axis Atoms")] = "SetXStatic";
+            actionMap[staticSiteMenu->addAction("Set Y-Axis Atoms")] = "SetYStatic";
+        }
+        else
+            staticSiteMenu->setEnabled(false);
+        
+        auto dynamicSiteMenu = siteMenu->addMenu("Dynamic");
+        dynamicSiteMenu->setFont(font());
+        if (nSelected > 0)
+        {
+            //actionMap[dynamicSiteMenu->addAction("Create")] = "CreateDynamic";
+            actionMap[dynamicSiteMenu->addAction("Set Elements")] = "SetDynamicElements";
+            actionMap[dynamicSiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
+        }
 
         // Set menu (only if DissolveWindow is set)
         if (dissolveWindow_)
@@ -164,6 +188,54 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         view_.resetViewMatrix();
     else if (actionMap[selectedAction] == "CopyToClipboard")
         copyViewToClipboard(true);
+    else if (actionMap[selectedAction] == "CreateStatic")
+    {
+        // Create the new site, using the empirical formula of the selection as the base name
+        auto *site = species_->addSite(EmpiricalFormula::formula(species_->selectedAtoms(), [](const auto &i) { return i->Z(); }));
+        site->setStaticOriginAtoms(species_->selectedAtoms());
+        setSite(site);
+        postRedisplay();
+        emit(siteCreatedAndShown());
+    }
+    else if (actionMap[selectedAction] == "SetOriginStatic")
+    {
+        site_->setStaticOriginAtoms(species_->selectedAtoms());
+        postRedisplay();
+        emit(sitesChanged());
+        // Change the origin of the current site to the selected atoms
+    }
+    else if (actionMap[selectedAction] == "SetXStatic")
+    {
+        site_->setStaticXAxisAtoms(species_->selectedAtoms());
+        postRedisplay();
+        emit(sitesChanged());
+        // Set the x-axis atoms of the current site to the selected atoms
+    }
+    else if (actionMap[selectedAction] == "SetXStatic")
+    {
+        // Set the y-axis atoms of the current site to the selected atoms
+        site_->setStaticYAxisAtoms(species_->selectedAtoms());
+        postRedisplay();
+        emit(sitesChanged());
+    }
+    else if (actionMap[selectedAction] == "SetDynamicElements")
+    {
+        std::vector<Elements::Element> elements;
+        for (const auto& i : species_->selectedAtoms())
+            elements.push_back(i->Z());
+        site_->setDynamicElements(elements);
+        postRedisplay();
+        emit(sitesChanged());
+    }
+    else if (actionMap[selectedAction] == "SetDynamicAtomTypes")
+    {
+        std::vector<std::shared_ptr<AtomType>> atomTypes;
+        for (const auto& i : species_->selectedAtoms())
+            atomTypes.push_back(i->atomType());
+        site_->setDynamicAtomTypes(atomTypes);
+        postRedisplay();
+        emit(sitesChanged());
+    }
     else if (DissolveSys::startsWith(actionMap[selectedAction], "Select"))
     {
         // Create a NETA description from the current atom

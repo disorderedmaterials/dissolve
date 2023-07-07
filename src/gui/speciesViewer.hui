@@ -110,6 +110,7 @@ class SpeciesViewer : public BaseViewer
     Species *species_;
     // Source SpeciesSite to display
     SpeciesSite *site_;
+    bool siteVisible_;
 
     public:
     // Set target Species
@@ -120,6 +121,7 @@ class SpeciesViewer : public BaseViewer
     void setSite(SpeciesSite *site);
     // Return target SpeciesSite
     SpeciesSite *speciesSite() const;
+    void setSiteVisible(bool visible);
 
     /*
      * Renderable
@@ -137,6 +139,8 @@ class SpeciesViewer : public BaseViewer
     RenderableSpecies::SpeciesDisplayStyle renderableDrawStyle() const;
     // Recreate selection primitive
     void recreateSelectionPrimitive();
+    // Update renderables
+    void updateRenderables();
 
     /*
      * Signals
@@ -144,4 +148,8 @@ class SpeciesViewer : public BaseViewer
     signals:
     // Atom selection changed
     void atomsChanged();
+    // Site created
+    void siteCreatedAndShown();
+    // Sites changes
+    void sitesChanged();
 };

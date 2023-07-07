@@ -71,9 +71,9 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
     connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), dissolveWindow_, SLOT(updateMenus()));
     connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), this, SLOT(updateAtomTableSelection()));
-    connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
-    connect(ui_.ViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
-    connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(sitesChanged()), this, SLOT(updateSitesTab()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(sitesChanged()), dissolveWindow_, SLOT(setModified()));
 
     connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(atomTableDataChanged(const QModelIndex &, const QModelIndex &)));
@@ -93,10 +93,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
  */
 void SpeciesTab::on_StructureToolBox_currentChanged(int index)
 {
-    if (index != ui_.StructureToolBox->count() - 1)
-        ui_.ViewerWidget->setSite(nullptr);
-    else
-        ui_.ViewerWidget->setSite(currentSite());
+    ui_.ViewerWidget->speciesViewer()->setSiteVisible(index == ui_.StructureToolBox->count() -1);
 }
 
 /*

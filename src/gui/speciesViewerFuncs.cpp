@@ -83,6 +83,12 @@ void SpeciesViewer::setSite(SpeciesSite *site)
 // Return target site
 SpeciesSite *SpeciesViewer::speciesSite() const { return site_; }
 
+void SpeciesViewer::setSiteVisible(bool visible)
+{
+    siteVisible_ = visible;
+    updateRenderables();
+}
+
 /*
  * Renderable
  */
@@ -108,4 +114,34 @@ void SpeciesViewer::recreateSelectionPrimitive()
 {
     if (speciesRenderable_)
         speciesRenderable_->recreateSelectionPrimitive();
+}
+
+void SpeciesViewer::updateRenderables()
+{
+    if (speciesRenderable_ != nullptr)
+        removeRenderable(speciesRenderable_);
+    speciesRenderable_ = nullptr;
+
+    // Clear Renderables
+    clearRenderables();
+
+    // Create a new Renderable for the supplied Species
+    if (species_)
+    {
+        speciesRenderable_ = createRenderable<RenderableSpecies, Species>(species_, species_->name());
+        addRenderable(speciesRenderable_);
+    }
+
+    if (siteRenderable_ != nullptr)
+        removeRenderable(siteRenderable_);
+    siteRenderable_ = nullptr;
+
+    if (site_ && siteVisible_)
+    {
+        siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
+        siteRenderable_->setName("Site");
+        addRenderable(siteRenderable_);
+    }
+
+    view_.showAllData();
 }
