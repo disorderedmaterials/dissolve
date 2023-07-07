@@ -44,17 +44,6 @@ void SpeciesTab::setCurrentSiteFromViewer()
     dissolveWindow_->fullUpdate();
 }
 
-void SpeciesTab::on_SiteAddButton_clicked(bool checked)
-{
-    species_->addSite("NewSite");
-
-    sites_.setData(species_->sites());
-
-    dissolveWindow_->setModified(DissolveSignals::SpeciesSiteMutated);
-
-    dissolveWindow_->fullUpdate();
-}
-
 void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
 {
     // Get the currently-selected site
@@ -81,21 +70,6 @@ void SpeciesTab::on_SiteTypeCombo_currentIndexChanged(int index)
     auto *site = currentSite();
     if (refreshLock_.isLocked() || (!site))
         return;
-
-    switch (index)
-    {
-        case (0):
-            site->setType(SpeciesSite::SiteType::Static);
-            break;
-        case (1):
-            site->setType(SpeciesSite::SiteType::Dynamic);
-            break;
-        case (2):
-            site->setType(SpeciesSite::SiteType::Fragment);
-            break;
-        default:
-            Messenger::error("Type combo index '{}' not handled.\n", index);
-    }
 
     updateSitesTab();
 
@@ -169,7 +143,6 @@ void SpeciesTab::updateSitesTab()
     }
 
     ui_.SiteRemoveButton->setEnabled(site != nullptr);
-    ui_.SiteTypeCombo->setEnabled(site != nullptr);
     ui_.SiteDefinitionStack->setEnabled(site != nullptr);
     if (!site)
     {
@@ -224,6 +197,6 @@ void SpeciesTab::updateSitesTab()
             break;
     }
     // If the current site has changed, also regenerate the SpeciesSite renderable
-    if (ui_.StructureToolBox->currentIndex() == 2 && ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
+    if (ui_.StructureToolBox->currentIndex() == ui_.StructureToolBox->count() - 1 && ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
         ui_.ViewerWidget->setSite(site);
 }

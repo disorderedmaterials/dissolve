@@ -859,7 +859,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>322</width>
+        <width>320</width>
         <height>678</height>
        </rect>
       </property>
@@ -946,32 +946,6 @@
                 </property>
                </widget>
               </item>
-              <item>
-               <widget class="QToolButton" name="SiteAddButton">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Add</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="main.qrc">
-                  <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>16</width>
-                  <height>16</height>
-                 </size>
-                </property>
-                <property name="toolButtonStyle">
-                 <enum>Qt::ToolButtonTextBesideIcon</enum>
-                </property>
-               </widget>
-              </item>
              </layout>
             </item>
             <item>
@@ -1021,6 +995,9 @@
           </property>
           <item>
            <widget class="QComboBox" name="SiteTypeCombo">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <item>
              <property name="text">
               <string>Static - Defined by specific atoms</string>
@@ -1433,13 +1410,13 @@
   <customwidget>
    <class>SpeciesWidget</class>
    <extends>QWidget</extends>
-   <header>gui/specieswidget.h</header>
+   <header>gui/speciesWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CheckIndicator</class>
    <extends>QLabel</extends>
-   <header>gui/widgets/checkindicator.hui</header>
+   <header>gui/widgets/checkIndicator.hui</header>
   </customwidget>
  </customwidgets>
  <resources>

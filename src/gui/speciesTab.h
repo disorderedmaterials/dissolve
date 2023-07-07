@@ -145,7 +145,6 @@ class SpeciesTab : public QWidget, public MainTab
 
     private slots:
     void setCurrentSiteFromViewer();
-    void on_SiteAddButton_clicked(bool checked);
     void on_SiteRemoveButton_clicked(bool checked);
     void on_SiteTypeCombo_currentIndexChanged(int index);
     void siteSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
