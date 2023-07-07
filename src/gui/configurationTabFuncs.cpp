@@ -114,12 +114,12 @@ void ConfigurationTab::updateControls()
     // Current Box
     const auto *box = configuration_->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
-    QString boxInfo =
-        QString("A  %1      %2  %3\n").arg(box->axisLengths().x).arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
-    boxInfo +=
-        QString("B  %1      %2  %3\n").arg(box->axisLengths().y).arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
-    boxInfo +=
-        QString("C  %1      %2  %3\n").arg(box->axisLengths().z).arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
+    QString boxInfo = QString("A  %1\n").arg(box->axisLengths().x);
+    boxInfo += QString("B  %1\n").arg(box->axisLengths().y);
+    boxInfo += QString("C  %1\n").arg(box->axisLengths().z);
+    boxInfo += QString("%1  %2\n").arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
+    boxInfo += QString("%1  %2\n").arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
+    boxInfo += QString("%1  %2").arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
     ui_.CurrentBoxTypeLabel->setToolTip(boxInfo);
     updateDensityLabel();
 
