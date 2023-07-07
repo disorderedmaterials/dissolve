@@ -95,7 +95,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
  */
 void SpeciesTab::on_StructureToolBox_currentChanged(int index)
 {
-    ui_.ViewerWidget->speciesViewer()->setSiteVisible(index == ui_.StructureToolBox->count() -1);
+    ui_.ViewerWidget->speciesViewer()->setSiteVisible(index == ui_.StructureToolBox->count() - 1);
 }
 
 /*

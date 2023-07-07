@@ -63,6 +63,7 @@ class ConfigurationTab : public QWidget, public MainTab
     private:
     // Update density label
     void updateDensityLabel();
+
     public:
     // Update controls in tab
     void updateControls() override;

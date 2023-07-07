@@ -115,16 +115,19 @@ void ConfigurationTab::updateControls()
 
     updateDensityLabel();
 
-    QString boxInfo = QString("A  %1      %2  %3\n").arg(box->axisLengths().x).arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
-    boxInfo += QString("B  %1      %2  %3\n").arg(box->axisLengths().y).arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
-    boxInfo += QString("C  %1      %2  %3\n").arg(box->axisLengths().z).arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
+    QString boxInfo =
+        QString("A  %1      %2  %3\n").arg(box->axisLengths().x).arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
+    boxInfo +=
+        QString("B  %1      %2  %3\n").arg(box->axisLengths().y).arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
+    boxInfo +=
+        QString("C  %1      %2  %3\n").arg(box->axisLengths().z).arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
 
     ui_.CurrentBoxTypeLabel->setToolTip(boxInfo);
 
     // Populations
     ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));
     ui_.MoleculePopulationLabel->setText(QString::number(configuration_->nMolecules()));
-    
+
     // Viewer
     ui_.ViewerWidget->postRedisplay();
 }

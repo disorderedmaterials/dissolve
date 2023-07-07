@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "classes/empiricalFormula.h"
 #include "gui/gui.h"
 #include "gui/speciesViewer.hui"
-#include "classes/empiricalFormula.h"
 #include "neta/neta.h"
 #include <QtGui/QMouseEvent>
 
@@ -137,7 +137,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         }
         else
             selectMenu->setEnabled(false);
-        
+
         if (sitesVisible_)
         {
             auto *siteMenu = menu.addMenu("Create and modify sites...");
@@ -156,7 +156,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
             }
             else
                 staticSiteMenu->setEnabled(false);
-            
+
             auto dynamicSiteMenu = siteMenu->addMenu("Dynamic");
             dynamicSiteMenu->setFont(font());
             if (nSelected > 0 && site_ && site_->type() == SpeciesSite::SiteType::Dynamic)
@@ -196,7 +196,8 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         copyViewToClipboard(true);
     else if (actionMap[selectedAction] == "CreateStatic")
     {
-        auto *site = species_->addSite(EmpiricalFormula::formula(species_->selectedAtoms(), [](const auto &i) { return i->Z(); }));
+        auto *site =
+            species_->addSite(EmpiricalFormula::formula(species_->selectedAtoms(), [](const auto &i) { return i->Z(); }));
         site->setStaticOriginAtoms(species_->selectedAtoms());
         setSite(site);
         postRedisplay();
@@ -223,7 +224,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
     else if (actionMap[selectedAction] == "SetDynamicElements")
     {
         std::vector<Elements::Element> elements;
-        for (const auto& i : species_->selectedAtoms())
+        for (const auto &i : species_->selectedAtoms())
             elements.push_back(i->Z());
         site_->setDynamicElements(elements);
         postRedisplay();
@@ -232,7 +233,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
     else if (actionMap[selectedAction] == "SetDynamicAtomTypes")
     {
         std::vector<std::shared_ptr<AtomType>> atomTypes;
-        for (const auto& i : species_->selectedAtoms())
+        for (const auto &i : species_->selectedAtoms())
             atomTypes.push_back(i->atomType());
         site_->setDynamicAtomTypes(atomTypes);
         postRedisplay();
