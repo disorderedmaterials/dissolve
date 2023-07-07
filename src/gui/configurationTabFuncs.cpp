@@ -114,6 +114,8 @@ void ConfigurationTab::updateControls()
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
 
     updateDensityLabel();
+    QString boxInfo = QString::number(box->axisLengths().x).append(QString("\n")).append(QString::number(box->axisLengths().y)).append(QString("\n")).append(QString::number(box->axisLengths().z));
+    ui_.CurrentBoxTypeLabel->setToolTip(boxInfo);
 
     // Populations
     ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));

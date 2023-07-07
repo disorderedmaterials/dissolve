@@ -77,5 +77,5 @@ class ConfigurationTab : public QWidget, public MainTab
     private slots:
     // Content
     void on_GenerateButton_clicked(bool checked);
-   void on_DensityUnitsCombo_currentIndexChanged(int index);
+    void on_DensityUnitsCombo_currentIndexChanged(int index);
 };
