@@ -93,7 +93,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
  */
 void SpeciesTab::on_StructureToolBox_currentChanged(int index)
 {
-    if (index != 3)
+    if (index != ui_.StructureToolBox->count() - 1)
         ui_.ViewerWidget->setSite(nullptr);
     else
         ui_.ViewerWidget->setSite(currentSite());
