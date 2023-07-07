@@ -82,6 +82,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         SimpleGlobalPotential,
         SizeFactor,
         Sum1D,
+        Temperature,
         Transmute
     };
     // Return enum option info for NodeType

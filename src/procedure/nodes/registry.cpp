@@ -43,6 +43,7 @@
 #include "procedure/nodes/simpleGlobalPotential.h"
 #include "procedure/nodes/sizeFactor.h"
 #include "procedure/nodes/sum1D.h"
+#include "procedure/nodes/temperature.h"
 #include "procedure/nodes/transmute.h"
 
 ProcedureNodeRegistry::ProcedureNodeRegistry()
@@ -60,6 +61,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
     registerProducer<SizeFactorProcedureNode>(ProcedureNode::NodeType::SizeFactor,
                                               "Scale a configuration's contents with a size factor", "Build");
+    registerProducer<TemperatureProcedureNode>(ProcedureNode::NodeType::Temperature, "Set temperature for configuration",
+                                               "Build");
     registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
                                              "Turn molecules from one species type into another", "Build");
 

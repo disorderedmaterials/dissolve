@@ -359,6 +359,7 @@ void DissolveWindow::updateMenus()
     ui_.ConfigurationRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
     ui_.ConfigurationDeleteAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
     ui_.ConfigurationExportToMenu->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
+    ui_.ConfigurationAdjustTemperatureAction->setEnabled(activeTab->type() == MainTab::TabType::Configuration);
 
     // Layer Menu
     ui_.LayerRenameAction->setEnabled(activeTab->type() == MainTab::TabType::Layer);

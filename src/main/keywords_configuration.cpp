@@ -64,6 +64,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                 cfg->setRequestedSizeFactor(parser.argd(1));
                 break;
             case (ConfigurationBlock::TemperatureKeyword):
+                Messenger::warn("The 'Temperature' keyword will be deprecated in a future version.\n");
                 cfg->setTemperature(parser.argd(1));
                 break;
             default:

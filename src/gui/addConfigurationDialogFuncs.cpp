@@ -10,6 +10,7 @@
 #include "procedure/nodes/coordinateSets.h"
 #include "procedure/nodes/generalRegion.h"
 #include "procedure/nodes/parameters.h"
+#include "procedure/nodes/temperature.h"
 #include <QInputDialog>
 #include <QMessageBox>
 
@@ -179,6 +180,10 @@ void AddConfigurationDialog::finalise()
     // Create the Configuration and a suitable generator
     auto *newConfiguration = dissolve_.addConfiguration();
     auto &generator = newConfiguration->generator();
+
+    // Add Temperature node, by default
+    generator.createRootNode<TemperatureProcedureNode>({});
+
     std::shared_ptr<GeneralRegionProcedureNode> regionNode;
 
     // Add the framework species if present
