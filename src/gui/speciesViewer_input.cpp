@@ -159,13 +159,22 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
 
             auto dynamicSiteMenu = siteMenu->addMenu("Dynamic");
             dynamicSiteMenu->setFont(font());
-            if (nSelected > 0 && site_ && site_->type() == SpeciesSite::SiteType::Dynamic)
+            if (nSelected > 0) 
             {
-                actionMap[dynamicSiteMenu->addAction("Set Elements")] = "SetDynamicElements";
-                actionMap[dynamicSiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
+                actionMap[dynamicSiteMenu->addAction("Create from Elements")] = "CreateDynamicElements";
+                actionMap[dynamicSiteMenu->addAction("Create from Atom Types")] = "CreateDynamicAtomTypes";
+                if (site_->type() == SpeciesSite::SiteType::Dynamic)
+                {
+                    actionMap[dynamicSiteMenu->addAction("Set Elements")] = "SetDynamicElements";
+                    actionMap[dynamicSiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
+                }
             }
             else
                 dynamicSiteMenu->setEnabled(false);
+
+            auto fragmentSiteMenu = siteMenu->addMenu("Fragment");
+            fragmentSiteMenu->setFont(font());
+            actionMap[fragmentSiteMenu->addAction("Create empty Fragment")] = "CreateFragment";
         }
         // Set menu (only if DissolveWindow is set)
         if (dissolveWindow_)
@@ -221,6 +230,32 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         postRedisplay();
         emit(sitesChanged());
     }
+    else if (actionMap[selectedAction] == "CreateDynamicElements")
+    {
+        auto *site =
+            species_->addSite(EmpiricalFormula::formula(species_->selectedAtoms(), [](const auto &i) { return i->Z(); }));
+        site->setType(SpeciesSite::SiteType::Dynamic);
+        std::vector<Elements::Element> elements;
+        for (const auto &i : species_->selectedAtoms())
+            elements.push_back(i->Z());
+        site->setDynamicElements(elements);
+        setSite(site);
+        postRedisplay();
+        emit(siteCreatedAndShown());
+    }
+    else if (actionMap[selectedAction] == "CreateDynamicAtomTypes")
+    {
+        auto *site =
+            species_->addSite(joinStrings(species_->selectedAtoms(), " ", [](const auto& i) { return i->atomType()->name();}));
+        site->setType(SpeciesSite::SiteType::Dynamic);
+        std::vector<std::shared_ptr<AtomType>> atomTypes;
+        for (const auto &i : species_->selectedAtoms())
+            atomTypes.push_back(i->atomType());
+        site->setDynamicAtomTypes(atomTypes);
+        setSite(site);
+        postRedisplay();
+        emit(siteCreatedAndShown());
+    }
     else if (actionMap[selectedAction] == "SetDynamicElements")
     {
         std::vector<Elements::Element> elements;
@@ -238,6 +273,14 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         site_->setDynamicAtomTypes(atomTypes);
         postRedisplay();
         emit(sitesChanged());
+    }
+    else if (actionMap[selectedAction] == "CreateFragment")
+    {
+        auto *site = species_->addSite("New Site");
+        site->setType(SpeciesSite::SiteType::Fragment);
+        setSite(site);
+        postRedisplay();
+        emit(siteCreatedAndShown());
     }
     else if (DissolveSys::startsWith(actionMap[selectedAction], "Select"))
     {
