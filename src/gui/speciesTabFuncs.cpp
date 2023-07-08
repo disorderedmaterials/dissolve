@@ -65,7 +65,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.ViewerWidget->speciesViewer()->setDissolveWindow(dissolveWindow_);
     ui_.ViewerWidget->setDissolve(&dissolve);
     ui_.ViewerWidget->setSpecies(species_);
-    ui_.ViewerWidget->setSite(species_->sites().front().get());
+    ui_.ViewerWidget->setSite(species_->sites().empty() ? nullptr : species_->sites().front().get());
     ui_.ViewerWidget->speciesViewer()->setSiteVisible(false);
 
     // Connect signals / slots
