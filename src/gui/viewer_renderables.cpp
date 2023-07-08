@@ -24,7 +24,6 @@ void BaseViewer::addRenderable(const std::shared_ptr<Renderable> &renderable)
     renderables_.emplace_back(renderable);
 
     emit(renderableAdded());
-    postRedisplay();
 }
 
 // Remove existing Renderable

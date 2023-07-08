@@ -90,6 +90,7 @@ void SpeciesViewer::setSiteVisible(bool visible)
         siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
         siteRenderable_->setName("Site");
         addRenderable(siteRenderable_);
+        postRedisplay();
     }
     else if (!visible && siteRenderable_)
     {
