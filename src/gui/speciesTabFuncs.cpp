@@ -129,7 +129,7 @@ void SpeciesTab::updateControls()
     boxInfo += QString("<b>%1:</b>  %2<br>").arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
     boxInfo += QString("<b>%1:</b>  %2<br>").arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
     boxInfo += QString("<b>%1:</b>  %2").arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
-    ui_.CurrentBoxTypeLabel->setToolTip(boxInfo);
+    ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
 
     // Contents / Forcefield Tab
