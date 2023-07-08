@@ -87,15 +87,10 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(updateIsotopologuesTab()));
 
-    boxPage_ = ui_.BoxPage;
-}
+    ui_.IsotopologuesFrame->setVisible(false);
+    ui_.SitesFrame->setVisible(false);
+    connect(ui_.SpeciesButtonGroup, SIGNAL(buttonToggled(QAbstractButton*, bool)), this, SLOT(buttonGroupToggled(QAbstractButton*, bool)));
 
-/*
- * Widget Functions - tool box
- */
-void SpeciesTab::on_StructureToolBox_currentChanged(int index)
-{
-    ui_.ViewerWidget->speciesViewer()->setSiteVisible(index == ui_.StructureToolBox->count() - 1);
 }
 
 /*
@@ -125,35 +120,17 @@ void SpeciesTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
-    if (species_->box()->type() != Box::BoxType::NonPeriodic)
-    {
-        //  Ensure the Box tab exists and is visible
-        if (ui_.StructureToolBox->count() == 3)
-            ui_.StructureToolBox->insertItem(0, boxPage_, QString("Box"));
-        boxPage_->setHidden(false);
-
-        // Current Box
-        const auto *box = species_->box();
-        ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
-        ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
-        ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
-        ui_.CurrentBoxCLabel->setText(QString::number(box->axisLengths().z));
-        ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
-        ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
-        ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
-    }
-    else
-    {
-        // Make sure the Box tab doesn't exist and is not visible
-        if (ui_.StructureToolBox->count() == 4)
-        {
-            ui_.StructureToolBox->removeItem(0);
-            ui_.StructureToolBox->setCurrentIndex(0);
-        }
-        boxPage_->setHidden(true);
-    }
-
-    ui_.ViewerWidget->postRedisplay();
+    // Current Box
+    const auto *box = species_->box();
+    ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
+    QString boxInfo = QString("<b>A:</b>  %1<br>").arg(box->axisLengths().x);
+    boxInfo += QString("<b>B:</b>  %1<br>").arg(box->axisLengths().y);
+    boxInfo += QString("<b>C:</b>  %1<br>").arg(box->axisLengths().z);
+    boxInfo += QString("<b>%1:</b>  %2<br>").arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
+    boxInfo += QString("<b>%1:</b>  %2<br>").arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
+    boxInfo += QString("<b>%1:</b>  %2").arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
+    ui_.CurrentBoxTypeLabel->setToolTip(boxInfo);
+    updateDensityLabel();
 
     // Contents / Forcefield Tab
     updateTotalCharges();
@@ -225,3 +202,27 @@ bool SpeciesTab::canClose() const
 
 // Return displayed Species
 Species *SpeciesTab::species() const { return species_; }
+
+// Button group toggled
+void SpeciesTab::buttonGroupToggled(QAbstractButton* button, bool checked)
+{
+    if (button == ui_.AtomsPushButton)
+    {
+        ui_.AtomsFrame->setVisible(checked);
+        ui_.IsotopologuesFrame->setVisible(!checked);
+        ui_.SitesFrame->setVisible(!checked);
+    }
+    else if (button == ui_.IsotopologuesPushButton)
+    {
+        ui_.IsotopologuesFrame->setVisible(checked);
+        ui_.AtomsFrame->setVisible(!checked);
+        ui_.SitesFrame->setVisible(!checked);
+    }
+    else if (button == ui_.SitesPushButton)
+    {
+        ui_.SitesFrame->setVisible(checked);
+        ui_.ViewerWidget->speciesViewer()->setSiteVisible(checked);
+        ui_.AtomsFrame->setVisible(!checked);
+        ui_.IsotopologuesFrame->setVisible(!checked);
+    }
+}

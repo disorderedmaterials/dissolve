@@ -38,6 +38,7 @@ void SpeciesTab::setCurrentSiteFromViewer()
     // Force a refresh of the sites model
     sites_.setData(species_->sites());
     ui_.SiteList->setCurrentIndex(sites_.index(index, 0));
+    ui_.SitesPushButton->setChecked(true);
 
     dissolveWindow_->setModified();
 
@@ -197,7 +198,6 @@ void SpeciesTab::updateSitesTab()
             break;
     }
     // If the current site has changed, also regenerate the SpeciesSite renderable
-    if (ui_.StructureToolBox->currentIndex() == ui_.StructureToolBox->count() - 1 &&
-        ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
+    if (ui_.ViewerWidget->speciesViewer()->speciesSite() != site)
         ui_.ViewerWidget->setSite(site);
 }

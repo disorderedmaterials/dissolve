@@ -138,37 +138,31 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         else
             selectMenu->setEnabled(false);
 
-        if (sitesVisible_)
-        {
-            auto *createSiteMenu = menu.addMenu("Create site from...");
-            createSiteMenu->setFont(font());
-            if (nSelected > 0)
-            {
-                actionMap[createSiteMenu->addAction("Atoms")] = "CreateStatic";                
-                actionMap[createSiteMenu->addAction("Elements")] = "CreateDynamicElements";
-                actionMap[createSiteMenu->addAction("Atom Types")] = "CreateDynamicAtomTypes";
-                actionMap[createSiteMenu->addAction("Empty Fragment String")] = "CreateFragment";
-            }
+        auto *createSiteMenu = menu.addMenu("Create site from...");
+        createSiteMenu->setFont(font());
+        actionMap[createSiteMenu->addAction("Atoms")] = "CreateStatic";                
+        actionMap[createSiteMenu->addAction("Elements")] = "CreateDynamicElements";
+        actionMap[createSiteMenu->addAction("Atom Types")] = "CreateDynamicAtomTypes";
+        actionMap[createSiteMenu->addAction("Empty Fragment String")] = "CreateFragment";
+        createSiteMenu->setEnabled(nSelected > 0);
 
-            auto *modifySiteMenu = menu.addMenu("Modify current site...");
-            modifySiteMenu->setFont(font());
-            if (nSelected > 0)
-            {
-                if (site_->type() == SpeciesSite::SiteType::Static)
-                {
-                    actionMap[modifySiteMenu->addAction("Set Origin Atoms")] = "SetOriginStatic";
-                    actionMap[modifySiteMenu->addAction("Set X-Axis Atoms")] = "SetXStatic";
-                    actionMap[modifySiteMenu->addAction("Set Y-Axis Atoms")] = "SetYStatic";
-                }
-                else if (site_->type() == SpeciesSite::SiteType::Dynamic)
-                {
-                    actionMap[modifySiteMenu->addAction("Set Elements")] = "SetDynamicElements";
-                    actionMap[modifySiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
-                }
-                else if (site_->type() == SpeciesSite::SiteType::Fragment)
-                    modifySiteMenu->setEnabled(false);
-            }
+        auto *modifySiteMenu = menu.addMenu("Modify current site...");
+        modifySiteMenu->setFont(font());
+        if (site_->type() == SpeciesSite::SiteType::Static)
+        {
+            actionMap[modifySiteMenu->addAction("Set Origin Atoms")] = "SetOriginStatic";
+            actionMap[modifySiteMenu->addAction("Set X-Axis Atoms")] = "SetXStatic";
+            actionMap[modifySiteMenu->addAction("Set Y-Axis Atoms")] = "SetYStatic";
         }
+        else if (site_->type() == SpeciesSite::SiteType::Dynamic)
+        {
+            actionMap[modifySiteMenu->addAction("Set Elements")] = "SetDynamicElements";
+            actionMap[modifySiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
+        }
+        else if (site_->type() == SpeciesSite::SiteType::Fragment)
+            modifySiteMenu->setEnabled(false);
+        modifySiteMenu->setEnabled(sitesVisible_);
+
         // Set menu (only if DissolveWindow is set)
         if (dissolveWindow_)
         {

@@ -81,12 +81,6 @@ class SpeciesTab : public QWidget, public MainTab
     Species *species() const;
 
     /*
-     * Widget Functions - tool box
-     */
-    private slots:
-    void on_StructureToolBox_currentChanged(int index);
-
-    /*
      * Widget Functions - Structure
      */
     private slots:
@@ -153,4 +147,6 @@ class SpeciesTab : public QWidget, public MainTab
     public slots:
     // Update sites tab
     void updateSitesTab();
+    // Button group toggled
+    void buttonGroupToggled(QAbstractButton* button, bool checked);
 };
