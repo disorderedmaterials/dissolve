@@ -148,19 +148,22 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
 
         auto *modifySiteMenu = menu.addMenu("Modify current site...");
         modifySiteMenu->setFont(font());
-        if (site_->type() == SpeciesSite::SiteType::Static)
+        if (site_ != nullptr)
         {
-            actionMap[modifySiteMenu->addAction("Set Origin Atoms")] = "SetOriginStatic";
-            actionMap[modifySiteMenu->addAction("Set X-Axis Atoms")] = "SetXStatic";
-            actionMap[modifySiteMenu->addAction("Set Y-Axis Atoms")] = "SetYStatic";
+            if (site_->type() == SpeciesSite::SiteType::Static)
+            {
+                actionMap[modifySiteMenu->addAction("Set Origin Atoms")] = "SetOriginStatic";
+                actionMap[modifySiteMenu->addAction("Set X-Axis Atoms")] = "SetXStatic";
+                actionMap[modifySiteMenu->addAction("Set Y-Axis Atoms")] = "SetYStatic";
+            }
+            else if (site_->type() == SpeciesSite::SiteType::Dynamic)
+            {
+                actionMap[modifySiteMenu->addAction("Set Elements")] = "SetDynamicElements";
+                actionMap[modifySiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
+            }
+            else if (site_->type() == SpeciesSite::SiteType::Fragment)
+                modifySiteMenu->setEnabled(false);
         }
-        else if (site_->type() == SpeciesSite::SiteType::Dynamic)
-        {
-            actionMap[modifySiteMenu->addAction("Set Elements")] = "SetDynamicElements";
-            actionMap[modifySiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
-        }
-        else if (site_->type() == SpeciesSite::SiteType::Fragment)
-            modifySiteMenu->setEnabled(false);
         modifySiteMenu->setEnabled(sitesVisible_);
 
         // Set menu (only if DissolveWindow is set)
