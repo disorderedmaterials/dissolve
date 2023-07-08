@@ -47,6 +47,9 @@ Configuration  'Bulk'
 
   # Modules
   Generator
+    Temperature
+      Temperature  298.0
+    EndTemperature
     Parameters
       Parameter  populationA  1500
       Parameter  ratioB  2
@@ -72,11 +75,6 @@ Configuration  'Bulk'
       Positioning  Random
     EndAdd
   EndGenerator
-
-  Temperature  298.000000
-
-  # Modules
-  # -- None
 EndConfiguration
 
 #------------------------------------------------------------------------------#
