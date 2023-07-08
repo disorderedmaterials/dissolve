@@ -140,7 +140,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
 
         auto *createSiteMenu = menu.addMenu("Create site from...");
         createSiteMenu->setFont(font());
-        actionMap[createSiteMenu->addAction("Atoms")] = "CreateStatic";                
+        actionMap[createSiteMenu->addAction("Atoms")] = "CreateStatic";
         actionMap[createSiteMenu->addAction("Elements")] = "CreateDynamicElements";
         actionMap[createSiteMenu->addAction("Atom Types")] = "CreateDynamicAtomTypes";
         actionMap[createSiteMenu->addAction("Empty Fragment String")] = "CreateFragment";

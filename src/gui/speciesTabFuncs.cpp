@@ -89,8 +89,8 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     ui_.IsotopologuesFrame->setVisible(false);
     ui_.SitesFrame->setVisible(false);
-    connect(ui_.SpeciesButtonGroup, SIGNAL(buttonToggled(QAbstractButton*, bool)), this, SLOT(buttonGroupToggled(QAbstractButton*, bool)));
-
+    connect(ui_.SpeciesButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
+            SLOT(buttonGroupToggled(QAbstractButton *, bool)));
 }
 
 /*
@@ -204,7 +204,7 @@ bool SpeciesTab::canClose() const
 Species *SpeciesTab::species() const { return species_; }
 
 // Button group toggled
-void SpeciesTab::buttonGroupToggled(QAbstractButton* button, bool checked)
+void SpeciesTab::buttonGroupToggled(QAbstractButton *button, bool checked)
 {
     if (button == ui_.AtomsPushButton)
     {

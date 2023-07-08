@@ -148,5 +148,5 @@ class SpeciesTab : public QWidget, public MainTab
     // Update sites tab
     void updateSitesTab();
     // Button group toggled
-    void buttonGroupToggled(QAbstractButton* button, bool checked);
+    void buttonGroupToggled(QAbstractButton *button, bool checked);
 };
