@@ -1,7 +1,4 @@
-# Testing Code
-enable_testing()
-
-# Example subdirectories
+# List example subdirectories
 message(STATUS "Looking for example tests in ${CMAKE_CURRENT_SOURCE_DIR}...")
 file(
   GLOB children
