@@ -70,7 +70,7 @@ SpeciesSite::SiteType SpeciesSite::type() const { return type_; }
 // Return whether the site has defined axes sites
 bool SpeciesSite::hasAxes() const
 {
-    return (type_ == SiteType::Static && !(staticXAxisAtoms_.empty() && staticYAxisAtoms_.empty())) ||
+    return (type_ == SiteType::Static && !(staticXAxisAtoms_.empty() || staticYAxisAtoms_.empty())) ||
            (type_ == SiteType::Fragment && fragment_.hasAxes());
 }
 
