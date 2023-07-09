@@ -401,14 +401,17 @@ bool SpeciesSite::generateUniqueSites()
                         sitesAllAtomsIndices_.end())
                         continue;
 
-                    // If it's unique, remember it and proceed.
-                    sitesAllAtomsIndices_.push_back(std::move(matchedAtomIndices));
 
                     auto identifiers = matchedGroup.identifiers();
 
-                    // Determine origin atoms
-                    sitesOriginAtomsIndices_.emplace_back(identifiers["origin"].size());
-                    std::transform(identifiers["origin"].begin(), identifiers["origin"].end(),
+                    // Determine origin atoms, if there are none then the site is not valid
+                    auto originAtomsIndices = identifiers["origin"];
+                    if (originAtomsIndices.empty())
+                        continue;
+
+                    sitesOriginAtomsIndices_.emplace_back(originAtomsIndices.size());
+                    std::transform(originAtomsIndices.begin(), originAtomsIndices
+                                   .end(),
                                    sitesOriginAtomsIndices_.back().begin(), [](const auto &atom) { return atom->index(); });
                     if (hasAxes())
                     {
@@ -421,6 +424,8 @@ bool SpeciesSite::generateUniqueSites()
                         std::transform(identifiers["y"].begin(), identifiers["y"].end(), sitesYAxisAtomsIndices_.back().begin(),
                                        [](const auto &atom) { return atom->index(); });
                     }
+
+                    sitesAllAtomsIndices_.push_back(std::move(matchedAtomIndices));
                 }
             }
             break;
