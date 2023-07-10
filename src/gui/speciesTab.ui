@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1087</width>
-    <height>962</height>
+    <height>969</height>
    </rect>
   </property>
   <property name="font">
@@ -43,19 +43,19 @@
       <enum>QLayout::SetMaximumSize</enum>
      </property>
      <property name="leftMargin">
-      <number>4</number>
+      <number>9</number>
      </property>
      <property name="topMargin">
-      <number>4</number>
+      <number>9</number>
      </property>
      <property name="rightMargin">
-      <number>4</number>
+      <number>9</number>
      </property>
      <property name="bottomMargin">
-      <number>4</number>
+      <number>9</number>
      </property>
      <item>
-      <widget class="QWidget" name="AtomsWidget" native="true">
+      <widget class="QWidget" name="AtomsTabWidget" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_8">
         <property name="spacing">
          <number>0</number>
@@ -184,7 +184,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="IsotopologuesWidget" native="true">
+      <widget class="QWidget" name="IsotopologuesTabWidget" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_9">
         <property name="spacing">
          <number>0</number>
@@ -453,7 +453,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="SitesWidget" native="true">
+      <widget class="QWidget" name="SitesTabWidget" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_10">
         <property name="spacing">
          <number>0</number>
@@ -1045,16 +1045,16 @@
       <enum>QLayout::SetNoConstraint</enum>
      </property>
      <property name="leftMargin">
-      <number>4</number>
+      <number>9</number>
      </property>
      <property name="topMargin">
-      <number>4</number>
+      <number>9</number>
      </property>
      <property name="rightMargin">
-      <number>4</number>
+      <number>9</number>
      </property>
      <property name="bottomMargin">
-      <number>4</number>
+      <number>9</number>
      </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_9">
