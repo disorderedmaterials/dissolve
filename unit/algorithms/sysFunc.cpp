@@ -64,6 +64,9 @@ TEST(SysFunc, StringManipulation)
     EXPECT_TRUE(DissolveSys::isNumber("+5.712945e+4"));
     EXPECT_TRUE(DissolveSys::isNumber("100"));
     EXPECT_FALSE(DissolveSys::isNumber("abc"));
+    EXPECT_FALSE(DissolveSys::isNumber("."));
+    EXPECT_FALSE(DissolveSys::isNumber(""));
+    EXPECT_FALSE(DissolveSys::isNumber("e-1"));
 
     // Conversion to numbers and type detection
     bool isFP = false;
@@ -78,6 +81,12 @@ TEST(SysFunc, StringManipulation)
     EXPECT_TRUE(DissolveSys::isNumber("100", isFP));
     EXPECT_FALSE(isFP);
     EXPECT_FALSE(DissolveSys::isNumber("abc", isFP));
+    EXPECT_FALSE(DissolveSys::isNumber(".", isFP));
+    EXPECT_FALSE(isFP);
+    EXPECT_FALSE(DissolveSys::isNumber("", isFP));
+    EXPECT_FALSE(isFP);
+    EXPECT_FALSE(DissolveSys::isNumber("e-1", isFP));
+    EXPECT_FALSE(isFP);
 
     // String replacement
     EXPECT_TRUE(DissolveSys::replace("Swap the aaa's", "a", "bee") == "Swbeep the beebeebee's");
