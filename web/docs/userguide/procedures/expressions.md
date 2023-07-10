@@ -45,6 +45,10 @@ Listed in order of decreasing precedence.
 |`exp`|`x`|Return the exponential function of $x$.|
 |`ln`|`x`|Return the natural logarithm of $x$.|
 |`log`|`x`|Return the base-10 logarithm of $x$.|
+|`pi`|`--`|Return the the value of Pi.|
 |`sin`|`x`|Return the sine of $x$, where $x$ is given in degrees.|
 |`sqrt`|`x`|Return the square root of $x$.|
 |`tan`|`x`|Return the tangent of $x$, where $x$ is given in degrees.|
+|`twopi`|`--`|Return the the value of 2Pi.|
+|`random`|`--`|Return a random value between 0.0 and 1.0 inclusive.|
+|`randomi`|`N`|Return a random integer between 0 and `N-1` inclusive.|
