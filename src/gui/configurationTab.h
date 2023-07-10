@@ -67,9 +67,9 @@ class ConfigurationTab : public QWidget, public MainTab
     public:
     // Update controls in tab
     void updateControls() override;
-    // Prevent editing of the generator
+    // Prevent editing within tab
     void preventEditing() override;
-    // Allow editing of the generator
+    // Allow editing within tab
     void allowEditing() override;
 
     /*

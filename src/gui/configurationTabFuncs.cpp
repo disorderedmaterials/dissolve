@@ -131,10 +131,10 @@ void ConfigurationTab::updateControls()
     ui_.ViewerWidget->postRedisplay();
 }
 
-// Prevent editing of the generator
+// Prevent editing within tab
 void ConfigurationTab::preventEditing() { ui_.GeneratorWidget->setEnabled(false); }
 
-// Allow editing of the generator
+// Allow editing within tab
 void ConfigurationTab::allowEditing() { ui_.GeneratorWidget->setEnabled(true); }
 
 /*
