@@ -143,6 +143,12 @@ void SpeciesTab::updateControls()
     // Charges
     updateTotalCharges();
 
+    // Atoms Tab
+    ui_.BondsCountLabel->setText(QString::number(species_->nBonds()));
+    ui_.AnglesCountLabel->setText(QString::number(species_->nAngles()));
+    ui_.TorsionsCountLabel->setText(QString::number(species_->nTorsions()));
+    ui_.ImpropersCountLabel->setText(QString::number(species_->nImpropers()));
+
     // Isotopologues Tab
     updateIsotopologuesTab();
 
