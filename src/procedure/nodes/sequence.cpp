@@ -6,7 +6,10 @@
 #include "base/sysFunc.h"
 #include "keywords/node.h"
 #include "keywords/nodeAndInteger.h"
+#include "keywords/nodeValue.h"
+#include "keywords/nodeValueEnumOptions.h"
 #include "keywords/nodeVector.h"
+#include "keywords/vec3NodeValue.h"
 #include "procedure/nodes/registry.h"
 
 ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
