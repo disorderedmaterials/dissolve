@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomType.h"
+#include "classes/empiricalFormula.h"
 #include "gui/delegates/comboList.hui"
 #include "gui/delegates/customComboDelegate.h"
 #include "gui/delegates/exponentialSpin.hui"
@@ -135,7 +136,10 @@ void SpeciesTab::updateControls()
     // Population
     ui_.AtomPopulationLabel->setText(QString::number(species_->nAtoms()));
 
-    // Contents / Forcefield Tab
+    ui_.EmpiricalFormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
+        species_->atoms(), [](const auto &i) { return i.Z(); }, true)));
+
+    // Charges
     updateTotalCharges();
 
     // Isotopologues Tab
