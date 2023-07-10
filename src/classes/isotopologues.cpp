@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/isotopologues.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/coredata.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include <numeric>
 
@@ -154,4 +154,35 @@ bool Isotopologues::serialise(LineParser &parser) const
             return false;
 
     return true;
+}
+
+// Express as a serialisable value
+SerialisedValue Isotopologues::serialise() const
+{
+    SerialisedValue result = {{"name", species_->name()}, {"population", speciesPopulation_}};
+
+    SerialisedValue mix;
+    for (const auto &isoWeight : mix_)
+        mix[std::string(isoWeight.isotopologue()->name())] = isoWeight.weight();
+
+    result["mix"] = mix;
+
+    return result;
+}
+
+// Read values from a serialisable value
+void Isotopologues::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    species_ = coreData.findSpecies(toml::find<std::string>(node, "name"));
+    speciesPopulation_ = toml::find<double>(node, "population");
+
+    auto location = node.location();
+    Serialisable::toMap(node, "mix",
+                        [&coreData, &location, this](const auto &name, const auto &item)
+                        {
+                            auto iso = species_->findIsotopologue(name);
+                            if (!iso)
+                                throw toml::syntax_error(fmt::format("Cannot find iso {}", name), location);
+                            add(iso, item.as_floating());
+                        });
 }

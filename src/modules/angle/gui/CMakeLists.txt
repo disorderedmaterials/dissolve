@@ -1,1 +1,1 @@
-dissolve_add_module_gui(anglemodule)
+dissolve_add_module_gui(angle)

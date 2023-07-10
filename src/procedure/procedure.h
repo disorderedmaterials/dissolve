@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodes/sequence.h"
 
@@ -11,7 +12,7 @@ class Configuration;
 class LineParser;
 
 // Procedure
-class Procedure
+class Procedure : public Serialisable<const CoreData &>
 {
     public:
     Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword = "EndProcedure");
@@ -44,6 +45,9 @@ class Procedure
     std::vector<ConstNodeRef> nodes(std::optional<ProcedureNode::NodeType> optNodeType = std::nullopt,
                                     std::optional<ProcedureNode::NodeClass> optNodeClass = std::nullopt) const;
 
+    // Remove a node
+    bool removeNode(NodeRef node);
+
     /*
      * Execute
      */
@@ -63,4 +67,8 @@ class Procedure
     bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write procedure to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix);
+    // Express as a serialisable value.
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

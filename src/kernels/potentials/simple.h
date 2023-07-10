@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/interactionpotential.h"
+#include "classes/interactionPotential.h"
 #include "kernels/potentials/base.h"
 
 // SimplePotential functional forms
@@ -12,7 +12,8 @@ class SimplePotentialFunctions
     public:
     enum class Form
     {
-        Harmonic /* Harmonic well potential */
+        Harmonic, /* Harmonic well potential */
+        LJ        /* Lennard-Jones potential */
     };
     // Return enum options for form
     static EnumOptions<Form> forms();

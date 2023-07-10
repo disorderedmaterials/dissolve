@@ -2,11 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/double.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 
 DoubleKeyword::DoubleKeyword(double &data, std::optional<double> minValue, std::optional<double> maxValue)
-    : KeywordBase(typeid(this)), data_(data), minimumLimit_(minValue), maximumLimit_(maxValue)
+    : KeywordBase(typeid(this)), data_(data), default_(data), minimumLimit_(minValue), maximumLimit_(maxValue)
 {
 }
 
@@ -72,3 +72,12 @@ bool DoubleKeyword::serialise(LineParser &parser, std::string_view keywordName, 
 
     return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }
+
+// Express as a serialisable value
+SerialisedValue DoubleKeyword::serialise() const { return data_; }
+
+// Read values from a serialisable value
+void DoubleKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_ = toml::get<double>(node); }
+
+// Has not changed from initial value
+bool DoubleKeyword::isDefault() const { return data_ == default_; }

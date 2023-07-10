@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/interpolator.h"
-#include "math/data1d.h"
+#include "math/data1D.h"
 #include "templates/algorithms.h"
 #include <gtest/gtest.h>
 

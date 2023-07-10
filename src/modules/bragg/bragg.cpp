@@ -5,9 +5,9 @@
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/double.h"
-#include "keywords/optionalint.h"
-#include "keywords/stdstring.h"
-#include "keywords/vec3integer.h"
+#include "keywords/optionalInt.h"
+#include "keywords/stdString.h"
+#include "keywords/vec3Integer.h"
 
 BraggModule::BraggModule() : Module(ModuleTypes::Bragg)
 {

@@ -1,5 +1,5 @@
 #include "gui/models/xmlTreeModel.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "data/elements.h"
 #include "data/ff/xml/base.h"
 #include <QColor>

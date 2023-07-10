@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "keywords/base.h"
-#include "keywords/nodeunderlay.h"
+#include "keywords/nodeUnderlay.h"
 #include "procedure/nodes/node.h"
 
 // Base class for NodeKeyword
@@ -112,6 +112,19 @@ template <class N> class NodeKeyword : public NodeKeywordBase
             return false;
 
         return true;
+    }
+
+    // Has not changed from initial value
+    bool isDefault() const override { return data_ == nullptr; }
+
+    // Express as a serialisable value
+    SerialisedValue serialise() const override { return data_->name(); }
+
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData)
+    {
+        auto child = findNode(std::string_view(std::string(node.as_string())));
+        setData(child);
     }
 
     /*

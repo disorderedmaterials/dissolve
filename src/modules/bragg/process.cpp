@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/kvector.h"
-#include "classes/neutronweights.h"
+#include "classes/kVector.h"
+#include "classes/neutronWeights.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "modules/bragg/bragg.h"

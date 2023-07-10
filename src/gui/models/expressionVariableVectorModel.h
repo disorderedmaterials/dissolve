@@ -4,7 +4,7 @@
 #pragma once
 
 #include "expression/variable.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <vector>

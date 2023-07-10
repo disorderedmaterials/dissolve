@@ -2,13 +2,13 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/export/coordinates.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/speciesatom.h"
-#include "data/atomicmasses.h"
+#include "classes/speciesAtom.h"
+#include "data/atomicMasses.h"
 
 CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename, CoordinateExportFormat format)
     : FileAndFormat(formats_, filename, (int)format)

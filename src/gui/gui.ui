@@ -270,6 +270,8 @@
     <addaction name="ConfigurationDeleteAction"/>
     <addaction name="separator"/>
     <addaction name="ConfigurationExportToMenu"/>
+    <addaction name="separator"/>
+    <addaction name="ConfigurationAdjustTemperatureAction"/>
    </widget>
    <widget class="QMenu" name="LayerMenu">
     <property name="font">
@@ -802,12 +804,17 @@
     <string>Create...</string>
    </property>
   </action>
+  <action name="ConfigurationAdjustTemperatureAction">
+   <property name="text">
+    <string>Adjust &amp;Temperature...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>MainTabsWidget</class>
    <extends>QTabWidget</extends>
-   <header>gui/maintabswidget.hui</header>
+   <header>gui/mainTabsWidget.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

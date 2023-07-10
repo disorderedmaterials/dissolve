@@ -1,93 +1,93 @@
 add_library(
   keywords
-  atomtypevector.cpp
+  atomTypeVector.cpp
   base.cpp
   bool.cpp
   configuration.cpp
-  configurationvector.cpp
-  data1dstore.cpp
-  data2dstore.cpp
-  data3dstore.cpp
+  configurationVector.cpp
+  data1DStore.cpp
+  data2DStore.cpp
+  data3DStore.cpp
   double.cpp
-  elementvector.cpp
+  elementVector.cpp
   expression.cpp
-  expressionvariablevector.cpp
-  fileandformat.cpp
-  function1d.cpp
-  geometrylist.cpp
+  expressionVariableVector.cpp
+  fileAndFormat.cpp
+  function1D.cpp
+  geometryList.cpp
   integer.cpp
-  isotopologueset.cpp
-  modulevector.cpp
-  nodebranch.cpp
-  nodeunderlay.cpp
-  nodevalue.cpp
-  optionaldouble.cpp
-  optionalint.cpp
+  isotopologueSet.cpp
+  moduleVector.cpp
+  nodeBranch.cpp
+  nodeUnderlay.cpp
+  nodeValue.cpp
+  optionalDouble.cpp
+  optionalInt.cpp
   procedure.cpp
   range.cpp
   species.cpp
-  speciessite.cpp
-  speciessitevector.cpp
-  speciesvector.cpp
-  stdstring.cpp
+  speciesSite.cpp
+  speciesSiteVector.cpp
+  speciesVector.cpp
+  stdString.cpp
   store.cpp
-  storedata.cpp
-  valuestore.cpp
-  vec3double.cpp
-  vec3integer.cpp
-  vec3nodevalue.cpp
-  vector_intdouble.cpp
-  vector_intstring.cpp
-  vector_stringdouble.cpp
-  vector_stringpair.cpp
-  atomtypevector.h
+  storeData.cpp
+  valueStore.cpp
+  vec3Double.cpp
+  vec3Integer.cpp
+  vec3NodeValue.cpp
+  vectorIntDouble.cpp
+  vectorIntString.cpp
+  vectorStringDouble.cpp
+  vectorStringPair.cpp
+  atomTypeVector.h
   base.h
   bool.h
   configuration.h
-  configurationvector.h
-  data1dstore.h
-  data2dstore.h
-  data3dstore.h
+  configurationVector.h
+  data1DStore.h
+  data2DStore.h
+  data3DStore.h
   double.h
-  elementvector.h
-  enumoptions.h
+  elementVector.h
+  enumOptions.h
   expression.h
-  expressionvariablevector.h
-  fileandformat.h
-  function1d.h
-  geometrylist.h
+  expressionVariableVector.h
+  fileAndFormat.h
+  function1D.h
+  geometryList.h
   integer.h
-  interactionpotential.h
-  isotopologueset.h
+  interactionPotential.h
+  isotopologueSet.h
   module.h
-  modulevector.h
+  moduleVector.h
   node.h
-  nodeandinteger.h
-  nodebranch.h
-  nodeunderlay.h
-  nodevalue.h
-  nodevalueenumoptions.h
-  nodevector.h
-  optionaldouble.h
-  optionalint.h
+  nodeAndInteger.h
+  nodeBranch.h
+  nodeUnderlay.h
+  nodeValue.h
+  nodeValueEnumOptions.h
+  nodeVector.h
+  optionalDouble.h
+  optionalInt.h
   procedure.h
   range.h
   species.h
-  speciessite.h
-  speciessitevector.h
-  speciesvector.h
-  stdstring.h
+  speciesSite.h
+  speciesSiteVector.h
+  speciesVector.h
+  stdString.h
   store.h
-  storedata.h
-  valuestore.h
-  vec3double.h
-  vec3integer.h
-  vec3labels.h
-  vec3nodevalue.h
-  vector_intdouble.h
-  vector_intstring.h
-  vector_stringdouble.h
-  vector_stringpair.h
+  storeData.h
+  valueStore.h
+  vec3Double.h
+  vec3Integer.h
+  vec3Labels.h
+  vec3NodeValue.h
+  vectorIntDouble.h
+  vectorIntString.h
+  vectorStringDouble.h
+  vectorStringPair.h
 )
 
 target_include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)

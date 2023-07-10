@@ -5,8 +5,8 @@
 #include "NETALexer.h"
 #include "NETAParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
-#include "data/ff/atomtype.h"
+#include "base/sysFunc.h"
+#include "data/ff/atomType.h"
 #include "neta/NETAErrorListeners.h"
 #include "neta/NETAVisitor.h"
 #include "neta/neta.h"
@@ -90,6 +90,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
 bool NETADefinition::create(std::string_view definition, const Forcefield *associatedFF)
 {
     definitionString_ = definition;
+    identifiers_.clear();
     return create(associatedFF);
 }
 

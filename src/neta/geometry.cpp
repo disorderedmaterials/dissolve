@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "neta/geometry.h"
-#include "classes/speciesatom.h"
+#include "classes/speciesAtom.h"
 
 NETAGeometryNode::NETAGeometryNode(NETADefinition *parent)
     : NETANode(parent, NETANode::NodeType::Geometry), geometry_(SpeciesAtom::AtomGeometry::Unknown),

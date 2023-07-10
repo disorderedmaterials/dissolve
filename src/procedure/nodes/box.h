@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "procedure/nodeValue.h"
 #include "procedure/nodes/node.h"
-#include "procedure/nodevalue.h"
 
 // Box Node
 class BoxProcedureNode : public ProcedureNode

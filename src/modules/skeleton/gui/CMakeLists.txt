@@ -1,1 +1,1 @@
-dissolve_add_module_gui(skeletonmodule)
+dissolve_add_module_gui(skeleton)

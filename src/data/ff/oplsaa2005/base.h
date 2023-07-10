@@ -4,7 +4,7 @@
 #pragma once
 
 #include "data/ff/ff.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // OPLS-AA (2005) Base Forcefield
 class OPLSAA2005BaseForcefield : public Forcefield

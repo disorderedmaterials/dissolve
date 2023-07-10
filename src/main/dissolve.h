@@ -5,10 +5,10 @@
 
 #include "base/serialiser.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
-#include "classes/pairpotential.h"
-#include "classes/potentialmap.h"
-#include "classes/serializablepairpotential.h"
+#include "classes/coreData.h"
+#include "classes/pairPotential.h"
+#include "classes/potentialMap.h"
+#include "classes/serializablePairPotential.h"
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
@@ -21,7 +21,7 @@ class Isotopologue;
 class Molecule;
 
 // Dissolve Main Class
-class Dissolve : public Serialisable
+class Dissolve : public Serialisable<>
 {
     public:
     Dissolve(CoreData &coreData);
@@ -253,13 +253,13 @@ class Dissolve : public Serialisable
     public:
     // Load input file
     bool loadInput(std::string_view filename);
-    // Read values from a tree node
-    void deserialise(SerialisedValue &node) override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node) override;
     // Load input from supplied string
     bool loadInputFromString(std::string_view inputString);
     // Save input file
     bool saveInput(std::string_view filename);
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Load restart file
     bool loadRestart(std::string_view filename);

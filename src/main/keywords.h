@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 
 // Forward Declarations
 class LineParser;
@@ -50,7 +50,6 @@ enum ConfigurationKeyword
                       unit cell */
     EndConfigurationKeyword,   /* 'EndConfiguration' - Signals the end of the Configuration block */
     GeneratorKeyword,          /* 'Generator' - Define the generator procedure for the Configuration */
-    InputCoordinatesKeyword,   /* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
     SizeFactorKeyword,         /* 'SizeFactor' - Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry */
     TemperatureKeyword         /* 'Temperature' - Defines the temperature of the simulation */
 };

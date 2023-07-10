@@ -3,9 +3,9 @@
 
 #include "procedure/nodes/node.h"
 
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "classes/site.h"
 #include "expression/variable.h"
 #include "procedure/nodes/sequence.h"
@@ -41,8 +41,11 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Copy, "Copy"},
                      {ProcedureNode::NodeType::CustomRegion, "CustomRegion"},
                      {ProcedureNode::NodeType::CylindricalRegion, "CylindricalRegion"},
+                     {ProcedureNode::NodeType::DirectionalGlobalPotential, "DirectionalGlobalPotential"},
                      {ProcedureNode::NodeType::DynamicSite, "DynamicSite"},
                      {ProcedureNode::NodeType::GeneralRegion, "GeneralRegion"},
+                     {ProcedureNode::NodeType::ImportCoordinates, "ImportCoordinates"},
+                     {ProcedureNode::NodeType::IntegerCollect1D, "IntegerCollect1D"},
                      {ProcedureNode::NodeType::Integrate1D, "Integrate1D"},
                      {ProcedureNode::NodeType::OperateDivide, "OperateDivide"},
                      {ProcedureNode::NodeType::OperateExpression, "OperateExpression"},
@@ -60,11 +63,14 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Process2D, "Process2D"},
                      {ProcedureNode::NodeType::Process3D, "Process3D"},
                      {ProcedureNode::NodeType::Remove, "Remove"},
+                     {ProcedureNode::NodeType::RestraintPotential, "RestraintPotential"},
+                     {ProcedureNode::NodeType::RotateFragment, "RotateFragment"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
-                     {ProcedureNode::NodeType::SimpleRestraintPotential, "SimpleRestraintPotential"},
+                     {ProcedureNode::NodeType::SizeFactor, "SizeFactor"},
                      {ProcedureNode::NodeType::Sum1D, "Sum1D"},
+                     {ProcedureNode::NodeType::Temperature, "Temperature"},
                      {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }
 
@@ -323,4 +329,21 @@ bool ProcedureNode::serialise(LineParser &parser, std::string_view prefix)
         return false;
 
     return true;
+}
+
+// Express as a serialisable value
+SerialisedValue ProcedureNode::serialise() const
+{
+    SerialisedValue result = {{"type", nodeTypes().keyword(type_)}};
+    if (mustBeNamed())
+        result["name"] = name_;
+    return keywords_.serialiseOnto(result);
+}
+
+// Read values from a serialisable value
+void ProcedureNode::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    if (mustBeNamed())
+        name_ = toml::find<std::string>(node, "name");
+    keywords_.deserialiseFrom(node, data);
 }

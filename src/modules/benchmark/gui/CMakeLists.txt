@@ -1,1 +1,1 @@
-dissolve_add_module_gui(benchmarkmodule)
+dissolve_add_module_gui(benchmark)

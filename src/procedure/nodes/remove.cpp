@@ -3,10 +3,10 @@
 
 #include "procedure/nodes/remove.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "keywords/node.h"
-#include "keywords/speciesvector.h"
+#include "keywords/speciesVector.h"
 #include "procedure/nodes/pick.h"
 
 RemoveProcedureNode::RemoveProcedureNode() : ProcedureNode(ProcedureNode::NodeType::Remove, {ProcedureNode::GenerationContext})

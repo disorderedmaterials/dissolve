@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "procedure/nodes/calculateexpression.h"
+#include "procedure/nodes/calculateExpression.h"
 #include "procedure/nodes/select.h"
 #include "procedure/procedure.h"
 #include "src/math/constants.h"
@@ -41,6 +41,7 @@ TEST(CalculateExpressionTest, NodeParameters)
 
     // Access parameter in Select node
     EXPECT_TRUE(expressionNode->setExpression("A.nSelected"));
+    EXPECT_DOUBLE_EQ(expressionNode->value(0), 0);
 
     // Invalid parameter
     EXPECT_FALSE(expressionNode->setExpression("B.nSelected"));

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "neta/node.h"
 #include <memory>
 #include <vector>

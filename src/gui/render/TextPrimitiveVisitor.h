@@ -4,10 +4,10 @@
 #pragma once
 
 #include "TextPrimitiveParserBaseVisitor.h"
-#include "base/enumoptions.h"
-#include "gui/render/textformat.h"
-#include "gui/render/textfragment.h"
-#include "templates/optionalref.h"
+#include "base/enumOptions.h"
+#include "gui/render/textFormat.h"
+#include "gui/render/textFragment.h"
+#include "templates/optionalRef.h"
 #include <antlr4-runtime.h>
 
 // Forward Declarations

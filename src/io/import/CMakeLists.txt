@@ -26,19 +26,20 @@ set(ANTLR_OUTPUT_DIRS
 add_library(
   import
   cif.cpp
-  cifclasses.cpp
+  cifClasses.cpp
   coordinates.cpp
   coordinates_dlpoly.cpp
   coordinates_epsr.cpp
   coordinates_moscito.cpp
   coordinates_xyz.cpp
-  data1d.cpp
-  data1d_histo.cpp
-  data1d_mint.cpp
-  data1d_xy.cpp
-  data2d.cpp
-  data2d_cartesian.cpp
-  data3d.cpp
+  data1D.cpp
+  data1D_histo.cpp
+  data1D_mint.cpp
+  data1D_xy.cpp
+  data2D.cpp
+  data2D_cartesian.cpp
+  data3D.cpp
+  data3D_pdens.cpp
   forces.cpp
   forces_dlpoly.cpp
   forces_moscito.cpp
@@ -49,11 +50,11 @@ add_library(
   trajectory_dlpoly.cpp
   values.cpp
   cif.h
-  cifclasses.h
+  cifClasses.h
   coordinates.h
-  data1d.h
-  data2d.h
-  data3d.h
+  data1D.h
+  data2D.h
+  data3D.h
   forces.h
   species.h
   trajectory.h

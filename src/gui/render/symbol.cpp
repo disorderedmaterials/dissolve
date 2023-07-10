@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/render/symbol.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include <algorithm>
 
 namespace SymbolData

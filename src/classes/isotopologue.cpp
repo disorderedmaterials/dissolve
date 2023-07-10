@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/isotopologue.h"
-#include "classes/atomtype.h"
-#include "classes/coredata.h"
+#include "classes/atomType.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
 
@@ -84,19 +84,23 @@ Sears91::Isotope Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) con
 std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isotopologue::isotopes() { return isotopes_; }
 const std::vector<std::tuple<std::shared_ptr<AtomType>, Sears91::Isotope>> &Isotopologue::isotopes() const { return isotopes_; }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Isotopologue::serialise() const
 {
-    SerialisedValue isotopologue;
+    SerialisedValue result;
+    result["name"] = name_;
     for (auto &&[type, isotope] : isotopes_)
-        isotopologue[type->name().data()] = Sears91::A(isotope);
-    return isotopologue;
+        result[type->name().data()] = Sears91::A(isotope);
+    return result;
 }
 
-void Isotopologue::deserialise(SerialisedValue &node, CoreData &coreData)
+void Isotopologue::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
+    name_ = toml::find<std::string>(node, "name");
     for (auto &[name, value] : node.as_table())
     {
+        if (value.is_string())
+            continue;
         auto at = coreData.findAtomType(name);
         setAtomTypeIsotope(at, Sears91::isotope(at->Z(), value.as_integer()));
     }

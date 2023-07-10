@@ -57,11 +57,8 @@ Matrix3 Matrix3::operator-(const Matrix3 &B) const
 
 Vec3<double> Matrix3::operator*(const Vec3<double> &v) const
 {
-    Vec3<double> result;
-    result.x = v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6];
-    result.y = v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7];
-    result.z = v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8];
-    return result;
+    return {v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6], v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7],
+            v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8]};
 }
 
 // Matrix3 multiply (operator *=)
@@ -118,7 +115,7 @@ void Matrix3::print() const
 void Matrix3::zero() { std::fill(matrix_.begin(), matrix_.end(), 0.0); }
 
 // Return transpose of current matrix
-Matrix3 &Matrix3::transpose()
+Matrix3 &Matrix3::transpose() const
 {
     static Matrix3 A;
     A.matrix_[0] = matrix_[0];
@@ -131,6 +128,13 @@ Matrix3 &Matrix3::transpose()
     A.matrix_[7] = matrix_[5];
     A.matrix_[8] = matrix_[8];
     return A;
+}
+
+// Transform the supplied vector by the transpose of the current matrix
+Vec3<double> Matrix3::transposeMultiply(const Vec3<double> &v) const
+{
+    return {v.x * matrix_[0] + v.y * matrix_[1] + v.z * matrix_[2], v.x * matrix_[3] + v.y * matrix_[4] + v.z * matrix_[5],
+            v.x * matrix_[6] + v.y * matrix_[7] + v.z * matrix_[8]};
 }
 
 // Calculate determinant
@@ -437,30 +441,30 @@ void Matrix3::createRotationZ(double angle)
 }
 
 // Create axis rotation quaternion
-void Matrix3::createRotationAxis(double ax, double ay, double az, double angle, bool normalise)
+void Matrix3::createRotationAxis(Vec3<double> axis, double angle, bool normalise)
 {
     double cosx, sinx, theta = angle / DEGRAD, oneMcosx;
     if (normalise)
     {
-        double mag = sqrt(ax * ax + ay * ay + az * az);
-        ax /= mag;
-        ay /= mag;
-        az /= mag;
+        double mag = sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+        axis.x /= mag;
+        axis.y /= mag;
+        axis.z /= mag;
     }
     cosx = cos(theta);
     sinx = sin(theta);
     oneMcosx = 1.0 - cosx;
-    matrix_[0] = ax * ax * oneMcosx + cosx;
-    matrix_[1] = ax * ay * oneMcosx - az * sinx;
-    matrix_[2] = ax * az * oneMcosx + ay * sinx;
+    matrix_[0] = axis.x * axis.x * oneMcosx + cosx;
+    matrix_[1] = axis.x * axis.y * oneMcosx - axis.z * sinx;
+    matrix_[2] = axis.x * axis.z * oneMcosx + axis.y * sinx;
 
-    matrix_[3] = ax * ay * oneMcosx + az * sinx;
-    matrix_[4] = ay * ay * oneMcosx + cosx;
-    matrix_[5] = ay * az * oneMcosx - ax * sinx;
+    matrix_[3] = axis.x * axis.y * oneMcosx + axis.z * sinx;
+    matrix_[4] = axis.y * axis.y * oneMcosx + cosx;
+    matrix_[5] = axis.y * axis.z * oneMcosx - axis.x * sinx;
 
-    matrix_[6] = ax * az * oneMcosx - ay * sinx;
-    matrix_[7] = ay * az * oneMcosx + ax * sinx;
-    matrix_[8] = az * az * oneMcosx + cosx;
+    matrix_[6] = axis.x * axis.z * oneMcosx - axis.y * sinx;
+    matrix_[7] = axis.y * axis.z * oneMcosx + axis.x * sinx;
+    matrix_[8] = axis.z * axis.z * oneMcosx + cosx;
 }
 
 // Apply rotation about X axis

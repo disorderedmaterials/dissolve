@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/cifAssemblyModel.h"
-#include "classes/empiricalformula.h"
+#include "classes/empiricalFormula.h"
 
 CIFAssemblyModel::CIFAssemblyModel(std::vector<CIFAssembly> &assemblies) : assemblies_(assemblies) {}
 

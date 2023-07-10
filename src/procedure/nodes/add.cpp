@@ -2,18 +2,19 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/add.h"
-#include "base/randombuffer.h"
+#include "base/randomBuffer.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "keywords/bool.h"
 #include "keywords/node.h"
-#include "keywords/nodevalue.h"
-#include "keywords/nodevalueenumoptions.h"
+#include "keywords/nodeValue.h"
+#include "keywords/nodeValueEnumOptions.h"
 #include "keywords/species.h"
-#include "procedure/nodes/coordinatesets.h"
-#include "procedure/nodes/regionbase.h"
+#include "procedure/nodes/coordinateSets.h"
+#include "procedure/nodes/generalRegion.h"
+#include "procedure/nodes/regionBase.h"
 
 AddProcedureNode::AddProcedureNode(const Species *sp, const NodeValue &population, const NodeValue &density,
                                    Units::DensityUnits densityUnits)

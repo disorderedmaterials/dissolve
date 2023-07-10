@@ -4,8 +4,8 @@
 #include "classes/molecule.h"
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
 #include "templates/algorithms.h"
 
 /*

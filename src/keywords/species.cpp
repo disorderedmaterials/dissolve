@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/species.h"
-#include "base/lineparser.h"
-#include "classes/coredata.h"
+#include "base/lineParser.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 
 SpeciesKeyword::SpeciesKeyword(const Species *&data) : KeywordBase(typeid(this)), data_(data) {}
@@ -49,4 +49,13 @@ void SpeciesKeyword::removeReferencesTo(Species *sp)
 {
     if (data_ == sp)
         data_ = nullptr;
+}
+
+// Express as a serialisable value
+SerialisedValue SpeciesKeyword::serialise() const { return data_->name(); }
+
+// Read values from a serialisable value
+void SpeciesKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_ = coreData.findSpecies(std::string_view(std::string(node.as_string())));
 }

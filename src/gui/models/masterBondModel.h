@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "classes/speciesbond.h"
+#include "classes/speciesBond.h"
 #include "gui/models/masterTermModel.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // MasterBond model
 class MasterBondModel : public MasterTermModel

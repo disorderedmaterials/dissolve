@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/speciesSiteFilterProxy.h"
-#include "classes/speciessite.h"
+#include "classes/speciesSite.h"
 
 // Set filter flag
 void SpeciesSiteFilterProxy::setFlag(SpeciesSiteFilterProxy::FilterFlag flag)

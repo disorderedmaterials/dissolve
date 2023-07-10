@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/render/renderable.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "gui/render/renderablegroupmanager.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
+#include "gui/render/renderableGroupManager.h"
 #include "gui/render/view.h"
 
 // Static Singletons

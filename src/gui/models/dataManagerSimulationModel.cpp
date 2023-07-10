@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/dataManagerSimulationModel.h"
-#include "genericitems/list.h"
+#include "items/list.h"
 #include <QFileDialog>
 
 DataManagerSimulationModel::DataManagerSimulationModel(Dissolve &dissolve, GenericList &items)

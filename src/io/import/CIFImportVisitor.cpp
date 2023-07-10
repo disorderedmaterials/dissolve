@@ -3,7 +3,7 @@
 
 #include "io/import/CIFImportVisitor.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "io/import/CIFImportErrorListeners.h"
 
 CIFImportVisitor::CIFImportVisitor(CIFImport::CIFTags &tags) : tags_(tags) {}

@@ -3,7 +3,7 @@
 
 #include "kernels/base.h"
 #include "classes/configuration.h"
-#include "classes/potentialmap.h"
+#include "classes/potentialMap.h"
 
 KernelBase::KernelBase(const Configuration *cfg, const ProcessPool &procPool, const PotentialMap &potentialMap,
                        std::optional<double> energyCutoff)

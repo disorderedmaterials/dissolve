@@ -3,14 +3,15 @@
 
 #pragma once
 
+#include "base/serialiser.h"
 #include "math/constants.h"
-#include "math/mathfunc.h"
+#include "math/mathFunc.h"
 #include <cmath>
 #include <fmt/format.h>
 #include <stdexcept>
 
 // 3D vector
-template <class T> class Vec3
+template <class T> class Vec3 : public Serialisable<>
 {
     public:
     Vec3<T>() : x(T()), y(T()), z(T()){};
@@ -81,6 +82,10 @@ template <class T> class Vec3
      * Operators
      */
     public:
+    bool operator==(const Vec3<T> &value) const { return x == value.x && y == value.y && z == value.z; }
+    bool operator!=(const Vec3<T> &value) const { return !(*this == value); }
+    bool operator==(const T &value) const { return x == value && y == value && z == value; }
+    bool operator!=(const T &value) const { return !(*this == value); }
     void operator=(const T value)
     {
         x = value;
@@ -409,5 +414,20 @@ template <class T> class Vec3
         T temp = get(a);
         set(a, get(b));
         set(b, temp);
+    }
+
+    SerialisedValue serialise() const override
+    {
+        toml::array result;
+        result.push_back(x);
+        result.push_back(y);
+        result.push_back(z);
+        return result;
+    }
+    void deserialise(const SerialisedValue &node) override
+    {
+        x = toml::get<T>(node[0]);
+        y = toml::get<T>(node[1]);
+        z = toml::get<T>(node[2]);
     }
 };

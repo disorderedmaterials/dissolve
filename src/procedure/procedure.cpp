@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/procedure.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/configuration.h"
 
 Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockKeyword)
@@ -38,6 +38,9 @@ std::vector<ConstNodeRef> Procedure::nodes(std::optional<ProcedureNode::NodeType
 {
     return rootSequence_.nodes(optNodeType, optNodeClass);
 }
+
+// Remove a node
+bool Procedure::removeNode(NodeRef node) { return rootSequence_.removeNode(node); }
 
 /*
  * Execute
@@ -98,3 +101,9 @@ bool Procedure::deserialise(LineParser &parser, const CoreData &coreData)
 
 // Write structure to specified LineParser
 bool Procedure::serialise(LineParser &parser, std::string_view prefix) { return rootSequence_.serialise(parser, prefix); }
+
+// Express as a serialisable value
+SerialisedValue Procedure::serialise() const { return rootSequence_.serialise(); }
+
+// Read values from a serialisable value
+void Procedure::deserialise(const SerialisedValue &node, const CoreData &data) { rootSequence_.deserialise(node, data); }

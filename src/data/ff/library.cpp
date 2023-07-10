@@ -3,7 +3,7 @@
 
 #include "data/ff/library.h"
 
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "data/ff/kulmala2010/kulmala2010.h"
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py4oh.h"
@@ -13,14 +13,14 @@
 #include "data/ff/oplsaa2005/alkenes.h"
 #include "data/ff/oplsaa2005/aromatics.h"
 #include "data/ff/oplsaa2005/diols.h"
-#include "data/ff/oplsaa2005/noblegases.h"
+#include "data/ff/oplsaa2005/nobleGases.h"
 #include "data/ff/oplsaa2005/triols.h"
 #include "data/ff/pcl2019/anions.h"
 #include "data/ff/pcl2019/cations.h"
-#include "data/ff/spcfw/spcfw.h"
+#include "data/ff/spcFW/spcFW.h"
 #include "data/ff/strader2002/dmso.h"
 #include "data/ff/uff/uff.h"
-#include "data/ff/uff/uff4mof.h"
+#include "data/ff/uff/uff4MOF.h"
 #include "data/ff/zhang2013/zhang2013.h"
 #include "data/ff/zhao2010/zhao2010.h"
 #include <utility>

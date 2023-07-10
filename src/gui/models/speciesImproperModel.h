@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "classes/speciesimproper.h"
-#include "data/ff/improperterm.h"
+#include "classes/speciesImproper.h"
+#include "data/ff/improperTerm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <vector>

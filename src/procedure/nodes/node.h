@@ -3,11 +3,12 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
+#include "base/serialiser.h"
 #include "keywords/store.h"
 #include "procedure/nodes/aliases.h"
 #include "procedure/nodes/context.h"
-#include "templates/optionalref.h"
+#include "templates/optionalRef.h"
 
 // Forward Declarations
 class Configuration;
@@ -20,7 +21,7 @@ class ProcessPool;
 class Site;
 
 // Procedure Node
-class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
+class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public Serialisable<const CoreData &>
 {
     public:
     // Node Classes
@@ -52,8 +53,11 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Copy,
         CustomRegion,
         CylindricalRegion,
+        DirectionalGlobalPotential,
         DynamicSite,
         GeneralRegion,
+        ImportCoordinates,
+        IntegerCollect1D,
         Integrate1D,
         OperateDivide,
         OperateExpression,
@@ -71,11 +75,14 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
         Process2D,
         Process3D,
         Remove,
+        RestraintPotential,
+        RotateFragment,
         Select,
         Sequence,
         SimpleGlobalPotential,
-        SimpleRestraintPotential,
+        SizeFactor,
         Sum1D,
+        Temperature,
         Transmute
     };
     // Return enum option info for NodeType
@@ -204,4 +211,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>
     virtual bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write node data to specified LineParser
     virtual bool serialise(LineParser &parser, std::string_view prefix);
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

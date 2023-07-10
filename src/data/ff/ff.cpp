@@ -2,17 +2,17 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "data/ff/ff.h"
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "classes/box.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
-#include "data/ff/angleterm.h"
-#include "data/ff/atomtype.h"
-#include "data/ff/bondterm.h"
-#include "data/ff/improperterm.h"
-#include "data/ff/torsionterm.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
+#include "data/ff/angleTerm.h"
+#include "data/ff/atomType.h"
+#include "data/ff/bondTerm.h"
+#include "data/ff/improperTerm.h"
+#include "data/ff/torsionTerm.h"
 
 /*
  * Set Up

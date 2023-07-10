@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciesatom.h"
+#include "classes/speciesAtom.h"
 #include "neta/node.h"
 #include <memory>
 #include <vector>

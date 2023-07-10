@@ -2,12 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/configuration.h"
-#include "base/lineparser.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
+#include "base/lineParser.h"
+#include "base/processPool.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
 #include "classes/cell.h"
-#include "classes/potentialmap.h"
+#include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 
@@ -95,9 +95,6 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
     return true;
 }
 
-// Return import coordinates file / format
-CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
-
 // Initialise (generate or load) the basic contents of the Configuration
 bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
 {
@@ -106,35 +103,21 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
 
     appliedSizeFactor_ = 1.0;
 
-    // Run the generator Procedure and potentially load coordinates from file
-    // Run the generator procedure (we will need species / atom info to load any coordinates in)
+    // Run the generator Procedure
     if (!generate(procedureContext))
         return false;
+
+    updateAtomLocations(true);
 
     // If there are still no atoms, complain.
     if (nAtoms() == 0)
         return false;
 
-    // If an input file was specified, try to load it
-    if (inputCoordinates_.hasFilename())
-    {
-        if (DissolveSys::fileExists(inputCoordinates_.filename()))
-        {
-            Messenger::print("Loading initial coordinates from file '{}'...\n", inputCoordinates_.filename());
-            if (!inputCoordinates_.importData(this, &procedureContext.processPool()))
-                return false;
-
-            // Need to update cell locations now, as we have new atom positions
-            updateAtomLocations(true);
-        }
-        else
-            return Messenger::error("Input coordinates file '{}' specified for Configuration '{}', but the "
-                                    "file doesn't exist.\n",
-                                    name(), inputCoordinates_.filename());
-    }
-
     // Create cell array
     updateCells(procedureContext.potentialMap().range());
+
+    // Apply size factor scaling if required
+    applySizeFactor(procedureContext.processPool(), procedureContext.potentialMap());
 
     return true;
 }
@@ -145,7 +128,7 @@ void Configuration::setTemperature(double t) { temperature_ = t; }
 // Return configuration temperature
 double Configuration::temperature() const { return temperature_; }
 
-// Express as a tree node
+// Express as a serialisable value
 SerialisedValue Configuration::serialise() const
 {
     SerialisedValue configuration;
@@ -157,9 +140,16 @@ SerialisedValue Configuration::serialise() const
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
-    SerialisedValue generator;
-    generator["box"] = box_->serialise();
-    configuration["generator"] = generator;
+    configuration["generator"] = generator_;
 
     return configuration;
+}
+
+// Read values from a serialisable value
+void Configuration::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    setTemperature(toml::find_or<double>(node, "temperature", defaultTemperature_));
+    requestedSizeFactor_ = toml::find_or<double>(node, "sizeFactor", defaultSizeFactor_);
+    requestedCellDivisionLength_ = toml::find_or<double>(node, "cellDivisionLength", defaultCellDivisionLength_);
+    generator_.deserialise(node.at("generator"), data);
 }

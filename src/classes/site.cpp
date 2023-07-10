@@ -10,13 +10,20 @@
  * Site
  */
 
-Site::Site(std::shared_ptr<const Molecule> molecule, Vec3<double> origin)
+Site::Site(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex, std::shared_ptr<const Molecule> molecule,
+           Vec3<double> origin)
 {
+    parent_ = parent;
+    uniqueSiteIndex_ = uniqueSiteIndex;
     molecule_ = std::move(molecule);
     origin_ = origin;
 }
 
-Site::~Site() = default;
+// Return the parent
+const SpeciesSite *Site::parent() const { return parent_; }
+
+// Return the unique site index in the parent
+std::optional<int> Site::uniqueSiteIndex() const { return uniqueSiteIndex_; }
 
 // Return site origin
 const Vec3<double> &Site::origin() const { return origin_; }
@@ -39,16 +46,15 @@ const Matrix3 &Site::axes() const
  * Oriented Site
  */
 
-OrientedSite::OrientedSite(std::shared_ptr<const Molecule> molecule, Vec3<double> origin, Vec3<double> xAxis,
+OrientedSite::OrientedSite(const SpeciesSite *parent, std::optional<int> uniqueSiteIndex,
+                           std::shared_ptr<const Molecule> molecule, Vec3<double> origin, Vec3<double> xAxis,
                            Vec3<double> yAxis, Vec3<double> zAxis)
-    : Site(std::move(molecule), origin)
+    : Site(parent, uniqueSiteIndex, std::move(molecule), origin)
 {
     axes_.setColumn(0, xAxis);
     axes_.setColumn(1, yAxis);
     axes_.setColumn(2, zAxis);
 }
-
-OrientedSite::~OrientedSite() = default;
 
 // Return whether local axes are present
 bool OrientedSite::hasAxes() const { return true; }
@@ -57,7 +63,7 @@ bool OrientedSite::hasAxes() const { return true; }
 EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
 {
     return EnumOptions<OrientedSite::SiteAxis>(
-        "SiteAxis", {{OrientedSite::XAxis, "XAxis"}, {OrientedSite::YAxis, "YAxis"}, {OrientedSite::ZAxis, "ZAxis"}});
+        "SiteAxis", {{OrientedSite::XAxis, "X"}, {OrientedSite::YAxis, "Y"}, {OrientedSite::ZAxis, "Z"}});
 }
 
 // Return local axes

@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/messenger.h"
-#include "base/sysfunc.h"
-#include "gui/render/fontinstance.h"
+#include "base/sysFunc.h"
+#include "gui/render/fontInstance.h"
 #include "gui/viewer.hui"
 #include <QApplication>
 #include <QClipboard>

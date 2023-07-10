@@ -2,11 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/sequence.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "keywords/node.h"
-#include "keywords/nodeandinteger.h"
-#include "keywords/nodevector.h"
+#include "keywords/nodeAndInteger.h"
+#include "keywords/nodeVector.h"
 #include "procedure/nodes/registry.h"
 
 ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
@@ -74,6 +74,19 @@ int ProcedureNodeSequence::nNodes() const { return sequence_.size(); }
 
 // Return whether the sequence is empty
 bool ProcedureNodeSequence::empty() const { return sequence_.empty(); }
+
+// Remove a node
+bool ProcedureNodeSequence::removeNode(NodeRef node)
+{
+    // Find the node in the sequence
+    auto it = std::find_if(sequence_.begin(), sequence_.end(), [node](const auto &n) { return n.get() == node.get(); });
+    if (it != sequence_.end())
+    {
+        sequence_.erase(it);
+        return true;
+    }
+    return false;
+}
 
 /*
  * Scope
@@ -515,3 +528,31 @@ std::vector<NodeRef>::const_reverse_iterator ProcedureNodeSequence::QueryRange::
 std::vector<NodeRef>::const_reverse_iterator ProcedureNodeSequence::QueryRange::end() { return stop_; }
 bool ProcedureNodeSequence::QueryRange::empty() { return start_ == stop_; }
 void ProcedureNodeSequence::QueryRange::next() { start_++; }
+
+// Express as a serialisable value
+SerialisedValue ProcedureNodeSequence::serialise() const
+{
+    SerialisedValue node;
+    for (auto n : sequence_)
+    {
+        // node.push_back(n->serialise());
+        SerialisedValue inner = n->serialise();
+        inner["type"] = n->nodeTypes().serialise(n->type());
+        node[std::string(n->name())] = inner;
+    }
+    return node;
+}
+
+// Read values from a serialisable value
+void ProcedureNodeSequence::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    toMap(node,
+          [this, &coreData](const auto &key, const auto &value)
+          {
+              ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(value.at("type"));
+              auto result = ProcedureNodeRegistry::create(type);
+              appendNode(result, {});
+              result->deserialise(value, coreData);
+              result->setName(key);
+          });
+}

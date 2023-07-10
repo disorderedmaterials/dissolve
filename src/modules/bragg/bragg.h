@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/braggreflection.h"
+#include "classes/braggReflection.h"
 #include "math/averaging.h"
 #include "module/module.h"
 

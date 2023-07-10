@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/atomtype.h"
+#include "classes/atomType.h"
 #include "classes/species.h"
-#include "modules/geomopt/geomopt.h"
+#include "modules/geomOpt/geomOpt.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

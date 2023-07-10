@@ -44,7 +44,7 @@ template <ProblemType problem, Population population> static void BM_CalculateEn
     const auto mol = problemDef.cfg_->molecules().front();
     for (auto _ : state)
     {
-        double molecularEnergy = energyKernel->totalEnergy(*mol, ProcessPool::PoolStrategy).total();
+        double molecularEnergy = energyKernel->totalEnergy(*mol).total();
         benchmark::DoNotOptimize(molecularEnergy);
     }
 }

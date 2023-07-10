@@ -4,10 +4,11 @@
 #pragma once
 
 #include "keywords/base.h"
-#include "keywords/enumoptions.h"
-#include "keywords/storedata.h"
-#include "procedure/nodevalue.h"
-#include "templates/optionalref.h"
+#include "keywords/enumOptions.h"
+#include "keywords/storeData.h"
+#include "math/range.h"
+#include "procedure/nodeValue.h"
+#include "templates/optionalRef.h"
 #include <any>
 #include <map>
 #include <typeindex>
@@ -15,6 +16,8 @@
 class SelectProcedureNode;
 class Collect1DProcedureNode;
 class RegionProcedureNodeBase;
+class SQModule;
+class RDFModule;
 class Configuration;
 
 // Keyword Store
@@ -146,6 +149,7 @@ class KeywordStore
     bool set(std::string_view name, const NodeValue value);
     bool set(std::string_view name, const Vec3<double> value);
     bool set(std::string_view name, const Vec3<NodeValue> value);
+    bool set(std::string_view name, const Range value);
     bool set(std::string_view name, const std::shared_ptr<Collect1DProcedureNode> value);
     bool set(std::string_view name, const std::vector<std::shared_ptr<const Collect1DProcedureNode>> value);
     bool set(std::string_view name, const std::shared_ptr<RegionProcedureNodeBase> value);
@@ -191,9 +195,9 @@ class KeywordStore
     // Retrieve a Species by keyword name
     const Species *getSpecies(std::string_view name) const;
     // Retrieve a vector of Modules by keyword name
-    std::vector<Module *> getVectorModule(std::string_view name) const;
+    const std::vector<Module *> &getVectorModule(std::string_view name) const;
     // Retrieve an Integer by keyword name
-    int getInt(std::string_view name);
+    int getInt(std::string_view name) const;
 
     // Get specified keyword data, casting as necessary
     template <class D, class K> OptionalReferenceWrapper<const D> get(std::string_view name) const
@@ -246,6 +250,10 @@ class KeywordStore
     KeywordBase::ParseResult deserialise(LineParser &parser, const CoreData &coreData, int startArg = 0);
     // Write all keywords to specified LineParser
     bool serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet = true) const;
+    // Apply the terms in the keyword store to a node
+    SerialisedValue serialiseOnto(SerialisedValue node) const;
+    // Pull keywords from entries in table
+    void deserialiseFrom(const SerialisedValue &node, const CoreData &coreData);
 
     /*
      * Object Management

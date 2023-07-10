@@ -4,16 +4,16 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "classes/atomtypemix.h"
+#include "classes/atomTypeMix.h"
 #include "classes/box.h"
-#include "classes/cellarray.h"
+#include "classes/cellArray.h"
 #include "classes/isotopologue.h"
-#include "classes/speciesangle.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
-#include "classes/speciesimproper.h"
-#include "classes/speciessite.h"
-#include "classes/speciestorsion.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesImproper.h"
+#include "classes/speciesSite.h"
+#include "classes/speciesTorsion.h"
 #include "io/import/coordinates.h"
 #include <list>
 #include <map>
@@ -25,7 +25,7 @@
 class Forcefield;
 
 // Species Definition
-class Species : public Serialisable
+class Species : public Serialisable<const CoreData &>
 {
     public:
     Species(std::string name = "Unnamed");
@@ -370,8 +370,8 @@ class Species : public Serialisable
     // Write Species definition to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
-    // Read values from a tree node
-    void deserialise(SerialisedValue &node, CoreData &coreData);
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, CoreData &coreData);
 };

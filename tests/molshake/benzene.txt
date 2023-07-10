@@ -142,10 +142,12 @@ Configuration  'Bulk'
       Rotate  True
       Positioning  Random
     EndAdd
+    SizeFactor  'SizeFactor01'
+      SizeFactor  '10.0'
+    EndSizeFactor
   EndGenerator
 
   Temperature  300.000000
-  SizeFactor  10.0
 
   # Modules
   # -- None

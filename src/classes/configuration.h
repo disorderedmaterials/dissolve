@@ -6,16 +6,16 @@
 #include "base/serialiser.h"
 #include "base/version.h"
 #include "classes/atom.h"
-#include "classes/atomtypemix.h"
+#include "classes/atomTypeMix.h"
 #include "classes/box.h"
-#include "classes/cellarray.h"
+#include "classes/cellArray.h"
 #include "classes/molecule.h"
-#include "classes/sitestack.h"
-#include "genericitems/list.h"
+#include "classes/siteStack.h"
 #include "io/import/coordinates.h"
+#include "items/list.h"
 #include "kernels/potentials/base.h"
-#include "math/data1d.h"
-#include "math/histogram1d.h"
+#include "math/data1D.h"
+#include "math/histogram1D.h"
 #include "math/interpolator.h"
 #include "module/layer.h"
 #include "procedure/procedure.h"
@@ -32,7 +32,7 @@ class ProcessPool;
 class Species;
 
 // Configuration
-class Configuration : public Serialisable
+class Configuration : public Serialisable<const CoreData &>
 {
     public:
     Configuration();
@@ -53,8 +53,6 @@ class Configuration : public Serialisable
     std::string niceName_;
     // Procedure to generate the Configuration
     Procedure generator_;
-    // File / format of input coordinates file, if provided
-    CoordinateImportFileFormat inputCoordinates_;
     static constexpr double defaultTemperature_ = 300.0;
     // Temperature of this configuration (K)
     double temperature_{defaultTemperature_};
@@ -70,8 +68,6 @@ class Configuration : public Serialisable
     Procedure &generator();
     // Create the Configuration according to its generator Procedure
     bool generate(const ProcedureContext &procedureContext);
-    // Return import coordinates file / format
-    CoordinateImportFileFormat &inputCoordinates();
     // Initialise (generate or load) the basic contents of the Configuration
     bool initialiseContent(const ProcedureContext &procedureContext);
     // Set configuration temperature
@@ -257,6 +253,8 @@ class Configuration : public Serialisable
     bool serialise(LineParser &parser) const;
     // Read from specified LineParser
     bool deserialise(LineParser &parser, const CoreData &coreData, double pairPotentialRange, bool hasPotentials);
-    // Express as a tree node
+    // Express as a serialisable value
     SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &data) override;
 };

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/ff/atomtype.h"
+#include "data/ff/atomType.h"
 #include "data/ff/xml/base.h"
 #include "gui/models/xmlAngleModel.h"
 #include "gui/models/xmlAtomModel.h"

@@ -4,8 +4,8 @@
 #pragma once
 
 #include "base/units.h"
+#include "procedure/nodeValue.h"
 #include "procedure/nodes/node.h"
-#include "procedure/nodevalue.h"
 
 // Forward Declarations
 class CoordinateSetsProcedureNode;
@@ -59,22 +59,28 @@ class AddProcedureNode : public ProcedureNode
     static EnumOptions<PositioningType> positioningTypes();
 
     private:
+    // The default box action if none is specified
+    static constexpr AddProcedureNode::BoxActionStyle defaultBoxAction_ = AddProcedureNode::BoxActionStyle::AddVolume;
     // Action to take on the Box geometry / volume on addition of the species
-    AddProcedureNode::BoxActionStyle boxAction_{AddProcedureNode::BoxActionStyle::AddVolume};
+    AddProcedureNode::BoxActionStyle boxAction_{defaultBoxAction_};
     // Coordinate set source for Species (if any)
     std::shared_ptr<const CoordinateSetsProcedureNode> coordinateSets_{nullptr};
     // Target density when adding molecules
     std::pair<NodeValue, Units::DensityUnits> density_{1.0, Units::GramsPerCentimetreCubedUnits};
     // Population of molecules to add
     NodeValue population_{1.0};
+    // The default positioning if none is specified
+    static constexpr AddProcedureNode::PositioningType defaultPositioningType_ = AddProcedureNode::PositioningType::Random;
     // Positioning type for individual molecules
-    AddProcedureNode::PositioningType positioningType_{AddProcedureNode::PositioningType::Random};
+    AddProcedureNode::PositioningType positioningType_{defaultPositioningType_};
     // Region into which we will add molecules (if any)
     std::shared_ptr<const RegionProcedureNodeBase> region_{nullptr};
     // Whether to rotate molecules on insertion
     bool rotate_{true};
-    // Flags controlling box axis scaling
-    bool scaleA_{true}, scaleB_{true}, scaleC_{true};
+    // The default scaling settings
+    static constexpr bool defaultScale_{true};
+    // iFlags controlling box axis scaling
+    bool scaleA_{defaultScale_}, scaleB_{defaultScale_}, scaleC_{defaultScale_};
     // Species to be added
     const Species *species_{nullptr};
 

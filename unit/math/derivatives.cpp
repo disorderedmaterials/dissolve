@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/speciesangle.h"
-#include "classes/speciesatom.h"
-#include "classes/speciesbond.h"
-#include "classes/speciesimproper.h"
-#include "classes/speciestorsion.h"
+#include "classes/speciesAngle.h"
+#include "classes/speciesAtom.h"
+#include "classes/speciesBond.h"
+#include "classes/speciesImproper.h"
+#include "classes/speciesTorsion.h"
 #include <fmt/format.h>
 #include <gtest/gtest.h>
 

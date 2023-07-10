@@ -1,30 +1,30 @@
 add_library(
   base
-  enumoptionsbase.cpp
+  enumOptionsBase.cpp
   geometry.cpp
-  lineparser.cpp
+  lineParser.cpp
   lock.cpp
   messenger.cpp
-  outputhandler.cpp
-  processgroup.cpp
-  processpool.cpp
-  randombuffer.cpp
-  sysfunc.cpp
+  outputHandler.cpp
+  processGroup.cpp
+  processPool.cpp
+  randomBuffer.cpp
+  sysFunc.cpp
   timer.cpp
   units.cpp
   version.cpp
-  enumoption.h
-  enumoptionsbase.h
-  enumoptions.h
+  enumOption.h
+  enumOptionsBase.h
+  enumOptions.h
   geometry.h
-  lineparser.h
+  lineParser.h
   lock.h
   messenger.h
-  outputhandler.h
-  processgroup.h
-  processpool.h
-  randombuffer.h
-  sysfunc.h
+  outputHandler.h
+  processGroup.h
+  processPool.h
+  randomBuffer.h
+  sysFunc.h
   timer.h
   units.h
   version.h

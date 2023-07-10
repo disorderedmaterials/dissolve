@@ -5,7 +5,7 @@
 #include "ExpressionLexer.h"
 #include "ExpressionParser.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 #include "expression/ExpressionErrorListeners.h"
 #include "expression/ExpressionVisitor.h"
 #include "expression/root.h"

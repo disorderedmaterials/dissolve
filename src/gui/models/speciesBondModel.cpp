@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/speciesBondModel.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 
 SpeciesBondModel::SpeciesBondModel(std::vector<SpeciesBond> &bonds, const CoreData &coreData)
     : bonds_(bonds), coreData_(coreData)

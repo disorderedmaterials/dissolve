@@ -6,7 +6,7 @@
 #include "classes/cell.h"
 #include "classes/configuration.h"
 #include "classes/molecule.h"
-#include "classes/potentialmap.h"
+#include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
 #include <iterator>
@@ -182,8 +182,7 @@ double EnergyKernel::pairPotentialEnergy(const Atom &i) const
 }
 
 // Return PairPotential energy of Molecule with world
-double EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular,
-                                         ProcessPool::DivisionStrategy strategy) const
+double EnergyKernel::pairPotentialEnergy(const Molecule &mol, bool includeIntraMolecular) const
 {
     assert(cellArray_);
     auto &cells = cellArray_->get();
@@ -306,13 +305,13 @@ double EnergyKernel::totalPairPotentialEnergy(bool includeIntraMolecular, Proces
 }
 
 // Return total interatomic PairPotential energy from summation of molecules
-double EnergyKernel::totalMoleculePairPotentialEnergy(bool includeIntraMolecular, ProcessPool::DivisionStrategy strategy) const
+double EnergyKernel::totalMoleculePairPotentialEnergy(bool includeIntraMolecular) const
 {
     assert(molecules_);
     auto &mols = molecules_->get();
     auto molecularEnergy = 0.0;
     for (const auto &mol : mols)
-        molecularEnergy += pairPotentialEnergy(*mol, includeIntraMolecular, ProcessPool::subDivisionStrategy(strategy));
+        molecularEnergy += pairPotentialEnergy(*mol, includeIntraMolecular);
 
     // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
     // pairpotential energy, and zero intramolecular energy
@@ -329,12 +328,10 @@ EnergyResult EnergyKernel::totalEnergy(const Atom &i) const
 }
 
 // Return total energy of supplied molecule with the world
-EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, ProcessPool::DivisionStrategy strategy,
-                                       Flags<EnergyCalculationFlags> flags) const
+EnergyResult EnergyKernel::totalEnergy(const Molecule &mol, Flags<EnergyCalculationFlags> flags) const
 {
-    return {flags.isSet(ExcludePairPotential)
-                ? 0.0
-                : pairPotentialEnergy(mol, !flags.isSet(ExcludeIntraMolecularPairPotential), strategy),
+    return {flags.isSet(ExcludePairPotential) ? 0.0
+                                              : pairPotentialEnergy(mol, !flags.isSet(ExcludeIntraMolecularPairPotential)),
             flags.isSet(ExcludeGeometry) ? 0.0 : totalGeometryEnergy(mol),
             flags.isSet(ExcludeExtended) ? 0.0 : extendedEnergy(mol)};
 }

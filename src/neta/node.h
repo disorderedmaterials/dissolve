@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
+#include "base/enumOptions.h"
 #include "data/elements.h"
-#include "neta/matchedgroup.h"
+#include "neta/matchedGroup.h"
 #include <memory>
 #include <vector>
 

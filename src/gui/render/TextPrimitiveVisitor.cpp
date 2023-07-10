@@ -3,7 +3,7 @@
 
 #include "gui/render/TextPrimitiveVisitor.h"
 #include "gui/render/TextPrimitiveErrorListeners.h"
-#include "gui/render/fontinstance.h"
+#include "gui/render/fontInstance.h"
 #include "gui/render/symbol.h"
 
 // Return enum options for EscapedFormatter

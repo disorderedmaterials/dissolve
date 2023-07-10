@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "base/enumoptions.h"
-#include "classes/data1dstore.h"
-#include "classes/scatteringmatrix.h"
-#include "math/data1d.h"
+#include "base/enumOptions.h"
+#include "classes/data1DStore.h"
+#include "classes/scatteringMatrix.h"
+#include "math/data1D.h"
 #include "module/groups.h"
 #include "module/module.h"
-#include "templates/array3d.h"
+#include "templates/array3D.h"
 
 // Forward Declarations
 class AtomType;

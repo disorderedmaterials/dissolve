@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/addconfigurationdialog.h"
-#include "gui/configurationtab.h"
+#include "gui/addConfigurationDialog.h"
+#include "gui/configurationTab.h"
 #include "gui/gui.h"
-#include "gui/selectspeciesdialog.h"
+#include "gui/selectSpeciesDialog.h"
 #include "io/export/coordinates.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
-#include "procedure/nodes/coordinatesets.h"
-#include "procedure/nodes/generalregion.h"
+#include "procedure/nodes/coordinateSets.h"
+#include "procedure/nodes/generalRegion.h"
 #include "procedure/nodes/parameters.h"
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QMessageBox>
 
 /*
@@ -135,4 +136,25 @@ void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)
                              QMessageBox::Ok, QMessageBox::Ok);
     else
         Messenger::print("Successfully exported configuration '{}' to '{}'.\n", cfg->name(), fileAndFormat.filename());
+}
+
+void DissolveWindow::on_ConfigurationAdjustTemperatureAction_triggered(bool checked)
+{
+    // Get the currently-displayed Configuration
+    auto *cfg = ui_.MainTabs->currentConfiguration();
+    if (!cfg)
+        return;
+
+    auto ok = false;
+    auto temperature = QInputDialog::getDouble(this, "Set temperature for configuration",
+                                               "Enter the temperature (K) to apply to this configuration", cfg->temperature(),
+                                               0.0, 1000000.0, 3, &ok);
+    if (!ok)
+        return;
+
+    cfg->setTemperature(temperature);
+
+    setModified();
+
+    fullUpdate();
 }

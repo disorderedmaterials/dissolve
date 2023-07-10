@@ -3,7 +3,7 @@
 
 #include "procedure/nodes/parameters.h"
 #include "expression/variable.h"
-#include "keywords/expressionvariablevector.h"
+#include "keywords/expressionVariableVector.h"
 
 ParametersProcedureNode::ParametersProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::Parameters, {ProcedureNode::AnyContext})
@@ -55,3 +55,23 @@ bool ParametersProcedureNode::prepare(const ProcedureContext &procedureContext) 
 
 // Execute node
 bool ParametersProcedureNode::execute(const ProcedureContext &procedureContext) { return true; }
+
+// Express as a serialisable value
+SerialisedValue ParametersProcedureNode::serialise() const
+{
+    SerialisedValue result;
+    for (auto &param : parameters_)
+        result[std::string(param->name())] = param->value();
+    return result;
+}
+
+// Read values from a serialisable value
+void ParametersProcedureNode::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    toMap(node,
+          [this](const auto &key, const auto &value)
+          {
+              if (key != "type")
+                  parameters_.push_back(std::make_shared<ExpressionVariable>(key, toml::get<ExpressionValue>(value)));
+          });
+}

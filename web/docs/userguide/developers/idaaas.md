@@ -120,7 +120,7 @@ We can now configure Dissolve.
 
 ``` shell
 mkdir build && cd build
-cmake --preset GUI-nix
+cmake --preset GUI-nix ..
 cd ..
 ```
 

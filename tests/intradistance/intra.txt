@@ -86,11 +86,13 @@ Configuration  'Bulk'
       BoxAction  AddVolume
       Positioning  Random
     EndAdd
+    SizeFactor  'SizeFactor01'
+      SizeFactor  '1.0'
+    EndSizeFactor
   EndGenerator
 
   Temperature  300
 
-  SizeFactor  1
 EndConfiguration
 
 #==============================================================================#

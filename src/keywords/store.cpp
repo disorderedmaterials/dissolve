@@ -2,23 +2,24 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/store.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
-#include "keywords/configurationvector.h"
+#include "keywords/configurationVector.h"
 #include "keywords/double.h"
 #include "keywords/integer.h"
 #include "keywords/module.h"
-#include "keywords/modulevector.h"
+#include "keywords/moduleVector.h"
 #include "keywords/node.h"
-#include "keywords/nodevalue.h"
-#include "keywords/nodevector.h"
+#include "keywords/nodeValue.h"
+#include "keywords/nodeVector.h"
+#include "keywords/range.h"
 #include "keywords/species.h"
-#include "keywords/stdstring.h"
-#include "keywords/vec3double.h"
-#include "keywords/vec3nodevalue.h"
-#include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/regionbase.h"
+#include "keywords/stdString.h"
+#include "keywords/vec3Double.h"
+#include "keywords/vec3NodeValue.h"
+#include "procedure/nodes/collect1D.h"
+#include "procedure/nodes/regionBase.h"
 #include "procedure/nodes/select.h"
 
 // Static Singletons
@@ -243,6 +244,10 @@ bool KeywordStore::set(std::string_view name, const Vec3<NodeValue> value)
 {
     return getKeyword<Vec3NodeValueKeyword>(keywords_, name)->setData(value);
 }
+bool KeywordStore::set(std::string_view name, const Range value)
+{
+    return getKeyword<RangeKeyword>(keywords_, name)->setData(value);
+}
 
 // Retrieve a Configuration by keyword name
 Configuration *KeywordStore::getConfiguration(std::string_view name) const
@@ -263,10 +268,40 @@ std::vector<Configuration *> KeywordStore::getVectorConfiguration(std::string_vi
 }
 
 // Retrieve an Integer by keyword name
-int KeywordStore::getInt(std::string_view name) { return getKeyword<IntegerKeyword>(keywords_, name)->data(); }
+int KeywordStore::getInt(std::string_view name) const { return getKeyword<IntegerKeyword>(keywords_, name)->data(); }
 
 // Retrieve a vector of Modules by keyword name
-std::vector<Module *> KeywordStore::getVectorModule(std::string_view name) const
+const std::vector<Module *> &KeywordStore::getVectorModule(std::string_view name) const
 {
     return getKeyword<ModuleVectorKeyword>(keywords_, name)->data();
+}
+
+// Turn first character of keyword label to lower case to match
+// convention with the rest of the file format.
+std::string toml_format(const std::string_view original)
+{
+    auto result = std::string(original);
+    result[0] = tolower(result[0]);
+    return result;
+}
+
+// Apply the terms in the keyword store to a node
+SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
+{
+    for (auto &k : keywords())
+        if (!k.keyword()->isDefault())
+        {
+            auto value = k.keyword()->serialise();
+            if (!value.is_uninitialized())
+                node[toml_format(k.keyword()->name())] = value;
+        }
+    return node;
+}
+
+// Pull keywords from entries in table
+void KeywordStore::deserialiseFrom(const SerialisedValue &node, const CoreData &coreData)
+{
+    for (auto &k : keywords_)
+        if (node.contains(toml_format(k.keyword()->name())))
+            k.keyword()->deserialise(node.at(toml_format(k.keyword()->name())), coreData);
 }

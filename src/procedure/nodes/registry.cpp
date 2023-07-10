@@ -3,41 +3,47 @@
 
 #include "procedure/nodes/registry.h"
 #include "procedure/nodes/add.h"
-#include "procedure/nodes/addpair.h"
+#include "procedure/nodes/addPair.h"
 #include "procedure/nodes/box.h"
-#include "procedure/nodes/calculateangle.h"
-#include "procedure/nodes/calculatedistance.h"
-#include "procedure/nodes/calculateexpression.h"
-#include "procedure/nodes/calculatevector.h"
-#include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/collect2d.h"
-#include "procedure/nodes/collect3d.h"
-#include "procedure/nodes/coordinatesets.h"
+#include "procedure/nodes/calculateAngle.h"
+#include "procedure/nodes/calculateDistance.h"
+#include "procedure/nodes/calculateExpression.h"
+#include "procedure/nodes/calculateVector.h"
+#include "procedure/nodes/collect1D.h"
+#include "procedure/nodes/collect2D.h"
+#include "procedure/nodes/collect3D.h"
+#include "procedure/nodes/coordinateSets.h"
 #include "procedure/nodes/copy.h"
-#include "procedure/nodes/customregion.h"
-#include "procedure/nodes/cylindricalregion.h"
-#include "procedure/nodes/generalregion.h"
-#include "procedure/nodes/integrate1d.h"
-#include "procedure/nodes/operatedivide.h"
-#include "procedure/nodes/operateexpression.h"
-#include "procedure/nodes/operategridnormalise.h"
-#include "procedure/nodes/operatemultiply.h"
-#include "procedure/nodes/operatenormalise.h"
-#include "procedure/nodes/operatenumberdensitynormalise.h"
-#include "procedure/nodes/operatesitepopulationnormalise.h"
-#include "procedure/nodes/operatesphericalshellnormalise.h"
+#include "procedure/nodes/customRegion.h"
+#include "procedure/nodes/cylindricalRegion.h"
+#include "procedure/nodes/directionalGlobalPotential.h"
+#include "procedure/nodes/generalRegion.h"
+#include "procedure/nodes/importCoordinates.h"
+#include "procedure/nodes/integerCollect1D.h"
+#include "procedure/nodes/integrate1D.h"
+#include "procedure/nodes/operateDivide.h"
+#include "procedure/nodes/operateExpression.h"
+#include "procedure/nodes/operateGridNormalise.h"
+#include "procedure/nodes/operateMultiply.h"
+#include "procedure/nodes/operateNormalise.h"
+#include "procedure/nodes/operateNumberDensityNormalise.h"
+#include "procedure/nodes/operateSitePopulationNormalise.h"
+#include "procedure/nodes/operateSphericalShellNormalise.h"
 #include "procedure/nodes/parameters.h"
 #include "procedure/nodes/pick.h"
-#include "procedure/nodes/pickproximity.h"
-#include "procedure/nodes/pickregion.h"
-#include "procedure/nodes/process1d.h"
-#include "procedure/nodes/process2d.h"
-#include "procedure/nodes/process3d.h"
+#include "procedure/nodes/pickProximity.h"
+#include "procedure/nodes/pickRegion.h"
+#include "procedure/nodes/process1D.h"
+#include "procedure/nodes/process2D.h"
+#include "procedure/nodes/process3D.h"
 #include "procedure/nodes/remove.h"
+#include "procedure/nodes/restraintPotential.h"
+#include "procedure/nodes/rotateFragment.h"
 #include "procedure/nodes/select.h"
-#include "procedure/nodes/simpleglobalpotential.h"
-#include "procedure/nodes/simplerestraintpotential.h"
-#include "procedure/nodes/sum1d.h"
+#include "procedure/nodes/simpleGlobalPotential.h"
+#include "procedure/nodes/sizeFactor.h"
+#include "procedure/nodes/sum1D.h"
+#include "procedure/nodes/temperature.h"
 #include "procedure/nodes/transmute.h"
 
 ProcedureNodeRegistry::ProcedureNodeRegistry()
@@ -50,7 +56,13 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<CoordinateSetsProcedureNode>(ProcedureNode::NodeType::CoordinateSets,
                                                   "Generate coordinate sets for a species", "Build");
     registerProducer<CopyProcedureNode>(ProcedureNode::NodeType::Copy, "Copy the contents of a configuration", "Build");
+    registerProducer<ImportCoordinatesProcedureNode>(ProcedureNode::NodeType::ImportCoordinates,
+                                                     "Import coordinates into a configuration", "Build");
     registerProducer<RemoveProcedureNode>(ProcedureNode::NodeType::Remove, "Remove molecules from a configuration", "Build");
+    registerProducer<SizeFactorProcedureNode>(ProcedureNode::NodeType::SizeFactor,
+                                              "Scale a configuration's contents with a size factor", "Build");
+    registerProducer<TemperatureProcedureNode>(ProcedureNode::NodeType::Temperature, "Set temperature for configuration",
+                                               "Build");
     registerProducer<TransmuteProcedureNode>(ProcedureNode::NodeType::Transmute,
                                              "Turn molecules from one species type into another", "Build");
 
@@ -69,6 +81,8 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<Collect1DProcedureNode>(ProcedureNode::NodeType::Collect1D, "Bin 1D quantity into a histogram", "Data");
     registerProducer<Collect2DProcedureNode>(ProcedureNode::NodeType::Collect2D, "Bin 2D quantity into a histogram", "Data");
     registerProducer<Collect3DProcedureNode>(ProcedureNode::NodeType::Collect3D, "Bin 3D quantity into a histogram", "Data");
+    registerProducer<IntegerCollect1DProcedureNode>(ProcedureNode::NodeType::IntegerCollect1D,
+                                                    "Bin integer 1D value into a histogram", "Data");
     registerProducer<Integrate1DProcedureNode>(ProcedureNode::NodeType::Integrate1D, "Integrate the data in a 1D dataset",
                                                "Data");
     registerProducer<Process1DProcedureNode>(ProcedureNode::NodeType::Process1D, "Process 1D histogram data", "Data");
@@ -114,11 +128,16 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
                                               "Pick");
 
     // Potentials
+    registerProducer<DirectionalGlobalPotentialProcedureNode>(ProcedureNode::NodeType::DirectionalGlobalPotential,
+                                                              "Add a directional global potential affecting all atoms",
+                                                              "Potentials");
+    registerProducer<RestraintPotentialProcedureNode>(ProcedureNode::NodeType::RestraintPotential,
+                                                      "Restraint atoms of molecules to their current positions", "Potentials");
     registerProducer<SimpleGlobalPotentialProcedureNode>(ProcedureNode::NodeType::SimpleGlobalPotential,
                                                          "Add a global potential affecting all atoms", "Potentials");
-    registerProducer<SimpleRestraintPotentialProcedureNode>(ProcedureNode::NodeType::SimpleRestraintPotential,
-                                                            "Restraint atoms of molecules to their current positions",
-                                                            "Potentials");
+
+    // Sites
+    registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
 }
 
 /*

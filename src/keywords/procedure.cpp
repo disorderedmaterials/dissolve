@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/procedure.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 
@@ -52,3 +52,12 @@ bool ProcedureKeyword::serialise(LineParser &parser, std::string_view keywordNam
 
     return true;
 }
+
+// Express as a serialisable value
+SerialisedValue ProcedureKeyword::serialise() const { return data_.serialise(); }
+
+// Read values from a serialisable value
+void ProcedureKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node, coreData); }
+
+// Has not changed from initial value
+bool ProcedureKeyword::isDefault() const { return false; }

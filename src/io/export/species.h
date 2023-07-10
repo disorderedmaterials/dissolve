@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "io/fileandformat.h"
+#include "io/fileAndFormat.h"
 
 // Forward Declarations
 class Species;

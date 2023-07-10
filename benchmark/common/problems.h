@@ -5,7 +5,7 @@
 
 #include "benchmark_config.h"
 #include "classes/box.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/gr/gr.h"

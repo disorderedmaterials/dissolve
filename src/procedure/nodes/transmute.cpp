@@ -3,11 +3,11 @@
 
 #include "procedure/nodes/transmute.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 #include "classes/species.h"
 #include "keywords/node.h"
 #include "keywords/species.h"
-#include "keywords/speciesvector.h"
+#include "keywords/speciesVector.h"
 #include "procedure/nodes/pick.h"
 
 TransmuteProcedureNode::TransmuteProcedureNode()

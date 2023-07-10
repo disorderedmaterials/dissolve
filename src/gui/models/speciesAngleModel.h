@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/speciesangle.h"
+#include "classes/speciesAngle.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 

@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/configuration.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 #include "classes/configuration.h"
-#include "classes/coredata.h"
+#include "classes/coreData.h"
 
 ConfigurationKeyword::ConfigurationKeyword(Configuration *&data) : KeywordBase(typeid(this)), data_(data) {}
 
@@ -49,4 +49,19 @@ void ConfigurationKeyword::removeReferencesTo(Configuration *cfg)
 {
     if (data_ == cfg)
         data_ = nullptr;
+}
+
+// Express as a serialisable value
+SerialisedValue ConfigurationKeyword::serialise() const
+{
+    // isDefault is checked before serialisation of keywords
+    // so we have checked for the null pointer
+    assert(data_);
+    return data_->name();
+}
+
+// Read values from a serialisable value
+void ConfigurationKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    data_ = coreData.findConfiguration(std::string_view(std::string(node.as_string())));
 }

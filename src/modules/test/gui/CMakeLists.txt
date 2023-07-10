@@ -1,1 +1,1 @@
-dissolve_add_module_gui(testmodule)
+dissolve_add_module_gui(test)

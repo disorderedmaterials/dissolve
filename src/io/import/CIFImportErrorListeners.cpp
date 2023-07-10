@@ -3,7 +3,7 @@
 
 #include "io/import/CIFImportErrorListeners.h"
 #include "base/messenger.h"
-#include "base/sysfunc.h"
+#include "base/sysFunc.h"
 
 /*
  * CIFImport Lexer Error Listener

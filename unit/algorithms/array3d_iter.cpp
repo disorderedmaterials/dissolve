@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/array3d_iter.h"
+#include "classes/array3DIterator.h"
 #include "templates/algorithms.h"
-#include "templates/array3d.h"
+#include "templates/array3D.h"
 #include "templates/vector3.h"
 #include <gtest/gtest.h>
 

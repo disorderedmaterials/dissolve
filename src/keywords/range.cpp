@@ -2,10 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "keywords/range.h"
-#include "base/lineparser.h"
+#include "base/lineParser.h"
 
 RangeKeyword::RangeKeyword(Range &data, Vec3Labels::LabelType labelType)
-    : KeywordBase(typeid(this)), data_(data), labelType_(labelType)
+    : KeywordBase(typeid(this)), data_(data), default_(data), labelType_(labelType)
 {
 }
 
@@ -33,6 +33,7 @@ bool RangeKeyword::setData(double rangeMin, double rangeMax)
 
     return true;
 }
+bool RangeKeyword::setData(const Range &range) { return setData(range.minimum(), range.maximum()); }
 
 // Set range minimum
 bool RangeKeyword::setMinimum(double rangeMin)
@@ -113,3 +114,12 @@ bool RangeKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 {
     return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.minimum(), data_.maximum());
 }
+
+// Express as a serialisable value
+SerialisedValue RangeKeyword::serialise() const { return data_; }
+
+// Read values from a serialisable value
+void RangeKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) { data_.deserialise(node); }
+
+// Has not changed from initial value
+bool RangeKeyword::isDefault() const { return data_ == default_; }

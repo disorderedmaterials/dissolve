@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "math/function1d.h"
+#include "math/function1D.h"
 
 // Forward Declarations
 class Data1D;

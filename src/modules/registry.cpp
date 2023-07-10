@@ -5,35 +5,36 @@
 #include "modules/accumulate/accumulate.h"
 #include "modules/analyse/analyse.h"
 #include "modules/angle/angle.h"
-#include "modules/atomshake/atomshake.h"
-#include "modules/avgmol/avgmol.h"
-#include "modules/axisangle/axisangle.h"
+#include "modules/atomShake/atomShake.h"
+#include "modules/avgMol/avgMol.h"
+#include "modules/axisAngle/axisAngle.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/bragg/bragg.h"
+#include "modules/checkSpecies/checkSpecies.h"
 #include "modules/checks/checks.h"
-#include "modules/checkspecies/checkspecies.h"
-#include "modules/dangle/dangle.h"
-#include "modules/datatest/datatest.h"
+#include "modules/dAngle/dAngle.h"
+#include "modules/dataTest/dataTest.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
-#include "modules/export_coordinates/exportcoords.h"
-#include "modules/export_pairpotentials/exportpp.h"
-#include "modules/export_trajectory/exporttraj.h"
+#include "modules/exportCoordinates/exportCoordinates.h"
+#include "modules/exportPairPotentials/exportPairPotentials.h"
+#include "modules/exportTrajectory/exportTrajectory.h"
 #include "modules/forces/forces.h"
-#include "modules/geomopt/geomopt.h"
+#include "modules/geomOpt/geomOpt.h"
 #include "modules/gr/gr.h"
-#include "modules/import_trajectory/importtraj.h"
-#include "modules/intraangle/intraangle.h"
-#include "modules/intradistance/intradistance.h"
-#include "modules/intrashake/intrashake.h"
+#include "modules/histogramCN/histogramCN.h"
+#include "modules/importTrajectory/importTrajectory.h"
+#include "modules/intraAngle/intraAngle.h"
+#include "modules/intraDistance/intraDistance.h"
+#include "modules/intraShake/intraShake.h"
 #include "modules/md/md.h"
-#include "modules/molshake/molshake.h"
-#include "modules/neutronsq/neutronsq.h"
+#include "modules/molShake/molShake.h"
+#include "modules/neutronSQ/neutronSQ.h"
 #include "modules/sdf/sdf.h"
-#include "modules/siterdf/siterdf.h"
+#include "modules/siteRDF/siteRDF.h"
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
-#include "modules/xraysq/xraysq.h"
+#include "modules/xRaySQ/xRaySQ.h"
 
 ModuleRegistry::ModuleRegistry()
 {
@@ -66,6 +67,8 @@ ModuleRegistry::ModuleRegistry()
     registerProducer<GeometryOptimisationModule>(ModuleTypes::GeometryOptimisation,
                                                  "Optimise geometry with respect to energy (minimise)", "Optimisation");
     registerProducer<GRModule>(ModuleTypes::GR, "Calculate partial and total g(r)", "Correlation Functions");
+    registerProducer<HistogramCNModule>(ModuleTypes::HistogramCN, "Produce a histogram of Coordination numbers between sites",
+                                        "Analysis");
     registerProducer<ImportTrajectoryModule>(ModuleTypes::ImportTrajectory,
                                              "Calculate coordination numbers from an existing radial distribution function",
                                              "Import");

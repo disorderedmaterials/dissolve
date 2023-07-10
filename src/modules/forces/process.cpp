@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "classes/box.h"
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
 #include "modules/forces/forces.h"
-#include "modules/import_trajectory/importtraj.h"
+#include "modules/importTrajectory/importTrajectory.h"
 
 // Run set-up stage
 bool ForcesModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)

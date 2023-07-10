@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "math/error.h"
-#include "base/enumoptions.h"
-#include "math/data1d.h"
+#include "base/enumOptions.h"
+#include "math/data1D.h"
 #include "math/interpolator.h"
 #include <algorithm>
 #include <templates/algorithms.h>
@@ -38,7 +38,9 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
     else if (errorType == EuclideanError)
         return euclidean(A, B, quiet);
 
-    Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
+    throw(
+        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+                                       errorTypes().keyword(errorType))));
     return 0.0;
 }
 

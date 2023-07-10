@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "gui/render/colourdefinition.h"
-#include "gui/render/linestyle.h"
-#include "gui/render/primitiveassembly.h"
-#include "gui/render/primitivelist.h"
-#include "gui/stockcolours.h"
+#include "gui/render/colourDefinition.h"
+#include "gui/render/lineStyle.h"
+#include "gui/render/primitiveAssembly.h"
+#include "gui/render/primitiveList.h"
+#include "gui/stockColours.h"
 #include "math/transformer.h"
 
 // Forward Declarations

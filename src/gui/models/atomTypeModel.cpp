@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/atomTypeModel.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/coredata.h"
+#include "base/sysFunc.h"
+#include "classes/atomType.h"
+#include "classes/coreData.h"
 #include "templates/algorithms.h"
 
 AtomTypeModel::AtomTypeModel(const CoreData &coreData) : coreData_(coreData) {}

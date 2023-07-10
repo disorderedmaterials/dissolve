@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/isotopologueset.h"
+#include "classes/isotopologueSet.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>
 

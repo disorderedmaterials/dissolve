@@ -2,9 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "benchmark/benchmark.h"
-#include "math/histogram1d.h"
-#include "math/histogram2d.h"
-#include "math/histogram3d.h"
+#include "math/histogram1D.h"
+#include "math/histogram2D.h"
+#include "math/histogram3D.h"
 #include <random>
 
 // Benchmark histograms

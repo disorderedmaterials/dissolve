@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "gui/render/renderablegroupmanager.h"
+#include "gui/render/renderableGroupManager.h"
 #include <QAbstractItemModel>
 #include <QModelIndex>
 

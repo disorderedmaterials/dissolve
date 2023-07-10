@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "module/module.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "base/lineParser.h"
+#include "base/sysFunc.h"
 #include "keywords/configuration.h"
 
 // Static Singletons
@@ -34,6 +34,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::Forces, "Forces"},
                                                                  {ModuleTypes::GeometryOptimisation, "GeometryOptimisation"},
                                                                  {ModuleTypes::GR, "GR"},
+                                                                 {ModuleTypes::HistogramCN, "HistogramCN"},
                                                                  {ModuleTypes::ImportTrajectory, "ImportTrajectory"},
                                                                  {ModuleTypes::IntraAngle, "IntraAngle"},
                                                                  {ModuleTypes::IntraDistance, "IntraDistance"},
@@ -235,4 +236,23 @@ std::vector<Module *> Module::allOfType(std::vector<ModuleTypes::ModuleType> typ
     std::copy_if(instances_.begin(), instances_.end(), std::back_inserter(modules),
                  [&types](const auto *m) { return std::find(types.begin(), types.end(), m->type()) != types.end(); });
     return modules;
+}
+
+// Express as a serialisable value
+SerialisedValue Module::serialise() const
+{
+    SerialisedValue result{{"name", name_}, {"type", ModuleTypes::moduleType(type_)}, {"frequency", frequency_}};
+    if (!enabled_)
+        result["disabled"] = true;
+    return keywords_.serialiseOnto(result);
+}
+
+// Read values from a serialisable value
+void Module::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    name_ = toml::find<std::string>(node, "name");
+    enabled_ = !toml::find_or<bool>(node, "disabled", false);
+    frequency_ = toml::find<int>(node, "frequency");
+
+    keywords_.deserialiseFrom(node, data);
 }

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "base/processpool.h"
-#include "classes/cellarray.h"
+#include "base/processPool.h"
+#include "classes/cellArray.h"
 
 // Distributor
 class Distributor
