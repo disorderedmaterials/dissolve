@@ -114,12 +114,12 @@ void ConfigurationTab::updateControls()
     // Current Box
     const auto *box = configuration_->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
-    QString boxInfo = QString("<b>A:</b>  %1<br>").arg(box->axisLengths().x);
-    boxInfo += QString("<b>B:</b>  %1<br>").arg(box->axisLengths().y);
-    boxInfo += QString("<b>C:</b>  %1<br>").arg(box->axisLengths().z);
-    boxInfo += QString("<b>%1:</b>  %2<br>").arg(QString::fromUtf8("\u03B1")).arg(box->axisAngles().x);
-    boxInfo += QString("<b>%1:</b>  %2<br>").arg(QString::fromUtf8("\u03B2")).arg(box->axisAngles().y);
-    boxInfo += QString("<b>%1:</b>  %2").arg(QString::fromUtf8("\u03B3")).arg(box->axisAngles().z);
+    QString boxInfo = QString("<b>A:</b>  %1 &#8491;<br>").arg(box->axisLengths().x);
+    boxInfo += QString("<b>B:</b>  %1 &#8491;<br>").arg(box->axisLengths().y);
+    boxInfo += QString("<b>C:</b>  %1 &#8491;<br>").arg(box->axisLengths().z);
+    boxInfo += QString("<b>&#x3B1;:</b>  %1&#xb0;<br>").arg(box->axisAngles().x);
+    boxInfo += QString("<b>&#x3B2;:</b>  %1&#xb0;<br>").arg(box->axisAngles().y);
+    boxInfo += QString("<b>&#x3B3;:</b>  %1&#xb0;").arg(box->axisAngles().z);
     ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
 
