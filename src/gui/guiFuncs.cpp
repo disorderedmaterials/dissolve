@@ -191,7 +191,7 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
 
         if (!loadResult)
         {
-            QMessageBox::warning(this, "Input file contained errors.",
+            QMessageBox::warning(this, "Input File Contained Errors",
                                  "The input file failed to load correctly.\nCheck the simulation carefully, and "
                                  "see the messages for more details.",
                                  QMessageBox::Ok, QMessageBox::Ok);
