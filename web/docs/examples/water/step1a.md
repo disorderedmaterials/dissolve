@@ -22,7 +22,7 @@ A new editor window opens in which we can create our new species.
 
 Finally, let's rename it:
 
-{{< step text="Double-click on the new species tab's title and change the name to `Water`" />}}
+{{< step text="Double-click on the new species tab's title and change the name from `NewSpecies` to `Water`" />}}
 
 
 {{< cimage src="../badwater.png" caption="A very badly drawn water molecule" >}}
