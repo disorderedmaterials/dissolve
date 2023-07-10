@@ -401,7 +401,6 @@ bool SpeciesSite::generateUniqueSites()
                         sitesAllAtomsIndices_.end())
                         continue;
 
-
                     auto identifiers = matchedGroup.identifiers();
 
                     // Determine origin atoms, if there are none then the site is not valid
@@ -410,8 +409,7 @@ bool SpeciesSite::generateUniqueSites()
                         continue;
 
                     sitesOriginAtomsIndices_.emplace_back(originAtomsIndices.size());
-                    std::transform(originAtomsIndices.begin(), originAtomsIndices
-                                   .end(),
+                    std::transform(originAtomsIndices.begin(), originAtomsIndices.end(),
                                    sitesOriginAtomsIndices_.back().begin(), [](const auto &atom) { return atom->index(); });
                     if (hasAxes())
                     {
