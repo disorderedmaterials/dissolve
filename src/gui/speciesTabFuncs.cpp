@@ -132,6 +132,9 @@ void SpeciesTab::updateControls()
     ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
 
+    // Population
+    ui_.AtomPopulationLabel->setText(QString::number(species_->nAtoms()));
+
     // Contents / Forcefield Tab
     updateTotalCharges();
 
