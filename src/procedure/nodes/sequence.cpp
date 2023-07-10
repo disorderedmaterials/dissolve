@@ -403,8 +403,14 @@ bool ProcedureNodeSequence::check() const
             return false;
 
         // Check validity of NodeValue-based keywords
-        for (auto &kwd : node->keywords().allOfType<NodeValue>())
-            if (!kwd->isValid())
+        for (auto &kwd : node->keywords().allOfType<NodeValueKeyword>())
+            if (!kwd->data().isValid())
+                return false;
+        for (auto &kwd : node->keywords().allOfType<Vec3NodeValueKeyword>())
+            if (!kwd->data().x.isValid() || !kwd->data().y.isValid() || !kwd->data().z.isValid())
+                return false;
+        for (auto &kwd : node->keywords().allOfType<NodeValueEnumOptionsBaseKeyword>())
+            if (!kwd->value().isValid())
                 return false;
     }
 
