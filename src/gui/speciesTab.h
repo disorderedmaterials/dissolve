@@ -143,10 +143,9 @@ class SpeciesTab : public QWidget, public MainTab
     void on_SiteOriginMassWeightedCheck_clicked(bool checked);
     void on_SiteFragmentDescriptionEdit_editingFinished();
     void on_SiteFragmentDescriptionEdit_returnPressed();
+    void buttonGroupToggled(QAbstractButton *button, bool checked);
 
     public slots:
     // Update sites tab
     void updateSitesTab();
-    // Button group toggled
-    void buttonGroupToggled(QAbstractButton *button, bool checked);
 };
