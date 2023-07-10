@@ -215,6 +215,9 @@
      </item>
      <item>
       <widget class="QFrame" name="MoleculePopulationFrame">
+       <property name="toolTip">
+        <string>Number of molecules in the configuration</string>
+       </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -269,6 +272,9 @@
      </item>
      <item>
       <widget class="QFrame" name="AtomPopulationFrame">
+       <property name="toolTip">
+        <string>Number of atoms in the configuration</string>
+       </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
