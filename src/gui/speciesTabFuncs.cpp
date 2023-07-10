@@ -223,6 +223,8 @@ void SpeciesTab::buttonGroupToggled(QAbstractButton *button, bool checked)
     if (button == ui_.AtomsPushButton)
     {
         ui_.AtomsFrame->setVisible(checked);
+        if (checked)
+            ui_.AtomTable->resizeColumnsToContents();
         ui_.IsotopologuesFrame->setVisible(!checked);
         ui_.SitesFrame->setVisible(!checked);
     }

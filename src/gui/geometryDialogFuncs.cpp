@@ -36,15 +36,19 @@ GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *spe
     ui_.BondTable->setModel(&bonds_);
     ui_.BondTable->horizontalHeader()->setFont(parent->font());
     ui_.BondTable->horizontalHeader()->setVisible(true);
+    ui_.BondTable->resizeColumnsToContents();
     ui_.AngleTable->setModel(&angles_);
     ui_.AngleTable->horizontalHeader()->setFont(parent->font());
     ui_.AngleTable->horizontalHeader()->setVisible(true);
+    ui_.AngleTable->resizeColumnsToContents();
     ui_.TorsionTable->setModel(&torsions_);
     ui_.TorsionTable->horizontalHeader()->setFont(parent->font());
     ui_.TorsionTable->horizontalHeader()->setVisible(true);
+    ui_.TorsionTable->resizeColumnsToContents();
     ui_.ImproperTable->setModel(&impropers_);
     ui_.ImproperTable->horizontalHeader()->setFont(parent->font());
     ui_.ImproperTable->horizontalHeader()->setVisible(true);
+    ui_.ImproperTable->resizeColumnsToContents();
 
     connect(&bonds_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
     connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow, SLOT(setModified()));
