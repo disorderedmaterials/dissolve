@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#pragma once
-
 #include "classes/species.h"
 #include "geometryDialog.h"
 #include "gui.h"
