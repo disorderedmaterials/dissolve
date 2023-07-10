@@ -54,6 +54,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.AtomTable->horizontalHeader()->setVisible(true);
     ui_.AtomTable->verticalHeader()->setFont(font());
     ui_.AtomTable->verticalHeader()->setVisible(true);
+    ui_.AtomTable->resizeColumnsToContents();
 
     // Set sites model and connect signals
     ui_.SiteList->setModel(&sites_);

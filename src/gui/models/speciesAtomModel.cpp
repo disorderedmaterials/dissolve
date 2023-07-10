@@ -31,7 +31,7 @@ QVariant SpeciesAtomModel::data(const QModelIndex &index, int role) const
     switch (index.column())
     {
         case 0:
-            return QString::fromStdString(std::string(Elements::name(item.Z())));
+            return QString::fromStdString(std::string(Elements::symbol(item.Z())));
         case 1:
             return item.atomType() ? QString::fromStdString(std::string(item.atomType()->name())) : "";
         case 2:
@@ -53,9 +53,9 @@ QVariant SpeciesAtomModel::headerData(int section, Qt::Orientation orientation, 
         switch (section)
         {
             case 0:
-                return "E";
+                return "El";
             case 1:
-                return "AtomType";
+                return "AT";
             case 2:
                 return "X";
             case 3:
