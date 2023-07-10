@@ -295,7 +295,7 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
                 break;
         }
     }
-    
+
     isFloatingPoint &= nDigits > 0;
     return nDigits > 0;
 }
