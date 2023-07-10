@@ -15,6 +15,7 @@ GeometryDialog::GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *spe
 {
 
     ui_.setupUi(this);
+    setFont(parent->font());
 
     // -- Geometry tables
     ui_.BondTable->setItemDelegateForColumn(
