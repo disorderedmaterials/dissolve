@@ -113,7 +113,16 @@ int main(int args, char **argv)
             }
         }
         else
-            Messenger::print("Restart file '{}' does not exist.\n", restartFile);
+        {
+            // If a restart file was specifically provided, raise an error. Otherwise just print a message
+            if (options.restartFilename())
+            {
+                Messenger::error("Specified restart file '{}' does not exist.\n", restartFile);
+                return 1;
+            }
+
+            Messenger::print("Default restart file '{}' does not exist.\n", restartFile);
+        }
     }
 
     // If we're just checking the input and restart files, exit now
