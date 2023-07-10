@@ -166,6 +166,9 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
     // Clear Dissolve itself
     dissolve_.clear();
 
+    // Clear the messages buffer
+    clearMessages();
+
     // Set the current dir to the location of the new file
     QFileInfo inputFileInfo(QString::fromStdString(std::string(inputFile)));
 
