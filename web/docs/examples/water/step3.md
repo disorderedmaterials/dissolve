@@ -57,7 +57,7 @@ Note that each of the new {{< module "NeutronSQ" >}} modules has a unique name (
 
 {{< action type="mouse" >}}Click on the second {{< module "NeutronSQ" >}} module ("NeutronSQ01") to display its options{{< /step >}}
 {{< action type="edit" >}}Change its name from "NeutronSQ01" to "D2O"{{< /action >}}
-{{< action type="groups" >}}In the **Control** section click the button for the **Isotopologue** option - it will currently say {{< gui-button text="&lt;Default to Natural&gt;" >}}{{< /action >}}
+{{< action type="groups" >}}In the **Isotopes & Normalisation** section click the button for the **Isotopologue** option - it will currently say {{< gui-button text="&lt;Default to Natural&gt;" >}}{{< /action >}}
 {{< action type="mouse" >}}Press the {{< gui-button text="Species" >}} button to add a new isotopologue for each species present{{< /action >}}
 {{< step text="Change the isotopologue from `Natural` to `Deuterated`" />}}
 {{< action type="edit" >}}In the **Reference Data** settings group, for the **Reference** keyword select the file "SLS18502-D2O.mint01" and set the format of the data to `mint`{{< /step >}}

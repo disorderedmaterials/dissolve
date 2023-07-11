@@ -6,7 +6,10 @@
 #include "base/sysFunc.h"
 #include "keywords/node.h"
 #include "keywords/nodeAndInteger.h"
+#include "keywords/nodeValue.h"
+#include "keywords/nodeValueEnumOptions.h"
 #include "keywords/nodeVector.h"
+#include "keywords/vec3NodeValue.h"
 #include "procedure/nodes/registry.h"
 
 ProcedureNodeSequence::ProcedureNodeSequence(ProcedureNode::NodeContext context, OptionalReferenceWrapper<ProcedureNode> owner,
@@ -401,6 +404,17 @@ bool ProcedureNodeSequence::check() const
         // Check node branch if present
         if (node->branch() && !node->branch()->get().check())
             return false;
+
+        // Check validity of NodeValue-based keywords
+        for (auto &kwd : node->keywords().allOfType<NodeValueKeyword>())
+            if (!kwd->data().isValid())
+                return false;
+        for (auto &kwd : node->keywords().allOfType<Vec3NodeValueKeyword>())
+            if (!kwd->data().x.isValid() || !kwd->data().y.isValid() || !kwd->data().z.isValid())
+                return false;
+        for (auto &kwd : node->keywords().allOfType<NodeValueEnumOptionsBaseKeyword>())
+            if (!kwd->value().isValid())
+                return false;
     }
 
     return true;

@@ -1,6 +1,6 @@
 dissolve_unit_test(aragorn.cpp)
 dissolve_unit_test(arrayIteration.cpp)
-dissolve_unit_test(pair_iter.cpp)
-dissolve_unit_test(array3d_iter.cpp)
+dissolve_unit_test(pairIterator.cpp)
+dissolve_unit_test(array3DIterator.cpp)
 dissolve_unit_test(sysFunc.cpp)
 dissolve_unit_test(zip.cpp)

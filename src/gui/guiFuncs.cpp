@@ -166,6 +166,9 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
     // Clear Dissolve itself
     dissolve_.clear();
 
+    // Clear the messages buffer
+    clearMessages();
+
     // Set the current dir to the location of the new file
     QFileInfo inputFileInfo(QString::fromStdString(std::string(inputFile)));
 
@@ -188,7 +191,7 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
 
         if (!loadResult)
         {
-            QMessageBox::warning(this, "Input file contained errors.",
+            QMessageBox::warning(this, "Input File Contained Errors",
                                  "The input file failed to load correctly.\nCheck the simulation carefully, and "
                                  "see the messages for more details.",
                                  QMessageBox::Ok, QMessageBox::Ok);
@@ -200,7 +203,15 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
         }
     }
     else
-        return Messenger::error("Input file does not exist.\n");
+    {
+        // Show the splash page
+        ui_.MainStack->setCurrentIndex(0);
+
+        QMessageBox::warning(this, "Input File Not Found", "The specified input file does not exist.", QMessageBox::Ok,
+                             QMessageBox::Ok);
+
+        return false;
+    }
 
     modified_ = false;
     dissolveIterating_ = false;
