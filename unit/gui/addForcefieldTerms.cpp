@@ -58,8 +58,8 @@ TEST_F(AddForcefieldDialogModelTest, benzene)
     model.next();
 
     // ForceFieldMaster
-    EXPECT_EQ(model.bonds()->data(model.bonds()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA");
-    EXPECT_EQ(model.angles()->data(model.angles()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA-CA");
+    EXPECT_EQ(model.bonds()->data(model.bonds()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-HA");
+    EXPECT_EQ(model.angles()->data(model.angles()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA-HA");
     EXPECT_EQ(model.torsions()->data(model.torsions()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA-CA-HA");
     EXPECT_TRUE(model.progressionAllowed());
     model.next();
