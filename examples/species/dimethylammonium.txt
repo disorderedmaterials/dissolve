@@ -94,10 +94,10 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  NDM  N  -1.200000e-01  LJ  7.112800e-01  3.250000e+00  0.000000e+00  0.000000e+00
-  Parameters  HDM  H  3.100000e-01  LJ  1.255000e-01  2.500000e+00  0.000000e+00  0.000000e+00
-  Parameters  CDM  C  -2.000000e-01  LJ  2.761400e-01  3.500000e+00  0.000000e+00  0.000000e+00
-  Parameters  HCD  H  1.500000e-01  LJ  1.255000e-01  2.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  NDM  N  -1.200000e-01  LJ  7.112800e-01  3.250000e+00
+  Parameters  HDM  H  3.100000e-01  LJ  1.255000e-01  2.500000e+00
+  Parameters  CDM  C  -2.000000e-01  LJ  2.761400e-01  3.500000e+00
+  Parameters  HCD  H  1.500000e-01  LJ  1.255000e-01  2.500000e+00
   Range  15.000000
   Delta  0.005000
   IncludeCoulomb  False

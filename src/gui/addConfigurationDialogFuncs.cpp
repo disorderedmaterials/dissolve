@@ -147,12 +147,12 @@ bool AddConfigurationDialog::prepareForNextPage(int currentIndex)
             ui_.BoxGeometryUndefinedSizeRadio->setDisabled(frameworkSpecies_);
             ui_.BoxAxisLengthsGroup->setDisabled(frameworkSpecies_);
             ui_.BoxAxisAnglesGroup->setDisabled(frameworkSpecies_);
-
-            // Species can't be added by density if using a framework model
-            ui_.SpeciesDensitySpin->setDisabled(frameworkSpecies_);
             break;
         case (AddConfigurationDialog::BoxGeometryPage):
             updateResultingBoxInfo();
+
+            // Species can't be added by density if using a fixed-geometry box
+            ui_.SpeciesDensitySpin->setDisabled(ui_.BoxGeometryFixedSizeRadio->isChecked());
             break;
         default:
             return true;

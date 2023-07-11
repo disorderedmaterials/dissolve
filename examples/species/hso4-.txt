@@ -56,10 +56,10 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  SA-  S  1.270000e+00  LJ  1.046000e+00  3.550000e+00  0.000000e+00  0.000000e+00
-  Parameters  OA-  O  -6.700000e-01  LJ  7.117600e-01  3.000000e+00  0.000000e+00  0.000000e+00
-  Parameters  OHA-  O  -6.400000e-01  LJ  7.117600e-01  3.000000e+00  0.000000e+00  0.000000e+00
-  Parameters  HSA-  H  3.800000e-01  LJ  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+  Parameters  SA-  S  1.270000e+00  LJ  1.046000e+00  3.550000e+00
+  Parameters  OA-  O  -6.700000e-01  LJ  7.117600e-01  3.000000e+00
+  Parameters  OHA-  O  -6.400000e-01  LJ  7.117600e-01  3.000000e+00
+  Parameters  HSA-  H  3.800000e-01  LJ  0.000000e+00  0.000000e+00
   Range  15.000000
   Delta  0.005000
   IncludeCoulomb  False
