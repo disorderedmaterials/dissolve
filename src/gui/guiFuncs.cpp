@@ -433,7 +433,7 @@ void DissolveWindow::clearMessages()
 }
 
 // Open the messages window
-void DissolveWindow::statusLabelLinkClicked(const QString& link)
+void DissolveWindow::statusLabelLinkClicked(const QString &link)
 {
     if (DissolveSys::sameString(link.toStdString(), "Messages"))
         ui_.MainTabs->setCurrentIndex(0);
