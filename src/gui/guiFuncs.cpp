@@ -54,6 +54,8 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
     statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
+    statusLabel_->setOpenExternalLinks(false);
+    connect(statusLabel_, SIGNAL(linkActivated(const QString)), this, SLOT(openMessages()));
 
     // Create recent files menu
     setUpRecentFileMenu();
@@ -296,7 +298,7 @@ void DissolveWindow::updateStatusBar()
     // Set status
     if (Messenger::nErrors() > 0)
     {
-        statusLabel_->setText(QString("%1 %2 (see Messages)")
+        statusLabel_->setText(QString("%1 %2 (see <a href='Messages'>Messages</a>)")
                                   .arg(QString::number(Messenger::nErrors()), Messenger::nErrors() == 1 ? "Error" : "Errors"));
         statusIndicator_->setPixmap(QPixmap(":/general/icons/general_false.svg"));
     }
@@ -428,4 +430,10 @@ void DissolveWindow::clearMessages()
 {
     ui_.MainTabs->messagesTab()->clearMessages();
     Messenger::clearErrorCounts();
+}
+
+// Open the messages window
+void DissolveWindow::openMessages()
+{
+    ui_.MainTabs->setCurrentIndex(0);
 }
