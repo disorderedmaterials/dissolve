@@ -1185,7 +1185,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
+              <normaloff>:/general/icons/general_periodictable.svg</normaloff>:/general/icons/general_periodictable.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -1365,7 +1365,6 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
@@ -1429,7 +1428,6 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
