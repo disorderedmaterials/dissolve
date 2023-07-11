@@ -214,7 +214,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         postRedisplay();
         emit(sitesChanged());
     }
-    else if (actionMap[selectedAction] == "SetXStatic")
+    else if (actionMap[selectedAction] == "SetYStatic")
     {
         site_->setStaticYAxisAtoms(species_->selectedAtoms());
         postRedisplay();
