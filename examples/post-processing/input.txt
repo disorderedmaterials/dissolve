@@ -161,6 +161,9 @@ Configuration  'NewConfiguration'
 
   # Modules
   Generator
+    Temperature
+      Temperature  300
+    EndTemperature
     Parameters  'Parameters01'
       Parameter  rho  0.1
     EndParameters
@@ -197,10 +200,6 @@ Configuration  'NewConfiguration'
       Positioning  Random
     EndAdd
   EndGenerator
-
-  Temperature  300
-
-  SizeFactor  1
 EndConfiguration
 
 #==============================================================================#
@@ -240,8 +239,6 @@ Layer  'GR / Neutron S(Q)'
 
   Module  NeutronSQ  'NeutronSQ'
     Frequency  1
-    Normalisation  None
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
     SourceSQs  'SQ'
   EndModule

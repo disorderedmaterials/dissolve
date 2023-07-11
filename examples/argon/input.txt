@@ -34,6 +34,9 @@ Configuration  'Bulk'
 
   # Modules
   Generator
+    Temperature
+      Temperature  85.0
+    EndTemperature
     Parameters
       Parameter  rho  2.130000e-02
     EndParameters
@@ -51,13 +54,6 @@ Configuration  'Bulk'
       Positioning  Random
     EndAdd
   EndGenerator
-
-  Temperature  85.0
-
-  SizeFactor  1.0
-
-  # Modules
-  # -- None
 EndConfiguration
 
 #==============================================================================#
@@ -104,6 +100,6 @@ Layer  'GR / Neutron S(Q)'
     Reference  xy  'data/yarnell.sq'
       RemoveAverage   9.00000e+00
     EndReference
-    ReferenceNormalisation  SquareOfAverage
+    ReferenceNormalisedTo  SquareOfAverage
   EndModule
 EndLayer

@@ -5217,6 +5217,9 @@ Configuration  'MOF'
 
   # Modules
   Generator
+    Temperature
+      Temperature  300
+    EndTemperature
     Add  'Framework'
       BoxAction  Set
       Density  '0.1'  atoms/A3
@@ -5227,9 +5230,6 @@ Configuration  'MOF'
     EndAdd
   EndGenerator
 
-  Temperature  300
-
-  SizeFactor  1
 EndConfiguration
 
 #==============================================================================#
@@ -5285,10 +5285,8 @@ Layer  'GR / Neutron S(Q)'
 
   Module  NeutronSQ  'NeutronSQ'
     Frequency  1
-    Normalisation  None
     Reference  mint  'data/Empty-CuBTC.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
     SourceSQs  'SQ'
   EndModule

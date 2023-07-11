@@ -251,6 +251,7 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
     isFloatingPoint = false;
 
     std::optional<int> exponentIndex;
+    auto nDigits = 0;
 
     const auto length = text.size();
     for (auto n = 0; n < length; ++n)
@@ -290,11 +291,13 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
                 // If not a digit, return false
                 if (!isdigit(c))
                     return false;
+                ++nDigits;
                 break;
         }
     }
 
-    return true;
+    isFloatingPoint &= nDigits > 0;
+    return nDigits > 0;
 }
 
 // Replace all occurrences of search string with replace string
