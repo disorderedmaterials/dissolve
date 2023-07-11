@@ -48,10 +48,6 @@ class NeutronSQModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets(NeutronSQModule *module);
-
     private slots:
     void on_TotalFQButton_clicked(bool checked);
     void on_PartialSQButton_clicked(bool checked);
