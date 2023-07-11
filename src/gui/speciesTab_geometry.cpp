@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomType.h"
-#include "gui/intramolecularTermsDialog.h"
 #include "gui/gui.h"
+#include "gui/intramolecularTermsDialog.h"
 #include "gui/speciesTab.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
@@ -104,7 +104,8 @@ void SpeciesTab::updateTotalCharges()
 
     auto atomCharge = species_->totalCharge(false);
     auto atomChargeOK = fabs(atomCharge) < 1.0e-5;
-    ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1 (Sp)").arg(atomCharge) : QString("%1 (Sp)").arg(atomCharge));
+    ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1 (Sp)").arg(atomCharge)
+                                                       : QString("%1 (Sp)").arg(atomCharge));
     ui_.TotalAtomChargeLabel->setPalette(atomChargeOK ? palette() : errorPalette);
     ui_.TotalAtomChargeIndicator->setOK(atomChargeOK);
 

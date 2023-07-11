@@ -3,13 +3,14 @@
 
 #include "classes/species.h"
 #include "gui.h"
-#include "gui/intramolecularTermsDialog.h"
 #include "gui/delegates/exponentialSpin.hui"
 #include "gui/delegates/intraFormCombo.h"
+#include "gui/intramolecularTermsDialog.h"
 #include "main/dissolve.h"
 #include <QWidget>
 
-IntramolecularTermsDialog::IntramolecularTermsDialog(QWidget *parent, Dissolve &dissolve, Species *species, DissolveWindow *dissolveWindow)
+IntramolecularTermsDialog::IntramolecularTermsDialog(QWidget *parent, Dissolve &dissolve, Species *species,
+                                                     DissolveWindow *dissolveWindow)
     : dissolve_(dissolve), bonds_(species->bonds(), dissolve.coreData()), torsions_(species->torsions(), dissolve.coreData()),
       impropers_(species->impropers(), dissolve.coreData()), angles_(species->angles(), dissolve.coreData())
 {
