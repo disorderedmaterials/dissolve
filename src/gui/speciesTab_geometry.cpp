@@ -104,14 +104,14 @@ void SpeciesTab::updateTotalCharges()
 
     auto atomCharge = species_->totalCharge(false);
     auto atomChargeOK = fabs(atomCharge) < 1.0e-5;
-    ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1").arg(atomCharge) : QString::number(atomCharge));
+    ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1 (Sp)").arg(atomCharge) : QString("%1 (Sp)").arg(atomCharge));
     ui_.TotalAtomChargeLabel->setPalette(atomChargeOK ? palette() : errorPalette);
     ui_.TotalAtomChargeIndicator->setHidden(atomChargeOK);
 
     auto atomTypeCharge = species_->totalCharge(true);
     auto atomTypeChargeOK = fabs(atomTypeCharge) < 1.0e-5;
-    ui_.TotalAtomTypeChargeLabel->setText(atomTypeCharge > 0.0 ? QString("+%1").arg(atomTypeCharge)
-                                                               : QString::number(atomTypeCharge));
+    ui_.TotalAtomTypeChargeLabel->setText(atomTypeCharge > 0.0 ? QString("+%1 (AT)").arg(atomTypeCharge)
+                                                               : QString("%1 (AT)").arg(atomTypeCharge));
     ui_.TotalAtomTypeChargeLabel->setPalette(atomTypeChargeOK ? palette() : errorPalette);
     ui_.TotalAtomTypeChargeIndicator->setHidden(atomTypeChargeOK);
 }

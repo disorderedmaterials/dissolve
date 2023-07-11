@@ -62,7 +62,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/general/icons/general_screen.svg</normaloff>:/general/icons/general_screen.svg</iconset>
+          <normaloff>:/general/icons/general_generator.svg</normaloff>:/general/icons/general_generator.svg</iconset>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -194,7 +194,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
+              <normaloff>:/general/icons/general_temperature.svg</normaloff>:/general/icons/general_temperature.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -306,7 +306,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/wizard/icons/wizard_frameworkmixture.svg</normaloff>:/wizard/icons/wizard_frameworkmixture.svg</iconset>
+              <normaloff>:/general/icons/general_density.svg</normaloff>:/general/icons/general_density.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>

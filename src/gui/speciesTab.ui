@@ -82,7 +82,7 @@
           </property>
           <property name="icon">
            <iconset resource="main.qrc">
-            <normaloff>:/general/icons/general_screen.svg</normaloff>:/general/icons/general_screen.svg</iconset>
+            <normaloff>:/menu/icons/menu_species.svg</normaloff>:/menu/icons/menu_species.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -156,7 +156,7 @@
            <item>
             <widget class="QGroupBox" name="GeometryGroupBox">
              <property name="title">
-              <string>Geometry</string>
+              <string>Intramolecular Terms</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_11">
               <property name="spacing">
@@ -248,7 +248,7 @@
                 <item row="4" column="1" colspan="2">
                  <widget class="QPushButton" name="GeometryButton">
                   <property name="text">
-                   <string>View/Edit Geometry</string>
+                   <string>View/Edit</string>
                   </property>
                  </widget>
                 </item>
@@ -291,7 +291,7 @@
           </property>
           <property name="icon">
            <iconset resource="main.qrc">
-            <normaloff>:/general/icons/general_screen.svg</normaloff>:/general/icons/general_screen.svg</iconset>
+            <normaloff>:/general/icons/general_isotopologues.svg</normaloff>:/general/icons/general_isotopologues.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -560,7 +560,7 @@
           </property>
           <property name="icon">
            <iconset resource="main.qrc">
-            <normaloff>:/general/icons/general_screen.svg</normaloff>:/general/icons/general_screen.svg</iconset>
+            <normaloff>:/general/icons/general_site.svg</normaloff>:/general/icons/general_site.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -1209,9 +1209,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="TotalAtomTypeChargeFrame">
+        <widget class="QFrame" name="TotalChargeFrame">
          <property name="toolTip">
-          <string>Total charge on the species as calculated from individual charges on assigned atom types</string>
+          <string/>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -1233,7 +1233,7 @@
            <number>4</number>
           </property>
           <item>
-           <widget class="QToolButton" name="TotalAtomTypeChargeToolButton">
+           <widget class="QToolButton" name="TotalChargeToolButton">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -1242,7 +1242,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/tabs/icons/tabs_ff.svg</normaloff>:/tabs/icons/tabs_ff.svg</iconset>
+              <normaloff>:/general/icons/general_charge.svg</normaloff>:/general/icons/general_charge.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -1250,7 +1250,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="TotalAtomTypeChargeLabel">
+           <widget class="QLabel" name="TotalAtomChargeLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1258,12 +1258,12 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>0</string>
+             <string> 0.0 (Sp)</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="CheckIndicator" name="TotalAtomTypeChargeIndicator">
+           <widget class="CheckIndicator" name="TotalAtomChargeIndicator">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1284,65 +1284,15 @@
             </property>
            </widget>
           </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="TotalAtomChargeFrame">
-         <property name="toolTip">
-          <string>Total charge on the species as calculated from individual charges on species atoms</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_19">
-          <property name="leftMargin">
-           <number>4</number>
-          </property>
-          <property name="topMargin">
-           <number>4</number>
-          </property>
-          <property name="rightMargin">
-           <number>4</number>
-          </property>
-          <property name="bottomMargin">
-           <number>4</number>
-          </property>
           <item>
-           <widget class="QToolButton" name="TotalAtomChargeToolButton">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
+           <widget class="QLabel" name="TotalAtomTypeChargeLabel">
             <property name="text">
-             <string>...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="main.qrc">
-              <normaloff>:/tabs/icons/tabs_ff.svg</normaloff>:/tabs/icons/tabs_ff.svg</iconset>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
+             <string>0.0 (AT)</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="TotalAtomChargeLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="CheckIndicator" name="TotalAtomChargeIndicator">
+           <widget class="CheckIndicator" name="TotalAtomTypeChargeIndicator">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1461,7 +1411,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/wizard/icons/wizard_frameworkmixture.svg</normaloff>:/wizard/icons/wizard_frameworkmixture.svg</iconset>
+              <normaloff>:/general/icons/general_density.svg</normaloff>:/general/icons/general_density.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
