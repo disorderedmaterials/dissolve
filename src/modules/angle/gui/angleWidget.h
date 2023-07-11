@@ -35,13 +35,4 @@ class AngleModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
-
-    /*
-     * Widgets / Functions
-     */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets(AngleModule *module);
-
-    private slots:
 };
