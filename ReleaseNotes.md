@@ -1,10 +1,20 @@
-Version 1.3 is a minor release adding new functionality across several areas.
+Version 1.3.1 is a patch release fixing UI issues and module problems, and updating documentation.
 
-## Input File Compatibility with v1.2
+## Minor Changes in v1.3.1
+
+- Fix: Accumulate module did not correctly work with multiple specified `Target`s.
+- Fix: Crashes when modifying some aspects of sites.
+- Fix: Occasional crashes when empty expressions were present in keywords in the GUI.
+- Fix: Specifying a non-existent restart file on the command-line now raises an error.
+- Fix: General UI improvements for menu item actions.
+- Docs: Updated to reflect new nodes, fixed some other issues.
+
+## Major Changes in v1.3
+
+### Input File Compatibility with v1.2
 
 Some users may experience errors when reading input files containing an `AxisAngle` module due to a small change made in keywords which accepted axis arguments. These keywords now take simplified string arguments of "X", "Y", or "Z" rather than "XAxis", "YAxis", or "ZAxis".
 
-## Major Changes in v1.3
 
 ### Coordination Number Histograms
 
