@@ -28,7 +28,7 @@
    <item>
     <widget class="QStackedWidget" name="MainStack">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="ImportCIFSelectFilePage">
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -754,6 +754,7 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="ImportCIFMolecularPage"/>
      <widget class="QWidget" name="ImportCIFSupercellPage">
       <layout class="QHBoxLayout" name="horizontalLayout_11">
        <property name="spacing">
@@ -917,6 +918,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -936,6 +938,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -958,6 +961,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -980,6 +984,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>50</weight>
                  <bold>false</bold>
                 </font>
                </property>
@@ -1050,6 +1055,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>50</weight>
                  <bold>false</bold>
                 </font>
                </property>
@@ -1072,6 +1078,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -1132,6 +1139,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -1173,6 +1181,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -1195,6 +1204,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -1217,6 +1227,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>50</weight>
                  <bold>false</bold>
                 </font>
                </property>
@@ -1245,6 +1256,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -1267,6 +1279,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>50</weight>
                  <bold>false</bold>
                 </font>
                </property>
@@ -1295,6 +1308,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -1336,6 +1350,7 @@
                <property name="font">
                 <font>
                  <pointsize>10</pointsize>
+                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -1693,15 +1708,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>CheckIndicator</class>
+   <extends>QLabel</extends>
+   <header>gui/widgets/checkIndicator.hui</header>
+  </customwidget>
+  <customwidget>
    <class>ConfigurationViewerWidget</class>
    <extends>QWidget</extends>
    <header>gui/configurationViewerWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CheckIndicator</class>
-   <extends>QLabel</extends>
-   <header>gui/widgets/checkIndicator.hui</header>
   </customwidget>
  </customwidgets>
  <resources>

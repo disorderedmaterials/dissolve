@@ -20,7 +20,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::SelectSpaceGroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
     registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::CleanedPage);
-    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::SupercellPage);
+    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::MolecularPage);
+    registerPage(ImportCIFDialog::MolecularPage, "Mol", ImportCIFDialog::SupercellPage);
     registerPage(ImportCIFDialog::SupercellPage, "Create Supercell", ImportCIFDialog::OutputSpeciesPage);
     registerPage(ImportCIFDialog::OutputSpeciesPage, "Species Partitioning");
 
@@ -140,6 +141,9 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
         case (ImportCIFDialog::CleanedPage):
             createSupercellSpecies();
             break;
+        case (ImportCIFDialog::MolecularPage):
+            molecularCIF(); 
+            break;
         case (ImportCIFDialog::SupercellPage):
             createPartitionedSpecies();
             break;
@@ -184,6 +188,8 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
 // Perform any final actions before the wizard is closed
 void ImportCIFDialog::finalise()
 {
+    auto *sp = dissolve_.copySpecies(distinctSpecies_.front());
+    return;
     auto *supercell = temporaryCoreData_.findSpecies("Supercell");
     assert(supercell);
 
@@ -509,6 +515,50 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         createCleanedSpecies();
 }
 
+bool ImportCIFDialog::molecularCIF()
+{
+    std::vector<std::vector<int>> matchedIndices;
+    std::vector<std::vector<const SpeciesAtom*>> matches;
+    auto firstDistinct = cleanedSpecies_->fragment(0);
+    NETADefinition neta;
+    neta.create(&cleanedSpecies_->atom(firstDistinct.front()), 69);
+    Messenger::print("{}", neta.definitionString());
+
+    for (auto& i : cleanedSpecies_->atoms())
+    {
+        if (neta.matches(&i))
+        {
+            auto matchedGroup = neta.matchedPath(&i);
+            auto matchedAtomsSet = matchedGroup.set();
+            std::vector<const SpeciesAtom*> matchedAtoms(matchedAtomsSet.size());
+            std::copy(matchedAtomsSet.begin(), matchedAtomsSet.end(), matchedAtoms.begin());
+            std::vector<int> indices(matchedAtoms.size());
+            std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
+                           [](const auto &atom) { return atom->index(); });
+
+            if (std::find(matchedIndices.begin(), matchedIndices.end(), indices) != matchedIndices.end())
+                continue;
+            matches.push_back(matchedAtoms);
+            matchedIndices.push_back(std::move(indices));
+        }
+    }
+
+    Messenger::print("Found {} matching species", matches.size());
+    auto distinct = temporaryCoreData_.addSpecies();
+    distinctSpecies_.push_back(distinct);
+    for (auto& i : matches.front())
+        distinct->addAtom(i->Z(), i->r(), i->charge(), i->atomType());
+    distinct->setName("Base");
+    for (auto& match : std::vector<std::vector<const SpeciesAtom*>>(std::next(matches.begin()), matches.end()))
+    {
+        std::vector<Vec3<double>> coords;
+        for (auto& i : match)
+            coords.push_back(i->r());
+        coordinates_.push_back(std::move(coords));
+    }
+    return true;
+}
+
 /*
  * Supercell Page
  */
@@ -608,14 +658,14 @@ bool ImportCIFDialog::createPartitionedSpecies()
         // Update the indicator and label
         sp->clearAtomSelection();
         auto selection = sp->fragment(0);
-        if (selection.size() != sp->nAtoms())
+        /*if (selection.size() != sp->nAtoms())
         {
             ui_.PartitioningIndicator->setOK(false);
             ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
                                            "simulation. Choose a different partitioning.");
 
             validSpecies = false;
-        }
+        }*/
     }
 
     ui_.PartitioningViewer->setConfiguration(partitioningConfiguration_);
