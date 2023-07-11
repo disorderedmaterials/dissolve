@@ -22,4 +22,4 @@ The `SimpleGlobalPotential` node allows an additional, global potential to be de
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`Potential`|[`SimplePotential`]({{< ref simplepotential >}})|--|Functional form and associated parameters for the restraint potential.|
+|`Potential`|[`SimplePotential`]({{< ref simplepotential >}})|--|Functional form and associated parameters for the potential.|

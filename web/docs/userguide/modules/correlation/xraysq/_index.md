@@ -41,7 +41,7 @@ The application of instrumental broadening is the responsibility of the source {
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`FormFactors`|[`XRayFormFactors`]({{< ref "xrayformfactors" >}})|`WK1995`|Atomic form factors to use for weighting|
-|`Normalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Quantity against which to normalise the total structure factor|
+|`NormaliseTo`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Normalisation to apply to the total weighted F(Q). The same normalisation is also applied to supplied reference data following removal (if appropriate) of its own normalisation (see the `ReferenceNormalisedTo` keyword)|
 
 ### Reference Data
 
@@ -51,7 +51,7 @@ Keyword|Arguments|Default|Description|
 |`ReferenceFTDeltaR`|`double`|0.05|Spacing in $r$ to use when generating the Fourier-transform of the $F(Q)$|
 |`ReferenceFTQMax`|`double`|--|Maximum Q value to use when Fourier-transforming the reference $F(Q)$ to its $G(r)$|
 |`ReferenceFTQMin`|`double`|--|Minimum Q value to use when Fourier-transforming the reference $F(Q)$ to its $G(r)$|
-|`ReferenceNormalisation`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Assumed normalisation type to remove from the reference total structure factor data once loaded|
+|`ReferenceNormalisedTo`|[`NormalisationType`]({{< ref "normalisationtype" >}})|`None`|Normalisation which has been applied to the reference data|
 |`ReferenceWindowFunction`|[`WindowFunction`]({{< ref "function1d" >}})|`Lorch0`|Window function to apply when Fourier-transforming reference $F(Q)$ to a reference $g(r)$|
 
 ## Export

@@ -16,6 +16,7 @@ cascade:
 - D. Nixon (January 2020 - present)
 - D. Bradley (January 2023 - present)
 - J. Swift (June 2023 - present)
+- N. Spitz (July 2023 - present)
 - V. Ionica (February 2022 - May 2022)
 - S. Smith (March 2021 - June 2021)
 - E. Devlin (August 2021), C. Green (August 2020 - August 2021), Simona (September 2019 - August 2020), J. Busch (October 2019 - December 2019)
@@ -25,7 +26,7 @@ cascade:
 
 **Structure Refinement for Scattering Data**
 
-Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems. See [What is Dissolve?]({{< ref "whatisdissolve" >}}}}) for more information.
+Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems. See [What is Dissolve?]({{< ref "whatisdissolve" >}}) for more information.
 
 Check out [Dissolve on GitHub](https://www.github.com/disorderedmaterials/dissolve) and [contribute]({{< ref "contributing" >}}) if you want to!
 
