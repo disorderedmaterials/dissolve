@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GeometryDialog</class>
- <widget class="QDialog" name="GeometryDialog">
+ <class>IntramolecularTermsDialog</class>
+ <widget class="QDialog" name="IntramolecularTermsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Geometry</string>
+   <string>Intramolecular Terms</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -384,6 +384,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -400,7 +403,7 @@
      <item>
       <widget class="QPushButton" name="OKButton">
        <property name="text">
-        <string>OK</string>
+        <string>&amp;OK</string>
        </property>
       </widget>
      </item>

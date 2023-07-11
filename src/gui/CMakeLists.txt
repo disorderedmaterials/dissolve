@@ -35,10 +35,10 @@ set(gui_MOC_HDRS
     getModuleLayerNameDialog.h
     getSpeciesNameDialog.h
     getTabNameDialog.h
-    geometryDialog.h
     importLigParGenDialog.h
     importCIFDialog.h
     importSpeciesDialog.h
+    intramolecularTermsDialog.h
     scaleChargesDialog.h
     selectAtomTypeDialog.h
     selectConfigurationDialog.h
@@ -89,10 +89,10 @@ set(gui_UIS
     getModuleLayerNameDialog.ui
     getSpeciesNameDialog.ui
     getTabNameDialog.ui
-    geometryDialog.ui
     importLigParGenDialog.ui
     importCIFDialog.ui
     importSpeciesDialog.ui
+    intramolecularTermsDialog.ui
     scaleChargesDialog.ui
     selectAtomTypeDialog.ui
     selectConfigurationDialog.ui
@@ -153,7 +153,6 @@ set(gui_SRCS
     addConfigurationDialogFuncs.cpp
     addForcefieldTermsDialogFuncs.cpp
     copySpeciesTermsDialogFuncs.cpp
-    geometryDialogFuncs.cpp
     dataManagerDialogFuncs.cpp
     editSpeciesDialogFuncs.cpp
     getConfigurationNameDialogFuncs.cpp
@@ -163,6 +162,7 @@ set(gui_SRCS
     importLigParGenDialogFuncs.cpp
     importCIFDialogFuncs.cpp
     importSpeciesDialogFuncs.cpp
+    intramolecularTermsDialogFuncs.cpp
     scaleChargesDialogFuncs.cpp
     selectAtomTypeDialogFuncs.cpp
     selectConfigurationDialogFuncs.cpp

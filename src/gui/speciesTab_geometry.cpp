@@ -2,7 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomType.h"
-#include "gui/geometryDialog.h"
+#include "gui/intramolecularTermsDialog.h"
 #include "gui/gui.h"
 #include "gui/speciesTab.h"
 #include "main/dissolve.h"
@@ -106,19 +106,19 @@ void SpeciesTab::updateTotalCharges()
     auto atomChargeOK = fabs(atomCharge) < 1.0e-5;
     ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1 (Sp)").arg(atomCharge) : QString("%1 (Sp)").arg(atomCharge));
     ui_.TotalAtomChargeLabel->setPalette(atomChargeOK ? palette() : errorPalette);
-    ui_.TotalAtomChargeIndicator->setHidden(atomChargeOK);
+    ui_.TotalAtomChargeIndicator->setOK(atomChargeOK);
 
     auto atomTypeCharge = species_->totalCharge(true);
     auto atomTypeChargeOK = fabs(atomTypeCharge) < 1.0e-5;
     ui_.TotalAtomTypeChargeLabel->setText(atomTypeCharge > 0.0 ? QString("+%1 (AT)").arg(atomTypeCharge)
                                                                : QString("%1 (AT)").arg(atomTypeCharge));
     ui_.TotalAtomTypeChargeLabel->setPalette(atomTypeChargeOK ? palette() : errorPalette);
-    ui_.TotalAtomTypeChargeIndicator->setHidden(atomTypeChargeOK);
+    ui_.TotalAtomTypeChargeIndicator->setOK(atomTypeChargeOK);
 }
 
 // Show geometry dialog
-void SpeciesTab::on_GeometryButton_clicked(bool checked)
+void SpeciesTab::on_IntramolecularTermsButton_clicked(bool checked)
 {
-    auto geometryDialog = GeometryDialog(this, dissolve_, species_, dissolveWindow_);
-    geometryDialog.exec();
+    auto intramolecularTermsDialog = IntramolecularTermsDialog(this, dissolve_, species_, dissolveWindow_);
+    intramolecularTermsDialog.exec();
 }

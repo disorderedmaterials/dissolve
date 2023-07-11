@@ -246,7 +246,7 @@
                  </spacer>
                 </item>
                 <item row="4" column="1" colspan="2">
-                 <widget class="QPushButton" name="GeometryButton">
+                 <widget class="QPushButton" name="IntramolecularTermsButton">
                   <property name="text">
                    <string>View/Edit</string>
                   </property>
@@ -1211,7 +1211,7 @@
        <item>
         <widget class="QFrame" name="TotalChargeFrame">
          <property name="toolTip">
-          <string/>
+          <string>Total charge on the species as calculated from individual charges on species atoms / assigned atom types</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>

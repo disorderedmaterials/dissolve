@@ -124,9 +124,9 @@ class SpeciesTab : public QWidget, public MainTab
     void updateIsotopologuesTab();
 
     /*
-     * Widget Functions - Geometry
+     * Widget Functions - Intramolecular terms
      */
-    void on_GeometryButton_clicked(bool checked);
+    void on_IntramolecularTermsButton_clicked(bool checked);
 
     /*
      * Widget Functions - Sites

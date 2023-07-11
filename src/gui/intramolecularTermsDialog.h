@@ -7,7 +7,7 @@
 #include "gui/models/speciesBondModel.h"
 #include "gui/models/speciesImproperModel.h"
 #include "gui/models/speciesTorsionModel.h"
-#include "gui/ui_geometryDialog.h"
+#include "gui/ui_intramolecularTermsDialog.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -15,20 +15,20 @@ class Dissolve;
 class Species;
 class DissolveWindow;
 
-class GeometryDialog : public QDialog
+class IntramolecularTermsDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-    GeometryDialog(QWidget *parent, Dissolve &dissolve, Species *species, DissolveWindow *dissolveWindow);
-    ~GeometryDialog() = default;
+    IntramolecularTermsDialog(QWidget *parent, Dissolve &dissolve, Species *species, DissolveWindow *dissolveWindow);
+    ~IntramolecularTermsDialog() = default;
 
     /*
      * UI
      */
     private:
     // Main form declaration
-    Ui::GeometryDialog ui_;
+    Ui::IntramolecularTermsDialog ui_;
 
     private:
     // Reference to Dissolve
