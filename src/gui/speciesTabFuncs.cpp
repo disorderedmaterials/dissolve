@@ -70,6 +70,10 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.ViewerWidget->setSite(species_->sites().empty() ? nullptr : species_->sites().front().get());
     ui_.ViewerWidget->speciesViewer()->setSiteVisible(false);
 
+    // Hide frames
+    ui_.IsotopologuesFrame->setVisible(false);
+    ui_.SitesFrame->setVisible(false);
+
     // Connect signals / slots
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
@@ -85,12 +89,9 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     connect(ui_.AtomTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(updateUnderlyingAtomSelection()));
     connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
-
+    connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(updateControls()));
     connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(updateIsotopologuesTab()));
-
-    ui_.IsotopologuesFrame->setVisible(false);
-    ui_.SitesFrame->setVisible(false);
     connect(ui_.SpeciesButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
             SLOT(buttonGroupToggled(QAbstractButton *, bool)));
 }
@@ -122,6 +123,11 @@ void SpeciesTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
+    // Update headers
+    ui_.AtomsPushButton->setText(QString("Atoms (%1)").arg(species_->nAtoms()));
+    ui_.IsotopologuesPushButton->setText(QString("Isotopologues (%1)").arg(species_->nIsotopologues()));
+    ui_.SitesPushButton->setText(QString("Sites (%1)").arg(species_->nSites()));
+
     // Current Box
     const auto *box = species_->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
@@ -133,9 +139,6 @@ void SpeciesTab::updateControls()
     boxInfo += QString("<b>&#x3B3;:</b>  %1&#xb0;").arg(box->axisAngles().z);
     ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
-
-    // Population
-    ui_.AtomPopulationLabel->setText(QString::number(species_->nAtoms()));
 
     ui_.EmpiricalFormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
         species_->atoms(), [](const auto &i) { return i.Z(); }, true)));
