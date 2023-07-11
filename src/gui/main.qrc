@@ -151,8 +151,15 @@
     <file>icons/start_openlocal.svg</file>
   </qresource>
   <qresource prefix="general">
+    <file>icons/general_charge.svg</file>
+    <file>icons/general_density.svg</file>
+    <file>icons/general_generator.svg</file>
+    <file>icons/general_isotopologues.svg</file>
+    <file>icons/general_site.svg</file>
+    <file>icons/general_temperature.svg</file>
     <file>icons/general_filter.svg</file>
     <file>icons/general_false.svg</file>
+    <file>icons/general_periodictable.svg</file>
     <file>icons/general_true.svg</file>
     <file>icons/general_output.svg</file>
     <file>icons/general_warn.svg</file>

@@ -84,6 +84,15 @@ void SpeciesWidget::setSpecies(Species *sp)
     updateStatusBar();
 }
 
+// Set target SpeciesSite, updating widget as necessary
+void SpeciesWidget::setSite(SpeciesSite *site)
+{
+    ui_.SpeciesView->setSite(site);
+
+    updateToolbar();
+    updateStatusBar();
+}
+
 // Return contained SpeciesViewer
 SpeciesViewer *SpeciesWidget::speciesViewer() { return ui_.SpeciesView; }
 

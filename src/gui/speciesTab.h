@@ -8,10 +8,7 @@
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
 #include "gui/mainTab.h"
-#include "gui/models/speciesAngleModel.h"
 #include "gui/models/speciesAtomModel.h"
-#include "gui/models/speciesBondModel.h"
-#include "gui/models/speciesImproperModel.h"
 #include "gui/models/speciesIsoModel.h"
 #include "gui/models/speciesSiteFilterProxy.h"
 #include "gui/models/speciesSiteModel.h"
@@ -40,12 +37,10 @@ class SpeciesTab : public QWidget, public MainTab
     // Main form declaration
     Ui::SpeciesTab ui_;
     SpeciesAtomModel atoms_;
-    SpeciesAngleModel angles_;
-    SpeciesBondModel bonds_;
-    SpeciesTorsionModel torsions_;
-    SpeciesImproperModel impropers_;
     SpeciesIsoModel isos_;
     SpeciesSiteModel sites_;
+    // Box information
+    QWidget *boxPage_;
 
     private:
     // Update density label
@@ -110,8 +105,6 @@ class SpeciesTab : public QWidget, public MainTab
     public slots:
     // Update total charges
     void updateTotalCharges();
-    // Update Geometry tables
-    void updateGeometryTables();
 
     /*
      * Widget Functions - Isotopologues
@@ -131,6 +124,11 @@ class SpeciesTab : public QWidget, public MainTab
     void updateIsotopologuesTab();
 
     /*
+     * Widget Functions - Intramolecular terms
+     */
+    void on_IntramolecularTermsButton_clicked(bool checked);
+
+    /*
      * Widget Functions - Sites
      */
     private:
@@ -139,13 +137,13 @@ class SpeciesTab : public QWidget, public MainTab
 
     private slots:
     void setCurrentSiteFromViewer();
-    void on_SiteAddButton_clicked(bool checked);
     void on_SiteRemoveButton_clicked(bool checked);
     void on_SiteTypeCombo_currentIndexChanged(int index);
     void siteSelectionChanged(const QItemSelection &current, const QItemSelection &previous);
     void on_SiteOriginMassWeightedCheck_clicked(bool checked);
     void on_SiteFragmentDescriptionEdit_editingFinished();
     void on_SiteFragmentDescriptionEdit_returnPressed();
+    void buttonGroupToggled(QAbstractButton *button, bool checked);
 
     public slots:
     // Update sites tab

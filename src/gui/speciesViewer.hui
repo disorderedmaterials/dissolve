@@ -4,6 +4,7 @@
 #pragma once
 
 #include "gui/render/renderableSpecies.h"
+#include "gui/render/renderableSpeciesSite.h"
 #include "gui/viewer.hui"
 
 // Forward Declarations
@@ -102,17 +103,27 @@ class SpeciesViewer : public BaseViewer
     Elements::Element drawElement() const;
 
     /*
-     * Source Species
+     * Source Species and Site
      */
     private:
     // Source Species to display
     Species *species_;
+    // Source SpeciesSite to display
+    SpeciesSite *site_;
+    // Sites are visible
+    bool sitesVisible_;
 
     public:
     // Set target Species
     void setSpecies(Species *sp);
     // Return target Species
     Species *species() const;
+    // Set target SpeciesSite
+    void setSite(SpeciesSite *site);
+    // Return target SpeciesSite
+    SpeciesSite *speciesSite() const;
+    // Toggle site visibility
+    void setSiteVisible(bool visible);
 
     /*
      * Renderable
@@ -120,6 +131,8 @@ class SpeciesViewer : public BaseViewer
     private:
     // Renderable for source Species
     std::shared_ptr<RenderableSpecies> speciesRenderable_;
+    // Renderable for displayed SpeciesSite
+    std::shared_ptr<RenderableSpeciesSite> siteRenderable_;
 
     public:
     // Set renderable draw style
@@ -135,4 +148,8 @@ class SpeciesViewer : public BaseViewer
     signals:
     // Atom selection changed
     void atomsChanged();
+    // Site created
+    void siteCreatedAndShown();
+    // Site changes
+    void sitesChanged();
 };
