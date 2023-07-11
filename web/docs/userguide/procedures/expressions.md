@@ -5,7 +5,7 @@ description: Mathematical expression parsing
 
 ## Overview
 
-Many node keywords accept mathematical expressions as input, rather than plain numerical values, allowing more complicated values to be calculated. This includes being able to reference named variables declared in, for instance, a {{< node "Parameters" >}} node.
+Many node keywords accept mathematical expressions as input, rather than plain numerical values, allowing more complicated values to be calculated. This includes being able to reference named variables declared in, for instance, a {{< node "Parameters" >}} node, as well as any parameters exposed by specific nodes. Provided a node is in scope at the point of use of the expression, available node parameters may be accessed by referencing the node name followed by a period (`.`) followed by the name of the parameter. For instance, [`Select`]({{< ref selectnode >}}) nodes expose a parameter containing the current number of sites selected, and which can be accessed (assuming the name of the node is "MySelect") as `MySelect.nSelected` in an expression.
 
 ## Type Conversion
 
@@ -45,6 +45,10 @@ Listed in order of decreasing precedence.
 |`exp`|`x`|Return the exponential function of $x$.|
 |`ln`|`x`|Return the natural logarithm of $x$.|
 |`log`|`x`|Return the base-10 logarithm of $x$.|
+|`pi`|`--`|Return the the value of Pi.|
 |`sin`|`x`|Return the sine of $x$, where $x$ is given in degrees.|
 |`sqrt`|`x`|Return the square root of $x$.|
 |`tan`|`x`|Return the tangent of $x$, where $x$ is given in degrees.|
+|`twopi`|`--`|Return the the value of 2Pi.|
+|`random`|`--`|Return a random value between 0.0 and 1.0 inclusive.|
+|`randomi`|`N`|Return a random integer between 0 and `N-1` inclusive.|
