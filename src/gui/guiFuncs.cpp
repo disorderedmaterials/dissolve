@@ -55,7 +55,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
     statusLabel_->setOpenExternalLinks(false);
-    connect(statusLabel_, SIGNAL(linkActivated(const QString)), this, SLOT(openMessages()));
+    connect(statusLabel_, SIGNAL(linkActivated(const QString)), this, SLOT(statusLabelLinkClicked(const QString)));
 
     // Create recent files menu
     setUpRecentFileMenu();
@@ -433,7 +433,8 @@ void DissolveWindow::clearMessages()
 }
 
 // Open the messages window
-void DissolveWindow::openMessages()
+void DissolveWindow::statusLabelLinkClicked(const QString& link)
 {
-    ui_.MainTabs->setCurrentIndex(0);
+    if (DissolveSys::sameString(link.toStdString(), "Messages"))
+        ui_.MainTabs->setCurrentIndex(0);
 }

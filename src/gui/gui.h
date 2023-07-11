@@ -206,7 +206,7 @@ class DissolveWindow : public QMainWindow
     // Thread controller
     DissolveThreadController threadController_;
     // Whether the GUI is currently running a simulation
-    bool dissolveIterating_t;
+    bool dissolveIterating_;
     // Whether any data has been modified
     bool modified_;
     // Whether window is currently refreshing
@@ -221,7 +221,6 @@ class DissolveWindow : public QMainWindow
     private slots:
     void on_MainTabs_currentChanged(int index);
     void statusLabelLinkClicked(const QString& link);
-    void openMessages();
 
     public:
     // Return whether the GUI is currently running a simulation
