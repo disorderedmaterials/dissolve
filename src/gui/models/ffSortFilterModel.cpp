@@ -12,7 +12,7 @@ bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelInde
     if (!species_)
         return false;
 
-		Messenger::mute();
+    Messenger::mute();
     auto index = sourceModel()->index(sourceRow, 0, source);
     QString name = sourceModel()->data(index).toString();
     auto regex = filterRegularExpression();
@@ -34,7 +34,7 @@ bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelInde
     // temporaryDissolve.clearAtomTypes();
 
     ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData, Forcefield::TypeAll, true);
-		Messenger::unMute();
+    Messenger::unMute();
     return temporaryDissolve.atomTypes().size() > 0;
 }
 
