@@ -1,6 +1,4 @@
-# Testing Code
-enable_testing()
-
+# Add System Test Function
 function(dissolve_system_test test_name input_file count)
   message(STATUS "... System test '${test_name}' in directory '${CMAKE_CURRENT_LIST_DIR}'")
   if(PARALLEL)
@@ -25,7 +23,7 @@ function(dissolve_system_test test_name input_file count)
   endif()
 endfunction()
 
-# System test subdirectories
+# List system test subdirectories
 message(STATUS "Looking for system tests in ${CMAKE_CURRENT_SOURCE_DIR}...")
 file(
   GLOB children

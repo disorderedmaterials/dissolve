@@ -291,6 +291,9 @@ Configuration  'Bulk'
 
   # Modules
   Generator
+    Temperature
+      Temperature  323
+    EndTemperature
     Parameters  'Parameters01'
       Parameter  rho  0.09985
     EndParameters
@@ -327,10 +330,6 @@ Configuration  'Bulk'
       Positioning  Random
     EndAdd
   EndGenerator
-
-  Temperature  323
-
-  SizeFactor  1
 EndConfiguration
 
 #==============================================================================#
@@ -381,10 +380,8 @@ Layer  'GR / Neutron S(Q)'
 
   Module  NeutronSQ  'H-H'
     Frequency  1
-    Normalisation  None
     Reference  mint  'data/SLS39546-H_H.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
     SourceSQs  'SQ'
   EndModule
@@ -392,10 +389,8 @@ Layer  'GR / Neutron S(Q)'
   Module  NeutronSQ  'H-D3'
     Frequency  1
     Isotopologue  'Acetate Anion'  'D3'  1
-    Normalisation  None
     Reference  mint  'data/SLS39548-H_D.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
     SourceSQs  'SQ'
   EndModule
@@ -403,10 +398,8 @@ Layer  'GR / Neutron S(Q)'
   Module  NeutronSQ  'H3D8-H'
     Frequency  1
     Isotopologue  '1-ethyl-3-methylimidazolium'  'H3D8'  1
-    Normalisation  None
     Reference  mint  'data/SLS39549-H3D8_H.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
     SourceSQs  'SQ'
   EndModule
@@ -415,10 +408,8 @@ Layer  'GR / Neutron S(Q)'
     Frequency  1
     Isotopologue  '1-ethyl-3-methylimidazolium'  'H3D8'  1
     Isotopologue  'Acetate Anion'  'D3'  1
-    Normalisation  None
     Reference  mint  'data/SLS39550-H3D8_D.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
     SourceSQs  'SQ'
   EndModule
@@ -428,10 +419,8 @@ Layer  'GR / Neutron S(Q)'
     Isotopologue  '1-ethyl-3-methylimidazolium'  'Natural'  1
     Isotopologue  'Acetate Anion'  'Natural'  1
     Isotopologue  'Acetate Anion'  'D3'  1
-    Normalisation  None
     Reference  mint  'data/SLS39567-H_50.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
     SourceSQs  'SQ'
   EndModule
@@ -442,10 +431,8 @@ Layer  'GR / Neutron S(Q)'
     Isotopologue  '1-ethyl-3-methylimidazolium'  'H3D8'  1
     Isotopologue  'Acetate Anion'  'Natural'  1
     Isotopologue  'Acetate Anion'  'D3'  1
-    Normalisation  None
     Reference  mint  'data/SLS39568-50_50.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
     SourceSQs  'SQ'
   EndModule

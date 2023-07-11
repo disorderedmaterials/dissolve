@@ -72,6 +72,9 @@ Configuration  'Bulk'
 
   # Generator
   Generator
+    Temperature
+      Temperature  300
+    EndTemperature
     Parameters  'Parameters01'
       Parameter  rho  0.1
     EndParameters
@@ -96,10 +99,6 @@ Configuration  'Bulk'
       Rotate  True
     EndAdd
   EndGenerator
-
-  Temperature  300
-
-  SizeFactor  1
 EndConfiguration
 
 #==============================================================================#
@@ -152,10 +151,8 @@ Layer  'GR / Neutron S(Q)'
     Frequency  1
     SourceSQs  'SQ01'
     Isotopologue  'Water'  'Natural'  1
-    Normalisation  None
     Reference  mint  'data/SLS18498-H2O.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
   EndModule
 
@@ -163,10 +160,8 @@ Layer  'GR / Neutron S(Q)'
     Frequency  1
     SourceSQs  'SQ01'
     Isotopologue  'Water'  'Deuterated'  1
-    Normalisation  None
     Reference  mint  'data/SLS18502-D2O.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
   EndModule
 
@@ -176,10 +171,8 @@ Layer  'GR / Neutron S(Q)'
     Exchangeable  HW
     Isotopologue  'Water'  'Natural'  1
     Isotopologue  'Water'  'Deuterated'  1
-    Normalisation  None
     Reference  mint  'data/SLS18500-HDO5050.mint01'
     EndReference
-    ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
   EndModule
 EndLayer

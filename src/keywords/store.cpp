@@ -141,8 +141,12 @@ KeywordBase::ParseResult KeywordStore::deserialise(LineParser &parser, const Cor
 bool KeywordStore::serialise(LineParser &parser, std::string_view prefix, bool onlyIfSet) const
 {
     for (const auto &kd : keywords_)
+    {
+        if (kd.type() == KeywordStoreData::KeywordType::Deprecated)
+            continue;
         if (!kd.keyword()->serialise(parser, kd.keyword()->name(), prefix))
             return false;
+    }
 
     return true;
 }
