@@ -8,6 +8,7 @@ on:
     - '.github/workflows/benchmark.yml'
     - '.github/workflows/cacheConan.yml'
     - '.github/workflows/cacheNix.yml'
+    - '.github/workflows/issues.yml'
     - '.github/workflows/pr.yml'
     - '.github/workflows/release.yml'
     - '.github/workflows/web**'
