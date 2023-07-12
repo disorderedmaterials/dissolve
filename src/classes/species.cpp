@@ -6,7 +6,7 @@
 #include "data/ff/ff.h"
 #include "data/ff/library.h"
 #include "data/isotopes.h"
-
+#include <map>
 Species::Species(std::string name) : name_(name), attachedAtomListsGenerated_(false), forcefield_(nullptr)
 {
     box_ = std::make_unique<SingleImageBox>();
@@ -36,8 +36,15 @@ void Species::copyBasic(const Species *source, bool copyAtomTypes)
 
     name_ = source->name_;
 
+    std::map<int, int> indexMap;
+
     for (auto &i : source->atoms_)
-        addAtom(i.Z(), i.r(), i.charge(), copyAtomTypes ? i.atomType() : nullptr);
+    {
+        indexMap[addAtom(i.Z(), i.r(), i.charge(), copyAtomTypes ? i.atomType() : nullptr)] = i.index();
+    }
+
+    for (auto const &[n, p] : indexMap)
+        atom(n).setIndex(p);
 
     for (auto &bond : source->bonds_)
         addBond(bond.indexI(), bond.indexJ());

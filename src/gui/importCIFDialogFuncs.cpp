@@ -515,15 +515,15 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         createCleanedSpecies();
 }
 
+
 bool ImportCIFDialog::molecularCIF()
 {
     std::vector<std::vector<int>> matchedIndices;
     std::vector<std::vector<const SpeciesAtom*>> matches;
     auto firstDistinct = cleanedSpecies_->fragment(0);
     NETADefinition neta;
-    neta.create(&cleanedSpecies_->atom(firstDistinct.front()), 69);
+    neta.create(&cleanedSpecies_->atom(firstDistinct.front()), 128);
     Messenger::print("{}", neta.definitionString());
-
     for (auto& i : cleanedSpecies_->atoms())
     {
         if (neta.matches(&i))
@@ -543,19 +543,19 @@ bool ImportCIFDialog::molecularCIF()
         }
     }
 
-    Messenger::print("Found {} matching species", matches.size());
-    auto distinct = temporaryCoreData_.addSpecies();
-    distinctSpecies_.push_back(distinct);
-    for (auto& i : matches.front())
-        distinct->addAtom(i->Z(), i->r(), i->charge(), i->atomType());
-    distinct->setName("Base");
-    for (auto& match : std::vector<std::vector<const SpeciesAtom*>>(std::next(matches.begin()), matches.end()))
+    std::vector<int> indicesToRemove;
+    for (auto i = 1; i < matchedIndices.size(); ++i)
     {
-        std::vector<Vec3<double>> coords;
-        for (auto& i : match)
-            coords.push_back(i->r());
-        coordinates_.push_back(std::move(coords));
+        indicesToRemove.insert(indicesToRemove.end(), matchedIndices.at(i).begin(), matchedIndices.at(i).end());
     }
+
+    Messenger::print("Found {} matching species, size {}", matches.size(), matches.front().size());
+    auto distinct = temporaryCoreData_.addSpecies();
+    distinct->copyBasic(cleanedSpecies_);
+    //matchedIndices.at(1).insert(matchedIndices.at(1).end(), matchedIndices.at(2).begin(), matchedIndices.at(2).end());
+    //matchedIndices.at(1).insert(matchedIndices.at(1).end(), matchedIndices.at(3).begin(), matchedIndices.at(3).end());
+    distinct->removeAtoms(indicesToRemove);
+    distinctSpecies_.push_back(distinct); 
     return true;
 }
 
