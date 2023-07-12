@@ -34,9 +34,6 @@ Configuration  'Bulk'
 
   # Modules
   Generator
-    Temperature
-      Temperature  85.0
-    EndTemperature
     Parameters
       Parameter  rho  2.130000e-02
     EndParameters
@@ -54,6 +51,7 @@ Configuration  'Bulk'
       Positioning  Random
     EndAdd
   EndGenerator
+  Temperature  85.0
 EndConfiguration
 
 #==============================================================================#

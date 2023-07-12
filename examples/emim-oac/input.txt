@@ -289,11 +289,9 @@ EndPairPotentials
 
 Configuration  'Bulk'
 
+  Temperature  323
   # Modules
   Generator
-    Temperature
-      Temperature  323
-    EndTemperature
     Parameters  'Parameters01'
       Parameter  rho  0.09985
     EndParameters

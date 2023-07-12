@@ -140,9 +140,6 @@ Configuration  'Bulk'
 
   # Modules
   Generator
-    Temperature
-      Temperature  300
-    EndTemperature
     Parameters  'Parameters01'
       Parameter  rho  0.876
     EndParameters
@@ -167,6 +164,8 @@ Configuration  'Bulk'
       Rotate  True
     EndAdd
   EndGenerator
+
+  Temperature  300
 
 EndConfiguration
 

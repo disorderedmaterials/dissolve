@@ -45,11 +45,9 @@ EndPairPotentials
 
 Configuration  'Bulk'
 
+  Temperature  298.0
   # Modules
   Generator
-    Temperature
-      Temperature  298.0
-    EndTemperature
     Parameters
       Parameter  populationA  1500
       Parameter  ratioB  2

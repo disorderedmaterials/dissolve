@@ -159,11 +159,9 @@ EndPairPotentials
 
 Configuration  'NewConfiguration'
 
+  Temperature  300
   # Modules
   Generator
-    Temperature
-      Temperature  300
-    EndTemperature
     Parameters  'Parameters01'
       Parameter  rho  0.1
     EndParameters

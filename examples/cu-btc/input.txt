@@ -5217,9 +5217,6 @@ Configuration  'MOF'
 
   # Modules
   Generator
-    Temperature
-      Temperature  300
-    EndTemperature
     Add  'Framework'
       BoxAction  Set
       Density  '0.1'  atoms/A3
@@ -5229,6 +5226,8 @@ Configuration  'MOF'
       Species  'C18 H7.96 Cu3 N2 O15'
     EndAdd
   EndGenerator
+
+  Temperature  300
 
 EndConfiguration
 
