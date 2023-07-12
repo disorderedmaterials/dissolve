@@ -219,6 +219,7 @@ class DissolveWindow : public QMainWindow
 
     private slots:
     void on_MainTabs_currentChanged(int index);
+    void statusLabelLinkClicked(const QString &link);
 
     public:
     // Return whether the GUI is currently running a simulation
