@@ -1,12 +1,19 @@
-Version 1.3.1 is a patch release fixing UI issues and module problems, and updating documentation.
+Version 1.3.1 is a patch release fixing some critical module issues along with some general UI issues and problems, and updating documentation.
+
+## Major Changes in v1.3.1
+
+- Fix: Accumulate module did not correctly work with multiple specified `Target`s.
+- Fix: Angle, AxisAngle, IntraAngle, and DAngle modules did not normalise output data correctly.
+- I/O: Errors in input files are handled less aggressively, trying to continue loading the file wherever possible.
 
 ## Minor Changes in v1.3.1
 
-- Fix: Accumulate module did not correctly work with multiple specified `Target`s.
 - Fix: Crashes when modifying some aspects of sites.
 - Fix: Occasional crashes when empty expressions were present in keywords in the GUI.
 - Fix: Specifying a non-existent restart file on the command-line now raises an error.
+- Fix: Interaction potentials keywords now have default parameters populated everywhere.
 - Fix: General UI improvements for menu item actions.
+- UI: Hyperlink messages status label to messages tab.
 - Docs: Updated to reflect new nodes, fixed some other issues.
 
 ## Major Changes in v1.3
