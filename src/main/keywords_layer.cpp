@@ -26,7 +26,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
     Messenger::print("\nParsing {} block '{}'...\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                      layer->name());
 
-    auto blockDone = false, error = false;
+    auto blockDone = false, errorsEncountered = false;
     Module *module = nullptr;
     std::string niceName;
 
@@ -42,7 +42,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
         {
-            error = true;
+            errorsEncountered = true;
             continue;
         }
 
@@ -91,7 +91,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                 if (!module)
                 {
                     Messenger::error("Module type '{}' does not exist.\n", parser.argsv(1));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
 
@@ -103,7 +103,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                     if (existingModule && (existingModule != module))
                     {
                         Messenger::error("A Module with the unique name '{}' already exists.\n", niceName);
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                     else if (dissolve->findConfigurationByNiceName(niceName))
@@ -111,7 +111,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                         Messenger::error("A Configuration with the unique name '{}' already exist, and so "
                                          "cannot be used as a Module name.\n",
                                          niceName);
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                     else
@@ -120,8 +120,8 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
 
                 // Parse rest of Module block
                 if (!ModuleBlock::parse(parser, dissolve, module, dissolve->processingModuleData(), false))
-                    error = true;
-                if (error)
+                    errorsEncountered = true;
+                if (errorsEncountered)
                     break;
                 break;
             case (LayerBlock::RequireEnergyStabilityKeyword):
@@ -133,7 +133,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
             default:
                 Messenger::error("{} block keyword '{}' not accounted for.\n",
                                  BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), keywords().keyword(kwd));
-                error = true;
+                errorsEncountered = true;
                 break;
         }
 
@@ -142,12 +142,12 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
             break;
     }
 
-    // If there's no error and the blockDone flag isn't set, return an error
-    if (!error && !blockDone)
+    // If there's no errorsEncountered and the blockDone flag isn't set, return an errorsEncountered
+    if (!errorsEncountered && !blockDone)
     {
         Messenger::error("Unterminated {} block found.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
-        error = true;
+        errorsEncountered = true;
     }
 
-    return (!error);
+    return (!errorsEncountered);
 }

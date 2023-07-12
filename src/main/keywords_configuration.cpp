@@ -26,7 +26,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                      BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
     std::string niceName;
-    auto blockDone = false, error = false;
+    auto blockDone = false, errorsEncountered = false;
 
     while (!parser.eofOrBlank())
     {
@@ -40,7 +40,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
         {
-            error = true;
+            errorsEncountered = true;
             continue;
         }
 
@@ -59,7 +59,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                 if (!cfg->generator().deserialise(parser, dissolve->coreData()))
                 {
                     Messenger::error("Failed to read generator procedure for Configuration.\n");
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             case (ConfigurationBlock::SizeFactorKeyword):
@@ -74,12 +74,12 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                 Messenger::error("{} block keyword '{}' not accounted for.\n",
                                  BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
                                  keywords().keyword(kwd));
-                error = true;
+                errorsEncountered = true;
                 break;
         }
 
         // Error encountered?
-        if (error)
+        if (errorsEncountered)
             break;
 
         // End of block?
@@ -87,13 +87,13 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
             break;
     }
 
-    // If there's no error and the blockDone flag isn't set, return an error
-    if (!error && !blockDone)
+    // If there's no errorsEncountered and the blockDone flag isn't set, return an errorsEncountered
+    if (!errorsEncountered && !blockDone)
     {
         Messenger::error("Unterminated {} block found.\n",
                          BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
-        error = true;
+        errorsEncountered = true;
     }
 
-    return (!error);
+    return (!errorsEncountered);
 }
