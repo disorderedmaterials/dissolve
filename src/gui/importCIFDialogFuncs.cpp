@@ -520,6 +520,7 @@ bool ImportCIFDialog::molecularCIF()
 {
     std::vector<std::vector<int>> matchedIndices;
     std::vector<std::vector<const SpeciesAtom*>> matches;
+    cleanedSpecies_->addMissingBonds(1.5);
     auto firstDistinct = cleanedSpecies_->fragment(0);
     NETADefinition neta;
     neta.create(&cleanedSpecies_->atom(firstDistinct.front()), 128);
@@ -533,7 +534,7 @@ bool ImportCIFDialog::molecularCIF()
             std::vector<const SpeciesAtom*> matchedAtoms(matchedAtomsSet.size());
             std::copy(matchedAtomsSet.begin(), matchedAtomsSet.end(), matchedAtoms.begin());
             std::vector<int> indices(matchedAtoms.size());
-            std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
+            std::transform(matchedAtomsSet.begin(), matchedAtomsSet.end(), indices.begin(),
                            [](const auto &atom) { return atom->index(); });
 
             if (std::find(matchedIndices.begin(), matchedIndices.end(), indices) != matchedIndices.end())
@@ -542,6 +543,8 @@ bool ImportCIFDialog::molecularCIF()
             matchedIndices.push_back(std::move(indices));
         }
     }
+
+    Messenger::print("{}", joinStrings(matches.at(0), " ", [&](auto& at) {return Elements::name(at->Z());}));
 
     std::vector<int> indicesToRemove;
     for (auto i = 1; i < matchedIndices.size(); ++i)
