@@ -22,7 +22,7 @@ bool Dissolve::loadInput(LineParser &parser)
     Configuration *cfg;
     ModuleLayer *layer = nullptr;
     Species *sp;
-    auto error = false;
+    auto errorsEncountered = false;
 
     while (!parser.eofOrBlank())
     {
@@ -32,7 +32,10 @@ bool Dissolve::loadInput(LineParser &parser)
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!BlockKeywords::keywords().isValid(parser.argsv(0)))
-            return BlockKeywords::keywords().errorAndPrintValid(parser.argsv(0));
+        {
+            BlockKeywords::keywords().errorAndPrintValid(parser.argsv(0));
+            continue;
+        }
         auto kwd = BlockKeywords::keywords().enumeration(parser.argsv(0));
 
         // All OK, so process the keyword
@@ -41,55 +44,43 @@ bool Dissolve::loadInput(LineParser &parser)
             case (BlockKeywords::ConfigurationBlockKeyword):
                 // Check to see if a Configuration with this name already exists...
                 if (findConfiguration(parser.argsv(1)))
-                {
-                    Messenger::error("Redefinition of Configuration '{}'.\n", parser.argsv(1));
-                    error = true;
-                    break;
-                }
+                    return Messenger::error("Redefinition of Configuration '{}'.\n", parser.argsv(1));
+
                 cfg = addConfiguration();
                 cfg->setName(parser.argsv(1));
                 Messenger::print("\n--> Created Configuration '{}'\n", cfg->name());
                 if (!ConfigurationBlock::parse(parser, this, cfg))
-                {
-                    error = true;
-                    break;
-                }
+                    errorsEncountered = true;
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...
                 if (findProcessingLayer(parser.argsv(1)))
-                {
                     Messenger::error("Redefinition of processing layer '{}'.\n", parser.argsv(1));
-                    error = true;
-                    break;
-                }
+
                 layer = addProcessingLayer();
                 layer->setName(parser.argsv(1));
                 Messenger::print("\n--> Created processing layer '{}'\n", layer->name());
                 if (!LayerBlock::parse(parser, this, layer))
-                    error = true;
+                    errorsEncountered = true;
                 break;
             case (BlockKeywords::MasterBlockKeyword):
                 if (!MasterBlock::parse(parser, coreData_))
-                    error = true;
+                    errorsEncountered = true;
                 break;
             case (BlockKeywords::PairPotentialsBlockKeyword):
                 if (!PairPotentialsBlock::parse(parser, this))
-                    error = true;
+                    errorsEncountered = true;
                 break;
             case (BlockKeywords::SpeciesBlockKeyword):
                 // Check to see if a Species with this name already exists...
                 if (findSpecies(parser.argsv(1)))
-                {
-                    Messenger::error("Redefinition of species '{}'.\n", parser.argsv(1));
-                    error = true;
-                    break;
-                }
+                    return Messenger::error("Redefinition of species '{}'.\n", parser.argsv(1));
+
                 sp = addSpecies();
                 sp->setName(parser.argsv(1));
                 Messenger::print("\n--> Created Species '{}'\n", sp->name());
                 if (!sp->read(parser, coreData_))
-                    error = true;
+                    errorsEncountered = true;
                 else if (Messenger::isVerbose())
                 {
                     Messenger::print("\n--- Species '{}'...\n", sp->name());
@@ -99,23 +90,19 @@ bool Dissolve::loadInput(LineParser &parser)
             default:
                 Messenger::error("Block keyword '{}' is not relevant in this context.\n",
                                  BlockKeywords::keywords().keyword(kwd));
-                error = true;
+                errorsEncountered = true;
                 break;
         }
-
-        // Error encountered?
-        if (error)
-            break;
     }
 
     // Error encountered?
-    if (error)
+    if (errorsEncountered)
         Messenger::error("Errors encountered while parsing input.");
 
     // Done
     parser.closeFiles();
 
-    return (!error);
+    return (!errorsEncountered);
 }
 
 // Load input from supplied string

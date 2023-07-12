@@ -28,7 +28,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
     AngleFunctions::Form af;
     TorsionFunctions::Form tf;
     auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
-    auto blockDone = false, error = false;
+    auto blockDone = false, errorsEncountered = false;
 
     while (!parser.eofOrBlank())
     {
@@ -38,10 +38,16 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!keywords().isValid(parser.argsv(0)))
-            return keywords().errorAndPrintValid(parser.argsv(0));
+        {
+            keywords().errorAndPrintValid(parser.argsv(0));
+            continue;
+        }
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
-            return false;
+        {
+            errorsEncountered = true;
+            continue;
+        }
 
         // All OK, so process the keyword
         switch (kwd)
@@ -51,7 +57,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 if (!AngleFunctions::forms().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of angle ({}) not recognised.\n", parser.argsv(2));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 af = AngleFunctions::forms().enumeration(parser.argsv(2));
@@ -65,14 +71,14 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!AngleFunctions::forms().validNArgs(af, parser.nArgs() - 3))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
                     // Set parameters
                     if (!masterAngle.setInteractionParameters(parser, 3))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -83,7 +89,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 catch (const std::runtime_error &e)
                 {
                     Messenger::error(e.what());
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             case (MasterBlock::BondKeyword):
@@ -91,7 +97,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 if (!BondFunctions::forms().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of bond ({}) not recognised.\n", parser.argsv(2));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 bf = BondFunctions::forms().enumeration(parser.argsv(2));
@@ -105,14 +111,14 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!BondFunctions::forms().validNArgs(bf, parser.nArgs() - 3))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
                     // Set parameters
                     if (!masterBond.setInteractionParameters(parser, 3))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -123,7 +129,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 catch (const std::runtime_error &e)
                 {
                     Messenger::error(e.what());
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             case (MasterBlock::EndMasterKeyword):
@@ -135,7 +141,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of improper ({}) not recognised.\n", parser.argsv(2));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
@@ -149,14 +155,14 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
                     // Set parameters
                     if (!masterImproper.setInteractionParameters(parser, 3))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -167,7 +173,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 catch (const std::runtime_error &e)
                 {
                     Messenger::error(e.what());
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             case (MasterBlock::Scaling14Keyword):
@@ -179,7 +185,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 if (!TorsionFunctions::forms().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of torsion ({}) not recognised.\n", parser.argsv(2));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 tf = TorsionFunctions::forms().enumeration(parser.argsv(2));
@@ -193,14 +199,14 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 3))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
                     // Set parameters
                     if (!masterTorsion.setInteractionParameters(parser, 3))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -214,32 +220,28 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 catch (const std::runtime_error &e)
                 {
                     Messenger::error(e.what());
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             default:
                 Messenger::error("{} block keyword '{}' not accounted for.\n",
                                  BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword), keywords().keyword(kwd));
-                error = true;
+                errorsEncountered = true;
                 break;
         }
-
-        // Error encountered?
-        if (error)
-            break;
 
         // End of block?
         if (blockDone)
             break;
     }
 
-    // If there's no error and the blockDone flag isn't set, return an error
-    if (!error && !blockDone)
+    // If there's no errorsEncountered and the blockDone flag isn't set, return an errorsEncountered
+    if (!errorsEncountered && !blockDone)
     {
         Messenger::error("Unterminated {} block found.\n",
                          BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword));
-        error = true;
+        errorsEncountered = true;
     }
 
-    return (!error);
+    return (!errorsEncountered);
 }

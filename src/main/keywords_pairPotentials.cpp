@@ -29,7 +29,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     Messenger::print("\nParsing {} block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 
     std::shared_ptr<AtomType> at1;
-    auto blockDone = false, error = false;
+    auto blockDone = false, errorsEncountered = false;
     Elements::Element Z;
 
     while (!parser.eofOrBlank())
@@ -40,10 +40,16 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!keywords().isValid(parser.argsv(0)))
-            return keywords().errorAndPrintValid(parser.argsv(0));
+        {
+            keywords().errorAndPrintValid(parser.argsv(0));
+            continue;
+        }
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
-            return false;
+        {
+            errorsEncountered = true;
+            continue;
+        }
 
         // All OK, so process the keyword
         switch (kwd)
@@ -55,7 +61,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 else
                 {
                     PairPotential::coulombTruncationSchemes().errorAndPrintValid(parser.argsv(1));
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             case (PairPotentialsBlock::DeltaKeyword):
@@ -82,7 +88,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 {
                     Messenger::error("Unknown element '{}' given for atom type '{}' in PairPotentials block.\n",
                                      parser.argsv(2), parser.argsv(1));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
 
@@ -101,7 +107,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                     Messenger::error("Element '{}' does not match that for the existing atom type '{}' in "
                                      "PairPotentials block.\n",
                                      parser.argsv(2), parser.argsv(1));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
 
@@ -112,13 +118,13 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 if (!ShortRangeFunctions::forms().isValid(parser.argsv(4)))
                 {
                     ShortRangeFunctions::forms().errorAndPrintValid(parser.argsv(4));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 at1->interactionPotential().setForm(ShortRangeFunctions::forms().enumeration(parser.argsv(4)));
                 if (!at1->interactionPotential().parseParameters(parser, 5))
                 {
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 break;
@@ -132,7 +138,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 else
                 {
                     PairPotential::shortRangeTruncationSchemes().errorAndPrintValid(parser.argsv(1));
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             case (PairPotentialsBlock::ShortRangeTruncationWidthKeyword):
@@ -142,13 +148,9 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 Messenger::error("{} block keyword '{}' not accounted for.\n",
                                  BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword),
                                  keywords().keyword(kwd));
-                error = true;
+                errorsEncountered = true;
                 break;
         }
-
-        // Error encountered?
-        if (error)
-            break;
 
         // End of block?
         if (blockDone)
@@ -156,12 +158,12 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     }
 
     // If there's no error and the blockDone flag isn't set, return an error
-    if (!error && !blockDone)
+    if (!errorsEncountered && !blockDone)
     {
         Messenger::error("Unterminated {} block found.\n",
                          BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
-        error = true;
+        errorsEncountered = true;
     }
 
-    return (!error);
+    return (!errorsEncountered);
 }

@@ -551,7 +551,10 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
             return keywords().errorAndPrintValid(parser.argsv(0));
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
-            return false;
+        {
+            error = true;
+            continue;
+        }
 
         // All OK, so process the keyword
         switch (kwd)
