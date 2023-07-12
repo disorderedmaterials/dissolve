@@ -96,11 +96,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 else
                     a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
-                if (!a)
-                {
-                    error = true;
-                    break;
-                }
 
                 /*
                  * If only the indices were given, create an angle without a specified functional form (a
@@ -191,11 +186,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 else
                     b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
-                if (!b)
-                {
-                    error = true;
-                    break;
-                }
 
                 /*
                  * If only the indices were given, create a bond without a specified functional form (a
@@ -328,11 +318,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 else
                     imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
-                if (!imp)
-                {
-                    error = true;
-                    break;
-                }
 
                 // Check the functional form specified - if it starts with '@' it is a reference to master
                 // parameters
@@ -496,11 +481,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 else
                     torsion = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
-                if (!torsion)
-                {
-                    error = true;
-                    break;
-                }
 
                 /*
                  * If only the indices were given, create an angle without a specified functional form (a
