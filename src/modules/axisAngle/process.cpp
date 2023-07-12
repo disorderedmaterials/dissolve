@@ -19,7 +19,8 @@ bool AxisAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Ensure any parameters in our nodes are set correctly
     calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
-    dAngleNormalisationExpression_->setExpression(fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
+    dAngleNormalisationExpression_->setExpression(
+        fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
     collectDistance_->keywords().set("RangeX", distanceRange_);
     collectAngle_->keywords().set("RangeX", angleRange_);
     collectDAngle_->keywords().set("RangeX", distanceRange_);

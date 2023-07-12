@@ -24,8 +24,10 @@ bool AngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     selectC_->setDistanceReferenceSite(selectB_);
     selectC_->setInclusiveDistanceRange({rangeBC_.x, rangeBC_.y});
     calculateAngle_->keywords().set("Symmetric", symmetric_);
-    dAngleABNormalisationExpression_->setExpression(fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
-    dAngleBCNormalisationExpression_->setExpression(fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
+    dAngleABNormalisationExpression_->setExpression(
+        fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
+    dAngleBCNormalisationExpression_->setExpression(
+        fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
     collectDDA_->keywords().set("RangeX", rangeAB_);
     collectDDA_->keywords().set("RangeY", rangeBC_);
     collectDDA_->keywords().set("RangeZ", angleRange_);

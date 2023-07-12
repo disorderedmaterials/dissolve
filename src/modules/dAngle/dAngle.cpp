@@ -82,7 +82,7 @@ DAngleModule::DAngleModule() : Module(ModuleTypes::DAngle), analyser_(ProcedureN
     processDAngle_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     auto &dAngleNormalisation = processDAngle_->branch()->get();
     dAngleNormalisationExpression_ = dAngleNormalisation.create<OperateExpressionProcedureNode>(
-        {}, fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
+        {}, fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
     dAngleNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({},
                                                                             ConstNodeVector<SelectProcedureNode>({selectA_}));
     dAngleNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>{selectB_});
