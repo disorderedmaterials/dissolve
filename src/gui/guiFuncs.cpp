@@ -432,7 +432,6 @@ void DissolveWindow::clearMessages()
     Messenger::clearErrorCounts();
 }
 
-// Open the messages window
 void DissolveWindow::statusLabelLinkClicked(const QString &link)
 {
     if (DissolveSys::sameString(link.toStdString(), "Messages"))
