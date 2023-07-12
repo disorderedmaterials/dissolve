@@ -24,10 +24,6 @@ IntraAngleModuleWidget::IntraAngleModuleWidget(QWidget *parent, IntraAngleModule
     angleView.axes().setRange(1, 0.0, 5.0);
     angleView.setAutoFollowType(View::AllAutoFollow);
 
-    setGraphDataTargets(module_);
-
-    updateControls();
-
     refreshing_ = false;
 }
 
@@ -38,27 +34,15 @@ IntraAngleModuleWidget::IntraAngleModuleWidget(QWidget *parent, IntraAngleModule
 // Update controls within widget
 void IntraAngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
-    ui_.AnglePlotWidget->updateToolbar();
-    angleGraph_->postRedisplay();
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void IntraAngleModuleWidget::setGraphDataTargets(IntraAngleModule *module)
-{
-    // Remove any current data
-    angleGraph_->clearRenderables();
-
-    // Get Configuration target
-    auto *cfg = module_->keywords().getConfiguration("Configuration");
-    if (!cfg)
-        return;
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
+        angleGraph_->clearRenderables();
 
     // Calculated angle histogram
-    auto angle = angleGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Angle(ABC)", module_->name()),
-                                                                 "A-B...C Angle");
-    angle->setColour(StockColours::RedStockColour);
+    if (angleGraph_->renderables().empty())
+        angleGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Angle(ABC)", module_->name()), "A-B...C Angle")
+            ->setColour(StockColours::RedStockColour);
+
+    ui_.AnglePlotWidget->updateToolbar();
+    angleGraph_->postRedisplay();
 }
