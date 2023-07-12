@@ -56,3 +56,9 @@ jobs:
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
         column-name: "CI"
         label-name: "Scope: CI"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ github.token }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Visualisation"
+        label-name: "Scope: Visualisation"
