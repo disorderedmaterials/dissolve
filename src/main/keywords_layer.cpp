@@ -95,7 +95,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                 {
                     Messenger::error("Module type '{}' does not exist.\n", parser.argsv(1));
                     errorsEncountered = true;
-                    break;
+                    continue;
                 }
 
                 // Set unique name, if it was provided - need to check if it has been used elsewhere

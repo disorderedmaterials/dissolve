@@ -82,10 +82,6 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                 error = true;
         }
 
-        // Error encountered?
-        if (error)
-            break;
-
         // End of block?
         if (blockDone)
             break;
