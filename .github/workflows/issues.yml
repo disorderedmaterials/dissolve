@@ -48,8 +48,8 @@ jobs:
       with:
         action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
-        column-name: "Speed"
-        label-name: "Scope: Speed"
+        column-name: "I/O"
+        label-name: "Scope: I/O"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
         action-token: "${{ github.token }}"
