@@ -98,7 +98,7 @@ AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode
     processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
     processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
     auto &angleNormalisation = processAngle_->branch()->get();
-    angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(x)");
+    angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(toRad(x))");
     angleNormalisation.create<OperateNormaliseProcedureNode>({}, 1.0);
 
     // Process2D: 'DAngle (A-B)-C'
@@ -108,7 +108,7 @@ AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode
     processDAngleAB_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     auto &dAngleABNormalisation = processDAngleAB_->branch()->get();
     dAngleABNormalisationExpression_ = dAngleABNormalisation.create<OperateExpressionProcedureNode>(
-        {}, fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
+        {}, fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
     dAngleABNormalisation.create<OperateSitePopulationNormaliseProcedureNode>(
         {}, ConstNodeVector<SelectProcedureNode>({selectA_, selectC_}));
     dAngleABNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({},
@@ -122,7 +122,7 @@ AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode
     processDAngleBC_->keywords().set("LabelY", std::string("\\symbol{theta}, \\symbol{degrees}"));
     auto &dAngleBCNormalisation = processDAngleBC_->branch()->get();
     dAngleBCNormalisationExpression_ = dAngleBCNormalisation.create<OperateExpressionProcedureNode>(
-        {}, fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
+        {}, fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
     dAngleBCNormalisation.create<OperateSitePopulationNormaliseProcedureNode>(
         {}, ConstNodeVector<SelectProcedureNode>({selectB_, selectA_}));
     dAngleBCNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({},
