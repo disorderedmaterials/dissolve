@@ -486,7 +486,10 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
 
         // Not a control keyword, so must be a node type
         if (!ProcedureNode::nodeTypes().isValid(parser.argsv(0)))
-            return Messenger::error("Unrecognised node type '{}' found.\n", parser.argsv(0));
+        {
+            Messenger::error("Unrecognised node type '{}' found.\n", parser.argsv(0));
+            continue;
+        }
 
         // Create a new node of the specified type
         auto newNode = ProcedureNodeRegistry::create(ProcedureNode::nodeTypes().enumeration(parser.argsv(0)));
@@ -511,7 +514,7 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
 
         // Read the new node
         if (!newNode->deserialise(parser, coreData))
-            return Messenger::error("Failed to read node sequence.\n");
+            Messenger::error("Failed to read node sequence.\n");
     }
 
     return true;
