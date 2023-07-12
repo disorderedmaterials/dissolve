@@ -227,10 +227,6 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 break;
         }
 
-        // Error encountered?
-        if (error)
-            break;
-
         // End of block?
         if (blockDone)
             break;

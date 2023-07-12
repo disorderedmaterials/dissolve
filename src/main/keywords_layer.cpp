@@ -137,10 +137,6 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                 break;
         }
 
-        // Error encountered?
-        if (error)
-            break;
-
         // End of block?
         if (blockDone)
             break;

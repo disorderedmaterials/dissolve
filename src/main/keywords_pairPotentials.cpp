@@ -149,10 +149,6 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 break;
         }
 
-        // Error encountered?
-        if (error)
-            break;
-
         // End of block?
         if (blockDone)
             break;
