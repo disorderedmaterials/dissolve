@@ -42,8 +42,8 @@ jobs:
       with:
         action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
-        column-name: "Source Code"
-        label-name: "Scope: Source Code"
+        column-name: "Code"
+        label-name: "Scope: Code"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
         action-token: "${{ github.token }}"
@@ -62,3 +62,9 @@ jobs:
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
         column-name: "Visualisation"
         label-name: "Scope: Visualisation"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ github.token }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Procedures"
+        label-name: "Scope: Procedures"
