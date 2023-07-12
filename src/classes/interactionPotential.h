@@ -14,7 +14,7 @@
 template <class Functions> class InteractionPotential
 {
     public:
-    explicit InteractionPotential(typename Functions::Form form) : form_(form){};
+    explicit InteractionPotential(typename Functions::Form form) { setForm(form); };
     virtual ~InteractionPotential() = default;
     InteractionPotential(const InteractionPotential &source) = default;
     InteractionPotential(InteractionPotential &&source) = delete;
@@ -121,8 +121,7 @@ template <class Functions> class InteractionPotential
     std::string parametersAsString() const
     {
         auto id = 0;
-        return joinStrings(Functions::parameters(form()), " ",
-                           [&](const auto &parameter)
-                           { return fmt::format("{}={}", parameter, id < parameters().size() ? parameters().at(id++) : 0.0); });
+        return joinStrings(parameters(), " ",
+                           [&](const auto &value) { return fmt::format("{}={}", Functions::parameter(form(), id++), value); });
     }
 };
