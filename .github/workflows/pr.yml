@@ -9,6 +9,7 @@ on:
     - '.github/workflows/cacheConan.yml'
     - '.github/workflows/cacheNix.yml'
     - '.github/workflows/continuous.yml'
+    - '.github/workflows/issues.yml'
     - '.github/workflows/release.yml'
     - '.github/workflows/web**'
     - 'web/**'
