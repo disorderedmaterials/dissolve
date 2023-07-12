@@ -73,7 +73,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!keywords().isValid(parser.argsv(0)))
-            return keywords().errorAndPrintValid(parser.argsv(0));
+        {
+            keywords().errorAndPrintValid(parser.argsv(0));
+            continue;
+        }
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
         {
