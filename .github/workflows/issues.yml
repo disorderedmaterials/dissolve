@@ -48,8 +48,8 @@ jobs:
       with:
         action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
-        column-name: "Code"
-        label-name: "Scope: Code"
+        column-name: "Codebase"
+        label-name: "Scope: Codebase"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
         action-token: "${{ github.token }}"
