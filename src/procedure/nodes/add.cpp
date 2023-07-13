@@ -290,7 +290,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         if (hasCoordinateSets)
         {
             mol = cfg->addMolecule(sp, coordinateSets_->set(coordinateSetIndex));
-
+            Messenger::print("Creating {} from CS {}", sp->name(), coordinateSetIndex);
             // Move to next coordinate set
             ++coordinateSetIndex;
             if (coordinateSetIndex == coordinateSets_->nSets())

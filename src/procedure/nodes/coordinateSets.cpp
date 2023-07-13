@@ -58,6 +58,11 @@ std::vector<Vec3<double>> &CoordinateSetsProcedureNode::addSet()
     return sets_.emplace_back(species_->nAtoms(), Vec3<double>());
 }
 
+void CoordinateSetsProcedureNode::setSets(std::vector<std::vector<Vec3<double>>> sets)
+{
+    sets_ = std::move(sets);
+}
+
 // Return number of available coordinates sets
 int CoordinateSetsProcedureNode::nSets() const { return sets_.size(); }
 
@@ -73,7 +78,6 @@ bool CoordinateSetsProcedureNode::prepare(const ProcedureContext &procedureConte
 {
     if (!species_)
         return Messenger::error("No Species set in CoordinateSets node.\n");
-
     // Clear existing sets?
     if (force_)
         sets_.clear();
