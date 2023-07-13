@@ -7,6 +7,7 @@
 #include "gui/mainTab.h"
 #include "gui/models/enumOptionsModel.h"
 #include "gui/models/procedureModel.h"
+#include "gui/models/globalPotentialModel.h"
 #include "gui/ui_configurationTab.h"
 #include <map>
 
@@ -52,6 +53,9 @@ class ConfigurationTab : public QWidget, public MainTab
     Configuration *configuration_;
     // Procedure Model
     ProcedureModel procedureModel_;
+    // Global potential model
+    GlobalPotentialModel globalPotentialModel_;
+
 
     public:
     // Return displayed Configuration
@@ -80,4 +84,5 @@ class ConfigurationTab : public QWidget, public MainTab
     void on_GenerateButton_clicked(bool checked);
     // Density units changed
     void on_DensityUnitsCombo_currentIndexChanged(int index);
+    void buttonGroupToggled(QAbstractButton *button, bool checked);
 };
