@@ -10,6 +10,8 @@ Rectangle {
     anchors.fill: parent;
     color: palette.active.window;
 
+    palette.buttonText: palette.active.text;
+
     AddForcefieldDialogModel {
 	id: dialogModel;
 	objectName: "dialogModel";
