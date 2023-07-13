@@ -8,6 +8,21 @@ ListView {
 
     signal selected();
 
+    /* Border */
+    Rectangle {
+	anchors.fill: parent;
+	z: 1;
+	color: "#00000000";
+	border.color: palette.active.dark;
+	border.width: 2;
+    }
+    /* Background */
+    Rectangle {
+	anchors.fill: parent;
+	z: -11;
+	color: palette.active.base;
+    }
+
     delegate:
     Rectangle {
 
@@ -15,7 +30,7 @@ ListView {
 	property bool picked: ListView.isCurrentItem;
 	color: picked ? palette.active.highlight : palette.active.base;
 	height: label.height;
-	width: label.width + label.height;
+	width: control.width;
 
 	Image {
 	    id: image;
