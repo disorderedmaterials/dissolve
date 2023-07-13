@@ -4,6 +4,7 @@
 #pragma once
 
 #include "kernels/potentials/types.h"
+#include "classes/interactionPotential.h"
 #include "keywords/store.h"
 
 // Forward Declarations
@@ -37,6 +38,7 @@ class ExternalPotential
     std::vector<const Species *> targetSpecies_;
 
     public:
+    ExternalPotentialTypes::ExternalPotentialType type() const;
     // Set atom indices targeted by the potential
     void setTargetAtomIndices(const std::vector<int> &targets);
     // Add target atom index
