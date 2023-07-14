@@ -92,5 +92,5 @@ class CheckSpeciesModule : public Module
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    executionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };

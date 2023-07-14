@@ -52,5 +52,5 @@ class AvgMolModule : public Module
     // Run set-up stage
     bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) override;
     // Run main processing
-    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    enum executionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };

@@ -28,7 +28,7 @@
 #include <functional>
 
 // Run set-up stage
-bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+enum executionResult EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Realise storage for generated S(Q), and initialise a scattering matrix
     auto &estimatedSQ =
@@ -45,30 +45,41 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
         const SQModule *sqModule = nullptr;
         if (optSQModule)
             sqModule = optSQModule.value();
-        if (!sqModule)
-            return Messenger::error(
+        if (!sqModule) 
+        {
+            Messenger::error(
                 "[SETUP {}] Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
                 name_, module->name());
+            return failed;
+        }
 
         auto *grModule = sqModule->sourceGR();
         if (!grModule)
-            return Messenger::error(
+        {
+            Messenger::error(
                 "[SETUP {}] Target '{}'s S(Q) module doesn't reference a GRModule, it can't be used as a target "
                 "for the EPSR module.",
                 name_, module->name());
-
+            return failed;
+        }
         // Check for number of targets, or different target if there's only 1
         auto rdfConfigs = grModule->keywords().getVectorConfiguration("Configurations");
         if (rdfConfigs.size() != 1)
-            return Messenger::error(
+        {
+            Messenger::error(
                 "[SETUP {}] GR module '{}' targets multiple configurations, which is not permitted when using "
                 "its data in the EPSR module.",
                 name_, grModule->name());
+            return failed
+        }
 
         if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfConfigs.front()))
-            return Messenger::error("[SETUP {}] GR module '{}' targets a configuration which is different from another target "
-                                    "module, and which is not permitted when using its data in the EPSR module.",
-                                    name_, grModule->name());
+        {
+            Messenger::error("[SETUP {}] GR module '{}' targets a configuration which is different from another target "
+                "module, and which is not permitted when using its data in the EPSR module.",
+                name_, grModule->name());        
+        }
+
         else
             targetConfiguration_ = rdfConfigs.front();
 
@@ -82,7 +93,10 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
 
         // Read in the coefficients / setup from the supplied file
         if (!readPCof(dissolve, procPool, pCofFilename_))
-            return Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", name_);
+        {
+            Messenger::error("[SETUP {}] Failed to read in potential coefficients from EPSR pcof file.\n", name_);
+            return failed;
+        }
 
         // Set up the additional potentials - reconstruct them from the current coefficients
         auto rmaxpt = rMaxPT_ ? rMaxPT_.value() : dissolve.pairPotentialRange();
@@ -91,13 +105,17 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
         {
             if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt,
                                              gSigma1_, gSigma2_))
-                return false;
+            {
+                return failed;
+            }
         }
         else
         {
             if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt,
                                              pSigma1_, pSigma2_))
-                return false;
+            {   
+                return failed;
+            }
         }
     }
 
@@ -108,13 +126,16 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
 
         // Read in the coefficients / setup from the supplied file
         if (!readFitCoefficients(dissolve, procPool, inpaFilename_))
-            return Messenger::error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", name_);
+        {
+            Messenger::error("[SETUP {}] Failed to read in fit coefficients from EPSR inpa file.\n", name_);
+            return failed;
+        }
     }
 
     // Try to calculate the deltaSQ array
     updateDeltaSQ(dissolve.processingModuleData());
 
-    return true;
+    return success;
 }
 
 // Run main processing
