@@ -13,6 +13,7 @@ Item {
 	anchors.right: parent.right;
 
 	ColumnLayout {
+	    spacing: 10;
 	    ImageRadio {
 		text: "Apply intramolecular terms to the whole species.\nExisting Data will be overriden"
 		source: "qrc:/wizard/icons/wizard_allatoms.svg";

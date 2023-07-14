@@ -25,7 +25,7 @@ GroupBox {
 
     ColumnLayout {
 	id: radioChoice;
-	spacing: 5;
+	spacing: 10;
 	ImageRadio {
 	    onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.All;
 	    source: "qrc:/wizard/icons/wizard_allatoms.svg";
