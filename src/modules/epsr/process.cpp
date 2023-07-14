@@ -185,13 +185,22 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      * Do we have targets to refine against?
      */
     if (targets_.empty())
-        return Messenger::error("At least one Module target containing suitable data must be provided.\n");
+    {
+        Messenger::error("At least one Module target containing suitable data must be provided.\n");
+        return failed;
+    }
 
     if (!targetConfiguration_)
-        return Messenger::error("No target configuration is set.\n");
+    {
+        Messenger::error("No target configuration is set.\n");
+        return failed;
+    }
 
     if (!targetConfiguration_->atomicDensity())
-        return Messenger::error("No density available for target configuration '{}'\n", targetConfiguration_->name());
+    {
+        Messenger::error("No density available for target configuration '{}'\n", targetConfiguration_->name());
+        return failed;
+    }
     auto rho = *targetConfiguration_->atomicDensity();
 
     /*
@@ -234,7 +243,10 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Retrieve the weighted S(Q)/F(Q)
         if (!dissolve.processingModuleData().contains("WeightedSQ", module->name()))
-            return Messenger::error("Weighted partials data not found for target '{}'.\n", module->name());
+        {
+            Messenger::error("Weighted partials data not found for target '{}'.\n", module->name());
+            return failed;
+        }
         const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->name());
 
         // Get source SQModule in order to have access to the unweighted S(Q)
@@ -243,18 +255,27 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         if (optSQModule)
             sqModule = optSQModule.value();
         if (!sqModule)
-            return Messenger::error(
+        {
+            Messenger::error(
                 "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
                 module->name());
+            return failed;
+        }
 
         // Retrieve the unweighted S(Q)/F(Q)
         if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->name()))
-            return Messenger::error("Unweighted partials data not found for target '{}'.\n", sqModule->name());
+        {
+            Messenger::error("Unweighted partials data not found for target '{}'.\n", sqModule->name());
+            return failed;
+        }
         const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->name());
 
         // Retrieve the ReferenceData
         if (!dissolve.processingModuleData().contains("ReferenceData", module->name()))
-            return Messenger::error("Reference data not found for target '{}'.\n", module->name());
+        {
+            Messenger::error("Reference data not found for target '{}'.\n", module->name());
+            return failed;
+        }
         const auto &originalReferenceData = dissolve.processingModuleData().value<Data1D>("ReferenceData", module->name());
 
         // Realise the r-factor array and make sure its object name is set
@@ -397,7 +418,10 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, feedback_)
                                       : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
-                return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
+            {
+                Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
+                return failed;
+            }
         }
         else if (module->type() == ModuleTypes::XRaySQ)
         {
@@ -427,11 +451,17 @@ bool EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
             if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, feedback_)
                                       : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
-                return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
+            {
+                Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
+                return failed;
+            }
         }
         else
-            return Messenger::error("Don't know how to add data from a module of type '{}' to the scattering matrix.",
+        {
+            Messenger::error("Don't know how to add data from a module of type '{}' to the scattering matrix.",
                                     ModuleTypes::moduleType(module->type()));
+            return failed;
+        }
 
         /*
          * Sum Unweighted S(Q)
