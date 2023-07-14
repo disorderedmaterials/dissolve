@@ -180,7 +180,7 @@ bool Module::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Keywor
 }
 
 // Run main processing stage
-enum executeProcessing Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Begin timer
     Timer timer;

@@ -9,7 +9,7 @@
 #include "templates/algorithms.h"
 
 // Run main processing
-bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+executionResult BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Bragg contributions.
@@ -20,7 +20,8 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return executionResult;
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
@@ -52,13 +53,13 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     bool alreadyUpToDate;
     if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, targetConfiguration_, qMin_, qDelta_, qMax_,
                              multiplicity_, alreadyUpToDate))
-        return false;
+        return failed;
 
     // If we are already up-to-date, then there's nothing more to do for this Configuration
     if (alreadyUpToDate)
     {
         Messenger::print("Bragg data is up-to-date for Configuration '{}'.\n", targetConfiguration_->name());
-        return true;
+        return notExecuted;
     }
 
     // Perform averaging of reflections data if requested
@@ -77,7 +78,7 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Attempt to load the specified file
         LineParser reflectionParser(&procPool);
         if (!reflectionParser.openInput(testReflectionsFile_))
-            return false;
+            return failed;
 
         // Retrieve BraggReflection data from the Configuration's module data
         const auto &braggReflections =
@@ -87,7 +88,7 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         while (!reflectionParser.eofOrBlank())
         {
             if (reflectionParser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
+                return failed;
 
             // Line format is : ArrayIndex  Q     h k l     mult    Intensity(0,0)  Intensity(0,1) ...
             auto id = reflectionParser.argi(0);
@@ -125,7 +126,8 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         if (nErrors == 0)
             Messenger::print("All data match.\n");
         else
-            return Messenger::error("Calculated and reference data are inconsistent.\n");
+            Messenger::error("Calculated and reference data are inconsistent.\n");
+            return failed;
     }
 
     // Save reflection data?
@@ -138,14 +140,14 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Open a file and save the basic reflection data
         LineParser braggParser(&procPool);
         if (!braggParser.openOutput(fmt::format("{}-Reflections.txt", name_)))
-            return false;
+            return failed;
         braggParser.writeLineF("#   ID      Q     h k l     mult    Intensity(0,0)\n");
         auto count = 0;
         for (const auto &reflxn : braggReflections)
         {
             if (!braggParser.writeLineF("{:6d}  {:10.6f} {} {} {} {:8d}  {:10.6e}\n", ++count, reflxn.q(), reflxn.hkl().x,
                                         reflxn.hkl().y, reflxn.hkl().z, reflxn.nKVectors(), reflxn.intensity(0, 0)))
-                return false;
+                return failed;
         }
         braggParser.closeFiles();
 
@@ -157,18 +159,18 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 LineParser intensityParser(&procPool);
                 if (!intensityParser.openOutput(fmt::format("{}-{}-{}.txt", name_, atd1.atomTypeName(), atd2.atomTypeName())))
-                    return false;
+                    return failed;
                 intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                 for (const auto &reflxn : braggReflections)
                     if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", reflxn.q(), reflxn.intensity(i, j)))
-                        return false;
+                        return failed;
                 intensityParser.closeFiles();
 
                 return EarlyReturn<bool>::Continue;
             });
         if (!success.value_or(true))
-            return false;
+            return failed;
     }
 
-    return true;
+    return success;
 }

@@ -152,11 +152,11 @@ enum executionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessP
 
     // Collect statistics across all processes
     if (!procPool.allSum(&nAccepted, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nAttempts, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return false;
+        return failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
@@ -181,5 +181,5 @@ enum executionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessP
     if (nAccepted > 0)
         targetConfiguration_->incrementContentsVersion();
 
-    return true;
+    return success;
 }

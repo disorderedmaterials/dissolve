@@ -12,11 +12,12 @@
 #include "modules/gr/gr.h"
 
 // Run main processing
-bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return failed;
 
     // Get options
     Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", nRepeats_, nRepeats_ == 1 ? "run" : "runs");
@@ -167,7 +168,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                           "Distributor (regional)", timing, save_);
     }
 
-    return true;
+    return success;
 }
 
 // Print timing information, assessing it against last value in existing timings (if found)

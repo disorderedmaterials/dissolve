@@ -50,23 +50,26 @@ bool AvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-bool AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return failed;
 
     // Grab Box pointer
     const auto *box = targetConfiguration_->box();
 
     // Get the target site
     if (!targetSite_)
-        return Messenger::error("No target site defined.\n");
+        Messenger::error("No target site defined.\n");
+        return failed;
 
     // Get site parent species
     auto *sp = targetSite_->parent();
     if (sp != targetSpecies_)
-        return Messenger::error("Internal error - target site parent is not the same as the target species.\n");
+        Messenger::error("Internal error - target site parent is not the same as the target species.\n");
+        return failed;
 
     Messenger::print("AvgMol: Target site (species) is {} ({}).\n", targetSite_->name(), targetSpecies_->name());
     if (exportFileAndFormat_.hasFilename())
@@ -119,8 +122,8 @@ bool AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (exportFileAndFormat_.hasFilename())
     {
         if (!exportFileAndFormat_.exportData(&averageSpecies_))
-            return false;
+            return failed;
     }
 
-    return true;
+    return success;
 }

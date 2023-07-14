@@ -83,5 +83,5 @@ class MDModule : public Module
      */
     private:
     // Run main processing
-    enum executeProcessing process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    enum executionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };
