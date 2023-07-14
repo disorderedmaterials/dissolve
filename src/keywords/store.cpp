@@ -296,7 +296,7 @@ SerialisedValue KeywordStore::serialiseOnto(SerialisedValue node) const
         if (!k.keyword()->isDefault())
         {
             auto value = k.keyword()->serialise();
-            if (!value.is_uninitialized())
+            if (k.type() != KeywordStoreData::KeywordType::Deprecated && !value.is_uninitialized())
                 node[toml_format(k.keyword()->name())] = value;
         }
     return node;
