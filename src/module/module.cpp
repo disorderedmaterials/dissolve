@@ -180,7 +180,7 @@ bool Module::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Keywor
 }
 
 // Run main processing stage
-bool Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
+enum executeProcessing Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Begin timer
     Timer timer;
@@ -191,7 +191,10 @@ bool Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Accumulate timing information
     timer.stop();
-    processTimes_ += timer.secondsElapsed();
+    if (result == success)
+    {
+        processTimes_ += timer.secondsElapsed();
+    } 
 
     return result;
 }

@@ -11,11 +11,12 @@
 #include "modules/md/md.h"
 
 // Run main processing
-bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executeProcessing MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return failed;
 
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
@@ -55,11 +56,11 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         auto stabilityResult = EnergyModule::checkStability(dissolve.processingModuleData(), targetConfiguration_);
         if (stabilityResult == EnergyModule::NotAssessable)
-            return false;
+            return failed;
         else if (stabilityResult == EnergyModule::EnergyUnstable)
         {
             Messenger::print("Skipping MD for Configuration '{}'.\n", targetConfiguration_->niceName());
-            return true;
+            return notExecuted;
         }
     }
 
@@ -177,12 +178,12 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
                 procPool.decideFalse();
-                return false;
+                return failed;
             }
             procPool.decideTrue();
         }
         else if (!procPool.decision())
-            return false;
+            return failed;
     }
 
     // Write header
@@ -222,7 +223,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         if (!determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound))
         {
             Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
-            return true;
+            return notExecuted;
         }
     }
 
@@ -336,7 +337,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 if (!trajParser.writeLine(header))
                 {
                     procPool.decideFalse();
-                    return false;
+                    return failed;
                 }
 
                 // Write Atoms
@@ -346,14 +347,14 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                                i.r().x, i.r().y, i.r().z))
                     {
                         procPool.decideFalse();
-                        return false;
+                        return failed;
                     }
                 }
 
                 procPool.decideTrue();
             }
             else if (!procPool.decision())
-                return false;
+                return failed;
         }
     }
     timer.stop();
@@ -376,5 +377,5 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      * Calculation End
      */
 
-    return true;
+    return success;
 }

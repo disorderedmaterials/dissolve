@@ -107,6 +107,13 @@ class Module : public Serialisable<const CoreData &>
     int frequency_;
     // Whether the Module is enabled
     bool enabled_;
+    // Process exit information
+    enum processExecuted
+    {
+        failed,
+        success,
+        notExecuted
+    };
 
     public:
     // Set frequency at which to run Module (relative to layer execution count)
@@ -138,7 +145,7 @@ class Module : public Serialisable<const CoreData &>
     // Run set-up stage
     virtual bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    bool executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
+    enum executeProcessing executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
 
     /*
      * Timing
