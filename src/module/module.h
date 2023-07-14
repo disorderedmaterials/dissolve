@@ -108,7 +108,7 @@ class Module : public Serialisable<const CoreData &>
     // Whether the Module is enabled
     bool enabled_;
     // Process exit information
-    enum processExecuted
+    enum executionResult
     {
         failed,
         success,

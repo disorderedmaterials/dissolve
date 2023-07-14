@@ -12,11 +12,12 @@
 #include "modules/atomShake/atomShake.h"
 
 // Run main processing
-bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return failed;
 
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
