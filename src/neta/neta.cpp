@@ -152,6 +152,10 @@ void NETADefinition::addIdentifier(std::string identifier) { identifiers_.insert
 // Return identifiers
 const std::set<std::string> &NETADefinition::identifiers() const { return identifiers_; }
 
+const Flags<NETADefinition::NETAFlags>& NETADefinition::flags() const { return flags_; }
+
+Flags<NETADefinition::NETAFlags>& NETADefinition::flags() { return flags_; }
+
 /*
  * Matching
  */

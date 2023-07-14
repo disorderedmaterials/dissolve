@@ -6,6 +6,7 @@
 #include "base/enumOptions.h"
 #include "neta/connection.h"
 #include "neta/matchedGroup.h"
+#include "templates/flags.h"
 
 // Forward Declarations
 class Forcefield;
@@ -19,6 +20,12 @@ class NETADefinition
     NETADefinition(const SpeciesAtom *i, int maxDepth = 1);
     ~NETADefinition() = default;
 
+    public:
+    enum NETAFlags
+    {
+        MatchHydrogens
+    };
+
     /*
      * Data
      */
@@ -31,6 +38,8 @@ class NETADefinition
     bool valid_;
     // Identifiers (#)
     std::set<std::string> identifiers_;
+    // Flags
+    Flags<NETAFlags> flags_;
 
     public:
     // Return root node pointer
@@ -51,6 +60,9 @@ class NETADefinition
     void addIdentifier(std::string identifier);
     // Return identifiers from definition
     const std::set<std::string> &identifiers() const;
+    // Return flags
+    const Flags<NETAFlags> &flags() const;
+    Flags<NETAFlags> &flags();
 
     /*
      * Matching
