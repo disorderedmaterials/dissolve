@@ -9,7 +9,7 @@
 #include <list>
 
 // Data3D Store
-class Data3DStore
+class Data3DStore : public Serialisable<const CoreData &>
 {
     public:
     Data3DStore() = default;
@@ -32,4 +32,8 @@ class Data3DStore
     OptionalReferenceWrapper<const Data3D> data(std::string_view name) const;
     // Return vector of all data
     const std::vector<std::shared_ptr<std::pair<Data3D, Data3DImportFileFormat>>> &data() const;
+    // Express as a serialisable value
+    SerialisedValue serialise() const override;
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
 };

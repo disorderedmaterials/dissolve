@@ -55,4 +55,6 @@ bool Data3DStoreKeyword::serialise(LineParser &parser, std::string_view keywordN
 }
 
 // Express as a serialisable value
-SerialisedValue Data3DStoreKeyword::serialise() const { throw std::runtime_error("Cannot serialise Data3DStoreKeyword"); }
+SerialisedValue Data3DStoreKeyword::serialise() const {
+  return data_;
+}
