@@ -4,9 +4,11 @@
 #include "classes/pairIterator.h"
 #include "classes/species.h"
 #include "gui/importCIFDialog.h"
+#include "neta/node.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/coordinateSets.h"
+#include "templates/algorithms.h"
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
@@ -147,7 +149,7 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             createSupercellSpecies();
             break;
         case (ImportCIFDialog::MolecularPage):
-            molecularCIF(); 
+            molecularCIF();
             break;
         case (ImportCIFDialog::SupercellPage):
             createPartitionedSpecies();
@@ -193,6 +195,7 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
 // Perform any final actions before the wizard is closed
 void ImportCIFDialog::finalise()
 {
+    return;
     auto *sp = dissolve_.copySpecies(distinctSpecies_.front());
     return;
     auto *supercell = temporaryCoreData_.findSpecies("Supercell");
@@ -520,95 +523,118 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         createCleanedSpecies();
 }
 
-
 bool ImportCIFDialog::molecularCIF()
 {
-    std::vector<std::vector<int>> matchedIndices;
-    std::vector<std::vector<const SpeciesAtom*>> matches;
-    cleanedSpecies_->addMissingBonds();
     // Need to find a unique atom to begin the definition from
-    auto firstDistinct = cleanedSpecies_->fragment(0);
-    std::sort(firstDistinct.begin(), firstDistinct.end());
-    auto *tempSpecies = temporaryCoreData_.addSpecies();
-    tempSpecies->copyBasic(cleanedSpecies_);
-    std::vector<int> initialRemove;
-    std::vector<int> allIndices(tempSpecies->nAtoms());
-    std::iota(allIndices.begin(), allIndices.end(), 0);
-    std::set_difference(allIndices.begin(), allIndices.end(), firstDistinct.begin(), firstDistinct.end(), std::back_inserter(initialRemove));
-    tempSpecies->removeAtoms(initialRemove);
 
-    Messenger::print("Removing {} atoms", initialRemove.size());
-    NETADefinition neta;
-    auto nDistinctMatches = 0;
-    auto idx = -1;
-    
-    while (nDistinctMatches != 1)
+    std::vector<std::vector<int>> fragments;
+
+    auto idx = 0;
+    std::vector<int> indices(cleanedSpecies_->nAtoms());
+    std::iota(indices.begin(), indices.end(), 0);
+    while (!indices.empty())
     {
-        if (idx+1 >= tempSpecies->nAtoms()) break;
-        nDistinctMatches = 0;
-        neta.create(&tempSpecies->atom(++idx), 128);
-        for (auto& i : tempSpecies->atoms()) 
-            if (neta.matches(&i))
-                nDistinctMatches++;
+        auto fragment = cleanedSpecies_->fragment(idx);
+        std::sort(fragment.begin(), fragment.end());
+        fragments.push_back(fragment);
+        indices.erase(std::remove_if(indices.begin(), indices.end(),
+                     [&](int value) {
+                         return std::find(fragment.begin(), fragment.end(), value) != fragment.end();
+                     }), indices.end());
+        idx = *std::min_element(indices.begin(), indices.end());
     }
-
-    Messenger::print("{} from {}, {}", neta.definitionString(), idx, Elements::symbol(tempSpecies->atom(idx).Z()));
-    auto* distinct = temporaryCoreData_.addSpecies();
-    distinct->copyBasic(cleanedSpecies_);
-    for (auto& i : cleanedSpecies_->atoms())
+    Messenger::print("There are {} total fragments", fragments.size());  
+    std::vector<NETADefinition> definitions;
+    for (auto& fragment : fragments)
     {
-        if (neta.matches(&i) && i.Z() == tempSpecies->atom(idx).Z())
+        auto *tempSpecies = temporaryCoreData_.addSpecies();
+        tempSpecies->copyBasic(cleanedSpecies_);
+        std::vector<int> allIndices(tempSpecies->nAtoms());
+        std::iota(allIndices.begin(), allIndices.end(), 0);
+        std::vector<int> indicesToRemove;
+        std::set_difference(allIndices.begin(), allIndices.end(), fragment.begin(), fragment.end(), std::back_inserter(indicesToRemove));
+        tempSpecies->removeAtoms(indicesToRemove);
+        Messenger::print("[{},{}, {}] {}", fragment.size(), tempSpecies->nAtoms(),cleanedSpecies_->nAtoms(), joinStrings(fragment, " "));
+        NETADefinition neta;
+        neta.flags() += NETADefinition::NETAFlags::MatchHydrogens;
+        auto nDistinctMatches = 0;
+        idx = 0;
+        while (nDistinctMatches != 1)
         {
-            Messenger::print("Checking {}", Elements::symbol(i.Z()));
-            auto matchedGroup = neta.matchedPath(&i);
-            auto matchedAtomsSet = matchedGroup.set();
-            std::vector<const SpeciesAtom*> matchedAtoms(matchedAtomsSet.size());
-            std::copy(matchedAtomsSet.begin(), matchedAtomsSet.end(), matchedAtoms.begin());
-            std::vector<int> indices(matchedAtoms.size());
-            std::transform(matchedAtomsSet.begin(), matchedAtomsSet.end(), indices.begin(),
-                           [](const auto &atom) { return atom->index(); });
-            matches.push_back(matchedAtoms);
-            matchedIndices.push_back(std::move(indices));
+            if (idx >= tempSpecies->nAtoms())
+                return false;
+            neta.create(&tempSpecies->atom(idx++), 128);
+
+            nDistinctMatches = 0;
+            for (auto& i : tempSpecies->atoms()) 
+                if (neta.matches(&i))
+                    nDistinctMatches++;
         }
+        Messenger::print("New NETA string {}", neta.definitionString());
+        definitions.push_back(neta); 
     }
-    for (auto& match : matches)
-    {
-        Messenger::print("{}", joinStrings(match, " ", [&](auto& at) {return Elements::name(at->Z());}));
-        Messenger::print("{}", joinStrings(match, " ", [&](auto& at) {return at->index();}));
-    }
-    Messenger::print("Found {} matching species, size {}", matches.size(), matches.front().size());
-    std::vector<int> indicesToRemove;
-    for (auto i = 1; i < matchedIndices.size(); ++i)
-    {
-        indicesToRemove.insert(indicesToRemove.end(), matchedIndices.at(i).begin(), matchedIndices.at(i).end());
-    }
-
-
-    distinct->removeAtoms(indicesToRemove);
+    std::sort(definitions.begin(), definitions.end(), [](const auto &a, const auto&b) {return a.definitionString() < b.definitionString();});
+    definitions.erase(std::unique(definitions.begin(), definitions.end(), [](const auto& a, const auto& b) {
+        return DissolveSys::sameString(a.definitionString(), b.definitionString());
+    }), definitions.end());
+    
+    Messenger::print("There are {} distinct species", definitions.size());
 
     auto* cfg = dissolve_.addConfiguration();
     auto& generator = cfg->generator();
     auto boxNode = generator.createRootNode<BoxProcedureNode>({});
     boxNode->keywords().set("Lengths", Vec3<NodeValue>(1.0, 1.0, 1.0));
     boxNode->keywords().set("Angles", Vec3<NodeValue>(90.0, 90.0, 90.0));
-    auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>("coords", distinct);
-    coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-    std::vector<std::vector<Vec3<double>>> coordinates;
-
-    for (auto& match : matches)
+    idx = 0;
+    for (auto& neta : definitions)
     {
-        std::vector<Vec3<double>> coords;
-        for (auto& i  : match)
-            coords.push_back(i->r());
-        Messenger::print("Created coordinate set of size {}", coords.size());
-        coordinates.push_back(std::move(coords));
-    }
-    distinctSpecies_.push_back(distinct);
-    coordsNode->setSets(coordinates);
-    Messenger::print("There are {} coordinate sets", coordsNode->nSets());
+        std::vector<std::vector<int>> matchedIndices;
+        std::vector<std::vector<const SpeciesAtom*>> matches;
+        auto* distinct = dissolve_.addSpecies();
+        distinct->copyBasic(cleanedSpecies_);
+        for (auto& i : distinct->atoms())
+        {
+            if (neta.matches(&i))
+            {
+                auto matchedGroup = neta.matchedPath(&i);
+                auto matchedAtomsSet = matchedGroup.set();
+                std::vector<const SpeciesAtom*> matchedAtoms(matchedAtomsSet.size());
+                std::copy(matchedAtomsSet.begin(), matchedAtomsSet.end(), matchedAtoms.begin());
+                std::vector<int> indices(matchedAtoms.size());
+                std::transform(matchedAtomsSet.begin(), matchedAtomsSet.end(), indices.begin(),
+                               [](const auto &atom) { return atom->index(); });
+                matches.push_back(matchedAtoms);
+                matchedIndices.push_back(std::move(indices));
+            }
+        }
 
-    auto addNode = generator.createRootNode<AddProcedureNode>("Species", coordsNode);
-    addNode->keywords().set("Population", NodeValue(int(coordinates.size())));
+        std::vector<int> allIndices(distinct->nAtoms());
+        std::iota(allIndices.begin(), allIndices.end(), 0);
+        std::vector<int> indicesToRemove;
+        std::set_difference(allIndices.begin(), allIndices.end(), matchedIndices.front().begin(), matchedIndices.front().end(), std::back_inserter(indicesToRemove));
+        distinct->removeAtoms(indicesToRemove);
+
+        auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("coords {}", idx), distinct);
+        coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
+        std::vector<std::vector<Vec3<double>>> coordinates;
+
+        for (auto& match : matches)
+        {
+            std::vector<Vec3<double>> coords;
+            for (auto& i : match)
+                coords.push_back(i->r());
+            Messenger::print("Created coordinate set of size {}", coords.size());
+            coordinates.push_back(std::move(coords));
+        }
+        distinctSpecies_.push_back(distinct);
+        coordsNode->setSets(coordinates);
+        Messenger::print("There are {} coordinate sets", coordsNode->nSets());
+
+        auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("species {}", idx++), coordsNode);
+        addNode->keywords().set("Population", NodeValue(int(coordinates.size())));
+
+    }
+
     return true;
 }
 
