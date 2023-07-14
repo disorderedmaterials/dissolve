@@ -8,6 +8,7 @@
 #include "gui/wizard.hui"
 #include "io/import/cif.h"
 #include "main/dissolve.h"
+#include "models/speciesModel.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -56,7 +57,7 @@ class ImportCIFDialog : public WizardDialog
         CIFInfoPage,          /* Basic CIF info page to check parsing */
         StructurePage,        /* Structure page */
         CleanedPage,          /* Cleaned structure page */
-        MolecularPage,        /* Molecular CIF page */
+        DistinctSpeciesPage,        /* Molecular CIF page */
         SupercellPage,        /* Options to create supercell */
         OutputSpeciesPage     /* Output Species page */
     };
@@ -137,10 +138,12 @@ class ImportCIFDialog : public WizardDialog
     void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
 
     private slots:
-    bool molecularCIF();
+    bool distinctSpecies();
+    void currentSpeciesChanged(const QItemSelection &current, const QItemSelection& previous);
 
     private:
-    std::vector<Species*> distinctSpecies_;
+    SpeciesModel speciesModel_;
+    std::vector<std::unique_ptr<Species>> species_;
     std::vector<std::vector<Vec3<double>>> coordinates_;
     Configuration *generatedConfiguration_;
     /*

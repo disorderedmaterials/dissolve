@@ -3,6 +3,7 @@
 
 #include "classes/pairIterator.h"
 #include "classes/species.h"
+#include "classes/empiricalFormula.h"
 #include "gui/importCIFDialog.h"
 #include "neta/node.h"
 #include "procedure/nodes/add.h"
@@ -27,8 +28,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::SelectSpaceGroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
     registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::CleanedPage);
-    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::MolecularPage);
-    registerPage(ImportCIFDialog::MolecularPage, "Mol", ImportCIFDialog::SupercellPage);
+    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::DistinctSpeciesPage);
+    registerPage(ImportCIFDialog::DistinctSpeciesPage, "Distinct Species", ImportCIFDialog::SupercellPage);
     registerPage(ImportCIFDialog::SupercellPage, "Create Supercell", ImportCIFDialog::OutputSpeciesPage);
     registerPage(ImportCIFDialog::OutputSpeciesPage, "Species Partitioning");
 
@@ -45,6 +46,10 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
             SLOT(createStructuralSpecies()));
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)),
             ui_.AssemblyView, SLOT(expandAll()));
+
+    ui_.SpeciesList->setModel(&speciesModel_);
+    ui_.SpeciesList->update();
+    connect(ui_.SpeciesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this, SLOT(currentSpeciesChanged(const QItemSelection&, const QItemSelection&)));
 
     // Update moiety NETA
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
@@ -147,9 +152,11 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             break;
         case (ImportCIFDialog::CleanedPage):
             createSupercellSpecies();
+            if(temporaryCoreData_.findSpecies("Supercell")->fragment(0).size() != temporaryCoreData_.findSpecies("Supercell")->nAtoms())
+                distinctSpecies();
             break;
-        case (ImportCIFDialog::MolecularPage):
-            molecularCIF();
+        case (ImportCIFDialog::DistinctSpeciesPage):
+            //distinctSpecies();
             break;
         case (ImportCIFDialog::SupercellPage):
             createPartitionedSpecies();
@@ -168,6 +175,8 @@ std::optional<int> ImportCIFDialog::determineNextPage(int currentIndex)
     if (currentIndex == ImportCIFDialog::SelectCIFFilePage)
         return cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
                                                                       : ImportCIFDialog::SelectSpaceGroupPage;
+    else if (currentIndex == ImportCIFDialog::CleanedPage)
+            return temporaryCoreData_.findSpecies("Supercell")->fragment(0).size() != temporaryCoreData_.findSpecies("Supercell")->nAtoms() ? ImportCIFDialog::DistinctSpeciesPage : ImportCIFDialog::SupercellPage;
     else
         return std::get<3>(getPage(currentIndex));
 }
@@ -196,7 +205,7 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
 void ImportCIFDialog::finalise()
 {
     return;
-    auto *sp = dissolve_.copySpecies(distinctSpecies_.front());
+    auto *sp = dissolve_.copySpecies(species_.front().get());
     return;
     auto *supercell = temporaryCoreData_.findSpecies("Supercell");
     assert(supercell);
@@ -523,9 +532,20 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         createCleanedSpecies();
 }
 
-bool ImportCIFDialog::molecularCIF()
+void ImportCIFDialog::currentSpeciesChanged(const QItemSelection &current, const QItemSelection& previous)
 {
-    // Need to find a unique atom to begin the definition from
+    if (current.empty())
+        ui_.ViewerWidget->setSpecies(nullptr);
+    else
+    {
+        auto species = speciesModel_.data(current.indexes().front(), Qt::UserRole).value<const Species*>();
+        Messenger::print("Selection changed! {}", species->name());
+        ui_.ViewerWidget->setSpecies(temporaryCoreData_.findSpecies(species->name()));
+    }
+}
+
+bool ImportCIFDialog::distinctSpecies()
+{
 
     std::vector<std::vector<int>> fragments;
 
@@ -543,7 +563,6 @@ bool ImportCIFDialog::molecularCIF()
                      }), indices.end());
         idx = *std::min_element(indices.begin(), indices.end());
     }
-    Messenger::print("There are {} total fragments", fragments.size());  
     std::vector<NETADefinition> definitions;
     for (auto& fragment : fragments)
     {
@@ -554,7 +573,6 @@ bool ImportCIFDialog::molecularCIF()
         std::vector<int> indicesToRemove;
         std::set_difference(allIndices.begin(), allIndices.end(), fragment.begin(), fragment.end(), std::back_inserter(indicesToRemove));
         tempSpecies->removeAtoms(indicesToRemove);
-        Messenger::print("[{},{}, {}] {}", fragment.size(), tempSpecies->nAtoms(),cleanedSpecies_->nAtoms(), joinStrings(fragment, " "));
         NETADefinition neta;
         neta.flags() += NETADefinition::NETAFlags::MatchHydrogens;
         auto nDistinctMatches = 0;
@@ -570,27 +588,19 @@ bool ImportCIFDialog::molecularCIF()
                 if (neta.matches(&i))
                     nDistinctMatches++;
         }
-        Messenger::print("New NETA string {}", neta.definitionString());
         definitions.push_back(neta); 
     }
     std::sort(definitions.begin(), definitions.end(), [](const auto &a, const auto&b) {return a.definitionString() < b.definitionString();});
     definitions.erase(std::unique(definitions.begin(), definitions.end(), [](const auto& a, const auto& b) {
         return DissolveSys::sameString(a.definitionString(), b.definitionString());
     }), definitions.end());
-    
-    Messenger::print("There are {} distinct species", definitions.size());
 
-    auto* cfg = dissolve_.addConfiguration();
-    auto& generator = cfg->generator();
-    auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-    boxNode->keywords().set("Lengths", Vec3<NodeValue>(1.0, 1.0, 1.0));
-    boxNode->keywords().set("Angles", Vec3<NodeValue>(90.0, 90.0, 90.0));
     idx = 0;
     for (auto& neta : definitions)
     {
         std::vector<std::vector<int>> matchedIndices;
         std::vector<std::vector<const SpeciesAtom*>> matches;
-        auto* distinct = dissolve_.addSpecies();
+        auto* distinct = temporaryCoreData_.addSpecies();
         distinct->copyBasic(cleanedSpecies_);
         for (auto& i : distinct->atoms())
         {
@@ -613,22 +623,40 @@ bool ImportCIFDialog::molecularCIF()
         std::vector<int> indicesToRemove;
         std::set_difference(allIndices.begin(), allIndices.end(), matchedIndices.front().begin(), matchedIndices.front().end(), std::back_inserter(indicesToRemove));
         distinct->removeAtoms(indicesToRemove);
-
-        auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("coords {}", idx), distinct);
-        coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-        std::vector<std::vector<Vec3<double>>> coordinates;
+        distinct->setName(EmpiricalFormula::formula(distinct->atoms(), [&](const auto& at){return at.Z();}));
+        species_.push_back(std::unique_ptr<Species>(distinct));
 
         for (auto& match : matches)
         {
             std::vector<Vec3<double>> coords;
             for (auto& i : match)
                 coords.push_back(i->r());
-            Messenger::print("Created coordinate set of size {}", coords.size());
-            coordinates.push_back(std::move(coords));
+            coordinates_.push_back(std::move(coords));
         }
+
+    }
+    speciesModel_.setData(species_);
+    Messenger::print("{}", speciesModel_.rowCount(QModelIndex()));
+    ui_.SpeciesList->update();
+    return true;
+
+}
+
+/*bool ImportCIFDialog::molecularCIF()
+{
+    // Need to find a unique atom to begin the definition from
+    
+
+    auto* cfg = dissolve_.addConfiguration();
+    auto& generator = cfg->generator();
+    auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+    boxNode->keywords().set("Lengths", Vec3<NodeValue>(1.0, 1.0, 1.0));
+    boxNode->keywords().set("Angles", Vec3<NodeValue>(90.0, 90.0, 90.0));
+
+        auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("coords {}", idx), distinct);
+        coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
         distinctSpecies_.push_back(distinct);
         coordsNode->setSets(coordinates);
-        Messenger::print("There are {} coordinate sets", coordsNode->nSets());
 
         auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("species {}", idx++), coordsNode);
         addNode->keywords().set("Population", NodeValue(int(coordinates.size())));
@@ -636,7 +664,7 @@ bool ImportCIFDialog::molecularCIF()
     }
 
     return true;
-}
+}*/
 
 /*
  * Supercell Page

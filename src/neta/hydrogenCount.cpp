@@ -43,10 +43,7 @@ int NETAHydrogenCountNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPa
         {
             nH++;
             if (parent_->flags().isSet(NETADefinition::NETAFlags::MatchHydrogens))
-            {
-                Messenger::print("Flag is set!");
                 newMatchPath.insert(bond.get().partner(i));
-            }
         }
     }
     matchPath = newMatchPath;
