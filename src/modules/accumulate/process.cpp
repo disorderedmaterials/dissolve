@@ -22,11 +22,12 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 }
 
 // Run main processing
-bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executeProcessing AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Get the modules and decide on the PartialSet data name we're looking for
     if (targetModules_.empty())
-        return Messenger::error("No target modules set.");
+        Messenger::error("No target modules set.");
+        return failed;
 
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
@@ -41,14 +42,16 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         auto targetDataIt = std::find_if(validTargets.begin(), validTargets.end(),
                                          [targetModule](const auto &target) { return target.first == targetModule->type(); });
         if (targetDataIt == validTargets.end())
-            return Messenger::error("Module of type '{}' is not a valid target.\n",
+            Messenger::error("Module of type '{}' is not a valid target.\n",
                                     ModuleTypes::moduleType(targetModule->type()));
+            return failed;
 
         auto dataName = targetDataIt->second[targetPartialSet_];
         if (dataName.empty())
-            return Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
+            Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
                                     targetPartialSet().keyword(targetPartialSet_),
                                     ModuleTypes::moduleType(targetModule->type()));
+            return failed;
 
         // Find the target data
         auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
@@ -56,7 +59,7 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         {
             Messenger::print("Target PartialSet data '{}' in module '{}' does not yet exist.\n",
                              targetPartialSet().keyword(targetPartialSet_), targetModule->name());
-            return true;
+            return notExecuted;
         }
 
         // Realise the accumulated partial set
@@ -72,8 +75,8 @@ bool AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
         if (save_ && !(MPIRunMaster(procPool, accumulated.save(fmt::format("{}-{}", name(), targetModule->name()), dataName,
                                                                suffixes[targetPartialSet_], units[targetPartialSet_]))))
-            return false;
+            return failed;
     }
 
-    return true;
+    return success;
 }
