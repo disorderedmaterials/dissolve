@@ -99,9 +99,11 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override {
-      if (data_) return data_->name();
-      return {};
+    SerialisedValue serialise() const override
+    {
+        if (data_)
+            return data_->name();
+        return {};
     }
 
     // Read values from a serialisable value

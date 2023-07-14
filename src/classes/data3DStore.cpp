@@ -44,7 +44,6 @@ OptionalReferenceWrapper<const Data3D> Data3DStore::data(std::string_view name) 
 // Return vector of all data
 const std::vector<std::shared_ptr<std::pair<Data3D, Data3DImportFileFormat>>> &Data3DStore::data() const { return data_; }
 
-
 // Express as a serialisable value
 SerialisedValue Data3DStore::serialise() const
 {

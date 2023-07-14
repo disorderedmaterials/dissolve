@@ -55,6 +55,4 @@ bool Data3DStoreKeyword::serialise(LineParser &parser, std::string_view keywordN
 }
 
 // Express as a serialisable value
-SerialisedValue Data3DStoreKeyword::serialise() const {
-  return data_;
-}
+SerialisedValue Data3DStoreKeyword::serialise() const { return data_; }
