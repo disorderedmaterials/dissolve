@@ -754,23 +754,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="ImportCIFDistinctSpeciesPage">
-      <layout class="QHBoxLayout" name="horizontalLayout_15">
-       <item>
-        <widget class="QListView" name="SpeciesList"/>
-       </item>
-       <item>
-        <widget class="SpeciesWidget" name="ViewerWidget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>3</horstretch>
-           <verstretch>2</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="ImportCIFSupercellPage">
       <layout class="QHBoxLayout" name="horizontalLayout_11">
        <property name="spacing">
@@ -1732,12 +1715,6 @@
    <class>ConfigurationViewerWidget</class>
    <extends>QWidget</extends>
    <header>gui/configurationViewerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SpeciesWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/speciesWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

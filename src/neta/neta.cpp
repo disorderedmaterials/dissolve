@@ -100,7 +100,7 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDept
     // Add this atom to the path
     path.push_back(i);
 
-    auto neta = fmt::format("nbonds={}", i->nBonds());
+    auto neta = fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()),i->nBonds());
 
     // Add on each connected atom, provided it is not already in the path
     auto nH = 0;

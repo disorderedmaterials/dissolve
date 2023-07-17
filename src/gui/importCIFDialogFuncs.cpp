@@ -28,8 +28,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     registerPage(ImportCIFDialog::SelectSpaceGroupPage, "Choose Space Group", ImportCIFDialog::CIFInfoPage);
     registerPage(ImportCIFDialog::CIFInfoPage, "CIF Information", ImportCIFDialog::StructurePage);
     registerPage(ImportCIFDialog::StructurePage, "Basic Structure", ImportCIFDialog::CleanedPage);
-    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::DistinctSpeciesPage);
-    registerPage(ImportCIFDialog::DistinctSpeciesPage, "Distinct Species", ImportCIFDialog::SupercellPage);
+    registerPage(ImportCIFDialog::CleanedPage, "Clean Structure", ImportCIFDialog::SupercellPage);
     registerPage(ImportCIFDialog::SupercellPage, "Create Supercell", ImportCIFDialog::OutputSpeciesPage);
     registerPage(ImportCIFDialog::OutputSpeciesPage, "Species Partitioning");
 
@@ -47,10 +46,6 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)),
             ui_.AssemblyView, SLOT(expandAll()));
 
-    ui_.SpeciesList->setModel(&speciesModel_);
-    ui_.SpeciesList->update();
-    connect(ui_.SpeciesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this, SLOT(currentSpeciesChanged(const QItemSelection&, const QItemSelection&)));
-
     // Update moiety NETA
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 
@@ -59,6 +54,8 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     structureConfiguration_->setName("Crystal");
     cleanedConfiguration_ = temporaryCoreData_.addConfiguration();
     cleanedConfiguration_->setName("Crystal (Cleaned)");
+    generatedConfiguration_= temporaryCoreData_.addConfiguration();
+    generatedConfiguration_->setName("Reconstruction");
     supercellConfiguration_ = temporaryCoreData_.addConfiguration();
     supercellConfiguration_->setName("Supercell");
     partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
@@ -113,7 +110,7 @@ bool ImportCIFDialog::progressionAllowed(int index) const
             return ui_.SpaceGroupsList->currentRow() != -1;
         case (ImportCIFDialog::OutputSpeciesPage):
             // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
-            if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
+            if (species_.empty() && (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked()))
                 return ui_.PartitioningIndicator->state() == CheckIndicator::OKState;
             break;
         default:
@@ -151,12 +148,9 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
                 return false;
             break;
         case (ImportCIFDialog::CleanedPage):
-            createSupercellSpecies();
-            if(temporaryCoreData_.findSpecies("Supercell")->fragment(0).size() != temporaryCoreData_.findSpecies("Supercell")->nAtoms())
+            if(cleanedSpecies_->fragment(0).size() != cleanedSpecies_->nAtoms())
                 distinctSpecies();
-            break;
-        case (ImportCIFDialog::DistinctSpeciesPage):
-            //distinctSpecies();
+            createSupercellSpecies();
             break;
         case (ImportCIFDialog::SupercellPage):
             createPartitionedSpecies();
@@ -175,8 +169,6 @@ std::optional<int> ImportCIFDialog::determineNextPage(int currentIndex)
     if (currentIndex == ImportCIFDialog::SelectCIFFilePage)
         return cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
                                                                       : ImportCIFDialog::SelectSpaceGroupPage;
-    else if (currentIndex == ImportCIFDialog::CleanedPage)
-            return temporaryCoreData_.findSpecies("Supercell")->fragment(0).size() != temporaryCoreData_.findSpecies("Supercell")->nAtoms() ? ImportCIFDialog::DistinctSpeciesPage : ImportCIFDialog::SupercellPage;
     else
         return std::get<3>(getPage(currentIndex));
 }
@@ -204,30 +196,54 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
 // Perform any final actions before the wizard is closed
 void ImportCIFDialog::finalise()
 {
-    return;
-    auto *sp = dissolve_.copySpecies(species_.front().get());
-    return;
-    auto *supercell = temporaryCoreData_.findSpecies("Supercell");
-    assert(supercell);
-
-    if (ui_.OutputFrameworkRadio->isChecked())
+    if (species_.empty())
     {
-        // Just copy the species
-        supercell->updateIntramolecularTerms();
-        auto *sp = dissolve_.copySpecies(supercell);
-        sp->setName(cifImporter_.chemicalFormula());
+        auto *supercell = temporaryCoreData_.findSpecies("Supercell");
+        assert(supercell);
+
+        if (ui_.OutputFrameworkRadio->isChecked())
+        {
+            // Just copy the species
+            supercell->updateIntramolecularTerms();
+            auto *sp = dissolve_.copySpecies(supercell);
+            sp->setName(cifImporter_.chemicalFormula());
+        }
+        else if (ui_.OutputSupermoleculeRadio->isChecked())
+        {
+            // Copy the species
+            supercell->updateIntramolecularTerms();
+            auto *sp = dissolve_.copySpecies(supercell);
+            sp->setName(cifImporter_.chemicalFormula());
+
+            // Remove the unit cell and any cell-crossing bonds
+            sp->removePeriodicBonds();
+            sp->updateIntramolecularTerms();
+            sp->removeBox();
+        }
     }
-    else if (ui_.OutputSupermoleculeRadio->isChecked())
+    else 
     {
-        // Copy the species
-        supercell->updateIntramolecularTerms();
-        auto *sp = dissolve_.copySpecies(supercell);
-        sp->setName(cifImporter_.chemicalFormula());
+        auto* cfg = dissolve_.addConfiguration();
+        cfg->setName(cifImporter_.chemicalFormula());
+        auto cellLengths = cifImporter_.getCellLengths();
+        auto cellAngles = cifImporter_.getCellAngles();
+        cfg->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+        auto& generator = cfg->generator();
 
-        // Remove the unit cell and any cell-crossing bonds
-        sp->removePeriodicBonds();
-        sp->updateIntramolecularTerms();
-        sp->removeBox();
+        for (auto i = 0; i < species_.size(); ++i)
+        {
+            auto *sp = dissolve_.copySpecies(species_.at(i));
+
+            auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets {}", i), sp);
+            coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
+            coordsNode->setSets(coordinates_.at(i));
+
+            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add {}", i), coordsNode);
+            addNode->keywords().set("Population", NodeValue(int(coordinates_.at(i).size())));
+            addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
+            addNode->keywords().set("Rotate", false);
+            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+        }
     }
 }
 
@@ -532,18 +548,6 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         createCleanedSpecies();
 }
 
-void ImportCIFDialog::currentSpeciesChanged(const QItemSelection &current, const QItemSelection& previous)
-{
-    if (current.empty())
-        ui_.ViewerWidget->setSpecies(nullptr);
-    else
-    {
-        auto species = speciesModel_.data(current.indexes().front(), Qt::UserRole).value<const Species*>();
-        Messenger::print("Selection changed! {}", species->name());
-        ui_.ViewerWidget->setSpecies(temporaryCoreData_.findSpecies(species->name()));
-    }
-}
-
 bool ImportCIFDialog::distinctSpecies()
 {
 
@@ -563,6 +567,7 @@ bool ImportCIFDialog::distinctSpecies()
                      }), indices.end());
         idx = *std::min_element(indices.begin(), indices.end());
     }
+    Messenger::print("There are {} fragments", fragments.size());
     std::vector<NETADefinition> definitions;
     for (auto& fragment : fragments)
     {
@@ -590,11 +595,13 @@ bool ImportCIFDialog::distinctSpecies()
         }
         definitions.push_back(neta); 
     }
+    Messenger::print("There are {} NETA definitions (producing a single match in a single fragment)", definitions.size());
+    Messenger::print("{}", joinStrings(definitions, " ** ", [&](const auto n){return n.definitionString();}));
     std::sort(definitions.begin(), definitions.end(), [](const auto &a, const auto&b) {return a.definitionString() < b.definitionString();});
     definitions.erase(std::unique(definitions.begin(), definitions.end(), [](const auto& a, const auto& b) {
         return DissolveSys::sameString(a.definitionString(), b.definitionString());
     }), definitions.end());
-
+    Messenger::print("There are {} unique NETA definitions, so {} distinct species", definitions.size(), definitions.size());
     idx = 0;
     for (auto& neta : definitions)
     {
@@ -624,47 +631,21 @@ bool ImportCIFDialog::distinctSpecies()
         std::set_difference(allIndices.begin(), allIndices.end(), matchedIndices.front().begin(), matchedIndices.front().end(), std::back_inserter(indicesToRemove));
         distinct->removeAtoms(indicesToRemove);
         distinct->setName(EmpiricalFormula::formula(distinct->atoms(), [&](const auto& at){return at.Z();}));
-        species_.push_back(std::unique_ptr<Species>(distinct));
-
+        species_.push_back(distinct);
+        std::vector<std::vector<Vec3<double>>> coordinates;
+        Messenger::print("Including the reference, there are {} copies of {}", matches.size(), distinct->name());
         for (auto& match : matches)
         {
             std::vector<Vec3<double>> coords;
             for (auto& i : match)
                 coords.push_back(i->r());
-            coordinates_.push_back(std::move(coords));
+            coordinates.push_back(std::move(coords));
         }
-
+        coordinates_.push_back(std::move(coordinates));
     }
-    speciesModel_.setData(species_);
-    Messenger::print("{}", speciesModel_.rowCount(QModelIndex()));
-    ui_.SpeciesList->update();
     return true;
 
 }
-
-/*bool ImportCIFDialog::molecularCIF()
-{
-    // Need to find a unique atom to begin the definition from
-    
-
-    auto* cfg = dissolve_.addConfiguration();
-    auto& generator = cfg->generator();
-    auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-    boxNode->keywords().set("Lengths", Vec3<NodeValue>(1.0, 1.0, 1.0));
-    boxNode->keywords().set("Angles", Vec3<NodeValue>(90.0, 90.0, 90.0));
-
-        auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("coords {}", idx), distinct);
-        coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-        distinctSpecies_.push_back(distinct);
-        coordsNode->setSets(coordinates);
-
-        auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("species {}", idx++), coordsNode);
-        addNode->keywords().set("Population", NodeValue(int(coordinates.size())));
-
-    }
-
-    return true;
-}*/
 
 /*
  * Supercell Page
@@ -746,42 +727,50 @@ void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { createSupercellSp
 // Create partitioned species from CIF data
 bool ImportCIFDialog::createPartitionedSpecies()
 {
-    ui_.PartitioningViewer->setConfiguration(nullptr);
-    partitioningConfiguration_->clear();
-
-    // Set up the basic configuration
-    auto *sp = temporaryCoreData_.findSpecies("Supercell");
-    assert(sp);
-    partitioningConfiguration_->createBoxAndCells(sp->box()->axisLengths(), sp->box()->axisAngles(), false, 1.0);
-
-    auto validSpecies = true;
-
-    if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
+    if (species_.empty())
     {
-        // Add the supercell species to the configuration
-        partitioningConfiguration_->addMolecule(sp);
-        partitioningConfiguration_->updateObjectRelationships();
 
-        // Update the indicator and label
-        sp->clearAtomSelection();
-        auto selection = sp->fragment(0);
-        /*if (selection.size() != sp->nAtoms())
+        ui_.PartitioningViewer->setConfiguration(nullptr);
+        partitioningConfiguration_->clear();
+
+        // Set up the basic configuration
+        auto *sp = temporaryCoreData_.findSpecies("Supercell");
+        assert(sp);
+        partitioningConfiguration_->createBoxAndCells(sp->box()->axisLengths(), sp->box()->axisAngles(), false, 1.0);
+
+        auto validSpecies = true;
+
+        if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
         {
-            ui_.PartitioningIndicator->setOK(false);
-            ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
-                                           "simulation. Choose a different partitioning.");
+            // Add the supercell species to the configuration
+            partitioningConfiguration_->addMolecule(sp);
+            partitioningConfiguration_->updateObjectRelationships();
 
-            validSpecies = false;
-        }*/
+            // Update the indicator and label
+            sp->clearAtomSelection();
+            auto selection = sp->fragment(0);
+            if (selection.size() != sp->nAtoms())
+            {
+                ui_.PartitioningIndicator->setOK(false);
+                ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
+                                               "simulation. Choose a different partitioning.");
+
+                validSpecies = false;
+            }
+        }
+
+        ui_.PartitioningViewer->setConfiguration(partitioningConfiguration_);
+
+        if (validSpecies)
+        {
+            ui_.PartitioningIndicator->setOK(true);
+            ui_.PartitioningLabel->setText("Species are valid.");
+        }
     }
-
-    ui_.PartitioningViewer->setConfiguration(partitioningConfiguration_);
-
-    if (validSpecies)
+    else 
     {
-        ui_.PartitioningIndicator->setOK(true);
-        ui_.PartitioningLabel->setText("Species are valid.");
+        ui_.PartitioningLayoutWidget->setEnabled(false);
+        ui_.PartitioningViewFrame->setEnabled(false);
     }
-
     return true;
 }
