@@ -75,7 +75,9 @@ bool ModuleModel::setData(const QModelIndex &index, const QVariant &value, int r
             {
                 if (exclusiveTypeChecking_)
                 {
-                    if (std::find_if(checkedItems_->get().cbegin(), checkedItems_->get().cend(), [m] (const auto& module) { return module != m && module->type() == m->type(); }) != checkedItems_->get().cend())
+                    if (std::find_if(checkedItems_->get().cbegin(), checkedItems_->get().cend(),
+                                     [m](const auto &module)
+                                     { return module != m && module->type() == m->type(); }) != checkedItems_->get().cend())
                         return false;
                 }
                 checkedItems_->get().push_back(m);

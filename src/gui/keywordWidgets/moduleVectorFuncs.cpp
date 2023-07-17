@@ -18,6 +18,7 @@ ModuleVectorKeywordWidget::ModuleVectorKeywordWidget(QWidget *parent, ModuleVect
     ui_.setupUi(dropWidget());
 
     // Set up the model
+    moduleModel_.setExclusiveTypeChecking(true);
     ui_.ModuleList->setModel(&moduleModel_);
     moduleModel_.setCheckStateData(keyword_->data());
     resetModelData();
