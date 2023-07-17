@@ -52,14 +52,16 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
             return Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
 
         // Check the module's type if we can
-        if (!moduleTypes_.empty() &&
+         else if (!moduleTypes_.empty() &&
             std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(),
                          [module](const auto &type) { return type == module->type(); }) == moduleTypes_.cend())
             return Messenger::error("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                     parser.argsv(n), ModuleTypes::moduleType(module->type()), name(),
                                     joinStrings(moduleTypes_));
-
-        data_.emplace_back(module);
+         else if (!data_.empty() && std::find_if(data_.cbegin(), data_.cend(), [module](const auto& m) { return m->type() == module->type(); }) != data_.cend())
+            Messenger::warn("Module '{}' is of type '{}', but a module of that type has already been added.\n", parser.argsv(n), ModuleTypes::moduleType(module->type()));
+        else
+            data_.emplace_back(module);
     }
 
     return true;
