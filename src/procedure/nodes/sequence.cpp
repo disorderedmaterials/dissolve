@@ -474,6 +474,7 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
     const auto blockTerminationKeyword = fmt::format("End{}", blockKeyword_);
 
     // Read until we encounter the block-ending keyword, or we fail for some reason
+    auto errorsEncountered = false;
     while (!parser.eofOrBlank())
     {
         // Read and parse the next line
@@ -488,6 +489,7 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
         if (!ProcedureNode::nodeTypes().isValid(parser.argsv(0)))
         {
             Messenger::error("Unrecognised node type '{}' found.\n", parser.argsv(0));
+            errorsEncountered = true;
             continue;
         }
 
@@ -496,8 +498,11 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
 
         // Set the name of the node if it is required / provided
         if (newNode->mustBeNamed() && !parser.hasArg(1))
+        {
             Messenger::error("A name must be given explicitly to a node of type {}.\n",
                              ProcedureNode::nodeTypes().keyword(newNode->type()));
+            errorsEncountered = true;
+        }
 
         if (parser.hasArg(1))
         {
@@ -514,10 +519,13 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
 
         // Read the new node
         if (!newNode->deserialise(parser, coreData))
+        {
             Messenger::error("Failed to read node sequence.\n");
+            errorsEncountered = true;
+        }
     }
 
-    return true;
+    return !errorsEncountered;
 }
 
 // Write structure to specified LineParser
