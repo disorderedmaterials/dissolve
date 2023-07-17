@@ -61,7 +61,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
             case (ConfigurationBlock::GeneratorKeyword):
                 if (!cfg->generator().deserialise(parser, dissolve->coreData()))
                 {
-                    Messenger::error("Failed to read generator procedure for Configuration.\n");
+                    Messenger::error("Errors while reading generator procedure for Configuration.\n");
                     errorsEncountered = true;
                 }
                 break;
