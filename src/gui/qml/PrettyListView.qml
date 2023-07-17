@@ -4,31 +4,31 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 ListView {
-    id: control;
+    id: control
+    signal selected
 
-    signal selected();
+    delegate: Text {
+        property variant fullData: model
 
-    delegate:
-    Text {
-	property variant fullData: model;
-	text: display;
-	padding: 2;
-	color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text;
-	MouseArea {
-	    height: parent.height;
-	    width: control.width;
-	    onClicked: {
-		control.currentIndex = index;
-		control.focus = true;
-	    }
-	    onDoubleClicked: {
-		control.currentIndex = index;
-		selected();
-	    }
-	}
+        color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text
+        padding: 2
+        text: display
+
+        MouseArea {
+            height: parent.height
+            width: control.width
+
+            onClicked: {
+                control.currentIndex = index;
+                control.focus = true;
+            }
+            onDoubleClicked: {
+                control.currentIndex = index;
+                selected();
+            }
+        }
     }
-    highlight:
-    Rectangle {
-	color: palette.active.highlight;
+    highlight: Rectangle {
+        color: palette.active.highlight
     }
 }

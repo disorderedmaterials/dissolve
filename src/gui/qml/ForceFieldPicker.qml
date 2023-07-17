@@ -4,68 +4,74 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 Item {
-    id: control;
-    property variant dialogModel;
-    signal selected();
+    id: control
+
+    property variant dialogModel
+
+    signal selected
+
+    Component.onCompleted: ffList.forceActiveFocus()
 
     Binding {
-	target: dialogModel
-	property: "ff";
-	value: ffList.currentItem == null ? null : ffList.currentItem.fullData.raw;
-    }
-
-
-    GroupBox {
-	title: "Select Forcefield";
-	anchors.top: parent.top;
-	height: parent.height/2;
-	width: parent.width;
-	TextField {
-	    id: ffFilter;
-	    anchors.top: parent.top;
-	    anchors.right: parent.right;
-	    placeholderText: qsTr("Filter");
-	    onTextEdited: dialogModel.forcefields.setFilterFixedString(text);
-
-	}
-	Image {
-	    anchors.top: ffFilter.top;
-	    anchors.bottom: ffFilter.bottom;
-	    anchors.right: ffFilter.left;
-	    source: "qrc:/general/icons/general_filter.svg";
-	    fillMode: Image.PreserveAspectFit;
-	}
-	Rectangle {
-	    width: parent.width;
-	    anchors.top: ffFilter.bottom;
-	    anchors.bottom: parent.bottom;
-	    color: palette.active.base;
-	    PrettyListView {
-		id: ffList;
-		anchors.fill: parent;
-		clip: true;
-		focus: true;
-		currentIndex: -1;
-		model: dialogModel.forcefields;
-		onSelected: control.selected();
-	    }
-	}
+        property: "ff"
+        target: dialogModel
+        value: ffList.currentItem == null ? null : ffList.currentItem.fullData.raw
     }
     GroupBox {
-	title: "Forcefield Description";
-	width: parent.width;
-	height: parent.height/2-5;
-	anchors.bottom: parent.bottom;
-	Rectangle {
-	    anchors.fill:parent;
-	    color: palette.active.base;
-	    TextArea {
-		readOnly: true;
-		anchors.fill: parent;
-		text: ffList.currentItem == null ? "" : ffList.currentItem.fullData.description;
-		wrapMode: TextEdit.Wrap;
-	    }
-	}
+        anchors.top: parent.top
+        height: parent.height / 2
+        title: "Select Forcefield"
+        width: parent.width
+
+        TextField {
+            id: ffFilter
+            anchors.right: parent.right
+            anchors.top: parent.top
+            placeholderText: qsTr("Filter")
+
+            onTextEdited: dialogModel.forcefields.setFilterFixedString(text)
+        }
+        Image {
+            anchors.bottom: ffFilter.bottom
+            anchors.right: ffFilter.left
+            anchors.top: ffFilter.top
+            fillMode: Image.PreserveAspectFit
+            source: "qrc:/general/icons/general_filter.svg"
+        }
+        Rectangle {
+            anchors.bottom: parent.bottom
+            anchors.top: ffFilter.bottom
+            color: palette.active.base
+            width: parent.width
+
+            PrettyListView {
+                id: ffList
+                anchors.fill: parent
+                clip: true
+                currentIndex: -1
+                focus: true
+                model: dialogModel.forcefields
+
+                onSelected: control.selected()
+            }
+        }
     }
-    Component.onCompleted: ffList.forceActiveFocus();
+    GroupBox {
+        anchors.bottom: parent.bottom
+        height: parent.height / 2 - 5
+        title: "Forcefield Description"
+        width: parent.width
+
+        Rectangle {
+            anchors.fill: parent
+            color: palette.active.base
+
+            TextArea {
+                anchors.fill: parent
+                readOnly: true
+                text: ffList.currentItem == null ? "" : ffList.currentItem.fullData.description
+                wrapMode: TextEdit.Wrap
+            }
+        }
+    }
 }

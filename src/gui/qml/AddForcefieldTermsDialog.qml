@@ -5,75 +5,72 @@ import QtQuick.Layouts
 import Dissolve
 
 Page {
-    id: root;
-    visible: true;
-    anchors.fill: parent;
-
-    palette.buttonText: palette.active.text;
-    font.pointSize: 10;
+    id: root
+    anchors.fill: parent
+    font.pointSize: 10
+    palette.buttonText: palette.active.text
+    visible: true
 
     AddForcefieldDialogModel {
-	id: dialogModel;
-	objectName: "dialogModel";
+        id: dialogModel
+        objectName: "dialogModel"
     }
-
     StackLayout {
-	id: stack;
-	anchors.top: parent.top;
-	anchors.left: parent.left;
-	anchors.right: parent.right;
-	anchors.bottom: nextButton.top;
-	currentIndex: dialogModel.index;
+        id: stack
+        anchors.bottom: nextButton.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        currentIndex: dialogModel.index
 
-	ForceFieldPicker {
-	    id: ffList;
-	    dialogModel: dialogModel;
-	    onSelected: nextButton.clicked();
-	}
+        ForceFieldPicker {
+            id: ffList
+            dialogModel: dialogModel
 
-	ForceFieldAssign {
-	    dialogModel: dialogModel;
-	}
-
-	ForceFieldAtomTypes {
-	    id: ffAtomTypes;
-	    dialogModel: dialogModel;
-	}
-
-	ForceFieldIntra {
-	    dialogModel: dialogModel;
-	}
-
-	ForceFieldMaster {
-	    dialogModel: dialogModel;
-	}
-    }
-
-    Button {
-	text: "Cancel";
-	icon.source: "qrc:/general/icons/general_false.svg";
-	icon.name: "dialog-cancel";
-	anchors.bottom: parent.bottom;
-	anchors.left: parent.left;
-	onClicked: dialogModel.cancel();
+            onSelected: nextButton.clicked()
+        }
+        ForceFieldAssign {
+            dialogModel: dialogModel
+        }
+        ForceFieldAtomTypes {
+            id: ffAtomTypes
+            dialogModel: dialogModel
+        }
+        ForceFieldIntra {
+            dialogModel: dialogModel
+        }
+        ForceFieldMaster {
+            dialogModel: dialogModel
+        }
     }
     Button {
-	id: nextButton;
-	enabled: dialogModel.progressionAllowed;
-	text: dialogModel.atEnd ? "Finish" : "Next";
-	icon.source: dialogModel.atEnd ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_arrowright.svg";
-	icon.name: dialogModel.atEnd ? "dialog-ok" : "go-next";
-	anchors.bottom: parent.bottom;
-	anchors.right: parent.right;
-	onClicked: dialogModel.next();
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        icon.name: "dialog-cancel"
+        icon.source: "qrc:/general/icons/general_false.svg"
+        text: "Cancel"
+
+        onClicked: dialogModel.cancel()
     }
     Button {
-	text: "Back";
-	icon.source: "qrc:/general/icons/general_arrowleft.svg";
-	icon.name: "go-previous";
-	anchors.bottom: parent.bottom;
-	anchors.right: nextButton.left;
-	enabled: dialogModel.index > 0;
-	onClicked: dialogModel.back();
+        id: nextButton
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        enabled: dialogModel.progressionAllowed
+        icon.name: dialogModel.atEnd ? "dialog-ok" : "go-next"
+        icon.source: dialogModel.atEnd ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_arrowright.svg"
+        text: dialogModel.atEnd ? "Finish" : "Next"
+
+        onClicked: dialogModel.next()
+    }
+    Button {
+        anchors.bottom: parent.bottom
+        anchors.right: nextButton.left
+        enabled: dialogModel.index > 0
+        icon.name: "go-previous"
+        icon.source: "qrc:/general/icons/general_arrowleft.svg"
+        text: "Back"
+
+        onClicked: dialogModel.back()
     }
 }

@@ -3,103 +3,98 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Item {
-    property variant dialogModel;
+    property variant dialogModel
+
+    Component.onCompleted: atList.forceActiveFocus()
 
     Rectangle {
-	anchors.top: parent.top;
-	anchors.left: parent.left;
-	anchors.right: prefixButton.left;
-	anchors.bottom: overwrite.top;
-	height: 400;
-	color: palette.active.base;
-	IconListView {
-	    id: atList;
-	    anchors.fill: parent;
-	    model: dialogModel.atomTypes;
-	}
+        anchors.bottom: overwrite.top
+        anchors.left: parent.left
+        anchors.right: prefixButton.left
+        anchors.top: parent.top
+        color: palette.active.base
+        height: 400
+
+        IconListView {
+            id: atList
+            anchors.fill: parent
+            model: dialogModel.atomTypes
+        }
     }
     Button {
-	id: prefixButton;
-	text: "Prefix";
-	anchors.right: parent.right;
-	anchors.top: parent.top;
-	onClicked: prefixDialog.open();
-	enabled: atList.currentIndex >= 0;
-    }
+        id: prefixButton
+        anchors.right: parent.right
+        anchors.top: parent.top
+        enabled: atList.currentIndex >= 0
+        text: "Prefix"
 
+        onClicked: prefixDialog.open()
+    }
     Dialog {
-	id: prefixDialog
-	title: "Prefix Dialog"
+        id: prefixDialog
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        title: "Prefix Dialog"
 
-	standardButtons: Dialog.Ok | Dialog.Cancel
-	onAccepted: dialogModel.atomTypes.addPrefix(atList.currentIndex , prefixField.text);
+        onAccepted: dialogModel.atomTypes.addPrefix(atList.currentIndex, prefixField.text)
 
-	TextField {
-	    id: prefixField;
-	    placeholderText: "Prefix";
-	}
-
+        TextField {
+            id: prefixField
+            placeholderText: "Prefix"
+        }
     }
-
     Button {
-	id: suffixButton;
-	text: "Suffix";
-	anchors.right: parent.right;
-	anchors.top: prefixButton.bottom;
-	onClicked: suffixDialog.open();
-	enabled: atList.currentIndex >= 0;
-    }
+        id: suffixButton
+        anchors.right: parent.right
+        anchors.top: prefixButton.bottom
+        enabled: atList.currentIndex >= 0
+        text: "Suffix"
 
+        onClicked: suffixDialog.open()
+    }
     Dialog {
-	id: suffixDialog
-	title: "Suffix Dialog"
+        id: suffixDialog
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        title: "Suffix Dialog"
 
-	standardButtons: Dialog.Ok | Dialog.Cancel
-	onAccepted: dialogModel.atomTypes.addSuffix(atList.currentIndex , suffixField.text);
+        onAccepted: dialogModel.atomTypes.addSuffix(atList.currentIndex, suffixField.text)
 
-	TextField {
-	    id: suffixField;
-	    placeholderText: "Suffix";
-	}
-
+        TextField {
+            id: suffixField
+            placeholderText: "Suffix"
+        }
     }
-
     CheckBox {
-	id: overwrite
-	anchors.bottom: indicator.top;
-	anchors.left: parent.left;
-	text: "Overwrite Parameters in existing atom types";
+        id: overwrite
+        anchors.bottom: indicator.top
+        anchors.left: parent.left
+        text: "Overwrite Parameters in existing atom types"
     }
-
     Image {
-	id: indicatorImage;
-	source: dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_warn.svg";
-	anchors.top: indicator.top;
-	anchors.bottom: indicator.bottom;
-	anchors.left: parent.left;
-	fillMode: Image.PreserveAspectFit;
+        id: indicatorImage
+        anchors.bottom: indicator.bottom
+        anchors.left: parent.left
+        anchors.top: indicator.top
+        fillMode: Image.PreserveAspectFit
+        source: dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_warn.svg"
     }
     Text {
-	id: indicator;
-	text: dialogModel.atomTypesIndicator == 0 ? "There are no naming conflicts with the assigned atom types" : (dialogModel.atomTypesIndicator  + " assigned atom types conflict with existing types");
-	anchors.bottom: parent.bottom;
-	anchors.left: indicatorImage.right;
-	anchors.right: parent.right;
-	wrapMode: Text.Wrap;
+        id: indicator
+        anchors.bottom: parent.bottom
+        anchors.left: indicatorImage.right
+        anchors.right: parent.right
+        text: dialogModel.atomTypesIndicator == 0 ? "There are no naming conflicts with the assigned atom types" : (dialogModel.atomTypesIndicator + " assigned atom types conflict with existing types")
+        wrapMode: Text.Wrap
     }
-
     Connections {
-	target: dialogModel.atomTypes;
-	function onDataChanged(topLeft, bottomRight) {
-	    dialogModel.atomTypesIndicatorChanged();
-	}
-    }
+        function onDataChanged(topLeft, bottomRight) {
+            dialogModel.atomTypesIndicatorChanged();
+        }
 
+        target: dialogModel.atomTypes
+    }
     Binding {
-	target: dialogModel;
-	property: "overwriteParametersCheck";
-	value: overwrite.checked;
+        property: "overwriteParametersCheck"
+        target: dialogModel
+        value: overwrite.checked
     }
-
-    Component.onCompleted: atList.forceActiveFocus();
 }
