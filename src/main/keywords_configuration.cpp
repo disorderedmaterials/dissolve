@@ -81,10 +81,6 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                 break;
         }
 
-        // Error encountered?
-        if (errorsEncountered)
-            break;
-
         // End of block?
         if (blockDone)
             break;
