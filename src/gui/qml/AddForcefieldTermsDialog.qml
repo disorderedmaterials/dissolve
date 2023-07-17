@@ -4,13 +4,13 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 import Dissolve
 
-Rectangle {
+Page {
     id: root;
     visible: true;
     anchors.fill: parent;
-    color: palette.active.window;
 
     palette.buttonText: palette.active.text;
+    font.pointSize: 10;
 
     AddForcefieldDialogModel {
 	id: dialogModel;
