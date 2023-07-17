@@ -20,7 +20,7 @@ void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &con
 }
 
 // Run main processing
-bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate S(Q) from Configuration's g(r).
@@ -29,7 +29,10 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     if (!sourceGR_)
-        return Messenger::error("A source GR module must be provided.\n");
+    {
+        Messenger::error("A source GR module must be provided.\n");
+        return failed;
+    }
 
     // Print argument/parameter summary
     Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin_,
@@ -68,7 +71,10 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Get unweighted g(r) from the source RDF module
     if (!dissolve.processingModuleData().contains("UnweightedGR", sourceGR_->name()))
-        return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceGR_->name());
+    {
+        Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceGR_->name());
+        return failed;
+    }
     const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", sourceGR_->name());
 
     // Get effective atomic density of underlying g(r)
@@ -88,13 +94,13 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1)))
     {
         Messenger::print("SQ: Unweighted partial S(Q) are up-to-date.\n");
-        return true;
+        return notExecuted;
     }
 
     // Transform g(r) into S(Q)
     if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, *rho,
                                WindowFunction(windowFunction_), qBroadening_))
-        return false;
+        return failed;
 
     // Include Bragg scattering?
     if (sourceBragg_)
@@ -129,9 +135,12 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 // Locate the corresponding Bragg intensities for this atom type pair
                 auto pairIndex = braggAtomTypes.indexOf(at1.atomType(), at2.atomType());
                 if (pairIndex.first == -1 || pairIndex.second == -1)
-                    return Messenger::error(
+                {
+                    Messenger::error(
                         "SQ data has a partial between {} and {}, but no such intensities exist in the reflection data.\n",
                         at1.atomTypeName(), at2.atomTypeName());
+                    return failed;
+                }
 
                 // Grab relevant partial and oop over reflections
                 auto &partial = braggPartials[pairIndex];
@@ -146,7 +155,7 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 return EarlyReturn<bool>::Continue;
             });
         if (result && !result.value())
-            return false;
+            return failed;
 
         // Finalise partials
         for (auto &partial : braggPartials)
@@ -212,7 +221,7 @@ bool SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Save data if requested
     if (save_ && !MPIRunMaster(procPool, unweightedsq.save(name_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
-        return false;
+        return failed;
 
-    return true;
+    return success;
 }

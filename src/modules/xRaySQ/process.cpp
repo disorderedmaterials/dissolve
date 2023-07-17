@@ -143,7 +143,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate x-ray structure factors from existing g(r) data
@@ -153,10 +153,16 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     if (!sourceSQ_)
-        return Messenger::error("A source SQ module must be provided.\n");
+    {
+        Messenger::error("A source SQ module must be provided.\n");
+        return failed;
+    }
     auto *grModule = sourceSQ_->sourceGR();
     if (!grModule)
-        return Messenger::error("A source GR module (in the SQ module) must be provided.\n");
+    {
+        Messenger::error("A source GR module (in the SQ module) must be provided.\n");
+        return failed;
+    }
 
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
@@ -188,7 +194,10 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Get unweighted S(Q) from the specified SQMOdule
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->name()))
-        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
+    {
+        Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
+        return failed;
+    }
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Construct weights matrix
@@ -208,7 +217,7 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
-        return false;
+        return failed;
     if (saveFormFactors_)
     {
         auto result = for_each_pair_early(
@@ -247,7 +256,10 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             });
 
         if (!result.value_or(true))
-            return Messenger::error("Failed to save form factor data.");
+        {
+            Messenger::error("Failed to save form factor data.");
+            return failed;
+        }
     }
 
     /*
@@ -256,7 +268,10 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Get summed unweighted g(r) from the specified RDFMOdule
     if (!dissolve.processingModuleData().contains("UnweightedGR", grModule->name()))
-        return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
+    {
+        Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
+        return failed;
+    }
     const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", grModule->name());
 
     // Create/retrieve PartialSet for summed weighted g(r)
@@ -304,8 +319,8 @@ bool XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 procPool.decideFalse();
         }
         else if (!procPool.decision())
-            return false;
+            return failed;
     }
 
-    return true;
+    return success;
 }

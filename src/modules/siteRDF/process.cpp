@@ -90,8 +90,11 @@ enum executionResult SiteRDFModule::process(Dissolve &dissolve, const ProcessPoo
     {
         // Is range A enabled?
         if (!isRangeEnabled(0))
-            return Messenger::error("Test coordination number for range B supplied, but calculation for that range "
-                                    "is not active.\n");
+        {
+            Messenger::error("Test coordination number for range B supplied, but calculation for that range "
+                            "is not active.\n");
+            return failed;
+        }
 
         const auto delta = testRangeA_.value() - sumCN_->sum(0);
 
@@ -99,14 +102,17 @@ enum executionResult SiteRDFModule::process(Dissolve &dissolve, const ProcessPoo
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return false;
+            return failed;
     }
     if (testRangeB_)
     {
         // Is range B enabled?
         if (!isRangeEnabled(1))
-            return Messenger::error("Test coordination number for range B supplied, but calculation for that range "
+        {
+            Messenger::error("Test coordination number for range B supplied, but calculation for that range "
                                     "is not active.\n");
+            return failed;
+        }
 
         const auto delta = testRangeB_.value() - sumCN_->sum(1);
 
@@ -114,14 +120,17 @@ enum executionResult SiteRDFModule::process(Dissolve &dissolve, const ProcessPoo
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return false;
+            return failed;
     }
     if (testRangeC_)
     {
         // Is range B enabled?
         if (!isRangeEnabled(2))
-            return Messenger::error("Test coordination number for range C supplied, but calculation for that range "
-                                    "is not active.\n");
+        {
+            Messenger::error("Test coordination number for range C supplied, but calculation for that range "
+                            "is not active.\n");
+            return failed;
+        }
 
         const auto delta = testRangeC_.value() - sumCN_->sum(2);
 
@@ -129,8 +138,8 @@ enum executionResult SiteRDFModule::process(Dissolve &dissolve, const ProcessPoo
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return false;
+            return failed;
     }
 
-    return true;
+    return success;
 }
