@@ -15,11 +15,14 @@
 #include "modules/intraShake/intraShake.h"
 
 // Run main processing
-bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return failed;
+    }
 
     // Retrieve control parameters
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
@@ -81,7 +84,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     for (auto &spPop : targetConfiguration_->speciesPopulations())
     {
         if (!spPop.first->attachedAtomListsGenerated())
-            return Messenger::error("Species '{}' has no attached atom lists, so module can't proceed.\n", spPop.first->name());
+        {
+            Messenger::error("Species '{}' has no attached atom lists, so module can't proceed.\n", spPop.first->name());
+            return failed;
+        }
     }
 
     int shake, nBondAttempts = 0, nAngleAttempts = 0, nTorsionAttempts = 0, nBondAccepted = 0, nAngleAccepted = 0,
@@ -385,5 +391,5 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if ((nBondAccepted > 0) || (nAngleAccepted > 0) || (nTorsionAccepted > 0))
         targetConfiguration_->incrementContentsVersion();
 
-    return true;
+    return success;
 }

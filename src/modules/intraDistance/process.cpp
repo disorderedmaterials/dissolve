@@ -10,7 +10,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-bool IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -18,7 +18,7 @@ bool IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPoo
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return failed;
     }
-    
+
     // Ensure any parameters in our nodes are set correctly
     collectDistance_->keywords().set("RangeX", distanceRange_);
 

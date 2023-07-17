@@ -12,11 +12,14 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     collectDistance_->keywords().set("RangeX", distanceRange_);
@@ -30,7 +33,10 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
-        return Messenger::error("CalculateRDF experienced problems with its analysis.\n");
+    {
+        Messenger::error("CalculateRDF experienced problems with its analysis.\n");
+        return failed;
+    }
 
     // Accumulate instantaneous coordination number data
     if (instantaneous_)
@@ -43,7 +49,10 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}_SumA.txt", name()));
                 if (!exportFormat.exportData(sumA))
-                    return Messenger::error("Failed to write instantaneous coordination number data for range A.\n");
+                {
+                    Messenger::error("Failed to write instantaneous coordination number data for range A.\n");
+                    return failed;
+                }
             }
         }
         if (isRangeEnabled(1))
@@ -54,7 +63,10 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}_SumB.txt", name()));
                 if (!exportFormat.exportData(sumB))
-                    return Messenger::error("Failed to write instantaneous coordination number data for range B.\n");
+                {
+                    Messenger::error("Failed to write instantaneous coordination number data for range B.\n");
+                    return failed;
+                }
             }
         }
         if (isRangeEnabled(2))
@@ -65,7 +77,10 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}_SumC.txt", name()));
                 if (!exportFormat.exportData(sumC))
-                    return Messenger::error("Failed to write instantaneous coordination number data for range C.\n");
+                {
+                    Messenger::error("Failed to write instantaneous coordination number data for range C.\n");
+                    return failed;
+                }
             }
         }
     }
