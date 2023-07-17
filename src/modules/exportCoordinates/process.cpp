@@ -8,10 +8,13 @@
 #include "modules/exportCoordinates/exportCoordinates.h"
 
 // Run main processing
-bool ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!coordinatesFormat_.hasFilename())
+    {
         Messenger::error("No valid file/format set for coordinate export.\n");
+        return failed;
+    }
 
     std::string originalFilename{coordinatesFormat_.filename()};
     if (tagWithIteration_)
@@ -19,7 +22,10 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &pro
 
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return failed;
+    }
 
     // Only the pool master saves the data
     if (procPool.isMaster())
@@ -31,16 +37,16 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &pro
         {
             Messenger::print("Export: Failed to export coordinates file '{}'.\n", coordinatesFormat_.filename());
             procPool.decideFalse();
-            return false;
+            return failed;
         }
 
         procPool.decideTrue();
     }
     else if (!procPool.decision())
-        return false;
+        return failed;
 
     // Reset filename
     coordinatesFormat_.setFilename(originalFilename);
 
-    return true;
+    return success;
 }

@@ -13,7 +13,10 @@
 bool ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!pairPotentialFormat_.hasFilename())
-        return Messenger::error("No valid file/format set for pair potential export.\n");
+    {
+        Messenger::error("No valid file/format set for pair potential export.\n");
+        return failed
+    }
 
     // Only the pool master saves the data
     if (procPool.isMaster())
@@ -35,7 +38,7 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &
                 Messenger::print("Export: Failed to export pair potential file '{}'.\n", pairPotentialFormat_.filename());
                 pairPotentialFormat_.setFilename(rootPPName);
                 procPool.decideFalse();
-                return false;
+                return failed;
             }
 
             procPool.decideTrue();
@@ -45,7 +48,7 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &
         pairPotentialFormat_.setFilename(rootPPName);
     }
     else if (!procPool.decision())
-        return false;
+        return failed;
 
-    return true;
+    return success;
 }
