@@ -99,7 +99,12 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase
     }
 
     // Express as a serialisable value
-    SerialisedValue serialise() const override { return data_->name(); }
+    SerialisedValue serialise() const override
+    {
+        if (data_)
+            return data_->name();
+        return {};
+    }
 
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
