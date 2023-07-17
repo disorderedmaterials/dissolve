@@ -23,9 +23,6 @@ void ModuleModel::setData(const std::vector<Module *> &modules)
 // Set vector containing checked items
 void ModuleModel::setCheckStateData(std::vector<Module *> &checkedItemsVector) { checkedItems_ = checkedItemsVector; }
 
-// Toggle exclusive type checking
-void ModuleModel::setExclusiveTypeChecking(bool enabled) { exclusiveTypeChecking_ = enabled; }
-
 Module *ModuleModel::rawData(const QModelIndex &index) const { return modules_->get()[index.row()]; }
 
 /*
@@ -72,16 +69,7 @@ bool ModuleModel::setData(const QModelIndex &index, const QVariant &value, int r
         if (value.value<Qt::CheckState>() == Qt::Checked)
         {
             if (it == checkedItems_->get().end())
-            {
-                if (exclusiveTypeChecking_)
-                {
-                    if (std::find_if(checkedItems_->get().cbegin(), checkedItems_->get().cend(),
-                                     [m](const auto &module)
-                                     { return module != m && module->type() == m->type(); }) != checkedItems_->get().cend())
-                        return false;
-                }
                 checkedItems_->get().push_back(m);
-            }
             else
                 return false;
         }

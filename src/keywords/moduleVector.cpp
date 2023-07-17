@@ -59,10 +59,9 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
                                     parser.argsv(n), ModuleTypes::moduleType(module->type()), name(),
                                     joinStrings(moduleTypes_));
         if (!data_.empty() && std::find_if(data_.cbegin(), data_.cend(),
-                                           [module](const auto &m) { return m->type() == module->type(); }) != data_.cend())
+                                           [module](const auto &m) { return m == module; }) != data_.cend())
         {
-            Messenger::warn("Module '{}' is of type '{}', but a module of that type has already been added.\n", parser.argsv(n),
-                            ModuleTypes::moduleType(module->type()));
+            Messenger::warn("Module '{}' has already been added.\n", parser.argsv(n));
             continue;
         }
         data_.emplace_back(module);

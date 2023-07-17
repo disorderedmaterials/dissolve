@@ -19,16 +19,12 @@ class ModuleModel : public QAbstractListModel
     OptionalReferenceWrapper<const std::vector<Module *>> modules_;
     // Vector containing checked items (if relevant)
     OptionalReferenceWrapper<std::vector<Module *>> checkedItems_;
-    // Should more than one item of the same type be allowed to be checked?
-    bool exclusiveTypeChecking_{false};
 
     public:
     // Set source Module data
     void setData(const std::vector<Module *> &modules);
     // Set vector containing checked items
     void setCheckStateData(std::vector<Module *> &checkedItemsVector);
-    // Toggle exclusive type checking
-    void setExclusiveTypeChecking(bool enabled);
     // Return object represented by specified model index
     Module *rawData(const QModelIndex &index) const;
 
