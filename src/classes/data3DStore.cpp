@@ -47,7 +47,6 @@ const std::vector<std::shared_ptr<std::pair<Data3D, Data3DImportFileFormat>>> &D
 // Express as a serialisable value
 SerialisedValue Data3DStore::serialise() const
 {
-
     if (data_.empty())
         return {};
     return fromVectorToMap(
