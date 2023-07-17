@@ -36,15 +36,9 @@ void Species::copyBasic(const Species *source, bool copyAtomTypes)
 
     name_ = source->name_;
 
-    std::map<int, int> indexMap;
 
     for (auto &i : source->atoms_)
-    {
-        indexMap[addAtom(i.Z(), i.r(), i.charge(), copyAtomTypes ? i.atomType() : nullptr)] = i.index();
-    }
-
-    for (auto const &[n, p] : indexMap)
-        atom(n).setIndex(p);
+        addAtom(i.Z(), i.r(), i.charge(), copyAtomTypes ? i.atomType() : nullptr);
 
     for (auto &bond : source->bonds_)
         addBond(bond.indexI(), bond.indexJ());
