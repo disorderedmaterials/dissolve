@@ -13,7 +13,7 @@ runs:
     run: |
       set -ex
       sudo apt-get update
-      sudo apt-get install --yes clang-format-13 qt6-base-dev qt6-tools-dev
+      sudo apt-get install --yes clang-format-13 qt6-base-dev qt6-tools-dev qml-module-qtquick-controls
       pip install cmake_format==0.6.9
 
   - name: C++ Formatting
