@@ -8,7 +8,7 @@
 #include "modules/gr/gr.h"
 
 // Run main processing
-bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate standard partial g(r)
@@ -19,7 +19,10 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.empty())
-        return Messenger::error("No configuration targets set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration targets set for module '{}'.\n", name());
+        return failed;
+    }
 
     // Print argument/parameter summary
     if (!requestedRange_)
@@ -59,9 +62,13 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         else
         {
             if (requestedRange_.value_or(0.0) > rdfRange)
-                return Messenger::error("Specified RDF range of {} Angstroms is out of range for Configuration "
+            {
+                Messenger::error("Specified RDF range of {} Angstroms is out of range for Configuration "
                                         "'{}' (max = {} Angstroms).\n",
                                         requestedRange_.value(), cfg->niceName(), rdfRange);
+                return failed;
+            }
+                 
             rdfRange = requestedRange_.value();
             Messenger::print("Cutoff for Configuration '{}' is {} Angstroms.\n", cfg->niceName(), rdfRange);
         }
@@ -97,7 +104,7 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             calculateGR(dissolve.processingModuleData(), procPool, cfg, GRModule::TestMethod, rdfRange, binWidth_,
                         alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
-                return false;
+                return failed;
         }
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
@@ -107,9 +114,9 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Save data if requested
         if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms"))))
-            return false;
+            return failed;
         if (saveOriginal_ && (!MPIRunMaster(procPool, originalgr.save(name_, "OriginalGR", "gr", "r, Angstroms"))))
-            return false;
+            return failed;
     }
 
     // Create/retrieve PartialSet for summed unweighted g(r)
@@ -119,7 +126,7 @@ bool GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Sum the partials from the associated Configurations
     if (!GRModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, name(), name(), targetConfigurations_,
                                    summedUnweightedGR))
-        return false;
+        return failed;
 
-    return true;
+    return success;
 }

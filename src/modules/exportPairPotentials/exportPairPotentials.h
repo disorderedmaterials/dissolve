@@ -25,5 +25,5 @@ class ExportPairPotentialsModule : public Module
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    enum executionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };

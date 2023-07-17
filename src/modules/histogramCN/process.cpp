@@ -12,7 +12,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-bool HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum executionResult HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -29,7 +29,10 @@ bool HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
-        return Messenger::error("HistogramCN experienced problems with its analysis.\n");
+    {
+        Messenger::error("HistogramCN experienced problems with its analysis.\n");
+        return failed;
+    } 
 
-    return true;
+    return success;
 }

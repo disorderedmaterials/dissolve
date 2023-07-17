@@ -142,5 +142,5 @@ enum executionResult CheckSpeciesModule::process(Dissolve &dissolve, const Proce
                             });
     }
 
-    return (nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == failed;
+    return (((nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0) ? success : failed);
 }
