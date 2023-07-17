@@ -13,7 +13,7 @@ runs:
     run: |
       set -ex
       sudo apt-get update
-      sudo apt-get install --yes clang-format-13
+      sudo apt-get install --yes clang-format-13 qt6-base-dev
       pip install cmake_format==0.6.9
 
   - name: C++ Formatting
@@ -31,6 +31,15 @@ runs:
       set -ex
       cmake-format --version
       find . -type f -name CMakeLists.txt -exec cmake-format -i '{}' \;
+      git diff
+      git diff --quiet
+
+  - name: QML Formatting
+    shell: bash
+    run: |
+      set -ex
+      qmlformat --version
+      find . -type f -name '.*\.qml" -exec qmlformat -imw 4 '{}' \;
       git diff
       git diff --quiet
 
