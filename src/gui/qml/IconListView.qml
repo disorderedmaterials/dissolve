@@ -47,6 +47,7 @@ ListView {
 	    color: picked ? palette.active.highlightedText : palette.active.text;
 	    anchors.left: image.right;
 	    anchors.top: parent.top;
+	    padding: 2;
 	    MouseArea {
 		height: parent.height;
 		width: control.width;
