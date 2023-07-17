@@ -58,8 +58,7 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
             return Messenger::error("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
                                     parser.argsv(n), ModuleTypes::moduleType(module->type()), name(),
                                     joinStrings(moduleTypes_));
-        if (!data_.empty() && std::find_if(data_.cbegin(), data_.cend(),
-                                           [module](const auto &m) { return m == module; }) != data_.cend())
+        if (!data_.empty() && std::find(data_.cbegin(), data_.cend(), module) != data_.cend())
         {
             Messenger::warn("Module '{}' has already been added.\n", parser.argsv(n));
             continue;
