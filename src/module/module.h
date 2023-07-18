@@ -136,7 +136,7 @@ class Module : public Serialisable<const CoreData &>
      */
     private:
     // Run main processing
-    virtual Module::ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
+    virtual ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
 
     public:
     // Set target data
@@ -145,7 +145,7 @@ class Module : public Serialisable<const CoreData &>
     // Run set-up stage
     virtual bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    Module::ExecutionResult executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
+    ExecutionResult executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
 
     /*
      * Timing
