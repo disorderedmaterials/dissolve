@@ -475,10 +475,10 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                 if (exportFormat.exportData(differenceData))
                     procPool.decideTrue();
                 else
-                    return (procPool.decideFalse() ? success : failed);
+                    return (procPool.decideFalse() ? notExecuted : failed);
             }
             else if (!procPool.decision())
-                return true;
+                return notExecuted;
 
             if (procPool.isMaster())
             {
@@ -486,10 +486,10 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                 if (exportFormat.exportData(deltaFQFit))
                     procPool.decideTrue();
                 else
-                    return (procPool.decideFalse() ? success : failed);
+                    return (procPool.decideFalse() ? notExecuted : failed);
             }
             else if (!procPool.decision())
-                return success;
+                return notExecuted;
         }
         if (saveSimulatedFR_)
         {
@@ -499,10 +499,10 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                 if (exportFormat.exportData(simulatedFR))
                     procPool.decideTrue();
                 else
-                    return (procPool.decideFalse() ? success : failed);
+                    return (procPool.decideFalse() ? notExecuted : failed);
             }
             else if (!procPool.decision())
-                return success;
+                return notExecuted;
         }
 
         /*
@@ -518,7 +518,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                 if (!optRefData)
                 {
                     Messenger::error("Reference data '{}' not found.\n", testDataName);
-                    return failed
+                    return failed;
                 }
                 auto error = Error::percent(simulatedFR, *optRefData);
                 Messenger::print("Simulated F(r) reference data '{}' has error of {:7.3f}% with calculated data "
@@ -541,7 +541,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
      */
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
-    auto success =
+    auto methodSuccess =
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
                             {
@@ -561,7 +561,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
 
                                 return EarlyReturn<bool>::Continue;
                             });
-    if (!success.value_or(true))
+    if (!methodSuccess.value_or(true))
         return failed;
 
     // If the scattering matrix was not set-up, need to generate the necessary inverse matrix or matrices here
@@ -597,18 +597,18 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", name_, sq.tag()));
                 if (!exportFormat.exportData(sq))
-                    return (procPool.decideFalse() ? success : failed);
+                    return (procPool.decideFalse() ? notExecuted : failed);
             }
             procPool.decideTrue();
         }
         else if (!procPool.decision())
-            return success;
+            return notExecuted;
     }
 
     // Test Mode
     if (test_)
     {
-        auto success = 
+        auto methodSuccess = 
             for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
                             {
@@ -626,7 +626,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                                 }
                                 return EarlyReturn<bool>::Continue;
                             });
-        if (!success.value_or(true))
+        if (!methodSuccess.value_or(true))
             return failed;
     }
 

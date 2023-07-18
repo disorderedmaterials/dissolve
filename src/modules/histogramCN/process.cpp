@@ -16,7 +16,10 @@ enum Module::executionResult HistogramCNModule::process(Dissolve &dissolve, cons
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     if (excludeSameMolecule_)

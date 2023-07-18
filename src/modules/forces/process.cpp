@@ -408,10 +408,13 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
             // Grab reference force array and check size
             const auto &fRef = processingData.value<std::vector<Vec3<double>>>("ReferenceForces", name());
             if (fRef.size() != targetConfiguration_->nAtoms())
-                return Messenger::error("Number of force components in ReferenceForces is {}, but the "
-                                        "Configuration '{}' contains {} atoms.\n",
-                                        fRef.size(), targetConfiguration_->name(), targetConfiguration_->nAtoms());
-
+            {
+               Messenger::error("Number of force components in ReferenceForces is {}, but the "
+                                "Configuration '{}' contains {} atoms.\n",
+                                fRef.size(), targetConfiguration_->name(), targetConfiguration_->nAtoms());
+                return failed;
+            }
+ 
             Messenger::print("\nTesting reference forces against calculated 'correct' forces - "
                              "atoms with erroneous forces will be output...\n");
             sumError = 0.0;
@@ -493,7 +496,7 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
         }
 
         if (!procPool.allTrue((nFailed1 + nFailed2 + nFailed3) == 0))
-            return false;
+            return failed;
     }
     else
     {

@@ -318,19 +318,19 @@ enum Module::executionResult IntraShakeModule::process(Dissolve &dissolve, const
 
     // Collect statistics across all processes
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nBondAttempts, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nBondAccepted, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nAngleAttempts, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nAngleAccepted, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nTorsionAttempts, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nTorsionAccepted, 1, strategy, commsTimer))
-        return false;
+        return failed;
 
     Messenger::print("IntraShake: Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
     Messenger::print("IntraShake: Total number of attempted moves was {} ({} work, {} comms).\n",

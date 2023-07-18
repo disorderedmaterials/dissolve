@@ -219,17 +219,17 @@ enum Module::executionResult MolShakeModule::process(Dissolve &dissolve, const P
 
     // Collect statistics across all processes
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nGeneralAttempts, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nTranslationAttempts, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nTranslationsAccepted, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nRotationAttempts, 1, strategy, commsTimer))
-        return false;
+        return failed;
     if (!procPool.allSum(&nRotationsAccepted, 1, strategy, commsTimer))
-        return false;
+        return failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
