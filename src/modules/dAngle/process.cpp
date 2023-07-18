@@ -15,8 +15,10 @@ enum Module::executionResult DAngleModule::process(Dissolve &dissolve, const Pro
 {
     // Check for Configuration target
     if (!targetConfiguration_)
+    {
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     calculateAngle_->keywords().set("Symmetric", symmetric_);
@@ -35,8 +37,10 @@ enum Module::executionResult DAngleModule::process(Dissolve &dissolve, const Pro
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
+    {
         Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
         return failed;
+    }
 
     return success;
 }
