@@ -525,7 +525,7 @@ bool ProcedureNodeSequence::deserialise(LineParser &parser, const CoreData &core
         }
     }
 
-    return !errorsEncountered;
+    return (!errorsEncountered);
 }
 
 // Write structure to specified LineParser
