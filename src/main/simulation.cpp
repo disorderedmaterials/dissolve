@@ -304,7 +304,8 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
-                if (module->executeProcessing(*this, worldPool()) == failed)
+                if (module->executeProcessing(*this, worldPool()))
+                    Messenger::print(module->executeProcessing(*this, worldPool()));
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }
         }
