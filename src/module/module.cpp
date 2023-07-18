@@ -191,10 +191,16 @@ enum Module::executionResult Module::executeProcessing(Dissolve &dissolve, const
 
     // Accumulate timing information
     timer.stop();
+
     if (result == success)
     {
         processTimes_ += timer.secondsElapsed();
-    } 
+    }
+    else
+    {
+        // If process is not run, do not add to the timing
+        processTimes_ += 0;
+    }
 
     return result;
 }

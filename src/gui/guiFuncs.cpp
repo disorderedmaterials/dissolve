@@ -407,7 +407,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
     // Set ETA text if we can
-    if (iterationsRemaining == -1)
+    if (iterationsRemaining == -1 || iterationsRemaining == 0) 
         etaLabel_->setText("--:--:--");
     else
     {
