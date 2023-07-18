@@ -22,7 +22,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
     Messenger::print("\nParsing {} block '{}' ({})...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
                      module->name(), ModuleTypes::moduleType(module->type()));
 
-    auto blockDone = false, error = false;
+    auto blockDone = false, errorsEncountered = false;
 
     while (!parser.eofOrBlank())
     {
@@ -36,7 +36,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
             auto kwd = keywords().enumeration(parser.argsv(0));
             if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             {
-                error = true;
+                errorsEncountered = true;
                 continue;
             }
 
@@ -58,7 +58,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                     Messenger::error("{} block keyword '{}' not accounted for.\n",
                                      BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
                                      keywords().keyword(kwd));
-                    error = true;
+                    errorsEncountered = true;
                     break;
             }
         }
@@ -74,12 +74,12 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                                  ModuleTypes::moduleType(module->type()));
                 keywords().errorAndPrintValid(parser.argsv(0));
                 module->printValidKeywords();
-                error = true;
+                errorsEncountered = true;
             }
             else if (result == KeywordBase::ParseResult::Deprecated)
                 Messenger::warn("The '{}' keyword is deprecated and will be removed in a future version.\n", parser.argsv(0));
             else if (result == KeywordBase::ParseResult::Failed)
-                error = true;
+                errorsEncountered = true;
         }
 
         // End of block?
@@ -87,13 +87,13 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
             break;
     }
 
-    // If there's no error and the blockDone flag isn't set, return an error
-    if (!error && !blockDone)
+    // If there's no errorsEncountered and the blockDone flag isn't set, return an errorsEncountered
+    if (!errorsEncountered && !blockDone)
     {
         Messenger::error("Unterminated {} block found.\n",
                          BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
-        error = true;
+        errorsEncountered = true;
     }
 
-    return (!error);
+    return (!errorsEncountered);
 }
