@@ -15,8 +15,10 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
+    {
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return failed;
+    }
 
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
@@ -56,7 +58,9 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
     {
         auto stabilityResult = EnergyModule::checkStability(dissolve.processingModuleData(), targetConfiguration_);
         if (stabilityResult == EnergyModule::NotAssessable)
+        {
             return failed;
+        }
         else if (stabilityResult == EnergyModule::EnergyUnstable)
         {
             Messenger::print("Skipping MD for Configuration '{}'.\n", targetConfiguration_->niceName());
@@ -81,7 +85,9 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
     std::vector<const Molecule *> targetMolecules;
     std::vector<int> free(targetConfiguration_->nAtoms(), 0);
     if (restrictToSpecies_.empty())
+    {
         std::fill(free.begin(), free.end(), 1);
+    }
     else
         for (const auto &mol : targetConfiguration_->molecules())
             if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
@@ -128,7 +134,10 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
         std::fill(velocities.begin(), velocities.end(), Vec3<double>());
     }
     else
+    {
         Messenger::print("Existing velocities will be used.\n");
+    }
+        
     Messenger::print("\n");
 
     // Store atomic masses for future use
@@ -183,7 +192,9 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
             procPool.decideTrue();
         }
         else if (!procPool.decision())
+        {
             return failed;
+        }
     }
 
     // Write header
@@ -354,7 +365,9 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
                 procPool.decideTrue();
             }
             else if (!procPool.decision())
+            {
                 return failed;
+            }
         }
     }
     timer.stop();
