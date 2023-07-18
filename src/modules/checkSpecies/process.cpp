@@ -15,8 +15,10 @@ enum Module::executionResult CheckSpeciesModule::process(Dissolve &dissolve, con
 {
     // Retrieve necessary keyword values
     if (!targetSpecies_)
+    {
         Messenger::error("No target species provided.\n");
         return failed;
+    }
 
     Messenger::print("CheckSpecies: Target species is '{}'.\n", targetSpecies_->name());
     Messenger::print("CheckSpecies: Tolerance for parameter checks is {:.5e}.", tolerance_);
@@ -33,8 +35,10 @@ enum Module::executionResult CheckSpeciesModule::process(Dissolve &dissolve, con
             // Get specified atom - tuple contains 'human-readable' indices from 1 - N...
             auto i = std::get<0>(indexName).at(0);
             if (i - 1 >= targetSpecies_->nAtoms())
+            {
                 Messenger::error("Atom index {} is out of range ({} atoms in species).\n", i, targetSpecies_->nAtoms());
                 return failed;
+            }
 
             auto &spAtom = targetSpecies_->atom(i - 1);
             auto at = spAtom.atomType();

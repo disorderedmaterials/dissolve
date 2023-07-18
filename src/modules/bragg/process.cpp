@@ -128,8 +128,10 @@ enum Module::executionResult BraggModule::process(Dissolve &dissolve, const Proc
         if (nErrors == 0)
             Messenger::print("All data match.\n");
         else
+        {
             Messenger::error("Calculated and reference data are inconsistent.\n");
             return failed;
+        }
     }
 
     // Save reflection data?

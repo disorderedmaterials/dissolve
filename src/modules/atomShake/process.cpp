@@ -16,8 +16,10 @@ enum Module::executionResult AtomShakeModule::process(Dissolve &dissolve, const 
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
+    {
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return failed;
+    }
 
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());

@@ -15,8 +15,10 @@ enum Module::executionResult AxisAngleModule::process(Dissolve &dissolve, const 
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
+    {
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     calculateAxisAngle_->keywords().set("Symmetric", symmetric_);
@@ -35,8 +37,10 @@ enum Module::executionResult AxisAngleModule::process(Dissolve &dissolve, const 
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
+    {
         Messenger::error("AxisAngle experienced problems with its analysis.\n");
         return failed;
+    }
 
     return success;
 }

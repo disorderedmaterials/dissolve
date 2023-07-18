@@ -16,8 +16,10 @@ enum Module::executionResult BenchmarkModule::process(Dissolve &dissolve, const 
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
+    {
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return failed;
+    }
 
     // Get options
     Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", nRepeats_, nRepeats_ == 1 ? "run" : "runs");

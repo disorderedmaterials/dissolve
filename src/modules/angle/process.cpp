@@ -16,8 +16,10 @@ enum Module::executionResult AngleModule::process(Dissolve &dissolve, const Proc
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
+    {
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     selectB_->setDistanceReferenceSite(selectA_);
@@ -56,8 +58,10 @@ enum Module::executionResult AngleModule::process(Dissolve &dissolve, const Proc
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
+    {
         Messenger::error("Angle experienced problems with its analysis.\n");
         return failed;
+    }
 
     return success;
 }
