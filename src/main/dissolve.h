@@ -234,6 +234,8 @@ class Dissolve : public Serialisable<>
     std::optional<double> estimateRequiredTime(int nIterations);
     // Print timing information
     void printTiming();
+    // Return time elapsed from main loop timer
+    double elapsedTime() const { return iterationTimer_ };
 
     /*
      * I/O
