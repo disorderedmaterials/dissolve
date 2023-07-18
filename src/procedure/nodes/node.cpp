@@ -300,7 +300,7 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
             errorsEncountered = true;
     }
 
-    return !errorsEncountered;
+    return (!errorsEncountered);
 }
 
 // Write node data to specified LineParser
