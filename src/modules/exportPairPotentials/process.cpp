@@ -15,7 +15,7 @@ enum Module::executionResult ExportPairPotentialsModule::process(Dissolve &disso
     if (!pairPotentialFormat_.hasFilename())
     {
         Messenger::error("No valid file/format set for pair potential export.\n");
-        return failed
+        return failed;
     }
 
     // Only the pool master saves the data

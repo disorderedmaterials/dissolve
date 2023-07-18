@@ -107,9 +107,13 @@ enum Module::executionResult SQModule::process(Dissolve &dissolve, const Process
     {
         // Check if reflection data is present
         if (!dissolve.processingModuleData().contains("Reflections", sourceBragg_->name()))
-            return Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
-                                    "could not be located.\n",
-                                    sourceBragg_->name());
+        {
+            Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
+                            "could not be located.\n",
+                            sourceBragg_->name());
+            return failed;
+        }
+
         const auto &braggReflections =
             dissolve.processingModuleData().value<std::vector<BraggReflection>>("Reflections", sourceBragg_->name());
         const auto nReflections = braggReflections.size();

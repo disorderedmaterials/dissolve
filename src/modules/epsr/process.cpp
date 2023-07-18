@@ -556,7 +556,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                                 {
                                     Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
                                                     at1->name(), at2->name());
-                                    return failed
+                                    return failed;
                                 }
 
                                 return EarlyReturn<bool>::Continue;

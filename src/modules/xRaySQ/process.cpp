@@ -304,7 +304,10 @@ enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const Pro
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = grModule->effectiveDensity();
     if (!rho)
-        return Messenger::error("No effective density available from RDF module '{}'\n", grModule->name());
+    {
+        Messenger::error("No effective density available from RDF module '{}'\n", grModule->name());
+        return failed;
+    }
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested
