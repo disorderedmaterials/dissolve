@@ -6,7 +6,7 @@
 #include "modules/analyse/analyse.h"
 
 // Run main processing
-enum executionResult AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

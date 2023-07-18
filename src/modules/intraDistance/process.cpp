@@ -10,7 +10,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-enum executionResult IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

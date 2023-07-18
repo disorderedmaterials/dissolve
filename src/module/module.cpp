@@ -151,7 +151,7 @@ bool Module::isDisabled() const { return !enabled_; }
  */
 
 // Run main processing
-bool Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return false; }
+enum Module::executionResult Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return failed; }
 
 // Set target data
 void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
@@ -180,7 +180,7 @@ bool Module::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Keywor
 }
 
 // Run main processing stage
-enum executionResult Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Begin timer
     Timer timer;

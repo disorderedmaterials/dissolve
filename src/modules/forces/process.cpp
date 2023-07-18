@@ -29,7 +29,7 @@ bool ForcesModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-enum executeProcessing ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

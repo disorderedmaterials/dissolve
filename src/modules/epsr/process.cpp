@@ -122,7 +122,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
 }
 
 // Run main processing
-enum executionResult EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     std::string testDataName;
 
@@ -473,7 +473,7 @@ enum executionResult EPSRModule::process(Dissolve &dissolve, const ProcessPool &
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}-Diff.q", module->name()));
                 if (exportFormat.exportData(differenceData))
-                    { procPool.decideTrue() };
+                    procPool.decideTrue();
                 else
                     return (procPool.decideFalse() ? success : failed);
             }

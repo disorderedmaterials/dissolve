@@ -143,7 +143,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-enum executionResult XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate x-ray structure factors from existing g(r) data

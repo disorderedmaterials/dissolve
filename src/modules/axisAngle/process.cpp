@@ -11,7 +11,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-enum executionResult AxisAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult AxisAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

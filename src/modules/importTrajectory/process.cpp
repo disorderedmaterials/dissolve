@@ -8,7 +8,7 @@
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run main processing
-enum executionResult ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

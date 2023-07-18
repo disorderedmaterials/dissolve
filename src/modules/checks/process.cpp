@@ -7,7 +7,7 @@
 #include "modules/checks/checks.h"
 
 // Run main processing
-enum executionResult ChecksModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult ChecksModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Perform simple checks for the target Configuration(s)

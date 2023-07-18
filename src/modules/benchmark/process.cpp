@@ -12,7 +12,7 @@
 #include "modules/gr/gr.h"
 
 // Run main processing
-enum executionResult BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

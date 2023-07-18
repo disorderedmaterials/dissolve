@@ -11,7 +11,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-enum executionResult DAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult DAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

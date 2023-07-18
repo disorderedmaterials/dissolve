@@ -23,7 +23,7 @@ bool EnergyModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-enum executionResult EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Energy for the target Configuration(s)

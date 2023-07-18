@@ -31,5 +31,5 @@ class AnalyseModule : public Module
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    enum Module::executionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };

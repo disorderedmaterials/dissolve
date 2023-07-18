@@ -11,7 +11,7 @@
 #include <numeric>
 
 // Run main processing
-enum executionResult CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Retrieve necessary keyword values
     if (!targetSpecies_)

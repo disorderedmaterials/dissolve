@@ -12,7 +12,7 @@
 #include "modules/molShake/molShake.h"
 
 // Run main processing
-enum executionResult MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

@@ -133,7 +133,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
 }
 
 // Run main processing
-enum executionResult NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate neutron structure factors from existing S(Q) data

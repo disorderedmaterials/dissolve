@@ -50,7 +50,7 @@ bool AvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-enum executionResult AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

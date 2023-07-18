@@ -5,7 +5,7 @@
 #include "modules/test/test.h"
 
 // Run main processing
-enum executionResult TestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult TestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

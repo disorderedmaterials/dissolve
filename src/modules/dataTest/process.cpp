@@ -10,7 +10,7 @@
 #include "modules/dataTest/dataTest.h"
 
 // Run main processing
-enum executionResult DataTestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * This is a serial routine.

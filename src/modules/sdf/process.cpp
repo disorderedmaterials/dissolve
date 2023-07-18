@@ -10,7 +10,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-enum executionResult SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

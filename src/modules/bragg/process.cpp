@@ -9,7 +9,7 @@
 #include "templates/algorithms.h"
 
 // Run main processing
-executionResult BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+enum Module::executionResult BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Bragg contributions.
@@ -20,8 +20,10 @@ executionResult BraggModule::process(Dissolve &dissolve, const ProcessPool &proc
 
     // Check for Configuration target
     if (!targetConfiguration_)
+    {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return executionResult;
+        return failed;
+    }
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
