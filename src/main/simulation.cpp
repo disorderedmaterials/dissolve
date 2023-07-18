@@ -306,7 +306,6 @@ bool Dissolve::iterate(int nIterations)
 
                 if (!module->executeProcessing(*this, worldPool()))
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
-
             }
         }
 
