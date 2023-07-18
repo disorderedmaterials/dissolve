@@ -1,18 +1,15 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Dialogs
-import QtQuick.Layouts
 
 ListView {
     id: control
     signal selected
 
     delegate: Text {
-        property variant fullData: model
+        property variant fullData: this.model
 
         color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text
         padding: 2
-        text: display
+        text: this.display
 
         MouseArea {
             height: parent.height
