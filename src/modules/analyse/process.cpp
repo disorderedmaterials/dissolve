@@ -10,15 +10,19 @@ enum Module::executionResult AnalyseModule::process(Dissolve &dissolve, const Pr
 {
     // Check for Configuration target
     if (!targetConfiguration_)
+    {
         Messenger::error("No configuration target set for module '{}'.\n", name());
         return failed;
+    }
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
+    {
         Messenger::error("Analysis failed.\n");
         return failed;
+    }
 
     return success;
 }
