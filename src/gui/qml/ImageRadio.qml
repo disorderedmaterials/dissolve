@@ -4,9 +4,9 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 
 RadioButton {
-    id: control
+id: control
 
-    property url source
+property url source
 
     contentItem: Item {
         Rectangle {
