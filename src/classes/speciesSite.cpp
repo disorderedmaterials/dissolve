@@ -538,7 +538,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
 {
     Messenger::printVerbose("\nReading information for Site '{}'...\n", name());
 
-    auto blockDone = false, error = false;
+    auto blockDone = false, errorsEncountered = false;
 
     while (!parser.eofOrBlank())
     {
@@ -552,7 +552,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
         {
-            error = true;
+            errorsEncountered = true;
             continue;
         }
 
@@ -566,7 +566,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     if (!at || !addDynamicAtomType(at))
                     {
                         Messenger::error("Failed to add target atom type for site '{}'.\n", name());
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                 }
@@ -578,7 +578,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                 {
                     Messenger::error(
                         "Can't set '{}' to be dynamic as origin, x-axis, or y-axis atoms have already been defined.\n", name());
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             case (SpeciesSite::ElementKeyword):
@@ -588,7 +588,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     if (el == Elements::Unknown || !addDynamicElement(el))
                     {
                         Messenger::error("Failed to add target element for site '{}'.\n", name());
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                 }
@@ -600,7 +600,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                 if (!fragment_.create(parser.args(1)))
                 {
                     Messenger::error("Failed to parse NETA description for site '{}'.\n", name());
-                    error = true;
+                    errorsEncountered = true;
                 }
                 break;
             case (SpeciesSite::EndSiteKeyword):
@@ -609,7 +609,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     if (!generateUniqueSites())
                     {
                         Messenger::error("Failed to generate unique sites for site '{}'.\n", name());
-                        error = true;
+                        errorsEncountered = true;
                     }
                 }
                 Messenger::print("Found end of Site '{}'.\n", name());
@@ -621,7 +621,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     if (!addStaticOriginAtom(parser.argi(n) - 1))
                     {
                         Messenger::error("Failed to add origin atom for site '{}'.\n", name());
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                 }
@@ -635,7 +635,7 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     if (!addStaticXAxisAtom(parser.argi(n) - 1))
                     {
                         Messenger::error("Failed to add x-axis atom for site '{}'.\n", name());
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                 }
@@ -646,19 +646,19 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
                     if (!addStaticYAxisAtom(parser.argi(n) - 1))
                     {
                         Messenger::error("Failed to add y-axis atom for site '{}'.\n", name());
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                 }
                 break;
             default:
                 Messenger::error("Site block keyword '{}' not accounted for.\n", keywords().keyword(kwd));
-                error = true;
+                errorsEncountered = true;
                 break;
         }
 
         // Error encountered?
-        if (error)
+        if (errorsEncountered)
             break;
 
         // End of block?
@@ -666,14 +666,14 @@ bool SpeciesSite::read(LineParser &parser, const CoreData &coreData)
             break;
     }
 
-    // If there's no error and the blockDone flag isn't set, return an error
-    if (!error && !blockDone)
+    // If there's no errorsEncountered and the blockDone flag isn't set, return an errorsEncountered
+    if (!errorsEncountered && !blockDone)
     {
         Messenger::error("Unterminated Site block found.\n");
-        error = true;
+        errorsEncountered = true;
     }
 
-    return (!error);
+    return (!errorsEncountered);
 }
 
 // Write site definition to specified LineParser
