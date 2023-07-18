@@ -26,8 +26,10 @@ enum Module::executionResult AccumulateModule::process(Dissolve &dissolve, const
 {
     // Get the modules and decide on the PartialSet data name we're looking for
     if (targetModules_.empty())
+    {
         Messenger::error("No target modules set.");
         return failed;
+    }
 
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
     Messenger::print("Accumulate: Save data is {}.\n", DissolveSys::onOff(save_));
@@ -42,16 +44,20 @@ enum Module::executionResult AccumulateModule::process(Dissolve &dissolve, const
         auto targetDataIt = std::find_if(validTargets.begin(), validTargets.end(),
                                          [targetModule](const auto &target) { return target.first == targetModule->type(); });
         if (targetDataIt == validTargets.end())
+        {
             Messenger::error("Module of type '{}' is not a valid target.\n",
-                                    ModuleTypes::moduleType(targetModule->type()));
+                        ModuleTypes::moduleType(targetModule->type()));
             return failed;
+        }
 
         auto dataName = targetDataIt->second[targetPartialSet_];
         if (dataName.empty())
+        {
             Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
                                     targetPartialSet().keyword(targetPartialSet_),
                                     ModuleTypes::moduleType(targetModule->type()));
             return failed;
+        }
 
         // Find the target data
         auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
