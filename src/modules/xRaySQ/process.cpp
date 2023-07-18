@@ -34,10 +34,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
         // Load the data
         Data1D referenceData;
         if (!referenceFQ_.importData(referenceData, &procPool))
-        {
-            Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", name_, referenceFQ_.filename());
-            return false;
-        }
+            return Messenger::error("[SETUP {}] Failed to load reference data '{}'.\n", name_, referenceFQ_.filename());
 
         // Get dependent modules
         if (!sourceSQ_)
