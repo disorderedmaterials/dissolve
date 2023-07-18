@@ -39,7 +39,7 @@ runs:
     run: |
       set -ex
       /usr/lib/qt6/bin/qmlformat --version
-      find . -type f -name '.*\.qml' -exec /usr/lib/qt6/bin/qmlformat -imw 4 '{}' \;
+      find . -type f -regex '.*\.qml' -exec /usr/lib/qt6/bin/qmlformat -imw 4 '{}' \;
       git diff
       git diff --quiet
 
