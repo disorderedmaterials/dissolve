@@ -5,7 +5,6 @@ import QtQuick.Layouts
 
 RadioButton {
     id: control
-
     property url source
 
     contentItem: Item {

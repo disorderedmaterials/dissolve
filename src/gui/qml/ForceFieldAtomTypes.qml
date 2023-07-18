@@ -86,11 +86,11 @@ Item {
         wrapMode: Text.Wrap
     }
     Connections {
+        target: dialogModel.atomTypes
+
         function onDataChanged(topLeft, bottomRight) {
             dialogModel.atomTypesIndicatorChanged();
         }
-
-        target: dialogModel.atomTypes
     }
     Binding {
         property: "overwriteParametersCheck"

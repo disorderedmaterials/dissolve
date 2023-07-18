@@ -15,13 +15,13 @@ GroupBox {
         value: chargesCheck.checked
     }
     Connections {
+        target: dialogModel
+
         function onAssignErrors(indices) {
             ffErrorIcon.visible = indices.length != 0;
             ffErrorText.visible = indices.length != 0;
             ffErrorText.text = "No matching atom types for indices " + indices.join(", ");
         }
-
-        target: dialogModel
     }
     ColumnLayout {
         id: radioChoice

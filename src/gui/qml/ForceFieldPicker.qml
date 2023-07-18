@@ -5,7 +5,6 @@ import QtQuick.Layouts
 
 Item {
     id: control
-
     property variant dialogModel
 
     signal selected
