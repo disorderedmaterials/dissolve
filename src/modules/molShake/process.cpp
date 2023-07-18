@@ -12,13 +12,13 @@
 #include "modules/molShake/molShake.h"
 
 // Run main processing
-enum Module::executionResult MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Retrieve control parameters from Configuration
@@ -219,17 +219,17 @@ enum Module::executionResult MolShakeModule::process(Dissolve &dissolve, const P
 
     // Collect statistics across all processes
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nGeneralAttempts, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nTranslationAttempts, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nTranslationsAccepted, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nRotationAttempts, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nRotationsAccepted, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
@@ -267,5 +267,5 @@ enum Module::executionResult MolShakeModule::process(Dissolve &dissolve, const P
     if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0))
         targetConfiguration_->incrementContentsVersion();
 
-    return success;
+    return ExecutionResult::Success;
 }

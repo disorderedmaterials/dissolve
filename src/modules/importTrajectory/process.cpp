@@ -8,13 +8,13 @@
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run main processing
-enum Module::executionResult ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     Messenger::print("Import: Reading trajectory file frame from '{}' into Configuration '{}'...\n",
@@ -25,7 +25,7 @@ enum Module::executionResult ImportTrajectoryModule::process(Dissolve &dissolve,
     if ((!parser.openInput(trajectoryFormat_.filename())) || (!parser.isFileGoodForReading()))
     {
         Messenger::error("Couldn't open trajectory file '{}'.\n", trajectoryFormat_.filename());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Does a seek position exist in the processing module info?
@@ -42,7 +42,7 @@ enum Module::executionResult ImportTrajectoryModule::process(Dissolve &dissolve,
     if (!trajectoryFormat_.importData(parser, targetConfiguration_, unitCell))
     {
         Messenger::error("Failed to read trajectory frame data.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
  
     targetConfiguration_->incrementContentsVersion();
@@ -68,5 +68,5 @@ enum Module::executionResult ImportTrajectoryModule::process(Dissolve &dissolve,
     // Make sure that the configuration contents are up-to-date w.r.t. cell locations etc.
     targetConfiguration_->updateAtomLocations(clearExistingLocations);
 
-    return success;
+    return ExecutionResult::Success;
 }

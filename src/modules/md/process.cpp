@@ -11,13 +11,13 @@
 #include "modules/md/md.h"
 
 // Run main processing
-enum Module::executionResult MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Get control parameters
@@ -59,12 +59,12 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
         auto stabilityResult = EnergyModule::checkStability(dissolve.processingModuleData(), targetConfiguration_);
         if (stabilityResult == EnergyModule::NotAssessable)
         {
-            return failed;
+            return ExecutionResult::Failed;
         }
         else if (stabilityResult == EnergyModule::EnergyUnstable)
         {
             Messenger::print("Skipping MD for Configuration '{}'.\n", targetConfiguration_->niceName());
-            return notExecuted;
+            return ExecutionResult::NotExecuted;
         }
     }
 
@@ -187,13 +187,13 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
             {
                 Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
                 procPool.decideFalse();
-                return failed;
+                return ExecutionResult::Failed;
             }
             procPool.decideTrue();
         }
         else if (!procPool.decision())
         {
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -234,7 +234,7 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
         if (!determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound))
         {
             Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
-            return notExecuted;
+            return ExecutionResult::NotExecuted;
         }
     }
 
@@ -348,7 +348,7 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
                 if (!trajParser.writeLine(header))
                 {
                     procPool.decideFalse();
-                    return failed;
+                    return ExecutionResult::Failed;
                 }
 
                 // Write Atoms
@@ -358,7 +358,7 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
                                                i.r().x, i.r().y, i.r().z))
                     {
                         procPool.decideFalse();
-                        return failed;
+                        return ExecutionResult::Failed;
                     }
                 }
 
@@ -366,7 +366,7 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
             }
             else if (!procPool.decision())
             {
-                return failed;
+                return ExecutionResult::Failed;
             }
         }
     }
@@ -390,5 +390,5 @@ enum Module::executionResult MDModule::process(Dissolve &dissolve, const Process
      * Calculation End
      */
 
-    return success;
+    return ExecutionResult::Success;
 }

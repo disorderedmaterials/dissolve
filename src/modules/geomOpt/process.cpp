@@ -6,7 +6,7 @@
 #include "modules/geomOpt/geomOpt.h"
 
 // Run main processing
-enum Module::executionResult GeometryOptimisationModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult GeometryOptimisationModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);
@@ -18,7 +18,7 @@ enum Module::executionResult GeometryOptimisationModule::process(Dissolve &disso
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Initialise working arrays for coordinates and forces
@@ -28,5 +28,5 @@ enum Module::executionResult GeometryOptimisationModule::process(Dissolve &disso
 
     optimise<Configuration>(dissolve.potentialMap(), procPool, targetConfiguration_);
 
-    return success;
+    return ExecutionResult::Success;
 }

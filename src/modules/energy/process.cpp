@@ -23,7 +23,7 @@ bool EnergyModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-enum Module::executionResult EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Energy for the target Configuration(s)
@@ -35,7 +35,7 @@ enum Module::executionResult EnergyModule::process(Dissolve &dissolve, const Pro
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     auto strategy = procPool.bestStrategy();
@@ -252,14 +252,14 @@ enum Module::executionResult EnergyModule::process(Dissolve &dissolve, const Pro
                              "is {} (threshold is {:10.3e} kJ/mol)\n",
                              delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
             if (!procPool.allTrue(fabs(delta) < testThreshold_))
-                return failed;
+                return ExecutionResult::Failed;
 
             delta = testReferenceInter_.value() - interEnergy;
             Messenger::print("Reference interatomic energy delta with production value is {:15.9e} kJ/mol "
                              "and is {} (threshold is {:10.3e} kJ/mol)\n",
                              delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
             if (!procPool.allTrue(fabs(delta) < testThreshold_))
-                return failed;
+                return ExecutionResult::Failed;
         }
         if (testReferenceIntra_)
         {
@@ -268,14 +268,14 @@ enum Module::executionResult EnergyModule::process(Dissolve &dissolve, const Pro
                              "and is {} (threshold is {:10.3e} kJ/mol)\n",
                              delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
             if (!procPool.allTrue(fabs(delta) < testThreshold_))
-                return failed;
+                return ExecutionResult::Failed;
 
             delta = testReferenceIntra_.value() - intraEnergy;
             Messenger::print("Reference intramolecular energy delta with production value is {:15.9e} kJ/mol "
                              "and is {} (threshold is {:10.3e} kJ/mol)\n",
                              delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
             if (!procPool.allTrue(fabs(delta) < testThreshold_))
-                return failed;
+                return ExecutionResult::Failed;
         }
 
         // Compare production vs 'correct' values
@@ -293,7 +293,7 @@ enum Module::executionResult EnergyModule::process(Dissolve &dissolve, const Pro
         // All OK?
         if (!procPool.allTrue((fabs(interDelta) < testThreshold_) && (fabs(intraDelta) < testThreshold_) &&
                               (fabs(moleculeDelta) < testThreshold_)))
-            return failed;
+            return ExecutionResult::Failed;
     }
     else
     {
@@ -398,5 +398,5 @@ enum Module::executionResult EnergyModule::process(Dissolve &dissolve, const Pro
 
     Messenger::print("\n");
 
-    return success;
+    return ExecutionResult::Success;
 }

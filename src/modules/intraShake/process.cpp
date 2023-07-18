@@ -15,13 +15,13 @@
 #include "modules/intraShake/intraShake.h"
 
 // Run main processing
-enum Module::executionResult IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Retrieve control parameters
@@ -86,7 +86,7 @@ enum Module::executionResult IntraShakeModule::process(Dissolve &dissolve, const
         if (!spPop.first->attachedAtomListsGenerated())
         {
             Messenger::error("Species '{}' has no attached atom lists, so module can't proceed.\n", spPop.first->name());
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -318,19 +318,19 @@ enum Module::executionResult IntraShakeModule::process(Dissolve &dissolve, const
 
     // Collect statistics across all processes
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nBondAttempts, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nBondAccepted, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nAngleAttempts, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nAngleAccepted, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nTorsionAttempts, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nTorsionAccepted, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
 
     Messenger::print("IntraShake: Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
     Messenger::print("IntraShake: Total number of attempted moves was {} ({} work, {} comms).\n",
@@ -391,5 +391,5 @@ enum Module::executionResult IntraShakeModule::process(Dissolve &dissolve, const
     if ((nBondAccepted > 0) || (nAngleAccepted > 0) || (nTorsionAccepted > 0))
         targetConfiguration_->incrementContentsVersion();
 
-    return success;
+    return ExecutionResult::Success;
 }

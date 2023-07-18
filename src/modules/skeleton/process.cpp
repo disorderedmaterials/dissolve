@@ -6,16 +6,16 @@
 #include "modules/skeleton/skeleton.h"
 
 // Run main processing
-enum Module::executionResult SkeletonModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SkeletonModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // MODULE CODE
 
-    return failed;
+    return ExecutionResult::Failed;
 }

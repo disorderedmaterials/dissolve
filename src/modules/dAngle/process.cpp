@@ -11,13 +11,13 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-enum Module::executionResult DAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult DAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Ensure any parameters in our nodes are set correctly
@@ -39,8 +39,8 @@ enum Module::executionResult DAngleModule::process(Dissolve &dissolve, const Pro
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

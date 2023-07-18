@@ -10,13 +10,13 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-enum Module::executionResult SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Ensure any parameters in our nodes are set correctly
@@ -34,7 +34,7 @@ enum Module::executionResult SDFModule::process(Dissolve &dissolve, const Proces
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateSDF experienced problems with its analysis.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Save data?
@@ -47,12 +47,12 @@ enum Module::executionResult SDFModule::process(Dissolve &dissolve, const Proces
             else
             {
                 procPool.decideFalse();
-                return failed;
+                return ExecutionResult::Failed;
             }
         }
         else if (!procPool.decision())
-            return failed;
+            return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

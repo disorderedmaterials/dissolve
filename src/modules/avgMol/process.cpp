@@ -49,13 +49,13 @@ bool AvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-enum Module::executionResult AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Grab Box pointer
@@ -65,7 +65,7 @@ enum Module::executionResult AvgMolModule::process(Dissolve &dissolve, const Pro
     if (!targetSite_)
     {
         Messenger::error("No target site defined.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Get site parent species
@@ -73,7 +73,7 @@ enum Module::executionResult AvgMolModule::process(Dissolve &dissolve, const Pro
     if (sp != targetSpecies_)
     {
         Messenger::error("Internal error - target site parent is not the same as the target species.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     Messenger::print("AvgMol: Target site (species) is {} ({}).\n", targetSite_->name(), targetSpecies_->name());
@@ -127,8 +127,8 @@ enum Module::executionResult AvgMolModule::process(Dissolve &dissolve, const Pro
     if (exportFileAndFormat_.hasFilename())
     {
         if (!exportFileAndFormat_.exportData(&averageSpecies_))
-            return failed;
+            return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

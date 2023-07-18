@@ -12,13 +12,13 @@
 #include "modules/atomShake/atomShake.h"
 
 // Run main processing
-enum Module::executionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Retrieve control parameters from Configuration
@@ -154,11 +154,11 @@ enum Module::executionResult AtomShakeModule::process(Dissolve &dissolve, const 
 
     // Collect statistics across all processes
     if (!procPool.allSum(&nAccepted, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nAttempts, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return failed;
+        return ExecutionResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
@@ -183,5 +183,5 @@ enum Module::executionResult AtomShakeModule::process(Dissolve &dissolve, const 
     if (nAccepted > 0)
         targetConfiguration_->incrementContentsVersion();
 
-    return success;
+    return ExecutionResult::Success;
 }

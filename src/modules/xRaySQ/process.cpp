@@ -140,7 +140,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate x-ray structure factors from existing g(r) data
@@ -152,13 +152,13 @@ enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const Pro
     if (!sourceSQ_)
     {
         Messenger::error("A source SQ module must be provided.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
     auto *grModule = sourceSQ_->sourceGR();
     if (!grModule)
     {
         Messenger::error("A source GR module (in the SQ module) must be provided.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Print argument/parameter summary
@@ -193,7 +193,7 @@ enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const Pro
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->name()))
     {
         Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
-        return failed;
+        return ExecutionResult::Failed;
     }
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
@@ -214,7 +214,7 @@ enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const Pro
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
-        return failed;
+        return ExecutionResult::Failed;
     if (saveFormFactors_)
     {
         auto result = for_each_pair_early(
@@ -255,7 +255,7 @@ enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const Pro
         if (!result.value_or(true))
         {
             Messenger::error("Failed to save form factor data.");
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -267,7 +267,7 @@ enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const Pro
     if (!dissolve.processingModuleData().contains("UnweightedGR", grModule->name()))
     {
         Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
     const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", grModule->name());
 
@@ -303,7 +303,7 @@ enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const Pro
     if (!rho)
     {
         Messenger::error("No effective density available from RDF module '{}'\n", grModule->name());
-        return failed;
+        return ExecutionResult::Failed;
     }
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
@@ -319,8 +319,8 @@ enum Module::executionResult XRaySQModule::process(Dissolve &dissolve, const Pro
                 procPool.decideFalse();
         }
         else if (!procPool.decision())
-            return failed;
+            return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

@@ -10,7 +10,7 @@
 #include "modules/dataTest/dataTest.h"
 
 // Run main processing
-enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * This is a serial routine.
@@ -30,7 +30,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
-            return failed;
+            return ExecutionResult::Failed;
         }
         const Data1D &data = optData->get();
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
@@ -42,7 +42,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
                          referenceData.tag(), error, notOK ? "NOT OK" : "OK", threshold_);
         if (notOK)
         {
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -54,7 +54,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
         if (!optData1)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag1);
-            return failed;
+            return ExecutionResult::Failed;
         }
         const Data1D data1 = optData1->get();
         Messenger::print("Located reference data '{}'.\n", tag1);
@@ -62,7 +62,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
         if (!optData2)
         {    
             Messenger::error("No data with tag '{}' exists.\n", tag2);
-            return failed;
+            return ExecutionResult::Failed;
         }
         const Data1D data2 = optData2->get();
         Messenger::print("Located reference data '{}'.\n", tag2);
@@ -74,7 +74,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
                          error, tag2, notOK ? "NOT OK" : "OK", threshold_);
         if (notOK)
         {    
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -87,7 +87,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
-            return failed;
+            return ExecutionResult::Failed;
         }
         const Data2D &data = *optData;
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
@@ -99,7 +99,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
         // if (isnan(error) || error > threshold_) return false;
 
         Messenger::error("Error calculation between 2D datasets is not yet implemented.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Loop over reference three-dimensional data supplied
@@ -111,7 +111,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
-            return failed;
+            return ExecutionResult::Failed;
         }
         const Data3D &data = *optData;
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
@@ -123,7 +123,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
                          referenceData.tag(), error, notOK ? "NOT OK" : "OK", threshold_);
         if (notOK)
         {
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -135,7 +135,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag);
-            return failed;
+            return ExecutionResult::Failed;
         }
         const SampledDouble &data = optData->get();
         Messenger::print("Located reference data '{}'.\n", tag);
@@ -147,7 +147,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
                          error, notOK ? "NOT OK" : "OK", threshold_);
         if (notOK)
         {
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -159,7 +159,7 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag);
-            return failed;
+            return ExecutionResult::Failed;
         }
         const SampledVector &data = optData->get();
         Messenger::print("Located reference data '{}'.\n", tag);
@@ -171,9 +171,9 @@ enum Module::executionResult DataTestModule::process(Dissolve &dissolve, const P
                          error, notOK ? "NOT OK" : "OK", threshold_);
         if (notOK)
         {
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

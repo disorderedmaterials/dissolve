@@ -8,7 +8,7 @@
 #include "modules/gr/gr.h"
 
 // Run main processing
-enum Module::executionResult GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate standard partial g(r)
@@ -21,7 +21,7 @@ enum Module::executionResult GRModule::process(Dissolve &dissolve, const Process
     if (targetConfigurations_.empty())
     {
         Messenger::error("No configuration targets set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Print argument/parameter summary
@@ -66,7 +66,7 @@ enum Module::executionResult GRModule::process(Dissolve &dissolve, const Process
                 Messenger::error("Specified RDF range of {} Angstroms is out of range for Configuration "
                                         "'{}' (max = {} Angstroms).\n",
                                         requestedRange_.value(), cfg->niceName(), rdfRange);
-                return failed;
+                return ExecutionResult::Failed;
             }
                  
             rdfRange = requestedRange_.value();
@@ -104,7 +104,7 @@ enum Module::executionResult GRModule::process(Dissolve &dissolve, const Process
             calculateGR(dissolve.processingModuleData(), procPool, cfg, GRModule::TestMethod, rdfRange, binWidth_,
                         alreadyUpToDate);
             if (!testReferencePartials(referencePartials, originalgr, 1.0e-6))
-                return failed;
+                return ExecutionResult::Failed;
         }
 
         // Form unweighted g(r) from original g(r), applying any requested nSmooths_ / intramolecular broadening
@@ -114,9 +114,9 @@ enum Module::executionResult GRModule::process(Dissolve &dissolve, const Process
 
         // Save data if requested
         if (save_ && (!MPIRunMaster(procPool, unweightedgr.save(name_, "UnweightedGR", "gr", "r, Angstroms"))))
-            return failed;
+            return ExecutionResult::Failed;
         if (saveOriginal_ && (!MPIRunMaster(procPool, originalgr.save(name_, "OriginalGR", "gr", "r, Angstroms"))))
-            return failed;
+            return ExecutionResult::Failed;
     }
 
     // Create/retrieve PartialSet for summed unweighted g(r)
@@ -126,7 +126,7 @@ enum Module::executionResult GRModule::process(Dissolve &dissolve, const Process
     // Sum the partials from the associated Configurations
     if (!GRModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, name(), name(), targetConfigurations_,
                                    summedUnweightedGR))
-        return failed;
+        return ExecutionResult::Failed;
 
-    return success;
+    return ExecutionResult::Success;
 }

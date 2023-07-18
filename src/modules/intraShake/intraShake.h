@@ -58,5 +58,5 @@ class IntraShakeModule : public Module
      */
     private:
     // Run main processing
-    enum Module::executionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    Module::ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
 };

@@ -11,13 +11,13 @@
 #include <numeric>
 
 // Run main processing
-enum Module::executionResult CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Retrieve necessary keyword values
     if (!targetSpecies_)
     {
         Messenger::error("No target species provided.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     Messenger::print("CheckSpecies: Target species is '{}'.\n", targetSpecies_->name());
@@ -37,7 +37,7 @@ enum Module::executionResult CheckSpeciesModule::process(Dissolve &dissolve, con
             if (i - 1 >= targetSpecies_->nAtoms())
             {
                 Messenger::error("Atom index {} is out of range ({} atoms in species).\n", i, targetSpecies_->nAtoms());
-                return failed;
+                return ExecutionResult::Failed;
             }
 
             auto &spAtom = targetSpecies_->atom(i - 1);
@@ -146,5 +146,5 @@ enum Module::executionResult CheckSpeciesModule::process(Dissolve &dissolve, con
                             });
     }
 
-    return (((nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0) ? success : failed);
+    return (((nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0) ? ExecutionResult::Success : ExecutionResult::Failed);
 }

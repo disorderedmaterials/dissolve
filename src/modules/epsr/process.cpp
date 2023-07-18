@@ -122,7 +122,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
 }
 
 // Run main processing
-enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     std::string testDataName;
 
@@ -170,19 +170,19 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
     if (targets_.empty())
     {
         Messenger::error("At least one Module target containing suitable data must be provided.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     if (!targetConfiguration_)
     {
         Messenger::error("No target configuration is set.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     if (!targetConfiguration_->atomicDensity())
     {
         Messenger::error("No density available for target configuration '{}'\n", targetConfiguration_->name());
-        return failed;
+        return ExecutionResult::Failed;
     }
     auto rho = *targetConfiguration_->atomicDensity();
 
@@ -228,7 +228,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
         if (!dissolve.processingModuleData().contains("WeightedSQ", module->name()))
         {
             Messenger::error("Weighted partials data not found for target '{}'.\n", module->name());
-            return failed;
+            return ExecutionResult::Failed;
         }
         const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->name());
 
@@ -242,14 +242,14 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
             Messenger::error(
                 "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
                 module->name());
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         // Retrieve the unweighted S(Q)/F(Q)
         if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->name()))
         {
             Messenger::error("Unweighted partials data not found for target '{}'.\n", sqModule->name());
-            return failed;
+            return ExecutionResult::Failed;
         }
         const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->name());
 
@@ -257,7 +257,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
         if (!dissolve.processingModuleData().contains("ReferenceData", module->name()))
         {
             Messenger::error("Reference data not found for target '{}'.\n", module->name());
-            return failed;
+            return ExecutionResult::Failed;
         }
         const auto &originalReferenceData = dissolve.processingModuleData().value<Data1D>("ReferenceData", module->name());
 
@@ -403,7 +403,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                                       : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
             {
                 Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
-                return failed;
+                return ExecutionResult::Failed;
             }
         }
         else if (module->type() == ModuleTypes::XRaySQ)
@@ -436,14 +436,14 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                                       : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
             {
                 Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
-                return failed;
+                return ExecutionResult::Failed;
             }
         }
         else
         {
             Messenger::error("Don't know how to add data from a module of type '{}' to the scattering matrix.",
                                     ModuleTypes::moduleType(module->type()));
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         /*
@@ -475,10 +475,10 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                 if (exportFormat.exportData(differenceData))
                     procPool.decideTrue();
                 else
-                    return (procPool.decideFalse() ? notExecuted : failed);
+                    return (procPool.decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
             }
             else if (!procPool.decision())
-                return notExecuted;
+                return ExecutionResult::NotExecuted;
 
             if (procPool.isMaster())
             {
@@ -486,10 +486,10 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                 if (exportFormat.exportData(deltaFQFit))
                     procPool.decideTrue();
                 else
-                    return (procPool.decideFalse() ? notExecuted : failed);
+                    return (procPool.decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
             }
             else if (!procPool.decision())
-                return notExecuted;
+                return ExecutionResult::NotExecuted;
         }
         if (saveSimulatedFR_)
         {
@@ -499,10 +499,10 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                 if (exportFormat.exportData(simulatedFR))
                     procPool.decideTrue();
                 else
-                    return (procPool.decideFalse() ? notExecuted : failed);
+                    return (procPool.decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
             }
             else if (!procPool.decision())
-                return notExecuted;
+                return ExecutionResult::NotExecuted;
         }
 
         /*
@@ -518,14 +518,14 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                 if (!optRefData)
                 {
                     Messenger::error("Reference data '{}' not found.\n", testDataName);
-                    return failed;
+                    return ExecutionResult::Failed;
                 }
                 auto error = Error::percent(simulatedFR, *optRefData);
                 Messenger::print("Simulated F(r) reference data '{}' has error of {:7.3f}% with calculated data "
                                  "and is {} (threshold is {:6.3f}%)\n\n",
                                  testDataName, error, error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
                 if (error > testThreshold_)
-                    return failed;
+                    return ExecutionResult::Failed;
             }
         }
     }
@@ -541,7 +541,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
      */
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
-    auto methodSuccess =
+    auto success =
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
                             {
@@ -556,13 +556,13 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                                 {
                                     Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
                                                     at1->name(), at2->name());
-                                    return failed;
+                                    return ExecutionResult::Failed;
                                 }
 
                                 return EarlyReturn<bool>::Continue;
                             });
-    if (!methodSuccess.value_or(true))
-        return failed;
+    if (!success.value_or(true))
+        return ExecutionResult::Failed;
 
     // If the scattering matrix was not set-up, need to generate the necessary inverse matrix or matrices here
     if (!scatteringMatrixSetUp)
@@ -597,12 +597,12 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", name_, sq.tag()));
                 if (!exportFormat.exportData(sq))
-                    return (procPool.decideFalse() ? notExecuted : failed);
+                    return (procPool.decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
             }
             procPool.decideTrue();
         }
         else if (!procPool.decision())
-            return notExecuted;
+            return ExecutionResult::NotExecuted;
     }
 
     // Test Mode
@@ -627,7 +627,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
                                 return EarlyReturn<bool>::Continue;
                             });
         if (!methodSuccess.value_or(true))
-            return failed;
+            return ExecutionResult::Failed;
     }
 
     /*
@@ -762,14 +762,14 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
         auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
 
         if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho, ncoeffp, rminpt, rmaxpt, sigma1, sigma2))
-            return failed;
+            return ExecutionResult::Failed;
     }
     else
         energabs = absEnergyEP(dissolve);
 
     // Test absolute EP energy?
     if (!testAbsEnergyEP_.empty() && !testAbsEnergyEP(dissolve))
-        return failed;
+        return ExecutionResult::Failed;
 
     // Save data?
     if (saveEmpiricalPotentials_)
@@ -791,7 +791,7 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
             procPool.decideTrue();
         }
         else if (!procPool.decision())
-            return failed;
+            return ExecutionResult::Failed;
     }
     if (savePotentialCoefficients_)
     {
@@ -819,12 +819,12 @@ enum Module::executionResult EPSRModule::process(Dissolve &dissolve, const Proce
             procPool.decideTrue();
         }
         else if (!procPool.decision())
-            return failed;
+            return ExecutionResult::Failed;
     }
 
     // Realise the phiMag array and make sure its object name is set
     auto &phiArray = dissolve.processingModuleData().realise<Data1D>("EPMag", name_, GenericItem::InRestartFileFlag);
     phiArray.addPoint(dissolve.iteration(), energabs);
 
-    return success;
+    return ExecutionResult::Success;
 }

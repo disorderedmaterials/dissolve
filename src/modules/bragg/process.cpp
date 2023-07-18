@@ -9,7 +9,7 @@
 #include "templates/algorithms.h"
 
 // Run main processing
-enum Module::executionResult BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Bragg contributions.
@@ -22,7 +22,7 @@ enum Module::executionResult BraggModule::process(Dissolve &dissolve, const Proc
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Print argument/parameter summary
@@ -55,13 +55,13 @@ enum Module::executionResult BraggModule::process(Dissolve &dissolve, const Proc
     bool alreadyUpToDate;
     if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, targetConfiguration_, qMin_, qDelta_, qMax_,
                              multiplicity_, alreadyUpToDate))
-        return failed;
+        return ExecutionResult::Failed;
 
     // If we are already up-to-date, then there's nothing more to do for this Configuration
     if (alreadyUpToDate)
     {
         Messenger::print("Bragg data is up-to-date for Configuration '{}'.\n", targetConfiguration_->name());
-        return notExecuted;
+        return ExecutionResult::NotExecuted;
     }
 
     // Perform averaging of reflections data if requested
@@ -80,7 +80,7 @@ enum Module::executionResult BraggModule::process(Dissolve &dissolve, const Proc
         // Attempt to load the specified file
         LineParser reflectionParser(&procPool);
         if (!reflectionParser.openInput(testReflectionsFile_))
-            return failed;
+            return ExecutionResult::Failed;
 
         // Retrieve BraggReflection data from the Configuration's module data
         const auto &braggReflections =
@@ -90,7 +90,7 @@ enum Module::executionResult BraggModule::process(Dissolve &dissolve, const Proc
         while (!reflectionParser.eofOrBlank())
         {
             if (reflectionParser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return failed;
+                return ExecutionResult::Failed;
 
             // Line format is : ArrayIndex  Q     h k l     mult    Intensity(0,0)  Intensity(0,1) ...
             auto id = reflectionParser.argi(0);
@@ -130,7 +130,7 @@ enum Module::executionResult BraggModule::process(Dissolve &dissolve, const Proc
         else
         {
             Messenger::error("Calculated and reference data are inconsistent.\n");
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -144,14 +144,14 @@ enum Module::executionResult BraggModule::process(Dissolve &dissolve, const Proc
         // Open a file and save the basic reflection data
         LineParser braggParser(&procPool);
         if (!braggParser.openOutput(fmt::format("{}-Reflections.txt", name_)))
-            return failed;
+            return ExecutionResult::Failed;
         braggParser.writeLineF("#   ID      Q     h k l     mult    Intensity(0,0)\n");
         auto count = 0;
         for (const auto &reflxn : braggReflections)
         {
             if (!braggParser.writeLineF("{:6d}  {:10.6f} {} {} {} {:8d}  {:10.6e}\n", ++count, reflxn.q(), reflxn.hkl().x,
                                         reflxn.hkl().y, reflxn.hkl().z, reflxn.nKVectors(), reflxn.intensity(0, 0)))
-                return failed;
+                return ExecutionResult::Failed;
         }
         braggParser.closeFiles();
 
@@ -163,18 +163,18 @@ enum Module::executionResult BraggModule::process(Dissolve &dissolve, const Proc
             {
                 LineParser intensityParser(&procPool);
                 if (!intensityParser.openOutput(fmt::format("{}-{}-{}.txt", name_, atd1.atomTypeName(), atd2.atomTypeName())))
-                    return failed;
+                    return ExecutionResult::Failed;
                 intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                 for (const auto &reflxn : braggReflections)
                     if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", reflxn.q(), reflxn.intensity(i, j)))
-                        return failed;
+                        return ExecutionResult::Failed;
                 intensityParser.closeFiles();
 
                 return EarlyReturn<bool>::Continue;
             });
         if (!success.value_or(true))
-            return failed;
+            return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

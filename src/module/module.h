@@ -108,11 +108,11 @@ class Module : public Serialisable<const CoreData &>
     // Whether the Module is enabled
     bool enabled_;
     // Process exit information
-    enum executionResult
+    enum class ExecutionResult
     {
-        failed,
-        success,
-        notExecuted
+        Failed,
+        Success,
+        NotExecuted
     };
 
     public:
@@ -136,7 +136,7 @@ class Module : public Serialisable<const CoreData &>
      */
     private:
     // Run main processing
-    virtual enum Module::executionResult process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
+    virtual Module::ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
 
     public:
     // Set target data
@@ -145,7 +145,7 @@ class Module : public Serialisable<const CoreData &>
     // Run set-up stage
     virtual bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    enum Module::executionResult executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
+    Module::ExecutionResult executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
 
     /*
      * Timing

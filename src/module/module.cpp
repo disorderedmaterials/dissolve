@@ -151,7 +151,7 @@ bool Module::isDisabled() const { return !enabled_; }
  */
 
 // Run main processing
-enum Module::executionResult Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return failed; }
+Module::ExecutionResult Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return ExecutionResult::Failed; }
 
 // Set target data
 void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
@@ -180,7 +180,7 @@ bool Module::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Keywor
 }
 
 // Run main processing stage
-enum Module::executionResult Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Begin timer
     Timer timer;
@@ -192,7 +192,7 @@ enum Module::executionResult Module::executeProcessing(Dissolve &dissolve, const
     // Accumulate timing information
     timer.stop();
 
-    if (result == success)
+    if (result == ExecutionResult::Success)
     {
         processTimes_ += timer.secondsElapsed();
     }

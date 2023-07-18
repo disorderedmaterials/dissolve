@@ -10,19 +10,19 @@
 #include "modules/exportTrajectory/exportTrajectory.h"
 
 // Run main processing
-enum Module::executionResult ExportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ExportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!trajectoryFormat_.hasFilename())
     {
         Messenger::error("No valid file/format set for trajectory export.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Check for Configuration target
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Only the pool master saves the data
@@ -35,13 +35,13 @@ enum Module::executionResult ExportTrajectoryModule::process(Dissolve &dissolve,
         {
             Messenger::print("Export: Failed to append trajectory file '{}'.\n", trajectoryFormat_.filename());
             procPool.decideFalse();
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         procPool.decideTrue();
     }
     else if (!procPool.decision())
-        return failed;
+        return ExecutionResult::Failed;
 
-    return success;
+    return ExecutionResult::Success;
 }

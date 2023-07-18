@@ -6,13 +6,13 @@
 #include "modules/analyse/analyse.h"
 
 // Run main processing
-enum Module::executionResult AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Execute the analysis
@@ -20,9 +20,9 @@ enum Module::executionResult AnalyseModule::process(Dissolve &dissolve, const Pr
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
     {
-        Messenger::error("Analysis failed.\n");
-        return failed;
+        Messenger::error("Analysis ExecutionResult::Failed.\n");
+        return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

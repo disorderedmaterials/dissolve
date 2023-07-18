@@ -12,13 +12,13 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-enum Module::executionResult HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Ensure any parameters in our nodes are set correctly
@@ -34,8 +34,8 @@ enum Module::executionResult HistogramCNModule::process(Dissolve &dissolve, cons
     if (!analyser_.execute(context))
     {
         Messenger::error("HistogramCN experienced problems with its analysis.\n");
-        return failed;
+        return ExecutionResult::Failed;
     } 
 
-    return success;
+    return ExecutionResult::Success;
 }

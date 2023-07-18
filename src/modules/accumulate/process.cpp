@@ -22,13 +22,13 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 }
 
 // Run main processing
-enum Module::executionResult AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AccumulateModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Get the modules and decide on the PartialSet data name we're looking for
     if (targetModules_.empty())
     {
         Messenger::error("No target modules set.");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     Messenger::print("Accumulate: Target data to accumulate is '{}'.\n", targetPartialSet().keyword(targetPartialSet_));
@@ -47,7 +47,7 @@ enum Module::executionResult AccumulateModule::process(Dissolve &dissolve, const
         {
             Messenger::error("Module of type '{}' is not a valid target.\n",
                         ModuleTypes::moduleType(targetModule->type()));
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         auto dataName = targetDataIt->second[targetPartialSet_];
@@ -56,7 +56,7 @@ enum Module::executionResult AccumulateModule::process(Dissolve &dissolve, const
             Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
                                     targetPartialSet().keyword(targetPartialSet_),
                                     ModuleTypes::moduleType(targetModule->type()));
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         // Find the target data
@@ -65,7 +65,7 @@ enum Module::executionResult AccumulateModule::process(Dissolve &dissolve, const
         {
             Messenger::print("Target PartialSet data '{}' in module '{}' does not yet exist.\n",
                              targetPartialSet().keyword(targetPartialSet_), targetModule->name());
-            return notExecuted;
+            return ExecutionResult::NotExecuted;
         }
 
         // Realise the accumulated partial set
@@ -81,8 +81,8 @@ enum Module::executionResult AccumulateModule::process(Dissolve &dissolve, const
         std::vector<std::string> units = {"r, Angstroms", "Q, Angstroms**-1", "r, Angstroms"};
         if (save_ && !(MPIRunMaster(procPool, accumulated.save(fmt::format("{}-{}", name(), targetModule->name()), dataName,
                                                                suffixes[targetPartialSet_], units[targetPartialSet_]))))
-            return failed;
+            return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

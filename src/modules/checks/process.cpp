@@ -7,7 +7,7 @@
 #include "modules/checks/checks.h"
 
 // Run main processing
-enum Module::executionResult ChecksModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ChecksModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Perform simple checks for the target Configuration(s)
@@ -19,7 +19,7 @@ enum Module::executionResult ChecksModule::process(Dissolve &dissolve, const Pro
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     Messenger::print("Checks: Threshold for distance checks is {} Angstroms\n", distanceThreshold_);
@@ -47,7 +47,7 @@ enum Module::executionResult ChecksModule::process(Dissolve &dissolve, const Pro
         if (!procPool.allTrue(ok))
         {
             Messenger::error("Failed consistency check between processes.\n");
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
@@ -70,9 +70,9 @@ enum Module::executionResult ChecksModule::process(Dissolve &dissolve, const Pro
         if (!procPool.allTrue(ok))
         {
             Messenger::error("Failed consistency check between processes.\n");
-            return failed;
+            return ExecutionResult::Failed;
         }
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

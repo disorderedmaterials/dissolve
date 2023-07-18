@@ -12,13 +12,13 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Ensure any parameters in our nodes are set correctly
@@ -35,7 +35,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateRDF experienced problems with its analysis.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Accumulate instantaneous coordination number data
@@ -51,7 +51,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
                 if (!exportFormat.exportData(sumA))
                 {
                     Messenger::error("Failed to write instantaneous coordination number data for range A.\n");
-                    return failed;
+                    return ExecutionResult::Failed;
                 }
             }
         }
@@ -65,7 +65,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
                 if (!exportFormat.exportData(sumB))
                 {
                     Messenger::error("Failed to write instantaneous coordination number data for range B.\n");
-                    return failed;
+                    return ExecutionResult::Failed;
                 }
             }
         }
@@ -79,7 +79,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
                 if (!exportFormat.exportData(sumC))
                 {
                     Messenger::error("Failed to write instantaneous coordination number data for range C.\n");
-                    return failed;
+                    return ExecutionResult::Failed;
                 }
             }
         }
@@ -93,7 +93,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
         {
             Messenger::error("Test coordination number for range B supplied, but calculation for that range "
                             "is not active.\n");
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         const auto delta = testRangeA_.value() - sumCN_->sum(0);
@@ -102,7 +102,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return failed;
+            return ExecutionResult::Failed;
     }
     if (testRangeB_)
     {
@@ -111,7 +111,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
         {
             Messenger::error("Test coordination number for range B supplied, but calculation for that range "
                                     "is not active.\n");
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         const auto delta = testRangeB_.value() - sumCN_->sum(1);
@@ -120,7 +120,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return failed;
+            return ExecutionResult::Failed;
     }
     if (testRangeC_)
     {
@@ -129,7 +129,7 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
         {
             Messenger::error("Test coordination number for range C supplied, but calculation for that range "
                             "is not active.\n");
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         const auto delta = testRangeC_.value() - sumCN_->sum(2);
@@ -138,8 +138,8 @@ enum Module::executionResult SiteRDFModule::process(Dissolve &dissolve, const Pr
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return failed;
+            return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

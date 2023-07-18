@@ -20,7 +20,7 @@ void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &con
 }
 
 // Run main processing
-enum Module::executionResult SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate S(Q) from Configuration's g(r).
@@ -31,7 +31,7 @@ enum Module::executionResult SQModule::process(Dissolve &dissolve, const Process
     if (!sourceGR_)
     {
         Messenger::error("A source GR module must be provided.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Print argument/parameter summary
@@ -73,7 +73,7 @@ enum Module::executionResult SQModule::process(Dissolve &dissolve, const Process
     if (!dissolve.processingModuleData().contains("UnweightedGR", sourceGR_->name()))
     {
         Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", sourceGR_->name());
-        return failed;
+        return ExecutionResult::Failed;
     }
     const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", sourceGR_->name());
 
@@ -94,13 +94,13 @@ enum Module::executionResult SQModule::process(Dissolve &dissolve, const Process
                         sourceBragg_ ? dissolve.processingModuleData().version("Reflections", sourceBragg_->name()) : -1)))
     {
         Messenger::print("SQ: Unweighted partial S(Q) are up-to-date.\n");
-        return notExecuted;
+        return ExecutionResult::NotExecuted;
     }
 
     // Transform g(r) into S(Q)
     if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin_, qDelta_, qMax_, *rho,
                                WindowFunction(windowFunction_), qBroadening_))
-        return failed;
+        return ExecutionResult::Failed;
 
     // Include Bragg scattering?
     if (sourceBragg_)
@@ -111,7 +111,7 @@ enum Module::executionResult SQModule::process(Dissolve &dissolve, const Process
             Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
                             "could not be located.\n",
                             sourceBragg_->name());
-            return failed;
+            return ExecutionResult::Failed;
         }
 
         const auto &braggReflections =
@@ -143,7 +143,7 @@ enum Module::executionResult SQModule::process(Dissolve &dissolve, const Process
                     Messenger::error(
                         "SQ data has a partial between {} and {}, but no such intensities exist in the reflection data.\n",
                         at1.atomTypeName(), at2.atomTypeName());
-                    return failed;
+                    return ExecutionResult::Failed;
                 }
 
                 // Grab relevant partial and oop over reflections
@@ -159,7 +159,7 @@ enum Module::executionResult SQModule::process(Dissolve &dissolve, const Process
                 return EarlyReturn<bool>::Continue;
             });
         if (result && !result.value())
-            return failed;
+            return ExecutionResult::Failed;
 
         // Finalise partials
         for (auto &partial : braggPartials)
@@ -225,7 +225,7 @@ enum Module::executionResult SQModule::process(Dissolve &dissolve, const Process
 
     // Save data if requested
     if (save_ && !MPIRunMaster(procPool, unweightedsq.save(name_, "UnweightedSQ", "sq", "Q, 1/Angstroms")))
-        return failed;
+        return ExecutionResult::Failed;
 
-    return success;
+    return ExecutionResult::Success;
 }

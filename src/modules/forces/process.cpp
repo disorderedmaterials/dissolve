@@ -29,13 +29,13 @@ bool ForcesModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Retrieve control parameters
@@ -318,7 +318,7 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
             interTimer.start();
             kernel->totalForces(fInterCheck, fInterCheck, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
             if (!procPool.allSum(fInterCheck))
-                return failed;
+                return ExecutionResult::Failed;
             interTimer.stop();
 
             Messenger::print("Time to do interatomic forces was {}.\n", interTimer.totalTimeString());
@@ -335,7 +335,7 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
                 fIntraCheck, fIntraCheck, ProcessPool::PoolStrategy,
                 {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
             if (!procPool.allSum(fIntraCheck))
-                return failed;
+                return ExecutionResult::Failed;
             intraTimer.stop();
 
             Messenger::print("Time to do intramolecular forces was {}.\n", intraTimer.totalTimeString());
@@ -395,7 +395,7 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
             }
         }
 
-        Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
+        Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
         Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
 
         // Test reference forces against production (if reference forces present)
@@ -412,7 +412,7 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
                Messenger::error("Number of force components in ReferenceForces is {}, but the "
                                 "Configuration '{}' contains {} atoms.\n",
                                 fRef.size(), targetConfiguration_->name(), targetConfiguration_->nAtoms());
-                return failed;
+                return ExecutionResult::Failed;
             }
  
             Messenger::print("\nTesting reference forces against calculated 'correct' forces - "
@@ -450,7 +450,7 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
                     ++nFailed2;
                 }
             }
-            Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed2,
+            Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed2,
                              nFailed2 == 0 ? "OK" : "NOT OK");
             Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 3));
 
@@ -490,13 +490,13 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
                     ++nFailed3;
                 }
             }
-            Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed3,
+            Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed3,
                              nFailed3 == 0 ? "OK" : "NOT OK");
             Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
         }
 
         if (!procPool.allTrue((nFailed1 + nFailed2 + nFailed3) == 0))
-            return failed;
+            return ExecutionResult::Failed;
     }
     else
     {
@@ -517,9 +517,9 @@ enum Module::executionResult ForcesModule::process(Dissolve &dissolve, const Pro
         if (saveData && !exportedForces_.exportData(f))
             {
                 Messenger::error("Failed to save forces.\n");
-                return failed;
+                return ExecutionResult::Failed;
             }
     }
 
-    return success;
+    return ExecutionResult::Success;
 }

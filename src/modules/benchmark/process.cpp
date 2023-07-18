@@ -12,13 +12,13 @@
 #include "modules/gr/gr.h"
 
 // Run main processing
-enum Module::executionResult BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // Get options
@@ -170,7 +170,7 @@ enum Module::executionResult BenchmarkModule::process(Dissolve &dissolve, const 
                           "Distributor (regional)", timing, save_);
     }
 
-    return success;
+    return ExecutionResult::Success;
 }
 
 // Print timing information, assessing it against last value in existing timings (if found)

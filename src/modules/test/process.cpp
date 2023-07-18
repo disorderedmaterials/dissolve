@@ -5,16 +5,16 @@
 #include "modules/test/test.h"
 
 // Run main processing
-enum Module::executionResult TestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult TestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
     {
         Messenger::error("No configuration target set for module '{}'.\n", name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     // MODULE CODE
 
-    return failed;
+    return ExecutionResult::Failed;
 }

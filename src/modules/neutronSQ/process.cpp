@@ -133,7 +133,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
 }
 
 // Run main processing
-enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate neutron structure factors from existing S(Q) data
@@ -145,14 +145,14 @@ enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const 
     if (!sourceSQ_)
     {
         Messenger::error("A source SQ module must be provided.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     const auto *rdfModule = sourceSQ_->sourceGR();
     if (!rdfModule)
     {
         Messenger::error("A source GR module (in the SQ module) must be provided.\n");
-        return failed;
+        return ExecutionResult::Failed;
 
     }
 
@@ -185,7 +185,7 @@ enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const 
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->name()))
     {
         Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
-        return failed;
+        return ExecutionResult::Failed;
     }
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
@@ -207,7 +207,7 @@ enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const 
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
-        return failed;
+        return ExecutionResult::Failed;
 
     /*
      * Transform UnweightedGR from underlying RDF data into WeightedGR.
@@ -217,7 +217,7 @@ enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const 
     if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->name()))
     {
         Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
@@ -233,7 +233,7 @@ enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const 
 
     // Save data if requested
     if (saveGR_ && (!MPIRunMaster(procPool, weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))))
-        return failed;
+        return ExecutionResult::Failed;
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
@@ -258,7 +258,7 @@ enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const 
     if (!rho)
     {
         Messenger::error("No effective density available from RDF module '{}'\n", rdfModule->name());
-        return failed;
+        return ExecutionResult::Failed;
     }
 
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
@@ -275,8 +275,8 @@ enum Module::executionResult NeutronSQModule::process(Dissolve &dissolve, const 
                 procPool.decideFalse();
         }
         else if (!procPool.decision())
-            return failed;
+            return ExecutionResult::Failed;
     }
 
-    return success;
+    return ExecutionResult::Success;
 }
