@@ -59,10 +59,8 @@ bool ModuleVectorKeyword::deserialise(LineParser &parser, int startArg, const Co
                                     parser.argsv(n), ModuleTypes::moduleType(module->type()), name(),
                                     joinStrings(moduleTypes_));
         if (!data_.empty() && std::find(data_.cbegin(), data_.cend(), module) != data_.cend())
-        {
-            Messenger::warn("Module '{}' has already been added.\n", parser.argsv(n));
-            continue;
-        }
+            Messenger::warn("Module '{}' has already been added to keyword '{}'.\n", parser.argsv(n), name());
+        else
         data_.emplace_back(module);
     }
 
