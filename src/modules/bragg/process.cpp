@@ -163,11 +163,11 @@ Module::ExecutionResult BraggModule::process(Dissolve &dissolve, const ProcessPo
             {
                 LineParser intensityParser(&procPool);
                 if (!intensityParser.openOutput(fmt::format("{}-{}-{}.txt", name_, atd1.atomTypeName(), atd2.atomTypeName())))
-                    return ExecutionResult::Failed;
+                    return false;
                 intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                 for (const auto &reflxn : braggReflections)
                     if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", reflxn.q(), reflxn.intensity(i, j)))
-                        return ExecutionResult::Failed;
+                        return false;
                 intensityParser.closeFiles();
 
                 return EarlyReturn<bool>::Continue;

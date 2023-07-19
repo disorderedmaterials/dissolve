@@ -553,7 +553,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
                                       : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
             {
                 Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n", at1->name(), at2->name());
-                return ExecutionResult::Failed;
+                return false;
             }
 
             return EarlyReturn<bool>::Continue;

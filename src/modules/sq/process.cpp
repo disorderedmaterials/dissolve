@@ -132,7 +132,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve, const ProcessPool 
             partial.initialise(unweightedsq.partial(0, 0));
 
         // For each partial in our S(Q) array, calculate the broadened Bragg function and blend it
-        auto result = for_each_pair_early(
+        auto success = for_each_pair_early(
             unweightedsq.atomTypeMix().begin(), unweightedsq.atomTypeMix().end(),
             [&](auto i, auto &at1, auto j, auto &at2) -> EarlyReturn<bool>
             {
@@ -143,7 +143,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve, const ProcessPool 
                     Messenger::error(
                         "SQ data has a partial between {} and {}, but no such intensities exist in the reflection data.\n",
                         at1.atomTypeName(), at2.atomTypeName());
-                    return ExecutionResult::Failed;
+                    return false;
                 }
 
                 // Grab relevant partial and oop over reflections
@@ -158,7 +158,7 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve, const ProcessPool 
 
                 return EarlyReturn<bool>::Continue;
             });
-        if (result && !result.value())
+        if (success && !success.value())
             return ExecutionResult::Failed;
 
         // Finalise partials
