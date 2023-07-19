@@ -5,6 +5,21 @@ ListView {
     id: control
     signal selected
 
+    /* Border */
+    Rectangle {
+        anchors.fill: parent
+        border.color: palette.active.dark
+        border.width: 2
+        color: "#00000000"
+        z: 1
+    }
+    /* Background */
+    Rectangle {
+        anchors.fill: parent
+        color: palette.active.base
+        z: -11
+    }
+
     delegate: Rectangle {
         id: disp
 
@@ -47,20 +62,5 @@ ListView {
                 }
             }
         }
-    }
-
-    /* Border */
-    Rectangle {
-        anchors.fill: parent
-        border.color: palette.active.dark
-        border.width: 2
-        color: "#00000000"
-        z: 1
-    }
-    /* Background */
-    Rectangle {
-        anchors.fill: parent
-        color: palette.active.base
-        z: -11
     }
 }

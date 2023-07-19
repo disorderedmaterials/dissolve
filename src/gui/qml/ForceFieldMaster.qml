@@ -5,7 +5,6 @@ import "widgets" as D
 
 Item {
     id: origin
-
     property int currentModel: 0
     property variant dialogModel
 

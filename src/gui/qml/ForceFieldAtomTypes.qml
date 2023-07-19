@@ -4,7 +4,6 @@ import "widgets" as D
 
 Item {
     id: control
-
     property variant dialogModel
 
     Component.onCompleted: atList.forceActiveFocus()
@@ -88,11 +87,11 @@ Item {
         wrapMode: Text.Wrap
     }
     Connections {
+        target: control.dialogModel.atomTypes
+
         function onDataChanged(topLeft, bottomRight) {
             control.dialogModel.atomTypesIndicatorChanged();
         }
-
-        target: control.dialogModel.atomTypes
     }
     Binding {
         property: "overwriteParametersCheck"

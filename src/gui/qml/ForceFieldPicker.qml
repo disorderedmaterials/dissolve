@@ -4,7 +4,6 @@ import "widgets" as D
 
 Item {
     id: control
-
     property variant dialogModel
 
     signal selected
