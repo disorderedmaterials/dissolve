@@ -2,13 +2,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Dissolve
-import "./widgets"
+import "./widgets" as D
 
 Item {
     id: control
     property variant dialogModel
 
-    DGroupBox {
+    D.GroupBox {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -39,7 +39,7 @@ Item {
             }
         }
     }
-    DGroupBox {
+    D.GroupBox {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right

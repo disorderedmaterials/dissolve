@@ -1,7 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
-import "./widgets"
+import "./widgets" as D
 
 Item {
     id: origin
@@ -85,7 +85,7 @@ Item {
             onSelected: control.selected()
         }
     }
-    Button {
+    D.Button {
         id: prefixButton
         anchors.right: parent.right
         anchors.top: parent.top
@@ -121,7 +121,7 @@ Item {
             placeholderText: "Prefix"
         }
     }
-    Button {
+    D.Button {
         id: suffixButton
         anchors.right: parent.right
         anchors.top: prefixButton.bottom

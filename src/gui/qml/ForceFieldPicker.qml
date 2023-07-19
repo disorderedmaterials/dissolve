@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import "./widgets"
+import "./widgets" as D
 
 Item {
     id: control
@@ -15,7 +15,7 @@ Item {
         target: control.dialogModel
         value: ffList.currentItem == null ? null : ffList.currentItem.fullData.raw
     }
-    DGroupBox {
+    D.GroupBox {
         anchors.top: parent.top
         height: parent.height / 2
         title: "Select Forcefield"
@@ -54,7 +54,7 @@ Item {
             }
         }
     }
-    DGroupBox {
+    D.GroupBox {
         anchors.bottom: parent.bottom
         height: parent.height / 2 - 5
         title: "Forcefield Description"

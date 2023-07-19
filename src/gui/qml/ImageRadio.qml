@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import "./widgets"
+import "./widgets" as D
 
 RadioButton {
     id: control
@@ -21,7 +21,7 @@ RadioButton {
             opacity: control.enabled ? 1.0 : 0.3
             source: control.source
         }
-        DText {
+        D.Text {
             id: instructions
             anchors.left: icon.right
             opacity: control.enabled ? 1.0 : 0.3

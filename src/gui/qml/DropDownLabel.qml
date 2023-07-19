@@ -1,6 +1,6 @@
 import QtQuick 6.0
 import QtQuick.Layouts 6.0
-import "./widgets"
+import "./widgets" as D
 
 RowLayout {
     id: control
@@ -9,11 +9,11 @@ RowLayout {
 
     signal activated
 
-    DText {
+    D.Text {
         rotation: control.active ? 90 : 0
         text: "▶"
     }
-    DText {
+    D.Text {
         text: control.label
 
         TapHandler {

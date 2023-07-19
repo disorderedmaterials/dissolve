@@ -203,9 +203,9 @@
     <file>icons/control_play.svg</file>
   </qresource>
   <qresource prefix="dialogs">
-    <file>qml/widgets/DButton.qml</file>
-    <file>qml/widgets/DGroupBox.qml</file>
-    <file>qml/widgets/DText.qml</file>
+    <file>qml/widgets/Button.qml</file>
+    <file>qml/widgets/GroupBox.qml</file>
+    <file>qml/widgets/Text.qml</file>
     <file>qml/AddForcefieldTermsDialog.qml</file>
     <file>qml/DropDownLabel.qml</file>
     <file>qml/ForceFieldAssign.qml</file>

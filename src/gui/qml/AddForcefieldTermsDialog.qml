@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Dissolve
-import "./widgets"
+import "./widgets" as D
 
 Page {
     id: root
@@ -44,7 +44,7 @@ Page {
             dialogModel: dialogModel
         }
     }
-    DButton {
+    D.Button {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         icon.name: "dialog-cancel"
@@ -53,7 +53,7 @@ Page {
 
         onClicked: dialogModel.cancel()
     }
-    DButton {
+    D.Button {
         id: nextButton
         anchors.bottom: parent.bottom
         anchors.right: parent.right
@@ -64,7 +64,7 @@ Page {
 
         onClicked: dialogModel.next()
     }
-    DButton {
+    D.Button {
         anchors.bottom: parent.bottom
         anchors.right: nextButton.left
         enabled: dialogModel.index > 0

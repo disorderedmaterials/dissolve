@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import "./widgets"
+import "./widgets" as D
 
 Item {
     id: control
@@ -22,7 +22,7 @@ Item {
             model: control.dialogModel.atomTypes
         }
     }
-    Button {
+    D.Button {
         id: prefixButton
         anchors.right: parent.right
         anchors.top: parent.top
@@ -43,7 +43,7 @@ Item {
             placeholderText: "Prefix"
         }
     }
-    Button {
+    D.Button {
         id: suffixButton
         anchors.right: parent.right
         anchors.top: prefixButton.bottom
@@ -78,7 +78,7 @@ Item {
         fillMode: Image.PreserveAspectFit
         source: control.dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_warn.svg"
     }
-    DText {
+    D.Text {
         id: indicator
         anchors.bottom: parent.bottom
         anchors.left: indicatorImage.right

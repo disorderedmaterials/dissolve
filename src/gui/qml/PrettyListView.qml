@@ -1,11 +1,11 @@
 import QtQuick
-import "./widgets"
+import "./widgets" as D
 
 ListView {
     id: control
     signal selected
 
-    delegate: DText {
+    delegate: D.Text {
         property variant fullData: model
 
         color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text

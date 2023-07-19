@@ -1,5 +1,5 @@
 import QtQuick
-import "./widgets"
+import "./widgets" as D
 
 ListView {
     id: control
@@ -36,7 +36,7 @@ ListView {
             source: icon ? "qrc:/general/icons/general_warn.svg" : "qrc:/general/icons/general_true.svg"
             width: height
         }
-        DText {
+        D.Text {
             id: label
             property variant fullData: model
 
