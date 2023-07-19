@@ -235,7 +235,7 @@ class Dissolve : public Serialisable<>
     // Print timing information
     void printTiming();
     // Return time elapsed from main loop timer
-    double elapsedTime() const { return iterationTimer_ };
+    std::string elapsedTime() { return iterationTimer_.elapsedTimeString() };
 
     /*
      * I/O
