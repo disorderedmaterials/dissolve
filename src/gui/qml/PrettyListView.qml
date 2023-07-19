@@ -5,11 +5,11 @@ ListView {
     signal selected
 
     delegate: Text {
-        property variant fullData: this.model
+        property variant fullData: model
 
         color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text
         padding: 2
-        text: this.display
+        text: display
 
         MouseArea {
             height: parent.height
