@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
 Item {
+    id: control
     property variant dialogModel
 
     Component.onCompleted: atList.forceActiveFocus()
@@ -18,7 +18,7 @@ Item {
         IconListView {
             id: atList
             anchors.fill: parent
-            model: dialogModel.atomTypes
+            model: control.dialogModel.atomTypes
         }
     }
     Button {
@@ -35,7 +35,7 @@ Item {
         standardButtons: Dialog.Ok | Dialog.Cancel
         title: "Prefix Dialog"
 
-        onAccepted: dialogModel.atomTypes.addPrefix(atList.currentIndex, prefixField.text)
+        onAccepted: control.dialogModel.atomTypes.addPrefix(atList.currentIndex, prefixField.text)
 
         TextField {
             id: prefixField
@@ -56,7 +56,7 @@ Item {
         standardButtons: Dialog.Ok | Dialog.Cancel
         title: "Suffix Dialog"
 
-        onAccepted: dialogModel.atomTypes.addSuffix(atList.currentIndex, suffixField.text)
+        onAccepted: control.dialogModel.atomTypes.addSuffix(atList.currentIndex, suffixField.text)
 
         TextField {
             id: suffixField
@@ -75,26 +75,26 @@ Item {
         anchors.left: parent.left
         anchors.top: indicator.top
         fillMode: Image.PreserveAspectFit
-        source: dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_warn.svg"
+        source: control.dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_warn.svg"
     }
     Text {
         id: indicator
         anchors.bottom: parent.bottom
         anchors.left: indicatorImage.right
         anchors.right: parent.right
-        text: dialogModel.atomTypesIndicator == 0 ? "There are no naming conflicts with the assigned atom types" : (dialogModel.atomTypesIndicator + " assigned atom types conflict with existing types")
+        text: control.dialogModel.atomTypesIndicator == 0 ? "There are no naming conflicts with the assigned atom types" : (control.dialogModel.atomTypesIndicator + " assigned atom types conflict with existing types")
         wrapMode: Text.Wrap
     }
     Connections {
-        target: dialogModel.atomTypes
+        target: control.dialogModel.atomTypes
 
         function onDataChanged(topLeft, bottomRight) {
-            dialogModel.atomTypesIndicatorChanged();
+            control.dialogModel.atomTypesIndicatorChanged();
         }
     }
     Binding {
         property: "overwriteParametersCheck"
-        target: dialogModel
+        target: control.dialogModel
         value: overwrite.checked
     }
 }
