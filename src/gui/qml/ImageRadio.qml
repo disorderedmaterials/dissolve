@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import "./widgets" as D
+import "widgets" as D
 
 RadioButton {
     id: control

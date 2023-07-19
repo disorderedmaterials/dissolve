@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Dissolve
-import "./widgets" as D
+import "widgets" as D
 
 Item {
     id: control

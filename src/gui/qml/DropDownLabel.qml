@@ -1,6 +1,6 @@
 import QtQuick 6.0
 import QtQuick.Layouts 6.0
-import "./widgets" as D
+import "widgets" as D
 
 RowLayout {
     id: control

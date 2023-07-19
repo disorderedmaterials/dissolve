@@ -1,5 +1,5 @@
 import QtQuick
-import "./widgets" as D
+import "widgets" as D
 
 ListView {
     id: control
