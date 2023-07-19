@@ -3,6 +3,7 @@ import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
 
 Item {
+    id: origin
     property int currentModel: 0
     property variant dialogModel
 
@@ -15,70 +16,70 @@ Item {
         clip: true
 
         DropDownLabel {
-            active: currentModel == 0
+            active: origin.currentModel == 0
             label: "Bonds"
 
-            onActivated: currentModel = 0
+            onActivated: origin.currentModel = 0
         }
         IconListView {
             id: bonds
-            Layout.fillHeight: currentModel == 0
+            Layout.fillHeight: origin.currentModel == 0
             Layout.fillWidth: true
             clip: true
             currentIndex: -1
             focus: true
-            model: dialogModel.bonds
+            model: origin.dialogModel.bonds
 
             onSelected: control.selected()
         }
         DropDownLabel {
-            active: currentModel == 1
+            active: origin.currentModel == 1
             label: "Angles"
 
-            onActivated: currentModel = 1
+            onActivated: origin.currentModel = 1
         }
         IconListView {
             id: angles
-            Layout.fillHeight: currentModel == 1
+            Layout.fillHeight: origin.currentModel == 1
             Layout.fillWidth: true
             clip: true
             currentIndex: -1
             focus: true
-            model: dialogModel.angles
+            model: origin.dialogModel.angles
 
             onSelected: control.selected()
         }
         DropDownLabel {
-            active: currentModel == 2
+            active: origin.currentModel == 2
             label: "Torsions"
 
-            onActivated: currentModel = 2
+            onActivated: origin.currentModel = 2
         }
         IconListView {
             id: torsions
-            Layout.fillHeight: currentModel == 2
+            Layout.fillHeight: origin.currentModel == 2
             Layout.fillWidth: true
             clip: true
             currentIndex: -1
             focus: true
-            model: dialogModel.torsions
+            model: origin.dialogModel.torsions
 
             onSelected: control.selected()
         }
         DropDownLabel {
-            active: currentModel == 3
+            active: origin.currentModel == 3
             label: "Impropers"
 
-            onActivated: currentModel = 3
+            onActivated: origin.currentModel = 3
         }
         IconListView {
             id: impropers
-            Layout.fillHeight: currentModel == 3
+            Layout.fillHeight: origin.currentModel == 3
             Layout.fillWidth: true
             clip: true
             currentIndex: -1
             focus: true
-            model: dialogModel.impropers
+            model: origin.dialogModel.impropers
 
             onSelected: control.selected()
         }
@@ -98,18 +99,18 @@ Item {
         title: "Prefix Dialog"
 
         onAccepted: {
-            switch (currentModel) {
+            switch (origin.currentModel) {
             case 0:
-                dialogModel.addMasterPrefix(currentModel, bonds.currentIndex, prefixField.text);
+                origin.dialogModel.addMasterPrefix(origin.currentModel, bonds.currentIndex, prefixField.text);
                 break;
             case 1:
-                dialogModel.addMasterPrefix(currentModel, angles.currentIndex, prefixField.text);
+                origin.dialogModel.addMasterPrefix(origin.currentModel, angles.currentIndex, prefixField.text);
                 break;
             case 2:
-                dialogModel.addMasterPrefix(currentModel, torsions.currentIndex, prefixField.text);
+                origin.dialogModel.addMasterPrefix(origin.currentModel, torsions.currentIndex, prefixField.text);
                 break;
             case 3:
-                dialogModel.addMasterPrefix(currentModel, impropers.currentIndex, prefixField.text);
+                origin.dialogModel.addMasterPrefix(origin.currentModel, impropers.currentIndex, prefixField.text);
                 break;
             }
         }
@@ -134,18 +135,18 @@ Item {
         title: "Suffix Dialog"
 
         onAccepted: {
-            switch (currentModel) {
+            switch (origin.currentModel) {
             case 0:
-                dialogModel.addMasterSuffix(currentModel, bonds.currentIndex, suffixField.text);
+                origin.dialogModel.addMasterSuffix(origin.currentModel, bonds.currentIndex, suffixField.text);
                 break;
             case 1:
-                dialogModel.addMasterSuffix(currentModel, angles.currentIndex, suffixField.text);
+                origin.dialogModel.addMasterSuffix(origin.currentModel, angles.currentIndex, suffixField.text);
                 break;
             case 2:
-                dialogModel.addMasterSuffix(currentModel, torsions.currentIndex, suffixField.text);
+                origin.dialogModel.addMasterSuffix(origin.currentModel, torsions.currentIndex, suffixField.text);
                 break;
             case 3:
-                dialogModel.addMasterSuffix(currentModel, impropers.currentIndex, suffixField.text);
+                origin.dialogModel.addMasterSuffix(origin.currentModel, impropers.currentIndex, suffixField.text);
                 break;
             }
         }
