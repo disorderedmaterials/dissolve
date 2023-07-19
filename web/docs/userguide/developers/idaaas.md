@@ -1,6 +1,6 @@
 ---
 title: Development Environment
-description: Instructions for creating a nix environment for Dissolve development
+description: Instructions for creating a nix environment for Dissolve development.
 ---
 
 ## Introduction
