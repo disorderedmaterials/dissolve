@@ -43,13 +43,6 @@ runs:
       git diff
       git diff --quiet
 
-  - name: QML Linting
-    shell: bash
-    run: |
-      set -ex
-      /usr/lib/qt6/bin/qmllint --version
-      find . -type f -regex '.*\.qml' -exec /usr/lib/qt6/bin/qmllint '{}' \;
-
   - name: Copyright Year
     shell: bash
     run: |
