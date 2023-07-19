@@ -408,7 +408,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 
     // Set ETA text if we can
     if (iterationsRemaining == -1)
-        etaLabel_->setText(dissolve_.elapsedTime());
+        etaLabel_->setText(QString::fromStdString(dissolve_.elapsedTime()));
     else
     {
         auto estimatedTime = dissolve_.estimateRequiredTime(iterationsRemaining);
