@@ -1,5 +1,5 @@
 import QtQuick.Controls
 
 GroupBox {
-    anchors.margins: 4;
+    anchors.margins: 4
 }

@@ -1,5 +1,5 @@
 import QtQuick.Controls
 
 Button {
-    anchors.margins: 4;
+    anchors.margins: 4
 }

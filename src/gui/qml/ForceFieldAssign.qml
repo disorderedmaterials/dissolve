@@ -6,6 +6,7 @@ import "./widgets" as D
 
 D.GroupBox {
     id: control
+
     property variant dialogModel
 
     clip: true
@@ -17,13 +18,13 @@ D.GroupBox {
         value: chargesCheck.checked
     }
     Connections {
-        target: control.dialogModel
-
         function onAssignErrors(indices) {
             ffErrorIcon.visible = indices.length != 0;
             ffErrorText.visible = indices.length != 0;
             ffErrorText.text = "No matching atom types for indices " + indices.join(", ");
         }
+
+        target: control.dialogModel
     }
     ColumnLayout {
         id: radioChoice

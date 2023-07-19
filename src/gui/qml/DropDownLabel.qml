@@ -4,6 +4,7 @@ import "./widgets" as D
 
 RowLayout {
     id: control
+
     property bool active
     property string label
 

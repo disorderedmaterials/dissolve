@@ -4,8 +4,10 @@ import "./widgets" as D
 
 RadioButton {
     id: control
+
     property url source
-    padding: 4;
+
+    padding: 4
 
     contentItem: Item {
         Rectangle {
