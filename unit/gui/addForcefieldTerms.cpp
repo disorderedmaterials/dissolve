@@ -62,6 +62,13 @@ TEST_F(AddForcefieldDialogModelTest, benzene)
     EXPECT_EQ(model.angles()->data(model.angles()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA-HA");
     EXPECT_EQ(model.torsions()->data(model.torsions()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA-CA-HA");
     EXPECT_TRUE(model.progressionAllowed());
+
+    //Prefix a bond
+    model.addMasterPrefix(0, 1, "Prefix-");
+    EXPECT_EQ(model.bonds()->data(model.bonds()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "Prefix-CA-HA");
+    model.addMasterSuffix(1, 1, "-Suffix");
+    EXPECT_EQ(model.angles()->data(model.angles()->index(1, 0), Qt::DisplayRole).toString().toStdString(), "CA-CA-HA-Suffix");
+
     model.next();
 }
 } // namespace UnitTest
