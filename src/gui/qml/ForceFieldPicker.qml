@@ -1,7 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Dialogs
-import QtQuick.Layouts
 
 Item {
     id: control
@@ -13,7 +11,7 @@ Item {
 
     Binding {
         property: "ff"
-        target: dialogModel
+        target: control.dialogModel
         value: ffList.currentItem == null ? null : ffList.currentItem.fullData.raw
     }
     GroupBox {
@@ -28,7 +26,7 @@ Item {
             anchors.top: parent.top
             placeholderText: qsTr("Filter")
 
-            onTextEdited: dialogModel.forcefields.setFilterFixedString(text)
+            onTextEdited: control.dialogModel.forcefields.setFilterFixedString(text)
         }
         Image {
             anchors.bottom: ffFilter.bottom
@@ -49,7 +47,7 @@ Item {
                 clip: true
                 currentIndex: -1
                 focus: true
-                model: dialogModel.forcefields
+                model: control.dialogModel.forcefields
 
                 onSelected: control.selected()
             }
