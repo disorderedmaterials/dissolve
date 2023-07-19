@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Dialogs
 import QtQuick.Layouts
 import Dissolve
 
 Item {
+    id: control
     property variant dialogModel
 
     GroupBox {
@@ -21,20 +21,20 @@ Item {
                 source: "qrc:/wizard/icons/wizard_allatoms.svg"
                 text: "Apply intramolecular terms to the whole species.\nExisting Data will be overriden"
 
-                onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.All
+                onClicked: control.dialogModel.intramolecularRadio = AddForcefieldDialogModel.All
             }
             ImageRadio {
-                enabled: dialogModel.speciesHasSelection
+                enabled: control.dialogModel.speciesHasSelection
                 source: "qrc:/wizard/icons/wizard_selectedatoms.svg"
                 text: "Apply intramolecular terms between selected atoms.\nExisting Data will be overriden"
 
-                onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.Selected
+                onClicked: control.dialogModel.intramolecularRadio = AddForcefieldDialogModel.Selected
             }
             ImageRadio {
                 source: "qrc:/general/icons/general_cross.svg"
                 text: "Do not apply intramolecular terms.\nExisting data will remain unchanged"
 
-                onClicked: dialogModel.intramolecularRadio = AddForcefieldDialogModel.None
+                onClicked: control.dialogModel.intramolecularRadio = AddForcefieldDialogModel.None
             }
         }
     }
@@ -60,17 +60,17 @@ Item {
         }
         Binding {
             property: "noMasterTerms"
-            target: dialogModel
+            target: control.dialogModel
             value: noMasterTerms.checked
         }
         Binding {
             property: "noImproperTerms"
-            target: dialogModel
+            target: control.dialogModel
             value: noImproperTerms.checked
         }
         Binding {
             property: "ignoreCurrentTypes"
-            target: dialogModel
+            target: control.dialogModel
             value: ignoreCurrentTypes.checked
         }
     }
