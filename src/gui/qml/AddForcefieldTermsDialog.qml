@@ -8,6 +8,7 @@ Page {
     anchors.fill: parent
     font.pointSize: 10
     palette.buttonText: palette.active.text
+    palette.disabled.buttonText: palette.disabled.text
     visible: true
 
     AddForcefieldDialogModel {
