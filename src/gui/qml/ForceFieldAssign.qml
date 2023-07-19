@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Dissolve
 
 GroupBox {
+    id: control
     property variant dialogModel
 
     clip: true
@@ -11,11 +12,11 @@ GroupBox {
 
     Binding {
         property: "keepSpeciesAtomChargesCheck"
-        target: dialogModel
+        target: control.dialogModel
         value: chargesCheck.checked
     }
     Connections {
-        target: dialogModel
+        target: control.dialogModel
 
         function onAssignErrors(indices) {
             ffErrorIcon.visible = indices.length != 0;
@@ -32,26 +33,26 @@ GroupBox {
             source: "qrc:/wizard/icons/wizard_allatoms.svg"
             text: "Determine atom types for all atoms\nOverwrite any assigned atom types"
 
-            onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.All
+            onClicked: control.dialogModel.atomTypeRadio = AddForcefieldDialogModel.All
         }
         ImageRadio {
-            enabled: dialogModel.speciesHasSelection
+            enabled: control.dialogModel.speciesHasSelection
             source: "qrc:/wizard/icons/wizard_selectedatoms.svg"
             text: "Determine atom types for the current atom selection\nOverwrite any assigned atom types"
 
-            onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.Selected
+            onClicked: control.dialogModel.atomTypeRadio = AddForcefieldDialogModel.Selected
         }
         ImageRadio {
             source: "qrc:/general/icons/general_unknown.svg"
             text: "Determine atom types for any atoms\nthat do not currently have one assigned"
 
-            onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.Empty
+            onClicked: control.dialogModel.atomTypeRadio = AddForcefieldDialogModel.Empty
         }
         ImageRadio {
             source: "qrc:/general/icons/general_cross.svg"
             text: "Do not assign atom types\nLeave current atom types as they are"
 
-            onClicked: dialogModel.atomTypeRadio = AddForcefieldDialogModel.None
+            onClicked: control.dialogModel.atomTypeRadio = AddForcefieldDialogModel.None
         }
     }
     Image {
