@@ -45,8 +45,7 @@ Module::ExecutionResult AccumulateModule::process(Dissolve &dissolve, const Proc
                                          [targetModule](const auto &target) { return target.first == targetModule->type(); });
         if (targetDataIt == validTargets.end())
         {
-            Messenger::error("Module of type '{}' is not a valid target.\n",
-                        ModuleTypes::moduleType(targetModule->type()));
+            Messenger::error("Module of type '{}' is not a valid target.\n", ModuleTypes::moduleType(targetModule->type()));
             return ExecutionResult::Failed;
         }
 
@@ -54,8 +53,7 @@ Module::ExecutionResult AccumulateModule::process(Dissolve &dissolve, const Proc
         if (dataName.empty())
         {
             Messenger::error("This data type ('{}') is not valid for a module of type '{}'.\n",
-                                    targetPartialSet().keyword(targetPartialSet_),
-                                    ModuleTypes::moduleType(targetModule->type()));
+                             targetPartialSet().keyword(targetPartialSet_), ModuleTypes::moduleType(targetModule->type()));
             return ExecutionResult::Failed;
         }
 

@@ -64,11 +64,11 @@ Module::ExecutionResult GRModule::process(Dissolve &dissolve, const ProcessPool 
             if (requestedRange_.value_or(0.0) > rdfRange)
             {
                 Messenger::error("Specified RDF range of {} Angstroms is out of range for Configuration "
-                                        "'{}' (max = {} Angstroms).\n",
-                                        requestedRange_.value(), cfg->niceName(), rdfRange);
+                                 "'{}' (max = {} Angstroms).\n",
+                                 requestedRange_.value(), cfg->niceName(), rdfRange);
                 return ExecutionResult::Failed;
             }
-                 
+
             rdfRange = requestedRange_.value();
             Messenger::print("Cutoff for Configuration '{}' is {} Angstroms.\n", cfg->niceName(), rdfRange);
         }

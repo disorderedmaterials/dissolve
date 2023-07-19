@@ -35,7 +35,7 @@ Module::ExecutionResult HistogramCNModule::process(Dissolve &dissolve, const Pro
     {
         Messenger::error("HistogramCN experienced problems with its analysis.\n");
         return ExecutionResult::Failed;
-    } 
+    }
 
     return ExecutionResult::Success;
 }

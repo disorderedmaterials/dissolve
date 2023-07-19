@@ -137,7 +137,7 @@ Module::ExecutionResult MDModule::process(Dissolve &dissolve, const ProcessPool 
     {
         Messenger::print("Existing velocities will be used.\n");
     }
-        
+
     Messenger::print("\n");
 
     // Store atomic masses for future use

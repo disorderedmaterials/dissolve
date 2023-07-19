@@ -44,7 +44,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(Dissolve &dissolve, cons
         Messenger::error("Failed to read trajectory frame data.\n");
         return ExecutionResult::Failed;
     }
- 
+
     targetConfiguration_->incrementContentsVersion();
 
     // Set the trajectory file position in the restart file

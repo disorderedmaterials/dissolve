@@ -45,7 +45,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
         const SQModule *sqModule = nullptr;
         if (optSQModule)
             sqModule = optSQModule.value();
-        if (!sqModule) 
+        if (!sqModule)
             return Messenger::error(
                 "[SETUP {}] Target '{}' doesn't source any S(Q) data, so it can't be used as a target for the EPSR module.",
                 name_, module->name());
@@ -66,8 +66,8 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
 
         if ((targetConfiguration_ != nullptr) && (targetConfiguration_ != rdfConfigs.front()))
             return Messenger::error("[SETUP {}] GR module '{}' targets a configuration which is different from another target "
-                "module, and which is not permitted when using its data in the EPSR module.",
-                name_, grModule->name());
+                                    "module, and which is not permitted when using its data in the EPSR module.",
+                                    name_, grModule->name());
 
         else
             targetConfiguration_ = rdfConfigs.front();
@@ -99,7 +99,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
         {
             if (!generateEmpiricalPotentials(dissolve, expansionFunction_, rho.value_or(0.1), nCoeffP_, rminpt, rmaxpt,
                                              pSigma1_, pSigma2_))
-            {   
+            {
                 return false;
             }
         }
@@ -141,8 +141,8 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
     Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", ncoeffp, pSigma2_);
     if (modifyPotential_)
         Messenger::print(
-        "EPSR: Perturbations to interatomic potentials will be generated and applied with a frequency of {}.\n",
-        *modifyPotential_);
+            "EPSR: Perturbations to interatomic potentials will be generated and applied with a frequency of {}.\n",
+            *modifyPotential_);
     else
         Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials "
                          "will not be modified).\n");
@@ -239,9 +239,8 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
             sqModule = optSQModule.value();
         if (!sqModule)
         {
-            Messenger::error(
-                "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
-                module->name());
+            Messenger::error("Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
+                             module->name());
             return ExecutionResult::Failed;
         }
 
@@ -442,7 +441,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
         else
         {
             Messenger::error("Don't know how to add data from a module of type '{}' to the scattering matrix.",
-                                    ModuleTypes::moduleType(module->type()));
+                             ModuleTypes::moduleType(module->type()));
             return ExecutionResult::Failed;
         }
 
@@ -541,26 +540,24 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
      */
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
-    auto success =
-        for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-                            {
-                                // Copy and rename the data for clarity
-                                auto data = calculatedUnweightedSQ[{i, j}];
-                                data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
+    auto success = for_each_pair_early(
+        dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+        {
+            // Copy and rename the data for clarity
+            auto data = calculatedUnweightedSQ[{i, j}];
+            data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
 
-                                // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
-                                if (scatteringMatrixSetUp
-                                        ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
-                                        : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
-                                {
-                                    Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
-                                                    at1->name(), at2->name());
-                                    return ExecutionResult::Failed;
-                                }
+            // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
+                                      : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
+            {
+                Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n", at1->name(), at2->name());
+                return ExecutionResult::Failed;
+            }
 
-                                return EarlyReturn<bool>::Continue;
-                            });
+            return EarlyReturn<bool>::Continue;
+        });
     if (!success.value_or(true))
         return ExecutionResult::Failed;
 
@@ -608,24 +605,23 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
     // Test Mode
     if (test_)
     {
-        auto methodSuccess = 
-            for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
-                            {
-                                testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
-                                auto optRefData = testReferenceData_.data(testDataName);
-                                if (optRefData)
-                                {
-                                    auto error = Error::percent(estimatedSQ[{i, j}], *optRefData);
-                                    Messenger::print("Generated S(Q) reference data '{}' has error of {:7.3f}% with "
-                                                     "calculated data and is {} (threshold is {:6.3f}%)\n\n",
-                                                     testDataName, error, error <= testThreshold_ ? "OK" : "NOT OK",
-                                                     testThreshold_);
-                                    if (error > testThreshold_)
-                                        return false;
-                                }
-                                return EarlyReturn<bool>::Continue;
-                            });
+        auto methodSuccess = for_each_pair_early(
+            dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+            {
+                testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
+                auto optRefData = testReferenceData_.data(testDataName);
+                if (optRefData)
+                {
+                    auto error = Error::percent(estimatedSQ[{i, j}], *optRefData);
+                    Messenger::print("Generated S(Q) reference data '{}' has error of {:7.3f}% with "
+                                     "calculated data and is {} (threshold is {:6.3f}%)\n\n",
+                                     testDataName, error, error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                    if (error > testThreshold_)
+                        return false;
+                }
+                return EarlyReturn<bool>::Continue;
+            });
         if (!methodSuccess.value_or(true))
             return ExecutionResult::Failed;
     }

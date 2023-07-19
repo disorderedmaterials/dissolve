@@ -92,7 +92,7 @@ Module::ExecutionResult SiteRDFModule::process(Dissolve &dissolve, const Process
         if (!isRangeEnabled(0))
         {
             Messenger::error("Test coordination number for range B supplied, but calculation for that range "
-                            "is not active.\n");
+                             "is not active.\n");
             return ExecutionResult::Failed;
         }
 
@@ -110,7 +110,7 @@ Module::ExecutionResult SiteRDFModule::process(Dissolve &dissolve, const Process
         if (!isRangeEnabled(1))
         {
             Messenger::error("Test coordination number for range B supplied, but calculation for that range "
-                                    "is not active.\n");
+                             "is not active.\n");
             return ExecutionResult::Failed;
         }
 
@@ -128,7 +128,7 @@ Module::ExecutionResult SiteRDFModule::process(Dissolve &dissolve, const Process
         if (!isRangeEnabled(2))
         {
             Messenger::error("Test coordination number for range C supplied, but calculation for that range "
-                            "is not active.\n");
+                             "is not active.\n");
             return ExecutionResult::Failed;
         }
 

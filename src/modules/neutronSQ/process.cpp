@@ -153,7 +153,6 @@ Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve, const Proce
     {
         Messenger::error("A source GR module (in the SQ module) must be provided.\n");
         return ExecutionResult::Failed;
-
     }
 
     // Print argument/parameter summary

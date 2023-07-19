@@ -60,7 +60,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", tag1);
         auto optData2 = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag2);
         if (!optData2)
-        {    
+        {
             Messenger::error("No data with tag '{}' exists.\n", tag2);
             return ExecutionResult::Failed;
         }
@@ -73,7 +73,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e})\n\n", tag1,
                          error, tag2, notOK ? "NOT OK" : "OK", threshold_);
         if (notOK)
-        {    
+        {
             return ExecutionResult::Failed;
         }
     }

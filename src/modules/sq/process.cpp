@@ -109,8 +109,8 @@ Module::ExecutionResult SQModule::process(Dissolve &dissolve, const ProcessPool 
         if (!dissolve.processingModuleData().contains("Reflections", sourceBragg_->name()))
         {
             Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
-                            "could not be located.\n",
-                            sourceBragg_->name());
+                             "could not be located.\n",
+                             sourceBragg_->name());
             return ExecutionResult::Failed;
         }
 

@@ -395,7 +395,8 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve, const ProcessP
             }
         }
 
-        Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
+        Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed1,
+                         nFailed1 == 0 ? "OK" : "NOT OK");
         Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
 
         // Test reference forces against production (if reference forces present)
@@ -409,12 +410,12 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve, const ProcessP
             const auto &fRef = processingData.value<std::vector<Vec3<double>>>("ReferenceForces", name());
             if (fRef.size() != targetConfiguration_->nAtoms())
             {
-               Messenger::error("Number of force components in ReferenceForces is {}, but the "
-                                "Configuration '{}' contains {} atoms.\n",
-                                fRef.size(), targetConfiguration_->name(), targetConfiguration_->nAtoms());
+                Messenger::error("Number of force components in ReferenceForces is {}, but the "
+                                 "Configuration '{}' contains {} atoms.\n",
+                                 fRef.size(), targetConfiguration_->name(), targetConfiguration_->nAtoms());
                 return ExecutionResult::Failed;
             }
- 
+
             Messenger::print("\nTesting reference forces against calculated 'correct' forces - "
                              "atoms with erroneous forces will be output...\n");
             sumError = 0.0;
@@ -515,10 +516,10 @@ Module::ExecutionResult ForcesModule::process(Dissolve &dissolve, const ProcessP
 
         // If writing to a file, append it here
         if (saveData && !exportedForces_.exportData(f))
-            {
-                Messenger::error("Failed to save forces.\n");
-                return ExecutionResult::Failed;
-            }
+        {
+            Messenger::error("Failed to save forces.\n");
+            return ExecutionResult::Failed;
+        }
     }
 
     return ExecutionResult::Success;

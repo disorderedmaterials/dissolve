@@ -146,5 +146,7 @@ Module::ExecutionResult CheckSpeciesModule::process(Dissolve &dissolve, const Pr
                             });
     }
 
-    return (((nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0) ? ExecutionResult::Success : ExecutionResult::Failed);
+    return (((nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0)
+                ? ExecutionResult::Success
+                : ExecutionResult::Failed);
 }
