@@ -22,7 +22,6 @@ ListView {
 
     delegate: Rectangle {
         id: disp
-
         property bool picked: ListView.isCurrentItem
 
         color: picked ? palette.active.highlight : palette.active.base
@@ -39,7 +38,6 @@ ListView {
         }
         D.Text {
             id: label
-
             property variant fullData: model
 
             anchors.left: image.right
