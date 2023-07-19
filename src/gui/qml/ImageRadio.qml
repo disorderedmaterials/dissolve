@@ -4,6 +4,7 @@ import QtQuick.Controls
 RadioButton {
     id: control
     property url source
+    padding: 4;
 
     contentItem: Item {
         Rectangle {
@@ -19,7 +20,7 @@ RadioButton {
             opacity: control.enabled ? 1.0 : 0.3
             source: control.source
         }
-        Text {
+        DText {
             id: instructions
             anchors.left: icon.right
             opacity: control.enabled ? 1.0 : 0.3

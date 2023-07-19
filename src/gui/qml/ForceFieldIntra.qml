@@ -7,7 +7,7 @@ Item {
     id: control
     property variant dialogModel
 
-    GroupBox {
+    DGroupBox {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -38,7 +38,7 @@ Item {
             }
         }
     }
-    GroupBox {
+    DGroupBox {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right

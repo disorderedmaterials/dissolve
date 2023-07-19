@@ -14,7 +14,7 @@ Item {
         target: control.dialogModel
         value: ffList.currentItem == null ? null : ffList.currentItem.fullData.raw
     }
-    GroupBox {
+    DGroupBox {
         anchors.top: parent.top
         height: parent.height / 2
         title: "Select Forcefield"
@@ -53,7 +53,7 @@ Item {
             }
         }
     }
-    GroupBox {
+    DGroupBox {
         anchors.bottom: parent.bottom
         height: parent.height / 2 - 5
         title: "Forcefield Description"

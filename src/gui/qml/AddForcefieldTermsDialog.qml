@@ -43,7 +43,7 @@ Page {
             dialogModel: dialogModel
         }
     }
-    Button {
+    DButton {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         icon.name: "dialog-cancel"
@@ -52,7 +52,7 @@ Page {
 
         onClicked: dialogModel.cancel()
     }
-    Button {
+    DButton {
         id: nextButton
         anchors.bottom: parent.bottom
         anchors.right: parent.right
@@ -63,7 +63,7 @@ Page {
 
         onClicked: dialogModel.next()
     }
-    Button {
+    DButton {
         anchors.bottom: parent.bottom
         anchors.right: nextButton.left
         enabled: dialogModel.index > 0

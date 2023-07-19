@@ -4,7 +4,7 @@ ListView {
     id: control
     signal selected
 
-    delegate: Text {
+    delegate: DText {
         property variant fullData: model
 
         color: ListView.isCurrentItem ? palette.active.highlightedText : palette.active.text

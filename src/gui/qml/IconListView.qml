@@ -35,7 +35,7 @@ ListView {
             source: icon ? "qrc:/general/icons/general_warn.svg" : "qrc:/general/icons/general_true.svg"
             width: height
         }
-        Text {
+        DText {
             id: label
             property variant fullData: model
 

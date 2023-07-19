@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Dissolve
 
-GroupBox {
+DGroupBox {
     id: control
     property variant dialogModel
 
@@ -64,7 +64,7 @@ GroupBox {
         source: "qrc:/general/icons/general_warn.svg"
         visible: false
     }
-    Text {
+    DText {
         id: ffErrorText
         anchors.bottom: optionsBox.top
         anchors.left: ffErrorIcon.right
@@ -74,7 +74,7 @@ GroupBox {
         font.bold: true
         wrapMode: Text.Wrap
     }
-    GroupBox {
+    DGroupBox {
         id: optionsBox
         anchors.bottom: parent.bottom
         clip: true

@@ -8,11 +8,11 @@ RowLayout {
 
     signal activated
 
-    Text {
+    DText {
         rotation: control.active ? 90 : 0
         text: "▶"
     }
-    Text {
+    DText {
         text: control.label
 
         TapHandler {

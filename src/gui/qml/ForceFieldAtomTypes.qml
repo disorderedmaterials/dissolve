@@ -77,7 +77,7 @@ Item {
         fillMode: Image.PreserveAspectFit
         source: control.dialogModel.atomTypesIndicator == 0 ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_warn.svg"
     }
-    Text {
+    DText {
         id: indicator
         anchors.bottom: parent.bottom
         anchors.left: indicatorImage.right
