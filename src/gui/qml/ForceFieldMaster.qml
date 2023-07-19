@@ -1,6 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
+import "./widgets"
 
 Item {
     id: origin
