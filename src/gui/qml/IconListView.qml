@@ -24,7 +24,7 @@ ListView {
         id: disp
         property bool picked: ListView.isCurrentItem
 
-        color: picked ? palette.active.highlight : palette.active.base
+        color: disp.picked ? palette.active.highlight : palette.active.base
         height: label.height
         width: control.width
 
