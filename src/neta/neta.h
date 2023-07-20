@@ -23,7 +23,8 @@ class NETADefinition
     public:
     enum NETAFlags
     {
-        MatchHydrogens
+        MatchHydrogens,
+        IncludeRootElement
     };
 
     /*
