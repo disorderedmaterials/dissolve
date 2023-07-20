@@ -29,11 +29,14 @@ bool ForcesModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Retrieve control parameters
     const auto saveData = exportedForces_.hasFilename();
@@ -315,7 +318,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             interTimer.start();
             kernel->totalForces(fInterCheck, fInterCheck, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
             if (!procPool.allSum(fInterCheck))
-                return false;
+                return ExecutionResult::Failed;
             interTimer.stop();
 
             Messenger::print("Time to do interatomic forces was {}.\n", interTimer.totalTimeString());
@@ -332,7 +335,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 fIntraCheck, fIntraCheck, ProcessPool::PoolStrategy,
                 {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
             if (!procPool.allSum(fIntraCheck))
-                return false;
+                return ExecutionResult::Failed;
             intraTimer.stop();
 
             Messenger::print("Time to do intramolecular forces was {}.\n", intraTimer.totalTimeString());
@@ -348,7 +351,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // Test 'correct' forces against production forces
         auto nFailed1 = 0;
-        bool failed;
+        bool testFailed;
         Vec3<double> interRatio, intraRatio;
         auto sumError = 0.0;
 
@@ -359,26 +362,26 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         {
             interRatio = fInter[n] - fInterCheck[n];
             intraRatio = fIntra[n] - fIntraCheck[n];
-            auto failed = false;
+            auto testFailed = false;
 
             for (auto i = 0; i < 3; ++i)
             {
                 if (fabs(fInter[n].get(i)) > 1.0e-6)
                     interRatio[i] *= 100.0 / fInter[n].get(i);
                 if (fabs(interRatio[i]) > testThreshold_)
-                    failed = true;
+                    testFailed = true;
 
                 if (fabs(fIntra[n].get(i)) > 1.0e-6)
                     intraRatio[i] *= 100.0 / fIntra[n].get(i);
                 if (fabs(intraRatio[i]) > testThreshold_)
-                    failed = true;
+                    testFailed = true;
             }
 
             // Sum average errors
             sumError += fabs(intraRatio.x) + fabs(intraRatio.y) + fabs(intraRatio.z) + fabs(interRatio.x) + fabs(interRatio.y) +
                         fabs(interRatio.z);
 
-            if (failed)
+            if (testFailed)
             {
                 Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                  "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (inter)\n",
@@ -392,7 +395,8 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             }
         }
 
-        Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
+        Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed1,
+                         nFailed1 == 0 ? "OK" : "NOT OK");
         Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
 
         // Test reference forces against production (if reference forces present)
@@ -405,9 +409,12 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             // Grab reference force array and check size
             const auto &fRef = processingData.value<std::vector<Vec3<double>>>("ReferenceForces", name());
             if (fRef.size() != targetConfiguration_->nAtoms())
-                return Messenger::error("Number of force components in ReferenceForces is {}, but the "
-                                        "Configuration '{}' contains {} atoms.\n",
-                                        fRef.size(), targetConfiguration_->name(), targetConfiguration_->nAtoms());
+            {
+                Messenger::error("Number of force components in ReferenceForces is {}, but the "
+                                 "Configuration '{}' contains {} atoms.\n",
+                                 fRef.size(), targetConfiguration_->name(), targetConfiguration_->nAtoms());
+                return ExecutionResult::Failed;
+            }
 
             Messenger::print("\nTesting reference forces against calculated 'correct' forces - "
                              "atoms with erroneous forces will be output...\n");
@@ -423,18 +430,18 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     totalRatio.z *= 100.0 / (fInter[n].z + fIntra[n].z);
 
                 if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold_)
-                    failed = true;
+                    testFailed = true;
                 else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold_)
-                    failed = true;
+                    testFailed = true;
                 else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold_)
-                    failed = true;
+                    testFailed = true;
                 else
-                    failed = false;
+                    testFailed = false;
 
                 // Sum average errors
                 sumError += fabs(totalRatio.x) + fabs(totalRatio.y) + fabs(totalRatio.z);
 
-                if (failed)
+                if (testFailed)
                 {
                     Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                      "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
@@ -444,7 +451,7 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     ++nFailed2;
                 }
             }
-            Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed2,
+            Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed2,
                              nFailed2 == 0 ? "OK" : "NOT OK");
             Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 3));
 
@@ -463,18 +470,18 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     totalRatio.z *= 100.0 / (fInterCheck[n].z + fIntraCheck[n].z);
 
                 if (std::isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold_)
-                    failed = true;
+                    testFailed = true;
                 else if (std::isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold_)
-                    failed = true;
+                    testFailed = true;
                 else if (std::isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold_)
-                    failed = true;
+                    testFailed = true;
                 else
-                    failed = false;
+                    testFailed = false;
 
                 // Sum average errors
                 sumError += fabs(totalRatio.x) + fabs(totalRatio.y) + fabs(totalRatio.z);
 
-                if (failed)
+                if (testFailed)
                 {
                     Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                      "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
@@ -484,13 +491,13 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     ++nFailed3;
                 }
             }
-            Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed3,
+            Messenger::print("Number of atoms with ExecutionResult::Failed force components = {} = {}\n", nFailed3,
                              nFailed3 == 0 ? "OK" : "NOT OK");
             Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
         }
 
         if (!procPool.allTrue((nFailed1 + nFailed2 + nFailed3) == 0))
-            return false;
+            return ExecutionResult::Failed;
     }
     else
     {
@@ -509,8 +516,11 @@ bool ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
         // If writing to a file, append it here
         if (saveData && !exportedForces_.exportData(f))
-            return Messenger::error("Failed to save forces.\n");
+        {
+            Messenger::error("Failed to save forces.\n");
+            return ExecutionResult::Failed;
+        }
     }
 
-    return true;
+    return ExecutionResult::Success;
 }

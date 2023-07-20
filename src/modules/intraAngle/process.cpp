@@ -10,11 +10,14 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-bool IntraAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult IntraAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     selectB_->setDistanceReferenceSite(selectA_);
@@ -28,7 +31,10 @@ bool IntraAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
-        return Messenger::error("CalculateAngle experienced problems with its analysis.\n");
+    {
+        Messenger::error("CalculateAngle experienced problems with its analysis.\n");
+        return ExecutionResult::Failed;
+    }
 
-    return true;
+    return ExecutionResult::Success;
 }

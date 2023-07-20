@@ -12,11 +12,14 @@
 #include "modules/molShake/molShake.h"
 
 // Run main processing
-bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
@@ -216,17 +219,17 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Collect statistics across all processes
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nGeneralAttempts, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nTranslationAttempts, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nTranslationsAccepted, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nRotationAttempts, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nRotationsAccepted, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
@@ -264,5 +267,5 @@ bool MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0))
         targetConfiguration_->incrementContentsVersion();
 
-    return true;
+    return ExecutionResult::Success;
 }
