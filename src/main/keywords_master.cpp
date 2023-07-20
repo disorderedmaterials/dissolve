@@ -40,6 +40,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
         if (!keywords().isValid(parser.argsv(0)))
         {
             keywords().errorAndPrintValid(parser.argsv(0));
+            errorsEncountered = true;
             continue;
         }
         auto kwd = keywords().enumeration(parser.argsv(0));

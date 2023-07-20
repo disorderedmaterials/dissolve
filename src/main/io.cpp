@@ -34,6 +34,7 @@ bool Dissolve::loadInput(LineParser &parser)
         if (!BlockKeywords::keywords().isValid(parser.argsv(0)))
         {
             BlockKeywords::keywords().errorAndPrintValid(parser.argsv(0));
+            errorsEncountered = true;
             continue;
         }
         auto kwd = BlockKeywords::keywords().enumeration(parser.argsv(0));

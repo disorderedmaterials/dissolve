@@ -39,6 +39,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
         if (!keywords().isValid(parser.argsv(0)))
         {
             keywords().errorAndPrintValid(parser.argsv(0));
+            errorsEncountered = true;
             continue;
         }
         auto kwd = keywords().enumeration(parser.argsv(0));
@@ -62,7 +63,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
             case (ConfigurationBlock::GeneratorKeyword):
                 if (!cfg->generator().deserialise(parser, dissolve->coreData()))
                 {
-                    Messenger::error("Failed to read generator procedure for Configuration.\n");
+                    Messenger::error("Errors while reading generator procedure for Configuration.\n");
                     errorsEncountered = true;
                 }
                 break;
@@ -92,10 +93,6 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                 errorsEncountered = true;
                 break;
         }
-
-        // Error encountered?
-        if (errorsEncountered)
-            break;
 
         // End of block?
         if (blockDone)
