@@ -33,7 +33,7 @@ class CoordinateSetsProcedureNode : public ProcedureNode
     enum class CoordinateSetSource
     {
         File, /* Import coordinates sets from file */
-        MD   /* Create coordinates via MD evolution of the parent species */
+        MD    /* Create coordinates via MD evolution of the parent species */
     };
     // Return enum option info for CoordinateSetSource
     static EnumOptions<CoordinateSetSource> coordinateSetSources();

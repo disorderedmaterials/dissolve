@@ -228,7 +228,7 @@ void ImportCIFDialog::finalise()
         auto cellLengths = cifImporter_.getCellLengths();
         auto cellAngles = cifImporter_.getCellAngles();
         cfg->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
-        
+
         auto &generator = cfg->generator();
         for (auto i = 0; i < species_.size(); ++i)
         {
