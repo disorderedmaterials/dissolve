@@ -69,18 +69,20 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
 
     if (addConfigurationDialog.exec() == QDialog::Accepted)
     {
-        // Fully update GUI
-        setModified();
-        fullUpdate();
 
         auto newConfig = dissolve_.configurations().back().get();
-        ui_.MainTabs->setCurrentTab(newConfig);
 
         // Make sure the potential map is up to date
         dissolve_.regeneratePairPotentials();
 
         // Initialise the content
         newConfig->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()});
+
+        // Fully update GUI
+        setModified();
+        fullUpdate();
+
+        ui_.MainTabs->setCurrentTab(newConfig);
     }
 }
 
