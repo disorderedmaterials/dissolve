@@ -107,6 +107,8 @@ class Module : public Serialisable<const CoreData &>
     int frequency_;
     // Whether the Module is enabled
     bool enabled_;
+
+    public:
     // Process exit information
     enum class ExecutionResult
     {
@@ -114,8 +116,6 @@ class Module : public Serialisable<const CoreData &>
         Success,
         NotExecuted
     };
-
-    public:
     // Set frequency at which to run Module (relative to layer execution count)
     void setFrequency(int freq);
     // Return frequency at which to run Module (relative to layer execution count)
