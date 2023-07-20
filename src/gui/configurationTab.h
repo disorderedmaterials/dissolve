@@ -65,12 +65,12 @@ class ConfigurationTab : public QWidget, public MainTab
     void updateDensityLabel();
 
     public:
-    // Update controls in tab
-    void updateControls() override;
-    // Prevent editing within tab
-    void preventEditing() override;
-    // Allow editing within tab
-    void allowEditing() override;
+    // update controls in tab
+    void updatecontrols() override;
+    // prevent editing within tab
+    void preventediting() override;
+    // allow editing within tab
+    void allowediting() override;
 
     /*
      * Signals / Slots
