@@ -26,7 +26,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                      BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword), cfg->name());
 
     std::string niceName;
-    auto blockDone = false, error = false;
+    auto blockDone = false, errorsEncountered = false;
 
     while (!parser.eofOrBlank())
     {
@@ -36,10 +36,17 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!keywords().isValid(parser.argsv(0)))
-            return keywords().errorAndPrintValid(parser.argsv(0));
+        {
+            keywords().errorAndPrintValid(parser.argsv(0));
+            errorsEncountered = true;
+            continue;
+        }
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
-            return false;
+        {
+            errorsEncountered = true;
+            continue;
+        }
 
         // All OK, so process the keyword
         switch (kwd)
@@ -55,8 +62,8 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
             case (ConfigurationBlock::GeneratorKeyword):
                 if (!cfg->generator().deserialise(parser, dissolve->coreData()))
                 {
-                    Messenger::error("Failed to read generator procedure for Configuration.\n");
-                    error = true;
+                    Messenger::error("Errors while reading generator procedure for Configuration.\n");
+                    errorsEncountered = true;
                 }
                 break;
             case (ConfigurationBlock::SizeFactorKeyword):
@@ -71,26 +78,22 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
                 Messenger::error("{} block keyword '{}' not accounted for.\n",
                                  BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
                                  keywords().keyword(kwd));
-                error = true;
+                errorsEncountered = true;
                 break;
         }
-
-        // Error encountered?
-        if (error)
-            break;
 
         // End of block?
         if (blockDone)
             break;
     }
 
-    // If there's no error and the blockDone flag isn't set, return an error
-    if (!error && !blockDone)
+    // If there's no errorsEncountered and the blockDone flag isn't set, return an errorsEncountered
+    if (!errorsEncountered && !blockDone)
     {
         Messenger::error("Unterminated {} block found.\n",
                          BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword));
-        error = true;
+        errorsEncountered = true;
     }
 
-    return (!error);
+    return (!errorsEncountered);
 }
