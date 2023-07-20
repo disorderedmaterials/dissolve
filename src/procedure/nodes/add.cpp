@@ -129,10 +129,6 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
     // Get target species
     auto *sp = species_ ? species_ : coordinateSets_->keywords().getSpecies("Species");
 
-    // Can't add the Species if it has any missing core information
-    if (!sp->checkSetUp())
-        return Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", sp->name());
-
     auto ipop = population_.asInteger();
     if (ipop > 0)
         Messenger::print("[Add] Adding species '{}' - population is {}.\n", sp->name(), ipop);
