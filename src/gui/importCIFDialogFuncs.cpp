@@ -609,7 +609,7 @@ bool ImportCIFDialog::distinctSpecies()
                 return false;
             neta.create(&tempSpecies->atom(idx++), 128);
             nDistinctMatches = std::count_if(tempSpecies->atoms().begin(), tempSpecies->atoms().end(),
-                                       [&](const auto &i) { return neta.matches(&i); });
+                                             [&](const auto &i) { return neta.matches(&i); });
         }
         definitions.push_back(neta);
     }

@@ -95,12 +95,15 @@ bool NETADefinition::create(std::string_view definition, const Forcefield *assoc
 }
 
 // Recursively create a NETA string for the specified atom
-std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDepth, std::vector<const SpeciesAtom *> &path, Flags<NETADefinition::NETAFlags> flags=Flags<NETADefinition::NETAFlags>())
+std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDepth, std::vector<const SpeciesAtom *> &path,
+                       Flags<NETADefinition::NETAFlags> flags = Flags<NETADefinition::NETAFlags>())
 {
     // Add this atom to the path
     path.push_back(i);
 
-    auto neta = flags.isSet(NETADefinition::NETAFlags::IncludeRootElement) ? fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds()) : fmt::format("nbonds={}", i->nBonds());
+    auto neta = flags.isSet(NETADefinition::NETAFlags::IncludeRootElement)
+                    ? fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds())
+                    : fmt::format("nbonds={}", i->nBonds());
 
     // Add on each connected atom, provided it is not already in the path
     auto nH = 0;
