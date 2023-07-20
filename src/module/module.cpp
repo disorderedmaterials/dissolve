@@ -193,14 +193,7 @@ Module::ExecutionResult Module::executeProcessing(Dissolve &dissolve, const Proc
     timer.stop();
 
     if (result == ExecutionResult::Success)
-    {
         processTimes_ += timer.secondsElapsed();
-    }
-    else
-    {
-        // If process is not run, do not add to the timing
-        processTimes_ += 0;
-    }
 
     return result;
 }
