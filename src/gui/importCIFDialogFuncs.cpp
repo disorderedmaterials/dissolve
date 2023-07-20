@@ -598,16 +598,17 @@ bool ImportCIFDialog::distinctSpecies()
 
         NETADefinition neta;
         neta.flags() += NETADefinition::NETAFlags::MatchHydrogens;
+        neta.flags() += NETADefinition::NETAFlags::IncludeRootElement;
 
         // Find a sp definition, if one exists.
-        auto nspMatches = 0;
+        auto nDistinctMatches = 0;
         idx = 0;
-        while (nspMatches != 1)
+        while (nDistinctMatches != 1)
         {
             if (idx >= tempSpecies->nAtoms())
                 return false;
             neta.create(&tempSpecies->atom(idx++), 128);
-            nspMatches = std::count_if(tempSpecies->atoms().begin(), tempSpecies->atoms().end(),
+            nDistinctMatches = std::count_if(tempSpecies->atoms().begin(), tempSpecies->atoms().end(),
                                        [&](const auto &i) { return neta.matches(&i); });
         }
         definitions.push_back(neta);
