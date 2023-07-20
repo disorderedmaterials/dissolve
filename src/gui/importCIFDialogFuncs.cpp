@@ -10,13 +10,10 @@
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/coordinateSets.h"
-#include "templates/algorithms.h"
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <algorithm>
-#include <iterator>
 #include <unordered_set>
 
 ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
