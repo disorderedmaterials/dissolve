@@ -140,10 +140,9 @@ class ImportCIFDialog : public WizardDialog
     bool distinctSpecies();
 
     private:
-    bool molecular_;
     std::vector<Species*> species_;
     std::vector<std::vector<std::vector<Vec3<double>>>> coordinates_;
-    Configuration *generatedConfiguration_;
+
     /*
      * Supercell Page
      */
