@@ -140,7 +140,7 @@ class ImportCIFDialog : public WizardDialog
     bool distinctSpecies();
 
     private:
-    std::vector<Species*> species_;
+    std::vector<Species *> species_;
     std::vector<std::vector<std::vector<Vec3<double>>>> coordinates_;
 
     /*

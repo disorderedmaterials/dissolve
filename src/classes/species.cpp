@@ -36,7 +36,6 @@ void Species::copyBasic(const Species *source, bool copyAtomTypes)
 
     name_ = source->name_;
 
-
     for (auto &i : source->atoms_)
         addAtom(i.Z(), i.r(), i.charge(), copyAtomTypes ? i.atomType() : nullptr);
 

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "classes/empiricalFormula.h"
 #include "classes/molecule.h"
 #include "classes/pairIterator.h"
 #include "classes/species.h"
-#include "classes/empiricalFormula.h"
 #include "gui/importCIFDialog.h"
 #include "neta/node.h"
 #include "procedure/nodes/add.h"
@@ -147,7 +147,7 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
                 return false;
             break;
         case (ImportCIFDialog::CleanedPage):
-            if(cleanedSpecies_->fragment(0).size() != cleanedSpecies_->nAtoms())
+            if (cleanedSpecies_->fragment(0).size() != cleanedSpecies_->nAtoms())
                 distinctSpecies();
             createSupercellSpecies();
             break;
@@ -220,14 +220,14 @@ void ImportCIFDialog::finalise()
             sp->removeBox();
         }
     }
-    else 
+    else
     {
-        auto* cfg = dissolve_.addConfiguration();
+        auto *cfg = dissolve_.addConfiguration();
         cfg->setName(cifImporter_.chemicalFormula());
         auto cellLengths = cifImporter_.getCellLengths();
         auto cellAngles = cifImporter_.getCellAngles();
         cfg->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
-        auto& generator = cfg->generator();
+        auto &generator = cfg->generator();
 
         for (auto i = 0; i < species_.size(); ++i)
         {
@@ -558,7 +558,7 @@ bool ImportCIFDialog::distinctSpecies()
     auto idx = 0;
     std::vector<int> indices(cleanedSpecies_->nAtoms());
     std::iota(indices.begin(), indices.end(), 0);
-    
+
     // Find all of the fragments
     while (!indices.empty())
     {
@@ -568,9 +568,9 @@ bool ImportCIFDialog::distinctSpecies()
         fragments.push_back(fragment);
         // Remove all of the indices associated with the fragment
         indices.erase(std::remove_if(indices.begin(), indices.end(),
-                     [&](int value) {
-                         return std::find(fragment.begin(), fragment.end(), value) != fragment.end();
-                     }), indices.end());
+                                     [&](int value)
+                                     { return std::find(fragment.begin(), fragment.end(), value) != fragment.end(); }),
+                      indices.end());
 
         // Choose starting index of the next fragment
         idx = *std::min_element(indices.begin(), indices.end());
@@ -580,21 +580,22 @@ bool ImportCIFDialog::distinctSpecies()
     // By sp, we mean that the definition produces a single match,
     // Therefore, the 'reference atom' is unique within the fragment.
     std::vector<NETADefinition> definitions;
-    for (auto& fragment : fragments)
+    for (auto &fragment : fragments)
     {
         auto *tempSpecies = temporaryCoreData_.addSpecies();
         tempSpecies->copyBasic(cleanedSpecies_);
-        
+
         // Remove all atoms from the temporary species, except those in the fragment.
         std::vector<int> allIndices(tempSpecies->nAtoms());
         std::iota(allIndices.begin(), allIndices.end(), 0);
         std::vector<int> indicesToRemove;
-        std::set_difference(allIndices.begin(), allIndices.end(), fragment.begin(), fragment.end(), std::back_inserter(indicesToRemove));
+        std::set_difference(allIndices.begin(), allIndices.end(), fragment.begin(), fragment.end(),
+                            std::back_inserter(indicesToRemove));
         tempSpecies->removeAtoms(indicesToRemove);
-        
+
         NETADefinition neta;
         neta.flags() += NETADefinition::NETAFlags::MatchHydrogens;
-        
+
         // Find a sp definition, if one exists.
         auto nspMatches = 0;
         idx = 0;
@@ -603,30 +604,32 @@ bool ImportCIFDialog::distinctSpecies()
             if (idx >= tempSpecies->nAtoms())
                 return false;
             neta.create(&tempSpecies->atom(idx++), 128);
-            nspMatches = std::count_if(tempSpecies->atoms().begin(), tempSpecies->atoms().end(), [&](const auto& i) { return neta.matches(&i); });
+            nspMatches = std::count_if(tempSpecies->atoms().begin(), tempSpecies->atoms().end(),
+                                       [&](const auto &i) { return neta.matches(&i); });
         }
-        definitions.push_back(neta); 
+        definitions.push_back(neta);
     }
 
     // Remove duplicate definitions
-    definitions.erase(std::unique(definitions.begin(), definitions.end(), [](const auto& a, const auto& b) {
-        return DissolveSys::sameString(a.definitionString(), b.definitionString());
-    }), definitions.end());
+    definitions.erase(std::unique(definitions.begin(), definitions.end(),
+                                  [](const auto &a, const auto &b)
+                                  { return DissolveSys::sameString(a.definitionString(), b.definitionString()); }),
+                      definitions.end());
 
-    for (auto& neta : definitions)
+    for (auto &neta : definitions)
     {
         std::vector<std::vector<int>> matchedIndices;
-        std::vector<std::vector<const SpeciesAtom*>> matches;
-        auto* sp = temporaryCoreData_.addSpecies();
+        std::vector<std::vector<const SpeciesAtom *>> matches;
+        auto *sp = temporaryCoreData_.addSpecies();
         sp->copyBasic(cleanedSpecies_);
-        
-        for (auto& i : sp->atoms())
+
+        for (auto &i : sp->atoms())
         {
             if (neta.matches(&i))
             {
                 auto matchedGroup = neta.matchedPath(&i);
                 auto matchedAtomsSet = matchedGroup.set();
-                std::vector<const SpeciesAtom*> matchedAtoms(matchedAtomsSet.size());
+                std::vector<const SpeciesAtom *> matchedAtoms(matchedAtomsSet.size());
                 std::copy(matchedAtomsSet.begin(), matchedAtomsSet.end(), matchedAtoms.begin());
                 std::vector<int> indices(matchedAtoms.size());
                 std::transform(matchedAtomsSet.begin(), matchedAtomsSet.end(), indices.begin(),
@@ -641,12 +644,13 @@ bool ImportCIFDialog::distinctSpecies()
         std::vector<int> allIndices(sp->nAtoms());
         std::iota(allIndices.begin(), allIndices.end(), 0);
         std::vector<int> indicesToRemove;
-        std::set_difference(allIndices.begin(), allIndices.end(), matchedIndices.front().begin(), matchedIndices.front().end(), std::back_inserter(indicesToRemove));
+        std::set_difference(allIndices.begin(), allIndices.end(), matchedIndices.front().begin(), matchedIndices.front().end(),
+                            std::back_inserter(indicesToRemove));
         sp->removeAtoms(indicesToRemove);
-       
+
         // Name the Species
-        sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto& at){return at.Z();}));
-        
+        sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
+
         // 'Fix' the geometry of the species
         // Construct a temporary molecule, which is just the species.
         std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
@@ -654,7 +658,7 @@ bool ImportCIFDialog::distinctSpecies()
         mol->setSpecies(sp);
         for (auto n = 0; n < sp->nAtoms(); ++n)
         {
-            Atom* atom = new Atom;
+            Atom *atom = new Atom;
             atom->setSpeciesAtom(&sp->atom(n));
             atom->setCoordinates(sp->atom(n).r());
             mol->addAtom(atom);
@@ -670,14 +674,14 @@ bool ImportCIFDialog::distinctSpecies()
         sp->setCentre(sp->box(), {0., 0., 0.});
 
         species_.push_back(sp);
-        
+
         // Extract coordinates, to be used in the Configuration later on.
         // These coordinates correspond to the molecules of the Species within the crystal structure.
-        std::vector<std::vector<Vec3<double>>> coordinates; 
-        for (auto& match : matches)
+        std::vector<std::vector<Vec3<double>>> coordinates;
+        for (auto &match : matches)
         {
             std::vector<Vec3<double>> coords;
-            for (auto& i : match)
+            for (auto &i : match)
                 coords.push_back(i->r());
             coordinates.push_back(std::move(coords));
         }
@@ -685,7 +689,6 @@ bool ImportCIFDialog::distinctSpecies()
     }
 
     return true;
-
 }
 
 /*
@@ -808,7 +811,7 @@ bool ImportCIFDialog::createPartitionedSpecies()
             ui_.PartitioningLabel->setText("Species are valid.");
         }
     }
-    else 
+    else
     {
         ui_.PartitioningLayoutWidget->setEnabled(false);
         ui_.PartitioningViewFrame->setEnabled(false);

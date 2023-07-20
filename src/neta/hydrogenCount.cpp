@@ -37,7 +37,7 @@ int NETAHydrogenCountNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPa
 
     // Count number of hydrogens attached to this atom, optionally appending them
     auto nH = 0;
-    for (const auto& bond : i->bonds())
+    for (const auto &bond : i->bonds())
     {
         if (bond.get().partner(i)->Z() == Elements::H)
         {

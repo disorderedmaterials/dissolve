@@ -100,7 +100,7 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDept
     // Add this atom to the path
     path.push_back(i);
 
-    auto neta = fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()),i->nBonds());
+    auto neta = fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds());
 
     // Add on each connected atom, provided it is not already in the path
     auto nH = 0;
@@ -152,9 +152,9 @@ void NETADefinition::addIdentifier(std::string identifier) { identifiers_.insert
 // Return identifiers
 const std::set<std::string> &NETADefinition::identifiers() const { return identifiers_; }
 
-const Flags<NETADefinition::NETAFlags>& NETADefinition::flags() const { return flags_; }
+const Flags<NETADefinition::NETAFlags> &NETADefinition::flags() const { return flags_; }
 
-Flags<NETADefinition::NETAFlags>& NETADefinition::flags() { return flags_; }
+Flags<NETADefinition::NETAFlags> &NETADefinition::flags() { return flags_; }
 
 /*
  * Matching
