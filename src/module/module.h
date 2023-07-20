@@ -109,7 +109,7 @@ class Module : public Serialisable<const CoreData &>
     bool enabled_;
 
     public:
-    // Process exit information
+    // Module execution result
     enum class ExecutionResult
     {
         Failed,
