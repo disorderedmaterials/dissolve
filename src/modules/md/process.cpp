@@ -11,11 +11,14 @@
 #include "modules/md/md.h"
 
 // Run main processing
-bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Get control parameters
     const auto maxForce = capForcesAt_ * 100.0; // To convert from kJ/mol to 10 J/mol
@@ -55,11 +58,13 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         auto stabilityResult = EnergyModule::checkStability(dissolve.processingModuleData(), targetConfiguration_);
         if (stabilityResult == EnergyModule::NotAssessable)
-            return false;
+        {
+            return ExecutionResult::Failed;
+        }
         else if (stabilityResult == EnergyModule::EnergyUnstable)
         {
             Messenger::print("Skipping MD for Configuration '{}'.\n", targetConfiguration_->niceName());
-            return true;
+            return ExecutionResult::NotExecuted;
         }
     }
 
@@ -80,7 +85,9 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     std::vector<const Molecule *> targetMolecules;
     std::vector<int> free(targetConfiguration_->nAtoms(), 0);
     if (restrictToSpecies_.empty())
+    {
         std::fill(free.begin(), free.end(), 1);
+    }
     else
         for (const auto &mol : targetConfiguration_->molecules())
             if (std::find(restrictToSpecies_.begin(), restrictToSpecies_.end(), mol->species()) != restrictToSpecies_.end())
@@ -127,7 +134,10 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         std::fill(velocities.begin(), velocities.end(), Vec3<double>());
     }
     else
+    {
         Messenger::print("Existing velocities will be used.\n");
+    }
+
     Messenger::print("\n");
 
     // Store atomic masses for future use
@@ -177,12 +187,14 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
                 procPool.decideFalse();
-                return false;
+                return ExecutionResult::Failed;
             }
             procPool.decideTrue();
         }
         else if (!procPool.decision())
-            return false;
+        {
+            return ExecutionResult::Failed;
+        }
     }
 
     // Write header
@@ -222,7 +234,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         if (!determineTimeStep(timestepType_, fixedTimestep_, fUnbound, fBound))
         {
             Messenger::print("Forces are currently too high for MD to proceed. Skipping this run.\n");
-            return true;
+            return ExecutionResult::NotExecuted;
         }
     }
 
@@ -336,7 +348,7 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 if (!trajParser.writeLine(header))
                 {
                     procPool.decideFalse();
-                    return false;
+                    return ExecutionResult::Failed;
                 }
 
                 // Write Atoms
@@ -346,14 +358,16 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                                                i.r().x, i.r().y, i.r().z))
                     {
                         procPool.decideFalse();
-                        return false;
+                        return ExecutionResult::Failed;
                     }
                 }
 
                 procPool.decideTrue();
             }
             else if (!procPool.decision())
-                return false;
+            {
+                return ExecutionResult::Failed;
+            }
         }
     }
     timer.stop();
@@ -376,5 +390,5 @@ bool MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      * Calculation End
      */
 
-    return true;
+    return ExecutionResult::Success;
 }

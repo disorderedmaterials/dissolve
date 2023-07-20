@@ -10,10 +10,13 @@
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 
 // Run main processing
-bool ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     if (!pairPotentialFormat_.hasFilename())
-        return Messenger::error("No valid file/format set for pair potential export.\n");
+    {
+        Messenger::error("No valid file/format set for pair potential export.\n");
+        return ExecutionResult::Failed;
+    }
 
     // Only the pool master saves the data
     if (procPool.isMaster())
@@ -35,7 +38,7 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &
                 Messenger::print("Export: Failed to export pair potential file '{}'.\n", pairPotentialFormat_.filename());
                 pairPotentialFormat_.setFilename(rootPPName);
                 procPool.decideFalse();
-                return false;
+                return ExecutionResult::Failed;
             }
 
             procPool.decideTrue();
@@ -45,7 +48,7 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &
         pairPotentialFormat_.setFilename(rootPPName);
     }
     else if (!procPool.decision())
-        return false;
+        return ExecutionResult::Failed;
 
-    return true;
+    return ExecutionResult::Success;
 }

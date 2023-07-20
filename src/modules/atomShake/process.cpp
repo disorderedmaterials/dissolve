@@ -12,11 +12,14 @@
 #include "modules/atomShake/atomShake.h"
 
 // Run main processing
-bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
@@ -151,11 +154,11 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Collect statistics across all processes
     if (!procPool.allSum(&nAccepted, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nAttempts, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
@@ -180,5 +183,5 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (nAccepted > 0)
         targetConfiguration_->incrementContentsVersion();
 
-    return true;
+    return ExecutionResult::Success;
 }

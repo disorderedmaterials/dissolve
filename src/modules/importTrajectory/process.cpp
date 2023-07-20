@@ -8,11 +8,14 @@
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run main processing
-bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     Messenger::print("Import: Reading trajectory file frame from '{}' into Configuration '{}'...\n",
                      trajectoryFormat_.filename(), targetConfiguration_->name());
@@ -20,7 +23,10 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
     // Open the file
     LineParser parser(&procPool);
     if ((!parser.openInput(trajectoryFormat_.filename())) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open trajectory file '{}'.\n", trajectoryFormat_.filename());
+    {
+        Messenger::error("Couldn't open trajectory file '{}'.\n", trajectoryFormat_.filename());
+        return ExecutionResult::Failed;
+    }
 
     // Does a seek position exist in the processing module info?
     std::string streamPosName = fmt::format("TrajectoryPosition_{}", targetConfiguration_->niceName());
@@ -34,7 +40,11 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
     // Read the frame
     std::optional<Matrix3> unitCell;
     if (!trajectoryFormat_.importData(parser, targetConfiguration_, unitCell))
-        return Messenger::error("Failed to read trajectory frame data.\n");
+    {
+        Messenger::error("Failed to read trajectory frame data.\n");
+        return ExecutionResult::Failed;
+    }
+
     targetConfiguration_->incrementContentsVersion();
 
     // Set the trajectory file position in the restart file
@@ -58,5 +68,5 @@ bool ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &proc
     // Make sure that the configuration contents are up-to-date w.r.t. cell locations etc.
     targetConfiguration_->updateAtomLocations(clearExistingLocations);
 
-    return true;
+    return ExecutionResult::Success;
 }

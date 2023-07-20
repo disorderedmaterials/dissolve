@@ -12,11 +12,14 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     collectDistance_->keywords().set("RangeX", distanceRange_);
@@ -30,7 +33,10 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
-        return Messenger::error("CalculateRDF experienced problems with its analysis.\n");
+    {
+        Messenger::error("CalculateRDF experienced problems with its analysis.\n");
+        return ExecutionResult::Failed;
+    }
 
     // Accumulate instantaneous coordination number data
     if (instantaneous_)
@@ -43,7 +49,10 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}_SumA.txt", name()));
                 if (!exportFormat.exportData(sumA))
-                    return Messenger::error("Failed to write instantaneous coordination number data for range A.\n");
+                {
+                    Messenger::error("Failed to write instantaneous coordination number data for range A.\n");
+                    return ExecutionResult::Failed;
+                }
             }
         }
         if (isRangeEnabled(1))
@@ -54,7 +63,10 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}_SumB.txt", name()));
                 if (!exportFormat.exportData(sumB))
-                    return Messenger::error("Failed to write instantaneous coordination number data for range B.\n");
+                {
+                    Messenger::error("Failed to write instantaneous coordination number data for range B.\n");
+                    return ExecutionResult::Failed;
+                }
             }
         }
         if (isRangeEnabled(2))
@@ -65,7 +77,10 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}_SumC.txt", name()));
                 if (!exportFormat.exportData(sumC))
-                    return Messenger::error("Failed to write instantaneous coordination number data for range C.\n");
+                {
+                    Messenger::error("Failed to write instantaneous coordination number data for range C.\n");
+                    return ExecutionResult::Failed;
+                }
             }
         }
     }
@@ -75,8 +90,11 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     {
         // Is range A enabled?
         if (!isRangeEnabled(0))
-            return Messenger::error("Test coordination number for range B supplied, but calculation for that range "
-                                    "is not active.\n");
+        {
+            Messenger::error("Test coordination number for range B supplied, but calculation for that range "
+                             "is not active.\n");
+            return ExecutionResult::Failed;
+        }
 
         const auto delta = testRangeA_.value() - sumCN_->sum(0);
 
@@ -84,14 +102,17 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return false;
+            return ExecutionResult::Failed;
     }
     if (testRangeB_)
     {
         // Is range B enabled?
         if (!isRangeEnabled(1))
-            return Messenger::error("Test coordination number for range B supplied, but calculation for that range "
-                                    "is not active.\n");
+        {
+            Messenger::error("Test coordination number for range B supplied, but calculation for that range "
+                             "is not active.\n");
+            return ExecutionResult::Failed;
+        }
 
         const auto delta = testRangeB_.value() - sumCN_->sum(1);
 
@@ -99,14 +120,17 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return false;
+            return ExecutionResult::Failed;
     }
     if (testRangeC_)
     {
         // Is range B enabled?
         if (!isRangeEnabled(2))
-            return Messenger::error("Test coordination number for range C supplied, but calculation for that range "
-                                    "is not active.\n");
+        {
+            Messenger::error("Test coordination number for range C supplied, but calculation for that range "
+                             "is not active.\n");
+            return ExecutionResult::Failed;
+        }
 
         const auto delta = testRangeC_.value() - sumCN_->sum(2);
 
@@ -114,8 +138,8 @@ bool SiteRDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
         if (!procPool.allTrue(fabs(delta) < testThreshold_))
-            return false;
+            return ExecutionResult::Failed;
     }
 
-    return true;
+    return ExecutionResult::Success;
 }
