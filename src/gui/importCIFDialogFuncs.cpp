@@ -222,21 +222,24 @@ void ImportCIFDialog::finalise()
     }
     else
     {
+        // Create a Configuration
         auto *cfg = dissolve_.addConfiguration();
         cfg->setName(cifImporter_.chemicalFormula());
         auto cellLengths = cifImporter_.getCellLengths();
         auto cellAngles = cifImporter_.getCellAngles();
         cfg->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+        
         auto &generator = cfg->generator();
-
         for (auto i = 0; i < species_.size(); ++i)
         {
             auto *sp = dissolve_.copySpecies(species_.at(i));
 
+            // CoordinateSets
             auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets {}", i), sp);
             coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
             coordsNode->setSets(coordinates_.at(i));
 
+            // Add
             auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add {}", i), coordsNode);
             addNode->keywords().set("Population", NodeValue(int(coordinates_.at(i).size())));
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
@@ -771,12 +774,12 @@ void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { createSupercellSp
 // Create partitioned species from CIF data
 bool ImportCIFDialog::createPartitionedSpecies()
 {
+
+    ui_.PartitioningViewer->setConfiguration(nullptr);
+    partitioningConfiguration_->clear();
+
     if (species_.empty())
     {
-
-        ui_.PartitioningViewer->setConfiguration(nullptr);
-        partitioningConfiguration_->clear();
-
         // Set up the basic configuration
         auto *sp = temporaryCoreData_.findSpecies("Supercell");
         assert(sp);

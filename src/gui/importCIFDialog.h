@@ -8,7 +8,6 @@
 #include "gui/wizard.hui"
 #include "io/import/cif.h"
 #include "main/dissolve.h"
-#include "models/speciesModel.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -136,7 +135,11 @@ class ImportCIFDialog : public WizardDialog
     void on_MoietyNETARemovalEdit_textEdited(const QString &text);
     void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
 
+    /*
+     * Molecular CIF
+     */
     private slots:
+    // Extract distinct species from Crystal structure
     bool distinctSpecies();
 
     private:

@@ -286,6 +286,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         if (hasCoordinateSets)
         {
             mol = cfg->addMolecule(sp, coordinateSets_->set(coordinateSetIndex));
+
             // Move to next coordinate set
             ++coordinateSetIndex;
             if (coordinateSetIndex == coordinateSets_->nSets())

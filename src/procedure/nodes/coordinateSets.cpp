@@ -75,6 +75,7 @@ bool CoordinateSetsProcedureNode::prepare(const ProcedureContext &procedureConte
 {
     if (!species_)
         return Messenger::error("No Species set in CoordinateSets node.\n");
+
     // Clear existing sets?
     if (force_)
         sets_.clear();

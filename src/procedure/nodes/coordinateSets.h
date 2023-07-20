@@ -33,7 +33,7 @@ class CoordinateSetsProcedureNode : public ProcedureNode
     enum class CoordinateSetSource
     {
         File, /* Import coordinates sets from file */
-        MD,   /* Create coordinates via MD evolution of the parent species */
+        MD   /* Create coordinates via MD evolution of the parent species */
     };
     // Return enum option info for CoordinateSetSource
     static EnumOptions<CoordinateSetSource> coordinateSetSources();
@@ -58,12 +58,13 @@ class CoordinateSetsProcedureNode : public ProcedureNode
     // Simulation timestep
     NodeValue deltaT_{5.0e-4};
 
-    public:
+    private:
     // Add new coordinate set
     std::vector<Vec3<double>> &addSet();
-    void setSets(std::vector<std::vector<Vec3<double>>> sets);
 
     public:
+    // Set coordinate sets
+    void setSets(std::vector<std::vector<Vec3<double>>> sets);
     // Return number of available coordinates sets
     int nSets() const;
     // Return nth coordinate set
