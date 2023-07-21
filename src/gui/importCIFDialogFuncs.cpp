@@ -598,7 +598,7 @@ bool ImportCIFDialog::detectUniqueSpecies()
         {
             if (idx >= tempSpecies->nAtoms())
                 return false;
-            neta.create(&tempSpecies->atom(idx++), 128, Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens + NETADefinition::NETACreationFlags::IncludeRootElement));
+            neta.create(&tempSpecies->atom(idx++), std::nullopt, Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens + NETADefinition::NETACreationFlags::IncludeRootElement));
             nDistinctMatches = std::count_if(tempSpecies->atoms().begin(), tempSpecies->atoms().end(),
                                              [&](const auto &i) { return neta.matches(&i); });
         }
@@ -648,20 +648,19 @@ bool ImportCIFDialog::detectUniqueSpecies()
 
         // 'Fix' the geometry of the species
         // Construct a temporary molecule, which is just the species.
-        Molecule mol;
-        mol.setSpecies(sp);
+        std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
         std::vector<Atom> molAtoms(sp->nAtoms());
         for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
         {
             atom.setSpeciesAtom(&spAtom);
             atom.setCoordinates(spAtom.r());
-            mol.addAtom(&atom);
+            mol->addAtom(&atom);
         }
 
         // Unfold the molecule
-        mol.unFold(cleanedSpecies_->box());
-
-        // Update the coordinates of atoms in the species
+        mol->unFold(cleanedSpecies_->box());
+        
+        // Update the coordinates of the species atoms
         for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
             spAtom.setCoordinates(atom.r());
 
