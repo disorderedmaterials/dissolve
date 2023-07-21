@@ -145,7 +145,7 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             break;
         case (ImportCIFDialog::CleanedPage):
             if (cleanedSpecies_->fragment(0).size() != cleanedSpecies_->nAtoms())
-                distinctSpecies();
+                detectUniqueSpecies();
             createSupercellSpecies();
             break;
         case (ImportCIFDialog::SupercellPage):
@@ -547,12 +547,9 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         createCleanedSpecies();
 }
 
-bool ImportCIFDialog::distinctSpecies()
+// Detect unique species in the structual species
+bool ImportCIFDialog::detectUniqueSpecies()
 {
-    // Temporary configuration
-    auto cfg = temporaryCoreData_.addConfiguration();
-    cfg->createBoxAndCells(cifImporter_.getCellLengths().value(), cifImporter_.getCellAngles().value(), false, 1.0);
-
     std::vector<std::vector<int>> fragments;
     auto idx = 0;
     std::vector<int> indices(cleanedSpecies_->nAtoms());
@@ -575,8 +572,8 @@ bool ImportCIFDialog::distinctSpecies()
         idx = *std::min_element(indices.begin(), indices.end());
     }
 
-    // Construct sp NETA definitions from the fragments
-    // By sp, we mean that the definition produces a single match,
+    // Construct unique NETA definitions from the fragments
+    // By unique, we mean that the definition produces a single match,
     // Therefore, the 'reference atom' is unique within the fragment.
     std::vector<NETADefinition> definitions;
     for (auto &fragment : fragments)
@@ -596,7 +593,7 @@ bool ImportCIFDialog::distinctSpecies()
         neta.flags() += NETADefinition::NETAFlags::MatchHydrogens;
         neta.flags() += NETADefinition::NETAFlags::IncludeRootElement;
 
-        // Find a sp definition, if one exists.
+        // Find a unique definition, if one exists.
         auto nDistinctMatches = 0;
         idx = 0;
         while (nDistinctMatches != 1)

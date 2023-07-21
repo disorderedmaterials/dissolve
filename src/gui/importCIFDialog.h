@@ -139,8 +139,8 @@ class ImportCIFDialog : public WizardDialog
      * Molecular CIF
      */
     private slots:
-    // Extract distinct species from Crystal structure
-    bool distinctSpecies();
+    // Detect unique species in the structural species
+    bool detectUniqueSpecies();
 
     private:
     std::vector<Species *> species_;
