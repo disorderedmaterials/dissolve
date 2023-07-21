@@ -8,8 +8,10 @@
  */
 
 // Add new processing layer
-ModuleLayer *Dissolve::addProcessingLayer() { return processingLayers_.emplace_back(std::make_unique<ModuleLayer>()).get(); }
-
+ModuleLayer *Dissolve::addProcessingLayer()
+{
+    return coreData_.addProcessingLayer();
+}
 // Remove specified processing layer
 void Dissolve::removeProcessingLayer(ModuleLayer *layer)
 {
@@ -21,48 +23,37 @@ void Dissolve::removeProcessingLayer(ModuleLayer *layer)
         removeReferencesTo(module.get());
 
     // Now safe to remove the layer
-    processingLayers_.erase(
-        std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](const auto &l) { return l.get() == layer; }));
+    coreData_.processingLayers().erase(
+        std::find_if(coreData_.processingLayers().begin(), coreData_.processingLayers().end(), [layer](const auto &l) { return l.get() == layer; }));
 }
 
 // Find named processing layer
 ModuleLayer *Dissolve::findProcessingLayer(std::string_view name) const
 {
-    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(),
-                           [name](auto &layer) { return DissolveSys::sameString(layer->name(), name); });
-    if (it == processingLayers_.end())
-        return nullptr;
-    return it->get();
+    return coreData_.findProcessingLayer(name);
 }
 
 // Own the specified processing layer
 bool Dissolve::ownProcessingLayer(ModuleLayer *layer)
 {
-    // Sanity check - do we already own this Configuration?
-    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](auto &l) { return l.get() == layer; });
-    if (it != processingLayers_.end())
-        return Messenger::error("Already own ModuleLayer '{}', so nothing to do.\n", layer->name());
-
-    processingLayers_.emplace_back(layer);
-
-    return true;
+    return coreData_.ownProcessingLayer(layer);
 }
 
 // Return number of defined processing layers
-int Dissolve::nProcessingLayers() const { return processingLayers_.size(); }
+int Dissolve::nProcessingLayers() const { return coreData_.nProcessingLayers(); }
 
 // Return list of processing layers
-std::vector<std::unique_ptr<ModuleLayer>> &Dissolve::processingLayers() { return processingLayers_; }
+std::vector<std::unique_ptr<ModuleLayer>> &Dissolve::processingLayers() { return coreData_.processingLayers(); }
 
 // Run the set-up stages of all modules in all layers
 bool Dissolve::setUpProcessingLayerModules()
 {
     auto setUpResult = true;
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
         if (!layer->setUpAll(*this, worldPool()))
             setUpResult = false;
     return setUpResult;
 }
 
 // Return data associated with processing Modules
-GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
+GenericList &Dissolve::processingModuleData() { return coreData_.processingModuleData(); }

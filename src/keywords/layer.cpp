@@ -22,6 +22,9 @@ const ModuleLayer *&LayerKeyword::data() const { return data_; }
 // Deserialise from supplied LineParser, starting at given argument offset
 bool LayerKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
+    data_ = coreData.findProcessingLayer(parser.argsv(startArg));
+    if (!data_)
+        return Messenger::error("Error setting Layer - no Layer named '{}' exists.\n", parser.argsv(startArg));
     return true;
 }
 
@@ -36,7 +39,9 @@ bool LayerKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 
 // Read values from a serialisable value
 void LayerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
-{}
+{
+   data_ = coreData.findProcessingLayer(std::string_view(std::string(node.as_string()))); 
+}
 
 
 // Express as a serialisable value

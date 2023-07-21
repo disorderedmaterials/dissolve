@@ -6,7 +6,7 @@
 #include "procedure/nodes/node.h"
 #include "keywords/layer.h"
 
-RunLayerNode::RunLayerNode(const ModuleLayer* layer) : ProcedureNode(ProcedureNode::NodeType::RunLayer, {ProcedureNode::ControlContext}), layer_(layer)
+RunLayerNode::RunLayerNode(const ModuleLayer* layer) : ProcedureNode(ProcedureNode::NodeType::RunLayer, {ProcedureNode::GenerationContext}), layer_(layer)
 {
 
     keywords_.setOrganisation("Options", "Target");

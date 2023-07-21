@@ -10,6 +10,7 @@
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
 #include "module/module.h"
+#include "module/layer.h"
 
 // Clear all data
 void CoreData::clear()
@@ -371,6 +372,63 @@ Configuration *CoreData::findConfiguration(std::string_view name) const
     if (it == configurations_.end())
         return nullptr;
     return it->get();
+}
+
+/*
+ * Layers
+ */
+
+// Add new processing layer
+ModuleLayer *CoreData::addProcessingLayer()
+{
+    return processingLayers_.emplace_back(std::make_unique<ModuleLayer>()).get();
+}
+
+// Find named processing layer
+ModuleLayer *CoreData::findProcessingLayer(std::string_view name) const
+{
+    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(),
+                           [name](auto &layer) { return DissolveSys::sameString(layer->name(), name); });
+    if (it == processingLayers_.end())
+        return nullptr;
+    return it->get();
+}
+
+// Own the specified processing layer
+bool CoreData::ownProcessingLayer(ModuleLayer *layer)
+{
+    // Sanity check - do we already own this Configuration?
+    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](auto &l) { return l.get() == layer; });
+    if (it != processingLayers_.end())
+        return Messenger::error("Already own ModuleLayer '{}', so nothing to do.\n", layer->name());
+
+    processingLayers_.emplace_back(layer);
+
+    return true;
+}
+
+// Return number of defined processing layers
+int CoreData::nProcessingLayers() const
+{
+    return processingLayers_.size();
+}
+
+// Return list of processing layers
+std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers()
+{
+    return processingLayers_;
+}
+
+// Return list of processing layers
+const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const
+{
+    return processingLayers_;
+}
+
+// Return data associated with main processing Modules
+GenericList &CoreData::processingModuleData()
+{
+    return processingModuleData_;
 }
 
 /*

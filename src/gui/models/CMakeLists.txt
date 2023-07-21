@@ -5,6 +5,7 @@ set(models_MOC_HDRS
     braggReflectionModel.h
     cifAssemblyModel.h
     configurationModel.h
+    controlModel.h
     dataManagerSimulationModel.h
     enumOptionsModel.h
     isotopologueSetModel.h
@@ -53,6 +54,7 @@ set(models_SRCS
     braggReflectionModel.cpp
     cifAssemblyModel.cpp
     configurationModel.cpp
+    controlModel.cpp
     dataManagerSimulationModel.cpp
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp

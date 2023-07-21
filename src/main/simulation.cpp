@@ -240,7 +240,7 @@ bool Dissolve::iterate(int nIterations)
         auto thisTime = 0.0;
         auto nEnabledModules = 0;
 
-        for (auto &layer : processingLayers_)
+        for (auto &layer : coreData_.processingLayers())
         {
             Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
@@ -284,7 +284,7 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  2)	Run processing Modules (using the world pool).
          */
-        for (auto &layer : processingLayers_)
+        for (auto &layer : coreData_.processingLayers())
         {
             // Check if this layer is due to run this iteration
             if (!layer->runThisIteration(iteration_))
@@ -294,7 +294,7 @@ bool Dissolve::iterate(int nIterations)
             auto layerExecutionCount = iteration_ / layer->frequency();
 
             // Check run-control settings
-            if (!layer->canRun(processingModuleData_))
+            if (!layer->canRun(coreData_.processingModuleData()))
                 continue;
 
             for (auto &module : layer->modules())
@@ -322,11 +322,11 @@ bool Dissolve::iterate(int nIterations)
 
             // Flag other data for inclusion in restart file
             // -- Iteration number
-            processingModuleData_.realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
+            coreData_.processingModuleData().realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
             // -- Pair Potentials
             for (auto &pot : pairPotentials_)
             {
-                processingModuleData_.realise<Data1D>(
+                coreData_.processingModuleData().realise<Data1D>(
                     fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",
                     GenericItem::InRestartFileFlag) = pot->uAdditional();
             }
@@ -396,7 +396,7 @@ std::optional<double> Dissolve::estimateRequiredTime(int nIterations)
     auto seconds = 0.0;
     auto n = 0;
 
-    for (const auto &layer : processingLayers_)
+    for (const auto &layer : coreData_.processingLayers())
     {
         if (!layer->isEnabled())
             continue;
@@ -445,7 +445,7 @@ void Dissolve::printTiming()
     // Add on space for brackets
     maxLength += 2;
 
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
     {
         Messenger::print("Accumulated timing for layer '{}':\n\n", layer->name());
         for (auto &module : layer->modules())

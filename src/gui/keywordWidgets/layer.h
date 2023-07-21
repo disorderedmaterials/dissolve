@@ -5,8 +5,8 @@
 
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/ui_layer.h"
+#include "gui/models/controlModel.h"
 #include "keywords/layer.h"
-#include "gui/models/moduleLayerModel.h"
 #include <QWidget>
 
 class LayerKeywordWidget : public QWidget, public KeywordWidgetBase
@@ -31,7 +31,7 @@ class LayerKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::LayerKeywordWidget ui_;
     // Model for combo box
-    ModuleLayerModel layerModel_;
+    ControlModel controlModel_;
 
     private slots:
     void on_LayerCombo_currentIndexChanged(int index);

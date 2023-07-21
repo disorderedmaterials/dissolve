@@ -111,8 +111,8 @@ bool Dissolve::regeneratePairPotentials()
                                 // Retrieve additional potential from the processing module data, if present
                                 auto itemName =
                                     fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
-                                if (processingModuleData_.contains(itemName, "Dissolve"))
-                                    pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve"));
+                                if (coreData_.processingModuleData().contains(itemName, "Dissolve"))
+                                    pot->setUAdditional(coreData_.processingModuleData().retrieve<Data1D>(itemName, "Dissolve"));
 
                                 return EarlyReturn<bool>::Continue;
                             });
@@ -132,7 +132,7 @@ void Dissolve::revertPairPotentials()
 
         // Clear entry in processing module data if it exists
         auto itemName = fmt::format("Potential_{}-{}_Additional", pp->atomTypeNameI(), pp->atomTypeNameJ());
-        if (processingModuleData_.contains(itemName, "Dissolve"))
-            processingModuleData_.remove(itemName, "Dissolve");
+        if (coreData_.processingModuleData().contains(itemName, "Dissolve"))
+            coreData_.processingModuleData().remove(itemName, "Dissolve");
     }
 }

@@ -156,7 +156,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable(configurations(), "configurations", root);
 
-    Serialisable::fromVectorToTable(processingLayers_, "layers", root);
+    Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 
     return root;
 }
@@ -381,7 +381,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write processing layers
     if (!parser.writeBannerComment("Processing Layers"))
         return false;
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                                layer->name()))
@@ -488,7 +488,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             Messenger::print("Reading item '{}' ({}) into processing module data...\n", parser.argsv(1), parser.argsv(2));
 
             // Realise the item in the list
-            processingModuleData_.deserialise(parser, coreData_, parser.args(1), parser.args(2), parser.argi(3),
+            coreData_.processingModuleData().deserialise(parser, coreData_, parser.args(1), parser.args(2), parser.argi(3),
                                               parser.hasArg(4) ? parser.argi(4) : 0);
         }
         else if (DissolveSys::startsWith(parser.argsv(0), "Configuration"))
@@ -540,7 +540,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::print("Finished reading restart file.\n");
 
     // Set current iteration number
-    iteration_ = processingModuleData_.valueOr<int>("Iteration", "Dissolve", 0);
+    iteration_ = coreData_.processingModuleData().valueOr<int>("Iteration", "Dissolve", 0);
 
     // Error encountered?
     if (error)
@@ -595,7 +595,7 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
                              parser.argsv(2));
 
             // Deserialise the item
-            processingModuleData_.deserialise(parser, coreData_, newName, parser.args(2), parser.argi(3),
+            coreData_.processingModuleData().deserialise(parser, coreData_, newName, parser.args(2), parser.argi(3),
                                               GenericItem::IsReferencePointDataFlag);
 
             skipCurrentItem = false;
@@ -667,7 +667,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Processing Module Data
-    if (!processingModuleData_.serialiseAll(parser, "Processing"))
+    if (!coreData_.processingModuleData().serialiseAll(parser, "Processing"))
         return false;
 
     // Configurations

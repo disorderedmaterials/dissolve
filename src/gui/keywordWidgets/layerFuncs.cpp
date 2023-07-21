@@ -11,7 +11,7 @@ LayerKeywordWidget::LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, c
 
     refreshing_ = false;
 
-    ui_.LayerCombo->setModel(&layerModel_);
+    ui_.LayerCombo->setModel(&controlModel_);
     updateLayersCombo();
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
@@ -53,7 +53,7 @@ void LayerKeywordWidget::updateLayersCombo()
 {
     refreshing_ = true;
     
-    //layerModel_.setData();
+    controlModel_.setData(coreData_.processingLayers());
 
     refreshing_ = false;
 }

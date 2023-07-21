@@ -15,6 +15,7 @@
 
 // Forward Declarations
 class Module;
+class ModuleLayer;
 class MasterBond;
 class MasterAngle;
 class MasterTorsion;
@@ -174,6 +175,30 @@ class CoreData
     Configuration *configuration(int n);
     // Search for Configuration by name
     Configuration *findConfiguration(std::string_view name) const;
+
+    /*
+     * Layers
+     */
+    private:
+    // List of defined processing layers
+    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
+    // Data associated with processing Modules
+    GenericList processingModuleData_;
+
+    public:
+    // Add new processing layer
+    ModuleLayer *addProcessingLayer();
+    // Find named processing layer
+    ModuleLayer *findProcessingLayer(std::string_view name) const;
+    // Own the specified processing layer
+    bool ownProcessingLayer(ModuleLayer *layer);
+    // Return number of defined processing layers
+    int nProcessingLayers() const;
+    // Return list of processing layers
+    std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
+    const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
+    // Return data associated with main processing Modules
+    GenericList &processingModuleData();
 
     /*
      * Input Filename
