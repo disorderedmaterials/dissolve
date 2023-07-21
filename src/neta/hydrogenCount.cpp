@@ -29,21 +29,12 @@ void NETAHydrogenCountNode::set(ComparisonOperator op, int value)
 // Evaluate the node and return its score
 int NETAHydrogenCountNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPath) const
 {
-    auto newMatchPath = matchPath;
     if (!value_)
         return NETANode::NoMatch;
 
-    // Count number of hydrogens attached to this atom, optionally appending them
-    auto nH = 0;
-    for (const auto &bond : i->bonds())
-    {
-        if (bond.get().partner(i)->Z() == Elements::H)
-        {
-            nH++;
-            if (parent_->flags().isSet(NETADefinition::NETAFlags::MatchHydrogens))
-                newMatchPath.insert(bond.get().partner(i));
-        }
-    }
-    matchPath = newMatchPath;
+    // Count number of hydrogens attached to this atom
+    auto nH = std::count_if(i->bonds().begin(), i->bonds().end(),
+                            [i](const SpeciesBond &bond) { return bond.partner(i)->Z() == Elements::H; });
+
     return compareValues(nH, operator_, *value_) ? 1 : NETANode::NoMatch;
 }

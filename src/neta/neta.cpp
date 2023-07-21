@@ -96,12 +96,12 @@ bool NETADefinition::create(std::string_view definition, const Forcefield *assoc
 
 // Recursively create a NETA string for the specified atom
 std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDepth, std::vector<const SpeciesAtom *> &path,
-                       const Flags<NETADefinition::NETAFlags> &flags = {})
+                       const Flags<NETADefinition::NETACreationFlags> &flags = {})
 {
     // Add this atom to the path
     path.push_back(i);
 
-    auto neta = flags.isSet(NETADefinition::NETAFlags::IncludeRootElement)
+    auto neta = flags.isSet(NETADefinition::NETACreationFlags::IncludeRootElement)
                     ? fmt::format("?{}, nbonds={}", Elements::symbol(i->Z()), i->nBonds())
                     : fmt::format("nbonds={}", i->nBonds());
 
@@ -112,7 +112,7 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDept
         auto j = b.get().partner(i);
 
         // Check for H
-        if (j->Z() == Elements::H)
+        if (!flags.isSet(NETADefinition::NETACreationFlags::ExplicitHydrogens) && j->Z() == Elements::H)
         {
             ++nH;
             continue;
@@ -134,10 +134,10 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDept
 }
 
 // Create from specified atom and its connectivity
-bool NETADefinition::create(const SpeciesAtom *i, int maxDepth)
+bool NETADefinition::create(const SpeciesAtom *i, int maxDepth, const Flags<NETACreationFlags>& flags)
 {
     std::vector<const SpeciesAtom *> path;
-    definitionString_ = netaString(i, 0, maxDepth, path, flags_);
+    definitionString_ = netaString(i, 0, maxDepth, path, flags);
     return create();
 }
 
@@ -154,10 +154,6 @@ bool NETADefinition::isValid() const { return valid_; }
 void NETADefinition::addIdentifier(std::string identifier) { identifiers_.insert(identifier); }
 // Return identifiers
 const std::set<std::string> &NETADefinition::identifiers() const { return identifiers_; }
-
-const Flags<NETADefinition::NETAFlags> &NETADefinition::flags() const { return flags_; }
-
-Flags<NETADefinition::NETAFlags> &NETADefinition::flags() { return flags_; }
 
 /*
  * Matching

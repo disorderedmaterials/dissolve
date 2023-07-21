@@ -193,8 +193,7 @@ TEST_F(NETATest, Creation)
     EXPECT_EQ(neta.definitionString(), "nbonds=1,-C(nbonds=4,nh=4)");
     testNETA("Hydrogen atom in methane", UnitTest::methaneSpecies(), neta, {1, 2, 3, 4});
     // -- Basic connectivity including the root element
-    neta.flags() += NETADefinition::NETAFlags::IncludeRootElement;
-    neta.create(&UnitTest::methaneSpecies().atom(1), 0);
+    neta.create(&UnitTest::methaneSpecies().atom(1), 0, Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::IncludeRootElement));
     EXPECT_EQ(neta.definitionString(), "?H, nbonds=1,-C");
     testNETA("Hydrogen atom in methane", UnitTest::methaneSpecies(), neta, {1, 2, 3, 4});
 }

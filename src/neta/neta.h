@@ -24,8 +24,8 @@ class NETADefinition
     // NETA Definition Creation Flags
     enum NETACreationFlags
     {
-        MatchHydrogens,
-        IncludeRootElement
+        ExplicitHydrogens, /* Explicitly include Hydrogen atoms in NETA definition string */
+        IncludeRootElement /* Include the root element in NETA definition string */
     };
 
     /*
@@ -40,8 +40,6 @@ class NETADefinition
     bool valid_;
     // Identifiers (#)
     std::set<std::string> identifiers_;
-    // Flags
-    Flags<NETAFlags> flags_;
 
     public:
     // Return root node pointer
@@ -51,7 +49,7 @@ class NETADefinition
     // Set definition string and create definition
     bool create(std::string_view definition, const Forcefield *associatedFF = nullptr);
     // Create from specified atom and its connectivity
-    bool create(const SpeciesAtom *i, int maxDepth = 1);
+    bool create(const SpeciesAtom *i, int maxDepth = 1, const Flags<NETACreationFlags> &flags = {});
     // Set generating string
     void setDefinitionString(std::string_view definition);
     // Return original generating string
@@ -62,9 +60,6 @@ class NETADefinition
     void addIdentifier(std::string identifier);
     // Return identifiers from definition
     const std::set<std::string> &identifiers() const;
-    // Return flags
-    const Flags<NETAFlags> &flags() const;
-    Flags<NETAFlags> &flags();
 
     /*
      * Matching
