@@ -664,8 +664,8 @@ bool ImportCIFDialog::detectUniqueSpecies()
         mol->unFold(cleanedSpecies_->box());
 
         // Update the coordinates of atoms in the species
-        for (auto n = 0; n < sp->nAtoms(); ++n)
-            sp->atom(n).setCoordinates(mol->atom(n)->r());
+        for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
+            spAtom.setCoordinates(atom.r());
 
         // Set the centre of geometry of the species to be at the origin.
         sp->setCentre(sp->box(), {0., 0., 0.});
