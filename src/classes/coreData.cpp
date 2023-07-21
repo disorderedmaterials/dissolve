@@ -512,6 +512,16 @@ Configuration *CoreData::findConfiguration(std::string_view name) const
     return it->get();
 }
 
+// Find configuration by 'nice' name
+Configuration *CoreData::findConfigurationByNiceName(std::string_view name) const
+{
+    auto it = std::find_if(configurations().begin(), configurations().end(),
+                           [&name](const auto &cfg) { return DissolveSys::sameString(name, cfg->niceName()); });
+    if (it == configurations().end())
+        return nullptr;
+    return it->get();
+}
+
 /*
  * Input Filename
  */

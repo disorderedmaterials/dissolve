@@ -178,7 +178,7 @@ bool AddConfigurationDialog::prepareForPreviousPage(int currentIndex) { return t
 void AddConfigurationDialog::finalise()
 {
     // Create the Configuration and a suitable generator
-    auto *newConfiguration = dissolve_.addConfiguration();
+    auto *newConfiguration = dissolve_.coreData().addConfiguration();
     auto &generator = newConfiguration->generator();
 
     // Add Temperature node, by default

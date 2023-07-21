@@ -71,7 +71,7 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
     if (addConfigurationDialog.exec() == QDialog::Accepted)
     {
 
-        auto newConfig = dissolve_.configurations().back().get();
+        auto newConfig = dissolve_.coreData().configurations().back().get();
 
         // Make sure the potential map is up to date
         dissolve_.regeneratePairPotentials();
@@ -113,7 +113,7 @@ void DissolveWindow::on_ConfigurationDeleteAction_triggered(bool checked)
         return;
 
     ui_.MainTabs->removeByPage(cfgTab->page());
-    dissolve_.removeConfiguration(cfgTab->configuration());
+    dissolve_.coreData().removeConfiguration(cfgTab->configuration());
 
     setModified();
     fullUpdate();

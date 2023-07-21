@@ -163,7 +163,7 @@ void DissolveWindow::closeTab(QWidget *page)
     {
         auto *cfg = dynamic_cast<ConfigurationTab *>(tab)->configuration();
         ui_.MainTabs->removeByPage(page);
-        dissolve_.removeConfiguration(cfg);
+        dissolve_.coreData().removeConfiguration(cfg);
         setModified({DissolveSignals::ConfigurationsMutated});
     }
     else if (tab->type() == MainTab::TabType::Layer)

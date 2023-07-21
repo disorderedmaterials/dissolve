@@ -72,7 +72,7 @@ bool Dissolve::prepare()
 
     // Check Configurations
     std::set<const Species *> globalUsedSpecies;
-    for (auto &cfg : configurations())
+    for (auto &cfg : coreData_.configurations())
     {
         // If the configuration is empty, initialise it now
         if (cfg->nMolecules() == 0)
@@ -95,17 +95,17 @@ bool Dissolve::prepare()
     }
 
     // If we have no configurations, check all species regardless
-    if (nConfigurations() == 0)
+    if (coreData_.nConfigurations() == 0)
         for (const auto &sp : coreData_.species())
             globalUsedSpecies.emplace(sp.get());
 
     // Check pair potential style - first, determine which styles might be valid for use
     // -- Configuration charges must always be zero
-    auto neutralConfigsWithPPCharges = std::all_of(configurations().begin(), configurations().end(),
+    auto neutralConfigsWithPPCharges = std::all_of(coreData_.configurations().begin(), coreData_.configurations().end(),
                                                    [](const auto &cfg) { return fabs(cfg->totalCharge(true)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on atom types    : {}\n",
                             DissolveSys::btoa(neutralConfigsWithPPCharges));
-    auto neutralConfigsWithSpeciesCharges = std::all_of(configurations().begin(), configurations().end(),
+    auto neutralConfigsWithSpeciesCharges = std::all_of(coreData_.configurations().begin(), coreData_.configurations().end(),
                                                         [](const auto &cfg) { return fabs(cfg->totalCharge(false)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on species atoms : {}\n",
                             DissolveSys::btoa(neutralConfigsWithSpeciesCharges));
@@ -153,7 +153,7 @@ bool Dissolve::prepare()
         {
             Messenger::error("Atom type charges in pair potentials requested, but at least one configuration is not "
                              "neutral with this approach.\n");
-            for (const auto &cfg : configurations())
+            for (const auto &cfg : coreData_.configurations())
                 Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(true));
             return false;
         }
@@ -176,7 +176,7 @@ bool Dissolve::prepare()
         {
             Messenger::error("Ths use of species atom charges was requested, but at least one configuration is not "
                              "neutral with this approach.\n");
-            for (const auto &cfg : configurations())
+            for (const auto &cfg : coreData_.configurations())
                 Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(false));
             return false;
         }
@@ -269,7 +269,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Configuration Upkeep");
 
-        for (auto &cfg : configurations())
+        for (auto &cfg : coreData_.configurations())
         {
             Messenger::heading("'{}'", cfg->name());
 

@@ -183,6 +183,8 @@ class CoreData
     Configuration *configuration(int n);
     // Search for Configuration by name
     Configuration *findConfiguration(std::string_view name) const;
+    // Find configuration by 'nice' name
+    Configuration *findConfigurationByNiceName(std::string_view name) const;
 
     /*
      * Input Filename

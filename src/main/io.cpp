@@ -44,10 +44,10 @@ bool Dissolve::loadInput(LineParser &parser)
         {
             case (BlockKeywords::ConfigurationBlockKeyword):
                 // Check to see if a Configuration with this name already exists...
-                if (findConfiguration(parser.argsv(1)))
+                if (coreData_.findConfiguration(parser.argsv(1)))
                     return Messenger::error("Redefinition of Configuration '{}'.\n", parser.argsv(1));
 
-                cfg = addConfiguration();
+                cfg = coreData_.addConfiguration();
                 cfg->setName(parser.argsv(1));
                 Messenger::print("\n--> Created Configuration '{}'\n", cfg->name());
                 if (!ConfigurationBlock::parse(parser, this, cfg))
@@ -142,7 +142,7 @@ SerialisedValue Dissolve::serialise() const
 
     root["pairPotentials"] = serializablePairPotential_.serialise();
 
-    Serialisable::fromVectorToTable(configurations(), "configurations", root);
+    Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
     Serialisable::fromVectorToTable(processingLayers_, "layers", root);
 
@@ -179,7 +179,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
     toMap(node, "configurations",
           [this](const std::string &name, const SerialisedValue &data)
           {
-              auto *cfg = addConfiguration();
+              auto *cfg = coreData_.addConfiguration();
               cfg->setName(name);
               cfg->deserialise(data, coreData_);
           });
@@ -338,7 +338,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write Configurations
     if (!parser.writeBannerComment("Configurations"))
         return false;
-    for (auto &cfg : configurations())
+    for (auto &cfg : coreData_.configurations())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
                                cfg->name()))
@@ -485,7 +485,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             Messenger::print("Reading Configuration '{}'...\n", parser.argsv(1));
 
             // Find the named Configuration
-            cfg = findConfiguration(parser.argsv(1));
+            cfg = coreData_.findConfiguration(parser.argsv(1));
             if (!cfg)
             {
                 Messenger::error("No Configuration named '{}' exists.\n", parser.argsv(1));
@@ -659,7 +659,7 @@ bool Dissolve::saveRestart(std::string_view filename)
         return false;
 
     // Configurations
-    for (const auto &cfg : configurations())
+    for (const auto &cfg : coreData_.configurations())
     {
         if (!parser.writeLineF("{}  '{}'\n",
                                (cfg->globalPotentials().empty() && cfg->targetedPotentials().empty())

@@ -1,7 +1,6 @@
 add_library(
   main
   comms.cpp
-  configurations.cpp
   cli.cpp
   dissolve.cpp
   io.cpp

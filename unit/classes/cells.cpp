@@ -56,7 +56,7 @@ TEST(CellsTest, Basic)
     water->addBond(1, 2);
 
     // Setup Configuration
-    auto *cfg = dissolve.addConfiguration();
+    auto *cfg = coreData.addConfiguration();
     cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, dissolve.pairPotentialRange());
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
     cfg->addMolecule(argon);

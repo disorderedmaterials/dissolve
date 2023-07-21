@@ -91,7 +91,7 @@ template <ProblemType problem, Population population> struct Problem
         auto file = benchmarkFilePath<problem, population>();
         dissolve_.loadInput(file);
         dissolve_.prepare();
-        cfg_ = dissolve_.configurations().front().get();
+        cfg_ = coredata_.configurations().front().get();
         setUpRDF();
     }
 

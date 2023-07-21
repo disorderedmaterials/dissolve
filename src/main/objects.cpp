@@ -24,7 +24,7 @@ void Dissolve::removeReferencesTo(Species *sp)
     KeywordStore::objectNoLongerValid<Species>(sp);
 
     // Check Configurations - if the Species was used, we must clear the configuration contents
-    for (auto &cfg : configurations())
+    for (auto &cfg : coreData_.configurations())
         if (cfg->containsSpecies(sp))
             cfg->empty();
 }
