@@ -25,8 +25,8 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     atomTypesModel_.setIconFunction(
         [&](const std::shared_ptr<AtomType> &atomType)
         {
-            return QIcon(dissolve_.findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
-                                                                  : ":/general/icons/general_true.svg");
+            return QIcon(dissolve_.coreData().findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
+                                                                             : ":/general/icons/general_true.svg");
         });
     ui_.AtomTypesList->setModel(&atomTypesModel_);
     connect(ui_.AtomTypesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
@@ -219,7 +219,7 @@ void ImportSpeciesDialog::updateAtomTypesPage()
     // Determine whether we have any naming conflicts
     auto conflicts = false;
     auto it = std::find_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
-                           [this](const auto at) { return dissolve_.findAtomType(at->name()); });
+                           [this](const auto at) { return dissolve_.coreData().findAtomType(at->name()); });
     if (it != temporaryCoreData_.atomTypes().end())
         conflicts = true;
     ui_.AtomTypesIndicator->setNotOK(conflicts);

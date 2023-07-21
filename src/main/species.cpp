@@ -50,10 +50,10 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     }
 
     // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-    auto at = findAtomType(sourceAtom->atomType()->name());
+    auto at = coreData_.findAtomType(sourceAtom->atomType()->name());
     if (!at)
     {
-        at = addAtomType(sourceAtom->Z());
+        at = coreData_.addAtomType(sourceAtom->Z());
         at->setName(sourceAtom->atomType()->name());
         at->interactionPotential() = sourceAtom->atomType()->interactionPotential();
     }

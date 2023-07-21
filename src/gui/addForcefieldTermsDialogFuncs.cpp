@@ -22,8 +22,8 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     atomTypeModel_.setIconFunction(
         [&](const auto &atomType)
         {
-            return QIcon(dissolve_.findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
-                                                                  : ":/general/icons/general_true.svg");
+            return QIcon(dissolve_.coreData().findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
+                                                                             : ":/general/icons/general_true.svg");
         });
     connect(ui_.AtomTypesConflictsList->selectionModel(),
             SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
@@ -115,7 +115,7 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
             {
                 // Remove all previous AtomType association from the Species, and subsequently from the main object
                 modifiedSpecies_->clearAtomTypes();
-                temporaryDissolve_.clearAtomTypes();
+                temporaryDissolve_.coreData().clearAtomTypes();
 
                 auto assignErrs = ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
                                                       !ui_.KeepSpeciesAtomChargesCheck->isChecked());
@@ -137,7 +137,7 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                     return alertAboutAtomTypeErrors(assignErrs);
             }
 
-            for (auto &at : temporaryDissolve_.atomTypes())
+            for (auto &at : temporaryDissolve_.coreData().atomTypes())
                 originalAtomTypeNames_.emplace_back(std::string(at->name()));
             atomTypeModel_.setData(temporaryCoreData_.atomTypes());
             checkAtomTypeConflicts();
@@ -329,7 +329,7 @@ void AddForcefieldTermsDialog::checkAtomTypeConflicts()
 {
     // Determine whether we have any naming conflicts
     auto nConflicts = std::count_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
-                                    [&](const auto &atomType) { return dissolve_.findAtomType(atomType->name()); });
+                                    [&](const auto &atomType) { return dissolve_.coreData().findAtomType(atomType->name()); });
 
     ui_.AtomTypesIndicator->setNotOK(nConflicts > 0);
 

@@ -23,13 +23,13 @@ TEST(CellsTest, Basic)
     PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
 
     // Add atom types and LJ pair potentials (only one real one - between Ar and OW
-    auto arType = dissolve.addAtomType(Elements::Ar);
+    auto arType = coreData.addAtomType(Elements::Ar);
     arType->setName("Ar");
     arType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
-    auto hType = dissolve.addAtomType(Elements::H);
+    auto hType = coreData.addAtomType(Elements::H);
     hType->setName("HW");
     hType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
-    auto oType = dissolve.addAtomType(Elements::O);
+    auto oType = coreData.addAtomType(Elements::O);
     oType->setName("OW");
     oType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 

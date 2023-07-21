@@ -14,7 +14,7 @@ void XmlAtomModel::readFile(const pugi::xml_node &root)
     beginResetModel();
     atoms_.clear();
 
-    auto types = dissolve_.atomTypes();
+    auto types = dissolve_.coreData().atomTypes();
 
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
     {

@@ -90,7 +90,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
         case 1:
             // TODO
             {
-                auto atomType = dissolve_.findAtomType(value.toString().toStdString());
+                auto atomType = dissolve_.coreData().findAtomType(value.toString().toStdString());
                 if (!atomType)
                     return false;
                 item.setAtomType(atomType);

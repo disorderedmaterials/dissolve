@@ -295,7 +295,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Atom Type Parameters
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
-    for (const auto &atomType : atomTypes())
+    for (const auto &atomType : coreData_.atomTypes())
         if (!parser.writeLineF("  {}  {}  {}  {:12.6e}  {}  {}\n",
                                PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
                                atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),

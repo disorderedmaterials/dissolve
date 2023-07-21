@@ -1,6 +1,5 @@
 add_library(
   main
-  atomTypes.cpp
   comms.cpp
   configurations.cpp
   cli.cpp

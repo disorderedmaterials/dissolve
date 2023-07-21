@@ -44,24 +44,6 @@ class Dissolve : public Serialisable<>
     static constexpr bool toml_testing_flag = false;
 
     /*
-     * Atom Types
-     * (Exposes functions in coreData_)
-     */
-    public:
-    // Add AtomType with specified Element
-    std::shared_ptr<AtomType> addAtomType(Elements::Element Z);
-    // Return number of AtomTypes in list
-    int nAtomTypes() const;
-    // Return AtomTypes list
-    std::vector<std::shared_ptr<AtomType>> &atomTypes();
-    // Return nth AtomType in list
-    std::shared_ptr<AtomType> atomType(int n);
-    // Search for AtomType by name
-    std::shared_ptr<AtomType> findAtomType(std::string_view name) const;
-    // Clear all AtomTypes
-    void clearAtomTypes();
-
-    /*
      * Species Definitions
      * (Exposes functions in coreData_)
      */

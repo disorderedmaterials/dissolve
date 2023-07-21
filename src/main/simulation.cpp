@@ -36,22 +36,22 @@ bool Dissolve::prepare()
     for (const auto &sp : species())
         usedAtomTypes.add(sp->atomTypes());
 
-    atomTypes().erase(std::remove_if(atomTypes().begin(), atomTypes().end(),
-                                     [&](const auto &at)
-                                     {
-                                         if (usedAtomTypes.contains(at))
-                                             return false;
-                                         else
-                                         {
-                                             Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
-                                             return true;
-                                         }
-                                     }),
-                      atomTypes().end());
+    coreData_.atomTypes().erase(std::remove_if(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                                               [&](const auto &at)
+                                               {
+                                                   if (usedAtomTypes.contains(at))
+                                                       return false;
+                                                   else
+                                                   {
+                                                       Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
+                                                       return true;
+                                                   }
+                                               }),
+                                coreData_.atomTypes().end());
 
     // Reassign AtomType indices (in case one or more have been added / removed)
     auto count = 0;
-    for (const auto &at : atomTypes())
+    for (const auto &at : coreData_.atomTypes())
         at->setIndex(count++);
 
     // Store / update last-used pair potential cutoff
@@ -121,9 +121,9 @@ bool Dissolve::prepare()
                     });
     Messenger::printVerbose("Species atomic charge validity  : {}\n", DissolveSys::btoa(speciesHaveValidAtomicCharges));
     // -- Do all atom types have 95% non-zero charges
-    auto atomTypesHaveValidAtomicCharges =
-        (std::count_if(atomTypes().begin(), atomTypes().end(), [](const auto &at) { return fabs(at->charge()) > 1.0e-5; }) /
-         double(nAtomTypes())) > 0.95;
+    auto atomTypesHaveValidAtomicCharges = (std::count_if(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                                                          [](const auto &at) { return fabs(at->charge()) > 1.0e-5; }) /
+                                            double(coreData_.nAtomTypes())) > 0.95;
     Messenger::printVerbose("AtomType atomic charge validity : {}\n", DissolveSys::btoa(atomTypesHaveValidAtomicCharges));
 
     if (automaticChargeSource_)
