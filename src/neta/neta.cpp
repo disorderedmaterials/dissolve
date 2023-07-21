@@ -96,7 +96,7 @@ bool NETADefinition::create(std::string_view definition, const Forcefield *assoc
 
 // Recursively create a NETA string for the specified atom
 std::string netaString(const SpeciesAtom *i, int currentDepth, const int maxDepth, std::vector<const SpeciesAtom *> &path,
-                       Flags<NETADefinition::NETAFlags> flags = Flags<NETADefinition::NETAFlags>())
+                       const Flags<NETADefinition::NETAFlags> &flags = {})
 {
     // Add this atom to the path
     path.push_back(i);

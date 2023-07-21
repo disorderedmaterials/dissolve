@@ -21,7 +21,8 @@ class NETADefinition
     ~NETADefinition() = default;
 
     public:
-    enum NETAFlags
+    // NETA Definition Creation Flags
+    enum NETACreationFlags
     {
         MatchHydrogens,
         IncludeRootElement

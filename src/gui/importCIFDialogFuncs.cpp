@@ -653,18 +653,18 @@ bool ImportCIFDialog::distinctSpecies()
 
         // 'Fix' the geometry of the species
         // Construct a temporary molecule, which is just the species.
-        std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-        mol->setArrayIndex(0);
+        Molecule mol;
         mol->setSpecies(sp);
-        for (auto n = 0; n < sp->nAtoms(); ++n)
+        std::vector<Atom> molAtoms(sp->nAtoms());
+        for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
         {
-            Atom *atom = new Atom;
-            atom->setSpeciesAtom(&sp->atom(n));
-            atom->setCoordinates(sp->atom(n).r());
-            mol->addAtom(atom);
+            atom.setSpeciesAtom(&spAtom);
+            atom.setCoordinates(spAtom.r());
+            mol->addAtom(&atom);
         }
+
         // Unfold the molecule
-        auto cog = mol->unFold(cfg->box());
+        mol->unFold(cleanedSpecies_->box());
 
         // Update the coordinates of atoms in the species
         for (auto n = 0; n < sp->nAtoms(); ++n)

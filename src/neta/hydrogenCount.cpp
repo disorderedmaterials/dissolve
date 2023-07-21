@@ -31,9 +31,7 @@ int NETAHydrogenCountNode::score(const SpeciesAtom *i, NETAMatchedGroup &matchPa
 {
     auto newMatchPath = matchPath;
     if (!value_)
-    {
         return NETANode::NoMatch;
-    }
 
     // Count number of hydrogens attached to this atom, optionally appending them
     auto nH = 0;
