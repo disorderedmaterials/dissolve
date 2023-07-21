@@ -549,7 +549,6 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 
 bool ImportCIFDialog::distinctSpecies()
 {
-
     // Temporary configuration
     auto cfg = temporaryCoreData_.addConfiguration();
     cfg->createBoxAndCells(cifImporter_.getCellLengths().value(), cifImporter_.getCellAngles().value(), false, 1.0);
