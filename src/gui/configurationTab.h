@@ -66,11 +66,11 @@ class ConfigurationTab : public QWidget, public MainTab
 
     public:
     // update controls in tab
-    void updatecontrols() override;
+    void updateControls() override;
     // prevent editing within tab
-    void preventediting() override;
+    void preventEditing() override;
     // allow editing within tab
-    void allowediting() override;
+    void allowEditing() override;
 
     /*
      * Signals / Slots
