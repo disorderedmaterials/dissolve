@@ -105,11 +105,11 @@ bool ImportSpeciesDialog::prepareForNextPage(int currentIndex)
         case (ImportSpeciesDialog::SelectFilePage):
             // Check that the input/species file exists, and can be read in successfully
             temporaryDissolve_.loadInput(qPrintable(ui_.InputFileEdit->text()));
-            if (temporaryDissolve_.nSpecies() == 0)
+            if (temporaryDissolve_.coreData().nSpecies() == 0)
                 return Messenger::error("No species loaded from input file.");
 
             // Update widget contents
-            speciesModel_.setData(temporaryDissolve_.species());
+            speciesModel_.setData(temporaryDissolve_.coreData().species());
 
             updateAtomTypesPage();
             masterTermModel_.setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(),
@@ -164,7 +164,7 @@ bool ImportSpeciesDialog::prepareForPreviousPage(int currentIndex)
 void ImportSpeciesDialog::finalise()
 {
     // Copy the species to the main Dissolve instance and set its new name
-    auto *sp = dissolve_.copySpecies(importTarget_);
+    auto *sp = dissolve_.coreData().copySpecies(importTarget_);
     sp->setName(ui_.SpeciesNameEdit->text().toStdString());
 }
 
@@ -364,7 +364,7 @@ void ImportSpeciesDialog::on_SpeciesNameEdit_textChanged(const QString text)
     if (text.isEmpty())
         readyForImport = false;
     else
-        readyForImport = dissolve_.findSpecies(qPrintable(text)) == nullptr;
+        readyForImport = dissolve_.coreData().findSpecies(qPrintable(text)) == nullptr;
 
     ui_.SpeciesNameIndicator->setOK(readyForImport);
 

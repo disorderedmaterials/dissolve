@@ -161,7 +161,7 @@ void ImportLigParGenDialog::finalise()
     // Copy the species to the main Dissolve instance and set its new name
     if (importedSpecies_ && importedSpecies_->nAtoms() > 0)
     {
-        auto *sp = dissolve_.copySpecies(importedSpecies_);
+        auto *sp = dissolve_.coreData().copySpecies(importedSpecies_);
         sp->setName("LigParGen Species");
     }
 

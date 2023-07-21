@@ -23,7 +23,7 @@ bool Dissolve::prepare()
     Messenger::banner("Preparing Simulation");
 
     // Check Species
-    for (const auto &sp : species())
+    for (const auto &sp : coreData_.species())
     {
         if (!sp->checkSetUp())
             return false;
@@ -33,7 +33,7 @@ bool Dissolve::prepare()
 
     // Remove unused atom types
     AtomTypeMix usedAtomTypes;
-    for (const auto &sp : species())
+    for (const auto &sp : coreData_.species())
         usedAtomTypes.add(sp->atomTypes());
 
     coreData_.atomTypes().erase(std::remove_if(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
@@ -96,7 +96,7 @@ bool Dissolve::prepare()
 
     // If we have no configurations, check all species regardless
     if (nConfigurations() == 0)
-        for (const auto &sp : species())
+        for (const auto &sp : coreData_.species())
             globalUsedSpecies.emplace(sp.get());
 
     // Check pair potential style - first, determine which styles might be valid for use

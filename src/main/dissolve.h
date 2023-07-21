@@ -44,33 +44,6 @@ class Dissolve : public Serialisable<>
     static constexpr bool toml_testing_flag = false;
 
     /*
-     * Species Definitions
-     * (Exposes functions in coreData_)
-     */
-    public:
-    // Add a new Species to the list
-    Species *addSpecies();
-    // Remove the specified Species from the list
-    void removeSpecies(Species *sp);
-    // Return number of defined Species
-    int nSpecies() const;
-    // Return Species list
-    std::vector<std::unique_ptr<Species>> &species();
-    // Return Species list
-    const std::vector<std::unique_ptr<Species>> &species() const;
-    // Search for Species by name
-    Species *findSpecies(std::string_view name) const;
-    // Copy AtomType, creating a new one if necessary
-    void copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom);
-    // Copy intramolecular interaction parameters, adding master term if necessary
-    void copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest);
-    void copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest);
-    void copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &dest);
-    void copySpeciesImproper(const SpeciesImproper &source, SpeciesImproper &dest);
-    // Copy Species
-    Species *copySpecies(const Species *species);
-
-    /*
      * Pair Potentials
      */
     private:

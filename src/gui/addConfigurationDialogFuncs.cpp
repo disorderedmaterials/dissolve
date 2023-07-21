@@ -20,7 +20,7 @@ AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, Dissolve &dissol
     ui_.setupUi(this);
 
     // Set up widgets
-    ui_.TargetSpeciesWidget->setSpecies(dissolve_.species());
+    ui_.TargetSpeciesWidget->setSpecies(dissolve_.coreData().species());
     ui_.TargetSpeciesWidget->reset(1, {});
 
     ui_.BoxASpin->setMinimum(0.0);

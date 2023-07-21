@@ -40,11 +40,11 @@ TEST(CellsTest, Basic)
     dissolve.addPairPotential(arType, hType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
 
     // Set up pseudo-species
-    auto *argon = dissolve.addSpecies();
+    auto *argon = coreData.addSpecies();
     argon->setName("Argon");
     argon->addAtom(Elements::Ar, {0.0, 0.0, 0.0}, 0.0);
     argon->atom(0).setAtomType(arType);
-    auto *water = dissolve.addSpecies();
+    auto *water = coreData.addSpecies();
     water->setName("Water");
     water->addAtom(Elements::H, {-1.0, 0.0, 0.0}, 0.0);
     water->addAtom(Elements::O, {0.0, 0.0, 0.0}, 0.0);

@@ -168,7 +168,7 @@ void MainTabsWidget::reconcileTabs()
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
     auto currentTabIndex = 0;
     auto baseIndex = 2;
-    for (const auto &sp : dissolve.species())
+    for (const auto &sp : dissolve.coreData().species())
     {
         // Loop over existing tabs
         while (currentTabIndex < speciesTabs_.size())
@@ -198,7 +198,7 @@ void MainTabsWidget::reconcileTabs()
 
         ++currentTabIndex;
     }
-    baseIndex += dissolve.nSpecies();
+    baseIndex += dissolve.coreData().nSpecies();
 
     // Configurations - Global tab indices run from 1+nSpecies (first tab after last Species) to 1+nSpecies+nConfigurations
     currentTabIndex = 0;

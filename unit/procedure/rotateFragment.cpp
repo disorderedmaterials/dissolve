@@ -22,7 +22,7 @@ TEST(RotateTest, Benzene)
     Dissolve dissolve(coreData);
 
     // Set up species
-    auto *benzene = dissolve.copySpecies(&benzeneSpecies());
+    auto *benzene = coreData.copySpecies(&benzeneSpecies());
 
     // Set up site
     auto site = SpeciesSite(benzene, SpeciesSite::SiteType::Fragment);

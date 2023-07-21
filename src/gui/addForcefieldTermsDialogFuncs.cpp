@@ -102,7 +102,7 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                 return false;
 
             // Copy selected Species to our temporary instance
-            modifiedSpecies_ = temporaryDissolve_.addSpecies();
+            modifiedSpecies_ = temporaryDissolve_.coreData().addSpecies();
             modifiedSpecies_->copyBasic(targetSpecies_);
             originalAtomTypeNames_.clear();
 
@@ -229,7 +229,7 @@ void AddForcefieldTermsDialog::finalise()
             continue;
 
         // Copy AtomType
-        dissolve_.copyAtomType(&modified, &original);
+        dissolve_.coreData().copyAtomType(&modified, &original);
 
         // Overwrite existing parameters?
         if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
@@ -257,7 +257,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalBond.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesBond(*modifiedBond, originalBond);
+            dissolve_.coreData().copySpeciesBond(*modifiedBond, originalBond);
 
             ++modifiedBond;
         }
@@ -269,7 +269,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalAngle.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesAngle(*modifiedAngle, originalAngle);
+            dissolve_.coreData().copySpeciesAngle(*modifiedAngle, originalAngle);
 
             ++modifiedAngle;
         }
@@ -281,7 +281,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalTorsion.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesTorsion(*modifiedTorsion, originalTorsion);
+            dissolve_.coreData().copySpeciesTorsion(*modifiedTorsion, originalTorsion);
 
             ++modifiedTorsion;
         }
@@ -296,12 +296,12 @@ void AddForcefieldTermsDialog::finalise()
             auto optImproper = targetSpecies_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
                                                            modifiedImproper.indexK(), modifiedImproper.indexL());
             if (optImproper)
-                dissolve_.copySpeciesImproper(modifiedImproper, *optImproper);
+                dissolve_.coreData().copySpeciesImproper(modifiedImproper, *optImproper);
             else
             {
                 auto &improper = targetSpecies_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
                                                              modifiedImproper.indexK(), modifiedImproper.indexL());
-                dissolve_.copySpeciesImproper(modifiedImproper, improper);
+                dissolve_.coreData().copySpeciesImproper(modifiedImproper, improper);
             }
         }
     }

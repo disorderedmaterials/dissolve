@@ -74,10 +74,10 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::SpeciesBlockKeyword):
                 // Check to see if a Species with this name already exists...
-                if (findSpecies(parser.argsv(1)))
+                if (coreData_.findSpecies(parser.argsv(1)))
                     return Messenger::error("Redefinition of species '{}'.\n", parser.argsv(1));
 
-                sp = addSpecies();
+                sp = coreData_.addSpecies();
                 sp->setName(parser.argsv(1));
                 Messenger::print("\n--> Created Species '{}'\n", sp->name());
                 if (!sp->read(parser, coreData_))
@@ -138,7 +138,7 @@ SerialisedValue Dissolve::serialise() const
         !coreData_.masterImpropers().empty())
         root["master"] = coreData_.serialiseMaster();
 
-    Serialisable::fromVectorToTable<>(species(), "species", root);
+    Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 
     root["pairPotentials"] = serializablePairPotential_.serialise();
 
@@ -174,7 +174,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
 
     toMap(node, "species",
           [this](const std::string &name, const SerialisedValue &data)
-          { species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
+          { coreData_.species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
 
     toMap(node, "configurations",
           [this](const std::string &name, const SerialisedValue &data)
@@ -278,7 +278,7 @@ bool Dissolve::saveInput(std::string_view filename)
 
     // Write Species data
     parser.writeBannerComment("Species");
-    for (auto &sp : species())
+    for (auto &sp : coreData_.species())
     {
         if (!parser.writeLineF("\n"))
             return false;

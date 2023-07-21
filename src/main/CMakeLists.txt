@@ -15,7 +15,6 @@ add_library(
   objects.cpp
   pairPotentials.cpp
   simulation.cpp
-  species.cpp
   version.cpp
   cli.h
   dissolve.h

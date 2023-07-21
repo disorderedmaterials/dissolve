@@ -191,14 +191,14 @@ void ImportCIFDialog::finalise()
     {
         // Just copy the species
         supercell->updateIntramolecularTerms();
-        auto *sp = dissolve_.copySpecies(supercell);
+        auto *sp = dissolve_.coreData().copySpecies(supercell);
         sp->setName(cifImporter_.chemicalFormula());
     }
     else if (ui_.OutputSupermoleculeRadio->isChecked())
     {
         // Copy the species
         supercell->updateIntramolecularTerms();
-        auto *sp = dissolve_.copySpecies(supercell);
+        auto *sp = dissolve_.coreData().copySpecies(supercell);
         sp->setName(cifImporter_.chemicalFormula());
 
         // Remove the unit cell and any cell-crossing bonds
