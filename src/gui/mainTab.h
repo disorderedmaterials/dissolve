@@ -27,6 +27,7 @@ class MainTab
     enum class TabType
     {
         Configuration,
+        ControlLayer,
         Forcefield,
         Layer,
         Messages,

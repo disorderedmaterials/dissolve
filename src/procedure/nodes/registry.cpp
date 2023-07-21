@@ -45,6 +45,7 @@
 #include "procedure/nodes/sum1D.h"
 #include "procedure/nodes/temperature.h"
 #include "procedure/nodes/transmute.h"
+#include "runLayer.h"
 
 ProcedureNodeRegistry::ProcedureNodeRegistry()
 {
@@ -138,6 +139,9 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
 
     // Sites
     registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
+
+    // Control
+    registerProducer<RunLayerNode>(ProcedureNode::NodeType::RunLayer, "Run layer", "Control");
 }
 
 /*
