@@ -82,8 +82,8 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
 
             // Set current Atom targets in ChangeStore (whole Molecule)
             changeStore.add(mol);
+            auto storeIndex = 0;
 
-            n = 0;
             // Loop over atoms in the Molecule
             for (const auto &i : mol->atoms())
             {
@@ -115,11 +115,11 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
                     if (accept)
                     {
                         // Accept new (current) position of target Atom
-                        changeStore.updateAtom(n);
+                        changeStore.updateAtom(storeIndex);
                         currentEnergy = newEnergy;
                     }
                     else
-                        changeStore.revert(n);
+                        changeStore.revert(storeIndex);
 
                     // Increase attempt counters
                     // The strategy in force at any one time may vary, so use the distributor's
@@ -133,8 +133,10 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
                         }
                         ++nAttempts;
                     }
-                    ++n;
                 }
+
+                // Increment index of target atom in ChangeStore
+                ++storeIndex;
             }
 
             // Store modifications to Atom positions ready for broadcast later
