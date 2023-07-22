@@ -148,10 +148,6 @@ class Dissolve : public Serialisable<>
     SampledDouble iterationTime_;
 
     public:
-    // Set number of test points to use when calculating Box normalisation arrays
-    void setNBoxNormalisationPoints(int nPoints);
-    // Return number of test points to use when calculating Box normalisation arrays
-    int nBoxNormalisationPoints() const;
     // Set frequency with which to write various iteration data
     void setRestartFileFrequency(int n);
     // Return frequency with which to write restart file
