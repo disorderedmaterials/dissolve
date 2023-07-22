@@ -42,7 +42,10 @@
      <property name="font">
       <font>
        <pointsize>11</pointsize>
+       <italic>false</italic>
        <bold>false</bold>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
       </font>
      </property>
      <property name="text">
