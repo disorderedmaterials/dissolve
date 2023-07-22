@@ -40,6 +40,7 @@ class Dissolve : public Serialisable<>
     const CoreData &coreData() const;
     // Clear all data
     void clear();
+    // TOML Toggle
     static constexpr bool toml_testing_flag = false;
 
     /*
