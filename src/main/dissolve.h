@@ -33,7 +33,6 @@ class Dissolve : public Serialisable<>
     private:
     // Reference to CoreData
     CoreData &coreData_;
-    SerializablePairPotential serializablePairPotential_;
 
     public:
     // Return reference to CoreData
@@ -61,6 +60,8 @@ class Dissolve : public Serialisable<>
     std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
+    // Handler for serialising pair potential data
+    SerializablePairPotential serializablePairPotential_;
 
     public:
     // Set maximum distance for tabulated PairPotentials
