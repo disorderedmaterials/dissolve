@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>892</width>
-    <height>23</height>
+    <height>25</height>
    </rect>
   </property>
   <property name="font">
@@ -37,7 +37,7 @@
    <item>
     <widget class="QLabel" name="SectionLabel">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="font">
       <font>
