@@ -44,6 +44,8 @@ void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
         if (!sectionName.empty())
         {
             auto *sectionLabel = new SectionHeaderWidget(QString::fromStdString(std::string(sectionName)));
+            if (row != 0)
+                sectionLabel->setContentsMargins(0, 15, 0, 0);
             groupLayout->addWidget(sectionLabel, row++, 0, 1, 2);
         }
 
