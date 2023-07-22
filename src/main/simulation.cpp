@@ -223,8 +223,6 @@ bool Dissolve::prepare()
 // Iterate main simulation
 bool Dissolve::iterate(int nIterations)
 {
-    iterationTimer_.zero();
-    iterationTimer_.start();
 
     for (auto iter = 0; iter < nIterations; ++iter)
     {
@@ -378,8 +376,6 @@ bool Dissolve::iterate(int nIterations)
 
         Messenger::banner("END OF MAIN LOOP ITERATION {:10d}         {}", iteration_, DissolveSys::currentTimeAndDate());
     }
-
-    iterationTimer_.stop();
 
     return true;
 }

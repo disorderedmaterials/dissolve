@@ -105,6 +105,10 @@ class DissolveWindow : public QMainWindow
     void updateWhileRunning(int iterationsRemaining);
     // Clear the messages window
     void clearMessages();
+    // Start run timer
+    void startTimer();
+    // Stop run timer
+    void stopTimer();
 
     /*
      * Main Menu

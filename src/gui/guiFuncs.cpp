@@ -408,7 +408,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 
     // Set ETA text if we can
     if (iterationsRemaining == -1)
-        etaLabel_->setText("--:--:--");
+        etaLabel_->setText(QString::fromStdString(dissolve_.iterationTimer_.elapsedTimeString()));
     else
     {
         auto estimatedTime = dissolve_.estimateRequiredTime(iterationsRemaining);
@@ -431,6 +431,10 @@ void DissolveWindow::clearMessages()
     ui_.MainTabs->messagesTab()->clearMessages();
     Messenger::clearErrorCounts();
 }
+
+void DissolveWindow::startTimer() { dissolve_.iterationTimer_.start(); }
+
+void DissolveWindow::stopTimer() { dissolve_.iterationTimer_.stop(); }
 
 void DissolveWindow::statusLabelLinkClicked(const QString &link)
 {

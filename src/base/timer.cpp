@@ -18,24 +18,25 @@ Timer::Timer(bool immediateStart)
 std::string Timer::timeString(std::chrono::duration<double> duration)
 {
     int n = duration.count();
-    auto hours = n / 3600;
+    int hours = n / 3600;
     n %= 3600;
-    auto minutes = n / 60;
+    int minutes = n / 60;
     n %= 60;
-    double seconds = duration.count() - hours * 3600 - minutes * 60;
+    int seconds = duration.count() - hours * 3600 - minutes * 60;
     if (hours != 0)
-        return fmt::format("{} hours, {} minutes, and {:0.2f} seconds", hours, minutes, seconds);
+        return fmt::format("{} hour{}, {} minute{}, and {} seconds", hours, plural(hours), minutes, plural(minutes), seconds);
     else if (minutes != 0)
-        return fmt::format("{} minutes and {:0.2f} seconds", minutes, seconds);
+        return fmt::format("{} minute{} and {} second{}", minutes, plural(minutes), seconds, plural(seconds));
     else
-        return fmt::format("{:0.2f} seconds", seconds);
+        return fmt::format("{} second{}", seconds, plural(seconds));
 }
 
 // Start timer
 void Timer::start()
 {
     running_ = true;
-    startTime_ = std::chrono::high_resolution_clock::now();
+    if (totalTime_ == std::chrono::duration<double>())
+        startTime_ = std::chrono::high_resolution_clock::now();
     splitTime_ = startTime_;
 }
 
@@ -93,12 +94,16 @@ std::string Timer::timeString(double seconds)
     seconds -= minutes * 60;
 
     if (hours != 0)
-        return fmt::format("{} hours, {} minutes, and {:0.1f} seconds", hours, minutes, seconds);
+        return fmt::format("{} hour{}, {} minute{}, and {:0.1f} seconds", hours, plural(hours), minutes, plural(minutes),
+                           seconds);
     else if (minutes != 0)
-        return fmt::format("{} minutes and {:0.1f} seconds", minutes, seconds);
+        return fmt::format("{} minute{} and {:0.1f} seconds", minutes, plural(minutes), seconds);
     else
         return fmt::format("{:0.1f} seconds", seconds);
 }
+
+// Returns 's' if value is greater than 1
+std::string Timer::plural(int value) { return (value == 1 ? "" : "s"); }
 
 // Return ETA string for number of seconds provided
 std::string Timer::etaString(double seconds)

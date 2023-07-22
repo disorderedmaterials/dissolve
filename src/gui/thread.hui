@@ -35,6 +35,8 @@ class DissolveThreadWorker : public QObject
     void clearMessages();
     void iterated(int iterationsRemaining);
     void iterationsComplete();
+    void startTimer();
+    void stopTimer();
 };
 
 // Dissolve Thread Controller
