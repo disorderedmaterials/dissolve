@@ -85,13 +85,13 @@ constexpr auto SimpleMethod = GRModule::PartialsMethod::SimpleMethod;
 
 template <ProblemType problem, Population population> struct Problem
 {
-    Problem() : dissolve_(coredata_)
+    Problem() : dissolve_(coreData_)
     {
         Messenger::setQuiet(true);
         auto file = benchmarkFilePath<problem, population>();
         dissolve_.loadInput(file);
         dissolve_.prepare();
-        cfg_ = coredata_.configurations().front().get();
+        cfg_ = coreData_.configurations().front().get();
         setUpRDF();
     }
 
@@ -110,7 +110,7 @@ template <ProblemType problem, Population population> struct Problem
         dissolve_.processingModuleData().clearAll();
     }
 
-    CoreData coredata_;
+    CoreData coreData_;
     Dissolve dissolve_;
     std::unique_ptr<GRModule> rdfmodule_;
     std::unique_ptr<EnergyModule> energymodule_;

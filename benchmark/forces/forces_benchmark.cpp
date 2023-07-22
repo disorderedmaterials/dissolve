@@ -69,7 +69,7 @@ static void BM_CalculateForces_TotalIntraMolecular(benchmark::State &state)
 template <ProblemType problem, Population population> static void BM_CalculateForces_TotalSpecies(benchmark::State &state)
 {
     Problem<problem, population> problemDef;
-    auto &sp = problemDef.dissolve_.coreData().species().front();
+    auto &sp = problemDef.coreData_.species().front();
     std::vector<Vec3<double>> forces(sp->nAtoms());
     auto &procPool = problemDef.dissolve_.worldPool();
     const PotentialMap &potentialMap = problemDef.dissolve_.potentialMap();
