@@ -1,7 +1,7 @@
 #include "gui/models/speciesAtomModel.h"
 #include "classes/atomType.h"
 
-SpeciesAtomModel::SpeciesAtomModel(Species &species, Dissolve &dissolve) : species_(species), dissolve_(dissolve) {}
+SpeciesAtomModel::SpeciesAtomModel(Species &species, const CoreData &coreData) : species_(species), coreData_(coreData) {}
 
 int SpeciesAtomModel::rowCount(const QModelIndex &parent) const
 {
@@ -90,7 +90,7 @@ bool SpeciesAtomModel::setData(const QModelIndex &index, const QVariant &value, 
         case 1:
             // TODO
             {
-                auto atomType = dissolve_.coreData().findAtomType(value.toString().toStdString());
+                auto atomType = coreData_.findAtomType(value.toString().toStdString());
                 if (!atomType)
                     return false;
                 item.setAtomType(atomType);
