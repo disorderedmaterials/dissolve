@@ -77,7 +77,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
              * Calculation Begins
              */
 
-            // Get Molecule index and pointer
+            // Get Molecule pointer
             std::shared_ptr<Molecule> mol = targetConfiguration_->molecule(molId);
 
             // Set current Atom targets in ChangeStore (whole Molecule)
