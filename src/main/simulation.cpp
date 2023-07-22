@@ -32,27 +32,7 @@ bool Dissolve::prepare()
     }
 
     // Remove unused atom types
-    AtomTypeMix usedAtomTypes;
-    for (const auto &sp : coreData_.species())
-        usedAtomTypes.add(sp->atomTypes());
-
-    coreData_.atomTypes().erase(std::remove_if(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
-                                               [&](const auto &at)
-                                               {
-                                                   if (usedAtomTypes.contains(at))
-                                                       return false;
-                                                   else
-                                                   {
-                                                       Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
-                                                       return true;
-                                                   }
-                                               }),
-                                coreData_.atomTypes().end());
-
-    // Reassign AtomType indices (in case one or more have been added / removed)
-    auto count = 0;
-    for (const auto &at : coreData_.atomTypes())
-        at->setIndex(count++);
+    coreData_.removeUnusedAtomTypes();
 
     // Store / update last-used pair potential cutoff
     // If lastPairPotentialCutoff is nullopt, store the current value and move on leaving the cutoff to use as nullopt.
