@@ -201,7 +201,7 @@ the directoy will unload them.
 
 [VS Code](https://code.visualstudio.com/)
 
-: A popular, multi-language IDE. We've pre-configured
+: A popular, multi-language IDE.
 
 [Ripgrep](https://github.com/BurntSushi/ripgrep)
 
