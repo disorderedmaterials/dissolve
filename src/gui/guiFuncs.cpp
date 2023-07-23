@@ -406,9 +406,13 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     // Set current iteration number
     iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
-    // Set ETA text if we can
+    // Text is set to time elapsed if iterating indefinitely
     if (iterationsRemaining == -1)
         etaLabel_->setText(QString::fromStdString(dissolve_.iterationTimer_.elapsedTimeString()));
+    // ETA text reverts to empty when iterations are completed
+    else if (iterationsRemaining == 0)
+        etaLabel_->setText("--:--:--");
+    // Set ETA text if we can
     else
     {
         auto estimatedTime = dissolve_.estimateRequiredTime(iterationsRemaining);

@@ -15,11 +15,14 @@
 #include "modules/intraShake/intraShake.h"
 
 // Run main processing
-bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Retrieve control parameters
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
@@ -81,7 +84,10 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     for (auto &spPop : targetConfiguration_->speciesPopulations())
     {
         if (!spPop.first->attachedAtomListsGenerated())
-            return Messenger::error("Species '{}' has no attached atom lists, so module can't proceed.\n", spPop.first->name());
+        {
+            Messenger::error("Species '{}' has no attached atom lists, so module can't proceed.\n", spPop.first->name());
+            return ExecutionResult::Failed;
+        }
     }
 
     int shake, nBondAttempts = 0, nAngleAttempts = 0, nTorsionAttempts = 0, nBondAccepted = 0, nAngleAccepted = 0,
@@ -312,19 +318,19 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Collect statistics across all processes
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nBondAttempts, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nBondAccepted, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nAngleAttempts, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nAngleAccepted, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nTorsionAttempts, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nTorsionAccepted, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
 
     Messenger::print("IntraShake: Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
     Messenger::print("IntraShake: Total number of attempted moves was {} ({} work, {} comms).\n",
@@ -385,5 +391,5 @@ bool IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if ((nBondAccepted > 0) || (nAngleAccepted > 0) || (nTorsionAccepted > 0))
         targetConfiguration_->incrementContentsVersion();
 
-    return true;
+    return ExecutionResult::Success;
 }

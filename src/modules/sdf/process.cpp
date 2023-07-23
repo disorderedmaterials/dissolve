@@ -10,11 +10,14 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-bool SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     collectVector_->keywords().set("RangeX", rangeX_);
@@ -29,7 +32,10 @@ bool SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
-        return Messenger::error("CalculateSDF experienced problems with its analysis.\n");
+    {
+        Messenger::error("CalculateSDF experienced problems with its analysis.\n");
+        return ExecutionResult::Failed;
+    }
 
     // Save data?
     if (sdfFileAndFormat_.hasFilename())
@@ -41,12 +47,12 @@ bool SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
             else
             {
                 procPool.decideFalse();
-                return false;
+                return ExecutionResult::Failed;
             }
         }
         else if (!procPool.decision())
-            return false;
+            return ExecutionResult::Failed;
     }
 
-    return true;
+    return ExecutionResult::Success;
 }
