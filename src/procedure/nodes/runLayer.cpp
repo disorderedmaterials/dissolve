@@ -6,7 +6,7 @@
 #include "procedure/nodes/node.h"
 #include "keywords/layer.h"
 
-RunLayerNode::RunLayerNode(const ModuleLayer* layer) : ProcedureNode(ProcedureNode::NodeType::RunLayer, {ProcedureNode::GenerationContext}), layer_(layer)
+RunLayerNode::RunLayerNode(const ModuleLayer* layer) : ProcedureNode(ProcedureNode::NodeType::RunLayer, {ProcedureNode::ControlContext}), layer_(layer)
 {
 
     keywords_.setOrganisation("Options", "Target");
@@ -26,8 +26,18 @@ bool RunLayerNode::mustBeNamed() const { return false; }
 
 // Prepare any necessary data, ready for execution
 bool RunLayerNode::prepare(const ProcedureContext &procedureContext)
-{;}
+{
+    if (!layer_->isEnabled())
+        return false;
+}
 
 // Execute node
 bool RunLayerNode::execute(const ProcedureContext &procedureContext)
-{;}
+{
+    if (!layer_->isEnabled())
+    {
+        Messenger::warn("Layer {} is disabled, so it won't be run!", layer_->name());
+        return true;
+    }
+
+}
