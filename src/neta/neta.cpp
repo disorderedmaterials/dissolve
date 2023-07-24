@@ -123,13 +123,13 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
             continue;
 
         if (!maxDepth || currentDepth < *maxDepth)
-            neta += fmt::format(",-{}({})", Elements::symbol(j->Z()), netaString(j, currentDepth + 1, maxDepth, path));
+            neta += fmt::format(",-{}({})", Elements::symbol(j->Z()), netaString(j, currentDepth + 1, maxDepth, path, flags));
         else
             neta += fmt::format(",-{}", Elements::symbol(j->Z()));
     
     }
 
-    if (i->Z() != Elements::H)
+    if (!flags.isSet(NETADefinition::NETACreationFlags::ExplicitHydrogens) && i->Z() != Elements::H)
         neta += fmt::format(",nh={}", nH);
     return neta;
 }
