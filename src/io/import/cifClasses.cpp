@@ -2,9 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/cifClasses.h"
+#include "classes/box.h"
 #include "classes/empiricalFormula.h"
 #include "classes/molecule.h"
+#include "classes/species.h"
 #include "neta/neta.h"
+
 /*
  * CIF Symmetry-Unique Atom
  */
