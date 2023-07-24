@@ -4,7 +4,6 @@
 #include "neta/hydrogenCount.h"
 #include "classes/speciesAtom.h"
 #include "classes/speciesBond.h"
-#include "neta.h"
 
 NETAHydrogenCountNode::NETAHydrogenCountNode(NETADefinition *parent, NETANode::ComparisonOperator op, std::optional<int> value)
     : NETANode(parent, NETANode::NodeType::HydrogenCount), value_(value), operator_(op)
