@@ -26,7 +26,7 @@ class LayerKeyword : public KeywordBase
     // Return reference to data
     const ModuleLayer *&data();
     const ModuleLayer *&data() const;
-    void setData(ModuleLayer* data);
+    void setData(ModuleLayer *data);
 
     /*
      * Arguments

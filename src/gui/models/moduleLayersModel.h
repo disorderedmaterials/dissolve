@@ -21,7 +21,7 @@ class ModuleLayersModel : public QAbstractListModel
     // Set source ModuleLayers data
     void setData(const std::vector<std::unique_ptr<ModuleLayer>> &layers);
     // Return object represented by specified model index
-    ModuleLayer* rawData(const QModelIndex &index) const;
+    ModuleLayer *rawData(const QModelIndex &index) const;
 
     /*
      * QAbstractItemModel overrides
@@ -33,4 +33,3 @@ class ModuleLayersModel : public QAbstractListModel
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 };
-

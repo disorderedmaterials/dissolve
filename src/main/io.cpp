@@ -477,7 +477,7 @@ bool Dissolve::loadRestart(std::string_view filename)
 
             // Realise the item in the list
             processingModuleData().deserialise(parser, coreData_, parser.args(1), parser.args(2), parser.argi(3),
-                                              parser.hasArg(4) ? parser.argi(4) : 0);
+                                               parser.hasArg(4) ? parser.argi(4) : 0);
         }
         else if (DissolveSys::startsWith(parser.argsv(0), "Configuration"))
         {
@@ -584,7 +584,7 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
 
             // Deserialise the item
             processingModuleData().deserialise(parser, coreData_, newName, parser.args(2), parser.argi(3),
-                                              GenericItem::IsReferencePointDataFlag);
+                                               GenericItem::IsReferencePointDataFlag);
 
             skipCurrentItem = false;
         }

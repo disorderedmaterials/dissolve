@@ -14,10 +14,7 @@ void ModuleLayersModel::setData(const std::vector<std::unique_ptr<ModuleLayer>> 
     endResetModel();
 }
 
-ModuleLayer* ModuleLayersModel::rawData(const QModelIndex &index) const
-{
-    return layers_->get()[index.row()].get();
-}
+ModuleLayer *ModuleLayersModel::rawData(const QModelIndex &index) const { return layers_->get()[index.row()].get(); }
 
 int ModuleLayersModel::rowCount(const QModelIndex &parent) const
 {
@@ -25,7 +22,7 @@ int ModuleLayersModel::rowCount(const QModelIndex &parent) const
     return layers_ ? layers_->get().size() : 0;
 }
 
-QVariant ModuleLayersModel::data(const QModelIndex& index, int role) const
+QVariant ModuleLayersModel::data(const QModelIndex &index, int role) const
 {
     switch (role)
     {
@@ -38,17 +35,8 @@ QVariant ModuleLayersModel::data(const QModelIndex& index, int role) const
     }
 }
 
-bool ModuleLayersModel::setData(const QModelIndex& index, const QVariant &value, int role)
-{
-    return false;
-}
+bool ModuleLayersModel::setData(const QModelIndex &index, const QVariant &value, int role) { return false; }
 
-Qt::ItemFlags ModuleLayersModel::flags(const QModelIndex& index) const
-{
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-}
+Qt::ItemFlags ModuleLayersModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
 
-QVariant ModuleLayersModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    return {};
-}
+QVariant ModuleLayersModel::headerData(int section, Qt::Orientation orientation, int role) const { return {}; }

@@ -9,7 +9,7 @@ class ModuleLayer;
 class RunLayerNode : public ProcedureNode
 {
     public:
-    explicit RunLayerNode(const ModuleLayer* layer = nullptr);
+    explicit RunLayerNode(const ModuleLayer *layer = nullptr);
     ~RunLayerNode() override = default;
 
     /*
@@ -20,7 +20,7 @@ class RunLayerNode : public ProcedureNode
     bool mustBeNamed() const override;
 
     private:
-    const ModuleLayer* layer_{nullptr};
+    const ModuleLayer *layer_{nullptr};
 
     /*
      * Execute
@@ -30,5 +30,4 @@ class RunLayerNode : public ProcedureNode
     bool prepare(const ProcedureContext &procedureContext) override;
     // Execute node
     bool execute(const ProcedureContext &procedureContext) override;
-
 };

@@ -186,7 +186,7 @@ class CoreData
     public:
     // Add new processing layer
     ModuleLayer *addProcessingLayer();
-    void removeProcessingLayer(ModuleLayer* layer);
+    void removeProcessingLayer(ModuleLayer *layer);
     // Find named processing layer
     ModuleLayer *findProcessingLayer(std::string_view name) const;
     // Own the specified processing layer

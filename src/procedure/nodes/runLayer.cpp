@@ -2,11 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/runLayer.h"
+#include "keywords/layer.h"
 #include "module/layer.h"
 #include "procedure/nodes/node.h"
-#include "keywords/layer.h"
 
-RunLayerNode::RunLayerNode(const ModuleLayer* layer) : ProcedureNode(ProcedureNode::NodeType::RunLayer, {ProcedureNode::ControlContext}), layer_(layer)
+RunLayerNode::RunLayerNode(const ModuleLayer *layer)
+    : ProcedureNode(ProcedureNode::NodeType::RunLayer, {ProcedureNode::ControlContext}), layer_(layer)
 {
 
     keywords_.setOrganisation("Options", "Target");
@@ -39,5 +40,4 @@ bool RunLayerNode::execute(const ProcedureContext &procedureContext)
         Messenger::warn("Layer {} is disabled, so it won't be run!", layer_->name());
         return true;
     }
-
 }

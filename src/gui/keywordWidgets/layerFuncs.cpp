@@ -4,7 +4,8 @@
 #include "gui/helpers/mouseWheelAdjustmentGuard.h"
 #include "gui/keywordWidgets/layer.h"
 
-LayerKeywordWidget::LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
+LayerKeywordWidget::LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, const CoreData &coreData)
+    : QWidget(parent), KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Setup our UI
     ui_.setupUi(this);
@@ -29,7 +30,7 @@ void LayerKeywordWidget::on_LayerCombo_currentIndexChanged(int index)
         return;
 
     // Get data from the selected item
-    
+
     if (index == -1)
         keyword_->setData(nullptr);
     else
@@ -52,7 +53,7 @@ void LayerKeywordWidget::on_ClearButton_clicked(bool checked)
 void LayerKeywordWidget::updateLayersCombo()
 {
     refreshing_ = true;
-    
+
     moduleLayersModel_.setData(coreData_.processingLayers());
 
     refreshing_ = false;

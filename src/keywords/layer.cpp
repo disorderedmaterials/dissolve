@@ -16,10 +16,7 @@ const ModuleLayer *&LayerKeyword::data() { return data_; }
 const ModuleLayer *&LayerKeyword::data() const { return data_; }
 
 // Set data
-void LayerKeyword::setData(ModuleLayer *data)
-{
-    data_ = data;
-}
+void LayerKeyword::setData(ModuleLayer *data) { data_ = data; }
 
 /*
  * Arguments
@@ -46,10 +43,8 @@ bool LayerKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 // Read values from a serialisable value
 void LayerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-   data_ = coreData.findProcessingLayer(std::string_view(std::string(node.as_string()))); 
+    data_ = coreData.findProcessingLayer(std::string_view(std::string(node.as_string())));
 }
-
 
 // Express as a serialisable value
 SerialisedValue LayerKeyword::serialise() const { return data_->name(); }
-

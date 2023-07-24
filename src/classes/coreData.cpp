@@ -9,8 +9,8 @@
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
-#include "module/module.h"
 #include "module/layer.h"
+#include "module/module.h"
 
 // Clear all data
 void CoreData::clear()
@@ -379,10 +379,7 @@ Configuration *CoreData::findConfiguration(std::string_view name) const
  */
 
 // Add new processing layer
-ModuleLayer *CoreData::addProcessingLayer()
-{
-    return processingLayers_.emplace_back(std::make_unique<ModuleLayer>()).get();
-}
+ModuleLayer *CoreData::addProcessingLayer() { return processingLayers_.emplace_back(std::make_unique<ModuleLayer>()).get(); }
 
 // Remove processing layer
 void CoreData::removeProcessingLayer(ModuleLayer *layer)
@@ -419,22 +416,13 @@ bool CoreData::ownProcessingLayer(ModuleLayer *layer)
 }
 
 // Return number of defined processing layers
-int CoreData::nProcessingLayers() const
-{
-    return processingLayers_.size();
-}
+int CoreData::nProcessingLayers() const { return processingLayers_.size(); }
 
 // Return list of processing layers
-std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers()
-{
-    return processingLayers_;
-}
+std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() { return processingLayers_; }
 
 // Return list of processing layers
-const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const
-{
-    return processingLayers_;
-}
+const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const { return processingLayers_; }
 
 /*
  * Input Filename
