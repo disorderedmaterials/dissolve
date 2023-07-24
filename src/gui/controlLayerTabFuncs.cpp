@@ -4,7 +4,11 @@
 #include "gui/controlLayerTab.h"
 #include "gui/mainTab.h"
 
-ControlLayerTab::ControlLayerTab(DissolveWindow *dissolveWindow, Dissolve& dissolve, MainTabsWidget *parent, const QString title) : MainTab(dissolveWindow, dissolve, parent, QString("Control"), this){}
+ControlLayerTab::ControlLayerTab(DissolveWindow *dissolveWindow, Dissolve& dissolve, MainTabsWidget *parent, const QString title) : MainTab(dissolveWindow, dissolve, parent, QString("Control"), this), controlProcedure_(ProcedureNode::ControlContext, "Control")
+{
+    ui_.setupUi(this);
+    ui_.ControlWidget->setUp(dissolveWindow_, controlProcedure_);
+}
 
 MainTab::TabType ControlLayerTab::type() const { return MainTab::TabType::ControlLayer; }
 bool ControlLayerTab::canClose() const {return false;}

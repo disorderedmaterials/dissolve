@@ -33,6 +33,7 @@ class ControlLayerTab : public QWidget, public MainTab
 
     private:
     ProcedureModel procedureModel_;
+    Procedure controlProcedure_;
         
     public:
     // update controls in tab

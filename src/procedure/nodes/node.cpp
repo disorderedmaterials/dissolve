@@ -81,6 +81,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
     return EnumOptions<ProcedureNode::NodeContext>("NodeContext", {{ProcedureNode::NoContext, "None"},
                                                                    {ProcedureNode::AnalysisContext, "Analysis"},
                                                                    {ProcedureNode::GenerationContext, "Generation"},
+                                                                   {ProcedureNode::ControlContext, "Control"},
                                                                    {ProcedureNode::OperateContext, "Operate"},
                                                                    {ProcedureNode::OperateContext, "Any"},
                                                                    {ProcedureNode::ParentProcedureContext, "ParentProcedure"}});

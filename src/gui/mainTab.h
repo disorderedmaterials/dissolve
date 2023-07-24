@@ -28,6 +28,7 @@ class MainTab
     {
         Configuration,
         Forcefield,
+        ControlLayer,
         Layer,
         Messages,
         Species
