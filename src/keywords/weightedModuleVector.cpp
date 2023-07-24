@@ -84,19 +84,22 @@ void WeightedModuleVectorKeyword::removeReferencesTo(Module *module)
 // Express as a serialisable value
 SerialisedValue WeightedModuleVectorKeyword::serialise() const
 {
-    return fromVector(data_, [](const auto &item) { return item.first->name(); });
+    return fromVector(data_,
+                      [](const auto &item) -> SerialisedValue {
+                          return {{"target", item.first->name()}, {"weight", item.second}};
+                      });
 }
 
 // Read values from a serialisable value
 void WeightedModuleVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     toVector(node,
-             [this, &coreData](const auto &item)
+             [this](const auto &item)
              {
-                 auto title = toml::get<std::string>(item);
-                 auto *module = Module::find(title);
+                 auto moduleName = toml::find<std::string>(item, "target");
+                 auto *module = Module::find(moduleName);
                  if (!module)
-                     throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", title), item.location());
+                     throw toml::syntax_error(fmt::format("No Module named '{}' exists.\n", moduleName), item.location());
 
                  // Check the module's type if we can
                  if (!moduleTypes_.empty() &&
@@ -104,9 +107,10 @@ void WeightedModuleVectorKeyword::deserialise(const SerialisedValue &node, const
                                   [module](const auto &s) { return s == module->type(); }) == moduleTypes_.cend())
                      throw toml::syntax_error(
                          fmt::format("Module '{}' is of type '{}', and is not relevant to keyword '{}' (allowed types = {}).\n",
-                                     title, module->type(), name(), joinStrings(moduleTypes_)),
+                                     moduleName, module->type(), name(), joinStrings(moduleTypes_)),
                          item.location());
-                 data_.emplace_back(module, 1.0);
+
+                 data_.emplace_back(module, toml::find<double>(item, "weight"));
              });
 }
 
