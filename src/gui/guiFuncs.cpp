@@ -48,9 +48,9 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     addStatusBarIcon(":/control/icons/control_step.svg")->setToolTip("Current step / iteration number");
     iterationLabel_ = addStatusBarLabel("00000");
     iterationLabel_->setToolTip("Current step / iteration number");
-    addStatusBarIcon(":/general/icons/general_clock.svg")->setToolTip("Time remaining to completion");
+    addStatusBarIcon(":/general/icons/general_clock.svg")->setToolTip("Timer");
     etaLabel_ = addStatusBarLabel("--:--:--");
-    etaLabel_->setToolTip("Time remaining to completion");
+    etaLabel_->setToolTip("Timer");
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
     statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
@@ -171,6 +171,9 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
     // Clear the messages buffer
     clearMessages();
 
+    // Empty timer text
+    etaLabel_->setText("--");
+
     // Set the current dir to the location of the new file
     QFileInfo inputFileInfo(QString::fromStdString(std::string(inputFile)));
 
@@ -287,6 +290,9 @@ void DissolveWindow::updateStatusBar()
 {
     // Set current iteration number
     iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
+    // etaLabel_ reports elapsed time
+    etaLabel_->setText(
+        QString::fromStdString(elapsedTimer_.hasStarted() ? elapsedTimer_.elapsedTimeString(true) : "------------"));
 
     // Set restart file locations
     restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
@@ -409,15 +415,14 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 
     // Text is set to time elapsed if iterating indefinitely
     if (iterationsRemaining == -1)
-        etaLabel_->setText(QString::fromStdString(elapsedTimer_.elapsedTimeString()));
-    // ETA text reverts to empty when iterations are completed
-    else if (iterationsRemaining == 0)
-        etaLabel_->setText("--:--:--");
+    {
+        etaLabel_->setText(QString::fromStdString(elapsedTimer_.elapsedTimeString(true)));
+    }
     // Set ETA text if we can
     else
     {
         auto estimatedTime = dissolve_.estimateRequiredTime(iterationsRemaining);
-        etaLabel_->setText(estimatedTime ? QString::fromStdString(Timer::etaString(estimatedTime.value())) : "??:??:??");
+        etaLabel_->setText(estimatedTime ? QString::fromStdString(Timer::timeString(estimatedTime.value())) : "------------");
     }
 
     // Enable data access in Renderables, and update all tabs.

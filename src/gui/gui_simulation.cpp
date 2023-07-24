@@ -63,14 +63,15 @@ void DissolveWindow::setupIteration(int count)
     Renderable::setSourceDataAccessEnabled(false);
     dissolveIterating_ = true;
 
-    // Start the main timer
-    if (count == -1)
-        elapsedTimer_.start(false);
-
     // Update the controls
     fullUpdate();
 
     emit iterate(count);
+
+    // Start the main timer
+    if (!elapsedTimer_.hasStarted())
+        elapsedTimer_.zero();
+    elapsedTimer_.start(false);
 }
 
 // Disable editing
@@ -121,6 +122,7 @@ void DissolveWindow::iterationsComplete()
     allowEditing();
     Renderable::setSourceDataAccessEnabled(true);
     dissolveIterating_ = false;
+
     elapsedTimer_.stop();
 
     fullUpdate();

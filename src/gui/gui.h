@@ -74,8 +74,8 @@ class DissolveWindow : public QMainWindow
     QLabel *etaLabel_;
     // General status indicator and label
     QLabel *statusIndicator_, *statusLabel_;
-    // TMain loop iteration timer
-    Timer elapsedTimer_;
+    // Main loop iteration timer
+    Timer elapsedTimer_ = Timer(false);
 
     private:
     // Add text label to status bar
