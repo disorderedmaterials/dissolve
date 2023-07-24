@@ -331,25 +331,25 @@ Species *CoreData::findSpecies(std::string_view name) const
 }
 
 // Copy AtomType, creating a new one if necessary
-void CoreData::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom)
+void CoreData::copyAtomType(const SpeciesAtom &sourceAtom, SpeciesAtom &destAtom)
 {
     // Check for no AtomType being set
-    if (!sourceAtom->atomType())
+    if (!sourceAtom.atomType())
     {
-        destAtom->setAtomType(nullptr);
+        destAtom.setAtomType(nullptr);
         return;
     }
 
     // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-    auto at = findAtomType(sourceAtom->atomType()->name());
+    auto at = findAtomType(sourceAtom.atomType()->name());
     if (!at)
     {
-        at = addAtomType(sourceAtom->Z());
-        at->setName(sourceAtom->atomType()->name());
-        at->interactionPotential() = sourceAtom->atomType()->interactionPotential();
+        at = addAtomType(sourceAtom.Z());
+        at->setName(sourceAtom.atomType()->name());
+        at->interactionPotential() = sourceAtom.atomType()->interactionPotential();
     }
 
-    destAtom->setAtomType(at);
+    destAtom.setAtomType(at);
 }
 
 // Copy intramolecular interaction parameters, adding master term if necessary
@@ -431,7 +431,7 @@ Species *CoreData::copySpecies(const Species *species)
             newSpecies->selectAtom(id);
 
         // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-        copyAtomType(&i, &newSpecies->atom(id));
+        copyAtomType(i, newSpecies->atom(id));
     }
 
     // Duplicate bonds
