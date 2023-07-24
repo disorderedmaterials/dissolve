@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include "classes/box.h"
+#include "classes/species.h"
 #include "data/elements.h"
 #include "templates/optionalRef.h"
 #include "templates/vector3.h"
-#include "classes/box.h"
-#include "classes/species.h"
 #include <algorithm>
 #include <vector>
 
@@ -119,27 +119,26 @@ class CIFSpecies
 {
 
     public:
-    CIFSpecies(Species* spRef, Species* sp, std::vector<int> referenceFragment);
-    
+    CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance);
+
     private:
-    Species* species_;
-    Species* speciesRef_;
-    std::string_view netaString_;
-    std::vector<int> referenceFragment_;
-    std::vector<std::vector<int>> fragments_;
+    Species *species_;
+    Species *speciesRef_;
+    std::string netaString_;
+    std::vector<int> referenceInstance_;
+    std::vector<std::vector<int>> instances_;
     std::vector<std::vector<Vec3<double>>> coordinates_;
+    bool hasSymmetry_{false};
 
     public:
-    Species* species();
-    void findCopies();
-    void fixGeometry(const Box* box);
-    std::vector<std::vector<Vec3<double>>> coordinates();
-    std::vector<std::vector<int>> fragments();
+    bool findInstances();
+    void determineCoordinates();
+    void fixGeometry(const Box *box);
 
-    // NETA String
-    // First bound fragment
-    // SUbsequenct fragments
-    // COordinates
-    
-
+    const Species *species() const;
+    const std::string netaString() const;
+    const std::vector<std::vector<int>> instances() const;
+    const std::vector<int> referenceInstance() const;
+    const std::vector<std::vector<Vec3<double>>> coordinates() const;
+    bool hasSymmetry() const;
 };

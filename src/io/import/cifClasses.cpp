@@ -2,10 +2,9 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/cifClasses.h"
-#include <cassert>
-#include "neta/neta.h"
-#include "classes/molecule.h"
 #include "classes/empiricalFormula.h"
+#include "classes/molecule.h"
+#include "neta/neta.h"
 /*
  * CIF Symmetry-Unique Atom
  */
@@ -93,46 +92,53 @@ int CIFAssembly::nGroups() const { return groups_.size(); }
  * CIF Species
  */
 
-CIFSpecies::CIFSpecies(Species* spRef, Species *sp, std::vector<int> referenceFragment) : speciesRef_(spRef), species_(sp), referenceFragment_(std::move(referenceFragment))
+CIFSpecies::CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance)
+    : speciesRef_(spRef), species_(sp), referenceInstance_(std::move(referenceInstance))
 {
 
     std::vector<int> allIndices(species_->nAtoms());
     std::iota(allIndices.begin(), allIndices.end(), 0);
     std::vector<int> indicesToRemove;
-    std::set_difference(allIndices.begin(), allIndices.end(), referenceFragment_.begin(), referenceFragment_.end(),
+    std::set_difference(allIndices.begin(), allIndices.end(), referenceInstance_.begin(), referenceInstance_.end(),
                         std::back_inserter(indicesToRemove));
     species_->removeAtoms(indicesToRemove);
-    Messenger::print("Removed {}, now {}", indicesToRemove.size(), species_->nAtoms());
 
-    findCopies();
+    hasSymmetry_ = !findInstances();
+
+    determineCoordinates();
+
     species_->setName(EmpiricalFormula::formula(species_->atoms(), [&](const auto &at) { return at.Z(); }));
-
 }
 
-Species *CIFSpecies::species()
-{
-    return species_;
-}
-std::vector<std::vector<int>> CIFSpecies::fragments()
-{
-    return fragments_;
-}
+const Species *CIFSpecies::species() const { return species_; }
 
+const std::vector<int> CIFSpecies::referenceInstance() const { return referenceInstance_; }
 
-void CIFSpecies::findCopies()
+const std::vector<std::vector<int>> CIFSpecies::instances() const { return instances_; }
+
+const std::vector<std::vector<Vec3<double>>> CIFSpecies::coordinates() const { return coordinates_; }
+
+const std::string CIFSpecies::netaString() const { return netaString_; }
+
+bool CIFSpecies::hasSymmetry() const { return hasSymmetry_; }
+
+bool CIFSpecies::findInstances()
 {
     NETADefinition neta;
     auto nMatches = 0, idx = 0;
     while (nMatches != 1)
     {
-        if (idx >= species_->nAtoms()) return;
-        neta.create(&species_->atom(idx++), std::nullopt, Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,  NETADefinition::NETACreationFlags::IncludeRootElement));
-        nMatches = std::count_if(species_->atoms().begin(), species_->atoms().end(),
-                                         [&](const auto &i) { return neta.matches(&i); });
+        if (idx >= species_->nAtoms())
+            return false;
+        neta.create(&species_->atom(idx++), std::nullopt,
+                    Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,
+                                                             NETADefinition::NETACreationFlags::IncludeRootElement));
+        nMatches =
+            std::count_if(species_->atoms().begin(), species_->atoms().end(), [&](const auto &i) { return neta.matches(&i); });
     }
 
     netaString_ = neta.definitionString();
-    Messenger::print("NETA string: {}", netaString_);
+
     for (auto &i : speciesRef_->atoms())
     {
         if (neta.matches(&i))
@@ -143,12 +149,14 @@ void CIFSpecies::findCopies()
             std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
                            [](const auto &atom) { return atom->index(); });
             std::sort(indices.begin(), indices.end());
-            fragments_.push_back(std::move(indices));
+            instances_.push_back(std::move(indices));
         }
     }
+
+    return true;
 }
 
-void CIFSpecies::fixGeometry(const Box* box)
+void CIFSpecies::fixGeometry(const Box *box)
 {
     // 'Fix' the geometry of the species
     // Construct a temporary molecule, which is just the species.
@@ -172,15 +180,12 @@ void CIFSpecies::fixGeometry(const Box* box)
     species_->setCentre(box, {0., 0., 0.});
 }
 
-std::vector<std::vector<Vec3<double>>>  CIFSpecies::coordinates()
+void CIFSpecies::determineCoordinates()
 {
-    std::vector<std::vector<Vec3<double>>> coordinates;
-    for (auto& fragment : fragments_)
+    for (auto &instance : instances_)
     {
-        std::vector<Vec3<double>> coords(fragment.size());
-        std::transform(fragment.begin(), fragment.end(), coords.begin(),
-            [&](auto i) { return speciesRef_->atom(i).r(); });
-        coordinates.push_back(std::move(coords));
+        std::vector<Vec3<double>> coords(instance.size());
+        std::transform(instance.begin(), instance.end(), coords.begin(), [&](auto i) { return speciesRef_->atom(i).r(); });
+        coordinates_.push_back(std::move(coords));
     }
-    return coordinates;
 }

@@ -232,12 +232,12 @@ void ImportCIFDialog::finalise()
             auto *sp = dissolve_.copySpecies(species_.at(i));
 
             // CoordinateSets
-            auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets {}", i), sp);
+            auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets_{}", i), sp);
             coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
             coordsNode->setSets(coordinates_.at(i));
 
             // Add
-            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add {}", i), coordsNode);
+            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", i), coordsNode);
             addNode->keywords().set("Population", NodeValue(int(coordinates_.at(i).size())));
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
@@ -550,37 +550,46 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 // Detect unique species in the structural species
 bool ImportCIFDialog::detectUniqueSpecies()
 {
+    Messenger::print("call");
+    // Clear any existing species
+    species_.clear();
+
     std::vector<CIFSpecies> cifSpecies;
-    std::vector<std::vector<int>> fragments;
-    auto idx = 0;
     std::vector<int> indices(cleanedSpecies_->nAtoms());
     std::iota(indices.begin(), indices.end(), 0);
 
-    // Find all of the fragments
+    auto idx = 0;
+
+    // Find all CIFSpecies, and their instances
     while (!indices.empty())
     {
         // Choose a fragment
         auto fragment = cleanedSpecies_->fragment(idx);
         std::sort(fragment.begin(), fragment.end());
+
+        // Setup the CIF species
         auto *tempSpecies = temporaryCoreData_.addSpecies();
         tempSpecies->copyBasic(cleanedSpecies_);
         auto cifSp = cifSpecies.emplace_back(cleanedSpecies_, tempSpecies, fragment);
-        cifSp.fixGeometry(cleanedSpecies_->box());
-        coordinates_.push_back(std::move(cifSp.coordinates()));
 
-        // Remove all of the indices associated with the fragment
-        for (auto& frag : cifSp.fragments())
+        // We cannot deal with symmetry.
+        if (cifSp.hasSymmetry())
+            return Messenger::error("CIFSpecies contains symmetry. We cannot deal with this currently.");
+
+        // Remove the current fragment, and all instances of the underlying CIFSpecies
+        for (auto& instance : cifSp.instances())
         {
-            Messenger::print("Frag size: {}", frag.size());
             indices.erase(std::remove_if(indices.begin(), indices.end(),
                                          [&](int value)
-                                         { return std::find(frag.begin(), frag.end(), value) != frag.end(); }),
+                                         { return std::find(instance.begin(), instance.end(), value) != instance.end(); }),
                           indices.end());
         }
 
+        coordinates_.push_back(std::move(cifSp.coordinates()));
+        species_.push_back(tempSpecies);
+
         // Choose starting index of the next fragment
         idx = *std::min_element(indices.begin(), indices.end());
-        species_.push_back(tempSpecies);
     }
     return true;
 }
