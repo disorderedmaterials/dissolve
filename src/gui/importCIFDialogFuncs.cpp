@@ -231,14 +231,28 @@ void ImportCIFDialog::finalise()
         {
             auto *sp = dissolve_.copySpecies(species_.at(i));
 
+            // Determine a unique suffix
+            auto base = species_.at(i)->name();
+            std::string uniqueSuffix{base};
+            if (!generator.nodes().empty())
+            {
+                // Start from the last root node
+                auto root = generator.nodes().back();
+                auto suffix = 0;
+
+                // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
+                while (generator.rootSequence().nodeInScope(root, fmt::format("CoordinateSets_{}", uniqueSuffix)) != nullptr)
+                    uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
+            }
+
             // CoordinateSets
             auto coordsNode =
-                generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets_{}", sp->name()), sp);
+                generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets_{}", uniqueSuffix), sp);
             coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
             coordsNode->setSets(coordinates_.at(i));
 
             // Add
-            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", sp->name()), coordsNode);
+            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
             addNode->keywords().set("Population", NodeValue(int(coordinates_.at(i).size())));
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
