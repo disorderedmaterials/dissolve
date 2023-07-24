@@ -232,12 +232,12 @@ void ImportCIFDialog::finalise()
             auto *sp = dissolve_.copySpecies(species_.at(i));
 
             // CoordinateSets
-            auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets_{}", i), sp);
+            auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets_{}", sp->name()), sp);
             coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
             coordsNode->setSets(coordinates_.at(i));
 
             // Add
-            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", i), coordsNode);
+            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", sp->name()), coordsNode);
             addNode->keywords().set("Population", NodeValue(int(coordinates_.at(i).size())));
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
