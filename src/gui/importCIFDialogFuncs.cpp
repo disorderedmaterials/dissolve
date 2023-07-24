@@ -106,7 +106,7 @@ bool ImportCIFDialog::progressionAllowed(int index) const
             return ui_.SpaceGroupsList->currentRow() != -1;
         case (ImportCIFDialog::OutputSpeciesPage):
             // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
-            if (species_.empty() && (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked()))
+            if (cifSpecies_.empty() && (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked()))
                 return ui_.PartitioningIndicator->state() == CheckIndicator::OKState;
             break;
         default:
@@ -192,7 +192,7 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
 // Perform any final actions before the wizard is closed
 void ImportCIFDialog::finalise()
 {
-    if (species_.empty())
+    if (cifSpecies_.empty())
     {
         auto *supercell = temporaryCoreData_.findSpecies("Supercell");
         assert(supercell);
@@ -227,12 +227,12 @@ void ImportCIFDialog::finalise()
         cfg->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
 
         auto &generator = cfg->generator();
-        for (auto i = 0; i < species_.size(); ++i)
+        for (auto &cifSp : cifSpecies_)
         {
-            auto *sp = dissolve_.copySpecies(species_.at(i));
+            auto *sp = dissolve_.copySpecies(cifSp->species());
 
             // Determine a unique suffix
-            auto base = species_.at(i)->name();
+            auto base = sp->name();
             std::string uniqueSuffix{base};
             if (!generator.nodes().empty())
             {
@@ -249,11 +249,11 @@ void ImportCIFDialog::finalise()
             auto coordsNode =
                 generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets_{}", uniqueSuffix), sp);
             coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-            coordsNode->setSets(coordinates_.at(i));
+            coordsNode->setSets(cifSp->coordinates());
 
             // Add
             auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-            addNode->keywords().set("Population", NodeValue(int(coordinates_.at(i).size())));
+            addNode->keywords().set("Population", NodeValue(int(cifSp->coordinates().size())));
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
             addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
@@ -565,11 +565,9 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 // Detect unique species in the structural species
 bool ImportCIFDialog::detectUniqueSpecies()
 {
-    Messenger::print("call");
     // Clear any existing species
-    species_.clear();
+    cifSpecies_.clear();
 
-    std::vector<CIFSpecies> cifSpecies;
     std::vector<int> indices(cleanedSpecies_->nAtoms());
     std::iota(indices.begin(), indices.end(), 0);
 
@@ -585,23 +583,20 @@ bool ImportCIFDialog::detectUniqueSpecies()
         // Setup the CIF species
         auto *tempSpecies = temporaryCoreData_.addSpecies();
         tempSpecies->copyBasic(cleanedSpecies_);
-        auto cifSp = cifSpecies.emplace_back(cleanedSpecies_, tempSpecies, fragment);
+        auto &cifSp = cifSpecies_.emplace_back(new CIFSpecies(cleanedSpecies_, tempSpecies, fragment));
 
         // We cannot deal with symmetry.
-        if (cifSp.hasSymmetry())
+        if (cifSp->hasSymmetry())
             return Messenger::error("CIFSpecies contains symmetry. We cannot deal with this currently.");
 
         // Remove the current fragment, and all instances of the underlying CIFSpecies
-        for (auto &instance : cifSp.instances())
+        for (auto &instance : cifSp->instances())
         {
             indices.erase(std::remove_if(indices.begin(), indices.end(),
                                          [&](int value)
                                          { return std::find(instance.begin(), instance.end(), value) != instance.end(); }),
                           indices.end());
         }
-
-        coordinates_.push_back(std::move(cifSp.coordinates()));
-        species_.push_back(tempSpecies);
 
         // Choose starting index of the next fragment
         idx = *std::min_element(indices.begin(), indices.end());
@@ -693,7 +688,7 @@ bool ImportCIFDialog::createPartitionedSpecies()
     ui_.PartitioningViewer->setConfiguration(nullptr);
     partitioningConfiguration_->clear();
 
-    if (species_.empty())
+    if (cifSpecies_.empty())
     {
         // Set up the basic configuration
         auto *sp = temporaryCoreData_.findSpecies("Supercell");

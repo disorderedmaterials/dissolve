@@ -120,6 +120,7 @@ class CIFSpecies
 
     public:
     CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance);
+    ~CIFSpecies() = default;
 
     private:
     // The output species

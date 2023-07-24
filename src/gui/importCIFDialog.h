@@ -143,8 +143,8 @@ class ImportCIFDialog : public WizardDialog
     bool detectUniqueSpecies();
 
     private:
-    std::vector<Species *> species_;
-    std::vector<std::vector<std::vector<Vec3<double>>>> coordinates_;
+    // CIF Species
+    std::vector<CIFSpecies *> cifSpecies_;
 
     /*
      * Supercell Page
