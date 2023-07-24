@@ -58,6 +58,10 @@ class DissolveSys
     static void removeComments(std::string &s);
     // Return nice version of string (no spaces, slashes etc.)
     static std::string niceName(std::string_view original);
+    // Returns 's' if value is plural
+    static std::string plural(int value);
+    // Returns 's' if value is plural
+    static std::string plural(double value);
     // Return whether the supplied string is a number
     static bool isNumber(std::string_view text);
     // Return whether the supplied string is a number, and also whether it is floating-point

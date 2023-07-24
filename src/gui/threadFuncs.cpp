@@ -17,8 +17,6 @@ void DissolveThreadWorker::beginIterating(int nIterations)
     nIterationsToRun_ = nIterations;
     keepIterating_ = true;
 
-    emit(startTimer());
-
     while (keepIterating_)
     {
         // Clear messages browser
@@ -35,8 +33,6 @@ void DissolveThreadWorker::beginIterating(int nIterations)
 
         QCoreApplication::processEvents();
     }
-
-    emit(stopTimer());
 
     emit(iterationsComplete());
 }
@@ -60,8 +56,6 @@ DissolveThreadController::DissolveThreadController(DissolveWindow *parentWindow,
     connect(worker, SIGNAL(clearMessages()), parentWindow, SLOT(clearMessages()), Qt::BlockingQueuedConnection);
     connect(worker, SIGNAL(iterated(int)), parentWindow, SLOT(updateWhileRunning(int)), Qt::BlockingQueuedConnection);
     connect(worker, SIGNAL(iterationsComplete()), parentWindow, SLOT(iterationsComplete()));
-    connect(worker, SIGNAL(startTimer()), parentWindow, SLOT(startTimer()));
-    connect(worker, SIGNAL(stopTimer()), parentWindow, SLOT(stopTimer()));
 
     workerThread_.start();
 }

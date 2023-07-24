@@ -63,6 +63,10 @@ void DissolveWindow::setupIteration(int count)
     Renderable::setSourceDataAccessEnabled(false);
     dissolveIterating_ = true;
 
+    // Start the main timer
+    if (count == -1)
+        elapsedTimer_.start(false);
+
     // Update the controls
     fullUpdate();
 
@@ -117,6 +121,7 @@ void DissolveWindow::iterationsComplete()
     allowEditing();
     Renderable::setSourceDataAccessEnabled(true);
     dissolveIterating_ = false;
+    elapsedTimer_.stop();
 
     fullUpdate();
 }

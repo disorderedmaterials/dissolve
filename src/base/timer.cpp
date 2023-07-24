@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "base/timer.h"
+#include "base/sysFunc.h"
 #include <fmt/format.h>
 
 Timer::Timer(bool immediateStart)
@@ -18,24 +19,26 @@ Timer::Timer(bool immediateStart)
 std::string Timer::timeString(std::chrono::duration<double> duration)
 {
     int n = duration.count();
-    int hours = n / 3600;
+    auto hours = n / 3600;
     n %= 3600;
-    int minutes = n / 60;
+    auto minutes = n / 60;
     n %= 60;
-    int seconds = duration.count() - hours * 3600 - minutes * 60;
+    auto seconds = int(duration.count()) - hours * 3600 - minutes * 60;
     if (hours != 0)
-        return fmt::format("{} hour{}, {} minute{}, and {} seconds", hours, plural(hours), minutes, plural(minutes), seconds);
+        return fmt::format("{} hour{}, {} minute{}, and {} seconds", hours, DissolveSys::plural(hours), minutes,
+                           DissolveSys::plural(minutes), seconds);
     else if (minutes != 0)
-        return fmt::format("{} minute{} and {} second{}", minutes, plural(minutes), seconds, plural(seconds));
+        return fmt::format("{} minute{} and {} second{}", minutes, DissolveSys::plural(minutes), seconds,
+                           DissolveSys::plural(seconds));
     else
-        return fmt::format("{} second{}", seconds, plural(seconds));
+        return fmt::format("{} second{}", seconds, DissolveSys::plural(seconds));
 }
 
 // Start timer
-void Timer::start()
+void Timer::start(bool resetTimer)
 {
     running_ = true;
-    if (totalTime_ == std::chrono::duration<double>())
+    if (resetTimer)
         startTime_ = std::chrono::high_resolution_clock::now();
     splitTime_ = startTime_;
 }
@@ -94,16 +97,14 @@ std::string Timer::timeString(double seconds)
     seconds -= minutes * 60;
 
     if (hours != 0)
-        return fmt::format("{} hour{}, {} minute{}, and {:0.1f} seconds", hours, plural(hours), minutes, plural(minutes),
-                           seconds);
+        return fmt::format("{} hour{}, {} minute{}, and {:0.1f} seconds", hours, DissolveSys::plural(hours), minutes,
+                           DissolveSys::plural(minutes), seconds);
     else if (minutes != 0)
-        return fmt::format("{} minute{} and {:0.1f} seconds", minutes, plural(minutes), seconds);
+        return fmt::format("{} minute{} and {:0.1f} second{}", minutes, DissolveSys::plural(minutes), seconds,
+                           DissolveSys::plural(seconds));
     else
-        return fmt::format("{:0.1f} seconds", seconds);
+        return fmt::format("{:0.1f} second{}", seconds, DissolveSys::plural(seconds));
 }
-
-// Returns 's' if value is greater than 1
-std::string Timer::plural(int value) { return (value == 1 ? "" : "s"); }
 
 // Return ETA string for number of seconds provided
 std::string Timer::etaString(double seconds)

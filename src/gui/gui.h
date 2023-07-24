@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/timer.h"
 #include "gui/mainTab.h"
 #include "gui/outputHandler.hui"
 #include "gui/signals.h"
@@ -73,6 +74,8 @@ class DissolveWindow : public QMainWindow
     QLabel *etaLabel_;
     // General status indicator and label
     QLabel *statusIndicator_, *statusLabel_;
+    // TMain loop iteration timer
+    Timer elapsedTimer_;
 
     private:
     // Add text label to status bar
@@ -106,9 +109,6 @@ class DissolveWindow : public QMainWindow
     // Clear the messages window
     void clearMessages();
     // Start run timer
-    void startTimer();
-    // Stop run timer
-    void stopTimer();
 
     /*
      * Main Menu

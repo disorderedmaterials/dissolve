@@ -401,6 +401,7 @@ void DissolveWindow::fullUpdate()
 // Update while running
 void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 {
+
     refreshing_ = true;
 
     // Set current iteration number
@@ -408,7 +409,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 
     // Text is set to time elapsed if iterating indefinitely
     if (iterationsRemaining == -1)
-        etaLabel_->setText(QString::fromStdString(dissolve_.iterationTimer_.elapsedTimeString()));
+        etaLabel_->setText(QString::fromStdString(elapsedTimer_.elapsedTimeString()));
     // ETA text reverts to empty when iterations are completed
     else if (iterationsRemaining == 0)
         etaLabel_->setText("--:--:--");
@@ -435,10 +436,6 @@ void DissolveWindow::clearMessages()
     ui_.MainTabs->messagesTab()->clearMessages();
     Messenger::clearErrorCounts();
 }
-
-void DissolveWindow::startTimer() { dissolve_.iterationTimer_.start(); }
-
-void DissolveWindow::stopTimer() { dissolve_.iterationTimer_.stop(); }
 
 void DissolveWindow::statusLabelLinkClicked(const QString &link)
 {

@@ -25,12 +25,10 @@ class Timer
     private:
     // Return time string based on provided duration in seconds
     std::string timeString(std::chrono::duration<double> duration);
-    // Returns 's' if value is plural
-    static std::string plural(int value);
 
     public:
     // Start timer
-    void start();
+    void start(bool resetTimer = true);
     // Stop timer and set total time
     void stop();
     // Return split time

@@ -208,12 +208,12 @@ class Dissolve : public Serialisable<>
     int iteration_;
     // Number of iterations performed
     int nIterationsPerformed_;
+    // Main loop iterations timer
+    Timer iterationTimer_;
     // Accumulated timing information for main loop iterations
     SampledDouble iterationTime_;
 
     public:
-    // TMain loop iteration timer
-    Timer iterationTimer_;
     // Set number of test points to use when calculating Box normalisation arrays
     void setNBoxNormalisationPoints(int nPoints);
     // Return number of test points to use when calculating Box normalisation arrays
