@@ -15,7 +15,7 @@ set(models_MOC_HDRS
     masterTermTreeModel.h
     masterTorsionModel.h
     moduleLayerModel.h
-        moduleLayersModel.h
+    moduleLayersModel.h
     moduleModel.h
     modulePaletteModel.h
     nodePaletteModel.h
@@ -65,9 +65,8 @@ set(models_SRCS
     masterTermTreeModel.cpp
     masterTorsionModel.cpp
     moduleLayerModel.cpp
-        modulesLayerModel.cpp
-
-        moduleModel.cpp
+    modulesLayerModel.cpp
+    moduleModel.cpp
     modulePaletteModel.cpp
     nodePaletteModel.cpp
     pairPotentialModel.cpp
