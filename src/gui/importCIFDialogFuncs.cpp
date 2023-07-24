@@ -547,9 +547,10 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         createCleanedSpecies();
 }
 
-// Detect unique species in the structual species
+// Detect unique species in the structural species
 bool ImportCIFDialog::detectUniqueSpecies()
 {
+    std::vector<CIFSpecies> cifSpecies;
     std::vector<std::vector<int>> fragments;
     auto idx = 0;
     std::vector<int> indices(cleanedSpecies_->nAtoms());
@@ -561,127 +562,26 @@ bool ImportCIFDialog::detectUniqueSpecies()
         // Choose a fragment
         auto fragment = cleanedSpecies_->fragment(idx);
         std::sort(fragment.begin(), fragment.end());
-        fragments.push_back(fragment);
+        auto *tempSpecies = temporaryCoreData_.addSpecies();
+        tempSpecies->copyBasic(cleanedSpecies_);
+        auto cifSp = cifSpecies.emplace_back(cleanedSpecies_, tempSpecies, fragment);
+        cifSp.fixGeometry(cleanedSpecies_->box());
+        coordinates_.push_back(std::move(cifSp.coordinates()));
+
         // Remove all of the indices associated with the fragment
-        indices.erase(std::remove_if(indices.begin(), indices.end(),
-                                     [&](int value)
-                                     { return std::find(fragment.begin(), fragment.end(), value) != fragment.end(); }),
-                      indices.end());
+        for (auto& frag : cifSp.fragments())
+        {
+            Messenger::print("Frag size: {}", frag.size());
+            indices.erase(std::remove_if(indices.begin(), indices.end(),
+                                         [&](int value)
+                                         { return std::find(frag.begin(), frag.end(), value) != frag.end(); }),
+                          indices.end());
+        }
 
         // Choose starting index of the next fragment
         idx = *std::min_element(indices.begin(), indices.end());
+        species_.push_back(tempSpecies);
     }
-
-    // Construct unique NETA definitions from the fragments
-    // By unique, we mean that the definition produces a single match,
-    // Therefore, the 'reference atom' is unique within the fragment.
-    std::vector<NETADefinition> definitions;
-    for (auto &fragment : fragments)
-    {
-        auto *tempSpecies = temporaryCoreData_.addSpecies();
-        tempSpecies->copyBasic(cleanedSpecies_);
-
-        // Remove all atoms from the temporary species, except those in the fragment.
-        std::vector<int> allIndices(tempSpecies->nAtoms());
-        std::iota(allIndices.begin(), allIndices.end(), 0);
-        std::vector<int> indicesToRemove;
-        std::set_difference(allIndices.begin(), allIndices.end(), fragment.begin(), fragment.end(),
-                            std::back_inserter(indicesToRemove));
-        tempSpecies->removeAtoms(indicesToRemove);
-
-        NETADefinition neta;
-
-        // Find a unique definition, if one exists.
-        auto nDistinctMatches = 0;
-        idx = 0;
-        while (nDistinctMatches != 1)
-        {
-            if (idx >= tempSpecies->nAtoms())
-                return false;
-            neta.create(&tempSpecies->atom(idx++), std::nullopt, Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens + NETADefinition::NETACreationFlags::IncludeRootElement));
-            nDistinctMatches = std::count_if(tempSpecies->atoms().begin(), tempSpecies->atoms().end(),
-                                             [&](const auto &i) { return neta.matches(&i); });
-        }
-        definitions.push_back(neta);
-    }
-
-    // Remove duplicate definitions
-    definitions.erase(std::unique(definitions.begin(), definitions.end(),
-                                  [](const auto &a, const auto &b)
-                                  { return DissolveSys::sameString(a.definitionString(), b.definitionString()); }),
-                      definitions.end());
-
-    for (auto &neta : definitions)
-    {
-        std::vector<std::vector<int>> matchedIndices;
-        std::vector<std::vector<const SpeciesAtom *>> matches;
-        auto *sp = temporaryCoreData_.addSpecies();
-        sp->copyBasic(cleanedSpecies_);
-
-        for (auto &i : sp->atoms())
-        {
-            if (neta.matches(&i))
-            {
-                auto matchedGroup = neta.matchedPath(&i);
-                auto matchedAtomsSet = matchedGroup.set();
-                std::vector<const SpeciesAtom *> matchedAtoms(matchedAtomsSet.size());
-                std::copy(matchedAtomsSet.begin(), matchedAtomsSet.end(), matchedAtoms.begin());
-                std::vector<int> indices(matchedAtoms.size());
-                std::transform(matchedAtomsSet.begin(), matchedAtomsSet.end(), indices.begin(),
-                               [](const auto &atom) { return atom->index(); });
-                matches.push_back(matchedAtoms);
-                matchedIndices.push_back(std::move(indices));
-            }
-        }
-
-        // Remove all atoms from the species, except those in the first match
-        // The remaning atoms will constitute the Species
-        std::vector<int> allIndices(sp->nAtoms());
-        std::iota(allIndices.begin(), allIndices.end(), 0);
-        std::vector<int> indicesToRemove;
-        std::set_difference(allIndices.begin(), allIndices.end(), matchedIndices.front().begin(), matchedIndices.front().end(),
-                            std::back_inserter(indicesToRemove));
-        sp->removeAtoms(indicesToRemove);
-
-        // Name the Species
-        sp->setName(EmpiricalFormula::formula(sp->atoms(), [&](const auto &at) { return at.Z(); }));
-
-        // 'Fix' the geometry of the species
-        // Construct a temporary molecule, which is just the species.
-        std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-        std::vector<Atom> molAtoms(sp->nAtoms());
-        for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
-        {
-            atom.setSpeciesAtom(&spAtom);
-            atom.setCoordinates(spAtom.r());
-            mol->addAtom(&atom);
-        }
-
-        // Unfold the molecule
-        mol->unFold(cleanedSpecies_->box());
-        
-        // Update the coordinates of the species atoms
-        for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
-            spAtom.setCoordinates(atom.r());
-
-        // Set the centre of geometry of the species to be at the origin.
-        sp->setCentre(sp->box(), {0., 0., 0.});
-
-        species_.push_back(sp);
-
-        // Extract coordinates, to be used in the Configuration later on.
-        // These coordinates correspond to the molecules of the Species within the crystal structure.
-        std::vector<std::vector<Vec3<double>>> coordinates;
-        for (auto &match : matches)
-        {
-            std::vector<Vec3<double>> coords;
-            for (auto &i : match)
-                coords.push_back(i->r());
-            coordinates.push_back(std::move(coords));
-        }
-        coordinates_.push_back(std::move(coordinates));
-    }
-
     return true;
 }
 

@@ -6,6 +6,8 @@
 #include "data/elements.h"
 #include "templates/optionalRef.h"
 #include "templates/vector3.h"
+#include "classes/box.h"
+#include "classes/species.h"
 #include <algorithm>
 #include <vector>
 
@@ -110,4 +112,34 @@ class CIFAssembly
     CIFAtomGroup &getGroup(std::string_view groupName);
     // Return the number of defined groups
     int nGroups() const;
+};
+
+// CIF Species
+class CIFSpecies
+{
+
+    public:
+    CIFSpecies(Species* spRef, Species* sp, std::vector<int> referenceFragment);
+    
+    private:
+    Species* species_;
+    Species* speciesRef_;
+    std::string_view netaString_;
+    std::vector<int> referenceFragment_;
+    std::vector<std::vector<int>> fragments_;
+    std::vector<std::vector<Vec3<double>>> coordinates_;
+
+    public:
+    Species* species();
+    void findCopies();
+    void fixGeometry(const Box* box);
+    std::vector<std::vector<Vec3<double>>> coordinates();
+    std::vector<std::vector<int>> fragments();
+
+    // NETA String
+    // First bound fragment
+    // SUbsequenct fragments
+    // COordinates
+    
+
 };
