@@ -5,7 +5,6 @@ set(models_MOC_HDRS
     braggReflectionModel.h
     cifAssemblyModel.h
     configurationModel.h
-    controlModel.h
     dataManagerSimulationModel.h
     enumOptionsModel.h
     isotopologueSetModel.h
@@ -16,6 +15,7 @@ set(models_MOC_HDRS
     masterTermTreeModel.h
     masterTorsionModel.h
     moduleLayerModel.h
+        moduleLayersModel.h
     moduleModel.h
     modulePaletteModel.h
     nodePaletteModel.h
@@ -54,7 +54,6 @@ set(models_SRCS
     braggReflectionModel.cpp
     cifAssemblyModel.cpp
     configurationModel.cpp
-    controlModel.cpp
     dataManagerSimulationModel.cpp
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
@@ -66,7 +65,9 @@ set(models_SRCS
     masterTermTreeModel.cpp
     masterTorsionModel.cpp
     moduleLayerModel.cpp
-    moduleModel.cpp
+        modulesLayerModel.cpp
+
+        moduleModel.cpp
     modulePaletteModel.cpp
     nodePaletteModel.cpp
     pairPotentialModel.cpp

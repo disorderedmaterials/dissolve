@@ -15,6 +15,12 @@ LayerKeyword::LayerKeyword(const ModuleLayer *&data) : KeywordBase(typeid(this))
 const ModuleLayer *&LayerKeyword::data() { return data_; }
 const ModuleLayer *&LayerKeyword::data() const { return data_; }
 
+// Set data
+void LayerKeyword::setData(ModuleLayer *data)
+{
+    data_ = data;
+}
+
 /*
  * Arguments
  */

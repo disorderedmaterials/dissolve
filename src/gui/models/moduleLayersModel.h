@@ -9,7 +9,7 @@
 #include <QModelIndex>
 #include <vector>
 
-class ControlModel : public QAbstractListModel
+class ModuleLayersModel : public QAbstractListModel
 {
     Q_OBJECT
 

@@ -11,7 +11,7 @@ LayerKeywordWidget::LayerKeywordWidget(QWidget *parent, LayerKeyword *keyword, c
 
     refreshing_ = false;
 
-    ui_.LayerCombo->setModel(&controlModel_);
+    ui_.LayerCombo->setModel(&moduleLayersModel_);
     updateLayersCombo();
 
     // Set event filtering so that we do not blindly accept mouse wheel events (problematic since we will exist in a
@@ -30,20 +30,20 @@ void LayerKeywordWidget::on_LayerCombo_currentIndexChanged(int index)
 
     // Get data from the selected item
     
-    /*if (index == -1)
+    if (index == -1)
         keyword_->setData(nullptr);
     else
-        keyword_->setData(ui_.LayerCombo->currentData(Qt::UserRole).value<ModuleLayer *>());*/
+        keyword_->setData(ui_.LayerCombo->currentData(Qt::UserRole).value<ModuleLayer *>());
 
     emit(keywordDataChanged(keyword_->editSignals()));
 }
 
 void LayerKeywordWidget::on_ClearButton_clicked(bool checked)
 {
-    //if (ui_.LayerCombo->currentIndex() == -1 && !keyword_->module())
-    //    return;
+    if (ui_.LayerCombo->currentIndex() == -1 && !keyword_->data())
+        return;
 
-    //ui_.LayerCombo->setCurrentIndex(-1);
+    ui_.LayerCombo->setCurrentIndex(-1);
 }
 
 /*
@@ -53,7 +53,7 @@ void LayerKeywordWidget::updateLayersCombo()
 {
     refreshing_ = true;
     
-    controlModel_.setData(coreData_.processingLayers());
+    moduleLayersModel_.setData(coreData_.processingLayers());
 
     refreshing_ = false;
 }
