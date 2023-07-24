@@ -133,7 +133,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
 }
 
 // Run main processing
-bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate neutron structure factors from existing S(Q) data
@@ -143,10 +143,17 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
      */
 
     if (!sourceSQ_)
-        return Messenger::error("A source SQ module must be provided.\n");
+    {
+        Messenger::error("A source SQ module must be provided.\n");
+        return ExecutionResult::Failed;
+    }
+
     const auto *rdfModule = sourceSQ_->sourceGR();
     if (!rdfModule)
-        return Messenger::error("A source GR module (in the SQ module) must be provided.\n");
+    {
+        Messenger::error("A source GR module (in the SQ module) must be provided.\n");
+        return ExecutionResult::Failed;
+    }
 
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sourceSQ_->name());
@@ -175,7 +182,10 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Get unweighted S(Q) from the specified SQMOdule
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sourceSQ_->name()))
-        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
+    {
+        Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
+        return ExecutionResult::Failed;
+    }
     const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Calculate and store weights
@@ -196,7 +206,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Save data if requested
     if (saveSQ_ && (!MPIRunMaster(procPool, weightedSQ.save(name_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
-        return false;
+        return ExecutionResult::Failed;
 
     /*
      * Transform UnweightedGR from underlying RDF data into WeightedGR.
@@ -204,7 +214,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Get summed unweighted g(r) from the RDFMOdule
     if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->name()))
-        return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
+    {
+        Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
+        return ExecutionResult::Failed;
+    }
+
     const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->name());
 
     // Create/retrieve PartialSet for summed weighted g(r)
@@ -218,7 +232,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Save data if requested
     if (saveGR_ && (!MPIRunMaster(procPool, weightedGR.save(name_, "WeightedGR", "gr", "r, Angstroms"))))
-        return false;
+        return ExecutionResult::Failed;
 
     // Calculate representative total g(r) from FT of calculated F(Q)
     auto &repGR =
@@ -241,7 +255,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
     if (!rho)
-        return Messenger::error("No effective density available from RDF module '{}'\n", rdfModule->name());
+    {
+        Messenger::error("No effective density available from RDF module '{}'\n", rdfModule->name());
+        return ExecutionResult::Failed;
+    }
+
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * *rho), rMin, 0.05, rMax, WindowFunction(referenceWindowFunction_));
 
     // Save data if requested
@@ -256,8 +274,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 procPool.decideFalse();
         }
         else if (!procPool.decision())
-            return false;
+            return ExecutionResult::Failed;
     }
 
-    return true;
+    return ExecutionResult::Success;
 }

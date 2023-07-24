@@ -9,7 +9,7 @@
 #include "templates/algorithms.h"
 
 // Run main processing
-bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     /*
      * Calculate Bragg contributions.
@@ -20,7 +20,10 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Print argument/parameter summary
     Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n",
@@ -52,13 +55,13 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     bool alreadyUpToDate;
     if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, targetConfiguration_, qMin_, qDelta_, qMax_,
                              multiplicity_, alreadyUpToDate))
-        return false;
+        return ExecutionResult::Failed;
 
     // If we are already up-to-date, then there's nothing more to do for this Configuration
     if (alreadyUpToDate)
     {
         Messenger::print("Bragg data is up-to-date for Configuration '{}'.\n", targetConfiguration_->name());
-        return true;
+        return ExecutionResult::NotExecuted;
     }
 
     // Perform averaging of reflections data if requested
@@ -77,7 +80,7 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Attempt to load the specified file
         LineParser reflectionParser(&procPool);
         if (!reflectionParser.openInput(testReflectionsFile_))
-            return false;
+            return ExecutionResult::Failed;
 
         // Retrieve BraggReflection data from the Configuration's module data
         const auto &braggReflections =
@@ -87,7 +90,7 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         while (!reflectionParser.eofOrBlank())
         {
             if (reflectionParser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                return false;
+                return ExecutionResult::Failed;
 
             // Line format is : ArrayIndex  Q     h k l     mult    Intensity(0,0)  Intensity(0,1) ...
             auto id = reflectionParser.argi(0);
@@ -125,7 +128,10 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         if (nErrors == 0)
             Messenger::print("All data match.\n");
         else
-            return Messenger::error("Calculated and reference data are inconsistent.\n");
+        {
+            Messenger::error("Calculated and reference data are inconsistent.\n");
+            return ExecutionResult::Failed;
+        }
     }
 
     // Save reflection data?
@@ -138,14 +144,14 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
         // Open a file and save the basic reflection data
         LineParser braggParser(&procPool);
         if (!braggParser.openOutput(fmt::format("{}-Reflections.txt", name_)))
-            return false;
+            return ExecutionResult::Failed;
         braggParser.writeLineF("#   ID      Q     h k l     mult    Intensity(0,0)\n");
         auto count = 0;
         for (const auto &reflxn : braggReflections)
         {
             if (!braggParser.writeLineF("{:6d}  {:10.6f} {} {} {} {:8d}  {:10.6e}\n", ++count, reflxn.q(), reflxn.hkl().x,
                                         reflxn.hkl().y, reflxn.hkl().z, reflxn.nKVectors(), reflxn.intensity(0, 0)))
-                return false;
+                return ExecutionResult::Failed;
         }
         braggParser.closeFiles();
 
@@ -167,8 +173,8 @@ bool BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 return EarlyReturn<bool>::Continue;
             });
         if (!success.value_or(true))
-            return false;
+            return ExecutionResult::Failed;
     }
 
-    return true;
+    return ExecutionResult::Success;
 }

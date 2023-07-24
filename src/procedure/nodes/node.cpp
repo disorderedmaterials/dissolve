@@ -279,6 +279,7 @@ bool ProcedureNode::finalise(const ProcedureContext &procedureContext) { return 
 bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 {
     // Read until we encounter the ending keyword (derived from the node type), or we fail for some reason
+    auto errorsEncountered = false;
     while (!parser.eofOrBlank())
     {
         // Read and parse the next line
@@ -287,7 +288,7 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 
         // Is this the end of the node block?
         if (DissolveSys::sameString(parser.argsv(0), fmt::format("End{}", nodeTypes().keyword(type_))))
-            return true;
+            return !errorsEncountered;
 
         // Try to parse this line as a keyword
         KeywordBase::ParseResult result = keywords_.deserialise(parser, coreData);
@@ -297,10 +298,10 @@ bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
         else if (result == KeywordBase::ParseResult::Deprecated)
             Messenger::warn("The '{}' keyword is deprecated and will be removed in a future version.\n", parser.argsv(0));
         else if (result == KeywordBase::ParseResult::Failed)
-            return Messenger::error("Failed to parse keyword '{}'.\n", parser.argsv(0));
+            errorsEncountered = true;
     }
 
-    return true;
+    return (!errorsEncountered);
 }
 
 // Write node data to specified LineParser

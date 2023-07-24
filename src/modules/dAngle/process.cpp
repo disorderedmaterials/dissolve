@@ -11,11 +11,14 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-bool DAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult DAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Ensure any parameters in our nodes are set correctly
     calculateAngle_->keywords().set("Symmetric", symmetric_);
@@ -34,7 +37,10 @@ bool DAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
-        return Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
+    {
+        Messenger::error("CalculateDAngle experienced problems with its analysis.\n");
+        return ExecutionResult::Failed;
+    }
 
-    return true;
+    return ExecutionResult::Success;
 }

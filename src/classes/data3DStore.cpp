@@ -43,3 +43,26 @@ OptionalReferenceWrapper<const Data3D> Data3DStore::data(std::string_view name) 
 
 // Return vector of all data
 const std::vector<std::shared_ptr<std::pair<Data3D, Data3DImportFileFormat>>> &Data3DStore::data() const { return data_; }
+
+// Express as a serialisable value
+SerialisedValue Data3DStore::serialise() const
+{
+    if (data_.empty())
+        return {};
+    return fromVectorToMap(
+        data_, [](const auto &item) { return std::string(item->first.tag()); }, [](const auto &item) { return item->second; });
+}
+
+// Read values from a serialisable value
+void Data3DStore::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+    toMap(node,
+          [this, &coreData](const auto key, const auto value)
+          {
+              auto pair = std::make_shared<std::pair<Data3D, Data3DImportFileFormat>>();
+              pair->first.setTag(key);
+              pair->second.deserialise(value, coreData);
+              pair->second.importData(pair->first);
+              data_.push_back(pair);
+          });
+}
