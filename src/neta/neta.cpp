@@ -21,7 +21,10 @@ NETADefinition::NETADefinition(std::string_view definition) : rootNode_(nullptr)
         create(definition);
 }
 
-NETADefinition::NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth) : rootNode_(nullptr), valid_(false) { create(i, maxDepth); }
+NETADefinition::NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth) : rootNode_(nullptr), valid_(false)
+{
+    create(i, maxDepth);
+}
 
 /*
  * Data
@@ -95,8 +98,8 @@ bool NETADefinition::create(std::string_view definition, const Forcefield *assoc
 }
 
 // Recursively create a NETA string for the specified atom
-std::string netaString(const SpeciesAtom *i, int currentDepth, const std::optional<int> maxDepth, std::vector<const SpeciesAtom *> &path,
-                       const Flags<NETADefinition::NETACreationFlags> &flags = {})
+std::string netaString(const SpeciesAtom *i, int currentDepth, const std::optional<int> maxDepth,
+                       std::vector<const SpeciesAtom *> &path, const Flags<NETADefinition::NETACreationFlags> &flags = {})
 {
     // Add this atom to the path
     path.push_back(i);
@@ -126,7 +129,6 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
             neta += fmt::format(",-{}({})", Elements::symbol(j->Z()), netaString(j, currentDepth + 1, maxDepth, path, flags));
         else
             neta += fmt::format(",-{}", Elements::symbol(j->Z()));
-    
     }
 
     if (!flags.isSet(NETADefinition::NETACreationFlags::ExplicitHydrogens) && i->Z() != Elements::H)
@@ -135,7 +137,7 @@ std::string netaString(const SpeciesAtom *i, int currentDepth, const std::option
 }
 
 // Create from specified atom and its connectivity
-bool NETADefinition::create(const SpeciesAtom *i, std::optional<int> maxDepth, const Flags<NETACreationFlags>& flags)
+bool NETADefinition::create(const SpeciesAtom *i, std::optional<int> maxDepth, const Flags<NETACreationFlags> &flags)
 {
     std::vector<const SpeciesAtom *> path;
     definitionString_ = netaString(i, 0, maxDepth, path, flags);
