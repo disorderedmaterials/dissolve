@@ -122,23 +122,46 @@ class CIFSpecies
     CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance);
 
     private:
+    // The output species
     Species *species_;
+    // Reference species
     Species *speciesRef_;
+    // NETA definition string
     std::string netaString_;
+    // The reference instance - this is a fragment in the reference species
     std::vector<int> referenceInstance_;
+    // Found copies/instances
     std::vector<std::vector<int>> instances_;
+    // Coordinates corresponding to the instances
     std::vector<std::vector<Vec3<double>>> coordinates_;
+    // Does the reference instance contain symmetry?
     bool hasSymmetry_{false};
 
+    /*
+     * Information
+     */
     public:
-    bool findInstances();
-    void determineCoordinates();
-    void fixGeometry(const Box *box);
-
+    // Return the output species
     const Species *species() const;
+    // Return the NETA definition string that uniquely describes the reference instance
     const std::string netaString() const;
-    const std::vector<std::vector<int>> instances() const;
+    // Return the reference instance
     const std::vector<int> referenceInstance() const;
+    // Return all found instances
+    const std::vector<std::vector<int>> instances() const;
+    // Return the coordinates corresponding to the instances
     const std::vector<std::vector<Vec3<double>>> coordinates() const;
+    // Return whether the reference instance contains symmetry.
     bool hasSymmetry() const;
+
+    /*
+     * Construction and operation
+     */
+    public:
+    // Inclusively, find all instances of the reference instance
+    bool findInstances();
+    // Determine the coordinates corresponding to the instances
+    void determineCoordinates();
+    // Fix the geometry of the output species, by unfolding it
+    void fixGeometry(const Box *box);
 };

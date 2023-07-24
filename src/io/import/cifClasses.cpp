@@ -95,7 +95,7 @@ int CIFAssembly::nGroups() const { return groups_.size(); }
 CIFSpecies::CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance)
     : speciesRef_(spRef), species_(sp), referenceInstance_(std::move(referenceInstance))
 {
-
+    // Empty the species of all atoms, except those in the reference instance.
     std::vector<int> allIndices(species_->nAtoms());
     std::iota(allIndices.begin(), allIndices.end(), 0);
     std::vector<int> indicesToRemove;
@@ -103,25 +103,35 @@ CIFSpecies::CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceIn
                         std::back_inserter(indicesToRemove));
     species_->removeAtoms(indicesToRemove);
 
+    // Find instances
     hasSymmetry_ = !findInstances();
 
+    // Determine coordinates
     determineCoordinates();
 
+    // Give the species a name
     species_->setName(EmpiricalFormula::formula(species_->atoms(), [&](const auto &at) { return at.Z(); }));
 }
 
+// Return the output species
 const Species *CIFSpecies::species() const { return species_; }
 
-const std::vector<int> CIFSpecies::referenceInstance() const { return referenceInstance_; }
-
-const std::vector<std::vector<int>> CIFSpecies::instances() const { return instances_; }
-
-const std::vector<std::vector<Vec3<double>>> CIFSpecies::coordinates() const { return coordinates_; }
-
+// Return the NETA definition string that uniquely describes the reference instance
 const std::string CIFSpecies::netaString() const { return netaString_; }
 
+// Return the reference instance
+const std::vector<int> CIFSpecies::referenceInstance() const { return referenceInstance_; }
+
+// Return all found instances
+const std::vector<std::vector<int>> CIFSpecies::instances() const { return instances_; }
+
+// Return the coordinates corresponding to the instances
+const std::vector<std::vector<Vec3<double>>> CIFSpecies::coordinates() const { return coordinates_; }
+
+// Return whether the reference instance contains symmetry.
 bool CIFSpecies::hasSymmetry() const { return hasSymmetry_; }
 
+// Inclusively, find all instances of the reference instance
 bool CIFSpecies::findInstances()
 {
     NETADefinition neta;
@@ -156,6 +166,18 @@ bool CIFSpecies::findInstances()
     return true;
 }
 
+// Determine the coordinates corresponding to the instances
+void CIFSpecies::determineCoordinates()
+{
+    for (auto &instance : instances_)
+    {
+        std::vector<Vec3<double>> coords(instance.size());
+        std::transform(instance.begin(), instance.end(), coords.begin(), [&](auto i) { return speciesRef_->atom(i).r(); });
+        coordinates_.push_back(std::move(coords));
+    }
+}
+
+// Fix the geometry of the output species, by unfolding it
 void CIFSpecies::fixGeometry(const Box *box)
 {
     // 'Fix' the geometry of the species
@@ -178,14 +200,4 @@ void CIFSpecies::fixGeometry(const Box *box)
 
     // Set the centre of geometry of the species to be at the origin.
     species_->setCentre(box, {0., 0., 0.});
-}
-
-void CIFSpecies::determineCoordinates()
-{
-    for (auto &instance : instances_)
-    {
-        std::vector<Vec3<double>> coords(instance.size());
-        std::transform(instance.begin(), instance.end(), coords.begin(), [&](auto i) { return speciesRef_->atom(i).r(); });
-        coordinates_.push_back(std::move(coords));
-    }
 }

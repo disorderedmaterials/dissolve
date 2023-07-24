@@ -577,7 +577,7 @@ bool ImportCIFDialog::detectUniqueSpecies()
             return Messenger::error("CIFSpecies contains symmetry. We cannot deal with this currently.");
 
         // Remove the current fragment, and all instances of the underlying CIFSpecies
-        for (auto& instance : cifSp.instances())
+        for (auto &instance : cifSp.instances())
         {
             indices.erase(std::remove_if(indices.begin(), indices.end(),
                                          [&](int value)
