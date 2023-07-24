@@ -209,19 +209,6 @@ class Dissolve : public Serialisable<>
     bool hasRestartFilename() const;
 
     /*
-     * Object Management
-     */
-    public:
-    // Remove all references to the specified Configuration
-    void removeReferencesTo(Configuration *cfg);
-    // Remove all references to the specified Module
-    void removeReferencesTo(Module *module);
-    // Remove all references to the specified Species
-    void removeReferencesTo(Species *sp);
-    // Remove all references to the specified SpeciesSite
-    void removeReferencesTo(SpeciesSite *site);
-
-    /*
      * Parallel Comms
      */
     private:

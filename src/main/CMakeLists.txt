@@ -11,7 +11,6 @@ add_library(
   keywords_module.cpp
   keywords_pairPotentials.cpp
   layers.cpp
-  objects.cpp
   pairPotentials.cpp
   simulation.cpp
   version.cpp

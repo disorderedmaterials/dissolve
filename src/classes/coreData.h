@@ -198,4 +198,14 @@ class CoreData
     void setInputFilename(std::string_view filename);
     // Return the current input filename
     std::string_view inputFilename() const;
+
+    /*
+     * Object Management
+     */
+    public:
+    // Remove all references to the specified data
+    void removeReferencesTo(Module *data);
+    void removeReferencesTo(Configuration *data);
+    void removeReferencesTo(Species *data);
+    void removeReferencesTo(SpeciesSite *data);
 };

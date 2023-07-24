@@ -300,6 +300,9 @@ Species *CoreData::addSpecies()
 // Remove specified Species
 void CoreData::removeSpecies(Species *sp)
 {
+    // Remove references to the Species itself
+    removeReferencesTo(sp);
+
     species_.erase(std::remove_if(species_.begin(), species_.end(), [&](const auto &p) { return sp == p.get(); }),
                    species_.end());
 }
@@ -486,6 +489,9 @@ Configuration *CoreData::addConfiguration()
 // Remove specified Configuration
 void CoreData::removeConfiguration(Configuration *cfg)
 {
+    // Remove references to the Configuration itself
+    removeReferencesTo(cfg);
+
     configurations_.erase(
         std::remove_if(configurations_.begin(), configurations_.end(), [cfg](const auto &c) { return cfg == c.get(); }),
         configurations_.end());
@@ -566,3 +572,21 @@ SerialisedValue CoreData::serialiseMaster() const { return masters_.serialise();
 
 // Read Master values from serialisable value
 void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deserialise(node); }
+
+/*
+ * Object Management
+ */
+
+// Remove all references to the specified data
+void CoreData::removeReferencesTo(Module *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(Configuration *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(Species *data)
+{
+    KeywordStore::objectNoLongerValid(data);
+
+    // Check Configurations - if the Species was used, we must clear the configuration contents
+    for (auto &cfg : configurations_)
+        if (cfg->containsSpecies(data))
+            cfg->empty();
+}
+void CoreData::removeReferencesTo(SpeciesSite *data) { KeywordStore::objectNoLongerValid(data); }
