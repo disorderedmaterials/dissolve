@@ -49,7 +49,6 @@ set(gui_MOC_HDRS
     # Main Tabs
     configurationTab.h
     forcefieldTab.h
-    controlLayerTab.h
     layerTab.h
     messagesTab.h
     speciesTab.h
@@ -104,7 +103,6 @@ set(gui_UIS
     # Main Tabs
     configurationTab.ui
     forcefieldTab.ui
-    controlLayerTab.ui
     layerTab.ui
     messagesTab.ui
     speciesTab.ui
@@ -175,7 +173,6 @@ set(gui_SRCS
     # Main Tabs
     configurationTabFuncs.cpp
     forcefieldTabFuncs.cpp
-    controlLayerTabFuncs.cpp
     layerTabFuncs.cpp
     mainTab.cpp
     mainTabsBarFuncs.cpp
