@@ -57,13 +57,13 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...
-                if (findProcessingLayer(parser.argsv(1)))
+                if (coreData_.findProcessingLayer(parser.argsv(1)))
                 {
                     Messenger::error("Redefinition of processing layer '{}'.\n", parser.argsv(1));
                     error = true;
                     break;
                 }
-                layer = addProcessingLayer();
+                layer = coreData_.addProcessingLayer();
                 layer->setName(parser.argsv(1));
                 Messenger::print("\n--> Created processing layer '{}'\n", layer->name());
                 if (!LayerBlock::parse(parser, this, layer))
@@ -199,7 +199,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
     toMap(node, "layers",
           [this](const std::string &name, const SerialisedValue &data)
           {
-              auto *layer = addProcessingLayer();
+              auto *layer = coreData_.addProcessingLayer();
               layer->setName(name);
               layer->deserialise(data, coreData_);
           });
@@ -488,7 +488,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             Messenger::print("Reading item '{}' ({}) into processing module data...\n", parser.argsv(1), parser.argsv(2));
 
             // Realise the item in the list
-            coreData_.processingModuleData().deserialise(parser, coreData_, parser.args(1), parser.args(2), parser.argi(3),
+            processingModuleData().deserialise(parser, coreData_, parser.args(1), parser.args(2), parser.argi(3),
                                               parser.hasArg(4) ? parser.argi(4) : 0);
         }
         else if (DissolveSys::startsWith(parser.argsv(0), "Configuration"))
@@ -540,7 +540,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::print("Finished reading restart file.\n");
 
     // Set current iteration number
-    iteration_ = coreData_.processingModuleData().valueOr<int>("Iteration", "Dissolve", 0);
+    iteration_ = processingModuleData().valueOr<int>("Iteration", "Dissolve", 0);
 
     // Error encountered?
     if (error)
@@ -595,7 +595,7 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
                              parser.argsv(2));
 
             // Deserialise the item
-            coreData_.processingModuleData().deserialise(parser, coreData_, newName, parser.args(2), parser.argi(3),
+            processingModuleData().deserialise(parser, coreData_, newName, parser.args(2), parser.argi(3),
                                               GenericItem::IsReferencePointDataFlag);
 
             skipCurrentItem = false;
@@ -667,7 +667,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Processing Module Data
-    if (!coreData_.processingModuleData().serialiseAll(parser, "Processing"))
+    if (!processingModuleData().serialiseAll(parser, "Processing"))
         return false;
 
     // Configurations

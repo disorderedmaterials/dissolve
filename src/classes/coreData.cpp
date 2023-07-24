@@ -384,6 +384,17 @@ ModuleLayer *CoreData::addProcessingLayer()
     return processingLayers_.emplace_back(std::make_unique<ModuleLayer>()).get();
 }
 
+// Remove processing layer
+void CoreData::removeProcessingLayer(ModuleLayer *layer)
+{
+    if (!layer)
+        return;
+
+    // Now safe to remove the layer
+    processingLayers_.erase(
+        std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](const auto &l) { return l.get() == layer; }));
+}
+
 // Find named processing layer
 ModuleLayer *CoreData::findProcessingLayer(std::string_view name) const
 {
@@ -423,12 +434,6 @@ std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers()
 const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const
 {
     return processingLayers_;
-}
-
-// Return data associated with main processing Modules
-GenericList &CoreData::processingModuleData()
-{
-    return processingModuleData_;
 }
 
 /*

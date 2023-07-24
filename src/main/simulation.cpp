@@ -294,7 +294,7 @@ bool Dissolve::iterate(int nIterations)
             auto layerExecutionCount = iteration_ / layer->frequency();
 
             // Check run-control settings
-            if (!layer->canRun(coreData_.processingModuleData()))
+            if (!layer->canRun(processingModuleData()))
                 continue;
 
             for (auto &module : layer->modules())
@@ -322,11 +322,11 @@ bool Dissolve::iterate(int nIterations)
 
             // Flag other data for inclusion in restart file
             // -- Iteration number
-            coreData_.processingModuleData().realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
+            processingModuleData().realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
             // -- Pair Potentials
             for (auto &pot : pairPotentials_)
             {
-                coreData_.processingModuleData().realise<Data1D>(
+                processingModuleData().realise<Data1D>(
                     fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",
                     GenericItem::InRestartFileFlag) = pot->uAdditional();
             }

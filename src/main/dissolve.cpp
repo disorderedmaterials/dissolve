@@ -51,7 +51,7 @@ void Dissolve::clear()
     // Simulation
     Messenger::printVerbose("Clearing Simulation...\n");
     coreData_.processingLayers().clear();
-    coreData_.processingModuleData().clearAll();
+    processingModuleData().clearAll();
     iteration_ = 0;
     nIterationsPerformed_ = 0;
 
