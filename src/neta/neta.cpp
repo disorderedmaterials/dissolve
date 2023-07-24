@@ -25,7 +25,6 @@ NETADefinition::NETADefinition(const SpeciesAtom *i, const std::optional<int> ma
 {
     create(i, maxDepth);
 }
-}
 
 /*
  * Data
