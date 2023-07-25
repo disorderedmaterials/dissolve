@@ -220,7 +220,7 @@ void ImportCIFDialog::finalise()
     else
     {
         // Create a Configuration
-        auto *cfg = dissolve_.addConfiguration();
+        auto *cfg = dissolve_.coreData().addConfiguration();
         cfg->setName(cifImporter_.chemicalFormula());
 
         // Grab the generator
