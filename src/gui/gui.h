@@ -70,7 +70,7 @@ class DissolveWindow : public QMainWindow
     QLabel *restartFileIndicator_;
     // Label for iteration number
     QLabel *iterationLabel_;
-    // Label for simulation ETA (when using RunFor)
+    // Label for simulation timer (ETA if RunFor, time elapsed if Run)
     QLabel *etaLabel_;
     // General status indicator and label
     QLabel *statusIndicator_, *statusLabel_;

@@ -171,9 +171,6 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
     // Clear the messages buffer
     clearMessages();
 
-    // Empty timer text
-    etaLabel_->setText("--");
-
     // Set the current dir to the location of the new file
     QFileInfo inputFileInfo(QString::fromStdString(std::string(inputFile)));
 
@@ -239,6 +236,10 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
 
         fullUpdate();
     }
+
+    // Empty timer text
+    elapsedTimer_.zero();
+    etaLabel_->setText("------------");
 
     return true;
 }

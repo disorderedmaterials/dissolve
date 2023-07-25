@@ -22,8 +22,10 @@ void Timer::start(bool resetTimer)
 {
     running_ = true;
     if (resetTimer || !started_)
+    {
         startTime_ = std::chrono::high_resolution_clock::now();
-    splitTime_ = startTime_;
+        splitTime_ = startTime_;
+    }
     started_ = true;
 }
 
@@ -84,10 +86,10 @@ std::string Timer::timeString(std::chrono::duration<double> duration, bool trunc
     auto seconds = duration.count() - hours * 3600 - minutes * 60;
 
     if (hours != 0)
-        return fmt::format("{} hour{}, {} minute{}, and {} seconds", hours, DissolveSys::plural(hours), minutes,
+        return fmt::format("{} hour{}, {} minute{}, and {:0.0f} seconds", hours, DissolveSys::plural(hours), minutes,
                            DissolveSys::plural(minutes), seconds);
     else if (minutes != 0)
-        return fmt::format("{} minute{} and {} second{}", minutes, DissolveSys::plural(minutes), seconds,
+        return fmt::format("{} minute{} and {:0.0f} second{}", minutes, DissolveSys::plural(minutes), seconds,
                            DissolveSys::plural(seconds));
     else if (truncate)
         return fmt::format("{:0.0f} second{}", seconds, DissolveSys::plural(seconds));

@@ -71,6 +71,7 @@ void DissolveWindow::setupIteration(int count)
     // Start the main timer
     if (!elapsedTimer_.hasStarted())
         elapsedTimer_.zero();
+
     elapsedTimer_.start(false);
 }
 
@@ -119,11 +120,12 @@ void DissolveWindow::allowEditing()
 // All iterations requested are complete
 void DissolveWindow::iterationsComplete()
 {
+    elapsedTimer_.accumulate();
+    elapsedTimer_.stop();
+
     allowEditing();
     Renderable::setSourceDataAccessEnabled(true);
     dissolveIterating_ = false;
-
-    elapsedTimer_.stop();
 
     fullUpdate();
 }
