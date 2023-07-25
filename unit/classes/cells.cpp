@@ -23,13 +23,13 @@ TEST(CellsTest, Basic)
     PairPotential::setShortRangeTruncationScheme(PairPotential::NoShortRangeTruncation);
 
     // Add atom types and LJ pair potentials (only one real one - between Ar and OW
-    auto arType = dissolve.addAtomType(Elements::Ar);
+    auto arType = coreData.addAtomType(Elements::Ar);
     arType->setName("Ar");
     arType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
-    auto hType = dissolve.addAtomType(Elements::H);
+    auto hType = coreData.addAtomType(Elements::H);
     hType->setName("HW");
     hType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
-    auto oType = dissolve.addAtomType(Elements::O);
+    auto oType = coreData.addAtomType(Elements::O);
     oType->setName("OW");
     oType->interactionPotential().setFormAndParameters(ShortRangeFunctions::Form::LennardJones, "epsilon=0.0 sigma=0.0");
 
@@ -40,11 +40,11 @@ TEST(CellsTest, Basic)
     dissolve.addPairPotential(arType, hType)->interactionPotential().setForm(ShortRangeFunctions::Form::None);
 
     // Set up pseudo-species
-    auto *argon = dissolve.addSpecies();
+    auto *argon = coreData.addSpecies();
     argon->setName("Argon");
     argon->addAtom(Elements::Ar, {0.0, 0.0, 0.0}, 0.0);
     argon->atom(0).setAtomType(arType);
-    auto *water = dissolve.addSpecies();
+    auto *water = coreData.addSpecies();
     water->setName("Water");
     water->addAtom(Elements::H, {-1.0, 0.0, 0.0}, 0.0);
     water->addAtom(Elements::O, {0.0, 0.0, 0.0}, 0.0);
@@ -56,7 +56,7 @@ TEST(CellsTest, Basic)
     water->addBond(1, 2);
 
     // Setup Configuration
-    auto *cfg = dissolve.addConfiguration();
+    auto *cfg = coreData.addConfiguration();
     cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, dissolve.pairPotentialRange());
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
     cfg->addMolecule(argon);

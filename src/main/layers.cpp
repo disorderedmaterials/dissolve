@@ -18,7 +18,7 @@ void Dissolve::removeProcessingLayer(ModuleLayer *layer)
 
     // Remove any references to the Modules in the layer before we delete it
     for (auto &module : layer->modules())
-        removeReferencesTo(module.get());
+        coreData_.removeReferencesTo(module.get());
 
     // Now safe to remove the layer
     processingLayers_.erase(
