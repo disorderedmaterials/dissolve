@@ -222,11 +222,18 @@ void ImportCIFDialog::finalise()
         // Create a Configuration
         auto *cfg = dissolve_.addConfiguration();
         cfg->setName(cifImporter_.chemicalFormula());
-        auto cellLengths = cifImporter_.getCellLengths();
-        auto cellAngles = cifImporter_.getCellAngles();
-        cfg->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
 
+        // Grab the generator
         auto &generator = cfg->generator();
+
+        // Add Box
+        auto boxNode = generator.createRootNode<BoxProcedureNode>({});
+        auto cellLengths = cifImporter_.getCellLengths().value();
+        auto cellAngles = cifImporter_.getCellAngles().value();
+        boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
+        boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
+
+        // Add the CIF Species
         for (auto &cifSp : cifSpecies_)
         {
             auto *sp = dissolve_.copySpecies(cifSp->species());
@@ -241,13 +248,13 @@ void ImportCIFDialog::finalise()
                 auto suffix = 0;
 
                 // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
-                while (generator.rootSequence().nodeInScope(root, fmt::format("CoordinateSets_{}", uniqueSuffix)) != nullptr)
+                while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) != nullptr)
                     uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
             }
 
             // CoordinateSets
             auto coordsNode =
-                generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("CoordinateSets_{}", uniqueSuffix), sp);
+                generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
             coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
             coordsNode->setSets(cifSp->coordinates());
 
