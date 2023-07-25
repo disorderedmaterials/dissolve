@@ -50,6 +50,12 @@ void Range::deserialise(const SerialisedValue &node)
     maximum_ = toml::find<double>(node, "max");
 }
 
+// Get the index of where range bounds are in a vector of doubles with fixed step sizes (e.g x axes)
+int rangeToIndex(double firstElem, double secondElem, double boundary)
+{
+    return ((boundary - firstElem) / (secondElem - firstElem)) - 1;
+}
+
 // Equality
 bool Range::operator==(const Range &rhs) const { return minimum_ == rhs.minimum_ && maximum_ == rhs.maximum_; }
 

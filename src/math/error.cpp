@@ -78,41 +78,27 @@ double error(ErrorType errorType, const std::vector<double> &vecA, const std::ve
 }
 
 // Return error of specified type between supplied data
-double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, std::vector<int> range)
+double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
-    // Get the step size between X values
-    double delta = A.xAxis(1) - A->xAxis(0);
 
-    // Get the index of where range bounds are in X axis vector
-    int startIndex = ((range[0] - A.xAxis(0)) / delta) - 1;
-    int endIndex = ((range[1] - A.xAxis(0)) / delta) - 1;
-
-    // Create new temporary Data1D objects
-    Data1D ATrimmed, BTrimmed;
-
-    auto x = A.xAxis(startIndex);
-
-    // Populate object data points
-    for (auto &&[y1, y2] : zip({A.values().begin() + startIndex, A.values().begin() + endIndex},
-                               {B.values().begin() + startIndex, B.values().begin() + endIndex}))
+    // if range is unset
+    if (range.maximum() == range.minimum())
     {
-        ATrimmed.addPoint(x, y1);
-        BTrimmed.addPoint(x, y2);
-        x += delta;
+        range.set(B.xAxis().front(), B.xAxis.back())
     }
 
     if (errorType == RMSEError)
-        return rmse(ATrimmed, BTrimmed, quiet);
+        return rmse(ATrimmed, BTrimmed, quiet, range);
     else if (errorType == MAAPEError)
-        return maape(ATrimmed, BTrimmed, quiet);
+        return maape(ATrimmed, BTrimmed, quiet, range);
     else if (errorType == MAPEError)
-        return mape(ATrimmed, BTrimmed, quiet);
+        return mape(ATrimmed, BTrimmed, quiet, range);
     else if (errorType == PercentError)
-        return percent(ATrimmed, BTrimmed, quiet);
+        return percent(ATrimmed, BTrimmed, quiet, range);
     else if (errorType == RFactorError)
-        return rFactor(ATrimmed, BTrimmed, quiet);
+        return rFactor(ATrimmed, BTrimmed, quiet, range);
     else if (errorType == EuclideanError)
-        return euclidean(ATrimmed, BTrimmed, quiet);
+        return euclidean(ATrimmed, BTrimmed, quiet, range);
 
     throw(
         std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
@@ -125,23 +111,30 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, 
  */
 
 // Return RMSE between supplied data
-double rmse(const Data1D &A, const Data1D &B, bool quiet)
+double rmse(const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(B.xAxis().front(), B.xAxis.back())
+    }
 
     // Generate RMSE at x values of A
     auto rmse = 0.0, firstX = 0.0, lastX = 0.0;
     double delta;
     auto nPointsConsidered = 0;
+
     for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.xAxis().front())
+        if (x < range.minimum())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.xAxis().back())
+        if (x > range.maximum())
             break;
 
         // Is this the first point considered?
@@ -165,7 +158,7 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return MAPE between supplied data
-double mape(const Data1D &A, const Data1D &B, bool quiet)
+double mape(const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -175,11 +168,11 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
     for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.xAxis().front())
+        if (x < range.minimum())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.xAxis().back())
+        if (x > range.maximum())
             break;
 
         // Is this the first point considered?
@@ -206,7 +199,7 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return MAAPE between supplied data
-double maape(const Data1D &A, const Data1D &B, bool quiet)
+double maape(const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -216,11 +209,11 @@ double maape(const Data1D &A, const Data1D &B, bool quiet)
     for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.xAxis().front())
+        if (x < range.minimum())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.xAxis().back())
+        if (x > range.maximum())
             break;
 
         // Is this the first point considered?
@@ -243,22 +236,28 @@ double maape(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return percentage error between supplied data
-double percent(const Data1D &A, const Data1D &B, bool quiet)
+double percent(const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(B.xAxis().front(), B.xAxis.back())
+    }
+
     // Calculate summed absolute error and absolute y value deviations from average
-    auto sume = 0.0, sumy = 0.0, firstX = 0.0, lastX = 0.0;
+    auto sume = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.xAxis().front())
+        if (x < range.minimum())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.xAxis().back())
+        if (x > range.maximum())
             break;
 
         // Is this the first point considered?
@@ -290,10 +289,16 @@ double percent(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return R-Factor (average squared error per point) between supplied data
-double rFactor(const Data1D &A, const Data1D &B, bool quiet)
+double rFactor(const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(B.xAxis().front(), B.xAxis.back())
+    }
 
     // Grab x and y arrays from data A
     const auto &aX = A.xAxis();
@@ -305,11 +310,11 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
     for (auto &&[x, y] : zip(aX, aY))
     {
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.xAxis().front())
+        if (x < range.minimum())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.xAxis().back())
+        if (x > range.maximum())
             break;
 
         // Is this the first point considered?
@@ -333,10 +338,16 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return Euclidean distance, normalised to mean of B, between supplied data
-double euclidean(const Data1D &A, const Data1D &B, bool quiet)
+double euclidean(const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(B.xAxis().front(), B.xAxis.back())
+    }
 
     auto y2 = 0.0, sos = 0.0, delta = 0.0;
     auto firstX = 0.0, lastX = 0.0;
@@ -344,11 +355,11 @@ double euclidean(const Data1D &A, const Data1D &B, bool quiet)
     for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.xAxis().front())
+        if (x < range.minimum())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.xAxis().back())
+        if (x > range.maximum())
             break;
 
         // Is this the first point considered?
