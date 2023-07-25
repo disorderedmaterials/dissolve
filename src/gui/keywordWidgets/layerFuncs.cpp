@@ -55,6 +55,7 @@ void LayerKeywordWidget::updateLayersCombo()
     refreshing_ = true;
 
     moduleLayersModel_.setData(coreData_.processingLayers());
+    ui_.LayerCombo->setCurrentIndex(-1);
 
     refreshing_ = false;
 }

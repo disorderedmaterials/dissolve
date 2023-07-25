@@ -5,6 +5,7 @@
 #include "keywords/layer.h"
 #include "module/layer.h"
 #include "procedure/nodes/node.h"
+#include "main/dissolve.h"
 
 RunLayerNode::RunLayerNode(const ModuleLayer *layer)
     : ProcedureNode(ProcedureNode::NodeType::RunLayer, {ProcedureNode::ControlContext}), layer_(layer)
@@ -28,16 +29,34 @@ bool RunLayerNode::mustBeNamed() const { return false; }
 // Prepare any necessary data, ready for execution
 bool RunLayerNode::prepare(const ProcedureContext &procedureContext)
 {
-    if (!layer_->isEnabled())
+    if (!layer_)
         return false;
+    return true;
 }
 
 // Execute node
 bool RunLayerNode::execute(const ProcedureContext &procedureContext)
 {
+    if (!layer_)
+        return false;
     if (!layer_->isEnabled())
     {
         Messenger::warn("Layer {} is disabled, so it won't be run!", layer_->name());
         return true;
     }
+    if (!layer_->runThisIteration(procedureContext.dissolve().iteration()))
+        return true;
+
+    if (!layer_->canRun(procedureContext.dataList()))
+        return true;
+    for (const auto& module : layer_->modules())
+    {
+        if (!module->runThisIteration(procedureContext.dissolve().iteration() / layer_->frequency()))
+            continue;
+
+        if (module->executeProcessing(procedureContext.dissolve(), procedureContext.processPool()) == Module::ExecutionResult::Failed)
+            return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
+    }
+
+    return true;
 }

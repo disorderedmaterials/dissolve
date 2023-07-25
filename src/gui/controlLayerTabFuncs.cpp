@@ -3,8 +3,9 @@
 
 #include "gui/controlLayerTab.h"
 #include "gui/mainTab.h"
+#include "main/dissolve.h"
 
-ControlLayerTab::ControlLayerTab(DissolveWindow *dissolveWindow, Dissolve& dissolve, MainTabsWidget *parent, const QString title) : MainTab(dissolveWindow, dissolve, parent, QString("Control"), this), controlProcedure_(ProcedureNode::ControlContext, "Control")
+ControlLayerTab::ControlLayerTab(DissolveWindow *dissolveWindow, Dissolve& dissolve, MainTabsWidget *parent, const QString title) : MainTab(dissolveWindow, dissolve, parent, QString("Control"), this), dissolve_(dissolve), controlProcedure_(ProcedureNode::ControlContext, "Control")
 {
     ui_.setupUi(this);
     ui_.ControlWidget->setUp(dissolveWindow_, controlProcedure_);
@@ -16,4 +17,10 @@ void ControlLayerTab::updateControls() {}
 void ControlLayerTab::preventEditing() {}
 void ControlLayerTab::allowEditing() {}
 
-void ControlLayerTab::on_RunButton_clicked(bool checked) {}
+void ControlLayerTab::on_RunButton_clicked(bool checked)
+{
+    // Prepare
+
+    // Run
+    auto result = controlProcedure_.execute({dissolve_.worldPool(), dissolve_});
+}

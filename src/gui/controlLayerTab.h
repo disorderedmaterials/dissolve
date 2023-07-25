@@ -32,6 +32,7 @@ class ControlLayerTab : public QWidget, public MainTab
     bool canClose() const override;
 
     private:
+    Dissolve& dissolve_;
     ProcedureModel procedureModel_;
     Procedure controlProcedure_;
         

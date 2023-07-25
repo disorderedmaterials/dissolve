@@ -132,6 +132,7 @@ bool ModuleLayer::contains(Module *searchModule) const
 
 // Return vector of Modules
 std::vector<std::unique_ptr<Module>> &ModuleLayer::modules() { return modules_; }
+const std::vector<std::unique_ptr<Module>> &ModuleLayer::modules() const { return modules_; }
 
 // Return map of modules in the layer, optionally preceding the specified module
 std::map<ModuleTypes::ModuleType, std::vector<const Module *>> ModuleLayer::modulesAsMap(const Module *beforeThis) const
