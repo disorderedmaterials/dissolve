@@ -25,6 +25,13 @@ EnumOptions<ErrorType> errorTypes()
 // Return error of specified type between supplied data
 double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
+
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(B.xAxis().front(), B.xAxis().back());
+    }
+
     if (errorType == RMSEError)
         return rmse(A, B, quiet, range);
     else if (errorType == MAAPEError)
@@ -63,34 +70,7 @@ double error(ErrorType errorType, const std::vector<double> &vecA, const std::ve
     // if range is unset
     if (range.maximum() == range.minimum())
     {
-        range.set(0.0, x)
-    }
-
-    if (errorType == RMSEError)
-        return rmse(A, B, quiet, range);
-    else if (errorType == MAAPEError)
-        return maape(A, B, quiet, range);
-    else if (errorType == MAPEError)
-        return mape(A, B, quiet, range);
-    else if (errorType == PercentError)
-        return percent(A, B, quiet, range);
-    else if (errorType == RFactorError)
-        return rFactor(A, B, quiet), range;
-    else if (errorType == EuclideanError)
-        return euclidean(A, B, quiet, range);
-
-    Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
-    return 0.0;
-}
-
-// Return error of specified type between supplied data
-double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, Range range)
-{
-
-    // if range is unset
-    if (range.maximum() == range.minimum())
-    {
-        range.set(B.xAxis().front(), B.xAxis().back());
+        range.set(0.0, x);
     }
 
     if (errorType == RMSEError)
@@ -106,9 +86,7 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, 
     else if (errorType == EuclideanError)
         return euclidean(A, B, quiet, range);
 
-    throw(
-        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
-                                       errorTypes().keyword(errorType))));
+    Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
     return 0.0;
 }
 
@@ -266,7 +244,7 @@ double percent(const Data1D &A, const Data1D &B, bool quiet, Range range)
     }
 
     // Calculate summed absolute error and absolute y value deviations from average
-    auto sume = 0.0, firstX = 0.0, lastX = 0.0;
+    auto sume = 0.0, sumy = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(A.xAxis(), A.values()))
     {
