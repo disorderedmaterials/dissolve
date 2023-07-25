@@ -109,6 +109,9 @@ CIFSpecies::CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceIn
     // Find instances
     hasSymmetry_ = !findInstances();
 
+    // Fix geometry
+    fixGeometry(speciesRef_->box());
+
     // Determine coordinates
     determineCoordinates();
 
