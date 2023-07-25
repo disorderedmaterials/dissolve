@@ -36,7 +36,6 @@ class Range : public Serialisable<>
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
-    int rangeToIndex(double firstElem, double secondElem, double boundary);
     bool operator==(const Range &rhs) const;
     bool operator!=(const Range &rhs) const;
 };
