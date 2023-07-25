@@ -88,3 +88,6 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 
 // Return list of target Modules / data for refinement
 const std::vector<Module *> &EPSRModule::targets() const { return targets_; }
+
+// Return current scattering matrix
+const ScatteringMatrix &EPSRModule::scatteringMatrix() const { return scatteringMatrix_; }

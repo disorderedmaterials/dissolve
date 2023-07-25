@@ -103,6 +103,8 @@ class EPSRModule : public Module
     public:
     // Return list of target Modules / data for refinement
     const std::vector<Module *> &targets() const;
+    // Return current scattering matrix
+    const ScatteringMatrix &scatteringMatrix() const;
 
     /*
      * Functions
