@@ -123,13 +123,13 @@ const Species *CIFSpecies::species() const { return species_; }
 const std::string CIFSpecies::netaString() const { return netaString_; }
 
 // Return the reference instance
-const std::vector<int> CIFSpecies::referenceInstance() const { return referenceInstance_; }
+const std::vector<int>& CIFSpecies::referenceInstance() const { return referenceInstance_; }
 
 // Return all found instances
-const std::vector<std::vector<int>> CIFSpecies::instances() const { return instances_; }
+const std::vector<std::vector<int>>& CIFSpecies::instances() const { return instances_; }
 
 // Return the coordinates corresponding to the instances
-const std::vector<std::vector<Vec3<double>>> CIFSpecies::coordinates() const { return coordinates_; }
+const std::vector<std::vector<Vec3<double>>>& CIFSpecies::coordinates() const { return coordinates_; }
 
 // Return whether the reference instance contains symmetry.
 bool CIFSpecies::hasSymmetry() const { return hasSymmetry_; }
