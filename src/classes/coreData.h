@@ -15,6 +15,7 @@
 
 // Forward Declarations
 class Module;
+class ModuleLayer;
 class MasterBond;
 class MasterAngle;
 class MasterTorsion;
@@ -187,6 +188,28 @@ class CoreData
     Configuration *findConfigurationByNiceName(std::string_view name) const;
 
     /*
+     * Layers
+     */
+    private:
+    // List of defined processing layers
+    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
+
+    public:
+    // Add new processing layer
+    ModuleLayer *addProcessingLayer();
+    // Remove processing layer
+    void removeProcessingLayer(ModuleLayer *layer);
+    // Find named processing layer
+    ModuleLayer *findProcessingLayer(std::string_view name) const;
+    // Own the specified processing layer
+    bool ownProcessingLayer(ModuleLayer *layer);
+    // Return number of defined processing layers
+    int nProcessingLayers() const;
+    // Return processing layers
+    std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
+    const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
+
+    /*
      * Input Filename
      */
     private:
@@ -205,6 +228,7 @@ class CoreData
     public:
     // Remove all references to the specified data
     void removeReferencesTo(Module *data);
+    void removeReferencesTo(ModuleLayer *data);
     void removeReferencesTo(Configuration *data);
     void removeReferencesTo(Species *data);
     void removeReferencesTo(SpeciesSite *data);

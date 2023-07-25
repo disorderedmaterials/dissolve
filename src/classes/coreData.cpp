@@ -9,6 +9,7 @@
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
+#include "module/layer.h"
 #include "module/module.h"
 
 // Clear all data
@@ -529,6 +530,56 @@ Configuration *CoreData::findConfigurationByNiceName(std::string_view name) cons
 }
 
 /*
+ * Layers
+ */
+
+// Add new processing layer
+ModuleLayer *CoreData::addProcessingLayer() { return processingLayers_.emplace_back(std::make_unique<ModuleLayer>()).get(); }
+
+// Remove processing layer
+void CoreData::removeProcessingLayer(ModuleLayer *layer)
+{
+    if (!layer)
+        return;
+
+    removeReferencesTo(layer);
+
+    // Now safe to remove the layer
+    processingLayers_.erase(
+        std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](const auto &l) { return l.get() == layer; }));
+}
+
+// Find named processing layer
+ModuleLayer *CoreData::findProcessingLayer(std::string_view name) const
+{
+    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(),
+                           [name](auto &layer) { return DissolveSys::sameString(layer->name(), name); });
+    if (it == processingLayers_.end())
+        return nullptr;
+    return it->get();
+}
+
+// Own the specified processing layer
+bool CoreData::ownProcessingLayer(ModuleLayer *layer)
+{
+    // Sanity check - do we already own this Configuration?
+    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](auto &l) { return l.get() == layer; });
+    if (it != processingLayers_.end())
+        return Messenger::error("Already own ModuleLayer '{}', so nothing to do.\n", layer->name());
+
+    processingLayers_.emplace_back(layer);
+
+    return true;
+}
+
+// Return number of defined processing layers
+int CoreData::nProcessingLayers() const { return processingLayers_.size(); }
+
+// Return processing layers
+std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() { return processingLayers_; }
+const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const { return processingLayers_; }
+
+/*
  * Input Filename
  */
 
@@ -579,6 +630,7 @@ void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deseria
 
 // Remove all references to the specified data
 void CoreData::removeReferencesTo(Module *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(ModuleLayer *data) { KeywordStore::objectNoLongerValid(data); }
 void CoreData::removeReferencesTo(Configuration *data) { KeywordStore::objectNoLongerValid(data); }
 void CoreData::removeReferencesTo(Species *data)
 {
