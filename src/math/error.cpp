@@ -23,20 +23,20 @@ EnumOptions<ErrorType> errorTypes()
 }
 
 // Return error of specified type between supplied data
-double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
+double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
     if (errorType == RMSEError)
-        return rmse(A, B, quiet);
+        return rmse(A, B, quiet, range);
     else if (errorType == MAAPEError)
-        return maape(A, B, quiet);
+        return maape(A, B, quiet, range);
     else if (errorType == MAPEError)
-        return mape(A, B, quiet);
+        return mape(A, B, quiet, range);
     else if (errorType == PercentError)
-        return percent(A, B, quiet);
+        return percent(A, B, quiet, range);
     else if (errorType == RFactorError)
-        return rFactor(A, B, quiet);
+        return rFactor(A, B, quiet, range);
     else if (errorType == EuclideanError)
-        return euclidean(A, B, quiet);
+        return euclidean(A, B, quiet, range);
 
     throw(
         std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
@@ -50,12 +50,6 @@ double error(ErrorType errorType, const std::vector<double> &vecA, const std::ve
     // Size check
     assert(vecA.size() == vecB.size());
 
-    // if range is unset
-    if (range.maximum() == range.minimum())
-    {
-        range.set(B.xAxis().front(), B.xAxis.back())
-    }
-
     // Create temporary Data1D for simplicity
     Data1D A, B;
     auto x = 0.0;
@@ -66,18 +60,24 @@ double error(ErrorType errorType, const std::vector<double> &vecA, const std::ve
         x += 1.0;
     }
 
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(0.0, x)
+    }
+
     if (errorType == RMSEError)
-        return rmse(A, B, quiet);
+        return rmse(A, B, quiet, range);
     else if (errorType == MAAPEError)
-        return maape(A, B, quiet);
+        return maape(A, B, quiet, range);
     else if (errorType == MAPEError)
-        return mape(A, B, quiet);
+        return mape(A, B, quiet, range);
     else if (errorType == PercentError)
-        return percent(A, B, quiet);
+        return percent(A, B, quiet, range);
     else if (errorType == RFactorError)
-        return rFactor(A, B, quiet);
+        return rFactor(A, B, quiet), range;
     else if (errorType == EuclideanError)
-        return euclidean(A, B, quiet);
+        return euclidean(A, B, quiet, range);
 
     Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
     return 0.0;
@@ -90,21 +90,21 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, 
     // if range is unset
     if (range.maximum() == range.minimum())
     {
-        range.set(B.xAxis().front(), B.xAxis.back())
+        range.set(B.xAxis().front(), B.xAxis().back())
     }
 
     if (errorType == RMSEError)
-        return rmse(ATrimmed, BTrimmed, quiet, range);
+        return rmse(A, B, quiet, range);
     else if (errorType == MAAPEError)
-        return maape(ATrimmed, BTrimmed, quiet, range);
+        return maape(A, B, quiet, range);
     else if (errorType == MAPEError)
-        return mape(ATrimmed, BTrimmed, quiet, range);
+        return mape(A, B, quiet, range);
     else if (errorType == PercentError)
-        return percent(ATrimmed, BTrimmed, quiet, range);
+        return percent(A, B, quiet, range);
     else if (errorType == RFactorError)
-        return rFactor(ATrimmed, BTrimmed, quiet, range);
+        return rFactor(A, B, quiet, range);
     else if (errorType == EuclideanError)
-        return euclidean(ATrimmed, BTrimmed, quiet, range);
+        return euclidean(A, B, quiet, range);
 
     throw(
         std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
@@ -125,7 +125,7 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet, Range range)
     // if range is unset
     if (range.maximum() == range.minimum())
     {
-        range.set(B.xAxis().front(), B.xAxis.back())
+        range.set(B.xAxis().front(), B.xAxis().back())
     }
 
     // Generate RMSE at x values of A
@@ -172,7 +172,7 @@ double mape(const Data1D &A, const Data1D &B, bool quiet, Range range)
     // if range is unset
     if (range.maximum() == range.minimum())
     {
-        range.set(B.xAxis().front(), B.xAxis.back())
+        range.set(B.xAxis().front(), B.xAxis().back())
     }
 
     auto sum = 0.0, firstX = 0.0, lastX = 0.0;
@@ -219,7 +219,7 @@ double maape(const Data1D &A, const Data1D &B, bool quiet, Range range)
     // if range is unset
     if (range.maximum() == range.minimum())
     {
-        range.set(B.xAxis().front(), B.xAxis.back())
+        range.set(B.xAxis().front(), B.xAxis().back())
     }
 
     auto sum = 0.0, firstX = 0.0, lastX = 0.0;
@@ -262,7 +262,7 @@ double percent(const Data1D &A, const Data1D &B, bool quiet, Range range)
     // if range is unset
     if (range.maximum() == range.minimum())
     {
-        range.set(B.xAxis().front(), B.xAxis.back())
+        range.set(B.xAxis().front(), B.xAxis().back())
     }
 
     // Calculate summed absolute error and absolute y value deviations from average
@@ -315,7 +315,7 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet, Range range)
     // if range is unset
     if (range.maximum() == range.minimum())
     {
-        range.set(B.xAxis().front(), B.xAxis.back())
+        range.set(B.xAxis().front(), B.xAxis().back())
     }
 
     // Grab x and y arrays from data A
@@ -364,7 +364,7 @@ double euclidean(const Data1D &A, const Data1D &B, bool quiet, Range range)
     // if range is unset
     if (range.maximum() == range.minimum())
     {
-        range.set(B.xAxis().front(), B.xAxis.back())
+        range.set(B.xAxis().front(), B.xAxis().back())
     }
 
     auto y2 = 0.0, sos = 0.0, delta = 0.0;
