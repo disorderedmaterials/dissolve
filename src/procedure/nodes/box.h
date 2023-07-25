@@ -6,8 +6,6 @@
 #include "procedure/nodeValue.h"
 #include "procedure/nodes/node.h"
 
-class ModuleLayer;
-
 // Box Node
 class BoxProcedureNode : public ProcedureNode
 {
@@ -31,7 +29,6 @@ class BoxProcedureNode : public ProcedureNode
     Vec3<NodeValue> angles_;
     // Box lengths
     Vec3<NodeValue> lengths_;
-    const ModuleLayer *layer_;
     // Whether the box is non-periodic
     bool nonPeriodic_{false};
 
