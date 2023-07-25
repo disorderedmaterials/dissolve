@@ -28,7 +28,7 @@ class Timer
     // Returns whether timer has started before
     bool hasStarted();
     // Start timer
-    void start(bool resetTimer = true);
+    void start();
     // Stop timer and set total time
     void stop();
     // Return split time

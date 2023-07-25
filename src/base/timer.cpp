@@ -18,14 +18,13 @@ Timer::Timer(bool immediateStart)
 bool Timer::hasStarted() { return started_; }
 
 // Start timer
-void Timer::start(bool resetTimer)
+void Timer::start()
 {
     running_ = true;
-    if (resetTimer || !started_)
-    {
-        startTime_ = std::chrono::high_resolution_clock::now();
-        splitTime_ = startTime_;
-    }
+
+    startTime_ = std::chrono::high_resolution_clock::now();
+    splitTime_ = startTime_;
+
     started_ = true;
 }
 
@@ -86,8 +85,8 @@ std::string Timer::timeString(std::chrono::duration<double> duration, bool trunc
     auto seconds = duration.count() - hours * 3600 - minutes * 60;
 
     if (hours != 0)
-        return fmt::format("{} hour{}, {} minute{}, and {:0.0f} seconds", hours, DissolveSys::plural(hours), minutes,
-                           DissolveSys::plural(minutes), seconds);
+        return fmt::format("{} hour{}, {} minute{}, and {:0.0f} second{}", hours, DissolveSys::plural(hours), minutes,
+                           DissolveSys::plural(minutes), seconds, DissolveSys::plural(seconds));
     else if (minutes != 0)
         return fmt::format("{} minute{} and {:0.0f} second{}", minutes, DissolveSys::plural(minutes), seconds,
                            DissolveSys::plural(seconds));
@@ -106,8 +105,8 @@ std::string Timer::timeString(double seconds)
     seconds -= minutes * 60;
 
     if (hours != 0)
-        return fmt::format("{} hour{}, {} minute{}, and {:0.1f} seconds", hours, DissolveSys::plural(hours), minutes,
-                           DissolveSys::plural(minutes), seconds);
+        return fmt::format("{} hour{}, {} minute{}, and {:0.1f} second{}", hours, DissolveSys::plural(hours), minutes,
+                           DissolveSys::plural(minutes), seconds, DissolveSys::plural(seconds));
     else if (minutes != 0)
         return fmt::format("{} minute{} and {:0.1f} second{}", minutes, DissolveSys::plural(minutes), seconds,
                            DissolveSys::plural(seconds));

@@ -69,10 +69,8 @@ void DissolveWindow::setupIteration(int count)
     emit iterate(count);
 
     // Start the main timer
-    if (!elapsedTimer_.hasStarted())
-        elapsedTimer_.zero();
-
-    elapsedTimer_.start(false);
+    elapsedTimer_.zero();
+    elapsedTimer_.start();
 }
 
 // Disable editing
@@ -120,7 +118,6 @@ void DissolveWindow::allowEditing()
 // All iterations requested are complete
 void DissolveWindow::iterationsComplete()
 {
-    elapsedTimer_.accumulate();
     elapsedTimer_.stop();
 
     allowEditing();
