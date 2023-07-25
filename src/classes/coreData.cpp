@@ -88,13 +88,27 @@ int CoreData::removeUnusedAtomTypes()
     for (auto &sp : species_)
         mix.add(sp->atomTypes());
 
-    auto nRemoved = atomTypes_.size();
-    auto it =
-        std::remove_if(atomTypes_.begin(), atomTypes_.end(), [&](const auto &atomType) { return !mix.contains(atomType); });
-    if (it != atomTypes_.end())
-        atomTypes_.erase(it, atomTypes_.end());
+    auto oldSize = atomTypes_.size();
 
-    return nRemoved - atomTypes_.size();
+    atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
+                                    [&](const auto &at)
+                                    {
+                                        if (mix.contains(at))
+                                            return false;
+                                        else
+                                        {
+                                            Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
+                                            return true;
+                                        }
+                                    }),
+                     atomTypes_.end());
+
+    // Reassign AtomType indices (in case one or more have been added / removed)
+    auto count = 0;
+    for (const auto &at : atomTypes_)
+        at->setIndex(count++);
+
+    return oldSize - atomTypes_.size();
 }
 
 // Clear all atom types
