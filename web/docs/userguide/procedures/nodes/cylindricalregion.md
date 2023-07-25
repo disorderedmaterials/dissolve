@@ -34,5 +34,5 @@ The `GeneralRegion` node assesses the current contents of a configuration and lo
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`VoxelSize`|`double`|`2.0`|Cubic voxel length to use when partitioning space. A smaller voxel size gives a more fine-grained region, at the expense of memory and speed.|
-|`Invert`|`bool`|`flase`|Invert the logic used to determine free space in the region.|
+|`VoxelSize`|`double`|`1.0`|Cubic voxel length to use when partitioning space. A smaller voxel size gives a more fine-grained region, at the expense of memory and speed.|
+|`Invert`|`bool`|`false`|Invert the logic used to determine free space in the region.|

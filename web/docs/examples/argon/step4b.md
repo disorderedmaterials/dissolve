@@ -53,7 +53,7 @@ The {{< module "NeutronSQ" >}} module itself looks after any related experimenta
 The data, along with its Fourier transform, can now be seen in the module's {{< gui-button text="Output" icon="general_output" >}} page. You may notice that the data have been normalised to the average squared value of the atomic scattering and oscillate around 1.0 - we will need to tell Dissolve to convert the data back to absolute units and make it oscillate around zero.
 
 {{< action type="groups" >}}Select the {{< module "NeutronSQ" >}} module and find the **Reference Data** settings group (go back to the {{< gui-button text="Options" icon="general_options" >}} page if you need to){{< /action >}}
-{{< action type="edit" text="Set the **ReferenceNormalisation** style to `SquareOfAverage`" />}}
+{{< action type="edit" text="Set the **ReferenceNormalisedTo** style to `SquareOfAverage`" />}}
 {{< step text="This tells Dissolve that the data have been normalised, and allows Dissolve to remove that normalisation in order to get the data in the correct units" />}}
 {{< action type="settings" text="Open the options for the file import at the extreme right of the **ReferenceData** keyword" />}}
 {{< action type="edit" text="Find the **Manipulations** group and set the **RemoveAverage** value to `9.0`" />}}

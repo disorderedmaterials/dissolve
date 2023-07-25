@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/configuration.h"
 #include "gui/render/renderableData1D.h"
 #include "gui/render/renderableData2D.h"
+#include "main/dissolve.h"
 #include "modules/angle/angle.h"
 #include "modules/angle/gui/angleWidget.h"
 
@@ -74,10 +74,6 @@ AngleModuleWidget::AngleModuleWidget(QWidget *parent, AngleModule *module, Disso
     dAngleBCView.axes().setRange(2, 0.0, 0.01);
     dAngleBCView.setAutoFollowType(View::AllAutoFollow);
 
-    setGraphDataTargets(module_);
-
-    updateControls();
-
     refreshing_ = false;
 }
 
@@ -88,6 +84,47 @@ AngleModuleWidget::AngleModuleWidget(QWidget *parent, AngleModule *module, Disso
 // Update controls within widget
 void AngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags)
 {
+    if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
+    {
+        rdfABGraph_->clearRenderables();
+        rdfBCGraph_->clearRenderables();
+        angleGraph_->clearRenderables();
+        dAngleABGraph_->clearRenderables();
+        dAngleBCGraph_->clearRenderables();
+    }
+
+    // Calculated A...B RDF
+    if (rdfABGraph_->renderables().empty())
+        rdfABGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF(AB)", module_->name()), "A...B g(r)")
+            ->setColour(StockColours::BlueStockColour);
+
+    // Calculated B...C RDF
+    if (rdfBCGraph_->renderables().empty())
+        rdfBCGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF(BC)", module_->name()), "B...C g(r)")
+            ->setColour(StockColours::BlueStockColour);
+
+    // Calculated angle histogram
+    if (angleGraph_->renderables().empty())
+        angleGraph_
+            ->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Angle(ABC)", module_->name()), "A-B...C Angle")
+            ->setColour(StockColours::RedStockColour);
+
+    // Calculated (A-B)-C distance-angle map
+    if (dAngleABGraph_->renderables().empty())
+        dAngleABGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle((A-B)-C)", module_->name()),
+                                                           "A-B vs A-B-C");
+
+    // Calculated A-(B-C) distance-angle map
+    if (dAngleBCGraph_->renderables().empty())
+        dAngleBCGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle(A-(B-C))", module_->name()),
+                                                           "B-C vs A-B-C");
+
+    rdfABGraph_->validateRenderables(dissolve_.processingModuleData());
+    rdfBCGraph_->validateRenderables(dissolve_.processingModuleData());
+    angleGraph_->validateRenderables(dissolve_.processingModuleData());
+    dAngleABGraph_->validateRenderables(dissolve_.processingModuleData());
+    dAngleBCGraph_->validateRenderables(dissolve_.processingModuleData());
+
     ui_.RDFABPlotWidget->updateToolbar();
     ui_.RDFBCPlotWidget->updateToolbar();
     ui_.AnglePlotWidget->updateToolbar();
@@ -99,47 +136,4 @@ void AngleModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &u
     angleGraph_->postRedisplay();
     dAngleABGraph_->postRedisplay();
     dAngleBCGraph_->postRedisplay();
-}
-
-/*
- * Widgets / Functions
- */
-
-// Set data targets in graphs
-void AngleModuleWidget::setGraphDataTargets(AngleModule *module)
-{
-    // Remove any current data
-    rdfABGraph_->clearRenderables();
-    rdfBCGraph_->clearRenderables();
-    angleGraph_->clearRenderables();
-    dAngleABGraph_->clearRenderables();
-    dAngleBCGraph_->clearRenderables();
-
-    // Get Configuration target
-    auto *cfg = module_->keywords().getConfiguration("Configuration");
-    if (!cfg)
-        return;
-
-    // Calculated A...B RDF
-    auto rdfAB =
-        rdfABGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF(AB)", module_->name()), "A...B g(r)");
-    rdfAB->setColour(StockColours::BlueStockColour);
-
-    // Calculated B...C RDF
-    auto rdfBC =
-        rdfBCGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//RDF(BC)", module_->name()), "B...C g(r)");
-    rdfBC->setColour(StockColours::BlueStockColour);
-
-    // Calculated angle histogram
-    auto angle = angleGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Angle(ABC)", module_->name()),
-                                                                 "A-B...C Angle");
-    angle->setColour(StockColours::RedStockColour);
-
-    // Calculated (A-B)-C distance-angle map
-    dAngleABGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle((A-B)-C)", module_->name()),
-                                                       "A-B vs A-B-C");
-
-    // Calculated A-(B-C) distance-angle map
-    dAngleBCGraph_->createRenderable<RenderableData2D>(fmt::format("{}//Process2D//DAngle(A-(B-C))", module_->name()),
-                                                       "B-C vs A-B-C");
 }

@@ -59,6 +59,8 @@ class SpeciesWidget : public QWidget
     public:
     // Set target Species, updating widget as necessary
     void setSpecies(Species *sp);
+    // Set target SpeciesSite, updating widget as necessary
+    void setSite(SpeciesSite *site);
     // Return contained SpeciesViewer
     SpeciesViewer *speciesViewer();
 

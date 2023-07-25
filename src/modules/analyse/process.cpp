@@ -6,17 +6,23 @@
 #include "modules/analyse/analyse.h"
 
 // Run main processing
-bool AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
-        return Messenger::error("Analysis failed.\n");
+    {
+        Messenger::error("Analysis ExecutionResult::Failed.\n");
+        return ExecutionResult::Failed;
+    }
 
-    return true;
+    return ExecutionResult::Success;
 }

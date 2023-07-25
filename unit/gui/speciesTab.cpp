@@ -46,7 +46,7 @@ TEST_F(SpeciesTabTest, Atoms)
     // Test Carbon atom
     for (auto role : roles)
     {
-        EXPECT_EQ(atom.data(atom.index(0, 0), role).toString().toStdString(), "Carbon");
+        EXPECT_EQ(atom.data(atom.index(0, 0), role).toString().toStdString(), "C");
         EXPECT_EQ(atom.data(atom.index(0, 1), role).toString().toStdString(), "CA");
         EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 2), role).toDouble(), -1.399);
         EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 3), role).toDouble(), 0.1600);
@@ -54,7 +54,7 @@ TEST_F(SpeciesTabTest, Atoms)
         EXPECT_DOUBLE_EQ(atom.data(atom.index(0, 5), role).toDouble(), -0.115);
 
         // Test Hydrogen Atom
-        EXPECT_EQ(atom.data(atom.index(6, 0), role).toString().toStdString(), "Hydrogen");
+        EXPECT_EQ(atom.data(atom.index(6, 0), role).toString().toStdString(), "H");
         EXPECT_EQ(atom.data(atom.index(6, 1), role).toString().toStdString(), "HA");
         EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 2), role).toDouble(), 1.483);
         EXPECT_DOUBLE_EQ(atom.data(atom.index(6, 3), role).toDouble(), 2.001);
@@ -63,7 +63,7 @@ TEST_F(SpeciesTabTest, Atoms)
     }
 
     // Mutate Hydrogen
-    EXPECT_FALSE(atom.setData(atom.index(6, 0), "Carbon"));
+    EXPECT_FALSE(atom.setData(atom.index(6, 0), "C"));
     EXPECT_TRUE(atom.setData(atom.index(6, 1), "HA"));
     EXPECT_FALSE(atom.setData(atom.index(6, 1), "Unreal"));
     EXPECT_TRUE(atom.setData(atom.index(6, 2), "CA"));

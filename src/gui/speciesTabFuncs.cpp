@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/atomType.h"
+#include "classes/empiricalFormula.h"
 #include "gui/delegates/comboList.hui"
 #include "gui/delegates/customComboDelegate.h"
 #include "gui/delegates/exponentialSpin.hui"
@@ -17,8 +18,6 @@
 SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                        Species *species)
     : MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this), atoms_(*species, dissolve),
-      angles_(species->angles(), dissolve.coreData()), bonds_(species->bonds(), dissolve.coreData()),
-      torsions_(species->torsions(), dissolve.coreData()), impropers_(species->impropers(), dissolve.coreData()),
       isos_(*species), sites_(species->sites())
 {
     ui_.setupUi(this);
@@ -39,21 +38,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.AtomTable->setItemDelegateForColumn(1, new CustomComboDelegate<SpeciesTab>(this, &SpeciesTab::validAtomTypeNames));
     for (auto n = 2; n < 6; ++n)
         ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-    // -- Geometry tables
-    ui_.BondTable->setItemDelegateForColumn(
-        2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<BondFunctions::Form>(BondFunctions::forms()),
-                                      dissolve.coreData().masterBonds()));
-    ui_.AngleTable->setItemDelegateForColumn(
-        3, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<AngleFunctions::Form>(AngleFunctions::forms()),
-                                      dissolve.coreData().masterAngles()));
-    ui_.TorsionTable->setItemDelegateForColumn(
-        4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
-                                      dissolve.coreData().masterTorsions()));
-    ui_.TorsionTable->setItemDelegateForColumn(6, new ExponentialSpinDelegate(this));
-    ui_.TorsionTable->setItemDelegateForColumn(7, new ExponentialSpinDelegate(this));
-    ui_.ImproperTable->setItemDelegateForColumn(
-        4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<TorsionFunctions::Form>(TorsionFunctions::forms()),
-                                      dissolve.coreData().masterImpropers()));
+
     // -- Isotopologues Tree
     ui_.IsotopologuesTree->setModel(&isos_);
     connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
@@ -69,18 +54,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.AtomTable->horizontalHeader()->setVisible(true);
     ui_.AtomTable->verticalHeader()->setFont(font());
     ui_.AtomTable->verticalHeader()->setVisible(true);
-    ui_.BondTable->setModel(&bonds_);
-    ui_.BondTable->horizontalHeader()->setFont(font());
-    ui_.BondTable->horizontalHeader()->setVisible(true);
-    ui_.AngleTable->setModel(&angles_);
-    ui_.AngleTable->horizontalHeader()->setFont(font());
-    ui_.AngleTable->horizontalHeader()->setVisible(true);
-    ui_.TorsionTable->setModel(&torsions_);
-    ui_.TorsionTable->horizontalHeader()->setFont(font());
-    ui_.TorsionTable->horizontalHeader()->setVisible(true);
-    ui_.ImproperTable->setModel(&impropers_);
-    ui_.ImproperTable->horizontalHeader()->setFont(font());
-    ui_.ImproperTable->horizontalHeader()->setVisible(true);
+    ui_.AtomTable->resizeColumnsToContents();
 
     // Set sites model and connect signals
     ui_.SiteList->setModel(&sites_);
@@ -93,33 +67,33 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.ViewerWidget->speciesViewer()->setDissolveWindow(dissolveWindow_);
     ui_.ViewerWidget->setDissolve(&dissolve);
     ui_.ViewerWidget->setSpecies(species_);
+    ui_.ViewerWidget->setSite(species_->sites().empty() ? nullptr : species_->sites().front().get());
+    ui_.ViewerWidget->speciesViewer()->setSiteVisible(false);
 
-    // Set up SiteViewer
-    ui_.SiteViewerWidget->setCoreData(&dissolve.coreData());
-    ui_.SiteViewerWidget->setSpecies(species_);
+    // Hide frames
+    ui_.IsotopologuesFrame->setVisible(false);
+    ui_.SitesFrame->setVisible(false);
 
     // Connect signals / slots
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), this, SLOT(updateControls()));
     connect(ui_.ViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
     connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), dissolveWindow_, SLOT(updateMenus()));
     connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(atomsChanged()), this, SLOT(updateAtomTableSelection()));
-    connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), this, SLOT(updateSitesTab()));
-    connect(ui_.SiteViewerWidget, SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
-    connect(ui_.SiteViewerWidget, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(sitesChanged()), this, SLOT(updateSitesTab()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(siteCreatedAndShown()), this, SLOT(setCurrentSiteFromViewer()));
+    connect(ui_.ViewerWidget->speciesViewer(), SIGNAL(sitesChanged()), dissolveWindow_, SLOT(setModified()));
 
     connect(&atoms_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(atomTableDataChanged(const QModelIndex &, const QModelIndex &)));
     connect(&atoms_, SIGNAL(atomTypeChanged()), this, SLOT(updateIsotopologuesTab()));
     connect(ui_.AtomTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(updateUnderlyingAtomSelection()));
-    connect(&bonds_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
-    connect(&angles_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
-    connect(&torsions_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
-    connect(&impropers_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
     connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), dissolveWindow_, SLOT(setModified()));
-
+    connect(&isos_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(updateControls()));
     connect(ui_.IsotopologuesTree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
             this, SLOT(updateIsotopologuesTab()));
+    connect(ui_.SpeciesButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
+            SLOT(buttonGroupToggled(QAbstractButton *, bool)));
 }
 
 /*
@@ -149,24 +123,34 @@ void SpeciesTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
-    // Structure Tab
-    ui_.BoxWidget->setVisible(species_->box()->type() != Box::BoxType::NonPeriodic);
-    if (species_->box()->type() != Box::BoxType::NonPeriodic)
-    {
-        const auto *box = species_->box();
-        ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
-        ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
-        ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
-        ui_.CurrentBoxCLabel->setText(QString::number(box->axisLengths().z));
-        ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
-        ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
-        ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
-    }
-    ui_.ViewerWidget->postRedisplay();
+    // Update headers
+    ui_.AtomsPushButton->setText(QString("Atoms (%1)").arg(species_->nAtoms()));
+    ui_.IsotopologuesPushButton->setText(QString("Isotopologues (%1)").arg(species_->nIsotopologues()));
+    ui_.SitesPushButton->setText(QString("Sites (%1)").arg(species_->nSites()));
 
-    // Contents / Forcefield Tab
+    // Current Box
+    const auto *box = species_->box();
+    ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
+    QString boxInfo = QString("<b>A:</b>  %1 &#8491;<br>").arg(box->axisLengths().x);
+    boxInfo += QString("<b>B:</b>  %1 &#8491;<br>").arg(box->axisLengths().y);
+    boxInfo += QString("<b>C:</b>  %1 &#8491;<br>").arg(box->axisLengths().z);
+    boxInfo += QString("<b>&#x3B1;:</b>  %1&#xb0;<br>").arg(box->axisAngles().x);
+    boxInfo += QString("<b>&#x3B2;:</b>  %1&#xb0;<br>").arg(box->axisAngles().y);
+    boxInfo += QString("<b>&#x3B3;:</b>  %1&#xb0;").arg(box->axisAngles().z);
+    ui_.CurrentBoxFrame->setToolTip(boxInfo);
+    updateDensityLabel();
+
+    ui_.EmpiricalFormulaLabel->setText(QString::fromStdString(EmpiricalFormula::formula(
+        species_->atoms(), [](const auto &i) { return i.Z(); }, true)));
+
+    // Charges
     updateTotalCharges();
-    updateGeometryTables();
+
+    // Atoms Tab
+    ui_.BondsCountLabel->setText(QString::number(species_->nBonds()));
+    ui_.AnglesCountLabel->setText(QString::number(species_->nAngles()));
+    ui_.TorsionsCountLabel->setText(QString::number(species_->nTorsions()));
+    ui_.ImpropersCountLabel->setText(QString::number(species_->nImpropers()));
 
     // Isotopologues Tab
     updateIsotopologuesTab();
@@ -235,3 +219,29 @@ bool SpeciesTab::canClose() const
 
 // Return displayed Species
 Species *SpeciesTab::species() const { return species_; }
+
+// Button group toggled
+void SpeciesTab::buttonGroupToggled(QAbstractButton *button, bool checked)
+{
+    if (button == ui_.AtomsPushButton)
+    {
+        ui_.AtomsFrame->setVisible(checked);
+        if (checked)
+            ui_.AtomTable->resizeColumnsToContents();
+        ui_.IsotopologuesFrame->setVisible(!checked);
+        ui_.SitesFrame->setVisible(!checked);
+    }
+    else if (button == ui_.IsotopologuesPushButton)
+    {
+        ui_.IsotopologuesFrame->setVisible(checked);
+        ui_.AtomsFrame->setVisible(!checked);
+        ui_.SitesFrame->setVisible(!checked);
+    }
+    else if (button == ui_.SitesPushButton)
+    {
+        ui_.SitesFrame->setVisible(checked);
+        ui_.ViewerWidget->speciesViewer()->setSiteVisible(checked);
+        ui_.AtomsFrame->setVisible(!checked);
+        ui_.IsotopologuesFrame->setVisible(!checked);
+    }
+}

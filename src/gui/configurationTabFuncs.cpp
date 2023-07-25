@@ -108,35 +108,40 @@ void ConfigurationTab::updateControls()
 {
     Locker refreshLocker(refreshLock_);
 
-    // Populations
-    ui_.AtomPopulation->setText(QString::number(configuration_->nAtoms()));
-    ui_.MolPopulation->setText(QString::number(configuration_->nMolecules()));
+    // Temperature
+    ui_.TemperatureLabel->setText(QString::number(configuration_->temperature()).append(QString(" K")));
 
     // Current Box
     const auto *box = configuration_->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
-    ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
-    ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
-    ui_.CurrentBoxCLabel->setText(QString::number(box->axisLengths().z));
-    ui_.CurrentBoxAlphaLabel->setText(QString::number(box->axisAngles().x));
-    ui_.CurrentBoxBetaLabel->setText(QString::number(box->axisAngles().y));
-    ui_.CurrentBoxGammaLabel->setText(QString::number(box->axisAngles().z));
+    QString boxInfo = QString("<b>A:</b>  %1 &#8491;<br>").arg(box->axisLengths().x);
+    boxInfo += QString("<b>B:</b>  %1 &#8491;<br>").arg(box->axisLengths().y);
+    boxInfo += QString("<b>C:</b>  %1 &#8491;<br>").arg(box->axisLengths().z);
+    boxInfo += QString("<b>&#x3B1;:</b>  %1&#xb0;<br>").arg(box->axisAngles().x);
+    boxInfo += QString("<b>&#x3B2;:</b>  %1&#xb0;<br>").arg(box->axisAngles().y);
+    boxInfo += QString("<b>&#x3B3;:</b>  %1&#xb0;").arg(box->axisAngles().z);
+    ui_.CurrentBoxFrame->setToolTip(boxInfo);
     updateDensityLabel();
+
+    // Populations
+    ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));
+    ui_.MoleculePopulationLabel->setText(QString::number(configuration_->nMolecules()));
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
 }
 
 // Prevent editing within tab
-void ConfigurationTab::preventEditing() { ui_.GeneratorGroup->setEnabled(false); }
+void ConfigurationTab::preventEditing() { ui_.GeneratorWidget->setEnabled(false); }
 
 // Allow editing within tab
-void ConfigurationTab::allowEditing() { ui_.GeneratorGroup->setEnabled(true); }
+void ConfigurationTab::allowEditing() { ui_.GeneratorWidget->setEnabled(true); }
 
 /*
  * Signals / Slots
  */
 
+// Generate
 void ConfigurationTab::on_GenerateButton_clicked(bool checked)
 {
     auto proceed = true;
@@ -170,5 +175,5 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolveWindow_->updateStatusBar();
 }
 
-// Current Box
+// Density units changed
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }

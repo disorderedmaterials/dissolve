@@ -3,6 +3,7 @@
 
 #include "classes/atomType.h"
 #include "gui/gui.h"
+#include "gui/intramolecularTermsDialog.h"
 #include "gui/speciesTab.h"
 #include "main/dissolve.h"
 #include <QMessageBox>
@@ -103,31 +104,22 @@ void SpeciesTab::updateTotalCharges()
 
     auto atomCharge = species_->totalCharge(false);
     auto atomChargeOK = fabs(atomCharge) < 1.0e-5;
-    ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1").arg(atomCharge) : QString::number(atomCharge));
+    ui_.TotalAtomChargeLabel->setText(atomCharge > 0.0 ? QString("+%1 (Sp)").arg(atomCharge)
+                                                       : QString("%1 (Sp)").arg(atomCharge));
     ui_.TotalAtomChargeLabel->setPalette(atomChargeOK ? palette() : errorPalette);
-    ui_.TotalAtomChargeIndicator->setHidden(atomChargeOK);
+    ui_.TotalAtomChargeIndicator->setOK(atomChargeOK);
 
     auto atomTypeCharge = species_->totalCharge(true);
     auto atomTypeChargeOK = fabs(atomTypeCharge) < 1.0e-5;
-    ui_.TotalAtomTypeChargeLabel->setText(atomTypeCharge > 0.0 ? QString("+%1").arg(atomTypeCharge)
-                                                               : QString::number(atomTypeCharge));
+    ui_.TotalAtomTypeChargeLabel->setText(atomTypeCharge > 0.0 ? QString("+%1 (AT)").arg(atomTypeCharge)
+                                                               : QString("%1 (AT)").arg(atomTypeCharge));
     ui_.TotalAtomTypeChargeLabel->setPalette(atomTypeChargeOK ? palette() : errorPalette);
-    ui_.TotalAtomTypeChargeIndicator->setHidden(atomTypeChargeOK);
+    ui_.TotalAtomTypeChargeIndicator->setOK(atomTypeChargeOK);
 }
 
-// Update Geometry tables
-void SpeciesTab::updateGeometryTables()
+// Show geometry dialog
+void SpeciesTab::on_IntramolecularTermsButton_clicked(bool checked)
 {
-    // If the Species version has changed, re-set the model data
-    if (speciesVersion_ != species_->version())
-    {
-        bonds_.reset();
-        angles_.reset();
-        torsions_.reset();
-        impropers_.reset();
-    }
-    ui_.BondTable->resizeColumnsToContents();
-    ui_.AngleTable->resizeColumnsToContents();
-    ui_.TorsionTable->resizeColumnsToContents();
-    ui_.ImproperTable->resizeColumnsToContents();
+    auto intramolecularTermsDialog = IntramolecularTermsDialog(this, dissolve_, species_, dissolveWindow_);
+    intramolecularTermsDialog.exec();
 }

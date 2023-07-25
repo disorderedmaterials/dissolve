@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "classes/empiricalFormula.h"
 #include "gui/gui.h"
 #include "gui/speciesViewer.hui"
 #include "neta/neta.h"
@@ -137,6 +138,34 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         else
             selectMenu->setEnabled(false);
 
+        auto *createSiteMenu = menu.addMenu("Create site from...");
+        createSiteMenu->setFont(font());
+        actionMap[createSiteMenu->addAction("Atoms")] = "CreateStatic";
+        actionMap[createSiteMenu->addAction("Elements")] = "CreateDynamicElements";
+        actionMap[createSiteMenu->addAction("Atom Types")] = "CreateDynamicAtomTypes";
+        actionMap[createSiteMenu->addAction("Empty Fragment String")] = "CreateFragment";
+        createSiteMenu->setEnabled(nSelected > 0);
+
+        auto *modifySiteMenu = menu.addMenu("Modify current site...");
+        modifySiteMenu->setFont(font());
+        if (site_ != nullptr)
+        {
+            if (site_->type() == SpeciesSite::SiteType::Static)
+            {
+                actionMap[modifySiteMenu->addAction("Set Origin Atoms")] = "SetOriginStatic";
+                actionMap[modifySiteMenu->addAction("Set X-Axis Atoms")] = "SetXStatic";
+                actionMap[modifySiteMenu->addAction("Set Y-Axis Atoms")] = "SetYStatic";
+            }
+            else if (site_->type() == SpeciesSite::SiteType::Dynamic)
+            {
+                actionMap[modifySiteMenu->addAction("Set Elements")] = "SetDynamicElements";
+                actionMap[modifySiteMenu->addAction("Set Atom Types")] = "SetDynamicAtomTypes";
+            }
+            else if (site_->type() == SpeciesSite::SiteType::Fragment)
+                modifySiteMenu->setEnabled(false);
+        }
+        modifySiteMenu->setEnabled(sitesVisible_);
+
         // Set menu (only if DissolveWindow is set)
         if (dissolveWindow_)
         {
@@ -164,6 +193,85 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         view_.resetViewMatrix();
     else if (actionMap[selectedAction] == "CopyToClipboard")
         copyViewToClipboard(true);
+    else if (actionMap[selectedAction] == "CreateStatic")
+    {
+        auto *site =
+            species_->addSite(EmpiricalFormula::formula(species_->selectedAtoms(), [](const auto &i) { return i->Z(); }));
+        site->setStaticOriginAtoms(species_->selectedAtoms());
+        setSite(site);
+        postRedisplay();
+        emit(siteCreatedAndShown());
+    }
+    else if (actionMap[selectedAction] == "SetOriginStatic")
+    {
+        site_->setStaticOriginAtoms(species_->selectedAtoms());
+        postRedisplay();
+        emit(sitesChanged());
+    }
+    else if (actionMap[selectedAction] == "SetXStatic")
+    {
+        site_->setStaticXAxisAtoms(species_->selectedAtoms());
+        postRedisplay();
+        emit(sitesChanged());
+    }
+    else if (actionMap[selectedAction] == "SetYStatic")
+    {
+        site_->setStaticYAxisAtoms(species_->selectedAtoms());
+        postRedisplay();
+        emit(sitesChanged());
+    }
+    else if (actionMap[selectedAction] == "CreateDynamicElements")
+    {
+        auto *site =
+            species_->addSite(EmpiricalFormula::formula(species_->selectedAtoms(), [](const auto &i) { return i->Z(); }));
+        site->setType(SpeciesSite::SiteType::Dynamic);
+        std::vector<Elements::Element> elements;
+        for (const auto &i : species_->selectedAtoms())
+            elements.push_back(i->Z());
+        site->setDynamicElements(elements);
+        setSite(site);
+        postRedisplay();
+        emit(siteCreatedAndShown());
+    }
+    else if (actionMap[selectedAction] == "CreateDynamicAtomTypes")
+    {
+        auto *site =
+            species_->addSite(joinStrings(species_->selectedAtoms(), "_", [](const auto &i) { return i->atomType()->name(); }));
+        site->setType(SpeciesSite::SiteType::Dynamic);
+        std::vector<std::shared_ptr<AtomType>> atomTypes;
+        for (const auto &i : species_->selectedAtoms())
+            atomTypes.push_back(i->atomType());
+        site->setDynamicAtomTypes(atomTypes);
+        setSite(site);
+        postRedisplay();
+        emit(siteCreatedAndShown());
+    }
+    else if (actionMap[selectedAction] == "SetDynamicElements")
+    {
+        std::vector<Elements::Element> elements;
+        for (const auto &i : species_->selectedAtoms())
+            elements.push_back(i->Z());
+        site_->setDynamicElements(elements);
+        postRedisplay();
+        emit(sitesChanged());
+    }
+    else if (actionMap[selectedAction] == "SetDynamicAtomTypes")
+    {
+        std::vector<std::shared_ptr<AtomType>> atomTypes;
+        for (const auto &i : species_->selectedAtoms())
+            atomTypes.push_back(i->atomType());
+        site_->setDynamicAtomTypes(atomTypes);
+        postRedisplay();
+        emit(sitesChanged());
+    }
+    else if (actionMap[selectedAction] == "CreateFragment")
+    {
+        auto *site = species_->addSite("New Site");
+        site->setType(SpeciesSite::SiteType::Fragment);
+        setSite(site);
+        postRedisplay();
+        emit(siteCreatedAndShown());
+    }
     else if (DissolveSys::startsWith(actionMap[selectedAction], "Select"))
     {
         // Create a NETA description from the current atom

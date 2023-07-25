@@ -60,7 +60,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     Vec3<double> boxAngles(90.0, 90.0, 90.0);
     std::optional<Vec3<double>> boxLengths;
     auto elec14Scaling = 0.5, vdw14Scaling = 0.5;
-    auto blockDone = false, error = false;
+    auto blockDone = false, errorsEncountered = false;
     auto atomVectorFixed = false, bondVectorFixed = false, angleVectorFixed = false, torsionVectorFixed = false,
          improperVectorFixed = false;
     auto atomIndex = 0, bondIndex = 0, angleIndex = 0, torsionIndex = 0, improperIndex = 0;
@@ -73,10 +73,17 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!keywords().isValid(parser.argsv(0)))
-            return keywords().errorAndPrintValid(parser.argsv(0));
+        {
+            keywords().errorAndPrintValid(parser.argsv(0));
+            errorsEncountered = true;
+            continue;
+        }
         auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
-            return false;
+        {
+            errorsEncountered = true;
+            continue;
+        }
 
         // All OK, so process the keyword
         switch (kwd)
@@ -93,11 +100,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 else
                     a = addAngle(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1);
-                if (!a)
-                {
-                    error = true;
-                    break;
-                }
 
                 /*
                  * If only the indices were given, create an angle without a specified functional form (a
@@ -114,7 +116,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!master)
                     {
                         Messenger::error("No master Angle parameters named '{}' exist.\n", &parser.argsv(4)[1]);
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -125,7 +127,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!AngleFunctions::forms().isValid(parser.argsv(4)))
                     {
                         Messenger::error("Functional form of Angle ({}) not recognised.\n", parser.argsv(4));
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                     af = AngleFunctions::forms().enumeration(parser.argsv(4));
@@ -134,14 +136,14 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!AngleFunctions::forms().validNArgs(af, parser.nArgs() - 5))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
                     // Set parameters
                     if (!a->get().setInteractionParameters(parser, 5))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                 }
@@ -152,7 +154,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 {
                     Messenger::error("Unrecognised element symbol '{}' found in {} keyword.\n", parser.argsv(2),
                                      Species::keywords().keyword(Species::SpeciesKeyword::Atom));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 if (atomVectorFixed && atomIndex < atoms_.size())
@@ -188,11 +190,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 else
                     b = addBond(parser.argi(1) - 1, parser.argi(2) - 1);
-                if (!b)
-                {
-                    error = true;
-                    break;
-                }
 
                 /*
                  * If only the indices were given, create a bond without a specified functional form (a
@@ -209,7 +206,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!master)
                     {
                         Messenger::error("No master Bond parameters named '{}' exist.\n", &parser.argsv(3)[1]);
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -221,7 +218,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!BondFunctions::forms().isValid(parser.argsv(3)))
                     {
                         Messenger::error("Functional form of Bond ({}) not recognised.\n", parser.argsv(3));
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                     bf = BondFunctions::forms().enumeration(parser.argsv(3));
@@ -230,14 +227,14 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!BondFunctions::forms().validNArgs(bf, parser.nArgs() - 4))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
                     // Set parameters
                     if (!b->get().setInteractionParameters(parser, 4))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                 }
@@ -250,7 +247,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     Messenger::error("Tried to set the bond type of bond between atoms {} and {}, but this bond "
                                      "does not exist.\n",
                                      parser.argi(1), parser.argi(2));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
 
@@ -259,7 +256,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 if (bt == SpeciesBond::nBondTypes)
                 {
                     Messenger::error("Unrecognised bond type '{}'.\n", parser.argsv(3));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 b->get().setBondType(bt);
@@ -276,7 +273,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 if (index >= nAtoms())
                 {
                     Messenger::error("Specified Atom index ({}) for Charge keyword is out of range.\n", parser.argi(1));
-                    error = true;
+                    errorsEncountered = true;
                 }
                 auto &i = atom(index);
                 i.setCharge(parser.argd(2));
@@ -296,7 +293,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 // Apply Forcefield?
                 if (forcefield_ && !applyForcefieldTerms(coreData))
                 {
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 updateIsotopologues();
@@ -308,7 +305,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 if (!forcefield_)
                 {
                     Messenger::error("No forcefield named '{}' exists.\n", parser.argsv(1));
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
                 break;
@@ -325,11 +322,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 else
                     imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
-                if (!imp)
-                {
-                    error = true;
-                    break;
-                }
 
                 // Check the functional form specified - if it starts with '@' it is a reference to master
                 // parameters
@@ -340,7 +332,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!master)
                     {
                         Messenger::error("No master Improper parameters named '{}' exist.\n", &parser.argsv(5)[1]);
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -352,7 +344,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!TorsionFunctions::forms().isValid(parser.argsv(5)))
                     {
                         Messenger::error("Functional form of Improper ({}) not recognised.\n", parser.argsv(5));
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                     tf = TorsionFunctions::forms().enumeration(parser.argsv(5));
@@ -361,14 +353,14 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 6))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
                     // Set parameters
                     if (!imp->get().setInteractionParameters(parser, 6))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                 }
@@ -390,7 +382,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         Messenger::error("Failed to find AtomType '{}', referred to in Isotopologue '{}', "
                                          "Species '{}'\n",
                                          arg1, iso->name(), name());
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -401,7 +393,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         Messenger::error("No such Isotope ({}) for element {} (AtomType '{}') in Isotopologue "
                                          "'{}', Species '{}'\n",
                                          A, Elements::symbol(at->Z()), at->name(), iso->name(), name());
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -472,13 +464,13 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 {
                     Messenger::error("The site '{}' already exists on Species '{}', and cannot be redefined.\n",
                                      parser.argsv(1), name());
-                    error = true;
+                    errorsEncountered = true;
                     break;
                 }
 
                 site = addSite(parser.argsv(1));
                 if (!site->read(parser, coreData))
-                    error = true;
+                    errorsEncountered = true;
                 break;
             case (Species::SpeciesKeyword::Torsion):
                 // Create a new angle definition between the specified atoms
@@ -493,11 +485,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 else
                     torsion = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
-                if (!torsion)
-                {
-                    error = true;
-                    break;
-                }
 
                 /*
                  * If only the indices were given, create an angle without a specified functional form (a
@@ -514,7 +501,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!master)
                     {
                         Messenger::error("No master Torsion parameters named '{}' exist.\n", &parser.argsv(5)[1]);
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -526,7 +513,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!TorsionFunctions::forms().isValid(parser.argsv(5)))
                     {
                         Messenger::error("Functional form of Torsion ({}) not recognised.\n", parser.argsv(5));
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
                     tf = TorsionFunctions::forms().enumeration(parser.argsv(5));
@@ -535,14 +522,14 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!TorsionFunctions::forms().validNArgs(tf, parser.nArgs() - 6))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
                     // Set parameters
                     if (!torsion->get().setInteractionParameters(parser, 6))
                     {
-                        error = true;
+                        errorsEncountered = true;
                         break;
                     }
 
@@ -552,27 +539,23 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             default:
                 Messenger::error("Species block keyword '{}' not accounted for.\n", keywords().keyword(kwd));
-                error = true;
+                errorsEncountered = true;
                 break;
         }
-
-        // Error encountered?
-        if (error)
-            break;
 
         // End of block?
         if (blockDone)
             break;
     }
 
-    // If there's no error and the blockDone flag isn't set, return an error
-    if (!error && !blockDone)
+    // If there's no errorsEncountered and the blockDone flag isn't set, return an errorsEncountered
+    if (!errorsEncountered && !blockDone)
     {
         Messenger::error("Unterminated Species block found.\n");
-        error = true;
+        errorsEncountered = true;
     }
 
-    return (!error);
+    return (!errorsEncountered);
 }
 
 // Write Species definition to specified LineParser

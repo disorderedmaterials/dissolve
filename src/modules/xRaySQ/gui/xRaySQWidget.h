@@ -48,10 +48,6 @@ class XRaySQModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
-    private:
-    // Set data targets in graphs
-    void setGraphDataTargets(XRaySQModule *module);
-
     private slots:
     void on_TotalFQButton_clicked(bool checked);
     void on_PartialSQButton_clicked(bool checked);

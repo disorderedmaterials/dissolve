@@ -12,11 +12,14 @@
 #include "modules/atomShake/atomShake.h"
 
 // Run main processing
-bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
-        return Messenger::error("No configuration target set for module '{}'.\n", name());
+    {
+        Messenger::error("No configuration target set for module '{}'.\n", name());
+        return ExecutionResult::Failed;
+    }
 
     // Retrieve control parameters from Configuration
     auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
@@ -44,7 +47,6 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
-    int shake, n;
     auto nAttempts = 0, nAccepted = 0;
     bool accept;
     double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
@@ -74,13 +76,13 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
              * Calculation Begins
              */
 
-            // Get Molecule index and pointer
+            // Get Molecule pointer
             std::shared_ptr<Molecule> mol = targetConfiguration_->molecule(molId);
 
             // Set current Atom targets in ChangeStore (whole Molecule)
             changeStore.add(mol);
+            auto storeIndex = 0;
 
-            n = 0;
             // Loop over atoms in the Molecule
             for (const auto &i : mol->atoms())
             {
@@ -90,7 +92,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                 currentIntraEnergy = er.geometry() * termScale;
 
                 // Loop over number of shakes per Atom
-                for (shake = 0; shake < nShakesPerAtom_; ++shake)
+                for (auto n = 0; n < nShakesPerAtom_; ++n)
                 {
                     // Create a random translation vector
                     rDelta.set(randomBuffer.randomPlusMinusOne() * stepSize_, randomBuffer.randomPlusMinusOne() * stepSize_,
@@ -112,11 +114,11 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                     if (accept)
                     {
                         // Accept new (current) position of target Atom
-                        changeStore.updateAtom(n);
+                        changeStore.updateAtom(storeIndex);
                         currentEnergy = newEnergy;
                     }
                     else
-                        changeStore.revert(n);
+                        changeStore.revert(storeIndex);
 
                     // Increase attempt counters
                     // The strategy in force at any one time may vary, so use the distributor's
@@ -130,8 +132,10 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
                         }
                         ++nAttempts;
                     }
-                    ++n;
                 }
+
+                // Increment index of target atom in ChangeStore
+                ++storeIndex;
             }
 
             // Store modifications to Atom positions ready for broadcast later
@@ -151,11 +155,11 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
 
     // Collect statistics across all processes
     if (!procPool.allSum(&nAccepted, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&nAttempts, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
     if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
-        return false;
+        return ExecutionResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
@@ -180,5 +184,5 @@ bool AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
     if (nAccepted > 0)
         targetConfiguration_->incrementContentsVersion();
 
-    return true;
+    return ExecutionResult::Success;
 }

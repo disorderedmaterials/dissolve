@@ -109,6 +109,13 @@ class Module : public Serialisable<const CoreData &>
     bool enabled_;
 
     public:
+    // Module execution result
+    enum class ExecutionResult
+    {
+        Failed,
+        Success,
+        NotExecuted
+    };
     // Set frequency at which to run Module (relative to layer execution count)
     void setFrequency(int freq);
     // Return frequency at which to run Module (relative to layer execution count)
@@ -129,7 +136,7 @@ class Module : public Serialisable<const CoreData &>
      */
     private:
     // Run main processing
-    virtual bool process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
+    virtual ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
 
     public:
     // Set target data
@@ -138,7 +145,7 @@ class Module : public Serialisable<const CoreData &>
     // Run set-up stage
     virtual bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    bool executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
+    ExecutionResult executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
 
     /*
      * Timing

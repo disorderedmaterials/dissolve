@@ -14,7 +14,7 @@
 template <class Functions> class InteractionPotential
 {
     public:
-    explicit InteractionPotential(typename Functions::Form form) : form_(form){};
+    explicit InteractionPotential(typename Functions::Form form) { setForm(form); };
     virtual ~InteractionPotential() = default;
     InteractionPotential(const InteractionPotential &source) = default;
     InteractionPotential(InteractionPotential &&source) = delete;

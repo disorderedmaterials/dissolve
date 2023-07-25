@@ -1,8 +1,8 @@
 ---
 name: Epic (Project Management Only)
-about: Create an Epic for an upcoming milestone
-title: 'Epic / Short Description'
-labels: 'Priority: Medium'
+about: Create an Epic project
+title: '[Epic] New Epic'
+labels: ['Epic', 'Priority: Medium']
 assignees: ''
 
 ---

@@ -10,49 +10,73 @@ jobs:
     steps:
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
-        action-token: "${{ secrets.MAIN_SECRET }}"
+        action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
         column-name: "Documentation"
         label-name: "Scope: Documentation"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
-        action-token: "${{ secrets.MAIN_SECRET }}"
+        action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
         column-name: "GUI"
         label-name: "Scope: GUI"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
-        action-token: "${{ secrets.MAIN_SECRET }}"
+        action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
         column-name: "Modules"
         label-name: "Scope: Modules"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
-        action-token: "${{ secrets.MAIN_SECRET }}"
+        action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
         column-name: "Workflow"
         label-name: "Scope: Workflow"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
-        action-token: "${{ secrets.MAIN_SECRET }}"
+        action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
         column-name: "Forcefields"
         label-name: "Scope: Forcefields"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
-        action-token: "${{ secrets.MAIN_SECRET }}"
+        action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
-        column-name: "Source Code"
-        label-name: "Scope: Source Code"
+        column-name: "Design"
+        label-name: "Scope: Design"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
-        action-token: "${{ secrets.MAIN_SECRET }}"
+        action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
-        column-name: "Speed"
-        label-name: "Scope: Speed"
+        column-name: "Codebase"
+        label-name: "Scope: Codebase"
     - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
       with:
-        action-token: "${{ secrets.MAIN_SECRET }}"
+        action-token: "${{ github.token }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "I/O"
+        label-name: "Scope: I/O"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ github.token }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
         column-name: "CI"
         label-name: "Scope: CI"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ github.token }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Visualisation"
+        label-name: "Scope: Visualisation"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ github.token }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Procedures"
+        label-name: "Scope: Procedures"
+    - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
+      with:
+        action-token: "${{ github.token }}"
+        project-url: "https://github.com/projectdissolve/dissolve/projects/6"
+        column-name: "Epics"
+        label-name: "Epic"

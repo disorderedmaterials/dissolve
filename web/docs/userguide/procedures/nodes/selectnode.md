@@ -26,6 +26,14 @@ When nesting `Select` nodes in analysis routines, the selection of sites can be 
 
 The hidden `ForEach` keyword / branch is executed for each site selected by the node, and may contain any other analysis-style nodes, including other `Select` nodes.
 
+## Available Parameters
+
+The following parameters are exported by the node:
+
+|Parameter|Description|
+|:--------|-----------|
+|`nSelected`|The number of sites currently selected by the node|
+
 ## Options
 
 ### Sites
