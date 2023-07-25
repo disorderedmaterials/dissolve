@@ -54,7 +54,7 @@ MainTab::TabType LayerTab::type() const { return MainTab::TabType::Layer; }
 QString LayerTab::getNewTitle(bool &ok)
 {
     // Get a new, valid name for the layer
-    GetModuleLayerNameDialog nameDialog(this, dissolve_.processingLayers());
+    GetModuleLayerNameDialog nameDialog(this, dissolve_.coreData().processingLayers());
     ok = nameDialog.get(moduleLayer_, QString::fromStdString(std::string(moduleLayer_->name())));
 
     if (ok)

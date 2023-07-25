@@ -205,7 +205,7 @@ class CoreData
     bool ownProcessingLayer(ModuleLayer *layer);
     // Return number of defined processing layers
     int nProcessingLayers() const;
-    // Return processing layers
+    // Return list of defined processing layers
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
 
@@ -228,7 +228,6 @@ class CoreData
     public:
     // Remove all references to the specified data
     void removeReferencesTo(Module *data);
-    void removeReferencesTo(ModuleLayer *data);
     void removeReferencesTo(Configuration *data);
     void removeReferencesTo(Species *data);
     void removeReferencesTo(SpeciesSite *data);

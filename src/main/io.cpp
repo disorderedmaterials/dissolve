@@ -55,10 +55,10 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...
-                if (findProcessingLayer(parser.argsv(1)))
+                if (coreData_.findProcessingLayer(parser.argsv(1)))
                     Messenger::error("Redefinition of processing layer '{}'.\n", parser.argsv(1));
 
-                layer = addProcessingLayer();
+                layer = coreData_.addProcessingLayer();
                 layer->setName(parser.argsv(1));
                 Messenger::print("\n--> Created processing layer '{}'\n", layer->name());
                 if (!LayerBlock::parse(parser, this, layer))
@@ -187,7 +187,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
     toMap(node, "layers",
           [this](const std::string &name, const SerialisedValue &data)
           {
-              auto *layer = addProcessingLayer();
+              auto *layer = coreData_.addProcessingLayer();
               layer->setName(name);
               layer->deserialise(data, coreData_);
           });

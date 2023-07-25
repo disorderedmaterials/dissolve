@@ -542,8 +542,6 @@ void CoreData::removeProcessingLayer(ModuleLayer *layer)
     if (!layer)
         return;
 
-    removeReferencesTo(layer);
-
     // Now safe to remove the layer
     processingLayers_.erase(
         std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](const auto &l) { return l.get() == layer; }));
@@ -575,7 +573,7 @@ bool CoreData::ownProcessingLayer(ModuleLayer *layer)
 // Return number of defined processing layers
 int CoreData::nProcessingLayers() const { return processingLayers_.size(); }
 
-// Return processing layers
+// Return list of defined processing layers
 std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() { return processingLayers_; }
 const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const { return processingLayers_; }
 
@@ -630,7 +628,6 @@ void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deseria
 
 // Remove all references to the specified data
 void CoreData::removeReferencesTo(Module *data) { KeywordStore::objectNoLongerValid(data); }
-void CoreData::removeReferencesTo(ModuleLayer *data) { KeywordStore::objectNoLongerValid(data); }
 void CoreData::removeReferencesTo(Configuration *data) { KeywordStore::objectNoLongerValid(data); }
 void CoreData::removeReferencesTo(Species *data)
 {
