@@ -109,8 +109,6 @@ class Dissolve : public Serialisable<>
      * Layers
      */
     private:
-    // List of defined processing layers
-    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
     // Data associated with processing Modules
     GenericList processingModuleData_;
 

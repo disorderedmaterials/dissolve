@@ -144,7 +144,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
-    Serialisable::fromVectorToTable(processingLayers_, "layers", root);
+    Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 
     return root;
 }
@@ -369,7 +369,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write processing layers
     if (!parser.writeBannerComment("Processing Layers"))
         return false;
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                                layer->name()))

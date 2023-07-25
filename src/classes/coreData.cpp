@@ -22,6 +22,7 @@ void CoreData::clear()
     masters_.torsions.clear();
     masters_.impropers.clear();
     atomTypes_.clear();
+    processingLayers_.clear();
 }
 
 /*

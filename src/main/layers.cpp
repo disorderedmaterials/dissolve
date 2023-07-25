@@ -11,7 +11,7 @@
 bool Dissolve::setUpProcessingLayerModules()
 {
     auto setUpResult = true;
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
         if (!layer->setUpAll(*this, worldPool()))
             setUpResult = false;
     return setUpResult;
