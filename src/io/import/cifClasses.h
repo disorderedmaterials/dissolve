@@ -149,11 +149,11 @@ class CIFSpecies
     // Return the NETA definition string that uniquely describes the reference instance
     const std::string netaString() const;
     // Return the reference instance
-    const std::vector<int> referenceInstance() const;
+    const std::vector<int> &referenceInstance() const;
     // Return all found instances
-    const std::vector<std::vector<int>> instances() const;
+    const std::vector<std::vector<int>> &instances() const;
     // Return the coordinates corresponding to the instances
-    const std::vector<std::vector<Vec3<double>>> coordinates() const;
+    const std::vector<std::vector<Vec3<double>>> &coordinates() const;
     // Return whether the reference instance contains symmetry.
     bool hasSymmetry() const;
 
