@@ -7,7 +7,7 @@
 
 XmlTreeIndex::XmlTreeIndex(int row, int column, pugi::xml_node node) : row_(row), column_(column), node_(node) {}
 
-XmlTreeModel::XmlTreeModel(Dissolve &dissolve) : QAbstractItemModel(), atoms_(dissolve) {}
+XmlTreeModel::XmlTreeModel(const CoreData &coreData) : QAbstractItemModel(), atoms_(coreData) {}
 
 void XmlTreeModel::readFile(const pugi::xml_node &root)
 {

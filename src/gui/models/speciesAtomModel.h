@@ -14,13 +14,13 @@ class SpeciesAtomModel : public QAbstractTableModel
 
     private:
     Species &species_;
-    Dissolve &dissolve_;
+    const CoreData &coreData_;
 
     signals:
     void atomTypeChanged();
 
     public:
-    SpeciesAtomModel(Species &species, Dissolve &dissolve);
+    SpeciesAtomModel(Species &species, const CoreData &coreData);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

@@ -12,6 +12,7 @@ on:
     - '.github/workflows/issues.yml'
     - '.github/workflows/release.yml'
     - '.github/workflows/web**'
+    - '.github/ISSUE_TEMPLATE/**'
     - 'web/**'
     - 'README.md'
 

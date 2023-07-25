@@ -1,8 +1,6 @@
 add_library(
   main
-  atomTypes.cpp
   comms.cpp
-  configurations.cpp
   cli.cpp
   dissolve.cpp
   io.cpp
@@ -13,10 +11,8 @@ add_library(
   keywords_module.cpp
   keywords_pairPotentials.cpp
   layers.cpp
-  objects.cpp
   pairPotentials.cpp
   simulation.cpp
-  species.cpp
   version.cpp
   cli.h
   dissolve.h

@@ -31,7 +31,7 @@ TEST(ForcesModuleTest, Full)
     ASSERT_TRUE(dissolve.loadInput("full.txt"));
     ASSERT_TRUE(dissolve.regeneratePairPotentials());
     dissolve.prepare();
-    auto &cfg = dissolve.configurations().front();
+    auto &cfg = coreData.configurations().front();
     ASSERT_TRUE(cfg != nullptr);
 
     // Load in full reference forces
@@ -55,7 +55,7 @@ TEST(ForcesModuleTest, Unbound)
     ASSERT_TRUE(dissolve.loadInput("full.txt"));
     ASSERT_TRUE(dissolve.regeneratePairPotentials());
     dissolve.prepare();
-    auto &cfg = dissolve.configurations().front();
+    auto &cfg = coreData.configurations().front();
     ASSERT_TRUE(cfg != nullptr);
 
     // Load in unbound reference forces
@@ -80,7 +80,7 @@ TEST(ForcesModuleTest, Bound)
     ASSERT_TRUE(dissolve.loadInput("full.txt"));
     ASSERT_TRUE(dissolve.regeneratePairPotentials());
     dissolve.prepare();
-    auto &cfg = dissolve.configurations().front();
+    auto &cfg = coreData.configurations().front();
     ASSERT_TRUE(cfg != nullptr);
 
     // Load in bound reference forces

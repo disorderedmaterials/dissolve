@@ -23,7 +23,7 @@ bool Dissolve::prepare()
     Messenger::banner("Preparing Simulation");
 
     // Check Species
-    for (const auto &sp : species())
+    for (const auto &sp : coreData_.species())
     {
         if (!sp->checkSetUp())
             return false;
@@ -33,25 +33,25 @@ bool Dissolve::prepare()
 
     // Remove unused atom types
     AtomTypeMix usedAtomTypes;
-    for (const auto &sp : species())
+    for (const auto &sp : coreData_.species())
         usedAtomTypes.add(sp->atomTypes());
 
-    atomTypes().erase(std::remove_if(atomTypes().begin(), atomTypes().end(),
-                                     [&](const auto &at)
-                                     {
-                                         if (usedAtomTypes.contains(at))
-                                             return false;
-                                         else
-                                         {
-                                             Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
-                                             return true;
-                                         }
-                                     }),
-                      atomTypes().end());
+    coreData_.atomTypes().erase(std::remove_if(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                                               [&](const auto &at)
+                                               {
+                                                   if (usedAtomTypes.contains(at))
+                                                       return false;
+                                                   else
+                                                   {
+                                                       Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
+                                                       return true;
+                                                   }
+                                               }),
+                                coreData_.atomTypes().end());
 
     // Reassign AtomType indices (in case one or more have been added / removed)
     auto count = 0;
-    for (const auto &at : atomTypes())
+    for (const auto &at : coreData_.atomTypes())
         at->setIndex(count++);
 
     // Store / update last-used pair potential cutoff
@@ -72,7 +72,7 @@ bool Dissolve::prepare()
 
     // Check Configurations
     std::set<const Species *> globalUsedSpecies;
-    for (auto &cfg : configurations())
+    for (auto &cfg : coreData_.configurations())
     {
         // If the configuration is empty, initialise it now
         if (cfg->nMolecules() == 0)
@@ -95,17 +95,17 @@ bool Dissolve::prepare()
     }
 
     // If we have no configurations, check all species regardless
-    if (nConfigurations() == 0)
-        for (const auto &sp : species())
+    if (coreData_.nConfigurations() == 0)
+        for (const auto &sp : coreData_.species())
             globalUsedSpecies.emplace(sp.get());
 
     // Check pair potential style - first, determine which styles might be valid for use
     // -- Configuration charges must always be zero
-    auto neutralConfigsWithPPCharges = std::all_of(configurations().begin(), configurations().end(),
+    auto neutralConfigsWithPPCharges = std::all_of(coreData_.configurations().begin(), coreData_.configurations().end(),
                                                    [](const auto &cfg) { return fabs(cfg->totalCharge(true)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on atom types    : {}\n",
                             DissolveSys::btoa(neutralConfigsWithPPCharges));
-    auto neutralConfigsWithSpeciesCharges = std::all_of(configurations().begin(), configurations().end(),
+    auto neutralConfigsWithSpeciesCharges = std::all_of(coreData_.configurations().begin(), coreData_.configurations().end(),
                                                         [](const auto &cfg) { return fabs(cfg->totalCharge(false)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on species atoms : {}\n",
                             DissolveSys::btoa(neutralConfigsWithSpeciesCharges));
@@ -121,9 +121,9 @@ bool Dissolve::prepare()
                     });
     Messenger::printVerbose("Species atomic charge validity  : {}\n", DissolveSys::btoa(speciesHaveValidAtomicCharges));
     // -- Do all atom types have 95% non-zero charges
-    auto atomTypesHaveValidAtomicCharges =
-        (std::count_if(atomTypes().begin(), atomTypes().end(), [](const auto &at) { return fabs(at->charge()) > 1.0e-5; }) /
-         double(nAtomTypes())) > 0.95;
+    auto atomTypesHaveValidAtomicCharges = (std::count_if(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                                                          [](const auto &at) { return fabs(at->charge()) > 1.0e-5; }) /
+                                            double(coreData_.nAtomTypes())) > 0.95;
     Messenger::printVerbose("AtomType atomic charge validity : {}\n", DissolveSys::btoa(atomTypesHaveValidAtomicCharges));
 
     if (automaticChargeSource_)
@@ -153,7 +153,7 @@ bool Dissolve::prepare()
         {
             Messenger::error("Atom type charges in pair potentials requested, but at least one configuration is not "
                              "neutral with this approach.\n");
-            for (const auto &cfg : configurations())
+            for (const auto &cfg : coreData_.configurations())
                 Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(true));
             return false;
         }
@@ -176,7 +176,7 @@ bool Dissolve::prepare()
         {
             Messenger::error("Ths use of species atom charges was requested, but at least one configuration is not "
                              "neutral with this approach.\n");
-            for (const auto &cfg : configurations())
+            for (const auto &cfg : coreData_.configurations())
                 Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(false));
             return false;
         }
@@ -269,7 +269,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Configuration Upkeep");
 
-        for (auto &cfg : configurations())
+        for (auto &cfg : coreData_.configurations())
         {
             Messenger::heading("'{}'", cfg->name());
 
@@ -304,7 +304,7 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
-                if (!module->executeProcessing(*this, worldPool()))
+                if (module->executeProcessing(*this, worldPool()) == Module::ExecutionResult::Failed)
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }
         }

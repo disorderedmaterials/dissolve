@@ -71,7 +71,7 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle), analyser_(P
     processAngle_->keywords().set("LabelValue", std::string("Normalised Frequency"));
     processAngle_->keywords().set("LabelX", std::string("\\symbol{theta}, \\symbol{degrees}"));
     auto &angleNormalisation = processAngle_->branch()->get();
-    angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(x)");
+    angleNormalisation.create<OperateExpressionProcedureNode>({}, "value/sin(toRad(x))");
     angleNormalisation.create<OperateNormaliseProcedureNode>({}, 1.0);
 
     // Process2D: 'DAngle'
@@ -81,7 +81,7 @@ AxisAngleModule::AxisAngleModule() : Module(ModuleTypes::AxisAngle), analyser_(P
     processDAngle_->keywords().set("LabelValue", std::string("g(r)"));
     auto &dAngleNormalisation = processDAngle_->branch()->get();
     dAngleNormalisationExpression_ = dAngleNormalisation.create<OperateExpressionProcedureNode>(
-        {}, fmt::format("{} * value/sin(y)/sin(yDelta)", symmetric_ ? 1.0 : 2.0));
+        {}, fmt::format("{} * value/sin(toRad(y))/sin(toRad(yDelta))", symmetric_ ? 1.0 : 2.0));
     dAngleNormalisation.create<OperateSitePopulationNormaliseProcedureNode>({},
                                                                             ConstNodeVector<SelectProcedureNode>({selectA_}));
     dAngleNormalisation.create<OperateNumberDensityNormaliseProcedureNode>({}, ConstNodeVector<SelectProcedureNode>{selectB_});

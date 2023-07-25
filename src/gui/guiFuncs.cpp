@@ -54,6 +54,8 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
     statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
+    statusLabel_->setOpenExternalLinks(false);
+    connect(statusLabel_, SIGNAL(linkActivated(const QString)), this, SLOT(statusLabelLinkClicked(const QString)));
 
     // Create recent files menu
     setUpRecentFileMenu();
@@ -296,7 +298,7 @@ void DissolveWindow::updateStatusBar()
     // Set status
     if (Messenger::nErrors() > 0)
     {
-        statusLabel_->setText(QString("%1 %2 (see Messages)")
+        statusLabel_->setText(QString("%1 %2 (see <a href='Messages'>Messages</a>)")
                                   .arg(QString::number(Messenger::nErrors()), Messenger::nErrors() == 1 ? "Error" : "Errors"));
         statusIndicator_->setPixmap(QPixmap(":/general/icons/general_false.svg"));
     }
@@ -405,7 +407,7 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
     // Set ETA text if we can
-    if (iterationsRemaining == -1)
+    if (iterationsRemaining == -1 || iterationsRemaining == 0)
         etaLabel_->setText("--:--:--");
     else
     {
@@ -428,4 +430,10 @@ void DissolveWindow::clearMessages()
 {
     ui_.MainTabs->messagesTab()->clearMessages();
     Messenger::clearErrorCounts();
+}
+
+void DissolveWindow::statusLabelLinkClicked(const QString &link)
+{
+    if (DissolveSys::sameString(link.toStdString(), "Messages"))
+        ui_.MainTabs->setCurrentIndex(0);
 }
