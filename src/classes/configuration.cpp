@@ -10,6 +10,7 @@
 #include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
+#include "main/dissolve.h"
 
 Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "Generator")
 {
@@ -114,10 +115,10 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
         return false;
 
     // Create cell array
-    updateCells(procedureContext.potentialMap().range());
+    updateCells(procedureContext.dissolve().potentialMap().range());
 
     // Apply size factor scaling if required
-    applySizeFactor(procedureContext.processPool(), procedureContext.potentialMap());
+    applySizeFactor(procedureContext.processPool(), procedureContext.dissolve().potentialMap());
 
     return true;
 }

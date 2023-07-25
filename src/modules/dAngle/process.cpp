@@ -35,7 +35,7 @@ Module::ExecutionResult DAngleModule::process(Dissolve &dissolve, const ProcessP
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateDAngle experienced problems with its analysis.\n");

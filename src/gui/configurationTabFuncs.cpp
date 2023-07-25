@@ -168,7 +168,7 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
     dissolve_.regeneratePairPotentials();
 
     // Initialise the content
-    configuration_->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()});
+    configuration_->initialiseContent({dissolve_.worldPool(), dissolve_});
 
     // Update
     updateControls();

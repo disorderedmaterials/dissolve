@@ -29,7 +29,7 @@ Module::ExecutionResult IntraAngleModule::process(Dissolve &dissolve, const Proc
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateAngle experienced problems with its analysis.\n");

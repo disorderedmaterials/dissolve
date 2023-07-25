@@ -3,6 +3,7 @@
 
 #include "procedure/nodes/context.h"
 #include <stdexcept>
+#include "main/dissolve.h"
 
 ProcedureContext::ProcedureContext(const ProcessPool &procPool) : processPool_(procPool) {}
 
@@ -11,8 +12,8 @@ ProcedureContext::ProcedureContext(const ProcessPool &procPool, Configuration *c
 {
 }
 
-ProcedureContext::ProcedureContext(const ProcessPool &procPool, const PotentialMap &potentialMap)
-    : processPool_(procPool), potentialMap_(potentialMap)
+ProcedureContext::ProcedureContext(const ProcessPool &procPool, Dissolve &dissolve)
+    : processPool_(procPool), dissolve_(dissolve)
 {
 }
 
@@ -30,31 +31,30 @@ Configuration *ProcedureContext::configuration() const
     return configuration_;
 }
 
-// Set target data list and prefix
-void ProcedureContext::setDataListAndPrefix(GenericList &list, std::string_view prefix)
-{
-    dataList_ = list;
-    dataPrefix_ = prefix;
-}
+// Set prefix
+void ProcedureContext::setPrefix(std::string_view prefix) { dataPrefix_ = prefix; }
 
 // Return prefix for generated data
 std::string_view ProcedureContext::dataPrefix() const { return dataPrefix_; }
 
-// Return target list for generated data
-GenericList &ProcedureContext::dataList() const
+// Return reference to Dissolve
+Dissolve& ProcedureContext::dissolve() const
 {
-    if (!dataList_)
-        throw(std::runtime_error("No data list set in this procedure's context.\n"));
-    return dataList_->get();
+    if (!dissolve_)
+        throw(std::runtime_error("No reference to Dissolve is set in this procedure's context.\n"));
+    return dissolve_->get();
 }
 
-// Set potential map
-void ProcedureContext::setPotentialMap(const PotentialMap &potentialMap) { potentialMap_ = potentialMap; }
+GenericList &ProcedureContext::dataList() const
+{
+    if (!dissolve_)
+        throw(std::runtime_error("No reference to Dissolve is set in this procedure's context.\n"));
+    return dissolve_->get().processingModuleData();
+}
 
-// Return potential map
 const PotentialMap &ProcedureContext::potentialMap() const
 {
-    if (!potentialMap_)
-        throw(std::runtime_error("No potential map was set in this procedure's context.\n"));
-    return potentialMap_->get();
+    if (!dissolve_)
+        throw(std::runtime_error("No reference to Dissolve is set in this procedure's context.\n"));
+    return dissolve_->get().potentialMap();
 }

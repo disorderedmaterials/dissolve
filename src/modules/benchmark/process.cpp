@@ -38,7 +38,7 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const Proce
         {
             Timer timer;
             Messenger::mute();
-            targetConfiguration_->generate({dissolve.worldPool(), dissolve.potentialMap()});
+            targetConfiguration_->generate({dissolve.worldPool(), dissolve});
             Messenger::unMute();
             timing += timer.split();
         }

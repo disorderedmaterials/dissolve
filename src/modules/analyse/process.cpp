@@ -17,7 +17,7 @@ Module::ExecutionResult AnalyseModule::process(Dissolve &dissolve, const Process
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("Analysis ExecutionResult::Failed.\n");

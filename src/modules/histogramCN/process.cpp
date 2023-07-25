@@ -30,7 +30,7 @@ Module::ExecutionResult HistogramCNModule::process(Dissolve &dissolve, const Pro
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("HistogramCN experienced problems with its analysis.\n");

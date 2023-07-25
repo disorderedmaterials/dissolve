@@ -13,6 +13,7 @@
 #include "keywords/nodeValue.h"
 #include "keywords/species.h"
 #include "modules/md/md.h"
+#include "main/dissolve.h"
 
 CoordinateSetsProcedureNode::CoordinateSetsProcedureNode(const Species *sp)
     : ProcedureNode(ProcedureNode::NodeType::CoordinateSets, {ProcedureNode::GenerationContext}), species_(sp)
@@ -159,7 +160,7 @@ bool CoordinateSetsProcedureNode::execute(const ProcedureContext &procedureConte
     for (auto n = 0; n < nSets_.asInteger(); ++n)
     {
         // Evolve our coordinates
-        r = MDModule::evolve(procedureContext.processPool(), procedureContext.potentialMap(), species_, temperature_.asDouble(),
+        r = MDModule::evolve(procedureContext.processPool(), procedureContext.dissolve().potentialMap(), species_, temperature_.asDouble(),
                              nSteps_.asInteger(), deltaT_.asDouble(), r, velocities);
 
         // Store a new set

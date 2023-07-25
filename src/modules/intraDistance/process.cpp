@@ -24,7 +24,7 @@ Module::ExecutionResult IntraDistanceModule::process(Dissolve &dissolve, const P
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateRDF experienced problems with its analysis.\n");
