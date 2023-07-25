@@ -77,6 +77,49 @@ double error(ErrorType errorType, const std::vector<double> &vecA, const std::ve
     return 0.0;
 }
 
+// Return error of specified type between supplied data
+double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, std::vector<int> range)
+{
+    // Get the step size between X values
+    double delta = A.xAxis(1) - A->xAxis(0);
+
+    // Get the index of where range bounds are in X axis vector
+    int startIndex = ((range[0] - A.xAxis(0)) / delta) - 1;
+    int endIndex = ((range[1] - A.xAxis(0)) / delta) - 1;
+
+    // Create new temporary Data1D objects
+    Data1D ATrimmed, BTrimmed;
+
+    auto x = A.xAxis(startIndex);
+
+    // Populate object data points
+    for (auto &&[y1, y2] : zip({A.values().begin() + startIndex, A.values().begin() + endIndex},
+                               {B.values().begin() + startIndex, B.values().begin() + endIndex}))
+    {
+        ATrimmed.addPoint(x, y1);
+        BTrimmed.addPoint(x, y2);
+        x += delta;
+    }
+
+    if (errorType == RMSEError)
+        return rmse(ATrimmed, BTrimmed, quiet);
+    else if (errorType == MAAPEError)
+        return maape(ATrimmed, BTrimmed, quiet);
+    else if (errorType == MAPEError)
+        return mape(ATrimmed, BTrimmed, quiet);
+    else if (errorType == PercentError)
+        return percent(ATrimmed, BTrimmed, quiet);
+    else if (errorType == RFactorError)
+        return rFactor(ATrimmed, BTrimmed, quiet);
+    else if (errorType == EuclideanError)
+        return euclidean(ATrimmed, BTrimmed, quiet);
+
+    throw(
+        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+                                       errorTypes().keyword(errorType))));
+    return 0.0;
+}
+
 /*
  * Data1D
  */

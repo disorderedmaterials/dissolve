@@ -35,6 +35,8 @@ EnumOptions<Error::ErrorType> errorTypes();
 double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet = false);
 // Return error of specified type between supplied double vectors
 double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet = false);
+// Return error of specified type between supplied data between specified range
+double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, std::vector<int> range);
 // Return RMSE between supplied data
 double rmse(const Data1D &A, const Data1D &B, bool quiet = false);
 // Return MAAPE between supplied data
