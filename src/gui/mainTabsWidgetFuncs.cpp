@@ -157,9 +157,10 @@ void MainTabsWidget::clearTabs()
     allTabs_.push_back(messagesTab_.data());
     // -- Forcefield
     addTab(forcefieldTab_->page(), "Forcefield");
-    addTab(controlLayerTab_->page(), "Control");
     setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
     allTabs_.push_back(forcefieldTab_.data());
+    addTab(controlLayerTab_->page(), "Control");
+    allTabs_.push_back(controlLayerTab_.data());
 }
 
 // Reconcile tabs, making them consistent with the provided data
