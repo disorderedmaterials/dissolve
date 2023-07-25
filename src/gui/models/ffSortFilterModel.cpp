@@ -26,7 +26,7 @@ bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelInde
     CoreData temporaryCoreData;
     Dissolve temporaryDissolve(temporaryCoreData);
 
-    Species *modifiedSpecies_ = temporaryDissolve.addSpecies();
+    Species *modifiedSpecies_ = temporaryDissolve.coreData().addSpecies();
     modifiedSpecies_->copyBasic(species_);
     // // originalAtomTypeNames_.clear();
 
@@ -35,7 +35,7 @@ bool ForcefieldSortFilterModel::filterAcceptsRow(int sourceRow, const QModelInde
 
     ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData, Forcefield::TypeAll, true);
     Messenger::unMute();
-    return temporaryDissolve.atomTypes().size() > 0;
+    return temporaryDissolve.coreData().atomTypes().size() > 0;
 }
 
 void ForcefieldSortFilterModel::setSpecies(const Species *species)

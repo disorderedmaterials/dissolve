@@ -31,6 +31,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     std::shared_ptr<AtomType> at1;
     auto blockDone = false, errorsEncountered = false;
     Elements::Element Z;
+    auto &coreData = dissolve->coreData();
 
     while (!parser.eofOrBlank())
     {
@@ -94,13 +95,13 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
 
                 // Find / create AtomType and check element...
-                at1 = dissolve->findAtomType(parser.argsv(1));
+                at1 = coreData.findAtomType(parser.argsv(1));
                 if (!at1)
                 {
                     Messenger::warn("Unknown atom type '{}' referenced in PairPotentials block - creating "
                                     "it now...\n",
                                     parser.argsv(1));
-                    at1 = dissolve->addAtomType(Z);
+                    at1 = coreData.addAtomType(Z);
                     at1->setName(parser.argsv(1));
                 }
                 else if (Z != at1->Z())

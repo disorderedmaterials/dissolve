@@ -33,7 +33,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
     // Realise storage for generated S(Q), and initialise a scattering matrix
     auto &estimatedSQ =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-    scatteringMatrix_.initialise(dissolve.atomTypes(), estimatedSQ);
+    scatteringMatrix_.initialise(dissolve.coreData().atomTypes(), estimatedSQ);
 
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
@@ -200,7 +200,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
      */
 
     // Set up storage for the changes to coefficients used to generate the empirical potentials
-    const auto nAtomTypes = dissolve.nAtomTypes();
+    const auto nAtomTypes = dissolve.coreData().nAtomTypes();
     Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
     fluctuationCoefficients = 0.0;
 
@@ -208,7 +208,8 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
     auto &calculatedUnweightedSQ =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("UnweightedSQ", name_, GenericItem::InRestartFileFlag);
     calculatedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
-    dissolve::for_each_pair(ParallelPolicies::par, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+    dissolve::for_each_pair(ParallelPolicies::par, dissolve.coreData().atomTypes().begin(),
+                            dissolve.coreData().atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) {
                                 calculatedUnweightedSQ[{i, j}].setTag(fmt::format("{}-{}", at1->name(), at2->name()));
                             });
@@ -541,7 +542,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
 
     // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
     auto success = for_each_pair_early(
-        dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+        dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
         {
             // Copy and rename the data for clarity
@@ -606,7 +607,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
     if (test_)
     {
         auto methodSuccess = for_each_pair_early(
-            dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+            dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
             [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
             {
                 testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
@@ -632,19 +633,19 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
 
     auto &estimatedGR =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", name_, GenericItem::InRestartFileFlag);
-    estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2)
-                            {
-                                auto &expGR = estimatedGR[{i, j}];
-                                expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+    estimatedGR.initialise(dissolve.coreData().nAtomTypes(), dissolve.coreData().nAtomTypes(), true);
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
+        [&](int i, auto at1, int j, auto at2)
+        {
+            auto &expGR = estimatedGR[{i, j}];
+            expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
 
-                                // Copy experimental S(Q) and FT it
-                                expGR = estimatedSQ[{i, j}];
-                                Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0,
-                                                WindowFunction(WindowFunction::Form::Lorch0));
-                                expGR += 1.0;
-                            });
+            // Copy experimental S(Q) and FT it
+            expGR = estimatedSQ[{i, j}];
+            Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Form::Lorch0));
+            expGR += 1.0;
+        });
 
     /*
      * Calculate contribution to potential coefficients.
@@ -660,7 +661,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
         dissolve::for_each_pair(
-            ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+            ParallelPolicies::seq, dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
             [&](int i, auto at1, int j, auto at2)
             {
                 auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.pairIndex(at1, at2), dataIndex}];
@@ -698,7 +699,8 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
     {
         // Sum fluctuation coefficients in to the potential coefficients
         auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
-        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+        dissolve::for_each_pair(ParallelPolicies::seq, dissolve.coreData().atomTypes().begin(),
+                                dissolve.coreData().atomTypes().end(),
                                 [&](int i, auto at1, int j, auto at2)
                                 {
                                     auto &potCoeff = coefficients[{i, j}];
@@ -772,18 +774,18 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
     {
         if (procPool.isMaster())
         {
-            dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
-                                    {
-                                        // Grab pointer to the relevant pair potential
-                                        PairPotential *pp = dissolve.pairPotential(at1, at2);
+            dissolve::for_each_pair(
+                ParallelPolicies::seq, dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
+                [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
+                {
+                    // Grab pointer to the relevant pair potential
+                    PairPotential *pp = dissolve.pairPotential(at1, at2);
 
-                                        Data1DExportFileFormat exportFormat(
-                                            fmt::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
-                                        if (!exportFormat.exportData(pp->uAdditional()))
-                                            return procPool.decideFalse();
-                                        return std::nullopt;
-                                    });
+                    Data1DExportFileFormat exportFormat(fmt::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
+                    if (!exportFormat.exportData(pp->uAdditional()))
+                        return procPool.decideFalse();
+                    return std::nullopt;
+                });
             procPool.decideTrue();
         }
         else if (!procPool.decision())
@@ -796,7 +798,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
             auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
             dissolve::for_each_pair(
-                ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                ParallelPolicies::seq, dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
                 [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
                 {
                     // Grab reference to coefficients

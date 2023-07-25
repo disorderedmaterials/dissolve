@@ -26,7 +26,7 @@ TEST_F(AddForcefieldDialogModelTest, benzene)
 
     dissolve.clear();
     ASSERT_TRUE(dissolve.loadInput("inputs/benzene.txt"));
-    auto species = dissolve.findSpecies("benzene");
+    auto species = dissolve.coreData().findSpecies("benzene");
     ASSERT_NE(species, nullptr);
 
     AddForcefieldDialogModel model;

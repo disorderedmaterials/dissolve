@@ -55,7 +55,7 @@ void AddForcefieldDialogModel::next()
         case AddForcefieldDialogModel::Page::AtomTypesPage:
             if (!ff_) // No valud forcefield
                 return;
-            modifiedSpecies_ = temporaryDissolve_->addSpecies();
+            modifiedSpecies_ = temporaryDissolve_->coreData().addSpecies();
             modifiedSpecies_->copyBasic(species_);
             originalAtomTypeNames_.clear();
 
@@ -69,7 +69,7 @@ void AddForcefieldDialogModel::next()
             {
                 case Radio::All:
                     modifiedSpecies_->clearAtomTypes();
-                    temporaryDissolve_->clearAtomTypes();
+                    temporaryDissolve_->coreData().clearAtomTypes();
 
                     assignErrs = ff_->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
                                                       !keepSpeciesAtomChargesCheck_);
@@ -91,7 +91,7 @@ void AddForcefieldDialogModel::next()
                 return;
             }
 
-            for (auto &at : temporaryDissolve_->atomTypes())
+            for (auto &at : temporaryDissolve_->coreData().atomTypes())
                 originalAtomTypeNames_.emplace_back(std::string(at->name()));
 
             atomTypes_.setData(temporaryCoreData_.atomTypes());
@@ -128,7 +128,7 @@ void AddForcefieldDialogModel::setDissolve(Dissolve &dissolve)
     masters_->setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(), temporaryCoreData_.masterTorsions(),
                       temporaryCoreData_.masterImpropers());
     // Set model and signals for the master terms tree
-    atomTypes_.setIconFunction([this](const auto type) { return dissolve_->findAtomType(type->name()) != nullptr; });
+    atomTypes_.setIconFunction([this](const auto type) { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
     masters_->setBondIconFunction([this](std::string_view name)
                                   { return dissolve_->coreData().getMasterBond(name).has_value(); });
     masters_->setAngleIconFunction([this](std::string_view name)
@@ -172,7 +172,7 @@ bool AddForcefieldDialogModel::progressionAllowed() const
 int AddForcefieldDialogModel::atomTypesIndicator() const
 {
     return std::count_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
-                         [&](const auto &atomType) { return dissolve_->findAtomType(atomType->name()); });
+                         [&](const auto &atomType) { return dissolve_->coreData().findAtomType(atomType->name()); });
 }
 
 // Whether we are at the final page of the wizard
@@ -233,7 +233,7 @@ void AddForcefieldDialogModel::finalise()
             continue;
 
         // Copy AtomType
-        dissolve_->copyAtomType(&modified, &original);
+        dissolve_->coreData().copyAtomType(modified, original);
 
         // Overwrite existing parameters?
         if (overwriteParametersCheck_)
@@ -261,7 +261,7 @@ void AddForcefieldDialogModel::finalise()
             if (intraSelectionOnly && (!originalBond.isSelected()))
                 continue;
 
-            dissolve_->copySpeciesBond(*modifiedBond, originalBond);
+            dissolve_->coreData().copySpeciesBond(*modifiedBond, originalBond);
 
             ++modifiedBond;
         }
@@ -273,7 +273,7 @@ void AddForcefieldDialogModel::finalise()
             if (intraSelectionOnly && (!originalAngle.isSelected()))
                 continue;
 
-            dissolve_->copySpeciesAngle(*modifiedAngle, originalAngle);
+            dissolve_->coreData().copySpeciesAngle(*modifiedAngle, originalAngle);
 
             ++modifiedAngle;
         }
@@ -285,7 +285,7 @@ void AddForcefieldDialogModel::finalise()
             if (intraSelectionOnly && (!originalTorsion.isSelected()))
                 continue;
 
-            dissolve_->copySpeciesTorsion(*modifiedTorsion, originalTorsion);
+            dissolve_->coreData().copySpeciesTorsion(*modifiedTorsion, originalTorsion);
 
             ++modifiedTorsion;
         }
@@ -300,12 +300,12 @@ void AddForcefieldDialogModel::finalise()
             auto optImproper = species_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
                                                      modifiedImproper.indexK(), modifiedImproper.indexL());
             if (optImproper)
-                dissolve_->copySpeciesImproper(modifiedImproper, *optImproper);
+                dissolve_->coreData().copySpeciesImproper(modifiedImproper, *optImproper);
             else
             {
                 auto &improper = species_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
                                                        modifiedImproper.indexK(), modifiedImproper.indexL());
-                dissolve_->copySpeciesImproper(modifiedImproper, improper);
+                dissolve_->coreData().copySpeciesImproper(modifiedImproper, improper);
             }
         }
     }

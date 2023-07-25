@@ -36,7 +36,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
         return;
 
     // Create the new Species, and add a single atom at {0,0,0}
-    auto *newSpecies = dissolve_.addSpecies();
+    auto *newSpecies = dissolve_.coreData().addSpecies();
     newSpecies->addAtom(Z, Vec3<double>());
     newSpecies->setName(DissolveSys::uniqueName(Elements::symbol(Z), dissolve().coreData().species(),
                                                 [&](const auto &sp)
@@ -49,7 +49,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 
 void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
 {
-    auto *newSpecies = dissolve_.addSpecies();
+    auto *newSpecies = dissolve_.coreData().addSpecies();
 
     EditSpeciesDialog editSpeciesDialog(this, newSpecies);
     if (editSpeciesDialog.editSpecies())
@@ -63,7 +63,7 @@ void DissolveWindow::on_SpeciesCreateDrawAction_triggered(bool checked)
         ui_.MainTabs->setCurrentTab(newSpecies);
     }
     else
-        dissolve_.removeSpecies(newSpecies);
+        dissolve_.coreData().removeSpecies(newSpecies);
 }
 
 void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
@@ -76,7 +76,7 @@ void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
         return;
 
     // Copy the base species
-    auto *newSpecies = dissolve_.copySpecies(baseSpecies.front());
+    auto *newSpecies = dissolve_.coreData().copySpecies(baseSpecies.front());
 
     EditSpeciesDialog editSpeciesDialog(this, newSpecies);
     if (editSpeciesDialog.editSpecies())
@@ -90,7 +90,7 @@ void DissolveWindow::on_SpeciesCreateFromExistingAction_triggered(bool checked)
         ui_.MainTabs->setCurrentTab(newSpecies);
     }
     else
-        dissolve_.removeSpecies(newSpecies);
+        dissolve_.coreData().removeSpecies(newSpecies);
 }
 
 void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
@@ -103,7 +103,7 @@ void DissolveWindow::on_SpeciesImportFromDissolveAction_triggered(bool checked)
         setModified();
         fullUpdate();
 
-        ui_.MainTabs->setCurrentTab(dissolve_.species().back().get());
+        ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
     }
 }
 
@@ -116,11 +116,11 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
         return;
 
     // Add new species, load from the xyz, and create intramolecular terms
-    auto *sp = dissolve_.addSpecies();
+    auto *sp = dissolve_.coreData().addSpecies();
     SpeciesImportFileFormat importer(qPrintable(xyzFile));
     if (!importer.importData(sp))
     {
-        dissolve_.removeSpecies(sp);
+        dissolve_.coreData().removeSpecies(sp);
         return;
     }
     sp->addMissingBonds();
@@ -129,7 +129,7 @@ void DissolveWindow::on_SpeciesImportFromXYZAction_triggered(bool checked)
     EditSpeciesDialog editSpeciesDialog(this, sp);
     if (!editSpeciesDialog.editSpecies())
     {
-        dissolve_.removeSpecies(sp);
+        dissolve_.coreData().removeSpecies(sp);
         return;
     }
 
@@ -154,7 +154,7 @@ void DissolveWindow::on_SpeciesImportLigParGenAction_triggered(bool checked)
         fullUpdate();
 
         // Select the new species
-        ui_.MainTabs->setCurrentTab(dissolve_.species().back().get());
+        ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
     }
 }
 
@@ -169,7 +169,7 @@ void DissolveWindow::on_SpeciesImportFromCIFAction_triggered(bool checked)
         fullUpdate();
 
         // Select the new species
-        ui_.MainTabs->setCurrentTab(dissolve_.species().back().get());
+        ui_.MainTabs->setCurrentTab(dissolve_.coreData().species().back().get());
     }
 }
 
@@ -199,7 +199,7 @@ void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
         return;
 
     ui_.MainTabs->removeByPage(spTab->page());
-    dissolve_.removeSpecies(spTab->species());
+    dissolve_.coreData().removeSpecies(spTab->species());
 
     setModified({DissolveSignals::DataMutations::SpeciesMutated, DissolveSignals::DataMutations::IsotopologuesMutated});
     fullUpdate();

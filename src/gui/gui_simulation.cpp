@@ -163,7 +163,7 @@ void DissolveWindow::closeTab(QWidget *page)
     {
         auto *cfg = dynamic_cast<ConfigurationTab *>(tab)->configuration();
         ui_.MainTabs->removeByPage(page);
-        dissolve_.removeConfiguration(cfg);
+        dissolve_.coreData().removeConfiguration(cfg);
         setModified({DissolveSignals::ConfigurationsMutated});
     }
     else if (tab->type() == MainTab::TabType::Layer)
@@ -178,7 +178,7 @@ void DissolveWindow::closeTab(QWidget *page)
     {
         auto *sp = dynamic_cast<SpeciesTab *>(tab)->species();
         ui_.MainTabs->removeByPage(page);
-        dissolve_.removeSpecies(sp);
+        dissolve_.coreData().removeSpecies(sp);
         setModified({DissolveSignals::DataMutations::SpeciesMutated, DissolveSignals::DataMutations::IsotopologuesMutated});
     }
     else

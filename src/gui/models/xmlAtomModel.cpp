@@ -7,14 +7,14 @@
 #include <QColor>
 #include <pugixml.hpp>
 
-XmlAtomModel::XmlAtomModel(Dissolve &dissolve) : dissolve_(dissolve) {}
+XmlAtomModel::XmlAtomModel(const CoreData &coreData) : coreData_(coreData) {}
 
 void XmlAtomModel::readFile(const pugi::xml_node &root)
 {
     beginResetModel();
     atoms_.clear();
 
-    auto types = dissolve_.atomTypes();
+    auto &types = coreData_.atomTypes();
 
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
     {

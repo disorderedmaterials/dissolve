@@ -104,10 +104,10 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         else if (ui_.EstimatedSQButton->isChecked())
         {
             // Add experimentally-determined partial S(Q)
-            for (auto [first, second] : PairIterator(dissolve_.atomTypes().size()))
+            for (auto [first, second] : PairIterator(dissolve_.coreData().atomTypes().size()))
             {
-                auto &at1 = dissolve_.atomTypes()[first];
-                auto &at2 = dissolve_.atomTypes()[second];
+                auto &at1 = dissolve_.coreData().atomTypes()[first];
+                auto &at2 = dissolve_.coreData().atomTypes()[second];
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 // Unweighted estimated partial
@@ -148,11 +148,11 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
             }
 
             // Add experimentally-determined partial g(r)
-            PairIterator pairs(dissolve_.atomTypes().size());
+            PairIterator pairs(dissolve_.coreData().atomTypes().size());
             for (auto [first, second] : pairs)
             {
-                auto &at1 = dissolve_.atomTypes()[first];
-                auto &at2 = dissolve_.atomTypes()[second];
+                auto &at1 = dissolve_.coreData().atomTypes()[first];
+                auto &at2 = dissolve_.coreData().atomTypes()[second];
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 // Experimentally-determined unweighted partial
@@ -181,11 +181,11 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
         else if (ui_.PotentialsButton->isChecked())
         {
             // Add on additional potentials
-            PairIterator pairs(dissolve_.atomTypes().size());
+            PairIterator pairs(dissolve_.coreData().atomTypes().size());
             for (auto [first, second] : pairs)
             {
-                auto &at1 = dissolve_.atomTypes()[first];
-                auto &at2 = dissolve_.atomTypes()[second];
+                auto &at1 = dissolve_.coreData().atomTypes()[first];
+                auto &at2 = dissolve_.coreData().atomTypes()[second];
                 const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
                 auto pp = dissolve_.pairPotential(at1, at2);
