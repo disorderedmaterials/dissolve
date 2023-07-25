@@ -32,23 +32,22 @@ EnumOptions<Error::ErrorType> errorTypes();
  * Data1D
  */
 
-// Return error of specified type between supplied data
-double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet = false);
-// Return error of specified type between supplied double vectors
-double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet = false);
-// Return error of specified type between supplied data between specified range
-double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, Range range);
+// Return error of specified type between supplied data, allows a range parameter to be specified
+double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
+// Return error of specified type between supplied double vectors, allows a range parameter to be specified
+double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet = false,
+             Range range = Range());
 // Return RMSE between supplied data
-double rmse(const Data1D &A, const Data1D &B, bool quiet = false, Range range);
+double rmse(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
 // Return MAAPE between supplied data
-double maape(const Data1D &A, const Data1D &B, bool quiet = false, Range range);
+double maape(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
 // Return MAPE between supplied data
-double mape(const Data1D &A, const Data1D &B, bool quiet = false, Range range);
+double mape(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
 // Return percentage error between supplied data
-double percent(const Data1D &A, const Data1D &B, bool quiet = false, Range range);
+double percent(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
 // Return R-Factor (average squared error per point) between supplied data
-double rFactor(const Data1D &A, const Data1D &B, bool quiet = false, Range range);
+double rFactor(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
 // Return Euclidean distance, normalised to mean of B, between supplied data
-double euclidean(const Data1D &A, const Data1D &B, bool quiet = false, Range range);
+double euclidean(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
 
 }; // namespace Error

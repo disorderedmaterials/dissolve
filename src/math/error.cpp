@@ -45,10 +45,16 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return error of specified type between supplied double vectors
-double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet)
+double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet, Range range)
 {
     // Size check
     assert(vecA.size() == vecB.size());
+
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(B.xAxis().front(), B.xAxis.back())
+    }
 
     // Create temporary Data1D for simplicity
     Data1D A, B;
@@ -163,6 +169,12 @@ double mape(const Data1D &A, const Data1D &B, bool quiet, Range range)
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(B.xAxis().front(), B.xAxis.back())
+    }
+
     auto sum = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(A.xAxis(), A.values()))
@@ -203,6 +215,12 @@ double maape(const Data1D &A, const Data1D &B, bool quiet, Range range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
+
+    // if range is unset
+    if (range.maximum() == range.minimum())
+    {
+        range.set(B.xAxis().front(), B.xAxis.back())
+    }
 
     auto sum = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
