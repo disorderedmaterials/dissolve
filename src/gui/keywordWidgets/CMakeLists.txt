@@ -12,6 +12,7 @@ set(keywordWidgets_MOC_HDRS
     function1D.h
     interactionPotential.h
     isotopologueSet.h
+    layer.h
     module.h
     moduleVector.h
     node.h
@@ -52,6 +53,7 @@ set(keywordWidgets_UIS
     function1D.ui
     interactionPotential.ui
     isotopologueSet.ui
+    layer.ui
     module.ui
     moduleVector.ui
     node.ui
@@ -89,6 +91,7 @@ set(keywordWidgets_SRCS
     integerFuncs.cpp
     interactionPotentialFuncs.cpp
     isotopologueSetFuncs.cpp
+    layerFuncs.cpp
     moduleFuncs.cpp
     moduleVectorFuncs.cpp
     nodeFuncs.cpp
