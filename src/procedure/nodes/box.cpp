@@ -7,6 +7,7 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "keywords/bool.h"
+#include "keywords/layer.h"
 #include "keywords/vec3NodeValue.h"
 
 BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angles, bool nonPeriodic)
@@ -17,6 +18,7 @@ BoxProcedureNode::BoxProcedureNode(Vec3<NodeValue> lengths, Vec3<NodeValue> angl
     keywords_.add<Vec3NodeValueKeyword>("Lengths", "Box lengths", lengths_, this, Vec3Labels::ABCLabels);
     keywords_.add<Vec3NodeValueKeyword>("Angles", "Box angles", angles_, this, Vec3Labels::AlphaBetaGammaLabels);
     keywords_.add<BoolKeyword>("NonPeriodic", "Whether the box is non-periodic", nonPeriodic_);
+    keywords_.add<LayerKeyword>("Layer", "k", layer_);
 }
 
 /*
