@@ -10,12 +10,16 @@
 #include "keywords/optionalInt.h"
 #include "keywords/stdString.h"
 #include "keywords/vectorStringDouble.h"
+#include "keywords/weightedModuleVector.h"
 
 EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
 {
     keywords_.addTarget<ModuleVectorKeyword>("Target", "Add specified Module (and it's Reference data) as a refinement target",
                                              targets_,
                                              std::vector<ModuleTypes::ModuleType>{ModuleTypes::NeutronSQ, ModuleTypes::XRaySQ});
+    keywords_.addTarget<WeightedModuleVectorKeyword>(
+        "TargetWeight", "Set relative weighting for specific module targets as they enter into the scattering matrix",
+        targetWeights_, std::vector<ModuleTypes::ModuleType>{ModuleTypes::NeutronSQ, ModuleTypes::XRaySQ});
 
     keywords_.setOrganisation("Options", "Control");
     keywords_.add<DoubleKeyword>("EReq", "Limit of magnitude of additional potential for any one pair potential", eReq_, 0.0);
