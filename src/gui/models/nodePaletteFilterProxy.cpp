@@ -20,16 +20,21 @@ bool NodePaletteFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent
     if (context_ == ProcedureNode::NodeContext::AnyContext)
         return true;
 
-    static const std::map<ProcedureNode::NodeContext, std::vector<std::string>> contextCategories = {
-        {ProcedureNode::NodeContext::NoContext, {}},
-        {ProcedureNode::NodeContext::AnalysisContext, {"Data"}},
-        {ProcedureNode::NodeContext::GenerationContext,
-         {"Calculate", "Build", "Calculate", "Data", "General", "Operate", "Pick", "Potentials", "Sites"}},
-        {ProcedureNode::NodeContext::OperateContext,
-         {"Calculate", "Data", "General", "Operate", "Pick", "Potentials", "Sites"}},
-    };
-
-    const auto &contextCategoryList = contextCategories.at(context_);
     auto category = std::next(ProcedureNodeRegistry::categoryMap().begin(), parent.isValid() ? parent.row() : row)->first;
-    return std::find(contextCategoryList.begin(), contextCategoryList.end(), category) != contextCategoryList.end();
+    
+    switch (context_)
+    {
+        case (ProcedureNode::NodeContext::AnyContext):
+            return true;
+        case (ProcedureNode::NodeContext::NoContext):
+            return false;
+        case (ProcedureNode::NodeContext::OperateContext):
+            return category == "Operate";
+        case (ProcedureNode::NodeContext::GenerateContext):
+            return category != "Operate";
+        case (ProcedureNode::NodeContext::AnalysisContext):
+            return category != "Build" && category != "Potentials" && category != "Operate";
+        default:
+            throw(.....);
+    }
 }
