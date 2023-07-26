@@ -4,7 +4,7 @@
 #include "gui/models/nodePaletteFilterProxy.h"
 #include "procedure/nodes/registry.h"
 
-// Set allowed categories
+// Set current context
 void NodePaletteFilterProxy::setContext(ProcedureNode::NodeContext context)
 {
     context_ = context;
