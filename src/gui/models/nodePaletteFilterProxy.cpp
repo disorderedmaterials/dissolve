@@ -20,7 +20,7 @@ bool NodePaletteFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent
     if (context_ == ProcedureNode::NodeContext::AnyContext)
         return true;
 
-    static std::map<ProcedureNode::NodeContext, std::vector<std::string>> contextCategories = {
+    static const std::map<ProcedureNode::NodeContext, std::vector<std::string>> contextCategories = {
         {ProcedureNode::NodeContext::NoContext, {}},
         {ProcedureNode::NodeContext::AnalysisContext, {"Data"}},
         {ProcedureNode::NodeContext::GenerationContext,
