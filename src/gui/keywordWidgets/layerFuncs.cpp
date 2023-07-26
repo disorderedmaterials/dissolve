@@ -55,7 +55,11 @@ void LayerKeywordWidget::updateLayersCombo()
     refreshing_ = true;
 
     moduleLayersModel_.setData(coreData_.processingLayers());
-    ui_.LayerCombo->setCurrentIndex(-1);
+
+    // Set current index based on keyword data
+    auto it = std::find_if(coreData_.processingLayers().begin(), coreData_.processingLayers().end(),
+                           [&](const auto &layer) { return layer.get() == keyword_->data(); });
+    ui_.LayerCombo->setCurrentIndex(it == coreData_.processingLayers().end() ? -1 : it - coreData_.processingLayers().begin());
 
     refreshing_ = false;
 }
