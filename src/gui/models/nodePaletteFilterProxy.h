@@ -11,7 +11,7 @@ class NodePaletteFilterProxy : public QSortFilterProxyModel
     Q_OBJECT
 
     private:
-    // Currently context
+    // Current context
     ProcedureNode::NodeContext context_{ProcedureNode::NodeContext::NoContext};
 
     public:

@@ -5,7 +5,7 @@
 #include "procedure/nodes/registry.h"
 
 // Set allowed categories
-void NodePaletteFilterProxy::setContext(const ProcedureNode::NodeContext context)
+void NodePaletteFilterProxy::setContext(ProcedureNode::NodeContext context)
 {
     context_ = context;
     invalidateFilter();
