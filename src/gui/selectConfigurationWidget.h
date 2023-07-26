@@ -4,6 +4,7 @@
 #pragma once
 
 #include "data/ff/library.h"
+#include "gui/models/configurationModel.h"
 #include "gui/ui_selectConfigurationWidget.h"
 #include <QWidget>
 
@@ -28,6 +29,8 @@ class SelectConfigurationWidget : public QWidget
     Ui::SelectConfigurationWidget ui_;
     // Whether the widget is refreshing
     bool refreshing_;
+    // Model for the Configuration list
+    ConfigurationModel configurationModel_;
 
     /*
      * Data
@@ -41,8 +44,8 @@ class SelectConfigurationWidget : public QWidget
     int maximumSelectionSize_;
 
     public:
-    // Set CoreData containing available Configuration
-    void setCoreData(const CoreData *coreData);
+    // Set target configuration data
+    void setConfiguration(const std::vector<std::unique_ptr<Configuration>> &configuration);
     // Reset widget, applying specified min and max limits to selection
     void reset(int minSize, int maxSize);
 

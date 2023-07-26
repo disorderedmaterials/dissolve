@@ -11,6 +11,9 @@ SelectConfigurationWidget::SelectConfigurationWidget(QWidget *parent) : QWidget(
 {
     ui_.setupUi(this);
 
+    connect(ui_.ConfigurationList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+            this, SLOT(selectionChanged(const QItemSelection &, const QItemSelection &)));
+
     coreData_ = nullptr;
     minimumSelectionSize_ = 1;
     maximumSelectionSize_ = 1;
@@ -24,12 +27,10 @@ SelectConfigurationWidget::~SelectConfigurationWidget() {}
  * Data
  */
 
-// Set CoreData containing available Configuration
-void SelectConfigurationWidget::setCoreData(const CoreData *coreData)
+// Set target Configuration data
+void SelectConfigurationWidget::setConfiguration(const std::vector<std::unique_ptr<Configuration>> &configuration)
 {
-    coreData_ = coreData;
-
-    updateConfigurationList();
+    configurationModel_.setData(configuration);
 }
 
 // Reset widget, applying specified min and max limits to selection

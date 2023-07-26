@@ -5,15 +5,6 @@
 #include "gui/selectConfigurationDialog.h"
 #include "gui/selectConfigurationWidget.h"
 
-SelectConfigurationDialog::SelectConfigurationDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)
-{
-    ui_.setupUi(this);
-
-    setWindowTitle(dialogTitle);
-
-    ui_.ConfigurationWidget->setCoreData(&coreData);
-}
-
 SelectConfigurationDialog::~SelectConfigurationDialog() {}
 
 void SelectConfigurationDialog::on_ConfigurationWidget_speciesSelectionChanged(bool isValid)
