@@ -578,9 +578,8 @@ bool ImportCIFDialog::detectUniqueSpecies()
     std::vector<int> indices(cleanedSpecies_->nAtoms());
     std::iota(indices.begin(), indices.end(), 0);
 
-    auto idx = 0;
-
     // Find all CIFSpecies, and their instances
+    auto idx = 0;
     while (!indices.empty())
     {
         // Choose a fragment

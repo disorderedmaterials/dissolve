@@ -124,6 +124,9 @@ class CIFSpecies
     CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance);
     ~CIFSpecies() = default;
 
+    /*
+     * Information
+     */
     private:
     // The output species
     Species *species_;
@@ -140,9 +143,6 @@ class CIFSpecies
     // Does the reference instance contain symmetry?
     bool hasSymmetry_{false};
 
-    /*
-     * Information
-     */
     public:
     // Return the output species
     const Species *species() const;
