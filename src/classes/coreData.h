@@ -210,7 +210,7 @@ class CoreData
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
     // Run the set-up stages of all modules in all layers
-    bool setUpProcessingLayerModules(Dissolve& dissolve);
+    bool setUpProcessingLayerModules(Dissolve &dissolve);
 
     /*
      * Input Filename
