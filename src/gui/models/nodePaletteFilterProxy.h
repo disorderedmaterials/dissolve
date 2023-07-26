@@ -3,23 +3,20 @@
 
 #pragma once
 
-#include "templates/flags.h"
+#include "procedure/nodes/node.h"
 #include <QSortFilterProxyModel>
 
 class NodePaletteFilterProxy : public QSortFilterProxyModel
 {
     Q_OBJECT
 
-    public:
-    NodePaletteFilterProxy(const std::vector<std::string>& categories = {});
-
     private:
-    // Currently allowed categories
-    std::vector<std::string> categories_;
+    // Currently context
+    ProcedureNode::NodeContext context_{ProcedureNode::NodeContext::NoContext};
 
     public:
-    // Set allowed categories
-    void setCategories(const std::vector<std::string>& categories);
+    // Set current context
+    void setContext(const ProcedureNode::NodeContext context);
 
     /*
      * QSortFilterProxyModel overrides

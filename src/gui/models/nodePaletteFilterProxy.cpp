@@ -4,12 +4,10 @@
 #include "gui/models/nodePaletteFilterProxy.h"
 #include "procedure/nodes/registry.h"
 
-NodePaletteFilterProxy::NodePaletteFilterProxy(const std::vector<std::string>& categories) : categories_(categories) {}
-
 // Set allowed categories
-void NodePaletteFilterProxy::setCategories(const std::vector<std::string>& categories)
+void NodePaletteFilterProxy::setContext(const ProcedureNode::NodeContext context)
 {
-    categories_ = categories;
+    context_ = context;
     invalidateFilter();
 }
 
@@ -19,8 +17,20 @@ void NodePaletteFilterProxy::setCategories(const std::vector<std::string>& categ
 
 bool NodePaletteFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    auto category =
-        std::next(ProcedureNodeRegistry::categoryMap().begin(), sourceModel()->parent(sourceModel()->index(row, 0)).row())->first;
-    return std::find(categories_.begin(), categories_.end(), category) != categories_.end();
-}
 
+    if (context_ == ProcedureNode::NodeContext::AnyContext)
+        return true;
+
+    static std::map<ProcedureNode::NodeContext, std::vector<std::string>> contextCategories = {
+        {ProcedureNode::NodeContext::NoContext, {}},
+        {ProcedureNode::NodeContext::AnalysisContext, {"Data"}},
+        {ProcedureNode::NodeContext::GenerationContext,
+         {"Calculate", "Build", "Calculate", "Data", "General", "Operate", "Pick", "Potentials", "Sites"}},
+        {ProcedureNode::NodeContext::OperateContext,
+         {"Calculate", "Data", "General", "Operate", "Pick", "Potentials", "Sites"}},
+    };
+
+    auto category = std::next(ProcedureNodeRegistry::categoryMap().begin(), parent.isValid() ? parent.row() : row)->first;
+    const auto &contextCategoryList = contextCategories.at(context_);
+    return std::find(contextCategoryList.begin(), contextCategoryList.end(), category) != contextCategoryList.end();
+}
