@@ -136,6 +136,17 @@ class ImportCIFDialog : public WizardDialog
     void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
 
     /*
+     * Molecular CIF
+     */
+    private slots:
+    // Detect unique species in the structural species
+    bool detectUniqueSpecies();
+
+    private:
+    // CIF Species
+    std::vector<CIFSpecies *> cifSpecies_;
+
+    /*
      * Supercell Page
      */
     private:

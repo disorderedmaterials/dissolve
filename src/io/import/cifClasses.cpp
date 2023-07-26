@@ -2,7 +2,11 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/cifClasses.h"
-#include <cassert>
+#include "classes/box.h"
+#include "classes/empiricalFormula.h"
+#include "classes/molecule.h"
+#include "classes/species.h"
+#include "neta/neta.h"
 
 /*
  * CIF Symmetry-Unique Atom
@@ -86,3 +90,120 @@ CIFAtomGroup &CIFAssembly::getGroup(std::string_view groupName)
 
 // Return the number of defined groups
 int CIFAssembly::nGroups() const { return groups_.size(); }
+
+/*
+ * CIF Species
+ */
+
+CIFSpecies::CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance)
+    : speciesRef_(spRef), species_(sp), referenceInstance_(std::move(referenceInstance))
+{
+    // Empty the species of all atoms, except those in the reference instance.
+    std::vector<int> allIndices(species_->nAtoms());
+    std::iota(allIndices.begin(), allIndices.end(), 0);
+    std::vector<int> indicesToRemove;
+    std::set_difference(allIndices.begin(), allIndices.end(), referenceInstance_.begin(), referenceInstance_.end(),
+                        std::back_inserter(indicesToRemove));
+    species_->removeAtoms(indicesToRemove);
+
+    // Find instances
+    hasSymmetry_ = !findInstances();
+
+    // Fix geometry
+    fixGeometry(speciesRef_->box());
+
+    // Determine coordinates
+    determineCoordinates();
+
+    // Give the species a name
+    species_->setName(EmpiricalFormula::formula(species_->atoms(), [&](const auto &at) { return at.Z(); }));
+}
+
+// Return the output species
+const Species *CIFSpecies::species() const { return species_; }
+
+// Return the NETA definition string that uniquely describes the reference instance
+const std::string CIFSpecies::netaString() const { return netaString_; }
+
+// Return the reference instance
+const std::vector<int> &CIFSpecies::referenceInstance() const { return referenceInstance_; }
+
+// Return all found instances
+const std::vector<std::vector<int>> &CIFSpecies::instances() const { return instances_; }
+
+// Return the coordinates corresponding to the instances
+const std::vector<std::vector<Vec3<double>>> &CIFSpecies::coordinates() const { return coordinates_; }
+
+// Return whether the reference instance contains symmetry.
+bool CIFSpecies::hasSymmetry() const { return hasSymmetry_; }
+
+// Inclusively, find all instances of the reference instance
+bool CIFSpecies::findInstances()
+{
+    NETADefinition neta;
+    auto nMatches = 0, idx = 0;
+    while (nMatches != 1)
+    {
+        if (idx >= species_->nAtoms())
+            return false;
+        neta.create(&species_->atom(idx++), std::nullopt,
+                    Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,
+                                                             NETADefinition::NETACreationFlags::IncludeRootElement));
+        nMatches =
+            std::count_if(species_->atoms().begin(), species_->atoms().end(), [&](const auto &i) { return neta.matches(&i); });
+    }
+
+    netaString_ = neta.definitionString();
+
+    for (auto &i : speciesRef_->atoms())
+    {
+        if (neta.matches(&i))
+        {
+            auto matchedGroup = neta.matchedPath(&i);
+            auto matchedAtoms = matchedGroup.set();
+            std::vector<int> indices(matchedAtoms.size());
+            std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
+                           [](const auto &atom) { return atom->index(); });
+            std::sort(indices.begin(), indices.end());
+            instances_.push_back(std::move(indices));
+        }
+    }
+
+    return true;
+}
+
+// Determine the coordinates corresponding to the instances
+void CIFSpecies::determineCoordinates()
+{
+    for (auto &instance : instances_)
+    {
+        std::vector<Vec3<double>> coords(instance.size());
+        std::transform(instance.begin(), instance.end(), coords.begin(), [&](auto i) { return speciesRef_->atom(i).r(); });
+        coordinates_.push_back(std::move(coords));
+    }
+}
+
+// Fix the geometry of the output species, by unfolding it
+void CIFSpecies::fixGeometry(const Box *box)
+{
+    // 'Fix' the geometry of the species
+    // Construct a temporary molecule, which is just the species.
+    std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
+    std::vector<Atom> molAtoms(species_->nAtoms());
+    for (auto &&[spAtom, atom] : zip(species_->atoms(), molAtoms))
+    {
+        atom.setSpeciesAtom(&spAtom);
+        atom.setCoordinates(spAtom.r());
+        mol->addAtom(&atom);
+    }
+
+    // Unfold the molecule
+    mol->unFold(box);
+
+    // Update the coordinates of the species atoms
+    for (auto &&[spAtom, atom] : zip(species_->atoms(), molAtoms))
+        spAtom.setCoordinates(atom.r());
+
+    // Set the centre of geometry of the species to be at the origin.
+    species_->setCentre(box, {0., 0., 0.});
+}
