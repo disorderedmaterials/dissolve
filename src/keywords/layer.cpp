@@ -43,8 +43,17 @@ bool LayerKeyword::serialise(LineParser &parser, std::string_view keywordName, s
 // Read values from a serialisable value
 void LayerKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    data_ = coreData.findProcessingLayer(std::string_view(std::string(node.as_string())));
+    data_ = coreData.findProcessingLayer(std::string(node.as_string()));
+    if (!data_)
+        throw toml::syntax_error(fmt::format("Layer '{}' given to keyword {} doesn't exist.\n",
+                                             std::string(node.as_string()), KeywordBase::name()),
+                                 node.location());
 }
 
 // Express as a serialisable value
-SerialisedValue LayerKeyword::serialise() const { return data_->name(); }
+SerialisedValue LayerKeyword::serialise() const
+{
+    if (data_)
+        return data_->name();
+    return {};
+}
