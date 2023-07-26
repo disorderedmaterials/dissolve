@@ -113,8 +113,6 @@ class Dissolve : public Serialisable<>
     GenericList processingModuleData_;
 
     public:
-    // Run the set-up stages of all modules in all layers
-    bool setUpProcessingLayerModules();
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
 

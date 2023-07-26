@@ -14,6 +14,7 @@
 #include <vector>
 
 // Forward Declarations
+class Dissolve;
 class Module;
 class ModuleLayer;
 class MasterBond;
@@ -208,6 +209,8 @@ class CoreData
     // Return list of defined processing layers
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
+    // Run the set-up stages of all modules in all layers
+    bool setUpProcessingLayerModules(Dissolve& dissolve);
 
     /*
      * Input Filename

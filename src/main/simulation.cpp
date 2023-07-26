@@ -217,7 +217,7 @@ bool Dissolve::prepare()
     }
 
     // Set up all modules and return
-    return setUpProcessingLayerModules();
+    return coreData_.setUpProcessingLayerModules(*this);
 }
 
 // Iterate main simulation

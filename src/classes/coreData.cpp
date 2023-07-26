@@ -11,6 +11,7 @@
 #include "classes/speciesTorsion.h"
 #include "module/layer.h"
 #include "module/module.h"
+#include "main/dissolve.h"
 
 // Clear all data
 void CoreData::clear()
@@ -577,6 +578,16 @@ int CoreData::nProcessingLayers() const { return processingLayers_.size(); }
 // Return list of defined processing layers
 std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() { return processingLayers_; }
 const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const { return processingLayers_; }
+
+// Run the set-up stages of all modules in all layers
+bool CoreData::setUpProcessingLayerModules(Dissolve& dissolve)
+{
+    auto setUpResult = true;
+    for (auto &layer : processingLayers())
+        if (!layer->setUpAll(dissolve, dissolve.worldPool()))
+            setUpResult = false;
+    return setUpResult;
+}
 
 /*
  * Input Filename
