@@ -34,6 +34,7 @@
 #include "gui/keywordWidgets/vec3Double.h"
 #include "gui/keywordWidgets/vec3Integer.h"
 #include "gui/keywordWidgets/vec3NodeValue.h"
+#include "gui/keywordWidgets/weightedModuleVector.h"
 #include "keywords/data1DStore.h"
 #include "keywords/data2DStore.h"
 #include "keywords/data3DStore.h"
@@ -82,6 +83,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<Vec3DoubleKeyword, Vec3DoubleKeywordWidget>();
     registerProducer<Vec3IntegerKeyword, Vec3IntegerKeywordWidget>();
     registerProducer<Vec3NodeValueKeyword, Vec3NodeValueKeywordWidget>();
+    registerProducer<WeightedModuleVectorKeyword, WeightedModuleVectorKeywordWidget>();
 
     // Keywords with no widgets
     registerNullProducer<Data1DStoreKeyword>();

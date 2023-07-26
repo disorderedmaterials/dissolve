@@ -200,7 +200,7 @@ class KeywordStore
     int getInt(std::string_view name) const;
 
     // Get specified keyword data, casting as necessary
-    template <class D, class K> OptionalReferenceWrapper<const D> get(std::string_view name) const
+    template <class D, class K> std::optional<const D> get(std::string_view name) const
     {
         auto optKd = find(name);
         if (!optKd)
@@ -213,7 +213,7 @@ class KeywordStore
 
         return keyword->data();
     }
-    template <class D, class K> OptionalReferenceWrapper<D> get(std::string_view name)
+    template <class D, class K> std::optional<D> get(std::string_view name)
     {
         auto optKd = find(name);
         if (!optKd)

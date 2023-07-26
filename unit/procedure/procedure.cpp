@@ -76,8 +76,7 @@ TEST(ProcedureTest, Scope)
     // -- Confirm current keyword data
     auto keywordNode = selectC->keywords()
                            .get<std::shared_ptr<const SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>("ReferenceSite")
-                           .value()
-                           .get();
+                           .value();
     EXPECT_EQ(keywordNode, selectA);
     // -- Move 'C' so it is before 'A'
     std::swap(procedure.rootSequence().sequence()[0], procedure.rootSequence().sequence()[1]);
@@ -85,8 +84,7 @@ TEST(ProcedureTest, Scope)
     procedure.rootSequence().validateNodeKeywords();
     keywordNode = selectC->keywords()
                       .get<std::shared_ptr<const SelectProcedureNode>, NodeKeyword<SelectProcedureNode>>("ReferenceSite")
-                      .value()
-                      .get();
+                      .value();
     EXPECT_EQ(keywordNode, nullptr);
 }
 

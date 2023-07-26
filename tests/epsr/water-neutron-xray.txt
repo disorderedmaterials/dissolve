@@ -287,8 +287,6 @@ Layer  'Refine (EPSR)'
     QMin  0.5
     QMax  30.0
     NPItSs  0
-    #SaveSimulatedFR  On
-    SaveEstimatedPartials  On
   EndModule
 
   Module DataTest  'SimulatedFR'

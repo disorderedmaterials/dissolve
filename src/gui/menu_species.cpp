@@ -201,6 +201,9 @@ void DissolveWindow::on_SpeciesDeleteAction_triggered(bool checked)
     ui_.MainTabs->removeByPage(spTab->page());
     dissolve_.coreData().removeSpecies(spTab->species());
 
+    // May now have unused atomtypes...
+    dissolve_.coreData().removeUnusedAtomTypes();
+
     setModified({DissolveSignals::DataMutations::SpeciesMutated, DissolveSignals::DataMutations::IsotopologuesMutated});
     fullUpdate();
 }
@@ -219,6 +222,9 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
         // Atom types will likely have changed, so make sure the
         // Isotopologues in the species are up-to-date
         species->updateIsotopologues();
+
+        // May now have unused atomtypes...
+        dissolve_.coreData().removeUnusedAtomTypes();
 
         // Fully update GUI
         setModified();
@@ -254,6 +260,10 @@ void DissolveWindow::on_SpeciesSimplifyAtomTypesAction_triggered(bool checked)
     if (nModified > 0)
     {
         Messenger::print("{} atom types were modified.\n", nModified);
+
+        // May now have unused atomtypes...
+        dissolve_.coreData().removeUnusedAtomTypes();
+
         setModified();
         fullUpdate();
     }
