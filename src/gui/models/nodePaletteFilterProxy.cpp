@@ -17,7 +17,6 @@ void NodePaletteFilterProxy::setContext(const ProcedureNode::NodeContext context
 
 bool NodePaletteFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-
     if (context_ == ProcedureNode::NodeContext::AnyContext)
         return true;
 
@@ -30,7 +29,7 @@ bool NodePaletteFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent
          {"Calculate", "Data", "General", "Operate", "Pick", "Potentials", "Sites"}},
     };
 
-    auto category = std::next(ProcedureNodeRegistry::categoryMap().begin(), parent.isValid() ? parent.row() : row)->first;
     const auto &contextCategoryList = contextCategories.at(context_);
+    auto category = std::next(ProcedureNodeRegistry::categoryMap().begin(), parent.isValid() ? parent.row() : row)->first;
     return std::find(contextCategoryList.begin(), contextCategoryList.end(), category) != contextCategoryList.end();
 }
