@@ -120,9 +120,6 @@ GenericItemSerialiser::GenericItemSerialiser()
             return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
         });
     registerSerialiser<XRayWeights>(simpleSerialise<XRayWeights>);
-
-    // Containers of Custom Classes
-    registerSerialiser<std::vector<BraggReflection>>(vectorSerialise<BraggReflection>);
 }
 
 /*

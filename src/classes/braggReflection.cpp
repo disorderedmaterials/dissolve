@@ -90,39 +90,3 @@ void BraggReflection::setHKL(int h, int k, int l) { hkl_.set(h, k, l); }
 
 // Return Miller indices of reflection
 const Vec3<int> &BraggReflection::hkl() const { return hkl_; }
-
-/*
- * Serialisation
- */
-
-// Read data through specified parser
-bool BraggReflection::deserialise(LineParser &parser)
-{
-    // Read index, Q centre, and number of contributing K-vectors
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    index_ = parser.argi(0);
-    q_ = parser.argd(1);
-    nKVectors_ = parser.argi(2);
-    hkl_ = parser.arg3i(3);
-
-    // Read intensities array
-    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(intensities_, parser))
-        return false;
-
-    return true;
-}
-
-// Write data through specified parser
-bool BraggReflection::serialise(LineParser &parser) const
-{
-    // Write index, Q centre, and number of contributing K-vectors
-    if (!parser.writeLineF("{} {} {} {} {} {}\n", index_, q_, nKVectors_, hkl_.x, hkl_.y, hkl_.z))
-        return false;
-
-    // Write intensities array
-    if (!GenericItemSerialiser::serialise<Array2D<double>>(intensities_, parser))
-        return false;
-
-    return true;
-}
