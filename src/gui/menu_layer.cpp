@@ -3,7 +3,6 @@
 
 #include "gui/gui.h"
 #include "gui/layerTab.h"
-#include "gui/selectConfigurationDialog.h"
 #include "main/dissolve.h"
 #include "modules/avgMol/avgMol.h"
 #include "modules/epsr/epsr.h"

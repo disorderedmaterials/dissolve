@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/coreData.h"
-#include "gui/helpers/listWidgetUpdater.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "gui/keywordWidgets/moduleVector.h"
 #include "module/module.h"

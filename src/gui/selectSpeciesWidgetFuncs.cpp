@@ -3,7 +3,6 @@
 
 #include "classes/coreData.h"
 #include "classes/species.h"
-#include "gui/helpers/listWidgetUpdater.h"
 #include "gui/selectSpeciesWidget.h"
 
 SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
