@@ -124,6 +124,10 @@ bool CIFStructuralSpecies::create(CIFImport cifImporter, double tolerance, bool 
     species_ = coreData_.addSpecies();
     species_->setName("Crystal");
 
+    // Generate a configuration
+    configuration_ = coreData_.addConfiguration();
+    configuration_->setName("Structure");
+
     // -- Set unit cell
     auto cellLengths = cifImporter.getCellLengths();
     if (!cellLengths)

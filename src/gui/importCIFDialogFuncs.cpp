@@ -321,10 +321,9 @@ bool ImportCIFDialog::createStructuralSpecies()
     CIFStructuralSpecies cifStructuralSpecies(temporaryCoreData_);
     if (!cifStructuralSpecies.create(cifImporter_, ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5, ui_.CalculateBondingRadio->isChecked(), ui_.BondingPreventMetallicCheck->isChecked()))
         return false;
-    return false;
+
     crystalSpecies_ = cifStructuralSpecies.species();
     structureConfiguration_ = cifStructuralSpecies.configuration();
-    structureConfiguration_->setName("Structure");
 
     ui_.StructureViewer->setConfiguration(structureConfiguration_);
 
