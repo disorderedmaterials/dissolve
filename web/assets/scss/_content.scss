@@ -154,7 +154,7 @@
 
 @mixin module-link($module) {
   .module-link.module-link-#{$module}::before{
-       background-image: url(/img/modules_#{$module}.svg);
+       background-image: url(/img/modules/#{$module}.svg);
   }
 }
 @mixin generate-module-link(){

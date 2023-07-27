@@ -26,7 +26,7 @@ ModuleControlWidget::ModuleControlWidget(DissolveWindow *dissolveWindow, Module 
 
     // Set the icon label
     ui_.ModuleIconLabel->setPixmap(
-        QPixmap(QString(":/modules/icons/modules_%1.svg")
+        QPixmap(QString(":/modules/icons/modules/%1.svg")
                     .arg(QString::fromStdString(ModuleTypes::moduleType(module_->type())).toLower())));
 
     // Set up keyword widgets, one group per stack page

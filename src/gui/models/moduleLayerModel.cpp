@@ -60,7 +60,7 @@ QVariant ModuleLayerModel::data(const QModelIndex &index, int role) const
         case (Qt::UserRole):
             return QVariant::fromValue(module);
         case (Qt::DecorationRole):
-            return QIcon((QPixmap(QString(":/modules/icons/modules_%1.svg")
+            return QIcon((QPixmap(QString(":/modules/icons/modules/%1.svg")
                                       .arg(QString::fromStdString(ModuleTypes::moduleType(module->type())).toLower()))));
         default:
             return {};
