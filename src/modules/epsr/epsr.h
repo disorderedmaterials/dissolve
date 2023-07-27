@@ -7,6 +7,7 @@
 #include "classes/data1DStore.h"
 #include "classes/scatteringMatrix.h"
 #include "math/data1D.h"
+#include "math/range.h"
 #include "module/groups.h"
 #include "module/module.h"
 #include "templates/array3D.h"
@@ -51,6 +52,8 @@ class EPSRModule : public Module
     double qMax_{30.0};
     // Minimum Q value over which to generate potentials from total scattering data
     double qMin_{0.5};
+    // Ranges for which the R Factors will be calculated for
+    std::optional<std::vector<Range>> rFactorRanges_;
     // Factor used when adding fluctuation coefficients to pair potentials
     double weighting_{1.0};
     // Width for Gaussian function in reciprocal space
