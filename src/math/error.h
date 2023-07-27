@@ -46,24 +46,22 @@ std::string errorReportString(ErrorReport errorReport);
  */
 
 // Return error of specified type between supplied data, allows a range parameter to be specified
-ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet = false,
-                  OptionalReferenceWrapper<Range> range = std::nullopt);
+ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return error of specified type between supplied double vectors
-ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet = false);
+ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB);
 // Return RMSE between supplied data
-ErrorReport rmse(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
+ErrorReport rmse(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return MAAPE between supplied data
-ErrorReport maape(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
+ErrorReport maape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return MAPE between supplied data
-ErrorReport mape(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
+ErrorReport mape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return percentage error between supplied data
-ErrorReport percent(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
+ErrorReport percent(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return absolute squared error between supplied data
 ErrorReport ase(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range);
 // Return R-Factor (average squared error per point) between supplied data
-ErrorReport rFactor(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
+ErrorReport rFactor(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return Euclidean distance, normalised to mean of B, between supplied data
-ErrorReport euclidean(const Data1D &A, const Data1D &B, bool quiet = false,
-                      OptionalReferenceWrapper<Range> range = std::nullopt);
+ErrorReport euclidean(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 
 }; // namespace Error

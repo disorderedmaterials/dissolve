@@ -574,7 +574,7 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
 {
     // Get a copy of the AtomTypeList to work from
     auto atomTypes = setA.atomTypeMix();
-    double error;
+    Error::ErrorReport error;
 
     for_each_pair_early(
         atomTypes.begin(), atomTypes.end(),

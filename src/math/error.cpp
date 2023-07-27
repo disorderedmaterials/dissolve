@@ -259,7 +259,7 @@ ErrorReport percent(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<R
         return ErrorReport{ASEError, sume, firstX, lastX, nPointsConsidered};
     }
 
-    auto percentError = sume : 100.0 * sume / sumy;
+    auto percentError = 100.0 * sume / sumy;
     return ErrorReport{PercentError, percentError, firstX, lastX, nPointsConsidered};
 }
 
