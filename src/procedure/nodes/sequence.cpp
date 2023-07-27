@@ -557,27 +557,24 @@ void ProcedureNodeSequence::QueryRange::next() { start_++; }
 // Express as a serialisable value
 SerialisedValue ProcedureNodeSequence::serialise() const
 {
-    SerialisedValue node;
-    for (auto n : sequence_)
-    {
-        // node.push_back(n->serialise());
-        SerialisedValue inner = n->serialise();
-        inner["type"] = n->nodeTypes().serialise(n->type());
-        node[std::string(n->name())] = inner;
-    }
-    return node;
+    return fromVector(sequence_,
+                      [](const auto item)
+                      {
+                          SerialisedValue node = item->serialise();
+                          node["type"] = item->nodeTypes().serialise(item->type());
+                          return node;
+                      });
 }
 
 // Read values from a serialisable value
 void ProcedureNodeSequence::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    toMap(node,
-          [this, &coreData](const auto &key, const auto &value)
-          {
-              ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(value.at("type"));
-              auto result = ProcedureNodeRegistry::create(type);
-              appendNode(result, {});
-              result->deserialise(value, coreData);
-              result->setName(key);
-          });
+    toVector(node,
+             [this, &coreData](const auto &value)
+             {
+                 ProcedureNode::NodeType type = ProcedureNode::nodeTypes().deserialise(value.at("type"));
+                 auto result = ProcedureNodeRegistry::create(type);
+                 appendNode(result, {});
+                 result->deserialise(value, coreData);
+             });
 }
