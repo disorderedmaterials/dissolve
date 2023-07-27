@@ -135,8 +135,8 @@ SerialisedValue Configuration::serialise() const
 
     if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
         configuration["cellDivisionLength"] = requestedCellDivisionLength_;
-    if (requestedSizeFactor_ != defaultSizeFactor_)
-        configuration["sizeFactor"] = requestedSizeFactor_;
+    if (requestedSizeFactor_.has_value())
+        configuration["sizeFactor"] = requestedSizeFactor_.value();
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 
