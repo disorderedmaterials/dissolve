@@ -61,33 +61,6 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
 }
 
-// Apply CIF bond definitions within specified species
-void ImportCIFDialog::applyCIFBonding(Species *sp)
-{
-    auto *box = sp->box();
-    auto pairs = PairIterator(sp->nAtoms());
-    for (auto pair : pairs)
-    {
-        // Grab indices and atom references
-        auto [indexI, indexJ] = pair;
-        if (indexI == indexJ)
-            continue;
-        auto &i = sp->atom(indexI);
-        auto &j = sp->atom(indexJ);
-
-        // Prevent metallic bonding?
-        if (ui_.BondingPreventMetallicCheck->isChecked() && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
-            continue;
-
-        // Retrieve distance
-        auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
-        if (!r)
-            continue;
-        else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
-            sp->addBond(&i, &j);
-    }
-}
-
 /*
  * Wizard
  */
@@ -342,73 +315,16 @@ void ImportCIFDialog::updateInfoPage()
 bool ImportCIFDialog::createStructuralSpecies()
 {
     ui_.StructureViewer->setConfiguration(nullptr);
-    partitioningConfiguration_->empty();
-    supercellConfiguration_->empty();
-    structureConfiguration_->empty();
 
     temporaryCoreData_.species().clear();
     temporaryCoreData_.atomTypes().clear();
-    crystalSpecies_ = nullptr;
-    cleanedSpecies_ = nullptr;
-
-    // Create temporary atom types corresponding to the unique atom labels
-    for (auto &a : cifImporter_.assemblies())
-        for (auto &g : a.groups())
-            if (g.active())
-                for (auto &i : g.atoms())
-                    if (!temporaryCoreData_.findAtomType(i.label()))
-                    {
-                        auto at = temporaryCoreData_.addAtomType(i.Z());
-                        at->setName(i.label());
-                    }
-
-    // Generate a single species containing the entire crystal
-    crystalSpecies_ = temporaryCoreData_.addSpecies();
-    crystalSpecies_->setName("Crystal");
-    // -- Set unit cell
-    auto cellLengths = cifImporter_.getCellLengths();
-    if (!cellLengths)
+    CIFStructuralSpecies cifStructuralSpecies(temporaryCoreData_);
+    if (!cifStructuralSpecies.create(cifImporter_, ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5, ui_.CalculateBondingRadio->isChecked(), ui_.BondingPreventMetallicCheck->isChecked()))
         return false;
-    auto cellAngles = cifImporter_.getCellAngles();
-    if (!cellAngles)
-        return false;
-    crystalSpecies_->createBox(cellLengths.value(), cellAngles.value());
-    auto *box = crystalSpecies_->box();
-    structureConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
-    // -- Generate atoms
-    auto symmetryGenerators = SpaceGroups::symmetryOperators(cifImporter_.spaceGroup());
-    auto tolerance = ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5;
-    for (const auto &generator : symmetryGenerators)
-        for (auto &a : cifImporter_.assemblies())
-            for (auto &g : a.groups())
-                if (g.active())
-                    for (auto &unique : g.atoms())
-                    {
-                        // Generate folded atomic position in real space
-                        auto r = generator * unique.rFrac();
-                        box->toReal(r);
-                        r = box->fold(r);
-
-                        // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
-                        if (std::any_of(crystalSpecies_->atoms().begin(), crystalSpecies_->atoms().end(),
-                                        [&r, box, tolerance](const auto &j)
-                                        { return box->minimumDistance(r, j.r()) < tolerance; }))
-                            continue;
-
-                        // Create the new atom
-                        auto i = crystalSpecies_->addAtom(unique.Z(), r);
-                        crystalSpecies_->atom(i).setAtomType(temporaryCoreData_.findAtomType(unique.label()));
-                    }
-
-    // Bonding
-    if (ui_.CalculateBondingRadio->isChecked())
-        crystalSpecies_->addMissingBonds(1.1, ui_.BondingPreventMetallicCheck->isChecked());
-    else
-        applyCIFBonding(crystalSpecies_);
-
-    // Add the structural species to the configuration
-    structureConfiguration_->addMolecule(crystalSpecies_);
-    structureConfiguration_->updateObjectRelationships();
+    return false;
+    crystalSpecies_ = cifStructuralSpecies.species();
+    structureConfiguration_ = cifStructuralSpecies.configuration();
+    structureConfiguration_->setName("Structure");
 
     ui_.StructureViewer->setConfiguration(structureConfiguration_);
 
@@ -653,8 +569,8 @@ bool ImportCIFDialog::createSupercellSpecies()
     // Bonding
     if (ui_.CalculateBondingRadio->isChecked())
         supercell->addMissingBonds();
-    else
-        applyCIFBonding(supercell);
+    //else
+        //applyCIFBonding(supercell);
 
     // Add the structural species to the configuration
     supercellConfiguration_->addMolecule(supercell);

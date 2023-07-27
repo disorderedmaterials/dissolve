@@ -2,7 +2,10 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "io/import/cifClasses.h"
+#include "io/import/cif.h"
 #include "classes/box.h"
+#include "classes/configuration.h"
+#include "classes/coreData.h"
 #include "classes/empiricalFormula.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
@@ -90,6 +93,110 @@ CIFAtomGroup &CIFAssembly::getGroup(std::string_view groupName)
 
 // Return the number of defined groups
 int CIFAssembly::nGroups() const { return groups_.size(); }
+
+
+CIFStructuralSpecies::CIFStructuralSpecies(CoreData &coreData) : coreData_(coreData){}
+
+Species *CIFStructuralSpecies::species()
+{
+    return species_;
+}
+
+Configuration* CIFStructuralSpecies::configuration()
+{
+    return configuration_;
+}
+
+bool CIFStructuralSpecies::create(CIFImport cifImporter, double tolerance, bool calculateBonding, bool preventMetallicBonding)
+{
+    // Create temporary atom types corresponding to the unique atom labels
+    for (auto &a : cifImporter.assemblies())
+        for (auto &g : a.groups())
+            if (g.active())
+                for (auto &i : g.atoms())
+                    if (!coreData_.findAtomType(i.label()))
+                    {
+                        auto at = coreData_.addAtomType(i.Z());
+                        at->setName(i.label());
+                    }
+
+    // Generate a single species containing the entire crystal
+    species_ = coreData_.addSpecies();
+    species_->setName("Crystal");
+
+    // -- Set unit cell
+    auto cellLengths = cifImporter.getCellLengths();
+    if (!cellLengths)
+        return false;
+    auto cellAngles = cifImporter.getCellAngles();
+    if (!cellAngles)
+        return false;
+    species_->createBox(cellLengths.value(), cellAngles.value());
+    auto *box = species_->box();
+    configuration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+
+    // -- Generate atoms
+    auto symmetryGenerators = SpaceGroups::symmetryOperators(cifImporter.spaceGroup());
+    for (const auto &generator : symmetryGenerators)
+        for (auto &a : cifImporter.assemblies())
+            for (auto &g : a.groups())
+                if (g.active())
+                    for (auto &unique : g.atoms())
+                    {
+                        // Generate folded atomic position in real space
+                        auto r = generator * unique.rFrac();
+                        box->toReal(r);
+                        r = box->fold(r);
+
+                        // If this atom overlaps with another in the box, don't add it as it's a symmetry-related copy
+                        if (std::any_of(species_->atoms().begin(), species_->atoms().end(),
+                                        [&r, box, tolerance](const auto &j)
+                                        { return box->minimumDistance(r, j.r()) < tolerance; }))
+                            continue;
+
+                        // Create the new atom
+                        auto i = species_->addAtom(unique.Z(), r);
+                        species_->atom(i).setAtomType(coreData_.findAtomType(unique.label()));
+                    }
+
+    // Bonding
+    if (calculateBonding)
+        species_->addMissingBonds(1.1, preventMetallicBonding);
+    else
+        applyCIFBonding(cifImporter, preventMetallicBonding);
+
+    // Add the structural species to the configuration
+    configuration_->addMolecule(species_);
+    configuration_->updateObjectRelationships();
+
+    return true;
+}
+
+void CIFStructuralSpecies::applyCIFBonding(CIFImport cifImporter, bool preventMetallicBonding)
+{
+    auto *box = species_->box();
+    auto pairs = PairIterator(species_->nAtoms());
+    for (auto pair : pairs)
+    {
+        // Grab indices and atom references
+        auto [indexI, indexJ] = pair;
+        if (indexI == indexJ)
+            continue;
+        auto &i = species_->atom(indexI);
+        auto &j = species_->atom(indexJ);
+
+        // Prevent metallic bonding?
+        if (preventMetallicBonding && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
+            continue;
+
+        // Retrieve distance
+        auto r = cifImporter.bondDistance(i.atomType()->name(), j.atomType()->name());
+        if (!r)
+            continue;
+        else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
+            species_->addBond(&i, &j);
+    }
+}
 
 /*
  * CIF Species

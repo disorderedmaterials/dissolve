@@ -11,6 +11,9 @@
 
 // Forward declarations
 class Box;
+class CIFImport;
+class CoreData;
+class Configuration;
 class Species;
 
 // CIF Symmetry-Unique Atom
@@ -114,6 +117,28 @@ class CIFAssembly
     CIFAtomGroup &getGroup(std::string_view groupName);
     // Return the number of defined groups
     int nGroups() const;
+};
+
+class CIFStructuralSpecies
+{
+    public:
+    CIFStructuralSpecies(CoreData& coreData);
+
+    private:
+    CoreData& coreData_;
+    Species* species_;
+    Configuration* configuration_;
+
+    public:
+    Species* species();
+    Configuration* configuration();
+
+    public:
+    bool create(CIFImport cifImporter, double tolerance, bool calculateBonding, bool preventMetallicBonding);
+
+    private:
+    void applyCIFBonding(CIFImport cifImporter, bool preventMetallicBonding);
+
 };
 
 // CIF Species
