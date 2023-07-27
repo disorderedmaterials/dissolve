@@ -202,11 +202,7 @@ class CoreData
     void removeProcessingLayer(ModuleLayer *layer);
     // Find named processing layer
     ModuleLayer *findProcessingLayer(std::string_view name) const;
-    // Own the specified processing layer
-    bool ownProcessingLayer(ModuleLayer *layer);
-    // Return number of defined processing layers
-    int nProcessingLayers() const;
-    // Return list of defined processing layers
+    // Return current processing layers
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
     // Run the set-up stages of all modules in all layers

@@ -106,7 +106,7 @@ class Dissolve : public Serialisable<>
     void revertPairPotentials();
 
     /*
-     * Layers
+     * Processing Module Data
      */
     private:
     // Data associated with processing Modules

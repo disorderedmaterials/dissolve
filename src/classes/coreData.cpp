@@ -544,6 +544,10 @@ void CoreData::removeProcessingLayer(ModuleLayer *layer)
     if (!layer)
         return;
 
+    // Remove any references to the Modules in the layer before we delete it
+    for (auto &module : layer->modules())
+        removeReferencesTo(module.get());
+        
     // Now safe to remove the layer
     processingLayers_.erase(
         std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](const auto &l) { return l.get() == layer; }));
@@ -559,23 +563,7 @@ ModuleLayer *CoreData::findProcessingLayer(std::string_view name) const
     return it->get();
 }
 
-// Own the specified processing layer
-bool CoreData::ownProcessingLayer(ModuleLayer *layer)
-{
-    // Sanity check - do we already own this Configuration?
-    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](auto &l) { return l.get() == layer; });
-    if (it != processingLayers_.end())
-        return Messenger::error("Already own ModuleLayer '{}', so nothing to do.\n", layer->name());
-
-    processingLayers_.emplace_back(layer);
-
-    return true;
-}
-
-// Return number of defined processing layers
-int CoreData::nProcessingLayers() const { return processingLayers_.size(); }
-
-// Return list of defined processing layers
+// Return current processing layers
 std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() { return processingLayers_; }
 const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const { return processingLayers_; }
 

@@ -27,7 +27,7 @@ bool LayerKeyword::deserialise(LineParser &parser, int startArg, const CoreData 
 {
     data_ = coreData.findProcessingLayer(parser.argsv(startArg));
     if (!data_)
-        return Messenger::error("Error setting Layer - no Layer named '{}' exists.\n", parser.argsv(startArg));
+        return Messenger::error("Layer '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg), KeywordBase::name());
     return true;
 }
 
