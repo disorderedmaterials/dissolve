@@ -344,6 +344,9 @@
        </item>
        <item>
         <widget class="QFrame" name="SizeFactorFrame">
+         <property name="toolTip">
+          <string>Applied size factor</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
