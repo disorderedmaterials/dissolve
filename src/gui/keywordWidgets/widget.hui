@@ -5,14 +5,14 @@
 
 #include "gui/keywordWidgets/base.h"
 #include "keywords/store.h"
-#include <QTabWidget>
+#include <QScrollArea>
 
 // Forward Declarations
 class CoreData;
 class QPushButton;
 
 // Keywords Widget
-class KeywordsWidget : public QWidget
+class KeywordsWidget : public QScrollArea
 {
     Q_OBJECT
 
