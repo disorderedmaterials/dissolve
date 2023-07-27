@@ -76,7 +76,7 @@
      </property>
      <property name="icon">
       <iconset resource="../main.qrc">
-       <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
+       <normaloff>:/general/icons/open.svg</normaloff>:/general/icons/open.svg</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -109,7 +109,7 @@
      </property>
      <property name="icon">
       <iconset resource="../main.qrc">
-       <normaloff>:/general/icons/general_options.svg</normaloff>:/general/icons/general_options.svg</iconset>
+       <normaloff>:/general/icons/options.svg</normaloff>:/general/icons/options.svg</iconset>
      </property>
      <property name="iconSize">
       <size>

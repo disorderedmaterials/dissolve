@@ -65,7 +65,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/general/icons/general_false.svg</normaloff>:/general/icons/general_false.svg</iconset>
+          <normaloff>:/general/icons/false.svg</normaloff>:/general/icons/false.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -95,7 +95,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/general/icons/general_arrowleft.svg</normaloff>:/general/icons/general_arrowleft.svg</iconset>
+          <normaloff>:/general/icons/arrowleft.svg</normaloff>:/general/icons/arrowleft.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -112,7 +112,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/general/icons/general_arrowright.svg</normaloff>:/general/icons/general_arrowright.svg</iconset>
+          <normaloff>:/general/icons/arrowright.svg</normaloff>:/general/icons/arrowright.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -129,7 +129,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/general/icons/general_true.svg</normaloff>:/general/icons/general_true.svg</iconset>
+          <normaloff>:/general/icons/true.svg</normaloff>:/general/icons/true.svg</iconset>
         </property>
         <property name="iconSize">
          <size>

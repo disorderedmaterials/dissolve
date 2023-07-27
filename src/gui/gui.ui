@@ -230,7 +230,7 @@
      </property>
      <property name="icon">
       <iconset resource="main.qrc">
-       <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
+       <normaloff>:/general/icons/species.svg</normaloff>:/general/icons/species.svg</iconset>
      </property>
      <addaction name="SpeciesCreateAtomicAction"/>
      <addaction name="SpeciesCreateDrawAction"/>
@@ -329,7 +329,7 @@
      </property>
      <property name="icon">
       <iconset resource="main.qrc">
-       <normaloff>:/tabs/icons/tabs_layer.svg</normaloff>:/tabs/icons/tabs_layer.svg</iconset>
+       <normaloff>:/general/icons/layer.svg</normaloff>:/general/icons/layer.svg</iconset>
      </property>
      <widget class="QMenu" name="LayerCreateEvolutionMenu">
       <property name="font">
@@ -406,7 +406,7 @@
   <action name="FileOpenAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
+     <normaloff>:/general/icons/open.svg</normaloff>:/general/icons/open.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Open...</string>
@@ -418,7 +418,7 @@
   <action name="FileSaveAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_save.svg</normaloff>:/menu/icons/menu_save.svg</iconset>
+     <normaloff>:/general/icons/save.svg</normaloff>:/general/icons/save.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Save</string>
@@ -449,7 +449,7 @@
    </property>
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_connect.svg</normaloff>:/menu/icons/menu_connect.svg</iconset>
+     <normaloff>:/general/icons/connect.svg</normaloff>:/general/icons/connect.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Connect...</string>
@@ -461,7 +461,7 @@
   <action name="SimulationRunAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/control/icons/control_play.svg</normaloff>:/control/icons/control_play.svg</iconset>
+     <normaloff>:/general/icons/play.svg</normaloff>:/general/icons/play.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Run</string>
@@ -473,7 +473,7 @@
   <action name="SimulationStepAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/control/icons/control_step.svg</normaloff>:/control/icons/control_step.svg</iconset>
+     <normaloff>:/general/icons/step.svg</normaloff>:/general/icons/step.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Step</string>
@@ -496,7 +496,7 @@
    </property>
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/control/icons/control_stop.svg</normaloff>:/control/icons/control_stop.svg</iconset>
+     <normaloff>:/general/icons/stop.svg</normaloff>:/general/icons/stop.svg</iconset>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -508,7 +508,7 @@
   <action name="FileNewAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
+     <normaloff>:/general/icons/new.svg</normaloff>:/general/icons/new.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;New</string>
@@ -517,7 +517,7 @@
   <action name="FileCloseAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/general/icons/general_cross.svg</normaloff>:/general/icons/general_cross.svg</iconset>
+     <normaloff>:/general/icons/cross.svg</normaloff>:/general/icons/cross.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Close</string>
@@ -526,7 +526,7 @@
   <action name="HelpOnlineManualAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/start/icons/start_manual.svg</normaloff>:/start/icons/start_manual.svg</iconset>
+     <normaloff>:/general/icons/manual.svg</normaloff>:/general/icons/manual.svg</iconset>
    </property>
    <property name="text">
     <string>Online Manual</string>
@@ -538,7 +538,7 @@
   <action name="HelpOnlineTutorialsAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/start/icons/start_tutorials.svg</normaloff>:/start/icons/start_tutorials.svg</iconset>
+     <normaloff>:/general/icons/tutorials.svg</normaloff>:/general/icons/tutorials.svg</iconset>
    </property>
    <property name="text">
     <string>Online Tutorials</string>
@@ -550,7 +550,7 @@
   <action name="SpeciesAddForcefieldTermsAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/tabs/icons/tabs_ff.svg</normaloff>:/tabs/icons/tabs_ff.svg</iconset>
+     <normaloff>:/general/icons/ff.svg</normaloff>:/general/icons/ff.svg</iconset>
    </property>
    <property name="text">
     <string>Add &amp;Forcefield Terms...</string>
@@ -574,7 +574,7 @@
   <action name="LayerCreateEmptyAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/menu/icons/menu_new.svg</normaloff>:/menu/icons/menu_new.svg</iconset>
+     <normaloff>:/general/icons/new.svg</normaloff>:/general/icons/new.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Empty</string>
@@ -603,7 +603,7 @@
   <action name="LayerDeleteAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+     <normaloff>:/general/icons/trash.svg</normaloff>:/general/icons/trash.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
@@ -617,7 +617,7 @@
   <action name="ConfigurationDeleteAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+     <normaloff>:/general/icons/trash.svg</normaloff>:/general/icons/trash.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
@@ -626,7 +626,7 @@
   <action name="SpeciesDeleteAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+     <normaloff>:/general/icons/trash.svg</normaloff>:/general/icons/trash.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
@@ -673,7 +673,7 @@
   <action name="SimulationDataManagerAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/viewer/icons/viewer_data.svg</normaloff>:/viewer/icons/viewer_data.svg</iconset>
+     <normaloff>:/general/icons/data.svg</normaloff>:/general/icons/data.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Data Manager...</string>
@@ -834,7 +834,7 @@
   <action name="ConfigurationCreateAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
+     <normaloff>:/general/icons/configuration.svg</normaloff>:/general/icons/configuration.svg</iconset>
    </property>
    <property name="text">
     <string>Create...</string>

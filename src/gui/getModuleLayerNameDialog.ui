@@ -23,7 +23,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="main.qrc">
-    <normaloff>:/tabs/icons/tabs_species.svg</normaloff>:/tabs/icons/tabs_species.svg</iconset>
+    <normaloff>:/general/icons/species.svg</normaloff>:/general/icons/species.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">

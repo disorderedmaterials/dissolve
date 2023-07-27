@@ -1,13 +1,4 @@
 <RCC>
-  <qresource prefix="menu">
-    <file>icons/menu_new.svg</file>
-    <file>icons/menu_species.svg</file>
-    <file>icons/menu_wizard.svg</file>
-    <file>icons/menu_recent.svg</file>
-    <file>icons/menu_open.svg</file>
-    <file>icons/menu_save.svg</file>
-    <file>icons/menu_connect.svg</file>
-  </qresource>
   <qresource prefix="nodes">
     <file>icons/nodes/add.svg</file>
     <file>icons/nodes/aliases.svg</file>
@@ -56,43 +47,9 @@
     <file>icons/nodes/sum1d.svg</file>
     <file>icons/nodes/transmute.svg</file>
   </qresource>
-  <qresource prefix="wizard">
-    <file>icons/wizard_allatoms.svg</file>
-    <file>icons/wizard_frameworkmixture.svg</file>
-    <file>icons/wizard_multiplespecies.svg</file>
-    <file>icons/wizard_selectedatoms.svg</file>
-  </qresource>
   <qresource prefix="dissolve">
     <file>icons/dissolve.png</file>
     <file>icons/splash.png</file>
-  </qresource>
-  <qresource prefix="viewer_toolbar">
-    <file>icons/viewer_toolbar_interaction.svg</file>
-    <file>icons/viewer_toolbar_site.svg</file>
-    <file>icons/viewer_toolbar_view.svg</file>
-    <file>icons/viewer_toolbar_graph.svg</file>
-    <file>icons/viewer_toolbar_tools.svg</file>
-  </qresource>
-  <qresource prefix="viewer">
-    <file>icons/viewer_edit.svg</file>
-    <file>icons/viewer_link.svg</file>
-    <file>icons/viewer_edit_on.svg</file>
-    <file>icons/viewer_interact.svg</file>
-    <file>icons/viewer_interact_on.svg</file>
-    <file>icons/viewer_reset.svg</file>
-    <file>icons/viewer_followx_on.svg</file>
-    <file>icons/viewer_followall.svg</file>
-    <file>icons/viewer_followall_on.svg</file>
-    <file>icons/viewer_medic.svg</file>
-    <file>icons/viewer_followx.svg</file>
-    <file>icons/viewer_axes.svg</file>
-    <file>icons/viewer_spheres.svg</file>
-    <file>icons/viewer_spheres_on.svg</file>
-    <file>icons/viewer_axes_on.svg</file>
-    <file>icons/viewer_delete.svg</file>
-    <file>icons/viewer_snapshot.svg</file>
-    <file>icons/viewer_calculatebonds.svg</file>
-    <file>icons/viewer_data.svg</file>
   </qresource>
   <qresource prefix="fonts">
     <file>fonts/FreeSans.ttf</file>
@@ -131,80 +88,102 @@
     <file>icons/modules/neutronsq.svg</file>
     <file>icons/modules/geometryoptimisation.svg</file>
   </qresource>
-  <qresource prefix="tabs">
-    <file>icons/tabs_ff.svg</file>
-    <file>icons/tabs_configuration.svg</file>
-    <file>icons/tabs_species.svg</file>
-    <file>icons/tabs_layer_disabled.svg</file>
-    <file>icons/tabs_messages.svg</file>
-    <file>icons/tabs_layer.svg</file>
-  </qresource>
-  <qresource prefix="start">
-    <file>icons/start_connect.svg</file>
-    <file>icons/start_openrecent.svg</file>
-    <file>icons/start_template.svg</file>
-    <file>icons/start_manual.svg</file>
-    <file>icons/start_tutorials.svg</file>
-    <file>icons/start_new.svg</file>
-    <file>icons/start_openlocal.svg</file>
-  </qresource>
   <qresource prefix="general">
-    <file>icons/general_charge.svg</file>
-    <file>icons/general_density.svg</file>
-    <file>icons/general_generator.svg</file>
-    <file>icons/general_isotopologues.svg</file>
-    <file>icons/general_site.svg</file>
-    <file>icons/general_temperature.svg</file>
-    <file>icons/general_filter.svg</file>
-    <file>icons/general_false.svg</file>
-    <file>icons/general_periodictable.svg</file>
-    <file>icons/general_true.svg</file>
-    <file>icons/general_output.svg</file>
-    <file>icons/general_warn.svg</file>
-    <file>icons/general_clear.svg</file>
-    <file>icons/general_unknown.svg</file>
-    <file>icons/general_options.svg</file>
-    <file>icons/general_collapseall.svg</file>
-    <file>icons/general_context.svg</file>
-    <file>icons/general_expandall.svg</file>
-    <file>icons/general_procedure.svg</file>
-    <file>icons/general_edit.svg</file>
-    <file>icons/general_screen.svg</file>
-    <file>icons/general_monitor.svg</file>
-    <file>icons/general_clock.svg</file>
-    <file>icons/general_heartbeat.svg</file>
-    <file>icons/general_local.svg</file>
-    <file>icons/general_copy.svg</file>
-    <file>icons/general_movemodule.svg</file>
-    <file>icons/general_restartfile.svg</file>
-    <file>icons/general_font.svg</file>
-    <file>icons/general_palette.svg</file>
+    <file>icons/ff.svg</file>
+    <file>icons/configuration.svg</file>
+    <file>icons/species.svg</file>
+    <file>icons/layer_disabled.svg</file>
+    <file>icons/messages.svg</file>
+    <file>icons/layer.svg</file>
+    <file>icons/connect.svg</file>
+    <file>icons/documents.svg</file>
+    <file>icons/manual.svg</file>
+    <file>icons/tutorials.svg</file>
+    <file>icons/charge.svg</file>
+    <file>icons/density.svg</file>
+    <file>icons/generator.svg</file>
+    <file>icons/isotopologues.svg</file>
+    <file>icons/site.svg</file>
+    <file>icons/temperature.svg</file>
+    <file>icons/filter.svg</file>
+    <file>icons/false.svg</file>
+    <file>icons/periodictable.svg</file>
+    <file>icons/true.svg</file>
+    <file>icons/output.svg</file>
+    <file>icons/warn.svg</file>
+    <file>icons/clear.svg</file>
+    <file>icons/unknown.svg</file>
+    <file>icons/options.svg</file>
+    <file>icons/collapseall.svg</file>
+    <file>icons/context.svg</file>
+    <file>icons/expandall.svg</file>
+    <file>icons/procedure.svg</file>
+    <file>icons/edit.svg</file>
+    <file>icons/screen.svg</file>
+    <file>icons/monitor.svg</file>
+    <file>icons/clock.svg</file>
+    <file>icons/heartbeat.svg</file>
+    <file>icons/local.svg</file>
+    <file>icons/copy.svg</file>
+    <file>icons/movemodule.svg</file>
+    <file>icons/restartfile.svg</file>
+    <file>icons/font.svg</file>
+    <file>icons/palette.svg</file>
     <file>icons/slider-off.svg</file>
-    <file>icons/general_trash.svg</file>
-    <file>icons/general_frequency.svg</file>
+    <file>icons/trash.svg</file>
+    <file>icons/frequency.svg</file>
     <file>icons/slider-on.svg</file>
-    <file>icons/general_advanced.svg</file>
-    <file>icons/general_bothon.svg</file>
-    <file>icons/general_cross.svg</file>
-    <file>icons/general_lefton.svg</file>
-    <file>icons/general_module.svg</file>
-    <file>icons/general_righton.svg</file>
-    <file>icons/general_arrowdown.svg</file>
-    <file>icons/general_arrowleft.svg</file>
-    <file>icons/general_library.svg</file>
-    <file>icons/general_repeat.svg</file>
-    <file>icons/general_add.svg</file>
-    <file>icons/general_remove.svg</file>
-    <file>icons/general_arrowright.svg</file>
-    <file>icons/general_arrowup.svg</file>
-  </qresource>
-  <qresource prefix="control">
-    <file>icons/control_pause.svg</file>
-    <file>icons/control_locked.svg</file>
-    <file>icons/control_stop.svg</file>
-    <file>icons/control_waiting.svg</file>
-    <file>icons/control_unlocked.svg</file>
-    <file>icons/control_step.svg</file>
-    <file>icons/control_play.svg</file>
+    <file>icons/advanced.svg</file>
+    <file>icons/bothon.svg</file>
+    <file>icons/cross.svg</file>
+    <file>icons/lefton.svg</file>
+    <file>icons/module.svg</file>
+    <file>icons/righton.svg</file>
+    <file>icons/arrowdown.svg</file>
+    <file>icons/arrowleft.svg</file>
+    <file>icons/library.svg</file>
+    <file>icons/repeat.svg</file>
+    <file>icons/add.svg</file>
+    <file>icons/remove.svg</file>
+    <file>icons/arrowright.svg</file>
+    <file>icons/arrowup.svg</file>
+    <file>icons/pause.svg</file>
+    <file>icons/locked.svg</file>
+    <file>icons/stop.svg</file>
+    <file>icons/waiting.svg</file>
+    <file>icons/unlocked.svg</file>
+    <file>icons/step.svg</file>
+    <file>icons/play.svg</file>
+    <file>icons/new.svg</file>
+    <file>icons/wizard.svg</file>
+    <file>icons/recent.svg</file>
+    <file>icons/open.svg</file>
+    <file>icons/save.svg</file>
+    <file>icons/site_alt.svg</file>
+    <file>icons/view.svg</file>
+    <file>icons/graph.svg</file>
+    <file>icons/tools.svg</file>
+    <file>icons/link.svg</file>
+    <file>icons/edit_on.svg</file>
+    <file>icons/interact.svg</file>
+    <file>icons/interact_on.svg</file>
+    <file>icons/reset.svg</file>
+    <file>icons/followx_on.svg</file>
+    <file>icons/followall.svg</file>
+    <file>icons/followall_on.svg</file>
+    <file>icons/medic.svg</file>
+    <file>icons/followx.svg</file>
+    <file>icons/axes.svg</file>
+    <file>icons/spheres.svg</file>
+    <file>icons/spheres_on.svg</file>
+    <file>icons/axes_on.svg</file>
+    <file>icons/delete.svg</file>
+    <file>icons/snapshot.svg</file>
+    <file>icons/calculatebonds.svg</file>
+    <file>icons/data.svg</file>
+    <file>icons/allatoms.svg</file>
+    <file>icons/frameworkmixture.svg</file>
+    <file>icons/multiplespecies.svg</file>
+    <file>icons/selectedatoms.svg</file>
   </qresource>
 </RCC>

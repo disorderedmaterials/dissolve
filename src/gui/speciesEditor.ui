@@ -110,8 +110,8 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_interact.svg</normaloff>
-          <normalon>:/viewer/icons/viewer_interact_on.svg</normalon>:/viewer/icons/viewer_interact.svg</iconset>
+          <normaloff>:/general/icons/interact.svg</normaloff>
+          <normalon>:/general/icons/interact_on.svg</normalon>:/general/icons/interact.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -165,8 +165,8 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_edit.svg</normaloff>
-          <normalon>:/viewer/icons/viewer_edit_on.svg</normalon>:/viewer/icons/viewer_edit.svg</iconset>
+          <normaloff>:/general/icons/edit.svg</normaloff>
+          <normalon>:/general/icons/edit_on.svg</normalon>:/general/icons/edit.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -242,7 +242,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_delete.svg</normaloff>:/viewer/icons/viewer_delete.svg</iconset>
+          <normaloff>:/general/icons/delete.svg</normaloff>:/general/icons/delete.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -321,7 +321,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_reset.svg</normaloff>:/viewer/icons/viewer_reset.svg</iconset>
+          <normaloff>:/general/icons/reset.svg</normaloff>:/general/icons/reset.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -362,8 +362,8 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_spheres.svg</normaloff>
-          <normalon>:/viewer/icons/viewer_spheres_on.svg</normalon>:/viewer/icons/viewer_spheres.svg</iconset>
+          <normaloff>:/general/icons/spheres.svg</normaloff>
+          <normalon>:/general/icons/spheres_on.svg</normalon>:/general/icons/spheres.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -404,8 +404,8 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_axes.svg</normaloff>
-          <normalon>:/viewer/icons/viewer_axes_on.svg</normalon>:/viewer/icons/viewer_axes.svg</iconset>
+          <normaloff>:/general/icons/axes.svg</normaloff>
+          <normalon>:/general/icons/axes_on.svg</normalon>:/general/icons/axes.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -446,7 +446,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_snapshot.svg</normaloff>:/viewer/icons/viewer_snapshot.svg</iconset>
+          <normaloff>:/general/icons/snapshot.svg</normaloff>:/general/icons/snapshot.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -525,7 +525,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_calculatebonds.svg</normaloff>:/viewer/icons/viewer_calculatebonds.svg</iconset>
+          <normaloff>:/general/icons/calculatebonds.svg</normaloff>:/general/icons/calculatebonds.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -566,7 +566,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/viewer/icons/viewer_medic.svg</normaloff>:/viewer/icons/viewer_medic.svg</iconset>
+          <normaloff>:/general/icons/medic.svg</normaloff>:/general/icons/medic.svg</iconset>
         </property>
         <property name="iconSize">
          <size>
