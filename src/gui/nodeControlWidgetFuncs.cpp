@@ -19,7 +19,7 @@ NodeControlWidget::NodeControlWidget(DissolveWindow *dissolveWindow, NodeRef nod
 
     // Set the icon label
     ui_.NodeIconLabel->setPixmap(
-        QPixmap(QString(":/nodes/icons/nodes_%1.svg")
+        QPixmap(QString(":/nodes/icons/nodes/%1.svg")
                     .arg(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node_->type()))).toLower())));
 
     // We can only display a single group of widgets at present, so check the size of the index

@@ -99,7 +99,7 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
                 return QVariant::fromValue(node->shared_from_this());
             case (Qt::DecorationRole):
                 return QIcon((QPixmap(
-                    QString(":/nodes/icons/nodes_%1.svg")
+                    QString(":/nodes/icons/nodes/%1.svg")
                         .arg(
                             QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))).toLower()))));
             default:
