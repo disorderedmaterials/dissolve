@@ -164,31 +164,28 @@ class CIFCleanedSpecies
 
 class CIFMolecularSpecies
 {
-
-    class CIFSpecies
-
     public:
     CIFMolecularSpecies(CoreData& coreData);
 
     private:
     CoreData& coreData_;
     std::vector<Species*> species_;
-    std::vector<Configuration*> configuration_;
+    Configuration* configuration_;
     bool hasSymmetry_;
 
     public:
     std::vector<Species*>  species();
-    std::vector<Configuration*> configurations();
+    Configuration* configuration();
     bool hasSymmetry();
 
     public:
-    bool create(Species* refSp);
+    bool create(CIFImport cifImporter, Species* refSp);
 
     private:
-    NETADefinition uniqueNETADefinition(Species* sp);
-    std::vector<std::vector<int>> instances(Species* sp);
+    std::optional<NETADefinition> uniqueNETADefinition(Species* sp);
+    std::vector<std::vector<int>> instances(Species* sp, NETADefinition neta);
     std::vector<std::vector<Vec3<double>>> coordinates(Species *sp, std::vector<std::vector<int>> instances);
-    void fixGeometry(Species *sp, Box* box);
+    void fixGeometry(Species *sp, const Box* box);
     Configuration* generateConfiguration(Species* sp, std::vector<std::vector<Vec3<double>>> coordinates);
 
 };
