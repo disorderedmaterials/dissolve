@@ -44,8 +44,5 @@ class Timer
     // Return number of seconds elapsed
     double secondsElapsed() const;
     // Return time string based on provided duration in seconds
-    static std::string timeString(std::chrono::duration<double> duration = std::chrono::duration<double>(),
-                                  bool truncate = false);
-    // Return time string for number of seconds provided
-    static std::string timeString(double seconds);
+    static std::string timeString(double seconds, bool truncate = false);
 };

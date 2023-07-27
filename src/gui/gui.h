@@ -71,7 +71,9 @@ class DissolveWindow : public QMainWindow
     // Label for iteration number
     QLabel *iterationLabel_;
     // Label for simulation timer (ETA if RunFor, time elapsed if Run)
-    QLabel *etaLabel_;
+    QLabel *timerLabel_;
+    // Timer label default text
+    static constexpr char *timerText_ = "Idle";
     // General status indicator and label
     QLabel *statusIndicator_, *statusLabel_;
     // Main loop iteration timer
@@ -108,8 +110,6 @@ class DissolveWindow : public QMainWindow
     void updateWhileRunning(int iterationsRemaining);
     // Clear the messages window
     void clearMessages();
-    // Start run timer
-
     /*
      * Main Menu
      */

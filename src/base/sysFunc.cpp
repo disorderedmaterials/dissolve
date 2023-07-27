@@ -236,9 +236,6 @@ std::string DissolveSys::niceName(std::string_view original)
 // Returns 's' if value is greater than 1
 std::string DissolveSys::plural(int value) { return (value == 1 ? "" : "s"); }
 
-// Returns 's' if value is greater than 1
-std::string DissolveSys::plural(double value) { return (0.5 < value && value < 1.5 ? "" : "s"); }
-
 /*
  * Number Detection
  */

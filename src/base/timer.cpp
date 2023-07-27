@@ -53,63 +53,37 @@ void Timer::accumulate() { totalTime_ += std::chrono::high_resolution_clock::now
 void Timer::zero() { totalTime_ = std::chrono::duration<double>(); }
 
 // Return current elapsed time as a time string
-std::string Timer::elapsedTimeString(bool truncate)
-{
-    if (running_)
-        return timeString(std::chrono::high_resolution_clock::now() - startTime_, truncate);
-    else
-        return timeString(totalTime_, truncate);
-}
+std::string Timer::elapsedTimeString(bool truncate) { return timeString(secondsElapsed(), truncate); }
 
 // Return total time (after stop()) as a time string
-std::string Timer::totalTimeString() { return timeString(totalTime_); }
+std::string Timer::totalTimeString() { return timeString(totalTime_.count()); }
 
 // Return number of seconds elapsed
 double Timer::secondsElapsed() const
 {
     if (running_)
-        return (std::chrono::high_resolution_clock::now() - startTime_).count();
+        return std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - startTime_).count();
     else
         return totalTime_.count();
 }
 
 // Return time string based on provided duration in seconds
-std::string Timer::timeString(std::chrono::duration<double> duration, bool truncate)
+std::string Timer::timeString(double duration, bool truncate)
 {
-
-    int n = duration.count();
+    int n = duration;
     auto hours = n / 3600;
     n %= 3600;
     auto minutes = n / 60;
     n %= 60;
-    auto seconds = duration.count() - hours * 3600 - minutes * 60;
+    auto seconds = duration - hours * 3600 - minutes * 60;
 
     if (hours != 0)
-        return fmt::format("{} hour{}, {} minute{}, and {:0.0f} second{}", hours, DissolveSys::plural(hours), minutes,
-                           DissolveSys::plural(minutes), seconds, DissolveSys::plural(seconds));
+        return fmt::format("{} hour{}, {} minute{}, and {:0.0f} seconds", hours, DissolveSys::plural(hours), minutes,
+                           DissolveSys::plural(minutes), seconds);
     else if (minutes != 0)
-        return fmt::format("{} minute{} and {:0.0f} second{}", minutes, DissolveSys::plural(minutes), seconds,
-                           DissolveSys::plural(seconds));
+        return fmt::format("{} minute{} and {:0.0f} seconds", minutes, DissolveSys::plural(minutes), seconds);
     else if (truncate)
-        return fmt::format("{:0.0f} second{}", seconds, DissolveSys::plural(seconds));
+        return fmt::format("{:0.0f} seconds", seconds);
     else
-        return fmt::format("{:0.1f} second{}", seconds, DissolveSys::plural(seconds));
-}
-
-// Return time string for number of seconds provided
-std::string Timer::timeString(double seconds)
-{
-    auto hours = int(seconds) / 3600;
-    seconds -= hours * 3600;
-    auto minutes = int(seconds) / 60;
-    seconds -= minutes * 60;
-
-    if (hours != 0)
-        return fmt::format("{} hour{}, {} minute{}, and {:0.1f} second{}", hours, DissolveSys::plural(hours), minutes,
-                           DissolveSys::plural(minutes), seconds, DissolveSys::plural(seconds));
-    else if (minutes != 0)
-        return fmt::format("{} minute{} and {:0.1f} second{}", minutes, DissolveSys::plural(minutes), seconds,
-                           DissolveSys::plural(seconds));
-    else
-        return fmt::format("{:0.1f} second{}", seconds, DissolveSys::plural(seconds));
+        return fmt::format("{:0.1f} seconds", seconds);
 }
