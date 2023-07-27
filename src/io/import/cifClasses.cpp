@@ -202,6 +202,99 @@ void CIFStructuralSpecies::applyCIFBonding(CIFImport cifImporter, bool preventMe
     }
 }
 
+CIFCleanedSpecies::CIFCleanedSpecies(CoreData &coreData) : coreData_(coreData) {}
+
+Species *CIFCleanedSpecies::species()
+{
+    return species_;
+}
+
+Configuration* CIFCleanedSpecies::configuration()
+{
+    return configuration_;
+}
+
+bool CIFCleanedSpecies::create(CIFImport cifImporter, Species* refSp, bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety, std::optional<NETADefinition> moietyNETA, std::optional<bool> removeEntireFragment)
+{
+    species_ = coreData_.addSpecies();
+    species_->setName("Crystal (Cleaned)");
+    if (!refSp)
+        return false;
+    species_->copyBasic(refSp);
+
+    // Create a configuration
+    configuration_ = coreData_.addConfiguration();
+    configuration_->setName("Cleaned");
+
+    // -- Set unit cell
+    auto cellLengths = cifImporter.getCellLengths();
+    if (!cellLengths)
+        return false;
+    auto cellAngles = cifImporter.getCellAngles();
+    if (!cellAngles)
+        return false;
+    species_->createBox(cellLengths.value(), cellAngles.value());
+    auto *box = species_->box();
+    configuration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+
+    if (removeAtomsOfSingleMoiety)
+    {
+        std::vector<int> indicesToRemove;
+        for (const auto &i : species_->atoms())
+            if (i.nBonds() == 0)
+                indicesToRemove.push_back(i.index());
+        Messenger::print("Atomic removal deleted {} atoms.\n", indicesToRemove.size());
+
+        // Remove selected atoms
+        species_->removeAtoms(indicesToRemove);
+    }
+
+    if (removeWaterMoleculesOfSingleMoiety)
+    {
+        NETADefinition waterVacuum("?O,nbonds=1,nh<=1|?O,nbonds>=2,-H(nbonds=1,-O)");
+        if (!waterVacuum.isValid())
+            return Messenger::error("NETA definition for water removal is invalid.\n");
+
+        std::vector<int> indicesToRemove;
+        for (const auto &i : species_->atoms())
+            if (waterVacuum.matches(&i))
+                indicesToRemove.push_back(i.index());
+        Messenger::print("Water removal deleted {} atoms.\n", indicesToRemove.size());
+
+        // Remove selected atoms
+        species_->removeAtoms(indicesToRemove);
+    }
+
+    if (moietyNETA.has_value() && moietyNETA.value().isValid())
+    {
+        // Select all atoms that are in moieties where one of its atoms matches our NETA definition
+        std::vector<int> indicesToRemove;
+        for (auto &i : species_->atoms())
+            if (moietyNETA.value().matches(&i))
+            {
+                // Select all atoms that are part of the same moiety?
+                if (removeEntireFragment.has_value() && removeEntireFragment.value())
+                {
+                    species_->clearAtomSelection();
+                    auto selection = species_->fragment(i.index());
+                    std::copy(selection.begin(), selection.end(), std::back_inserter(indicesToRemove));
+                }
+                else
+                    indicesToRemove.push_back(i.index());
+            }
+        Messenger::print("Moiety removal deleted {} atoms.\n", indicesToRemove.size());
+
+        // Remove selected atoms
+        species_->removeAtoms(indicesToRemove);
+    }
+
+    // Add the structural species to the configuration
+    configuration_->addMolecule(species_);
+    configuration_->updateObjectRelationships();
+
+    return true;
+}
+
 /*
  * CIF Species
  */

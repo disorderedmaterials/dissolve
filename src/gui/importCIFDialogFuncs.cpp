@@ -376,79 +376,12 @@ bool ImportCIFDialog::createCleanedSpecies()
     if (cleanedSpecies_)
         temporaryCoreData_.removeSpecies(cleanedSpecies_);
 
-    // Copy the crystal species
-    cleanedSpecies_ = temporaryCoreData_.addSpecies();
-    cleanedSpecies_->setName("Crystal (Cleaned)");
-    if (!crystalSpecies_)
-        return Messenger::error("Crystal reference species doesn't exist.\n");
-    cleanedSpecies_->copyBasic(crystalSpecies_, true);
-    // -- Set unit cell
-    auto cellLengths = cifImporter_.getCellLengths();
-    if (!cellLengths)
+    CIFCleanedSpecies cifCleanedSpecies(temporaryCoreData_);
+    if (!cifCleanedSpecies.create(cifImporter_, crystalSpecies_, ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked(), moietyNETA_, ui_.MoietyNETARemoveFragmentsCheck->isChecked()))
         return false;
-    auto cellAngles = cifImporter_.getCellAngles();
-    if (!cellAngles)
-        return false;
-    cleanedSpecies_->createBox(cellLengths.value(), cellAngles.value());
-    cleanedConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
 
-    // Atomics
-    if (ui_.MoietyRemoveAtomicsCheck->isChecked())
-    {
-        std::vector<int> indicesToRemove;
-        for (const auto &i : cleanedSpecies_->atoms())
-            if (i.nBonds() == 0)
-                indicesToRemove.push_back(i.index());
-        Messenger::print("Atomic removal deleted {} atoms.\n", indicesToRemove.size());
-
-        // Remove selected atoms
-        cleanedSpecies_->removeAtoms(indicesToRemove);
-    }
-
-    // Water or coordinated oxygens
-    if (ui_.MoietyRemoveWaterCheck->isChecked())
-    {
-        NETADefinition waterVacuum("?O,nbonds=1,nh<=1|?O,nbonds>=2,-H(nbonds=1,-O)");
-        if (!waterVacuum.isValid())
-            return Messenger::error("NETA definition for water removal is invalid.\n");
-
-        std::vector<int> indicesToRemove;
-        for (const auto &i : cleanedSpecies_->atoms())
-            if (waterVacuum.matches(&i))
-                indicesToRemove.push_back(i.index());
-        Messenger::print("Water removal deleted {} atoms.\n", indicesToRemove.size());
-
-        // Remove selected atoms
-        cleanedSpecies_->removeAtoms(indicesToRemove);
-    }
-
-    // Custom NETA Removal
-    if (ui_.MoietyRemoveByNETAGroup->isChecked() && moietyNETA_.isValid())
-    {
-        // Select all atoms that are in moieties where one of its atoms matches our NETA definition
-        std::vector<int> indicesToRemove;
-        for (auto &i : cleanedSpecies_->atoms())
-            if (moietyNETA_.matches(&i))
-            {
-                // Select all atoms that are part of the same moiety?
-                if (ui_.MoietyNETARemoveFragmentsCheck->isChecked())
-                {
-                    cleanedSpecies_->clearAtomSelection();
-                    auto selection = cleanedSpecies_->fragment(i.index());
-                    std::copy(selection.begin(), selection.end(), std::back_inserter(indicesToRemove));
-                }
-                else
-                    indicesToRemove.push_back(i.index());
-            }
-        Messenger::print("Moiety removal deleted {} atoms.\n", indicesToRemove.size());
-
-        // Remove selected atoms
-        cleanedSpecies_->removeAtoms(indicesToRemove);
-    }
-
-    // Add the structural species to the configuration
-    cleanedConfiguration_->addMolecule(cleanedSpecies_);
-    cleanedConfiguration_->updateObjectRelationships();
+    cleanedSpecies_ = cifCleanedSpecies.species();
+    cleanedConfiguration_ = cifCleanedSpecies.configuration();
 
     ui_.CleanedViewer->setConfiguration(cleanedConfiguration_);
 

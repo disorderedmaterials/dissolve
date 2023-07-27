@@ -15,6 +15,7 @@ class CIFImport;
 class CoreData;
 class Configuration;
 class Species;
+class NETADefinition;
 
 // CIF Symmetry-Unique Atom
 class CIFSymmetryAtom
@@ -138,6 +139,26 @@ class CIFStructuralSpecies
 
     private:
     void applyCIFBonding(CIFImport cifImporter, bool preventMetallicBonding);
+
+};
+
+class CIFCleanedSpecies
+{
+    public:
+    CIFCleanedSpecies(CoreData& coreData);
+
+    private:
+    CoreData& coreData_;
+    Species* species_;
+    Configuration* configuration_;
+
+    public:
+    Species* species();
+    Configuration* configuration();
+
+    public:
+    bool create(CIFImport cifImporter, Species* refSp, bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety, std::optional<NETADefinition> moietyNETA, std::optional<bool> removeEntireFragment);
+
 
 };
 
