@@ -49,7 +49,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     iterationLabel_ = addStatusBarLabel("00000");
     iterationLabel_->setToolTip("Current step / iteration number");
     addStatusBarIcon(":/general/icons/general_clock.svg");
-    timerLabel_ = addStatusBarLabel("--:--:--");
+    timerLabel_ = addStatusBarLabel(timerText_);
     restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
     statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
@@ -290,9 +290,6 @@ void DissolveWindow::updateStatusBar()
 {
     // Set current iteration number
     iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
-    // timerLabel_ reports elapsed time
-    timerLabel_->setText(
-        QString::fromStdString(elapsedTimer_.hasStarted() ? elapsedTimer_.elapsedTimeString(true) : timerText_));
 
     // Set restart file locations
     restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
@@ -312,6 +309,9 @@ void DissolveWindow::updateStatusBar()
     {
         statusLabel_->setText("Running (ESC to stop)");
         statusIndicator_->setPixmap(QPixmap(":/control/icons/control_play.svg"));
+        // timerLabel_ reports elapsed time
+        timerLabel_->setText(
+            QString::fromStdString(elapsedTimer_.hasStarted() ? elapsedTimer_.elapsedTimeString(true) : timerText_));
     }
     else if (ui_.MainStack->currentIndex() == 1)
     {
