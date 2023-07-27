@@ -16,6 +16,7 @@ set(models_MOC_HDRS
     masterTorsionModel.h
     moduleLayerModel.h
     moduleModel.h
+    nodePaletteFilterProxy.h
     modulePaletteModel.h
     nodePaletteModel.h
     pairPotentialModel.h
@@ -66,6 +67,7 @@ set(models_SRCS
     masterTorsionModel.cpp
     moduleLayerModel.cpp
     moduleModel.cpp
+    nodePaletteFilterProxy.cpp
     modulePaletteModel.cpp
     nodePaletteModel.cpp
     pairPotentialModel.cpp
