@@ -547,7 +547,7 @@ void CoreData::removeProcessingLayer(ModuleLayer *layer)
     // Remove any references to the Modules in the layer before we delete it
     for (auto &module : layer->modules())
         removeReferencesTo(module.get());
-        
+
     // Now safe to remove the layer
     processingLayers_.erase(
         std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](const auto &l) { return l.get() == layer; }));
