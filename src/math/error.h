@@ -5,6 +5,7 @@
 
 #include "base/enumOptions.h"
 #include "math/range.h"
+#include "templates/optionalRef.h"
 
 // Forward Declarations
 class Data1D;
@@ -33,21 +34,21 @@ EnumOptions<Error::ErrorType> errorTypes();
  */
 
 // Return error of specified type between supplied data, allows a range parameter to be specified
-double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
-// Return error of specified type between supplied double vectors, allows a range parameter to be specified
-double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet = false,
-             Range range = Range());
+double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet = false,
+             OptionalReferenceWrapper<Range> range = std::nullopt);
+// Return error of specified type between supplied double vectors
+double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet = false);
 // Return RMSE between supplied data
-double rmse(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
+double rmse(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return MAAPE between supplied data
-double maape(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
+double maape(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return MAPE between supplied data
-double mape(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
+double mape(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return percentage error between supplied data
-double percent(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
+double percent(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return R-Factor (average squared error per point) between supplied data
-double rFactor(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
+double rFactor(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return Euclidean distance, normalised to mean of B, between supplied data
-double euclidean(const Data1D &A, const Data1D &B, bool quiet = false, Range range = Range());
+double euclidean(const Data1D &A, const Data1D &B, bool quiet = false, OptionalReferenceWrapper<Range> range = std::nullopt);
 
 }; // namespace Error
