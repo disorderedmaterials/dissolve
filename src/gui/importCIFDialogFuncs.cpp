@@ -370,7 +370,6 @@ bool ImportCIFDialog::createCleanedSpecies()
     ui_.CleanedViewer->setConfiguration(nullptr);
     partitioningConfiguration_->empty();
     supercellConfiguration_->empty();
-    cleanedConfiguration_->empty();
 
     // Remove the cleaned crystal species
     if (cleanedSpecies_)

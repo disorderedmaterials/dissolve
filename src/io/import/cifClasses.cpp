@@ -338,6 +338,65 @@ const std::vector<std::vector<int>> &CIFSpecies::instances() const { return inst
 // Return the coordinates corresponding to the instances
 const std::vector<std::vector<Vec3<double>>> &CIFSpecies::coordinates() const { return coordinates_; }
 
+CIFMolecularSpecies::CIFMolecularSpecies(CoreData &coreData) : coreData_(CoreData) {}
+
+std::vector<Species *> CIFMolecularSpecies::species() { return species_; }
+std::vector<Configuration *> CIFMolecularSpecies::configurations() { return configuration_; }
+
+bool CIFMolecularSpecies::create(Species *refSp)
+{
+    std::vector<int> indices(cleanedSpecies_->nAtoms());
+    std::iota(indices.begin(), indices.end(), 0);
+
+    // Find all CIFSpecies, and their instances
+    auto idx = 0;
+    while (!indices.empty())
+    {
+        // Choose a fragment
+        auto fragment = cleanedSpecies_->fragment(idx);
+        std::sort(fragment.begin(), fragment.end());
+
+        // Setup the CIF species
+        auto *sp = temporaryCoreData_.addSpecies();
+        sp->copyBasic(refSp);
+
+        // Leave a single fragment in the species
+
+        fixGeometry(sp, refSp->box());
+
+        auto neta = uniqueNETADefinition(sp);
+        auto copies = instances(refSp, neta);
+        auto coords = coordinates(refSp, copies);
+
+        // Generate a configuration here.
+
+        species_.push_back(sp);
+        configuration_.push_back(cfg);
+    }
+}
+
+std::optional<NETADefinition> CIFMolecularSpecies::uniqueNETADefinition(Species *sp)
+{
+    NETADefinition neta;
+    auto nMatches = 0, idx = 0;
+    while (nMatches != 1)
+    {
+        if (idx >= sp->nAtoms())
+            return std::nullopt;
+        neta.create(&sp->atom(idx++), std::nullopt,
+                    Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,
+                                                             NETADefinition::NETACreationFlags::IncludeRootElement));
+        nMatches =
+            std::count_if(sp->atoms().begin(), sp->atoms().end(), [&](const auto &i) { return neta.matches(&i); });
+    }
+    return neta;
+}
+
+std::vector<std::vector<int>> CIFMolecularSpecies::instances(Species *sp)
+{
+    return {};
+}
+
 // Return whether the reference instance contains symmetry.
 bool CIFSpecies::hasSymmetry() const { return hasSymmetry_; }
 
