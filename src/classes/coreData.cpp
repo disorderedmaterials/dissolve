@@ -563,6 +563,9 @@ ModuleLayer *CoreData::findProcessingLayer(std::string_view name) const
     return it->get();
 }
 
+// Return number of processing layers
+int CoreData::nProcessingLayers() const { return processingLayers_.size(); }
+
 // Return current processing layers
 std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() { return processingLayers_; }
 const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const { return processingLayers_; }

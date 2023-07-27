@@ -202,6 +202,8 @@ class CoreData
     void removeProcessingLayer(ModuleLayer *layer);
     // Find named processing layer
     ModuleLayer *findProcessingLayer(std::string_view name) const;
+    // Return number of processing layers
+    int nProcessingLayers() const;
     // Return current processing layers
     std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
     const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
