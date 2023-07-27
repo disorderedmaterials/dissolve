@@ -31,6 +31,9 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     // Set-up the generator procedure editor
     ui_.GeneratorWidget->setUp(dissolveWindow_, configuration_->generator());
+
+    // Set warning for Size Factor indicator
+    ui_.SizeFactorIndicator->setWarning();
 }
 
 /*
@@ -126,6 +129,10 @@ void ConfigurationTab::updateControls()
     // Populations
     ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));
     ui_.MoleculePopulationLabel->setText(QString::number(configuration_->nMolecules()));
+
+    // Applied size factor
+    ui_.SizeFactorLabel->setText(QString::number(configuration_->appliedSizeFactor()));
+    ui_.SizeFactorFrame->setVisible(configuration_->appliedSizeFactor() != 1.0);
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
