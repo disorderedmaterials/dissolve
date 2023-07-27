@@ -96,7 +96,8 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
     while (true)
     {
         // Calculate ratio between current and applied size factors for use later on
-        const auto sizeFactorRatio = requestedSizeFactor_.value_or(defaultSizeFactor_) / appliedSizeFactor_.value_or(defaultSizeFactor_);
+        const auto sizeFactorRatio =
+            requestedSizeFactor_.value_or(defaultSizeFactor_) / appliedSizeFactor_.value_or(defaultSizeFactor_);
 
         // Check current vs applied size factors (via the ratio) - if unequal, perform scaling and set the new applied
         // size factor
@@ -104,7 +105,8 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
         {
             Messenger::print("Requested SizeFactor for Configuration is {}, current SizeFactor is {}, so scaling "
                              "Box contents.\n",
-                             requestedSizeFactor_.value_or(defaultSizeFactor_), appliedSizeFactor_.value_or(defaultSizeFactor_));
+                             requestedSizeFactor_.value_or(defaultSizeFactor_),
+                             appliedSizeFactor_.value_or(defaultSizeFactor_));
 
             // Scale molecule centres of geometry
             scaleContents({sizeFactorRatio, sizeFactorRatio, sizeFactorRatio});
@@ -135,11 +137,13 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             requestedSizeFactor_ = requestedSizeFactor_.value_or(defaultSizeFactor_) * reductionFactor;
             if (requestedSizeFactor_.value_or(defaultSizeFactor_) < 1.0)
                 requestedSizeFactor_ = 1.0;
-            Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to {}\n", requestedSizeFactor_.value_or(defaultSizeFactor_));
+            Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to {}\n",
+                             requestedSizeFactor_.value_or(defaultSizeFactor_));
         }
         else
         {
-            Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n", requestedSizeFactor_.value_or(defaultSizeFactor_));
+            Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n",
+                             requestedSizeFactor_.value_or(defaultSizeFactor_));
             break;
         }
     }
