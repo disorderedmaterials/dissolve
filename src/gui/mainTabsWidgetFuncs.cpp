@@ -189,7 +189,7 @@ void MainTabsWidget::reconcileTabs()
         {
             QString tabTitle = QString::fromStdString(std::string(sp->name()));
             auto spTab = speciesTabs_.emplace_back(new SpeciesTab(dissolveWindow_, dissolve, this, tabTitle, sp.get()));
-            allTabs_.insert(allTabs_.begin() + baseIndex + currentTabIndex, spTab.data());
+            allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), spTab.data());
             insertTab(baseIndex + currentTabIndex, spTab.data(), tabTitle);
             addTabCloseButton(spTab->page());
             setTabIcon(spTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
@@ -222,7 +222,7 @@ void MainTabsWidget::reconcileTabs()
             QString tabTitle = QString::fromStdString(std::string(cfg->name()));
             auto cfgTab =
                 configurationTabs_.emplace_back(new ConfigurationTab(dissolveWindow_, dissolve, this, tabTitle, cfg.get()));
-            allTabs_.insert(allTabs_.begin() + baseIndex + currentTabIndex, cfgTab.data());
+            allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), cfgTab.data());
             insertTab(baseIndex + currentTabIndex, cfgTab.data(), tabTitle);
             addTabCloseButton(cfgTab->page());
             setTabIcon(cfgTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
@@ -261,8 +261,7 @@ void MainTabsWidget::reconcileTabs()
             QString tabTitle = QString::fromStdString(std::string(layer->name()));
             auto layerTab =
                 processingLayerTabs_.emplace_back(new LayerTab(dissolveWindow_, dissolve, this, tabTitle, layer.get()));
-
-            allTabs_.insert(allTabs_.begin() + baseIndex + currentTabIndex, layerTab.data());
+            allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
             setTabIcon(processingLayerTabs_[currentTabIndex]->page(), layer->isEnabled()
