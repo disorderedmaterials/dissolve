@@ -59,3 +59,10 @@ void Dissolve::clear()
     restartFilename_.clear();
     saveRestartTimes_.clear();
 }
+
+/*
+ * Processing Module Data
+ */
+
+// Return data associated with processing Modules
+GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
