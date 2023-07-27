@@ -18,39 +18,45 @@ EnumOptions<ErrorType> errorTypes()
                                                 {MAAPEError, "MAAPE"},
                                                 {MAPEError, "MAPE"},
                                                 {PercentError, "Percent"},
+                                                {ASEError, "Absolute Squared"},
                                                 {RFactorError, "RFactor"},
-                                                {EuclideanError, "Euclidean"}});
+                                                {EuclideanError, "Euclidean Distance"}});
+}
+
+std::string errorReportString(ErrorReport errorReport)
+{
+    return fmt::format("{} between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n",
+                       errorTypes().keyword(errorReport.errorType), errorReport.value, errorReport.firstX, errorReport.lastX,
+                       errorReport.nPointsConsidered);
 }
 
 // Return error of specified type between supplied data
-double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapper<Range> range)
+ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
-
     // if range is unset
     auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
     auto rangeMax = range ? range->get().maximum() : B.xAxis().back();
 
     if (errorType == RMSEError)
-        return rmse(A, B, quiet, range);
+        return rmse(A, B, range);
     else if (errorType == MAAPEError)
-        return maape(A, B, quiet, range);
+        return maape(A, B, range);
     else if (errorType == MAPEError)
-        return mape(A, B, quiet, range);
+        return mape(A, B, range);
     else if (errorType == PercentError)
-        return percent(A, B, quiet, range);
+        return percent(A, B, range);
     else if (errorType == RFactorError)
-        return rFactor(A, B, quiet, range);
+        return rFactor(A, B, range);
     else if (errorType == EuclideanError)
-        return euclidean(A, B, quiet, range);
+        return euclidean(A, B, range);
 
     throw(
         std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
                                        errorTypes().keyword(errorType))));
-    return 0.0;
 }
 
 // Return error of specified type between supplied double vectors
-double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet)
+ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB)
 {
     // Size check
     assert(vecA.size() == vecB.size());
@@ -66,20 +72,21 @@ double error(ErrorType errorType, const std::vector<double> &vecA, const std::ve
     }
 
     if (errorType == RMSEError)
-        return rmse(A, B, quiet);
+        return rmse(A, B);
     else if (errorType == MAAPEError)
-        return maape(A, B, quiet);
+        return maape(A, B);
     else if (errorType == MAPEError)
-        return mape(A, B, quiet);
+        return mape(A, B);
     else if (errorType == PercentError)
-        return percent(A, B, quiet);
+        return percent(A, B);
     else if (errorType == RFactorError)
-        return rFactor(A, B, quiet);
+        return rFactor(A, B);
     else if (errorType == EuclideanError)
-        return euclidean(A, B, quiet);
+        return euclidean(A, B);
 
-    Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
-    return 0.0;
+    throw(
+        std::runtime_error(fmt::format("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n",
+                                       errorTypes().keyword(errorType))));
 }
 
 /*
@@ -87,8 +94,9 @@ double error(ErrorType errorType, const std::vector<double> &vecA, const std::ve
  */
 
 // Return RMSE between supplied data
-double rmse(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapper<Range> range)
+ErrorReport rmse(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
+    ErrorReport rmseReport;
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 
@@ -124,15 +132,12 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapp
 
     // Finalise RMSE and summarise result
     rmse = sqrt(rmse / nPointsConsidered);
-    if (!quiet)
-        Messenger::print("RMSE between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", rmse, firstX, lastX,
-                         nPointsConsidered);
 
-    return rmse;
+    return ErrorReport{RMSEError, rmse, firstX, lastX, nPointsConsidered};
 }
 
 // Return MAPE between supplied data
-double mape(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapper<Range> range)
+ErrorReport mape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -169,15 +174,12 @@ double mape(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapp
     }
 
     auto mape = 100.0 * sum / nPointsConsidered;
-    if (!quiet)
-        Messenger::print("MAPE between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n", mape, firstX, lastX,
-                         nPointsConsidered);
 
-    return mape;
+    return ErrorReport{MAPEError, mape, firstX, lastX, nPointsConsidered};
 }
 
 // Return MAAPE between supplied data
-double maape(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapper<Range> range)
+ErrorReport maape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -210,15 +212,12 @@ double maape(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrap
     }
 
     auto maape = 100.0 * sum / nPointsConsidered;
-    if (!quiet)
-        Messenger::print("MAAPE between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n", maape, firstX, lastX,
-                         nPointsConsidered);
 
-    return maape;
+    return ErrorReport{MAAPEError, maape, firstX, lastX, nPointsConsidered};
 }
 
 // Return percentage error between supplied data
-double percent(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapper<Range> range)
+ErrorReport percent(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -253,23 +252,59 @@ double percent(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWr
     }
 
     // Calculate percentage error, avoiding divide-by-zero if the sum of y values is zero
-    auto zeroSum = sumy == 0;
-    auto percentError = (zeroSum ? sume : 100.0 * sume / sumy);
-    if (!quiet)
+    // (Returns absolute squared error instead)
+
+    if (sumy == 0)
     {
-        if (zeroSum)
-            Messenger::print("Absolute squared error between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n",
-                             percentError, firstX, lastX, nPointsConsidered);
-        else
-            Messenger::print("Percentage error between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n",
-                             percentError, firstX, lastX, nPointsConsidered);
+        return ErrorReport{ASEError, sume, firstX, lastX, nPointsConsidered};
     }
 
-    return percentError;
+    auto percentError = sume : 100.0 * sume / sumy;
+    return ErrorReport{PercentError, percentError, firstX, lastX, nPointsConsidered};
+}
+
+// Return absolute squared error between supplied data
+ErrorReport ase(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
+{
+    // First, generate interpolation of data B
+    Interpolator interpolatedB(B);
+
+    // if range is unset
+    auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
+    auto rangeMax = range ? range->get().maximum() : B.xAxis().back();
+
+    // Calculate summed absolute error and absolute y value deviations from average
+    auto sume = 0.0, firstX = 0.0, lastX = 0.0;
+    auto nPointsConsidered = 0;
+    for (auto &&[x, y] : zip(A.xAxis(), A.values()))
+    {
+        // Is our x value lower than the lowest x value of the reference data?
+        if (x < rangeMin)
+            continue;
+
+        // Is our x value higher than the last x value of the reference data?
+        if (x > rangeMax)
+            break;
+
+        // Is this the first point considered?
+        if (nPointsConsidered == 0)
+            firstX = x;
+
+        // Get y reference value
+        sume += fabs(y - interpolatedB.y(x));
+
+        lastX = x;
+        ++nPointsConsidered;
+    }
+
+    // Calculate percentage error, avoiding divide-by-zero if the sum of y values is zero
+    // (Returns absolute squared error instead)
+
+    return ErrorReport{ASEError, sume, firstX, lastX, nPointsConsidered};
 }
 
 // Return R-Factor (average squared error per point) between supplied data
-double rFactor(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapper<Range> range)
+ErrorReport rFactor(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -308,15 +343,12 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWr
 
     // Calculate squared error per point and summarise result
     rfac /= nPointsConsidered;
-    if (!quiet)
-        Messenger::print("R-Factor between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", rfac, firstX,
-                         lastX, nPointsConsidered);
 
-    return rfac;
+    return ErrorReport{RFactorError, rfac, firstX, lastX, nPointsConsidered};
 }
 
 // Return Euclidean distance, normalised to mean of B, between supplied data
-double euclidean(const Data1D &A, const Data1D &B, bool quiet, OptionalReferenceWrapper<Range> range)
+ErrorReport euclidean(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -352,11 +384,8 @@ double euclidean(const Data1D &A, const Data1D &B, bool quiet, OptionalReference
 
     // Calculate final error and summarise result
     auto euc = sos / sqrt(y2);
-    if (!quiet)
-        Messenger::print("Euclidean distance between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", euc,
-                         firstX, lastX, nPointsConsidered);
 
-    return euc;
+    return ErrorReport{EuclideanError, euc, firstX, lastX, nPointsConsidered};
 }
 
 } // namespace Error
