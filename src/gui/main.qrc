@@ -1,41 +1,41 @@
 <RCC>
   <qresource prefix="nodes">
     <file>icons/nodes/add.svg</file>
-    <file>icons/nodes/simpleglobalpotential.svg</file>
+    <file>icons/nodes/simpleGlobalPotential.svg</file>
     <file>icons/nodes/box.svg</file>
-    <file>icons/nodes/calculateangle.svg</file>
-    <file>icons/nodes/calculateaxisangle.svg</file>
-    <file>icons/nodes/calculatedistance.svg</file>
-    <file>icons/nodes/calculatevector.svg</file>
-    <file>icons/nodes/collect1d.svg</file>
-    <file>icons/nodes/customregion.svg</file>
-    <file>icons/nodes/collect2d.svg</file>
-    <file>icons/nodes/collect3d.svg</file>
-    <file>icons/nodes/coordinatesets.svg</file>
-    <file>icons/nodes/addpair.svg</file>
-    <file>icons/nodes/cylindricalregion.svg</file>
+    <file>icons/nodes/calculateAngle.svg</file>
+    <file>icons/nodes/calculateAxisAngle.svg</file>
+    <file>icons/nodes/calculateDistance.svg</file>
+    <file>icons/nodes/calculateVector.svg</file>
+    <file>icons/nodes/collect1D.svg</file>
+    <file>icons/nodes/customRegion.svg</file>
+    <file>icons/nodes/collect2D.svg</file>
+    <file>icons/nodes/collect3D.svg</file>
+    <file>icons/nodes/coordinateSets.svg</file>
+    <file>icons/nodes/addPair.svg</file>
+    <file>icons/nodes/cylindricalRegion.svg</file>
     <file>icons/nodes/copy.svg</file>
-    <file>icons/nodes/fit1d.svg</file>
-    <file>icons/nodes/generalregion.svg</file>
-    <file>icons/nodes/integrate1d.svg</file>
-    <file>icons/nodes/operatedivide.svg</file>
-    <file>icons/nodes/operateexpression.svg</file>
-    <file>icons/nodes/operategridnormalise.svg</file>
-    <file>icons/nodes/operatemultiply.svg</file>
-    <file>icons/nodes/operatenormalise.svg</file>
-    <file>icons/nodes/operatenumberdensitynormalise.svg</file>
-    <file>icons/nodes/operatesitepopulationnormalise.svg</file>
-    <file>icons/nodes/operatesphericalshellnormalise.svg</file>
+    <file>icons/nodes/fit1D.svg</file>
+    <file>icons/nodes/generalRegion.svg</file>
+    <file>icons/nodes/integrate1D.svg</file>
+    <file>icons/nodes/operateDivide.svg</file>
+    <file>icons/nodes/operateExpression.svg</file>
+    <file>icons/nodes/operateGridNormalise.svg</file>
+    <file>icons/nodes/operateMultiply.svg</file>
+    <file>icons/nodes/operateNormalise.svg</file>
+    <file>icons/nodes/operateNumberDensityNormalise.svg</file>
+    <file>icons/nodes/operateSitePopulationNormalise.svg</file>
+    <file>icons/nodes/operateSphericalShellNormalise.svg</file>
     <file>icons/nodes/parameters.svg</file>
     <file>icons/nodes/pick.svg</file>
-    <file>icons/nodes/pickproximity.svg</file>
-    <file>icons/nodes/pickregion.svg</file>
-    <file>icons/nodes/process1d.svg</file>
-    <file>icons/nodes/process2d.svg</file>
-    <file>icons/nodes/process3d.svg</file>
+    <file>icons/nodes/pickProximity.svg</file>
+    <file>icons/nodes/pickRegion.svg</file>
+    <file>icons/nodes/process1D.svg</file>
+    <file>icons/nodes/process2D.svg</file>
+    <file>icons/nodes/process3D.svg</file>
     <file>icons/nodes/remove.svg</file>
     <file>icons/nodes/select.svg</file>
-    <file>icons/nodes/sum1d.svg</file>
+    <file>icons/nodes/sum1D.svg</file>
     <file>icons/nodes/transmute.svg</file>
   </qresource>
   <qresource prefix="dissolve">

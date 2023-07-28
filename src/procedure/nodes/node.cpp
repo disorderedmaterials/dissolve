@@ -74,6 +74,14 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Transmute, "Transmute"}});
 }
 
+// Return the lowerCamelCase name of the node type provided
+std::string ProcedureNode::lccNodeType(NodeType nodeType)
+{
+    auto lccNodeName = ProcedureNode::nodeTypes().keyword(nodeType);
+    lccNodeName.front() = tolower(lccNodeName.front());
+    return lccNodeName;
+}
+
 // Return enum option info for NodeContext
 EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 {
