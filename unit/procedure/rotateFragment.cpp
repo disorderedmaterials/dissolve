@@ -22,7 +22,7 @@ TEST(RotateTest, Benzene)
     Dissolve dissolve(coreData);
 
     // Set up species
-    auto *benzene = dissolve.copySpecies(&benzeneSpecies());
+    auto *benzene = coreData.copySpecies(&benzeneSpecies());
 
     // Set up site
     auto site = SpeciesSite(benzene, SpeciesSite::SiteType::Fragment);
@@ -30,7 +30,7 @@ TEST(RotateTest, Benzene)
     std::vector<const SpeciesSite *> sites = {&site};
 
     // Setup configuration
-    auto *cfg = dissolve.addConfiguration();
+    auto *cfg = coreData.addConfiguration();
     auto procedure = cfg->generator();
     cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, dissolve.pairPotentialRange());
     cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());

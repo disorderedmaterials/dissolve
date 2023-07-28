@@ -88,13 +88,27 @@ int CoreData::removeUnusedAtomTypes()
     for (auto &sp : species_)
         mix.add(sp->atomTypes());
 
-    auto nRemoved = atomTypes_.size();
-    auto it =
-        std::remove_if(atomTypes_.begin(), atomTypes_.end(), [&](const auto &atomType) { return !mix.contains(atomType); });
-    if (it != atomTypes_.end())
-        atomTypes_.erase(it, atomTypes_.end());
+    auto oldSize = atomTypes_.size();
 
-    return nRemoved - atomTypes_.size();
+    atomTypes_.erase(std::remove_if(atomTypes_.begin(), atomTypes_.end(),
+                                    [&](const auto &at)
+                                    {
+                                        if (mix.contains(at))
+                                            return false;
+                                        else
+                                        {
+                                            Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
+                                            return true;
+                                        }
+                                    }),
+                     atomTypes_.end());
+
+    // Reassign AtomType indices (in case one or more have been added / removed)
+    auto count = 0;
+    for (const auto &at : atomTypes_)
+        at->setIndex(count++);
+
+    return oldSize - atomTypes_.size();
 }
 
 // Clear all atom types
@@ -300,6 +314,9 @@ Species *CoreData::addSpecies()
 // Remove specified Species
 void CoreData::removeSpecies(Species *sp)
 {
+    // Remove references to the Species itself
+    removeReferencesTo(sp);
+
     species_.erase(std::remove_if(species_.begin(), species_.end(), [&](const auto &p) { return sp == p.get(); }),
                    species_.end());
 }
@@ -327,6 +344,145 @@ Species *CoreData::findSpecies(std::string_view name) const
     }
 }
 
+// Copy AtomType, creating a new one if necessary
+void CoreData::copyAtomType(const SpeciesAtom &sourceAtom, SpeciesAtom &destAtom)
+{
+    // Check for no AtomType being set
+    if (!sourceAtom.atomType())
+    {
+        destAtom.setAtomType(nullptr);
+        return;
+    }
+
+    // Search for the existing atom's AtomType by name, and create it if it doesn't exist
+    auto at = findAtomType(sourceAtom.atomType()->name());
+    if (!at)
+    {
+        at = addAtomType(sourceAtom.Z());
+        at->setName(sourceAtom.atomType()->name());
+        at->interactionPotential() = sourceAtom.atomType()->interactionPotential();
+    }
+
+    destAtom.setAtomType(at);
+}
+
+// Copy intramolecular interaction parameters, adding master term if necessary
+void CoreData::copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest)
+{
+    if (source.masterTerm())
+    {
+        auto master = getMasterBond(source.masterTerm()->name());
+        if (!master)
+            master = addMasterBond(source.masterTerm()->name());
+
+        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
+        dest.setMasterTerm(&master->get());
+    }
+    else
+        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
+}
+void CoreData::copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest)
+{
+    if (source.masterTerm())
+    {
+        auto master = getMasterAngle(source.masterTerm()->name());
+        if (!master)
+            master = addMasterAngle(source.masterTerm()->name());
+
+        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
+        dest.setMasterTerm(&master->get());
+    }
+    else
+        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
+}
+void CoreData::copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &dest)
+{
+    if (source.masterTerm())
+    {
+        auto master = getMasterTorsion(source.masterTerm()->name());
+        if (!master)
+            master = addMasterTorsion(source.masterTerm()->name());
+
+        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
+        dest.setMasterTerm(&master->get());
+    }
+    else
+        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
+}
+void CoreData::copySpeciesImproper(const SpeciesImproper &source, SpeciesImproper &dest)
+{
+    if (source.masterTerm())
+    {
+        auto master = getMasterImproper(source.masterTerm()->name());
+        if (!master)
+            master = addMasterImproper(source.masterTerm()->name());
+
+        master->get().setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
+        dest.setMasterTerm(&master->get());
+    }
+    else
+        dest.setInteractionFormAndParameters(source.interactionForm(), source.interactionParameters());
+}
+
+// Copy Species from supplied instance
+Species *CoreData::copySpecies(const Species *species)
+{
+    // Create our new Species
+    Species *newSpecies = addSpecies();
+    newSpecies->setName(DissolveSys::uniqueName(
+        species->name(), species_, [&](const auto &sp) { return newSpecies == sp.get() ? std::string() : sp->name(); }));
+
+    // Copy Box definition if one exists
+    if (species->box()->type() != Box::BoxType::NonPeriodic)
+        newSpecies->createBox(species->box()->axisLengths(), species->box()->axisAngles());
+
+    // Duplicate atoms
+    for (auto &i : species->atoms())
+    {
+        // Create the Atom in our new Species
+        auto id = newSpecies->addAtom(i.Z(), i.r(), i.charge());
+        if (i.isSelected())
+            newSpecies->selectAtom(id);
+
+        // Search for the existing atom's AtomType by name, and create it if it doesn't exist
+        copyAtomType(i, newSpecies->atom(id));
+    }
+
+    // Duplicate bonds
+    for (const auto &bond : species->bonds())
+    {
+        // Create the bond in the new Species
+        auto &newBond = newSpecies->addBond(bond.indexI(), bond.indexJ());
+        copySpeciesBond(bond, newBond);
+    }
+
+    // Duplicate angles
+    for (const auto &angle : species->angles())
+    {
+        // Create the angle in the new Species
+        auto &newAngle = newSpecies->addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
+        copySpeciesAngle(angle, newAngle);
+    }
+
+    // Duplicate torsions
+    for (const auto &torsion : species->torsions())
+    {
+        // Create the torsion in the new Species
+        auto &newTorsion = newSpecies->addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
+        copySpeciesTorsion(torsion, newTorsion);
+    }
+
+    // Duplicate impropers
+    for (const auto &improper : species->impropers())
+    {
+        // Create the improper in the new Species
+        auto &newImproper = newSpecies->addImproper(improper.indexI(), improper.indexJ(), improper.indexK(), improper.indexL());
+        copySpeciesImproper(improper, newImproper);
+    }
+
+    return newSpecies;
+}
+
 /*
  * Configuration
  */
@@ -347,6 +503,9 @@ Configuration *CoreData::addConfiguration()
 // Remove specified Configuration
 void CoreData::removeConfiguration(Configuration *cfg)
 {
+    // Remove references to the Configuration itself
+    removeReferencesTo(cfg);
+
     configurations_.erase(
         std::remove_if(configurations_.begin(), configurations_.end(), [cfg](const auto &c) { return cfg == c.get(); }),
         configurations_.end());
@@ -369,6 +528,16 @@ Configuration *CoreData::findConfiguration(std::string_view name) const
     auto it = std::find_if(configurations_.begin(), configurations_.end(),
                            [&name](const auto &cfg) { return DissolveSys::sameString(cfg->name(), name); });
     if (it == configurations_.end())
+        return nullptr;
+    return it->get();
+}
+
+// Find configuration by 'nice' name
+Configuration *CoreData::findConfigurationByNiceName(std::string_view name) const
+{
+    auto it = std::find_if(configurations().begin(), configurations().end(),
+                           [&name](const auto &cfg) { return DissolveSys::sameString(name, cfg->niceName()); });
+    if (it == configurations().end())
         return nullptr;
     return it->get();
 }
@@ -417,3 +586,21 @@ SerialisedValue CoreData::serialiseMaster() const { return masters_.serialise();
 
 // Read Master values from serialisable value
 void CoreData::deserialiseMaster(const SerialisedValue &node) { masters_.deserialise(node); }
+
+/*
+ * Object Management
+ */
+
+// Remove all references to the specified data
+void CoreData::removeReferencesTo(Module *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(Configuration *data) { KeywordStore::objectNoLongerValid(data); }
+void CoreData::removeReferencesTo(Species *data)
+{
+    KeywordStore::objectNoLongerValid(data);
+
+    // Check Configurations - if the Species was used, we must clear the configuration contents
+    for (auto &cfg : configurations_)
+        if (cfg->containsSpecies(data))
+            cfg->empty();
+}
+void CoreData::removeReferencesTo(SpeciesSite *data) { KeywordStore::objectNoLongerValid(data); }

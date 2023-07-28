@@ -22,8 +22,8 @@ AddForcefieldTermsDialog::AddForcefieldTermsDialog(QWidget *parent, Dissolve &di
     atomTypeModel_.setIconFunction(
         [&](const auto &atomType)
         {
-            return QIcon(dissolve_.findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
-                                                                  : ":/general/icons/general_true.svg");
+            return QIcon(dissolve_.coreData().findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
+                                                                             : ":/general/icons/general_true.svg");
         });
     connect(ui_.AtomTypesConflictsList->selectionModel(),
             SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
@@ -102,7 +102,7 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                 return false;
 
             // Copy selected Species to our temporary instance
-            modifiedSpecies_ = temporaryDissolve_.addSpecies();
+            modifiedSpecies_ = temporaryDissolve_.coreData().addSpecies();
             modifiedSpecies_->copyBasic(targetSpecies_);
             originalAtomTypeNames_.clear();
 
@@ -115,7 +115,7 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
             {
                 // Remove all previous AtomType association from the Species, and subsequently from the main object
                 modifiedSpecies_->clearAtomTypes();
-                temporaryDissolve_.clearAtomTypes();
+                temporaryDissolve_.coreData().clearAtomTypes();
 
                 auto assignErrs = ff->assignAtomTypes(modifiedSpecies_, temporaryCoreData_, Forcefield::TypeAll,
                                                       !ui_.KeepSpeciesAtomChargesCheck->isChecked());
@@ -137,7 +137,7 @@ bool AddForcefieldTermsDialog::prepareForNextPage(int currentIndex)
                     return alertAboutAtomTypeErrors(assignErrs);
             }
 
-            for (auto &at : temporaryDissolve_.atomTypes())
+            for (auto &at : temporaryDissolve_.coreData().atomTypes())
                 originalAtomTypeNames_.emplace_back(std::string(at->name()));
             atomTypeModel_.setData(temporaryCoreData_.atomTypes());
             checkAtomTypeConflicts();
@@ -229,7 +229,7 @@ void AddForcefieldTermsDialog::finalise()
             continue;
 
         // Copy AtomType
-        dissolve_.copyAtomType(&modified, &original);
+        dissolve_.coreData().copyAtomType(modified, original);
 
         // Overwrite existing parameters?
         if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
@@ -257,7 +257,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalBond.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesBond(*modifiedBond, originalBond);
+            dissolve_.coreData().copySpeciesBond(*modifiedBond, originalBond);
 
             ++modifiedBond;
         }
@@ -269,7 +269,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalAngle.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesAngle(*modifiedAngle, originalAngle);
+            dissolve_.coreData().copySpeciesAngle(*modifiedAngle, originalAngle);
 
             ++modifiedAngle;
         }
@@ -281,7 +281,7 @@ void AddForcefieldTermsDialog::finalise()
             if (intraSelectionOnly && (!originalTorsion.isSelected()))
                 continue;
 
-            dissolve_.copySpeciesTorsion(*modifiedTorsion, originalTorsion);
+            dissolve_.coreData().copySpeciesTorsion(*modifiedTorsion, originalTorsion);
 
             ++modifiedTorsion;
         }
@@ -296,12 +296,12 @@ void AddForcefieldTermsDialog::finalise()
             auto optImproper = targetSpecies_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
                                                            modifiedImproper.indexK(), modifiedImproper.indexL());
             if (optImproper)
-                dissolve_.copySpeciesImproper(modifiedImproper, *optImproper);
+                dissolve_.coreData().copySpeciesImproper(modifiedImproper, *optImproper);
             else
             {
                 auto &improper = targetSpecies_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
                                                              modifiedImproper.indexK(), modifiedImproper.indexL());
-                dissolve_.copySpeciesImproper(modifiedImproper, improper);
+                dissolve_.coreData().copySpeciesImproper(modifiedImproper, improper);
             }
         }
     }
@@ -329,7 +329,7 @@ void AddForcefieldTermsDialog::checkAtomTypeConflicts()
 {
     // Determine whether we have any naming conflicts
     auto nConflicts = std::count_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
-                                    [&](const auto &atomType) { return dissolve_.findAtomType(atomType->name()); });
+                                    [&](const auto &atomType) { return dissolve_.coreData().findAtomType(atomType->name()); });
 
     ui_.AtomTypesIndicator->setNotOK(nConflicts > 0);
 

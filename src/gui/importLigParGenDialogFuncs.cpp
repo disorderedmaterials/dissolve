@@ -9,7 +9,8 @@
 #include <pugixml.hpp>
 
 ImportLigParGenDialog::ImportLigParGenDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), ff_(dissolve), dissolve_(dissolve), importedSpecies_(nullptr), importedForcefield_(nullptr)
+    : WizardDialog(parent), xmlFFModel_(dissolve.coreData()), dissolve_(dissolve), importedSpecies_(nullptr),
+      importedForcefield_(nullptr)
 {
     ui_.setupUi(this);
 
@@ -17,7 +18,7 @@ ImportLigParGenDialog::ImportLigParGenDialog(QWidget *parent, Dissolve &dissolve
     importedSpecies_ = temporaryCoreData_.addSpecies();
 
     // Set model for ff terms tree
-    ui_.xmlTree->setModel(&ff_);
+    ui_.xmlTree->setModel(&xmlFFModel_);
 
     // Set model for the atom type list
     ui_.AtomTypeList->setModel(&atomTypeModel_);
@@ -72,14 +73,14 @@ bool ImportLigParGenDialog::prepareForNextPage(int currentIndex)
             {
                 if (doc.load_file(ui_.InputXMLEdit->text().toStdString().c_str()))
                 {
-                    ff_.resetXml();
-                    ff_.readFile(doc.root());
+                    xmlFFModel_.resetXml();
+                    xmlFFModel_.readFile(doc.root());
                     ui_.xmlTree->expandAll();
-                    for (int i = 0; i < ff_.columnCount(QModelIndex()); ++i)
+                    for (int i = 0; i < xmlFFModel_.columnCount(QModelIndex()); ++i)
                         ui_.xmlTree->resizeColumnToContents(i);
                     ui_.xmlTree->collapseAll();
 
-                    if (!ff_.isValid())
+                    if (!xmlFFModel_.isValid())
                         return Messenger::error("Failed to parse XML file '{}'.\n",
                                                 ui_.InputXMLEdit->text().toStdString().c_str());
                 }
@@ -104,7 +105,7 @@ bool ImportLigParGenDialog::prepareForNextPage(int currentIndex)
             return true;
         case (ImportLigParGenDialog::PreviewTermsPage):
             // Get the data as a Dissolve forcefield
-            importedForcefield_ = ff_.toForcefield();
+            importedForcefield_ = xmlFFModel_.toForcefield();
 
             // Apply forcefield terms to the model
             if (!applyForcefield(temporaryCoreData_, importedSpecies_))
@@ -128,7 +129,7 @@ std::optional<int> ImportLigParGenDialog::determineNextPage(int currentIndex)
             return importedSpecies_ && importedSpecies_->nAtoms() > 0 ? ImportLigParGenDialog::PreviewSpeciesPage
                                                                       : ImportLigParGenDialog::PreviewTermsPage;
         case (ImportLigParGenDialog::PreviewSpeciesPage):
-            if (ff_.isValid())
+            if (xmlFFModel_.isValid())
                 return ImportLigParGenDialog::PreviewTermsPage;
             else
                 return std::nullopt;
@@ -146,7 +147,7 @@ bool ImportLigParGenDialog::prepareForPreviousPage(int currentIndex)
             importedSpecies_->clear();
             ui_.SpeciesView->setSpecies(nullptr);
         case (ImportLigParGenDialog::PreviewTermsPage):
-            ff_.resetXml();
+            xmlFFModel_.resetXml();
             importedForcefield_ = nullptr;
         default:
             break;
@@ -161,7 +162,7 @@ void ImportLigParGenDialog::finalise()
     // Copy the species to the main Dissolve instance and set its new name
     if (importedSpecies_ && importedSpecies_->nAtoms() > 0)
     {
-        auto *sp = dissolve_.copySpecies(importedSpecies_);
+        auto *sp = dissolve_.coreData().copySpecies(importedSpecies_);
         sp->setName("LigParGen Species");
     }
 
@@ -310,7 +311,7 @@ bool ImportLigParGenDialog::applyForcefield(CoreData &coreData, Species *sp) con
 
 void ImportLigParGenDialog::on_ForcefieldNameEdit_textChanged(QString text)
 {
-    ff_.setName(text.toStdString());
+    xmlFFModel_.setName(text.toStdString());
 
     updateProgressionControls();
 }

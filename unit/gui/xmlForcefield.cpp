@@ -150,8 +150,7 @@ TEST_F(XmlFFTest, XmlImproper)
 TEST_F(XmlFFTest, XmlAtom)
 {
     CoreData coreData;
-    Dissolve dissolve(coreData);
-    XmlAtomModel atoms(dissolve);
+    XmlAtomModel atoms(coreData);
 
     atoms.readFile(doc.root());
 
@@ -182,8 +181,7 @@ TEST_F(XmlFFTest, XmlAtom)
 TEST_F(XmlFFTest, XmlTree)
 {
     CoreData coreData;
-    Dissolve dissolve(coreData);
-    XmlTreeModel treeModel(dissolve);
+    XmlTreeModel treeModel(coreData);
 
     treeModel.setName("TestFF");
 

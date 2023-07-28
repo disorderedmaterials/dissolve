@@ -11,10 +11,6 @@ DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
     // Set up our UI
     ui_.setupUi(this);
 
-    // Create button group for interaction tools
-    QButtonGroup *interactionToolsGroup = new QButtonGroup;
-    interactionToolsGroup->addButton(ui_.InteractionViewButton);
-
     // Set data for group manager model
     renderableGroupManagerModel_.setSourceData(ui_.DataView->groupManager());
     ui_.DataTree->setModel(&renderableGroupManagerModel_);
@@ -44,12 +40,6 @@ DataViewer *DataWidget::dataViewer() { return ui_.DataView; }
 /*
  * Tools
  */
-
-// Interaction
-void DataWidget::on_InteractionViewButton_clicked(bool checked)
-{
-    dataViewer()->setInteractionMode(DataViewer::InteractionMode::Default);
-}
 
 // Graph
 void DataWidget::on_GraphResetButton_clicked(bool checked)
@@ -157,16 +147,6 @@ void DataWidget::clearRenderableData()
 void DataWidget::updateToolbar()
 {
     Locker refreshLock(refreshLock_);
-
-    // Set current interaction mode
-    switch (dataViewer()->interactionMode())
-    {
-        case (DataViewer::InteractionMode::Default):
-            ui_.InteractionViewButton->setChecked(true);
-            break;
-        default:
-            break;
-    }
 
     // Controls reflecting the state of options in the underlying DataViewer
     // -- Graph

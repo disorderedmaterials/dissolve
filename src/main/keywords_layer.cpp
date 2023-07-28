@@ -110,7 +110,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                         errorsEncountered = true;
                         break;
                     }
-                    else if (dissolve->findConfigurationByNiceName(niceName))
+                    else if (dissolve->coreData().findConfigurationByNiceName(niceName))
                     {
                         Messenger::error("A Configuration with the unique name '{}' already exist, and so "
                                          "cannot be used as a Module name.\n",
