@@ -101,31 +101,31 @@
     <file>icons/charge.svg</file>
     <file>icons/density.svg</file>
     <file>icons/generator.svg</file>
-    <file>icons/threespecies.svg</file>
+    <file>icons/threeSpecies.svg</file>
     <file>icons/site.svg</file>
     <file>icons/temperature.svg</file>
     <file>icons/filter.svg</file>
     <file>icons/false.svg</file>
-    <file>icons/periodictable.svg</file>
+    <file>icons/periodicTable.svg</file>
     <file>icons/true.svg</file>
     <file>icons/output.svg</file>
     <file>icons/warn.svg</file>
     <file>icons/clear.svg</file>
     <file>icons/unknown.svg</file>
     <file>icons/options.svg</file>
-    <file>icons/collapseall.svg</file>
+    <file>icons/collapseAll.svg</file>
     <file>icons/context.svg</file>
-    <file>icons/expandall.svg</file>
+    <file>icons/expandAll.svg</file>
     <file>icons/procedure.svg</file>
     <file>icons/edit.svg</file>
     <file>icons/screen.svg</file>
     <file>icons/monitor.svg</file>
     <file>icons/clock.svg</file>
-    <file>icons/heartbeat.svg</file>
+    <file>icons/heartBeat.svg</file>
     <file>icons/local.svg</file>
     <file>icons/copy.svg</file>
-    <file>icons/movemodule.svg</file>
-    <file>icons/datastack.svg</file>
+    <file>icons/moveModule.svg</file>
+    <file>icons/dataStack.svg</file>
     <file>icons/font.svg</file>
     <file>icons/palette.svg</file>
     <file>icons/slider-off.svg</file>
@@ -133,18 +133,18 @@
     <file>icons/frequency.svg</file>
     <file>icons/slider-on.svg</file>
     <file>icons/advanced.svg</file>
-    <file>icons/bothon.svg</file>
+    <file>icons/bothOn.svg</file>
     <file>icons/cross.svg</file>
-    <file>icons/lefton.svg</file>
+    <file>icons/leftOn.svg</file>
     <file>icons/module.svg</file>
-    <file>icons/righton.svg</file>
-    <file>icons/arrowdown.svg</file>
-    <file>icons/arrowleft.svg</file>
+    <file>icons/rightOn.svg</file>
+    <file>icons/arrowSown.svg</file>
+    <file>icons/arrowLeft.svg</file>
     <file>icons/repeat.svg</file>
     <file>icons/add.svg</file>
     <file>icons/remove.svg</file>
-    <file>icons/arrowright.svg</file>
-    <file>icons/arrowup.svg</file>
+    <file>icons/arrowRight.svg</file>
+    <file>icons/arrowUp.svg</file>
     <file>icons/pause.svg</file>
     <file>icons/locked.svg</file>
     <file>icons/stop.svg</file>
@@ -166,20 +166,20 @@
     <file>icons/interact.svg</file>
     <file>icons/interact_on.svg</file>
     <file>icons/reset.svg</file>
-    <file>icons/followx_on.svg</file>
-    <file>icons/followall.svg</file>
-    <file>icons/followall_on.svg</file>
+    <file>icons/followX_on.svg</file>
+    <file>icons/followAll.svg</file>
+    <file>icons/followAll_on.svg</file>
     <file>icons/medic.svg</file>
-    <file>icons/followx.svg</file>
+    <file>icons/followX.svg</file>
     <file>icons/axes.svg</file>
     <file>icons/spheres.svg</file>
     <file>icons/spheres_on.svg</file>
     <file>icons/axes_on.svg</file>
     <file>icons/delete.svg</file>
     <file>icons/snapshot.svg</file>
-    <file>icons/calculatebonds.svg</file>
+    <file>icons/calculateBonds.svg</file>
     <file>icons/data.svg</file>
-    <file>icons/frameworkmixture.svg</file>
-    <file>icons/selectedatoms.svg</file>
+    <file>icons/frameworkMixture.svg</file>
+    <file>icons/selectedAtoms.svg</file>
   </qresource>
 </RCC>

@@ -188,8 +188,8 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/general/icons/followall.svg</normaloff>
-             <normalon>:/general/icons/followall_on.svg</normalon>:/general/icons/followall.svg</iconset>
+             <normaloff>:/general/icons/followAll.svg</normaloff>
+             <normalon>:/general/icons/followAll_on.svg</normalon>:/general/icons/followAll.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -224,8 +224,8 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/general/icons/followx.svg</normaloff>
-             <normalon>:/general/icons/followx_on.svg</normalon>:/general/icons/followx.svg</iconset>
+             <normaloff>:/general/icons/followX.svg</normaloff>
+             <normalon>:/general/icons/followX_on.svg</normalon>:/general/icons/followX.svg</iconset>
            </property>
            <property name="iconSize">
             <size>

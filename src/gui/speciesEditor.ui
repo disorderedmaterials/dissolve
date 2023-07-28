@@ -525,7 +525,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/general/icons/calculatebonds.svg</normaloff>:/general/icons/calculatebonds.svg</iconset>
+          <normaloff>:/general/icons/calculateBonds.svg</normaloff>:/general/icons/calculateBonds.svg</iconset>
         </property>
         <property name="iconSize">
          <size>

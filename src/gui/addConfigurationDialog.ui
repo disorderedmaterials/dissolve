@@ -198,7 +198,7 @@ Periodic species containing (optional) mixture</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/frameworkmixture.svg</normaloff>:/general/icons/frameworkmixture.svg</iconset>
+                <normaloff>:/general/icons/frameworkMixture.svg</normaloff>:/general/icons/frameworkMixture.svg</iconset>
               </property>
               <property name="iconSize">
                <size>

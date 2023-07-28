@@ -291,7 +291,7 @@
           </property>
           <property name="icon">
            <iconset resource="main.qrc">
-            <normaloff>:/general/icons/threespecies.svg</normaloff>:/general/icons/threespecies.svg</iconset>
+            <normaloff>:/general/icons/threeSpecies.svg</normaloff>:/general/icons/threeSpecies.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -1185,7 +1185,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/periodictable.svg</normaloff>:/general/icons/periodictable.svg</iconset>
+              <normaloff>:/general/icons/periodicTable.svg</normaloff>:/general/icons/periodicTable.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>

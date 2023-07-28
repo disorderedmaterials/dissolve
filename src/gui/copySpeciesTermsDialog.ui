@@ -142,7 +142,7 @@
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/selectedatoms.svg</normaloff>:/general/icons/selectedatoms.svg</iconset>
+                <normaloff>:/general/icons/selectedAtoms.svg</normaloff>:/general/icons/selectedAtoms.svg</iconset>
               </property>
               <property name="iconSize">
                <size>

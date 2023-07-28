@@ -51,7 +51,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     addStatusBarIcon(":/general/icons/clock.svg")->setToolTip("Time remaining to completion");
     etaLabel_ = addStatusBarLabel("--:--:--");
     etaLabel_->setToolTip("Time remaining to completion");
-    restartFileIndicator_ = addStatusBarIcon(":/general/icons/datastack.svg");
+    restartFileIndicator_ = addStatusBarIcon(":/general/icons/dataStack.svg");
     statusIndicator_ = addStatusBarIcon(":/general/icons/true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
     statusLabel_->setOpenExternalLinks(false);

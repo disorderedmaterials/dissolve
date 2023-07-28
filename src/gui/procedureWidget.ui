@@ -94,7 +94,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/expandall.svg</normaloff>:/general/icons/expandall.svg</iconset>
+              <normaloff>:/general/icons/expandAll.svg</normaloff>:/general/icons/expandAll.svg</iconset>
             </property>
            </widget>
           </item>
@@ -108,7 +108,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/collapseall.svg</normaloff>:/general/icons/collapseall.svg</iconset>
+              <normaloff>:/general/icons/collapseAll.svg</normaloff>:/general/icons/collapseAll.svg</iconset>
             </property>
            </widget>
           </item>
