@@ -32,13 +32,13 @@ class QSpeciesModule : public Module
     // Whether to exclude correlations between sites on the same molecule
     bool excludeSameMolecule_{false};
     // Distance range for calculation
-    Range distanceRange_{0.0, 5.0};
+    Range distanceRange_{0.0, 2.5};
     // Analysis procedure to be run
     Procedure analyser_;
     // SelectNode for site A
-    std::shared_ptr<SelectProcedureNode> selectA_;
+    std::shared_ptr<SelectProcedureNode> selectBO_;
     // SelectNode for site B
-    std::shared_ptr<SelectProcedureNode> selectB_;
+    std::shared_ptr<SelectProcedureNode> selectNF_;
 
     public:
     /*

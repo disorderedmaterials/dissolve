@@ -16,26 +16,18 @@
 QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(ProcedureNode::AnalysisContext)
 {
     // Select: Site 'A'
-    selectA_ = analyser_.createRootNode<SelectProcedureNode>("A");
-    auto &forEachA = selectA_->branch()->get();
+    selectBO_ = analyser_.createRootNode<SelectProcedureNode>("BO");
+    auto &forEachBO = selectBO_->branch()->get();
 
     // -- Select: Site 'B'
-    selectB_ = forEachA.create<SelectProcedureNode>("B");
-    selectB_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectA_});
-    selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectA_});
-    selectB_->keywords().set("ReferenceSite", selectA_);
-    selectB_->keywords().set("InclusiveRange", distanceRange_);
+    selectNF_ = forEachBO.create<SelectProcedureNode>("NF");
+    selectNF_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectBO_});
+    selectNF_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectBO_});
+    selectNF_->keywords().set("ReferenceSite", selectBO_);
+    selectNF_->keywords().set("InclusiveRange", distanceRange_);
 
-    // Coordination Histogram
-    auto calcExpression_ = forEachA.create<CalculateExpressionProcedureNode>({});
-    calcExpression_->setExpression("B.nSelected");
-
-    auto collectCN_ =
-        forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext, 0, 10);
-
-    auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN_);
-    auto &normalisation = process1D->branch()->get();
-    auto norm = normalisation.create<OperateNormaliseProcedureNode>({});
+    /*Loop over each NF site - check for exactly 2 sites
+    Need to do this inside ForEach with IfValueRange*/
 
     /*
      * Keywords
@@ -47,7 +39,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF",
                                             selectA_->speciesSites(), selectA_->axesRequired());
     keywords_.add<SpeciesSiteVectorKeyword>(
-        "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
+        "SiteB", "Set the site(s) 'NF' for which the distribution around the origin sites 'A' should be calculated",
         selectB_->speciesSites(), selectB_->axesRequired());
 
     keywords_.setOrganisation("Options", "Ranges");

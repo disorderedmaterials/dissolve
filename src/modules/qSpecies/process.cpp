@@ -23,10 +23,10 @@ Module::ExecutionResult QSpeciesModule::process(Dissolve &dissolve, const Proces
 
     // Ensure any parameters in our nodes are set correctly
     if (excludeSameMolecule_)
-        selectB_->setSameMoleculeExclusions({selectA_});
+        selectNF_->setSameMoleculeExclusions({selectBO_});
     else
-        selectB_->setSameMoleculeExclusions({});
-    selectB_->keywords().set("InclusiveRange", distanceRange_);
+        selectNF_->setSameMoleculeExclusions({});
+    selectNF_->keywords().set("InclusiveRange", distanceRange_);
 
     // Execute the analysis
     ProcedureContext context(procPool, targetConfiguration_);
