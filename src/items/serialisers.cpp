@@ -123,6 +123,9 @@ GenericItemSerialiser::GenericItemSerialiser()
 
     // Containers of Custom Classes
     registerSerialiser<std::vector<BraggReflection>>(vectorSerialise<BraggReflection>);
+
+    // Containers of Custom Classes
+    registerSerialiser<std::vector<BraggReflection>>(vectorSerialise<BraggReflection>);
 }
 
 /*
