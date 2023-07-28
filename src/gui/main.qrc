@@ -2,12 +2,16 @@
   <qresource prefix="nodes">
     <file>icons/nodes/add.svg</file>
     <file>icons/nodes/simpleGlobalPotential.svg</file>
+    <file>icons/nodes/restraintPotential.svg</file>
+    <file>icons/nodes/directionalGlobalPotential.svg</file>
     <file>icons/nodes/box.svg</file>
     <file>icons/nodes/calculateAngle.svg</file>
     <file>icons/nodes/calculateAxisAngle.svg</file>
     <file>icons/nodes/calculateDistance.svg</file>
+    <file>icons/nodes/calculateExpression.svg</file>
     <file>icons/nodes/calculateVector.svg</file>
     <file>icons/nodes/collect1D.svg</file>
+    <file>icons/nodes/integerCollect1D.svg</file>
     <file>icons/nodes/customRegion.svg</file>
     <file>icons/nodes/collect2D.svg</file>
     <file>icons/nodes/collect3D.svg</file>
@@ -37,6 +41,10 @@
     <file>icons/nodes/select.svg</file>
     <file>icons/nodes/sum1D.svg</file>
     <file>icons/nodes/transmute.svg</file>
+    <file>icons/nodes/temperature.svg</file>
+    <file>icons/nodes/sizeFactor.svg</file>
+    <file>icons/nodes/rotateFragment.svg</file>
+    <file>icons/nodes/importCoordinates.svg</file>
   </qresource>
   <qresource prefix="dissolve">
     <file>icons/dissolve.png</file>
