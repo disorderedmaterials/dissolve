@@ -73,7 +73,7 @@ class DissolveWindow : public QMainWindow
     // Label for simulation timer (ETA if RunFor, time elapsed if Run)
     QLabel *timerLabel_;
     // Timer label default text
-    static constexpr char *timerText_ = "Idle";
+    static constexpr const char *timerText_ = "Idle";
     // General status indicator and label
     QLabel *statusIndicator_, *statusLabel_;
     // Main loop iteration timer
