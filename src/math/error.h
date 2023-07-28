@@ -58,7 +58,7 @@ ErrorReport mape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Rang
 // Return percentage error between supplied data
 ErrorReport percent(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return absolute squared error between supplied data
-ErrorReport ase(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range);
+ErrorReport ase(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return R-Factor (average squared error per point) between supplied data
 ErrorReport rFactor(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return Euclidean distance, normalised to mean of B, between supplied data
