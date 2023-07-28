@@ -41,6 +41,7 @@ add_library(
   vectorStringDouble.cpp
   vectorStringPair.cpp
   rFactorRangesVector.cpp
+  weightedModuleVector.cpp
   atomTypeVector.h
   base.h
   bool.h
@@ -90,7 +91,7 @@ add_library(
   vectorStringDouble.h
   vectorStringPair.h
   rFactorRangesVector.h
-)
+  weightedModuleVector.h
 
 target_include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(keywords PRIVATE base)

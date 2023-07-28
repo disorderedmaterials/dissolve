@@ -33,7 +33,6 @@ class Dissolve : public Serialisable<>
     private:
     // Reference to CoreData
     CoreData &coreData_;
-    SerializablePairPotential serializablePairPotential_;
 
     public:
     // Return reference to CoreData
@@ -41,52 +40,8 @@ class Dissolve : public Serialisable<>
     const CoreData &coreData() const;
     // Clear all data
     void clear();
+    // TOML Toggle
     static constexpr bool toml_testing_flag = false;
-
-    /*
-     * Atom Types
-     * (Exposes functions in coreData_)
-     */
-    public:
-    // Add AtomType with specified Element
-    std::shared_ptr<AtomType> addAtomType(Elements::Element Z);
-    // Return number of AtomTypes in list
-    int nAtomTypes() const;
-    // Return AtomTypes list
-    std::vector<std::shared_ptr<AtomType>> &atomTypes();
-    // Return nth AtomType in list
-    std::shared_ptr<AtomType> atomType(int n);
-    // Search for AtomType by name
-    std::shared_ptr<AtomType> findAtomType(std::string_view name) const;
-    // Clear all AtomTypes
-    void clearAtomTypes();
-
-    /*
-     * Species Definitions
-     * (Exposes functions in coreData_)
-     */
-    public:
-    // Add a new Species to the list
-    Species *addSpecies();
-    // Remove the specified Species from the list
-    void removeSpecies(Species *sp);
-    // Return number of defined Species
-    int nSpecies() const;
-    // Return Species list
-    std::vector<std::unique_ptr<Species>> &species();
-    // Return Species list
-    const std::vector<std::unique_ptr<Species>> &species() const;
-    // Search for Species by name
-    Species *findSpecies(std::string_view name) const;
-    // Copy AtomType, creating a new one if necessary
-    void copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom);
-    // Copy intramolecular interaction parameters, adding master term if necessary
-    void copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest);
-    void copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest);
-    void copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &dest);
-    void copySpeciesImproper(const SpeciesImproper &source, SpeciesImproper &dest);
-    // Copy Species
-    Species *copySpecies(const Species *species);
 
     /*
      * Pair Potentials
@@ -106,6 +61,8 @@ class Dissolve : public Serialisable<>
     std::vector<std::unique_ptr<PairPotential>> pairPotentials_;
     // Map for PairPotentials
     PotentialMap potentialMap_;
+    // Handler for serialising pair potential data
+    SerializablePairPotential serializablePairPotential_;
 
     public:
     // Set maximum distance for tabulated PairPotentials
@@ -147,29 +104,6 @@ class Dissolve : public Serialisable<>
     bool regeneratePairPotentials();
     // Revert potentials to reference state, clearing additional potentials
     void revertPairPotentials();
-
-    /*
-     * Configurations
-     * (Exposes List<Configuration> in coreData_)
-     */
-    public:
-    // Add new Configuration
-    Configuration *addConfiguration();
-    // Own the specified Configuration
-    bool ownConfiguration(Configuration *cfg);
-    // Remove specified Configuration
-    void removeConfiguration(Configuration *cfg);
-    // Return number of defined Configurations
-    int nConfigurations() const;
-    // Return Configuration vector
-    std::vector<std::unique_ptr<Configuration>> &configurations();
-    const std::vector<std::unique_ptr<Configuration>> &configurations() const;
-    // Return raw Configuration vector
-    std::vector<Configuration *> rawConfigurations() const;
-    // Find configuration by name
-    Configuration *findConfiguration(std::string_view name) const;
-    // Find configuration by 'nice' name
-    Configuration *findConfigurationByNiceName(std::string_view name) const;
 
     /*
      * Layers
@@ -214,10 +148,6 @@ class Dissolve : public Serialisable<>
     SampledDouble iterationTime_;
 
     public:
-    // Set number of test points to use when calculating Box normalisation arrays
-    void setNBoxNormalisationPoints(int nPoints);
-    // Return number of test points to use when calculating Box normalisation arrays
-    int nBoxNormalisationPoints() const;
     // Set frequency with which to write various iteration data
     void setRestartFileFrequency(int n);
     // Return frequency with which to write restart file
@@ -277,19 +207,6 @@ class Dissolve : public Serialisable<>
     std::string_view restartFilename() const;
     // Return whether a restart filename has been set
     bool hasRestartFilename() const;
-
-    /*
-     * Object Management
-     */
-    public:
-    // Remove all references to the specified Configuration
-    void removeReferencesTo(Configuration *cfg);
-    // Remove all references to the specified Module
-    void removeReferencesTo(Module *module);
-    // Remove all references to the specified Species
-    void removeReferencesTo(Species *sp);
-    // Remove all references to the specified SpeciesSite
-    void removeReferencesTo(SpeciesSite *site);
 
     /*
      * Parallel Comms

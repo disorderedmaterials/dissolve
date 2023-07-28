@@ -6,6 +6,7 @@
 #include "base/enumOptions.h"
 #include "neta/connection.h"
 #include "neta/matchedGroup.h"
+#include "templates/flags.h"
 
 // Forward Declarations
 class Forcefield;
@@ -16,8 +17,16 @@ class NETADefinition
 {
     public:
     explicit NETADefinition(std::string_view definition = "");
-    NETADefinition(const SpeciesAtom *i, int maxDepth = 1);
+    NETADefinition(const SpeciesAtom *i, const std::optional<int> maxDepth = 1);
     ~NETADefinition() = default;
+
+    public:
+    // NETA Definition Creation Flags
+    enum NETACreationFlags
+    {
+        ExplicitHydrogens, /* Explicitly include Hydrogen atoms in NETA definition string */
+        IncludeRootElement /* Include the root element in NETA definition string */
+    };
 
     /*
      * Data
@@ -40,7 +49,7 @@ class NETADefinition
     // Set definition string and create definition
     bool create(std::string_view definition, const Forcefield *associatedFF = nullptr);
     // Create from specified atom and its connectivity
-    bool create(const SpeciesAtom *i, int maxDepth = 1);
+    bool create(const SpeciesAtom *i, const std::optional<int> maxDepth = 1, const Flags<NETACreationFlags> &flags = {});
     // Set generating string
     void setDefinitionString(std::string_view definition);
     // Return original generating string

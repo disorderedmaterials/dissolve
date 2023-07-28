@@ -71,6 +71,6 @@ UnsignedInteger:    DIGIT+;
 
 // Character Strings
 UnquotedString:     OrdinaryChar NonBlankChar*;
-SingleQuotedString: '\'' AnyPrintChar* '\'';
-DoubleQuotedString: '"' AnyPrintChar* '"';
+SingleQuotedString: '\'' AnyPrintChar*? '\'';
+DoubleQuotedString: '"' AnyPrintChar*? '"';
 SemiColonTextField: ';' EOL* (TextLeadChar AnyPrintChar* EOL*?)* ';';

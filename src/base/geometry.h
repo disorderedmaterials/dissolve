@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <fmt/format.h>
 #include <map>
 #include <toml11/toml.hpp>
 
@@ -52,8 +53,12 @@ template <> struct from<Geometry::GeometryType>
             return Geometry::GeometryType::AngleType;
         else if (typeString == "distance")
             return Geometry::GeometryType::DistanceType;
-        else
+        else if (typeString == "torsion")
             return Geometry::GeometryType::TorsionType;
+        else
+            throw toml::syntax_error(
+                fmt::format("Unhandled geometry type '{}' - can't convert from TOML value.\n", std::string(typeString)),
+                node.location());
     }
 };
 
@@ -69,6 +74,8 @@ template <> struct into<Geometry::GeometryType>
                 return "distance";
             case Geometry::GeometryType::TorsionType:
                 return "torsion";
+            default:
+                throw std::runtime_error("Unhandled geometry type - can't convert to TOML value.\n");
         }
     }
 };

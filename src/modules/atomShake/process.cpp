@@ -47,7 +47,6 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
     RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
-    int shake, n;
     auto nAttempts = 0, nAccepted = 0;
     bool accept;
     double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
@@ -77,13 +76,13 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
              * Calculation Begins
              */
 
-            // Get Molecule index and pointer
+            // Get Molecule pointer
             std::shared_ptr<Molecule> mol = targetConfiguration_->molecule(molId);
 
             // Set current Atom targets in ChangeStore (whole Molecule)
             changeStore.add(mol);
+            auto storeIndex = 0;
 
-            n = 0;
             // Loop over atoms in the Molecule
             for (const auto &i : mol->atoms())
             {
@@ -93,7 +92,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
                 currentIntraEnergy = er.geometry() * termScale;
 
                 // Loop over number of shakes per Atom
-                for (shake = 0; shake < nShakesPerAtom_; ++shake)
+                for (auto n = 0; n < nShakesPerAtom_; ++n)
                 {
                     // Create a random translation vector
                     rDelta.set(randomBuffer.randomPlusMinusOne() * stepSize_, randomBuffer.randomPlusMinusOne() * stepSize_,
@@ -115,11 +114,11 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
                     if (accept)
                     {
                         // Accept new (current) position of target Atom
-                        changeStore.updateAtom(n);
+                        changeStore.updateAtom(storeIndex);
                         currentEnergy = newEnergy;
                     }
                     else
-                        changeStore.revert(n);
+                        changeStore.revert(storeIndex);
 
                     // Increase attempt counters
                     // The strategy in force at any one time may vary, so use the distributor's
@@ -133,8 +132,10 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
                         }
                         ++nAttempts;
                     }
-                    ++n;
                 }
+
+                // Increment index of target atom in ChangeStore
+                ++storeIndex;
             }
 
             // Store modifications to Atom positions ready for broadcast later

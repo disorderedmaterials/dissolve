@@ -16,6 +16,7 @@ set(models_MOC_HDRS
     masterTorsionModel.h
     moduleLayerModel.h
     moduleModel.h
+    nodePaletteFilterProxy.h
     modulePaletteModel.h
     nodePaletteModel.h
     pairPotentialModel.h
@@ -41,6 +42,7 @@ set(models_MOC_HDRS
     speciesImproperModel.h
     speciesIsoModel.h
     speciesTorsionModel.h
+    weightedModuleModel.h
 )
 
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
@@ -65,6 +67,7 @@ set(models_SRCS
     masterTorsionModel.cpp
     moduleLayerModel.cpp
     moduleModel.cpp
+    nodePaletteFilterProxy.cpp
     modulePaletteModel.cpp
     nodePaletteModel.cpp
     pairPotentialModel.cpp
@@ -84,6 +87,7 @@ set(models_SRCS
     speciesSiteFilterProxy.cpp
     speciesSiteModel.cpp
     speciesTorsionModel.cpp
+    weightedModuleModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -116,6 +120,7 @@ qt_wrap_cpp(
   speciesImproperModel.h
   speciesIsoModel.h
   speciesTorsionModel.h
+  weightedModuleModel.h
 )
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})
