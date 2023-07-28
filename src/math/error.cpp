@@ -82,7 +82,7 @@ ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const st
     else if (errorType == PercentError)
         return percent(A, B);
     else if (errorType == ASEError)
-        return ase(A, B, range);
+        return ase(A, B);
     else if (errorType == RFactorError)
         return rFactor(A, B);
     else if (errorType == EuclideanError)
