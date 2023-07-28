@@ -291,7 +291,7 @@
           </property>
           <property name="icon">
            <iconset resource="main.qrc">
-            <normaloff>:/general/icons/isotopologues.svg</normaloff>:/general/icons/isotopologues.svg</iconset>
+            <normaloff>:/general/icons/threespecies.svg</normaloff>:/general/icons/threespecies.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>

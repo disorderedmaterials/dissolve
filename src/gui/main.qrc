@@ -97,12 +97,11 @@
     <file>icons/layer.svg</file>
     <file>icons/connect.svg</file>
     <file>icons/documents.svg</file>
-    <file>icons/manual.svg</file>
-    <file>icons/tutorials.svg</file>
+    <file>icons/book.svg</file>
     <file>icons/charge.svg</file>
     <file>icons/density.svg</file>
     <file>icons/generator.svg</file>
-    <file>icons/isotopologues.svg</file>
+    <file>icons/threespecies.svg</file>
     <file>icons/site.svg</file>
     <file>icons/temperature.svg</file>
     <file>icons/filter.svg</file>
@@ -126,7 +125,7 @@
     <file>icons/local.svg</file>
     <file>icons/copy.svg</file>
     <file>icons/movemodule.svg</file>
-    <file>icons/restartfile.svg</file>
+    <file>icons/datastack.svg</file>
     <file>icons/font.svg</file>
     <file>icons/palette.svg</file>
     <file>icons/slider-off.svg</file>
@@ -141,7 +140,6 @@
     <file>icons/righton.svg</file>
     <file>icons/arrowdown.svg</file>
     <file>icons/arrowleft.svg</file>
-    <file>icons/library.svg</file>
     <file>icons/repeat.svg</file>
     <file>icons/add.svg</file>
     <file>icons/remove.svg</file>
@@ -181,9 +179,7 @@
     <file>icons/snapshot.svg</file>
     <file>icons/calculatebonds.svg</file>
     <file>icons/data.svg</file>
-    <file>icons/allatoms.svg</file>
     <file>icons/frameworkmixture.svg</file>
-    <file>icons/multiplespecies.svg</file>
     <file>icons/selectedatoms.svg</file>
   </qresource>
 </RCC>

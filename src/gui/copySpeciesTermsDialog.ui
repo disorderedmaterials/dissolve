@@ -122,7 +122,7 @@
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/allatoms.svg</normaloff>:/general/icons/allatoms.svg</iconset>
+                <normaloff>:/general/icons/species.svg</normaloff>:/general/icons/species.svg</iconset>
               </property>
               <property name="iconSize">
                <size>

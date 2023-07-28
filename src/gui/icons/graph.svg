@@ -16,10 +16,10 @@
    viewBox="0 0 100 100"
    version="1.1"
    id="svg4"
-   sodipodi:docname="viewer_toolbar_graph.svg"
+   sodipodi:docname="graph.svg"
    width="100"
    height="100"
-   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
   <metadata
      id="metadata10">
     <rdf:RDF>
@@ -43,20 +43,21 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1163"
+     inkscape:window-width="3840"
+     inkscape:window-height="1531"
      id="namedview6"
      showgrid="false"
      inkscape:zoom="7.375"
      inkscape:cx="33.590128"
-     inkscape:cy="88.651604"
-     inkscape:window-x="1920"
-     inkscape:window-y="0"
+     inkscape:cy="66.956689"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4" />
+     inkscape:current-layer="svg4"
+     inkscape:document-rotation="0" />
   <path
-     d="M 88.125,70 C 89.15625,70 90,70.84375 90,71.875 v 6.25 C 90,79.15625 89.15625,80 88.125,80 H 11.875 C 10.84375,80 10,79.15625 10,78.125 V 21.875 C 10,20.84375 10.84375,20 11.875,20 h 6.25 C 19.15625,20 20,20.84375 20,21.875 V 70 Z M 68.234375,34.921875 55,43.75 41.671875,25.984375 C 40.875,24.921875 39.25,25 38.5625,26.140625 L 25,48.75 V 65 H 85 L 70.953125,35.65625 c -0.5,-1.015625 -1.78125,-1.359375 -2.71875,-0.734375 z"
+     d="M 97.65625,75 C 98.94531,75 100,76.054687 100,77.34375 v 7.8125 C 100,86.445312 98.94531,87.5 97.65625,87.5 H 2.34375 C 1.054688,87.5 0,86.445312 0,85.15625 V 14.84375 C 0,13.554687 1.054688,12.5 2.34375,12.5 h 7.8125 C 11.445312,12.5 12.5,13.554687 12.5,14.84375 V 75 Z M 72.792969,31.152344 56.25,42.1875 39.589844,19.980469 C 38.59375,18.652344 36.5625,18.75 35.703125,20.175781 L 18.75,48.4375 V 68.75 h 75 L 76.191406,32.070312 c -0.625,-1.269531 -2.226562,-1.699218 -3.398437,-0.917968 z"
      id="path2"
      inkscape:connector-curvature="0"
-     style="fill:#646464;stroke-width:1;fill-opacity:1" />
+     style="fill:#646464;fill-opacity:1;stroke-width:1" />
 </svg>

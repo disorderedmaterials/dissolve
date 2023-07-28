@@ -526,7 +526,7 @@
   <action name="HelpOnlineManualAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/general/icons/manual.svg</normaloff>:/general/icons/manual.svg</iconset>
+     <normaloff>:/general/icons/link.svg</normaloff>:/general/icons/link.svg</iconset>
    </property>
    <property name="text">
     <string>Online Manual</string>
@@ -538,7 +538,7 @@
   <action name="HelpOnlineTutorialsAction">
    <property name="icon">
     <iconset resource="main.qrc">
-     <normaloff>:/general/icons/tutorials.svg</normaloff>:/general/icons/tutorials.svg</iconset>
+     <normaloff>:/general/icons/book.svg</normaloff>:/general/icons/book.svg</iconset>
    </property>
    <property name="text">
     <string>Online Tutorials</string>

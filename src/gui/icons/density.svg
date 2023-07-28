@@ -12,7 +12,7 @@
    height="100"
    id="svg2"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
-   sodipodi:docname="general_density.svg">
+   sodipodi:docname="density.svg">
   <metadata
      id="metadata3050">
     <rdf:RDF>
@@ -51,13 +51,14 @@
      id="defs4" />
   <text
      xml:space="preserve"
-     style="font-size:99.6106px;line-height:1.25;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';fill:#310049;fill-opacity:1;stroke:#310049;stroke-width:5.33627;stroke-opacity:1"
-     x="22.305767"
-     y="66.196449"
-     id="text836"><tspan
+     style="font-size:127.991px;line-height:1.25;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';fill:#310049;fill-opacity:1;stroke:#310049;stroke-width:5.33627;stroke-opacity:1"
+     x="14.307328"
+     y="70.91925"
+     id="text836"
+     transform="scale(1.0021643,0.99784038)"><tspan
        sodipodi:role="line"
        id="tspan834"
-       x="22.305767"
-       y="66.196449"
+       x="14.307328"
+       y="70.91925"
        style="fill:#310049;fill-opacity:1;stroke:#310049;stroke-width:5.33627;stroke-opacity:1">𝜌</tspan></text>
 </svg>
