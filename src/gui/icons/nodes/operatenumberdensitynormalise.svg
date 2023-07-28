@@ -12,7 +12,69 @@
    height="100"
    id="svg2"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
-   sodipodi:docname="nodes_operatenumberdensitynormalise.svg">
+   sodipodi:docname="operatenumberdensitynormalise.svg">
+  <g
+     id="g854"
+     transform="translate(-1.801447,-10.368547)">
+    <g
+       id="g1021"
+       transform="matrix(1.2145077,0,0,1.2170149,153.29167,-19.175152)"
+       style="stroke-width:0.751939">
+      <text
+         xml:space="preserve"
+         style="font-size:80.4577px;line-height:1.25;font-family:sans-serif;fill:#004b00;fill-opacity:1;stroke:#003800;stroke-width:3.00776;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         x="-118.46147"
+         y="78.44191"
+         id="text922-3"><tspan
+           sodipodi:role="line"
+           id="tspan920-9"
+           x="-118.46147"
+           y="78.44191"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Italic';fill:#004b00;fill-opacity:1;stroke:#003800;stroke-width:3.00776;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">𝜌</tspan></text>
+      <g
+         id="g1014"
+         style="stroke-width:0.751939">
+        <text
+           xml:space="preserve"
+           style="font-size:80.4577px;line-height:1.25;font-family:sans-serif;fill:#004b00;fill-opacity:1;stroke:none;stroke-width:3.24104;stroke-opacity:1"
+           x="-118.46147"
+           y="78.44191"
+           id="text922"><tspan
+             sodipodi:role="line"
+             id="tspan920"
+             x="-118.46147"
+             y="78.44191"
+             style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Italic';fill:#004b00;fill-opacity:1;stroke:none;stroke-width:3.24104;stroke-opacity:1">𝜌</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g946"
+       transform="matrix(0.48354635,0,0,0.48454457,104.23093,51.68627)"
+       style="stroke-width:0.751939">
+      <text
+         xml:space="preserve"
+         style="font-size:80.4577px;line-height:1.25;font-family:sans-serif;fill:#004b00;fill-opacity:1;stroke:#003800;stroke-width:3.00776;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         x="-83.591354"
+         y="82.926781"
+         id="text922-3-3"><tspan
+           sodipodi:role="line"
+           id="tspan920-9-8"
+           x="-83.591354"
+           y="82.926781"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';fill:#004b00;fill-opacity:1;stroke:#003800;stroke-width:3.00776;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">N</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:80.4577px;line-height:1.25;font-family:sans-serif;fill:#004b00;fill-opacity:1;stroke:none;stroke-width:3.24104;stroke-opacity:1"
+         x="-83.591354"
+         y="82.926781"
+         id="text922-0"><tspan
+           sodipodi:role="line"
+           id="tspan920-5"
+           x="-83.591354"
+           y="82.926781"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';fill:#004b00;fill-opacity:1;stroke:none;stroke-width:3.24104;stroke-opacity:1">N</tspan></text>
+    </g>
+  </g>
   <metadata
      id="metadata3050">
     <rdf:RDF>
@@ -21,7 +83,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -34,89 +96,19 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1131"
+     inkscape:window-width="3840"
+     inkscape:window-height="1531"
      id="namedview3048"
      showgrid="false"
      inkscape:zoom="4.0000001"
      inkscape:cx="-39.977867"
      inkscape:cy="39.576638"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="32"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2"
      showguides="false"
      inkscape:document-rotation="0" />
   <defs
      id="defs4" />
-  <g
-     id="g863"
-     transform="matrix(0.99008362,0,0,0.99008362,-30.603055,0.49581899)"
-     style="fill:#d9d9d9;fill-opacity:1;stroke:#eaeae9;stroke-opacity:1">
-    <circle
-       style="fill:#d9d9d9;fill-opacity:1;stroke:#eaeae9;stroke-width:2.55631;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path812"
-       cx="50"
-       cy="50"
-       r="17.812279" />
-    <path
-       id="rect818-3"
-       style="fill:#d9d9d9;fill-opacity:1;stroke:#eaeae9;stroke-width:1.00157;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       d="M 44.740234,2.8749996e-8 V 29.769531 A 20.903845,20.903845 0 0 1 50,29.095703 20.903845,20.903845 0 0 1 55.259766,29.769531 V 2.8749996e-8 Z M 44.740234,70.230469 V 100 H 55.259766 V 70.230469 A 20.903845,20.903845 0 0 1 50,70.904297 20.903845,20.903845 0 0 1 44.740234,70.230469 Z" />
-  </g>
-  <g
-     id="g1021"
-     transform="matrix(0.91417763,0,0,0.91417763,138.89653,-8.5110958)">
-    <text
-       xml:space="preserve"
-       style="font-size:80.4577px;line-height:1.25;font-family:sans-serif;fill:#004b00;fill-opacity:1;stroke:#003800;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="-118.46147"
-       y="78.44191"
-       id="text922-3"><tspan
-         sodipodi:role="line"
-         id="tspan920-9"
-         x="-118.46147"
-         y="78.44191"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Italic';fill:#004b00;fill-opacity:1;stroke:#003800;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">𝜌</tspan></text>
-    <g
-       id="g1014">
-      <text
-         xml:space="preserve"
-         style="font-size:80.4577px;line-height:1.25;font-family:sans-serif;fill:#004b00;fill-opacity:1;stroke:none;stroke-width:4.31024;stroke-opacity:1"
-         x="-118.46147"
-         y="78.44191"
-         id="text922"><tspan
-           sodipodi:role="line"
-           id="tspan920"
-           x="-118.46147"
-           y="78.44191"
-           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif Italic';fill:#004b00;fill-opacity:1;stroke:none;stroke-width:4.31024;stroke-opacity:1">𝜌</tspan></text>
-    </g>
-  </g>
-  <g
-     id="g946"
-     transform="matrix(0.36397239,0,0,0.36397239,101.9678,44.717446)">
-    <text
-       xml:space="preserve"
-       style="font-size:80.4577px;line-height:1.25;font-family:sans-serif;fill:#004b00;fill-opacity:1;stroke:#003800;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="-83.591354"
-       y="82.926781"
-       id="text922-3-3"><tspan
-         sodipodi:role="line"
-         id="tspan920-9-8"
-         x="-83.591354"
-         y="82.926781"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';fill:#004b00;fill-opacity:1;stroke:#003800;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">N</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:80.4577px;line-height:1.25;font-family:sans-serif;fill:#004b00;fill-opacity:1;stroke:none;stroke-width:4.31024;stroke-opacity:1"
-       x="-83.591354"
-       y="82.926781"
-       id="text922-0"><tspan
-         sodipodi:role="line"
-         id="tspan920-5"
-         x="-83.591354"
-         y="82.926781"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';fill:#004b00;fill-opacity:1;stroke:none;stroke-width:4.31024;stroke-opacity:1">N</tspan></text>
-  </g>
 </svg>

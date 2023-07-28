@@ -1,29 +1,23 @@
 <RCC>
   <qresource prefix="nodes">
     <file>icons/nodes/add.svg</file>
-    <file>icons/nodes/aliases.svg</file>
     <file>icons/nodes/simpleglobalpotential.svg</file>
     <file>icons/nodes/box.svg</file>
     <file>icons/nodes/calculateangle.svg</file>
     <file>icons/nodes/calculateaxisangle.svg</file>
-    <file>icons/nodes/calculatebase.svg</file>
     <file>icons/nodes/calculatedistance.svg</file>
     <file>icons/nodes/calculatevector.svg</file>
     <file>icons/nodes/collect1d.svg</file>
     <file>icons/nodes/customregion.svg</file>
     <file>icons/nodes/collect2d.svg</file>
     <file>icons/nodes/collect3d.svg</file>
-    <file>icons/nodes/context.svg</file>
     <file>icons/nodes/coordinatesets.svg</file>
     <file>icons/nodes/addpair.svg</file>
     <file>icons/nodes/cylindricalregion.svg</file>
     <file>icons/nodes/copy.svg</file>
-    <file>icons/nodes/dynamicsite.svg</file>
     <file>icons/nodes/fit1d.svg</file>
     <file>icons/nodes/generalregion.svg</file>
     <file>icons/nodes/integrate1d.svg</file>
-    <file>icons/nodes/nodereference.svg</file>
-    <file>icons/nodes/operatebase.svg</file>
     <file>icons/nodes/operatedivide.svg</file>
     <file>icons/nodes/operateexpression.svg</file>
     <file>icons/nodes/operategridnormalise.svg</file>
@@ -34,16 +28,13 @@
     <file>icons/nodes/operatesphericalshellnormalise.svg</file>
     <file>icons/nodes/parameters.svg</file>
     <file>icons/nodes/pick.svg</file>
-    <file>icons/nodes/pickbase.svg</file>
     <file>icons/nodes/pickproximity.svg</file>
     <file>icons/nodes/pickregion.svg</file>
     <file>icons/nodes/process1d.svg</file>
     <file>icons/nodes/process2d.svg</file>
     <file>icons/nodes/process3d.svg</file>
-    <file>icons/nodes/regionbase.svg</file>
     <file>icons/nodes/remove.svg</file>
     <file>icons/nodes/select.svg</file>
-    <file>icons/nodes/sequence.svg</file>
     <file>icons/nodes/sum1d.svg</file>
     <file>icons/nodes/transmute.svg</file>
   </qresource>
