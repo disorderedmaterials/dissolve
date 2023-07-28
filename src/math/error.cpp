@@ -18,9 +18,9 @@ EnumOptions<ErrorType> errorTypes()
                                                 {MAAPEError, "MAAPE"},
                                                 {MAPEError, "MAPE"},
                                                 {PercentError, "Percent"},
-                                                {ASEError, "Absolute Squared"},
+                                                {ASEError, "ASE"},
                                                 {RFactorError, "RFactor"},
-                                                {EuclideanError, "Euclidean Distance"}});
+                                                {EuclideanError, "Euclidean"}});
 }
 
 std::string errorReportString(ErrorReport errorReport)
@@ -45,6 +45,8 @@ ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, Optiona
         return mape(A, B, range);
     else if (errorType == PercentError)
         return percent(A, B, range);
+    else if (errorType == ASEError)
+        return ase(A, B, range);
     else if (errorType == RFactorError)
         return rFactor(A, B, range);
     else if (errorType == EuclideanError)
@@ -79,6 +81,8 @@ ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const st
         return mape(A, B);
     else if (errorType == PercentError)
         return percent(A, B);
+    else if (errorType == ASEError)
+        return ase(A, B, range);
     else if (errorType == RFactorError)
         return rFactor(A, B);
     else if (errorType == EuclideanError)
