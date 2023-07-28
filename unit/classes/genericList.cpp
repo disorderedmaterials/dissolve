@@ -3,9 +3,9 @@
 
 #include "items/list.h"
 #include "math/data1D.h"
+#include "templates/algorithms.h"
 #include <gtest/gtest.h>
 #include <string>
-#include <templates/algorithms.h>
 
 namespace UnitTest
 {

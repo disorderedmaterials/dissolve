@@ -38,6 +38,7 @@ set(gui_MOC_HDRS
     importCIFDialog.h
     importSpeciesDialog.h
     intramolecularTermsDialog.h
+    rFactorAddRangeDialog.h
     scaleChargesDialog.h
     selectAtomTypeDialog.h
     selectElementDialog.h
@@ -90,6 +91,7 @@ set(gui_UIS
     importCIFDialog.ui
     importSpeciesDialog.ui
     intramolecularTermsDialog.ui
+    rFactorAddRangeDialog.ui
     scaleChargesDialog.ui
     selectAtomTypeDialog.ui
     selectElementDialog.ui
@@ -158,6 +160,7 @@ set(gui_SRCS
     importCIFDialogFuncs.cpp
     importSpeciesDialogFuncs.cpp
     intramolecularTermsDialogFuncs.cpp
+    rFactorAddRangeDialogFuncs.cpp
     scaleChargesDialogFuncs.cpp
     selectAtomTypeDialogFuncs.cpp
     selectElementDialogFuncs.cpp

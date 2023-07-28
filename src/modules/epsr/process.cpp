@@ -280,7 +280,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
         // Calculate r-factor over fit range and store
         auto tempRefData = originalReferenceData;
         Filters::trim(tempRefData, qMin_, qMax_);
-        auto rFactor = Error::rFactor(tempRefData, weightedSQ.total(), true);
+        auto rFactor = (tempRefData, weightedSQ.total(), std::nullopt, true);
         rFacTot += rFactor;
         errors.addPoint(dissolve.iteration(), rFactor);
         Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactor);
