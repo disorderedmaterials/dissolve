@@ -3,7 +3,6 @@
 
 #include "classes/configuration.h"
 #include "classes/coreData.h"
-#include "gui/helpers/listWidgetUpdater.h"
 #include "gui/keywordWidgets/configurationVector.h"
 #include "module/module.h"
 #include "templates/algorithms.h"

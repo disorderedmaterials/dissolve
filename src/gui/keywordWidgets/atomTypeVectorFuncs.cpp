@@ -4,7 +4,6 @@
 #include "classes/atomType.h"
 #include "classes/atomTypeMix.h"
 #include "classes/coreData.h"
-#include "gui/helpers/listWidgetUpdater.h"
 #include "gui/keywordWidgets/atomTypeVector.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "templates/algorithms.h"
