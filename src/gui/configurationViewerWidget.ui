@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>334</height>
+    <width>666</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="font">
@@ -81,7 +81,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
+         <pixmap resource="main.qrc">:/general/icons/view.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -92,14 +92,14 @@
        <widget class="QToolButton" name="ViewResetButton">
         <property name="minimumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="toolTip">
@@ -114,8 +114,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="checkable">
@@ -133,14 +133,14 @@
        <widget class="QToolButton" name="ViewSpheresButton">
         <property name="minimumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="toolTip">
@@ -156,8 +156,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="checkable">
@@ -175,14 +175,14 @@
        <widget class="QToolButton" name="ViewAxesVisibleButton">
         <property name="minimumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="toolTip">
@@ -198,8 +198,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="checkable">
@@ -217,14 +217,14 @@
        <widget class="QToolButton" name="ViewCopyToClipboardButton">
         <property name="minimumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>26</width>
+          <height>26</height>
          </size>
         </property>
         <property name="toolTip">
@@ -239,8 +239,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>20</width>
+          <height>20</height>
          </size>
         </property>
         <property name="checkable">
@@ -340,7 +340,7 @@
  </customwidgets>
  <resources>
   <include location="main.qrc"/>
-  <include location="../main.qrc"/>
+  <include location="main.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>262</height>
+    <width>328</width>
+    <height>229</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -80,16 +80,16 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <property name="spacing">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="leftMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="topMargin">
           <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="bottomMargin">
           <number>0</number>
@@ -104,21 +104,21 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>26</width>
-             <height>26</height>
+             <width>24</width>
+             <height>24</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>26</width>
-             <height>26</height>
+             <width>24</width>
+             <height>24</height>
             </size>
            </property>
            <property name="text">
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_graph.svg</pixmap>
+            <pixmap resource="main.qrc">:/general/icons/graph.svg</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -151,8 +151,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>22</width>
-             <height>22</height>
+             <width>18</width>
+             <height>18</height>
             </size>
            </property>
            <property name="checkable">
@@ -193,8 +193,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>22</width>
-             <height>22</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -229,8 +229,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>22</width>
-             <height>22</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -297,16 +297,16 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <property name="spacing">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="leftMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="topMargin">
           <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="bottomMargin">
           <number>0</number>
@@ -321,21 +321,21 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>26</width>
-             <height>26</height>
+             <width>24</width>
+             <height>24</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>26</width>
-             <height>26</height>
+             <width>24</width>
+             <height>24</height>
             </size>
            </property>
            <property name="text">
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
+            <pixmap resource="main.qrc">:/general/icons/view.svg</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -408,8 +408,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -444,8 +444,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -485,8 +485,8 @@
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -568,19 +568,19 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <property name="spacing">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="leftMargin">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="topMargin">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>4</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QTreeView" name="DataTree">

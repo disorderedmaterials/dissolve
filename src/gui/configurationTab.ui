@@ -172,17 +172,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="TemperatureToolButton">
@@ -220,17 +223,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="CurrentBoxToolButton">
@@ -260,7 +266,6 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
@@ -284,17 +289,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="DensityToolButton">
@@ -307,6 +315,12 @@
             <property name="icon">
              <iconset resource="main.qrc">
               <normaloff>:/general/icons/density.svg</normaloff>:/general/icons/density.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>14</width>
+              <height>14</height>
+             </size>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -324,7 +338,6 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
@@ -423,17 +436,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="MoleculePopulationToolButton">
@@ -480,17 +496,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="AtomPopulationToolButton">

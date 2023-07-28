@@ -9,8 +9,8 @@
 CheckIndicator::CheckIndicator(QWidget *parent) : QLabel(parent)
 {
     // Set minimum size
-    setMinimumSize(QSize(20, 20));
-    setMaximumSize(QSize(20, 20));
+    setMinimumSize(QSize(16, 16));
+    setMaximumSize(QSize(16, 16));
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     setScaledContents(true);
 
