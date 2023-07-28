@@ -1,20 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "keywords/rFactorRangesVector.h"
 #include "base/lineParser.h"
 #include "classes/coreData.h"
-#include "keywords/rFactorRanges.h"
-#include "math/range.h"
 
-RFactorRangesVector::RFactorRangesVector(std::vector<Range *> &data) : KeywordBase(typeid(this)), data_(data) {}
+RFactorRangesVector::RFactorRangesVector(std::vector<Range> &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data
  */
 
 // Return the data vector
-std::vector<Range *> &RFactorRangesVector::data() { return data_; }
-const std::vector<Range *> &RFactorRangesVector::data() const { return data_; }
+std::vector<Range> &RFactorRangesVector::data() { return data_; }
+const std::vector<Range> &RFactorRangesVector::data() const { return data_; }
 
 /*
  * Arguments
@@ -33,7 +32,7 @@ bool RFactorRangesVector::deserialise(LineParser &parser, int startArg, const Co
             if (DissolveSys::isNumber(parser.argsv(n + 1)))
             {
                 // If both are numbers, initialise new Range
-                data_.push_back(Range(parser.argd(n), parser.argd(n + 1)));
+                data_.emplace_back(parser.argd(n), parser.argd(n + 1));
             }
             else
             {
@@ -54,9 +53,11 @@ bool RFactorRangesVector::deserialise(LineParser &parser, int startArg, const Co
 // Serialise data to specified LineParser
 bool RFactorRangesVector::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    for (auto *range : data_)
-        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, range->minimum().asString(), range->maximum().asString()))
+    for (auto range : data_)
+        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, range.minimum(), range.maximum()))
             return false;
+
+    return true;
 }
 
 /*
@@ -64,9 +65,11 @@ bool RFactorRangesVector::serialise(LineParser &parser, std::string_view keyword
  */
 
 // Prune any references to the supplied range in the contained data
-void RFactorRangesVector::removeReferencesTo(Range *range)
+void RFactorRangesVector::removeReferencesTo(Range range)
 {
-    auto it = std::find(data_.begin(), data_.end(), range);
+    auto it = std::find_if(data_.begin(), data_.end(),
+                           [&range](const Range &rg)
+                           { return (range.minimum() == rg.minimum() && range.maximum() == rg.maximum()); });
     if (it != data_.end())
         data_.erase(it);
 }
@@ -74,7 +77,10 @@ void RFactorRangesVector::removeReferencesTo(Range *range)
 // Express as a serialisable value
 SerialisedValue RFactorRangesVector::serialise() const
 {
-    return fromVector(data_, [](const auto *item) { return {{"minimum", item.minimum()}, {"maximum", item.maximum()}}; });
+    return fromVector(data_,
+                      [](const auto item) -> SerialisedValue {
+                          return {{"minimum", item.minimum()}, {"maximum", item.maximum()}};
+                      });
 }
 
 // Read values from a serialisable value

@@ -102,3 +102,9 @@ void KeywordBase::removeReferencesTo(NodeRef node)
 {
     // Default action - ignore
 }
+
+// Prune any references to the supplied Range in the contained data
+void KeywordBase::removeReferencesTo(Range range)
+{
+    // Default action - ignore
+}

@@ -4,16 +4,14 @@
 #pragma once
 
 #include "keywords/base.h"
+#include "math/range.h"
 #include "module/module.h"
-
-// Forward Declarations
-class Range;
 
 // Module Vector Keyword
 class RFactorRangesVector : public KeywordBase
 {
     public:
-    RFactorRangesVector(std::vector<Range *>);
+    RFactorRangesVector(std::vector<Range> &data);
     ~RFactorRangesVector() override = default;
 
     /*
@@ -21,12 +19,12 @@ class RFactorRangesVector : public KeywordBase
      */
     private:
     // Reference to data vector
-    std::vector<Range *> &data_;
+    std::vector<Range> &data_;
 
     public:
     // Return the data vector
-    std::vector<Range *> &data();
-    const std::vector<Range *> &data() const;
+    std::vector<Range> &data();
+    const std::vector<Range> &data() const;
 
     /*
      * Arguments
@@ -42,7 +40,7 @@ class RFactorRangesVector : public KeywordBase
      */
     protected:
     // Prune any references to the supplied Range in the contained data
-    void removeReferencesTo(Range *range) override;
+    void removeReferencesTo(Range range) override;
 
     public:
     // Express as a serialisable value
@@ -51,4 +49,4 @@ class RFactorRangesVector : public KeywordBase
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
     // Has not changed from initial value
     bool isDefault() const override;
-}
+};
