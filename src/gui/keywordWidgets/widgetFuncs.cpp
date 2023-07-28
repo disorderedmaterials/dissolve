@@ -12,10 +12,11 @@
 #include <QPushButton>
 #include <QSpacerItem>
 
-KeywordsWidget::KeywordsWidget(QWidget *parent) : QWidget(parent)
+KeywordsWidget::KeywordsWidget(QWidget *parent) : QScrollArea(parent)
 {
     refreshing_ = false;
-    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+    setWidgetResizable(true);
 }
 
 /*
@@ -32,7 +33,7 @@ void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
     auto &groupMap = keywordMap.at(keywordIndexInfo.first);
 
     // Create a new QWidget and layout for the next group?
-    auto *groupWidget = new QWidget;
+    auto *groupWidget = new QWidget(parentWidget());
     auto *groupLayout = new QGridLayout(groupWidget);
     auto row = 0;
     for (auto sectionName : keywordIndexInfo.second)
@@ -44,6 +45,7 @@ void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
         if (!sectionName.empty())
         {
             auto *sectionLabel = new SectionHeaderWidget(QString::fromStdString(std::string(sectionName)));
+
             if (row != 0)
                 sectionLabel->setContentsMargins(0, 15, 0, 0);
             groupLayout->addWidget(sectionLabel, row++, 0, 1, 2);
@@ -82,7 +84,8 @@ void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
 
     // Add vertical spacer to the end of the group
     groupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
-    setLayout(groupLayout);
+    groupWidget->setLayout(groupLayout);
+    setWidget(groupWidget);
 }
 
 // Create a suitable button for the named group
