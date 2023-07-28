@@ -61,4 +61,13 @@ class BraggReflection
     void setHKL(int h, int k, int l);
     // Return Miller indices of reflection
     const Vec3<int> &hkl() const;
+
+    /*
+     * Serialisation
+     */
+    public:
+    // Read data through specified parser
+    bool deserialise(LineParser &parser);
+    // Write data through specified parser
+    bool serialise(LineParser &parser) const;
 };
