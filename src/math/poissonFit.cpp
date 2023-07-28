@@ -383,7 +383,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
     // Calculate the approximate function
     generateApproximation(space);
 
-    return Error::percent(referenceData_, approximateData_).value;
+    return Error::percent(referenceData_, approximateData_, true);
 }
 
 // Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin
@@ -437,10 +437,11 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
     poissonMinimiser.setSamplingFrequency(nIterations / 2.5);
+    currentError_ = poissonMinimiser.minimise();
 
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);
-    currentError_ = Error::percent(referenceData_, approximateData_).value;
+    currentError_ = Error::percent(referenceData_, approximateData_, true);
 
     return currentError_;
 }

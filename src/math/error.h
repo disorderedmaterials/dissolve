@@ -4,8 +4,6 @@
 #pragma once
 
 #include "base/enumOptions.h"
-#include "math/range.h"
-#include "templates/optionalRef.h"
 
 // Forward Declarations
 class Data1D;
@@ -22,46 +20,32 @@ enum ErrorType
     MAAPEError,
     MAPEError,
     PercentError,
-    ASEError,
     RFactorError,
     EuclideanError,
     nErrorCalculationTypes
 };
-// Error information struct
-struct ErrorReport
-{
-    ErrorType errorType;
-    double value;
-    double firstX;
-    double lastX;
-    int nPointsConsidered;
-};
 // Return enum options for ErrorType
 EnumOptions<Error::ErrorType> errorTypes();
-// Return error report formatted to string
-std::string errorReportString(ErrorReport errorReport);
 
 /*
  * Data1D
  */
 
-// Return error of specified type between supplied data, allows a range parameter to be specified
-ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
+// Return error of specified type between supplied data
+double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet = false);
 // Return error of specified type between supplied double vectors
-ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB);
+double error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB, bool quiet = false);
 // Return RMSE between supplied data
-ErrorReport rmse(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
+double rmse(const Data1D &A, const Data1D &B, bool quiet = false);
 // Return MAAPE between supplied data
-ErrorReport maape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
+double maape(const Data1D &A, const Data1D &B, bool quiet = false);
 // Return MAPE between supplied data
-ErrorReport mape(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
+double mape(const Data1D &A, const Data1D &B, bool quiet = false);
 // Return percentage error between supplied data
-ErrorReport percent(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
-// Return absolute squared error between supplied data
-ErrorReport ase(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range);
+double percent(const Data1D &A, const Data1D &B, bool quiet = false);
 // Return R-Factor (average squared error per point) between supplied data
-ErrorReport rFactor(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
+double rFactor(const Data1D &A, const Data1D &B, bool quiet = false);
 // Return Euclidean distance, normalised to mean of B, between supplied data
-ErrorReport euclidean(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
+double euclidean(const Data1D &A, const Data1D &B, bool quiet = false);
 
 }; // namespace Error
