@@ -36,12 +36,16 @@ bool RFactorRangesVector::deserialise(LineParser &parser, int startArg, const Co
                 data_.push_back(Range(parser.argd(n), parser.argd(n + 1)));
             }
             else
+            {
                 return Messenger::error("Value '{}' provided for keyword R Factor Ranges doesn't appear to be a number.\n",
                                         parser.argsv(n + 1));
+            }
         }
         else
+        {
             return Messenger::error("Value '{}' provided for keyword R Factor Ranges doesn't appear to be a number.\n",
                                     parser.argsv(n));
+        }
     }
 
     return true;
@@ -70,29 +74,29 @@ void RFactorRangesVector::removeReferencesTo(Range *range)
 // Express as a serialisable value
 SerialisedValue RFactorRangesVector::serialise() const
 {
-    return fromVector(data_, [](const auto *item) { return item->name(); });
+    return fromVector(data_, [](const auto *item) { return {{"minimum", item.minimum()}, {"maximum", item.maximum()}}; });
 }
 
 // Read values from a serialisable value
 void RFactorRangesVector::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    toVector(node,
-             [this, &coreData](const auto &item)
-             {
-                 // Set the value
-                 bool isFloatingPoint = false;
-                 if (DissolveSys::isNumber(parser.argsv(n), isFloatingPoint))
-                 {
-                     // All OK - add it to our vector
-                     if (isFloatingPoint)
-                         data_.push_back(parser.argd(n));
-                     else
-                         data_.push_back(parser.argi(n));
-                 }
-                 else
-                     return Messenger::error("Value '{}' provided for keyword R Factor Ranges doesn't appear to be a number.\n",
-                                             parser.argsv(n));
-             });
+    Range range;
+    auto counter = 0;
+
+    for (auto &item : node.as_array())
+    {
+        if (counter % 2 != 0)
+        {
+            range.setMinimum(toml::get<double>(item));
+        }
+        else
+        {
+            range.setMaximum(toml::get<double>(item));
+            data_.push_back(range);
+        }
+
+        ++counter;
+    }
 }
 
 // Has not changed from initial value

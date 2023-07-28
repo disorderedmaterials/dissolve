@@ -40,6 +40,7 @@ add_library(
   vectorIntString.cpp
   vectorStringDouble.cpp
   vectorStringPair.cpp
+  rFactorRangesVector.cpp
   atomTypeVector.h
   base.h
   bool.h
@@ -88,6 +89,7 @@ add_library(
   vectorIntString.h
   vectorStringDouble.h
   vectorStringPair.h
+  rFactorRangesVector.h
 )
 
 target_include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)
