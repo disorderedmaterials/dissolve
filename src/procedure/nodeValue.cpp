@@ -153,26 +153,23 @@ SerialisedValue NodeValue::serialise() const
 }
 
 // Read values from a serialisable value
-void NodeValue::deserialise(const SerialisedValue &node)
+void NodeValue::deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params)
 {
     toml::visit(
-        [this](auto &arg)
+        [this, &params](auto &arg)
         {
             using T = std::decay_t<decltype(arg)>;
             if constexpr (std::is_same_v<T, toml::integer>)
             {
-                type_ = IntegerNodeValue;
-                valueI_ = arg;
+		set((int) arg);
             }
             else if constexpr (std::is_same_v<T, toml::floating>)
             {
-                type_ = DoubleNodeValue;
-                valueD_ = arg;
+		set((double) arg);
             }
             else if constexpr (std::is_same_v<T, toml::string>)
             {
-                type_ = ExpressionNodeValue;
-                expression_.create(std::string_view(std::string(arg)), {});
+                set(std::string_view(std::string(arg)), params);
             }
         },
         node);

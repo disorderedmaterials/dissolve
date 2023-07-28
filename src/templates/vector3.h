@@ -10,6 +10,7 @@
 #include <fmt/format.h>
 #include <stdexcept>
 
+
 // 3D vector
 template <class T> class Vec3 : public Serialisable<>
 {
@@ -424,10 +425,12 @@ template <class T> class Vec3 : public Serialisable<>
         result.push_back(z);
         return result;
     }
-    void deserialise(const SerialisedValue &node) override
+    void deserialise(const SerialisedValue &node) override;
+    template <typename Context>
+    void deserialise(const SerialisedValue &node, Context context)
     {
-        x = toml::get<T>(node[0]);
-        y = toml::get<T>(node[1]);
-        z = toml::get<T>(node[2]);
+        x.deserialise(node[0], context);
+        y.deserialise(node[1], context);
+        z.deserialise(node[2], context);
     }
 };
