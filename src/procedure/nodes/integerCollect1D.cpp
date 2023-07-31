@@ -13,9 +13,9 @@
 #include "procedure/nodes/sequence.h"
 
 IntegerCollect1DProcedureNode::IntegerCollect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable,
-                                                             ProcedureNode::NodeContext subCollectContext, int rMin, int rMax)
-    : ProcedureNode(ProcedureNode::NodeType::IntegerCollect1D, {ProcedureNode::AnalysisContext}),
-      xObservable_{observable, 0}, minimum_{rMin}, maximum_{rMax}, subCollectBranch_(subCollectContext, *this, "SubCollect")
+                                                             ProcedureNode::NodeContext subCollectContext)
+    : ProcedureNode(ProcedureNode::NodeType::IntegerCollect1D, {ProcedureNode::AnalysisContext}), xObservable_{observable, 0},
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.setOrganisation("Options", "Quantity / Range");
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(

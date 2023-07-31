@@ -30,8 +30,7 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     auto calcExpression_ = forEachA.create<CalculateExpressionProcedureNode>({});
     calcExpression_->setExpression("B.nSelected");
 
-    auto collectCN_ =
-        forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext, 0, 10);
+    auto collectCN_ = forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext);
 
     auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN_);
     auto &normalisation = process1D->branch()->get();
