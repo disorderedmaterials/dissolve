@@ -44,6 +44,9 @@ TEST(RotateTest, Benzene)
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
     auto rotate = procedure.createRootNode<RotateFragmentProcedureNode>("RotateBenzene", select);
 
+    // Set up the configuration before the main loop starts
+    cfg->generate(ProcedureContext(ProcessPool(), dissolve.potentialMap()));
+
     // Rotate four times around the x-axis of the site
     for (auto x = 90.0; x <= 360.0; x += 90.0)
     {
