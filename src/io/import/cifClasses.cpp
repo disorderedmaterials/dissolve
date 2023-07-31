@@ -433,6 +433,37 @@ void CIFSpecies::fixGeometry(Species *sp, const Box *box)
     sp->setCentre(box, {0., 0., 0.});
 }
 
+Species *CIFSpecies::createSupercellSpecies(Species *refSp, Vec3<int> repeat, bool calculateBonding)
+{
+    auto *sp = coreData_.addSpecies();
+    sp->setName("Supercell");
+
+    if (!refSp)
+        return nullptr;
+
+    auto supercellLengths = refSp->box()->axisLengths();
+    supercellLengths.multiply(repeat.x, repeat.y, repeat.z);
+    sp->createBox(supercellLengths, refSp->box()->axisAngles(), false);
+
+    // Copy atoms from the Crystal species - we'll do the bonding afterwards
+    sp->atoms().reserve(repeat.x * repeat.y * repeat.z * refSp->nAtoms());
+    for (auto ix = 0; ix < repeat.x; ++ix)
+        for (auto iy = 0; iy < repeat.y; ++iy)
+            for (auto iz = 0; iz < repeat.z; ++iz)
+            {
+                Vec3<double> deltaR = refSp->box()->axes() * Vec3<double>(ix, iy, iz);
+                for (const auto &i : refSp->atoms())
+                    sp->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
+            }
+
+    if (calculateBonding)
+        sp->addMissingBonds();
+    else
+        applyCIFBonding(refSp, false);
+
+    return sp;
+}
+
 Configuration* CIFSpecies::generateConfiguration(Species *sp, std::string name)
 {
     // Create a configuration

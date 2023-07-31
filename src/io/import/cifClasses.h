@@ -142,6 +142,7 @@ class CIFSpecies
     Species* createStructuralSpecies(double tolerance, bool calculateBonding, bool preventMetallicBonding);
     Species* createCleanedSpecies(Species* refSp, bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety, std::optional<NETADefinition> moietyNETA, std::optional<bool> removeEntireFragment);
     std::vector<CIFMolecularSpecies*> createMolecularSpecies(Species* refSp);
+    Species* createSupercellSpecies(Species* refSp, Vec3<int> repeat, bool calculateBonding);
     Configuration* generateConfiguration(Species* sp, std::string name);
     Configuration* generateConfiguration(std::vector<CIFMolecularSpecies*>);
     Configuration* generateConfiguration(CoreData& coreData, std::vector<CIFMolecularSpecies*>);

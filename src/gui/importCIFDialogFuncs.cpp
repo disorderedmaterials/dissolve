@@ -404,36 +404,16 @@ bool ImportCIFDialog::createSupercellSpecies()
     auto *supercell = temporaryCoreData_.findSpecies("Supercell");
     if (supercell)
         temporaryCoreData_.removeSpecies(supercell);
-    supercell = temporaryCoreData_.addSpecies();
-    supercell->setName("Supercell");
 
     // Set the repeat vector
     Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
 
-    // Add the cleaned crystal species and set a new Supercell box
-    if (!cleanedSpecies_)
-        return Messenger::error("Cleaned crystal reference species doesn't exist.\n");
-    auto supercellLengths = cleanedSpecies_->box()->axisLengths();
-    supercellLengths.multiply(repeat.x, repeat.y, repeat.z);
-    supercell->createBox(supercellLengths, cleanedSpecies_->box()->axisAngles(), false);
-    supercellConfiguration_->createBoxAndCells(supercellLengths, cleanedSpecies_->box()->axisAngles(), false, 1.0);
+    supercell = cifSpecies_->createSupercellSpecies(cleanedSpecies_, repeat, ui_.CalculateBondingRadio->isChecked());
 
-    // Copy atoms from the Crystal species - we'll do the bonding afterwards
-    supercell->atoms().reserve(repeat.x * repeat.y * repeat.z * cleanedSpecies_->nAtoms());
-    for (auto ix = 0; ix < repeat.x; ++ix)
-        for (auto iy = 0; iy < repeat.y; ++iy)
-            for (auto iz = 0; iz < repeat.z; ++iz)
-            {
-                Vec3<double> deltaR = cleanedSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
-                for (const auto &i : cleanedSpecies_->atoms())
-                    supercell->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
-            }
+    if (!supercell)
+        return false;
 
-    // Bonding
-    if (ui_.CalculateBondingRadio->isChecked())
-        supercell->addMissingBonds();
-    //else
-        //applyCIFBonding(supercell);
+    supercellConfiguration_->createBoxAndCells(supercell->box()->axisLengths(), cleanedSpecies_->box()->axisAngles(), false, 1.0);
 
     // Add the structural species to the configuration
     supercellConfiguration_->addMolecule(supercell);
