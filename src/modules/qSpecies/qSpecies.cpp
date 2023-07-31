@@ -37,10 +37,10 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
 
     keywords_.setOrganisation("Options", "Sites");
     keywords_.add<SpeciesSiteVectorKeyword>("SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF",
-                                            selectA_->speciesSites(), selectA_->axesRequired());
+                                            selectBO_->speciesSites(), selectBO_->axesRequired());
     keywords_.add<SpeciesSiteVectorKeyword>(
         "SiteB", "Set the site(s) 'NF' for which the distribution around the origin sites 'A' should be calculated",
-        selectB_->speciesSites(), selectB_->axesRequired());
+        selectNF_->speciesSites(), selectNF_->axesRequired());
 
     keywords_.setOrganisation("Options", "Ranges");
     keywords_.add<RangeKeyword>("DistanceRange",
