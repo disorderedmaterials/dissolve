@@ -55,10 +55,10 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...
-                if (findProcessingLayer(parser.argsv(1)))
+                if (coreData_.findProcessingLayer(parser.argsv(1)))
                     Messenger::error("Redefinition of processing layer '{}'.\n", parser.argsv(1));
 
-                layer = addProcessingLayer();
+                layer = coreData_.addProcessingLayer();
                 layer->setName(parser.argsv(1));
                 Messenger::print("\n--> Created processing layer '{}'\n", layer->name());
                 if (!LayerBlock::parse(parser, this, layer))
@@ -144,7 +144,7 @@ SerialisedValue Dissolve::serialise() const
 
     Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
-    Serialisable::fromVectorToTable(processingLayers_, "layers", root);
+    Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 
     return root;
 }
@@ -187,7 +187,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
     toMap(node, "layers",
           [this](const std::string &name, const SerialisedValue &data)
           {
-              auto *layer = addProcessingLayer();
+              auto *layer = coreData_.addProcessingLayer();
               layer->setName(name);
               layer->deserialise(data, coreData_);
           });
@@ -369,7 +369,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write processing layers
     if (!parser.writeBannerComment("Processing Layers"))
         return false;
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                                layer->name()))

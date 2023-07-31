@@ -14,7 +14,9 @@
 #include <vector>
 
 // Forward Declarations
+class Dissolve;
 class Module;
+class ModuleLayer;
 class MasterBond;
 class MasterAngle;
 class MasterTorsion;
@@ -185,6 +187,28 @@ class CoreData
     Configuration *findConfiguration(std::string_view name) const;
     // Find configuration by 'nice' name
     Configuration *findConfigurationByNiceName(std::string_view name) const;
+
+    /*
+     * Layers
+     */
+    private:
+    // List of defined processing layers
+    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
+
+    public:
+    // Add new processing layer
+    ModuleLayer *addProcessingLayer();
+    // Remove processing layer
+    void removeProcessingLayer(ModuleLayer *layer);
+    // Find named processing layer
+    ModuleLayer *findProcessingLayer(std::string_view name) const;
+    // Return number of processing layers
+    int nProcessingLayers() const;
+    // Return current processing layers
+    std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
+    const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
+    // Run the set-up stages of all modules in all layers
+    bool setUpProcessingLayerModules(Dissolve &dissolve);
 
     /*
      * Input Filename

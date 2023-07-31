@@ -220,7 +220,7 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
 
     Messenger::banner("Setting Up Processing Modules");
 
-    if (!dissolve_.setUpProcessingLayerModules())
+    if (!dissolve_.coreData().setUpProcessingLayerModules(dissolve_))
         return false;
 
     // Handle restart file loading?

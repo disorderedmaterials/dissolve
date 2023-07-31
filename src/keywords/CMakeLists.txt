@@ -17,6 +17,7 @@ add_library(
   geometryList.cpp
   integer.cpp
   isotopologueSet.cpp
+  layer.cpp
   moduleVector.cpp
   nodeBranch.cpp
   nodeUnderlay.cpp
@@ -60,6 +61,7 @@ add_library(
   integer.h
   interactionPotential.h
   isotopologueSet.h
+  layer.h
   module.h
   moduleVector.h
   node.h

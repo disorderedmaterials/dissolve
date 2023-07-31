@@ -235,7 +235,7 @@ void MainTabsWidget::reconcileTabs()
     // Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to
     // 1+nSpecies+nConfigurations+nProcessingLayers
     currentTabIndex = 0;
-    for (const auto &layer : dissolve.processingLayers())
+    for (const auto &layer : dissolve.coreData().processingLayers())
     {
         // Loop over existing tabs
         while (currentTabIndex < processingLayerTabs_.size())
@@ -271,7 +271,7 @@ void MainTabsWidget::reconcileTabs()
 
         ++currentTabIndex;
     }
-    baseIndex += dissolve.nProcessingLayers();
+    baseIndex += dissolve.coreData().nProcessingLayers();
 }
 
 // Remove tab containing the specified page widget

@@ -106,29 +106,13 @@ class Dissolve : public Serialisable<>
     void revertPairPotentials();
 
     /*
-     * Layers
+     * Processing Module Data
      */
     private:
-    // List of defined processing layers
-    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
     // Data associated with processing Modules
     GenericList processingModuleData_;
 
     public:
-    // Add new processing layer
-    ModuleLayer *addProcessingLayer();
-    // Remove specified processing layer
-    void removeProcessingLayer(ModuleLayer *layer);
-    // Find named processing layer
-    ModuleLayer *findProcessingLayer(std::string_view name) const;
-    // Own the specified processing layer
-    bool ownProcessingLayer(ModuleLayer *layer);
-    // Return number of defined processing layers
-    int nProcessingLayers() const;
-    // Return list of processing layers
-    std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
-    // Run the set-up stages of all modules in all layers
-    bool setUpProcessingLayerModules();
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
 

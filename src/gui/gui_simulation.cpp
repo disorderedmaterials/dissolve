@@ -171,7 +171,7 @@ void DissolveWindow::closeTab(QWidget *page)
         auto *layerTab = dynamic_cast<LayerTab *>(tab);
         layerTab->removeModuleControlWidgets();
         ui_.MainTabs->removeByPage(page);
-        dissolve_.removeProcessingLayer(layerTab->moduleLayer());
+        dissolve_.coreData().removeProcessingLayer(layerTab->moduleLayer());
         setModified({DissolveSignals::ModulesMutated});
     }
     else if (tab->type() == MainTab::TabType::Species)
