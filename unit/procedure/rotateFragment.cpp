@@ -26,8 +26,8 @@ TEST(RotateTest, Benzene)
     auto *benzene = coreData.copySpecies(&benzeneSpecies());
 
     // Set up site
-    auto site = SpeciesSite(benzene, SpeciesSite::SiteType::Fragment);
-    site.setFragmentDefinitionString("?C, #origin, ring(C(-H),C(-H),C(-H),C(-H),C(-H),C(-H))");
+    auto site = SpeciesSite(benzene, "COG", SpeciesSite::SiteType::Fragment);
+    site.setFragmentDefinitionString("?C,#origin, ring(C(#origin, -H),C(#origin, -H),C(#origin, -H),C(#origin,#x, -H),C(#origin,#y, -H),C(#origin,#y, -H))");
     std::vector<const SpeciesSite *> sites = {&site};
 
     // Setup configuration
