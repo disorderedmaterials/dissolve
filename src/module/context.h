@@ -7,6 +7,7 @@
 
 // Forward Declarations
 class CoreData;
+class GenericList;
 class ProcessPool;
 class PotentialMap;
 
@@ -14,7 +15,7 @@ class PotentialMap;
 class ModuleContext
 {
     public:
-    explicit ModuleContext(const ProcessPool &procPool, const CoreData& coreData, const double& pairPotentialRange, const double& pairPotentialDelta, const PotentialMap& potentialMap);
+    explicit ModuleContext(const ProcessPool &procPool, const CoreData& coreData, const double& pairPotentialRange, const double& pairPotentialDelta, const PotentialMap& potentialMap, GenericList& processingModuleData);
 
     private:
     // Available process pool
@@ -23,6 +24,7 @@ class ModuleContext
     const double& pairPotentialRange_;
     const double& pairPotentialDelta_;
     const PotentialMap& potentialMap_;
+    GenericList& processingModuleData_;
 
     public:
     // Return available process pool
@@ -31,4 +33,7 @@ class ModuleContext
     const double& pairPotentialRange() const;
     const double& pairPotentialDelta() const;
     const PotentialMap& potentialMap() const;
+    const GenericList& processingModuleData() const;
+    GenericList& processingModuleData();
+
 };

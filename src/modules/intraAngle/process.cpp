@@ -3,6 +3,7 @@
 
 #include "expression/variable.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/intraAngle/intraAngle.h"
 #include "procedure/nodes/calculateAngle.h"
 #include "procedure/nodes/collect1D.h"

@@ -4,6 +4,7 @@
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/histogramCN/histogramCN.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/operateSitePopulationNormalise.h"

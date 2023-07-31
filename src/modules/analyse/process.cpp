@@ -4,6 +4,7 @@
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
+#include "module/context.h"
 
 // Run main processing
 Module::ExecutionResult AnalyseModule::process(const ModuleContext& moduleContext)
@@ -17,7 +18,7 @@ Module::ExecutionResult AnalyseModule::process(const ModuleContext& moduleContex
 
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setDataListAndPrefix(moduleContext.processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("Analysis ExecutionResult::Failed.\n");

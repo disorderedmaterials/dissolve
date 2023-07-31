@@ -8,6 +8,8 @@
 #include "math/sampledVector.h"
 #include "module/module.h"
 
+class GenericList;
+
 // Calculate Average Molecule Module
 class AvgMolModule : public Module
 {
@@ -35,7 +37,7 @@ class AvgMolModule : public Module
      */
     private:
     // Ensure arrays are the correct size for the current target Species
-    void updateArrays(Dissolve &dissolve);
+    void updateArrays(const GenericList& moduleData);
     // Update the local species with the coordinates from the supplied arrays
     void updateSpecies(const SampledVector &x, const SampledVector &y, const SampledVector &z);
 

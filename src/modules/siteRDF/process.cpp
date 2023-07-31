@@ -4,6 +4,7 @@
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/siteRDF/siteRDF.h"
 #include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/operateSitePopulationNormalise.h"

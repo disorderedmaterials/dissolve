@@ -58,7 +58,7 @@ Module::ExecutionResult AccumulateModule::process(const ModuleContext& moduleCon
         }
 
         // Find the target data
-        auto targetSet = dissolve.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
+        auto targetSet = moduleContext.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
         if (!targetSet)
         {
             Messenger::print("Target PartialSet data '{}' in module '{}' does not yet exist.\n",
@@ -67,7 +67,7 @@ Module::ExecutionResult AccumulateModule::process(const ModuleContext& moduleCon
         }
 
         // Realise the accumulated partial set
-        auto &accumulated = dissolve.processingModuleData().realise<PartialSetAccumulator>(
+        auto &accumulated = moduleContext.processingModuleData().realise<PartialSetAccumulator>(
             targetModule->name(), name(), GenericItem::ItemFlag::InRestartFileFlag);
 
         accumulated += *targetSet;

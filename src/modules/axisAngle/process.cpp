@@ -3,6 +3,7 @@
 
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/axisAngle/axisAngle.h"
 #include "procedure/nodes/calculateAxisAngle.h"
 #include "procedure/nodes/collect1D.h"

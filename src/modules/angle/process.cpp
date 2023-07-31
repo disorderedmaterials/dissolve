@@ -3,6 +3,7 @@
 
 #include "expression/variable.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/angle/angle.h"
 #include "procedure/nodes/calculateAngle.h"
 #include "procedure/nodes/collect1D.h"
@@ -56,7 +57,7 @@ Module::ExecutionResult AngleModule::process(const ModuleContext& moduleContext)
 
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setDataListAndPrefix(moduleContext.processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("Angle experienced problems with its analysis.\n");

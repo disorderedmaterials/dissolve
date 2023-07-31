@@ -3,8 +3,8 @@
 
 #include "module/context.h"
 
-ModuleContext::ModuleContext(const ProcessPool &procPool, const CoreData &coreData, const double &pairPotentialRange, const double &pairPotentialDelta, const PotentialMap &potentialMap) :
-processPool_(procPool), coreData_(coreData), pairPotentialRange_(pairPotentialRange), pairPotentialDelta_(pairPotentialDelta), potentialMap_(potentialMap)
+ModuleContext::ModuleContext(const ProcessPool &procPool, const CoreData &coreData, const double &pairPotentialRange, const double &pairPotentialDelta, const PotentialMap &potentialMap, GenericList &processingModuleData) :
+processPool_(procPool), coreData_(coreData), pairPotentialRange_(pairPotentialRange), pairPotentialDelta_(pairPotentialDelta), potentialMap_(potentialMap), processingModuleData_(processingModuleData)
 {}
 
 const ProcessPool &ModuleContext::processPool() const { return processPool_; }
@@ -27,4 +27,14 @@ const double &ModuleContext::pairPotentialDelta() const
 const PotentialMap &ModuleContext::potentialMap() const
 {
     return potentialMap_;
+}
+
+const GenericList &ModuleContext::processingModuleData() const
+{
+    return processingModuleData_;
+}
+
+GenericList &ModuleContext::processingModuleData()
+{
+    return processingModuleData_;
 }

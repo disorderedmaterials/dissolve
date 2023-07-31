@@ -40,10 +40,10 @@ bool AvgMolModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::
         fmt::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
 
     // Realise arrays
-    updateArrays(dissolve);
+    updateArrays(moduleContext.processingModuleData());
 
     // Update the species coordinates
-    updateSpecies(dissolve.processingModuleData());
+    updateSpecies(moduleContext.processingModuleData());
 
     return true;
 }
@@ -84,15 +84,15 @@ Module::ExecutionResult AvgMolModule::process(const ModuleContext& moduleContext
     Messenger::print("\n");
 
     // Update arrays
-    updateArrays(dissolve);
+    updateArrays(moduleContext.processingModuleData());
 
     // Get the site stack
     const auto *stack = targetConfiguration_->siteStack(targetSite_);
 
     // Retrieve data arrays
-    auto &sampledX = dissolve.processingModuleData().retrieve<SampledVector>("X", name());
-    auto &sampledY = dissolve.processingModuleData().retrieve<SampledVector>("Y", name());
-    auto &sampledZ = dissolve.processingModuleData().retrieve<SampledVector>("Z", name());
+    auto &sampledX = moduleContext.processingModuleData().retrieve<SampledVector>("X", name());
+    auto &sampledY = moduleContext.processingModuleData().retrieve<SampledVector>("Y", name());
+    auto &sampledZ = moduleContext.processingModuleData().retrieve<SampledVector>("Z", name());
 
     // Loop over sites
     std::vector<double> rx(targetSpecies_->nAtoms()), ry(targetSpecies_->nAtoms()), rz(targetSpecies_->nAtoms());

@@ -7,6 +7,7 @@
 #include "io/export/data1D.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/energy/energy.h"
 #include "modules/gr/gr.h"
@@ -26,7 +27,7 @@ Module::ExecutionResult BenchmarkModule::process(const ModuleContext& moduleCont
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
 
-    ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
 
     /*
      * Configuration Generation
@@ -38,7 +39,7 @@ Module::ExecutionResult BenchmarkModule::process(const ModuleContext& moduleCont
         {
             Timer timer;
             Messenger::mute();
-            targetConfiguration_->generate({dissolve.worldPool(), dissolve.potentialMap()});
+            targetConfiguration_->generate({moduleContext.processPool(), moduleContext.potentialMap()});
             Messenger::unMute();
             timing += timer.split();
         }
