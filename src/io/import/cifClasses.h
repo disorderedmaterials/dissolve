@@ -120,125 +120,38 @@ class CIFAssembly
     int nGroups() const;
 };
 
-class CIFStructuralSpecies
-{
-    public:
-    CIFStructuralSpecies(CoreData& coreData);
-
-    private:
-    CoreData& coreData_;
-    Species* species_;
-    Configuration* configuration_;
-
-    public:
-    Species* species();
-    Configuration* configuration();
-
-    public:
-    bool create(CIFImport cifImporter, double tolerance, bool calculateBonding, bool preventMetallicBonding);
-
-    private:
-    void applyCIFBonding(CIFImport cifImporter, bool preventMetallicBonding);
-
-};
-
-class CIFCleanedSpecies
-{
-    public:
-    CIFCleanedSpecies(CoreData& coreData);
-
-    private:
-    CoreData& coreData_;
-    Species* species_;
-    Configuration* configuration_;
-
-    public:
-    Species* species();
-    Configuration* configuration();
-
-    public:
-    bool create(CIFImport cifImporter, Species* refSp, bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety, std::optional<NETADefinition> moietyNETA, std::optional<bool> removeEntireFragment);
-
-
-};
-
-class CIFMolecularSpecies
-{
-    public:
-    CIFMolecularSpecies(CoreData& coreData);
-
-    private:
-    CoreData& coreData_;
-    std::vector<Species*> species_;
-    Configuration* configuration_;
-    bool hasSymmetry_;
-
-    public:
-    std::vector<Species*>  species();
-    Configuration* configuration();
-    bool hasSymmetry();
-
-    public:
-    bool create(CIFImport cifImporter, Species* refSp);
-
-    private:
-    std::optional<NETADefinition> uniqueNETADefinition(Species* sp);
-    std::vector<std::vector<int>> instances(Species* sp, NETADefinition neta);
-    std::vector<std::vector<Vec3<double>>> coordinates(Species *sp, std::vector<std::vector<int>> instances);
-    void fixGeometry(Species *sp, const Box* box);
-    Configuration* generateConfiguration(CoreData& coreData);
-
-};
-
-// CIF Species
 class CIFSpecies
 {
 
     public:
-    CIFSpecies(Species *spRef, Species *sp, std::vector<int> referenceInstance);
-    ~CIFSpecies() = default;
+    typedef struct CIFMolecularSpecies{
+        Species* species;
+        std::string netaString;
+        std::vector<std::vector<int>> instances;
+        std::vector<std::vector<Vec3<double>>> coordinates;
+    } CIFMolecularSpecies;
 
-    /*
-     * Information
-     */
+    public:
+    CIFSpecies(CIFImport& cifImporter, CoreData& coreData);
+
     private:
-    // The output species
-    Species *species_;
-    // Reference species
-    Species *speciesRef_;
-    // NETA definition string
-    std::string netaString_;
-    // The reference instance - this is a fragment in the reference species
-    std::vector<int> referenceInstance_;
-    // Found copies/instances
-    std::vector<std::vector<int>> instances_;
-    // Coordinates corresponding to the instances
-    std::vector<std::vector<Vec3<double>>> coordinates_;
-    // Does the reference instance contain symmetry?
-    bool hasSymmetry_{false};
+    CIFImport& cifImporter_;
+    CoreData& coreData_;
 
     public:
-    // Return the output species
-    const Species *species() const;
-    // Return the NETA definition string that uniquely describes the reference instance
-    const std::string netaString() const;
-    // Return the reference instance
-    const std::vector<int> &referenceInstance() const;
-    // Return all found instances
-    const std::vector<std::vector<int>> &instances() const;
-    // Return the coordinates corresponding to the instances
-    const std::vector<std::vector<Vec3<double>>> &coordinates() const;
-    // Return whether the reference instance contains symmetry.
-    bool hasSymmetry() const;
+    Species* createStructuralSpecies(double tolerance, bool calculateBonding, bool preventMetallicBonding);
+    Species* createCleanedSpecies(Species* refSp, bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety, std::optional<NETADefinition> moietyNETA, std::optional<bool> removeEntireFragment);
+    std::vector<CIFMolecularSpecies*> createMolecularSpecies(Species* refSp);
+    Configuration* generateConfiguration(Species* sp, std::string name);
+    Configuration* generateConfiguration(std::vector<CIFMolecularSpecies*>);
+    Configuration* generateConfiguration(CoreData& coreData, std::vector<CIFMolecularSpecies*>);
 
-    /*
-     * Construction and operation
-     */
-    public:
-    // Inclusively, find all instances of the reference instance
-    bool findInstances();
-    // Determine the coordinates corresponding to the instances
-    void determineCoordinates();
-    // Fix the geometry of the output species, by unfolding it
-    void fixGeometry(const Box *box);
+    private:
+    void applyCIFBonding(Species* sp, bool preventMetallicBonding);
+    std::optional<NETADefinition> uniqueNETADefinition(Species* sp);
+    std::vector<std::vector<int>> instances(Species* sp, NETADefinition neta);
+    std::vector<std::vector<Vec3<double>>> coordinates(Species *sp, std::vector<std::vector<int>> instances);
+    void fixGeometry(Species *sp, const Box* box);
+
+
 };
