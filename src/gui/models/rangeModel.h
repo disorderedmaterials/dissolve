@@ -11,7 +11,7 @@
 
 #include <vector>
 
-class RFactorRangeModel : public QAbstractTableModel
+class RangeModel : public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -19,6 +19,8 @@ class RFactorRangeModel : public QAbstractTableModel
     private:
     // Vector containing ranges
     OptionalReferenceWrapper<std::vector<Range>> ranges_;
+    // Vector containing indices to checked ranges
+    OptionalReferenceWrapper<int> checkedRanges_;
 
     public:
     // Set ranges
