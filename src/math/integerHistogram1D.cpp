@@ -200,18 +200,18 @@ bool IntegerHistogram1D::serialise(LineParser &parser) const
                            DissolveSys::btoa(maximum_.has_value()), maximum_.value_or(0)))
         return false;
 
-    if (!parser.writeLineF("{}  {} \n", nBinned_, nMissed_))
+    if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
 
     if (!zeroCounter_.serialise(parser))
         return false;
 
-    if (!parser.writeLineF("{} \n", raw_.size()))
+    if (!parser.writeLineF("{}\n", raw_.size()))
         return false;
 
     for (auto &[key, value] : raw_)
     {
-        if (!parser.writeLineF("{} {} \n", key, value))
+        if (!parser.writeLineF("{} {}\n", key, value))
             return false;
         if (!averages_.at(key).serialise(parser))
             return false;
