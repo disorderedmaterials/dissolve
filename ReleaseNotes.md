@@ -1,4 +1,23 @@
-Version 1.3.1 is a patch release fixing some critical module issues along with some general UI issues and problems, and updating documentation.
+Version 1.3.2 is a patch release fixing a host of smaller issues in the code.
+
+## Major Changes in v1.3.2
+
+Handling of errors encountered when reading input files has been greatly "softened" - Dissolve will now try to read as much as possible of the file, and continue over "bad" keywords/data wherever possible.
+
+## Minor Changes in v1.3.2
+
+- UI: GUI is now much more flexible when it comes to minimum size.
+- UI: Styling of keyword widgets has been improved.
+- UI: SpeciesSite keyword controls are now clearly labelled.
+- UI: Layer context menu targeted the wrong tabs on occasion.
+- Fix: Limits on HistogramCN binning caused issues in certain cases.
+- Fix: Added option to export data from HistogramCN.
+- Fix: Unused atom types are now pruned strategically in the code.
+- Fix: CIFs containing space-separated quoted strings are now handled correctly.
+- Fix: Module timing estimates were polluted by modules that did not run for a legitimate reason.
+- Fix: AtomShake module would crash if the "NShakes" keyword was set to anything other than 1.
+- Fix: Keywords targeting vectors of Modules allowed the same module to be specified multiple times.
+- Docs: Updated silica example, correcting a few errors.
 
 ## Major Changes in v1.3.1
 
