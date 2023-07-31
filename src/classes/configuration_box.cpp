@@ -65,9 +65,6 @@ void Configuration::scaleBox(Vec3<double> scaleFactors)
     cells_.scale(scaleFactors);
 }
 
-// Return default size factor for Box
-double Configuration::defaultSizeFactor() { return defaultSizeFactor_; }
-
 // Set requested size factor for Box
 void Configuration::setRequestedSizeFactor(double factor) { requestedSizeFactor_ = factor; }
 

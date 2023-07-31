@@ -183,8 +183,6 @@ class Configuration : public Serialisable<const CoreData &>
     const Box *box() const;
     // Scale Box lengths (and associated Cells) by specified factors
     void scaleBox(Vec3<double> scaleFactors);
-    // Return default size factor for Box
-    static double defaultSizeFactor();
     // Set requested size factor for Box
     void setRequestedSizeFactor(double factor);
     // Return requested size factor for Box
