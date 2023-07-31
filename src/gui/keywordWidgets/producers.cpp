@@ -26,6 +26,7 @@
 #include "gui/keywordWidgets/optionalDouble.hui"
 #include "gui/keywordWidgets/optionalInt.hui"
 #include "gui/keywordWidgets/range.h"
+#include "gui/keywordWidgets/rangeVector.h"
 #include "gui/keywordWidgets/species.h"
 #include "gui/keywordWidgets/speciesSite.h"
 #include "gui/keywordWidgets/speciesSiteVector.h"
@@ -84,6 +85,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<Vec3IntegerKeyword, Vec3IntegerKeywordWidget>();
     registerProducer<Vec3NodeValueKeyword, Vec3NodeValueKeywordWidget>();
     registerProducer<WeightedModuleVectorKeyword, WeightedModuleVectorKeywordWidget>();
+    registerProducer<RangeVectorKeyword, RangeVectorKeywordWidget>();
 
     // Keywords with no widgets
     registerNullProducer<Data1DStoreKeyword>();

@@ -40,14 +40,10 @@ class EPSRModuleWidget : public ModuleWidget
     public:
     // Update controls within widget
     void updateControls(const Flags<ModuleWidget::UpdateFlags> &updateFlags = {}) override;
-    void setUpRFactorMenu();
 
     /*
      * Widgets / Functions
      */
-    public slots:
-    void rFactorAll();
-    void rFactorAddRange();
 
     private slots:
     void on_TotalFQButton_clicked(bool checked);

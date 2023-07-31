@@ -4,17 +4,15 @@
 #include "gui/models/rangeModel.h"
 
 // set range data
-void RangeModel::setData(OptionalReferenceWrapper<std::vector<Range>> &ranges)
+void RangeModel::setData(std::vector<Range> &ranges)
 {
-    if (ranges)
-    {
-        beginResetModel();
-        ranges_ = ranges;
-        endResetModel();
-    }
+
+    beginResetModel();
+    ranges_ = ranges;
+    endResetModel();
 }
 
-Range RangeModel::getRange(const QModelIndex &index) const { return ranges_[index.row()]; }
+Range RangeModel::getRange(const QModelIndex &index) const { return ranges_->get()[index.row()]; }
 
 /*
  * QAbstractItemModel overrides
@@ -23,7 +21,7 @@ Range RangeModel::getRange(const QModelIndex &index) const { return ranges_[inde
 int RangeModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return (ranges_ ? ranges_.size() : 0);
+    return (ranges_ ? ranges_->get().size() : 0);
 }
 
 int RangeModel::columnCount(const QModelIndex &parent) const
@@ -59,28 +57,31 @@ QVariant RangeModel::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(getRange(index));
 
         case (Qt::CheckStateRole):
-            if (index.column != 0)
+            if (index.column() != 0)
             {
                 return {};
             }
 
             // See if the selected cell's row index is stored in the checkedRanges_ vector
-            return std::find(checkedRanges_.begin(), checkedRanges_.end(), index.row()) == checkedRanges_.end() ? Qt::Unchecked
-                                                                                                                : Qt::Checked;
+            return std::find(checkedRanges_->get().begin(), checkedRanges_->get().end(), index.row()) ==
+                           checkedRanges_->get().end()
+                       ? Qt::Unchecked
+                       : Qt::Checked;
 
         default:
             return {};
     }
 }
 
-bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole)
+bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!ranges_)
+    if (!ranges_ || !checkedRanges_)
     {
         return false;
     }
 
     auto range = getRange(index);
+    double floatValue = value.value<float>();
 
     switch (index.column())
     {
@@ -88,14 +89,14 @@ bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int ro
             if (role == Qt::CheckStateRole)
             {
                 // See if the selected cell's row index is stored in the checkedRanges_ vector
-                auto it = find(checkedRanges_.begin(), checkedRanges_.end(), index.row());
+                auto it = find(checkedRanges_->get().begin(), checkedRanges_->get().end(), index.row());
 
                 if (value.value<Qt::CheckState>() == Qt::Checked)
                 {
                     // If checked cell is not stored in checkedRanges_, add it
-                    if (it == checkedRanges_.end())
+                    if (it == checkedRanges_->get().end())
                     {
-                        checkedRanges.push_back(index.row());
+                        checkedRanges_->get().push_back(index.row());
                     }
                     else
                     {
@@ -106,9 +107,9 @@ bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 else
                 {
                     // If unchecked cell is stored in checkedRanges_, remove it
-                    if (it != checkedRanges_.end())
+                    if (it != checkedRanges_->get().end())
                     {
-                        checkedRanges_.erase(it);
+                        checkedRanges_->get().erase(it);
                     }
                     else
                     {
@@ -122,9 +123,9 @@ bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
             break;
         case (1):
-            if (getRange(index).minimum() != value)
+            if (getRange(index).minimum() != floatValue)
             {
-                getRange(index).setMinimum(value);
+                getRange(index).setMinimum(floatValue);
 
                 emit dataChanged(index, index);
                 return true;
@@ -136,9 +137,9 @@ bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int ro
             break;
 
         case (2):
-            if (getRange(index).maximum() != value)
+            if (getRange(index).maximum() != floatValue)
             {
-                getRange(index).setMaximum(value);
+                getRange(index).setMaximum(floatValue);
 
                 emit dataChanged(index, index);
                 return true;
@@ -168,7 +169,7 @@ Qt::ItemFlags RangeModel::flags(const QModelIndex &index) const
     }
 }
 
-QVariant RangeModel::headerData(int section, Qt::Orientation oriantation, int role) const
+QVariant RangeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
         return {};

@@ -8,6 +8,7 @@
 #include "keywords/moduleVector.h"
 #include "keywords/optionalDouble.h"
 #include "keywords/optionalInt.h"
+#include "keywords/rangeVector.h"
 #include "keywords/stdString.h"
 #include "keywords/vectorStringDouble.h"
 
@@ -56,6 +57,7 @@ EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
     keywords_.add<OptionalIntegerKeyword>("Smoothing",
                                           "Smoothing to apply to fluctuation coefficients before summation into potential",
                                           fluctuationSmoothing_, 0, std::nullopt, 1, "Off");
+    keywords_.add<RangeVectorKeyword>("RFactor Ranges", "Ranges over which to calculate RFactors", ranges_);
 
     keywords_.setOrganisation("Advanced", "Test");
     keywords_.add<BoolKeyword>("Test", "Test against supplied reference data", test_);

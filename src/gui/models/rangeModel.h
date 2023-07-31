@@ -20,11 +20,11 @@ class RangeModel : public QAbstractTableModel
     // Vector containing ranges
     OptionalReferenceWrapper<std::vector<Range>> ranges_;
     // Vector containing indices to checked ranges
-    OptionalReferenceWrapper<int> checkedRanges_;
+    OptionalReferenceWrapper<std::vector<int>> checkedRanges_;
 
     public:
     // Set ranges
-    void setData(OptionalReferenceWrapper<std::vector<Range>> &ranges = std::nullopt);
+    void setData(std::vector<Range> &ranges);
     Range getRange(const QModelIndex &index) const;
 
     /*

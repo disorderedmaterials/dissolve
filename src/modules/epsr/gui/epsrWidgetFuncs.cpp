@@ -19,8 +19,6 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     // Set up user interface
     ui_.setupUi(this);
 
-    setUpRFactorMenu();
-
     refreshing_ = true;
 
     // Set up the main graph

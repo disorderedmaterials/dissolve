@@ -43,6 +43,7 @@ set(models_MOC_HDRS
     speciesIsoModel.h
     speciesTorsionModel.h
     weightedModuleModel.h
+    rangeModel.h
 )
 
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
@@ -88,6 +89,7 @@ set(models_SRCS
     speciesSiteModel.cpp
     speciesTorsionModel.cpp
     weightedModuleModel.cpp
+    rangeModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -121,6 +123,7 @@ qt_wrap_cpp(
   speciesIsoModel.h
   speciesTorsionModel.h
   weightedModuleModel.h
+  rangeModel.h
 )
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})
