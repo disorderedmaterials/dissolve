@@ -48,40 +48,26 @@ void IntegerHistogram1D::updateAccumulatedData()
     }
 }
 
-// Create dsiplay data object covering extents of current bins
+// Create display data object covering extents of current bins
 const std::pair<Data1D, int> IntegerHistogram1D::createDisplayData()
 {
+    // If we haven't binned anything yet, return now
+    if (raw_.empty())
+        return std::make_pair(Data1D(), 0);
 
     // Get limiting key values
-    std::optional<int> expectedMinimum = raw_.empty() ? std::nullopt : std::optional<int>(raw_.begin()->first);
-    if (minimum_)
-        expectedMinimum = expectedMinimum ? std::min(*minimum_, *expectedMinimum) : *minimum_;
-
-    std::optional<int> expectedMaximum = raw_.empty() ? std::nullopt : std::optional<int>(std::prev(raw_.end())->first);
-    if (maximum_)
-        expectedMaximum = expectedMaximum ? std::max(*maximum_, *expectedMaximum) : *maximum_;
-
-    // Need to check on null values - set to zeroes if both null, or if one is null set it to match the other
-    if (!expectedMinimum && !expectedMaximum)
-    {
-        expectedMinimum = 0;
-        expectedMaximum = 0;
-    }
-    else if (!expectedMinimum)
-        expectedMinimum = expectedMaximum;
-    else if (!expectedMaximum)
-        expectedMaximum = expectedMinimum;
-
-    auto expectedNBins = (*expectedMaximum - *expectedMinimum) + 1;
+    auto expectedMinimum = minimum_ ? std::min(*minimum_, raw_.begin()->first) : raw_.begin()->first;
+    auto expectedMaximum = maximum_ ? std::max(*maximum_, std::prev(raw_.end())->first) : std::prev(raw_.end())->first;
+    auto expectedNBins = (expectedMaximum - expectedMinimum) + 1;
 
     // Set up data
     Data1D data;
     data.initialise(expectedNBins, true);
-    auto x = *expectedMinimum;
+    auto x = expectedMinimum;
     for (auto n = 0; n < expectedNBins; ++n)
         data.xAxis(n) = x++;
 
-    return std::make_pair(data, expectedMinimum.value());
+    return std::make_pair(data, expectedMinimum);
 }
 
 // Initialise with specified bin range
