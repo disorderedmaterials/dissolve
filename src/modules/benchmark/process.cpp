@@ -12,7 +12,7 @@
 #include "modules/gr/gr.h"
 
 // Run main processing
-Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult BenchmarkModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

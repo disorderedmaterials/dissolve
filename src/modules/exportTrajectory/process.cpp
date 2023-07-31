@@ -10,7 +10,7 @@
 #include "modules/exportTrajectory/exportTrajectory.h"
 
 // Run main processing
-Module::ExecutionResult ExportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ExportTrajectoryModule::process(const ModuleContext& moduleContext)
 {
     if (!trajectoryFormat_.hasFilename())
     {

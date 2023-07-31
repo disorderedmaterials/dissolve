@@ -8,7 +8,7 @@
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run main processing
-Module::ExecutionResult ImportTrajectoryModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ImportTrajectoryModule::process(const ModuleContext& moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

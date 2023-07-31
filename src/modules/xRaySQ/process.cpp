@@ -24,7 +24,7 @@ void XRaySQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> 
 }
 
 // Run set-up stage
-bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool XRaySQModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     /*
      * Load and set up reference data (if a file/format was given)
@@ -140,7 +140,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-Module::ExecutionResult XRaySQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult XRaySQModule::process(const ModuleContext& moduleContext)
 {
     /*
      * Calculate x-ray structure factors from existing g(r) data

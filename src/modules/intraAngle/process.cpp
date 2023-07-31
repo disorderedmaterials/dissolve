@@ -10,7 +10,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult IntraAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult IntraAngleModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -28,7 +28,7 @@ Module::ExecutionResult IntraAngleModule::process(Dissolve &dissolve, const Proc
     collectABC_->keywords().set("RangeX", angleRange_);
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
     {

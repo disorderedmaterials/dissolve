@@ -20,7 +20,7 @@ void SQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> &con
 }
 
 // Run main processing
-Module::ExecutionResult SQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SQModule::process(const ModuleContext& moduleContext)
 {
     /*
      * Calculate S(Q) from Configuration's g(r).

@@ -45,5 +45,5 @@ class IntraDistanceModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    Module::ExecutionResult process(const ModuleContext& moduleContext) override;
 };

@@ -12,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult AngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AngleModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -55,7 +55,7 @@ Module::ExecutionResult AngleModule::process(Dissolve &dissolve, const ProcessPo
         selectC_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
     {

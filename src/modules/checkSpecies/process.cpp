@@ -11,7 +11,7 @@
 #include <numeric>
 
 // Run main processing
-Module::ExecutionResult CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult CheckSpeciesModule::process(const ModuleContext& moduleContext)
 {
     // Retrieve necessary keyword values
     if (!targetSpecies_)

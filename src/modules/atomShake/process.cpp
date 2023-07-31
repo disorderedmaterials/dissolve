@@ -12,7 +12,7 @@
 #include "modules/atomShake/atomShake.h"
 
 // Run main processing
-Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AtomShakeModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

@@ -10,7 +10,7 @@
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 
 // Run main processing
-Module::ExecutionResult ExportPairPotentialsModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ExportPairPotentialsModule::process(const ModuleContext& moduleContext)
 {
     if (!pairPotentialFormat_.hasFilename())
     {

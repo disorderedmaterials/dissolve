@@ -6,7 +6,7 @@
 #include "modules/skeleton/skeleton.h"
 
 // Run main processing
-Module::ExecutionResult SkeletonModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SkeletonModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

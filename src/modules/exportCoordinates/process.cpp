@@ -8,7 +8,7 @@
 #include "modules/exportCoordinates/exportCoordinates.h"
 
 // Run main processing
-Module::ExecutionResult ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ExportCoordinatesModule::process(const ModuleContext& moduleContext)
 {
     if (!coordinatesFormat_.hasFilename())
     {

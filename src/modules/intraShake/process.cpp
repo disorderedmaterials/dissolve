@@ -15,7 +15,7 @@
 #include "modules/intraShake/intraShake.h"
 
 // Run main processing
-Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult IntraShakeModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

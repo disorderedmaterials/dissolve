@@ -9,7 +9,7 @@
 #include "templates/algorithms.h"
 
 // Run main processing
-Module::ExecutionResult BraggModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult BraggModule::process(const ModuleContext& moduleContext)
 {
     /*
      * Calculate Bragg contributions.

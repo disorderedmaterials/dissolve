@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
+#include "module/context.h"
 #include "modules/angle/angle.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"

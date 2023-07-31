@@ -11,7 +11,7 @@
 #include "modules/md/md.h"
 
 // Run main processing
-Module::ExecutionResult MDModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult MDModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

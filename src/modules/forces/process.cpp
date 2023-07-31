@@ -11,7 +11,7 @@
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run set-up stage
-bool ForcesModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool ForcesModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (referenceForces_.hasFilename())
     {
@@ -29,7 +29,7 @@ bool ForcesModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-Module::ExecutionResult ForcesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ForcesModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

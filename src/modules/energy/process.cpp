@@ -11,7 +11,7 @@
 #include "modules/energy/energy.h"
 
 // Run set-up stage
-bool EnergyModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool EnergyModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // For the Configuration target add a flag to its moduleData (which is *not* stored in the restart file) to specify that we
     // are targeting it
@@ -23,7 +23,7 @@ bool EnergyModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-Module::ExecutionResult EnergyModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult EnergyModule::process(const ModuleContext& moduleContext)
 {
     /*
      * Calculate Energy for the target Configuration(s)

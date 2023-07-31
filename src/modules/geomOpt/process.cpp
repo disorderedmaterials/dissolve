@@ -6,7 +6,7 @@
 #include "modules/geomOpt/geomOpt.h"
 
 // Run main processing
-Module::ExecutionResult GeometryOptimisationModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult GeometryOptimisationModule::process(const ModuleContext& moduleContext)
 {
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);

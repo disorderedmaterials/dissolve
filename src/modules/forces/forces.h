@@ -45,11 +45,11 @@ class ForcesModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    Module::ExecutionResult process(const ModuleContext& moduleContext) override;
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+   bool setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 
     /*
      * Functions

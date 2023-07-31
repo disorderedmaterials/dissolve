@@ -7,7 +7,7 @@
 #include "modules/checks/checks.h"
 
 // Run main processing
-Module::ExecutionResult ChecksModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ChecksModule::process(const ModuleContext& moduleContext)
 {
     /*
      * Perform simple checks for the target Configuration(s)

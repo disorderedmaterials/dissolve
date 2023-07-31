@@ -12,7 +12,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-Module::ExecutionResult HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult HistogramCNModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -29,7 +29,7 @@ Module::ExecutionResult HistogramCNModule::process(Dissolve &dissolve, const Pro
     selectB_->keywords().set("InclusiveRange", distanceRange_);
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
     {

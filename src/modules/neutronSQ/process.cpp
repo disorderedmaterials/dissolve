@@ -23,7 +23,7 @@ void NeutronSQModule::setTargets(const std::vector<std::unique_ptr<Configuration
 }
 
 // Run set-up stage
-bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool NeutronSQModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     /*
      * Load and set up reference data (if a file/format was given)
@@ -133,7 +133,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Fla
 }
 
 // Run main processing
-Module::ExecutionResult NeutronSQModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult NeutronSQModule::process(const ModuleContext& moduleContext)
 {
     /*
      * Calculate neutron structure factors from existing S(Q) data

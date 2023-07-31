@@ -12,7 +12,7 @@
 #include "modules/molShake/molShake.h"
 
 // Run main processing
-Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult MolShakeModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

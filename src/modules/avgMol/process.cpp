@@ -7,7 +7,7 @@
 #include "templates/algorithms.h"
 
 // Run set-up stage
-bool AvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool AvgMolModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Clear species
     averageSpecies_.clear();
@@ -49,7 +49,7 @@ bool AvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
 }
 
 // Run main processing
-Module::ExecutionResult AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AvgMolModule::process(const ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

@@ -10,7 +10,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-Module::ExecutionResult SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SDFModule::process(const ModuleContext& moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -29,7 +29,7 @@ Module::ExecutionResult SDFModule::process(Dissolve &dissolve, const ProcessPool
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
     context.setDataListAndPrefix(dissolve.processingModuleData(), name());
     if (!analyser_.execute(context))
     {

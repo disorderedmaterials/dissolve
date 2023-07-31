@@ -151,7 +151,7 @@ bool Module::isDisabled() const { return !enabled_; }
  */
 
 // Run main processing
-Module::ExecutionResult Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return ExecutionResult::Failed; }
+Module::ExecutionResult Module::process(const ModuleContext& moduleContext) { return ExecutionResult::Failed; }
 
 // Set target data
 void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
@@ -174,20 +174,20 @@ void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &confi
 }
 
 // Run set-up stage
-bool Module::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool Module::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     return true;
 }
 
 // Run main processing stage
-Module::ExecutionResult Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult Module::executeProcessing(const ModuleContext& moduleContext)
 {
     // Begin timer
     Timer timer;
     timer.start();
 
     // Run main processing routine
-    auto result = process(dissolve, procPool);
+    auto result = process(moduleContext);
 
     // Accumulate timing information
     timer.stop();

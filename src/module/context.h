@@ -14,7 +14,7 @@ class PotentialMap;
 class ModuleContext
 {
     public:
-    explicit ModuleContext(const ProcessPool &procPool);
+    explicit ModuleContext(const ProcessPool &procPool, const CoreData& coreData, const double& pairPotentialRange, const double& pairPotentialDelta, const PotentialMap& potentialMap);
 
     private:
     // Available process pool

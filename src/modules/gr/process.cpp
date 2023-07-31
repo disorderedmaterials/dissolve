@@ -8,7 +8,7 @@
 #include "modules/gr/gr.h"
 
 // Run main processing
-Module::ExecutionResult GRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult GRModule::process(const ModuleContext& moduleContext)
 {
     /*
      * Calculate standard partial g(r)

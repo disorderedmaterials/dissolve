@@ -28,7 +28,7 @@
 #include <functional>
 
 // Run set-up stage
-bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool EPSRModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Realise storage for generated S(Q), and initialise a scattering matrix
     auto &estimatedSQ =
@@ -122,7 +122,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<Ke
 }
 
 // Run main processing
-Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult EPSRModule::process(const ModuleContext& moduleContext)
 {
     std::string testDataName;
 

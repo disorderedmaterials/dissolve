@@ -9,6 +9,7 @@
 #include "gui/moduleControlWidget.h"
 #include "keywords/procedure.h"
 #include "module/module.h"
+#include "module/context.h"
 #include "modules/widget.h"
 #include "modules/widgetProducer.h"
 
@@ -212,9 +213,11 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
         keywordSignals -= KeywordBase::KeywordSignal::ClearModuleData;
     }
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_.coreData(), dissolve_.pairPotentialRange(), dissolve_.pairPotentialDelta(), dissolve_.potentialMap());
+
     // Call the module's setUp() function if any other flags are still set
     if (keywordSignals.anySet())
-        module_->setUp(dissolve_, dissolve_.worldPool(), keywordSignals);
+        module_->setUp(context, keywordSignals);
 
     // Update the module widget
     if (moduleWidget_)

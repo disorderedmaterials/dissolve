@@ -13,6 +13,7 @@
 class Dissolve;
 class Configuration;
 class ModuleWidget;
+class ModuleContext;
 class QWidget;
 
 // Module Types
@@ -136,16 +137,16 @@ class Module : public Serialisable<const CoreData &>
      */
     private:
     // Run main processing
-    virtual ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
+    virtual ExecutionResult process(const ModuleContext& moduleContext) = 0;
 
     public:
     // Set target data
     virtual void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                             const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
-    virtual bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
+    virtual bool setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    ExecutionResult executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
+    ExecutionResult executeProcessing(const ModuleContext& moduleContext);
 
     /*
      * Timing
