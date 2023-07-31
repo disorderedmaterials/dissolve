@@ -157,7 +157,8 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     atomTypes_.finalise();
 
     // Scale box and cells according to the applied size factor
-    scaleBox({appliedSizeFactor_.value_or(defaultSizeFactor_), appliedSizeFactor_.value_or(defaultSizeFactor_),
+    auto appliedSF = appliedSizeFactor_.value_or(defaultSizeFactor_);
+    scaleBox({appliedSF, appliedSF, appliedSF});
               appliedSizeFactor_.value_or(defaultSizeFactor_)});
 
     // Update all relationships

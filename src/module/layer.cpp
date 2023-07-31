@@ -85,8 +85,7 @@ bool ModuleLayer::canRun(GenericList &processingModuleData) const
         if (std::any_of(cfgs.begin(), cfgs.end(),
                         [](const auto *cfg)
                         {
-                            return std::abs(cfg->appliedSizeFactor().value_or(Configuration::defaultSizeFactor()) - 1.0) >
-                                   2 * std::numeric_limits<double>::epsilon();
+                            return cfg->appliedSizeFactor();
                         }))
         {
             Messenger::print("One or more configurations have an applied size factor, so the layer will not run.\n");
