@@ -5,22 +5,22 @@
 #include "base/lineParser.h"
 #include "classes/coreData.h"
 
-RFactorRangesVector::RFactorRangesVector(std::vector<Range> &data) : KeywordBase(typeid(this)), data_(data) {}
+RangeVectorKeyword::RangeVectorKeyword(std::vector<Range> &data) : KeywordBase(typeid(this)), data_(data) {}
 
 /*
  * Data
  */
 
 // Return the data vector
-std::vector<Range> &RFactorRangesVector::data() { return data_; }
-const std::vector<Range> &RFactorRangesVector::data() const { return data_; }
+std::vector<Range> &RangeVectorKeyword::data() { return data_; }
+const std::vector<Range> &RangeVectorKeyword::data() const { return data_; }
 
 /*
  * Arguments
  */
 
 // Deserialise from supplied LineParser, starting at given argument offset
-bool RFactorRangesVector::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
+bool RangeVectorKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments
     for (auto n = startArg; n < parser.nArgs(); n += 2)
@@ -36,14 +36,14 @@ bool RFactorRangesVector::deserialise(LineParser &parser, int startArg, const Co
             }
             else
             {
-                return Messenger::error("Value '{}' provided for keyword R Factor Ranges doesn't appear to be a number.\n",
-                                        parser.argsv(n + 1));
+                return Messenger::error("Value '{}' provided for keyword '{}' doesn't appear to be a number.\n",
+                                        parser.argsv(n + 1), name());
             }
         }
         else
         {
-            return Messenger::error("Value '{}' provided for keyword R Factor Ranges doesn't appear to be a number.\n",
-                                    parser.argsv(n));
+            return Messenger::error("Value '{}' provided for keyword '{}' doesn't appear to be a number.\n", parser.argsv(n),
+                                    name());
         }
     }
 
@@ -51,9 +51,9 @@ bool RFactorRangesVector::deserialise(LineParser &parser, int startArg, const Co
 }
 
 // Serialise data to specified LineParser
-bool RFactorRangesVector::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+bool RangeVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
-    for (auto range : data_)
+    for (auto &range : data_)
         if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, range.minimum(), range.maximum()))
             return false;
 
@@ -64,46 +64,21 @@ bool RFactorRangesVector::serialise(LineParser &parser, std::string_view keyword
  * Object Management
  */
 
-// Prune any references to the supplied range in the contained data
-void RFactorRangesVector::removeReferencesTo(Range range)
-{
-    auto it = std::find_if(data_.begin(), data_.end(),
-                           [&range](const Range &rg)
-                           { return (range.minimum() == rg.minimum() && range.maximum() == rg.maximum()); });
-    if (it != data_.end())
-        data_.erase(it);
-}
-
 // Express as a serialisable value
-SerialisedValue RFactorRangesVector::serialise() const
+SerialisedValue RangeVectorKeyword::serialise() const
 {
     return fromVector(data_,
-                      [](const auto item) -> SerialisedValue {
+                      [](const auto &item) -> SerialisedValue {
                           return {{"minimum", item.minimum()}, {"maximum", item.maximum()}};
                       });
 }
 
 // Read values from a serialisable value
-void RFactorRangesVector::deserialise(const SerialisedValue &node, const CoreData &coreData)
+void RangeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    Range range;
-    auto counter = 0;
-
-    for (auto &item : node.as_array())
-    {
-        if (counter % 2 != 0)
-        {
-            range.setMinimum(toml::get<double>(item));
-        }
-        else
-        {
-            range.setMaximum(toml::get<double>(item));
-            data_.push_back(range);
-        }
-
-        ++counter;
-    }
+    toVector(node, [this](const auto &item)
+             { data_.emplace_back(toml::find<double>(item, "minimum"), toml::find<double>(item, "maximum")); });
 }
 
 // Has not changed from initial value
-bool RFactorRangesVector::isDefault() const { return data_.empty(); }
+bool RangeVectorKeyword::isDefault() const { return data_.empty(); }

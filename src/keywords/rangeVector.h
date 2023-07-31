@@ -8,11 +8,11 @@
 #include "module/module.h"
 
 // Module Vector Keyword
-class RFactorRangesVector : public KeywordBase
+class RangeVectorKeyword : public KeywordBase
 {
     public:
-    RFactorRangesVector(std::vector<Range> &data);
-    ~RFactorRangesVector() override = default;
+    RangeVectorKeyword(std::vector<Range> &data);
+    ~RangeVectorKeyword() override = default;
 
     /*
      * Data
@@ -34,15 +34,6 @@ class RFactorRangesVector : public KeywordBase
     bool deserialise(LineParser &parser, int startArg, const CoreData &coreData) override;
     // Serialise data to specified LineParser
     bool serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const override;
-
-    /*
-     * Object Management
-     */
-    protected:
-    // Prune any references to the supplied Range in the contained data
-    void removeReferencesTo(Range range) override;
-
-    public:
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value

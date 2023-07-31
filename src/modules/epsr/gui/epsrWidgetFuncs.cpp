@@ -216,7 +216,7 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
 
     // Set information labels
     auto eReqArray = dissolve_.processingModuleData().valueIf<Data1D>("EPMag", module_->name());
-    ui_.EReqValueLabel->setText(eReqArray ? QString::number(eReqArraPy->get().values().back()) : "--");
+    ui_.EReqValueLabel->setText(eReqArray ? QString::number(eReqArray->get().values().back()) : "--");
     auto rFactorArray = dissolve_.processingModuleData().valueIf<Data1D>("RFactor", module_->name());
     ui_.RFactorValueLabel->setText(rFactorArray ? QString::number(rFactorArray->get().values().back()) : "--");
 

@@ -4,7 +4,6 @@
 #pragma once
 
 #include "base/serialiser.h"
-#include "math/range.h"
 #include "procedure/nodes/aliases.h"
 #include "templates/flags.h"
 #include <memory>
@@ -134,8 +133,6 @@ class KeywordBase : public Serialisable<CoreData const &>
     virtual void removeReferencesTo(SpeciesSite *spSite);
     // Prune any references to the supplied ProcedureNode in the contained data
     virtual void removeReferencesTo(NodeRef node);
-    // Prune any references to the supplied Range in the contained data
-    virtual void removeReferencesTo(Range range);
 
     public:
     // Gracefully deal with the specified object no longer being valid
