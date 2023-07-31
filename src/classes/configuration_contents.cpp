@@ -15,7 +15,7 @@ void Configuration::empty()
     molecules_.clear();
     atoms_.clear();
     atomTypes_.clear();
-    appliedSizeFactor_ = 1.0;
+    appliedSizeFactor_ = std::nullopt;
     speciesPopulations_.clear();
     globalPotentials_.clear();
     targetedPotentials_.clear();
