@@ -279,7 +279,7 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
         // Calculate r-factor over fit range and store
         auto tempRefData = originalReferenceData;
         Filters::trim(tempRefData, qMin_, qMax_);
-        auto rFactor = Error::rFactor(tempRefData, weightedSQ.total()).value;
+        auto rFactor = Error::rFactor(tempRefData, weightedSQ.total()).error;
         rFacTot += rFactor;
         errors.addPoint(dissolve.iteration(), rFactor);
         Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactor);
@@ -519,14 +519,14 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
                     Messenger::error("Reference data '{}' not found.\n", testDataName);
                     return ExecutionResult::Failed;
                 }
-                auto error = Error::percent(simulatedFR, *optRefData);
-                Messenger::print(Error::errorReportString(error));
+                auto errorReport = Error::percent(simulatedFR, *optRefData);
+                Messenger::print(Error::errorReportString(errorReport));
                 Messenger::print("Simulated F(r) reference data '{}' has {} error of {:7.3f}{} with calculated data "
                                  "and is {} (threshold is {:6.3f}%)\n\n",
-                                 testDataName, Error::errorTypes().keyword(error.errorType), error.value,
-                                 error.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                 error.value <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-                if (error.value > testThreshold_)
+                                 testDataName, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                                 errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                 errorReport.error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                if (errorReport.error > testThreshold_)
                     return ExecutionResult::Failed;
             }
         }
@@ -616,14 +616,14 @@ Module::ExecutionResult EPSRModule::process(Dissolve &dissolve, const ProcessPoo
                 auto optRefData = testReferenceData_.data(testDataName);
                 if (optRefData)
                 {
-                    auto error = Error::percent(estimatedSQ[{i, j}], *optRefData);
-                    Messenger::print(Error::errorReportString(error));
+                    auto errorReport = Error::percent(estimatedSQ[{i, j}], *optRefData);
+                    Messenger::print(Error::errorReportString(errorReport));
                     Messenger::print("Generated S(Q) reference data '{}' has {} error of {:7.3f}{} with "
                                      "calculated data and is {} (threshold is {:6.3f}%)\n\n",
-                                     testDataName, Error::errorTypes().keyword(error.errorType), error.value,
-                                     error.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                     error.value <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-                    if (error.value > testThreshold_)
+                                     testDataName, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                                     errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                     errorReport.error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                    if (errorReport.error > testThreshold_)
                         return false;
                 }
                 return EarlyReturn<bool>::Continue;

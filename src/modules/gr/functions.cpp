@@ -574,56 +574,57 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
 {
     // Get a copy of the AtomTypeList to work from
     auto atomTypes = setA.atomTypeMix();
-    Error::ErrorReport error;
 
     for_each_pair_early(
+
         atomTypes.begin(), atomTypes.end(),
         [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool>
         {
             // Full partial
-            error = Error::percent(setA.partial(n, m), setB.partial(n, m));
-            Messenger::print(Error::errorReportString(error));
+            auto errorReport = Error::percent(setA.partial(n, m), setB.partial(n, m));
+            Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference full partial '{}-{}' has {} error of {:7.3f}{} with calculated data and is "
                              "{} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(error.errorType),
-                             error.value, error.errorType == Error::ErrorType::PercentError ? "%" : "",
-                             error.value <= testThreshold ? "OK" : "NOT OK", testThreshold);
-            if (error.value > testThreshold)
+                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                             errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                             errorReport.value <= testThreshold ? "OK" : "NOT OK", testThreshold);
+            if (errorReport.error > testThreshold)
                 return false;
 
             // Bound partial
-            error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
-            Messenger::print(Error::errorReportString(error));
+            errorReport = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
+            Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference bound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
                              "is {} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(error.errorType),
-                             error.value, error.errorType == Error::ErrorType::PercentError ? "%" : "",
-                             error.value <= testThreshold ? "OK" : "NOT OK", testThreshold);
-            if (error.value > testThreshold)
+                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                             errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                             errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+            if (errorReport.error > testThreshold)
                 return false;
 
             // Unbound reference
-            error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
-            Messenger::print(Error::errorReportString(error));
+            errorReport = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
+            Messenger::print(Error::errorReportString(errorReport));
             Messenger::print("Test reference unbound partial '{}-{}' has {} error of {:7.3f}{} with calculated data and "
                              "is {} (threshold is {:6.3f}%)\n\n",
-                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(error.errorType),
-                             error.value, error.errorType == Error::ErrorType::PercentError ? "%" : "",
-                             error.value <= testThreshold ? "OK" : "NOT OK", testThreshold);
-            if (error.value > testThreshold)
+                             typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
+                             errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                             errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+            if (errorReport.value > testThreshold)
                 return false;
 
             return EarlyReturn<bool>::Continue;
         });
 
     // Total reference data supplied?
-    error = Error::percent(setA.total(), setB.total());
-    Messenger::print(Error::errorReportString(error));
+    auto errorReport = Error::percent(setA.total(), setB.total());
+    Messenger::print(Error::errorReportString(errorReport));
     Messenger::print(
         "Test reference total has {} error of {:7.3f}{} with calculated data and is {} (threshold is {:6.3f}%)\n\n",
-        Error::errorTypes().keyword(error.errorType), error.value, error.errorType == Error::ErrorType::PercentError ? "%" : "",
-        error.value <= testThreshold ? "OK" : "NOT OK", testThreshold);
-    if (error.value > testThreshold)
+        Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+        errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+        errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+    if (errorReport.error > testThreshold)
         return false;
 
     return true;
@@ -637,13 +638,13 @@ bool GRModule::testReferencePartial(const PartialSet &partials, double testThres
     auto testResult = false;
     if (DissolveSys::sameString(typeIorTotal, "total") && typeJ.empty() && target.empty())
     {
-        auto error = Error::percent(partials.total(), testData);
+        auto errorReport = Error::percent(partials.total(), testData);
         Messenger::print(Error::errorReportString(error));
-        testResult = (error.value <= testThreshold);
+        testResult = (errorReport.error <= testThreshold);
         Messenger::print("Test reference data '{}' has {} error of {:7.3f}{} with calculated data and is {} (threshold is "
                          "{:6.3f}%)\n\n",
-                         testData.tag(), Error::errorTypes().keyword(error.errorType), error.value,
-                         error.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
+                         testData.tag(), Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                         errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
                          testThreshold);
     }
     else
@@ -655,32 +656,32 @@ bool GRModule::testReferencePartial(const PartialSet &partials, double testThres
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.tag());
 
         // AtomTypes are valid, so check the 'target'
-        Error::ErrorReport error;
+        Error::ErrorReport errorReport;
         if (DissolveSys::sameString(target, "bound"))
         {
-            error = Error::percent(partials.boundPartial(indexI, indexJ), testData);
-            Messenger::print(Error::errorReportString(error));
+            errorReport = Error::percent(partials.boundPartial(indexI, indexJ), testData);
+            Messenger::print(Error::errorReportString(errorReport));
         }
 
         else if (DissolveSys::sameString(target, "unbound"))
         {
-            error = Error::percent(partials.unboundPartial(indexI, indexJ), testData);
-            Messenger::print(Error::errorReportString(error));
+            errorReport = Error::percent(partials.unboundPartial(indexI, indexJ), testData);
+            Messenger::print(Error::errorReportString(errorReport));
         }
         else if (DissolveSys::sameString(target, "full"))
         {
-            error = Error::percent(partials.partial(indexI, indexJ), testData);
-            Messenger::print(Error::errorReportString(error));
+            errorReport = Error::percent(partials.partial(indexI, indexJ), testData);
+            Messenger::print(Error::errorReportString(errorReport));
         }
 
         else
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.tag());
 
-        testResult = (error.value <= testThreshold);
+        testResult = (errorReport.error <= testThreshold);
         Messenger::print("Test reference data '{}' has {} error of {:7.3f}{} with calculated data and is {} (threshold is "
                          "{:6.3f}%)\n\n",
-                         testData.tag(), Error::errorTypes().keyword(error.errorType), error.value,
-                         error.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
+                         testData.tag(), Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                         errorReport.errorType == Error::ErrorType::PercentError ? "%" : "", testResult ? "OK" : "NOT OK",
                          testThreshold);
     }
 

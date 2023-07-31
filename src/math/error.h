@@ -31,7 +31,7 @@ enum ErrorType
 struct ErrorReport
 {
     ErrorType errorType;
-    double value;
+    double error;
     double firstX;
     double lastX;
     int nPointsConsidered;
@@ -39,13 +39,13 @@ struct ErrorReport
 // Return enum options for ErrorType
 EnumOptions<Error::ErrorType> errorTypes();
 // Return error report formatted to string
-std::string errorReportString(ErrorReport errorReport);
+std::string errorReportString(const ErrorReport &errorReport);
 
 /*
  * Data1D
  */
 
-// Return error of specified type between supplied data, allows a range parameter to be specified
+// Return error of specified type between supplied data over all points or the range given
 ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range = std::nullopt);
 // Return error of specified type between supplied double vectors
 ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const std::vector<double> &vecB);

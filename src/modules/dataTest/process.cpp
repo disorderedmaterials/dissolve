@@ -36,7 +36,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType_, data, referenceData).value;
+        auto error = Error::error(errorType_, data, referenceData).error;
         auto notOK = isnan(error) || error > threshold_;
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n",
                          referenceData.tag(), error, notOK ? "NOT OK" : "OK", threshold_);
@@ -68,7 +68,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", tag2);
 
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType_, data1, data2).value;
+        auto error = Error::error(errorType_, data1, data2).error;
         auto notOK = isnan(error) || error > threshold_;
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e})\n\n", tag1,
                          error, tag2, notOK ? "NOT OK" : "OK", threshold_);
@@ -117,7 +117,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType_, data.values().linearArray(), referenceData.values().linearArray()).value;
+        auto error = Error::error(errorType_, data.values().linearArray(), referenceData.values().linearArray()).error;
         auto notOK = isnan(error) || error > threshold_;
         Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold is {:6.3e})\n\n",
                          referenceData.tag(), error, notOK ? "NOT OK" : "OK", threshold_);
@@ -165,7 +165,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", tag);
 
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType_, data.values(), referenceData).value;
+        auto error = Error::error(errorType_, data.values(), referenceData).error;
         auto notOK = isnan(error) || error > threshold_;
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
                          error, notOK ? "NOT OK" : "OK", threshold_);
