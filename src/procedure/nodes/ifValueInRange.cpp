@@ -12,7 +12,7 @@
 
 IfValueInRangeProcedureNode::IfValueInRangeProcedureNode()
     : ProcedureNode(ProcedureNode::NodeType::IfValueInRange, {NodeContext::AnyContext}),
-      thenBranch_(NodeContext::ParentProcedureContext, *this, "Then")
+      thenBranch_(NodeContext::InheritContext, *this, "Then")
 {
     keywords_.setOrganisation("Options", "Condition");
     keywords_.add<NodeValueKeyword>("Value", "Value expression to test", value_, this);

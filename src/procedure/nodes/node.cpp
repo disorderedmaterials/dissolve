@@ -83,7 +83,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
                                                                    {ProcedureNode::GenerationContext, "Generation"},
                                                                    {ProcedureNode::OperateContext, "Operate"},
                                                                    {ProcedureNode::AnyContext, "Any"},
-                                                                   {ProcedureNode::ParentProcedureContext, "ParentProcedure"}});
+                                                                   {ProcedureNode::InheritContext, "Inherit"}});
 }
 
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType, std::vector<NodeContext> relevantContexts,
@@ -166,7 +166,8 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
     if (!scope_)
         return ProcedureNode::NoContext;
 
-    return (*scope_).get().sequenceContext();
+    auto context = (*scope_).get().context();
+    return context == ProcedureNode::NodeContext::InheritContext ? parent()->scopeContext() : context;
 }
 
 // Return named node, optionally matching the type / class given, in or out of scope

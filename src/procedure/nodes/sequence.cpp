@@ -154,7 +154,10 @@ ProcedureNodeSequence::searchParameters(std::string_view name,
 OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { return owner_; }
 
 // Return the context of the sequence
-ProcedureNode::NodeContext ProcedureNodeSequence::sequenceContext() const { return context_; }
+ProcedureNode::NodeContext ProcedureNodeSequence::context() const
+{
+    return context_ == ProcedureNode::NodeContext::InheritContext ? owner_->get().scopeContext() : context_;
+}
 
 // Return named node if present in this sequence, and which matches the (optional) type given
 ConstNodeRef ProcedureNodeSequence::node(std::string_view name, ConstNodeRef excludeNode,
