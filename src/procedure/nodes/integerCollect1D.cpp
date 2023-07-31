@@ -20,10 +20,10 @@ IntegerCollect1DProcedureNode::IntegerCollect1DProcedureNode(std::shared_ptr<Cal
     keywords_.setOrganisation("Options", "Quantity / Range");
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
         "QuantityX", "Calculated observable to collect", xObservable_, this, ProcedureNode::NodeClass::Calculate, true);
-    keywords_.add<OptionalIntegerKeyword>("Minimum", "Minimum of the x-axis of the histogram", minimum_, 0, std::nullopt, 1,
-                                          "Use Minimum value");
-    keywords_.add<OptionalIntegerKeyword>("Maximum", "Maximum of the x-axis of the histogram", maximum_, 0, std::nullopt, 1,
-                                          "Use Maximum value");
+    keywords_.add<OptionalIntegerKeyword>("Minimum", "Minimum allowed bin value for the histogram", minimum_, 0, std::nullopt,
+                                          1, "No Limit");
+    keywords_.add<OptionalIntegerKeyword>("Maximum", "Maximum allowed bin value for the histogram", maximum_, 0, std::nullopt,
+                                          1, "No Limit");
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantity was binned successfully",
                                            subCollectBranch_);
 }
