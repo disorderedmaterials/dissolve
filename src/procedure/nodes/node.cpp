@@ -102,26 +102,17 @@ ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
 // Return whether the supplied context is relevant for the current node
 bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
 {
+    // Check for spurious context checks
+    if (targetContext == ProcedureNode::NodeContext::InheritContext)
+        throw(std::runtime_error(fmt::format("Attempted to context check node '{}' with an InheritedContext.\n")));
+
     // If the node is suitable in Any context, or if there is no context (None) return immediately
-    if (targetContext == ProcedureNode::NodeContext::NoContext ||
+    if (targetContext == ProcedureNode::NodeContext::NoContext || targetContext == ProcedureNode::NodeContext::AnyContext ||
         std::find(relevantContexts_.begin(), relevantContexts_.end(), ProcedureNode::NodeContext::AnyContext) !=
             relevantContexts_.end())
         return true;
 
-    // If the node is relevant in the context, check that against the supplied one. Otherwise, search for it in our vector
-    if (std::find(relevantContexts_.begin(), relevantContexts_.end(), ProcedureNode::NodeContext::ParentProcedureContext) !=
-        relevantContexts_.end())
-    {
-        if (!scope_)
-            throw(
-                std::runtime_error(fmt::format("Node type '{}' requires check for parent scope context, but it has no scope.\n",
-                                               ProcedureNode::nodeTypes().keyword(type_))));
-        auto &seq = *scope_;
-        return std::find(relevantContexts_.begin(), relevantContexts_.end(), seq.get().sequenceContext()) !=
-               relevantContexts_.end();
-    }
-    else
-        return std::find(relevantContexts_.begin(), relevantContexts_.end(), targetContext) != relevantContexts_.end();
+    return std::find(relevantContexts_.begin(), relevantContexts_.end(), targetContext) != relevantContexts_.end();
 }
 
 // Return whether the node is of the specified class
