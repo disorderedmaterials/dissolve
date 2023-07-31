@@ -32,7 +32,7 @@ TEST(RotateTest, Benzene)
 
     // Setup configuration
     auto *cfg = coreData.addConfiguration();
-    auto procedure = cfg->generator();
+    auto &procedure = cfg->generator();
     auto box = procedure.createRootNode<BoxProcedureNode>("Box", Vec3<NodeValue>(20, 20, 20), Vec3<NodeValue>(90, 90, 90));
 
     // Add a single Benzene molecule
