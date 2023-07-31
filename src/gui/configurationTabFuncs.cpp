@@ -131,8 +131,7 @@ void ConfigurationTab::updateControls()
     ui_.MoleculePopulationLabel->setText(QString::number(configuration_->nMolecules()));
 
     // Applied size factor
-    ui_.SizeFactorLabel->setText(
-        QString::number(configuration_->appliedSizeFactor().value_or(0.0)));
+    ui_.SizeFactorLabel->setText(QString::number(configuration_->appliedSizeFactor().value_or(0.0)));
     ui_.SizeFactorFrame->setVisible(configuration_->appliedSizeFactor().has_value());
 
     // Viewer

@@ -104,8 +104,7 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
         {
             Messenger::print("Requested SizeFactor for Configuration is {}, current SizeFactor is {}, so scaling "
                              "Box contents.\n",
-                             requestedSF,
-                             appliedSF);
+                             requestedSF, appliedSF);
 
             // Scale molecule centres of geometry
             scaleContents({sizeFactorRatio, sizeFactorRatio, sizeFactorRatio});
@@ -139,13 +138,11 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             requestedSF *= reductionFactor;
             if (requestedSF < 1.0)
                 requestedSF = 1.0;
-            Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to {}\n",
-                             requestedSF);
+            Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to {}\n", requestedSF);
         }
         else
         {
-            Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n",
-                             requestedSF);
+            Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n", requestedSF);
             appliedSizeFactor_ = std::nullopt;
             break;
         }
