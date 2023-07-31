@@ -102,9 +102,10 @@ ProcedureNode::NodeType ProcedureNode::type() const { return type_; }
 // Return whether the supplied context is relevant for the current node
 bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
 {
-    // If the node is suitable in Any context return immediately
-    if (std::find(relevantContexts_.begin(), relevantContexts_.end(), ProcedureNode::NodeContext::AnyContext) !=
-        relevantContexts_.end())
+    // If the node is suitable in Any context, or if there is no context (None) return immediately
+    if (targetContext == ProcedureNode::NodeContext::NoContext ||
+        std::find(relevantContexts_.begin(), relevantContexts_.end(), ProcedureNode::NodeContext::AnyContext) !=
+            relevantContexts_.end())
         return true;
 
     // If the node is relevant in the context, check that against the supplied one. Otherwise, search for it in our vector
