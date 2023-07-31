@@ -130,7 +130,10 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
          *  -- If energy is positive, don't change anything
          */
         if (fabs(requestedSF - 1.0) < 1.0e-5)
+        {
+            appliedSizeFactor_ = std::nullopt;
             break;
+        }
         else if (EnergyModule::interMolecularEnergy(procPool, this, potentialMap) <= 0.0)
         {
             requestedSF *= reductionFactor;

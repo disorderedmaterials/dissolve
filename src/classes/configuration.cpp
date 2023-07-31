@@ -25,8 +25,8 @@ void Configuration::clear()
     empty();
 
     // Reset size factors
-    requestedSizeFactor_ = 1.0;
-    appliedSizeFactor_ = 1.0;
+    requestedSizeFactor_ = std::nullopt;
+    appliedSizeFactor_ = std::nullopt;
 
     // Reset box / Cells
     requestedCellDivisionLength_ = 7.0;
@@ -101,7 +101,7 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
     // Clear existing content
     empty();
 
-    appliedSizeFactor_ = 1.0;
+    appliedSizeFactor_ = std::nullopt;
 
     // Run the generator Procedure
     if (!generate(procedureContext))
