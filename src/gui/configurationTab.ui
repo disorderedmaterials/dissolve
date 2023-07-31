@@ -387,6 +387,10 @@
             <property name="text">
              <string>...</string>
             </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/nodes/icons/nodes/sizeFactor.svg</normaloff>:/nodes/icons/nodes/sizeFactor.svg</iconset>
+            </property>
             <property name="autoRaise">
              <bool>true</bool>
             </property>
