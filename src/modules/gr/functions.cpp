@@ -587,7 +587,7 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
                              "{} (threshold is {:6.3f}%)\n\n",
                              typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
                              errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                             errorReport.value <= testThreshold ? "OK" : "NOT OK", testThreshold);
+                             errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
             if (errorReport.error > testThreshold)
                 return false;
 
@@ -610,7 +610,7 @@ bool GRModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double 
                              typeI.atomTypeName(), typeJ.atomTypeName(), Error::errorTypes().keyword(errorReport.errorType),
                              errorReport.error, errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
                              errorReport.error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-            if (errorReport.value > testThreshold)
+            if (errorReport.error > testThreshold)
                 return false;
 
             return EarlyReturn<bool>::Continue;
@@ -639,7 +639,7 @@ bool GRModule::testReferencePartial(const PartialSet &partials, double testThres
     if (DissolveSys::sameString(typeIorTotal, "total") && typeJ.empty() && target.empty())
     {
         auto errorReport = Error::percent(partials.total(), testData);
-        Messenger::print(Error::errorReportString(error));
+        Messenger::print(Error::errorReportString(errorReport));
         testResult = (errorReport.error <= testThreshold);
         Messenger::print("Test reference data '{}' has {} error of {:7.3f}{} with calculated data and is {} (threshold is "
                          "{:6.3f}%)\n\n",

@@ -23,10 +23,10 @@ EnumOptions<ErrorType> errorTypes()
                                                 {EuclideanError, "Euclidean"}});
 }
 
-std::string errorReportString(ErrorReport errorReport)
+std::string errorReportString(const ErrorReport &errorReport)
 {
     return fmt::format("{} between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n",
-                       errorTypes().keyword(errorReport.errorType), errorReport.value, errorReport.firstX, errorReport.lastX,
+                       errorTypes().keyword(errorReport.errorType), errorReport.error, errorReport.firstX, errorReport.lastX,
                        errorReport.nPointsConsidered);
 }
 
