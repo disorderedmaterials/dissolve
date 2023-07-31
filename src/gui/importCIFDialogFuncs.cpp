@@ -192,52 +192,7 @@ void ImportCIFDialog::finalise()
     }
     else
     {
-        // Create a Configuration
-        auto *cfg = dissolve_.coreData().addConfiguration();
-        cfg->setName(cifImporter_.chemicalFormula());
-
-        // Grab the generator
-        auto &generator = cfg->generator();
-
-        // Add Box
-        auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-        auto cellLengths = cifImporter_.getCellLengths().value();
-        auto cellAngles = cifImporter_.getCellAngles().value();
-        boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
-        boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
-
-        // Add the CIF Species
-        for (auto &cifSp : cifSpecies_)
-        {
-            auto *sp = dissolve_.coreData().copySpecies(cifSp->species());
-
-            // Determine a unique suffix
-            auto base = sp->name();
-            std::string uniqueSuffix{base};
-            if (!generator.nodes().empty())
-            {
-                // Start from the last root node
-                auto root = generator.nodes().back();
-                auto suffix = 0;
-
-                // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
-                while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) != nullptr)
-                    uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
-            }
-
-            // CoordinateSets
-            auto coordsNode =
-                generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
-            coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
-            coordsNode->setSets(cifSp->coordinates());
-
-            // Add
-            auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-            addNode->keywords().set("Population", NodeValueProxy(int(cifSp->coordinates().size())));
-            addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
-            addNode->keywords().set("Rotate", false);
-            addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
-        }
+        ;
     }
 }
 
@@ -419,42 +374,7 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 // Detect unique species in the structural species
 bool ImportCIFDialog::detectUniqueSpecies()
 {
-    // Clear any existing species
-    cifSpecies_.clear();
-
-    std::vector<int> indices(cleanedSpecies_->nAtoms());
-    std::iota(indices.begin(), indices.end(), 0);
-
-    // Find all CIFSpecies, and their instances
-    auto idx = 0;
-    while (!indices.empty())
-    {
-        // Choose a fragment
-        auto fragment = cleanedSpecies_->fragment(idx);
-        std::sort(fragment.begin(), fragment.end());
-
-        // Setup the CIF species
-        auto *tempSpecies = temporaryCoreData_.addSpecies();
-        tempSpecies->copyBasic(cleanedSpecies_);
-        auto &cifSp = cifSpecies_.emplace_back(new CIFSpecies(cleanedSpecies_, tempSpecies, fragment));
-
-        // We cannot deal with symmetry.
-        if (cifSp->hasSymmetry())
-            return Messenger::error("CIFSpecies contains symmetry. We cannot deal with this currently.");
-
-        // Remove the current fragment, and all instances of the underlying CIFSpecies
-        for (auto &instance : cifSp->instances())
-        {
-            indices.erase(std::remove_if(indices.begin(), indices.end(),
-                                         [&](int value)
-                                         { return std::find(instance.begin(), instance.end(), value) != instance.end(); }),
-                          indices.end());
-        }
-
-        // Choose starting index of the next fragment
-        idx = *std::min_element(indices.begin(), indices.end());
-    }
-    return true;
+    return cifMolecularSpecies_.create(cifImporter_, cleanedSpecies_);
 }
 
 /*

@@ -186,7 +186,7 @@ class CIFMolecularSpecies
     std::vector<std::vector<int>> instances(Species* sp, NETADefinition neta);
     std::vector<std::vector<Vec3<double>>> coordinates(Species *sp, std::vector<std::vector<int>> instances);
     void fixGeometry(Species *sp, const Box* box);
-    Configuration* generateConfiguration(Species* sp, std::vector<std::vector<Vec3<double>>> coordinates);
+    Configuration* generateConfiguration(CoreData& coreData);
 
 };
 

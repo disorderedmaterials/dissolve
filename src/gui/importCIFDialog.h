@@ -144,7 +144,7 @@ class ImportCIFDialog : public WizardDialog
 
     private:
     // CIF Species
-    std::vector<CIFSpecies *> cifSpecies_;
+    CIFMolecularSpecies cifMolecularSpecies_{temporaryCoreData_};
 
     /*
      * Supercell Page
