@@ -7,6 +7,7 @@
 #include "keywords/nodeValue.h"
 #include "main/dissolve.h"
 #include "procedure/nodes/add.h"
+#include "procedure/nodes/box.h"
 #include "procedure/nodes/select.h"
 #include "procedure/procedure.h"
 #include "unit/data/species.h"
@@ -32,8 +33,7 @@ TEST(RotateTest, Benzene)
     // Setup configuration
     auto *cfg = coreData.addConfiguration();
     auto procedure = cfg->generator();
-    cfg->createBoxAndCells({20, 20, 20}, {90, 90, 90}, false, dissolve.pairPotentialRange());
-    cfg->cells().generate(cfg->box(), 7.0, dissolve.pairPotentialRange());
+    auto box = procedure.createRootNode<BoxProcedureNode>("Box", Vec3<NodeValue>(20, 20, 20), Vec3<NodeValue>(90, 90, 90));
 
     // Add a single Benzene molecule
     auto add = procedure.createRootNode<AddProcedureNode>("Benzene", benzene, 1);
