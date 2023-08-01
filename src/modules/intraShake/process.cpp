@@ -16,7 +16,7 @@
 #include "modules/intraShake/intraShake.h"
 
 // Run main processing
-Module::ExecutionResult IntraShakeModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -54,15 +54,17 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext& moduleContext)
 
     Messenger::print("\n");
 
-    ProcessPool::DivisionStrategy strategy =  moduleContext.processPool().bestStrategy();
+    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
     Timer commsTimer(false);
 
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), moduleContext.processPool(), strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
+                                    moduleContext.processPool(), strategy);
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore(moduleContext.processPool(), commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(), moduleContext.dissolve().potentialMap(), rCut);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
+                                               moduleContext.dissolve().potentialMap(), rCut);
 
     // Initialise the random number buffer
     RandomBuffer randomBuffer(moduleContext.processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
@@ -318,19 +320,19 @@ Module::ExecutionResult IntraShakeModule::process(ModuleContext& moduleContext)
     timer.stop();
 
     // Collect statistics across all processes
-    if (! moduleContext.processPool().allSum(&totalDelta, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&totalDelta, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (! moduleContext.processPool().allSum(&nBondAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nBondAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (! moduleContext.processPool().allSum(&nBondAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nBondAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (! moduleContext.processPool().allSum(&nAngleAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nAngleAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (! moduleContext.processPool().allSum(&nAngleAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nAngleAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (! moduleContext.processPool().allSum(&nTorsionAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nTorsionAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (! moduleContext.processPool().allSum(&nTorsionAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nTorsionAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
 
     Messenger::print("IntraShake: Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);

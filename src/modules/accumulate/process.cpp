@@ -23,7 +23,7 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 }
 
 // Run main processing
-Module::ExecutionResult AccumulateModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult AccumulateModule::process(ModuleContext &moduleContext)
 {
     // Get the modules and decide on the PartialSet data name we're looking for
     if (targetModules_.empty())

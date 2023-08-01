@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "module/context.h"
 #include "modules/angle/angle.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
 #include "keywords/fileAndFormat.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
+#include "module/context.h"
 #include "procedure/nodes/calculateAngle.h"
 #include "procedure/nodes/calculateDistance.h"
 #include "procedure/nodes/collect1D.h"

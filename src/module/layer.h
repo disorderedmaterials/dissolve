@@ -99,7 +99,7 @@ class ModuleLayer : public Serialisable<const CoreData &>
      */
     public:
     // Run set-up stages for all modules
-    bool setUpAll(ModuleContext& moduleContext);
+    bool setUpAll(ModuleContext &moduleContext);
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
     // Express as a serialisable value

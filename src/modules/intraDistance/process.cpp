@@ -11,7 +11,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-Module::ExecutionResult IntraDistanceModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

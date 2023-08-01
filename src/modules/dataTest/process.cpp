@@ -11,7 +11,7 @@
 #include "modules/dataTest/dataTest.h"
 
 // Run main processing
-Module::ExecutionResult DataTestModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult DataTestModule::process(ModuleContext &moduleContext)
 {
     /*
      * This is a serial routine.
@@ -27,7 +27,8 @@ Module::ExecutionResult DataTestModule::process(ModuleContext& moduleContext)
     {
         auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
-        auto optData = moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
+        auto optData =
+            moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());

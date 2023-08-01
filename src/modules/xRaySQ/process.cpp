@@ -25,7 +25,7 @@ void XRaySQModule::setTargets(const std::vector<std::unique_ptr<Configuration>> 
 }
 
 // Run set-up stage
-bool XRaySQModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool XRaySQModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     /*
      * Load and set up reference data (if a file/format was given)
@@ -98,13 +98,14 @@ bool XRaySQModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::Keywor
 
         // Store the reference data in processing
         referenceData.setTag(name());
-        auto &storedData = moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceData", name(), GenericItem::ProtectedFlag);
+        auto &storedData = moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceData", name(),
+                                                                                           GenericItem::ProtectedFlag);
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setTag(name());
-        auto &storedDataFT =
-            moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceDataFT", name(), GenericItem::ProtectedFlag);
+        auto &storedDataFT = moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceDataFT", name(),
+                                                                                             GenericItem::ProtectedFlag);
         storedDataFT = referenceData;
         Filters::trim(storedDataFT, ftQMin, ftQMax);
         auto rho = grModule->effectiveDensity();
@@ -122,17 +123,17 @@ bool XRaySQModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::Keywor
         // Save data?
         if (saveReference_)
         {
-            if ( moduleContext.processPool().isMaster())
+            if (moduleContext.processPool().isMaster())
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", name()));
                 if (!exportFormat.exportData(storedData))
-                    return  moduleContext.processPool().decideFalse();
+                    return moduleContext.processPool().decideFalse();
                 Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", name()));
                 if (!exportFormatFT.exportData(storedDataFT))
-                    return  moduleContext.processPool().decideFalse();
-                 moduleContext.processPool().decideTrue();
+                    return moduleContext.processPool().decideFalse();
+                moduleContext.processPool().decideTrue();
             }
-            else if (! moduleContext.processPool().decision())
+            else if (!moduleContext.processPool().decision())
                 return false;
         }
     }
@@ -141,7 +142,7 @@ bool XRaySQModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::Keywor
 }
 
 // Run main processing
-Module::ExecutionResult XRaySQModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult XRaySQModule::process(ModuleContext &moduleContext)
 {
     /*
      * Calculate x-ray structure factors from existing g(r) data
@@ -196,17 +197,19 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext& moduleContext)
         Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sourceSQ_->name());
         return ExecutionResult::Failed;
     }
-    const auto &unweightedSQ = moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
+    const auto &unweightedSQ =
+        moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedSQ", sourceSQ_->name());
 
     // Construct weights matrix
-    auto &weights = moduleContext.dissolve().processingModuleData().realise<XRayWeights>("FullWeights", name_, GenericItem::InRestartFileFlag);
+    auto &weights = moduleContext.dissolve().processingModuleData().realise<XRayWeights>("FullWeights", name_,
+                                                                                         GenericItem::InRestartFileFlag);
     calculateWeights(grModule, weights, formFactors_);
     Messenger::print("Weights matrix:\n\n");
     weights.print();
 
     // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-    auto [weightedSQ, wSQtatus] =
-        moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>("WeightedSQ", name_, GenericItem::InRestartFileFlag);
+    auto [weightedSQ, wSQtatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
+        "WeightedSQ", name_, GenericItem::InRestartFileFlag);
     if (wSQtatus == GenericItem::ItemStatus::Created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypeMix());
 
@@ -224,30 +227,30 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext& moduleContext)
             {
                 if (i == j)
                 {
-                    if ( moduleContext.processPool().isMaster())
+                    if (moduleContext.processPool().isMaster())
                     {
                         Data1D atomicData = unweightedSQ.partial(i, i);
                         atomicData.values() = weights.formFactor(i, atomicData.xAxis());
                         Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", name(), at1.atomTypeName()));
                         if (!exportFormat.exportData(atomicData))
-                            return  moduleContext.processPool().decideFalse();
-                         moduleContext.processPool().decideTrue();
+                            return moduleContext.processPool().decideFalse();
+                        moduleContext.processPool().decideTrue();
                     }
-                    else if (! moduleContext.processPool().decision())
+                    else if (!moduleContext.processPool().decision())
                         return false;
                 }
 
-                if ( moduleContext.processPool().isMaster())
+                if (moduleContext.processPool().isMaster())
                 {
                     Data1D ffData = unweightedSQ.partial(i, j);
                     ffData.values() = weights.weight(i, j, ffData.xAxis());
                     Data1DExportFileFormat exportFormat(
                         fmt::format("{}-{}-{}.form", name(), at1.atomTypeName(), at2.atomTypeName()));
                     if (!exportFormat.exportData(ffData))
-                        return  moduleContext.processPool().decideFalse();
-                     moduleContext.processPool().decideTrue();
+                        return moduleContext.processPool().decideFalse();
+                    moduleContext.processPool().decideTrue();
                 }
-                else if (! moduleContext.processPool().decision())
+                else if (!moduleContext.processPool().decision())
                     return false;
 
                 return EarlyReturn<bool>::Continue;
@@ -270,11 +273,12 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext& moduleContext)
         Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
         return ExecutionResult::Failed;
     }
-    const auto &unweightedGR = moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedGR", grModule->name());
+    const auto &unweightedGR =
+        moduleContext.dissolve().processingModuleData().value<PartialSet>("UnweightedGR", grModule->name());
 
     // Create/retrieve PartialSet for summed weighted g(r)
-    auto [weightedGR, wGRstatus] =
-        moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>("WeightedGR", name_, GenericItem::InRestartFileFlag);
+    auto [weightedGR, wGRstatus] = moduleContext.dissolve().processingModuleData().realiseIf<PartialSet>(
+        "WeightedGR", name_, GenericItem::InRestartFileFlag);
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedSQ.atomTypeMix());
 
@@ -282,8 +286,8 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext& moduleContext)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normaliseTo_);
 
     // Calculate representative total g(r) from FT of calculated F(Q)
-    auto &repGR =
-        moduleContext.dissolve().processingModuleData().realise<Data1D>("RepresentativeTotalGR", name_, GenericItem::InRestartFileFlag);
+    auto &repGR = moduleContext.dissolve().processingModuleData().realise<Data1D>("RepresentativeTotalGR", name_,
+                                                                                  GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
     auto ftQMax = 0.0;
     if (referenceFTQMax_)
@@ -291,8 +295,8 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext& moduleContext)
     else if (referenceFQ_.hasFilename())
     {
         // Take FT max Q limit from reference data
-        auto &referenceData =
-            moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceData", name(), GenericItem::ProtectedFlag);
+        auto &referenceData = moduleContext.dissolve().processingModuleData().realise<Data1D>("ReferenceData", name(),
+                                                                                              GenericItem::ProtectedFlag);
         ftQMax = referenceData.xAxis().back();
     }
     else
@@ -311,15 +315,15 @@ Module::ExecutionResult XRaySQModule::process(ModuleContext& moduleContext)
     // Save data if requested
     if (saveRepresentativeGR_)
     {
-        if ( moduleContext.processPool().isMaster())
+        if (moduleContext.processPool().isMaster())
         {
             Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", name_));
             if (exportFormat.exportData(repGR))
-                 moduleContext.processPool().decideTrue();
+                moduleContext.processPool().decideTrue();
             else
-                 moduleContext.processPool().decideFalse();
+                moduleContext.processPool().decideFalse();
         }
-        else if (! moduleContext.processPool().decision())
+        else if (!moduleContext.processPool().decision())
             return ExecutionResult::Failed;
     }
 

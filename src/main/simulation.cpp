@@ -286,7 +286,6 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
-
                 if (module->executeProcessing(context) == Module::ExecutionResult::Failed)
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }

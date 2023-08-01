@@ -13,7 +13,7 @@
 #include "modules/gr/gr.h"
 
 // Run main processing
-Module::ExecutionResult BenchmarkModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -63,7 +63,8 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext& moduleContext)
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), targetConfiguration_, GRModule::CellsMethod,
+            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(),
+                                  targetConfiguration_, GRModule::CellsMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
@@ -88,7 +89,8 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext& moduleContext)
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), targetConfiguration_, GRModule::SimpleMethod,
+            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(),
+                                  targetConfiguration_, GRModule::SimpleMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
@@ -107,7 +109,8 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext& moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap());
+            EnergyModule::intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_,
+                                               moduleContext.dissolve().potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
@@ -125,7 +128,8 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext& moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::interAtomicEnergy(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap());
+            EnergyModule::interAtomicEnergy(moduleContext.processPool(), targetConfiguration_,
+                                            moduleContext.dissolve().potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
@@ -142,8 +146,8 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext& moduleContext)
         for (auto n = 0; n < nRepeats_; ++n)
         {
             // Create a Molecule distributor
-            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), moduleContext.processPool(),
-                                            strategy);
+            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
+                                            moduleContext.processPool(), strategy);
 
             Timer timer;
             Messenger::mute();

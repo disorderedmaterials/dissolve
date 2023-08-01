@@ -2,13 +2,13 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/box.h"
-#include "module/context.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/avgMol/avgMol.h"
 #include "templates/algorithms.h"
 
 // Run set-up stage
-bool AvgMolModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool AvgMolModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Clear species
     averageSpecies_.clear();
@@ -50,7 +50,7 @@ bool AvgMolModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::Keywor
 }
 
 // Run main processing
-Module::ExecutionResult AvgMolModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult AvgMolModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

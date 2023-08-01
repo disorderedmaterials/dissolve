@@ -10,7 +10,7 @@
  */
 
 // Ensure arrays are the correct size for the current target Species
-void AvgMolModule::updateArrays(GenericList& moduleData)
+void AvgMolModule::updateArrays(GenericList &moduleData)
 {
     auto requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 

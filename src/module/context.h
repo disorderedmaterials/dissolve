@@ -9,16 +9,15 @@
 class Dissolve;
 class ProcessPool;
 
-
 class ModuleContext
 {
     public:
     explicit ModuleContext(const ProcessPool &procPool);
-    ModuleContext(const ProcessPool &procPool, Dissolve& dissolve);
+    ModuleContext(const ProcessPool &procPool, Dissolve &dissolve);
 
     private:
     // Available process pool
-    const ProcessPool& processPool_;
+    const ProcessPool &processPool_;
     // Reference to dissolve
     OptionalReferenceWrapper<Dissolve> dissolve_;
 
@@ -26,7 +25,6 @@ class ModuleContext
     // Return available process pool
     const ProcessPool &processPool() const;
     // Return reference to dissolve
-    Dissolve& dissolve();
-    const Dissolve& dissolve() const;
-
+    Dissolve &dissolve();
+    const Dissolve &dissolve() const;
 };

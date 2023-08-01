@@ -39,5 +39,5 @@ class AccumulateModule : public Module
      */
     public:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext& moduleContext) override;
+    Module::ExecutionResult process(ModuleContext &moduleContext) override;
 };

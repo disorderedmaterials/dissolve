@@ -37,7 +37,7 @@ class AvgMolModule : public Module
      */
     private:
     // Ensure arrays are the correct size for the current target Species
-    void updateArrays(GenericList& moduleData);
+    void updateArrays(GenericList &moduleData);
     // Update the local species with the coordinates from the supplied arrays
     void updateSpecies(const SampledVector &x, const SampledVector &y, const SampledVector &z);
 
@@ -52,7 +52,7 @@ class AvgMolModule : public Module
      */
     private:
     // Run set-up stage
-   bool setUp(ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
     // Run main processing
-    Module::ExecutionResult process(ModuleContext& moduleContext) override;
+    Module::ExecutionResult process(ModuleContext &moduleContext) override;
 };

@@ -3,11 +3,11 @@
 
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
-#include "modules/analyse/analyse.h"
 #include "module/context.h"
+#include "modules/analyse/analyse.h"
 
 // Run main processing
-Module::ExecutionResult AnalyseModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult AnalyseModule::process(ModuleContext &moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

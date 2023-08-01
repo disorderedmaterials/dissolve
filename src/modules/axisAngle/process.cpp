@@ -12,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult AxisAngleModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

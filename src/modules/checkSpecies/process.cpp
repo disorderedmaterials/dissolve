@@ -12,7 +12,7 @@
 #include <numeric>
 
 // Run main processing
-Module::ExecutionResult CheckSpeciesModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult CheckSpeciesModule::process(ModuleContext &moduleContext)
 {
     // Retrieve necessary keyword values
     if (!targetSpecies_)

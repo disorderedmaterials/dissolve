@@ -137,16 +137,16 @@ class Module : public Serialisable<const CoreData &>
      */
     private:
     // Run main processing
-    virtual ExecutionResult process(ModuleContext& moduleContext) = 0;
+    virtual ExecutionResult process(ModuleContext &moduleContext) = 0;
 
     public:
     // Set target data
     virtual void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                             const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
-    virtual bool setUp(ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals = {});
+    virtual bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    ExecutionResult executeProcessing(ModuleContext& moduleContext);
+    ExecutionResult executeProcessing(ModuleContext &moduleContext);
 
     /*
      * Timing

@@ -151,7 +151,7 @@ std::map<ModuleTypes::ModuleType, std::vector<const Module *>> ModuleLayer::modu
  */
 
 // Run set-up stages for all modules
-bool ModuleLayer::setUpAll(ModuleContext& moduleContext)
+bool ModuleLayer::setUpAll(ModuleContext &moduleContext)
 {
     auto result = true;
 

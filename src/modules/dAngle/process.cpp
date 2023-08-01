@@ -12,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult DAngleModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)

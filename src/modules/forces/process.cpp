@@ -12,7 +12,7 @@
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run set-up stage
-bool ForcesModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool ForcesModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (referenceForces_.hasFilename())
     {
@@ -30,7 +30,7 @@ bool ForcesModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::Keywor
 }
 
 // Run main processing
-Module::ExecutionResult ForcesModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -313,12 +313,13 @@ Module::ExecutionResult ForcesModule::process(ModuleContext& moduleContext)
         // Calculate interatomic forces
         if (testInter_)
         {
-            auto kernel = KernelProducer::forceKernel(targetConfiguration_, moduleContext.processPool(), moduleContext.dissolve().potentialMap());
+            auto kernel = KernelProducer::forceKernel(targetConfiguration_, moduleContext.processPool(),
+                                                      moduleContext.dissolve().potentialMap());
             Timer interTimer;
 
             interTimer.start();
             kernel->totalForces(fInterCheck, fInterCheck, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
-            if (! moduleContext.processPool().allSum(fInterCheck))
+            if (!moduleContext.processPool().allSum(fInterCheck))
                 return ExecutionResult::Failed;
             interTimer.stop();
 
@@ -328,14 +329,15 @@ Module::ExecutionResult ForcesModule::process(ModuleContext& moduleContext)
         // Calculate intramolecular forces
         if (testIntra_)
         {
-            auto kernel = KernelProducer::forceKernel(targetConfiguration_, moduleContext.processPool(), moduleContext.dissolve().potentialMap());
+            auto kernel = KernelProducer::forceKernel(targetConfiguration_, moduleContext.processPool(),
+                                                      moduleContext.dissolve().potentialMap());
             Timer intraTimer;
 
             intraTimer.start();
             kernel->totalForces(
                 fIntraCheck, fIntraCheck, ProcessPool::PoolStrategy,
                 {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
-            if (! moduleContext.processPool().allSum(fIntraCheck))
+            if (!moduleContext.processPool().allSum(fIntraCheck))
                 return ExecutionResult::Failed;
             intraTimer.stop();
 
@@ -497,7 +499,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext& moduleContext)
             Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
         }
 
-        if (! moduleContext.processPool().allTrue((nFailed1 + nFailed2 + nFailed3) == 0))
+        if (!moduleContext.processPool().allTrue((nFailed1 + nFailed2 + nFailed3) == 0))
             return ExecutionResult::Failed;
     }
     else
@@ -510,7 +512,8 @@ Module::ExecutionResult ForcesModule::process(ModuleContext& moduleContext)
         f.resize(targetConfiguration_->nAtoms());
 
         // Calculate forces
-        totalForces(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(), ForcesModule::ForceCalculationType::Full, f, f);
+        totalForces(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(),
+                    ForcesModule::ForceCalculationType::Full, f, f);
 
         // Convert forces to 10J/mol
         std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });

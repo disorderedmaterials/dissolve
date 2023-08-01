@@ -13,7 +13,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-Module::ExecutionResult SiteRDFModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -44,7 +44,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext& moduleContext)
     {
         if (isRangeEnabled(0))
         {
-            auto &sumA = moduleContext.dissolve().processingModuleData().realise<Data1D>("SumA", name(), GenericItem::InRestartFileFlag);
+            auto &sumA =
+                moduleContext.dissolve().processingModuleData().realise<Data1D>("SumA", name(), GenericItem::InRestartFileFlag);
             sumA.addPoint(moduleContext.dissolve().iteration(), sumCN_->sum(0).value());
             if (exportInstantaneous_)
             {
@@ -58,7 +59,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext& moduleContext)
         }
         if (isRangeEnabled(1))
         {
-            auto &sumB = moduleContext.dissolve().processingModuleData().realise<Data1D>("SumB", name(), GenericItem::InRestartFileFlag);
+            auto &sumB =
+                moduleContext.dissolve().processingModuleData().realise<Data1D>("SumB", name(), GenericItem::InRestartFileFlag);
             sumB.addPoint(moduleContext.dissolve().iteration(), sumCN_->sum(1).value());
             if (exportInstantaneous_)
             {
@@ -72,7 +74,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext& moduleContext)
         }
         if (isRangeEnabled(2))
         {
-            auto &sumC = moduleContext.dissolve().processingModuleData().realise<Data1D>("SumC", name(), GenericItem::InRestartFileFlag);
+            auto &sumC =
+                moduleContext.dissolve().processingModuleData().realise<Data1D>("SumC", name(), GenericItem::InRestartFileFlag);
             sumC.addPoint(moduleContext.dissolve().iteration(), sumCN_->sum(2).value());
             if (exportInstantaneous_)
             {
@@ -102,7 +105,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext& moduleContext)
         Messenger::print("Reference coordination number delta with correct value for range A is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-        if (! moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
+        if (!moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
             return ExecutionResult::Failed;
     }
     if (testRangeB_)
@@ -120,7 +123,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext& moduleContext)
         Messenger::print("Reference coordination number delta with correct value for range B is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-        if (! moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
+        if (!moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
             return ExecutionResult::Failed;
     }
     if (testRangeC_)
@@ -138,7 +141,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext& moduleContext)
         Messenger::print("Reference coordination number delta with correct value for range C is {:15.9e} and is {} "
                          "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-        if (! moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
+        if (!moduleContext.processPool().allTrue(fabs(delta) < testThreshold_))
             return ExecutionResult::Failed;
     }
 

@@ -11,7 +11,7 @@
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 
 // Run main processing
-Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext &moduleContext)
 {
     if (!pairPotentialFormat_.hasFilename())
     {
@@ -20,7 +20,7 @@ Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext& modul
     }
 
     // Only the pool master saves the data
-    if ( moduleContext.processPool().isMaster())
+    if (moduleContext.processPool().isMaster())
     {
         // Store the current (root) pair potential filename
         std::string rootPPName{pairPotentialFormat_.filename()};
@@ -38,17 +38,17 @@ Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext& modul
             {
                 Messenger::print("Export: Failed to export pair potential file '{}'.\n", pairPotentialFormat_.filename());
                 pairPotentialFormat_.setFilename(rootPPName);
-                 moduleContext.processPool().decideFalse();
+                moduleContext.processPool().decideFalse();
                 return ExecutionResult::Failed;
             }
 
-             moduleContext.processPool().decideTrue();
+            moduleContext.processPool().decideTrue();
         }
 
         // Revert root name in FileAndFormat
         pairPotentialFormat_.setFilename(rootPPName);
     }
-    else if (! moduleContext.processPool().decision())
+    else if (!moduleContext.processPool().decision())
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

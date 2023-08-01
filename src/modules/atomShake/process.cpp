@@ -13,7 +13,7 @@
 #include "modules/atomShake/atomShake.h"
 
 // Run main processing
-Module::ExecutionResult AtomShakeModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult AtomShakeModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -39,11 +39,13 @@ Module::ExecutionResult AtomShakeModule::process(ModuleContext& moduleContext)
     Timer commsTimer(false);
 
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), moduleContext.processPool(), strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
+                                    moduleContext.processPool(), strategy);
 
     // Create a local ChangeStore and EnergyKernel
     ChangeStore changeStore(moduleContext.processPool(), commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(), moduleContext.dissolve().potentialMap(), rCut);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
+                                               moduleContext.dissolve().potentialMap(), rCut);
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
     RandomBuffer randomBuffer(moduleContext.processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);

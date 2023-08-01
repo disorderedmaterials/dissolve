@@ -8,8 +8,8 @@
 #include "gui/keywordWidgets/widget.hui"
 #include "gui/moduleControlWidget.h"
 #include "keywords/procedure.h"
-#include "module/module.h"
 #include "module/context.h"
+#include "module/module.h"
 #include "modules/widget.h"
 #include "modules/widgetProducer.h"
 

@@ -11,7 +11,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-Module::ExecutionResult SDFModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -44,14 +44,14 @@ Module::ExecutionResult SDFModule::process(ModuleContext& moduleContext)
         if (moduleContext.processPool().isMaster())
         {
             if (sdfFileAndFormat_.exportData(processPosition_->processedData()))
-                 moduleContext.processPool().decideTrue();
+                moduleContext.processPool().decideTrue();
             else
             {
-                 moduleContext.processPool().decideFalse();
+                moduleContext.processPool().decideFalse();
                 return ExecutionResult::Failed;
             }
         }
-        else if (! moduleContext.processPool().decision())
+        else if (!moduleContext.processPool().decision())
             return ExecutionResult::Failed;
     }
 

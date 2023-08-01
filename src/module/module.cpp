@@ -151,7 +151,7 @@ bool Module::isDisabled() const { return !enabled_; }
  */
 
 // Run main processing
-Module::ExecutionResult Module::process(ModuleContext& moduleContext) { return ExecutionResult::Failed; }
+Module::ExecutionResult Module::process(ModuleContext &moduleContext) { return ExecutionResult::Failed; }
 
 // Set target data
 void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
@@ -174,13 +174,10 @@ void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &confi
 }
 
 // Run set-up stage
-bool Module::setUp(ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
-{
-    return true;
-}
+bool Module::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) { return true; }
 
 // Run main processing stage
-Module::ExecutionResult Module::executeProcessing(ModuleContext& moduleContext)
+Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
 {
     // Begin timer
     Timer timer;

@@ -80,9 +80,9 @@ class EnergyModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(ModuleContext& moduleContext) override;
+    Module::ExecutionResult process(ModuleContext &moduleContext) override;
 
     public:
     // Run set-up stage
-   bool setUp(ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };

@@ -9,7 +9,7 @@
 #include "modules/exportCoordinates/exportCoordinates.h"
 
 // Run main processing
-Module::ExecutionResult ExportCoordinatesModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult ExportCoordinatesModule::process(ModuleContext &moduleContext)
 {
     if (!coordinatesFormat_.hasFilename())
     {
@@ -19,7 +19,8 @@ Module::ExecutionResult ExportCoordinatesModule::process(ModuleContext& moduleCo
 
     std::string originalFilename{coordinatesFormat_.filename()};
     if (tagWithIteration_)
-        coordinatesFormat_.setFilename(fmt::format("{}.{}", coordinatesFormat_.filename(), moduleContext.dissolve().iteration()));
+        coordinatesFormat_.setFilename(
+            fmt::format("{}.{}", coordinatesFormat_.filename(), moduleContext.dissolve().iteration()));
 
     // Check for Configuration target
     if (!targetConfiguration_)

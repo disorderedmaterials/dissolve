@@ -11,7 +11,7 @@
 #include "modules/exportTrajectory/exportTrajectory.h"
 
 // Run main processing
-Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext &moduleContext)
 {
     if (!trajectoryFormat_.hasFilename())
     {
@@ -27,7 +27,7 @@ Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext& moduleCon
     }
 
     // Only the pool master saves the data
-    if ( moduleContext.processPool().isMaster())
+    if (moduleContext.processPool().isMaster())
     {
         Messenger::print("Export: Appending trajectory file ({}) for Configuration '{}'...\n",
                          trajectoryFormat_.formatDescription(), targetConfiguration_->name());
@@ -35,13 +35,13 @@ Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext& moduleCon
         if (!trajectoryFormat_.exportData(targetConfiguration_))
         {
             Messenger::print("Export: Failed to append trajectory file '{}'.\n", trajectoryFormat_.filename());
-             moduleContext.processPool().decideFalse();
+            moduleContext.processPool().decideFalse();
             return ExecutionResult::Failed;
         }
 
-         moduleContext.processPool().decideTrue();
+        moduleContext.processPool().decideTrue();
     }
-    else if (! moduleContext.processPool().decision())
+    else if (!moduleContext.processPool().decision())
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

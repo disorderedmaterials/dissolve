@@ -13,7 +13,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-Module::ExecutionResult HistogramCNModule::process(ModuleContext& moduleContext)
+Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
