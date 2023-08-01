@@ -77,6 +77,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         Remove,
         RestraintPotential,
         RotateFragment,
+        RunLayer,
         Select,
         Sequence,
         SimpleGlobalPotential,
@@ -95,7 +96,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         GenerationContext = 2,
         OperateContext = 4,
         AnyContext = 8,
-        ParentProcedureContext = 16
+        ParentProcedureContext = 16,
+        ControlContext = 32
     };
     // Return enum option info for NodeContext
     static EnumOptions<NodeContext> nodeContexts();
