@@ -11,7 +11,7 @@ int GlobalPotentialModel::rowCount(const QModelIndex &parent) const
 int GlobalPotentialModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 1;
+    return 3;
 }
 
 const ExternalPotential *GlobalPotentialModel::rawData(const QModelIndex index) const { return globalPotentials_[index.row()].get(); }
@@ -31,10 +31,12 @@ QVariant GlobalPotentialModel::data(const QModelIndex &index, int role) const
             // Type
             case (0):
                 return QString::fromStdString(keyword(p->type()));
+            // Functional form
             case (1):
-                return QString::fromStdString(DirectionalPotentialFunctions::forms().keyword(p->interactionPotential()->form()));
+                return QString::fromStdString(p->formString());
+            // Parameters
             case (2):
-                return QString::fromStdString(p->interactionPotential().parametersAsString());
+                return QString::fromStdString(p->formParametersString());
             default:
                 return {};
         }

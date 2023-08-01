@@ -57,6 +57,10 @@ class ExternalPotential
     void addTargetSpecies(const Species *target);
     // Return species targeted by the potential
     const std::vector<const Species *> &targetSpecies() const;
+    // Return functional form of the potential, as a string
+    virtual const std::string formString() const = 0;
+    // Return parameters of the potential, as a string
+    virtual const std::string formParametersString() const = 0;
 
     /*
      * Keywords
