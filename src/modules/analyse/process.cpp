@@ -7,7 +7,7 @@
 #include "module/context.h"
 
 // Run main processing
-Module::ExecutionResult AnalyseModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult AnalyseModule::process(ModuleContext& moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -18,7 +18,7 @@ Module::ExecutionResult AnalyseModule::process(const ModuleContext& moduleContex
 
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(moduleContext.processingModuleData(), name());
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("Analysis ExecutionResult::Failed.\n");

@@ -265,7 +265,7 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  2)	Run processing Modules (using the world pool).
          */
-        ModuleContext context(worldPool(), coreData(), pairPotentialRange(), pairPotentialDelta(), potentialMap());
+        ModuleContext context(worldPool(), *this);
         for (auto &layer : coreData_.processingLayers())
         {
             // Check if this layer is due to run this iteration

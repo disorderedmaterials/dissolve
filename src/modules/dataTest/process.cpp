@@ -7,10 +7,11 @@
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/sampledData1D.h"
+#include "module/context.h"
 #include "modules/dataTest/dataTest.h"
 
 // Run main processing
-Module::ExecutionResult DataTestModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult DataTestModule::process(ModuleContext& moduleContext)
 {
     /*
      * This is a serial routine.
@@ -26,7 +27,7 @@ Module::ExecutionResult DataTestModule::process(const ModuleContext& moduleConte
     {
         auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
+        auto optData = moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
@@ -50,7 +51,7 @@ Module::ExecutionResult DataTestModule::process(const ModuleContext& moduleConte
     for (auto &[tag1, tag2] : internal1DData_)
     {
         // Locate the target reference datasets
-        auto optData1 = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag1);
+        auto optData1 = moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag1);
         if (!optData1)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag1);
@@ -58,7 +59,7 @@ Module::ExecutionResult DataTestModule::process(const ModuleContext& moduleConte
         }
         const Data1D data1 = optData1->get();
         Messenger::print("Located reference data '{}'.\n", tag1);
-        auto optData2 = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag2);
+        auto optData2 = moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag2);
         if (!optData2)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag2);
@@ -83,7 +84,7 @@ Module::ExecutionResult DataTestModule::process(const ModuleContext& moduleConte
     {
         auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().search<const Data2D>(referenceData.tag());
+        auto optData = moduleContext.dissolve().processingModuleData().search<const Data2D>(referenceData.tag());
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
@@ -107,7 +108,7 @@ Module::ExecutionResult DataTestModule::process(const ModuleContext& moduleConte
     {
         auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().search<const Data3D>(referenceData.tag());
+        auto optData = moduleContext.dissolve().processingModuleData().search<const Data3D>(referenceData.tag());
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
@@ -131,7 +132,7 @@ Module::ExecutionResult DataTestModule::process(const ModuleContext& moduleConte
     for (auto &[tag, value] : testSampledDoubleData_)
     {
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().search<const SampledDouble>(tag);
+        auto optData = moduleContext.dissolve().processingModuleData().search<const SampledDouble>(tag);
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag);
@@ -155,7 +156,7 @@ Module::ExecutionResult DataTestModule::process(const ModuleContext& moduleConte
     for (auto &[tag, referenceData, format] : testSampledVectorData_.data())
     {
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().search<const SampledVector>(tag);
+        auto optData = moduleContext.dissolve().processingModuleData().search<const SampledVector>(tag);
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag);

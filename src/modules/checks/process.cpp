@@ -4,10 +4,11 @@
 #include "base/sysFunc.h"
 #include "classes/box.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/checks/checks.h"
 
 // Run main processing
-Module::ExecutionResult ChecksModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult ChecksModule::process(ModuleContext& moduleContext)
 {
     /*
      * Perform simple checks for the target Configuration(s)
@@ -44,7 +45,7 @@ Module::ExecutionResult ChecksModule::process(const ModuleContext& moduleContext
                          d.indices(0) + 1, d.indices(1) + 1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold_);
 
         // Check consistency between processes
-        if (!procPool.allTrue(ok))
+        if (!moduleContext.processPool().allTrue(ok))
         {
             Messenger::error("Failed consistency check between processes.\n");
             return ExecutionResult::Failed;
@@ -67,7 +68,7 @@ Module::ExecutionResult ChecksModule::process(const ModuleContext& moduleContext
                          angleThreshold_);
 
         // Check consistency between processes
-        if (!procPool.allTrue(ok))
+        if (!moduleContext.processPool().allTrue(ok))
         {
             Messenger::error("Failed consistency check between processes.\n");
             return ExecutionResult::Failed;

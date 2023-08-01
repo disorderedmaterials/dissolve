@@ -12,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult DAngleModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult DAngleModule::process(ModuleContext& moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -36,7 +36,7 @@ Module::ExecutionResult DAngleModule::process(const ModuleContext& moduleContext
 
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateDAngle experienced problems with its analysis.\n");

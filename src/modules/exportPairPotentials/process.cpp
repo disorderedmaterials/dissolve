@@ -7,10 +7,11 @@
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/exportPairPotentials/exportPairPotentials.h"
 
 // Run main processing
-Module::ExecutionResult ExportPairPotentialsModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult ExportPairPotentialsModule::process(ModuleContext& moduleContext)
 {
     if (!pairPotentialFormat_.hasFilename())
     {
@@ -19,12 +20,12 @@ Module::ExecutionResult ExportPairPotentialsModule::process(const ModuleContext&
     }
 
     // Only the pool master saves the data
-    if (procPool.isMaster())
+    if ( moduleContext.processPool().isMaster())
     {
         // Store the current (root) pair potential filename
         std::string rootPPName{pairPotentialFormat_.filename()};
 
-        for (auto &pp : dissolve.pairPotentials())
+        for (auto &pp : moduleContext.dissolve().pairPotentials())
         {
             Messenger::print("Export: Writing pair potential file ({}) for {}-{}...\n",
                              pairPotentialFormat_.formatDescription(), pp->atomTypeNameI(), pp->atomTypeNameJ());
@@ -37,17 +38,17 @@ Module::ExecutionResult ExportPairPotentialsModule::process(const ModuleContext&
             {
                 Messenger::print("Export: Failed to export pair potential file '{}'.\n", pairPotentialFormat_.filename());
                 pairPotentialFormat_.setFilename(rootPPName);
-                procPool.decideFalse();
+                 moduleContext.processPool().decideFalse();
                 return ExecutionResult::Failed;
             }
 
-            procPool.decideTrue();
+             moduleContext.processPool().decideTrue();
         }
 
         // Revert root name in FileAndFormat
         pairPotentialFormat_.setFilename(rootPPName);
     }
-    else if (!procPool.decision())
+    else if (! moduleContext.processPool().decision())
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

@@ -2,11 +2,12 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/energy/energy.h"
 #include "modules/geomOpt/geomOpt.h"
 
 // Run main processing
-Module::ExecutionResult GeometryOptimisationModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult GeometryOptimisationModule::process(ModuleContext& moduleContext)
 {
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is {}.\n", maxCycles_);
@@ -26,7 +27,7 @@ Module::ExecutionResult GeometryOptimisationModule::process(const ModuleContext&
     rTemp_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
     f_.resize(targetConfiguration_->nAtoms(), Vec3<double>());
 
-    optimise<Configuration>(dissolve.potentialMap(), procPool, targetConfiguration_);
+    optimise<Configuration>(moduleContext.dissolve().potentialMap(), moduleContext.processPool(), targetConfiguration_);
 
     return ExecutionResult::Success;
 }

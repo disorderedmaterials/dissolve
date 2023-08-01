@@ -7,21 +7,22 @@
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/forces/forces.h"
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run set-up stage
-bool ForcesModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool ForcesModule::setUp(ModuleContext& moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     if (referenceForces_.hasFilename())
     {
         Messenger::print("[SETUP {}] Reading test reference forces.\n", name_);
 
         // Realise and read the force array
-        auto &f = dissolve.processingModuleData().realise<std::vector<Vec3<double>>>("ReferenceForces", name());
+        auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vec3<double>>>("ReferenceForces", name());
 
         // Read in the forces
-        if (!referenceForces_.importData(f, &procPool))
+        if (!referenceForces_.importData(f, &moduleContext.processPool()))
             return false;
     }
 
@@ -29,7 +30,7 @@ bool ForcesModule::setUp(const ModuleContext& moduleContext, Flags<KeywordBase::
 }
 
 // Run main processing
-Module::ExecutionResult ForcesModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult ForcesModule::process(ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -59,7 +60,7 @@ Module::ExecutionResult ForcesModule::process(const ModuleContext& moduleContext
          * Calculation Begins
          */
 
-        const auto &potentialMap = dissolve.potentialMap();
+        const auto &potentialMap = moduleContext.dissolve().potentialMap();
         const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
         double magjisq, magji, magjk, dp, force, r;
@@ -312,12 +313,12 @@ Module::ExecutionResult ForcesModule::process(const ModuleContext& moduleContext
         // Calculate interatomic forces
         if (testInter_)
         {
-            auto kernel = KernelProducer::forceKernel(targetConfiguration_, procPool, dissolve.potentialMap());
+            auto kernel = KernelProducer::forceKernel(targetConfiguration_, moduleContext.processPool(), moduleContext.dissolve().potentialMap());
             Timer interTimer;
 
             interTimer.start();
             kernel->totalForces(fInterCheck, fInterCheck, ProcessPool::PoolStrategy, ForceKernel::ExcludeGeometry);
-            if (!procPool.allSum(fInterCheck))
+            if (! moduleContext.processPool().allSum(fInterCheck))
                 return ExecutionResult::Failed;
             interTimer.stop();
 
@@ -327,14 +328,14 @@ Module::ExecutionResult ForcesModule::process(const ModuleContext& moduleContext
         // Calculate intramolecular forces
         if (testIntra_)
         {
-            auto kernel = KernelProducer::forceKernel(targetConfiguration_, procPool, dissolve.potentialMap());
+            auto kernel = KernelProducer::forceKernel(targetConfiguration_, moduleContext.processPool(), moduleContext.dissolve().potentialMap());
             Timer intraTimer;
 
             intraTimer.start();
             kernel->totalForces(
                 fIntraCheck, fIntraCheck, ProcessPool::PoolStrategy,
                 {ForceKernel::ExcludeInterMolecularPairPotential, ForceKernel::ExcludeIntraMolecularPairPotential});
-            if (!procPool.allSum(fIntraCheck))
+            if (! moduleContext.processPool().allSum(fIntraCheck))
                 return ExecutionResult::Failed;
             intraTimer.stop();
 
@@ -403,7 +404,7 @@ Module::ExecutionResult ForcesModule::process(const ModuleContext& moduleContext
         auto nFailed2 = 0, nFailed3 = 0;
         Vec3<double> totalRatio;
         sumError = 0.0;
-        GenericList &processingData = dissolve.processingModuleData();
+        GenericList &processingData = moduleContext.dissolve().processingModuleData();
         if (processingData.contains("ReferenceForces", name()))
         {
             // Grab reference force array and check size
@@ -496,7 +497,7 @@ Module::ExecutionResult ForcesModule::process(const ModuleContext& moduleContext
             Messenger::print("Average error in force components was {}%.\n", sumError / (targetConfiguration_->nAtoms() * 6));
         }
 
-        if (!procPool.allTrue((nFailed1 + nFailed2 + nFailed3) == 0))
+        if (! moduleContext.processPool().allTrue((nFailed1 + nFailed2 + nFailed3) == 0))
             return ExecutionResult::Failed;
     }
     else
@@ -504,12 +505,12 @@ Module::ExecutionResult ForcesModule::process(const ModuleContext& moduleContext
         Messenger::print("Calculating total forces for Configuration '{}'...\n", targetConfiguration_->name());
 
         // Realise the force vector
-        auto &f = dissolve.processingModuleData().realise<std::vector<Vec3<double>>>(
+        auto &f = moduleContext.dissolve().processingModuleData().realise<std::vector<Vec3<double>>>(
             fmt::format("{}//Forces", targetConfiguration_->niceName()), name());
         f.resize(targetConfiguration_->nAtoms());
 
         // Calculate forces
-        totalForces(procPool, targetConfiguration_, dissolve.potentialMap(), ForcesModule::ForceCalculationType::Full, f, f);
+        totalForces(moduleContext.processPool(), targetConfiguration_, moduleContext.dissolve().potentialMap(), ForcesModule::ForceCalculationType::Full, f, f);
 
         // Convert forces to 10J/mol
         std::transform(f.begin(), f.end(), f.begin(), [](auto val) { return val * 100.0; });

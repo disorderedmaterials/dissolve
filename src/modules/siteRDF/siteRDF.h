@@ -75,5 +75,5 @@ class SiteRDFModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(const ModuleContext& moduleContext) override;
+    Module::ExecutionResult process(ModuleContext& moduleContext) override;
 };

@@ -4,11 +4,12 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include "classes/configuration.h"
+#include "module/context.h"
 #include "main/dissolve.h"
 #include "modules/importTrajectory/importTrajectory.h"
 
 // Run main processing
-Module::ExecutionResult ImportTrajectoryModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult ImportTrajectoryModule::process(ModuleContext& moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -21,7 +22,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(const ModuleContext& mod
                      trajectoryFormat_.filename(), targetConfiguration_->name());
 
     // Open the file
-    LineParser parser(&procPool);
+    LineParser parser(&moduleContext.processPool());
     if ((!parser.openInput(trajectoryFormat_.filename())) || (!parser.isFileGoodForReading()))
     {
         Messenger::error("Couldn't open trajectory file '{}'.\n", trajectoryFormat_.filename());
@@ -30,10 +31,10 @@ Module::ExecutionResult ImportTrajectoryModule::process(const ModuleContext& mod
 
     // Does a seek position exist in the processing module info?
     std::string streamPosName = fmt::format("TrajectoryPosition_{}", targetConfiguration_->niceName());
-    if (dissolve.processingModuleData().contains(streamPosName, name()))
+    if (moduleContext.dissolve().processingModuleData().contains(streamPosName, name()))
     {
         // Retrieve the streampos and go to it in the file
-        std::streampos trajPos = dissolve.processingModuleData().retrieve<std::streampos>(streamPosName, name());
+        std::streampos trajPos = moduleContext.dissolve().processingModuleData().retrieve<std::streampos>(streamPosName, name());
         parser.seekg(trajPos);
     }
 
@@ -48,7 +49,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(const ModuleContext& mod
     targetConfiguration_->incrementContentsVersion();
 
     // Set the trajectory file position in the restart file
-    dissolve.processingModuleData().realise<std::streampos>(streamPosName, name(), GenericItem::InRestartFileFlag) =
+    moduleContext.dissolve().processingModuleData().realise<std::streampos>(streamPosName, name(), GenericItem::InRestartFileFlag) =
         parser.tellg();
 
     // Handle the unit cell if one was provided
@@ -59,7 +60,7 @@ Module::ExecutionResult ImportTrajectoryModule::process(const ModuleContext& mod
         if ((unitCell.value() - targetConfiguration_->box()->axes()).maxAbs() > 1.0e-8)
         {
             // Create new Box and cells for the configuration
-            targetConfiguration_->createBoxAndCells(unitCell.value(), dissolve.pairPotentialRange());
+            targetConfiguration_->createBoxAndCells(unitCell.value(), moduleContext.dissolve().pairPotentialRange());
 
             clearExistingLocations = true;
         }

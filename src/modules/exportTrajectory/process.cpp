@@ -7,10 +7,11 @@
 #include "classes/atomType.h"
 #include "classes/box.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/exportTrajectory/exportTrajectory.h"
 
 // Run main processing
-Module::ExecutionResult ExportTrajectoryModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult ExportTrajectoryModule::process(ModuleContext& moduleContext)
 {
     if (!trajectoryFormat_.hasFilename())
     {
@@ -26,7 +27,7 @@ Module::ExecutionResult ExportTrajectoryModule::process(const ModuleContext& mod
     }
 
     // Only the pool master saves the data
-    if (procPool.isMaster())
+    if ( moduleContext.processPool().isMaster())
     {
         Messenger::print("Export: Appending trajectory file ({}) for Configuration '{}'...\n",
                          trajectoryFormat_.formatDescription(), targetConfiguration_->name());
@@ -34,13 +35,13 @@ Module::ExecutionResult ExportTrajectoryModule::process(const ModuleContext& mod
         if (!trajectoryFormat_.exportData(targetConfiguration_))
         {
             Messenger::print("Export: Failed to append trajectory file '{}'.\n", trajectoryFormat_.filename());
-            procPool.decideFalse();
+             moduleContext.processPool().decideFalse();
             return ExecutionResult::Failed;
         }
 
-        procPool.decideTrue();
+         moduleContext.processPool().decideTrue();
     }
-    else if (!procPool.decision())
+    else if (! moduleContext.processPool().decision())
         return ExecutionResult::Failed;
 
     return ExecutionResult::Success;

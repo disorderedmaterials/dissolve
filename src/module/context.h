@@ -14,7 +14,7 @@ class ModuleContext
 {
     public:
     explicit ModuleContext(const ProcessPool &procPool);
-    explicit ModuleContext(const ProcessPool &procPool, Dissolve& dissolve);
+    ModuleContext(const ProcessPool &procPool, Dissolve& dissolve);
 
     private:
     // Available process pool
@@ -27,5 +27,6 @@ class ModuleContext
     const ProcessPool &processPool() const;
     // Return reference to dissolve
     Dissolve& dissolve();
+    const Dissolve& dissolve() const;
 
 };

@@ -4,6 +4,7 @@
 #include "main/dissolve.h"
 #include "math/gaussFit.h"
 #include "math/poissonFit.h"
+#include "module/context.h"
 #include "modules/epsr/epsr.h"
 #include "templates/algorithms.h"
 

@@ -59,7 +59,7 @@ bool Dissolve::setUpProcessingLayerModules()
 {
     auto setUpResult = true;
 
-    ModuleContext context(worldPool(), coreData(), pairPotentialRange(), pairPotentialDelta(), potentialMap(), processingModuleData());
+    ModuleContext context(worldPool(), *this);
 
     for (auto &layer : processingLayers_)
         if (!layer->setUpAll(context))

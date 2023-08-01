@@ -67,8 +67,8 @@ double EnergyModule::interAtomicEnergy(const ProcessPool &procPool, const Specie
 
     // Get start/end for loop
     Combinations comb(sp->nAtoms(), 2);
-    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset =  procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks =  procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
     auto [loopStart, loopEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
     double energy = dissolve::transform_reduce(ParallelPolicies::par, dissolve::counting_iterator<int>(loopStart),
@@ -161,8 +161,8 @@ double EnergyModule::intraMolecularEnergy(const ProcessPool &procPool, const Con
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Set start/stride for parallel loop
-    auto start = procPool.interleavedLoopStart(strategy);
-    auto stride = procPool.interleavedLoopStride(strategy);
+    auto start =  procPool.interleavedLoopStart(strategy);
+    auto stride =  procPool.interleavedLoopStride(strategy);
 
     const auto &molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;

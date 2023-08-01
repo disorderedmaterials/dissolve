@@ -12,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult AxisAngleModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult AxisAngleModule::process(ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -36,7 +36,7 @@ Module::ExecutionResult AxisAngleModule::process(const ModuleContext& moduleCont
 
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("AxisAngle experienced problems with its analysis.\n");

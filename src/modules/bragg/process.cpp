@@ -4,12 +4,13 @@
 #include "classes/kVector.h"
 #include "classes/neutronWeights.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "math/averaging.h"
 #include "modules/bragg/bragg.h"
 #include "templates/algorithms.h"
 
 // Run main processing
-Module::ExecutionResult BraggModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult BraggModule::process(ModuleContext& moduleContext)
 {
     /*
      * Calculate Bragg contributions.
@@ -40,12 +41,12 @@ Module::ExecutionResult BraggModule::process(const ModuleContext& moduleContext)
 
     // Realise an AtomTypeList containing the sum of atom types over all target configurations (currently only one)
     auto &combinedAtomTypes =
-        dissolve.processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", name_, GenericItem::InRestartFileFlag);
+        moduleContext.dissolve().processingModuleData().realise<AtomTypeMix>("SummedAtomTypes", name_, GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     combinedAtomTypes.add(targetConfiguration_->atomTypes());
 
     // Store unit cell information
-    auto &unitCellVolume = dissolve.processingModuleData().realise<double>("V0", name_, GenericItem::InRestartFileFlag);
+    auto &unitCellVolume = moduleContext.dissolve().processingModuleData().realise<double>("V0", name_, GenericItem::InRestartFileFlag);
     unitCellVolume = targetConfiguration_->box()->volume() / (multiplicity_.x * multiplicity_.y * multiplicity_.z);
 
     // Finalise combined AtomTypes matrix
@@ -53,7 +54,7 @@ Module::ExecutionResult BraggModule::process(const ModuleContext& moduleContext)
 
     // Calculate Bragg vectors and intensities for the current Configuration
     bool alreadyUpToDate;
-    if (!calculateBraggTerms(dissolve.processingModuleData(), procPool, targetConfiguration_, qMin_, qDelta_, qMax_,
+    if (!calculateBraggTerms(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), targetConfiguration_, qMin_, qDelta_, qMax_,
                              multiplicity_, alreadyUpToDate))
         return ExecutionResult::Failed;
 
@@ -66,11 +67,11 @@ Module::ExecutionResult BraggModule::process(const ModuleContext& moduleContext)
 
     // Perform averaging of reflections data if requested
     if (averagingLength_)
-        Averaging::vectorAverage<std::vector<BraggReflection>>(dissolve.processingModuleData(), "Reflections", name(),
+        Averaging::vectorAverage<std::vector<BraggReflection>>(moduleContext.dissolve().processingModuleData(), "Reflections", name(),
                                                                averagingLength_.value(), averagingScheme_);
 
     // Form partial and total reflection functions
-    formReflectionFunctions(dissolve.processingModuleData(), procPool, targetConfiguration_, qMin_, qDelta_, qMax_);
+    formReflectionFunctions(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(), targetConfiguration_, qMin_, qDelta_, qMax_);
 
     // Test reflection data
     if (!testReflectionsFile_.empty())
@@ -78,13 +79,13 @@ Module::ExecutionResult BraggModule::process(const ModuleContext& moduleContext)
         Messenger::print("Testing calculated intensity data against reference...\n");
 
         // Attempt to load the specified file
-        LineParser reflectionParser(&procPool);
+        LineParser reflectionParser(&moduleContext.processPool());
         if (!reflectionParser.openInput(testReflectionsFile_))
             return ExecutionResult::Failed;
 
         // Retrieve BraggReflection data from the Configuration's module data
         const auto &braggReflections =
-            dissolve.processingModuleData().value<const std::vector<BraggReflection>>("Reflections", name());
+            moduleContext.dissolve().processingModuleData().value<const std::vector<BraggReflection>>("Reflections", name());
 
         auto nErrors = 0;
         while (!reflectionParser.eofOrBlank())
@@ -139,10 +140,10 @@ Module::ExecutionResult BraggModule::process(const ModuleContext& moduleContext)
     {
         // Retrieve BraggReflection data from the Configuration's module data
         const auto &braggReflections =
-            dissolve.processingModuleData().value<const std::vector<BraggReflection>>("Reflections", name());
+            moduleContext.dissolve().processingModuleData().value<const std::vector<BraggReflection>>("Reflections", name());
 
         // Open a file and save the basic reflection data
-        LineParser braggParser(&procPool);
+        LineParser braggParser(&moduleContext.processPool());
         if (!braggParser.openOutput(fmt::format("{}-Reflections.txt", name_)))
             return ExecutionResult::Failed;
         braggParser.writeLineF("#   ID      Q     h k l     mult    Intensity(0,0)\n");
@@ -161,7 +162,7 @@ Module::ExecutionResult BraggModule::process(const ModuleContext& moduleContext)
             types.begin(), types.end(),
             [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool>
             {
-                LineParser intensityParser(&procPool);
+                LineParser intensityParser(&moduleContext.processPool());
                 if (!intensityParser.openOutput(fmt::format("{}-{}-{}.txt", name_, atd1.atomTypeName(), atd2.atomTypeName())))
                     return false;
                 intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());

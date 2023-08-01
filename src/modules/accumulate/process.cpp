@@ -4,6 +4,7 @@
 #include "base/sysFunc.h"
 #include "classes/partialSetAccumulator.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/accumulate/accumulate.h"
 
 // Valid Target Modules / Data
@@ -22,7 +23,7 @@ EnumOptions<AccumulateModule::TargetPartialSet> AccumulateModule::targetPartialS
 }
 
 // Run main processing
-Module::ExecutionResult AccumulateModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult AccumulateModule::process(ModuleContext& moduleContext)
 {
     // Get the modules and decide on the PartialSet data name we're looking for
     if (targetModules_.empty())
@@ -58,7 +59,7 @@ Module::ExecutionResult AccumulateModule::process(const ModuleContext& moduleCon
         }
 
         // Find the target data
-        auto targetSet = moduleContext.processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
+        auto targetSet = moduleContext.dissolve().processingModuleData().valueIf<PartialSet>(dataName, targetModule->name());
         if (!targetSet)
         {
             Messenger::print("Target PartialSet data '{}' in module '{}' does not yet exist.\n",
@@ -67,7 +68,7 @@ Module::ExecutionResult AccumulateModule::process(const ModuleContext& moduleCon
         }
 
         // Realise the accumulated partial set
-        auto &accumulated = moduleContext.processingModuleData().realise<PartialSetAccumulator>(
+        auto &accumulated = moduleContext.dissolve().processingModuleData().realise<PartialSetAccumulator>(
             targetModule->name(), name(), GenericItem::ItemFlag::InRestartFileFlag);
 
         accumulated += *targetSet;

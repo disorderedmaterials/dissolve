@@ -13,7 +13,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult AngleModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult AngleModule::process(ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -57,7 +57,7 @@ Module::ExecutionResult AngleModule::process(const ModuleContext& moduleContext)
 
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(moduleContext.processingModuleData(), name());
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("Angle experienced problems with its analysis.\n");

@@ -94,8 +94,8 @@ bool GRModule::calculateGRSimple(const ProcessPool &procPool, Configuration *cfg
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group
-    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset =  procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks =  procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     Messenger::printVerbose("Self terms..\n");
 
@@ -172,8 +172,8 @@ bool GRModule::calculateGRCells(const ProcessPool &procPool, Configuration *cfg,
 
     // Loop context is to use all processes in Pool as one group
     Combinations comb(cellArray.nCells(), 2);
-    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset =  procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks =  procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
     auto [cStart, cEnd] = chop_range(0, comb.getNumCombinations(), nChunks, offset);
 
     auto combinableHistograms = dissolve::CombinableValue<Array2D<Histogram1D>>(
@@ -366,8 +366,8 @@ bool GRModule::calculateGR(GenericList &processingData, const ProcessPool &procP
     const auto &cells = cfg->cells();
 
     // Set start/stride for parallel loop (pool solo)
-    auto offset = (method == GRModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    auto nChunks = (method == GRModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
+    auto offset = (method == GRModule::TestMethod ? 0 :  procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+    auto nChunks = (method == GRModule::TestMethod ? 1 :  procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
     timer.start();
 

@@ -5,7 +5,7 @@
 #include "modules/test/test.h"
 
 // Run main processing
-Module::ExecutionResult TestModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult TestModule::process(ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)

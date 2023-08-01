@@ -213,7 +213,7 @@ void ModuleControlWidget::localKeywordChanged(int signalMask)
         keywordSignals -= KeywordBase::KeywordSignal::ClearModuleData;
     }
 
-    ModuleContext context(dissolve_.worldPool(), dissolve_.coreData(), dissolve_.pairPotentialRange(), dissolve_.pairPotentialDelta(), dissolve_.potentialMap(), dissolve_.processingModuleData());
+    ModuleContext context(dissolve_.worldPool());
 
     // Call the module's setUp() function if any other flags are still set
     if (keywordSignals.anySet())

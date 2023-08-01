@@ -11,7 +11,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-Module::ExecutionResult IntraDistanceModule::process(const ModuleContext& moduleContext)
+Module::ExecutionResult IntraDistanceModule::process(ModuleContext& moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -25,7 +25,7 @@ Module::ExecutionResult IntraDistanceModule::process(const ModuleContext& module
 
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateRDF experienced problems with its analysis.\n");

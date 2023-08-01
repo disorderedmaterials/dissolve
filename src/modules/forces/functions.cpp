@@ -42,9 +42,9 @@ void ForcesModule::totalForces(const ProcessPool &procPool, Configuration *cfg, 
     Messenger::printVerbose("Time to do forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
-    procPool.allSum(fUnbound, ProcessPool::PoolProcessesCommunicator, commsTimer);
+     procPool.allSum(fUnbound, ProcessPool::PoolProcessesCommunicator, commsTimer);
     if (&fUnbound != &fBound)
-        procPool.allSum(fBound, ProcessPool::PoolProcessesCommunicator, commsTimer);
+         procPool.allSum(fBound, ProcessPool::PoolProcessesCommunicator, commsTimer);
 }
 
 // Calculate forces acting on specific Molecules within the specified Configuration (arising from all atoms)
