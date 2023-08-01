@@ -31,10 +31,10 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     auto calcExpression_ = forEachA.create<CalculateExpressionProcedureNode>({});
     calcExpression_->setExpression("B.nSelected");
 
-    auto collectCN_ = forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext);
+    auto collectCN = forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext);
 
-    auto process1D_ = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN_);
-    auto &normalisation = process1D_->branch()->get();
+    auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN);
+    auto &normalisation = process1D->branch()->get();
     auto norm = normalisation.create<OperateNormaliseProcedureNode>({});
 
     /*
@@ -56,5 +56,5 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
                                 distanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
     keywords_.setOrganisation("Export");
     keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated HitogramCN data",
-                                        process1D_->exportFileAndFormat(), "EndExport");
+                                        process1D->exportFileAndFormat(), "EndExport");
 }
