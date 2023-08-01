@@ -10,8 +10,8 @@
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
 #include "main/dissolve.h"
-#include "module/layer.h"
 #include "module/context.h"
+#include "module/layer.h"
 #include "module/module.h"
 
 // Clear all data
