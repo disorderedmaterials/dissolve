@@ -12,6 +12,13 @@ void RangeModel::setData(std::vector<Range> &ranges)
     endResetModel();
 }
 
+void RangeModel::addRange()
+{
+    beginResetModel();
+    ranges_->get().emplace_back();
+    endResetModel();
+}
+
 Range RangeModel::getRange(const QModelIndex &index) const { return ranges_->get()[index.row()]; }
 
 /*

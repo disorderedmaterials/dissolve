@@ -37,6 +37,8 @@ class RangeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
 
     private slots:
     void modelDataChanged(const QModelIndex &, const QModelIndex &);
+    void on_RangeAddButton_clicked(bool checked);
+    void on_RangeRemoveButton_clicked(bool checked);
 
     signals:
     // Keyword data changed

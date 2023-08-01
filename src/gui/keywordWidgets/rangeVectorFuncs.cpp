@@ -45,6 +45,10 @@ void RangeVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMode
     emit(keywordDataChanged(keyword_->editSignals()));
 }
 
+void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked) { rangeModel_.addRange(); }
+
+void RangeVectorKeywordWidget::on_RangeRemoveButton_clicked(bool checked) {}
+
 /*
  * Update
  */

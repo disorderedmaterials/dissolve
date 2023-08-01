@@ -25,6 +25,9 @@ class RangeModel : public QAbstractTableModel
     public:
     // Set ranges
     void setData(std::vector<Range> &ranges);
+    // Add new range object to vector
+    void addRange();
+    // Returns range object from vector
     Range getRange(const QModelIndex &index) const;
 
     /*
