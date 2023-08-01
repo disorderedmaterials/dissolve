@@ -11,6 +11,7 @@
 #include "classes/speciesTorsion.h"
 #include "main/dissolve.h"
 #include "module/layer.h"
+#include "module/context.h"
 #include "module/module.h"
 
 // Clear all data
@@ -588,8 +589,9 @@ const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() co
 bool CoreData::setUpProcessingLayerModules(Dissolve &dissolve)
 {
     auto setUpResult = true;
+    ModuleContext context(dissolve.worldPool(), dissolve);
     for (auto &layer : processingLayers())
-        if (!layer->setUpAll(dissolve, dissolve.worldPool()))
+        if (!layer->setUpAll(context))
             setUpResult = false;
     return setUpResult;
 }
