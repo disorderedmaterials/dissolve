@@ -45,9 +45,9 @@ class ProcedureContext
     // Return target list for generated data
     GenericList &dataList() const;
     // Set dissolve
-    void setDissolve(Dissolve& dissolve);
+    void setDissolve(Dissolve &dissolve);
     // Return reference to dissolve
-    Dissolve& dissolve() const;
+    Dissolve &dissolve() const;
     // Return potential map
     const PotentialMap &potentialMap() const;
 };

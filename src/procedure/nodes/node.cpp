@@ -78,8 +78,8 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 // Return enum option info for NodeContext
 EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 {
-    return EnumOptions<ProcedureNode::NodeContext>("NodeContext", {
-                                                                   {ProcedureNode::NoContext, "None"}, {ProcedureNode::AnalysisContext, "Analysis"},
+    return EnumOptions<ProcedureNode::NodeContext>("NodeContext", {{ProcedureNode::NoContext, "None"},
+                                                                   {ProcedureNode::AnalysisContext, "Analysis"},
                                                                    {ProcedureNode::GenerationContext, "Generation"},
                                                                    {ProcedureNode::ControlContext, "Control"},
                                                                    {ProcedureNode::OperateContext, "Operate"},

@@ -12,7 +12,7 @@ ProcedureContext::ProcedureContext(const ProcessPool &procPool, Configuration *c
 {
 }
 
-ProcedureContext::ProcedureContext(const ProcessPool &procPool, Dissolve& dissolve)
+ProcedureContext::ProcedureContext(const ProcessPool &procPool, Dissolve &dissolve)
     : processPool_(procPool), dissolve_(dissolve)
 {
 }
@@ -31,12 +31,9 @@ Configuration *ProcedureContext::configuration() const
     return configuration_;
 }
 
-void ProcedureContext::setDissolve(Dissolve &dissolve)
-{
-    dissolve_ = dissolve;
-}
+void ProcedureContext::setDissolve(Dissolve &dissolve) { dissolve_ = dissolve; }
 
-Dissolve& ProcedureContext::dissolve() const
+Dissolve &ProcedureContext::dissolve() const
 {
     if (!dissolve_)
         throw(std::runtime_error("No reference to Dissolve is set in this procedure's context.\n"));
@@ -52,13 +49,15 @@ std::string_view ProcedureContext::dataPrefix() const { return dataPrefix_; }
 GenericList &ProcedureContext::dataList() const
 {
     if (!dissolve_)
-        throw(std::runtime_error("No reference to Dissolve is set in this procedure's context, so cannot return processingModuleData.\n"));
+        throw(std::runtime_error(
+            "No reference to Dissolve is set in this procedure's context, so cannot return processingModuleData.\n"));
     return dissolve_->get().processingModuleData();
 }
 
 const PotentialMap &ProcedureContext::potentialMap() const
 {
     if (!dissolve_)
-        throw(std::runtime_error("No reference to Dissolve is set in this procedure's context, so cannot return potentialMap.\n"));
+        throw(std::runtime_error(
+            "No reference to Dissolve is set in this procedure's context, so cannot return potentialMap.\n"));
     return dissolve_->get().potentialMap();
 }
