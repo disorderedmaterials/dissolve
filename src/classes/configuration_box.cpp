@@ -143,7 +143,6 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
         else
         {
             Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n", requestedSF);
-            appliedSizeFactor_ = std::nullopt;
             break;
         }
     }
