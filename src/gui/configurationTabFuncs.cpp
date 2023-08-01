@@ -15,7 +15,7 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-    procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials())
+      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials())
 {
     ui_.setupUi(this);
 
@@ -41,7 +41,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.PotentialsTable->horizontalHeader()->setVisible(true);
     ui_.PotentialsTable->verticalHeader()->setFont(font());
     ui_.PotentialsTable->verticalHeader()->setVisible(true);
-    ui_.PotentialsTable->resizeColumnsToContents(); 
+    ui_.PotentialsTable->resizeColumnsToContents();
 
     ui_.PotentialsFrame->setHidden(true);
     connect(ui_.ConfigurationButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
@@ -142,15 +142,14 @@ void ConfigurationTab::updateControls()
     ui_.AtomPopulationLabel->setText(QString::number(configuration_->nAtoms()));
     ui_.MoleculePopulationLabel->setText(QString::number(configuration_->nMolecules()));
 
-<<<<<<< HEAD
     // Applied size factor
     ui_.SizeFactorLabel->setText(configuration_->appliedSizeFactor() ? QString::number(*configuration_->appliedSizeFactor())
                                                                      : "N/A");
     ui_.SizeFactorFrame->setVisible(configuration_->appliedSizeFactor().has_value());
-=======
+
     // Potentials
     globalPotentialModel_.reset();
->>>>>>> eb988d544 (Added Global Potentials table to GUI.)
+    ui_.PotentialsTable->resizeColumnsToContents();
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
@@ -217,4 +216,3 @@ void ConfigurationTab::buttonGroupToggled(QAbstractButton *button, bool checked)
         ui_.GeneratorFrame->setVisible(!checked);
     }
 }
-

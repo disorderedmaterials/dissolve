@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "kernels/potentials/types.h"
 #include "classes/interactionPotential.h"
+#include "kernels/potentials/types.h"
 #include "keywords/store.h"
 
 // Forward Declarations

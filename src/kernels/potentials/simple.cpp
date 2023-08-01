@@ -69,10 +69,7 @@ const std::string SimplePotential::formString() const
 }
 
 // Return parameters of the potential, as a string
-const std::string SimplePotential::formParametersString() const
-{
-    return interactionPotential_.parametersAsString();
-}
+const std::string SimplePotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
 
 /*
  * Potential Calculation

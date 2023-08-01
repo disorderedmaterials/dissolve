@@ -68,10 +68,7 @@ const std::string RestraintPotential::formString() const
 }
 
 // Return parameters of the potential, as a string
-const std::string RestraintPotential::formParametersString() const
-{
-    return interactionPotential_.parametersAsString();
-}
+const std::string RestraintPotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
 
 /*
  * Potential Calculation

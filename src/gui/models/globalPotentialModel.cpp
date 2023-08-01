@@ -1,6 +1,10 @@
 #include "gui/models/globalPotentialModel.h"
 #include "kernels/potentials/directional.h"
-GlobalPotentialModel::    GlobalPotentialModel(const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials) : globalPotentials_(globalPotentials) {Messenger::print("{}", globalPotentials.size());}
+GlobalPotentialModel::GlobalPotentialModel(const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials)
+    : globalPotentials_(globalPotentials)
+{
+    Messenger::print("{}", globalPotentials.size());
+}
 
 int GlobalPotentialModel::rowCount(const QModelIndex &parent) const
 {
@@ -14,7 +18,10 @@ int GlobalPotentialModel::columnCount(const QModelIndex &parent) const
     return 3;
 }
 
-const ExternalPotential *GlobalPotentialModel::rawData(const QModelIndex index) const { return globalPotentials_[index.row()].get(); }
+const ExternalPotential *GlobalPotentialModel::rawData(const QModelIndex index) const
+{
+    return globalPotentials_[index.row()].get();
+}
 
 ExternalPotential *GlobalPotentialModel::rawData(const QModelIndex index) { return globalPotentials_[index.row()].get(); }
 
@@ -47,7 +54,6 @@ QVariant GlobalPotentialModel::data(const QModelIndex &index, int role) const
     return {};
 }
 
-
 Qt::ItemFlags GlobalPotentialModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
 
 QVariant GlobalPotentialModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -77,4 +83,3 @@ void GlobalPotentialModel::reset()
     beginResetModel();
     endResetModel();
 }
-
