@@ -30,8 +30,14 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
+<<<<<<< HEAD
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
     context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
+=======
+    ProcedureContext context(procPool, targetConfiguration_);
+    context.setDissolve(dissolve);
+    context.setPrefix(name());
+>>>>>>> 94beb10c0 (ProcedureContext has a reference to Dissolve.)
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateSDF experienced problems with its analysis.\n");

@@ -10,6 +10,7 @@
 #include "classes/potentialMap.h"
 #include "classes/species.h"
 #include "modules/energy/energy.h"
+#include "main/dissolve.h"
 
 Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "Generator")
 {
@@ -75,7 +76,7 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_, context.potentialMap().range());
+    cells_.generate(box_.get(), requestedCellDivisionLength_, context.dissolve().potentialMap().range());
 
     // Make sure all objects know about each other
     updateObjectRelationships();

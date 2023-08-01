@@ -29,8 +29,10 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     collectABC_->keywords().set("RangeX", angleRange_);
 
     // Execute the analysis
+    // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
+    context.setDissolve(moduleContext.dissolve());
+    context.setPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateAngle experienced problems with its analysis.\n");
