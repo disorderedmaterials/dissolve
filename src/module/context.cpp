@@ -3,38 +3,16 @@
 
 #include "module/context.h"
 
-ModuleContext::ModuleContext(const ProcessPool &procPool, const CoreData &coreData, const double &pairPotentialRange, const double &pairPotentialDelta, const PotentialMap &potentialMap, GenericList &processingModuleData) :
-processPool_(procPool), coreData_(coreData), pairPotentialRange_(pairPotentialRange), pairPotentialDelta_(pairPotentialDelta), potentialMap_(potentialMap), processingModuleData_(processingModuleData)
+ModuleContext::ModuleContext(const ProcessPool &procPool) : processPool_(procPool)
+{}
+ModuleContext::ModuleContext(const ProcessPool &procPool, Dissolve &dissolve) : processPool_(procPool), dissolve_(dissolve)
 {}
 
 const ProcessPool &ModuleContext::processPool() const { return processPool_; }
 
-const CoreData &ModuleContext::coreData() const
+Dissolve& ModuleContext::dissolve()
 {
-    return coreData_;
-}
-
-const double &ModuleContext::pairPotentialRange() const
-{
-    return pairPotentialRange_;
-}
-
-const double &ModuleContext::pairPotentialDelta() const
-{
-    return pairPotentialDelta_;
-}
-
-const PotentialMap &ModuleContext::potentialMap() const
-{
-    return potentialMap_;
-}
-
-const GenericList &ModuleContext::processingModuleData() const
-{
-    return processingModuleData_;
-}
-
-GenericList &ModuleContext::processingModuleData()
-{
-    return processingModuleData_;
+    if (!dissolve_)
+        throw(std::runtime_error("Dissolve is not set in this module's context.\n"));
+    return dissolve_->get();
 }
