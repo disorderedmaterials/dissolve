@@ -54,6 +54,7 @@ class DirectionalPotential : public ExternalPotential
     const std::string formString() const override;
     // Return parameters of the potential, as a string
     const std::string formParametersString() const override;
+
     /*
      * Potential Calculation
      */
