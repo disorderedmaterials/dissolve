@@ -4,6 +4,7 @@
 #include "modules/histogramCN/histogramCN.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
+#include "keywords/fileAndFormat.h"
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
@@ -30,10 +31,9 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     auto calcExpression_ = forEachA.create<CalculateExpressionProcedureNode>({});
     calcExpression_->setExpression("B.nSelected");
 
-    auto collectCN_ =
-        forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext, 0, 10);
+    auto collectCN = forEachA.create<IntegerCollect1DProcedureNode>("Bins", calcExpression_, ProcedureNode::AnalysisContext);
 
-    auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN_);
+    auto process1D = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectCN);
     auto &normalisation = process1D->branch()->get();
     auto norm = normalisation.create<OperateNormaliseProcedureNode>({});
 
@@ -54,4 +54,7 @@ HistogramCNModule::HistogramCNModule() : Module(ModuleTypes::HistogramCN), analy
     keywords_.add<RangeKeyword>("DistanceRange",
                                 "Distance range (min, max) over which to calculate coordination number from central site",
                                 distanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated HitogramCN data",
+                                        process1D->exportFileAndFormat(), "EndExport");
 }
