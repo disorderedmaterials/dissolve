@@ -72,8 +72,7 @@ bool IfValueInRangeProcedureNode::execute(const ProcedureContext &procedureConte
 {
     // Evaluate and check
     if (valueRange_.contains(value_.asDouble()))
-        if (!thenBranch_.execute(procedureContext))
-            return false;
+        return thenBranch_.execute(procedureContext);
 
     return true;
 }
