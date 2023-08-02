@@ -7,7 +7,7 @@
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
-#include "procedure/nodes/calculateExpression.h"
+#include "procedure/nodes/ifValueInRange.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/operateNormalise.h"
 #include "procedure/nodes/process1D.h"
@@ -15,19 +15,22 @@
 
 QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(ProcedureNode::AnalysisContext)
 {
-    // Select: Site 'A'
+    // Select: Site 'BO' - Bonding Oxygen
     selectBO_ = analyser_.createRootNode<SelectProcedureNode>("BO");
     auto &forEachBO = selectBO_->branch()->get();
 
-    // -- Select: Site 'B'
+    // -- Select: Site 'NF' - Network Former
     selectNF_ = forEachBO.create<SelectProcedureNode>("NF");
     selectNF_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{selectBO_});
     selectNF_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{selectBO_});
     selectNF_->keywords().set("ReferenceSite", selectBO_);
     selectNF_->keywords().set("InclusiveRange", distanceRange_);
 
-    /*Loop over each NF site - check for exactly 2 sites
-    Need to do this inside ForEach with IfValueRange*/
+    auto &forEachNF = selectNF_->branch()->get();
+    auto valuesInRange = forEachNF.create<IfValueInRangeProcedureNode>({});
+    valuesInRange->keywords().set("Value", NodeValue("NF.nSelected"));
+    valuesInRange->keywords().set("Range", Range(1.9, 2.1));
+    auto &ifThen = valuesInRange->branch()->get();
 
     /*
      * Keywords
