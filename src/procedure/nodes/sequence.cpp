@@ -36,7 +36,7 @@ void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAt
     node->setScope(*this);
 
     // Check context
-    if (!node->isContextRelevant(context_))
+    if (!node->isContextRelevant(context()))
         throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
                                              ProcedureNode::nodeTypes().keyword(node->type()),
                                              ProcedureNode::nodeContexts().keyword(context_))));
@@ -400,7 +400,7 @@ bool ProcedureNodeSequence::check() const
                                     fmt::ptr(node->parent()), fmt::ptr(this));
 
         // Check context
-        if (!node->isContextRelevant(context_))
+        if (!node->isContextRelevant(context()))
             return Messenger::error("Node '{}' is not allowed in this context ({})\n", node->name(),
                                     ProcedureNode::nodeContexts().keyword(context_));
 
