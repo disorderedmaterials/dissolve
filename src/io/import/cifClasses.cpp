@@ -177,6 +177,7 @@ void CIFSpecies::applyCIFBonding(Species *sp, bool preventMetallicBonding)
         auto [indexI, indexJ] = pair;
         if (indexI == indexJ)
             continue;
+
         auto &i = sp->atom(indexI);
         auto &j = sp->atom(indexJ);
 
@@ -444,77 +445,6 @@ bool CIFSpecies::createSupercellSpecies(Vec3<int> repeat, bool calculateBonding,
 
     return true;
 }
-
-/*
-Configuration* CIFSpecies::generateConfiguration(Species *sp, std::string name)
-{
-    // Create a configuration
-    auto *cfg = coreData_.addConfiguration();
-    cfg->setName(name);
-
-    auto cellLengths = cifImporter_.getCellLengths();
-    if (!cellLengths)
-        return nullptr;
-    auto cellAngles = cifImporter_.getCellAngles();
-    if (!cellAngles)
-        return nullptr;
-
-    cfg->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
-
-    // Add the species to the configuration
-    cfg->addMolecule(sp);
-    cfg->updateObjectRelationships();
-
-    return cfg;
-}
-
-Configuration *CIFSpecies::generateConfiguration(CoreData &coreData, std::vector<CIFMolecularSpecies *> cifMolecularSpecies)
-{
-    auto cfg = coreData.addConfiguration();
-    cfg->setName(cifImporter_.chemicalFormula());
-
-    // Grab the generator
-    auto &generator = cfg->generator();
-
-    // Add Box
-    auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-    auto cellLengths = cifImporter_.getCellLengths().value();
-    auto cellAngles = cifImporter_.getCellAngles().value();
-    boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
-    boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
-
-    for (auto &cifMolecularSp : cifMolecularSpecies)
-    {
-        // Determine a unique suffix
-        auto base = cifMolecularSp->species->name();
-        std::string uniqueSuffix{base};
-        if (!generator.nodes().empty())
-        {
-            // Start from the last root node
-            auto root = generator.nodes().back();
-            auto suffix = 0;
-
-            // We use 'CoordinateSets' here, because in this instance we are working with (CoordinateSet, Add) pairs
-            while (generator.rootSequence().nodeInScope(root, fmt::format("SymmetryCopies_{}", uniqueSuffix)) != nullptr)
-                uniqueSuffix = fmt::format("{}_{:02d}", base, ++suffix);
-        }
-
-        // CoordinateSets
-        auto coordsNode =
-            generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix),
-cifMolecularSp->species); coordsNode->keywords().setEnumeration("Source",
-CoordinateSetsProcedureNode::CoordinateSetSource::File); coordsNode->setSets(cifMolecularSp->coordinates);
-
-        // Add
-        auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-        addNode->keywords().set("Population", NodeValue(int(cifMolecularSp->coordinates.size())));
-        addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
-        addNode->keywords().set("Rotate", false);
-        addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
-    }
-
-    return cfg;
-}*/
 
 Species *CIFSpecies::structuralSpecies() { return structuralSpecies_; }
 
