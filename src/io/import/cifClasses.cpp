@@ -99,6 +99,11 @@ int CIFAssembly::nGroups() const { return groups_.size(); }
 
 CIFSpecies::CIFSpecies(CIFImport &cifImporter, CoreData &coreData) : cifImporter_(cifImporter), coreData_(coreData) {}
 
+/*
+ * Creation
+ */
+
+// Create a structural species
 bool CIFSpecies::createStructuralSpecies(double tolerance, bool calculateBonding, bool preventMetallicBonding)
 {
     // Create temporary atom types corresponding to the unique atom labels
@@ -167,33 +172,7 @@ bool CIFSpecies::createStructuralSpecies(double tolerance, bool calculateBonding
     return true;
 }
 
-void CIFSpecies::applyCIFBonding(Species *sp, bool preventMetallicBonding)
-{
-    auto *box = sp->box();
-    auto pairs = PairIterator(sp->nAtoms());
-    for (auto pair : pairs)
-    {
-        // Grab indices and atom references
-        auto [indexI, indexJ] = pair;
-        if (indexI == indexJ)
-            continue;
-
-        auto &i = sp->atom(indexI);
-        auto &j = sp->atom(indexJ);
-
-        // Prevent metallic bonding?
-        if (preventMetallicBonding && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
-            continue;
-
-        // Retrieve distance
-        auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
-        if (!r)
-            continue;
-        else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
-            sp->addBond(&i, &j);
-    }
-}
-
+// Create a cleaned structural species
 bool CIFSpecies::createCleanedSpecies(bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety,
                                       std::optional<NETADefinition> moietyNETA, std::optional<bool> removeEntireFragment)
 {
@@ -271,13 +250,14 @@ bool CIFSpecies::createCleanedSpecies(bool removeAtomsOfSingleMoiety, bool remov
         // Remove selected atoms
         cleanedSpecies_->removeAtoms(indicesToRemove);
     }
-    Messenger::print("Created cleaned species.");
 
     cleanedConfiguration_->addMolecule(cleanedSpecies_);
     cleanedConfiguration_->updateObjectRelationships();
+
     return true;
 }
 
+// Create molecular species
 bool CIFSpecies::createMolecularSpecies()
 {
     if (!cleanedSpecies_)
@@ -307,13 +287,15 @@ bool CIFSpecies::createMolecularSpecies()
                             std::back_inserter(indicesToRemove));
         sp->removeAtoms(indicesToRemove);
 
+        // Determine a unique NETA definition describing the fragment
         auto neta = uniqueNETADefinition(sp);
         if (!neta.has_value())
             return false;
 
+        // Find copies
         auto copies = instances(cleanedSpecies_, neta.value());
 
-        // Remove the current fragment, and all instances of the underlying CIFMolecularSpecies
+        // Remove the current fragment and all copies
         for (auto &copy : copies)
         {
             indices.erase(std::remove_if(indices.begin(), indices.end(),
@@ -321,150 +303,27 @@ bool CIFSpecies::createMolecularSpecies()
                           indices.end());
         }
 
-        auto coords = coordinates(cleanedSpecies_, copies);
-
+        // Fix geometry
         fixGeometry(sp, cleanedSpecies_->box());
+
+        // Give the species a name
+        sp->setName(EmpiricalFormula::formula(species_->atoms(), [&](const auto &at) { return at.Z(); }));
 
         species->species = sp;
         species->netaString = neta->definitionString();
         species->instances = std::move(copies);
-        species->coordinates = std::move(coords);
+        species->coordinates = std::move(coordinates(cleanedSpecies_, copies););
         molecularSpecies_.push_back(species);
         idx = *std::min_element(indices.begin(), indices.end());
     }
-
-    Messenger::print("Generated molecular species");
     return true;
 }
 
-std::optional<NETADefinition> CIFSpecies::uniqueNETADefinition(Species *sp)
+// Create configuration that composes molecular species
+Configuration *CIFSpecies::createMolecularConfiguration(std::optional<CoreData> &coreData)
 {
-    NETADefinition neta;
-    auto nMatches = 0, idx = 0;
-    while (nMatches != 1)
-    {
-        if (idx >= sp->nAtoms())
-            return std::nullopt;
-        neta.create(&sp->atom(idx++), std::nullopt,
-                    Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,
-                                                             NETADefinition::NETACreationFlags::IncludeRootElement));
-        nMatches = std::count_if(sp->atoms().begin(), sp->atoms().end(), [&](const auto &i) { return neta.matches(&i); });
-    }
-    return neta;
-}
-
-std::vector<std::vector<int>> CIFSpecies::instances(Species *sp, NETADefinition neta)
-{
-    std::vector<std::vector<int>> instances;
-    for (auto &i : sp->atoms())
-    {
-        if (neta.matches(&i))
-        {
-            auto matchedGroup = neta.matchedPath(&i);
-            auto matchedAtoms = matchedGroup.set();
-            std::vector<int> indices(matchedAtoms.size());
-            std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
-                           [](const auto &atom) { return atom->index(); });
-            std::sort(indices.begin(), indices.end());
-            instances.push_back(std::move(indices));
-        }
-    }
-    return instances;
-}
-
-std::vector<std::vector<Vec3<double>>> CIFSpecies::coordinates(Species *sp, std::vector<std::vector<int>> instances)
-{
-    std::vector<std::vector<Vec3<double>>> coordinates;
-    for (auto &instance : instances)
-    {
-        std::vector<Vec3<double>> coords(instance.size());
-        std::transform(instance.begin(), instance.end(), coords.begin(), [&](auto i) { return sp->atom(i).r(); });
-        coordinates.push_back(std::move(coords));
-    }
-    return coordinates;
-}
-
-void CIFSpecies::fixGeometry(Species *sp, const Box *box)
-{
-    // 'Fix' the geometry of the species
-    // Construct a temporary molecule, which is just the species.
-    std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
-    std::vector<Atom> molAtoms(sp->nAtoms());
-    for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
-    {
-        atom.setSpeciesAtom(&spAtom);
-        atom.setCoordinates(spAtom.r());
-        mol->addAtom(&atom);
-    }
-
-    // Unfold the molecule
-    mol->unFold(box);
-
-    // Update the coordinates of the species atoms
-    for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
-        spAtom.setCoordinates(atom.r());
-
-    // Set the centre of geometry of the species to be at the origin.
-    sp->setCentre(box, {0., 0., 0.});
-}
-
-bool CIFSpecies::createSupercellSpecies(Vec3<int> repeat, bool calculateBonding, bool preventMetallicBonding)
-{
-    if (!cleanedSpecies_)
-        return false;
-
-    supercellSpecies_ = coreData_.addSpecies();
-    supercellSpecies_->setName("Supercell");
-
-    auto supercellLengths = cleanedSpecies_->box()->axisLengths();
-    supercellLengths.multiply(repeat.x, repeat.y, repeat.z);
-    supercellSpecies_->createBox(supercellLengths, cleanedSpecies_->box()->axisAngles(), false);
-
-    supercellConfiguration_ = coreData_.addConfiguration();
-    supercellConfiguration_->createBoxAndCells(supercellLengths, cleanedSpecies_->box()->axisAngles(), false, 1.0);
-
-    // Copy atoms from the Crystal species - we'll do the bonding afterwards
-    supercellSpecies_->atoms().reserve(repeat.x * repeat.y * repeat.z * cleanedSpecies_->nAtoms());
-    for (auto ix = 0; ix < repeat.x; ++ix)
-        for (auto iy = 0; iy < repeat.y; ++iy)
-            for (auto iz = 0; iz < repeat.z; ++iz)
-            {
-                Vec3<double> deltaR = cleanedSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
-                for (const auto &i : cleanedSpecies_->atoms())
-                    supercellSpecies_->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
-            }
-
-    if (calculateBonding)
-        supercellSpecies_->addMissingBonds();
-    else
-        applyCIFBonding(supercellSpecies_, preventMetallicBonding);
-
-    // Add the structural species to the configuration
-    supercellConfiguration_->addMolecule(supercellSpecies_);
-    supercellConfiguration_->updateObjectRelationships();
-
-    return true;
-}
-
-Species *CIFSpecies::structuralSpecies() { return structuralSpecies_; }
-
-Configuration *CIFSpecies::structuralConfiguration() { return structuralConfiguration_; }
-
-Species *CIFSpecies::cleanedSpecies() { return cleanedSpecies_; }
-
-Configuration *CIFSpecies::cleanedConfiguration() { return cleanedConfiguration_; }
-
-std::vector<Species *> CIFSpecies::molecularSpecies()
-{
-    std::vector<Species *> molecularSpecies;
-    for (auto &cifMolecularSpecies : molecularSpecies_)
-        molecularSpecies.push_back(cifMolecularSpecies->species);
-    return molecularSpecies;
-}
-
-Configuration *CIFSpecies::molecularConfiguration(CoreData &coreData)
-{
-    auto cfg = coreData.addConfiguration();
+    // Create a configuration
+    auto cfg = coreData.has_value() ? coreData.addConfiguration() : coreData_.addConfiguration();
     cfg->setName(cifImporter_.chemicalFormula());
 
     // Grab the generator
@@ -510,13 +369,173 @@ Configuration *CIFSpecies::molecularConfiguration(CoreData &coreData)
     return cfg;
 }
 
-Species *CIFSpecies::supercellSpecies() { return supercellSpecies_; }
-
-Configuration *CIFSpecies::supercellConfiguration() { return supercellConfiguration_; }
-
-Configuration *CIFSpecies::partitionedConfiguration()
+// Create supercell species
+bool CIFSpecies::createSupercellSpecies(Vec3<int> repeat, bool calculateBonding, bool preventMetallicBonding)
 {
-    partitionedConfiguration_ = coreData_.addConfiguration();
-    partitionedConfiguration_->setName("Partitioned");
-    return partitionedConfiguration_;
+    if (!cleanedSpecies_)
+        return false;
+
+    supercellSpecies_ = coreData_.addSpecies();
+    supercellSpecies_->setName("Supercell");
+
+    auto supercellLengths = cleanedSpecies_->box()->axisLengths();
+    supercellLengths.multiply(repeat.x, repeat.y, repeat.z);
+    supercellSpecies_->createBox(supercellLengths, cleanedSpecies_->box()->axisAngles(), false);
+
+    supercellConfiguration_ = coreData_.addConfiguration();
+    supercellConfiguration_->createBoxAndCells(supercellLengths, cleanedSpecies_->box()->axisAngles(), false, 1.0);
+
+    // Copy atoms from the Crystal species - we'll do the bonding afterwards
+    supercellSpecies_->atoms().reserve(repeat.x * repeat.y * repeat.z * cleanedSpecies_->nAtoms());
+    for (auto ix = 0; ix < repeat.x; ++ix)
+        for (auto iy = 0; iy < repeat.y; ++iy)
+            for (auto iz = 0; iz < repeat.z; ++iz)
+            {
+                Vec3<double> deltaR = cleanedSpecies_->box()->axes() * Vec3<double>(ix, iy, iz);
+                for (const auto &i : cleanedSpecies_->atoms())
+                    supercellSpecies_->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
+            }
+
+    if (calculateBonding)
+        supercellSpecies_->addMissingBonds();
+    else
+        applyCIFBonding(supercellSpecies_, preventMetallicBonding);
+
+    // Add the structural species to the configuration
+    supercellConfiguration_->addMolecule(supercellSpecies_);
+    supercellConfiguration_->updateObjectRelationships();
+
+    return true;
 }
+
+/*
+ * Helpers
+ */
+
+// Apply CIF bonding to a given species
+void CIFSpecies::applyCIFBonding(Species *sp, bool preventMetallicBonding)
+{
+    auto *box = sp->box();
+    auto pairs = PairIterator(sp->nAtoms());
+    for (auto pair : pairs)
+    {
+        // Grab indices and atom references
+        auto [indexI, indexJ] = pair;
+        if (indexI == indexJ)
+            continue;
+
+        auto &i = sp->atom(indexI);
+        auto &j = sp->atom(indexJ);
+
+        // Prevent metallic bonding?
+        if (preventMetallicBonding && Elements::isMetallic(i.Z()) && Elements::isMetallic(j.Z()))
+            continue;
+
+        // Retrieve distance
+        auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
+        if (!r)
+            continue;
+        else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)
+            sp->addBond(&i, &j);
+    }
+}
+
+// Determine a unique NETA definition corresponding to a given species
+std::optional<NETADefinition> CIFSpecies::uniqueNETADefinition(Species *sp)
+{
+    NETADefinition neta;
+    auto nMatches = 0, idx = 0;
+    while (nMatches != 1)
+    {
+        if (idx >= sp->nAtoms())
+            return std::nullopt;
+        neta.create(&sp->atom(idx++), std::nullopt,
+                    Flags<NETADefinition::NETACreationFlags>(NETADefinition::NETACreationFlags::ExplicitHydrogens,
+                                                             NETADefinition::NETACreationFlags::IncludeRootElement));
+        nMatches = std::count_if(sp->atoms().begin(), sp->atoms().end(), [&](const auto &i) { return neta.matches(&i); });
+    }
+    return neta;
+}
+
+// Determine instances of a NETA definition in a given species
+std::vector<std::vector<int>> CIFSpecies::instances(Species *sp, NETADefinition neta)
+{
+    std::vector<std::vector<int>> instances;
+    for (auto &i : sp->atoms())
+    {
+        if (neta.matches(&i))
+        {
+            auto matchedGroup = neta.matchedPath(&i);
+            auto matchedAtoms = matchedGroup.set();
+            std::vector<int> indices(matchedAtoms.size());
+            std::transform(matchedAtoms.begin(), matchedAtoms.end(), indices.begin(),
+                           [](const auto &atom) { return atom->index(); });
+            std::sort(indices.begin(), indices.end());
+            instances.push_back(std::move(indices));
+        }
+    }
+    return instances;
+}
+
+// Determine coordinates of instances in a given species
+std::vector<std::vector<Vec3<double>>> CIFSpecies::coordinates(Species *sp, std::vector<std::vector<int>> instances)
+{
+    std::vector<std::vector<Vec3<double>>> coordinates;
+    for (auto &instance : instances)
+    {
+        std::vector<Vec3<double>> coords(instance.size());
+        std::transform(instance.begin(), instance.end(), coords.begin(), [&](auto i) { return sp->atom(i).r(); });
+        coordinates.push_back(std::move(coords));
+    }
+    return coordinates;
+}
+
+// 'Fix' the geometry of a given species
+void CIFSpecies::fixGeometry(Species *sp, const Box *box)
+{
+    // 'Fix' the geometry of the species
+    // Construct a temporary molecule, which is just the species.
+    std::shared_ptr<Molecule> mol = std::make_shared<Molecule>();
+    std::vector<Atom> molAtoms(sp->nAtoms());
+    for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
+    {
+        atom.setSpeciesAtom(&spAtom);
+        atom.setCoordinates(spAtom.r());
+        mol->addAtom(&atom);
+    }
+
+    // Unfold the molecule
+    mol->unFold(box);
+
+    // Update the coordinates of the species atoms
+    for (auto &&[spAtom, atom] : zip(sp->atoms(), molAtoms))
+        spAtom.setCoordinates(atom.r());
+
+    // Set the centre of geometry of the species to be at the origin.
+    sp->setCentre(box, {0., 0., 0.});
+}
+
+/*
+ * Retrieval
+ */
+
+// Structural
+Species *CIFSpecies::structuralSpecies() { return structuralSpecies_; }
+Configuration *CIFSpecies::structuralConfiguration() { return structuralConfiguration_; }
+
+// Cleaned
+Species *CIFSpecies::cleanedSpecies() { return cleanedSpecies_; }
+Configuration *CIFSpecies::cleanedConfiguration() { return cleanedConfiguration_; }
+
+// Molecular
+std::vector<Species *> CIFSpecies::molecularSpecies()
+{
+    std::vector<Species *> molecularSpecies;
+    for (auto &cifMolecularSpecies : molecularSpecies_)
+        molecularSpecies.push_back(cifMolecularSpecies->species);
+    return molecularSpecies;
+}
+
+// Supercell
+Species *CIFSpecies::supercellSpecies() { return supercellSpecies_; }
+Configuration *CIFSpecies::supercellConfiguration() { return supercellConfiguration_; }

@@ -47,16 +47,6 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     // Update moiety NETA
     createMoietyRemovalNETA(ui_.MoietyNETARemovalEdit->text().toStdString());
 
-    // Create preview configurations
-    structureConfiguration_ = temporaryCoreData_.addConfiguration();
-    structureConfiguration_->setName("Crystal");
-    cleanedConfiguration_ = temporaryCoreData_.addConfiguration();
-    cleanedConfiguration_->setName("Crystal (Cleaned)");
-    supercellConfiguration_ = temporaryCoreData_.addConfiguration();
-    supercellConfiguration_->setName("Supercell");
-    partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
-    partitioningConfiguration_->setName("Partitioning");
-
     // Init the wizard
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
 
@@ -197,7 +187,7 @@ void ImportCIFDialog::finalise()
     {
         for (auto &sp : molecularSpecies_)
             dissolve_.coreData().copySpecies(sp);
-        cifSpecies_->molecularConfiguration(dissolve_.coreData());
+        cifSpecies_->createMolecularConfiguration(dissolve_.coreData());
     }
 }
 
@@ -339,7 +329,8 @@ bool ImportCIFDialog::createCleanedSpecies()
         temporaryCoreData_.removeSpecies(cleanedSpecies_);
 
     if (ui_.MoietyRemoveByNETAGroup->isChecked())
-        cifSpecies_->createCleanedSpecies(ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked(), moietyNETA_, ui_.MoietyNETARemoveFragmentsCheck->isChecked());
+        cifSpecies_->createCleanedSpecies(ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked(),
+                                          moietyNETA_, ui_.MoietyNETARemoveFragmentsCheck->isChecked());
     else
         cifSpecies_->createCleanedSpecies(ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked());
 

@@ -4,9 +4,9 @@
 #pragma once
 
 #include "data/elements.h"
+#include "neta/neta.h"
 #include "templates/optionalRef.h"
 #include "templates/vector3.h"
-#include "neta/neta.h"
 #include <algorithm>
 #include <vector>
 
@@ -146,30 +146,53 @@ class CIFSpecies
     Configuration *molecularConfiguration_;
     Species *supercellSpecies_;
     Configuration *supercellConfiguration_;
-    Species *partitionedSpecies_;
-    Configuration *partitionedConfiguration_;
 
+    /*
+     * Creation
+     */
     public:
+    // Create a structural species
     bool createStructuralSpecies(double tolerance, bool calculateBonding, bool preventMetallicBonding);
+    // Create a cleaned structural species
     bool createCleanedSpecies(bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety,
-                              std::optional<NETADefinition> moietyNETA = std::nullopt, std::optional<bool> removeEntireFragment = std::nullopt);
+                              std::optional<NETADefinition> moietyNETA = std::nullopt,
+                              std::optional<bool> removeEntireFragment = std::nullopt);
+    // Create molecular species
     bool createMolecularSpecies();
+    // Create configuration that composes molecular species
+    bool createMolecularConfiguration(std::optional<CoreData & coreData>);
+    // Create supercell species
     bool createSupercellSpecies(Vec3<int> repeat, bool calculateBonding, bool preventMetallicBonding);
 
+    /*
+     * Helpers
+     */
+    private:
+    // Apply CIF bonding to a given species
+    void applyCIFBonding(Species *sp, bool preventMetallicBonding);
+    // Determine a unique NETA definition corresponding to a given species
+    std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
+    // Determine instances of a NETA definition in a given species
+    std::vector<std::vector<int>> instances(Species *sp, NETADefinition neta);
+    // Determine coordinates of instances in a given species
+    std::vector<std::vector<Vec3<double>>> coordinates(Species *sp, std::vector<std::vector<int>> instances);
+    // 'Fix' the geometry of a given species
+    void fixGeometry(Species *sp, const Box *box);
+
+    /*
+     * Retrieval
+     */
+    public:
+    // Structural
     Species *structuralSpecies();
     Configuration *structuralConfiguration();
+    // Cleaned
     Species *cleanedSpecies();
     Configuration *cleanedConfiguration();
+    // Molecular
     std::vector<Species *> molecularSpecies();
-    Configuration *molecularConfiguration(CoreData &coreData);
+    Configuration *molecularConfiguration();
+    // Supercell
     Species *supercellSpecies();
     Configuration *supercellConfiguration();
-    Configuration *partitionedConfiguration();
-
-    private:
-    void applyCIFBonding(Species *sp, bool preventMetallicBonding);
-    std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
-    std::vector<std::vector<int>> instances(Species *sp, NETADefinition neta);
-    std::vector<std::vector<Vec3<double>>> coordinates(Species *sp, std::vector<std::vector<int>> instances);
-    void fixGeometry(Species *sp, const Box *box);
 };
