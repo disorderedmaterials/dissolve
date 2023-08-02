@@ -160,7 +160,7 @@ class CIFSpecies
     // Create molecular species
     bool createMolecularSpecies();
     // Create configuration that composes molecular species
-    bool createMolecularConfiguration(std::optional<CoreData & coreData>);
+    bool createMolecularConfiguration(OptionalReferenceWrapper<CoreData> coreData);
     // Create supercell species
     bool createSupercellSpecies(Vec3<int> repeat, bool calculateBonding, bool preventMetallicBonding);
 

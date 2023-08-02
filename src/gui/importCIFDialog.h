@@ -94,6 +94,7 @@ class ImportCIFDialog : public WizardDialog
     void updateInfoPage();
 
     private:
+    // CIFSpecies
     CIFSpecies *cifSpecies_;
 
     /*
@@ -146,7 +147,7 @@ class ImportCIFDialog : public WizardDialog
     bool detectUniqueSpecies();
 
     private:
-    // CIF Species
+    // Molecular species
     std::vector<Species *> molecularSpecies_;
 
     /*

@@ -51,6 +51,11 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
 
     cifSpecies_ = new CIFSpecies(cifImporter_, temporaryCoreData_);
+
+    // Configuration
+    partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
+    partitioningConfiguration_->setName("Partitioning");
+
 }
 
 /*
@@ -185,9 +190,7 @@ void ImportCIFDialog::finalise()
     }
     else
     {
-        for (auto &sp : molecularSpecies_)
-            dissolve_.coreData().copySpecies(sp);
-        cifSpecies_->createMolecularConfiguration(dissolve_.coreData());
+        cifSpecies_->createMolecularConfiguration(OptionalReferenceWrapper<CoreData>(dissolve_.coreData()));
     }
 }
 
@@ -267,6 +270,7 @@ bool ImportCIFDialog::createStructuralSpecies()
     ui_.StructureViewer->setConfiguration(nullptr);
     temporaryCoreData_.species().clear();
     temporaryCoreData_.atomTypes().clear();
+
     cifSpecies_->createStructuralSpecies(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5,
                                          ui_.CalculateBondingRadio->isChecked(), ui_.BondingPreventMetallicCheck->isChecked());
     crystalSpecies_ = cifSpecies_->structuralSpecies();
@@ -321,12 +325,6 @@ void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
 bool ImportCIFDialog::createCleanedSpecies()
 {
     ui_.CleanedViewer->setConfiguration(nullptr);
-    partitioningConfiguration_->empty();
-    supercellConfiguration_->empty();
-
-    // Remove the cleaned crystal species
-    if (cleanedSpecies_)
-        temporaryCoreData_.removeSpecies(cleanedSpecies_);
 
     if (ui_.MoietyRemoveByNETAGroup->isChecked())
         cifSpecies_->createCleanedSpecies(ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked(),
@@ -381,7 +379,8 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 // Detect unique species in the structural species
 bool ImportCIFDialog::detectUniqueSpecies()
 {
-    cifSpecies_->createMolecularSpecies();
+    if (!cifSpecies_->createMolecularSpecies())
+        return false;
     molecularSpecies_ = cifSpecies_->molecularSpecies();
     return true;
 }
@@ -394,20 +393,13 @@ bool ImportCIFDialog::detectUniqueSpecies()
 bool ImportCIFDialog::createSupercellSpecies()
 {
     ui_.SupercellViewer->setConfiguration(nullptr);
-    supercellConfiguration_->empty();
-    partitioningConfiguration_->empty();
-
-    // Remove the old Supercell species if it exists, and create a new one
-    auto *supercell = temporaryCoreData_.findSpecies("Supercell");
-    if (supercell)
-        temporaryCoreData_.removeSpecies(supercell);
 
     // Set the repeat vector
     Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
 
     cifSpecies_->createSupercellSpecies(repeat, ui_.CalculateBondingRadio->isChecked(),
                                         ui_.BondingPreventMetallicCheck->isChecked());
-    supercell = cifSpecies_->supercellSpecies();
+    auto* supercell = cifSpecies_->supercellSpecies();
     if (!supercell)
         return false;
 
