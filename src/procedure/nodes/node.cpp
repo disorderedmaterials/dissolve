@@ -104,7 +104,7 @@ bool ProcedureNode::isContextRelevant(NodeContext targetContext) const
 {
     // Check for spurious context checks
     if (targetContext == ProcedureNode::NodeContext::InheritContext)
-        throw(std::runtime_error(fmt::format("Attempted to context check node '{}' with an InheritedContext.\n")));
+        throw(std::runtime_error(fmt::format("Attempted to context check node '{}' with an InheritedContext.\n", name_)));
 
     // If the node is suitable in Any context, or if there is no context (None) return immediately
     if (targetContext == ProcedureNode::NodeContext::NoContext || targetContext == ProcedureNode::NodeContext::AnyContext ||
