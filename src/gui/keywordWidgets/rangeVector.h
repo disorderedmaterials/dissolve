@@ -11,7 +11,7 @@
 #include "math/range.h"
 #include <QWidget>
 
-class RangeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class RangeVectorKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
@@ -54,6 +54,6 @@ class RangeVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBas
     public:
     // Update value displayed in widget
     void updateValue(const Flags<DissolveSignals::DataMutations> &mutationFlags) override;
-    // Update summary text
-    void updateSummaryText();
+    // Returns the index of the selected row
+    int selectedRow() const;
 };

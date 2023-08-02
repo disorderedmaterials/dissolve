@@ -11,13 +11,14 @@
 #include <QString>
 
 RangeVectorKeywordWidget::RangeVectorKeywordWidget(QWidget *parent, RangeVectorKeyword *keyword, const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData), keyword_(keyword)
+    : KeywordWidgetBase(coreData), keyword_(keyword)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
-    ui_.setupUi(dropWidget());
+    ui_.setupUi(this);
 
     // Set up the model
     ui_.RangeVectorTable->setModel(&rangeModel_);
+    ui_.RangeVectorTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     resetModelData();
 
     // Set delegates
@@ -26,8 +27,6 @@ RangeVectorKeywordWidget::RangeVectorKeywordWidget(QWidget *parent, RangeVectorK
     // Connect signals / slots
     connect(&rangeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
-
-    updateSummaryText();
 }
 
 /*
@@ -40,12 +39,14 @@ void RangeVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMode
     if (refreshing_)
         return;
 
-    updateSummaryText();
-
     emit(keywordDataChanged(keyword_->editSignals()));
 }
 
-void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked) { rangeModel_.addRange(); }
+void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked)
+{
+    rangeModel_.insertRows(rangeModel_.rowCount(), 1);
+    // rangeModel_.addRange();
+}
 
 void RangeVectorKeywordWidget::on_RangeRemoveButton_clicked(bool checked) {}
 
@@ -61,8 +62,6 @@ void RangeVectorKeywordWidget::resetModelData()
     // Update allowed modules
     rangeModel_.setData(keyword_->data());
 
-    updateSummaryText();
-
     refreshing_ = false;
 }
 
@@ -73,8 +72,4 @@ void RangeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMuta
         resetModelData();
 }
 
-// Update summary text
-void RangeVectorKeywordWidget::updateSummaryText()
-{
-    setSummaryText(QString::fromStdString(fmt::format("{} defined", keyword_->data().size())));
-}
+int RangeVectorKeywordWidget::selectedRow() const { return ui_.RangeVectorTable->selectionModel()->currentIndex().row(); }

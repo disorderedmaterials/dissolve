@@ -10,7 +10,7 @@
 class Range : public Serialisable<>
 {
     public:
-    Range(double minimum = 0.0, double maximum = 0.0);
+    Range(double minimum = 0.0, double maximum = 0.0, std::string name = "");
 
     /*
      * Data
@@ -18,6 +18,8 @@ class Range : public Serialisable<>
     private:
     // Minimum and maximum for range
     double minimum_, maximum_;
+    // Name of range
+    std::string name_;
 
     public:
     // Set range
@@ -30,6 +32,10 @@ class Range : public Serialisable<>
     void setMaximum(double maximum);
     // Return maximum for range
     double maximum() const;
+    // Set name of range
+    void setName(std::string name);
+    // Return name of range
+    std::string name() const;
     // Return whether the range contains the specified value
     bool contains(double d) const;
     // Express as a serialisable value

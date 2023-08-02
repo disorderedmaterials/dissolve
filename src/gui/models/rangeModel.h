@@ -15,18 +15,17 @@ class RangeModel : public QAbstractTableModel
 {
     Q_OBJECT
 
-    public:
     private:
     // Vector containing ranges
     OptionalReferenceWrapper<std::vector<Range>> ranges_;
     // Vector containing indices to checked ranges
     OptionalReferenceWrapper<std::vector<int>> checkedRanges_;
+    // Count of created ranges
+    int rangeCount_ = 0;
 
     public:
     // Set ranges
     void setData(std::vector<Range> &ranges);
-    // Add new range object to vector
-    void addRange();
     // Returns range object from vector
     Range getRange(const QModelIndex &index) const;
 
@@ -40,4 +39,6 @@ class RangeModel : public QAbstractTableModel
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 };

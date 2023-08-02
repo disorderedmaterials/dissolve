@@ -74,6 +74,7 @@ void KeywordsWidget::setUp(KeywordStore::KeywordStoreIndexInfo keywordIndexInfo,
             auto *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
             nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
             nameLabel->setContentsMargins(10, 0, 0, 0);
+            nameLabel->setAlignment(Qt::AlignTop);
             groupLayout->addWidget(nameLabel, row, 0);
             groupLayout->addLayout(w, row++, 1);
 
