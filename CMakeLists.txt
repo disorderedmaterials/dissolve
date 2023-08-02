@@ -249,7 +249,6 @@ set(BASIC_LINK_LIBS
     sginfo
     # Forcefields
     ff
-    templates
     ${FF_LINK_LIBS}
     # Modules
     ${MODULE_LINK_LIBS}

@@ -10,6 +10,7 @@
 #include <fmt/format.h>
 #include <stdexcept>
 
+class NodeValue;
 
 // 3D vector
 template <class T> class Vec3 : public Serialisable<>
@@ -425,9 +426,17 @@ template <class T> class Vec3 : public Serialisable<>
         result.push_back(z);
         return result;
     }
-    void deserialise(const SerialisedValue &node) override;
-    template <typename Context>
-    void deserialise(const SerialisedValue &node, Context context)
+    void deserialise(const SerialisedValue &node) override
+    {
+        if constexpr (std::is_same_v<T, NodeValue>) { throw std::runtime_error("Cannot build NodeValue witout context"); }
+        else
+        {
+            x = toml::get<T>(node[0]);
+            y = toml::get<T>(node[1]);
+            z = toml::get<T>(node[2]);
+        }
+    }
+    template <typename Context> void deserialise(const SerialisedValue &node, Context context)
     {
         x.deserialise(node[0], context);
         y.deserialise(node[1], context);
