@@ -36,14 +36,15 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.SizeFactorIndicator->setWarning();
 
     // Set up the global potentials table
-    ui_.PotentialsTable->setModel(&globalPotentialModel_);
-    ui_.PotentialsTable->horizontalHeader()->setFont(font());
-    ui_.PotentialsTable->horizontalHeader()->setVisible(true);
-    ui_.PotentialsTable->verticalHeader()->setFont(font());
-    ui_.PotentialsTable->verticalHeader()->setVisible(true);
-    ui_.PotentialsTable->resizeColumnsToContents();
+    ui_.GlobalPotentialsTable->setModel(&globalPotentialModel_);
+    ui_.GlobalPotentialsTable->horizontalHeader()->setFont(font());
+    ui_.GlobalPotentialsTable->horizontalHeader()->setVisible(true);
+    ui_.GlobalPotentialsTable->verticalHeader()->setFont(font());
+    ui_.GlobalPotentialsTable->verticalHeader()->setVisible(true);
+    ui_.GlobalPotentialsTable->resizeColumnsToContents();
 
-    ui_.PotentialsFrame->setHidden(true);
+    ui_.GlobalPotentialsFrame->setHidden(true);
+    ui_.RestraintPotentialsFrame->setHidden(true);
     connect(ui_.ConfigurationButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
             SLOT(buttonGroupToggled(QAbstractButton *, bool)));
 }
@@ -149,7 +150,7 @@ void ConfigurationTab::updateControls()
 
     // Potentials
     globalPotentialModel_.reset();
-    ui_.PotentialsTable->resizeColumnsToContents();
+    ui_.GlobalPotentialsTable->resizeColumnsToContents();
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();
@@ -208,11 +209,19 @@ void ConfigurationTab::buttonGroupToggled(QAbstractButton *button, bool checked)
     if (button == ui_.GeneratorPushButton)
     {
         ui_.GeneratorFrame->setVisible(checked);
-        ui_.PotentialsFrame->setVisible(!checked);
+        ui_.GlobalPotentialsFrame->setVisible(!checked);
+        ui_.RestraintPotentialsFrame->setVisible(!checked);
     }
-    else if (button == ui_.PotentialsPushButton)
+    else if (button == ui_.GlobalPotentialsPushButton)
     {
-        ui_.PotentialsFrame->setVisible(checked);
         ui_.GeneratorFrame->setVisible(!checked);
+        ui_.GlobalPotentialsFrame->setVisible(checked);
+        ui_.RestraintPotentialsFrame->setVisible(!checked);
+    }
+    else if (button == ui_.RestraintPotentialsPushButton)
+    {
+        ui_.GeneratorFrame->setVisible(!checked);
+        ui_.GlobalPotentialsFrame->setVisible(!checked);
+        ui_.RestraintPotentialsFrame->setVisible(checked);
     }
 }

@@ -6,7 +6,7 @@
 #include "base/units.h"
 #include "gui/mainTab.h"
 #include "gui/models/enumOptionsModel.h"
-#include "gui/models/globalPotentialModel.h"
+#include "gui/models/externalPotentialModel.h"
 #include "gui/models/procedureModel.h"
 #include "gui/ui_configurationTab.h"
 #include <map>
@@ -54,7 +54,7 @@ class ConfigurationTab : public QWidget, public MainTab
     // Procedure Model
     ProcedureModel procedureModel_;
     // Global potential model
-    GlobalPotentialModel globalPotentialModel_;
+    ExternalPotentialModel globalPotentialModel_;
 
     public:
     // Return displayed Configuration

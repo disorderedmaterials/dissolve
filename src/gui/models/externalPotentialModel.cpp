@@ -1,32 +1,29 @@
-#include "gui/models/globalPotentialModel.h"
+#include "gui/models/externalPotentialModel.h"
 #include "kernels/potentials/directional.h"
 
 GlobalPotentialModel::GlobalPotentialModel(const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials)
-    : globalPotentials_(globalPotentials)
-{
-    Messenger::print("{}", globalPotentials.size());
-}
+    : globalPotentials_(globalPotentials) {}
 
-int GlobalPotentialModel::rowCount(const QModelIndex &parent) const
+int ExternalPotentialModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return globalPotentials_.size();
+    return externalPotentials_.size();
 }
 
-int GlobalPotentialModel::columnCount(const QModelIndex &parent) const
+int ExternalPotentialModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 3;
 }
 
-const ExternalPotential *GlobalPotentialModel::rawData(const QModelIndex index) const
+const ExternalPotential *ExternalPotentialModel::rawData(const QModelIndex index) const
 {
-    return globalPotentials_[index.row()].get();
+    return externalPotentials_[index.row()].get();
 }
 
-ExternalPotential *GlobalPotentialModel::rawData(const QModelIndex index) { return globalPotentials_[index.row()].get(); }
+ExternalPotential *ExternalPotentialModel::rawData(const QModelIndex index) { return externalPotentials_[index.row()].get(); }
 
-QVariant GlobalPotentialModel::data(const QModelIndex &index, int role) const
+QVariant ExternalPotentialModel::data(const QModelIndex &index, int role) const
 {
     auto *p = rawData(index);
     if (!p)
@@ -55,9 +52,9 @@ QVariant GlobalPotentialModel::data(const QModelIndex &index, int role) const
     return {};
 }
 
-Qt::ItemFlags GlobalPotentialModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
+Qt::ItemFlags ExternalPotentialModel::flags(const QModelIndex &index) const { return Qt::ItemIsSelectable | Qt::ItemIsEnabled; }
 
-QVariant GlobalPotentialModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant ExternalPotentialModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
         return {};
@@ -79,7 +76,7 @@ QVariant GlobalPotentialModel::headerData(int section, Qt::Orientation orientati
 }
 
 // Set source AtomType data
-void GlobalPotentialModel::reset()
+void ExternalPotentialModel::reset()
 {
     beginResetModel();
     endResetModel();
