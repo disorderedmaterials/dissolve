@@ -94,7 +94,7 @@ class ImportCIFDialog : public WizardDialog
     void updateInfoPage();
 
     private:
-    CIFSpecies* cifSpecies_;
+    CIFSpecies *cifSpecies_;
 
     /*
      * Structure Page
@@ -147,7 +147,7 @@ class ImportCIFDialog : public WizardDialog
 
     private:
     // CIF Species
-    std::vector<CIFSpecies::CIFMolecularSpecies*> cifMolecularSpecies_;
+    std::vector<Species *> molecularSpecies_;
 
     /*
      * Supercell Page

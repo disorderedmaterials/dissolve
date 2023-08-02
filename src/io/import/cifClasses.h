@@ -6,6 +6,7 @@
 #include "data/elements.h"
 #include "templates/optionalRef.h"
 #include "templates/vector3.h"
+#include "neta/neta.h"
 #include <algorithm>
 #include <vector>
 
@@ -15,7 +16,6 @@ class CIFImport;
 class CoreData;
 class Configuration;
 class Species;
-class NETADefinition;
 
 // CIF Symmetry-Unique Atom
 class CIFSymmetryAtom
@@ -124,35 +124,52 @@ class CIFSpecies
 {
 
     public:
-    typedef struct CIFMolecularSpecies{
-        Species* species;
+    typedef struct CIFMolecularSpecies
+    {
+        Species *species;
         std::string netaString;
         std::vector<std::vector<int>> instances;
         std::vector<std::vector<Vec3<double>>> coordinates;
     } CIFMolecularSpecies;
 
     public:
-    CIFSpecies(CIFImport& cifImporter, CoreData& coreData);
+    CIFSpecies(CIFImport &cifImporter, CoreData &coreData);
 
     private:
-    CIFImport& cifImporter_;
-    CoreData& coreData_;
+    CIFImport &cifImporter_;
+    CoreData &coreData_;
+    Species *structuralSpecies_;
+    Configuration *structuralConfiguration_;
+    Species *cleanedSpecies_;
+    Configuration *cleanedConfiguration_;
+    std::vector<CIFMolecularSpecies *> molecularSpecies_;
+    Configuration *molecularConfiguration_;
+    Species *supercellSpecies_;
+    Configuration *supercellConfiguration_;
+    Species *partitionedSpecies_;
+    Configuration *partitionedConfiguration_;
 
     public:
-    Species* createStructuralSpecies(double tolerance, bool calculateBonding, bool preventMetallicBonding);
-    Species* createCleanedSpecies(Species* refSp, bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety, std::optional<NETADefinition> moietyNETA, std::optional<bool> removeEntireFragment);
-    std::vector<CIFMolecularSpecies*> createMolecularSpecies(Species* refSp);
-    Species* createSupercellSpecies(Species* refSp, Vec3<int> repeat, bool calculateBonding);
-    Configuration* generateConfiguration(Species* sp, std::string name);
-    Configuration* generateConfiguration(std::vector<CIFMolecularSpecies*>);
-    Configuration* generateConfiguration(CoreData& coreData, std::vector<CIFMolecularSpecies*>);
+    bool createStructuralSpecies(double tolerance, bool calculateBonding, bool preventMetallicBonding);
+    bool createCleanedSpecies(bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety,
+                              std::optional<NETADefinition> moietyNETA = std::nullopt, std::optional<bool> removeEntireFragment = std::nullopt);
+    bool createMolecularSpecies();
+    bool createSupercellSpecies(Vec3<int> repeat, bool calculateBonding, bool preventMetallicBonding);
+
+    Species *structuralSpecies();
+    Configuration *structuralConfiguration();
+    Species *cleanedSpecies();
+    Configuration *cleanedConfiguration();
+    std::vector<Species *> molecularSpecies();
+    Configuration *molecularConfiguration(CoreData &coreData);
+    Species *supercellSpecies();
+    Configuration *supercellConfiguration();
+    Configuration *partitionedConfiguration();
 
     private:
-    void applyCIFBonding(Species* sp, bool preventMetallicBonding);
-    std::optional<NETADefinition> uniqueNETADefinition(Species* sp);
-    std::vector<std::vector<int>> instances(Species* sp, NETADefinition neta);
+    void applyCIFBonding(Species *sp, bool preventMetallicBonding);
+    std::optional<NETADefinition> uniqueNETADefinition(Species *sp);
+    std::vector<std::vector<int>> instances(Species *sp, NETADefinition neta);
     std::vector<std::vector<Vec3<double>>> coordinates(Species *sp, std::vector<std::vector<int>> instances);
-    void fixGeometry(Species *sp, const Box* box);
-
-
+    void fixGeometry(Species *sp, const Box *box);
 };
