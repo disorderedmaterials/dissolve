@@ -1,5 +1,6 @@
 #include "gui/models/globalPotentialModel.h"
 #include "kernels/potentials/directional.h"
+
 GlobalPotentialModel::GlobalPotentialModel(const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials)
     : globalPotentials_(globalPotentials)
 {
