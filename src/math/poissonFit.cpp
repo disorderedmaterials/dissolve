@@ -437,6 +437,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, const std::vect
     poissonMinimiser.setMaxIterations(nIterations);
     poissonMinimiser.setStepSize(initialStepSize);
     poissonMinimiser.setSamplingFrequency(nIterations / 2.5);
+    poissonMinimiser.minimise();
 
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);
