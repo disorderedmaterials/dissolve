@@ -7,6 +7,7 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/intraShake/intraShake.h"
 #include <cstdio>
 #include <numeric>
@@ -264,6 +265,7 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  2)	Run processing Modules (using the world pool).
          */
+        ModuleContext context(worldPool(), *this);
         for (auto &layer : coreData_.processingLayers())
         {
             // Check if this layer is due to run this iteration
@@ -284,7 +286,7 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
-                if (module->executeProcessing(*this, worldPool()) == Module::ExecutionResult::Failed)
+                if (module->executeProcessing(context) == Module::ExecutionResult::Failed)
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }
         }

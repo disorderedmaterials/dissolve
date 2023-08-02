@@ -36,5 +36,5 @@ class AtomShakeModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    Module::ExecutionResult process(ModuleContext &moduleContext) override;
 };

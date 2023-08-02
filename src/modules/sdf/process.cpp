@@ -3,6 +3,7 @@
 
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/sdf/sdf.h"
 #include "procedure/nodes/collect3D.h"
 #include "procedure/nodes/process3D.h"
@@ -10,7 +11,7 @@
 #include "procedure/nodes/sequence.h"
 
 // Run main processing
-Module::ExecutionResult SDFModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -29,8 +30,8 @@ Module::ExecutionResult SDFModule::process(Dissolve &dissolve, const ProcessPool
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateSDF experienced problems with its analysis.\n");
@@ -40,17 +41,17 @@ Module::ExecutionResult SDFModule::process(Dissolve &dissolve, const ProcessPool
     // Save data?
     if (sdfFileAndFormat_.hasFilename())
     {
-        if (procPool.isMaster())
+        if (moduleContext.processPool().isMaster())
         {
             if (sdfFileAndFormat_.exportData(processPosition_->processedData()))
-                procPool.decideTrue();
+                moduleContext.processPool().decideTrue();
             else
             {
-                procPool.decideFalse();
+                moduleContext.processPool().decideFalse();
                 return ExecutionResult::Failed;
             }
         }
-        else if (!procPool.decision())
+        else if (!moduleContext.processPool().decision())
             return ExecutionResult::Failed;
     }
 

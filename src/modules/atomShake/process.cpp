@@ -9,10 +9,11 @@
 #include "classes/regionalDistributor.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/atomShake/atomShake.h"
 
 // Run main processing
-Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AtomShakeModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -22,7 +23,7 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
     }
 
     // Retrieve control parameters from Configuration
-    auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
+    auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());
     const auto termScale = 1.0;
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
@@ -34,18 +35,20 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
     Messenger::print("AtomShake: Target acceptance rate is {}.\n", targetAcceptanceRate_);
     Messenger::print("\n");
 
-    ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
     Timer commsTimer(false);
 
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), procPool, strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
+                                    moduleContext.processPool(), strategy);
 
     // Create a local ChangeStore and EnergyKernel
-    ChangeStore changeStore(procPool, commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, procPool, dissolve.potentialMap(), rCut);
+    ChangeStore changeStore(moduleContext.processPool(), commsTimer);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
+                                               moduleContext.dissolve().potentialMap(), rCut);
 
     // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
-    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
+    RandomBuffer randomBuffer(moduleContext.processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
     auto nAttempts = 0, nAccepted = 0;
     bool accept;
@@ -154,11 +157,11 @@ Module::ExecutionResult AtomShakeModule::process(Dissolve &dissolve, const Proce
     timer.stop();
 
     // Collect statistics across all processes
-    if (!procPool.allSum(&nAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&totalDelta, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
