@@ -42,11 +42,7 @@ void RangeVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMode
     emit(keywordDataChanged(keyword_->editSignals()));
 }
 
-void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked)
-{
-    rangeModel_.insertRows(rangeModel_.rowCount(), 1);
-    // rangeModel_.addRange();
-}
+void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked) { rangeModel_.insertRows(rangeModel_.rowCount(), 1); }
 
 void RangeVectorKeywordWidget::on_RangeRemoveButton_clicked(bool checked) { rangeModel_.removeRows(selectedRow(), 1); }
 
@@ -72,4 +68,9 @@ void RangeVectorKeywordWidget::updateValue(const Flags<DissolveSignals::DataMuta
         resetModelData();
 }
 
-int RangeVectorKeywordWidget::selectedRow() const { return ui_.RangeVectorTable->selectionModel()->currentIndex().row(); }
+int RangeVectorKeywordWidget::selectedRow() const
+{
+    return (ui_.RangeVectorTable->selectionModel()->hasSelection()
+                ? ui_.RangeVectorTable->selectionModel()->currentIndex().row()
+                : -1);
+}

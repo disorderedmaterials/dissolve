@@ -57,6 +57,10 @@
 							<property name="text">
 								<string>Add</string>
 							</property>
+                                <property name="icon">
+                                <iconset resource="main.qrc">
+                                <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+                                </property>
 						</widget>
 					</item>
 					<item>
@@ -64,6 +68,10 @@
 							<property name="text">
 								<string>Remove</string>
 							</property>
+                                <property name="icon">
+                                <iconset resource="main.qrc">
+                                <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+                                </property>
 						</widget>
 					</item>
 				</layout>
