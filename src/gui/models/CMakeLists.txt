@@ -7,6 +7,7 @@ set(models_MOC_HDRS
     configurationModel.h
     dataManagerSimulationModel.h
     enumOptionsModel.h
+    externalPotentialModel.h
     isotopologueSetModel.h
     masterAngleModel.h
     masterBondModel.h
@@ -59,6 +60,8 @@ set(models_SRCS
     dataManagerSimulationModel.cpp
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
+    externalPotentialModel.cpp
+    globalPotentialFilterProxy.cpp
     isotopologueSetModel.cpp
     masterAngleModel.cpp
     masterBondModel.cpp
@@ -106,6 +109,8 @@ qt_wrap_cpp(
   dataManagerSimulationModel.h
   enumOptionsModel.h
   expressionVariableVectorModel.h
+  externalPotentialModel.h
+  globalPotentialFilterProxy.h
   isotopologueSetModel.h
   pairPotentialModel.h
   speciesModel.h

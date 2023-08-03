@@ -47,6 +47,10 @@ class SimplePotential : public ExternalPotential
     void setPotential(const InteractionPotential<SimplePotentialFunctions> &potential);
     // Set coordinate origin of potential
     void setOrigin(Vec3<double> origin);
+    // Return functional form of the potential, as a string
+    const std::string formString() const override;
+    // Return parameters of the potential, as a string
+    const std::string formParametersString() const override;
 
     /*
      * Potential Calculation

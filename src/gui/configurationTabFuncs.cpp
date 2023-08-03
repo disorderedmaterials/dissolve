@@ -15,7 +15,8 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-      procedureModel_(cfg->generator())
+      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()),
+      targetedPotentialModel_(cfg->targetedPotentials())
 {
     ui_.setupUi(this);
 
@@ -34,6 +35,28 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     // Set warning for Size Factor indicator
     ui_.SizeFactorIndicator->setWarning();
+
+    // Set up the global potentials table
+    globalPotentialFilterProxy_.setSourceModel(&globalPotentialModel_);
+    ui_.GlobalPotentialsTable->setModel(&globalPotentialFilterProxy_);
+    ui_.GlobalPotentialsTable->horizontalHeader()->setFont(font());
+    ui_.GlobalPotentialsTable->horizontalHeader()->setVisible(true);
+    ui_.GlobalPotentialsTable->verticalHeader()->setFont(font());
+    ui_.GlobalPotentialsTable->verticalHeader()->setVisible(true);
+    ui_.GlobalPotentialsTable->resizeColumnsToContents();
+
+    // Set up the restraint potentials table
+    ui_.TargetedPotentialsTable->setModel(&targetedPotentialModel_);
+    ui_.TargetedPotentialsTable->horizontalHeader()->setFont(font());
+    ui_.TargetedPotentialsTable->horizontalHeader()->setVisible(true);
+    ui_.TargetedPotentialsTable->verticalHeader()->setFont(font());
+    ui_.TargetedPotentialsTable->verticalHeader()->setVisible(true);
+    ui_.TargetedPotentialsTable->resizeColumnsToContents();
+
+    ui_.GlobalPotentialsFrame->setHidden(true);
+    ui_.TargetedPotentialsFrame->setHidden(true);
+    connect(ui_.ConfigurationButtonGroup, SIGNAL(buttonToggled(QAbstractButton *, bool)), this,
+            SLOT(buttonGroupToggled(QAbstractButton *, bool)));
 }
 
 /*
@@ -135,6 +158,12 @@ void ConfigurationTab::updateControls()
                                                                      : "N/A");
     ui_.SizeFactorFrame->setVisible(configuration_->appliedSizeFactor().has_value());
 
+    // Potentials
+    globalPotentialModel_.reset();
+    ui_.GlobalPotentialsTable->resizeColumnsToContents();
+    targetedPotentialModel_.reset();
+    ui_.TargetedPotentialsTable->resizeColumnsToContents();
+
     // Viewer
     ui_.ViewerWidget->postRedisplay();
 }
@@ -185,3 +214,26 @@ void ConfigurationTab::on_GenerateButton_clicked(bool checked)
 
 // Density units changed
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index) { updateDensityLabel(); }
+
+// Button group toggled
+void ConfigurationTab::buttonGroupToggled(QAbstractButton *button, bool checked)
+{
+    if (button == ui_.GeneratorPushButton)
+    {
+        ui_.GeneratorFrame->setVisible(checked);
+        ui_.GlobalPotentialsFrame->setVisible(!checked);
+        ui_.TargetedPotentialsFrame->setVisible(!checked);
+    }
+    else if (button == ui_.GlobalPotentialsPushButton)
+    {
+        ui_.GeneratorFrame->setVisible(!checked);
+        ui_.GlobalPotentialsFrame->setVisible(checked);
+        ui_.TargetedPotentialsFrame->setVisible(!checked);
+    }
+    else if (button == ui_.TargetedPotentialsPushButton)
+    {
+        ui_.GeneratorFrame->setVisible(!checked);
+        ui_.GlobalPotentialsFrame->setVisible(!checked);
+        ui_.TargetedPotentialsFrame->setVisible(checked);
+    }
+}

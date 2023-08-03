@@ -50,6 +50,10 @@ class DirectionalPotential : public ExternalPotential
     void setOrigin(Vec3<double> origin);
     // Set vector of potential
     void setVector(Vec3<double> vector);
+    // Return functional form of the potential, as a string
+    const std::string formString() const override;
+    // Return parameters of the potential, as a string
+    const std::string formParametersString() const override;
 
     /*
      * Potential Calculation

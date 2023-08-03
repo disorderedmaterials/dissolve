@@ -62,6 +62,15 @@ void SimplePotential::setPotential(const InteractionPotential<SimplePotentialFun
 // Set coordinate origin of potential
 void SimplePotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
 
+// Return functional form of the potential, as a string
+const std::string SimplePotential::formString() const
+{
+    return SimplePotentialFunctions::forms().keyword(interactionPotential_.form());
+}
+
+// Return parameters of the potential, as a string
+const std::string SimplePotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
+
 /*
  * Potential Calculation
  */
