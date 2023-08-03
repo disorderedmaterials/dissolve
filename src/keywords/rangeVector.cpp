@@ -54,7 +54,7 @@ bool RangeVectorKeyword::deserialise(LineParser &parser, int startArg, const Cor
 bool RangeVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (auto &range : data_)
-        if (!parser.writeLineF("{}{}{}  {}  {}\n", prefix, keywordName, range.name(), range.minimum(), range.maximum()))
+        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, range.minimum(), range.maximum()))
             return false;
 
     return true;
@@ -69,19 +69,15 @@ SerialisedValue RangeVectorKeyword::serialise() const
 {
     return fromVector(data_,
                       [](const auto &item) -> SerialisedValue {
-                          return {{"name", item.name()}, {"minimum", item.minimum()}, {"maximum", item.maximum()}};
+                          return {{"minimum", item.minimum()}, {"maximum", item.maximum()}};
                       });
 }
 
 // Read values from a serialisable value
 void RangeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    toVector(node,
-             [this](const auto &item)
-             {
-                 data_.emplace_back(toml::find<double>(item, "minimum"), toml::find<double>(item, "maximum"),
-                                    toml::find<std::string>(item, "name"));
-             });
+    toVector(node, [this](const auto &item)
+             { data_.emplace_back(toml::find<double>(item, "minimum"), toml::find<double>(item, "maximum")); });
 }
 
 // Has not changed from initial value

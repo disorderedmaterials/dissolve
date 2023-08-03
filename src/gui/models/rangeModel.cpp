@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/models/rangeModel.h"
+#include <QBrush>
 #include <fmt/format.h>
 
 // set range data
@@ -13,7 +14,7 @@ void RangeModel::setData(std::vector<Range> &ranges)
     endResetModel();
 }
 
-Range RangeModel::getRange(const QModelIndex &index) const { return ranges_->get()[index.row()]; }
+Range *RangeModel::getRange(const QModelIndex &index) const { return &ranges_->get()[index.row()]; }
 
 /*
  * QAbstractItemModel overrides
@@ -40,39 +41,34 @@ QVariant RangeModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
+        case (Qt::EditRole):
         case (Qt::DisplayRole):
 
             switch (index.column())
             {
                 case (0):
-                    return QString::fromStdString(getRange(index).name());
+                    return QString::fromStdString(fmt::format("Range {}", index.row() + 1));
                 case (1):
-                    return QString::number(getRange(index).minimum());
+                    return getRange(index)->minimum();
                 case (2):
-                    return QString::number(getRange(index).maximum());
+                    return getRange(index)->maximum();
                 default:
                     return {};
             }
 
         case (Qt::UserRole):
+
             return QVariant::fromValue(getRange(index));
 
-        case (Qt::CheckStateRole):
-            if (index.column() != 0)
+        case (Qt::ForegroundRole):
+            if ((index.column() == 1 || index.column() == 2) && getRange(index)->maximum() < getRange(index)->minimum())
+            {
+                return QBrush(Qt::red);
+            }
+            else
             {
                 return {};
             }
-
-            if (!checkedRanges_)
-            {
-                return Qt::Unchecked;
-            }
-
-            // See if the selected cell's row index is stored in the checkedRanges_ vector
-            return std::find(checkedRanges_->get().begin(), checkedRanges_->get().end(), index.row()) ==
-                           checkedRanges_->get().end()
-                       ? Qt::Unchecked
-                       : Qt::Checked;
 
         default:
             return {};
@@ -85,8 +81,7 @@ bool RangeModel::insertRows(int row, int count, const QModelIndex &parent)
     Q_UNUSED(count);
 
     beginInsertRows(parent, row, row);
-    ++rangeCount_;
-    ranges_->get().emplace_back(0.0, 0.0, fmt::format("Range {}", rangeCount_));
+    ranges_->get().emplace_back(0.0, 0.0);
     endInsertRows();
     return true;
 }
@@ -109,88 +104,40 @@ bool RangeModel::removeRows(int row, int count, const QModelIndex &parent)
 
 bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!ranges_ || !checkedRanges_)
+    // HEY FUTURE NOELLA WE ARE WORKING ON SETTING THE NEW DATA AND RIGHT NOW STRUGGLING
+    // TO CONVERT VALUE TO DOUBLE AND STRING
+    if (!ranges_ || !value.canConvert<double>())
     {
         return false;
     }
 
     auto range = getRange(index);
-    double floatValue = value.value<float>();
+    auto doubleValue = value.toDouble();
 
     switch (index.column())
     {
-        case (0):
-            if (role == Qt::CheckStateRole)
-            {
-                // See if the selected cell's row index is stored in the checkedRanges_ vector
-                auto it = find(checkedRanges_->get().begin(), checkedRanges_->get().end(), index.row());
 
-                if (value.value<Qt::CheckState>() == Qt::Checked)
-                {
-                    // If checked cell is not stored in checkedRanges_, add it
-                    if (!checkedRanges_)
-                    {
-                        checkedRanges_->get().push_back(index.row());
-                    }
-                    else if (it == checkedRanges_->get().end())
-                    {
-                        checkedRanges_->get().push_back(index.row());
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-
-                else
-                {
-                    // If unchecked cell is stored in checkedRanges_, remove it
-                    if (!checkedRanges_)
-                    {
-                        return false;
-                    }
-                    else if (it != checkedRanges_->get().end())
-                    {
-                        checkedRanges_->get().erase(it);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                    emit dataChanged(index, index);
-                    return true;
-                }
-            }
-
-            break;
         case (1):
-            if (getRange(index).minimum() != floatValue)
+            if (range->minimum() != doubleValue)
             {
-                getRange(index).setMinimum(floatValue);
+                range->setMinimum(doubleValue);
 
                 emit dataChanged(index, index);
                 return true;
             }
-            else
-            {
-                return false;
-            }
-            break;
+
+            return false;
 
         case (2):
-            if (getRange(index).maximum() != floatValue)
+            if (range->maximum() != doubleValue)
             {
-                getRange(index).setMaximum(floatValue);
+                range->setMaximum(doubleValue);
 
                 emit dataChanged(index, index);
                 return true;
             }
-            else
-            {
-                return false;
-            }
-            break;
+
+            return false;
 
         default:
             return false;
@@ -203,7 +150,7 @@ Qt::ItemFlags RangeModel::flags(const QModelIndex &index) const
 {
     if (index.column() == 0)
     {
-        return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     }
     else
     {
@@ -213,10 +160,8 @@ Qt::ItemFlags RangeModel::flags(const QModelIndex &index) const
 
 QVariant RangeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != Qt::DisplayRole)
-        return {};
 
-    if (orientation == Qt::Horizontal)
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         switch (section)
         {
             case 0:

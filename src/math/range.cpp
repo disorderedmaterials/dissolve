@@ -3,11 +3,10 @@
 
 #include "math/range.h"
 
-Range::Range(double minimum, double maximum, std::string name)
+Range::Range(double minimum, double maximum)
 {
     minimum_ = minimum;
     maximum_ = maximum;
-    name_ = name;
 }
 
 /*
@@ -32,12 +31,6 @@ void Range::setMaximum(double maximum) { maximum_ = maximum; }
 
 // Return maximum for range
 double Range::maximum() const { return maximum_; }
-
-// Set name of range
-void Range::setName(std::string name) { name_ = name; }
-
-// Return name of range
-std::string Range::name() const { return name_; }
 
 // Return whether the range contains the specified value
 bool Range::contains(double d) const

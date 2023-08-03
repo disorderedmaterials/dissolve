@@ -48,7 +48,7 @@ void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked)
     // rangeModel_.addRange();
 }
 
-void RangeVectorKeywordWidget::on_RangeRemoveButton_clicked(bool checked) {}
+void RangeVectorKeywordWidget::on_RangeRemoveButton_clicked(bool checked) { rangeModel_.removeRows(selectedRow(), 1); }
 
 /*
  * Update
