@@ -55,7 +55,6 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     // Configuration
     partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
     partitioningConfiguration_->setName("Partitioning");
-
 }
 
 /*
@@ -399,7 +398,7 @@ bool ImportCIFDialog::createSupercellSpecies()
 
     cifSpecies_->createSupercellSpecies(repeat, ui_.CalculateBondingRadio->isChecked(),
                                         ui_.BondingPreventMetallicCheck->isChecked());
-    auto* supercell = cifSpecies_->supercellSpecies();
+    auto *supercell = cifSpecies_->supercellSpecies();
     if (!supercell)
         return false;
 

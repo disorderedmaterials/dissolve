@@ -342,7 +342,7 @@ bool CIFSpecies::createMolecularSpecies()
 // Create configuration that composes molecular species
 bool CIFSpecies::createMolecularConfiguration(OptionalReferenceWrapper<CoreData> coreData)
 {
-    CoreData& localCoreData = coreData ? coreData->get() : coreData_;
+    CoreData &localCoreData = coreData ? coreData->get() : coreData_;
 
     // Create a configuration
     molecularConfiguration_ = localCoreData.addConfiguration();
@@ -360,7 +360,7 @@ bool CIFSpecies::createMolecularConfiguration(OptionalReferenceWrapper<CoreData>
 
     for (auto &cifMolecularSp : molecularSpecies_)
     {
-        auto* sp = cifMolecularSp->species;
+        auto *sp = cifMolecularSp->species;
         // Add the species if it doesn't already exist
         if (!localCoreData.findSpecies(sp->name()))
             sp = localCoreData.copySpecies(cifMolecularSp->species);
@@ -380,8 +380,8 @@ bool CIFSpecies::createMolecularConfiguration(OptionalReferenceWrapper<CoreData>
         }
 
         // CoordinateSets
-        auto coordsNode = generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix),
-                                                                                sp);
+        auto coordsNode =
+            generator.createRootNode<CoordinateSetsProcedureNode>(fmt::format("SymmetryCopies_{}", uniqueSuffix), sp);
         coordsNode->keywords().setEnumeration("Source", CoordinateSetsProcedureNode::CoordinateSetSource::File);
         coordsNode->setSets(cifMolecularSp->coordinates);
 
