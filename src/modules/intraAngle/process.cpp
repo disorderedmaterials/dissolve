@@ -29,7 +29,6 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     collectABC_->keywords().set("RangeX", angleRange_);
 
     // Execute the analysis
-    // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
     context.setDissolve(moduleContext.dissolve());
     context.setPrefix(name());

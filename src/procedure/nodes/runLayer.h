@@ -20,6 +20,7 @@ class RunLayerNode : public ProcedureNode
     bool mustBeNamed() const override;
 
     private:
+    // Target module layer to run
     const ModuleLayer *layer_{nullptr};
 
     /*

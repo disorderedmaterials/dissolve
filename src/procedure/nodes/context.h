@@ -38,8 +38,8 @@ class ProcedureContext
     void setConfiguration(Configuration *cfg);
     // Return target Configuration
     Configuration *configuration() const;
-    // Set prefix
-    void setPrefix(std::string_view prefix);
+    // Set prefix for generated processing data
+    void setProcessingDataPrefix(std::string_view prefix);
     // Return prefix for generated data
     std::string_view dataPrefix() const;
     // Return target list for generated data
