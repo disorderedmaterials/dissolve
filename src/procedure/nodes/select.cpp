@@ -266,7 +266,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
             }
 
             // All OK, so add site and index in its stack (1...N numbering)
-            sites_.emplace_back(site, siteIndex++, n+1);
+            sites_.emplace_back(site, siteIndex++, n + 1);
         }
     }
 
