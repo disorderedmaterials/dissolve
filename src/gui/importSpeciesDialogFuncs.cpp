@@ -25,8 +25,8 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     atomTypesModel_.setIconFunction(
         [&](const std::shared_ptr<AtomType> &atomType)
         {
-            return QIcon(dissolve_.coreData().findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
-                                                                             : ":/general/icons/general_true.svg");
+            return QIcon(dissolve_.coreData().findAtomType(atomType->name()) ? ":/general/icons/warn.svg"
+                                                                             : ":/general/icons/true.svg");
         });
     ui_.AtomTypesList->setModel(&atomTypesModel_);
     connect(ui_.AtomTypesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
@@ -35,27 +35,18 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     // Set model and signals for the master terms tree
     masterTermModel_.setBondIconFunction(
         [&](std::string_view name)
-        {
-            return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/general_warn.svg"
-                                                                  : ":/general/icons/general_true.svg");
-        });
+        { return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg"); });
     masterTermModel_.setAngleIconFunction(
         [&](std::string_view name)
-        {
-            return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/general_warn.svg"
-                                                                   : ":/general/icons/general_true.svg");
-        });
+        { return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg"); });
     masterTermModel_.setTorsionIconFunction(
-        [&](std::string_view name)
-        {
-            return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
-                                                                     : ":/general/icons/general_true.svg");
+        [&](std::string_view name) {
+            return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg");
         });
     masterTermModel_.setImproperIconFunction(
-        [&](std::string_view name)
-        {
-            return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
-                                                                      : ":/general/icons/general_true.svg");
+        [&](std::string_view name) {
+            return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/warn.svg"
+                                                                      : ":/general/icons/true.svg");
         });
     ui_.MasterTermsTree->setModel(&masterTermModel_);
     connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,

@@ -9,10 +9,10 @@ weight: 1
 Let's now set up a configuration for our simulation. We'll focus on just the Cu-BTC itself which means we essentially want to create a configuration with one copy of the Cu-BTC species in it, and which takes on its unit cell. Dissolve has a specific option for creating this kind of system:
 
 {{< action type="menu" text="Configuration &#8680; Create..." />}}
-{{< action type="mouse" >}}Choose the framework species and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}The configuration type is selected as _Framework + Mixture_ so press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}The box style is now restricted to _Fixed Geometry, Fixed Size_ and the box lengths and angles can't be changed, so press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}There is nothing to define on the species page, so click {{< gui-button text="Finish" icon="general_true" >}}{{< /action >}}
+{{< action type="mouse" >}}Choose the framework species and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}The configuration type is selected as _Framework + Mixture_ so press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}The box style is now restricted to _Fixed Geometry, Fixed Size_ and the box lengths and angles can't be changed, so press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}There is nothing to define on the species page, so click {{< gui-button text="Finish" icon="true" >}}{{< /action >}}
 {{< action type="edit" text="Double-click on the configuration tab's title and change its name to `MOF`" />}}
 
 
@@ -42,7 +42,7 @@ We're changing to a finer binning in $Q$ so our Bragg features have better defin
 
 One thing missing from the standard layers is the calculation of Bragg scattering, so we must add a {{< module "Bragg" >}} module in to this layer.
 
-{{< action type="mouse" >}}Show the module palette for the current layer by clicking the {{< gui-button icon="general_palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
+{{< action type="mouse" >}}Show the module palette for the current layer by clicking the {{< gui-button icon="palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
 {{< action type="mouse" >}}Drag a {{< module "Bragg" >}} module from the **Correlations** category up to the module list, placing it in-between the existing {{< module "GR" >}} and {{< module "SQ" >}} modules{{< /action >}}
 {{< action type="mouse" >}}Select the new {{< module "Bragg" >}} module to show its options{{< /action >}}
 {{< action type="edit" >}}Change the **QMax** to `5.0`{{< /action >}}

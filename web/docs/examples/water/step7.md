@@ -25,7 +25,7 @@ Our new layer contains only the {{< module "EPSR" >}} module, and which Dissolve
 
 The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the `EPSR` module to use. You'll see that Dissolve has added all of the available {{< module "NeutronSQ" >}} modules have been selected automatically.
 
-All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different {{< gui-button text="Output" icon="general_output" >}} tabs in the {{< module "EPSR" >}} module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
+All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different {{< gui-button text="Output" icon="output" >}} tabs in the {{< module "EPSR" >}} module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
 
 ### 1. F(Q)
 
