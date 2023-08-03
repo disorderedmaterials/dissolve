@@ -48,6 +48,8 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
     nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
+    siteIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("siteIndex"));
+    indexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("index"));
 }
 
 /*
@@ -61,6 +63,8 @@ void SelectProcedureNode::setName(std::string_view name)
 
     // Update parameter names to match
     nSelectedParameter_->setName(fmt::format("{}.nSelected", name_));
+    siteIndexParameter_->setName(fmt::format("{}.siteIndex", name_));
+    indexParameter_->setName(fmt::format("{}.index", name_));
 }
 
 /*
@@ -270,9 +274,12 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
     currentSite_ = std::nullopt;
     if (!forEachBranch_.empty())
     {
+        auto index = 1;
         for (const auto &siteInfo : sites_)
         {
             currentSite_ = siteInfo.first;
+            siteIndexParameter_->setValue(siteInfo.second);
+            indexParameter_->setValue(index++);
 
             ++nCumulativeSites_;
 
