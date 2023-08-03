@@ -61,6 +61,7 @@ set(models_SRCS
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
+    globalPotentialFilterProxy.cpp
     isotopologueSetModel.cpp
     masterAngleModel.cpp
     masterBondModel.cpp
@@ -109,6 +110,7 @@ qt_wrap_cpp(
   enumOptionsModel.h
   expressionVariableVectorModel.h
   externalPotentialModel.h
+  globalPotentialFilterProxy.h
   isotopologueSetModel.h
   pairPotentialModel.h
   speciesModel.h

@@ -15,7 +15,7 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials())
+      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()), targetedPotentialModel_(cfg->targetedPotentials())
 {
     ui_.setupUi(this);
 
@@ -36,12 +36,21 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     ui_.SizeFactorIndicator->setWarning();
 
     // Set up the global potentials table
-    ui_.GlobalPotentialsTable->setModel(&globalPotentialModel_);
+    globalPotentialFilterProxy_.setSourceModel(&globalPotentialModel_);
+    ui_.GlobalPotentialsTable->setModel(&globalPotentialFilterProxy_);
     ui_.GlobalPotentialsTable->horizontalHeader()->setFont(font());
     ui_.GlobalPotentialsTable->horizontalHeader()->setVisible(true);
     ui_.GlobalPotentialsTable->verticalHeader()->setFont(font());
     ui_.GlobalPotentialsTable->verticalHeader()->setVisible(true);
     ui_.GlobalPotentialsTable->resizeColumnsToContents();
+
+    // Set up the restraint potentials table
+    ui_.RestraintPotentialsTable->setModel(&targetedPotentialModel_);
+    ui_.RestraintPotentialsTable->horizontalHeader()->setFont(font());
+    ui_.RestraintPotentialsTable->horizontalHeader()->setVisible(true);
+    ui_.RestraintPotentialsTable->verticalHeader()->setFont(font());
+    ui_.RestraintPotentialsTable->verticalHeader()->setVisible(true);
+    ui_.RestraintPotentialsTable->resizeColumnsToContents();
 
     ui_.GlobalPotentialsFrame->setHidden(true);
     ui_.RestraintPotentialsFrame->setHidden(true);
@@ -151,6 +160,8 @@ void ConfigurationTab::updateControls()
     // Potentials
     globalPotentialModel_.reset();
     ui_.GlobalPotentialsTable->resizeColumnsToContents();
+    targetedPotentialModel_.reset();
+    ui_.RestraintPotentialsTable->resizeColumnsToContents();
 
     // Viewer
     ui_.ViewerWidget->postRedisplay();

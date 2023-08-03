@@ -1,8 +1,8 @@
 #include "gui/models/externalPotentialModel.h"
 #include "kernels/potentials/directional.h"
 
-GlobalPotentialModel::GlobalPotentialModel(const std::vector<std::unique_ptr<ExternalPotential>> &globalPotentials)
-    : globalPotentials_(globalPotentials) {}
+ExternalPotentialModel::ExternalPotentialModel(const std::vector<std::unique_ptr<ExternalPotential>> &externalPotentials)
+    : externalPotentials_(externalPotentials) {}
 
 int ExternalPotentialModel::rowCount(const QModelIndex &parent) const
 {
@@ -13,7 +13,7 @@ int ExternalPotentialModel::rowCount(const QModelIndex &parent) const
 int ExternalPotentialModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 3;
+    return 4;
 }
 
 const ExternalPotential *ExternalPotentialModel::rawData(const QModelIndex index) const
@@ -42,6 +42,8 @@ QVariant ExternalPotentialModel::data(const QModelIndex &index, int role) const
             // Parameters
             case (2):
                 return QString::fromStdString(p->formParametersString());
+            case (3):
+                return "Targets";
             default:
                 return {};
         }
@@ -68,6 +70,8 @@ QVariant ExternalPotentialModel::headerData(int section, Qt::Orientation orienta
                 return "Form";
             case (2):
                 return "Parameters";
+            case (3):
+                return "Target";
             default:
                 return {};
         }
