@@ -98,10 +98,8 @@ QVariant ProcedureModel::data(const QModelIndex &index, int role) const
             case (Qt::UserRole):
                 return QVariant::fromValue(node->shared_from_this());
             case (Qt::DecorationRole):
-                return QIcon((QPixmap(
-                    QString(":/nodes/icons/nodes_%1.svg")
-                        .arg(
-                            QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node->type()))).toLower()))));
+                return QIcon(QPixmap(QString(":/nodes/icons/nodes/%1.svg")
+                                         .arg(QString::fromStdString(ProcedureNode::lccNodeType(node->type())))));
             default:
                 return {};
         }
@@ -324,7 +322,7 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
             return false;
 
         // Now check the suitability of the existing node in the target scope context.
-        if (!existingNode->isContextRelevant(scope->get().sequenceContext()))
+        if (!existingNode->isContextRelevant(scope->get().context()))
             return false;
 
         return true;
@@ -348,7 +346,7 @@ bool ProcedureModel::canDropMimeData(const QMimeData *data, Qt::DropAction actio
         auto newNode = mimeData->node();
         if (!newNode)
             return false;
-        if (!newNode->isContextRelevant(scope->get().sequenceContext()))
+        if (!newNode->isContextRelevant(scope->get().context()))
             return false;
 
         return true;

@@ -16,9 +16,9 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 
 {{< action type="menu" text="Layer &#8680; Create &#8680; Empty" />}}
 {{< action type="edit" text="Double-click the layer tab and rename it to `Analysis`" />}}
-{{< action type="mouse">}}Show the module palette for the current layer by clicking the {{< gui-button icon="general_palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
+{{< action type="mouse">}}Show the module palette for the current layer by clicking the {{< gui-button icon="palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
 {{< action type="mouse">}}Drag a {{< module "AxisAngle" >}} module up to the module list{{< /action >}}
-{{< action type="mouse">}}Select the new {{< module "AxisAngle" >}} module to show its {{< gui-button text="Options" icon="general_options" >}}{{< /action >}}
+{{< action type="mouse">}}Select the new {{< module "AxisAngle" >}} module to show its {{< gui-button text="Options" icon="options" >}}{{< /action >}}
 {{< action type="edit" text="For the **DistanceRange** change the _Bin Width_ to `10` respectively" />}}
 {{< action type="edit" text="For the **AngleRange** change the _Max_ to `90`"/>}}
 {{< action type="edit" text="Enable the **Symmetric** option"/>}}

@@ -7,6 +7,7 @@
 #include "keywords/fileAndFormat.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
+#include "module/context.h"
 #include "procedure/nodes/calculateAngle.h"
 #include "procedure/nodes/calculateDistance.h"
 #include "procedure/nodes/collect1D.h"

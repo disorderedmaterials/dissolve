@@ -37,7 +37,7 @@ void SpeciesTab::on_IsotopologuesTree_customContextMenuRequested(const QPoint &p
     auto *setHDeuteriated = setHydrogensMenu->addAction("Deuteriated");
     menu.addSeparator();
     auto *duplicate = menu.addAction("Duplicate");
-    duplicate->setIcon(QIcon(":/general/icons/general_copy.svg"));
+    duplicate->setIcon(QIcon(":/general/icons/copy.svg"));
 
     auto *action = menu.exec(ui_.IsotopologuesTree->mapToGlobal(pos));
     if (action == setHNatural || action == setHProtiated || action == setHDeuteriated)

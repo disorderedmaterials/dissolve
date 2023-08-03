@@ -60,7 +60,7 @@
      </property>
      <property name="icon">
       <iconset resource="../main.qrc">
-       <normaloff>:/general/icons/general_clear.svg</normaloff>:/general/icons/general_clear.svg</iconset>
+       <normaloff>:/general/icons/clear.svg</normaloff>:/general/icons/clear.svg</iconset>
      </property>
      <property name="iconSize">
       <size>

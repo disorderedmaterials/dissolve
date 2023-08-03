@@ -48,9 +48,6 @@
         <property name="leftMargin">
          <number>0</number>
         </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
         <property name="rightMargin">
          <number>0</number>
         </property>
@@ -67,7 +64,7 @@
           </property>
           <property name="icon">
            <iconset resource="main.qrc">
-            <normaloff>:/general/icons/general_generator.svg</normaloff>:/general/icons/general_generator.svg</iconset>
+            <normaloff>:/general/icons/generator.svg</normaloff>:/general/icons/generator.svg</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -126,7 +123,7 @@
                </property>
                <property name="icon">
                 <iconset resource="main.qrc">
-                 <normaloff>:/general/icons/general_repeat.svg</normaloff>:/general/icons/general_repeat.svg</iconset>
+                 <normaloff>:/general/icons/repeat.svg</normaloff>:/general/icons/repeat.svg</iconset>
                </property>
               </widget>
              </item>
@@ -322,17 +319,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="TemperatureToolButton">
@@ -344,7 +344,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/general_temperature.svg</normaloff>:/general/icons/general_temperature.svg</iconset>
+              <normaloff>:/general/icons/temperature.svg</normaloff>:/general/icons/temperature.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -370,17 +370,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="CurrentBoxToolButton">
@@ -392,7 +395,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/tabs/icons/tabs_configuration.svg</normaloff>:/tabs/icons/tabs_configuration.svg</iconset>
+              <normaloff>:/general/icons/configuration.svg</normaloff>:/general/icons/configuration.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -410,7 +413,6 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
@@ -434,17 +436,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="DensityToolButton">
@@ -456,7 +461,13 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/general_density.svg</normaloff>:/general/icons/general_density.svg</iconset>
+              <normaloff>:/general/icons/density.svg</normaloff>:/general/icons/density.svg</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>14</width>
+              <height>14</height>
+             </size>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -474,7 +485,6 @@
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
@@ -523,6 +533,10 @@
             </property>
             <property name="text">
              <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="main.qrc">
+              <normaloff>:/nodes/icons/nodes/sizeFactor.svg</normaloff>:/nodes/icons/nodes/sizeFactor.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -573,17 +587,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="MoleculePopulationToolButton">
@@ -595,7 +612,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/wizard/icons/wizard_allatoms.svg</normaloff>:/wizard/icons/wizard_allatoms.svg</iconset>
+              <normaloff>:/general/icons/species.svg</normaloff>:/general/icons/species.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -630,17 +647,20 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <property name="leftMargin">
+          <property name="spacing">
            <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
           </property>
           <property name="topMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <property name="bottomMargin">
-           <number>4</number>
+           <number>2</number>
           </property>
           <item>
            <widget class="QToolButton" name="AtomPopulationToolButton">
@@ -652,7 +672,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/viewer/icons/viewer_spheres_on.svg</normaloff>:/viewer/icons/viewer_spheres_on.svg</iconset>
+              <normaloff>:/general/icons/spheres_on.svg</normaloff>:/general/icons/spheres_on.svg</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>

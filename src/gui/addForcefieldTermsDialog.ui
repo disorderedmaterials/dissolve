@@ -131,7 +131,7 @@ Overwrite any assigned atom types</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/wizard/icons/wizard_allatoms.svg</normaloff>:/wizard/icons/wizard_allatoms.svg</iconset>
+                <normaloff>:/general/icons/species.svg</normaloff>:/general/icons/species.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -155,7 +155,7 @@ Overwrite any assigned atom types</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/wizard/icons/wizard_selectedatoms.svg</normaloff>:/wizard/icons/wizard_selectedatoms.svg</iconset>
+                <normaloff>:/general/icons/selectedAtoms.svg</normaloff>:/general/icons/selectedAtoms.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -176,7 +176,7 @@ that do not currently have one assigned</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/general_unknown.svg</normaloff>:/general/icons/general_unknown.svg</iconset>
+                <normaloff>:/general/icons/unknown.svg</normaloff>:/general/icons/unknown.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -194,7 +194,7 @@ Leave current atom types as they are</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/general_cross.svg</normaloff>:/general/icons/general_cross.svg</iconset>
+                <normaloff>:/general/icons/cross.svg</normaloff>:/general/icons/cross.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -505,7 +505,7 @@ Existing data will be overwritten</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/wizard/icons/wizard_allatoms.svg</normaloff>:/wizard/icons/wizard_allatoms.svg</iconset>
+                <normaloff>:/general/icons/species.svg</normaloff>:/general/icons/species.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -526,7 +526,7 @@ Existing data will be overwritten</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/wizard/icons/wizard_selectedatoms.svg</normaloff>:/wizard/icons/wizard_selectedatoms.svg</iconset>
+                <normaloff>:/general/icons/selectedAtoms.svg</normaloff>:/general/icons/selectedAtoms.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -547,7 +547,7 @@ Existing data will remain unchanged</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/general_cross.svg</normaloff>:/general/icons/general_cross.svg</iconset>
+                <normaloff>:/general/icons/cross.svg</normaloff>:/general/icons/cross.svg</iconset>
               </property>
               <property name="iconSize">
                <size>

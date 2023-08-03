@@ -139,11 +139,11 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             if (requestedSF < 1.0)
                 requestedSF = 1.0;
             Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to {}\n", requestedSF);
+            requestedSizeFactor_ = requestedSF;
         }
         else
         {
             Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n", requestedSF);
-            appliedSizeFactor_ = std::nullopt;
             break;
         }
     }

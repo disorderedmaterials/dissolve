@@ -50,6 +50,14 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
 
 // Return module type string for specified type enumeration
 std::string moduleType(ModuleTypes::ModuleType type) { return moduleTypes_.keyword(type); }
+// Return the lowerCamelCase name of the module type provided
+std::string lccModuleType(ModuleTypes::ModuleType type)
+{
+    auto lccModuleType = moduleTypes_.keyword(type);
+    if (!std::all_of(lccModuleType.begin(), lccModuleType.end(), [](const char c) { return std::isupper(c); }))
+        lccModuleType.front() = tolower(lccModuleType.front());
+    return lccModuleType;
+}
 // Return module type enumeration for specified module type string
 std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword)
 {
@@ -151,7 +159,7 @@ bool Module::isDisabled() const { return !enabled_; }
  */
 
 // Run main processing
-Module::ExecutionResult Module::process(Dissolve &dissolve, const ProcessPool &procPool) { return ExecutionResult::Failed; }
+Module::ExecutionResult Module::process(ModuleContext &moduleContext) { return ExecutionResult::Failed; }
 
 // Set target data
 void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
@@ -174,20 +182,17 @@ void Module::setTargets(const std::vector<std::unique_ptr<Configuration>> &confi
 }
 
 // Run set-up stage
-bool Module::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
-{
-    return true;
-}
+bool Module::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) { return true; }
 
 // Run main processing stage
-Module::ExecutionResult Module::executeProcessing(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult Module::executeProcessing(ModuleContext &moduleContext)
 {
     // Begin timer
     Timer timer;
     timer.start();
 
     // Run main processing routine
-    auto result = process(dissolve, procPool);
+    auto result = process(moduleContext);
 
     // Accumulate timing information
     timer.stop();

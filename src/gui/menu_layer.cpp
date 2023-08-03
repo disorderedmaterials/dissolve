@@ -4,6 +4,7 @@
 #include "gui/gui.h"
 #include "gui/layerTab.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/avgMol/avgMol.h"
 #include "modules/epsr/epsr.h"
 #include "modules/gr/gr.h"
@@ -39,8 +40,10 @@ void DissolveWindow::on_LayerCreateEvolveBasicAtomicAction_triggered(bool checke
     module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -70,8 +73,10 @@ void DissolveWindow::on_LayerCreateEvolveAtomicAction_triggered(bool checked)
     module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -101,8 +106,10 @@ void DissolveWindow::on_LayerCreateEvolveMolecularAction_triggered(bool checked)
     module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -130,8 +137,10 @@ void DissolveWindow::on_LayerCreateEvolveMDAction_triggered(bool checked)
     module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -160,8 +169,10 @@ void DissolveWindow::on_LayerCreateEvolveEPSRAction_triggered(bool checked)
     module = ModuleRegistry::create(ModuleTypes::Energy, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -183,8 +194,10 @@ void DissolveWindow::on_LayerCreateRefineEPSRAction_triggered(bool checked)
     // Set any suitable module targets
     epsr->keywords().set("Target", Module::allOfType(ModuleTypes::NeutronSQ));
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -202,8 +215,10 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFAction_triggered(bool checked)
     // Add the GR module
     newLayer->append(ModuleTypes::GR, dissolve_.coreData().configurations());
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -224,8 +239,10 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFStructureFactorAction_triggere
     // Add a plain structure factor module
     newLayer->append(ModuleTypes::SQ, dissolve_.coreData().configurations());
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -249,8 +266,10 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronAction_triggered(bool c
     // Add a NeutronSQ module
     newLayer->append(ModuleTypes::NeutronSQ, dissolve_.coreData().configurations());
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -274,8 +293,10 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFXRayAction_triggered(bool chec
     // Add an XRaySQ module
     newLayer->append(ModuleTypes::XRaySQ, dissolve_.coreData().configurations());
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -302,8 +323,10 @@ void DissolveWindow::on_LayerCreateCorrelationsRDFNeutronXRayAction_triggered(bo
     // Add an XRaySQ module
     newLayer->append(ModuleTypes::XRaySQ, dissolve_.coreData().configurations());
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -324,8 +347,10 @@ void DissolveWindow::on_LayerCreateAnalyseRDFCNAction_triggered(bool checked)
     auto *calcRDFModule = ModuleRegistry::create(ModuleTypes::SiteRDF, newLayer);
     calcRDFModule->keywords().set("Configuration", firstCfg);
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();
@@ -350,8 +375,10 @@ void DissolveWindow::on_LayerCreateAnalyseAvgMolSDFAction_triggered(bool checked
     module = ModuleRegistry::create(ModuleTypes::SDF, newLayer);
     module->keywords().set("Configuration", firstCfg);
 
+    ModuleContext context(dissolve_.worldPool(), dissolve_);
+
     // Run set-up stages for modules
-    newLayer->setUpAll(dissolve_, dissolve_.worldPool());
+    newLayer->setUpAll(context);
 
     setModified();
     fullUpdate();

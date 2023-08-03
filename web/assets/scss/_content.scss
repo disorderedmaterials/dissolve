@@ -154,7 +154,7 @@
 
 @mixin module-link($module) {
   .module-link.module-link-#{$module}::before{
-       background-image: url(/img/modules_#{$module}.svg);
+       background-image: url(/img/modules/#{$module}.svg);
   }
 }
 @mixin generate-module-link(){
@@ -188,7 +188,7 @@ $modules: ("accumulate", "analyse", "atomshake", "benchmark", "bragg", "calculat
 
 @mixin node-link($node) {
   .node-link.node-link-#{$node}::before{
-       background-image: url(/img/nodes_#{$node}.svg);
+       background-image: url(/img/nodes/#{$node}.svg);
   }
 }
 @mixin generate-node-link(){
