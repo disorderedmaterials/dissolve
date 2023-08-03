@@ -103,8 +103,8 @@ class SelectProcedureNode : public ProcedureNode
     private:
     // Vector of selected sites
     std::vector<const Site *> sites_;
-    // Current Site index
-    int currentSiteIndex_;
+    // Current site
+    const Site *currentSite_{nullptr};
     // Number of selections made by the node
     int nSelections_{0};
     // Cumulative number of sites ever selected

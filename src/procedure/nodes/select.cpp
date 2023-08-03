@@ -47,7 +47,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
-    currentSiteIndex_ = -1;
     nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
 }
 
@@ -167,10 +166,7 @@ unsigned long int SelectProcedureNode::nCumulativeSites() const { return nCumula
 unsigned long int SelectProcedureNode::nAvailableSites() const { return double(nAvailableSites_) / nSelections_; }
 
 // Return current site
-const Site *SelectProcedureNode::currentSite() const
-{
-    return (currentSiteIndex_ == -1 ? nullptr : sites_.at(currentSiteIndex_));
-}
+const Site *SelectProcedureNode::currentSite() const { return currentSite_; }
 
 /*
  * Branch
@@ -267,15 +263,17 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
         }
     }
 
-    // Set first site index and increase selections counter
-    currentSiteIndex_ = (sites_.empty() ? -1 : 0);
+    // Increase selections counter
     ++nSelections_;
 
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
+    currentSite_ = nullptr;
     if (!forEachBranch_.empty())
     {
-        for (currentSiteIndex_ = 0; currentSiteIndex_ < sites_.size(); ++currentSiteIndex_)
+        for (auto *s : sites_)
         {
+            currentSite_ = s;
+
             ++nCumulativeSites_;
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
