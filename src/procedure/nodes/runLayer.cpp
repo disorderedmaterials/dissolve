@@ -4,6 +4,7 @@
 #include "procedure/nodes/runLayer.h"
 #include "keywords/layer.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "module/layer.h"
 #include "procedure/nodes/node.h"
 
@@ -44,14 +45,15 @@ bool RunLayerNode::execute(const ProcedureContext &procedureContext)
     if (!layer_->canRun(procedureContext.dataList()))
         return true;
 
+    ModuleContext moduleContext(procedureContext.processPool(), procedureContext.dissolve());
+
     // Run the modules
     for (auto &module : layer_->modules())
     {
         if (!module->runThisIteration(procedureContext.dissolve().iteration() / layer_->frequency()))
             continue;
 
-        if (module->executeProcessing(procedureContext.dissolve(), procedureContext.processPool()) ==
-            Module::ExecutionResult::Failed)
+        if (module->executeProcessing(moduleContext) == Module::ExecutionResult::Failed)
             return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
     }
 
