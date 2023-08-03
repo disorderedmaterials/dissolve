@@ -228,7 +228,6 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
     /*
      * Add sites from specified Species/Sites
      */
-    double r;
     for (auto *spSite : speciesSites_)
     {
         const auto *siteStack = procedureContext.configuration()->siteStack(spSite);
@@ -257,8 +256,8 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
             // Check distance from reference site (if defined)
             if (distanceRef)
             {
-                r = procedureContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->get().origin());
-                if (!inclusiveDistanceRange_.contains(r))
+                if (!inclusiveDistanceRange_.contains(
+                        procedureContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->get().origin())))
                     continue;
             }
 
