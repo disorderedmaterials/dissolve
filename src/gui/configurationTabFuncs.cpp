@@ -15,7 +15,8 @@
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
                                    const QString title, Configuration *cfg)
     : MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this),
-      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()), targetedPotentialModel_(cfg->targetedPotentials())
+      procedureModel_(cfg->generator()), globalPotentialModel_(cfg->globalPotentials()),
+      targetedPotentialModel_(cfg->targetedPotentials())
 {
     ui_.setupUi(this);
 

@@ -2,7 +2,9 @@
 #include "kernels/potentials/directional.h"
 
 ExternalPotentialModel::ExternalPotentialModel(const std::vector<std::unique_ptr<ExternalPotential>> &externalPotentials)
-    : externalPotentials_(externalPotentials) {}
+    : externalPotentials_(externalPotentials)
+{
+}
 
 int ExternalPotentialModel::rowCount(const QModelIndex &parent) const
 {
