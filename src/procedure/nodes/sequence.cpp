@@ -348,12 +348,9 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     // Recursively check our owner
     if (owner_)
     {
-        auto optOtherParams = owner_->get().parameters();
-        if (optOtherParams)
-        {
-            const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);
-            parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
-        }
+        auto otherParams = owner_->get().getParameters();
+
+        parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
     }
 
     return parameters;
