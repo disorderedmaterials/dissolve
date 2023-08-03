@@ -46,7 +46,7 @@ QVariant ExternalPotentialModel::data(const QModelIndex &index, int role) const
                 return QString::fromStdString(p->formParametersString());
             // Target atom indices
             case (3):
-                return QString::fromStdString(joinStrings(p->targetAtomIndices(), " "));
+                return QString::fromStdString(joinStrings(p->targetAtomIndices(), "  ", [](const auto i) { return i + 1; }));
             default:
                 return {};
         }
