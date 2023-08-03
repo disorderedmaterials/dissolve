@@ -33,6 +33,7 @@ add_library(
   stdString.cpp
   store.cpp
   storeData.cpp
+  task.cpp
   valueStore.cpp
   vec3Double.cpp
   vec3Integer.cpp
@@ -82,6 +83,7 @@ add_library(
   stdString.h
   store.h
   storeData.h
+  task.h
   valueStore.h
   vec3Double.h
   vec3Integer.h
