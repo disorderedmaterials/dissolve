@@ -49,6 +49,7 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
     siteIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("siteIndex"));
+    stackIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("stackIndex"));
     indexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("index"));
 }
 
@@ -64,6 +65,7 @@ void SelectProcedureNode::setName(std::string_view name)
     // Update parameter names to match
     nSelectedParameter_->setName(fmt::format("{}.nSelected", name_));
     siteIndexParameter_->setName(fmt::format("{}.siteIndex", name_));
+    stackIndexParameter_->setName(fmt::format("{}.stackIndex", name_));
     indexParameter_->setName(fmt::format("{}.index", name_));
 }
 
@@ -228,6 +230,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
     /*
      * Add sites from specified Species/Sites
      */
+    auto siteIndex = 0;
     for (auto *spSite : speciesSites_)
     {
         const auto *siteStack = procedureContext.configuration()->siteStack(spSite);
@@ -237,6 +240,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
         for (auto n = 0; n < siteStack->nSites(); ++n)
         {
             const auto &site = siteStack->site(n);
+            ++siteIndex;
 
             // Check Molecule inclusion / exclusions
             if (moleculeParent)
@@ -262,7 +266,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
             }
 
             // All OK, so add site and index in its stack (1...N numbering)
-            sites_.emplace_back(site, n + 1);
+            sites_.emplace_back(site, siteIndex++, n+1);
         }
     }
 
@@ -276,8 +280,9 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
         auto index = 1;
         for (const auto &siteInfo : sites_)
         {
-            currentSite_ = siteInfo.first;
-            siteIndexParameter_->setValue(siteInfo.second);
+            currentSite_ = std::get<0>(siteInfo);
+            siteIndexParameter_->setValue(std::get<1>(siteInfo));
+            stackIndexParameter_->setValue(std::get<1>(siteInfo));
             indexParameter_->setValue(index++);
 
             ++nCumulativeSites_;

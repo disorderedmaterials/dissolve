@@ -38,7 +38,7 @@ class SelectProcedureNode : public ProcedureNode
     // Defined parameters
     std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
-    std::shared_ptr<ExpressionVariable> nSelectedParameter_, siteIndexParameter_, indexParameter_;
+    std::shared_ptr<ExpressionVariable> nSelectedParameter_, siteIndexParameter_, stackIndexParameter_, indexParameter_;
 
     public:
     // Return the named parameter (if it exists)
@@ -100,7 +100,7 @@ class SelectProcedureNode : public ProcedureNode
      */
     private:
     // Vector of selected sites
-    std::vector<std::pair<const Site &, int>> sites_;
+    std::vector<std::tuple<const Site &, int, int>> sites_;
     // Current site
     OptionalReferenceWrapper<const Site> currentSite_;
     // Number of selections made by the node
