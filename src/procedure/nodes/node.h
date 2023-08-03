@@ -96,9 +96,9 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         AnalysisContext = 1,
         GenerationContext = 2,
         OperateContext = 4,
-        AnyContext = 8,
-        InheritContext = 16,
-        ControlContext = 32
+        ControlContext = 8,
+        AnyContext = 16,
+        InheritContext = 32,
     };
     // Return enum option info for NodeContext
     static EnumOptions<NodeContext> nodeContexts();
