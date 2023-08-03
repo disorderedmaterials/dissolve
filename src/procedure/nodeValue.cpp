@@ -169,7 +169,7 @@ void NodeValue::deserialise(const SerialisedValue &node, std::vector<std::shared
             }
             else if constexpr (std::is_same_v<T, toml::string>)
             {
-                set(std::string_view(std::string(arg)), params);
+                set(std::string(arg), params);
             }
         },
         node);
