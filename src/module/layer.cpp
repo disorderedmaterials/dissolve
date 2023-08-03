@@ -215,7 +215,7 @@ void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreD
         [&coreData, this](const SerialisedValue &data)
         {
             auto *module =
-                append(*ModuleTypes::moduleType(std::string_view(std::string(toml::find<std::string>(data, "type"), {}))), {});
+                append(*ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
             module->deserialise(data, coreData);
         });
 }
