@@ -42,8 +42,9 @@ QVariant ExternalPotentialModel::data(const QModelIndex &index, int role) const
             // Parameters
             case (2):
                 return QString::fromStdString(p->formParametersString());
+            // Target atom indices
             case (3):
-                return "Targets";
+                return QString::fromStdString(joinStrings(p->targetAtomIndices(), " "));
             default:
                 return {};
         }
@@ -71,7 +72,7 @@ QVariant ExternalPotentialModel::headerData(int section, Qt::Orientation orienta
             case (2):
                 return "Parameters";
             case (3):
-                return "Target";
+                return "Targets";
             default:
                 return {};
         }
