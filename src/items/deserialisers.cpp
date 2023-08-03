@@ -190,6 +190,9 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         });
     registerDeserialiser<XRayWeights>(simpleDeserialiseCore<XRayWeights>);
 
+    // Containers of Custom Classes
+    registerDeserialiser<std::vector<BraggReflection>>(vectorDeserialise<BraggReflection>);
+
     // Legacy Classes
     registerLegacyDeserialiser<LegacyAtomTypeListItem>(simpleDeserialiseCore<LegacyAtomTypeListItem>);
 }
