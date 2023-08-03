@@ -4,6 +4,7 @@
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/qSpecies/qSpecies.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/operateSitePopulationNormalise.h"
@@ -12,7 +13,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-Module::ExecutionResult QSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult QSpeciesModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -29,11 +30,11 @@ Module::ExecutionResult QSpeciesModule::process(Dissolve &dissolve, const Proces
     selectNF_->keywords().set("InclusiveRange", distanceRange_);
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
-        Messenger::error("HistogramCN experienced problems with its analysis.\n");
+        Messenger::error("Q Species experienced problems with its analysis.\n");
         return ExecutionResult::Failed;
     }
 
