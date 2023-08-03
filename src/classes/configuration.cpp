@@ -76,7 +76,7 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
     Messenger::print("\n");
 
     // Set-up Cells for the Box
-    cells_.generate(box_.get(), requestedCellDivisionLength_, context.dissolve().potentialMap().range());
+    cells_.generate(box_.get(), requestedCellDivisionLength_, context.potentialMap().range());
 
     // Make sure all objects know about each other
     updateObjectRelationships();
