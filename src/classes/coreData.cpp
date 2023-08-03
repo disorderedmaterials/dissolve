@@ -9,6 +9,9 @@
 #include "classes/speciesAngle.h"
 #include "classes/speciesBond.h"
 #include "classes/speciesTorsion.h"
+#include "main/dissolve.h"
+#include "module/context.h"
+#include "module/layer.h"
 #include "module/module.h"
 
 // Clear all data
@@ -21,6 +24,7 @@ void CoreData::clear()
     masters_.torsions.clear();
     masters_.impropers.clear();
     atomTypes_.clear();
+    processingLayers_.clear();
 }
 
 /*
@@ -540,6 +544,56 @@ Configuration *CoreData::findConfigurationByNiceName(std::string_view name) cons
     if (it == configurations().end())
         return nullptr;
     return it->get();
+}
+
+/*
+ * Layers
+ */
+
+// Add new processing layer
+ModuleLayer *CoreData::addProcessingLayer() { return processingLayers_.emplace_back(std::make_unique<ModuleLayer>()).get(); }
+
+// Remove processing layer
+void CoreData::removeProcessingLayer(ModuleLayer *layer)
+{
+    if (!layer)
+        return;
+
+    // Remove any references to the Modules in the layer before we delete it
+    for (auto &module : layer->modules())
+        removeReferencesTo(module.get());
+
+    // Now safe to remove the layer
+    processingLayers_.erase(
+        std::find_if(processingLayers_.begin(), processingLayers_.end(), [layer](const auto &l) { return l.get() == layer; }));
+}
+
+// Find named processing layer
+ModuleLayer *CoreData::findProcessingLayer(std::string_view name) const
+{
+    auto it = std::find_if(processingLayers_.begin(), processingLayers_.end(),
+                           [name](auto &layer) { return DissolveSys::sameString(layer->name(), name); });
+    if (it == processingLayers_.end())
+        return nullptr;
+    return it->get();
+}
+
+// Return number of processing layers
+int CoreData::nProcessingLayers() const { return processingLayers_.size(); }
+
+// Return current processing layers
+std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() { return processingLayers_; }
+const std::vector<std::unique_ptr<ModuleLayer>> &CoreData::processingLayers() const { return processingLayers_; }
+
+// Run the set-up stages of all modules in all layers
+bool CoreData::setUpProcessingLayerModules(Dissolve &dissolve)
+{
+    auto setUpResult = true;
+    ModuleContext context(dissolve.worldPool(), dissolve);
+    for (auto &layer : processingLayers())
+        if (!layer->setUpAll(context))
+            setUpResult = false;
+    return setUpResult;
 }
 
 /*

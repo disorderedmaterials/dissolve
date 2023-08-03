@@ -99,9 +99,9 @@ std::pair<QPushButton *, bool> KeywordsWidget::buttonForGroup(std::string_view g
     b->setFlat(true);
 
     const std::vector<std::tuple<std::string_view, QString, bool>> knownButtons = {
-        {"Options", ":/general/icons/general_options.svg", false},
-        {"Export", ":/menu/icons/menu_save.svg", false},
-        {"Advanced", ":/general/icons/general_advanced.svg", true},
+        {"Options", ":/general/icons/options.svg", false},
+        {"Export", ":/general/icons/save.svg", false},
+        {"Advanced", ":/general/icons/advanced.svg", true},
     };
 
     // Apply icons / alignment to recognised buttons

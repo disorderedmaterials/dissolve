@@ -7,6 +7,7 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/intraShake/intraShake.h"
 #include <cstdio>
 #include <numeric>
@@ -197,7 +198,7 @@ bool Dissolve::prepare()
     }
 
     // Set up all modules and return
-    return setUpProcessingLayerModules();
+    return coreData_.setUpProcessingLayerModules(*this);
 }
 
 // Iterate main simulation
@@ -220,7 +221,7 @@ bool Dissolve::iterate(int nIterations)
         auto thisTime = 0.0;
         auto nEnabledModules = 0;
 
-        for (auto &layer : processingLayers_)
+        for (auto &layer : coreData_.processingLayers())
         {
             Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
@@ -264,7 +265,8 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  2)	Run processing Modules (using the world pool).
          */
-        for (auto &layer : processingLayers_)
+        ModuleContext context(worldPool(), *this);
+        for (auto &layer : coreData_.processingLayers())
         {
             // Check if this layer is due to run this iteration
             if (!layer->runThisIteration(iteration_))
@@ -284,7 +286,7 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
-                if (module->executeProcessing(*this, worldPool()) == Module::ExecutionResult::Failed)
+                if (module->executeProcessing(context) == Module::ExecutionResult::Failed)
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }
         }
@@ -376,7 +378,7 @@ std::optional<double> Dissolve::estimateRequiredTime(int nIterations)
     auto seconds = 0.0;
     auto n = 0;
 
-    for (const auto &layer : processingLayers_)
+    for (const auto &layer : coreData_.processingLayers())
     {
         if (!layer->isEnabled())
             continue;
@@ -425,7 +427,7 @@ void Dissolve::printTiming()
     // Add on space for brackets
     maxLength += 2;
 
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
     {
         Messenger::print("Accumulated timing for layer '{}':\n\n", layer->name());
         for (auto &module : layer->modules())

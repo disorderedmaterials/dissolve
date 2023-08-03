@@ -8,7 +8,7 @@ We'll add a basic analysis layer and calculate the IPA-water centre-of-mass RDF 
 
 {{< action type="menu" text="Layer &#8680; Create... &#8680; Empty" />}}
 {{< step text="Double-click the layer tab and rename it to `Analyse`" />}}
-{{< action type="mouse">}}Show the module palette for the current layer by clicking the {{< gui-button icon="general_palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
+{{< action type="mouse">}}Show the module palette for the current layer by clicking the {{< gui-button icon="palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
 {{< action type="mouse">}}Drag a {{< module "SiteRDF" >}} module from the _Import_ section into the layer{{< /action >}}
 
 In the {{< module "SiteRDF" >}} module itself:

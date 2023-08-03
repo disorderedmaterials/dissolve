@@ -12,10 +12,11 @@
 #include "classes/speciesTorsion.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/intraShake/intraShake.h"
 
 // Run main processing
-Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult IntraShakeModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -25,7 +26,7 @@ Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve, const Proc
     }
 
     // Retrieve control parameters
-    auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
+    auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
     // Print argument/parameter summary
@@ -53,18 +54,20 @@ Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve, const Proc
 
     Messenger::print("\n");
 
-    ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
     Timer commsTimer(false);
 
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), procPool, strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
+                                    moduleContext.processPool(), strategy);
 
     // Create a local ChangeStore and EnergyKernel
-    ChangeStore changeStore(procPool, commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, procPool, dissolve.potentialMap(), rCut);
+    ChangeStore changeStore(moduleContext.processPool(), commsTimer);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
+                                               moduleContext.dissolve().potentialMap(), rCut);
 
     // Initialise the random number buffer
-    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
+    RandomBuffer randomBuffer(moduleContext.processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
     // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
     if (!restrictToSpecies_.empty())
@@ -317,19 +320,19 @@ Module::ExecutionResult IntraShakeModule::process(Dissolve &dissolve, const Proc
     timer.stop();
 
     // Collect statistics across all processes
-    if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&totalDelta, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nBondAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nBondAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nBondAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nBondAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nAngleAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nAngleAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nAngleAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nAngleAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nTorsionAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nTorsionAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nTorsionAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nTorsionAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
 
     Messenger::print("IntraShake: Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);

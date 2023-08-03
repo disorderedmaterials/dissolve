@@ -82,12 +82,12 @@ class XRaySQModule : public Module
      */
     private:
     // Run main processing
-    Module::ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) override;
+    Module::ExecutionResult process(ModuleContext &moduleContext) override;
 
     public:
     // Set target data
     void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                     const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap) override;
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals) override;
+    bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals) override;
 };

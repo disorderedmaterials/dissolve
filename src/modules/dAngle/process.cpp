@@ -3,6 +3,7 @@
 
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/dAngle/dAngle.h"
 #include "procedure/nodes/calculateAngle.h"
 #include "procedure/nodes/collect1D.h"
@@ -11,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult DAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult DAngleModule::process(ModuleContext &moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -34,8 +35,8 @@ Module::ExecutionResult DAngleModule::process(Dissolve &dissolve, const ProcessP
         selectC_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateDAngle experienced problems with its analysis.\n");

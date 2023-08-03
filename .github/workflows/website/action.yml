@@ -89,7 +89,7 @@ runs:
     shell: bash
     run: |
       set -ex
-      cp -v src/gui/icons/*.svg web/static/img
+      cp -rv src/gui/icons/* web/static/img
 
   - name: 'Meld Examples'
     shell: bash

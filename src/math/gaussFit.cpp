@@ -329,7 +329,10 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
     // Calculate the approximate function
     generateApproximation(space);
 
-    return Error::percent(referenceData_, approximateData_);
+    auto errorReport = Error::percent(referenceData_, approximateData_);
+    Messenger::print(Error::errorReportString(errorReport));
+
+    return errorReport.error;
 }
 
 // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
@@ -409,7 +412,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
 
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);
-    currentError_ = Error::percent(referenceData_, approximateData_, true);
+    currentError_ = Error::percent(referenceData_, approximateData_).error;
 
     return currentError_;
 }

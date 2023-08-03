@@ -94,7 +94,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/general_expandall.svg</normaloff>:/general/icons/general_expandall.svg</iconset>
+              <normaloff>:/general/icons/expandAll.svg</normaloff>:/general/icons/expandAll.svg</iconset>
             </property>
            </widget>
           </item>
@@ -108,7 +108,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/general_collapseall.svg</normaloff>:/general/icons/general_collapseall.svg</iconset>
+              <normaloff>:/general/icons/collapseAll.svg</normaloff>:/general/icons/collapseAll.svg</iconset>
             </property>
            </widget>
           </item>
@@ -122,7 +122,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/general_context.svg</normaloff>:/general/icons/general_context.svg</iconset>
+              <normaloff>:/general/icons/context.svg</normaloff>:/general/icons/context.svg</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -142,7 +142,7 @@
             </property>
             <property name="icon">
              <iconset resource="main.qrc">
-              <normaloff>:/general/icons/general_trash.svg</normaloff>:/general/icons/general_trash.svg</iconset>
+              <normaloff>:/general/icons/trash.svg</normaloff>:/general/icons/trash.svg</iconset>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -206,7 +206,7 @@
      </property>
      <property name="icon">
       <iconset resource="main.qrc">
-       <normaloff>:/general/icons/general_palette.svg</normaloff>:/general/icons/general_palette.svg</iconset>
+       <normaloff>:/general/icons/palette.svg</normaloff>:/general/icons/palette.svg</iconset>
      </property>
      <property name="iconSize">
       <size>

@@ -69,10 +69,10 @@ void Configuration::scaleBox(Vec3<double> scaleFactors)
 void Configuration::setRequestedSizeFactor(double factor) { requestedSizeFactor_ = factor; }
 
 // Return requested size factor for Box
-double Configuration::requestedSizeFactor() const { return requestedSizeFactor_; }
+std::optional<double> Configuration::requestedSizeFactor() const { return requestedSizeFactor_; }
 
 // Return last size factor applied to Box / Cells
-double Configuration::appliedSizeFactor() const { return appliedSizeFactor_; }
+std::optional<double> Configuration::appliedSizeFactor() const { return appliedSizeFactor_; }
 
 // Set requested side length for individual Cell
 void Configuration::setRequestedCellDivisionLength(double a) { requestedCellDivisionLength_ = a; }
@@ -90,10 +90,13 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
 {
     const auto reductionFactor = 0.95;
 
+    auto requestedSF = requestedSizeFactor_.value_or(defaultSizeFactor_);
+    auto appliedSF = appliedSizeFactor_.value_or(defaultSizeFactor_);
+
     while (true)
     {
         // Calculate ratio between current and applied size factors for use later on
-        const auto sizeFactorRatio = requestedSizeFactor_ / appliedSizeFactor_;
+        const auto sizeFactorRatio = requestedSF / appliedSF;
 
         // Check current vs applied size factors (via the ratio) - if unequal, perform scaling and set the new applied
         // size factor
@@ -101,7 +104,7 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
         {
             Messenger::print("Requested SizeFactor for Configuration is {}, current SizeFactor is {}, so scaling "
                              "Box contents.\n",
-                             requestedSizeFactor_, appliedSizeFactor_);
+                             requestedSF, appliedSF);
 
             // Scale molecule centres of geometry
             scaleContents({sizeFactorRatio, sizeFactorRatio, sizeFactorRatio});
@@ -113,7 +116,7 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
             updateAtomLocations();
 
             // Store new size factors
-            appliedSizeFactor_ = requestedSizeFactor_;
+            appliedSizeFactor_ = requestedSF;
 
             // Can now break out of the loop
             break;
@@ -125,18 +128,22 @@ void Configuration::applySizeFactor(const ProcessPool &procPool, const Potential
          *  -- Otherwise, check energy - if it is negative, reduce requested size factor
          *  -- If energy is positive, don't change anything
          */
-        if (fabs(requestedSizeFactor_ - 1.0) < 1.0e-5)
+        if (fabs(requestedSF - 1.0) < 1.0e-5)
+        {
+            appliedSizeFactor_ = std::nullopt;
             break;
+        }
         else if (EnergyModule::interMolecularEnergy(procPool, this, potentialMap) <= 0.0)
         {
-            requestedSizeFactor_ *= reductionFactor;
-            if (requestedSizeFactor_ < 1.0)
-                requestedSizeFactor_ = 1.0;
-            Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to {}\n", requestedSizeFactor_);
+            requestedSF *= reductionFactor;
+            if (requestedSF < 1.0)
+                requestedSF = 1.0;
+            Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to {}\n", requestedSF);
+            requestedSizeFactor_ = requestedSF;
         }
         else
         {
-            Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n", requestedSizeFactor_);
+            Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n", requestedSF);
             break;
         }
     }
