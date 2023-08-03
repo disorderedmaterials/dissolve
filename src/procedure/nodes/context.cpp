@@ -31,8 +31,10 @@ Configuration *ProcedureContext::configuration() const
     return configuration_;
 }
 
+// Set reference to Dissolve
 void ProcedureContext::setDissolve(Dissolve &dissolve) { dissolve_ = dissolve; }
 
+// Return reference to Dissolve
 Dissolve &ProcedureContext::dissolve() const
 {
     if (!dissolve_)
@@ -46,6 +48,7 @@ void ProcedureContext::setPrefix(std::string_view prefix) { dataPrefix_ = prefix
 // Return prefix for generated data
 std::string_view ProcedureContext::dataPrefix() const { return dataPrefix_; }
 
+// Return target list for generated data
 GenericList &ProcedureContext::dataList() const
 {
     if (!dissolve_)
@@ -54,6 +57,7 @@ GenericList &ProcedureContext::dataList() const
     return dissolve_->get().processingModuleData();
 }
 
+// Return potential map
 const PotentialMap &ProcedureContext::potentialMap() const
 {
     if (!dissolve_)

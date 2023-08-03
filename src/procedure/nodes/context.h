@@ -44,9 +44,9 @@ class ProcedureContext
     std::string_view dataPrefix() const;
     // Return target list for generated data
     GenericList &dataList() const;
-    // Set dissolve
+    // Set reference to Dissolve
     void setDissolve(Dissolve &dissolve);
-    // Return reference to dissolve
+    // Return reference to Dissolve
     Dissolve &dissolve() const;
     // Return potential map
     const PotentialMap &potentialMap() const;
