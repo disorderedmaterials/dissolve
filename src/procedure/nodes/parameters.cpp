@@ -72,8 +72,6 @@ void ParametersProcedureNode::deserialise(const SerialisedValue &node, const Cor
           [this](const auto &key, const auto &value)
           {
               if (key != "type")
-              {
                   addParameter(key, toml::get<ExpressionValue>(value));
-              }
           });
 }

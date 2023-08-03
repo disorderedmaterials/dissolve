@@ -161,11 +161,11 @@ void NodeValue::deserialise(const SerialisedValue &node, std::vector<std::shared
             using T = std::decay_t<decltype(arg)>;
             if constexpr (std::is_same_v<T, toml::integer>)
             {
-		set((int) arg);
+                set((int)arg);
             }
             else if constexpr (std::is_same_v<T, toml::floating>)
             {
-		set((double) arg);
+                set((double)arg);
             }
             else if constexpr (std::is_same_v<T, toml::string>)
             {
