@@ -81,7 +81,7 @@ class SelectProcedureNode : public ProcedureNode
     // Site to use for distance check
     std::shared_ptr<const SelectProcedureNode> distanceReferenceSite_;
     // Range of distance to allow from distance reference site (if limiting)
-    Range inclusiveDistanceRange_;
+    Range inclusiveDistanceRange_{0.0, 5.0};
 
     public:
     // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
@@ -106,11 +106,11 @@ class SelectProcedureNode : public ProcedureNode
     // Current Site index
     int currentSiteIndex_;
     // Number of selections made by the node
-    int nSelections_;
+    int nSelections_{0};
     // Cumulative number of sites ever selected
-    unsigned long int nCumulativeSites_;
+    unsigned long int nCumulativeSites_{0};
     // Total number of sites available per selection
-    unsigned long int nAvailableSites_;
+    unsigned long int nAvailableSites_{0};
 
     public:
     // Selection Populations

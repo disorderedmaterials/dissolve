@@ -20,8 +20,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     : ProcedureNode(ProcedureNode::NodeType::Select, {ProcedureNode::AnalysisContext, ProcedureNode::GenerationContext}),
       speciesSites_(std::move(sites)), axesRequired_(axesRequired), forEachBranch_(forEachContext, *this, "ForEach")
 {
-    inclusiveDistanceRange_.set(0.0, 5.0);
-
     keywords_.setOrganisation("Options", "Sites");
     keywords_.add<SpeciesSiteVectorKeyword>("Site", "Add target site(s) to the selection", speciesSites_, axesRequired_);
 
@@ -50,11 +48,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
     currentSiteIndex_ = -1;
-    nCumulativeSites_ = 0;
-    nSelections_ = 0;
-    nAvailableSites_ = 0;
-    sameMolecule_ = nullptr;
-    distanceReferenceSite_ = nullptr;
     nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
 }
 
