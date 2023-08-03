@@ -19,6 +19,7 @@ add_library(
   cylindricalRegion.cpp
   directionalGlobalPotential.cpp
   generalRegion.cpp
+  ifValueInRange.cpp
   importCoordinates.cpp
   integerCollect1D.cpp
   integrate1D.cpp
@@ -73,6 +74,7 @@ add_library(
   cylindricalRegion.h
   directionalGlobalPotential.h
   generalRegion.h
+  ifValueInRange.h
   importCoordinates.h
   integerCollect1D.h
   integrate1D.h

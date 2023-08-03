@@ -36,7 +36,7 @@ void ProcedureNodeSequence::appendNode(NodeRef node, std::optional<int> insertAt
     node->setScope(*this);
 
     // Check context
-    if (!node->isContextRelevant(context_))
+    if (!node->isContextRelevant(context()))
         throw(std::runtime_error(fmt::format("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
                                              ProcedureNode::nodeTypes().keyword(node->type()),
                                              ProcedureNode::nodeContexts().keyword(context_))));
@@ -154,7 +154,10 @@ ProcedureNodeSequence::searchParameters(std::string_view name,
 OptionalReferenceWrapper<ProcedureNode> ProcedureNodeSequence::owner() const { return owner_; }
 
 // Return the context of the sequence
-ProcedureNode::NodeContext ProcedureNodeSequence::sequenceContext() const { return context_; }
+ProcedureNode::NodeContext ProcedureNodeSequence::context() const
+{
+    return context_ == ProcedureNode::NodeContext::InheritContext ? owner_->get().scopeContext() : context_;
+}
 
 // Return named node if present in this sequence, and which matches the (optional) type given
 ConstNodeRef ProcedureNodeSequence::node(std::string_view name, ConstNodeRef excludeNode,
@@ -397,7 +400,7 @@ bool ProcedureNodeSequence::check() const
                                     fmt::ptr(node->parent()), fmt::ptr(this));
 
         // Check context
-        if (!node->isContextRelevant(context_))
+        if (!node->isContextRelevant(context()))
             return Messenger::error("Node '{}' is not allowed in this context ({})\n", node->name(),
                                     ProcedureNode::nodeContexts().keyword(context_));
 
