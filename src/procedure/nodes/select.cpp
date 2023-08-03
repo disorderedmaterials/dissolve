@@ -258,8 +258,8 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
                     continue;
             }
 
-            // All OK, so add site
-            sites_.emplace_back(site, n);
+            // All OK, so add site and index in its stack (1...N numbering)
+            sites_.emplace_back(site, n + 1);
         }
     }
 
