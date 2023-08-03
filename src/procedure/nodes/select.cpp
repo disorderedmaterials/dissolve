@@ -122,14 +122,14 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
     if (!sameMolecule_)
         return nullptr;
 
-    const Site *site = sameMolecule_->currentSite();
+    const auto site = sameMolecule_->currentSite();
     if (!site)
     {
         Messenger::warn("Requested Molecule from SelectProcedureNode::sameMolecule_, but there is no current site.\n");
         return nullptr;
     }
 
-    return site->molecule();
+    return site->get().molecule();
 }
 
 // Set site to use for distance check
@@ -166,7 +166,7 @@ unsigned long int SelectProcedureNode::nCumulativeSites() const { return nCumula
 unsigned long int SelectProcedureNode::nAvailableSites() const { return double(nAvailableSites_) / nSelections_; }
 
 // Return current site
-const Site *SelectProcedureNode::currentSite() const { return currentSite_; }
+OptionalReferenceWrapper<const Site> SelectProcedureNode::currentSite() const { return currentSite_; }
 
 /*
  * Branch
@@ -208,18 +208,18 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
     excludedMolecules_.clear();
     for (auto node : sameMoleculeExclusions_)
         if (node->currentSite())
-            excludedMolecules_.emplace_back(node->currentSite()->molecule());
+            excludedMolecules_.emplace_back(node->currentSite()->get().molecule());
 
     excludedSites_.clear();
     for (auto node : sameSiteExclusions_)
         if (node->currentSite())
-            excludedSites_.insert(node->currentSite());
+            excludedSites_.insert(&node->currentSite()->get());
 
     // Get required Molecule parent, if requested
     std::shared_ptr<const Molecule> moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : nullptr;
 
     // Site to use as distance reference point (if any)
-    const Site *distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : nullptr;
+    const auto distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : std::nullopt;
 
     /*
      * Add sites from specified Species/Sites
@@ -253,13 +253,13 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
             // Check distance from reference site (if defined)
             if (distanceRef)
             {
-                r = procedureContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->origin());
+                r = procedureContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->get().origin());
                 if (!inclusiveDistanceRange_.contains(r))
                     continue;
             }
 
             // All OK, so add site
-            sites_.push_back(&site);
+            sites_.emplace_back(site, n);
         }
     }
 
@@ -267,12 +267,12 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
     ++nSelections_;
 
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
-    currentSite_ = nullptr;
+    currentSite_ = std::nullopt;
     if (!forEachBranch_.empty())
     {
-        for (auto *s : sites_)
+        for (const auto &siteInfo : sites_)
         {
-            currentSite_ = s;
+            currentSite_ = siteInfo.first;
 
             ++nCumulativeSites_;
 

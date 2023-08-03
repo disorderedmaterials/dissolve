@@ -102,9 +102,9 @@ class SelectProcedureNode : public ProcedureNode
      */
     private:
     // Vector of selected sites
-    std::vector<const Site *> sites_;
+    std::vector<std::pair<const Site &, int>> sites_;
     // Current site
-    const Site *currentSite_{nullptr};
+    OptionalReferenceWrapper<const Site> currentSite_;
     // Number of selections made by the node
     int nSelections_{0};
     // Cumulative number of sites ever selected
@@ -130,7 +130,7 @@ class SelectProcedureNode : public ProcedureNode
     // Return total number of sites available per selection
     unsigned long int nAvailableSites() const;
     // Return current site
-    const Site *currentSite() const;
+    OptionalReferenceWrapper<const Site> currentSite() const;
 
     /*
      * Branch
