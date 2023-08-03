@@ -335,7 +335,7 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     std::vector<std::shared_ptr<ExpressionVariable>> parameters;
 
     // Start from the target node and work backwards...
-    for (auto node : range)
+    for (const auto &node : range)
     {
         auto optOtherParams = node->parameters();
         if (optOtherParams)
