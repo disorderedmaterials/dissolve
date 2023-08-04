@@ -12,7 +12,7 @@
 
 // Forward declarations
 class Box;
-class CIFImport;
+class CIFHandler;
 class CoreData;
 class Configuration;
 class Species;
@@ -133,10 +133,10 @@ class CIFSpecies
     } CIFMolecularSpecies;
 
     public:
-    CIFSpecies(CIFImport &cifImporter, CoreData &coreData);
+    CIFSpecies(CIFHandler &cifHandler, CoreData &coreData);
 
     private:
-    CIFImport &cifImporter_;
+    CIFHandler &cifHandler_;
     CoreData &coreData_;
     Species *structuralSpecies_;
     Configuration *structuralConfiguration_;

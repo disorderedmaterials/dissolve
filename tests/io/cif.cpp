@@ -15,8 +15,8 @@ TEST(ImportCIFTest, Parse)
 
     for (auto &cif : cifs)
     {
-        CIFImport cifImporter;
-        EXPECT_TRUE(cifImporter.read(cifPath + cif));
+        CIFHandler cifHandler;
+        EXPECT_TRUE(cifHandler.read(cifPath + cif));
     }
 }
 } // namespace UnitTest

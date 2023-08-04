@@ -97,7 +97,7 @@ CIFAtomGroup &CIFAssembly::getGroup(std::string_view groupName)
 // Return the number of defined groups
 int CIFAssembly::nGroups() const { return groups_.size(); }
 
-CIFSpecies::CIFSpecies(CIFImport &cifImporter, CoreData &coreData) : cifImporter_(cifImporter), coreData_(coreData)
+CIFSpecies::CIFSpecies(CIFHandler &cifHandler, CoreData &coreData) : cifHandler_(cifHandler), coreData_(coreData)
 {
     structuralConfiguration_ = coreData.addConfiguration();
     structuralConfiguration_->setName("Crystal");
@@ -115,7 +115,7 @@ CIFSpecies::CIFSpecies(CIFImport &cifImporter, CoreData &coreData) : cifImporter
 bool CIFSpecies::createStructuralSpecies(double tolerance, bool calculateBonding, bool preventMetallicBonding)
 {
     // Create temporary atom types corresponding to the unique atom labels
-    for (auto &a : cifImporter_.assemblies())
+    for (auto &a : cifHandler_.assemblies())
         for (auto &g : a.groups())
             if (g.active())
                 for (auto &i : g.atoms())
@@ -134,10 +134,10 @@ bool CIFSpecies::createStructuralSpecies(double tolerance, bool calculateBonding
     structuralSpecies_->setName("Crystal");
 
     // -- Set unit cell
-    auto cellLengths = cifImporter_.getCellLengths();
+    auto cellLengths = cifHandler_.getCellLengths();
     if (!cellLengths)
         return false;
-    auto cellAngles = cifImporter_.getCellAngles();
+    auto cellAngles = cifHandler_.getCellAngles();
     if (!cellAngles)
         return false;
     structuralSpecies_->createBox(cellLengths.value(), cellAngles.value());
@@ -148,9 +148,9 @@ bool CIFSpecies::createStructuralSpecies(double tolerance, bool calculateBonding
     structuralConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
 
     // -- Generate atoms
-    auto symmetryGenerators = SpaceGroups::symmetryOperators(cifImporter_.spaceGroup());
+    auto symmetryGenerators = SpaceGroups::symmetryOperators(cifHandler_.spaceGroup());
     for (const auto &generator : symmetryGenerators)
-        for (auto &a : cifImporter_.assemblies())
+        for (auto &a : cifHandler_.assemblies())
             for (auto &g : a.groups())
                 if (g.active())
                     for (auto &unique : g.atoms())
@@ -199,10 +199,10 @@ bool CIFSpecies::createCleanedSpecies(bool removeAtomsOfSingleMoiety, bool remov
     cleanedSpecies_->copyBasic(structuralSpecies_);
 
     // -- Set unit cell
-    auto cellLengths = cifImporter_.getCellLengths();
+    auto cellLengths = cifHandler_.getCellLengths();
     if (!cellLengths)
         return false;
-    auto cellAngles = cifImporter_.getCellAngles();
+    auto cellAngles = cifHandler_.getCellAngles();
     if (!cellAngles)
         return false;
     cleanedSpecies_->createBox(cellLengths.value(), cellAngles.value());
@@ -346,15 +346,15 @@ bool CIFSpecies::createMolecularConfiguration(OptionalReferenceWrapper<CoreData>
 
     // Create a configuration
     molecularConfiguration_ = localCoreData.addConfiguration();
-    molecularConfiguration_->setName(cifImporter_.chemicalFormula());
+    molecularConfiguration_->setName(cifHandler_.chemicalFormula());
 
     // Grab the generator
     auto &generator = molecularConfiguration_->generator();
 
     // Add Box
     auto boxNode = generator.createRootNode<BoxProcedureNode>({});
-    auto cellLengths = cifImporter_.getCellLengths().value();
-    auto cellAngles = cifImporter_.getCellAngles().value();
+    auto cellLengths = cifHandler_.getCellLengths().value();
+    auto cellAngles = cifHandler_.getCellAngles().value();
     boxNode->keywords().set("Lengths", Vec3<NodeValue>(cellLengths.get(0), cellLengths.get(1), cellLengths.get(2)));
     boxNode->keywords().set("Angles", Vec3<NodeValue>(cellAngles.get(0), cellAngles.get(1), cellAngles.get(2)));
 
@@ -464,7 +464,7 @@ void CIFSpecies::applyCIFBonding(Species *sp, bool preventMetallicBonding)
             continue;
 
         // Retrieve distance
-        auto r = cifImporter_.bondDistance(i.atomType()->name(), j.atomType()->name());
+        auto r = cifHandler_.bondDistance(i.atomType()->name(), j.atomType()->name());
         if (!r)
             continue;
         else if (fabs(box->minimumDistance(i.r(), j.r()) - r.value()) < 1.0e-2)

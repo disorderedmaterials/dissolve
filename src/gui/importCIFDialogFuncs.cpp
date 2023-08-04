@@ -17,7 +17,7 @@
 #include <unordered_set>
 
 ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), cifAssemblyModel_(cifImporter_.assemblies()), dissolve_(dissolve)
+    : WizardDialog(parent), cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
 {
     ui_.setupUi(this);
 
@@ -50,7 +50,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     // Init the wizard
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
 
-    cifSpecies_ = new CIFSpecies(cifImporter_, temporaryCoreData_);
+    cifSpecies_ = new CIFSpecies(cifHandler_, temporaryCoreData_);
 
     // Configuration
     partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
@@ -93,18 +93,18 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
     {
         case (ImportCIFDialog::SelectCIFFilePage):
             // Load the CIF file
-            if (!cifImporter_.read(ui_.InputFileEdit->text().toStdString()))
+            if (!cifHandler_.read(ui_.InputFileEdit->text().toStdString()))
                 return Messenger::error("Failed to load CIF file '{}'.\n", ui_.InputFileEdit->text().toStdString());
             updateInfoPage();
             updateSpaceGroupPage();
             break;
         case (ImportCIFDialog::SelectSpaceGroupPage):
-            cifImporter_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpaceGroupsList->currentRow() + 1));
+            cifHandler_.setSpaceGroup((SpaceGroups::SpaceGroupId)(ui_.SpaceGroupsList->currentRow() + 1));
             updateInfoPage();
             break;
         case (ImportCIFDialog::CIFInfoPage):
-            ui_.BondFromCIFRadio->setEnabled(cifImporter_.hasBondDistances());
-            ui_.BondFromCIFRadio->setChecked(cifImporter_.hasBondDistances());
+            ui_.BondFromCIFRadio->setEnabled(cifHandler_.hasBondDistances());
+            ui_.BondFromCIFRadio->setChecked(cifHandler_.hasBondDistances());
             if (!createStructuralSpecies())
                 return false;
             ui_.AssemblyView->expandAll();
@@ -133,7 +133,7 @@ std::optional<int> ImportCIFDialog::determineNextPage(int currentIndex)
 {
     // Only check for the first page
     if (currentIndex == ImportCIFDialog::SelectCIFFilePage)
-        return cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
+        return cifHandler_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
                                                                       : ImportCIFDialog::SelectSpaceGroupPage;
     else
         return std::get<3>(getPage(currentIndex));
@@ -172,14 +172,14 @@ void ImportCIFDialog::finalise()
             // Just copy the species
             supercell->updateIntramolecularTerms();
             auto *sp = dissolve_.coreData().copySpecies(supercell);
-            sp->setName(cifImporter_.chemicalFormula());
+            sp->setName(cifHandler_.chemicalFormula());
         }
         else if (ui_.OutputSupermoleculeRadio->isChecked())
         {
             // Copy the species
             supercell->updateIntramolecularTerms();
             auto *sp = dissolve_.coreData().copySpecies(supercell);
-            sp->setName(cifImporter_.chemicalFormula());
+            sp->setName(cifHandler_.chemicalFormula());
 
             // Remove the unit cell and any cell-crossing bonds
             sp->removePeriodicBonds();
@@ -233,28 +233,28 @@ void ImportCIFDialog::on_SpaceGroupsList_itemDoubleClicked(QListWidgetItem *item
 void ImportCIFDialog::updateInfoPage()
 {
     // DATA_ ID
-    ui_.InfoDataLabel->setText(QString::fromStdString(cifImporter_.getTagString("DATA_").value_or("<Unknown>")));
+    ui_.InfoDataLabel->setText(QString::fromStdString(cifHandler_.getTagString("DATA_").value_or("<Unknown>")));
 
     // Chemical Formula
-    ui_.InfoChemicalFormulaLabel->setText(QString::fromStdString(cifImporter_.chemicalFormula()));
+    ui_.InfoChemicalFormulaLabel->setText(QString::fromStdString(cifHandler_.chemicalFormula()));
 
     // Publication Data
     ui_.InfoPublicationTitleLabel->setText(
-        QString::fromStdString(cifImporter_.getTagString("_publ_section_title").value_or("<Unknown>")));
+        QString::fromStdString(cifHandler_.getTagString("_publ_section_title").value_or("<Unknown>")));
     ui_.InfoPublicationReferenceLabel->setText(QString::fromStdString(
-        fmt::format("{}, {}, <b>{}</b>, {}", cifImporter_.getTagString("_journal_name_full").value_or("???"),
-                    cifImporter_.getTagString("_journal_year").value_or("???"),
-                    cifImporter_.getTagString("_journal_volume").value_or("???"),
-                    cifImporter_.getTagString("_journal_page_first").value_or("???"))));
+        fmt::format("{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("???"),
+                    cifHandler_.getTagString("_journal_year").value_or("???"),
+                    cifHandler_.getTagString("_journal_volume").value_or("???"),
+                    cifHandler_.getTagString("_journal_page_first").value_or("???"))));
     ui_.InfoAuthorsList->clear();
-    auto authors = cifImporter_.getTagStrings("_publ_author_name");
+    auto authors = cifHandler_.getTagStrings("_publ_author_name");
     for (auto &author : authors)
         ui_.InfoAuthorsList->addItem(QString::fromStdString(author));
 
     // Spacegroup
-    if (cifImporter_.spaceGroup() != SpaceGroups::NoSpaceGroup)
+    if (cifHandler_.spaceGroup() != SpaceGroups::NoSpaceGroup)
         ui_.InfoSpacegroupLabel->setText(
-            QString::fromStdString(std::string(SpaceGroups::formattedInformation(cifImporter_.spaceGroup()))));
+            QString::fromStdString(std::string(SpaceGroups::formattedInformation(cifHandler_.spaceGroup()))));
     else
         ui_.InfoSpacegroupLabel->setText("<Unknown Space Group>");
 }

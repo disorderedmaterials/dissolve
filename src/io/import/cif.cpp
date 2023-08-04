@@ -10,7 +10,7 @@
 #include "templates/algorithms.h"
 
 // Parse supplied file into the destination objects
-bool CIFImport::parse(std::string filename, CIFImport::CIFTags &tags) const
+bool CIFHandler::parse(std::string filename, CIFHandler::CIFTags &tags) const
 {
     // Set up ANTLR input stream
     std::ifstream cifFile(std::string(filename), std::ios::in | std::ios::binary);
@@ -63,14 +63,14 @@ bool CIFImport::parse(std::string filename, CIFImport::CIFTags &tags) const
 }
 
 // Return whether the specified file parses correctly
-bool CIFImport::validFile(std::string filename) const
+bool CIFHandler::validFile(std::string filename) const
 {
     CIFTags tags;
     return parse(filename, tags);
 }
 
 // Read CIF data from specified file
-bool CIFImport::read(std::string filename)
+bool CIFHandler::read(std::string filename)
 {
     assemblies_.clear();
     bondingPairs_.clear();
@@ -188,10 +188,10 @@ bool CIFImport::read(std::string filename)
 }
 
 // Return if the specified tag exists
-bool CIFImport::hasTag(std::string tag) const { return tags_.find(tag) != tags_.end(); }
+bool CIFHandler::hasTag(std::string tag) const { return tags_.find(tag) != tags_.end(); }
 
 // Return tag data string (if it exists) assuming a single datum (first in the vector)
-std::optional<std::string> CIFImport::getTagString(std::string tag) const
+std::optional<std::string> CIFHandler::getTagString(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -205,7 +205,7 @@ std::optional<std::string> CIFImport::getTagString(std::string tag) const
 }
 
 // Return tag data strings (if it exists)
-std::vector<std::string> CIFImport::getTagStrings(std::string tag) const
+std::vector<std::string> CIFHandler::getTagStrings(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -215,7 +215,7 @@ std::vector<std::string> CIFImport::getTagStrings(std::string tag) const
 }
 
 // Return tag data as double (if it exists) assuming a single datum (first in the vector)
-std::optional<double> CIFImport::getTagDouble(std::string tag) const
+std::optional<double> CIFHandler::getTagDouble(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -241,7 +241,7 @@ std::optional<double> CIFImport::getTagDouble(std::string tag) const
 }
 
 // Return tag data doubles (if it exists)
-std::vector<double> CIFImport::getTagDoubles(std::string tag) const
+std::vector<double> CIFHandler::getTagDoubles(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -266,7 +266,7 @@ std::vector<double> CIFImport::getTagDoubles(std::string tag) const
 }
 
 // Return tag data as integer (if it exists) assuming a single datum (first in the vector)
-std::optional<int> CIFImport::getTagInt(std::string tag) const
+std::optional<int> CIFHandler::getTagInt(std::string tag) const
 {
     auto it = tags_.find(tag);
     if (it == tags_.end())
@@ -296,13 +296,13 @@ std::optional<int> CIFImport::getTagInt(std::string tag) const
  */
 
 // Set space group from index
-void CIFImport::setSpaceGroup(SpaceGroups::SpaceGroupId sgid) { spaceGroup_ = sgid; }
+void CIFHandler::setSpaceGroup(SpaceGroups::SpaceGroupId sgid) { spaceGroup_ = sgid; }
 
 // Return space group information
-SpaceGroups::SpaceGroupId CIFImport::spaceGroup() const { return spaceGroup_; }
+SpaceGroups::SpaceGroupId CIFHandler::spaceGroup() const { return spaceGroup_; }
 
 // Return cell lengths
-std::optional<Vec3<double>> CIFImport::getCellLengths() const
+std::optional<Vec3<double>> CIFHandler::getCellLengths() const
 {
     auto a = getTagDouble("_cell_length_a");
     if (!a)
@@ -321,7 +321,7 @@ std::optional<Vec3<double>> CIFImport::getCellLengths() const
 }
 
 // Return cell angles
-std::optional<Vec3<double>> CIFImport::getCellAngles() const
+std::optional<Vec3<double>> CIFHandler::getCellAngles() const
 {
     auto alpha = getTagDouble("_cell_angle_alpha");
     if (!alpha)
@@ -340,14 +340,14 @@ std::optional<Vec3<double>> CIFImport::getCellAngles() const
 }
 
 // Return chemical formula
-std::string CIFImport::chemicalFormula() const
+std::string CIFHandler::chemicalFormula() const
 {
     auto it = tags_.find("_chemical_formula_sum");
     return (it != tags_.end() ? it->second.front() : "Unknown");
 }
 
 // Get (add or retrieve) named assembly
-CIFAssembly &CIFImport::getAssembly(std::string_view name)
+CIFAssembly &CIFHandler::getAssembly(std::string_view name)
 {
     auto it = std::find_if(assemblies_.begin(), assemblies_.end(), [name](const auto &a) { return a.name() == name; });
     if (it != assemblies_.end())
@@ -357,15 +357,15 @@ CIFAssembly &CIFImport::getAssembly(std::string_view name)
 }
 
 // Return atom assemblies
-std::vector<CIFAssembly> &CIFImport::assemblies() { return assemblies_; }
+std::vector<CIFAssembly> &CIFHandler::assemblies() { return assemblies_; }
 
-const std::vector<CIFAssembly> &CIFImport::assemblies() const { return assemblies_; }
+const std::vector<CIFAssembly> &CIFHandler::assemblies() const { return assemblies_; }
 
 // Return whether any bond distances are defined
-bool CIFImport::hasBondDistances() const { return !bondingPairs_.empty(); }
+bool CIFHandler::hasBondDistances() const { return !bondingPairs_.empty(); }
 
 // Return whether a bond distance is defined for the specified label pair
-std::optional<double> CIFImport::bondDistance(std::string_view labelI, std::string_view labelJ) const
+std::optional<double> CIFHandler::bondDistance(std::string_view labelI, std::string_view labelJ) const
 {
     auto it = std::find_if(bondingPairs_.begin(), bondingPairs_.end(),
                            [labelI, labelJ](const auto &bp) {

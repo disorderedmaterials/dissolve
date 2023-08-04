@@ -37,8 +37,8 @@ class ImportCIFDialog : public WizardDialog
     private:
     // Main Dissolve object
     Dissolve &dissolve_;
-    // CIF Importer
-    CIFImport cifImporter_;
+    // CIF Handler
+    CIFHandler cifHandler_;
 
     private:
     // Apply CIF bond definitions within specified species

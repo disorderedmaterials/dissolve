@@ -8,12 +8,12 @@
 #include "math/matrix4.h"
 #include <map>
 
-// CIF Importer
-class CIFImport
+// CIF Handler
+class CIFHandler
 {
     public:
-    CIFImport() = default;
-    ~CIFImport() = default;
+    CIFHandler() = default;
+    ~CIFHandler() = default;
 
     /*
      * Raw Data
