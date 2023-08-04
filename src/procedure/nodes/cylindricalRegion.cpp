@@ -6,6 +6,12 @@
 #include "keywords/double.h"
 #include "keywords/vec3Double.h"
 
+// Return whether voxel centred at supplied real coordinates is valid
+bool CylindricalRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+{
+    // TODO
+}
+
 CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
     : RegionProcedureNodeBase(ProcedureNode::NodeType::CylindricalRegion)
 {
@@ -19,6 +25,9 @@ CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
 /*
  * Region Data
  */
+
+// Return a new voxel check kernel
+std::unique_ptr<VoxelKernel> CylindricalRegionProcedureNode::createVoxelKernel() { return std::make_unique<CylindricalRegionVoxelKernel>(); }
 
 // Return whether voxel centred at supplied real coordinates is valid
 bool CylindricalRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const

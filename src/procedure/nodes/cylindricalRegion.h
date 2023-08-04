@@ -5,6 +5,14 @@
 
 #include "procedure/nodes/regionBase.h"
 
+// Custom Region Voxel Kernel
+class CylindricalRegionVoxelKernel : public VoxelKernel
+{
+    public:
+    // Return whether voxel centred at supplied real coordinates is valid
+    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
+};
+
 // Cylindrical Region
 class CylindricalRegionProcedureNode : public RegionProcedureNodeBase
 {
@@ -26,6 +34,10 @@ class CylindricalRegionProcedureNode : public RegionProcedureNodeBase
     /*
      * Region Data
      */
+    protected:
+    // Return a new voxel check kernel
+    std::unique_ptr<VoxelKernel> createVoxelKernel() override;
+
     public:
     // Return whether voxel centred at supplied real coordinates is valid
     bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;

@@ -5,6 +5,14 @@
 
 #include "procedure/nodes/regionBase.h"
 
+// General Region Voxel Kernel
+class GeneralRegionVoxelKernel : public VoxelKernel
+{
+    public:
+    // Return whether voxel centred at supplied real coordinates is valid
+    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
+};
+
 // General Region
 class GeneralRegionProcedureNode : public RegionProcedureNodeBase
 {
@@ -24,6 +32,10 @@ class GeneralRegionProcedureNode : public RegionProcedureNodeBase
     /*
      * Region Data
      */
+    protected:
+    // Return a new voxel check kernel
+    std::unique_ptr<VoxelKernel> createVoxelKernel() override;
+
     public:
     // Return whether voxel centred at supplied real coordinates is valid
     bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;

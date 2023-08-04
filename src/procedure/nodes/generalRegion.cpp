@@ -5,6 +5,13 @@
 #include "classes/configuration.h"
 #include "keywords/double.h"
 
+// Return whether voxel centred at supplied real coordinates is valid
+bool GeneralRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+{
+    // TODO
+}
+
+
 GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::GeneralRegion)
 {
     keywords_.setOrganisation("Options", "Definition");
@@ -15,6 +22,9 @@ GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBa
 /*
  * Region Data
  */
+
+// Return a new voxel check kernel
+std::unique_ptr<VoxelKernel> GeneralRegionProcedureNode::createVoxelKernel() { return std::make_unique<GeneralRegionVoxelKernel>(); }
 
 // Return whether voxel centred at supplied real coordinates is valid
 bool GeneralRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const

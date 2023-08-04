@@ -7,6 +7,43 @@
 #include "keywords/double.h"
 #include "keywords/nodeValue.h"
 
+// Set up any necessary data for the kernel
+void CustomRegionVoxelKernel::initialise(std::string_view expressionString, double minimumValue, double maximumValue)
+{
+    // Create our local variables
+    x_ = expression_.addLocalVariable("x");
+    y_ = expression_.addLocalVariable("y");
+    z_ = expression_.addLocalVariable("z");
+    xFrac_ = expression_.addLocalVariable("xFrac");
+    yFrac_ = expression_.addLocalVariable("yFrac");
+    zFrac_ = expression_.addLocalVariable("zFrac");
+
+    // Set the expression
+    expression_.set(expressionString);
+
+    // Set limits
+    minimumValue_ = minimumValue;
+    maximumValue_ = maximumValue;
+}
+
+// Return whether voxel centred at supplied real coordinates is valid
+bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+{
+    // Poke values into our variables
+    x_->setValue(r.x);
+    y_->setValue(r.y);
+    z_->setValue(r.z);
+    auto rFrac = cfg->box()->getFractional(r);
+    xFrac_->setValue(rFrac.x);
+    yFrac_->setValue(rFrac.y);
+    zFrac_->setValue(rFrac.z);
+
+    // Assess expression
+    auto x = expression_.asDouble();
+
+    return (x >= minimumValue_ && x <= maximumValue_);
+}
+
 CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::CustomRegion)
 {
     keywords_.setOrganisation("Options", "Definition");
@@ -20,6 +57,15 @@ CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase
     xFrac_ = expression_.addLocalVariable("xFrac");
     yFrac_ = expression_.addLocalVariable("yFrac");
     zFrac_ = expression_.addLocalVariable("zFrac");
+}
+
+std::unique_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()
+{
+    auto kernel = std::make_unique<CustomRegionVoxelKernel>();
+
+    kernel->initialise(expression_.asString(), minimumValue_, maximumValue_);
+
+    return kernel;
 }
 
 /*
