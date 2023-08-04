@@ -8,7 +8,6 @@
 // set range data
 void RangeModel::setData(std::vector<Range> &ranges)
 {
-
     beginResetModel();
     ranges_ = ranges;
     endResetModel();
@@ -43,7 +42,6 @@ QVariant RangeModel::data(const QModelIndex &index, int role) const
     {
         case (Qt::EditRole):
         case (Qt::DisplayRole):
-
             switch (index.column())
             {
                 case (0):
@@ -55,11 +53,8 @@ QVariant RangeModel::data(const QModelIndex &index, int role) const
                 default:
                     return {};
             }
-
         case (Qt::UserRole):
-
             return QVariant::fromValue(getRange(index));
-
         case (Qt::ForegroundRole):
             if ((index.column() == 1 || index.column() == 2) && getRange(index)->maximum() < getRange(index)->minimum())
             {
@@ -77,9 +72,7 @@ QVariant RangeModel::data(const QModelIndex &index, int role) const
 
 bool RangeModel::insertRows(int row, int count, const QModelIndex &parent)
 {
-
     Q_UNUSED(count);
-
     beginInsertRows(parent, row, row);
     ranges_->get().emplace_back(0.0, 0.0);
     endInsertRows();
@@ -88,9 +81,7 @@ bool RangeModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool RangeModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-
     Q_UNUSED(count);
-
     if (row >= rowCount() || row < 0)
     {
         return false;
@@ -116,7 +107,6 @@ bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
     switch (index.column())
     {
-
         case (1):
             if (range->minimum() != doubleValue)
             {
@@ -125,9 +115,7 @@ bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 emit dataChanged(index, index);
                 return true;
             }
-
             return false;
-
         case (2):
             if (range->maximum() != doubleValue)
             {
@@ -136,9 +124,7 @@ bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int ro
                 emit dataChanged(index, index);
                 return true;
             }
-
             return false;
-
         default:
             return false;
     }
@@ -160,7 +146,6 @@ Qt::ItemFlags RangeModel::flags(const QModelIndex &index) const
 
 QVariant RangeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         switch (section)
         {
