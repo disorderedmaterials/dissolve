@@ -11,7 +11,6 @@ bool GeneralRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3
     // TODO
 }
 
-
 GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::GeneralRegion)
 {
     keywords_.setOrganisation("Options", "Definition");
@@ -24,7 +23,10 @@ GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBa
  */
 
 // Return a new voxel check kernel
-std::unique_ptr<VoxelKernel> GeneralRegionProcedureNode::createVoxelKernel() { return std::make_unique<GeneralRegionVoxelKernel>(); }
+std::shared_ptr<VoxelKernel> GeneralRegionProcedureNode::createVoxelKernel()
+{
+    return std::make_shared<GeneralRegionVoxelKernel>();
+}
 
 // Return whether voxel centred at supplied real coordinates is valid
 bool GeneralRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const

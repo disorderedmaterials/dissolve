@@ -51,7 +51,7 @@ class CustomRegionProcedureNode : public RegionProcedureNodeBase
      */
     protected:
     // Return a new voxel check kernel
-    std::unique_ptr<VoxelKernel> createVoxelKernel() override;
+    std::shared_ptr<VoxelKernel> createVoxelKernel() override;
 
     public:
     // Return whether voxel centred at supplied real coordinates is valid

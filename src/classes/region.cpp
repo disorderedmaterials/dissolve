@@ -8,7 +8,8 @@
 Region::Region() : box_(nullptr) {}
 
 // Generate region information
-bool Region::generate(const Configuration *cfg, double voxelSize, std::function<std::unique_ptr<VoxelKernel>()> kernelGenerator)
+bool Region::generate(const Configuration *cfg, double voxelSize,
+                      const std::function<std::shared_ptr<VoxelKernel>(void)> &kernelGenerator)
 {
     box_ = cfg->box();
 
@@ -20,20 +21,19 @@ bool Region::generate(const Configuration *cfg, double voxelSize, std::function<
     // Initialise 3D map and determine valid voxels
     voxelMap_.initialise(nVoxels_.x, nVoxels_.y, nVoxels_.z);
 
-    // Create a voxel check kernel
-    auto voxelKernel = kernelGenerator();
+    // Create a voxel combinable and check function
+    auto voxelCombinable = Region::createCombinableVoxelKernel(kernelGenerator);
+    auto voxelCheckFunction = [&](auto triplet, auto x, auto y, auto z)
+    {
+        voxelMap_[triplet] = {Vec3<int>(x, y, z),
+                              voxelCombinable.local()->isVoxelValid(
+                                  cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
+                                                      (z + 0.5) * voxelSizeFrac_.z}))};
+    };
 
-    // Setup iterator for voxel map
-    // Iterate voxels in parallel
-    dissolve::for_each_triplet(
-        ParallelPolicies::seq, voxelMap_.beginIndices(), voxelMap_.endIndices(),
-        [&](auto triplet, auto x, auto y, auto z)
-        {
-            voxelMap_[triplet] = {
-                Vec3<int>(x, y, z),
-                voxelKernel->isVoxelValid(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
-                                                              (z + 0.5) * voxelSizeFrac_.z}))};
-        });
+    // Iterate over voxels
+    dissolve::for_each_triplet(ParallelPolicies::par, voxelMap_.beginIndices(), voxelMap_.endIndices(), voxelCheckFunction);
+
     // Create linear vector of all available voxels
     auto nFreeVoxels = std::count_if(voxelMap_.begin(), voxelMap_.end(), [](const auto &voxel) { return voxel.second; });
     freeVoxels_.clear();

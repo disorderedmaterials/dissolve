@@ -27,7 +27,10 @@ CylindricalRegionProcedureNode::CylindricalRegionProcedureNode()
  */
 
 // Return a new voxel check kernel
-std::unique_ptr<VoxelKernel> CylindricalRegionProcedureNode::createVoxelKernel() { return std::make_unique<CylindricalRegionVoxelKernel>(); }
+std::shared_ptr<VoxelKernel> CylindricalRegionProcedureNode::createVoxelKernel()
+{
+    return std::make_shared<CylindricalRegionVoxelKernel>();
+}
 
 // Return whether voxel centred at supplied real coordinates is valid
 bool CylindricalRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const

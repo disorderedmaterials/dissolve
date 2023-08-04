@@ -59,9 +59,9 @@ CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase
     zFrac_ = expression_.addLocalVariable("zFrac");
 }
 
-std::unique_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()
+std::shared_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()
 {
-    auto kernel = std::make_unique<CustomRegionVoxelKernel>();
+    auto kernel = std::make_shared<CustomRegionVoxelKernel>();
 
     kernel->initialise(expression_.asString(), minimumValue_, maximumValue_);
 

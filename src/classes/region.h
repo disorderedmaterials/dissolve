@@ -8,6 +8,7 @@
 #include "classes/configuration.h"
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
+#include "templates/combinable.h"
 #include "templates/parallelDefs.h"
 #include "templates/vector3.h"
 #include <functional>
@@ -43,10 +44,18 @@ class Region
     // Lower-left corner voxel indices of free regions
     std::vector<std::pair<Vec3<int>, bool>> freeVoxels_;
 
+    private:
+    // Generate voxel combinable
+    static dissolve::CombinableFunctor<std::shared_ptr<VoxelKernel>>
+    createCombinableVoxelKernel(std::function<std::shared_ptr<VoxelKernel>(void)> kernelGenerator)
+    {
+        return kernelGenerator;
+    }
+
     public:
     // Generate region information
     bool generate(const Configuration *cfg, double voxelSize,
-                  std::function<std::unique_ptr<VoxelKernel>(void)> kernelGenerator);
+                  const std::function<std::shared_ptr<VoxelKernel>(void)> &kernelGenerator);
     // Return whether the region is valid
     bool isValid() const;
     // Return the fraction free voxels in the region
