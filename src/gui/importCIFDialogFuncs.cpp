@@ -50,8 +50,6 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     // Init the wizard
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
 
-    cifSpecies_ = new CIFSpecies(cifHandler_, temporaryCoreData_);
-
     // Configuration
     partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
     partitioningConfiguration_->setName("Partitioning");
@@ -189,7 +187,7 @@ void ImportCIFDialog::finalise()
     }
     else
     {
-        cifSpecies_->createMolecularConfiguration(OptionalReferenceWrapper<CoreData>(dissolve_.coreData()));
+        cifHandler_.createMolecularConfiguration(dissolve_.coreData());
     }
 }
 
@@ -270,13 +268,14 @@ bool ImportCIFDialog::createStructuralSpecies()
     temporaryCoreData_.species().clear();
     temporaryCoreData_.atomTypes().clear();
 
-    cifSpecies_->createStructuralSpecies(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5,
+    cifHandler_.createStructuralSpecies(temporaryCoreData_, ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5,
                                          ui_.CalculateBondingRadio->isChecked(), ui_.BondingPreventMetallicCheck->isChecked());
-    crystalSpecies_ = cifSpecies_->structuralSpecies();
+
+    crystalSpecies_ = cifHandler_.structuralSpecies();
     if (crystalSpecies_ == nullptr)
         return false;
 
-    structureConfiguration_ = cifSpecies_->structuralConfiguration();
+    structureConfiguration_ = cifHandler_.structuralConfiguration();
 
     if (structureConfiguration_ == nullptr)
         return false;
@@ -326,17 +325,17 @@ bool ImportCIFDialog::createCleanedSpecies()
     ui_.CleanedViewer->setConfiguration(nullptr);
 
     if (ui_.MoietyRemoveByNETAGroup->isChecked())
-        cifSpecies_->createCleanedSpecies(ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked(),
+        cifHandler_.createCleanedSpecies(temporaryCoreData_, ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked(),
                                           moietyNETA_, ui_.MoietyNETARemoveFragmentsCheck->isChecked());
     else
-        cifSpecies_->createCleanedSpecies(ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked());
+        cifHandler_.createCleanedSpecies(temporaryCoreData_, ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked());
 
-    cleanedSpecies_ = cifSpecies_->cleanedSpecies();
+    cleanedSpecies_ = cifHandler_.cleanedSpecies();
 
     if (cleanedSpecies_ == nullptr)
         return false;
 
-    cleanedConfiguration_ = cifSpecies_->cleanedConfiguration();
+    cleanedConfiguration_ = cifHandler_.cleanedConfiguration();
 
     if (cleanedConfiguration_ == nullptr)
         return false;
@@ -378,9 +377,9 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 // Detect unique species in the structural species
 bool ImportCIFDialog::detectUniqueSpecies()
 {
-    if (!cifSpecies_->createMolecularSpecies())
+    if (!cifHandler_.createMolecularSpecies(temporaryCoreData_))
         return false;
-    molecularSpecies_ = cifSpecies_->molecularSpecies();
+    molecularSpecies_ = cifHandler_.molecularSpecies();
     return true;
 }
 
@@ -396,13 +395,13 @@ bool ImportCIFDialog::createSupercellSpecies()
     // Set the repeat vector
     Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
 
-    cifSpecies_->createSupercellSpecies(repeat, ui_.CalculateBondingRadio->isChecked(),
+    cifHandler_.createSupercellSpecies(temporaryCoreData_, repeat, ui_.CalculateBondingRadio->isChecked(),
                                         ui_.BondingPreventMetallicCheck->isChecked());
-    auto *supercell = cifSpecies_->supercellSpecies();
+    auto *supercell = cifHandler_.supercellSpecies();
     if (!supercell)
         return false;
 
-    supercellConfiguration_ = cifSpecies_->supercellConfiguration();
+    supercellConfiguration_ = cifHandler_.supercellConfiguration();
     ui_.SupercellViewer->setConfiguration(supercellConfiguration_);
 
     // Update the information panel
@@ -441,7 +440,7 @@ bool ImportCIFDialog::createPartitionedSpecies()
     if (molecularSpecies_.empty())
     {
         // Set up the basic configuration
-        auto *sp = cifSpecies_->supercellSpecies();
+        auto *sp = cifHandler_.supercellSpecies();
         assert(sp);
         partitioningConfiguration_->createBoxAndCells(sp->box()->axisLengths(), sp->box()->axisAngles(), false, 1.0);
 

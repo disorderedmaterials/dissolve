@@ -93,10 +93,6 @@ class ImportCIFDialog : public WizardDialog
     private slots:
     void updateInfoPage();
 
-    private:
-    // CIFSpecies
-    CIFSpecies *cifSpecies_;
-
     /*
      * Structure Page
      */
