@@ -9,6 +9,7 @@
 #include "main/dissolve.h"
 #include "module/context.h"
 #include "modules/intraShake/intraShake.h"
+#include "task/context.h"
 #include <cstdio>
 #include <numeric>
 
@@ -216,36 +217,6 @@ bool Dissolve::iterate(int nIterations)
         Messenger::banner(" START MAIN LOOP ITERATION {:10d}         {}", iteration_, DissolveSys::currentTimeAndDate());
 
         /*
-         *  0)	Print schedule of tasks to run
-         */
-        auto thisTime = 0.0;
-        auto nEnabledModules = 0;
-
-        for (auto &layer : coreData_.processingLayers())
-        {
-            Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
-
-            if (!layer->isEnabled())
-                continue;
-
-            auto layerExecutionCount = iteration_ / layer->frequency();
-            for (auto &module : layer->modules())
-            {
-                Messenger::print("      --> {:20}  ({})\n", module->name(), module->frequencyDetails(layerExecutionCount));
-
-                if (module->isEnabled())
-                    ++nEnabledModules;
-
-                thisTime += module->processTimes().value();
-            }
-            Messenger::print("\n");
-        }
-
-        // If no modules are enabled, complain that we have nothing to do!
-        if (nEnabledModules == 0)
-            return Messenger::error("No modules or layers enabled - nothing to do!\n");
-
-        /*
          *  1)	Loop over Configurations and perform any upkeep tasks
          */
         Messenger::banner("Configuration Upkeep");
@@ -265,30 +236,14 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  2)	Run processing Modules (using the world pool).
          */
-        ModuleContext context(worldPool(), *this);
-        for (auto &layer : coreData_.processingLayers())
+
+        for (auto& layer : coreData_.processingLayers())
+            master_->addRunLayerNode(layer.get());
+        TaskContext taskContext(worldPool(), *this);
+        auto result = master_->execute(taskContext);
+        if (!result)
         {
-            // Check if this layer is due to run this iteration
-            if (!layer->runThisIteration(iteration_))
-                continue;
-
-            Messenger::banner("Layer '{}'", layer->name());
-            auto layerExecutionCount = iteration_ / layer->frequency();
-
-            // Check run-control settings
-            if (!layer->canRun(processingModuleData_))
-                continue;
-
-            for (auto &module : layer->modules())
-            {
-                if (!module->runThisIteration(layerExecutionCount))
-                    continue;
-
-                Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
-
-                if (module->executeProcessing(context) == Module::ExecutionResult::Failed)
-                    return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
-            }
+            return Messenger::error("Something went wrong..");
         }
 
         // Sync up all processes
@@ -362,7 +317,6 @@ bool Dissolve::iterate(int nIterations)
     }
 
     iterationTimer_.stop();
-
     return true;
 }
 
