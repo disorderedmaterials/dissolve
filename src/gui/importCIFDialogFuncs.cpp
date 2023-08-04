@@ -379,7 +379,10 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 bool ImportCIFDialog::detectUniqueSpecies()
 {
     if (!cifHandler_.createMolecularSpecies(temporaryCoreData_))
+    {
+        Messenger::warn("Couldn't determine unique species due to symmetry.");
         return false;
+    }
     molecularSpecies_ = cifHandler_.molecularSpecies();
     return true;
 }
