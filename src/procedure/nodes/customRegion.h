@@ -10,9 +10,9 @@
 class CustomRegionVoxelKernel : public VoxelKernel
 {
     public:
-    CustomRegionVoxelKernel(std::string_view expressionString, double minimumValue, double maximumValue);
+    explicit CustomRegionVoxelKernel(std::string_view expressionString = "", double minimumValue = 0.0, double maximumValue = 1.0);
 
-    private:
+    protected:
     // Local variables, set when checking voxels
     std::shared_ptr<ExpressionVariable> x_, y_, z_, xFrac_, yFrac_, zFrac_;
     // Expression describing region
@@ -28,24 +28,11 @@ class CustomRegionVoxelKernel : public VoxelKernel
 };
 
 // Custom Region
-class CustomRegionProcedureNode : public RegionProcedureNodeBase
+class CustomRegionProcedureNode : public RegionProcedureNodeBase, CustomRegionVoxelKernel
 {
     public:
     CustomRegionProcedureNode();
     ~CustomRegionProcedureNode() override = default;
-
-    /*
-     * Control
-     */
-    private:
-    // Local variables, set when checking voxels
-    std::shared_ptr<ExpressionVariable> x_, y_, z_, xFrac_, yFrac_, zFrac_;
-    // Expression describing region
-    NodeValue expression_;
-    // Minimum threshold value for function
-    double minimumValue_{0.0};
-    // Maximum threshold value for function
-    double maximumValue_{1.0};
 
     /*
      * Region Data

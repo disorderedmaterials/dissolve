@@ -57,13 +57,6 @@ CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase
     keywords_.add<NodeValueKeyword>("Expression", "Expression describing region", expression_, this);
     keywords_.add<DoubleKeyword>("Minimum", "Minimum value for descriptive function defining region", minimumValue_);
     keywords_.add<DoubleKeyword>("Maximum", "Maximum value for descriptive function defining region", maximumValue_);
-
-    x_ = expression_.addLocalVariable("x");
-    y_ = expression_.addLocalVariable("y");
-    z_ = expression_.addLocalVariable("z");
-    xFrac_ = expression_.addLocalVariable("xFrac");
-    yFrac_ = expression_.addLocalVariable("yFrac");
-    zFrac_ = expression_.addLocalVariable("zFrac");
 }
 
 std::shared_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()

@@ -9,9 +9,10 @@
 class CylindricalRegionVoxelKernel : public VoxelKernel
 {
     public:
-    CylindricalRegionVoxelKernel(Vec3<double> originFrac, double radius, Vec3<double> vector);
+    explicit CylindricalRegionVoxelKernel(Vec3<double> originFrac = {0.0, 0.0, 0.0}, double radius = 5.0,
+                                          Vec3<double> vector = {0.0, 0.0, 1.0});
 
-    private:
+    protected:
     // Origin of vector in fractional coordinates
     Vec3<double> originFrac_{0.0, 0.0, 0.0};
     // Radius of cylindrical region
@@ -25,22 +26,11 @@ class CylindricalRegionVoxelKernel : public VoxelKernel
 };
 
 // Cylindrical Region
-class CylindricalRegionProcedureNode : public RegionProcedureNodeBase
+class CylindricalRegionProcedureNode : public RegionProcedureNodeBase, CylindricalRegionVoxelKernel
 {
     public:
     CylindricalRegionProcedureNode();
     ~CylindricalRegionProcedureNode() override = default;
-
-    /*
-     * Control
-     */
-    private:
-    // Origin of vector in fractional coordinates
-    Vec3<double> originFrac_{0.0, 0.0, 0.0};
-    // Radius of cylindrical region
-    double radius_{5.0};
-    // Cylinder vector
-    Vec3<double> vector_{0.0, 0.0, 1.0};
 
     /*
      * Region Data

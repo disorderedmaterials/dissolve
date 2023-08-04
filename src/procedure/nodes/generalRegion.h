@@ -9,11 +9,11 @@
 class GeneralRegionVoxelKernel : public VoxelKernel
 {
     public:
-    GeneralRegionVoxelKernel(double toleranceSquared);
+    explicit GeneralRegionVoxelKernel(double toleranceSquared = 1.0);
 
-    private:
+    protected:
     // Squared tolerance
-    double toleranceSquared_;
+    double toleranceSquared_{1.0};
 
     public:
     // Return whether voxel centred at supplied real coordinates is valid
@@ -21,7 +21,7 @@ class GeneralRegionVoxelKernel : public VoxelKernel
 };
 
 // General Region
-class GeneralRegionProcedureNode : public RegionProcedureNodeBase
+class GeneralRegionProcedureNode : public RegionProcedureNodeBase, GeneralRegionVoxelKernel
 {
     public:
     GeneralRegionProcedureNode();
@@ -33,8 +33,6 @@ class GeneralRegionProcedureNode : public RegionProcedureNodeBase
     private:
     // Distance tolerance (threshold) for avoiding existing atoms
     double tolerance_{1.0};
-    // Squared tolerance
-    double toleranceSquared_{1.0};
 
     /*
      * Region Data
