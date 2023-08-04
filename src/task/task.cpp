@@ -1,26 +1,14 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2023 Team Dissolve and contributors
+
 #include "task/task.h"
+#include "task/context.h"
+#include "procedure/procedure.h"
+#include "procedure/nodes/context.h"
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 
-std::vector<std::unique_ptr<Module>> &Task::modules()
-{ return modules_; }
-
-SerialisedValue Task::serialise() const
+bool Task::execute(TaskContext &taskContext)
 {
-    SerialisedValue result;
-    Serialisable::fromVectorToTable(modules_, "modules", result);
-    return result;
-}
-
-void Task::deserialise(const SerialisedValue &node, const CoreData &coreData)
-{
-    Serialisable::toMap(
-        node, "modules",
-        [&coreData, this](const auto &key, const SerialisedValue &data)
-        {
-            auto *module =
-                addModule(*ModuleTypes::moduleType(std::string_view(std::string(toml::find<std::string>(data, "type"), {}))));
-            module->setName(key);
-            module->deserialise(data, coreData);
-        });
+    ProcedureContext context();
 }

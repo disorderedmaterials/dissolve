@@ -8,10 +8,10 @@
 #include <string>
 #include <vector>
 #include "module/module.h"
+#include "procedure/procedure.h"
 #include "task/context.h"
 
 class CoreData;
-class Procedure;
 
 class Task : public Serialisable<const CoreData &>
 {
@@ -21,30 +21,8 @@ class Task : public Serialisable<const CoreData &>
 
     private:
     std::string name{"Untitled Task"};
-    TaskContext context_;
-
-    /*
-     * Modules
-     */
-    private:
-    // Vector of Modules in the layer
-    std::vector<std::unique_ptr<Module>> modules_;
+    Procedure procedure_;
 
     public:
-    // Return vector of Modules
-    std::vector<std::unique_ptr<Module>> &modules();
-    Module *addModule(ModuleTypes::ModuleType moduleType);
-
-    public:
-    bool prepare();
-    bool execute();
-
-    /*
-     * General Actions
-     */
-    public:
-    // Express as a serialisable value
-    SerialisedValue serialise() const override;
-    // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node, const CoreData &coreData) override;
+    bool execute(TaskContext& taskContext);
 };
