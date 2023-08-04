@@ -376,7 +376,7 @@ bool CIFHandler::hasBondDistances() const { return !bondingPairs_.empty(); }
 std::optional<double> CIFHandler::bondDistance(std::string_view labelI, std::string_view labelJ) const
 {
     auto it = std::find_if(bondingPairs_.begin(), bondingPairs_.end(),
-                           [labelI, labelJ](const auto &bp) {
+                           [labelI, labelJ](const auto &bp  ) {
                                return (bp.labelI() == labelI && bp.labelJ() == labelJ) ||
                                       (bp.labelI() == labelJ && bp.labelJ() == labelI);
                            });
@@ -390,7 +390,7 @@ std::optional<double> CIFHandler::bondDistance(std::string_view labelI, std::str
  */
 
 // Create a structural species
-bool CIFHandler::createStructuralSpecies(CoreData &coreData, double tolerance, bool calculateBonding, bool preventMetallicBonding)
+bool CIFHandler::createStructuralSpecies(CoreData &coreData, double tolerance, Flags<BondingFlags> bondingFlags)
 {
     // Create temporary atom types corresponding to the unique atom labels
     for (auto &a : assemblies_)
@@ -447,10 +447,10 @@ bool CIFHandler::createStructuralSpecies(CoreData &coreData, double tolerance, b
                     }
 
     // Bonding
-    if (calculateBonding)
-        structuralSpecies_->addMissingBonds(1.1, preventMetallicBonding);
+    if (bondingFlags.isSet(BondingFlags::CalculateBonding))
+        structuralSpecies_->addMissingBonds(1.1, bondingFlags.isSet(BondingFlags::PreventMetallicBonding));
     else
-        applyCIFBonding(structuralSpecies_, preventMetallicBonding);
+        applyCIFBonding(structuralSpecies_, bondingFlags.isSet(BondingFlags::PreventMetallicBonding));
 
     structuralConfiguration_->addMolecule(structuralSpecies_);
     structuralConfiguration_->updateObjectRelationships();
@@ -459,7 +459,7 @@ bool CIFHandler::createStructuralSpecies(CoreData &coreData, double tolerance, b
 }
 
 // Create a cleaned structural species
-bool CIFHandler::createCleanedSpecies(CoreData &coreData, bool removeAtomsOfSingleMoiety, bool removeWaterMoleculesOfSingleMoiety, std::optional<NETADefinition> moietyNETA, std::optional<bool> removeEntireFragment)
+bool CIFHandler::createCleanedSpecies(CoreData &coreData, Flags<CleaningFlags> cleaningFlags, std::optional<NETADefinition> moietyNETA)
 {
     if (!structuralSpecies_)
         return false;
@@ -483,7 +483,7 @@ bool CIFHandler::createCleanedSpecies(CoreData &coreData, bool removeAtomsOfSing
     cleanedConfiguration_->empty();
     cleanedConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
 
-    if (removeAtomsOfSingleMoiety)
+    if (cleaningFlags.isSet(CleaningFlags::RemoveSingleMoietyAtoms))
     {
         std::vector<int> indicesToRemove;
         for (const auto &i : cleanedSpecies_->atoms())
@@ -495,7 +495,7 @@ bool CIFHandler::createCleanedSpecies(CoreData &coreData, bool removeAtomsOfSing
         cleanedSpecies_->removeAtoms(indicesToRemove);
     }
 
-    if (removeWaterMoleculesOfSingleMoiety)
+    if (cleaningFlags.isSet(CleaningFlags::RemoveSingleMoietyWaterMolecules))
     {
         NETADefinition waterVacuum("?O,nbonds=1,nh<=1|?O,nbonds>=2,-H(nbonds=1,-O)");
         if (!waterVacuum.isValid())
@@ -514,7 +514,7 @@ bool CIFHandler::createCleanedSpecies(CoreData &coreData, bool removeAtomsOfSing
         cleanedSpecies_->removeAtoms(indicesToRemove);
     }
 
-    if (moietyNETA.has_value() && moietyNETA.value().isValid())
+    if (cleaningFlags.isSet(CleaningFlags::RemoveMoietyNETA) && moietyNETA.value().isValid())
     {
         // Select all atoms that are in moieties where one of its atoms matches our NETA definition
         std::vector<int> indicesToRemove;
@@ -522,7 +522,7 @@ bool CIFHandler::createCleanedSpecies(CoreData &coreData, bool removeAtomsOfSing
             if (moietyNETA.value().matches(&i))
             {
                 // Select all atoms that are part of the same moiety?
-                if (removeEntireFragment.has_value() && removeEntireFragment.value())
+                if (cleaningFlags.isSet(CleaningFlags::RemoveEntireFragments))
                 {
                     cleanedSpecies_->clearAtomSelection();
                     auto selection = cleanedSpecies_->fragment(i.index());
@@ -667,7 +667,7 @@ bool CIFHandler::createMolecularConfiguration(CoreData &coreData)
 }
 
 // Create supercell species
-bool CIFHandler::createSupercellSpecies(CoreData &coreData, Vec3<int> repeat, bool calculateBonding, bool preventMetallicBonding)
+bool CIFHandler::createSupercellSpecies(CoreData &coreData, Vec3<int> repeat, Flags<CIFHandler::BondingFlags> bondingFlags)
 {
         if (!cleanedSpecies_)
             return false;
@@ -693,10 +693,10 @@ bool CIFHandler::createSupercellSpecies(CoreData &coreData, Vec3<int> repeat, bo
                         supercellSpecies_->addAtom(i.Z(), i.r() + deltaR, 0.0, i.atomType());
                 }
 
-        if (calculateBonding)
+        if (bondingFlags.isSet(BondingFlags::CalculateBonding))
             supercellSpecies_->addMissingBonds();
         else
-            applyCIFBonding(supercellSpecies_, preventMetallicBonding);
+            applyCIFBonding(supercellSpecies_, bondingFlags.isSet(BondingFlags::PreventMetallicBonding));
 
         // Add the structural species to the configuration
         supercellConfiguration_->addMolecule(supercellSpecies_);

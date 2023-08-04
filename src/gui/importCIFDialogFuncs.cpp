@@ -101,8 +101,16 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             updateInfoPage();
             break;
         case (ImportCIFDialog::CIFInfoPage):
+            if (!cifHandler_.hasBondDistances())
+                bondingFlags_.setFlag(CIFHandler::BondingFlags::CalculateBonding);
+            else
+                bondingFlags_.removeFlag(CIFHandler::BondingFlags::CalculateBonding);
             ui_.BondFromCIFRadio->setEnabled(cifHandler_.hasBondDistances());
             ui_.BondFromCIFRadio->setChecked(cifHandler_.hasBondDistances());
+            if (ui_.BondingPreventMetallicCheck->isChecked())
+                bondingFlags_.setFlag(CIFHandler::BondingFlags::PreventMetallicBonding);
+            else
+                bondingFlags_.removeFlag(CIFHandler::BondingFlags::PreventMetallicBonding);
             if (!createStructuralSpecies())
                 return false;
             ui_.AssemblyView->expandAll();
@@ -270,7 +278,7 @@ bool ImportCIFDialog::createStructuralSpecies()
     temporaryCoreData_.atomTypes().clear();
 
     cifHandler_.createStructuralSpecies(temporaryCoreData_, ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5,
-                                         ui_.CalculateBondingRadio->isChecked(), ui_.BondingPreventMetallicCheck->isChecked());
+                                         bondingFlags_);
 
     crystalSpecies_ = cifHandler_.structuralSpecies();
     if (crystalSpecies_ == nullptr)
@@ -300,18 +308,35 @@ void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
 
 void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
 {
+    if (checked)
+        bondingFlags_.setFlag(CIFHandler::CalculateBonding);
+    else if (bondingFlags_.isSet(CIFHandler::CalculateBonding))
+        bondingFlags_.removeFlag(CIFHandler::CalculateBonding);
+
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
+    {
         createStructuralSpecies();
+    }
 }
 
 void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
 {
+    if (checked)
+        bondingFlags_.setFlag(CIFHandler::PreventMetallicBonding);
+    else if (bondingFlags_.isSet(CIFHandler::PreventMetallicBonding))
+        bondingFlags_.removeFlag(CIFHandler::PreventMetallicBonding);
+
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
         createStructuralSpecies();
 }
 
 void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
 {
+    if (!checked)
+        bondingFlags_.setFlag(CIFHandler::CalculateBonding);
+    else if (bondingFlags_.isSet(CIFHandler::CalculateBonding))
+        bondingFlags_.removeFlag(CIFHandler::CalculateBonding);
+
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
         createStructuralSpecies();
 }
@@ -325,11 +350,7 @@ bool ImportCIFDialog::createCleanedSpecies()
 {
     ui_.CleanedViewer->setConfiguration(nullptr);
 
-    if (ui_.MoietyRemoveByNETAGroup->isChecked())
-        cifHandler_.createCleanedSpecies(temporaryCoreData_, ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked(),
-                                          moietyNETA_, ui_.MoietyNETARemoveFragmentsCheck->isChecked());
-    else
-        cifHandler_.createCleanedSpecies(temporaryCoreData_, ui_.MoietyRemoveAtomicsCheck->isChecked(), ui_.MoietyRemoveWaterCheck->isChecked());
+    cifHandler_.createCleanedSpecies(temporaryCoreData_, cleaningFlags_, moietyNETA_);
 
     cleanedSpecies_ = cifHandler_.cleanedSpecies();
 
@@ -356,11 +377,35 @@ bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
     return result;
 }
 
-void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked) { createCleanedSpecies(); }
+void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
+{
+    if (checked)
+        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveSingleMoietyAtoms);
+    else if (cleaningFlags_.isSet(CIFHandler::CleaningFlags::RemoveSingleMoietyAtoms))
+        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveSingleMoietyAtoms);
 
-void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked) { createCleanedSpecies(); }
+    createCleanedSpecies();
+}
 
-void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked) { createCleanedSpecies(); }
+void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
+{
+    if (checked)
+        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveSingleMoietyWaterMolecules);
+    else if (cleaningFlags_.isSet(CIFHandler::CleaningFlags::RemoveSingleMoietyWaterMolecules))
+        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveSingleMoietyWaterMolecules);
+
+    createCleanedSpecies();
+}
+
+void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
+{
+    if (checked)
+        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveMoietyNETA);
+    else if (cleaningFlags_.isSet(CIFHandler::CleaningFlags::RemoveMoietyNETA))
+        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveMoietyNETA);
+
+    createCleanedSpecies();
+}
 
 void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 {
@@ -371,6 +416,11 @@ void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 
 void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 {
+    if (checked)
+        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveEntireFragments);
+    else if (cleaningFlags_.isSet(CIFHandler::CleaningFlags::RemoveEntireFragments))
+        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveEntireFragments);
+
     if (moietyNETA_.isValid())
         createCleanedSpecies();
 }
@@ -399,8 +449,7 @@ bool ImportCIFDialog::createSupercellSpecies()
     // Set the repeat vector
     Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
 
-    cifHandler_.createSupercellSpecies(temporaryCoreData_, repeat, ui_.CalculateBondingRadio->isChecked(),
-                                        ui_.BondingPreventMetallicCheck->isChecked());
+    cifHandler_.createSupercellSpecies(temporaryCoreData_, repeat, bondingFlags_);
     auto *supercell = cifHandler_.supercellSpecies();
     if (!supercell)
         return false;

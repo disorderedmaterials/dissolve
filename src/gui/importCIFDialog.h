@@ -39,6 +39,9 @@ class ImportCIFDialog : public WizardDialog
     Dissolve &dissolve_;
     // CIF Handler
     CIFHandler cifHandler_;
+    // Flags
+    Flags<CIFHandler::BondingFlags> bondingFlags_;
+    Flags<CIFHandler::CleaningFlags> cleaningFlags_;
 
     private:
     // Apply CIF bond definitions within specified species
