@@ -70,25 +70,3 @@ std::shared_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()
 {
     return std::make_shared<CustomRegionVoxelKernel>(expression_.asString(), minimumValue_, maximumValue_);
 }
-
-/*
- * Region Data
- */
-
-// Return whether voxel centred at supplied real coordinates is valid
-bool CustomRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
-{
-    // Poke values into our variables
-    x_->setValue(r.x);
-    y_->setValue(r.y);
-    z_->setValue(r.z);
-    auto rFrac = cfg->box()->getFractional(r);
-    xFrac_->setValue(rFrac.x);
-    yFrac_->setValue(rFrac.y);
-    zFrac_->setValue(rFrac.z);
-
-    // Assess expression
-    auto x = expression_.asDouble();
-
-    return (x >= minimumValue_ && x <= maximumValue_);
-}
