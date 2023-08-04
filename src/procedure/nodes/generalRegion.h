@@ -40,11 +40,4 @@ class GeneralRegionProcedureNode : public RegionProcedureNodeBase, GeneralRegion
     protected:
     // Return a new voxel check kernel
     std::shared_ptr<VoxelKernel> createVoxelKernel() override;
-
-    /*
-     * Execute
-     */
-    public:
-    // Prepare any necessary data, ready for execution
-    bool prepare(const ProcedureContext &procedureContext) override;
 };

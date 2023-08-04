@@ -33,13 +33,5 @@ GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBa
 // Return a new voxel check kernel
 std::shared_ptr<VoxelKernel> GeneralRegionProcedureNode::createVoxelKernel()
 {
-    return std::make_shared<GeneralRegionVoxelKernel>(toleranceSquared_);
-}
-
-// Prepare any necessary data, ready for execution
-bool GeneralRegionProcedureNode::prepare(const ProcedureContext &procedureContext)
-{
-    toleranceSquared_ = tolerance_ * tolerance_;
-
-    return true;
+    return std::make_shared<GeneralRegionVoxelKernel>(tolerance_ * tolerance_);
 }
