@@ -7,6 +7,7 @@
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
+#include "procedure/nodes/calculateExpression.h"
 #include "procedure/nodes/ifValueInRange.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/operateNormalise.h"
@@ -29,8 +30,13 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     auto &forEachNF = selectNF_->branch()->get();
     auto valuesInRange = forEachNF.create<IfValueInRangeProcedureNode>({});
     valuesInRange->keywords().set("Value", NodeValue("NF.nSelected"));
-    valuesInRange->keywords().set("Range", Range(1.9, 2.1));
+    valuesInRange->keywords().set("ValidRange", Range(1.9, 2.1));
+
     auto &ifThen = valuesInRange->branch()->get();
+    auto siteIndex = ifThen.create<CalculateExpressionProcedureNode>({});
+    siteIndex->setExpression("NF.nSelected");
+
+    auto collectNFIndex = forEachNF.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
 
     /*
      * Keywords
