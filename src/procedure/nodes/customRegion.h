@@ -10,7 +10,8 @@
 class CustomRegionVoxelKernel : public VoxelKernel
 {
     public:
-    explicit CustomRegionVoxelKernel(std::string_view expressionString = "", double minimumValue = 0.0, double maximumValue = 1.0);
+    explicit CustomRegionVoxelKernel(std::string_view expressionString = "", double minimumValue = 0.0,
+                                     double maximumValue = 1.0);
 
     protected:
     // Local variables, set when checking voxels
