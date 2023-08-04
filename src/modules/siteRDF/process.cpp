@@ -32,7 +32,8 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
 
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
+    context.setDissolve(moduleContext.dissolve());
+    context.setProcessingDataPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateRDF experienced problems with its analysis.\n");

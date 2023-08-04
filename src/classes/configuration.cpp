@@ -9,6 +9,7 @@
 #include "classes/cell.h"
 #include "classes/potentialMap.h"
 #include "classes/species.h"
+#include "main/dissolve.h"
 #include "modules/energy/energy.h"
 
 Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "Generator")
