@@ -9,6 +9,13 @@
 class GeneralRegionVoxelKernel : public VoxelKernel
 {
     public:
+    GeneralRegionVoxelKernel(double toleranceSquared);
+
+    private:
+    // Squared tolerance
+    double toleranceSquared_;
+
+    public:
     // Return whether voxel centred at supplied real coordinates is valid
     bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
 };
@@ -25,9 +32,9 @@ class GeneralRegionProcedureNode : public RegionProcedureNodeBase
      */
     private:
     // Distance tolerance (threshold) for avoiding existing atoms
-    double tolerance_;
+    double tolerance_{1.0};
     // Squared tolerance
-    double toleranceSquared_;
+    double toleranceSquared_{1.0};
 
     /*
      * Region Data
