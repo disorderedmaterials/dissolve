@@ -6,22 +6,22 @@
 #include "templates/optionalRef.h"
 
 class Dissolve;
-class ProcedurePool;
+class ProcessPool;
 
 class TaskContext
 {
 
     public:
-    explicit TaskContext(const ProcedurePool& procPool);
-    TaskContext(const ProcedurePool& procPool, Dissolve& dissolve);
+    explicit TaskContext(const ProcessPool& procPool);
+    TaskContext(const ProcessPool& procPool, Dissolve& dissolve);
     ~TaskContext() = default;
 
     private:
-    const ProcedurePool& procedurePool_;
+    const ProcessPool& processPool_;
     OptionalReferenceWrapper<Dissolve> dissolve_;
 
     public:
-    const ProcedurePool& procedurePool();
+    const ProcessPool& processPool();
     Dissolve& dissolve();
 
 };

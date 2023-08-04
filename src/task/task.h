@@ -12,6 +12,7 @@
 #include "task/context.h"
 
 class CoreData;
+class ModuleLayer;
 
 class Task : public Serialisable<const CoreData &>
 {
@@ -25,4 +26,5 @@ class Task : public Serialisable<const CoreData &>
 
     public:
     bool execute(TaskContext& taskContext);
+    void addRunLayerNode(ModuleLayer* layer);
 };

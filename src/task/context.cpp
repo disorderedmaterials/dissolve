@@ -4,10 +4,10 @@
 #include "task/context.h"
 #include <stdexcept>
 
-TaskContext::TaskContext(const ProcedurePool &procPool) : procedurePool_(procPool) {}
-TaskContext::TaskContext(const ProcedurePool &procPool, Dissolve &dissolve) : procedurePool_(procPool), dissolve_(dissolve) {}
+TaskContext::TaskContext(const ProcessPool &procPool) : processPool_(procPool) {}
+TaskContext::TaskContext(const ProcessPool &procPool, Dissolve &dissolve) : processPool_(procPool), dissolve_(dissolve) {}
 
-const ProcedurePool &TaskContext::procedurePool() { return procedurePool_; }
+const ProcessPool &TaskContext::processPool() { return processPool_; }
 
 Dissolve& TaskContext::dissolve()
 {
