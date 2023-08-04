@@ -7,8 +7,11 @@
 #include "keywords/double.h"
 #include "keywords/nodeValue.h"
 
-// Set up any necessary data for the kernel
-void CustomRegionVoxelKernel::initialise(std::string_view expressionString, double minimumValue, double maximumValue)
+/*
+ * Custom Region Voxel Kernel
+ */
+
+CustomRegionVoxelKernel::CustomRegionVoxelKernel(std::string_view expressionString, double minimumValue, double maximumValue)
 {
     // Create our local variables
     x_ = expression_.addLocalVariable("x");
@@ -44,6 +47,10 @@ bool CustomRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<
     return (x >= minimumValue_ && x <= maximumValue_);
 }
 
+/*
+ * Custom Region
+ */
+
 CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::CustomRegion)
 {
     keywords_.setOrganisation("Options", "Definition");
@@ -61,11 +68,7 @@ CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase
 
 std::shared_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()
 {
-    auto kernel = std::make_shared<CustomRegionVoxelKernel>();
-
-    kernel->initialise(expression_.asString(), minimumValue_, maximumValue_);
-
-    return kernel;
+    return std::make_shared<CustomRegionVoxelKernel>(expression_.asString(), minimumValue_, maximumValue_);
 }
 
 /*

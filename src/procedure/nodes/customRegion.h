@@ -9,6 +9,9 @@
 // Custom Region Voxel Kernel
 class CustomRegionVoxelKernel : public VoxelKernel
 {
+    public:
+    CustomRegionVoxelKernel(std::string_view expressionString, double minimumValue, double maximumValue);
+
     private:
     // Local variables, set when checking voxels
     std::shared_ptr<ExpressionVariable> x_, y_, z_, xFrac_, yFrac_, zFrac_;
@@ -20,8 +23,6 @@ class CustomRegionVoxelKernel : public VoxelKernel
     double maximumValue_{1.0};
 
     public:
-    // Set up necessary data for the kernel
-    void initialise(std::string_view expressionString, double minimumValue, double maximumValue);
     // Return whether voxel centred at supplied real coordinates is valid
     bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
 };
