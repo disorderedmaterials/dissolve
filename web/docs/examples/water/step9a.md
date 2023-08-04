@@ -35,7 +35,7 @@ The new layer contains the following modules:
 
 We'll need to set up both of these modules to calculate exactly what we need.  First, {{< module "SiteRDF" >}}:
 
-{{< action type="mouse" >}}Select the {{< module "SiteRDF" >}} module and display its {{< gui-button text="Options" icon="general_options" >}}{{< /action >}}
+{{< action type="mouse" >}}Select the {{< module "SiteRDF" >}} module and display its {{< gui-button text="Options" icon="options" >}}{{< /action >}}
 {{< action type="edit" text="Click the **SiteA** option and choose the `COM` site" />}}
 {{< action type="edit" text="Select the `COM` site for **SiteB** as well" />}}
 {{< action type="edit" text="Enable the **ExcludeSameMolecule** option" />}}

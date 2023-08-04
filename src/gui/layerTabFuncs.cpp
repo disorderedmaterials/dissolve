@@ -143,12 +143,12 @@ void LayerTab::on_LayerEnabledButton_clicked(bool checked)
 
     if (checked)
     {
-        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer.svg"));
+        tabWidget_->setTabIcon(page_, QIcon(":/general/icons/layer.svg"));
         moduleLayer_->runControlFlags().removeFlag(ModuleLayer::RunControlFlag::Disabled);
     }
     else
     {
-        tabWidget_->setTabIcon(page_, QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+        tabWidget_->setTabIcon(page_, QIcon(":/general/icons/layer_disabled.svg"));
         moduleLayer_->runControlFlags().setFlag(ModuleLayer::RunControlFlag::Disabled);
     }
 
@@ -310,7 +310,7 @@ void LayerTab::on_ModulesList_customContextMenuRequested(const QPoint &pos)
     auto *clearData = menu.addAction("&Clear associated data");
     menu.addSeparator();
     auto *deleteModule = menu.addAction("&Delete");
-    deleteModule->setIcon(QIcon(":/general/icons/general_cross.svg"));
+    deleteModule->setIcon(QIcon(":/general/icons/cross.svg"));
 
     auto *action = menu.exec(ui_.ModulesList->mapToGlobal(pos));
     if (action == enableModule)

@@ -21,7 +21,7 @@ The {{< module "SiteRDF" >}} module output shows a strong peak at around 2.8 &#8
 ### Hydrogen Bond Geometry
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="Analyse HBond" type="Layer" >}} layer {{< /action >}}
-{{< action type="mouse" >}}Click the {{< module "DAngle" >}} module and go to the {{< gui-button text="Output" icon="general_output" >}} page{{< /action >}}
+{{< action type="mouse" >}}Click the {{< module "DAngle" >}} module and go to the {{< gui-button text="Output" icon="output" >}} page{{< /action >}}
 
 There are three graphs on display here - the B&middot;&middot;&middot;C g(r) (top left), the A&ndash;B&middot;&middot;&middot;C angle histogram (bottom left), and the 2D correlation map of the two (right). The B&middot;&middot;&middot;C g(r) corresponds to the intermolecular H&middot;&middot;&middot;O and you should see the principal hydrogen bonding peak at 1.8 &#8491; followed by a second, broader interaction at 3.3 &#8491;. So, the primary hydrogen bonding distance in the liquid is 1.8 &#8491;, but how directional is this interaction? If we look at the distance-angle map and read off the x axis to 1.8 &#8491; we can see that the A&ndash;B&middot;&middot;&middot;C angle is always between 150 and 180&deg;. In other words, a very directional hydrogen bond! Angles associated to the broader feature at 3.3 &#8491; are around 60&deg;.
 
@@ -32,7 +32,7 @@ There are three graphs on display here - the B&middot;&middot;&middot;C g(r) (to
 To make sense of the spatial distribution function output by the {{< module "SDF" >}} module we will need to set the central reference molecule to the average molecule we also requested, and adjust the cutoff to get a sensible surface.
 
 {{< action type="tabs" >}}Go to the {{< gui-tab text="Analyse AvgMol/SDF" type="Layer" >}} layer {{< /action >}}
-{{< action type="mouse" >}}Click the {{< module "SDF" >}} module and go to the {{< gui-button text="Output" icon="general_output" >}} page{{< /action >}}
+{{< action type="mouse" >}}Click the {{< module "SDF" >}} module and go to the {{< gui-button text="Output" icon="output" >}} page{{< /action >}}
 {{< step text="Set the **Reference Molecule** to `COM@Water (AvgMol)`" />}}
 {{< step text="Change the **Lower** cutoff to 0.065" />}}
 
