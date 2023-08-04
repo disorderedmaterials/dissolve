@@ -112,7 +112,8 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
                 return false;
             break;
         case (ImportCIFDialog::CleanedPage):
-            detectUniqueSpecies();
+            if (cleanedSpecies_->fragment(0).size() != cleanedSpecies_->nAtoms())
+                detectUniqueSpecies();
             if (!createSupercellSpecies())
                 return false;
             break;
