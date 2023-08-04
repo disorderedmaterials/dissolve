@@ -109,29 +109,30 @@ class CIFHandler
     // CIF Species Cleaning Flags
     enum CleaningFlags
     {
-        RemoveSingleMoietyAtoms, /* Remove atoms of single moiety */
-        RemoveSingleMoietyWaterMolecules, /* Remove water molecules of single moiety */
-        RemoveMoietyNETA, /* Remove single moiety atoms by NETA definition */
-        RemoveEntireFragments, /* Remove entire fragments when using NETA definition */
+        MoietyRemoveAtomics,  /* Remove atoms of single moiety */
+        MoietyRemoveWater,    /* Remove water molecules of single moiety */
+        MoietyRemoveNETA,     /* Remove single atoms by NETA definition */
+        RemoveBoundFragments, /* Remove entire fragments when using NETA definition */
     };
     // CIF Species Bonding Flags
     enum BondingFlags
     {
-        CalculateBonding, /* Calculate bonding */
+        CalculateBonding,       /* Calculate bonding */
         PreventMetallicBonding, /* Prevent metallic bonding */
     };
 
     public:
     // Create a structural species
-    bool createStructuralSpecies(CoreData& coreData, double tolerance, Flags<BondingFlags> bondingFlags = {});
+    bool createStructuralSpecies(CoreData &coreData, double tolerance, Flags<BondingFlags> bondingFlags = {});
     // Create a cleaned structural species
-    bool createCleanedSpecies(CoreData& coreData, Flags<CleaningFlags> cleaningFlags = {}, std::optional<NETADefinition> moietyNETA = std::nullopt);
+    bool createCleanedSpecies(CoreData &coreData, Flags<CleaningFlags> cleaningFlags = {},
+                              std::optional<NETADefinition> moietyNETA = std::nullopt);
     // Create molecular species
-    bool createMolecularSpecies(CoreData& coreData);
+    bool createMolecularSpecies(CoreData &coreData);
     // Create configuration that composes molecular species
-    bool createMolecularConfiguration(CoreData& coreData);
+    bool createMolecularConfiguration(CoreData &coreData);
     // Create supercell species
-    bool createSupercellSpecies(CoreData& coreData, Vec3<int> repeat, Flags<BondingFlags> bondingFlags = {});
+    bool createSupercellSpecies(CoreData &coreData, Vec3<int> repeat, Flags<BondingFlags> bondingFlags = {});
 
     /*
      * Helpers

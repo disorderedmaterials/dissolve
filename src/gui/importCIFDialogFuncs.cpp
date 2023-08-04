@@ -141,7 +141,7 @@ std::optional<int> ImportCIFDialog::determineNextPage(int currentIndex)
     // Only check for the first page
     if (currentIndex == ImportCIFDialog::SelectCIFFilePage)
         return cifHandler_.spaceGroup() != SpaceGroups::NoSpaceGroup ? ImportCIFDialog::CIFInfoPage
-                                                                      : ImportCIFDialog::SelectSpaceGroupPage;
+                                                                     : ImportCIFDialog::SelectSpaceGroupPage;
     else
         return std::get<3>(getPage(currentIndex));
 }
@@ -248,11 +248,10 @@ void ImportCIFDialog::updateInfoPage()
     // Publication Data
     ui_.InfoPublicationTitleLabel->setText(
         QString::fromStdString(cifHandler_.getTagString("_publ_section_title").value_or("<Unknown>")));
-    ui_.InfoPublicationReferenceLabel->setText(QString::fromStdString(
-        fmt::format("{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("???"),
-                    cifHandler_.getTagString("_journal_year").value_or("???"),
-                    cifHandler_.getTagString("_journal_volume").value_or("???"),
-                    cifHandler_.getTagString("_journal_page_first").value_or("???"))));
+    ui_.InfoPublicationReferenceLabel->setText(QString::fromStdString(fmt::format(
+        "{}, {}, <b>{}</b>, {}", cifHandler_.getTagString("_journal_name_full").value_or("???"),
+        cifHandler_.getTagString("_journal_year").value_or("???"), cifHandler_.getTagString("_journal_volume").value_or("???"),
+        cifHandler_.getTagString("_journal_page_first").value_or("???"))));
     ui_.InfoAuthorsList->clear();
     auto authors = cifHandler_.getTagStrings("_publ_author_name");
     for (auto &author : authors)
@@ -278,7 +277,7 @@ bool ImportCIFDialog::createStructuralSpecies()
     temporaryCoreData_.atomTypes().clear();
 
     cifHandler_.createStructuralSpecies(temporaryCoreData_, ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5,
-                                         bondingFlags_);
+                                        bondingFlags_);
 
     crystalSpecies_ = cifHandler_.structuralSpecies();
     if (crystalSpecies_ == nullptr)
@@ -310,7 +309,7 @@ void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
 {
     if (checked)
         bondingFlags_.setFlag(CIFHandler::CalculateBonding);
-    else if (bondingFlags_.isSet(CIFHandler::CalculateBonding))
+    else
         bondingFlags_.removeFlag(CIFHandler::CalculateBonding);
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
@@ -323,7 +322,7 @@ void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
 {
     if (checked)
         bondingFlags_.setFlag(CIFHandler::PreventMetallicBonding);
-    else if (bondingFlags_.isSet(CIFHandler::PreventMetallicBonding))
+    else
         bondingFlags_.removeFlag(CIFHandler::PreventMetallicBonding);
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
@@ -334,7 +333,7 @@ void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
 {
     if (!checked)
         bondingFlags_.setFlag(CIFHandler::CalculateBonding);
-    else if (bondingFlags_.isSet(CIFHandler::CalculateBonding))
+    else
         bondingFlags_.removeFlag(CIFHandler::CalculateBonding);
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
@@ -380,9 +379,9 @@ bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
 void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
 {
     if (checked)
-        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveSingleMoietyAtoms);
-    else if (cleaningFlags_.isSet(CIFHandler::CleaningFlags::RemoveSingleMoietyAtoms))
-        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveSingleMoietyAtoms);
+        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::MoietyRemoveAtomics);
+    else
+        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveAtomics);
 
     createCleanedSpecies();
 }
@@ -390,9 +389,9 @@ void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
 void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
 {
     if (checked)
-        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveSingleMoietyWaterMolecules);
-    else if (cleaningFlags_.isSet(CIFHandler::CleaningFlags::RemoveSingleMoietyWaterMolecules))
-        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveSingleMoietyWaterMolecules);
+        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::MoietyRemoveWater);
+    else
+        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveWater);
 
     createCleanedSpecies();
 }
@@ -400,9 +399,9 @@ void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
 void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
 {
     if (checked)
-        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveMoietyNETA);
-    else if (cleaningFlags_.isSet(CIFHandler::CleaningFlags::RemoveMoietyNETA))
-        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveMoietyNETA);
+        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::MoietyRemoveNETA);
+    else
+        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveNETA);
 
     createCleanedSpecies();
 }
@@ -417,9 +416,9 @@ void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 {
     if (checked)
-        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveEntireFragments);
-    else if (cleaningFlags_.isSet(CIFHandler::CleaningFlags::RemoveEntireFragments))
-        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveEntireFragments);
+        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveBoundFragments);
+    else
+        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveBoundFragments);
 
     if (moietyNETA_.isValid())
         createCleanedSpecies();
