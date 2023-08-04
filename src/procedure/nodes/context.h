@@ -27,7 +27,7 @@ class ProcedureContext
     // Target Configuration
     Configuration *configuration_{nullptr};
     // Prefix for generated data
-    std::string dataPrefix_;
+    std::string processingDataPrefix_;
     // Dissolve
     OptionalReferenceWrapper<Dissolve> dissolve_;
 
@@ -41,7 +41,7 @@ class ProcedureContext
     // Set prefix for generated processing data
     void setProcessingDataPrefix(std::string_view prefix);
     // Return prefix for generated data
-    std::string_view dataPrefix() const;
+    std::string_view processingDataPrefix() const;
     // Return target list for generated data
     GenericList &dataList() const;
     // Set reference to Dissolve

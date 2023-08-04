@@ -32,7 +32,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
     // Execute the analysis
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
     context.setDissolve(moduleContext.dissolve());
-    context.setPrefix(name());
+    context.setProcessingDataPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateSDF experienced problems with its analysis.\n");

@@ -62,7 +62,7 @@ bool Collect2DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), procedureContext.configuration()->niceName());
-    auto [target, status] = procedureContext.dataList().realiseIf<Histogram2D>(dataName, procedureContext.dataPrefix(),
+    auto [target, status] = procedureContext.dataList().realiseIf<Histogram2D>(dataName, procedureContext.processingDataPrefix(),
                                                                                GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {

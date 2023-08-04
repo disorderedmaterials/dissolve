@@ -43,10 +43,10 @@ Dissolve &ProcedureContext::dissolve() const
 }
 
 // Set target data list and prefix
-void ProcedureContext::setPrefix(std::string_view prefix) { dataPrefix_ = prefix; }
+void ProcedureContext::setProcessingDataPrefix(std::string_view prefix) { processingDataPrefix_ = prefix; }
 
 // Return prefix for generated data
-std::string_view ProcedureContext::dataPrefix() const { return dataPrefix_; }
+std::string_view ProcedureContext::processingDataPrefix() const { return processingDataPrefix_; }
 
 // Return target list for generated data
 GenericList &ProcedureContext::dataList() const
