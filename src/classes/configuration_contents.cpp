@@ -15,7 +15,7 @@ void Configuration::empty()
     molecules_.clear();
     atoms_.clear();
     atomTypes_.clear();
-    appliedSizeFactor_ = 1.0;
+    appliedSizeFactor_ = std::nullopt;
     speciesPopulations_.clear();
     globalPotentials_.clear();
     targetedPotentials_.clear();
@@ -230,9 +230,12 @@ Atom &Configuration::addAtom(const SpeciesAtom *sourceAtom, const std::shared_pt
     newAtom.setCoordinates(r);
 
     // Update our typeIndex (non-isotopic) and set local and master type indices
-    AtomTypeData &atd = atomTypes_.add(sourceAtom->atomType(), 1);
-    newAtom.setLocalTypeIndex(atd.listIndex());
-    newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
+    if (sourceAtom->atomType() != nullptr)
+    {
+        AtomTypeData &atd = atomTypes_.add(sourceAtom->atomType(), 1);
+        newAtom.setLocalTypeIndex(atd.listIndex());
+        newAtom.setMasterTypeIndex(sourceAtom->atomType()->index());
+    }
 
     return newAtom;
 }

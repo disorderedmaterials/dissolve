@@ -13,17 +13,17 @@
 #include "procedure/nodes/sequence.h"
 
 IntegerCollect1DProcedureNode::IntegerCollect1DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> observable,
-                                                             ProcedureNode::NodeContext subCollectContext, int rMin, int rMax)
-    : ProcedureNode(ProcedureNode::NodeType::IntegerCollect1D, {ProcedureNode::AnalysisContext}),
-      xObservable_{observable, 0}, minimum_{rMin}, maximum_{rMax}, subCollectBranch_(subCollectContext, *this, "SubCollect")
+                                                             ProcedureNode::NodeContext subCollectContext)
+    : ProcedureNode(ProcedureNode::NodeType::IntegerCollect1D, {ProcedureNode::AnalysisContext}), xObservable_{observable, 0},
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.setOrganisation("Options", "Quantity / Range");
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>(
         "QuantityX", "Calculated observable to collect", xObservable_, this, ProcedureNode::NodeClass::Calculate, true);
-    keywords_.add<OptionalIntegerKeyword>("Minimum", "Minimum of the x-axis of the histogram", minimum_, 0, std::nullopt, 1,
-                                          "Use Minimum value");
-    keywords_.add<OptionalIntegerKeyword>("Maximum", "Maximum of the x-axis of the histogram", maximum_, 0, std::nullopt, 1,
-                                          "Use Maximum value");
+    keywords_.add<OptionalIntegerKeyword>("Minimum", "Minimum allowed bin value for the histogram", minimum_, 0, std::nullopt,
+                                          1, "No Limit");
+    keywords_.add<OptionalIntegerKeyword>("Maximum", "Maximum allowed bin value for the histogram", maximum_, 0, std::nullopt,
+                                          1, "No Limit");
     keywords_.addHidden<NodeBranchKeyword>("SubCollect", "Branch which runs if the target quantity was binned successfully",
                                            subCollectBranch_);
 }

@@ -21,6 +21,9 @@ Procedure::~Procedure() = default;
 // Clear all data
 void Procedure::clear() { rootSequence_.clear(); }
 
+// Return context for the main Procedure
+ProcedureNode::NodeContext Procedure::context() { return context_; }
+
 // Return root sequence
 ProcedureNodeSequence &Procedure::rootSequence() { return rootSequence_; }
 

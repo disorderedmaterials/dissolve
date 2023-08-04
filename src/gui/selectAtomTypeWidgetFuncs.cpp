@@ -3,7 +3,6 @@
 
 #include "classes/atomType.h"
 #include "classes/coreData.h"
-#include "gui/helpers/listWidgetUpdater.h"
 #include "gui/selectAtomTypeWidget.h"
 
 SelectAtomTypeWidget::SelectAtomTypeWidget(QWidget *parent) : QWidget(parent)

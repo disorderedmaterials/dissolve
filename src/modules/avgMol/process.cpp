@@ -3,11 +3,12 @@
 
 #include "classes/box.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/avgMol/avgMol.h"
 #include "templates/algorithms.h"
 
 // Run set-up stage
-bool AvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals)
+bool AvgMolModule::setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals)
 {
     // Clear species
     averageSpecies_.clear();
@@ -40,16 +41,16 @@ bool AvgMolModule::setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<
         fmt::format("{}@{}", targetSite_ ? targetSite_->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
 
     // Realise arrays
-    updateArrays(dissolve);
+    updateArrays(moduleContext.dissolve().processingModuleData());
 
     // Update the species coordinates
-    updateSpecies(dissolve.processingModuleData());
+    updateSpecies(moduleContext.dissolve().processingModuleData());
 
     return true;
 }
 
 // Run main processing
-Module::ExecutionResult AvgMolModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AvgMolModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -84,15 +85,15 @@ Module::ExecutionResult AvgMolModule::process(Dissolve &dissolve, const ProcessP
     Messenger::print("\n");
 
     // Update arrays
-    updateArrays(dissolve);
+    updateArrays(moduleContext.dissolve().processingModuleData());
 
     // Get the site stack
     const auto *stack = targetConfiguration_->siteStack(targetSite_);
 
     // Retrieve data arrays
-    auto &sampledX = dissolve.processingModuleData().retrieve<SampledVector>("X", name());
-    auto &sampledY = dissolve.processingModuleData().retrieve<SampledVector>("Y", name());
-    auto &sampledZ = dissolve.processingModuleData().retrieve<SampledVector>("Z", name());
+    auto &sampledX = moduleContext.dissolve().processingModuleData().retrieve<SampledVector>("X", name());
+    auto &sampledY = moduleContext.dissolve().processingModuleData().retrieve<SampledVector>("Y", name());
+    auto &sampledZ = moduleContext.dissolve().processingModuleData().retrieve<SampledVector>("Z", name());
 
     // Loop over sites
     std::vector<double> rx(targetSpecies_->nAtoms()), ry(targetSpecies_->nAtoms()), rz(targetSpecies_->nAtoms());

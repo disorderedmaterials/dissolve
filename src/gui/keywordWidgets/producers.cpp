@@ -16,6 +16,7 @@
 #include "gui/keywordWidgets/integer.hui"
 #include "gui/keywordWidgets/interactionPotential.h"
 #include "gui/keywordWidgets/isotopologueSet.h"
+#include "gui/keywordWidgets/layer.h"
 #include "gui/keywordWidgets/module.h"
 #include "gui/keywordWidgets/moduleVector.h"
 #include "gui/keywordWidgets/node.h"
@@ -34,6 +35,7 @@
 #include "gui/keywordWidgets/vec3Double.h"
 #include "gui/keywordWidgets/vec3Integer.h"
 #include "gui/keywordWidgets/vec3NodeValue.h"
+#include "gui/keywordWidgets/weightedModuleVector.h"
 #include "keywords/data1DStore.h"
 #include "keywords/data2DStore.h"
 #include "keywords/data3DStore.h"
@@ -64,6 +66,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<IntegerKeyword, IntegerKeywordWidget>();
     registerProducer<InteractionPotentialBaseKeyword, InteractionPotentialKeywordWidget>();
     registerProducer<IsotopologueSetKeyword, IsotopologueSetKeywordWidget>();
+    registerProducer<LayerKeyword, LayerKeywordWidget>();
     registerProducer<ModuleKeywordBase, ModuleKeywordWidget>();
     registerProducer<ModuleVectorKeyword, ModuleVectorKeywordWidget>();
     registerProducer<NodeKeywordBase, NodeKeywordWidget>();
@@ -82,6 +85,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<Vec3DoubleKeyword, Vec3DoubleKeywordWidget>();
     registerProducer<Vec3IntegerKeyword, Vec3IntegerKeywordWidget>();
     registerProducer<Vec3NodeValueKeyword, Vec3NodeValueKeywordWidget>();
+    registerProducer<WeightedModuleVectorKeyword, WeightedModuleVectorKeywordWidget>();
 
     // Keywords with no widgets
     registerNullProducer<Data1DStoreKeyword>();

@@ -19,8 +19,9 @@ bool Configuration::serialise(LineParser &parser) const
     // Write unit cell (box) lengths and angles
     const auto lengths = box()->axisLengths();
     const auto angles = box()->axisAngles();
-    if (!parser.writeLineF("{:12e} {:12e} {:12e}  {}  {}  {}\n", lengths.x, lengths.y, lengths.z, appliedSizeFactor_,
-                           requestedSizeFactor_, DissolveSys::btoa(box()->type() == Box::BoxType::NonPeriodic)))
+    if (!parser.writeLineF("{:12e} {:12e} {:12e}  {}  {}  {}\n", lengths.x, lengths.y, lengths.z,
+                           appliedSizeFactor_.value_or(defaultSizeFactor_), requestedSizeFactor_.value_or(defaultSizeFactor_),
+                           DissolveSys::btoa(box()->type() == Box::BoxType::NonPeriodic)))
         return false;
     if (!parser.writeLineF("{:12e} {:12e} {:12e}\n", angles.x, angles.y, angles.z))
         return false;
@@ -102,7 +103,7 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     appliedSizeFactor_ = parser.argd(3);
     requestedSizeFactor_ = parser.argd(4);
     auto nonPeriodic = parser.argb(5);
-    const auto lengths = parser.arg3d(0) / appliedSizeFactor_;
+    const auto lengths = parser.arg3d(0) / appliedSizeFactor_.value_or(defaultSizeFactor_);
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
@@ -156,7 +157,8 @@ bool Configuration::deserialise(LineParser &parser, const CoreData &coreData, do
     atomTypes_.finalise();
 
     // Scale box and cells according to the applied size factor
-    scaleBox({appliedSizeFactor_, appliedSizeFactor_, appliedSizeFactor_});
+    auto appliedSF = appliedSizeFactor_.value_or(defaultSizeFactor_);
+    scaleBox({appliedSF, appliedSF, appliedSF});
 
     // Update all relationships
     updateObjectRelationships();

@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/helpers/listWidgetUpdater.h"
 #include "gui/speciesTab.h"
 #include "templates/algorithms.h"
 #include <string>

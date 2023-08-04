@@ -138,10 +138,9 @@ void EPSRModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags> &up
                 else
                 {
                     auto optRDFModule =
-                        optSQModule.value().get()->keywords().get<const GRModule *, ModuleKeyword<const GRModule>>(
-                            "SourceRDFs");
+                        optSQModule.value()->keywords().get<const GRModule *, ModuleKeyword<const GRModule>>("SourceRDFs");
                     if (optRDFModule)
-                        rdfModuleName = optRDFModule.value().get()->name();
+                        rdfModuleName = optRDFModule.value()->name();
                     else
                         rdfModuleName = "UNKNOWN_RDF_MODULE";
                 }

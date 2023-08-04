@@ -58,6 +58,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         GeneralRegion,
         ImportCoordinates,
         IntegerCollect1D,
+        IfValueInRange,
         Integrate1D,
         OperateDivide,
         OperateExpression,
@@ -95,7 +96,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         GenerationContext = 2,
         OperateContext = 4,
         AnyContext = 8,
-        ParentProcedureContext = 16
+        InheritContext = 16
     };
     // Return enum option info for NodeContext
     static EnumOptions<NodeContext> nodeContexts();

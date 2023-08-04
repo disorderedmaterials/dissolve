@@ -3,10 +3,11 @@
 
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/analyse/analyse.h"
 
 // Run main processing
-Module::ExecutionResult AnalyseModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AnalyseModule::process(ModuleContext &moduleContext)
 {
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -16,8 +17,8 @@ Module::ExecutionResult AnalyseModule::process(Dissolve &dissolve, const Process
     }
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
+    context.setDataListAndPrefix(moduleContext.dissolve().processingModuleData(), name());
     if (!analyser_.execute(context))
     {
         Messenger::error("Analysis ExecutionResult::Failed.\n");

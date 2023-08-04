@@ -63,6 +63,8 @@ class CoordinateSetsProcedureNode : public ProcedureNode
     std::vector<Vec3<double>> &addSet();
 
     public:
+    // Set coordinate sets
+    void setSets(std::vector<std::vector<Vec3<double>>> sets);
     // Return number of available coordinates sets
     int nSets() const;
     // Return nth coordinate set

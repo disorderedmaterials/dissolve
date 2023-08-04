@@ -189,8 +189,7 @@ void MainTabsWidget::reconcileTabs()
         {
             QString tabTitle = QString::fromStdString(std::string(sp->name()));
             auto spTab = speciesTabs_.emplace_back(new SpeciesTab(dissolveWindow_, dissolve, this, tabTitle, sp.get()));
-
-            allTabs_.emplace_back(spTab.data());
+            allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), spTab.data());
             insertTab(baseIndex + currentTabIndex, spTab.data(), tabTitle);
             addTabCloseButton(spTab->page());
             setTabIcon(spTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
@@ -223,8 +222,7 @@ void MainTabsWidget::reconcileTabs()
             QString tabTitle = QString::fromStdString(std::string(cfg->name()));
             auto cfgTab =
                 configurationTabs_.emplace_back(new ConfigurationTab(dissolveWindow_, dissolve, this, tabTitle, cfg.get()));
-
-            allTabs_.push_back(cfgTab.data());
+            allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), cfgTab.data());
             insertTab(baseIndex + currentTabIndex, cfgTab.data(), tabTitle);
             addTabCloseButton(cfgTab->page());
             setTabIcon(cfgTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
@@ -237,7 +235,7 @@ void MainTabsWidget::reconcileTabs()
     // Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to
     // 1+nSpecies+nConfigurations+nProcessingLayers
     currentTabIndex = 0;
-    for (const auto &layer : dissolve.processingLayers())
+    for (const auto &layer : dissolve.coreData().processingLayers())
     {
         // Loop over existing tabs
         while (currentTabIndex < processingLayerTabs_.size())
@@ -263,8 +261,7 @@ void MainTabsWidget::reconcileTabs()
             QString tabTitle = QString::fromStdString(std::string(layer->name()));
             auto layerTab =
                 processingLayerTabs_.emplace_back(new LayerTab(dissolveWindow_, dissolve, this, tabTitle, layer.get()));
-
-            allTabs_.push_back(layerTab.data());
+            allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
             setTabIcon(processingLayerTabs_[currentTabIndex]->page(), layer->isEnabled()
@@ -274,7 +271,7 @@ void MainTabsWidget::reconcileTabs()
 
         ++currentTabIndex;
     }
-    baseIndex += dissolve.nProcessingLayers();
+    baseIndex += dissolve.coreData().nProcessingLayers();
 }
 
 // Remove tab containing the specified page widget
@@ -458,6 +455,9 @@ void MainTabsWidget::contextMenuRequested(const QPoint &pos)
         return;
     auto *tab = allTabs_[tabIndex];
     auto *layerTab = tab->type() == MainTab::TabType::Layer ? dynamic_cast<LayerTab *>(tab) : nullptr;
+
+    if (!layerTab)
+        return;
 
     QMenu menu;
     menu.setFont(font());
