@@ -100,7 +100,7 @@ set(models_SRCS
     xmlTorsionModel.cpp
 )
 
-qt_wrap_cpp(
+qt6_wrap_cpp(
   models_SRCS
   atomTypeFilterProxy.h
   atomTypeModel.h
