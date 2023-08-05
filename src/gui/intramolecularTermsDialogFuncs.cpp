@@ -11,8 +11,8 @@
 
 IntramolecularTermsDialog::IntramolecularTermsDialog(QWidget *parent, Dissolve &dissolve, Species *species,
                                                      DissolveWindow *dissolveWindow)
-    : dissolve_(dissolve), bonds_(species->bonds(), dissolve.coreData()), torsions_(species->torsions(), dissolve.coreData()),
-      impropers_(species->impropers(), dissolve.coreData()), angles_(species->angles(), dissolve.coreData())
+    : dissolve_(dissolve), bonds_(species->bonds(), dissolve.coreData()), angles_(species->angles(), dissolve.coreData()),
+      torsions_(species->torsions(), dissolve.coreData()), impropers_(species->impropers(), dissolve.coreData())
 {
 
     ui_.setupUi(this);
