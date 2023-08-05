@@ -401,7 +401,7 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
                    "This cannot be undone! Proceed?");
     msgBox.addButton(QMessageBox::Yes);
     msgBox.addButton(QMessageBox::No);
-    QPushButton *testButton = msgBox.addButton("Test", QMessageBox::ActionRole);
+    msgBox.addButton("Test", QMessageBox::ActionRole);
 
     auto result = msgBox.exec();
 
