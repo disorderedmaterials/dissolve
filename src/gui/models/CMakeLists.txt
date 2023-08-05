@@ -23,7 +23,6 @@ set(models_MOC_HDRS
     nodePaletteModel.h
     pairPotentialModel.h
     procedureModel.h
-    procedureModelMimeData.h
     procedureNodeModel.h
     renderableGroupManagerModel.h
     sitesFilterProxy.h
@@ -113,6 +112,7 @@ qt_wrap_cpp(
   globalPotentialFilterProxy.h
   isotopologueSetModel.h
   pairPotentialModel.h
+  procedureModelMimeData.h
   speciesModel.h
   speciesSiteModel.h
   xmlAngleModel.h
