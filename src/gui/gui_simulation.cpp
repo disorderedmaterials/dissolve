@@ -70,7 +70,14 @@ void DissolveWindow::setupIteration(int count)
 
     // Start the main timer
     elapsedTimer_.zero();
-    elapsedTimer_.start();
+    if (count == -1)
+    {
+        elapsedTimer_.start();
+    }
+    else
+    {
+        elapsedTimer_.zero();
+    }
 }
 
 // Disable editing

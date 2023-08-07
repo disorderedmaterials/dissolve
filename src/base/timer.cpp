@@ -15,8 +15,6 @@ Timer::Timer(bool immediateStart)
  * Timing Routines
  */
 
-bool Timer::hasStarted() { return started_; }
-
 // Start timer
 void Timer::start()
 {
@@ -24,15 +22,16 @@ void Timer::start()
 
     startTime_ = std::chrono::high_resolution_clock::now();
     splitTime_ = startTime_;
-
-    started_ = true;
 }
 
 // Set total time
 void Timer::stop()
 {
-    totalTime_ = std::chrono::high_resolution_clock::now() - startTime_;
-    running_ = false;
+    if (running_)
+    {
+        totalTime_ = std::chrono::high_resolution_clock::now() - startTime_;
+        running_ = false;
+    }
 }
 
 // Return split time

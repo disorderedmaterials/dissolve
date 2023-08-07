@@ -21,12 +21,8 @@ class Timer
     std::chrono::duration<double> totalTime_;
     // Whether the timer is running or not
     bool running_{false};
-    // Whether the timer has started before
-    bool started_{false};
 
     public:
-    // Returns whether timer has started before
-    bool hasStarted();
     // Start timer
     void start();
     // Stop timer and set total time
