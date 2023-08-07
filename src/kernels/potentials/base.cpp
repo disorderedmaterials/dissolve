@@ -5,6 +5,7 @@
 #include "classes/atomType.h"
 #include "classes/species.h"
 #include "templates/algorithms.h"
+#include "types.h"
 
 ExternalPotential::ExternalPotential(ExternalPotentialTypes::ExternalPotentialType type) : type_(type) {}
 
@@ -20,6 +21,8 @@ void ExternalPotential::addTargetAtomIndex(int index) { targetAtomIndices_.push_
 
 // Return atom indices targeted by the potential
 const std::vector<int> &ExternalPotential::targetAtomIndices() const { return targetAtomIndices_; }
+
+ExternalPotentialTypes::ExternalPotentialType ExternalPotential::type() const { return type_; }
 
 // Atom types targeted by the potential
 void ExternalPotential::setTargetAtomTypes(const std::vector<std::shared_ptr<AtomType>> &targets)

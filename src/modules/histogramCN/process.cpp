@@ -4,6 +4,7 @@
 #include "base/sysFunc.h"
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/histogramCN/histogramCN.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/operateSitePopulationNormalise.h"
@@ -12,7 +13,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-Module::ExecutionResult HistogramCNModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -29,8 +30,9 @@ Module::ExecutionResult HistogramCNModule::process(Dissolve &dissolve, const Pro
     selectB_->keywords().set("InclusiveRange", distanceRange_);
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
+    context.setDissolve(moduleContext.dissolve());
+    context.setProcessingDataPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("HistogramCN experienced problems with its analysis.\n");

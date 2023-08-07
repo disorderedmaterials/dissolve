@@ -122,7 +122,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::
     // Retrieve and zero the current potential coefficients file
     auto &potentialCoefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
         "PotentialCoefficients", name_, GenericItem::InRestartFileFlag);
-    potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
+    potentialCoefficients.initialise(dissolve.coreData().nAtomTypes(), dissolve.coreData().nAtomTypes(), true);
     for (auto &n : potentialCoefficients)
     {
         n.clear();
@@ -142,10 +142,10 @@ bool EPSRModule::readPCof(Dissolve &dissolve, const ProcessPool &procPool, std::
             return Messenger::error("Failed to read pair potential atom types from pcof file.\n");
 
         // Find the atom types to which these coefficients relate
-        auto at1 = dissolve.findAtomType(parser.argsv(0));
+        auto at1 = dissolve.coreData().findAtomType(parser.argsv(0));
         if (!at1)
             return Messenger::error("Unrecognised AtomType '{}' referenced in pcof file.\n", parser.argsv(0));
-        auto at2 = dissolve.findAtomType(parser.argsv(1));
+        auto at2 = dissolve.coreData().findAtomType(parser.argsv(1));
         if (!at2)
             return Messenger::error("Unrecognised AtomType '{}' referenced in pcof file.\n", parser.argsv(1));
 

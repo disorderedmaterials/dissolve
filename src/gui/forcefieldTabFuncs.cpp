@@ -170,7 +170,7 @@ void ForcefieldTab::updateControls()
     ui_.MasterImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
-    atomTypesModel_.setData(dissolve_.atomTypes());
+    atomTypesModel_.setData(dissolve_.coreData().atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
@@ -225,8 +225,9 @@ void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
         return;
 
     // Generate a unique name before we duplicate
-    auto newName = DissolveSys::uniqueName(at->name(), dissolve_.atomTypes(), [](const auto &at) { return at->name(); });
-    auto newAt = dissolve_.addAtomType(at->Z());
+    auto newName =
+        DissolveSys::uniqueName(at->name(), dissolve_.coreData().atomTypes(), [](const auto &at) { return at->name(); });
+    auto newAt = dissolve_.coreData().addAtomType(at->Z());
     newAt->setName(newName);
     newAt->setCharge(at->charge());
     newAt->interactionPotential().setFormAndParameters(at->interactionPotential().form(),
@@ -234,7 +235,7 @@ void ForcefieldTab::on_AtomTypeDuplicateButton_clicked(bool checked)
 
     Locker refreshLocker(refreshLock_);
 
-    atomTypesModel_.setData(dissolve_.atomTypes());
+    atomTypesModel_.setData(dissolve_.coreData().atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // Re-set the current index
@@ -252,11 +253,11 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     if (!ok)
         return;
 
-    auto at = dissolve_.addAtomType(Z);
+    auto at = dissolve_.coreData().addAtomType(Z);
 
     Locker refreshLocker(refreshLock_);
 
-    atomTypesModel_.setData(dissolve_.atomTypes());
+    atomTypesModel_.setData(dissolve_.coreData().atomTypes());
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();

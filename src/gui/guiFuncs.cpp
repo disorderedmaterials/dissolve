@@ -48,13 +48,13 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     dissolveIterating_ = false;
 
     // Create statusbar widgets
-    addStatusBarIcon(":/control/icons/control_step.svg")->setToolTip("Current step / iteration number");
+    addStatusBarIcon(":/general/icons/step.svg")->setToolTip("Current step / iteration number");
     iterationLabel_ = addStatusBarLabel("00000");
     iterationLabel_->setToolTip("Current step / iteration number");
     addStatusBarIcon(":/general/icons/clock.svg");
     timerLabel_ = addStatusBarLabel(defaultTimerText);
-    restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
-    statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
+    restartFileIndicator_ = addStatusBarIcon(":/general/icons/restartfile.svg");
+    statusIndicator_ = addStatusBarIcon(":/general/icons/true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
     statusLabel_->setOpenExternalLinks(false);
     connect(statusLabel_, SIGNAL(linkActivated(const QString)), this, SLOT(statusLabelLinkClicked(const QString)));
@@ -222,7 +222,7 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
 
     Messenger::banner("Setting Up Processing Modules");
 
-    if (!dissolve_.setUpProcessingLayerModules())
+    if (!dissolve_.coreData().setUpProcessingLayerModules(dissolve_))
         return false;
 
     // Handle restart file loading?
@@ -306,7 +306,12 @@ void DissolveWindow::updateStatusBar()
     {
         statusLabel_->setText(QString("%1 %2 (see <a href='Messages'>Messages</a>)")
                                   .arg(QString::number(Messenger::nErrors()), Messenger::nErrors() == 1 ? "Error" : "Errors"));
-        statusIndicator_->setPixmap(QPixmap(":/general/icons/general_false.svg"));
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/false.svg"));
+    }
+    else if (dissolveIterating_)
+    {
+        statusLabel_->setText("Running (ESC to stop)");
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/play.svg"));
     }
     else if (!dissolveIterating_ && elapsedTimer_.secondsElapsed() != 0.0)
     {
@@ -315,7 +320,7 @@ void DissolveWindow::updateStatusBar()
     else if (ui_.MainStack->currentIndex() == 1)
     {
         statusLabel_->setText("Idle");
-        statusIndicator_->setPixmap(QPixmap(":/general/icons/general_true.svg"));
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/true.svg"));
     }
     else
     {

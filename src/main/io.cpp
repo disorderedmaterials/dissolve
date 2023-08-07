@@ -44,10 +44,10 @@ bool Dissolve::loadInput(LineParser &parser)
         {
             case (BlockKeywords::ConfigurationBlockKeyword):
                 // Check to see if a Configuration with this name already exists...
-                if (findConfiguration(parser.argsv(1)))
+                if (coreData_.findConfiguration(parser.argsv(1)))
                     return Messenger::error("Redefinition of Configuration '{}'.\n", parser.argsv(1));
 
-                cfg = addConfiguration();
+                cfg = coreData_.addConfiguration();
                 cfg->setName(parser.argsv(1));
                 Messenger::print("\n--> Created Configuration '{}'\n", cfg->name());
                 if (!ConfigurationBlock::parse(parser, this, cfg))
@@ -55,10 +55,10 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...
-                if (findProcessingLayer(parser.argsv(1)))
+                if (coreData_.findProcessingLayer(parser.argsv(1)))
                     Messenger::error("Redefinition of processing layer '{}'.\n", parser.argsv(1));
 
-                layer = addProcessingLayer();
+                layer = coreData_.addProcessingLayer();
                 layer->setName(parser.argsv(1));
                 Messenger::print("\n--> Created processing layer '{}'\n", layer->name());
                 if (!LayerBlock::parse(parser, this, layer))
@@ -74,10 +74,10 @@ bool Dissolve::loadInput(LineParser &parser)
                 break;
             case (BlockKeywords::SpeciesBlockKeyword):
                 // Check to see if a Species with this name already exists...
-                if (findSpecies(parser.argsv(1)))
+                if (coreData_.findSpecies(parser.argsv(1)))
                     return Messenger::error("Redefinition of species '{}'.\n", parser.argsv(1));
 
-                sp = addSpecies();
+                sp = coreData_.addSpecies();
                 sp->setName(parser.argsv(1));
                 Messenger::print("\n--> Created Species '{}'\n", sp->name());
                 if (!sp->read(parser, coreData_))
@@ -138,13 +138,13 @@ SerialisedValue Dissolve::serialise() const
         !coreData_.masterImpropers().empty())
         root["master"] = coreData_.serialiseMaster();
 
-    Serialisable::fromVectorToTable<>(species(), "species", root);
+    Serialisable::fromVectorToTable<>(coreData_.species(), "species", root);
 
     root["pairPotentials"] = serializablePairPotential_.serialise();
 
-    Serialisable::fromVectorToTable(configurations(), "configurations", root);
+    Serialisable::fromVectorToTable(coreData_.configurations(), "configurations", root);
 
-    Serialisable::fromVectorToTable(processingLayers_, "layers", root);
+    Serialisable::fromVectorToTable(coreData_.processingLayers(), "layers", root);
 
     return root;
 }
@@ -174,12 +174,12 @@ void Dissolve::deserialise(const SerialisedValue &node)
 
     toMap(node, "species",
           [this](const std::string &name, const SerialisedValue &data)
-          { species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
+          { coreData_.species().emplace_back(std::make_unique<Species>(name))->deserialise(data, coreData_); });
 
     toMap(node, "configurations",
           [this](const std::string &name, const SerialisedValue &data)
           {
-              auto *cfg = addConfiguration();
+              auto *cfg = coreData_.addConfiguration();
               cfg->setName(name);
               cfg->deserialise(data, coreData_);
           });
@@ -187,7 +187,7 @@ void Dissolve::deserialise(const SerialisedValue &node)
     toMap(node, "layers",
           [this](const std::string &name, const SerialisedValue &data)
           {
-              auto *layer = addProcessingLayer();
+              auto *layer = coreData_.addProcessingLayer();
               layer->setName(name);
               layer->deserialise(data, coreData_);
           });
@@ -278,7 +278,7 @@ bool Dissolve::saveInput(std::string_view filename)
 
     // Write Species data
     parser.writeBannerComment("Species");
-    for (auto &sp : species())
+    for (auto &sp : coreData_.species())
     {
         if (!parser.writeLineF("\n"))
             return false;
@@ -295,7 +295,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Atom Type Parameters
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
-    for (const auto &atomType : atomTypes())
+    for (const auto &atomType : coreData_.atomTypes())
         if (!parser.writeLineF("  {}  {}  {}  {:12.6e}  {}  {}\n",
                                PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
                                atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
@@ -338,7 +338,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write Configurations
     if (!parser.writeBannerComment("Configurations"))
         return false;
-    for (auto &cfg : configurations())
+    for (auto &cfg : coreData_.configurations())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
                                cfg->name()))
@@ -369,7 +369,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write processing layers
     if (!parser.writeBannerComment("Processing Layers"))
         return false;
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                                layer->name()))
@@ -485,7 +485,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             Messenger::print("Reading Configuration '{}'...\n", parser.argsv(1));
 
             // Find the named Configuration
-            cfg = findConfiguration(parser.argsv(1));
+            cfg = coreData_.findConfiguration(parser.argsv(1));
             if (!cfg)
             {
                 Messenger::error("No Configuration named '{}' exists.\n", parser.argsv(1));
@@ -659,7 +659,7 @@ bool Dissolve::saveRestart(std::string_view filename)
         return false;
 
     // Configurations
-    for (const auto &cfg : configurations())
+    for (const auto &cfg : coreData_.configurations())
     {
         if (!parser.writeLineF("{}  '{}'\n",
                                (cfg->globalPotentials().empty() && cfg->targetedPotentials().empty())

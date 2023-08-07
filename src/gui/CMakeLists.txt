@@ -21,7 +21,6 @@ set(gui_MOC_HDRS
     nodeControlWidget.h
     procedureWidget.h
     selectAtomTypeWidget.h
-    selectConfigurationWidget.h
     selectForcefieldWidget.h
     selectSpeciesWidget.h
     wizard.hui
@@ -41,7 +40,6 @@ set(gui_MOC_HDRS
     intramolecularTermsDialog.h
     scaleChargesDialog.h
     selectAtomTypeDialog.h
-    selectConfigurationDialog.h
     selectElementDialog.h
     selectGenericItemDialog.h
     selectRestartFileDialog.h
@@ -74,7 +72,6 @@ set(gui_UIS
     nodeControlWidget.ui
     procedureWidget.ui
     selectAtomTypeWidget.ui
-    selectConfigurationWidget.ui
     selectForcefieldWidget.ui
     selectSpeciesWidget.ui
     wizardFooter.ui
@@ -95,7 +92,6 @@ set(gui_UIS
     intramolecularTermsDialog.ui
     scaleChargesDialog.ui
     selectAtomTypeDialog.ui
-    selectConfigurationDialog.ui
     selectElementDialog.ui
     selectGenericItemDialog.ui
     selectRestartFileDialog.ui
@@ -145,7 +141,6 @@ set(gui_SRCS
     nodeControlWidgetFuncs.cpp
     procedureWidgetFuncs.cpp
     selectAtomTypeWidgetFuncs.cpp
-    selectConfigurationWidgetFuncs.cpp
     selectForcefieldWidgetFuncs.cpp
     selectSpeciesWidgetFuncs.cpp
     wizardFuncs.cpp
@@ -165,7 +160,6 @@ set(gui_SRCS
     intramolecularTermsDialogFuncs.cpp
     scaleChargesDialogFuncs.cpp
     selectAtomTypeDialogFuncs.cpp
-    selectConfigurationDialogFuncs.cpp
     selectElementDialogFuncs.cpp
     selectGenericItemDialogFuncs.cpp
     selectRestartFileDialogFuncs.cpp

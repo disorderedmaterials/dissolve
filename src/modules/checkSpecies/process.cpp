@@ -7,11 +7,12 @@
 #include "keywords/vectorIntDouble.h"
 #include "keywords/vectorIntString.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/checkSpecies/checkSpecies.h"
 #include <numeric>
 
 // Run main processing
-Module::ExecutionResult CheckSpeciesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult CheckSpeciesModule::process(ModuleContext &moduleContext)
 {
     // Retrieve necessary keyword values
     if (!targetSpecies_)
@@ -67,7 +68,7 @@ Module::ExecutionResult CheckSpeciesModule::process(Dissolve &dissolve, const Pr
     {
         Messenger::print("\nChecking total charge...\n");
 
-        auto q = targetSpecies_->totalCharge(dissolve.atomTypeChargeSource());
+        auto q = targetSpecies_->totalCharge(moduleContext.dissolve().atomTypeChargeSource());
         auto qDiff = fabs(q - totalCharge_.value());
         if (qDiff > chargeTolerance_)
         {

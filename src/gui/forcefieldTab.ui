@@ -107,7 +107,7 @@
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/general_copy.svg</normaloff>:/general/icons/general_copy.svg</iconset>
+                <normaloff>:/general/icons/copy.svg</normaloff>:/general/icons/copy.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -149,7 +149,7 @@
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+                <normaloff>:/general/icons/remove.svg</normaloff>:/general/icons/remove.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -175,7 +175,7 @@
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+                <normaloff>:/general/icons/add.svg</normaloff>:/general/icons/add.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -839,7 +839,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+               <normaloff>:/general/icons/remove.svg</normaloff>:/general/icons/remove.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -865,7 +865,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+               <normaloff>:/general/icons/add.svg</normaloff>:/general/icons/add.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -946,7 +946,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+               <normaloff>:/general/icons/remove.svg</normaloff>:/general/icons/remove.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -972,7 +972,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+               <normaloff>:/general/icons/add.svg</normaloff>:/general/icons/add.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1053,7 +1053,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+               <normaloff>:/general/icons/remove.svg</normaloff>:/general/icons/remove.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1079,7 +1079,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+               <normaloff>:/general/icons/add.svg</normaloff>:/general/icons/add.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1160,7 +1160,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+               <normaloff>:/general/icons/remove.svg</normaloff>:/general/icons/remove.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1186,7 +1186,7 @@
              </property>
              <property name="icon">
               <iconset resource="main.qrc">
-               <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+               <normaloff>:/general/icons/add.svg</normaloff>:/general/icons/add.svg</iconset>
              </property>
              <property name="iconSize">
               <size>

@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "gui/gui.h"
-#include "gui/helpers/listWidgetUpdater.h"
 #include "gui/speciesTab.h"
 #include "templates/algorithms.h"
 #include <string>
@@ -53,11 +52,11 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
         return;
 
     // Remove references to the site, and invalidate our site renderable
-    dissolveWindow_->dissolve().removeReferencesTo(site);
+    dissolve_.coreData().removeReferencesTo(site);
     ui_.ViewerWidget->setSite(nullptr);
 
     // Remove the site proper
-    dissolve_.removeReferencesTo(site);
+    dissolve_.coreData().removeReferencesTo(site);
     species_->removeSite(site);
     sites_.setData(species_->sites());
 

@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "classes/coreData.h"
-#include "gui/helpers/listWidgetUpdater.h"
 #include "gui/keywordWidgets/nodeVector.h"
 #include "procedure/procedure.h"
 #include "templates/algorithms.h"

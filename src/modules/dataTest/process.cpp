@@ -7,10 +7,11 @@
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/sampledData1D.h"
+#include "module/context.h"
 #include "modules/dataTest/dataTest.h"
 
 // Run main processing
-Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult DataTestModule::process(ModuleContext &moduleContext)
 {
     /*
      * This is a serial routine.
@@ -26,7 +27,8 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
     {
         auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
+        auto optData =
+            moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(referenceData.tag());
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
@@ -36,7 +38,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType_, data, referenceData, true);
+        auto error = Error::error(errorType_, data, referenceData).error;
         auto notOK = isnan(error) || error > threshold_;
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n",
                          referenceData.tag(), error, notOK ? "NOT OK" : "OK", threshold_);
@@ -50,7 +52,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
     for (auto &[tag1, tag2] : internal1DData_)
     {
         // Locate the target reference datasets
-        auto optData1 = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag1);
+        auto optData1 = moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag1);
         if (!optData1)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag1);
@@ -58,7 +60,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         }
         const Data1D data1 = optData1->get();
         Messenger::print("Located reference data '{}'.\n", tag1);
-        auto optData2 = dissolve.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag2);
+        auto optData2 = moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag2);
         if (!optData2)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag2);
@@ -68,7 +70,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", tag2);
 
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType_, data1, data2, true);
+        auto error = Error::error(errorType_, data1, data2).error;
         auto notOK = isnan(error) || error > threshold_;
         Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e})\n\n", tag1,
                          error, tag2, notOK ? "NOT OK" : "OK", threshold_);
@@ -83,7 +85,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
     {
         auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().search<const Data2D>(referenceData.tag());
+        auto optData = moduleContext.dissolve().processingModuleData().search<const Data2D>(referenceData.tag());
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
@@ -107,7 +109,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
     {
         auto &[referenceData, format] = *sharedDataPointer.get();
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().search<const Data3D>(referenceData.tag());
+        auto optData = moduleContext.dissolve().processingModuleData().search<const Data3D>(referenceData.tag());
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
@@ -117,7 +119,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", referenceData.tag());
 
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType_, data.values().linearArray(), referenceData.values().linearArray(), true);
+        auto error = Error::error(errorType_, data.values().linearArray(), referenceData.values().linearArray()).error;
         auto notOK = isnan(error) || error > threshold_;
         Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold is {:6.3e})\n\n",
                          referenceData.tag(), error, notOK ? "NOT OK" : "OK", threshold_);
@@ -131,7 +133,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
     for (auto &[tag, value] : testSampledDoubleData_)
     {
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().search<const SampledDouble>(tag);
+        auto optData = moduleContext.dissolve().processingModuleData().search<const SampledDouble>(tag);
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag);
@@ -155,7 +157,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
     for (auto &[tag, referenceData, format] : testSampledVectorData_.data())
     {
         // Locate the target reference data
-        auto optData = dissolve.processingModuleData().search<const SampledVector>(tag);
+        auto optData = moduleContext.dissolve().processingModuleData().search<const SampledVector>(tag);
         if (!optData)
         {
             Messenger::error("No data with tag '{}' exists.\n", tag);
@@ -165,7 +167,7 @@ Module::ExecutionResult DataTestModule::process(Dissolve &dissolve, const Proces
         Messenger::print("Located reference data '{}'.\n", tag);
 
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType_, data.values(), referenceData, true);
+        auto error = Error::error(errorType_, data.values(), referenceData).error;
         auto notOK = isnan(error) || error > threshold_;
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
                          error, notOK ? "NOT OK" : "OK", threshold_);

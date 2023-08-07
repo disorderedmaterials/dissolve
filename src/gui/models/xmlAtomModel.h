@@ -22,14 +22,14 @@ class XmlAtomModel : public QAbstractTableModel
 
     private:
     std::vector<XmlAtomData> atoms_;
-    Dissolve &dissolve_;
+    const CoreData &coreData_;
 
     public slots:
     // Read from an XML file
     void readFile(const pugi::xml_node &);
 
     public:
-    XmlAtomModel(Dissolve &);
+    XmlAtomModel(const CoreData &coreData);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

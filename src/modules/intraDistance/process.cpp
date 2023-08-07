@@ -3,6 +3,7 @@
 
 #include "io/export/data1D.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/intraDistance/intraDistance.h"
 #include "procedure/nodes/collect1D.h"
 #include "procedure/nodes/select.h"
@@ -10,7 +11,7 @@
 #include "procedure/nodes/sum1D.h"
 
 // Run main processing
-Module::ExecutionResult IntraDistanceModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult IntraDistanceModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -23,8 +24,9 @@ Module::ExecutionResult IntraDistanceModule::process(Dissolve &dissolve, const P
     collectDistance_->keywords().set("RangeX", distanceRange_);
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
+    context.setDissolve(moduleContext.dissolve());
+    context.setProcessingDataPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateRDF experienced problems with its analysis.\n");

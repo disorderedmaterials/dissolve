@@ -25,8 +25,8 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     atomTypesModel_.setIconFunction(
         [&](const std::shared_ptr<AtomType> &atomType)
         {
-            return QIcon(dissolve_.findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
-                                                                  : ":/general/icons/general_true.svg");
+            return QIcon(dissolve_.coreData().findAtomType(atomType->name()) ? ":/general/icons/warn.svg"
+                                                                             : ":/general/icons/true.svg");
         });
     ui_.AtomTypesList->setModel(&atomTypesModel_);
     connect(ui_.AtomTypesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
@@ -35,27 +35,18 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
     // Set model and signals for the master terms tree
     masterTermModel_.setBondIconFunction(
         [&](std::string_view name)
-        {
-            return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/general_warn.svg"
-                                                                  : ":/general/icons/general_true.svg");
-        });
+        { return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg"); });
     masterTermModel_.setAngleIconFunction(
         [&](std::string_view name)
-        {
-            return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/general_warn.svg"
-                                                                   : ":/general/icons/general_true.svg");
-        });
+        { return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg"); });
     masterTermModel_.setTorsionIconFunction(
-        [&](std::string_view name)
-        {
-            return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/general_warn.svg"
-                                                                     : ":/general/icons/general_true.svg");
+        [&](std::string_view name) {
+            return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg");
         });
     masterTermModel_.setImproperIconFunction(
-        [&](std::string_view name)
-        {
-            return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/general_warn.svg"
-                                                                      : ":/general/icons/general_true.svg");
+        [&](std::string_view name) {
+            return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/warn.svg"
+                                                                      : ":/general/icons/true.svg");
         });
     ui_.MasterTermsTree->setModel(&masterTermModel_);
     connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
@@ -105,11 +96,11 @@ bool ImportSpeciesDialog::prepareForNextPage(int currentIndex)
         case (ImportSpeciesDialog::SelectFilePage):
             // Check that the input/species file exists, and can be read in successfully
             temporaryDissolve_.loadInput(qPrintable(ui_.InputFileEdit->text()));
-            if (temporaryDissolve_.nSpecies() == 0)
+            if (temporaryDissolve_.coreData().nSpecies() == 0)
                 return Messenger::error("No species loaded from input file.");
 
             // Update widget contents
-            speciesModel_.setData(temporaryDissolve_.species());
+            speciesModel_.setData(temporaryDissolve_.coreData().species());
 
             updateAtomTypesPage();
             masterTermModel_.setData(temporaryCoreData_.masterBonds(), temporaryCoreData_.masterAngles(),
@@ -164,7 +155,7 @@ bool ImportSpeciesDialog::prepareForPreviousPage(int currentIndex)
 void ImportSpeciesDialog::finalise()
 {
     // Copy the species to the main Dissolve instance and set its new name
-    auto *sp = dissolve_.copySpecies(importTarget_);
+    auto *sp = dissolve_.coreData().copySpecies(importTarget_);
     sp->setName(ui_.SpeciesNameEdit->text().toStdString());
 }
 
@@ -219,7 +210,7 @@ void ImportSpeciesDialog::updateAtomTypesPage()
     // Determine whether we have any naming conflicts
     auto conflicts = false;
     auto it = std::find_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
-                           [this](const auto at) { return dissolve_.findAtomType(at->name()); });
+                           [this](const auto at) { return dissolve_.coreData().findAtomType(at->name()); });
     if (it != temporaryCoreData_.atomTypes().end())
         conflicts = true;
     ui_.AtomTypesIndicator->setNotOK(conflicts);
@@ -364,7 +355,7 @@ void ImportSpeciesDialog::on_SpeciesNameEdit_textChanged(const QString text)
     if (text.isEmpty())
         readyForImport = false;
     else
-        readyForImport = dissolve_.findSpecies(qPrintable(text)) == nullptr;
+        readyForImport = dissolve_.coreData().findSpecies(qPrintable(text)) == nullptr;
 
     ui_.SpeciesNameIndicator->setOK(readyForImport);
 

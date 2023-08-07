@@ -19,7 +19,8 @@ ProcedureWidget::ProcedureWidget(QWidget *parent) : QWidget(parent)
     connect(&procedureModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
             SLOT(procedureDataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)));
     // Set up the available nodes tree
-    ui_.AvailableNodesTree->setModel(&nodePaletteModel_);
+    nodePaletteFilterProxy_.setSourceModel(&nodePaletteModel_);
+    ui_.AvailableNodesTree->setModel(&nodePaletteFilterProxy_);
     ui_.AvailableNodesTree->expandAll();
     ui_.AvailableNodesTree->setVisible(false);
 }
@@ -29,6 +30,8 @@ void ProcedureWidget::setUp(DissolveWindow *dissolveWindow, Procedure &proc)
 {
     dissolveWindow_ = dissolveWindow;
     procedure_ = proc;
+    nodePaletteFilterProxy_.setContext(proc.context());
+    ui_.AvailableNodesTree->expandAll();
     procedureModel_.setData(proc);
     ui_.NodesTree->expandAll();
     ui_.NodesTree->resizeColumnToContents(0);

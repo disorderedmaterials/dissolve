@@ -29,7 +29,7 @@ class ImportLigParGenDialog : public WizardDialog
 
     private:
     Ui::ImportLigParGenDialog ui_;
-    XmlTreeModel ff_;
+    XmlTreeModel xmlFFModel_;
 
     /*
      * Data

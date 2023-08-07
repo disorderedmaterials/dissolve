@@ -171,7 +171,7 @@ Species mixed by population or ratio</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/wizard/icons/wizard_multiplespecies.svg</normaloff>:/wizard/icons/wizard_multiplespecies.svg</iconset>
+                <normaloff>:/general/icons/multiplespecies.svg</normaloff>:/general/icons/multiplespecies.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -198,7 +198,7 @@ Periodic species containing (optional) mixture</string>
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/wizard/icons/wizard_frameworkmixture.svg</normaloff>:/wizard/icons/wizard_frameworkmixture.svg</iconset>
+                <normaloff>:/general/icons/frameworkMixture.svg</normaloff>:/general/icons/frameworkMixture.svg</iconset>
               </property>
               <property name="iconSize">
                <size>

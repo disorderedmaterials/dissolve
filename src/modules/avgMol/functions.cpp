@@ -10,14 +10,14 @@
  */
 
 // Ensure arrays are the correct size for the current target Species
-void AvgMolModule::updateArrays(Dissolve &dissolve)
+void AvgMolModule::updateArrays(GenericList &moduleData)
 {
     auto requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 
     // Retrieve / create the three data arrays, and size accordingly
-    auto &x = dissolve.processingModuleData().realise<SampledVector>("X", name(), GenericItem::InRestartFileFlag);
-    auto &y = dissolve.processingModuleData().realise<SampledVector>("Y", name(), GenericItem::InRestartFileFlag);
-    auto &z = dissolve.processingModuleData().realise<SampledVector>("Z", name(), GenericItem::InRestartFileFlag);
+    auto &x = moduleData.realise<SampledVector>("X", name(), GenericItem::InRestartFileFlag);
+    auto &y = moduleData.realise<SampledVector>("Y", name(), GenericItem::InRestartFileFlag);
+    auto &z = moduleData.realise<SampledVector>("Z", name(), GenericItem::InRestartFileFlag);
 
     if (requiredSize > 0)
     {

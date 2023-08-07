@@ -12,6 +12,7 @@ set(keywordWidgets_MOC_HDRS
     function1D.h
     interactionPotential.h
     isotopologueSet.h
+    layer.h
     module.h
     moduleVector.h
     node.h
@@ -28,6 +29,7 @@ set(keywordWidgets_MOC_HDRS
     vec3Double.h
     vec3Integer.h
     vec3NodeValue.h
+    weightedModuleVector.h
     bool.hui
     double.hui
     dropWidget.hui
@@ -52,6 +54,7 @@ set(keywordWidgets_UIS
     function1D.ui
     interactionPotential.ui
     isotopologueSet.ui
+    layer.ui
     module.ui
     moduleVector.ui
     node.ui
@@ -68,6 +71,7 @@ set(keywordWidgets_UIS
     vec3Double.ui
     vec3Integer.ui
     vec3NodeValue.ui
+    weightedModuleVector.ui
 )
 qt6_wrap_ui(keywordWidgets_UIS_H ${keywordWidgets_UIS})
 
@@ -89,6 +93,7 @@ set(keywordWidgets_SRCS
     integerFuncs.cpp
     interactionPotentialFuncs.cpp
     isotopologueSetFuncs.cpp
+    layerFuncs.cpp
     moduleFuncs.cpp
     moduleVectorFuncs.cpp
     nodeFuncs.cpp
@@ -111,6 +116,7 @@ set(keywordWidgets_SRCS
     vec3IntegerFuncs.cpp
     vec3Labels.cpp
     vec3NodeValueFuncs.cpp
+    weightedModuleVectorFuncs.cpp
     base.h
     vec3Labels.h
     producers.h

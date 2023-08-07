@@ -83,7 +83,7 @@
               </property>
               <property name="icon">
                <iconset resource="main.qrc">
-                <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
+                <normaloff>:/general/icons/open.svg</normaloff>:/general/icons/open.svg</iconset>
               </property>
              </widget>
             </item>

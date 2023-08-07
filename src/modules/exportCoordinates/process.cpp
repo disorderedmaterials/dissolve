@@ -5,10 +5,11 @@
 #include "classes/atom.h"
 #include "classes/atomType.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/exportCoordinates/exportCoordinates.h"
 
 // Run main processing
-Module::ExecutionResult ExportCoordinatesModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult ExportCoordinatesModule::process(ModuleContext &moduleContext)
 {
     if (!coordinatesFormat_.hasFilename())
     {
@@ -18,7 +19,8 @@ Module::ExecutionResult ExportCoordinatesModule::process(Dissolve &dissolve, con
 
     std::string originalFilename{coordinatesFormat_.filename()};
     if (tagWithIteration_)
-        coordinatesFormat_.setFilename(fmt::format("{}.{}", coordinatesFormat_.filename(), dissolve.iteration()));
+        coordinatesFormat_.setFilename(
+            fmt::format("{}.{}", coordinatesFormat_.filename(), moduleContext.dissolve().iteration()));
 
     // Check for Configuration target
     if (!targetConfiguration_)
@@ -28,7 +30,7 @@ Module::ExecutionResult ExportCoordinatesModule::process(Dissolve &dissolve, con
     }
 
     // Only the pool master saves the data
-    if (procPool.isMaster())
+    if (moduleContext.processPool().isMaster())
     {
         Messenger::print("Export: Writing coordinates file ({}) for Configuration '{}'...\n",
                          coordinatesFormat_.formatDescription(), targetConfiguration_->name());
@@ -36,13 +38,13 @@ Module::ExecutionResult ExportCoordinatesModule::process(Dissolve &dissolve, con
         if (!coordinatesFormat_.exportData(targetConfiguration_))
         {
             Messenger::print("Export: Failed to export coordinates file '{}'.\n", coordinatesFormat_.filename());
-            procPool.decideFalse();
+            moduleContext.processPool().decideFalse();
             return ExecutionResult::Failed;
         }
 
-        procPool.decideTrue();
+        moduleContext.processPool().decideTrue();
     }
-    else if (!procPool.decision())
+    else if (!moduleContext.processPool().decision())
         return ExecutionResult::Failed;
 
     // Reset filename

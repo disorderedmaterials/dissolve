@@ -14,7 +14,9 @@
 #include <vector>
 
 // Forward Declarations
+class Dissolve;
 class Module;
+class ModuleLayer;
 class MasterBond;
 class MasterAngle;
 class MasterTorsion;
@@ -152,6 +154,15 @@ class CoreData
     const std::vector<std::unique_ptr<Species>> &species() const;
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
+    // Copy AtomType between SpeciesAtoms, creating a new one if necessary
+    void copyAtomType(const SpeciesAtom &sourceAtom, SpeciesAtom &destAtom);
+    // Copy intramolecular interaction parameters, adding master term if necessary
+    void copySpeciesBond(const SpeciesBond &source, SpeciesBond &dest);
+    void copySpeciesAngle(const SpeciesAngle &source, SpeciesAngle &dest);
+    void copySpeciesTorsion(const SpeciesTorsion &source, SpeciesTorsion &dest);
+    void copySpeciesImproper(const SpeciesImproper &source, SpeciesImproper &dest);
+    // Copy Species
+    Species *copySpecies(const Species *species);
 
     /*
      * Configurations
@@ -174,6 +185,30 @@ class CoreData
     Configuration *configuration(int n);
     // Search for Configuration by name
     Configuration *findConfiguration(std::string_view name) const;
+    // Find configuration by 'nice' name
+    Configuration *findConfigurationByNiceName(std::string_view name) const;
+
+    /*
+     * Layers
+     */
+    private:
+    // List of defined processing layers
+    std::vector<std::unique_ptr<ModuleLayer>> processingLayers_;
+
+    public:
+    // Add new processing layer
+    ModuleLayer *addProcessingLayer();
+    // Remove processing layer
+    void removeProcessingLayer(ModuleLayer *layer);
+    // Find named processing layer
+    ModuleLayer *findProcessingLayer(std::string_view name) const;
+    // Return number of processing layers
+    int nProcessingLayers() const;
+    // Return current processing layers
+    std::vector<std::unique_ptr<ModuleLayer>> &processingLayers();
+    const std::vector<std::unique_ptr<ModuleLayer>> &processingLayers() const;
+    // Run the set-up stages of all modules in all layers
+    bool setUpProcessingLayerModules(Dissolve &dissolve);
 
     /*
      * Input Filename
@@ -187,4 +222,14 @@ class CoreData
     void setInputFilename(std::string_view filename);
     // Return the current input filename
     std::string_view inputFilename() const;
+
+    /*
+     * Object Management
+     */
+    public:
+    // Remove all references to the specified data
+    void removeReferencesTo(Module *data);
+    void removeReferencesTo(Configuration *data);
+    void removeReferencesTo(Species *data);
+    void removeReferencesTo(SpeciesSite *data);
 };

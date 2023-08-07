@@ -33,8 +33,6 @@ class DataWidget : public QWidget
      * Tools
      */
     private slots:
-    // Interaction
-    void on_InteractionViewButton_clicked(bool checked);
     // Graph
     void on_GraphResetButton_clicked(bool checked);
     void on_GraphFollowAllButton_clicked(bool checked);

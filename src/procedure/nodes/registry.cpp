@@ -18,6 +18,7 @@
 #include "procedure/nodes/cylindricalRegion.h"
 #include "procedure/nodes/directionalGlobalPotential.h"
 #include "procedure/nodes/generalRegion.h"
+#include "procedure/nodes/ifValueInRange.h"
 #include "procedure/nodes/importCoordinates.h"
 #include "procedure/nodes/integerCollect1D.h"
 #include "procedure/nodes/integrate1D.h"
@@ -39,6 +40,7 @@
 #include "procedure/nodes/remove.h"
 #include "procedure/nodes/restraintPotential.h"
 #include "procedure/nodes/rotateFragment.h"
+#include "procedure/nodes/runLayer.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleGlobalPotential.h"
 #include "procedure/nodes/sizeFactor.h"
@@ -76,6 +78,10 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
     registerProducer<CalculateVectorProcedureNode>(ProcedureNode::NodeType::CalculateVector,
                                                    "Calculate vector between two sites", "Calculate");
     registerProducer<SelectProcedureNode>(ProcedureNode::NodeType::Select, "Select sites for consideration", "Calculate");
+
+    // Control
+    registerProducer<IfValueInRangeProcedureNode>(ProcedureNode::NodeType::IfValueInRange,
+                                                  "Conditionally execute other nodes if a value is within range", "Control");
 
     // Data
     registerProducer<Collect1DProcedureNode>(ProcedureNode::NodeType::Collect1D, "Bin 1D quantity into a histogram", "Data");
@@ -138,6 +144,9 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
 
     // Sites
     registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
+
+    // Control
+    registerProducer<RunLayerNode>(ProcedureNode::NodeType::RunLayer, "Run layer", "Control");
 }
 
 /*

@@ -3,6 +3,7 @@
 
 #include "base/sysFunc.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/axisAngle/axisAngle.h"
 #include "procedure/nodes/calculateAxisAngle.h"
 #include "procedure/nodes/collect1D.h"
@@ -11,7 +12,7 @@
 #include "procedure/nodes/select.h"
 
 // Run main processing
-Module::ExecutionResult AxisAngleModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -34,8 +35,9 @@ Module::ExecutionResult AxisAngleModule::process(Dissolve &dissolve, const Proce
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(procPool, targetConfiguration_);
-    context.setDataListAndPrefix(dissolve.processingModuleData(), name());
+    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
+    context.setDissolve(moduleContext.dissolve());
+    context.setProcessingDataPrefix(name());
     if (!analyser_.execute(context))
     {
         Messenger::error("AxisAngle experienced problems with its analysis.\n");

@@ -7,6 +7,7 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/intraShake/intraShake.h"
 #include <cstdio>
 #include <numeric>
@@ -23,7 +24,7 @@ bool Dissolve::prepare()
     Messenger::banner("Preparing Simulation");
 
     // Check Species
-    for (const auto &sp : species())
+    for (const auto &sp : coreData_.species())
     {
         if (!sp->checkSetUp())
             return false;
@@ -32,27 +33,7 @@ bool Dissolve::prepare()
     }
 
     // Remove unused atom types
-    AtomTypeMix usedAtomTypes;
-    for (const auto &sp : species())
-        usedAtomTypes.add(sp->atomTypes());
-
-    atomTypes().erase(std::remove_if(atomTypes().begin(), atomTypes().end(),
-                                     [&](const auto &at)
-                                     {
-                                         if (usedAtomTypes.contains(at))
-                                             return false;
-                                         else
-                                         {
-                                             Messenger::warn("Pruning unused atom type '{}'...\n", at->name());
-                                             return true;
-                                         }
-                                     }),
-                      atomTypes().end());
-
-    // Reassign AtomType indices (in case one or more have been added / removed)
-    auto count = 0;
-    for (const auto &at : atomTypes())
-        at->setIndex(count++);
+    coreData_.removeUnusedAtomTypes();
 
     // Store / update last-used pair potential cutoff
     // If lastPairPotentialCutoff is nullopt, store the current value and move on leaving the cutoff to use as nullopt.
@@ -72,12 +53,12 @@ bool Dissolve::prepare()
 
     // Check Configurations
     std::set<const Species *> globalUsedSpecies;
-    for (auto &cfg : configurations())
+    for (auto &cfg : coreData_.configurations())
     {
         // If the configuration is empty, initialise it now
         if (cfg->nMolecules() == 0)
         {
-            if (!cfg->initialiseContent({worldPool_, potentialMap_}))
+            if (!cfg->initialiseContent({worldPool_, *this}))
                 return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
         }
         else if (newPairPotentialRange)
@@ -95,17 +76,17 @@ bool Dissolve::prepare()
     }
 
     // If we have no configurations, check all species regardless
-    if (nConfigurations() == 0)
-        for (const auto &sp : species())
+    if (coreData_.nConfigurations() == 0)
+        for (const auto &sp : coreData_.species())
             globalUsedSpecies.emplace(sp.get());
 
     // Check pair potential style - first, determine which styles might be valid for use
     // -- Configuration charges must always be zero
-    auto neutralConfigsWithPPCharges = std::all_of(configurations().begin(), configurations().end(),
+    auto neutralConfigsWithPPCharges = std::all_of(coreData_.configurations().begin(), coreData_.configurations().end(),
                                                    [](const auto &cfg) { return fabs(cfg->totalCharge(true)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on atom types    : {}\n",
                             DissolveSys::btoa(neutralConfigsWithPPCharges));
-    auto neutralConfigsWithSpeciesCharges = std::all_of(configurations().begin(), configurations().end(),
+    auto neutralConfigsWithSpeciesCharges = std::all_of(coreData_.configurations().begin(), coreData_.configurations().end(),
                                                         [](const auto &cfg) { return fabs(cfg->totalCharge(false)) < 1.0e-5; });
     Messenger::printVerbose("Configuration neutrality if using charges on species atoms : {}\n",
                             DissolveSys::btoa(neutralConfigsWithSpeciesCharges));
@@ -121,9 +102,9 @@ bool Dissolve::prepare()
                     });
     Messenger::printVerbose("Species atomic charge validity  : {}\n", DissolveSys::btoa(speciesHaveValidAtomicCharges));
     // -- Do all atom types have 95% non-zero charges
-    auto atomTypesHaveValidAtomicCharges =
-        (std::count_if(atomTypes().begin(), atomTypes().end(), [](const auto &at) { return fabs(at->charge()) > 1.0e-5; }) /
-         double(nAtomTypes())) > 0.95;
+    auto atomTypesHaveValidAtomicCharges = (std::count_if(coreData_.atomTypes().begin(), coreData_.atomTypes().end(),
+                                                          [](const auto &at) { return fabs(at->charge()) > 1.0e-5; }) /
+                                            double(coreData_.nAtomTypes())) > 0.95;
     Messenger::printVerbose("AtomType atomic charge validity : {}\n", DissolveSys::btoa(atomTypesHaveValidAtomicCharges));
 
     if (automaticChargeSource_)
@@ -153,7 +134,7 @@ bool Dissolve::prepare()
         {
             Messenger::error("Atom type charges in pair potentials requested, but at least one configuration is not "
                              "neutral with this approach.\n");
-            for (const auto &cfg : configurations())
+            for (const auto &cfg : coreData_.configurations())
                 Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(true));
             return false;
         }
@@ -176,7 +157,7 @@ bool Dissolve::prepare()
         {
             Messenger::error("Ths use of species atom charges was requested, but at least one configuration is not "
                              "neutral with this approach.\n");
-            for (const auto &cfg : configurations())
+            for (const auto &cfg : coreData_.configurations())
                 Messenger::print("Total charge in configuration '{}' is {}.\n", cfg->name(), cfg->totalCharge(false));
             return false;
         }
@@ -217,7 +198,7 @@ bool Dissolve::prepare()
     }
 
     // Set up all modules and return
-    return setUpProcessingLayerModules();
+    return coreData_.setUpProcessingLayerModules(*this);
 }
 
 // Iterate main simulation
@@ -239,7 +220,7 @@ bool Dissolve::iterate(int nIterations)
         auto thisTime = 0.0;
         auto nEnabledModules = 0;
 
-        for (auto &layer : processingLayers_)
+        for (auto &layer : coreData_.processingLayers())
         {
             Messenger::print("Processing layer '{}'  ({}):\n\n", layer->name(), layer->frequencyDetails(iteration_));
 
@@ -268,7 +249,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Configuration Upkeep");
 
-        for (auto &cfg : configurations())
+        for (auto &cfg : coreData_.configurations())
         {
             Messenger::heading("'{}'", cfg->name());
 
@@ -283,7 +264,8 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  2)	Run processing Modules (using the world pool).
          */
-        for (auto &layer : processingLayers_)
+        ModuleContext context(worldPool(), *this);
+        for (auto &layer : coreData_.processingLayers())
         {
             // Check if this layer is due to run this iteration
             if (!layer->runThisIteration(iteration_))
@@ -303,7 +285,7 @@ bool Dissolve::iterate(int nIterations)
 
                 Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
 
-                if (module->executeProcessing(*this, worldPool()) == Module::ExecutionResult::Failed)
+                if (module->executeProcessing(context) == Module::ExecutionResult::Failed)
                     return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
             }
         }
@@ -395,7 +377,7 @@ std::optional<double> Dissolve::estimateRequiredTime(int nIterations)
     auto seconds = 0.0;
     auto n = 0;
 
-    for (const auto &layer : processingLayers_)
+    for (const auto &layer : coreData_.processingLayers())
     {
         if (!layer->isEnabled())
             continue;
@@ -444,7 +426,7 @@ void Dissolve::printTiming()
     // Add on space for brackets
     maxLength += 2;
 
-    for (auto &layer : processingLayers_)
+    for (auto &layer : coreData_.processingLayers())
     {
         Messenger::print("Accumulated timing for layer '{}':\n\n", layer->name());
         for (auto &module : layer->modules())

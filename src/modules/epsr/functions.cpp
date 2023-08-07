@@ -4,6 +4,7 @@
 #include "main/dissolve.h"
 #include "math/gaussFit.h"
 #include "math/poissonFit.h"
+#include "module/context.h"
 #include "modules/epsr/epsr.h"
 #include "templates/algorithms.h"
 
@@ -67,13 +68,13 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
                                              double averagedRho, std::optional<int> ncoeffp, double rminpt, double rmaxpt,
                                              double sigma1, double sigma2)
 {
-    const auto nAtomTypes = dissolve.nAtomTypes();
+    const auto nAtomTypes = dissolve.coreData().nAtomTypes();
 
     // Get coefficients array
     Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
     auto result = for_each_pair_early(
-        dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+        dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
         {
             auto &potCoeff = coefficients[{i, j}];
@@ -120,7 +121,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 // Generate and return single empirical potential function
 Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n)
 {
-    const auto nAtomTypes = dissolve.nAtomTypes();
+    const auto nAtomTypes = dissolve.coreData().nAtomTypes();
 
     // EPSR constants
     const auto mcoeff = 200;
@@ -169,7 +170,7 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
      */
 
     // Get coefficients array
-    auto &coefficients = potentialCoefficients(dissolve, dissolve.nAtomTypes());
+    auto &coefficients = potentialCoefficients(dissolve, dissolve.coreData().nAtomTypes());
     if (coefficients.empty())
         return 0.0;
 
@@ -188,11 +189,11 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
             absEnergyEP = range;
 
         // Output information
-        Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", dissolve.atomTypes()[i]->name(),
-                         dissolve.atomTypes()[j]->name(), range);
+        Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", dissolve.coreData().atomTypes()[i]->name(),
+                         dissolve.coreData().atomTypes()[j]->name(), range);
     };
 
-    PairIterator pairs(dissolve.atomTypes().size());
+    PairIterator pairs(dissolve.coreData().atomTypes().size());
     dissolve::for_each(ParallelPolicies::seq, pairs.begin(), pairs.end(), unaryOp);
 
     return absEnergyEP;
@@ -201,37 +202,37 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 // Test absolute energy of empirical potentials
 bool EPSRModule::testAbsEnergyEP(Dissolve &dissolve)
 {
-    auto &coefficients = potentialCoefficients(dissolve, dissolve.nAtomTypes());
+    auto &coefficients = potentialCoefficients(dissolve, dissolve.coreData().nAtomTypes());
     if (coefficients.empty())
         return false;
 
     auto result = true;
-    dissolve::for_each_pair(ParallelPolicies::seq, dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2)
-                            {
-                                auto id1 = fmt::format("{}-{}", at1->name(), at2->name());
-                                auto id2 = fmt::format("{}-{}", at2->name(), at1->name());
-                                auto it = std::find_if(testAbsEnergyEP_.begin(), testAbsEnergyEP_.end(),
-                                                       [id1, id2](const auto &pair)
-                                                       { return pair.first == id1 || pair.first == id2; });
+    dissolve::for_each_pair(
+        ParallelPolicies::seq, dissolve.coreData().atomTypes().begin(), dissolve.coreData().atomTypes().end(),
+        [&](int i, auto at1, int j, auto at2)
+        {
+            auto id1 = fmt::format("{}-{}", at1->name(), at2->name());
+            auto id2 = fmt::format("{}-{}", at2->name(), at1->name());
+            auto it = std::find_if(testAbsEnergyEP_.begin(), testAbsEnergyEP_.end(),
+                                   [id1, id2](const auto &pair) { return pair.first == id1 || pair.first == id2; });
 
-                                if (it != testAbsEnergyEP_.end())
-                                {
-                                    auto &potCoeff = coefficients[{i, j}];
+            if (it != testAbsEnergyEP_.end())
+            {
+                auto &potCoeff = coefficients[{i, j}];
 
-                                    auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
-                                    auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
-                                    auto range = cMax - cMin;
+                auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
+                auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
+                auto range = cMax - cMin;
 
-                                    auto error = fabs(it->second - range);
-                                    Messenger::print("Absolute EP magnitude for '{}' has error of {} with reference data "
-                                                     "and is {} (threshold is {})\n\n",
-                                                     it->first, error, error <= testAbsEnergyEPThreshold_ ? "OK" : "NOT OK",
-                                                     testAbsEnergyEPThreshold_);
-                                    if (error > testAbsEnergyEPThreshold_)
-                                        result = false;
-                                }
-                            });
+                auto error = fabs(it->second - range);
+                Messenger::print("Absolute EP magnitude for '{}' has error of {} with reference data "
+                                 "and is {} (threshold is {})\n\n",
+                                 it->first, error, error <= testAbsEnergyEPThreshold_ ? "OK" : "NOT OK",
+                                 testAbsEnergyEPThreshold_);
+                if (error > testAbsEnergyEPThreshold_)
+                    result = false;
+            }
+        });
 
     return result;
 }

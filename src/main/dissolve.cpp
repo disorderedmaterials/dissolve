@@ -50,7 +50,6 @@ void Dissolve::clear()
 
     // Simulation
     Messenger::printVerbose("Clearing Simulation...\n");
-    processingLayers_.clear();
     processingModuleData_.clearAll();
     iteration_ = 0;
     nIterationsPerformed_ = 0;
@@ -60,3 +59,10 @@ void Dissolve::clear()
     restartFilename_.clear();
     saveRestartTimes_.clear();
 }
+
+/*
+ * Processing Module Data
+ */
+
+// Return data associated with processing Modules
+GenericList &Dissolve::processingModuleData() { return processingModuleData_; }

@@ -67,6 +67,15 @@ void DirectionalPotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
 // Set vector of potential
 void DirectionalPotential::setVector(Vec3<double> vector) { vector_ = vector; }
 
+// Return functional form of the potential, as a string
+const std::string DirectionalPotential::formString() const
+{
+    return DirectionalPotentialFunctions::forms().keyword(interactionPotential_.form());
+}
+
+// Return parameters of the potential, as a string
+const std::string DirectionalPotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
+
 /*
  * Potential Calculation
  */

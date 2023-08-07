@@ -58,6 +58,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         GeneralRegion,
         ImportCoordinates,
         IntegerCollect1D,
+        IfValueInRange,
         Integrate1D,
         OperateDivide,
         OperateExpression,
@@ -77,6 +78,7 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         Remove,
         RestraintPotential,
         RotateFragment,
+        RunLayer,
         Select,
         Sequence,
         SimpleGlobalPotential,
@@ -87,6 +89,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
     };
     // Return enum option info for NodeType
     static EnumOptions<NodeType> nodeTypes();
+    // Return the lowerCamelCase name of the node type provided
+    static std::string lccNodeType(NodeType nodeType);
     // Node Contexts
     enum NodeContext
     {
@@ -94,8 +98,9 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
         AnalysisContext = 1,
         GenerationContext = 2,
         OperateContext = 4,
-        AnyContext = 8,
-        ParentProcedureContext = 16
+        ControlContext = 8,
+        AnyContext = 16,
+        InheritContext = 32,
     };
     // Return enum option info for NodeContext
     static EnumOptions<NodeContext> nodeContexts();

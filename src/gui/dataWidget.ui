@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>352</height>
+    <width>328</width>
+    <height>229</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -43,7 +43,7 @@
    <item>
     <widget class="QFrame" name="ToolsFrame">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+      <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -56,7 +56,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="spacing">
-       <number>6</number>
+       <number>2</number>
       </property>
       <property name="leftMargin">
        <number>0</number>
@@ -71,113 +71,6 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QWidget" name="InteractionToolsWidget" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="InteractionToolsLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_interaction.svg</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="InteractionViewButton">
-           <property name="minimumSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>View mode</string>
-           </property>
-           <property name="text">
-            <string>I</string>
-           </property>
-           <property name="icon">
-            <iconset resource="main.qrc">
-             <normaloff>:/viewer/icons/viewer_interact.svg</normaloff>
-             <normalon>:/viewer/icons/viewer_interact_on.svg</normalon>:/viewer/icons/viewer_interact.svg</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="Line" name="line">
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
-        <property name="lineWidth">
-         <number>2</number>
-        </property>
-        <property name="midLineWidth">
-         <number>1</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QWidget" name="GraphToolsWidget" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -187,16 +80,16 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <property name="spacing">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="leftMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="topMargin">
           <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="bottomMargin">
           <number>0</number>
@@ -209,6 +102,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
              <width>24</width>
@@ -219,7 +118,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_graph.svg</pixmap>
+            <pixmap resource="main.qrc">:/general/icons/graph.svg</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -230,14 +129,14 @@
           <widget class="QToolButton" name="GraphResetButton">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="toolTip">
@@ -248,12 +147,12 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/viewer/icons/viewer_reset.svg</normaloff>:/viewer/icons/viewer_reset.svg</iconset>
+             <normaloff>:/general/icons/reset.svg</normaloff>:/general/icons/reset.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>18</width>
+             <height>18</height>
             </size>
            </property>
            <property name="checkable">
@@ -271,14 +170,14 @@
           <widget class="QToolButton" name="GraphFollowAllButton">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="toolTip">
@@ -289,13 +188,13 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/viewer/icons/viewer_followall.svg</normaloff>
-             <normalon>:/viewer/icons/viewer_followall_on.svg</normalon>:/viewer/icons/viewer_followall.svg</iconset>
+             <normaloff>:/general/icons/followAll.svg</normaloff>
+             <normalon>:/general/icons/followAll_on.svg</normalon>:/general/icons/followAll.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -307,14 +206,14 @@
           <widget class="QToolButton" name="GraphFollowXButton">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="toolTip">
@@ -325,13 +224,13 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/viewer/icons/viewer_followx.svg</normaloff>
-             <normalon>:/viewer/icons/viewer_followx_on.svg</normalon>:/viewer/icons/viewer_followx.svg</iconset>
+             <normaloff>:/general/icons/followX.svg</normaloff>
+             <normalon>:/general/icons/followX_on.svg</normalon>:/general/icons/followX.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -342,14 +241,14 @@
          <item>
           <widget class="ExponentialSpin" name="GraphFollowXLengthSpin">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
             <size>
-             <width>64</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -398,16 +297,16 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <property name="spacing">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="leftMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="topMargin">
           <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="bottomMargin">
           <number>0</number>
@@ -420,6 +319,12 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
              <width>24</width>
@@ -430,7 +335,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="main.qrc">:/viewer_toolbar/icons/viewer_toolbar_view.svg</pixmap>
+            <pixmap resource="main.qrc">:/general/icons/view.svg</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -440,7 +345,7 @@
          <item>
           <widget class="QComboBox" name="ViewTypeCombo">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -481,14 +386,14 @@
           <widget class="QToolButton" name="ViewToggleDataButton">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="toolTip">
@@ -499,12 +404,12 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/viewer/icons/viewer_data.svg</normaloff>:/viewer/icons/viewer_data.svg</iconset>
+             <normaloff>:/general/icons/data.svg</normaloff>:/general/icons/data.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -516,14 +421,14 @@
           <widget class="QToolButton" name="ViewAxesVisibleButton">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="toolTip">
@@ -534,13 +439,13 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/viewer/icons/viewer_axes.svg</normaloff>
-             <normalon>:/viewer/icons/viewer_axes_on.svg</normalon>:/viewer/icons/viewer_axes.svg</iconset>
+             <normaloff>:/general/icons/axes.svg</normaloff>
+             <normalon>:/general/icons/axes_on.svg</normalon>:/general/icons/axes.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -558,14 +463,14 @@
           <widget class="QToolButton" name="ViewCopyToClipboardButton">
            <property name="minimumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>32</width>
-             <height>32</height>
+             <width>26</width>
+             <height>26</height>
             </size>
            </property>
            <property name="toolTip">
@@ -576,12 +481,12 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/viewer/icons/viewer_snapshot.svg</normaloff>:/viewer/icons/viewer_snapshot.svg</iconset>
+             <normaloff>:/general/icons/snapshot.svg</normaloff>:/general/icons/snapshot.svg</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>24</width>
-             <height>24</height>
+             <width>20</width>
+             <height>20</height>
             </size>
            </property>
            <property name="checkable">
@@ -605,7 +510,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>151</width>
+          <width>0</width>
           <height>20</height>
          </size>
         </property>
@@ -653,8 +558,8 @@
       <item>
        <widget class="QGroupBox" name="DataGroup">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-          <horstretch>0</horstretch>
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>1</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
@@ -663,24 +568,24 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <property name="spacing">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="leftMargin">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="topMargin">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
-          <number>4</number>
+          <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>4</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QTreeView" name="DataTree">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -720,6 +625,12 @@
    </item>
    <item>
     <widget class="QFrame" name="InfoFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="font">
       <font>
        <pointsize>10</pointsize>

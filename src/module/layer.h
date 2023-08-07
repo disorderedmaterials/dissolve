@@ -91,6 +91,7 @@ class ModuleLayer : public Serialisable<const CoreData &>
     bool contains(Module *searchModule) const;
     // Return vector of Modules
     std::vector<std::unique_ptr<Module>> &modules();
+    const std::vector<std::unique_ptr<Module>> &modules() const;
     // Return map of modules in the layer, optionally preceding the specified module
     std::map<ModuleTypes::ModuleType, std::vector<const Module *>> modulesAsMap(const Module *beforeThis = nullptr) const;
 
@@ -99,7 +100,7 @@ class ModuleLayer : public Serialisable<const CoreData &>
      */
     public:
     // Run set-up stages for all modules
-    bool setUpAll(Dissolve &dissolve, const ProcessPool &procPool);
+    bool setUpAll(ModuleContext &moduleContext);
     // Return all configurations targeted by modules in the layer
     std::vector<Configuration *> allTargetedConfigurations() const;
     // Express as a serialisable value

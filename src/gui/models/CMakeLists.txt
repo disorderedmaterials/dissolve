@@ -7,6 +7,7 @@ set(models_MOC_HDRS
     configurationModel.h
     dataManagerSimulationModel.h
     enumOptionsModel.h
+    externalPotentialModel.h
     isotopologueSetModel.h
     masterAngleModel.h
     masterBondModel.h
@@ -15,7 +16,9 @@ set(models_MOC_HDRS
     masterTermTreeModel.h
     masterTorsionModel.h
     moduleLayerModel.h
+    moduleLayersModel.h
     moduleModel.h
+    nodePaletteFilterProxy.h
     modulePaletteModel.h
     nodePaletteModel.h
     pairPotentialModel.h
@@ -41,6 +44,7 @@ set(models_MOC_HDRS
     speciesImproperModel.h
     speciesIsoModel.h
     speciesTorsionModel.h
+    weightedModuleModel.h
 )
 
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
@@ -56,6 +60,8 @@ set(models_SRCS
     dataManagerSimulationModel.cpp
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
+    externalPotentialModel.cpp
+    globalPotentialFilterProxy.cpp
     isotopologueSetModel.cpp
     masterAngleModel.cpp
     masterBondModel.cpp
@@ -64,7 +70,9 @@ set(models_SRCS
     masterTermTreeModel.cpp
     masterTorsionModel.cpp
     moduleLayerModel.cpp
+    moduleLayersModel.cpp
     moduleModel.cpp
+    nodePaletteFilterProxy.cpp
     modulePaletteModel.cpp
     nodePaletteModel.cpp
     pairPotentialModel.cpp
@@ -84,6 +92,7 @@ set(models_SRCS
     speciesSiteFilterProxy.cpp
     speciesSiteModel.cpp
     speciesTorsionModel.cpp
+    weightedModuleModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -100,6 +109,8 @@ qt_wrap_cpp(
   dataManagerSimulationModel.h
   enumOptionsModel.h
   expressionVariableVectorModel.h
+  externalPotentialModel.h
+  globalPotentialFilterProxy.h
   isotopologueSetModel.h
   pairPotentialModel.h
   speciesModel.h
@@ -116,6 +127,7 @@ qt_wrap_cpp(
   speciesImproperModel.h
   speciesIsoModel.h
   speciesTorsionModel.h
+  weightedModuleModel.h
 )
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})
