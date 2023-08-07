@@ -76,7 +76,7 @@ bool Sum1DProcedureNode::finalise(const ProcedureContext &procedureContext)
         {
             if (!sum_[i].has_value())
                 sum_[i] = procedureContext.dataList().realise<SampledDouble>(
-                    fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), procedureContext.dataPrefix(),
+                    fmt::format("Sum1D//{}//{}", name(), rangeNames[i]), procedureContext.processingDataPrefix(),
                     GenericItem::InRestartFileFlag);
             if (instantaneous_)
                 sum_[i]->get() = Integrator::sum(sourceData_->processedData(), range_[i]);

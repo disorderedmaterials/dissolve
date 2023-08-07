@@ -8,6 +8,7 @@
 
 // Forward Declarations
 class Configuration;
+class Dissolve;
 class GenericList;
 class PotentialMap;
 class ProcessPool;
@@ -18,7 +19,7 @@ class ProcedureContext
     public:
     explicit ProcedureContext(const ProcessPool &procPool);
     ProcedureContext(const ProcessPool &procPool, Configuration *cfg);
-    ProcedureContext(const ProcessPool &procPool, const PotentialMap &potentialMap);
+    ProcedureContext(const ProcessPool &procPool, Dissolve &dissolve);
 
     private:
     // Available process pool
@@ -26,11 +27,9 @@ class ProcedureContext
     // Target Configuration
     Configuration *configuration_{nullptr};
     // Prefix for generated data
-    std::string dataPrefix_;
-    // Target list for generated data
-    OptionalReferenceWrapper<GenericList> dataList_;
-    // Potential map
-    OptionalReferenceWrapper<const PotentialMap> potentialMap_;
+    std::string processingDataPrefix_;
+    // Dissolve
+    OptionalReferenceWrapper<Dissolve> dissolve_;
 
     public:
     // Return available process pool
@@ -39,14 +38,16 @@ class ProcedureContext
     void setConfiguration(Configuration *cfg);
     // Return target Configuration
     Configuration *configuration() const;
-    // Set target data list and prefix
-    void setDataListAndPrefix(GenericList &list, std::string_view prefix);
+    // Set prefix for generated processing data
+    void setProcessingDataPrefix(std::string_view prefix);
     // Return prefix for generated data
-    std::string_view dataPrefix() const;
+    std::string_view processingDataPrefix() const;
     // Return target list for generated data
     GenericList &dataList() const;
-    // Set potential map
-    void setPotentialMap(const PotentialMap &potentialMap);
+    // Set reference to Dissolve
+    void setDissolve(Dissolve &dissolve);
+    // Return reference to Dissolve
+    Dissolve &dissolve() const;
     // Return potential map
     const PotentialMap &potentialMap() const;
 };
