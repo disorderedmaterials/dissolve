@@ -7,6 +7,6 @@
 
 bool Task::execute()
 {
-    ProcedureContext procedureContext(context_.processPool());
+    ProcedureContext procedureContext(context_.processPool(), context_.dissolve());
     return procedure_.execute(procedureContext);
 }
