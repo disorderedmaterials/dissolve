@@ -310,7 +310,7 @@ void DissolveWindow::updateStatusBar()
     }
     else if (!dissolveIterating_ && elapsedTimer_.secondsElapsed() != 0.0)
     {
-        timerLabel_->setText(QString::fromStdString(fmt::format("- Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
+        timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
     else if (ui_.MainStack->currentIndex() == 1)
     {
