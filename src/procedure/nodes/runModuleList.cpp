@@ -3,11 +3,16 @@
 
 #include "procedure/nodes/runModuleList.h"
 #include "keywords/moduleVector.h"
+#include "module/context.h"
+#include "keywords/integer.h"
+#include "templates/flags.h"
+#include "main/dissolve.h"
 
-RunModuleListNode::RunModuleListNode(std::vector<Module *> modules) : ProcedureNode(ProcedureNode::NodeType::RunModuleList, {ProcedureNode::ControlContext}), modules_(std::move(modules))
+RunModuleListNode::RunModuleListNode(std::vector<Module *> modules, int frequency) : ProcedureNode(ProcedureNode::NodeType::RunModuleList, {ProcedureNode::ControlContext}), modules_(std::move(modules)), frequency_(frequency)
 {
     keywords_.setOrganisation("Options", "Targets");
     keywords_.add<ModuleVectorKeyword>("Modules", "Target modules to run", modules_);
+    keywords_.add<IntegerKeyword>("Frequency", "Frequency to run modules", frequency_);
 }
 
 /*
@@ -31,4 +36,15 @@ bool RunModuleListNode::prepare(const ProcedureContext &procedureContext)
 bool RunModuleListNode::execute(const ProcedureContext &procedureContext)
 {
     return true;
+    if (procedureContext.dissolve().iteration() % frequency_ == 0)
+    {
+        for (auto &module : modules_)
+        {
+            if (!module->runThisIteration(procedureContext.dissolve().iteration() / frequency_))
+                continue;
+            ModuleContext moduleContext({procedureContext.processPool(), procedureContext.dissolve()});
+            if (module->executeProcessing(moduleContext) == Module::ExecutionResult::Failed)
+                return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
+        }
+    }
 }

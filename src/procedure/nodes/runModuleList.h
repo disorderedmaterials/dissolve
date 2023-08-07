@@ -8,7 +8,7 @@
 class RunModuleListNode : public ProcedureNode
 {
     public:
-    explicit RunModuleListNode(std::vector<Module*> modules = {});
+    explicit RunModuleListNode(std::vector<Module*> modules = {}, int frequency = 0);
 
     /*
      * Identity
@@ -20,6 +20,8 @@ class RunModuleListNode : public ProcedureNode
     private:
     // Target modules to run
     std::vector<Module*> modules_;
+    // Frequency to run module list at
+    int frequency_;
 
     /*
      * Execute
