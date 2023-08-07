@@ -9,12 +9,12 @@
 class Task
 {
     public:
-    Task();
+    Task(TaskContext taskContext);
     ~Task() = default;
 
     private:
     // Procedure to be executed by the task
-    Procedure procedure_;
+    Procedure* procedure_;
     // Context to execute the task within
     TaskContext context_;
 

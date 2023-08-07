@@ -9,7 +9,7 @@
 
 Dissolve::Dissolve(CoreData &coreData)
     : coreData_(coreData),
-      serializablePairPotential_(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_, coreData_.atomTypes())
+      serializablePairPotential_(pairPotentialRange_, pairPotentialDelta_, atomTypeChargeSource_, coreData_.atomTypes()), master_({worldPool_, *this})
 {
     // Set core simulation variables
     restartFileFrequency_ = 10;

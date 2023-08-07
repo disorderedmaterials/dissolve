@@ -240,7 +240,6 @@ set(BASIC_LINK_LIBS
     neta
     procedure
     procedureNodes
-    task
     keywords
     expression
     items
@@ -248,6 +247,7 @@ set(BASIC_LINK_LIBS
     math
     data
     sginfo
+    task
     # Forcefields
     ff
     ${FF_LINK_LIBS}
