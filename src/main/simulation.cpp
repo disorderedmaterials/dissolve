@@ -9,6 +9,7 @@
 #include "main/dissolve.h"
 #include "module/context.h"
 #include "modules/intraShake/intraShake.h"
+#include "procedure/nodes/runModuleList.h"
 #include <cstdio>
 #include <numeric>
 
@@ -197,6 +198,19 @@ bool Dissolve::prepare()
         }
     }
 
+    auto* procedure = master_.procedure();
+    procedure->clear();
+    for (auto &layer : coreData_.processingLayers())
+    {
+        if (layer->isEnabled())
+        {
+            std::vector<Module*> modules;
+            for (auto& module : layer->modules())
+                modules.push_back(module.get());
+            procedure->createRootNode<RunModuleListNode>(fmt::format("Run {}", layer->name()), modules, layer->frequency());
+        }
+    }
+
     // Set up all modules and return
     return coreData_.setUpProcessingLayerModules(*this);
 }
@@ -265,31 +279,8 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  2)	Run processing Modules (using the world pool).
          */
-        ModuleContext context(worldPool(), *this);
-        for (auto &layer : coreData_.processingLayers())
-        {
-            // Check if this layer is due to run this iteration
-            if (!layer->runThisIteration(iteration_))
-                continue;
-
-            Messenger::banner("Layer '{}'", layer->name());
-            auto layerExecutionCount = iteration_ / layer->frequency();
-
-            // Check run-control settings
-            if (!layer->canRun(processingModuleData_))
-                continue;
-
-            for (auto &module : layer->modules())
-            {
-                if (!module->runThisIteration(layerExecutionCount))
-                    continue;
-
-                Messenger::heading("{} ({})", ModuleTypes::moduleType(module->type()), module->name());
-
-                if (module->executeProcessing(context) == Module::ExecutionResult::Failed)
-                    return Messenger::error("Module '{}' experienced problems. Exiting now.\n", module->name());
-            }
-        }
+        if (!master_.execute())
+            return Messenger::error("The Master Task experienced problems...");
 
         // Sync up all processes
         Messenger::printVerbose("Waiting for other processes at end of main processing...\n");
