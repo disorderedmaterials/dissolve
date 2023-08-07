@@ -4,18 +4,9 @@
 #pragma once
 
 #include "data/elements.h"
-#include "neta/neta.h"
-#include "templates/optionalRef.h"
 #include "templates/vector3.h"
 #include <algorithm>
 #include <vector>
-
-// Forward declarations
-class Box;
-class CIFHandler;
-class CoreData;
-class Configuration;
-class Species;
 
 // CIF Symmetry-Unique Atom
 class CIFSymmetryAtom
