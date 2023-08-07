@@ -9,6 +9,7 @@
 #include "main/dissolve.h"
 #include "module/context.h"
 #include "modules/intraShake/intraShake.h"
+#include "task/task.h"
 #include "task/context.h"
 #include <cstdio>
 #include <numeric>
@@ -237,14 +238,14 @@ bool Dissolve::iterate(int nIterations)
          *  2)	Run processing Modules (using the world pool).
          */
 
-        for (auto& layer : coreData_.processingLayers())
-            master_->addRunLayerNode(layer.get());
+        //for (auto& layer : coreData_.processingLayers())
+        //    master_->addRunLayerNode(layer.get());
         TaskContext taskContext(worldPool(), *this);
-        auto result = master_->execute(taskContext);
-        if (!result)
-        {
-            return Messenger::error("Something went wrong..");
-        }
+        //auto result = master_->execute(taskContext);
+        //if (!result)
+        //{
+        //    return Messenger::error("Something went wrong..");
+       // }
 
         // Sync up all processes
         Messenger::printVerbose("Waiting for other processes at end of main processing...\n");

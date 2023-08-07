@@ -9,14 +9,17 @@
 #include "base/lineParser.h"
 #include "base/sysFunc.h"
 #include <memory>
+#include "module/layer.h"
+#include "fmt/format.h"
 
 bool Task::execute(TaskContext &taskContext)
 {
-    ProcedureContext context(taskContext.procedurePool(), taskContext.dissolve());
+    ProcedureContext context(taskContext.processPool(), taskContext.dissolve());
     return procedure_.execute(context);
 }
 
-void Task::addRunLayerNode(ModuleLayer* layer)
+void Task::addRunLayerNode(ModuleLayer *layer)
 {
-    //procedure_.createRootNode<RunLayerNode>(fmt::format("Run {}", layer->name()), layer);
+    auto run = procedure_.createRootNode<RunLayerNode>(fmt::format("Run {}", layer->name()), layer);
+    Messenger::print("Added node {}, targets {}", run->name(), run->keywords().keyword("Layer")->name());
 }
