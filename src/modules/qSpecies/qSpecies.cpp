@@ -29,7 +29,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
 
     auto &forEachNF = selectNF_->branch()->get();
     auto valuesInRange = forEachNF.create<IfValueInRangeProcedureNode>({});
-    valuesInRange->keywords().set("Value", NodeValue("NF.nSelected"));
+    valuesInRange->keywords().set("Value", NodeValueProxy("NF.nSelected"));
     valuesInRange->keywords().set("ValidRange", Range(1.9, 2.1));
 
     auto &ifThen = valuesInRange->branch()->get();
