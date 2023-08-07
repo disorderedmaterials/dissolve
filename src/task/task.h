@@ -21,5 +21,7 @@ class Task
     public:
     // Execute the task
     bool execute();
+    Procedure* procedure();
+    const Procedure* procedure() const;
 
 };

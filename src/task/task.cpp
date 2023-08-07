@@ -5,10 +5,23 @@
 #include "task/context.h"
 #include "procedure/procedure.h"
 
-Task::Task(TaskContext taskContext) : context_(taskContext) {}
+Task::Task(TaskContext taskContext) : context_(taskContext)
+{
+    procedure_ = new Procedure(ProcedureNode::NodeContext::ControlContext);
+}
 
 bool Task::execute()
 {
     ProcedureContext procedureContext(context_.processPool(), context_.dissolve());
     return procedure_->execute(procedureContext);
+}
+
+Procedure *Task::procedure()
+{
+    return procedure_;
+}
+
+const Procedure *Task::procedure() const
+{
+    return procedure_;
 }
