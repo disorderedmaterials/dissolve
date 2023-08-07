@@ -12,6 +12,7 @@
 #include "data/elements.h"
 #include "module/layer.h"
 #include "module/module.h"
+#include "task/task.h"
 
 // Forward Declarations
 class Atom;
@@ -115,6 +116,11 @@ class Dissolve : public Serialisable<>
     public:
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
+
+    /*
+     * Task
+     */
+    Task master_;
 
     /*
      * Simulation
