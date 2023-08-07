@@ -45,8 +45,9 @@ add_library(
   regionBase.cpp
   registry.cpp
   remove.cpp
-  rotateFragment.cpp
   restraintPotential.cpp
+  rotateFragment.cpp
+  runLayer.cpp
   select.cpp
   sequence.cpp
   simpleGlobalPotential.cpp
@@ -99,8 +100,9 @@ add_library(
   regionBase.h
   registry.h
   remove.h
-  rotateFragment.h
   restraintPotential.h
+  rotateFragment.h
+  runLayer.h
   select.h
   sequence.h
   simpleGlobalPotential.h

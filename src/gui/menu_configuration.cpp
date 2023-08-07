@@ -77,7 +77,7 @@ void DissolveWindow::on_ConfigurationCreateAction_triggered(bool checked)
         dissolve_.regeneratePairPotentials();
 
         // Initialise the content
-        newConfig->initialiseContent({dissolve_.worldPool(), dissolve_.potentialMap()});
+        newConfig->initialiseContent({dissolve_.worldPool(), dissolve_});
 
         // Fully update GUI
         setModified();

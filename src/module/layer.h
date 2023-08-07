@@ -91,6 +91,7 @@ class ModuleLayer : public Serialisable<const CoreData &>
     bool contains(Module *searchModule) const;
     // Return vector of Modules
     std::vector<std::unique_ptr<Module>> &modules();
+    const std::vector<std::unique_ptr<Module>> &modules() const;
     // Return map of modules in the layer, optionally preceding the specified module
     std::map<ModuleTypes::ModuleType, std::vector<const Module *>> modulesAsMap(const Module *beforeThis = nullptr) const;
 

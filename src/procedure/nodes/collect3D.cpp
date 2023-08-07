@@ -99,8 +99,8 @@ bool Collect3DProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), procedureContext.configuration()->niceName());
-    auto [target, status] = procedureContext.dataList().realiseIf<Histogram3D>(dataName, procedureContext.dataPrefix(),
-                                                                               GenericItem::InRestartFileFlag);
+    auto [target, status] = procedureContext.dataList().realiseIf<Histogram3D>(
+        dataName, procedureContext.processingDataPrefix(), GenericItem::InRestartFileFlag);
     if (status == GenericItem::ItemStatus::Created)
     {
         Messenger::printVerbose("Three-dimensional histogram data for '{}' was not in the target list, so it will now "

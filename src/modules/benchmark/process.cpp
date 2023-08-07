@@ -39,7 +39,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         {
             Timer timer;
             Messenger::mute();
-            targetConfiguration_->generate({moduleContext.processPool(), moduleContext.dissolve().potentialMap()});
+            targetConfiguration_->generate({moduleContext.processPool(), moduleContext.dissolve()});
             Messenger::unMute();
             timing += timer.split();
         }

@@ -66,6 +66,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::Remove, "Remove"},
                      {ProcedureNode::NodeType::RestraintPotential, "RestraintPotential"},
                      {ProcedureNode::NodeType::RotateFragment, "RotateFragment"},
+                     {ProcedureNode::NodeType::RunLayer, "RunLayer"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
@@ -89,6 +90,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
     return EnumOptions<ProcedureNode::NodeContext>("NodeContext", {{ProcedureNode::NoContext, "None"},
                                                                    {ProcedureNode::AnalysisContext, "Analysis"},
                                                                    {ProcedureNode::GenerationContext, "Generation"},
+                                                                   {ProcedureNode::ControlContext, "Control"},
                                                                    {ProcedureNode::OperateContext, "Operate"},
                                                                    {ProcedureNode::AnyContext, "Any"},
                                                                    {ProcedureNode::InheritContext, "Inherit"}});
