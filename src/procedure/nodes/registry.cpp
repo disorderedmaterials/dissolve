@@ -41,6 +41,7 @@
 #include "procedure/nodes/restraintPotential.h"
 #include "procedure/nodes/rotateFragment.h"
 #include "procedure/nodes/runLayer.h"
+#include "procedure/nodes/runModuleList.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleGlobalPotential.h"
 #include "procedure/nodes/sizeFactor.h"
@@ -147,6 +148,7 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
 
     // Control
     registerProducer<RunLayerNode>(ProcedureNode::NodeType::RunLayer, "Run layer", "Control");
+    registerProducer<RunModuleListNode>(ProcedureNode::NodeType::RunModuleList, "Run modules", "Control");
 }
 
 /*

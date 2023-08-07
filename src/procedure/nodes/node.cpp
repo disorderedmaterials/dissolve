@@ -67,6 +67,7 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::NodeType::RestraintPotential, "RestraintPotential"},
                      {ProcedureNode::NodeType::RotateFragment, "RotateFragment"},
                      {ProcedureNode::NodeType::RunLayer, "RunLayer"},
+                     {ProcedureNode::NodeType::RunModuleList, "RunModuleList"},
                      {ProcedureNode::NodeType::Select, "Select"},
                      {ProcedureNode::NodeType::Sequence, "Sequence"},
                      {ProcedureNode::NodeType::SimpleGlobalPotential, "SimpleGlobalPotential"},
