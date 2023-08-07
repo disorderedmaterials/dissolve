@@ -24,6 +24,7 @@ set(models_MOC_HDRS
     procedureModel.h
     procedureModelMimeData.h
     procedureNodeModel.h
+    rangeVectorModel.h
     renderableGroupManagerModel.h
     sitesFilterProxy.h
     sitesModel.h
@@ -31,12 +32,6 @@ set(models_MOC_HDRS
     speciesModel.h
     speciesSiteFilterProxy.h
     speciesSiteModel.h
-    xmlAngleModel.h
-    xmlAtomModel.h
-    xmlBondModel.h
-    xmlImproperModel.h
-    xmlTreeModel.h
-    xmlTorsionModel.h
     speciesAngleModel.h
     speciesAtomModel.h
     speciesBondModel.h
@@ -44,7 +39,12 @@ set(models_MOC_HDRS
     speciesIsoModel.h
     speciesTorsionModel.h
     weightedModuleModel.h
-    rangeModel.h
+    xmlAngleModel.h
+    xmlAtomModel.h
+    xmlBondModel.h
+    xmlImproperModel.h
+    xmlTreeModel.h
+    xmlTorsionModel.h
 )
 
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
@@ -77,6 +77,7 @@ set(models_SRCS
     procedureModel.cpp
     procedureModelMimeData.cpp
     procedureNodeModel.cpp
+    rangeVectorModel.cpp
     renderableGroupManagerModel.cpp
     sitesFilterProxy.cpp
     sitesModel.cpp
@@ -91,7 +92,6 @@ set(models_SRCS
     speciesSiteModel.cpp
     speciesTorsionModel.cpp
     weightedModuleModel.cpp
-    rangeModel.cpp
     xmlAngleModel.cpp
     xmlAtomModel.cpp
     xmlBondModel.cpp
@@ -110,22 +110,22 @@ qt_wrap_cpp(
   expressionVariableVectorModel.h
   isotopologueSetModel.h
   pairPotentialModel.h
+  rangeVectorModel.h
+  speciesAngleModel.h
+  speciesAtomModel.h
+  speciesBondModel.h
+  speciesImproperModel.h
+  speciesIsoModel.h
   speciesModel.h
   speciesSiteModel.h
+  speciesTorsionModel.h
+  weightedModuleModel.h
   xmlAngleModel.h
   xmlAtomModel.h
   xmlBondModel.h
   xmlImproperModel.h
   xmlTreeModel.h
   xmlTorsionModel.h
-  speciesAngleModel.h
-  speciesAtomModel.h
-  speciesBondModel.h
-  speciesImproperModel.h
-  speciesIsoModel.h
-  speciesTorsionModel.h
-  weightedModuleModel.h
-  rangeModel.h
 )
 
 add_library(models ${models_SRCS} ${models_MOC_SRCS})

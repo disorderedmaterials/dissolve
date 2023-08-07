@@ -33,6 +33,9 @@ EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
     keywords_.add<DoubleKeyword>("Weighting", "Factor used when adding fluctuation coefficients to pair potentials", weighting_,
                                  0.0, 100.0);
 
+    keywords_.setOrganisation("Advanced", "Additional R-Factors");
+    keywords_.add<RangeVectorKeyword>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
+
     keywords_.setOrganisation("Advanced", "Expansion Function");
     keywords_.add<EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>>(
         "ExpansionFunction", "Form of expansion function to use when fitting difference data", expansionFunction_,
@@ -57,7 +60,6 @@ EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
     keywords_.add<OptionalIntegerKeyword>("Smoothing",
                                           "Smoothing to apply to fluctuation coefficients before summation into potential",
                                           fluctuationSmoothing_, 0, std::nullopt, 1, "Off");
-    keywords_.add<RangeVectorKeyword>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
 
     keywords_.setOrganisation("Advanced", "Test");
     keywords_.add<BoolKeyword>("Test", "Test against supplied reference data", test_);

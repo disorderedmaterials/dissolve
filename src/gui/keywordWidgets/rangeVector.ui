@@ -59,7 +59,7 @@
 							</property>
                                 <property name="icon">
                                 <iconset resource="main.qrc">
-                                <normaloff>:/general/icons/general_add.svg</normaloff>:/general/icons/general_add.svg</iconset>
+                                <normaloff>:/general/icons/add.svg</normaloff>:/general/icons/add.svg</iconset>
                                 </property>
 						</widget>
 					</item>
@@ -70,7 +70,7 @@
 							</property>
                                 <property name="icon">
                                 <iconset resource="main.qrc">
-                                <normaloff>:/general/icons/general_remove.svg</normaloff>:/general/icons/general_remove.svg</iconset>
+                                <normaloff>:/general/icons/remove.svg</normaloff>:/general/icons/remove.svg</iconset>
                                 </property>
 						</widget>
 					</item>

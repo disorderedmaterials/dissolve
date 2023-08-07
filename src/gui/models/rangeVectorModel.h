@@ -11,7 +11,7 @@
 
 #include <vector>
 
-class RangeModel : public QAbstractTableModel
+class RangeVectorModel : public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ class RangeModel : public QAbstractTableModel
     // Set ranges
     void setData(std::vector<Range> &ranges);
     // Returns range object from vector
-    Range *getRange(const QModelIndex &index) const;
+    OptionalReferenceWrapper<Range> getRange(const QModelIndex &index) const;
 
     /*
      * QAbstractTableModel overrides

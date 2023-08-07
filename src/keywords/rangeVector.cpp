@@ -32,7 +32,15 @@ bool RangeVectorKeyword::deserialise(LineParser &parser, int startArg, const Cor
             if (DissolveSys::isNumber(parser.argsv(n + 1)))
             {
                 // If both are numbers, initialise new Range
-                data_.emplace_back(parser.argd(n), parser.argd(n + 1));
+                if (parser.argd(n) > parser.argd(n + 1))
+                {
+                    // If minimum is greater than maximum, swap
+                    data_.emplace_back(parser.argd(n + 1), parser.argd(n));
+                }
+                else
+                {
+                    data_.emplace_back(parser.argd(n), parser.argd(n + 1));
+                }
             }
             else
             {
@@ -67,17 +75,14 @@ bool RangeVectorKeyword::serialise(LineParser &parser, std::string_view keywordN
 // Express as a serialisable value
 SerialisedValue RangeVectorKeyword::serialise() const
 {
-    return fromVector(data_,
-                      [](const auto &item) -> SerialisedValue {
-                          return {{"minimum", item.minimum()}, {"maximum", item.maximum()}};
-                      });
+    return fromVector(data_, [](const auto &item) -> SerialisedValue { return item.serialise(); });
 }
 
 // Read values from a serialisable value
 void RangeVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     toVector(node, [this](const auto &item)
-             { data_.emplace_back(toml::find<double>(item, "minimum"), toml::find<double>(item, "maximum")); });
+             { data_.emplace_back(toml::find<double>(item, "min"), toml::find<double>(item, "max")); });
 }
 
 // Has not changed from initial value

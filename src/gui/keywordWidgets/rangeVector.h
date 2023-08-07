@@ -6,7 +6,7 @@
 #include "gui/keywordWidgets/base.h"
 #include "gui/keywordWidgets/dropDown.h"
 #include "gui/keywordWidgets/ui_rangeVector.h"
-#include "gui/models/rangeModel.h"
+#include "gui/models/rangeVectorModel.h"
 #include "keywords/rangeVector.h"
 #include "math/range.h"
 #include <QWidget>
@@ -33,7 +33,7 @@ class RangeVectorKeywordWidget : public QWidget, public KeywordWidgetBase
     // Main form declaration
     Ui::RangeVectorWidget ui_;
     // Model for combo box
-    RangeModel rangeModel_;
+    RangeVectorModel rangeVectorModel_;
 
     private slots:
     void modelDataChanged(const QModelIndex &, const QModelIndex &);

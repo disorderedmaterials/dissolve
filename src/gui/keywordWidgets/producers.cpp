@@ -78,6 +78,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<OptionalDoubleKeyword, OptionalDoubleKeywordWidget>();
     registerProducer<OptionalIntegerKeyword, OptionalIntegerKeywordWidget>();
     registerProducer<RangeKeyword, RangeKeywordWidget>();
+    registerProducer<RangeVectorKeyword, RangeVectorKeywordWidget>();
     registerProducer<SpeciesKeyword, SpeciesKeywordWidget>();
     registerProducer<SpeciesSiteKeyword, SpeciesSiteKeywordWidget>();
     registerProducer<SpeciesSiteVectorKeyword, SpeciesSiteVectorKeywordWidget>();
@@ -87,7 +88,6 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<Vec3IntegerKeyword, Vec3IntegerKeywordWidget>();
     registerProducer<Vec3NodeValueKeyword, Vec3NodeValueKeywordWidget>();
     registerProducer<WeightedModuleVectorKeyword, WeightedModuleVectorKeywordWidget>();
-    registerProducer<RangeVectorKeyword, RangeVectorKeywordWidget>();
 
     // Keywords with no widgets
     registerNullProducer<Data1DStoreKeyword>();

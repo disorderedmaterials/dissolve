@@ -26,6 +26,7 @@ add_library(
   optionalInt.cpp
   procedure.cpp
   range.cpp
+  rangeVector.cpp
   species.cpp
   speciesSite.cpp
   speciesSiteVector.cpp
@@ -41,7 +42,6 @@ add_library(
   vectorIntString.cpp
   vectorStringDouble.cpp
   vectorStringPair.cpp
-  rangeVector.cpp
   weightedModuleVector.cpp
   atomTypeVector.h
   base.h
@@ -83,6 +83,7 @@ add_library(
   stdString.h
   store.h
   storeData.h
+  rangeVector.h
   valueStore.h
   vec3Double.h
   vec3Integer.h
@@ -92,7 +93,6 @@ add_library(
   vectorIntString.h
   vectorStringDouble.h
   vectorStringPair.h
-  rangeVector.h
   weightedModuleVector.h
 )
 

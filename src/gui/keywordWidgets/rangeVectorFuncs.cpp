@@ -17,7 +17,7 @@ RangeVectorKeywordWidget::RangeVectorKeywordWidget(QWidget *parent, RangeVectorK
     ui_.setupUi(this);
 
     // Set up the model
-    ui_.RangeVectorTable->setModel(&rangeModel_);
+    ui_.RangeVectorTable->setModel(&rangeVectorModel_);
     ui_.RangeVectorTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     resetModelData();
 
@@ -25,7 +25,7 @@ RangeVectorKeywordWidget::RangeVectorKeywordWidget(QWidget *parent, RangeVectorK
     ui_.RangeVectorTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
 
     // Connect signals / slots
-    connect(&rangeModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+    connect(&rangeVectorModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
             SLOT(modelDataChanged(const QModelIndex &, const QModelIndex &)));
 }
 
@@ -42,9 +42,12 @@ void RangeVectorKeywordWidget::modelDataChanged(const QModelIndex &, const QMode
     emit(keywordDataChanged(keyword_->editSignals()));
 }
 
-void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked) { rangeModel_.insertRows(rangeModel_.rowCount(), 1); }
+void RangeVectorKeywordWidget::on_RangeAddButton_clicked(bool checked)
+{
+    rangeVectorModel_.insertRows(rangeVectorModel_.rowCount(), 1);
+}
 
-void RangeVectorKeywordWidget::on_RangeRemoveButton_clicked(bool checked) { rangeModel_.removeRows(selectedRow(), 1); }
+void RangeVectorKeywordWidget::on_RangeRemoveButton_clicked(bool checked) { rangeVectorModel_.removeRows(selectedRow(), 1); }
 
 /*
  * Update
@@ -56,7 +59,7 @@ void RangeVectorKeywordWidget::resetModelData()
     refreshing_ = true;
 
     // Update allowed modules
-    rangeModel_.setData(keyword_->data());
+    rangeVectorModel_.setData(keyword_->data());
 
     refreshing_ = false;
 }

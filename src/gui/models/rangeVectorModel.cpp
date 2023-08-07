@@ -1,42 +1,52 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "gui/models/rangeModel.h"
+#include "gui/models/rangeVectorModel.h"
 #include <QBrush>
 #include <fmt/format.h>
 
 // set range data
-void RangeModel::setData(std::vector<Range> &ranges)
+void RangeVectorModel::setData(std::vector<Range> &ranges)
 {
     beginResetModel();
     ranges_ = ranges;
     endResetModel();
 }
 
-Range *RangeModel::getRange(const QModelIndex &index) const { return &ranges_->get()[index.row()]; }
+OptionalReferenceWrapper<Range> RangeVectorModel::getRange(const QModelIndex &index) const
+{
+    if (!index.isValid() || !ranges_)
+    {
+        return std::nullopt;
+    }
+
+    return ranges_->get()[index.row()];
+}
 
 /*
  * QAbstractItemModel overrides
  */
 
-int RangeModel::rowCount(const QModelIndex &parent) const
+int RangeVectorModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return (ranges_ ? ranges_->get().size() : 0);
 }
 
-int RangeModel::columnCount(const QModelIndex &parent) const
+int RangeVectorModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 3;
 }
 
-QVariant RangeModel::data(const QModelIndex &index, int role) const
+QVariant RangeVectorModel::data(const QModelIndex &index, int role) const
 {
     if (!ranges_)
     {
         return {};
     }
+
+    auto range = getRange(index);
 
     switch (role)
     {
@@ -47,30 +57,34 @@ QVariant RangeModel::data(const QModelIndex &index, int role) const
                 case (0):
                     return QString::fromStdString(fmt::format("Range {}", index.row() + 1));
                 case (1):
-                    return getRange(index)->minimum();
+                    if (range)
+                    {
+                        return range->get().minimum();
+                    }
+                    else
+                    {
+                        return {};
+                    }
                 case (2):
-                    return getRange(index)->maximum();
+                    if (range)
+                    {
+                        return range->get().maximum();
+                    }
+                    else
+                    {
+                        return {};
+                    }
                 default:
                     return {};
             }
         case (Qt::UserRole):
             return QVariant::fromValue(getRange(index));
-        case (Qt::ForegroundRole):
-            if ((index.column() == 1 || index.column() == 2) && getRange(index)->maximum() < getRange(index)->minimum())
-            {
-                return QBrush(Qt::red);
-            }
-            else
-            {
-                return {};
-            }
-
         default:
             return {};
     }
 }
 
-bool RangeModel::insertRows(int row, int count, const QModelIndex &parent)
+bool RangeVectorModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(count);
     beginInsertRows(parent, row, row);
@@ -79,7 +93,7 @@ bool RangeModel::insertRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
-bool RangeModel::removeRows(int row, int count, const QModelIndex &parent)
+bool RangeVectorModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(count);
     if (row >= rowCount() || row < 0)
@@ -93,33 +107,35 @@ bool RangeModel::removeRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
-bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool RangeVectorModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    // HEY FUTURE NOELLA WE ARE WORKING ON SETTING THE NEW DATA AND RIGHT NOW STRUGGLING
-    // TO CONVERT VALUE TO DOUBLE AND STRING
     if (!ranges_ || !value.canConvert<double>())
     {
         return false;
     }
 
     auto range = getRange(index);
+    if (!range)
+    {
+        return false;
+    }
     auto doubleValue = value.toDouble();
 
     switch (index.column())
     {
         case (1):
-            if (range->minimum() != doubleValue)
+            if (range->get().minimum() != doubleValue)
             {
-                range->setMinimum(doubleValue);
+                range->get().setMinimum(doubleValue);
 
                 emit dataChanged(index, index);
                 return true;
             }
             return false;
         case (2):
-            if (range->maximum() != doubleValue)
+            if (range->get().maximum() != doubleValue)
             {
-                range->setMaximum(doubleValue);
+                range->get().setMaximum(doubleValue);
 
                 emit dataChanged(index, index);
                 return true;
@@ -132,7 +148,7 @@ bool RangeModel::setData(const QModelIndex &index, const QVariant &value, int ro
     return false;
 }
 
-Qt::ItemFlags RangeModel::flags(const QModelIndex &index) const
+Qt::ItemFlags RangeVectorModel::flags(const QModelIndex &index) const
 {
     if (index.column() == 0)
     {
@@ -144,7 +160,7 @@ Qt::ItemFlags RangeModel::flags(const QModelIndex &index) const
     }
 }
 
-QVariant RangeModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant RangeVectorModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         switch (section)

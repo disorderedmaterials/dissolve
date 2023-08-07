@@ -220,26 +220,10 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     // Is our scattering matrix fully set-up and just requiring updated data?
     auto scatteringMatrixSetUp = scatteringMatrix_.nReferenceData() != 0;
 
-    // Check range validity
-    std::vector<std::reference_wrapper<Range>> ranges;
-
-    for (auto &range : ranges_)
-    {
-        if (range.minimum() > range.maximum())
-        {
-            Messenger::warn("Range {:.5f} to {:.5f} is invalid and will be skipped", range.minimum(), range.maximum());
-            continue;
-        }
-
-        ranges.push_back(range);
-    }
+    auto rFacTot = 0.0;
+    std::vector<double> rangedRFacTots(targets_.size() * ranges_.size());
 
     // Loop over target data
-    auto rFacTot = 0.0;
-
-    std::vector<double> rangedRFacTots(targets_.size() * ranges.size());
-
-    int rFacCount = 0;
     for (auto *module : targets_)
     {
         /*
@@ -310,29 +294,16 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         errors.addPoint(moduleContext.dissolve().iteration(), rFactor);
         Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactor);
 
-        // Calculate r-factor over specified ranges
-        if (ranges.size() != 0)
+        // Calculate r-factor over specified ranges_
+        if (ranges_.size() != 0)
         {
-            for (int i = 0; i < ranges.size(); i++)
+            for (int i = 0; i < ranges_.size(); i++)
             {
-                if (ranges[i].get().minimum() < errorReport.firstX || ranges[i].get().maximum() > errorReport.lastX)
-                {
-                    Messenger::warn("Range {:.5f} to {:.5f} is outside reference data '{}' bounds: {:.5f} to {:.5f} and will "
-                                    "be skipped",
-                                    ranges[i].get().minimum(), ranges[i].get().maximum(), module->name(), errorReport.firstX,
-                                    errorReport.lastX);
-
-                    ranges.erase(ranges.begin() + i);
-
-                    continue;
-                }
-
-                rFactor = Error::rFactor(tempRefData, weightedSQ.total(), ranges[i].get()).error;
+                rFactor = Error::rFactor(tempRefData, weightedSQ.total(), ranges_[i]).error;
                 rangedRFacTots[i] += rFactor;
                 Messenger::print("Current R-Factor for reference data '{}' over range {:.5f} to {:.5f} is {:.5f}.\n",
-                                 module->name(), ranges[i].get().minimum(), ranges[i].get().maximum(), rFactor);
+                                 module->name(), ranges_[i].minimum(), ranges_[i].maximum(), rFactor);
             }
-            ++rFacCount;
         }
 
         /*
@@ -592,11 +563,11 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     totalRFactor.addPoint(moduleContext.dissolve().iteration(), rFacTot);
     Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
 
-    for (int i = 0; i < ranges.size(); i++)
+    for (int i = 0; i < ranges_.size(); i++)
     {
 
-        Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", ranges[i].get().minimum(),
-                         ranges[i].get().maximum(), rangedRFacTots[i] /= targets_.size());
+        Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", ranges_[i].minimum(),
+                         ranges_[i].maximum(), rangedRFacTots[i] /= targets_.size());
     }
 
     Messenger::print("\n");
