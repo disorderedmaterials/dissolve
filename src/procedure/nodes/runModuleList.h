@@ -3,12 +3,15 @@
 
 #pragma once
 
+#include "module/layer.h"
 #include "procedure/nodes/node.h"
+#include "templates/flags.h"
 
 class RunModuleListNode : public ProcedureNode
 {
     public:
-    explicit RunModuleListNode(std::vector<Module*> modules = {}, int frequency = 0);
+    explicit RunModuleListNode(std::vector<Module *> modules = {}, int frequency = 0,
+                              const Flags<ModuleLayer::RunControlFlag>& flags = {});
 
     /*
      * Identity
@@ -19,9 +22,11 @@ class RunModuleListNode : public ProcedureNode
 
     private:
     // Target modules to run
-    std::vector<Module*> modules_;
+    std::vector<Module *> modules_;
     // Frequency to run module list at
     int frequency_;
+    bool energyStability_;
+    bool sizeFactors_;
 
     /*
      * Execute

@@ -2,8 +2,8 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "task/task.h"
-#include "task/context.h"
 #include "procedure/procedure.h"
+#include "task/context.h"
 
 Task::Task(TaskContext taskContext) : context_(taskContext)
 {
@@ -16,12 +16,6 @@ bool Task::execute()
     return procedure_->execute(procedureContext);
 }
 
-Procedure *Task::procedure()
-{
-    return procedure_;
-}
+Procedure *Task::procedure() { return procedure_; }
 
-const Procedure *Task::procedure() const
-{
-    return procedure_;
-}
+const Procedure *Task::procedure() const { return procedure_; }

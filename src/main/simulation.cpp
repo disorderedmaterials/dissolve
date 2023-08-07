@@ -198,16 +198,16 @@ bool Dissolve::prepare()
         }
     }
 
-    auto* procedure = master_.procedure();
+    auto *procedure = master_.procedure();
     procedure->clear();
     for (auto &layer : coreData_.processingLayers())
     {
         if (layer->isEnabled())
         {
-            std::vector<Module*> modules;
-            for (auto& module : layer->modules())
+            std::vector<Module *> modules;
+            for (auto &module : layer->modules())
                 modules.push_back(module.get());
-            procedure->createRootNode<RunModuleListNode>(fmt::format("Run {}", layer->name()), modules, layer->frequency());
+            procedure->createRootNode<RunModuleListNode>(fmt::format("Run {}", layer->name()), modules, layer->frequency(), layer->runControlFlags());
         }
     }
 

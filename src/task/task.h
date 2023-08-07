@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "task/context.h"
 #include "procedure/procedure.h"
+#include "task/context.h"
 
 class Task
 {
@@ -14,14 +14,13 @@ class Task
 
     private:
     // Procedure to be executed by the task
-    Procedure* procedure_;
+    Procedure *procedure_;
     // Context to execute the task within
     TaskContext context_;
 
     public:
     // Execute the task
     bool execute();
-    Procedure* procedure();
-    const Procedure* procedure() const;
-
+    Procedure *procedure();
+    const Procedure *procedure() const;
 };
