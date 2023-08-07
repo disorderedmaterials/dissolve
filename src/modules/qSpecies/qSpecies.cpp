@@ -34,7 +34,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
 
     auto &ifThen = valuesInRange->branch()->get();
     auto siteIndex = ifThen.create<CalculateExpressionProcedureNode>({});
-    siteIndex->setExpression("NF.nSelected");
+    siteIndex->setExpression("NF.siteIndex");
 
     auto collectNFIndex = forEachNF.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
 
