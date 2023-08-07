@@ -195,3 +195,43 @@ bool NodeValue::operator==(const NodeValue &value) const
 }
 
 bool NodeValue::operator!=(const NodeValue &value) const { return !(*this == value); }
+
+/*
+ * Node Value Proxy
+ */
+
+NodeValueProxy::NodeValueProxy(const int i)
+{
+    valueI_ = i;
+    valueD_ = 0.0;
+    type_ = IntegerNodeValue;
+}
+NodeValueProxy::NodeValueProxy(const double d)
+{
+    valueI_ = 0;
+    valueD_ = d;
+    type_ = DoubleNodeValue;
+}
+NodeValueProxy::NodeValueProxy(std::string_view expressionText)
+{
+    valueI_ = 0;
+    valueD_ = 0.0;
+    type_ = ExpressionNodeValue;
+    expressionString_ = expressionText;
+}
+
+// Return value represented as a string
+std::string NodeValueProxy::asString(bool addQuotesIfRequired) const
+{
+    if (type_ == IntegerNodeValue)
+        return fmt::format("{}", valueI_);
+    else if (type_ == DoubleNodeValue)
+        return fmt::format("{}", valueD_);
+    else
+    {
+        if (addQuotesIfRequired)
+            return fmt::format("'{}'", expressionString_);
+        else
+            return fmt::format("{}", expressionString_);
+    }
+}

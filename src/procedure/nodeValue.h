@@ -26,7 +26,7 @@ class NodeValue : public Serialisable<>
     /*
      * Data
      */
-    private:
+    protected:
     // Value Types
     enum NodeValueType
     {
@@ -65,7 +65,7 @@ class NodeValue : public Serialisable<>
     // Return contained value as double
     double asDouble() const;
     // Return value represented as a string
-    std::string asString(bool addQuotesIfRequired = false) const;
+    virtual std::string asString(bool addQuotesIfRequired = false) const;
 
     /*
      * Serialisable
@@ -75,4 +75,24 @@ class NodeValue : public Serialisable<>
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node) override;
+};
+
+// Node Value Proxy
+class NodeValueProxy : public NodeValue
+{
+    public:
+    NodeValueProxy(const int i);
+    NodeValueProxy(const double d);
+    NodeValueProxy(std::string_view expressionText);
+
+    private:
+    // String for expression
+    std::string expressionString_;
+
+    /*
+     * Value Retrieval
+     */
+    public:
+    // Return value represented as a string
+    std::string asString(bool addQuotesIfRequired = false) const override;
 };
