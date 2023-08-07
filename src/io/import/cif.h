@@ -6,9 +6,9 @@
 #include "data/spaceGroups.h"
 #include "io/import/cifClasses.h"
 #include "math/matrix4.h"
-#include <map>
-#include "templates/flags.h"
 #include "neta/neta.h"
+#include "templates/flags.h"
+#include <map>
 
 // Forward Declarations
 class Box;
