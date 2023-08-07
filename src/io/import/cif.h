@@ -7,6 +7,14 @@
 #include "io/import/cifClasses.h"
 #include "math/matrix4.h"
 #include <map>
+#include "templates/flags.h"
+#include "neta/neta.h"
+
+// Forward Declarations
+class Box;
+class Configuration;
+class CoreData;
+class Species;
 
 // CIF Handler
 class CIFHandler
