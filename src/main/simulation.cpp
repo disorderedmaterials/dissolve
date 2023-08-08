@@ -203,7 +203,6 @@ bool Dissolve::prepare()
 // Iterate main simulation
 bool Dissolve::iterate(int nIterations)
 {
-    iterationTimer_.zero();
     iterationTimer_.start();
 
     for (auto iter = 0; iter < nIterations; ++iter)
