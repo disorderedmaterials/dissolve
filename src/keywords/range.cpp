@@ -22,14 +22,10 @@ RangeKeyword::RangeKeyword(Range &data, std::optional<double> minimumLimit, std:
 // Set data
 bool RangeKeyword::setData(double rangeMin, double rangeMax)
 {
-    if (rangeMax < rangeMin)
-        std::swap(rangeMin, rangeMax);
-
     if ((minimumLimit_ && rangeMin < minimumLimit_.value()) || (maximumLimit_ && rangeMax > maximumLimit_.value()))
         return false;
 
-    data_.setMinimum(rangeMin);
-    data_.setMaximum(rangeMax);
+    data_.set(rangeMin, rangeMax);
 
     return true;
 }

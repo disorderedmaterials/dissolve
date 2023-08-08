@@ -32,15 +32,7 @@ bool RangeVectorKeyword::deserialise(LineParser &parser, int startArg, const Cor
             if (DissolveSys::isNumber(parser.argsv(n + 1)))
             {
                 // If both are numbers, initialise new Range
-                if (parser.argd(n) > parser.argd(n + 1))
-                {
-                    // If minimum is greater than maximum, swap
-                    data_.emplace_back(parser.argd(n + 1), parser.argd(n));
-                }
-                else
-                {
-                    data_.emplace_back(parser.argd(n), parser.argd(n + 1));
-                }
+                data_.emplace_back(parser.argd(n + 1), parser.argd(n));
             }
             else
             {
