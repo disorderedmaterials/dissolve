@@ -39,9 +39,6 @@ void NodeValue::operator=(const int value) { set(value); }
 // Assignment from integer
 void NodeValue::operator=(const double value) { set(value); }
 
-// Conversion (to double)
-NodeValue::operator double() { return asDouble(); }
-
 /*
  * Data
  */

@@ -21,7 +21,6 @@ class NodeValue : public Serialisable<>
     void operator=(const double value);
     bool operator==(const NodeValue &value) const;
     bool operator!=(const NodeValue &value) const;
-    operator double();
 
     /*
      * Data
