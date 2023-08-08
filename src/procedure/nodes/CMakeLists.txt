@@ -23,7 +23,11 @@ add_library(
   importCoordinates.cpp
   integerCollect1D.cpp
   integrate1D.cpp
+<<<<<<< HEAD
   iterateData1D.cpp
+=======
+  iterateSelection.cpp
+>>>>>>> 73b74ead2 (iterateSelection setup)
   node.cpp
   nodeReference.cpp
   operateBase.cpp
@@ -80,6 +84,7 @@ add_library(
   integerCollect1D.h
   integrate1D.h
   iterateData1D.h
+  iterateSelection.h
   node.h
   nodeReference.h
   operateBase.h
