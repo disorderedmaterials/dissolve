@@ -32,10 +32,18 @@ NodeValue::NodeValue(std::string_view expressionText,
 }
 
 // Assignment from integer
-void NodeValue::operator=(const int value) { set(value); }
+NodeValue &NodeValue::operator=(const int value)
+{
+    set(value);
+    return *this;
+}
 
 // Assignment from integer
-void NodeValue::operator=(const double value) { set(value); }
+NodeValue &NodeValue::operator=(const double value)
+{
+    set(value);
+    return *this;
+}
 
 /*
  * Data
