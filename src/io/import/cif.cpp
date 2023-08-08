@@ -650,9 +650,7 @@ bool CIFHandler::createMolecularSpecies()
                                          [&](int value) { return std::find(copy.begin(), copy.end(), value) != copy.end(); }),
                           indices.end());
         }
-        Messenger::print("{}", indices.size());
 
-        return false;
         // Determine coordinates
         auto coords = speciesCopiesCoordinates(cleanedSpecies_, copies);
 
