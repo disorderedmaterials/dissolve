@@ -40,8 +40,7 @@ class ImportCIFDialog : public WizardDialog
     // CIF Handler
     CIFHandler cifHandler_;
     // Flags
-    Flags<CIFHandler::BondingFlags> bondingFlags_;
-    Flags<CIFHandler::CleaningFlags> cleaningFlags_;
+    Flags<CIFHandler::UpdateFlags> updateFlags_;
 
     private:
     // Apply CIF bond definitions within specified species
@@ -99,9 +98,6 @@ class ImportCIFDialog : public WizardDialog
     /*
      * Structure Page
      */
-    private:
-    // Structure preview Configuration
-    Configuration *structureConfiguration_;
 
     private slots:
     // Generate structural species from CIF data
@@ -115,8 +111,6 @@ class ImportCIFDialog : public WizardDialog
      * CleanUp Page
      */
     private:
-    // Cleaned Configuration
-    Configuration *cleanedConfiguration_;
     // NETA for moiety removal
     NETADefinition moietyNETA_;
 
@@ -136,22 +130,11 @@ class ImportCIFDialog : public WizardDialog
     bool update();
 
     /*
-     * Molecular CIF
-     */
-
-    private:
-    // Molecular species
-    std::vector<Species *> molecularSpecies_;
-
-    /*
      * Supercell Page
      */
     private:
-    // Supercell preview Configuration
-    Configuration *supercellConfiguration_;
 
     private slots:
-    // Create supercell species
     void on_RepeatASpin_valueChanged(int value);
     void on_RepeatBSpin_valueChanged(int value);
     void on_RepeatCSpin_valueChanged(int value);
@@ -164,7 +147,7 @@ class ImportCIFDialog : public WizardDialog
     Configuration *partitioningConfiguration_;
 
     private slots:
-    // Create partitioned species from CIF data
-    bool createPartitionedSpecies();
+    void on_OutputFrameworkRadio_clicked(bool checked);
+    void on_OutputSupermoleculeRadio_clicked(bool checked);
 
 };

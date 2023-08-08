@@ -8,24 +8,24 @@
 #include "math/matrix4.h"
 #include "neta/neta.h"
 #include "templates/flags.h"
+#include "classes/coreData.h"
 #include <map>
 
 // Forward Declarations
 class Box;
 class Configuration;
-class CoreData;
 class Species;
 
 // CIF Handler
 class CIFHandler
 {
     public:
-    CIFHandler(CoreData& coreData);
+    CIFHandler();
     ~CIFHandler() = default;
 
     private:
     // Reference to CoreData
-    CoreData& coreData_;
+    CoreData coreData_;
 
     /*
      * Raw Data
@@ -104,6 +104,7 @@ class CIFHandler
         std::vector<std::vector<Vec3<double>>> coordinates;
     } CIFMolecularSpecies;
 
+    private:
     Species *structuralSpecies_;
     Configuration *structuralConfiguration_;
     Species *cleanedSpecies_;
@@ -112,43 +113,44 @@ class CIFHandler
     Configuration *molecularConfiguration_;
     Species *supercellSpecies_;
     Configuration *supercellConfiguration_;
+    Species* partitionedSpecies_;
+    Configuration *partitionedConfiguration_;
 
     /*
      * Creation
      */
 
     public:
-    // CIF Species Cleaning Flags
-    enum CleaningFlags
+    // CIF Species Update Flags
+    enum UpdateFlags
     {
-        MoietyRemoveAtomics,  /* Remove atoms of single moiety */
-        MoietyRemoveWater,    /* Remove water molecules of single moiety */
-        MoietyRemoveNETA,     /* Remove single atoms by NETA definition */
-        RemoveBoundFragments, /* Remove entire fragments when using NETA definition */
-    };
-    // CIF Species Bonding Flags
-    enum BondingFlags
-    {
-        CalculateBonding,       /* Calculate bonding */
-        PreventMetallicBonding, /* Prevent metallic bonding */
+        CleanMoietyRemoveAtomics,  /* Remove atoms of single moiety */
+        CleanMoietyRemoveWater,    /* Remove water molecules of single moiety  */
+        CleanMoietyRemoveNETA,     /* Remove single atoms by NETA definition  */
+        CleanRemoveBoundFragments, /* Remove entire fragments when using NETA definition  */
+        CalculateBonding,          /* Calculate bonding */
+        PreventMetallicBonding,    /* Prevent metallic bonding */
+        CreateSupermolecule
     };
 
     public:
-    bool update(double tolerance, Vec3<int> supercellRepeat, std::optional<NETADefinition> moietyNETA = std::nullopt, Flags<BondingFlags> bondingFlags = {}, Flags<CleaningFlags> cleaningFlags = {});
-    bool finalise(CoreData& coreData);
+    bool update(double tolerance, Vec3<int> supercellRepeat, std::optional<NETADefinition> moietyNETA = std::nullopt,
+                Flags<UpdateFlags> flags = {});
+    std::pair<std::vector<Species *>, Configuration *> finalise(CoreData &coreData) const;
+    void reset();
+    bool isValid() const;
 
     private:
     // Create a structural species
-    bool createStructuralSpecies(double tolerance, Flags<BondingFlags> bondingFlags = {});
+    bool createStructuralSpecies(double tolerance, Flags<UpdateFlags> flags = {});
     // Create a cleaned structural species
-    bool createCleanedSpecies(Flags<CleaningFlags> cleaningFlags = {},
-                              std::optional<NETADefinition> moietyNETA = std::nullopt);
+    bool createCleanedSpecies(Flags<UpdateFlags> flags = {}, std::optional<NETADefinition> moietyNETA = std::nullopt);
     // Create molecular species
     bool createMolecularSpecies();
-    // Create configuration that composes molecular species
-    bool createMolecularConfiguration();
     // Create supercell species
-    bool createSupercellSpecies(Vec3<int> repeat, Flags<BondingFlags> bondingFlags = {});
+    bool createSupercellSpecies(Vec3<int> repeat, Flags<UpdateFlags> flags = {});
+    // Create partitioned species
+    bool createPartitionedSpecies(Flags<UpdateFlags> flags = {});
 
     /*
      * Helpers
@@ -181,4 +183,7 @@ class CIFHandler
     // Supercell
     Species *supercellSpecies();
     Configuration *supercellConfiguration();
+    // Partitioned
+    Species* partitionedSpecies();
+    Configuration * partitionedConfiguration();
 };

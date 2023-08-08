@@ -17,7 +17,7 @@
 #include <unordered_set>
 
 ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), cifHandler_(temporaryCoreData_),cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
+    : WizardDialog(parent), cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
 {
     ui_.setupUi(this);
 
@@ -49,10 +49,6 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
 
     // Init the wizard
     initialise(this, ui_.MainStack, ImportCIFDialog::SelectCIFFilePage);
-
-    // Configuration
-    partitioningConfiguration_ = temporaryCoreData_.addConfiguration();
-    partitioningConfiguration_->setName("Partitioning");
 }
 
 /*
@@ -73,8 +69,7 @@ bool ImportCIFDialog::progressionAllowed(int index) const
             return ui_.SpaceGroupsList->currentRow() != -1;
         case (ImportCIFDialog::OutputSpeciesPage):
             // If the "Framework" or "Supermolecule" options are chosen, the "Crystal" species must be a single moiety
-            if (molecularSpecies_.empty() &&
-                (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked()))
+            if (cifHandler_.isValid())
                 return ui_.PartitioningIndicator->state() == CheckIndicator::OKState;
             break;
         default:
@@ -101,18 +96,8 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             updateInfoPage();
             break;
         case (ImportCIFDialog::CIFInfoPage):
-            /*if (!cifHandler_.hasBondDistances())
-            else
-                bondingFlags_.removeFlag(CIFHandler::BondingFlags::CalculateBonding);
-            bondingFlags_.setFlag(CIFHandler::BondingFlags::CalculateBonding);
             ui_.BondFromCIFRadio->setEnabled(cifHandler_.hasBondDistances());
-            //ui_.BondFromCIFRadio->setChecked(cifHandler_.hasBondDistances());
-            if (ui_.BondingPreventMetallicCheck->isChecked())
-                bondingFlags_.setFlag(CIFHandler::BondingFlags::PreventMetallicBonding);
-            else
-                bondingFlags_.removeFlag(CIFHandler::BondingFlags::PreventMetallicBonding);
-            */
-            bondingFlags_.setFlag(CIFHandler::BondingFlags::CalculateBonding);
+            updateFlags_.setFlag(CIFHandler::UpdateFlags::CalculateBonding);
             update();
             if (!cifHandler_.structuralSpecies())
                 return false;
@@ -129,7 +114,9 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
                 return false;
             break;
         case (ImportCIFDialog::SupercellPage):
-            createPartitionedSpecies();
+            update();
+            if (!cifHandler_.partitionedSpecies())
+                return false;
             break;
         default:
             break;
@@ -155,53 +142,16 @@ bool ImportCIFDialog::prepareForPreviousPage(int currentIndex)
     switch (currentIndex)
     {
         case (ImportCIFDialog::CIFInfoPage):
-            structureConfiguration_->empty();
-            cleanedConfiguration_->empty();
-            supercellConfiguration_->empty();
-            partitioningConfiguration_->empty();
-            temporaryCoreData_.species().clear();
-            temporaryCoreData_.atomTypes().clear();
+            cifHandler_.reset();
             break;
         default:
             break;
     }
-
     return true;
 }
 
 // Perform any final actions before the wizard is closed
-void ImportCIFDialog::finalise()
-{
-    if (molecularSpecies_.empty())
-    {
-        auto *supercell = temporaryCoreData_.findSpecies("Supercell");
-        assert(supercell);
-
-        if (ui_.OutputFrameworkRadio->isChecked())
-        {
-            // Just copy the species
-            supercell->updateIntramolecularTerms();
-            auto *sp = dissolve_.coreData().copySpecies(supercell);
-            sp->setName(cifHandler_.chemicalFormula());
-        }
-        else if (ui_.OutputSupermoleculeRadio->isChecked())
-        {
-            // Copy the species
-            supercell->updateIntramolecularTerms();
-            auto *sp = dissolve_.coreData().copySpecies(supercell);
-            sp->setName(cifHandler_.chemicalFormula());
-
-            // Remove the unit cell and any cell-crossing bonds
-            sp->removePeriodicBonds();
-            sp->updateIntramolecularTerms();
-            sp->removeBox();
-        }
-    }
-    else
-    {
-        //cifHandler_.createMolecularConfiguration(dissolve_.coreData());
-    }
-}
+void ImportCIFDialog::finalise() { cifHandler_.finalise(dissolve_.coreData()); }
 
 /*
  * Select CIF File Page
@@ -287,9 +237,9 @@ void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
 void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
 {
     if (checked)
-        bondingFlags_.setFlag(CIFHandler::CalculateBonding);
+        updateFlags_.setFlag(CIFHandler::CalculateBonding);
     else
-        bondingFlags_.removeFlag(CIFHandler::CalculateBonding);
+        updateFlags_.removeFlag(CIFHandler::CalculateBonding);
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
     {
@@ -300,9 +250,9 @@ void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
 void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
 {
     if (checked)
-        bondingFlags_.setFlag(CIFHandler::PreventMetallicBonding);
+        updateFlags_.setFlag(CIFHandler::PreventMetallicBonding);
     else
-        bondingFlags_.removeFlag(CIFHandler::PreventMetallicBonding);
+        updateFlags_.removeFlag(CIFHandler::PreventMetallicBonding);
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
         update();
@@ -311,9 +261,9 @@ void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
 void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
 {
     if (!checked)
-        bondingFlags_.setFlag(CIFHandler::CalculateBonding);
+        updateFlags_.setFlag(CIFHandler::CalculateBonding);
     else
-        bondingFlags_.removeFlag(CIFHandler::CalculateBonding);
+        updateFlags_.removeFlag(CIFHandler::CalculateBonding);
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
         update();
@@ -322,7 +272,6 @@ void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
 /*
  * Cleaned Page
  */
-
 
 // Create / check NETA definition for moiety removal
 bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
@@ -337,9 +286,9 @@ bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
 void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
 {
     if (checked)
-        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::MoietyRemoveAtomics);
+        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveAtomics);
     else
-        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveAtomics);
+        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveAtomics);
 
     update();
 }
@@ -347,9 +296,9 @@ void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
 void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
 {
     if (checked)
-        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::MoietyRemoveWater);
+        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveWater);
     else
-        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveWater);
+        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveWater);
 
     update();
 }
@@ -357,9 +306,9 @@ void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
 void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
 {
     if (checked)
-        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::MoietyRemoveNETA);
+        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveNETA);
     else
-        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveNETA);
+        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanMoietyRemoveNETA);
 
     update();
 }
@@ -374,9 +323,9 @@ void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
 {
     if (checked)
-        cleaningFlags_.setFlag(CIFHandler::CleaningFlags::RemoveBoundFragments);
+        updateFlags_.setFlag(CIFHandler::UpdateFlags::CleanRemoveBoundFragments);
     else
-        cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveBoundFragments);
+        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CleanRemoveBoundFragments);
 
     if (moietyNETA_.isValid())
         update();
@@ -396,67 +345,33 @@ void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { update(); }
  * Species Partitioning Page
  */
 
-// Create partitioned species from CIF data
-bool ImportCIFDialog::createPartitionedSpecies()
+void ImportCIFDialog::on_OutputFrameworkRadio_clicked(bool checked)
 {
-
-    ui_.PartitioningViewer->setConfiguration(nullptr);
-    partitioningConfiguration_->clear();
-
-    if (molecularSpecies_.empty())
-    {
-        // Set up the basic configuration
-        auto *sp = cifHandler_.supercellSpecies();
-        assert(sp);
-        partitioningConfiguration_->createBoxAndCells(sp->box()->axisLengths(), sp->box()->axisAngles(), false, 1.0);
-
-        auto validSpecies = true;
-
-        if (ui_.OutputFrameworkRadio->isChecked() || ui_.OutputSupermoleculeRadio->isChecked())
-        {
-            // Add the supercell species to the configuration
-            partitioningConfiguration_->addMolecule(sp);
-            partitioningConfiguration_->updateObjectRelationships();
-
-            // Update the indicator and label
-            sp->clearAtomSelection();
-            auto selection = sp->fragment(0);
-            if (selection.size() != sp->nAtoms())
-            {
-                ui_.PartitioningIndicator->setOK(false);
-                ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
-                                               "simulation. Choose a different partitioning.");
-
-                validSpecies = false;
-            }
-        }
-
-        ui_.PartitioningViewer->setConfiguration(partitioningConfiguration_);
-
-        if (validSpecies)
-        {
-            ui_.PartitioningIndicator->setOK(true);
-            ui_.PartitioningLabel->setText("Species are valid.");
-        }
-    }
+    if (checked)
+        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
     else
-    {
-        ui_.PartitioningLayoutWidget->setEnabled(false);
-        ui_.PartitioningViewFrame->setEnabled(false);
-    }
-    return true;
+        updateFlags_.setFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
+}
+
+void ImportCIFDialog::on_OutputSupermoleculeRadio_clicked(bool checked)
+{
+    if (checked)
+        updateFlags_.setFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
+    else
+        updateFlags_.removeFlag(CIFHandler::UpdateFlags::CreateSupermolecule);
 }
 
 bool ImportCIFDialog::update()
 {
     // Set the repeat vector
     Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
-    auto result = cifHandler_.update(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5, repeat, moietyNETA_, bondingFlags_, cleaningFlags_);
+    auto result =
+        cifHandler_.update(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5, repeat, moietyNETA_, updateFlags_);
     ui_.StructureViewer->setConfiguration(cifHandler_.structuralConfiguration());
     ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedConfiguration());
     ui_.SupercellViewer->setConfiguration(cifHandler_.supercellConfiguration());
-
-    auto* supercell = cifHandler_.supercellSpecies();
+    ui_.PartitioningViewer->setConfiguration(cifHandler_.partitionedConfiguration());
+    auto *supercell = cifHandler_.supercellSpecies();
 
     if (supercell)
     {
@@ -470,9 +385,37 @@ bool ImportCIFDialog::update()
         auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
         ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
                                                            : "-- g cm<sup>3</sup>");
-        ui_.SupercellVolumeLabel->setText(QString::number(cifHandler_.supercellConfiguration()->box()->volume()) + " &#8491;<sup>3</sup>");
+        ui_.SupercellVolumeLabel->setText(QString::number(cifHandler_.supercellConfiguration()->box()->volume()) +
+                                          " &#8491;<sup>3</sup>");
         ui_.SupercellNAtomsLabel->setText(QString::number(cifHandler_.supercellConfiguration()->nAtoms()));
-        //createPartitionedSpecies();
+    }
+
+    auto validSpecies = true;
+
+    if (cifHandler_.molecularSpecies().empty())
+    {
+        // Update the indicator and label
+        cifHandler_.partitionedSpecies()->clearAtomSelection();
+        if (cifHandler_.partitionedSpecies()->fragment(0).size() != cifHandler_.partitionedSpecies()->nAtoms())
+        {
+            ui_.PartitioningIndicator->setOK(false);
+            ui_.PartitioningLabel->setText("Species contains more than one molecule/fragment, and cannot be used in a "
+                                           "simulation. Choose a different partitioning.");
+
+            validSpecies = false;
+        }
+    }
+    else
+    {
+        ui_.PartitioningLayoutWidget->setEnabled(false);
+        ui_.PartitioningViewFrame->setEnabled(false);
+        ui_.PartitioningIndicator->setOK(true);
+    }
+
+    if (validSpecies)
+    {
+        ui_.PartitioningIndicator->setOK(true);
+        ui_.PartitioningLabel->setText("Species are valid.");
     }
 
     return true;
