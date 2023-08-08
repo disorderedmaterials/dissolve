@@ -168,8 +168,8 @@ double SelectProcedureNode::nAverageSites() const { return double(nCumulativeSit
 // Return the cumulative number of sites ever selected
 unsigned long int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
 
-// Return total number of sites available per selection
-unsigned long int SelectProcedureNode::nAvailableSites() const { return double(nAvailableSites_) / nSelections_; }
+// Return average number of sites available per selection, before any distance pruning
+double SelectProcedureNode::nAvailableSitesAverage() const { return double(nAvailableSites_) / nSelections_; }
 
 // Return current site
 OptionalReferenceWrapper<const Site> SelectProcedureNode::currentSite() const { return currentSite_; }
@@ -255,6 +255,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
             if (std::find(excludedSites_.begin(), excludedSites_.end(), &site) != excludedSites_.end())
                 continue;
 
+            // Increment available sites now, before distance pruning
             ++nAvailableSites_;
 
             // Check distance from reference site (if defined)

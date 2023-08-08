@@ -125,8 +125,8 @@ class SelectProcedureNode : public ProcedureNode
     double nAverageSites() const;
     // Return the cumulative number of sites ever selected
     unsigned long int nCumulativeSites() const;
-    // Return total number of sites available per selection
-    unsigned long int nAvailableSites() const;
+    // Return average number of sites available per selection, before any distance pruning
+    double nAvailableSitesAverage() const;
     // Return current site
     OptionalReferenceWrapper<const Site> currentSite() const;
 
