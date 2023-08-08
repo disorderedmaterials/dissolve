@@ -48,8 +48,9 @@ bool CalculateAngleProcedureNode::execute(const ProcedureContext &procedureConte
     assert(sites_[2] && sites_[2]->currentSite());
 
     // Determine the value of the observable
-    value_.x = procedureContext.configuration()->box()->angleInDegrees(
-        sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(), sites_[2]->currentSite()->origin());
+    value_.x = procedureContext.configuration()->box()->angleInDegrees(sites_[0]->currentSite()->get().origin(),
+                                                                       sites_[1]->currentSite()->get().origin(),
+                                                                       sites_[2]->currentSite()->get().origin());
 
     if (symmetric_ && value_.x > 90.0)
         value_.x = 180.0 - value_.x;

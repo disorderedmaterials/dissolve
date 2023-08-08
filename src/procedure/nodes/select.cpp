@@ -20,8 +20,6 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
     : ProcedureNode(ProcedureNode::NodeType::Select, {ProcedureNode::AnalysisContext, ProcedureNode::GenerationContext}),
       speciesSites_(std::move(sites)), axesRequired_(axesRequired), forEachBranch_(forEachContext, *this, "ForEach")
 {
-    inclusiveDistanceRange_.set(0.0, 5.0);
-
     keywords_.setOrganisation("Options", "Sites");
     keywords_.add<SpeciesSiteVectorKeyword>("Site", "Add target site(s) to the selection", speciesSites_, axesRequired_);
 
@@ -49,13 +47,10 @@ SelectProcedureNode::SelectProcedureNode(std::vector<const SpeciesSite *> sites,
 
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
 
-    currentSiteIndex_ = -1;
-    nCumulativeSites_ = 0;
-    nSelections_ = 0;
-    nAvailableSites_ = 0;
-    sameMolecule_ = nullptr;
-    distanceReferenceSite_ = nullptr;
     nSelectedParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("nSelected"));
+    siteIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("siteIndex"));
+    stackIndexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("stackIndex"));
+    indexParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("index"));
 }
 
 /*
@@ -69,6 +64,9 @@ void SelectProcedureNode::setName(std::string_view name)
 
     // Update parameter names to match
     nSelectedParameter_->setName(fmt::format("{}.nSelected", name_));
+    siteIndexParameter_->setName(fmt::format("{}.siteIndex", name_));
+    stackIndexParameter_->setName(fmt::format("{}.stackIndex", name_));
+    indexParameter_->setName(fmt::format("{}.index", name_));
 }
 
 /*
@@ -130,14 +128,14 @@ std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
     if (!sameMolecule_)
         return nullptr;
 
-    const Site *site = sameMolecule_->currentSite();
+    const auto site = sameMolecule_->currentSite();
     if (!site)
     {
         Messenger::warn("Requested Molecule from SelectProcedureNode::sameMolecule_, but there is no current site.\n");
         return nullptr;
     }
 
-    return site->molecule();
+    return site->get().molecule();
 }
 
 // Set site to use for distance check
@@ -161,6 +159,9 @@ EnumOptions<SelectProcedureNode::SelectionPopulation> SelectProcedureNode::selec
                                 {SelectProcedureNode::SelectionPopulation::Average, "Average"}});
 }
 
+// Return vector of selected sites
+const std::vector<std::tuple<const Site &, int, int>> &SelectProcedureNode::sites() const { return sites_; }
+
 // Return the number of available sites in the current stack, if any
 int SelectProcedureNode::nSitesInStack() const { return sites_.size(); }
 
@@ -170,14 +171,11 @@ double SelectProcedureNode::nAverageSites() const { return double(nCumulativeSit
 // Return the cumulative number of sites ever selected
 unsigned long int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
 
-// Return total number of sites available per selection
-unsigned long int SelectProcedureNode::nAvailableSites() const { return double(nAvailableSites_) / nSelections_; }
+// Return average number of sites available per selection, before any distance pruning
+double SelectProcedureNode::nAvailableSitesAverage() const { return double(nAvailableSites_) / nSelections_; }
 
 // Return current site
-const Site *SelectProcedureNode::currentSite() const
-{
-    return (currentSiteIndex_ == -1 ? nullptr : sites_.at(currentSiteIndex_));
-}
+OptionalReferenceWrapper<const Site> SelectProcedureNode::currentSite() const { return currentSite_; }
 
 /*
  * Branch
@@ -219,23 +217,23 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
     excludedMolecules_.clear();
     for (auto node : sameMoleculeExclusions_)
         if (node->currentSite())
-            excludedMolecules_.emplace_back(node->currentSite()->molecule());
+            excludedMolecules_.emplace_back(node->currentSite()->get().molecule());
 
     excludedSites_.clear();
     for (auto node : sameSiteExclusions_)
         if (node->currentSite())
-            excludedSites_.insert(node->currentSite());
+            excludedSites_.insert(&node->currentSite()->get());
 
     // Get required Molecule parent, if requested
     std::shared_ptr<const Molecule> moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : nullptr;
 
     // Site to use as distance reference point (if any)
-    const Site *distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : nullptr;
+    const auto distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : std::nullopt;
 
     /*
      * Add sites from specified Species/Sites
      */
-    double r;
+    auto siteIndex = 0;
     for (auto *spSite : speciesSites_)
     {
         const auto *siteStack = procedureContext.configuration()->siteStack(spSite);
@@ -245,6 +243,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
         for (auto n = 0; n < siteStack->nSites(); ++n)
         {
             const auto &site = siteStack->site(n);
+            ++siteIndex;
 
             // Check Molecule inclusion / exclusions
             if (moleculeParent)
@@ -259,30 +258,37 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
             if (std::find(excludedSites_.begin(), excludedSites_.end(), &site) != excludedSites_.end())
                 continue;
 
+            // Increment available sites now, before distance pruning
             ++nAvailableSites_;
 
             // Check distance from reference site (if defined)
             if (distanceRef)
             {
-                r = procedureContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->origin());
-                if (!inclusiveDistanceRange_.contains(r))
+                if (!inclusiveDistanceRange_.contains(
+                        procedureContext.configuration()->box()->minimumDistance(site.origin(), distanceRef->get().origin())))
                     continue;
             }
 
-            // All OK, so add site
-            sites_.push_back(&site);
+            // All OK, so add site, its global index among all site stacks, and index in its stack (1...N numbering)
+            sites_.emplace_back(site, siteIndex, n + 1);
         }
     }
 
-    // Set first site index and increase selections counter
-    currentSiteIndex_ = (sites_.empty() ? -1 : 0);
+    // Increase selections counter
     ++nSelections_;
 
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
+    currentSite_ = std::nullopt;
     if (!forEachBranch_.empty())
     {
-        for (currentSiteIndex_ = 0; currentSiteIndex_ < sites_.size(); ++currentSiteIndex_)
+        auto index = 1;
+        for (const auto &siteInfo : sites_)
         {
+            currentSite_ = std::get<0>(siteInfo);
+            siteIndexParameter_->setValue(std::get<1>(siteInfo));
+            stackIndexParameter_->setValue(std::get<2>(siteInfo));
+            indexParameter_->setValue(index++);
+
             ++nCumulativeSites_;
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop

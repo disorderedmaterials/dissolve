@@ -37,13 +37,12 @@ int CalculateDistanceProcedureNode::dimensionality() const { return 1; }
 // Execute node
 bool CalculateDistanceProcedureNode::execute(const ProcedureContext &procedureContext)
 {
-
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
 
     // Determine the value of the observable
-    value_.x = procedureContext.configuration()->box()->minimumDistance(sites_[0]->currentSite()->origin(),
-                                                                        sites_[1]->currentSite()->origin());
+    value_.x = procedureContext.configuration()->box()->minimumDistance(sites_[0]->currentSite()->get().origin(),
+                                                                        sites_[1]->currentSite()->get().origin());
 
     return true;
 }
