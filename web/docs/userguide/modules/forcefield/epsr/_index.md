@@ -27,6 +27,7 @@ What follows is a brief overview of the basic ideas behind the EPSR methodology.
 |Keyword|Arguments|Default|Description|
 |:------|:-------:|:-----:|-----------|
 |`Target`|`Module ...`|--|List of {{< module "NeutronSQ" >}} and/or {{< module "XRaySQ" >}} modules from which to take reference data and introduce into the fitting procedure|
+|`TargetWeight`|`Module`<br/>`double`|--|The name of a target module and the weighting it should have in the scattering matrix. If not specified a target module has a standard weighting of `1.0`.|
 
 ### Control
 
