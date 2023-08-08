@@ -6,6 +6,34 @@
 
 namespace UnitTest
 {
+// Return argon test species
+const Species &argonSpecies()
+{
+    static Species argon_;
+    if (argon_.nAtoms() == 0)
+    {
+        argon_.setName("Argon");
+        argon_.addAtom(Elements::Ar, {0.000000, 0.000000, 0.000000});
+    }
+
+    return argon_;
+}
+
+// Return diatomic test species
+const Species &diatomicSpecies()
+{
+    static Species diatomic_;
+    if (diatomic_.nAtoms() == 0)
+    {
+        diatomic_.setName("Diatomic");
+        diatomic_.addAtom(Elements::N, {0.000000, 0.000000, 0.000000});
+        diatomic_.addAtom(Elements::O, {0.000000, 1.100000, 0.000000});
+        diatomic_.addMissingBonds();
+    }
+
+    return diatomic_;
+}
+
 // Return methane test species
 const Species &methaneSpecies()
 {

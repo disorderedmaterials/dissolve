@@ -33,6 +33,13 @@ The following parameters are exported by the node:
 |Parameter|Description|
 |:--------|-----------|
 |`nSelected`|The number of sites currently selected by the node|
+|`index`|The index of the current site in the ForEach loop. Note that this index is just the "local" index for the loop, and does not have any relation to the indices of the sites per se.| 
+|`stackIndex`|The "stack" index of the current site in the ForEach loop. This reflects the ordering of the sites as they are calculated from the configuration and so are tied to the atom indexing.|
+`siteIndex`|The "global stack" index of the current site over all possible sites targeted by the selection.|
+
+Thus, if there are _N_ sites of a given type, the `index` for a given site will change based on how many of the _N_ are selected according to other criteria (i.e. within a certain distance, not on the same molecule etc.) while a given site's `stackIndex` will remain the same regardless of how many are selected, provided _N_ does not change (i.e. the population of molecules in the `Configuration` is static).
+
+Similarly, the `siteIndex` remains constant for a given site regardless of how many species sites are requested for selection. So, if three sites are provided having _N_, _M_, and _O_ sites respectively, then the `siteIndex` number goes from `1...(N+M+O)`, with sites from _N_ always being numbered `1...N`, sites from _M_ being numbered `N+1...N+M`, and sites from _O_ being numbered `N+M+1...N+M+O`.
 
 ## Options
 
