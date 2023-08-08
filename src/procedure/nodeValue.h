@@ -11,7 +11,7 @@
 class NodeValue : public Serialisable<>
 {
     public:
-    NodeValue();
+    NodeValue() = default;
     NodeValue(const int i);
     NodeValue(const double d);
     NodeValue(std::string_view expressionText,
@@ -34,11 +34,11 @@ class NodeValue : public Serialisable<>
         ExpressionNodeValue
     };
     // Type of contained data
-    NodeValueType type_;
+    NodeValueType type_{DoubleNodeValue};
     // Integer value, if defined
-    int valueI_;
+    int valueI_{0};
     // Double value, if defined
-    double valueD_;
+    double valueD_{0.0};
     // Expression, if defined
     Expression expression_;
 

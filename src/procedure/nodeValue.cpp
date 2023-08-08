@@ -5,30 +5,13 @@
 #include "base/sysFunc.h"
 #include <string>
 
-NodeValue::NodeValue()
-{
-    valueI_ = 0;
-    valueD_ = 0.0;
-    type_ = DoubleNodeValue;
-}
-NodeValue::NodeValue(const int i)
-{
-    valueI_ = i;
-    valueD_ = 0.0;
-    type_ = IntegerNodeValue;
-}
-NodeValue::NodeValue(const double d)
-{
-    valueI_ = 0;
-    valueD_ = d;
-    type_ = DoubleNodeValue;
-}
+NodeValue::NodeValue(const int i) : type_(NodeValue::IntegerNodeValue), valueI_(i) {}
+NodeValue::NodeValue(const double d) : valueD_(d) {}
 NodeValue::NodeValue(std::string_view expressionText,
                      std::optional<std::vector<std::shared_ptr<ExpressionVariable>>> parameters)
+    : type_(NodeValue::ExpressionNodeValue)
 {
-    valueI_ = 0;
-    valueD_ = 0.0;
-    set(expressionText, parameters);
+    set(expressionText, std::move(parameters));
 }
 
 // Assignment from integer
