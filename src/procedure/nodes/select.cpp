@@ -159,6 +159,9 @@ EnumOptions<SelectProcedureNode::SelectionPopulation> SelectProcedureNode::selec
                                 {SelectProcedureNode::SelectionPopulation::Average, "Average"}});
 }
 
+// Return vector of selected sites
+const std::vector<std::tuple<const Site &, int, int>> &SelectProcedureNode::sites() const { return sites_; }
+
 // Return the number of available sites in the current stack, if any
 int SelectProcedureNode::nSitesInStack() const { return sites_.size(); }
 

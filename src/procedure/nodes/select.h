@@ -119,6 +119,8 @@ class SelectProcedureNode : public ProcedureNode
     };
     // Return EnumOptions for SelectionPopulation
     static EnumOptions<SelectionPopulation> selectionPopulations();
+    // Return vector of selected sites
+    const std::vector<std::tuple<const Site &, int, int>> &sites() const;
     // Return the number of available sites in the current stack, if any
     int nSitesInStack() const;
     // Return the average number of sites selected
