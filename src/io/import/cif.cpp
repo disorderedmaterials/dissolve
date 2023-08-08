@@ -17,6 +17,18 @@
 #include "procedure/nodes/coordinateSets.h"
 #include "templates/algorithms.h"
 
+CIFHandler::CIFHandler(CoreData &coreData) : coreData_(coreData)
+{
+    structuralConfiguration_ = coreData.addConfiguration();
+    structuralConfiguration_->setName("Structural");
+    cleanedConfiguration_ = coreData.addConfiguration();
+    cleanedConfiguration_->setName("Cleaned");
+    molecularConfiguration_ = coreData.addConfiguration();
+    molecularConfiguration_->setName("Molecular");
+    supercellConfiguration_ = coreData.addConfiguration();
+    supercellConfiguration_->setName("Supercell");
+}
+
 // Parse supplied file into the destination objects
 bool CIFHandler::parse(std::string filename, CIFHandler::CIFTags &tags) const
 {
@@ -389,22 +401,53 @@ std::optional<double> CIFHandler::bondDistance(std::string_view labelI, std::str
  * Creation
  */
 
+bool CIFHandler::update(double tolerance, Vec3<int> supercellRepeat, std::optional<NETADefinition> moietyNETA, Flags<CIFHandler::BondingFlags> bondingFlags, Flags<CIFHandler::CleaningFlags> cleaningFlags)
+{
+    coreData_.species().clear();
+    coreData_.atomTypes().clear();
+    structuralSpecies_ = nullptr;
+    structuralConfiguration_->clear();
+    cleanedSpecies_ = nullptr;
+    cleanedConfiguration_->clear();
+    molecularSpecies_.clear();
+    molecularConfiguration_->clear();
+    supercellSpecies_ = nullptr;
+    supercellConfiguration_->clear();
+
+    if (!createStructuralSpecies(tolerance, bondingFlags))
+        return false;
+    Messenger::print("Created structural species");
+    if (!createCleanedSpecies(cleaningFlags, moietyNETA))
+        return false;
+    Messenger::print("Created cleaned species");
+    /*if (cleanedSpecies_->fragment(0).size() != cleanedSpecies_->nAtoms())
+        if (!createMolecularSpecies())
+            return false;
+        if (!createMolecularConfiguration())
+            return false;
+        Messenger::print("Created molecular species");*/
+    if (!createSupercellSpecies(supercellRepeat, bondingFlags))
+        return false;
+    Messenger::print("Created supercell species");
+    return true;
+}
+
 // Create a structural species
-bool CIFHandler::createStructuralSpecies(CoreData &coreData, double tolerance, Flags<BondingFlags> bondingFlags)
+bool CIFHandler::createStructuralSpecies(double tolerance, Flags<BondingFlags> bondingFlags)
 {
     // Create temporary atom types corresponding to the unique atom labels
     for (auto &a : assemblies_)
         for (auto &g : a.groups())
             if (g.active())
                 for (auto &i : g.atoms())
-                    if (!coreData.findAtomType(i.label()))
+                    if (!coreData_.findAtomType(i.label()))
                     {
-                        auto at = coreData.addAtomType(i.Z());
+                        auto at = coreData_.addAtomType(i.Z());
                         at->setName(i.label());
                     }
 
     // Generate a single species containing the entire crystal
-    structuralSpecies_ = coreData.addSpecies();
+    structuralSpecies_ = coreData_.addSpecies();
     structuralSpecies_->setName("Crystal");
 
     // -- Set unit cell
@@ -418,9 +461,8 @@ bool CIFHandler::createStructuralSpecies(CoreData &coreData, double tolerance, F
     auto *box = structuralSpecies_->box();
 
     // Configuration
-    structuralConfiguration_ = coreData.addConfiguration();
-    structuralConfiguration_->empty();
     structuralConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
+
     // -- Generate atoms
     auto symmetryGenerators = SpaceGroups::symmetryOperators(spaceGroup_);
     for (const auto &generator : symmetryGenerators)
@@ -442,7 +484,7 @@ bool CIFHandler::createStructuralSpecies(CoreData &coreData, double tolerance, F
 
                         // Create the new atom
                         auto i = structuralSpecies_->addAtom(unique.Z(), r);
-                        structuralSpecies_->atom(i).setAtomType(coreData.findAtomType(unique.label()));
+                        structuralSpecies_->atom(i).setAtomType(coreData_.findAtomType(unique.label()));
                     }
 
     // Bonding
@@ -458,13 +500,13 @@ bool CIFHandler::createStructuralSpecies(CoreData &coreData, double tolerance, F
 }
 
 // Create a cleaned structural species
-bool CIFHandler::createCleanedSpecies(CoreData &coreData, Flags<CleaningFlags> cleaningFlags,
+bool CIFHandler::createCleanedSpecies(Flags<CleaningFlags> cleaningFlags,
                                       std::optional<NETADefinition> moietyNETA)
 {
     if (!structuralSpecies_)
         return false;
 
-    cleanedSpecies_ = coreData.addSpecies();
+    cleanedSpecies_ = coreData_.addSpecies();
     cleanedSpecies_->setName("Crystal (Cleaned)");
     cleanedSpecies_->copyBasic(structuralSpecies_);
 
@@ -479,8 +521,6 @@ bool CIFHandler::createCleanedSpecies(CoreData &coreData, Flags<CleaningFlags> c
     auto *box = cleanedSpecies_->box();
 
     // Configuration
-    cleanedConfiguration_ = coreData.addConfiguration();
-    cleanedConfiguration_->empty();
     cleanedConfiguration_->createBoxAndCells(cellLengths.value(), cellAngles.value(), false, 1.0);
 
     if (cleaningFlags.isSet(CleaningFlags::MoietyRemoveAtomics))
@@ -544,7 +584,7 @@ bool CIFHandler::createCleanedSpecies(CoreData &coreData, Flags<CleaningFlags> c
 }
 
 // Create molecular species
-bool CIFHandler::createMolecularSpecies(CoreData &coreData)
+bool CIFHandler::createMolecularSpecies()
 {
     if (!cleanedSpecies_)
         return false;
@@ -564,7 +604,7 @@ bool CIFHandler::createMolecularSpecies(CoreData &coreData)
         std::sort(fragment.begin(), fragment.end());
 
         // Set up the CIF species
-        auto *sp = coreData.addSpecies();
+        auto *sp = coreData_.addSpecies();
         sp->copyBasic(cleanedSpecies_);
 
         // Empty the species of all atoms, except those in the reference instance
@@ -612,12 +652,8 @@ bool CIFHandler::createMolecularSpecies(CoreData &coreData)
 }
 
 // Create configuration that composes molecular species
-bool CIFHandler::createMolecularConfiguration(CoreData &coreData)
+bool CIFHandler::createMolecularConfiguration()
 {
-    // Create a configuration
-    molecularConfiguration_ = coreData.addConfiguration();
-    molecularConfiguration_->setName(chemicalFormula());
-
     // Grab the generator
     auto &generator = molecularConfiguration_->generator();
 
@@ -632,8 +668,8 @@ bool CIFHandler::createMolecularConfiguration(CoreData &coreData)
     {
         auto *sp = cifMolecularSp->species;
         // Add the species if it doesn't already exist
-        if (!coreData.findSpecies(sp->name()))
-            sp = coreData.copySpecies(cifMolecularSp->species);
+        if (!coreData_.findSpecies(sp->name()))
+            sp = coreData_.copySpecies(cifMolecularSp->species);
 
         // Determine a unique suffix
         auto base = sp->name();
@@ -667,19 +703,15 @@ bool CIFHandler::createMolecularConfiguration(CoreData &coreData)
 }
 
 // Create supercell species
-bool CIFHandler::createSupercellSpecies(CoreData &coreData, Vec3<int> repeat, Flags<CIFHandler::BondingFlags> bondingFlags)
+bool CIFHandler::createSupercellSpecies(Vec3<int> repeat, Flags<CIFHandler::BondingFlags> bondingFlags)
 {
-    if (!cleanedSpecies_)
-        return false;
-
-    supercellSpecies_ = coreData.addSpecies();
+    supercellSpecies_ = coreData_.addSpecies();
     supercellSpecies_->setName("Supercell");
     auto supercellLengths = cleanedSpecies_->box()->axisLengths();
     supercellLengths.multiply(repeat.x, repeat.y, repeat.z);
     supercellSpecies_->createBox(supercellLengths, cleanedSpecies_->box()->axisAngles(), false);
 
     // Configuration
-    supercellConfiguration_ = coreData.addConfiguration();
     supercellConfiguration_->createBoxAndCells(supercellLengths, cleanedSpecies_->box()->axisAngles(), false, 1.0);
 
     // Copy atoms from the Crystal species - we'll do the bonding afterwards

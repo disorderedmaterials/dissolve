@@ -100,14 +100,11 @@ class ImportCIFDialog : public WizardDialog
      * Structure Page
      */
     private:
-    // Generated crystal species
-    Species *crystalSpecies_{nullptr};
     // Structure preview Configuration
     Configuration *structureConfiguration_;
 
     private slots:
     // Generate structural species from CIF data
-    bool createStructuralSpecies();
     void on_NormalOverlapToleranceRadio_clicked(bool checked);
     void on_LooseOverlapToleranceRadio_clicked(bool checked);
     void on_CalculateBondingRadio_clicked(bool checked);
@@ -118,8 +115,6 @@ class ImportCIFDialog : public WizardDialog
      * CleanUp Page
      */
     private:
-    // Generated cleaned species
-    Species *cleanedSpecies_{nullptr};
     // Cleaned Configuration
     Configuration *cleanedConfiguration_;
     // NETA for moiety removal
@@ -131,19 +126,18 @@ class ImportCIFDialog : public WizardDialog
 
     private slots:
     // Generate structural species from CIF data
-    bool createCleanedSpecies();
     void on_MoietyRemoveAtomicsCheck_clicked(bool checked);
     void on_MoietyRemoveWaterCheck_clicked(bool checked);
     void on_MoietyRemoveByNETAGroup_clicked(bool checked);
     void on_MoietyNETARemovalEdit_textEdited(const QString &text);
     void on_MoietyNETARemoveFragmentsCheck_clicked(bool checked);
 
+    public:
+    bool update();
+
     /*
      * Molecular CIF
      */
-    private slots:
-    // Detect unique species in the structural species
-    bool detectUniqueSpecies();
 
     private:
     // Molecular species
@@ -158,7 +152,6 @@ class ImportCIFDialog : public WizardDialog
 
     private slots:
     // Create supercell species
-    bool createSupercellSpecies();
     void on_RepeatASpin_valueChanged(int value);
     void on_RepeatBSpin_valueChanged(int value);
     void on_RepeatCSpin_valueChanged(int value);
@@ -173,4 +166,5 @@ class ImportCIFDialog : public WizardDialog
     private slots:
     // Create partitioned species from CIF data
     bool createPartitionedSpecies();
+
 };

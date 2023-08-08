@@ -20,8 +20,12 @@ class Species;
 class CIFHandler
 {
     public:
-    CIFHandler() = default;
+    CIFHandler(CoreData& coreData);
     ~CIFHandler() = default;
+
+    private:
+    // Reference to CoreData
+    CoreData& coreData_;
 
     /*
      * Raw Data
@@ -130,17 +134,21 @@ class CIFHandler
     };
 
     public:
+    bool update(double tolerance, Vec3<int> supercellRepeat, std::optional<NETADefinition> moietyNETA = std::nullopt, Flags<BondingFlags> bondingFlags = {}, Flags<CleaningFlags> cleaningFlags = {});
+    bool finalise(CoreData& coreData);
+
+    private:
     // Create a structural species
-    bool createStructuralSpecies(CoreData &coreData, double tolerance, Flags<BondingFlags> bondingFlags = {});
+    bool createStructuralSpecies(double tolerance, Flags<BondingFlags> bondingFlags = {});
     // Create a cleaned structural species
-    bool createCleanedSpecies(CoreData &coreData, Flags<CleaningFlags> cleaningFlags = {},
+    bool createCleanedSpecies(Flags<CleaningFlags> cleaningFlags = {},
                               std::optional<NETADefinition> moietyNETA = std::nullopt);
     // Create molecular species
-    bool createMolecularSpecies(CoreData &coreData);
+    bool createMolecularSpecies();
     // Create configuration that composes molecular species
-    bool createMolecularConfiguration(CoreData &coreData);
+    bool createMolecularConfiguration();
     // Create supercell species
-    bool createSupercellSpecies(CoreData &coreData, Vec3<int> repeat, Flags<BondingFlags> bondingFlags = {});
+    bool createSupercellSpecies(Vec3<int> repeat, Flags<BondingFlags> bondingFlags = {});
 
     /*
      * Helpers

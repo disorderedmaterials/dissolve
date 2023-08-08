@@ -17,7 +17,7 @@
 #include <unordered_set>
 
 ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
-    : WizardDialog(parent), cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
+    : WizardDialog(parent), cifHandler_(temporaryCoreData_),cifAssemblyModel_(cifHandler_.assemblies()), dissolve_(dissolve)
 {
     ui_.setupUi(this);
 
@@ -40,7 +40,7 @@ ImportCIFDialog::ImportCIFDialog(QWidget *parent, Dissolve &dissolve)
     ui_.AssemblyView->update();
     ui_.AssemblyView->expandAll();
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)), this,
-            SLOT(createStructuralSpecies()));
+            SLOT(update()));
     connect(&cifAssemblyModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QList<int> &)),
             ui_.AssemblyView, SLOT(expandAll()));
 
@@ -101,28 +101,31 @@ bool ImportCIFDialog::prepareForNextPage(int currentIndex)
             updateInfoPage();
             break;
         case (ImportCIFDialog::CIFInfoPage):
-            if (!cifHandler_.hasBondDistances())
-                bondingFlags_.setFlag(CIFHandler::BondingFlags::CalculateBonding);
+            /*if (!cifHandler_.hasBondDistances())
             else
                 bondingFlags_.removeFlag(CIFHandler::BondingFlags::CalculateBonding);
+            bondingFlags_.setFlag(CIFHandler::BondingFlags::CalculateBonding);
             ui_.BondFromCIFRadio->setEnabled(cifHandler_.hasBondDistances());
-            ui_.BondFromCIFRadio->setChecked(cifHandler_.hasBondDistances());
+            //ui_.BondFromCIFRadio->setChecked(cifHandler_.hasBondDistances());
             if (ui_.BondingPreventMetallicCheck->isChecked())
                 bondingFlags_.setFlag(CIFHandler::BondingFlags::PreventMetallicBonding);
             else
                 bondingFlags_.removeFlag(CIFHandler::BondingFlags::PreventMetallicBonding);
-            if (!createStructuralSpecies())
+            */
+            bondingFlags_.setFlag(CIFHandler::BondingFlags::CalculateBonding);
+            update();
+            if (!cifHandler_.structuralSpecies())
                 return false;
             ui_.AssemblyView->expandAll();
             break;
         case (ImportCIFDialog::StructurePage):
-            if (!createCleanedSpecies())
+            update();
+            if (!cifHandler_.cleanedSpecies())
                 return false;
             break;
         case (ImportCIFDialog::CleanedPage):
-            if (cleanedSpecies_->fragment(0).size() != cleanedSpecies_->nAtoms())
-                detectUniqueSpecies();
-            if (!createSupercellSpecies())
+            update();
+            if (!cifHandler_.supercellSpecies())
                 return false;
             break;
         case (ImportCIFDialog::SupercellPage):
@@ -196,7 +199,7 @@ void ImportCIFDialog::finalise()
     }
     else
     {
-        cifHandler_.createMolecularConfiguration(dissolve_.coreData());
+        //cifHandler_.createMolecularConfiguration(dissolve_.coreData());
     }
 }
 
@@ -269,40 +272,16 @@ void ImportCIFDialog::updateInfoPage()
  * Structure Page
  */
 
-// Generate structural species from CIF data
-bool ImportCIFDialog::createStructuralSpecies()
-{
-    ui_.StructureViewer->setConfiguration(nullptr);
-    temporaryCoreData_.species().clear();
-    temporaryCoreData_.atomTypes().clear();
-
-    cifHandler_.createStructuralSpecies(temporaryCoreData_, ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5,
-                                        bondingFlags_);
-
-    crystalSpecies_ = cifHandler_.structuralSpecies();
-    if (crystalSpecies_ == nullptr)
-        return false;
-
-    structureConfiguration_ = cifHandler_.structuralConfiguration();
-
-    if (structureConfiguration_ == nullptr)
-        return false;
-
-    ui_.StructureViewer->setConfiguration(structureConfiguration_);
-
-    return true;
-}
-
 void ImportCIFDialog::on_NormalOverlapToleranceRadio_clicked(bool checked)
 {
     if (checked)
-        createStructuralSpecies();
+        update();
 }
 
 void ImportCIFDialog::on_LooseOverlapToleranceRadio_clicked(bool checked)
 {
     if (checked)
-        createStructuralSpecies();
+        update();
 }
 
 void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
@@ -314,7 +293,7 @@ void ImportCIFDialog::on_CalculateBondingRadio_clicked(bool checked)
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
     {
-        createStructuralSpecies();
+        update();
     }
 }
 
@@ -326,7 +305,7 @@ void ImportCIFDialog::on_BondingPreventMetallicCheck_clicked(bool checked)
         bondingFlags_.removeFlag(CIFHandler::PreventMetallicBonding);
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
-        createStructuralSpecies();
+        update();
 }
 
 void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
@@ -337,34 +316,13 @@ void ImportCIFDialog::on_BondFromCIFRadio_clicked(bool checked)
         bondingFlags_.removeFlag(CIFHandler::CalculateBonding);
 
     if (ui_.MainStack->currentIndex() == ImportCIFDialog::StructurePage)
-        createStructuralSpecies();
+        update();
 }
 
 /*
  * Cleaned Page
  */
 
-// Generate cleaned species from CIF data
-bool ImportCIFDialog::createCleanedSpecies()
-{
-    ui_.CleanedViewer->setConfiguration(nullptr);
-
-    cifHandler_.createCleanedSpecies(temporaryCoreData_, cleaningFlags_, moietyNETA_);
-
-    cleanedSpecies_ = cifHandler_.cleanedSpecies();
-
-    if (cleanedSpecies_ == nullptr)
-        return false;
-
-    cleanedConfiguration_ = cifHandler_.cleanedConfiguration();
-
-    if (cleanedConfiguration_ == nullptr)
-        return false;
-
-    ui_.CleanedViewer->setConfiguration(cleanedConfiguration_);
-
-    return true;
-}
 
 // Create / check NETA definition for moiety removal
 bool ImportCIFDialog::createMoietyRemovalNETA(std::string definition)
@@ -383,7 +341,7 @@ void ImportCIFDialog::on_MoietyRemoveAtomicsCheck_clicked(bool checked)
     else
         cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveAtomics);
 
-    createCleanedSpecies();
+    update();
 }
 
 void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
@@ -393,7 +351,7 @@ void ImportCIFDialog::on_MoietyRemoveWaterCheck_clicked(bool checked)
     else
         cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveWater);
 
-    createCleanedSpecies();
+    update();
 }
 
 void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
@@ -403,14 +361,14 @@ void ImportCIFDialog::on_MoietyRemoveByNETAGroup_clicked(bool checked)
     else
         cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::MoietyRemoveNETA);
 
-    createCleanedSpecies();
+    update();
 }
 
 void ImportCIFDialog::on_MoietyNETARemovalEdit_textEdited(const QString &text)
 {
     createMoietyRemovalNETA(text.toStdString());
     if (moietyNETA_.isValid())
-        createCleanedSpecies();
+        update();
 }
 
 void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
@@ -421,62 +379,18 @@ void ImportCIFDialog::on_MoietyNETARemoveFragmentsCheck_clicked(bool checked)
         cleaningFlags_.removeFlag(CIFHandler::CleaningFlags::RemoveBoundFragments);
 
     if (moietyNETA_.isValid())
-        createCleanedSpecies();
-}
-
-// Detect unique species in the structural species
-bool ImportCIFDialog::detectUniqueSpecies()
-{
-    if (!cifHandler_.createMolecularSpecies(temporaryCoreData_))
-    {
-        Messenger::warn("Couldn't determine unique species due to symmetry.");
-        return false;
-    }
-    molecularSpecies_ = cifHandler_.molecularSpecies();
-    return true;
+        update();
 }
 
 /*
  * Supercell Page
  */
 
-// Create supercell species
-bool ImportCIFDialog::createSupercellSpecies()
-{
-    ui_.SupercellViewer->setConfiguration(nullptr);
+void ImportCIFDialog::on_RepeatASpin_valueChanged(int value) { update(); }
 
-    // Set the repeat vector
-    Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
+void ImportCIFDialog::on_RepeatBSpin_valueChanged(int value) { update(); }
 
-    cifHandler_.createSupercellSpecies(temporaryCoreData_, repeat, bondingFlags_);
-    auto *supercell = cifHandler_.supercellSpecies();
-    if (!supercell)
-        return false;
-
-    supercellConfiguration_ = cifHandler_.supercellConfiguration();
-    ui_.SupercellViewer->setConfiguration(supercellConfiguration_);
-
-    // Update the information panel
-    ui_.SupercellBoxALabel->setText(QString::number(supercell->box()->axisLengths().x) + " &#8491;");
-    ui_.SupercellBoxBLabel->setText(QString::number(supercell->box()->axisLengths().y) + " &#8491;");
-    ui_.SupercellBoxCLabel->setText(QString::number(supercell->box()->axisLengths().z) + " &#8491;");
-    ui_.SupercellBoxAlphaLabel->setText(QString::number(supercell->box()->axisAngles().x) + "&deg;");
-    ui_.SupercellBoxBetaLabel->setText(QString::number(supercell->box()->axisAngles().y) + "&deg;");
-    ui_.SupercellBoxGammaLabel->setText(QString::number(supercell->box()->axisAngles().z) + "&deg;");
-    auto chemicalDensity = supercellConfiguration_->chemicalDensity();
-    ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
-                                                       : "-- g cm<sup>3</sup>");
-    ui_.SupercellVolumeLabel->setText(QString::number(supercellConfiguration_->box()->volume()) + " &#8491;<sup>3</sup>");
-    ui_.SupercellNAtomsLabel->setText(QString::number(supercellConfiguration_->nAtoms()));
-
-    return true;
-}
-
-void ImportCIFDialog::on_RepeatASpin_valueChanged(int value) { createSupercellSpecies(); }
-
-void ImportCIFDialog::on_RepeatBSpin_valueChanged(int value) { createSupercellSpecies(); }
-
-void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { createSupercellSpecies(); }
+void ImportCIFDialog::on_RepeatCSpin_valueChanged(int value) { update(); }
 
 /*
  * Species Partitioning Page
@@ -530,5 +444,36 @@ bool ImportCIFDialog::createPartitionedSpecies()
         ui_.PartitioningLayoutWidget->setEnabled(false);
         ui_.PartitioningViewFrame->setEnabled(false);
     }
+    return true;
+}
+
+bool ImportCIFDialog::update()
+{
+    // Set the repeat vector
+    Vec3<int> repeat(ui_.RepeatASpin->value(), ui_.RepeatBSpin->value(), ui_.RepeatCSpin->value());
+    auto result = cifHandler_.update(ui_.NormalOverlapToleranceRadio->isChecked() ? 0.1 : 0.5, repeat, moietyNETA_, bondingFlags_, cleaningFlags_);
+    ui_.StructureViewer->setConfiguration(cifHandler_.structuralConfiguration());
+    ui_.CleanedViewer->setConfiguration(cifHandler_.cleanedConfiguration());
+    ui_.SupercellViewer->setConfiguration(cifHandler_.supercellConfiguration());
+
+    auto* supercell = cifHandler_.supercellSpecies();
+
+    if (supercell)
+    {
+        // Update the information panel
+        ui_.SupercellBoxALabel->setText(QString::number(supercell->box()->axisLengths().x) + " &#8491;");
+        ui_.SupercellBoxBLabel->setText(QString::number(supercell->box()->axisLengths().y) + " &#8491;");
+        ui_.SupercellBoxCLabel->setText(QString::number(supercell->box()->axisLengths().z) + " &#8491;");
+        ui_.SupercellBoxAlphaLabel->setText(QString::number(supercell->box()->axisAngles().x) + "&deg;");
+        ui_.SupercellBoxBetaLabel->setText(QString::number(supercell->box()->axisAngles().y) + "&deg;");
+        ui_.SupercellBoxGammaLabel->setText(QString::number(supercell->box()->axisAngles().z) + "&deg;");
+        auto chemicalDensity = cifHandler_.supercellConfiguration()->chemicalDensity();
+        ui_.SupercellDensityLabel->setText(chemicalDensity ? QString::number(*chemicalDensity) + " g cm<sup>3</sup>"
+                                                           : "-- g cm<sup>3</sup>");
+        ui_.SupercellVolumeLabel->setText(QString::number(cifHandler_.supercellConfiguration()->box()->volume()) + " &#8491;<sup>3</sup>");
+        ui_.SupercellNAtomsLabel->setText(QString::number(cifHandler_.supercellConfiguration()->nAtoms()));
+        //createPartitionedSpecies();
+    }
+
     return true;
 }
