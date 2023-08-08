@@ -313,7 +313,7 @@ void DissolveWindow::updateStatusBar()
         statusLabel_->setText("Running (ESC to stop)");
         statusIndicator_->setPixmap(QPixmap(":/general/icons/play.svg"));
     }
-    else if (!dissolveIterating_ && elapsedTimer_.secondsElapsed() != 0.0)
+    else if (!dissolveIterating_ && elapsedTimer_.secondsElapsed() > 0.0)
     {
         timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
