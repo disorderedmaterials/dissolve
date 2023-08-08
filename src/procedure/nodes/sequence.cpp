@@ -349,7 +349,6 @@ std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNodeSequence::paramete
     if (owner_)
     {
         auto otherParams = owner_->get().getParameters();
-
         parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
     }
 

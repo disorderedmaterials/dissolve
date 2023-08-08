@@ -269,7 +269,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
                     continue;
             }
 
-            // All OK, so add site and index in its stack (1...N numbering)
+            // All OK, so add site, its global index among all site stacks, and index in its stack (1...N numbering)
             sites_.emplace_back(site, siteIndex, n + 1);
         }
     }
@@ -286,7 +286,7 @@ bool SelectProcedureNode::execute(const ProcedureContext &procedureContext)
         {
             currentSite_ = std::get<0>(siteInfo);
             siteIndexParameter_->setValue(std::get<1>(siteInfo));
-            stackIndexParameter_->setValue(std::get<1>(siteInfo));
+            stackIndexParameter_->setValue(std::get<2>(siteInfo));
             indexParameter_->setValue(index++);
 
             ++nCumulativeSites_;
