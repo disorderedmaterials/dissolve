@@ -59,7 +59,7 @@ QVariant RangeVectorModel::data(const QModelIndex &index, int role) const
                 case (1):
                     if (range)
                     {
-                        return range->get().minimum();
+                        return QString::number(range->get().minimum(), 'g', 5);
                     }
                     else
                     {
@@ -68,7 +68,7 @@ QVariant RangeVectorModel::data(const QModelIndex &index, int role) const
                 case (2):
                     if (range)
                     {
-                        return range->get().maximum();
+                        return QString::number(range->get().maximum(), 'g', 5);
                     }
                     else
                     {
@@ -88,7 +88,7 @@ bool RangeVectorModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(count);
     beginInsertRows(parent, row, row);
-    ranges_->get().emplace_back(0.0, 0.0);
+    ranges_->get().emplace_back();
     endInsertRows();
     return true;
 }
@@ -128,7 +128,7 @@ bool RangeVectorModel::setData(const QModelIndex &index, const QVariant &value, 
             {
                 range->get().setMinimum(doubleValue);
 
-                emit dataChanged(index, index);
+                emit dataChanged(index, index.siblingAtColumn(2));
                 return true;
             }
             return false;
@@ -137,7 +137,7 @@ bool RangeVectorModel::setData(const QModelIndex &index, const QVariant &value, 
             {
                 range->get().setMaximum(doubleValue);
 
-                emit dataChanged(index, index);
+                emit dataChanged(index, index.siblingAtColumn(1));
                 return true;
             }
             return false;

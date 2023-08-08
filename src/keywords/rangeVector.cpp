@@ -62,8 +62,16 @@ bool RangeVectorKeyword::deserialise(LineParser &parser, int startArg, const Cor
 bool RangeVectorKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     for (auto &range : data_)
+    {
+        if (!range.isDefined())
+        {
+            continue;
+        }
         if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, range.minimum(), range.maximum()))
+        {
             return false;
+        }
+    }
 
     return true;
 }
