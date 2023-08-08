@@ -221,7 +221,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     auto scatteringMatrixSetUp = scatteringMatrix_.nReferenceData() != 0;
 
     auto rFacTot = 0.0;
-    double rangedRFacTots[targets_.size() * ranges_.size()];
+    std::vector<double> rangedRFacTots(targets_.size() * ranges_.size());
 
     // Loop over target data
     for (auto *module : targets_)
