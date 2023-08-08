@@ -16,7 +16,7 @@ class NodeValue : public Serialisable<>
     NodeValue(const double d);
     NodeValue(std::string_view expressionText,
               std::optional<std::vector<std::shared_ptr<ExpressionVariable>>> parameters = std::nullopt);
-    ~NodeValue();
+    ~NodeValue() = default;
     void operator=(const int value);
     void operator=(const double value);
     bool operator==(const NodeValue &value) const;
