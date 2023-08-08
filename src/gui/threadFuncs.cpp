@@ -16,6 +16,7 @@ void DissolveThreadWorker::beginIterating(int nIterations)
 {
     nIterationsToRun_ = nIterations;
     keepIterating_ = true;
+
     while (keepIterating_)
     {
         // Clear messages browser
