@@ -28,7 +28,7 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
      */
     public:
     // Return base node data
-    virtual ConstNodeRef baseNode() = 0;
+    virtual ConstNodeRef baseNode() const = 0;
     // Set node
     virtual bool setNode(ConstNodeRef node) = 0;
     // Set integer
@@ -46,7 +46,20 @@ class NodeAndIntegerKeywordBase : public NodeKeywordUnderlay, public KeywordBase
         return false;
     }
     // Express as a serialisable value
-    SerialisedValue serialise() const override { throw std::runtime_error("Cannot serialise NodeAndIntegerKeywordBase"); }
+    SerialisedValue serialise() const override { return {{"node", baseNode()->name()}, {"int", integer()}}; }
+    // Read values from a serialisable value
+    void deserialise(const SerialisedValue &node, const CoreData &coreData) override
+    {
+        // Locate the named node in scope
+        auto nodeName = toml::find<std::string>(node, "node");
+        auto realNode = findNode(nodeName);
+        if (!realNode)
+            throw toml::syntax_error(
+                fmt::format("Node '{}' given to keyword {} doesn't exist.\n", nodeName, KeywordBase::name()), node.location());
+
+        setInteger(toml::find<int>(node, "int"));
+        setNode(realNode);
+    };
 };
 
 // Keyword managing ProcedureNode and integer index
@@ -77,7 +90,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     std::pair<std::shared_ptr<const N>, int> &data() { return data_; }
     const std::pair<std::shared_ptr<const N>, int> &data() const { return data_; }
     // Return base node data
-    std::shared_ptr<const ProcedureNode> baseNode() override { return data_.first; }
+    std::shared_ptr<const ProcedureNode> baseNode() const override { return data_.first; }
     // Set node
     bool setNode(ConstNodeRef node) override
     {

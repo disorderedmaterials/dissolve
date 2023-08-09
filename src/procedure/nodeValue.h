@@ -8,7 +8,7 @@
 #include "templates/optionalRef.h"
 
 // Node Value
-class NodeValue : public Serialisable<>
+class NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVariable>>>
 {
     public:
     NodeValue();
@@ -74,5 +74,5 @@ class NodeValue : public Serialisable<>
     // Express as a serialisable value
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
-    void deserialise(const SerialisedValue &node) override;
+    void deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params) override;
 };

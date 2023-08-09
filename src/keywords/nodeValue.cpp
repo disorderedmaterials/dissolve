@@ -57,7 +57,10 @@ bool NodeValueKeyword::serialise(LineParser &parser, std::string_view keywordNam
 SerialisedValue NodeValueKeyword::serialise() const { return data_; }
 
 // Read values from a serialisable value
-void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data) { data_ = toml::get<NodeValue>(node); }
+void NodeValueKeyword::deserialise(const SerialisedValue &node, const CoreData &data)
+{
+    data_.deserialise(node, parentNode_->getParameters());
+}
 
 // Has not changed from initial value
 bool NodeValueKeyword::isDefault() const { return default_ == data_; }

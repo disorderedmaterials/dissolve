@@ -72,6 +72,6 @@ void ParametersProcedureNode::deserialise(const SerialisedValue &node, const Cor
           [this](const auto &key, const auto &value)
           {
               if (key != "type")
-                  parameters_.push_back(std::make_shared<ExpressionVariable>(key, toml::get<ExpressionValue>(value)));
+                  addParameter(key, toml::get<ExpressionValue>(value));
           });
 }
