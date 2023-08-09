@@ -32,7 +32,7 @@ class IterateSelectionProcedureNode : public ProcedureNode
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> nSelectedParameter_;
     // Selection to iterate over
-    std::shared_ptr<const SelectProcedureNode> selection_{nullptr};
+    std::shared_ptr<const SelectProcedureNode> selection_;
 
     /*
      * Selection Targets
@@ -41,16 +41,16 @@ class IterateSelectionProcedureNode : public ProcedureNode
     // Vector of sites to select
     std::vector<const SpeciesSite *> speciesSites_;
 
-    public:
-    // Return vector of sites to select
-    std::vector<const SpeciesSite *> &speciesSites();
-
     /*
      * Selected Sites
      */
     private:
-    // Vector of selected sites
-    std::vector<const Site *> sites_;
+    // Current Site index
+    int currentSiteIndex_;
+    // Number of selections made by the node
+    int nSelections_;
+    // Cumulative number of sites ever selected
+    unsigned long int nCumulativeSites_;
 
     /*
      * Branch
