@@ -11,7 +11,9 @@
  * Custom Region Voxel Kernel
  */
 
-CustomRegionVoxelKernel::CustomRegionVoxelKernel(std::string_view expressionString, double minimumValue, double maximumValue)
+CustomRegionVoxelKernel::CustomRegionVoxelKernel(std::string_view expressionString,
+                                                 std::vector<std::shared_ptr<ExpressionVariable>> parameters,
+                                                 double minimumValue, double maximumValue)
 {
     // Create our local variables
     x_ = expression_.addLocalVariable("x");
@@ -22,7 +24,7 @@ CustomRegionVoxelKernel::CustomRegionVoxelKernel(std::string_view expressionStri
     zFrac_ = expression_.addLocalVariable("zFrac");
 
     // Set the expression
-    expression_.set(expressionString);
+    expression_.set(expressionString, std::move(parameters));
 
     // Set limits
     minimumValue_ = minimumValue;
@@ -61,5 +63,5 @@ CustomRegionProcedureNode::CustomRegionProcedureNode() : RegionProcedureNodeBase
 
 std::shared_ptr<VoxelKernel> CustomRegionProcedureNode::createVoxelKernel()
 {
-    return std::make_shared<CustomRegionVoxelKernel>(expression_.asString(), minimumValue_, maximumValue_);
+    return std::make_shared<CustomRegionVoxelKernel>(expression_.asString(), getParameters(), minimumValue_, maximumValue_);
 }
