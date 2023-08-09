@@ -133,7 +133,6 @@ class ImportCIFDialog : public WizardDialog
      * Supercell Page
      */
     private:
-
     private slots:
     void on_RepeatASpin_valueChanged(int value);
     void on_RepeatBSpin_valueChanged(int value);
@@ -149,5 +148,4 @@ class ImportCIFDialog : public WizardDialog
     private slots:
     void on_OutputFrameworkRadio_clicked(bool checked);
     void on_OutputSupermoleculeRadio_clicked(bool checked);
-
 };

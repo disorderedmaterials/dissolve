@@ -711,7 +711,8 @@ bool CIFHandler::createPartitionedSpecies(Flags<UpdateFlags> flags)
 {
     partitionedSpecies_ = coreData_.addSpecies();
     partitionedSpecies_->copyBasic(supercellSpecies_);
-    partitionedConfiguration_->createBoxAndCells(supercellSpecies_->box()->axisLengths(), supercellSpecies_->box()->axisAngles(), false, 1.0);
+    partitionedConfiguration_->createBoxAndCells(supercellSpecies_->box()->axisLengths(),
+                                                 supercellSpecies_->box()->axisAngles(), false, 1.0);
     if (flags.isSet(UpdateFlags::CreateSupermolecule))
     {
         partitionedSpecies_->removePeriodicBonds();
@@ -921,12 +922,6 @@ Species *CIFHandler::supercellSpecies() { return supercellSpecies_; }
 Configuration *CIFHandler::supercellConfiguration() { return supercellConfiguration_; }
 
 // Partitioned
-Species *CIFHandler::partitionedSpecies()
-{
-    return partitionedSpecies_;
-}
+Species *CIFHandler::partitionedSpecies() { return partitionedSpecies_; }
 
-Configuration *CIFHandler::partitionedConfiguration()
-{
-    return partitionedConfiguration_;
-}
+Configuration *CIFHandler::partitionedConfiguration() { return partitionedConfiguration_; }

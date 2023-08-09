@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "classes/coreData.h"
 #include "data/spaceGroups.h"
 #include "io/import/cifClasses.h"
 #include "math/matrix4.h"
 #include "neta/neta.h"
 #include "templates/flags.h"
-#include "classes/coreData.h"
 #include <map>
 
 // Forward Declarations
@@ -113,7 +113,7 @@ class CIFHandler
     Configuration *molecularConfiguration_;
     Species *supercellSpecies_;
     Configuration *supercellConfiguration_;
-    Species* partitionedSpecies_;
+    Species *partitionedSpecies_;
     Configuration *partitionedConfiguration_;
 
     /*
@@ -184,6 +184,6 @@ class CIFHandler
     Species *supercellSpecies();
     Configuration *supercellConfiguration();
     // Partitioned
-    Species* partitionedSpecies();
-    Configuration * partitionedConfiguration();
+    Species *partitionedSpecies();
+    Configuration *partitionedConfiguration();
 };
