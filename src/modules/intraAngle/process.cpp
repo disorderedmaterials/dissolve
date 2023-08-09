@@ -29,8 +29,7 @@ Module::ExecutionResult IntraAngleModule::process(ModuleContext &moduleContext)
     collectABC_->keywords().set("RangeX", angleRange_);
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.dissolve(), targetConfiguration_, name());
-    if (!analyser_.execute(context))
+    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
     {
         Messenger::error("CalculateAngle experienced problems with its analysis.\n");
         return ExecutionResult::Failed;

@@ -56,8 +56,7 @@ Module::ExecutionResult AngleModule::process(ModuleContext &moduleContext)
         selectC_->keywords().set("ExcludeSameSite", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.dissolve(), targetConfiguration_, name());
-    if (!analyser_.execute(context))
+    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
     {
         Messenger::error("Angle experienced problems with its analysis.\n");
         return ExecutionResult::Failed;

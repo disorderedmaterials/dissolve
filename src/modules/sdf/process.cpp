@@ -30,8 +30,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.dissolve(), targetConfiguration_, name());
-    if (!analyser_.execute(context))
+    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
     {
         Messenger::error("CalculateSDF experienced problems with its analysis.\n");
         return ExecutionResult::Failed;

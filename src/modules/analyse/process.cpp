@@ -17,8 +17,7 @@ Module::ExecutionResult AnalyseModule::process(ModuleContext &moduleContext)
     }
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.dissolve(), targetConfiguration_, name());
-    if (!analyser_.execute(context))
+    if (!analyser_.execute({moduleContext.dissolve(), targetConfiguration_, name()}))
     {
         Messenger::error("Analysis ExecutionResult::Failed.\n");
         return ExecutionResult::Failed;
