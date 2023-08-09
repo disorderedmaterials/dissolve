@@ -7,6 +7,7 @@ set(models_MOC_HDRS
     cifAssemblyModel.h
     configurationModel.h
     dataManagerSimulationModel.h
+    dissolveModel.h
     enumOptionsModel.h
     forcefieldModel.h
     isotopologueSetModel.h
@@ -59,6 +60,7 @@ set(models_SRCS
     cifAssemblyModel.cpp
     configurationModel.cpp
     dataManagerSimulationModel.cpp
+    dissolveModel.cpp
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
