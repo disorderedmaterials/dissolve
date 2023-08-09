@@ -4,6 +4,7 @@
 #pragma once
 
 #include "templates/optionalRef.h"
+#include <stdexcept>
 #include <string>
 
 // Forward Declarations
@@ -20,6 +21,17 @@ class ProcedureContext
     explicit ProcedureContext(const ProcessPool &procPool);
     ProcedureContext(const ProcessPool &procPool, Configuration *cfg);
     ProcedureContext(const ProcessPool &procPool, Dissolve &dissolve);
+    template <class... ContextObjects>
+    ProcedureContext(Dissolve &dissolve, const ProcessPool &procPool, ContextObjects &&...contextObjects)
+        : dissolve_(dissolve), processPool_(procPool)
+    {
+        (
+            [&]
+            {
+                set(contextObjects);
+            }(),
+            ...);
+    }
 
     private:
     // Available process pool
@@ -30,6 +42,10 @@ class ProcedureContext
     std::string processingDataPrefix_;
     // Dissolve
     OptionalReferenceWrapper<Dissolve> dissolve_;
+
+    private:
+    template <class T> void set(T) { throw(std::runtime_error("Invalid object type passed to ProcedureContext set().\n")); }
+    template <class T> void set(Configuration *cfg) { printf("It's a config!\n"); };
 
     public:
     // Return available process pool

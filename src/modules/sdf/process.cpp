@@ -30,6 +30,7 @@ Module::ExecutionResult SDFModule::process(ModuleContext &moduleContext)
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
+    ProcedureContext TEST(moduleContext.dissolve(), moduleContext.processPool(), targetConfiguration_);
     ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
     context.setDissolve(moduleContext.dissolve());
     context.setProcessingDataPrefix(name());
