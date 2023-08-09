@@ -21,8 +21,7 @@ class IterateSelectionProcedureNode : public ProcedureNode
 {
     public:
     explicit IterateSelectionProcedureNode(
-        std::vector<const SpeciesSite *> sites = {},
-        ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext, bool axesRequired = false);
+        ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext);
 
     /*
      * Parameters
@@ -32,6 +31,8 @@ class IterateSelectionProcedureNode : public ProcedureNode
     std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> nSelectedParameter_;
+    // Selection to iterate over
+    std::shared_ptr<const SelectProcedureNode> selection_{nullptr};
 
     /*
      * Selection Targets

@@ -15,12 +15,14 @@
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 
-IterateSelectionProcedureNode::IterateSelectionProcedureNode(std::vector<const SpeciesSite *> sites,
-                                                             ProcedureNode::NodeContext forEachContext)
-    : ProcedureNode(ProcedureNode::NodeType::Select, {ProcedureNode::AnalysisContext, ProcedureNode::GenerationContext}),
-      speciesSites_(std::move(sites)))
+IterateSelectionProcedureNode::IterateSelectionProcedureNode(ProcedureNode::NodeContext forEachContext)
+    : ProcedureNode(ProcedureNode::NodeType::IterateSelection,
+                    {ProcedureNode::AnalysisContext, ProcedureNode::GenerationContext}),
+      forEachBranch_(forEachContext, *this, "ForEach")
 {
     // Keywords
+    keywords_.add<NodeKeyword<SelectProcedureNode>>("Selection", "Target selection to iterate over", selection_, this,
+                                                    ProcedureNode::NodeType::Select, true);
 }
 
 /*
@@ -29,10 +31,6 @@ IterateSelectionProcedureNode::IterateSelectionProcedureNode(std::vector<const S
 
 // Return vector of sites to select
 std::vector<const SpeciesSite *> &IterateSelectionProcedureNode::speciesSites() { return speciesSites_; }
-
-/*
- * Selected Sites
- */
 
 /*
  * Branch
