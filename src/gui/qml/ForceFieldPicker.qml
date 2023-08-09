@@ -34,7 +34,7 @@ Item {
             anchors.right: ffFilter.left
             anchors.top: ffFilter.top
             fillMode: Image.PreserveAspectFit
-            source: "qrc:/general/icons/general_filter.svg"
+            source: "qrc:/general/icons/filter.svg"
         }
         Rectangle {
             anchors.bottom: parent.bottom

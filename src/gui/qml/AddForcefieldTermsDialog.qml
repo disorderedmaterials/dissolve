@@ -48,7 +48,7 @@ Page {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         icon.name: "dialog-cancel"
-        icon.source: "qrc:/general/icons/general_false.svg"
+        icon.source: "qrc:/general/icons/false.svg"
         text: "Cancel"
 
         onClicked: dialogModel.cancel()
@@ -59,7 +59,7 @@ Page {
         anchors.right: parent.right
         enabled: dialogModel.progressionAllowed
         icon.name: dialogModel.atEnd ? "dialog-ok" : "go-next"
-        icon.source: dialogModel.atEnd ? "qrc:/general/icons/general_true.svg" : "qrc:/general/icons/general_arrowright.svg"
+        icon.source: dialogModel.atEnd ? "qrc:/general/icons/true.svg" : "qrc:/general/icons/arrowRight.svg"
         text: dialogModel.atEnd ? "Finish" : "Next"
 
         onClicked: dialogModel.next()
@@ -69,7 +69,7 @@ Page {
         anchors.right: nextButton.left
         enabled: dialogModel.index > 0
         icon.name: "go-previous"
-        icon.source: "qrc:/general/icons/general_arrowleft.svg"
+        icon.source: "qrc:/general/icons/arrowLeft.svg"
         text: "Back"
 
         onClicked: dialogModel.back()

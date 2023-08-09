@@ -19,20 +19,20 @@ Item {
 
             ImageRadio {
                 checked: true
-                source: "qrc:/wizard/icons/wizard_allatoms.svg"
+                source: "qrc:/general/icons/species.svg"
                 text: "Apply intramolecular terms to the whole species.\nExisting Data will be overriden"
 
                 onClicked: control.dialogModel.intramolecularRadio = AddForcefieldDialogModel.All
             }
             ImageRadio {
                 enabled: control.dialogModel.speciesHasSelection
-                source: "qrc:/wizard/icons/wizard_selectedatoms.svg"
+                source: "qrc:/general/icons/selectedAtoms.svg"
                 text: "Apply intramolecular terms between selected atoms.\nExisting Data will be overriden"
 
                 onClicked: control.dialogModel.intramolecularRadio = AddForcefieldDialogModel.Selected
             }
             ImageRadio {
-                source: "qrc:/general/icons/general_cross.svg"
+                source: "qrc:/general/icons/cross.svg"
                 text: "Do not apply intramolecular terms.\nExisting data will remain unchanged"
 
                 onClicked: control.dialogModel.intramolecularRadio = AddForcefieldDialogModel.None

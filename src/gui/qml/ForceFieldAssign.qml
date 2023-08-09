@@ -31,26 +31,26 @@ D.GroupBox {
 
         ImageRadio {
             checked: true
-            source: "qrc:/wizard/icons/wizard_allatoms.svg"
+            source: "qrc:/general/icons/species.svg"
             text: "Determine atom types for all atoms\nOverwrite any assigned atom types"
 
             onClicked: control.dialogModel.atomTypeRadio = AddForcefieldDialogModel.All
         }
         ImageRadio {
             enabled: control.dialogModel.speciesHasSelection
-            source: "qrc:/wizard/icons/wizard_selectedatoms.svg"
+            source: "qrc:/general/icons/selectedAtoms.svg"
             text: "Determine atom types for the current atom selection\nOverwrite any assigned atom types"
 
             onClicked: control.dialogModel.atomTypeRadio = AddForcefieldDialogModel.Selected
         }
         ImageRadio {
-            source: "qrc:/general/icons/general_unknown.svg"
+            source: "qrc:/general/icons/unknown.svg"
             text: "Determine atom types for any atoms\nthat do not currently have one assigned"
 
             onClicked: control.dialogModel.atomTypeRadio = AddForcefieldDialogModel.Empty
         }
         ImageRadio {
-            source: "qrc:/general/icons/general_cross.svg"
+            source: "qrc:/general/icons/cross.svg"
             text: "Do not assign atom types\nLeave current atom types as they are"
 
             onClicked: control.dialogModel.atomTypeRadio = AddForcefieldDialogModel.None
@@ -62,7 +62,7 @@ D.GroupBox {
         anchors.left: parent.left
         anchors.top: ffErrorText.top
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/general/icons/general_warn.svg"
+        source: "qrc:/general/icons/warn.svg"
         visible: false
     }
     D.Text {
