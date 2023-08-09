@@ -68,8 +68,7 @@ bool Configuration::generate(const ProcedureContext &procedureContext)
 
     // Generate the contents
     Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
-    auto context = procedureContext;
-    context.setConfiguration(this);
+    ProcedureContext context(procedureContext, this);
     auto result = generator_.execute(context);
     if (!result)
         return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());

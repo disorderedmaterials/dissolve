@@ -30,9 +30,7 @@ Module::ExecutionResult HistogramCNModule::process(ModuleContext &moduleContext)
     selectB_->keywords().set("InclusiveRange", distanceRange_);
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDissolve(moduleContext.dissolve());
-    context.setProcessingDataPrefix(name());
+    ProcedureContext context(moduleContext.dissolve(), targetConfiguration_, name());
     if (!analyser_.execute(context))
     {
         Messenger::error("HistogramCN experienced problems with its analysis.\n");

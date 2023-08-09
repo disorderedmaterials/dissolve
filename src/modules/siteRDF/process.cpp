@@ -31,9 +31,7 @@ Module::ExecutionResult SiteRDFModule::process(ModuleContext &moduleContext)
     cnNormaliser_->keywords().set("Site", ConstNodeVector<SelectProcedureNode>{selectA_});
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDissolve(moduleContext.dissolve());
-    context.setProcessingDataPrefix(name());
+    ProcedureContext context(moduleContext.dissolve(), targetConfiguration_, name());
     if (!analyser_.execute(context))
     {
         Messenger::error("CalculateRDF experienced problems with its analysis.\n");

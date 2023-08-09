@@ -35,9 +35,7 @@ Module::ExecutionResult AxisAngleModule::process(ModuleContext &moduleContext)
         selectB_->keywords().set("ExcludeSameMolecule", ConstNodeVector<SelectProcedureNode>{});
 
     // Execute the analysis
-    ProcedureContext context(moduleContext.processPool(), targetConfiguration_);
-    context.setDissolve(moduleContext.dissolve());
-    context.setProcessingDataPrefix(name());
+    ProcedureContext context(moduleContext.dissolve(), targetConfiguration_, name());
     if (!analyser_.execute(context))
     {
         Messenger::error("AxisAngle experienced problems with its analysis.\n");
