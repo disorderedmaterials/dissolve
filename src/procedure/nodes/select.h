@@ -129,13 +129,9 @@ class SelectProcedureNode : public ProcedureNode
     // Return average number of sites available per selection, before any distance pruning
     double nAvailableSitesAverage() const;
     // Return current site
-<<<<<<< HEAD
     OptionalReferenceWrapper<const Site> currentSite() const;
-=======
-    const Site *currentSite() const;
-    //Return sites vector
+    // Return site vector
     std::vector<const Site *> returnSite();
->>>>>>> a6e2574ba (add accessor to sites_ and correction)
 
     /*
      * Branch

@@ -2,7 +2,6 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "procedure/nodes/iterateSelection.h"
-#include "procedure/nodes/select.h"
 #include "classes/configuration.h"
 #include "classes/coreData.h"
 #include "classes/siteReference.h"
@@ -13,6 +12,7 @@
 #include "keywords/nodeVector.h"
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
+#include "procedure/nodes/select.h"
 #include "procedure/nodes/sequence.h"
 #include <algorithm>
 
@@ -54,20 +54,20 @@ bool IterateSelectionProcedureNode::prepare(const ProcedureContext &procedureCon
 // Execute node
 bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureContext)
 {
-/*     auto sites = returnSite();
-    // Create our site vector
-    sites.clear();
-    // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
-    if (!forEachBranch_.empty())
-    {
-        for (currentSiteIndex_ = 0; currentSiteIndex_ < sites.size(); ++currentSiteIndex_)
+    /*     auto sites = returnSite();
+        // Create our site vector
+        sites.clear();
+        // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
+        if (!forEachBranch_.empty())
         {
-            ++nCumulativeSites_;
+            for (currentSiteIndex_ = 0; currentSiteIndex_ < sites.size(); ++currentSiteIndex_)
+            {
+                ++nCumulativeSites_;
 
-            // If the branch fails at any point, return failure here.  Otherwise, continue the loop
-            if (!forEachBranch_.execute(procedureContext))
-                return false;
-        }
-    } */
+                // If the branch fails at any point, return failure here.  Otherwise, continue the loop
+                if (!forEachBranch_.execute(procedureContext))
+                    return false;
+            }
+        } */
     return true;
 }
