@@ -65,13 +65,13 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
     switch (axis_)
     {
         case (OrientedSite::SiteAxis::XAxis):
-            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(0), rotation_, false);
+            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(0), rotation_.asDouble(), false);
             break;
         case (OrientedSite::SiteAxis::YAxis):
-            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(1), rotation_, false);
+            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(1), rotation_.asDouble(), false);
             break;
         case (OrientedSite::SiteAxis::ZAxis):
-            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(2), rotation_, false);
+            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(2), rotation_.asDouble(), false);
             break;
     }
 
