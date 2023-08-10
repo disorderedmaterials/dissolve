@@ -33,10 +33,6 @@ std::string errorReportString(const ErrorReport &errorReport)
 // Return error of specified type between supplied data
 ErrorReport error(ErrorType errorType, const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
-    // if range is unset
-    auto rangeMin = range ? range->get().minimum() : B.xAxis().front();
-    auto rangeMax = range ? range->get().maximum() : B.xAxis().back();
-
     if (errorType == RMSEError)
         return rmse(A, B, range);
     else if (errorType == MAAPEError)
@@ -100,7 +96,6 @@ ErrorReport error(ErrorType errorType, const std::vector<double> &vecA, const st
 // Return RMSE between supplied data
 ErrorReport rmse(const Data1D &A, const Data1D &B, OptionalReferenceWrapper<Range> range)
 {
-    ErrorReport rmseReport;
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
 

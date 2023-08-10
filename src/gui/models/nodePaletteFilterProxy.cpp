@@ -32,6 +32,7 @@ bool NodePaletteFilterProxy::filterAcceptsRow(int row, const QModelIndex &parent
         case (ProcedureNode::NodeContext::AnalysisContext):
             return category != "Build" && category != "Potentials" && category != "Operate" && category != "Sites";
         default:
-            throw("Context '{}' is not handled in the Node Palette.", ProcedureNode::nodeContexts().keyword(context_));
+            throw(std::runtime_error(fmt::format("Context '{}' is not handled in the Node Palette.",
+                                                 ProcedureNode::nodeContexts().keyword(context_))));
     }
 }

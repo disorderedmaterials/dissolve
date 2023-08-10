@@ -45,8 +45,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 {
     public:
     NodeValueEnumOptionsKeyword(std::pair<NodeValue, E> &data, ProcedureNode *parentNode, EnumOptions<E> optionData)
-        : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), parentNode_(parentNode), optionData_(optionData),
-          default_(data)
+        : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), default_(data), parentNode_(parentNode),
+          optionData_(optionData)
     {
     }
     ~NodeValueEnumOptionsKeyword() override = default;

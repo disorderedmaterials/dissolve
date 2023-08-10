@@ -100,7 +100,7 @@ SerialisedValue GeometryListKeyword::serialise() const
 // Read values from a serialisable value
 void GeometryListKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
-    Geometry::GeometryType typeString = toml::find<Geometry::GeometryType>(node, "type");
+    geometryType_ = toml::find<Geometry::GeometryType>(node, "type");
 
     for (auto item : node.at("geometries").as_array())
     {

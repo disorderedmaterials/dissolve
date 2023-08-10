@@ -39,8 +39,6 @@ Module::ExecutionResult EnergyModule::process(ModuleContext &moduleContext)
         return ExecutionResult::Failed;
     }
 
-    auto strategy = moduleContext.processPool().bestStrategy();
-
     // Print parameter summary
     if (test_)
     {

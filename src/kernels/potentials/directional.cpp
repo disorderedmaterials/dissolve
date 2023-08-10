@@ -42,8 +42,8 @@ std::optional<int> DirectionalPotentialFunctions::parameterIndex(Form form, std:
 }
 
 DirectionalPotential::DirectionalPotential()
-    : interactionPotential_(DirectionalPotentialFunctions::Form::LJCylinder),
-      ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Directional)
+    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Directional),
+      interactionPotential_(DirectionalPotentialFunctions::Form::LJCylinder)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
     keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>(
