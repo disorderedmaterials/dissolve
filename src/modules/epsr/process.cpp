@@ -559,10 +559,10 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         moduleContext.dissolve().processingModuleData().realise<Data1D>("RFactor", name_, GenericItem::InRestartFileFlag);
     totalRFactor.addPoint(moduleContext.dissolve().iteration(), rFacTot);
     Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
-    for (int i = 0; i < ranges_.size(); i++)
+    for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
     {
-        Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", ranges_[i].minimum(),
-                         ranges_[i].maximum(), rangedRFacTots[i] /= targets_.size());
+        Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", range.minimum(),
+                         range.maximum(), rangeTot /= targets_.size());
     }
 
     Messenger::print("\n");
