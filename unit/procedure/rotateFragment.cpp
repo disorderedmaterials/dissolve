@@ -40,6 +40,7 @@ TEST(RotateTest, Benzene)
     auto add = procedure.createRootNode<AddProcedureNode>("Benzene", benzene, 1);
     add->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Central);
     add->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
+    add->keywords().setEnumeration("Rotate", false);
 
     // Select the site and set up a RotateFragment node
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
