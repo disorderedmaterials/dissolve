@@ -236,7 +236,7 @@ bool KeywordStore::set(std::string_view name, const std::string value)
     getKeyword<StringKeyword>(keywords_, name)->data() = value;
     return true;
 }
-bool KeywordStore::set(std::string_view name, const NodeValue value)
+bool KeywordStore::set(std::string_view name, const NodeValueProxy value)
 {
     return getKeyword<NodeValueKeyword>(keywords_, name)->setData(value);
 }

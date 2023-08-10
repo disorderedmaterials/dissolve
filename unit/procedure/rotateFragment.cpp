@@ -48,7 +48,7 @@ TEST(RotateTest, Benzene)
     {
         auto molecules_before = cfg->molecules();
 
-        rotate->keywords().set("Rotation", NodeValue{x});
+        rotate->keywords().set("Rotation", NodeValueProxy(x));
         cfg->generate({ProcessPool(), dissolve});
 
         for (const auto &[mol1, mol2] : zip(molecules_before, cfg->molecules()))

@@ -11,22 +11,21 @@
 class NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVariable>>>
 {
     public:
-    NodeValue();
+    NodeValue() = default;
     NodeValue(const int i);
     NodeValue(const double d);
     NodeValue(std::string_view expressionText,
               std::optional<std::vector<std::shared_ptr<ExpressionVariable>>> parameters = std::nullopt);
-    ~NodeValue();
-    void operator=(const int value);
-    void operator=(const double value);
+    ~NodeValue() = default;
+    NodeValue &operator=(const int value);
+    NodeValue &operator=(const double value);
     bool operator==(const NodeValue &value) const;
     bool operator!=(const NodeValue &value) const;
-    operator double();
 
     /*
      * Data
      */
-    private:
+    protected:
     // Value Types
     enum NodeValueType
     {
@@ -35,11 +34,11 @@ class NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVari
         ExpressionNodeValue
     };
     // Type of contained data
-    NodeValueType type_;
+    NodeValueType type_{DoubleNodeValue};
     // Integer value, if defined
-    int valueI_;
+    int valueI_{0};
     // Double value, if defined
-    double valueD_;
+    double valueD_{0.0};
     // Expression, if defined
     Expression expression_;
 
@@ -65,7 +64,7 @@ class NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVari
     // Return contained value as double
     double asDouble() const;
     // Return value represented as a string
-    std::string asString(bool addQuotesIfRequired = false) const;
+    virtual std::string asString(bool addQuotesIfRequired = false) const;
 
     /*
      * Serialisable
@@ -75,4 +74,24 @@ class NodeValue : public Serialisable<std::vector<std::shared_ptr<ExpressionVari
     SerialisedValue serialise() const override;
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params) override;
+};
+
+// Node Value Proxy
+class NodeValueProxy : public NodeValue
+{
+    public:
+    NodeValueProxy(const int i);
+    NodeValueProxy(const double d);
+    NodeValueProxy(std::string_view expressionText);
+
+    private:
+    // String for expression
+    std::string expressionString_;
+
+    /*
+     * Value Retrieval
+     */
+    public:
+    // Return value represented as a string
+    std::string asString(bool addQuotesIfRequired = false) const override;
 };

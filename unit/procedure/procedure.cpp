@@ -132,12 +132,10 @@ TEST(ProcedureTest, Parameters)
     auto bigVars = bigHole->getParameters();
     EXPECT_EQ(bigVars.size(), 6);
 
-    // Set an equation in A via a NodeValue
-    NodeValue simple("20.0");
-    NodeValue eggPinFromSmall("1 + Egg * Pin", smallVars), eggPinFromBig("1 + Egg * Pin", smallVars);
-    NodeValue eggBus("Egg / Bus", bigVars), busMeaning("Bus + MeaningOfLife", bigVars);
-    EXPECT_TRUE(simple.isValid() && eggPinFromSmall.isValid() && eggPinFromBig.isValid() && eggBus.isValid() &&
-                busMeaning.isValid());
+    // Set an equation in A via a NodeValueProxy
+    NodeValueProxy simple("20.0");
+    NodeValueProxy eggPinFromSmall("1 + Egg * Pin"), eggPinFromBig("1 + Egg * Pin");
+    NodeValueProxy eggBus("Egg / Bus"), busMeaning("Bus + MeaningOfLife");
     EXPECT_TRUE(smallHole->keywords().set("Population", simple));
     EXPECT_TRUE(smallHole->keywords().set("Population", eggPinFromSmall));
     EXPECT_TRUE(smallHole->keywords().set("Population", eggPinFromBig));

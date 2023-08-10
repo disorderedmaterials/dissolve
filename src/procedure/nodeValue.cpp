@@ -5,42 +5,28 @@
 #include "base/sysFunc.h"
 #include <string>
 
-NodeValue::NodeValue()
-{
-    valueI_ = 0;
-    valueD_ = 0.0;
-    type_ = DoubleNodeValue;
-}
-NodeValue::NodeValue(const int i)
-{
-    valueI_ = i;
-    valueD_ = 0.0;
-    type_ = IntegerNodeValue;
-}
-NodeValue::NodeValue(const double d)
-{
-    valueI_ = 0;
-    valueD_ = d;
-    type_ = DoubleNodeValue;
-}
+NodeValue::NodeValue(const int i) : type_(NodeValue::IntegerNodeValue), valueI_(i) {}
+NodeValue::NodeValue(const double d) : valueD_(d) {}
 NodeValue::NodeValue(std::string_view expressionText,
                      std::optional<std::vector<std::shared_ptr<ExpressionVariable>>> parameters)
+    : type_(NodeValue::ExpressionNodeValue)
 {
-    valueI_ = 0;
-    valueD_ = 0.0;
-    set(expressionText, parameters);
+    set(expressionText, std::move(parameters));
 }
 
-NodeValue::~NodeValue() = default;
+// Assignment from integer
+NodeValue &NodeValue::operator=(const int value)
+{
+    set(value);
+    return *this;
+}
 
 // Assignment from integer
-void NodeValue::operator=(const int value) { set(value); }
-
-// Assignment from integer
-void NodeValue::operator=(const double value) { set(value); }
-
-// Conversion (to double)
-NodeValue::operator double() { return asDouble(); }
+NodeValue &NodeValue::operator=(const double value)
+{
+    set(value);
+    return *this;
+}
 
 /*
  * Data
@@ -194,3 +180,43 @@ bool NodeValue::operator==(const NodeValue &value) const
 }
 
 bool NodeValue::operator!=(const NodeValue &value) const { return !(*this == value); }
+
+/*
+ * Node Value Proxy
+ */
+
+NodeValueProxy::NodeValueProxy(const int i)
+{
+    valueI_ = i;
+    valueD_ = 0.0;
+    type_ = IntegerNodeValue;
+}
+NodeValueProxy::NodeValueProxy(const double d)
+{
+    valueI_ = 0;
+    valueD_ = d;
+    type_ = DoubleNodeValue;
+}
+NodeValueProxy::NodeValueProxy(std::string_view expressionText)
+{
+    valueI_ = 0;
+    valueD_ = 0.0;
+    type_ = ExpressionNodeValue;
+    expressionString_ = expressionText;
+}
+
+// Return value represented as a string
+std::string NodeValueProxy::asString(bool addQuotesIfRequired) const
+{
+    if (type_ == IntegerNodeValue)
+        return fmt::format("{}", valueI_);
+    else if (type_ == DoubleNodeValue)
+        return fmt::format("{}", valueD_);
+    else
+    {
+        if (addQuotesIfRequired)
+            return fmt::format("'{}'", expressionString_);
+        else
+            return fmt::format("{}", expressionString_);
+    }
+}
