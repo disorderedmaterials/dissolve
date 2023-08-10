@@ -1,4 +1,5 @@
 set(models_MOC_HDRS
+    addForcefieldDialogModel.h
     addSpeciesInfoModel.h
     atomTypeModel.h
     braggReflectionFilterProxy.h
@@ -7,7 +8,7 @@ set(models_MOC_HDRS
     configurationModel.h
     dataManagerSimulationModel.h
     enumOptionsModel.h
-    externalPotentialModel.h
+    forcefieldModel.h
     isotopologueSetModel.h
     masterAngleModel.h
     masterBondModel.h
@@ -49,6 +50,7 @@ set(models_MOC_HDRS
 qt6_wrap_cpp(models_MOC_SRCS ${models_MOC_HDRS})
 
 set(models_SRCS
+    addForcefieldDialogModel.cpp
     addSpeciesInfoModel.cpp
     atomTypeFilterProxy.cpp
     atomTypeModel.cpp
@@ -60,6 +62,8 @@ set(models_SRCS
     enumOptionsModel.cpp
     expressionVariableVectorModel.cpp
     externalPotentialModel.cpp
+    ffSortFilterModel.cpp
+    forcefieldModel.cpp
     globalPotentialFilterProxy.cpp
     isotopologueSetModel.cpp
     masterAngleModel.cpp
@@ -108,8 +112,7 @@ qt6_wrap_cpp(
   dataManagerSimulationModel.h
   enumOptionsModel.h
   expressionVariableVectorModel.h
-  externalPotentialModel.h
-  globalPotentialFilterProxy.h
+  forcefieldModel.h
   isotopologueSetModel.h
   pairPotentialModel.h
   procedureModelMimeData.h
