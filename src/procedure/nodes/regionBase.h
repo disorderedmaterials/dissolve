@@ -39,8 +39,8 @@ class RegionProcedureNodeBase : public ProcedureNode
     double voxelSize_{1.0};
 
     protected:
-    // Return whether voxel centred at supplied real coordinates is valid
-    virtual bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const = 0;
+    // Return a new voxel check kernel
+    virtual std::shared_ptr<VoxelKernel> createVoxelKernel() = 0;
 
     public:
     // Return current region data

@@ -36,7 +36,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData1D(const ProcessPool
         if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Average)
             (*targetData1D_) /= (node->nAverageSites() / cfg->box()->volume());
         else if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Available)
-            (*targetData1D_) /= (node->nAvailableSites() / cfg->box()->volume());
+            (*targetData1D_) /= (node->nAvailableSitesAverage() / cfg->box()->volume());
 
     return true;
 }
@@ -48,7 +48,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData2D(const ProcessPool
         if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Average)
             (*targetData2D_) /= (node->nAverageSites() / cfg->box()->volume());
         else if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Available)
-            (*targetData2D_) /= (node->nAvailableSites() / cfg->box()->volume());
+            (*targetData2D_) /= (node->nAvailableSitesAverage() / cfg->box()->volume());
 
     return true;
 }
@@ -60,7 +60,7 @@ bool OperateNumberDensityNormaliseProcedureNode::operateData3D(const ProcessPool
         if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Average)
             (*targetData3D_) /= (node->nAverageSites() / cfg->box()->volume());
         else if (targetPopulation_ == SelectProcedureNode::SelectionPopulation::Available)
-            (*targetData3D_) /= (node->nAvailableSites() / cfg->box()->volume());
+            (*targetData3D_) /= (node->nAvailableSitesAverage() / cfg->box()->volume());
 
     return true;
 }

@@ -5,8 +5,23 @@
 
 #include "procedure/nodes/regionBase.h"
 
+// General Region Voxel Kernel
+class GeneralRegionVoxelKernel : public VoxelKernel
+{
+    public:
+    explicit GeneralRegionVoxelKernel(double toleranceSquared = 1.0);
+
+    protected:
+    // Squared tolerance
+    double toleranceSquared_{1.0};
+
+    public:
+    // Return whether voxel centred at supplied real coordinates is valid
+    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
+};
+
 // General Region
-class GeneralRegionProcedureNode : public RegionProcedureNodeBase
+class GeneralRegionProcedureNode : public RegionProcedureNodeBase, GeneralRegionVoxelKernel
 {
     public:
     GeneralRegionProcedureNode();
@@ -17,21 +32,12 @@ class GeneralRegionProcedureNode : public RegionProcedureNodeBase
      */
     private:
     // Distance tolerance (threshold) for avoiding existing atoms
-    double tolerance_;
-    // Squared tolerance
-    double toleranceSquared_;
+    double tolerance_{1.0};
 
     /*
      * Region Data
      */
-    public:
-    // Return whether voxel centred at supplied real coordinates is valid
-    bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
-
-    /*
-     * Execute
-     */
-    public:
-    // Prepare any necessary data, ready for execution
-    bool prepare(const ProcedureContext &procedureContext) override;
+    protected:
+    // Return a new voxel check kernel
+    std::shared_ptr<VoxelKernel> createVoxelKernel() override;
 };

@@ -22,10 +22,6 @@ class Timer
     // Whether the timer is running or not
     bool running_{false};
 
-    private:
-    // Return time string based on provided duration in seconds
-    std::string timeString(std::chrono::duration<double> duration);
-
     public:
     // Start timer
     void start();
@@ -38,13 +34,11 @@ class Timer
     // Zero total time
     void zero();
     // Return current elapsed time as a time string
-    std::string elapsedTimeString();
+    std::string elapsedTimeString(bool truncate = false);
     // Return total time (after stop()) as a time string
     std::string totalTimeString();
     // Return number of seconds elapsed
     double secondsElapsed() const;
-    // Return time string for number of seconds provided
-    static std::string timeString(double seconds);
-    // Return ETA string for number of seconds provided
-    static std::string etaString(double seconds);
+    // Return time string based on provided duration in seconds
+    static std::string timeString(double seconds, bool truncate = false);
 };

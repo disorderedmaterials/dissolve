@@ -40,6 +40,7 @@
 #include "procedure/nodes/remove.h"
 #include "procedure/nodes/restraintPotential.h"
 #include "procedure/nodes/rotateFragment.h"
+#include "procedure/nodes/runLayer.h"
 #include "procedure/nodes/select.h"
 #include "procedure/nodes/simpleGlobalPotential.h"
 #include "procedure/nodes/sizeFactor.h"
@@ -143,6 +144,9 @@ ProcedureNodeRegistry::ProcedureNodeRegistry()
 
     // Sites
     registerProducer<RotateFragmentProcedureNode>(ProcedureNode::NodeType::RotateFragment, "Rotate fragment sites", "Sites");
+
+    // Control
+    registerProducer<RunLayerNode>(ProcedureNode::NodeType::RunLayer, "Run layer", "Control");
 }
 
 /*

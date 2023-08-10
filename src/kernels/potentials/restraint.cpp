@@ -40,8 +40,8 @@ std::optional<int> RestraintPotentialFunctions::parameterIndex(Form form, std::s
 }
 
 RestraintPotential::RestraintPotential()
-    : interactionPotential_(RestraintPotentialFunctions::Form::Harmonic),
-      ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Simple)
+    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Simple),
+      interactionPotential_(RestraintPotentialFunctions::Form::Harmonic)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
     keywords_.add<InteractionPotentialKeyword<RestraintPotentialFunctions>>(
@@ -60,6 +60,15 @@ void RestraintPotential::setPotential(const InteractionPotential<RestraintPotent
 
 // Set coordinate origin of potential
 void RestraintPotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
+
+// Return functional form of the potential, as a string
+const std::string RestraintPotential::formString() const
+{
+    return RestraintPotentialFunctions::forms().keyword(interactionPotential_.form());
+}
+
+// Return parameters of the potential, as a string
+const std::string RestraintPotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
 
 /*
  * Potential Calculation

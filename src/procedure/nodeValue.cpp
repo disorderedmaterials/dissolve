@@ -5,42 +5,28 @@
 #include "base/sysFunc.h"
 #include <string>
 
-NodeValue::NodeValue()
-{
-    valueI_ = 0;
-    valueD_ = 0.0;
-    type_ = DoubleNodeValue;
-}
-NodeValue::NodeValue(const int i)
-{
-    valueI_ = i;
-    valueD_ = 0.0;
-    type_ = IntegerNodeValue;
-}
-NodeValue::NodeValue(const double d)
-{
-    valueI_ = 0;
-    valueD_ = d;
-    type_ = DoubleNodeValue;
-}
+NodeValue::NodeValue(const int i) : type_(NodeValue::IntegerNodeValue), valueI_(i) {}
+NodeValue::NodeValue(const double d) : valueD_(d) {}
 NodeValue::NodeValue(std::string_view expressionText,
                      std::optional<std::vector<std::shared_ptr<ExpressionVariable>>> parameters)
+    : type_(NodeValue::ExpressionNodeValue)
 {
-    valueI_ = 0;
-    valueD_ = 0.0;
-    set(expressionText, parameters);
+    set(expressionText, std::move(parameters));
 }
 
-NodeValue::~NodeValue() = default;
+// Assignment from integer
+NodeValue &NodeValue::operator=(const int value)
+{
+    set(value);
+    return *this;
+}
 
 // Assignment from integer
-void NodeValue::operator=(const int value) { set(value); }
-
-// Assignment from integer
-void NodeValue::operator=(const double value) { set(value); }
-
-// Conversion (to double)
-NodeValue::operator double() { return asDouble(); }
+NodeValue &NodeValue::operator=(const double value)
+{
+    set(value);
+    return *this;
+}
 
 /*
  * Data
@@ -149,30 +135,29 @@ SerialisedValue NodeValue::serialise() const
             return valueD_;
         case ExpressionNodeValue:
             return expression_.expressionString();
+        default:
+            throw(std::runtime_error("Unhandled NodeValue type in serialise().\n"));
     }
 }
 
 // Read values from a serialisable value
-void NodeValue::deserialise(const SerialisedValue &node)
+void NodeValue::deserialise(const SerialisedValue &node, std::vector<std::shared_ptr<ExpressionVariable>> params)
 {
     toml::visit(
-        [this](auto &arg)
+        [this, &params](auto &arg)
         {
             using T = std::decay_t<decltype(arg)>;
             if constexpr (std::is_same_v<T, toml::integer>)
             {
-                type_ = IntegerNodeValue;
-                valueI_ = arg;
+                set((int)arg);
             }
             else if constexpr (std::is_same_v<T, toml::floating>)
             {
-                type_ = DoubleNodeValue;
-                valueD_ = arg;
+                set((double)arg);
             }
             else if constexpr (std::is_same_v<T, toml::string>)
             {
-                type_ = ExpressionNodeValue;
-                expression_.create(std::string_view(std::string(arg)), {});
+                set(std::string(arg), params);
             }
         },
         node);
@@ -195,3 +180,43 @@ bool NodeValue::operator==(const NodeValue &value) const
 }
 
 bool NodeValue::operator!=(const NodeValue &value) const { return !(*this == value); }
+
+/*
+ * Node Value Proxy
+ */
+
+NodeValueProxy::NodeValueProxy(const int i)
+{
+    valueI_ = i;
+    valueD_ = 0.0;
+    type_ = IntegerNodeValue;
+}
+NodeValueProxy::NodeValueProxy(const double d)
+{
+    valueI_ = 0;
+    valueD_ = d;
+    type_ = DoubleNodeValue;
+}
+NodeValueProxy::NodeValueProxy(std::string_view expressionText)
+{
+    valueI_ = 0;
+    valueD_ = 0.0;
+    type_ = ExpressionNodeValue;
+    expressionString_ = expressionText;
+}
+
+// Return value represented as a string
+std::string NodeValueProxy::asString(bool addQuotesIfRequired) const
+{
+    if (type_ == IntegerNodeValue)
+        return fmt::format("{}", valueI_);
+    else if (type_ == DoubleNodeValue)
+        return fmt::format("{}", valueD_);
+    else
+    {
+        if (addQuotesIfRequired)
+            return fmt::format("'{}'", expressionString_);
+        else
+            return fmt::format("{}", expressionString_);
+    }
+}

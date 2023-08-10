@@ -138,6 +138,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
     // Print option summary
     Messenger::print("EPSR: Feedback factor is {}.\n", feedback_);
+    for (auto &&[targetModule, weight] : targetWeights_)
+        Messenger::print("EPSR: Weight for module data '{}' set to {}.\n", targetModule->name(), weight);
     Messenger::print("EPSR: {} functions will be used to approximate difference data.\n",
                      expansionFunctionTypes().keyword(expansionFunction_));
     Messenger::print("EPSR: Number of functions used in approximation is {}, sigma(Q) = {}.\n", ncoeffp, pSigma2_);
@@ -220,6 +222,13 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     // Is our scattering matrix fully set-up and just requiring updated data?
     auto scatteringMatrixSetUp = scatteringMatrix_.nReferenceData() != 0;
 
+    // Get summed weights over all datasets
+    const auto totalDataSetWeight =
+        std::accumulate(targetWeights_.begin(), targetWeights_.end(), 0.0,
+                        [](const auto acc, const auto &targetWeight) { return acc + targetWeight.second; }) +
+        (targets_.size() - targetWeights_.size());
+
+    // Loop over target data
     auto rFacTot = 0.0;
     std::vector<double> rangedRFacTots(ranges_.size());
 
@@ -401,6 +410,12 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
          * Add the Data to the Scattering Matrix
          */
 
+        // Set overall weighting factor for the dataset
+        auto weightIt = std::find_if(targetWeights_.begin(), targetWeights_.end(),
+                                     [module](const auto &targetWeight) { return targetWeight.first == module; });
+        auto dataSetWeight =
+            feedback_ * (weightIt == targetWeights_.end() ? 1.0 : weightIt->second) * (targets_.size() / totalDataSetWeight);
+
         if (module->type() == ModuleTypes::NeutronSQ)
         {
             const auto &weights =
@@ -418,8 +433,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
                 refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, feedback_)
-                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
+                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
             {
                 Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
                 return ExecutionResult::Failed;
@@ -452,8 +467,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                                refMinusIntra.values().begin(), std::divides<>());
             }
 
-            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, feedback_)
-                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, feedback_))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
+                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
             {
                 Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
                 return ExecutionResult::Failed;

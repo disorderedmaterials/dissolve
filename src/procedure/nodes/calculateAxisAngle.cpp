@@ -73,8 +73,8 @@ bool CalculateAxisAngleProcedureNode::execute(const ProcedureContext &procedureC
     assert(sites_[0] && sites_[0]->currentSite());
     assert(sites_[1] && sites_[1]->currentSite());
 
-    value_.x = Box::angleInDegrees(sites_[0]->currentSite()->axes().columnAsVec3(axes_[0]),
-                                   sites_[1]->currentSite()->axes().columnAsVec3(axes_[1]));
+    value_.x = Box::angleInDegrees(sites_[0]->currentSite()->get().axes().columnAsVec3(axes_[0]),
+                                   sites_[1]->currentSite()->get().axes().columnAsVec3(axes_[1]));
 
     if (symmetric_ && value_.x > 90.0)
         value_.x = 180.0 - value_.x;

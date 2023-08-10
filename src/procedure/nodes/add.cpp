@@ -140,7 +140,8 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
 
     auto *cfg = procedureContext.configuration();
     const auto nAtomsToAdd = ipop * sp->nAtoms();
-    auto [rho, rhoUnits] = density_;
+    auto rho = std::get<0>(density_).asDouble();
+    auto rhoUnits = std::get<1>(density_);
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
     Vec3<bool> scalableAxes(scaleA_, scaleB_, scaleC_);
@@ -160,7 +161,7 @@ bool AddProcedureNode::execute(const ProcedureContext &procedureContext)
         else
             requiredVolume = ((sp->mass() * ipop) / AVOGADRO) / (rho / 1.0E24);
 
-        Messenger::print("[Add] Density for new species is {} {}.\n", rho.asDouble(), Units::densityUnits().keyword(rhoUnits));
+        Messenger::print("[Add] Density for new species is {} {}.\n", rho, Units::densityUnits().keyword(rhoUnits));
         Messenger::print("[Add] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
         // If the current box has no atoms in it, absorb the current volume rather than adding to it

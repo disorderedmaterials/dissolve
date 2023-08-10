@@ -260,7 +260,7 @@ void ImportCIFDialog::finalise()
 
             // Add
             auto addNode = generator.createRootNode<AddProcedureNode>(fmt::format("Add_{}", uniqueSuffix), coordsNode);
-            addNode->keywords().set("Population", NodeValue(int(cifSp->coordinates().size())));
+            addNode->keywords().set("Population", NodeValueProxy(int(cifSp->coordinates().size())));
             addNode->keywords().setEnumeration("Positioning", AddProcedureNode::PositioningType::Current);
             addNode->keywords().set("Rotate", false);
             addNode->keywords().setEnumeration("BoxAction", AddProcedureNode::BoxActionStyle::None);
