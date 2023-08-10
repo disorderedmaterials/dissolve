@@ -221,7 +221,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     auto scatteringMatrixSetUp = scatteringMatrix_.nReferenceData() != 0;
 
     auto rFacTot = 0.0;
-    std::vector<double> rangedRFacTots(targets_.size() * ranges_.size());
+    std::vector<double> rangedRFacTots(ranges_.size());
 
     // Loop over target data
     for (auto *module : targets_)
@@ -295,15 +295,12 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactor);
 
         // Calculate r-factor over specified ranges_
-        if (ranges_.size() != 0)
+        for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
         {
-            for (int i = 0; i < ranges_.size(); i++)
-            {
-                rFactor = Error::rFactor(tempRefData, weightedSQ.total(), ranges_[i]).error;
-                rangedRFacTots[i] += rFactor;
-                Messenger::print("Current R-Factor for reference data '{}' over range {:.5f} to {:.5f} is {:.5f}.\n",
-                                 module->name(), ranges_[i].minimum(), ranges_[i].maximum(), rFactor);
-            }
+            rFactor = Error::rFactor(tempRefData, weightedSQ.total(), range).error;
+            rangeTot += rFactor;
+            Messenger::print("Current R-Factor for reference data '{}' over range {:.5f} to {:.5f} is {:.5f}.\n",
+                             module->name(), range.minimum(), range.maximum(), rFactor);
         }
 
         /*
