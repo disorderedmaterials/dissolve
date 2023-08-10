@@ -5,8 +5,7 @@
 
 Range::Range(std::optional<double> minimum, std::optional<double> maximum)
 {
-    minimum_ = std::min(minimum, maximum);
-    maximum_ = std::max(minimum, maximum);
+    set(minimum, maximum);
 }
 
 /*
@@ -50,12 +49,10 @@ double Range::maximum() const { return maximum_ ? *maximum_ : 0.0; }
 // Return whether the range contains the specified value
 bool Range::contains(double d) const
 {
-    if (!isDefined() || !(d < minimum_) || (d > maximum_))
-        return false;
-    return true;
+    return isDefined() && (d >= minimum_) && (d <= maximum_);
 }
 
-bool Range::isDefined() const { return (minimum_ && maximum_) ? true : false; }
+bool Range::isDefined() const { return (minimum_ && maximum_); }
 
 // Express as a serialisable value
 SerialisedValue Range::serialise() const { return {{"min", minimum()}, {"max", maximum()}}; }
