@@ -7,6 +7,7 @@
 #include "gui/forcefieldTab.h"
 #include "gui/layerTab.h"
 #include "gui/messagesTab.h"
+#include "gui/overviewTab.h"
 #include "gui/speciesTab.h"
 #include <QPointer>
 #include <QTabWidget>
@@ -50,6 +51,8 @@ class MainTabsWidget : public QTabWidget
     QPointer<MessagesTab> messagesTab_;
     // Pointer to Forcefield tab
     QPointer<ForcefieldTab> forcefieldTab_;
+    // Pointer to Overview tab
+    QPointer<OverviewTab> overviewTab_;
     // List of Species tabs
     std::vector<QPointer<SpeciesTab>> speciesTabs_;
     // List of Configuration tabs

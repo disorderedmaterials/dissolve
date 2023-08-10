@@ -43,6 +43,7 @@ void MainTabsWidget::setUp(DissolveWindow *dissolveWindow)
     dissolveWindow_ = dissolveWindow;
     forcefieldTab_ = new ForcefieldTab(dissolveWindow, dissolveWindow->dissolve(), this, "Forcefield");
     messagesTab_ = new MessagesTab(dissolveWindow, dissolveWindow->dissolve(), this, "Messages");
+    overviewTab_ = new OverviewTab(dissolveWindow, dissolveWindow->dissolve(), this, "Overview");
 }
 
 /*
@@ -158,6 +159,8 @@ void MainTabsWidget::clearTabs()
     addTab(forcefieldTab_->page(), "Forcefield");
     setTabIcon(forcefieldTab_->page(), QIcon(":/general/icons/ff.svg"));
     allTabs_.push_back(forcefieldTab_.data());
+    addTab(overviewTab_->page(), "Overview");
+    allTabs_.push_back(overviewTab_.data());
 }
 
 // Reconcile tabs, making them consistent with the provided data
@@ -167,7 +170,7 @@ void MainTabsWidget::reconcileTabs()
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
     auto currentTabIndex = 0;
-    auto baseIndex = 2;
+    auto baseIndex = 3;
     for (const auto &sp : dissolve.coreData().species())
     {
         // Loop over existing tabs
