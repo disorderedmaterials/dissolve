@@ -35,6 +35,5 @@ const Region &RegionProcedureNodeBase::region() const { return region_; }
 // Execute node
 bool RegionProcedureNodeBase::execute(const ProcedureContext &procedureContext)
 {
-    return region_.generate(procedureContext.configuration(), voxelSize_,
-                            [&](const Configuration *cfg, Vec3<double> r) { return isVoxelValid(cfg, r) != invert_; });
+    return region_.generate(procedureContext.configuration(), voxelSize_, [&]() { return createVoxelKernel(); });
 }

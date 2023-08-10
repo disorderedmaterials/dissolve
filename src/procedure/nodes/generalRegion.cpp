@@ -5,19 +5,14 @@
 #include "classes/configuration.h"
 #include "keywords/double.h"
 
-GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::GeneralRegion)
-{
-    keywords_.setOrganisation("Options", "Definition");
-    keywords_.add<DoubleKeyword>("Tolerance", "Distance threshold for avoiding existing atoms in the configuration", tolerance_,
-                                 0.1);
-}
-
 /*
- * Region Data
+ * General Region Voxel Kernel
  */
 
+GeneralRegionVoxelKernel::GeneralRegionVoxelKernel(double toleranceSquared) : toleranceSquared_(toleranceSquared) {}
+
 // Return whether voxel centred at supplied real coordinates is valid
-bool GeneralRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
+bool GeneralRegionVoxelKernel::isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const
 {
     // If any atom in the Configuration is less than some tolerance value to this coordinate, invalidate the voxel
     return !std::any_of(cfg->atoms().begin(), cfg->atoms().end(),
@@ -25,14 +20,18 @@ bool GeneralRegionProcedureNode::isVoxelValid(const Configuration *cfg, const Ve
 }
 
 /*
- * Execute
+ * General Region
  */
 
-// Prepare any necessary data, ready for execution
-bool GeneralRegionProcedureNode::prepare(const ProcedureContext &procedureContext)
+GeneralRegionProcedureNode::GeneralRegionProcedureNode() : RegionProcedureNodeBase(ProcedureNode::NodeType::GeneralRegion)
 {
-    // Retrieve keyword values
-    toleranceSquared_ = tolerance_ * tolerance_;
+    keywords_.setOrganisation("Options", "Definition");
+    keywords_.add<DoubleKeyword>("Tolerance", "Distance threshold for avoiding existing atoms in the configuration", tolerance_,
+                                 0.1);
+}
 
-    return true;
+// Return a new voxel check kernel
+std::shared_ptr<VoxelKernel> GeneralRegionProcedureNode::createVoxelKernel()
+{
+    return std::make_shared<GeneralRegionVoxelKernel>(tolerance_ * tolerance_);
 }
