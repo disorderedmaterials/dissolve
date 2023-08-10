@@ -149,6 +149,8 @@ SerialisedValue NodeValue::serialise() const
             return valueD_;
         case ExpressionNodeValue:
             return expression_.expressionString();
+        default:
+            throw(std::runtime_error("Unhandled NodeValue type in serialise().\n"));
     }
 }
 

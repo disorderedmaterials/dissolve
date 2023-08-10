@@ -23,7 +23,6 @@ set(models_MOC_HDRS
     nodePaletteModel.h
     pairPotentialModel.h
     procedureModel.h
-    procedureModelMimeData.h
     procedureNodeModel.h
     renderableGroupManagerModel.h
     sitesFilterProxy.h
@@ -101,7 +100,7 @@ set(models_SRCS
     xmlTorsionModel.cpp
 )
 
-qt_wrap_cpp(
+qt6_wrap_cpp(
   models_SRCS
   atomTypeFilterProxy.h
   atomTypeModel.h
@@ -113,6 +112,7 @@ qt_wrap_cpp(
   globalPotentialFilterProxy.h
   isotopologueSetModel.h
   pairPotentialModel.h
+  procedureModelMimeData.h
   speciesModel.h
   speciesSiteModel.h
   xmlAngleModel.h

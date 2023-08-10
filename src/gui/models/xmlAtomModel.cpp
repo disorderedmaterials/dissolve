@@ -14,8 +14,6 @@ void XmlAtomModel::readFile(const pugi::xml_node &root)
     beginResetModel();
     atoms_.clear();
 
-    auto &types = coreData_.atomTypes();
-
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
     {
         auto nonbonded = root.select_node(
