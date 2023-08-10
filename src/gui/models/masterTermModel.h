@@ -19,6 +19,14 @@ enum DataType
     Electrostatic14Scale = 3,
     VanDerWaals14Scale = 4
 };
+
+enum Roles
+{
+    Display = Qt::DisplayRole,
+    Edit = Qt::EditRole,
+    Icon = Qt::DecorationRole,
+    HasMaster = Qt::UserRole
+};
 }; // namespace MasterTermModelData
 
 // Base master term model
@@ -31,7 +39,7 @@ class MasterTermModel : public QAbstractTableModel
 
     protected:
     // Icon return function
-    std::function<QIcon(std::string_view termName)> iconFunction_;
+    std::function<bool(std::string_view termName)> iconFunction_;
 
     public:
     // Return model data, by type, for specified term index
@@ -39,7 +47,7 @@ class MasterTermModel : public QAbstractTableModel
     // Set model data, by type, for specified term index
     virtual bool setTermData(int row, MasterTermModelData::DataType dataType, const QVariant &value) = 0;
     // Set function to return QIcon for item
-    void setIconFunction(std::function<QIcon(std::string_view termName)> func);
+    void setIconFunction(std::function<bool(std::string_view termName)> func);
 
     /*
      * QAbstractItemModel overrides
@@ -50,4 +58,5 @@ class MasterTermModel : public QAbstractTableModel
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+    QHash<int, QByteArray> roleNames() const override;
 };

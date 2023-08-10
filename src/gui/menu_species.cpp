@@ -20,6 +20,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QQuickView>
 #include <qdialog.h>
 #include <qinputdialog.h>
 #include <qmessagebox.h>
@@ -218,7 +219,8 @@ void DissolveWindow::on_SpeciesAddForcefieldTermsAction_triggered(bool checked)
 
     if (addForcefieldTermsDialog.exec() == QDialog::Accepted)
     {
-        // Atom types will likely have changed, so make sure the Isotopologues in the species are up-to-date
+        // Atom types will likely have changed, so make sure the
+        // Isotopologues in the species are up-to-date
         species->updateIsotopologues();
 
         // May now have unused atomtypes...
@@ -401,7 +403,7 @@ void DissolveWindow::on_SpeciesSetAtomTypeChargesFromSpeciesAction_triggered(boo
                    "This cannot be undone! Proceed?");
     msgBox.addButton(QMessageBox::Yes);
     msgBox.addButton(QMessageBox::No);
-    QPushButton *testButton = msgBox.addButton("Test", QMessageBox::ActionRole);
+    msgBox.addButton("Test", QMessageBox::ActionRole);
 
     auto result = msgBox.exec();
 

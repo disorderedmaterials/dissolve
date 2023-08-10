@@ -55,6 +55,7 @@ bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataTy
 
     auto &t = terms[row];
 
+    beginResetModel();
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -78,6 +79,7 @@ bool MasterAngleModel::setTermData(int row, MasterTermModelData::DataType dataTy
         default:
             return false;
     }
+    endResetModel();
 
     return true;
 }

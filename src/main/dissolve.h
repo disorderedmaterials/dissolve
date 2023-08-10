@@ -126,7 +126,7 @@ class Dissolve : public Serialisable<>
     int iteration_;
     // Number of iterations performed
     int nIterationsPerformed_;
-    // Main loop timer
+    // Main loop iterations timer
     Timer iterationTimer_;
     // Accumulated timing information for main loop iterations
     SampledDouble iterationTime_;

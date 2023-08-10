@@ -42,8 +42,8 @@ std::optional<int> DirectionalPotentialFunctions::parameterIndex(Form form, std:
 }
 
 DirectionalPotential::DirectionalPotential()
-    : interactionPotential_(DirectionalPotentialFunctions::Form::LJCylinder),
-      ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Directional)
+    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Directional),
+      interactionPotential_(DirectionalPotentialFunctions::Form::LJCylinder)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
     keywords_.add<InteractionPotentialKeyword<DirectionalPotentialFunctions>>(
@@ -66,6 +66,15 @@ void DirectionalPotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
 
 // Set vector of potential
 void DirectionalPotential::setVector(Vec3<double> vector) { vector_ = vector; }
+
+// Return functional form of the potential, as a string
+const std::string DirectionalPotential::formString() const
+{
+    return DirectionalPotentialFunctions::forms().keyword(interactionPotential_.form());
+}
+
+// Return parameters of the potential, as a string
+const std::string DirectionalPotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
 
 /*
  * Potential Calculation

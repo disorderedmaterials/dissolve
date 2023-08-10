@@ -90,6 +90,8 @@ class EPSRModule : public Module
     bool saveSimulatedFR_{false};
     // Target Modules containing data to refine against
     std::vector<Module *> targets_;
+    // Weightings for targets (if not 1.0)
+    std::vector<std::pair<Module *, double>> targetWeights_;
     // Test against supplied reference data
     bool test_{false};
     // Test absolute EP energy values
@@ -106,6 +108,8 @@ class EPSRModule : public Module
     public:
     // Return list of target Modules / data for refinement
     const std::vector<Module *> &targets() const;
+    // Return current scattering matrix
+    const ScatteringMatrix &scatteringMatrix() const;
 
     /*
      * Functions

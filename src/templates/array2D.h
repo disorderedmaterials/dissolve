@@ -130,11 +130,24 @@ template <class A> class Array2D
                 (*this)[{n, m}] = oldArray[{n, m}];
         }
     }
-    // Set row
+    // Set elements in specified row to same value
     void setRow(int row, A value)
     {
         for (auto n = 0; n < nColumns_; ++n)
             (*this)[{row, n}] = value;
+    }
+    // Set row
+    void setRow(int row, std::vector<A> values)
+    {
+        assert(values.size() == nColumns_);
+        for (auto n = 0; n < nColumns_; ++n)
+            (*this)[{row, n}] = values[n];
+    }
+    // Multiply elements in specified row
+    void multiplyRow(int row, A multiplier)
+    {
+        for (auto n = 0; n < nColumns_; ++n)
+            (*this)[{row, n}] *= multiplier;
     }
     // Return specified element as reference
     A &operator[](const std::tuple<int, int> index)

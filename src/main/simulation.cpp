@@ -58,7 +58,7 @@ bool Dissolve::prepare()
         // If the configuration is empty, initialise it now
         if (cfg->nMolecules() == 0)
         {
-            if (!cfg->initialiseContent({worldPool_, potentialMap_}))
+            if (!cfg->initialiseContent({worldPool_, *this}))
                 return Messenger::error("Failed to initialise content for configuration '{}'.\n", cfg->name());
         }
         else if (newPairPotentialRange)
@@ -204,7 +204,6 @@ bool Dissolve::prepare()
 // Iterate main simulation
 bool Dissolve::iterate(int nIterations)
 {
-    iterationTimer_.zero();
     iterationTimer_.start();
 
     for (auto iter = 0; iter < nIterations; ++iter)

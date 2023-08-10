@@ -41,8 +41,8 @@ std::optional<int> SimplePotentialFunctions::parameterIndex(Form form, std::stri
 }
 
 SimplePotential::SimplePotential()
-    : interactionPotential_(SimplePotentialFunctions::Form::Harmonic),
-      ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Simple)
+    : ExternalPotential(ExternalPotentialTypes::ExternalPotentialType::Simple),
+      interactionPotential_(SimplePotentialFunctions::Form::Harmonic)
 {
     keywords_.add<Vec3DoubleKeyword>("Origin", "Reference origin point", origin_, Vec3Labels::LabelType::XYZLabels);
     keywords_.add<InteractionPotentialKeyword<SimplePotentialFunctions>>(
@@ -61,6 +61,15 @@ void SimplePotential::setPotential(const InteractionPotential<SimplePotentialFun
 
 // Set coordinate origin of potential
 void SimplePotential::setOrigin(Vec3<double> origin) { origin_ = origin; }
+
+// Return functional form of the potential, as a string
+const std::string SimplePotential::formString() const
+{
+    return SimplePotentialFunctions::forms().keyword(interactionPotential_.form());
+}
+
+// Return parameters of the potential, as a string
+const std::string SimplePotential::formParametersString() const { return interactionPotential_.parametersAsString(); }
 
 /*
  * Potential Calculation

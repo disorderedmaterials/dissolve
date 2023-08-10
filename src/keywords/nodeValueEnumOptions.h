@@ -45,8 +45,8 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 {
     public:
     NodeValueEnumOptionsKeyword(std::pair<NodeValue, E> &data, ProcedureNode *parentNode, EnumOptions<E> optionData)
-        : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), parentNode_(parentNode), optionData_(optionData),
-          default_(data)
+        : NodeValueEnumOptionsBaseKeyword(optionData_), data_(data), default_(data), parentNode_(parentNode),
+          optionData_(optionData)
     {
     }
     ~NodeValueEnumOptionsKeyword() override = default;
@@ -130,7 +130,7 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
     // Read values from a serialisable value
     void deserialise(const SerialisedValue &node, const CoreData &coreData) override
     {
-        data_.first = toml::find<NodeValue>(node, "value");
+        data_.first.deserialise(node.at("value"), parentNode_->getParameters());
         data_.second = optionData_.deserialise(node.at("option"));
     }
 };

@@ -55,6 +55,7 @@ bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dat
 
     auto &t = terms[row];
 
+    beginResetModel();
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -78,6 +79,7 @@ bool MasterImproperModel::setTermData(int row, MasterTermModelData::DataType dat
         default:
             return false;
     }
+    beginResetModel();
 
     return true;
 }
