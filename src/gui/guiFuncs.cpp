@@ -46,6 +46,7 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     refreshing_ = false;
     modified_ = false;
     dissolveIterating_ = false;
+    elapsedTimer_.zero();
 
     // Create statusbar widgets
     addStatusBarIcon(":/control/icons/control_step.svg")->setToolTip("Current step / iteration number");
