@@ -4,6 +4,7 @@
 #pragma once
 
 #include "gui/mainTab.h"
+#include "gui/models/dissolveModel.h"
 #include <QWidget>
 
 class OverviewTab : public QWidget, public MainTab
@@ -20,6 +21,9 @@ class OverviewTab : public QWidget, public MainTab
     // Return tab type
     MainTab::TabType type() const override;
 
+    private:
+    DissolveModel dissolveModel_;
+
     /*
      * Update
      */
@@ -30,5 +34,8 @@ class OverviewTab : public QWidget, public MainTab
     void preventEditing() override;
     // Allow editing within tab
     void allowEditing() override;
+
+    private slots:
+    void clicky();
 
 };

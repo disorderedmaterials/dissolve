@@ -196,5 +196,9 @@
     <file>qml/IconListView.qml</file>
     <file>qml/ImageRadio.qml</file>
     <file>qml/PrettyListView.qml</file>
+    <file>qml/OverviewTab.qml</file>
+  </qresource>
+  <qresource prefix="widgets">
+
   </qresource>
 </RCC>

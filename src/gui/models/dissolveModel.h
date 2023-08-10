@@ -17,6 +17,7 @@ class DissolveModel : public QAbstractItemModel
     void setDissolve(Dissolve& dissolve);
     const QVariant rawData(const QModelIndex index) const;
     QVariant rawData(const QModelIndex index);
+    void reset();
 
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
     QModelIndex parent(const QModelIndex &child) const override;
