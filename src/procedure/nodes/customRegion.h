@@ -6,17 +6,15 @@
 #include "procedure/nodeValue.h"
 #include "procedure/nodes/regionBase.h"
 
-// Custom Region
-class CustomRegionProcedureNode : public RegionProcedureNodeBase
+// Custom Region Voxel Kernel
+class CustomRegionVoxelKernel : public VoxelKernel
 {
     public:
-    CustomRegionProcedureNode();
-    ~CustomRegionProcedureNode() override = default;
+    explicit CustomRegionVoxelKernel(std::string_view expressionString = "",
+                                     std::vector<std::shared_ptr<ExpressionVariable>> = {}, double minimumValue = 0.0,
+                                     double maximumValue = 1.0);
 
-    /*
-     * Control
-     */
-    private:
+    protected:
     // Local variables, set when checking voxels
     std::shared_ptr<ExpressionVariable> x_, y_, z_, xFrac_, yFrac_, zFrac_;
     // Expression describing region
@@ -26,10 +24,22 @@ class CustomRegionProcedureNode : public RegionProcedureNodeBase
     // Maximum threshold value for function
     double maximumValue_{1.0};
 
-    /*
-     * Region Data
-     */
     public:
     // Return whether voxel centred at supplied real coordinates is valid
     bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
+};
+
+// Custom Region
+class CustomRegionProcedureNode : public RegionProcedureNodeBase, CustomRegionVoxelKernel
+{
+    public:
+    CustomRegionProcedureNode();
+    ~CustomRegionProcedureNode() override = default;
+
+    /*
+     * Region Data
+     */
+    protected:
+    // Return a new voxel check kernel
+    std::shared_ptr<VoxelKernel> createVoxelKernel() override;
 };

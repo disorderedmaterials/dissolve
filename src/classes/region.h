@@ -8,12 +8,22 @@
 #include "classes/configuration.h"
 #include "templates/algorithms.h"
 #include "templates/array3D.h"
+#include "templates/combinable.h"
 #include "templates/parallelDefs.h"
 #include "templates/vector3.h"
+#include <functional>
 #include <vector>
 
 // Forward Declarations
 class Configuration;
+
+// Voxel Kernel
+class VoxelKernel
+{
+    public:
+    // Return whether voxel centred at supplied real coordinates is valid
+    virtual bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const = 0;
+};
 
 // Region Data
 class Region
@@ -34,40 +44,18 @@ class Region
     // Lower-left corner voxel indices of free regions
     std::vector<std::pair<Vec3<int>, bool>> freeVoxels_;
 
+    private:
+    // Generate voxel combinable
+    static dissolve::CombinableFunctor<std::shared_ptr<VoxelKernel>>
+    createCombinableVoxelKernel(std::function<std::shared_ptr<VoxelKernel>(void)> kernelGenerator)
+    {
+        return kernelGenerator;
+    }
+
     public:
     // Generate region information
-    template <class Lam> bool generate(const Configuration *cfg, double voxelSize, Lam voxelCheckFunction)
-    {
-        box_ = cfg->box();
-
-        // Set fractional voxel sizes
-        for (auto n = 0; n < 3; ++n)
-            nVoxels_.set(n, std::max(int(box_->axisLength(n) / voxelSize), 1));
-        voxelSizeFrac_.set(1.0 / nVoxels_.x, 1.0 / nVoxels_.y, 1.0 / nVoxels_.z);
-
-        // Initialise 3D map and determine valid voxels
-        voxelMap_.initialise(nVoxels_.x, nVoxels_.y, nVoxels_.z);
-
-        // Setup iterator for voxel map
-        // Iterate voxels in parallel
-        dissolve::for_each_triplet(
-            ParallelPolicies::seq, voxelMap_.beginIndices(), voxelMap_.endIndices(),
-            [&](auto triplet, auto x, auto y, auto z)
-            {
-                voxelMap_[triplet] = {
-                    Vec3<int>(x, y, z),
-                    voxelCheckFunction(cfg, box_->getReal({(x + 0.5) * voxelSizeFrac_.x, (y + 0.5) * voxelSizeFrac_.y,
-                                                           (z + 0.5) * voxelSizeFrac_.z}))};
-            });
-
-        // Create linear vector of all available voxels
-        auto nFreeVoxels = std::count_if(voxelMap_.begin(), voxelMap_.end(), [](const auto &voxel) { return voxel.second; });
-        freeVoxels_.clear();
-        freeVoxels_.resize(nFreeVoxels);
-        std::copy_if(voxelMap_.begin(), voxelMap_.end(), freeVoxels_.begin(), [](const auto &voxel) { return voxel.second; });
-
-        return nFreeVoxels > 0;
-    }
+    bool generate(const Configuration *cfg, double voxelSize,
+                  const std::function<std::shared_ptr<VoxelKernel>(void)> &kernelGenerator);
     // Return whether the region is valid
     bool isValid() const;
     // Return the fraction free voxels in the region
