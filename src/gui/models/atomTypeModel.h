@@ -29,18 +29,22 @@ class AtomTypeModel : public QAbstractListModel
     // Vector containing checked items (if relevant)
     OptionalReferenceWrapper<std::vector<std::shared_ptr<AtomType>>> checkedItems_;
     // Icon return function
-    std::function<QIcon(const std::shared_ptr<AtomType> &atomType)> iconFunction_;
+    std::function<bool(const std::shared_ptr<AtomType> &atomType)> iconFunction_;
 
     public:
     // Set source AtomType data
     void setData(const std::vector<std::shared_ptr<AtomType>> &atomTypes,
                  OptionalReferenceWrapper<const CoreData> coreData = std::nullopt);
     // Set function to return QIcon for item
-    void setIconFunction(std::function<QIcon(const std::shared_ptr<AtomType> &atomType)> func);
+    void setIconFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func);
     // Set vector containing checked items
     void setCheckStateData(std::vector<std::shared_ptr<AtomType>> &checkedItemsVector);
     // Return object represented by specified model index
     const std::shared_ptr<AtomType> &rawData(const QModelIndex &index) const;
+    // Add a suffix to the name of an AtomType
+    Q_INVOKABLE void addSuffix(int index, QString suffix);
+    // Add a prefix to the name of an AtomType
+    Q_INVOKABLE void addPrefix(int index, QString prefix);
 
     /*
      * QAbstractItemModel overrides
@@ -52,4 +56,5 @@ class AtomTypeModel : public QAbstractListModel
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
 };

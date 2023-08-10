@@ -182,4 +182,19 @@
     <file>icons/frameworkMixture.svg</file>
     <file>icons/selectedAtoms.svg</file>
   </qresource>
+  <qresource prefix="dialogs">
+    <file>qml/widgets/Button.qml</file>
+    <file>qml/widgets/GroupBox.qml</file>
+    <file>qml/widgets/Text.qml</file>
+    <file>qml/AddForcefieldTermsDialog.qml</file>
+    <file>qml/DropDownLabel.qml</file>
+    <file>qml/ForceFieldAssign.qml</file>
+    <file>qml/ForceFieldAtomTypes.qml</file>
+    <file>qml/ForceFieldIntra.qml</file>
+    <file>qml/ForceFieldMaster.qml</file>
+    <file>qml/ForceFieldPicker.qml</file>
+    <file>qml/IconListView.qml</file>
+    <file>qml/ImageRadio.qml</file>
+    <file>qml/PrettyListView.qml</file>
+  </qresource>
 </RCC>

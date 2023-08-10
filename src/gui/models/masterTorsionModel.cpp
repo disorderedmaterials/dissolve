@@ -59,6 +59,7 @@ bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType data
 
     auto &t = terms[row];
 
+    beginResetModel();
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -90,6 +91,7 @@ bool MasterTorsionModel::setTermData(int row, MasterTermModelData::DataType data
         default:
             return false;
     }
+    endResetModel();
 
     return true;
 }

@@ -230,11 +230,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1680528871,
-        "narHash": "sha256-DPb7Z638N94c/4/cXzSx8BdxnxTPFj+QxA7tWIVaBZ4=",
+        "lastModified": 1686232008,
+        "narHash": "sha256-Z//2vkJYSU1/iCTnAnBeg4tOXWtsx5tsEnnS3y/qSM0=",
         "owner": "disorderedmaterials",
         "repo": "qt-idaaas",
-        "rev": "3fb484d010b4efa7aa591e914cb990ba8704ba46",
+        "rev": "99e40b7906cc1944d222a7f81c93280a4beb499d",
         "type": "github"
       },
       "original": {

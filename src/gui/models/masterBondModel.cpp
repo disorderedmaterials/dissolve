@@ -55,6 +55,7 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
 
     auto &t = terms[row];
 
+    beginResetModel();
     switch (dataType)
     {
         case (MasterTermModelData::DataType::Name):
@@ -78,6 +79,7 @@ bool MasterBondModel::setTermData(int row, MasterTermModelData::DataType dataTyp
         default:
             return false;
     }
+    endResetModel();
 
     return true;
 }

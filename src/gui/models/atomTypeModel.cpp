@@ -22,7 +22,7 @@ void AtomTypeModel::setData(const std::vector<std::shared_ptr<AtomType>> &atomTy
 }
 
 // Set function to return QIcon for item
-void AtomTypeModel::setIconFunction(std::function<QIcon(const std::shared_ptr<AtomType> &atomType)> func)
+void AtomTypeModel::setIconFunction(std::function<bool(const std::shared_ptr<AtomType> &atomType)> func)
 {
     iconFunction_ = func;
 }
@@ -60,6 +60,19 @@ int AtomTypeModel::columnCount(const QModelIndex &parent) const
 
 QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
 {
+    if (role >= Qt::UserRole)
+    {
+        auto data = rawData(index);
+        switch (role)
+        {
+            case Qt::UserRole:
+                return QVariant::fromValue(data);
+            case Qt::UserRole + 1:
+                return QString::fromStdString(std::string(data->name()));
+            case Qt::UserRole + 2:
+                return QVariant(iconFunction_(rawData(index)));
+        }
+    }
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
         switch (index.column())
@@ -87,13 +100,11 @@ QVariant AtomTypeModel::data(const QModelIndex &index, int role) const
         }
     }
     else if (role == Qt::DecorationRole && iconFunction_)
-        return QVariant(iconFunction_(rawData(index)));
+        return QIcon(iconFunction_(rawData(index)) ? ":/general/icons/warn.svg" : ":/general/icons/warn.svg");
     else if (role == Qt::CheckStateRole && checkedItems_)
         return std::find(checkedItems_->get().begin(), checkedItems_->get().end(), rawData(index)) == checkedItems_->get().end()
                    ? Qt::Unchecked
                    : Qt::Checked;
-    else if (role == Qt::UserRole)
-        return QVariant::fromValue(rawData(index));
 
     return {};
 }
@@ -200,4 +211,29 @@ QVariant AtomTypeModel::headerData(int section, Qt::Orientation orientation, int
         }
 
     return {};
+}
+
+QHash<int, QByteArray> AtomTypeModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Qt::UserRole] = "raw";
+    roles[Qt::UserRole + 1] = "display";
+    roles[Qt::UserRole + 2] = "icon";
+    return roles;
+}
+
+void AtomTypeModel::addSuffix(int row, QString suffix)
+{
+    auto &data = atomTypes_->get()[row];
+    data->setName(fmt::format("{}{}", data->name(), suffix.toStdString()));
+    auto idx = index(row, 0);
+    emit dataChanged(idx, idx);
+}
+
+void AtomTypeModel::addPrefix(int row, QString prefix)
+{
+    auto &data = atomTypes_->get()[row];
+    data->setName(fmt::format("{}{}", prefix.toStdString(), data->name()));
+    auto idx = index(row, 0);
+    emit dataChanged(idx, idx);
 }

@@ -47,7 +47,12 @@
           libglvnd
           libglvnd.dev
           q.qtbase
+          q.qtbase.dev
           q.qtsvg
+          q.qtshadertools
+          q.qttools
+          q.qtdeclarative
+          q.qtdeclarative.dev
           q.wrapQtAppsHook
         ];
       check_libs = pkgs: with pkgs; [ gtest ];
@@ -177,9 +182,12 @@
           AntlrRuntime_INCLUDE_DIRS =
             "${pkgs.antlr4.runtime.cpp.dev}/include/antlr4-runtime";
           AntlrRuntime_LINK_DIRS = "${pkgs.antlr4.runtime.cpp}/lib";
-          CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache";
+          CMAKE_CXX_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
+          CMAKE_C_COMPILER_LAUNCHER = "${pkgs.ccache}/bin/ccache;${pkgs.distcc}/bin/distcc";
           CMAKE_CXX_FLAGS_DEBUG = "-g -O0";
           CXXL = "${pkgs.stdenv.cc.cc.lib}";
+          QML_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
+          QML2_IMPORT_PATH = "${qt-idaaas.packages.${system}.qtdeclarative}/lib/qt-6/qml/";
           THREADING_LINK_LIBS = "${pkgs.tbb}/lib/libtbb.so";
         };
 

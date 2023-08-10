@@ -5,7 +5,7 @@
 
 MasterTermModel::MasterTermModel(QObject *parent) : QAbstractTableModel(parent) {}
 
-void MasterTermModel::setIconFunction(std::function<QIcon(std::string_view termName)> func) { iconFunction_ = std::move(func); }
+void MasterTermModel::setIconFunction(std::function<bool(std::string_view termName)> func) { iconFunction_ = std::move(func); }
 
 int MasterTermModel::columnCount(const QModelIndex &parent) const { return parent.isValid() ? 0 : 3; }
 
@@ -47,10 +47,15 @@ QVariant MasterTermModel::data(const QModelIndex &index, int role) const
     if (index.row() < 0 || index.row() >= rowCount())
         return {};
 
-    if (role == Qt::DecorationRole && iconFunction_)
-        return QVariant(iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString()));
+    if (role == MasterTermModelData::Roles::HasMaster && iconFunction_)
+        return iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString());
 
-    if (role == Qt::DisplayRole || role == Qt::EditRole)
+    if (role == MasterTermModelData::Roles::Icon && iconFunction_)
+        return QIcon(iconFunction_(getTermData(index.row(), MasterTermModelData::DataType::Name).toString().toStdString())
+                         ? ":/general/icons/warn.svg"
+                         : ":/general/icons/warn.svg");
+
+    if (role == MasterTermModelData::Roles::Display || role == MasterTermModelData::Roles::Edit)
         return getTermData(index.row(), static_cast<MasterTermModelData::DataType>(index.column()));
 
     return {};
@@ -67,4 +72,12 @@ bool MasterTermModel::setData(const QModelIndex &index, const QVariant &value, i
     emit dataChanged(index, index);
 
     return true;
+}
+
+QHash<int, QByteArray> MasterTermModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Qt::DisplayRole] = "display";
+    roles[Qt::DecorationRole] = "icon";
+    return roles;
 }
