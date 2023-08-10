@@ -3,10 +3,7 @@
 
 #include "math/range.h"
 
-Range::Range(std::optional<double> minimum, std::optional<double> maximum)
-{
-    set(minimum, maximum);
-}
+Range::Range(std::optional<double> minimum, std::optional<double> maximum) { set(minimum, maximum); }
 
 /*
  * Data
@@ -47,10 +44,7 @@ void Range::setMaximum(double maximum) { set(minimum_, maximum); }
 double Range::maximum() const { return maximum_ ? *maximum_ : 0.0; }
 
 // Return whether the range contains the specified value
-bool Range::contains(double d) const
-{
-    return isDefined() && (d >= minimum_) && (d <= maximum_);
-}
+bool Range::contains(double d) const { return isDefined() && (d >= minimum_) && (d <= maximum_); }
 
 bool Range::isDefined() const { return (minimum_ && maximum_); }
 
