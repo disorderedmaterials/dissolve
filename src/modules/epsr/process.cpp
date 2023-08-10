@@ -561,8 +561,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
     for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
     {
-        Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", range.minimum(),
-                         range.maximum(), rangeTot /= targets_.size());
+        Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", range.minimum(), range.maximum(),
+                         rangeTot /= targets_.size());
     }
 
     Messenger::print("\n");
