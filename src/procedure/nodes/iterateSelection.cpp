@@ -71,3 +71,5 @@ bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureCon
         } */
     return true;
 }
+
+bool IterateSelectionProcedureNode::finalise(const ProcedureContext &procedureContext) { return true; }
