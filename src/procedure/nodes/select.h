@@ -131,7 +131,7 @@ class SelectProcedureNode : public ProcedureNode
     // Return current site
     OptionalReferenceWrapper<const Site> currentSite() const;
     // Return site vector
-    std::vector<std::tuple<const Site &, int, int>>  returnSites() const;
+    std::vector<std::tuple<const Site &, int, int>> returnSites() const;
 
     /*
      * Branch
