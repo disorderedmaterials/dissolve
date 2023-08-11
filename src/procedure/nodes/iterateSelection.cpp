@@ -74,7 +74,24 @@ bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureCon
                 return false;
         }
     }
+    // Update parameters
+    nSelectedParameter_->setValue(int(sites.size()));
     return true;
 }
 
-bool IterateSelectionProcedureNode::finalise(const ProcedureContext &procedureContext) { return true; }
+bool IterateSelectionProcedureNode::finalise(const ProcedureContext &procedureContext)
+{
+    auto selectionSize = selection_->returnSites().size();
+    // If one exists, finalise the ForEach branch nodes
+    if (!forEachBranch_.finalise(procedureContext))
+        return false;
+
+    // Print out summary information
+    Messenger::print("Select - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(), nSelections_,
+                     selectionSize);
+    Messenger::print("Select - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
+                     nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
+    Messenger::print("Select - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
+
+    return true;
+}
