@@ -30,7 +30,7 @@ class IterateSelectionProcedureNode : public ProcedureNode
     // Defined parameters
     std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
-    std::shared_ptr<ExpressionVariable> nSelectedParameter_;
+    std::shared_ptr<ExpressionVariable> nSelectedParameter_, siteIndexParameter_, stackIndexParameter_, indexParameter_;
     // Selection to iterate over
     std::shared_ptr<const SelectProcedureNode> selection_;
 
@@ -51,6 +51,8 @@ class IterateSelectionProcedureNode : public ProcedureNode
     int nSelections_;
     // Cumulative number of sites ever selected
     unsigned long int nCumulativeSites_;
+    // Current site
+    OptionalReferenceWrapper<const Site> currentSite_;
 
     /*
      * Branch

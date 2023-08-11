@@ -54,21 +54,26 @@ bool IterateSelectionProcedureNode::prepare(const ProcedureContext &procedureCon
 // Execute node
 bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureContext)
 {
-    /*     auto sites = returnSite();
-        // Create our site vector
-        sites.clear();
-        // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
-        if (!forEachBranch_.empty())
+    // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
+    auto sites = selection_->returnSites();
+    currentSite_ = std::nullopt;
+    if (!forEachBranch_.empty())
+    {
+        auto index = 1;
+        for (const auto &siteInfo : sites)
         {
-            for (currentSiteIndex_ = 0; currentSiteIndex_ < sites.size(); ++currentSiteIndex_)
-            {
-                ++nCumulativeSites_;
+            currentSite_ = std::get<0>(siteInfo);
+            siteIndexParameter_->setValue(std::get<1>(siteInfo));
+            stackIndexParameter_->setValue(std::get<2>(siteInfo));
+            indexParameter_->setValue(index++);
 
-                // If the branch fails at any point, return failure here.  Otherwise, continue the loop
-                if (!forEachBranch_.execute(procedureContext))
-                    return false;
-            }
-        } */
+            ++nCumulativeSites_;
+
+            // If the branch fails at any point, return failure here.  Otherwise, continue the loop
+            if (!forEachBranch_.execute(procedureContext))
+                return false;
+        }
+    }
     return true;
 }
 

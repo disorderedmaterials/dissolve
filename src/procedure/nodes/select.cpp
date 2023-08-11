@@ -178,7 +178,7 @@ double SelectProcedureNode::nAvailableSitesAverage() const { return double(nAvai
 OptionalReferenceWrapper<const Site> SelectProcedureNode::currentSite() const { return currentSite_; }
 
 // Return sites vector
-std::vector<std::tuple<const Site &, int, int>> SelectProcedureNode::returnSite() { return sites_; }
+std::vector<std::tuple<const Site &, int, int>> SelectProcedureNode::returnSites() const { return sites_; }
 
 /*
  * Branch
