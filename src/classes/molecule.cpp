@@ -4,7 +4,7 @@
 #include "classes/molecule.h"
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "classes/speciesAtom.h"
+#include "classes/species.h"
 #include "classes/speciesBond.h"
 #include "templates/algorithms.h"
 
@@ -13,7 +13,11 @@
  */
 
 // Set Species that this Molecule represents
-void Molecule::setSpecies(const Species *sp) { species_ = sp; }
+void Molecule::setSpecies(const Species *sp)
+{
+    species_ = sp;
+    atoms_.reserve(sp->nAtoms());
+}
 
 // Return Species that this Molecule represents
 const Species *Molecule::species() const { return species_; }
