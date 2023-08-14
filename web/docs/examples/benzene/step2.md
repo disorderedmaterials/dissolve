@@ -6,10 +6,10 @@ type: docs
 Time to create a suitable liquid configuration for our simulation using the predefined "simple random mix" generator:
 
 {{< action type="menu" text="Configuration &#8680; Create..." />}}
-{{< action type="mouse" >}}Choose the benzene species and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}Leave the configuration type as _Mixture_ and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
-{{< action type="mouse" >}}Leave the box style as _Fixed Geometry, Undefined Size_ and press {{< gui-button text="Next" icon="general_arrowright" >}}{{< /action >}}
-{{< action type="edit" >}}Set the _Density_ to `0.876` and the units to `g/cm3`, and the _Multiplier_ to `100`. You'll see that this gives us a box with side length of just over 24.5 &#8491; which is fairly small, but in the interests of speed we'll go with it for now so hit {{< gui-button text="Finish" icon="general_true" >}}.{{< /action >}}
+{{< action type="mouse" >}}Choose the benzene species and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}Leave the configuration type as _Mixture_ and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="mouse" >}}Leave the box style as _Fixed Geometry, Undefined Size_ and press {{< gui-button text="Next" icon="arrowright" >}}{{< /action >}}
+{{< action type="edit" >}}Set the _Density_ to `0.876` and the units to `g/cm3`, and the _Multiplier_ to `100`. You'll see that this gives us a box with side length of just over 24.5 &#8491; which is fairly small, but in the interests of speed we'll go with it for now so hit {{< gui-button text="Finish" icon="true" >}}.{{< /action >}}
 {{< action type="edit" text="Double-click on the configuration tab's title and change its name to `Liquid`" />}}
 
 {{< cimage src="../benzenebox.png" caption="Initial, randomised benzene box containing 100 molecules" >}}

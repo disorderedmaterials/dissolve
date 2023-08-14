@@ -9,10 +9,11 @@
 #include "classes/species.h"
 #include "kernels/producer.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/molShake/molShake.h"
 
 // Run main processing
-Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult MolShakeModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -22,7 +23,7 @@ Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve, const Proces
     }
 
     // Retrieve control parameters from Configuration
-    auto rCut = cutoffDistance_.value_or(dissolve.pairPotentialRange());
+    auto rCut = cutoffDistance_.value_or(moduleContext.dissolve().pairPotentialRange());
     const auto rRT = 1.0 / (.008314472 * targetConfiguration_->temperature());
 
     // Print argument/parameter summary
@@ -38,11 +39,12 @@ Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve, const Proces
                          joinStrings(restrictToSpecies_, "  ", [](const auto &sp) { return sp->name(); }));
     Messenger::print("\n");
 
-    ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
     Timer commsTimer(false);
 
     // Create a Molecule distributor
-    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), procPool, strategy);
+    RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
+                                    moduleContext.processPool(), strategy);
 
     // Determine target molecules from the restrictedSpecies vector (if any) and give to the distributor
     if (!restrictToSpecies_.empty())
@@ -59,11 +61,12 @@ Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve, const Proces
     }
 
     // Create a local ChangeStore and a suitable EnergyKernel
-    ChangeStore changeStore(procPool, commsTimer);
-    auto kernel = KernelProducer::energyKernel(targetConfiguration_, procPool, dissolve.potentialMap(), rCut);
+    ChangeStore changeStore(moduleContext.processPool(), commsTimer);
+    auto kernel = KernelProducer::energyKernel(targetConfiguration_, moduleContext.processPool(),
+                                               moduleContext.dissolve().potentialMap(), rCut);
 
     // Initialise the random number buffer
-    RandomBuffer randomBuffer(procPool, ProcessPool::subDivisionStrategy(strategy), commsTimer);
+    RandomBuffer randomBuffer(moduleContext.processPool(), ProcessPool::subDivisionStrategy(strategy), commsTimer);
 
     int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0,
                nGeneralAttempts = 0;
@@ -218,17 +221,17 @@ Module::ExecutionResult MolShakeModule::process(Dissolve &dissolve, const Proces
     timer.stop();
 
     // Collect statistics across all processes
-    if (!procPool.allSum(&totalDelta, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&totalDelta, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nGeneralAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nGeneralAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nTranslationAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nTranslationAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nTranslationsAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nTranslationsAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nRotationAttempts, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nRotationAttempts, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
-    if (!procPool.allSum(&nRotationsAccepted, 1, strategy, commsTimer))
+    if (!moduleContext.processPool().allSum(&nRotationsAccepted, 1, strategy, commsTimer))
         return ExecutionResult::Failed;
 
     Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);

@@ -8,7 +8,7 @@ At this point we would normally add an evolution layer in order to move our conf
 
 {{< action type="menu" text="Layer &#8680; Create... &#8680; Empty" />}}
 {{< step text="Double-click the layer tab and rename it to `Import`" />}}
-{{< action type="mouse">}}Show the module palette for the current layer by clicking the {{< gui-button icon="general_palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
+{{< action type="mouse">}}Show the module palette for the current layer by clicking the {{< gui-button icon="palette" text="Show Available Modules">}} button at the bottom of the module list on the left{{< /action >}}
 {{< action type="mouse">}}Drag an {{< module "ImportTrajectory" >}} module from the _Import_ section into the layer{{< /action >}}
 
 An important thing to note here is that the {{< module "ImportTrajectory" >}} module should run every iteration - otherwise, there is the risk of averaging calculated quantities over identical configuration snapshots in the trajectory and polluting your results.

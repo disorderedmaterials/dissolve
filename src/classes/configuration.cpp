@@ -9,6 +9,7 @@
 #include "classes/cell.h"
 #include "classes/potentialMap.h"
 #include "classes/species.h"
+#include "main/dissolve.h"
 #include "modules/energy/energy.h"
 
 Configuration::Configuration() : generator_(ProcedureNode::GenerationContext, "Generator")
@@ -25,8 +26,8 @@ void Configuration::clear()
     empty();
 
     // Reset size factors
-    requestedSizeFactor_ = 1.0;
-    appliedSizeFactor_ = 1.0;
+    requestedSizeFactor_ = std::nullopt;
+    appliedSizeFactor_ = std::nullopt;
 
     // Reset box / Cells
     requestedCellDivisionLength_ = 7.0;
@@ -101,7 +102,7 @@ bool Configuration::initialiseContent(const ProcedureContext &procedureContext)
     // Clear existing content
     empty();
 
-    appliedSizeFactor_ = 1.0;
+    appliedSizeFactor_ = std::nullopt;
 
     // Run the generator Procedure
     if (!generate(procedureContext))
@@ -135,8 +136,8 @@ SerialisedValue Configuration::serialise() const
 
     if (requestedCellDivisionLength_ != defaultCellDivisionLength_)
         configuration["cellDivisionLength"] = requestedCellDivisionLength_;
-    if (requestedSizeFactor_ != defaultSizeFactor_)
-        configuration["sizeFactor"] = requestedSizeFactor_;
+    if (requestedSizeFactor_.has_value())
+        configuration["sizeFactor"] = requestedSizeFactor_.value();
     if (temperature_ != defaultTemperature_)
         configuration["temperature"] = temperature_;
 

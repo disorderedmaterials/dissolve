@@ -367,7 +367,7 @@
        </property>
        <property name="icon">
         <iconset resource="main.qrc">
-         <normaloff>:/general/icons/general_palette.svg</normaloff>:/general/icons/general_palette.svg</iconset>
+         <normaloff>:/general/icons/palette.svg</normaloff>:/general/icons/palette.svg</iconset>
        </property>
        <property name="iconSize">
         <size>

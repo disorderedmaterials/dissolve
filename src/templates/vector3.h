@@ -10,6 +10,8 @@
 #include <fmt/format.h>
 #include <stdexcept>
 
+class NodeValue;
+
 // 3D vector
 template <class T> class Vec3 : public Serialisable<>
 {
@@ -416,6 +418,7 @@ template <class T> class Vec3 : public Serialisable<>
         set(b, temp);
     }
 
+    // Express as a serialisable value
     SerialisedValue serialise() const override
     {
         toml::array result;
@@ -424,10 +427,26 @@ template <class T> class Vec3 : public Serialisable<>
         result.push_back(z);
         return result;
     }
+
+    // Read values from a serialisable value when no context is required
+    // This will throw an exception for types that require context (i.e. NodeValue)
     void deserialise(const SerialisedValue &node) override
     {
-        x = toml::get<T>(node[0]);
-        y = toml::get<T>(node[1]);
-        z = toml::get<T>(node[2]);
+        if constexpr (std::is_same_v<T, NodeValue>)
+            throw std::runtime_error("Cannot build NodeValue witout context");
+        else
+        {
+            x = toml::get<T>(node[0]);
+            y = toml::get<T>(node[1]);
+            z = toml::get<T>(node[2]);
+        }
+    }
+
+    // Read values from a serialisable value with a required context
+    template <typename... Context> void deserialise(const SerialisedValue &node, Context... context)
+    {
+        x.deserialise(node[0], context...);
+        y.deserialise(node[1], context...);
+        z.deserialise(node[2], context...);
     }
 };

@@ -9,8 +9,8 @@
 CheckIndicator::CheckIndicator(QWidget *parent) : QLabel(parent)
 {
     // Set minimum size
-    setMinimumSize(QSize(20, 20));
-    setMaximumSize(QSize(20, 20));
+    setMinimumSize(QSize(16, 16));
+    setMaximumSize(QSize(16, 16));
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     setScaledContents(true);
 
@@ -29,13 +29,13 @@ CheckIndicator::IndicatorState CheckIndicator::state() const { return state_; }
 void CheckIndicator::updateStateIcon()
 {
     if (state_ == CheckIndicator::OKState)
-        setPixmap(QPixmap(":/general/icons/general_true.svg"));
+        setPixmap(QPixmap(":/general/icons/true.svg"));
     else if (state_ == CheckIndicator::NotOKState)
-        setPixmap(QPixmap(":/general/icons/general_false.svg"));
+        setPixmap(QPixmap(":/general/icons/false.svg"));
     else if (state_ == CheckIndicator::WarningState)
-        setPixmap(QPixmap(":/general/icons/general_warn.svg"));
+        setPixmap(QPixmap(":/general/icons/warn.svg"));
     else
-        setPixmap(QPixmap(":/general/icons/general_unknown.svg"));
+        setPixmap(QPixmap(":/general/icons/unknown.svg"));
 }
 
 // Set indicator to OK (green tick)

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# SDFs 
+# Note, pdens code was modified to invert y axis of generated axes since it is incorrect w.r.t. Dissolve
+pdens benzene181.HISu benzene181.OUT 1 1 -axis 1 1 7 3 5
+# pdens benzene181.HISu benzene181.OUT 1 1 -axis 1 1 7 3 5 -orient 1 3 0.0 -10.0

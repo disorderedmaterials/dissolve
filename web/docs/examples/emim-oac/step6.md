@@ -8,7 +8,7 @@ Now that we have our structure factor calculations set up let's run for a few st
 
 {{< action type="key" >}}Ctrl-5{{< /action >}}
 
-You can go to the {{< gui-button text="Output" icon="general_output" >}} tab of any of the {{< module "NeutronSQ" >}} modules and see the comparison of the F(Q) - we re-plot all seven together for convenience below (this is output from the {{< module "EPSR" >}} module):
+You can go to the {{< gui-button text="Output" icon="output" >}} tab of any of the {{< module "NeutronSQ" >}} modules and see the comparison of the F(Q) - we re-plot all seven together for convenience below (this is output from the {{< module "EPSR" >}} module):
 
 {{< cimage src="../equilibrated-fq.png" caption="Calculated total structure factors (dashed lines) compared to the experimental data (solid lines) in the equilibrated simulation" >}}
 
@@ -23,7 +23,7 @@ Because of the stronger intermolecular interactions manifesting in a system of i
 For the present system a value of about 17 is optimal, and we'll put this in straight away:
 
 {{< action type="tabs">}}Go to the {{< gui-tab type="layer" text="Refine (EPSR)">}} layer tab{{< /action >}}
-{{< action type="mouse">}}Select the {{< module "EPSR" >}} module and show its {{< gui-button icon="general_output" text="Output" >}} tab{{< /action >}}
+{{< action type="mouse">}}Select the {{< module "EPSR" >}} module and show its {{< gui-button icon="output" text="Output" >}} tab{{< /action >}}
 {{< action type="edit" text="Change the **EReq** value to `17`" />}}
 
 Running the simulation for another 1000 iterations should give us a good refined structure:

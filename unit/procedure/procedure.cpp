@@ -5,6 +5,7 @@
 #include "keywords/node.h"
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
+#include "procedure/nodes/ifValueInRange.h"
 #include "procedure/nodes/parameters.h"
 #include "procedure/nodes/select.h"
 #include <gtest/gtest.h>
@@ -19,6 +20,12 @@ TEST(ProcedureTest, Context)
 
     // Select A
     auto selectA = procedure.createRootNode<SelectProcedureNode>("A");
+    // -- Select nodes are valid in most contexts except "Operate"
+    EXPECT_TRUE(selectA->isContextRelevant(ProcedureNode::NodeContext::AnyContext));
+    EXPECT_TRUE(selectA->isContextRelevant(ProcedureNode::NodeContext::NoContext));
+    EXPECT_TRUE(selectA->isContextRelevant(ProcedureNode::NodeContext::AnalysisContext));
+    EXPECT_TRUE(selectA->isContextRelevant(ProcedureNode::NodeContext::GenerationContext));
+    EXPECT_FALSE(selectA->isContextRelevant(ProcedureNode::NodeContext::OperateContext));
     auto &forEachA = selectA->branch()->get();
     EXPECT_TRUE(procedure.rootSequence().check());
 
@@ -37,6 +44,13 @@ TEST(ProcedureTest, Context)
 
     // Node with same name as an existing one
     EXPECT_THROW(procedure.createRootNode<BoxProcedureNode>("A"), std::runtime_error);
+
+    // Create a new node with an InheritContext type
+    auto ifValue = forEachB.create<IfValueInRangeProcedureNode>("IfValue");
+    auto &ifThen = ifValue->branch()->get();
+    EXPECT_TRUE(procedure.rootSequence().check());
+    EXPECT_EQ(ifThen.context(), ProcedureNode::NodeContext::AnalysisContext);
+    EXPECT_TRUE(ifValue->isContextRelevant(forEachB.context()));
 }
 
 TEST(ProcedureTest, Scope)
@@ -118,12 +132,10 @@ TEST(ProcedureTest, Parameters)
     auto bigVars = bigHole->getParameters();
     EXPECT_EQ(bigVars.size(), 6);
 
-    // Set an equation in A via a NodeValue
-    NodeValue simple("20.0");
-    NodeValue eggPinFromSmall("1 + Egg * Pin", smallVars), eggPinFromBig("1 + Egg * Pin", smallVars);
-    NodeValue eggBus("Egg / Bus", bigVars), busMeaning("Bus + MeaningOfLife", bigVars);
-    EXPECT_TRUE(simple.isValid() && eggPinFromSmall.isValid() && eggPinFromBig.isValid() && eggBus.isValid() &&
-                busMeaning.isValid());
+    // Set an equation in A via a NodeValueProxy
+    NodeValueProxy simple("20.0");
+    NodeValueProxy eggPinFromSmall("1 + Egg * Pin"), eggPinFromBig("1 + Egg * Pin");
+    NodeValueProxy eggBus("Egg / Bus"), busMeaning("Bus + MeaningOfLife");
     EXPECT_TRUE(smallHole->keywords().set("Population", simple));
     EXPECT_TRUE(smallHole->keywords().set("Population", eggPinFromSmall));
     EXPECT_TRUE(smallHole->keywords().set("Population", eggPinFromBig));

@@ -16,6 +16,7 @@
 #include "gui/keywordWidgets/integer.hui"
 #include "gui/keywordWidgets/interactionPotential.h"
 #include "gui/keywordWidgets/isotopologueSet.h"
+#include "gui/keywordWidgets/layer.h"
 #include "gui/keywordWidgets/module.h"
 #include "gui/keywordWidgets/moduleVector.h"
 #include "gui/keywordWidgets/node.h"
@@ -65,6 +66,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<IntegerKeyword, IntegerKeywordWidget>();
     registerProducer<InteractionPotentialBaseKeyword, InteractionPotentialKeywordWidget>();
     registerProducer<IsotopologueSetKeyword, IsotopologueSetKeywordWidget>();
+    registerProducer<LayerKeyword, LayerKeywordWidget>();
     registerProducer<ModuleKeywordBase, ModuleKeywordWidget>();
     registerProducer<ModuleVectorKeyword, ModuleVectorKeywordWidget>();
     registerProducer<NodeKeywordBase, NodeKeywordWidget>();

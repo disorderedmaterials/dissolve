@@ -82,9 +82,7 @@ bool ModuleLayer::canRun(GenericList &processingModuleData) const
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
     {
         // Check that Configurations have unmodified size factor
-        if (std::any_of(cfgs.begin(), cfgs.end(),
-                        [](const auto *cfg)
-                        { return std::abs(cfg->appliedSizeFactor() - 1.0) > 2 * std::numeric_limits<double>::epsilon(); }))
+        if (std::any_of(cfgs.begin(), cfgs.end(), [](const auto *cfg) { return cfg->appliedSizeFactor(); }))
         {
             Messenger::print("One or more configurations have an applied size factor, so the layer will not run.\n");
             return false;
@@ -132,6 +130,7 @@ bool ModuleLayer::contains(Module *searchModule) const
 
 // Return vector of Modules
 std::vector<std::unique_ptr<Module>> &ModuleLayer::modules() { return modules_; }
+const std::vector<std::unique_ptr<Module>> &ModuleLayer::modules() const { return modules_; }
 
 // Return map of modules in the layer, optionally preceding the specified module
 std::map<ModuleTypes::ModuleType, std::vector<const Module *>> ModuleLayer::modulesAsMap(const Module *beforeThis) const
@@ -153,12 +152,12 @@ std::map<ModuleTypes::ModuleType, std::vector<const Module *>> ModuleLayer::modu
  */
 
 // Run set-up stages for all modules
-bool ModuleLayer::setUpAll(Dissolve &dissolve, const ProcessPool &procPool)
+bool ModuleLayer::setUpAll(ModuleContext &moduleContext)
 {
     auto result = true;
 
     for (auto &module : modules_)
-        if (!module->setUp(dissolve, procPool))
+        if (!module->setUp(moduleContext))
             result = false;
 
     return result;
@@ -198,7 +197,7 @@ SerialisedValue ModuleLayer::serialise() const
         result["requireEnergyStability"] = true;
     if (runControlFlags_.isSet(ModuleLayer::RunControlFlag::SizeFactors))
         result["requireSizeFactors"] = true;
-    Serialisable::fromVectorToTable(modules_, "modules", result);
+    Serialisable::fromVector(modules_, "modules", result);
     return result;
 }
 
@@ -212,13 +211,11 @@ void ModuleLayer::deserialise(const SerialisedValue &node, const CoreData &coreD
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::EnergyStability);
     if (toml::find_or<bool>(node, "requireSizeFactors", false))
         runControlFlags_.setFlag(ModuleLayer::RunControlFlag::SizeFactors);
-    Serialisable::toMap(
-        node, "modules",
-        [&coreData, this](const auto &key, const SerialisedValue &data)
-        {
-            auto *module =
-                append(*ModuleTypes::moduleType(std::string_view(std::string(toml::find<std::string>(data, "type"), {}))), {});
-            module->setName(key);
-            module->deserialise(data, coreData);
-        });
+    Serialisable::toVector(node, "modules",
+                           [&coreData, this](const SerialisedValue &data)
+                           {
+                               auto *module =
+                                   append(*ModuleTypes::moduleType(std::string(toml::find<std::string>(data, "type"), {})), {});
+                               module->deserialise(data, coreData);
+                           });
 }

@@ -13,6 +13,7 @@
 class Dissolve;
 class Configuration;
 class ModuleWidget;
+class ModuleContext;
 class QWidget;
 
 // Module Types
@@ -57,6 +58,8 @@ enum ModuleType
 };
 // Return module type string for specified type enumeration
 std::string moduleType(ModuleTypes::ModuleType type);
+// Return the lowerCamelCase name of the module type provided
+std::string lccModuleType(ModuleTypes::ModuleType type);
 // Return module type enumeration for specified module type string
 std::optional<ModuleTypes::ModuleType> moduleType(std::string_view keyword);
 }; // namespace ModuleTypes
@@ -136,16 +139,16 @@ class Module : public Serialisable<const CoreData &>
      */
     private:
     // Run main processing
-    virtual ExecutionResult process(Dissolve &dissolve, const ProcessPool &procPool) = 0;
+    virtual ExecutionResult process(ModuleContext &moduleContext) = 0;
 
     public:
     // Set target data
     virtual void setTargets(const std::vector<std::unique_ptr<Configuration>> &configurations,
                             const std::map<ModuleTypes::ModuleType, std::vector<const Module *>> &moduleMap);
     // Run set-up stage
-    virtual bool setUp(Dissolve &dissolve, const ProcessPool &procPool, Flags<KeywordBase::KeywordSignal> actionSignals = {});
+    virtual bool setUp(ModuleContext &moduleContext, Flags<KeywordBase::KeywordSignal> actionSignals = {});
     // Run main processing stage
-    ExecutionResult executeProcessing(Dissolve &dissolve, const ProcessPool &procPool);
+    ExecutionResult executeProcessing(ModuleContext &moduleContext);
 
     /*
      * Timing

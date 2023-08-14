@@ -67,6 +67,17 @@ void DissolveWindow::setupIteration(int count)
     fullUpdate();
 
     emit iterate(count);
+
+    // Start the main timer
+    elapsedTimer_.zero();
+    if (count == -1)
+    {
+        elapsedTimer_.start();
+    }
+    else
+    {
+        elapsedTimer_.zero();
+    }
 }
 
 // Disable editing
@@ -114,6 +125,8 @@ void DissolveWindow::allowEditing()
 // All iterations requested are complete
 void DissolveWindow::iterationsComplete()
 {
+    elapsedTimer_.stop();
+
     allowEditing();
     Renderable::setSourceDataAccessEnabled(true);
     dissolveIterating_ = false;
@@ -171,7 +184,7 @@ void DissolveWindow::closeTab(QWidget *page)
         auto *layerTab = dynamic_cast<LayerTab *>(tab);
         layerTab->removeModuleControlWidgets();
         ui_.MainTabs->removeByPage(page);
-        dissolve_.removeProcessingLayer(layerTab->moduleLayer());
+        dissolve_.coreData().removeProcessingLayer(layerTab->moduleLayer());
         setModified({DissolveSignals::ModulesMutated});
     }
     else if (tab->type() == MainTab::TabType::Species)

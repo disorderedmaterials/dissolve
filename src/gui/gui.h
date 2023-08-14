@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/timer.h"
 #include "gui/mainTab.h"
 #include "gui/outputHandler.hui"
 #include "gui/signals.h"
@@ -69,10 +70,12 @@ class DissolveWindow : public QMainWindow
     QLabel *restartFileIndicator_;
     // Label for iteration number
     QLabel *iterationLabel_;
-    // Label for simulation ETA (when using RunFor)
-    QLabel *etaLabel_;
+    // Label for simulation timer (ETA if RunFor, time elapsed if Run)
+    QLabel *timerLabel_;
     // General status indicator and label
     QLabel *statusIndicator_, *statusLabel_;
+    // Main loop iteration timer
+    Timer elapsedTimer_{Timer(false)};
 
     private:
     // Add text label to status bar
@@ -105,7 +108,6 @@ class DissolveWindow : public QMainWindow
     void updateWhileRunning(int iterationsRemaining);
     // Clear the messages window
     void clearMessages();
-
     /*
      * Main Menu
      */

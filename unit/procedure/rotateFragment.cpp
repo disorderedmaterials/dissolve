@@ -46,7 +46,7 @@ TEST(RotateTest, Benzene)
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
 
     // Set up the prior configuration
-    cfg->generate(ProcedureContext(ProcessPool(), dissolve.potentialMap()));
+    cfg->generate({ProcessPool(), dissolve});
 
     // Move the molecule to the origin
     auto mol = cfg->molecule(0);
@@ -56,17 +56,17 @@ TEST(RotateTest, Benzene)
     std::vector<Vec3<double>> coordinatesBefore(mol->nAtoms()), coordinatesAfter(mol->nAtoms());
     std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesBefore.begin(), [&](const auto& at) { return at->r(); });
 
-    // Rotate Benzene around the Z-Axis of the site (which is defined at the COG)
+    // Rotate Benzene around the Z-Axis of the site (which is defined at the COG, which is at the origin)
     auto rotate = procedure.createRootNode<RotateFragmentProcedureNode>("RotateBenzene", select);
     rotate->keywords().setEnumeration("Axis", OrientedSite::SiteAxis::ZAxis);
 
     for (auto x = 180.0; x <= 360.0; x+= 180.0)
     {
         // Rotate by 'x' degrees
-        rotate->keywords().set("Rotation", NodeValue{x});
+        rotate->keywords().set("Rotation", NodeValueProxy(x));
 
         // Re-generate the configuration
-        cfg->generate(ProcedureContext(ProcessPool(), dissolve.potentialMap()));
+        cfg->generate({ProcessPool(), dissolve});
 
         // Move the molecule to the origin
         mol = cfg->molecule(0);

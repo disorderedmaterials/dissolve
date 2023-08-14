@@ -178,7 +178,7 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/general/icons/general_procedure.svg</normaloff>:/general/icons/general_procedure.svg</iconset>
+             <normaloff>:/general/icons/procedure.svg</normaloff>:/general/icons/procedure.svg</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -204,7 +204,7 @@
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
-             <normaloff>:/general/icons/general_screen.svg</normaloff>:/general/icons/general_screen.svg</iconset>
+             <normaloff>:/general/icons/screen.svg</normaloff>:/general/icons/screen.svg</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>

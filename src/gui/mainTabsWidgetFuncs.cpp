@@ -152,11 +152,11 @@ void MainTabsWidget::clearTabs()
 
     // -- Messages
     addTab(messagesTab_->page(), "Messages");
-    setTabIcon(messagesTab_->page(), QIcon(":/tabs/icons/tabs_messages.svg"));
+    setTabIcon(messagesTab_->page(), QIcon(":/general/icons/messages.svg"));
     allTabs_.push_back(messagesTab_.data());
     // -- Forcefield
     addTab(forcefieldTab_->page(), "Forcefield");
-    setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
+    setTabIcon(forcefieldTab_->page(), QIcon(":/general/icons/ff.svg"));
     allTabs_.push_back(forcefieldTab_.data());
 }
 
@@ -192,7 +192,7 @@ void MainTabsWidget::reconcileTabs()
             allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), spTab.data());
             insertTab(baseIndex + currentTabIndex, spTab.data(), tabTitle);
             addTabCloseButton(spTab->page());
-            setTabIcon(spTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
+            setTabIcon(spTab->page(), QIcon(":/general/icons/species.svg"));
         }
 
         ++currentTabIndex;
@@ -225,7 +225,7 @@ void MainTabsWidget::reconcileTabs()
             allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), cfgTab.data());
             insertTab(baseIndex + currentTabIndex, cfgTab.data(), tabTitle);
             addTabCloseButton(cfgTab->page());
-            setTabIcon(cfgTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
+            setTabIcon(cfgTab->page(), QIcon(":/general/icons/configuration.svg"));
         }
 
         ++currentTabIndex;
@@ -235,7 +235,7 @@ void MainTabsWidget::reconcileTabs()
     // Processing Layers - Global tab indices run from 1+nSpecies+nConfigurations (first tab after last Configuration) to
     // 1+nSpecies+nConfigurations+nProcessingLayers
     currentTabIndex = 0;
-    for (const auto &layer : dissolve.processingLayers())
+    for (const auto &layer : dissolve.coreData().processingLayers())
     {
         // Loop over existing tabs
         while (currentTabIndex < processingLayerTabs_.size())
@@ -244,8 +244,8 @@ void MainTabsWidget::reconcileTabs()
             if (processingLayerTabs_[currentTabIndex]->moduleLayer() == layer.get())
             {
                 setTabIcon(processingLayerTabs_[currentTabIndex]->page(), layer->isEnabled()
-                                                                              ? QIcon(":/tabs/icons/tabs_layer.svg")
-                                                                              : QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+                                                                              ? QIcon(":/general/icons/layer.svg")
+                                                                              : QIcon(":/general/icons/layer_disabled.svg"));
                 break;
             }
             else
@@ -264,14 +264,13 @@ void MainTabsWidget::reconcileTabs()
             allTabs_.emplace(std::next(allTabs_.begin(), baseIndex + currentTabIndex), layerTab.data());
             insertTab(baseIndex + currentTabIndex, layerTab.data(), tabTitle);
             addTabCloseButton(layerTab->page());
-            setTabIcon(processingLayerTabs_[currentTabIndex]->page(), layer->isEnabled()
-                                                                          ? QIcon(":/tabs/icons/tabs_layer.svg")
-                                                                          : QIcon(":/tabs/icons/tabs_layer_disabled.svg"));
+            setTabIcon(processingLayerTabs_[currentTabIndex]->page(),
+                       layer->isEnabled() ? QIcon(":/general/icons/layer.svg") : QIcon(":/general/icons/layer_disabled.svg"));
         }
 
         ++currentTabIndex;
     }
-    baseIndex += dissolve.nProcessingLayers();
+    baseIndex += dissolve.coreData().nProcessingLayers();
 }
 
 // Remove tab containing the specified page widget
@@ -430,7 +429,7 @@ QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
 
     // Create a suitable tool button for the tab
     auto *closeButton = new QToolButton;
-    closeButton->setIcon(QIcon(":/general/icons/general_cross.svg"));
+    closeButton->setIcon(QIcon(":/general/icons/cross.svg"));
     closeButton->setIconSize(QSize(10, 10));
     closeButton->setAutoRaise(true);
     mainTabsBar_->setTabButton(tabIndex, QTabBar::RightSide, closeButton);

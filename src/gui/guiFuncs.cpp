@@ -19,6 +19,9 @@
 #include <QMessageBox>
 #include <iostream>
 
+// Default timer text
+const QString defaultTimerText{"Idle"};
+
 DissolveWindow::DissolveWindow(Dissolve &dissolve)
     : QMainWindow(nullptr), dissolve_(dissolve), recentFileLimit_(10), threadController_(this, dissolve)
 {
@@ -43,16 +46,16 @@ DissolveWindow::DissolveWindow(Dissolve &dissolve)
     refreshing_ = false;
     modified_ = false;
     dissolveIterating_ = false;
+    elapsedTimer_.zero();
 
     // Create statusbar widgets
-    addStatusBarIcon(":/control/icons/control_step.svg")->setToolTip("Current step / iteration number");
+    addStatusBarIcon(":/general/icons/step.svg")->setToolTip("Current step / iteration number");
     iterationLabel_ = addStatusBarLabel("00000");
     iterationLabel_->setToolTip("Current step / iteration number");
-    addStatusBarIcon(":/general/icons/general_clock.svg")->setToolTip("Time remaining to completion");
-    etaLabel_ = addStatusBarLabel("--:--:--");
-    etaLabel_->setToolTip("Time remaining to completion");
-    restartFileIndicator_ = addStatusBarIcon(":/general/icons/general_restartfile.svg");
-    statusIndicator_ = addStatusBarIcon(":/general/icons/general_true.svg", false);
+    addStatusBarIcon(":/general/icons/clock.svg");
+    timerLabel_ = addStatusBarLabel(defaultTimerText);
+    restartFileIndicator_ = addStatusBarIcon(":/general/icons/restartfile.svg");
+    statusIndicator_ = addStatusBarIcon(":/general/icons/true.svg", false);
     statusLabel_ = addStatusBarLabel("Unknown", false);
     statusLabel_->setOpenExternalLinks(false);
     connect(statusLabel_, SIGNAL(linkActivated(const QString)), this, SLOT(statusLabelLinkClicked(const QString)));
@@ -220,7 +223,7 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
 
     Messenger::banner("Setting Up Processing Modules");
 
-    if (!dissolve_.setUpProcessingLayerModules())
+    if (!dissolve_.coreData().setUpProcessingLayerModules(dissolve_))
         return false;
 
     // Handle restart file loading?
@@ -236,6 +239,10 @@ bool DissolveWindow::loadInputFile(std::string_view inputFile, bool handleRestar
 
         fullUpdate();
     }
+
+    // Empty timer text
+    elapsedTimer_.zero();
+    timerLabel_->setText(defaultTimerText);
 
     return true;
 }
@@ -300,17 +307,21 @@ void DissolveWindow::updateStatusBar()
     {
         statusLabel_->setText(QString("%1 %2 (see <a href='Messages'>Messages</a>)")
                                   .arg(QString::number(Messenger::nErrors()), Messenger::nErrors() == 1 ? "Error" : "Errors"));
-        statusIndicator_->setPixmap(QPixmap(":/general/icons/general_false.svg"));
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/false.svg"));
     }
     else if (dissolveIterating_)
     {
         statusLabel_->setText("Running (ESC to stop)");
-        statusIndicator_->setPixmap(QPixmap(":/control/icons/control_play.svg"));
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/play.svg"));
+    }
+    else if (!dissolveIterating_ && elapsedTimer_.secondsElapsed() > 0.0)
+    {
+        timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
     }
     else if (ui_.MainStack->currentIndex() == 1)
     {
         statusLabel_->setText("Idle");
-        statusIndicator_->setPixmap(QPixmap(":/general/icons/general_true.svg"));
+        statusIndicator_->setPixmap(QPixmap(":/general/icons/true.svg"));
     }
     else
     {
@@ -401,18 +412,23 @@ void DissolveWindow::fullUpdate()
 // Update while running
 void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 {
+
     refreshing_ = true;
 
     // Set current iteration number
     iterationLabel_->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
-
+    // Text is set to time elapsed if iterating indefinitely
+    if (iterationsRemaining == -1)
+    {
+        timerLabel_->setText(QString::fromStdString(fmt::format("Time elapsed: {}", elapsedTimer_.elapsedTimeString(true))));
+    }
     // Set ETA text if we can
-    if (iterationsRemaining == -1 || iterationsRemaining == 0)
-        etaLabel_->setText("--:--:--");
     else
     {
         auto estimatedTime = dissolve_.estimateRequiredTime(iterationsRemaining);
-        etaLabel_->setText(estimatedTime ? QString::fromStdString(Timer::etaString(estimatedTime.value())) : "??:??:??");
+        timerLabel_->setText(estimatedTime ? QString::fromStdString(fmt::format(
+                                                 "Time remaining: {}", Timer::timeString(estimatedTime.value(), false)))
+                                           : defaultTimerText);
     }
 
     // Enable data access in Renderables, and update all tabs.

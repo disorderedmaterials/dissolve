@@ -7,12 +7,13 @@
 #include "io/export/data1D.h"
 #include "io/import/data1D.h"
 #include "main/dissolve.h"
+#include "module/context.h"
 #include "modules/benchmark/benchmark.h"
 #include "modules/energy/energy.h"
 #include "modules/gr/gr.h"
 
 // Run main processing
-Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const ProcessPool &procPool)
+Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
 {
     // Check for zero Configuration targets
     if (!targetConfiguration_)
@@ -26,7 +27,7 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const Proce
     Messenger::print("Benchmark: Test timings {} be saved to disk.\n", save_ ? "will" : "will not");
     Messenger::print("\n");
 
-    ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+    ProcessPool::DivisionStrategy strategy = moduleContext.processPool().bestStrategy();
 
     /*
      * Configuration Generation
@@ -38,7 +39,7 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const Proce
         {
             Timer timer;
             Messenger::mute();
-            targetConfiguration_->generate({dissolve.worldPool(), dissolve.potentialMap()});
+            targetConfiguration_->generate({moduleContext.processPool(), moduleContext.dissolve()});
             Messenger::unMute();
             timing += timer.split();
         }
@@ -62,7 +63,8 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const Proce
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(dissolve.processingModuleData(), procPool, targetConfiguration_, GRModule::CellsMethod,
+            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(),
+                                  targetConfiguration_, GRModule::CellsMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
@@ -87,7 +89,8 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const Proce
             bool upToDate;
             Timer timer;
             Messenger::mute();
-            rdfModule.calculateGR(dissolve.processingModuleData(), procPool, targetConfiguration_, GRModule::SimpleMethod,
+            rdfModule.calculateGR(moduleContext.dissolve().processingModuleData(), moduleContext.processPool(),
+                                  targetConfiguration_, GRModule::SimpleMethod,
                                   targetConfiguration_->box()->inscribedSphereRadius(), 0.05, upToDate);
             Messenger::unMute();
             timing += timer.split();
@@ -106,7 +109,8 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const Proce
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::intraMolecularEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
+            EnergyModule::intraMolecularEnergy(moduleContext.processPool(), targetConfiguration_,
+                                               moduleContext.dissolve().potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
@@ -124,7 +128,8 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const Proce
         {
             Timer timer;
             Messenger::mute();
-            EnergyModule::interAtomicEnergy(procPool, targetConfiguration_, dissolve.potentialMap());
+            EnergyModule::interAtomicEnergy(moduleContext.processPool(), targetConfiguration_,
+                                            moduleContext.dissolve().potentialMap());
             Messenger::unMute();
             timing += timer.split();
         }
@@ -141,8 +146,8 @@ Module::ExecutionResult BenchmarkModule::process(Dissolve &dissolve, const Proce
         for (auto n = 0; n < nRepeats_; ++n)
         {
             // Create a Molecule distributor
-            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(), procPool,
-                                            strategy);
+            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
+                                            moduleContext.processPool(), strategy);
 
             Timer timer;
             Messenger::mute();

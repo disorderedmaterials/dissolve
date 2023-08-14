@@ -39,21 +39,23 @@ bool RotateFragmentProcedureNode::mustBeNamed() const { return false; }
 
 bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureContext)
 {
-    auto site = site_->currentSite();
-    auto parent = site->parent();
-    auto molecule = site->molecule();
+    assert(site_->currentSite());
+
+    auto &site = site_->currentSite()->get();
+    auto parent = site.parent();
+    auto molecule = site.molecule();
     auto box = procedureContext.configuration()->box();
 
-    if (!site->uniqueSiteIndex().has_value())
+    if (!site.uniqueSiteIndex().has_value())
     {
         Messenger::warn("Parent index not set for for site generated from FragmentSite '{}', so cannot rotate.",
                         parent->name());
         return false;
     }
 
-    auto parentIndex = site->uniqueSiteIndex().value();
+    auto parentIndex = site.uniqueSiteIndex().value();
 
-    if (!site->hasAxes())
+    if (!site.hasAxes())
     {
         Messenger::warn("FragmentSite '{}' has no axes to rotate about.", parent->name());
         return false;
@@ -63,20 +65,20 @@ bool RotateFragmentProcedureNode::execute(const ProcedureContext &procedureConte
     switch (axis_)
     {
         case (OrientedSite::SiteAxis::XAxis):
-            rotationMatrix.createRotationAxis(site->axes().columnAsVec3(0), rotation_, false);
+            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(0), rotation_.asDouble(), false);
             break;
         case (OrientedSite::SiteAxis::YAxis):
-            rotationMatrix.createRotationAxis(site->axes().columnAsVec3(1), rotation_, false);
+            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(1), rotation_.asDouble(), false);
             break;
         case (OrientedSite::SiteAxis::ZAxis):
-            rotationMatrix.createRotationAxis(site->axes().columnAsVec3(2), rotation_, false);
+            rotationMatrix.createRotationAxis(site.axes().columnAsVec3(2), rotation_.asDouble(), false);
             break;
     }
 
     for (auto index : parent->sitesAllAtomsIndices().at(parentIndex))
     {
         auto atom = molecule->atom(index);
-        atom->set(rotationMatrix.transform(box->minimumVector(site->origin(), atom->r())) + site->origin());
+        atom->set(rotationMatrix.transform(box->minimumVector(site.origin(), atom->r())) + site.origin());
     }
 
     return true;
