@@ -56,7 +56,7 @@ TEST(RotateTest, Benzene)
     // Select the site
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
     // Rotate Benzene around the Z-Axis of the site (which is defined at the COG, which is at the origin)
-    auto& forEachB = select->branch()->get();
+    auto &forEachB = select->branch()->get();
     auto rotate = forEachB.create<RotateFragmentProcedureNode>("RotateBenzene", select);
     rotate->keywords().setEnumeration("Axis", OrientedSite::SiteAxis::ZAxis);
 
