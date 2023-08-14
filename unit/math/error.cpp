@@ -28,19 +28,16 @@ TEST(ErrorRangeTest, Range)
     auto A = basicData();
     auto B = basicData();
 
-    for (int i = 0; i < Error::errorTypes().nOptions(); i++)
+    // Vector of error reports for an ErrorType
+    std::vector<double> errTypeReports;
+    for (auto range : ranges)
     {
-        // Vector of error reports for an ErrorType
-        std::vector<double> errTypeReports;
-        for (auto range : ranges)
-        {
-            errTypeReports.push_back(Error::error(Error::errorTypes().enumerationByIndex(i), A, B, range).error);
-        }
-
-        // Check to see that the sum of ranged errors is equal to the unranged error
-        EXPECT_DOUBLE_EQ(std::accumulate(errTypeReports.begin(), errTypeReports.end(), 0.0),
-                         Error::error(Error::errorTypes().enumerationByIndex(i), A, B).error);
+        errTypeReports.push_back(Error::error(Error::ASEError, A, B, range).error);
     }
+
+    // Check to see that the sum of ranged errors is equal to the unranged error
+    EXPECT_DOUBLE_EQ(std::accumulate(errTypeReports.begin(), errTypeReports.end(), 0.0),
+                     Error::error(Error::ASEError, A, B, totalRange).error);
 }
 
 } // namespace UnitTest
