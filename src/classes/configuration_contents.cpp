@@ -123,6 +123,7 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     adjustSpeciesPopulation(sp, 1);
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
+    auto previousNAtoms = atoms_.size();
     if (sourceCoordinates)
     {
         auto r = sourceCoordinates->get();
@@ -134,6 +135,9 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
         for (auto n = 0; n < sp->nAtoms(); ++n)
             addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
     }
+
+    newMolecule->updateAtoms(atoms_, previousNAtoms);
+
     return newMolecule;
 }
 
