@@ -115,7 +115,6 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
 {
     // Create the new Molecule object and set its Species pointer
     std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
-    newMolecule->setArrayIndex(molecules_.size());
     molecules_.push_back(newMolecule);
     newMolecule->setSpecies(sp);
 
@@ -141,7 +140,6 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
 std::shared_ptr<Molecule> Configuration::copyMolecule(const std::shared_ptr<Molecule> &sourceMolecule)
 {
     std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
-    newMolecule->setArrayIndex(molecules_.size());
     molecules_.push_back(newMolecule);
     auto *sp = sourceMolecule->species();
     newMolecule->setSpecies(sp);

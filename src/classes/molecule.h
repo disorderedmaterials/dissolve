@@ -27,8 +27,6 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     std::vector<Atom *> atoms_;
     // Offset of first Atom in main configuration vector
     int globalAtomOffset_{0};
-    // Object's index within the parent DynamicArray
-    int arrayIndex_{-1};
 
     public:
     // Set Species that this Molecule represents
@@ -50,10 +48,6 @@ class Molecule : public std::enable_shared_from_this<Molecule>
     int globalAtomOffset() const;
     // Return global index of supplied atom
     int globalAtomIndex(const Atom *i) const;
-    // Sets the index of the object within the parent DynamicArray
-    void setArrayIndex(int index);
-    // Gets the index of the object within the parent DynamicArray
-    int arrayIndex() const;
 
     /*
      * Manipulations

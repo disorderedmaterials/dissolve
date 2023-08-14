@@ -17,8 +17,8 @@ class Molecule;
 class RegionalDistributor
 {
     public:
-    RegionalDistributor(const int nMolecules, const CellArray &cellArray, const ProcessPool &procPool,
-                        ProcessPool::DivisionStrategy strategy);
+    RegionalDistributor(const std::vector<std::shared_ptr<Molecule>> &molecules, const CellArray &cellArray,
+                        const ProcessPool &procPool, ProcessPool::DivisionStrategy strategy);
     ~RegionalDistributor() = default;
     // Molecule Status Flag
     enum class MoleculeStatusFlag
@@ -89,20 +89,18 @@ class RegionalDistributor
      * Molecule Data
      */
     private:
-    // Total number of molecules in the system
-    int nMolecules_;
     // Number of Molecules to distribute
     int nMoleculesToDistribute_;
     // Counter for distributed Molecules
     int nMoleculesDistributed_;
     // Molecule status array
-    std::vector<MoleculeStatusFlag> moleculeStatus_;
+    std::map<std::shared_ptr<Molecule>, MoleculeStatusFlag> moleculeStatus_;
     // Arrays of Molecule IDs assigned to each process / group
-    std::vector<std::vector<int>> assignedMolecules_;
+    std::vector<std::set<std::shared_ptr<Molecule>>> assignedMolecules_;
 
     private:
     // Assign Molecule to process/group if possible
-    bool assignMolecule(const std::shared_ptr<const Molecule> &mol, int processOrGroup);
+    bool assignMolecule(std::shared_ptr<Molecule> mol, int processOrGroup);
     // Try to assign a Molecule from the specified Cell to the process/group
     std::shared_ptr<Molecule> assignMolecule(const Cell *cell, int processOrGroup);
     // Try to find a Molecule target for the process/group

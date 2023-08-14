@@ -51,12 +51,6 @@ int Molecule::globalAtomOffset() const { return globalAtomOffset_; }
 // Return global index of supplied atom
 int Molecule::globalAtomIndex(const Atom *i) const { return globalAtomOffset_ + (i - atoms_[0]); }
 
-// Sets the index of the object within the parent DynamicArray
-void Molecule::setArrayIndex(int index) { arrayIndex_ = index; }
-
-// Gets the index of the object within the parent DynamicArray
-int Molecule::arrayIndex() const { return arrayIndex_; }
-
 /*
  * Manipulations
  */

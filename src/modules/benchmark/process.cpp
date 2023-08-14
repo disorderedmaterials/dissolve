@@ -146,7 +146,7 @@ Module::ExecutionResult BenchmarkModule::process(ModuleContext &moduleContext)
         for (auto n = 0; n < nRepeats_; ++n)
         {
             // Create a Molecule distributor
-            RegionalDistributor distributor(targetConfiguration_->nMolecules(), targetConfiguration_->cells(),
+            RegionalDistributor distributor(targetConfiguration_->molecules(), targetConfiguration_->cells(),
                                             moduleContext.processPool(), strategy);
 
             Timer timer;

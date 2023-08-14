@@ -12,7 +12,7 @@
 // Debug Mode
 const bool debugDistributor = false;
 
-RegionalDistributor::RegionalDistributor(const int nMolecules, const CellArray &cellArray, const ProcessPool &procPool,
+RegionalDistributor::RegionalDistributor(const std::vector<std::shared_ptr<Molecule>> &molecules, const CellArray &cellArray, const ProcessPool &procPool,
                                          ProcessPool::DivisionStrategy strategy)
     : processPool_(procPool), originalStrategy_(strategy), cellArray_(cellArray)
 {
@@ -29,12 +29,14 @@ RegionalDistributor::RegionalDistributor(const int nMolecules, const CellArray &
     std::fill(cellLockOwners_.begin(), cellLockOwners_.end(), -1);
 
     // Molecules
-    nMolecules_ = nMolecules;
     assignedMolecules_.resize(nProcessesOrGroups_);
-    moleculeStatus_.resize(nMolecules_);
-    std::fill(moleculeStatus_.begin(), moleculeStatus_.end(), MoleculeStatusFlag::ToDo);
-    nMoleculesToDistribute_ = nMolecules_;
+    nMoleculesToDistribute_ = molecules.size();
     nMoleculesDistributed_ = 0;
+
+    // Create a map of molecules and status flags
+    moleculeStatus_.clear();
+    for (auto &mol : molecules)
+        moleculeStatus_[mol] = MoleculeStatusFlag::ToDo;
 }
 
 // Return string for specified MoleculeStatusFlag
@@ -98,7 +100,6 @@ bool RegionalDistributor::cycle()
         return false;
     }
 
-    std::shared_ptr<Molecule> molecule;
     std::vector<bool> allPossibleMoleculesAssigned(nProcessesOrGroups_, false);
     int processOrGroup, allPossibleMoleculesAssignedCount = 0;
 
@@ -121,14 +122,12 @@ bool RegionalDistributor::cycle()
     // molecules sequentially to each
     if (nProcessesOrGroups_ == 1)
     {
-        for (auto n = 0; n < nMolecules_; ++n)
-        {
-            if (moleculeStatus_[n] == MoleculeStatusFlag::ToDo)
+        for (auto &&[mol,statusFlag] : moleculeStatus_)
+            if (statusFlag == MoleculeStatusFlag::ToDo)
             {
-                assignedMolecules_[0].push_back(n);
+                assignedMolecules_[0].insert(mol);
                 ++nMoleculesDistributed_;
             }
-        }
     }
     else
         while (allPossibleMoleculesAssignedCount < nProcessesOrGroups_)
@@ -144,7 +143,7 @@ bool RegionalDistributor::cycle()
                     continue;
 
                 // Try to assign a Molecule to this process/group
-                molecule = assignMolecule(processOrGroup);
+                auto molecule = assignMolecule(processOrGroup);
                 if (!molecule)
                 {
                     allPossibleMoleculesAssigned[processOrGroup] = true;
@@ -156,14 +155,14 @@ bool RegionalDistributor::cycle()
                 else
                 {
                     // Valid Molecule found, so add it to our distribution array and mark it as such
-                    assignedMolecules_[processOrGroup].push_back(molecule->arrayIndex());
-                    moleculeStatus_[molecule->arrayIndex()] = MoleculeStatusFlag::Assigned;
+                    assignedMolecules_[processOrGroup].insert(molecule);
+                    moleculeStatus_[molecule] = MoleculeStatusFlag::Assigned;
                     ++nMoleculesDistributed_;
 
                     if (debugDistributor)
                         Messenger::print("Molecule {} assigned to process/group {} - nMoleculesDistributed is "
                                          "now {}. Process/group has {} locked Cells in total.\n",
-                                         molecule->arrayIndex(), processOrGroup, nMoleculesDistributed_,
+                                         fmt::ptr(molecule), processOrGroup, nMoleculesDistributed_,
                                          lockedCells_[processOrGroup].size());
                 }
 
@@ -182,9 +181,9 @@ bool RegionalDistributor::cycle()
             {
                 // Put all assigned molecules into group 0
                 assignedMolecules_[0].clear();
-                for (auto n = 0; n < nMolecules_; ++n)
-                    if (moleculeStatus_[n] == MoleculeStatusFlag::Assigned)
-                        assignedMolecules_[0].push_back(n);
+                for (auto &&[mol, statusFlag] : moleculeStatus_)
+                    if (statusFlag == MoleculeStatusFlag::Assigned)
+                        assignedMolecules_[0].insert(mol);
 
                 // Copy target molecule(s) to all groups
                 for (processOrGroup = 1; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
@@ -212,9 +211,9 @@ bool RegionalDistributor::cycle()
     }
 
     // Change status of all "Assigned" molecules to "Completed"
-    for (auto n = 0; n < nMolecules_; ++n)
-        if (moleculeStatus_[n] == MoleculeStatusFlag::Assigned)
-            moleculeStatus_[n] = MoleculeStatusFlag::Completed;
+    for (auto &&[mol, statusFlag] : moleculeStatus_)
+        if (statusFlag == MoleculeStatusFlag::Assigned)
+            statusFlag = MoleculeStatusFlag::Completed;
 
     return true;
 }
@@ -264,18 +263,15 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
  */
 
 // Assign Molecule to process/group if possible
-bool RegionalDistributor::assignMolecule(const std::shared_ptr<const Molecule> &mol, int processOrGroup)
+bool RegionalDistributor::assignMolecule(std::shared_ptr<Molecule> mol, int processOrGroup)
 {
     Cell *primaryCell = nullptr;
 
     // Obvious check first - is the Molecule available for distribution / assignment?
-    const auto molId = mol->arrayIndex();
-
     if (debugDistributor)
-        Messenger::print("  -- Checking Molecule {} for process/group {}: status = {}\n", molId, processOrGroup,
-                         moleculeStatusFlag(moleculeStatus_[molId]));
-
-    if (moleculeStatus_[molId] != MoleculeStatusFlag::ToDo)
+        Messenger::print("  -- Checking Molecule {} for process/group {}: status = {}\n", fmt::ptr(mol), processOrGroup,
+                         moleculeStatusFlag(moleculeStatus_[mol]));
+    if (moleculeStatus_[mol] != MoleculeStatusFlag::ToDo)
         return false;
 
     // Go through the Atoms of the Molecule, assembling a list of primary Cells in which its Atoms are found.
@@ -409,15 +405,14 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(const Cell *cell, 
     std::vector<std::shared_ptr<Molecule>> checkedMolecules;
 
     // Loop over Atoms in Cell
-    std::shared_ptr<Molecule> mol;
     for (auto &atom : cell->atoms())
     {
         // Get the Atom's Molecule pointer
-        mol = atom->molecule();
+        auto mol = atom->molecule();
 
         if (debugDistributor)
             Messenger::print(
-                "  <> Molecule index is {} and this molecule {} already in our list..\n", mol->arrayIndex(),
+                "  <> Molecule is {} and this molecule {} already in our list..\n", fmt::ptr(mol),
                 std::find(checkedMolecules.begin(), checkedMolecules.end(), mol) != checkedMolecules.end() ? "IS" : "IS NOT");
 
         // Have we already checked this Molecule?

@@ -55,9 +55,15 @@ bool Configuration::serialise(LineParser &parser) const
     // Write all Atoms - for each write index and coordinates
     if (!parser.writeLineF("{}  # nAtoms\n", atoms_.size()))
         return false;
+    auto molIndex = -1;
+    std::shared_ptr<Molecule> lastMol;
     for (const auto &i : atoms_)
     {
-        if (!parser.writeLineF("{} {} {} {}\n", i.molecule()->arrayIndex(), i.x(), i.y(), i.z()))
+        // Increase our index counter if we have moved on to a different Molecule
+        if (i.molecule() != lastMol)
+            ++molIndex;
+        lastMol = i.molecule();
+        if (!parser.writeLineF("{} {} {} {}\n", molIndex, i.x(), i.y(), i.z()))
             return false;
     }
 
