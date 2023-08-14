@@ -1,21 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
-
-Rectangle {
-    signal clickedy
-    width: 100
-    height: 50
-    color: "lightblue"
-    border.color: "blue"
-    border.width: 2
-    TapHandler {
-        onTapped: {
-            clickedy();
-            console.log("oof");
-        }
-    }
-}
+import QtQml.Models 6.0
 
 /*
 ColumnLayout {
@@ -43,15 +29,11 @@ ColumnLayout {
                 }
             }
         }*/
-/*
+
 ColumnLayout {
     id: root
-    signal clickedy(string text)
-    property string propagateText: ""
 
-    onPropagateTextChanged: {
-        clickedy(propagateText);
-    }
+    signal clicked(row: int, col: int)
 
     RowLayout {
         spacing: 5
@@ -71,16 +53,17 @@ ColumnLayout {
                     text: dissolveModel.data(dissolveModel.index(0, columnIndex), Qt.DisplayRole)
                     font.bold: true
                 }
-                TapHandler {
-                    onTapped: {
-                        root.propagateText = "Test!";
-                        console.log("Test");
+                MouseArea {
+                    width: 100
+                    height: 50
+                    onClicked: {
+                        root.clicked(0, columnIndex)
                     }
                 }
             }
         }
     }
-}*/
+}
     /*
     RowLayout {
         spacing: 5

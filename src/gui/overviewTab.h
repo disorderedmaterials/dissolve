@@ -5,11 +5,15 @@
 
 #include "gui/mainTab.h"
 #include "gui/models/dissolveModel.h"
+
 #include <QWidget>
+
+class QQuickWidget;
 
 class OverviewTab : public QWidget, public MainTab
 {
     Q_OBJECT
+
     public:
     OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title);
     ~OverviewTab() = default;
@@ -23,6 +27,7 @@ class OverviewTab : public QWidget, public MainTab
 
     private:
     DissolveModel dissolveModel_;
+    QQuickWidget* view_{nullptr};
 
     /*
      * Update
@@ -36,6 +41,6 @@ class OverviewTab : public QWidget, public MainTab
     void allowEditing() override;
 
     private slots:
-    void clicky();
+    void clicked(QModelIndex index);
 
 };
