@@ -6,6 +6,7 @@
 #include "gui/mainTab.h"
 #include "gui/models/dissolveModel.h"
 
+
 #include <QWidget>
 
 class QQuickWidget;
@@ -28,6 +29,7 @@ class OverviewTab : public QWidget, public MainTab
     private:
     DissolveModel dissolveModel_;
     QQuickWidget* view_{nullptr};
+    bool slotsAreSetup_{false};
 
     /*
      * Update
@@ -41,6 +43,7 @@ class OverviewTab : public QWidget, public MainTab
     void allowEditing() override;
 
     private slots:
-    void clicked(QModelIndex index);
+    void viewStatusChanged();
+    void clicked(int row, int col);
 
 };

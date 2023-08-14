@@ -12,15 +12,28 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 
 QVariant DissolveModel::rawData(const QModelIndex index)
 {
+    if (!index.isValid())
+        return {};
+    if (!dissolve_)
+        return {};
+    auto& species = dissolve_->get().coreData().species();
+    auto& configurations = dissolve_->get().coreData().configurations();
     switch(index.row())
     {
-        case 0:
-            return QVariant::fromValue(dissolve_->get().coreData().species()[index.column()].get());
-        case 1:
-            return QVariant::fromValue(dissolve_->get().coreData().configurations()[index.column()].get());
+        case (0):
+            return {};
+        case (1):
+            if (index.column() < species.size())
+                return QVariant::fromValue(dissolve_->get().coreData().species()[index.column()].get());
+            break;
+        case (2):
+            if (index.column() < configurations.size())
+                return QVariant::fromValue(dissolve_->get().coreData().configurations()[index.column()].get());
+            break;
         default:
             return {};
     }
+    return {};
 }
 
 const QVariant DissolveModel::rawData(const QModelIndex index) const

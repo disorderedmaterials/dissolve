@@ -33,7 +33,7 @@ ColumnLayout {
 ColumnLayout {
     id: root
 
-    signal clicked(row: int, col: int)
+    signal clicked(int row, int col)
 
     RowLayout {
         spacing: 5
@@ -47,7 +47,7 @@ ColumnLayout {
                 border.width: 2
                 property int columnIndex: index
                 property string content: dissolveModel.data(dissolveModel.index(0, columnIndex), Qt.DisplayRole)
-                //visible: !!content
+                visible: !!content
                 Text {
                     anchors.centerIn: parent
                     text: dissolveModel.data(dissolveModel.index(0, columnIndex), Qt.DisplayRole)
@@ -63,8 +63,6 @@ ColumnLayout {
             }
         }
     }
-}
-    /*
     RowLayout {
         spacing: 5
         Repeater {
@@ -72,21 +70,23 @@ ColumnLayout {
             delegate: Rectangle {
                 width: 100
                 height: 50
-                MouseArea {
-                    height: parent.height
-                    width: parent.width
-                    onClicked: root.clickedy()
-                }
                 color: "lightgreen"
                 border.color: "green"
                 border.width: 2
                 property int columnIndex: index
                 property string content: dissolveModel.data(dissolveModel.index(1, columnIndex), Qt.DisplayRole)
-                //visible: !!content
+                visible: !!content
                 Text {
                     anchors.centerIn: parent
                     text: dissolveModel.data(dissolveModel.index(1, columnIndex), Qt.DisplayRole)
                     font.bold: true
+                }
+                MouseArea {
+                    width: 100
+                    height: 50
+                    onClicked: {
+                        root.clicked(1, columnIndex)
+                    }
                 }
             }
         }
@@ -99,22 +99,25 @@ ColumnLayout {
             delegate: Rectangle {
                 width: 100
                 height: 50
-                MouseArea {
-                    height: parent.height
-                    width: parent.width
-                    onClicked: root.clickedy()
-                }
                 color: "lightgreen"
                 border.color: "green"
                 border.width: 2
                 property int columnIndex: index
                 property string content: dissolveModel.data(dissolveModel.index(2, columnIndex), Qt.DisplayRole)
-                //visible: !!content
+                visible: !!content
                 Text {
                     anchors.centerIn: parent
                     text: dissolveModel.data(dissolveModel.index(2, columnIndex), Qt.DisplayRole)
                     font.bold: true
                 }
+                MouseArea {
+                    width: 100
+                    height: 50
+                    onClicked: {
+                        root.clicked(2, columnIndex)
+                    }
+                }
             }
         }
-    }*/
+    }
+}
