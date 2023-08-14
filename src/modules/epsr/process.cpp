@@ -230,6 +230,7 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
 
     // Loop over target data
     auto rFacTot = 0.0;
+    auto lowerBound = 0.0, upperBound = 0.0;
     std::vector<double> rangedRFacTots(ranges_.size());
 
     // Loop over target data
@@ -298,11 +299,13 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         auto tempRefData = originalReferenceData;
         Filters::trim(tempRefData, qMin_, qMax_);
         auto errorReport = Error::rFactor(tempRefData, weightedSQ.total());
+        lowerBound = errorReport.firstX;
+        upperBound = errorReport.lastX;
         auto rFactor = errorReport.error;
         rFacTot += rFactor;
         errors.addPoint(moduleContext.dissolve().iteration(), rFactor);
-        Messenger::print("Current R-Factor for reference data '{}' is {:.5f}.\n", module->name(), rFactor);
-
+        Messenger::print("Current R-Factor for reference data '{}' over complete range ({:.5f} to {:.5f}) is {:.5f}.\n",
+                         module->name(), lowerBound, upperBound, rFactor);
         // Calculate r-factor over specified ranges_
         for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
         {
@@ -573,7 +576,8 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
     auto &totalRFactor =
         moduleContext.dissolve().processingModuleData().realise<Data1D>("RFactor", name_, GenericItem::InRestartFileFlag);
     totalRFactor.addPoint(moduleContext.dissolve().iteration(), rFacTot);
-    Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
+    Messenger::print("Current total R-Factor over complete range ({:.5f} to {:.5f}) is {:.5f}.\n", lowerBound, upperBound,
+                     rFacTot);
     for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
     {
         Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", range.minimum(), range.maximum(),
