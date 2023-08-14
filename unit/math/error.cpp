@@ -9,7 +9,7 @@
 namespace UnitTest
 {
 
-const std::vector<Range> ranges = {Range(0, 4), Range(4, 22), Range(22, 30), Range(30, 33), Range(33, 50)};
+const std::vector<Range> ranges = {Range(0, 4), Range(5, 22), Range(23, 30), Range(31, 33), Range(34, 50)};
 const Range totalRange{Range(0, 50)};
 
 Data1D basicData()
