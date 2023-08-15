@@ -58,7 +58,6 @@ void RangeVectorKeywordWidget::resetModelData()
 {
     refreshing_ = true;
 
-    // Update allowed modules
     rangeVectorModel_.setData(keyword_->data());
 
     refreshing_ = false;
