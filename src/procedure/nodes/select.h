@@ -38,11 +38,9 @@ class SelectProcedureNode : public ProcedureNode
     // Defined parameters
     std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
-    std::shared_ptr<ExpressionVariable> nSelectedParameter_;
+    std::shared_ptr<ExpressionVariable> nSelectedParameter_, siteIndexParameter_, stackIndexParameter_, indexParameter_;
 
     public:
-    // Add new parameter
-    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, ExpressionValue initialValue);
     // Return the named parameter (if it exists)
     std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
                                                      std::shared_ptr<ExpressionVariable> excludeParameter) override;
@@ -81,7 +79,7 @@ class SelectProcedureNode : public ProcedureNode
     // Site to use for distance check
     std::shared_ptr<const SelectProcedureNode> distanceReferenceSite_;
     // Range of distance to allow from distance reference site (if limiting)
-    Range inclusiveDistanceRange_;
+    Range inclusiveDistanceRange_{0.0, 5.0};
 
     public:
     // Set other sites (nodes) which will exclude one of our sites if it has the same Molecule parent
@@ -102,15 +100,15 @@ class SelectProcedureNode : public ProcedureNode
      */
     private:
     // Vector of selected sites
-    std::vector<const Site *> sites_;
-    // Current Site index
-    int currentSiteIndex_;
+    std::vector<std::tuple<const Site &, int, int>> sites_;
+    // Current site
+    OptionalReferenceWrapper<const Site> currentSite_;
     // Number of selections made by the node
-    int nSelections_;
+    int nSelections_{0};
     // Cumulative number of sites ever selected
-    unsigned long int nCumulativeSites_;
+    unsigned long int nCumulativeSites_{0};
     // Total number of sites available per selection
-    unsigned long int nAvailableSites_;
+    unsigned long int nAvailableSites_{0};
 
     public:
     // Selection Populations
@@ -121,16 +119,18 @@ class SelectProcedureNode : public ProcedureNode
     };
     // Return EnumOptions for SelectionPopulation
     static EnumOptions<SelectionPopulation> selectionPopulations();
+    // Return vector of selected sites
+    const std::vector<std::tuple<const Site &, int, int>> &sites() const;
     // Return the number of available sites in the current stack, if any
     int nSitesInStack() const;
     // Return the average number of sites selected
     double nAverageSites() const;
     // Return the cumulative number of sites ever selected
     unsigned long int nCumulativeSites() const;
-    // Return total number of sites available per selection
-    unsigned long int nAvailableSites() const;
+    // Return average number of sites available per selection, before any distance pruning
+    double nAvailableSitesAverage() const;
     // Return current site
-    const Site *currentSite() const;
+    OptionalReferenceWrapper<const Site> currentSite() const;
 
     /*
      * Branch

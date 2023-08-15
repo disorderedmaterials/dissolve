@@ -5,17 +5,14 @@
 
 #include "procedure/nodes/regionBase.h"
 
-// Cylindrical Region
-class CylindricalRegionProcedureNode : public RegionProcedureNodeBase
+// Custom Region Voxel Kernel
+class CylindricalRegionVoxelKernel : public VoxelKernel
 {
     public:
-    CylindricalRegionProcedureNode();
-    ~CylindricalRegionProcedureNode() override = default;
+    explicit CylindricalRegionVoxelKernel(Vec3<double> originFrac = {0.0, 0.0, 0.0}, double radius = 5.0,
+                                          Vec3<double> vector = {0.0, 0.0, 1.0});
 
-    /*
-     * Control
-     */
-    private:
+    protected:
     // Origin of vector in fractional coordinates
     Vec3<double> originFrac_{0.0, 0.0, 0.0};
     // Radius of cylindrical region
@@ -23,10 +20,22 @@ class CylindricalRegionProcedureNode : public RegionProcedureNodeBase
     // Cylinder vector
     Vec3<double> vector_{0.0, 0.0, 1.0};
 
-    /*
-     * Region Data
-     */
     public:
     // Return whether voxel centred at supplied real coordinates is valid
     bool isVoxelValid(const Configuration *cfg, const Vec3<double> &r) const override;
+};
+
+// Cylindrical Region
+class CylindricalRegionProcedureNode : public RegionProcedureNodeBase, CylindricalRegionVoxelKernel
+{
+    public:
+    CylindricalRegionProcedureNode();
+    ~CylindricalRegionProcedureNode() override = default;
+
+    /*
+     * Region Data
+     */
+    protected:
+    // Return a new voxel check kernel
+    std::shared_ptr<VoxelKernel> createVoxelKernel() override;
 };

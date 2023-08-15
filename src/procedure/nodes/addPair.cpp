@@ -140,7 +140,8 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
     auto *cfg = procedureContext.configuration();
 
     const auto nAtomsToAdd = ipop * (speciesA_->nAtoms() + speciesB_->nAtoms());
-    auto [rho, rhoUnits] = density_;
+    auto rho = std::get<0>(density_).asDouble();
+    auto rhoUnits = std::get<1>(density_);
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
     Vec3<bool> scalableAxes(scaleA_, scaleB_, scaleC_);
@@ -160,8 +161,7 @@ bool AddPairProcedureNode::execute(const ProcedureContext &procedureContext)
         else
             requiredVolume = (((speciesA_->mass() + speciesB_->mass()) * ipop) / AVOGADRO) / (rho / 1.0E24);
 
-        Messenger::print("[AddPair] Density for new species is {} {}.\n", rho.asDouble(),
-                         Units::densityUnits().keyword(rhoUnits));
+        Messenger::print("[AddPair] Density for new species is {} {}.\n", rho, Units::densityUnits().keyword(rhoUnits));
         Messenger::print("[AddPair] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
         // If the current box has no atoms in it, absorb the current volume rather than adding to it

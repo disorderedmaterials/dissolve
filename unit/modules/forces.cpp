@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "classes/configuration.h"
 #include "io/import/forces.h"
+#include "classes/configuration.h"
 #include "main/dissolve.h"
 #include "modules/forces/forces.h"
 #include <gmock/gmock.h>
