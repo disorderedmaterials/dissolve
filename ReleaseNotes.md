@@ -1,4 +1,9 @@
-Version 1.3.2 is a patch release fixing a host of smaller issues in the code.
+Version 1.3.3 is a patch release making some small fixes and improvements.
+
+## Minor Changes in v1.3.3
+
+- UI: Time remaining as well as time elapsed is now shown on the main status bar.
+- Fix: Region generation gave incorrect results.
 
 ## Major Changes in v1.3.2
 
