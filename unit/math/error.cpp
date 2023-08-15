@@ -10,7 +10,7 @@ namespace UnitTest
 {
 
 const std::vector<Range> ranges = {Range(0, 4), Range(5, 22), Range(23, 30), Range(31, 33), Range(34, 50)};
-const Range totalRange{Range(0, 50)};
+const Range totalRange{0, 50};
 
 Data1D basicData()
 {
@@ -37,7 +37,7 @@ TEST(ErrorRangeTest, Range)
 
     // Check to see that the sum of ranged errors is equal to the unranged error
     EXPECT_DOUBLE_EQ(std::accumulate(errTypeReports.begin(), errTypeReports.end(), 0.0),
-                     Error::error(Error::ASEError, A, B, totalRange).error);
+                     Error::error(Error::ASEError, A, B).error);
 }
 
 } // namespace UnitTest
