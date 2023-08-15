@@ -268,4 +268,4 @@ TEST_F(SelectTest, Inclusions)
     EXPECT_DOUBLE_EQ(selectN->nAvailableSitesAverage(), double(nType_));
     EXPECT_DOUBLE_EQ(selectO->nAvailableSitesAverage(), 1.0);
 }
-} // namespace UnitTest
+} // namespace UnitTest 
