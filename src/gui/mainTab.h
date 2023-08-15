@@ -51,6 +51,9 @@ class MainTab
     // Unique title (name) of tab
     QString title_;
 
+    public:
+    MainTabsWidget* tabWidget();
+
     protected:
     // Raise suitable dialog for entering / checking new tab name
     virtual QString getNewTitle(bool &ok);

@@ -200,6 +200,11 @@ void ForcefieldTab::preventEditing() { setEnabled(false); }
 // Allow editing within tab
 void ForcefieldTab::allowEditing() { setEnabled(true); }
 
+void ForcefieldTab::setTabIndex(int index)
+{
+    ui_.Tabs->setCurrentIndex(index);
+}
+
 /*
  * Signals / Slots
  */
