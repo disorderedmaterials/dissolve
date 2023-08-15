@@ -35,14 +35,13 @@ class IterateData1DProcedureNode : public ProcedureNode
     // Collect1D node that we are processing
     std::shared_ptr<const Collect1DProcedureNode> sourceData_;
     std::shared_ptr<const IntegerCollect1DProcedureNode> sourceIntegerData_;
-    // Pointer to processed data (stored in processing data list)
-    Data1D *processedData_{nullptr};
 
-    public:
-    // Return whether processed data exists
-    bool hasProcessedData() const;
-    // Return processed data
-    const Data1D &processedData() const;
+    /*
+     * Parameters
+     */
+    private:
+    // Pointers to individual parameters
+    std::shared_ptr<ExpressionVariable> xParameter_, valueParameter_;
 
     /*
      * Branch
@@ -51,12 +50,18 @@ class IterateData1DProcedureNode : public ProcedureNode
     // Branch for ForEach
     ProcedureNodeSequence forEachBranch_;
 
+    public:
+    // Return the branch from this node (if it has one)
+    OptionalReferenceWrapper<ProcedureNodeSequence> branch() override;
+
     /*
      * Execute
      */
     public:
     // Prepare any necessary data, ready for execution
     bool prepare(const ProcedureContext &procedureContext) override;
+    // Execute Node
+    bool execute(const ProcedureContext &procedureContect) override;
     // Finalise any necessary data after execution
     bool finalise(const ProcedureContext &procedureContext) override;
 };
