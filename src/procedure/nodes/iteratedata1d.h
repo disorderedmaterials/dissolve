@@ -18,9 +18,9 @@ class IterateData1DProcedureNode : public ProcedureNode
 {
     public:
     IterateData1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target = nullptr,
-                               ProcedureNode::NodeContext normalisationContext = ProcedureNode::OperateContext);
+                               ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext);
     IterateData1DProcedureNode(std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
-                               ProcedureNode::NodeContext normalisationContext = ProcedureNode::OperateContext);
+                               ProcedureNode::NodeContext forEachContext = ProcedureNode::NodeContext::AnalysisContext);
     ~IterateData1DProcedureNode() override = default;
 
     private:
@@ -45,11 +45,11 @@ class IterateData1DProcedureNode : public ProcedureNode
     const Data1D &processedData() const;
 
     /*
-     * Branches
+     * Branch
      */
     private:
-    // Branch for normalisation of data
-    ProcedureNodeSequence normalisationBranch_;
+    // Branch for ForEach
+    ProcedureNodeSequence forEachBranch_;
 
     /*
      * Execute

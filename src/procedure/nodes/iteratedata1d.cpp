@@ -15,17 +15,17 @@
 #include "procedure/nodes/operateBase.h"
 
 IterateData1DProcedureNode::IterateData1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
-                                                       ProcedureNode::NodeContext normalisationContext)
-    : ProcedureNode(ProcedureNode::NodeType::Process1D, {ProcedureNode::AnalysisContext}), sourceData_(target),
-      normalisationBranch_(normalisationContext, *this, "Normalisation")
+                                                       ProcedureNode::NodeContext forEachContext)
+    : ProcedureNode(ProcedureNode::NodeType::IterateData1D, {ProcedureNode::AnalysisContext}),
+                    sourceData_(target),forEachBranch_(forEachContext, *this, "ForEach")
 {
     setUpKeywords();
 }
 
 IterateData1DProcedureNode::IterateData1DProcedureNode(std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
-                                                       ProcedureNode::NodeContext normalisationContext)
-    : ProcedureNode(ProcedureNode::NodeType::Process1D, {ProcedureNode::AnalysisContext}), sourceIntegerData_(intTarget),
-      normalisationBranch_(normalisationContext, *this, "Normalisation")
+                                                       ProcedureNode::NodeContext forEachContext)
+    : ProcedureNode(ProcedureNode::NodeType::IterateData1D, {ProcedureNode::AnalysisContext}),
+                    sourceIntegerData_(intTarget),forEachBranch_(forEachContext, *this, "ForEach")
 {
     setUpKeywords();
 }
@@ -46,7 +46,8 @@ void IterateData1DProcedureNode::setUpKeywords()
  */
 
 // Return whether processed data exists
-bool IterateData1DProcedureNode::hasProcessedData() const { return (processedData_ != nullptr); }
+bool IterateData1DProcedureNode::hasProcessedData() const {
+    return (processedData_ != nullptr); }
 
 // Return processed data
 const Data1D &IterateData1DProcedureNode::processedData() const
@@ -69,51 +70,9 @@ const Data1D &IterateData1DProcedureNode::processedData() const
  */
 
 // Prepare any necessary data, ready for execution
-bool IterateData1DProcedureNode::prepare(const ProcedureContext &procedureContext)
-{
-    if (sourceData_ && sourceIntegerData_)
-    {
-        return Messenger::error("Specify either SourceData or SourceIntegerData, not both.\n");
-    }
-    else if (sourceData_ || sourceIntegerData_)
-    {
-        normalisationBranch_.prepare(procedureContext);
-
-        return true;
-    }
-    else
-        return Messenger::error("No source data node set in '{}'.\n", name());
-}
+bool IterateData1DProcedureNode::prepare(const ProcedureContext &procedureContext) {
+    return true; }
 
 // Finalise any necessary data after execution
-bool IterateData1DProcedureNode::finalise(const ProcedureContext &procedureContext)
-{
-    // Retrieve / realise the normalised data from the supplied list
-    auto &data = procedureContext.dataList().realise<Data1D>(
-        fmt::format("Process1D//{}", name()), procedureContext.processingDataPrefix(), GenericItem::InRestartFileFlag);
-    processedData_ = &data;
-    data.setTag(name());
-
-    // Copy the averaged data from the associated Process1D node
-    if (instantaneous_)
-        data = sourceData_ ? sourceData_->data() : sourceIntegerData_->data();
-    else
-        data = sourceData_ ? sourceData_->accumulatedData() : sourceIntegerData_->accumulatedData();
-
-    // Run normalisation on the data
-    // Set data targets in the normalisation nodes
-    for (auto &node : normalisationBranch_.sequence())
-    {
-        if (node->nodeClass() != ProcedureNode::NodeClass::Operate)
-            continue;
-
-        // Cast the node
-        auto operateNode = std::dynamic_pointer_cast<OperateProcedureNodeBase>(node);
-        operateNode->setTarget(processedData_);
-    }
-
-    if (!normalisationBranch_.execute(procedureContext))
-        return false;
-
-    return true;
-}
+bool IterateData1DProcedureNode::finalise(const ProcedureContext &procedureContext) {
+    return true; }
