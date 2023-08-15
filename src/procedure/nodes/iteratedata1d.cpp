@@ -16,16 +16,16 @@
 
 IterateData1DProcedureNode::IterateData1DProcedureNode(std::shared_ptr<Collect1DProcedureNode> target,
                                                        ProcedureNode::NodeContext forEachContext)
-    : ProcedureNode(ProcedureNode::NodeType::IterateData1D, {ProcedureNode::AnalysisContext}),
-                    sourceData_(target),forEachBranch_(forEachContext, *this, "ForEach")
+    : ProcedureNode(ProcedureNode::NodeType::IterateData1D, {ProcedureNode::AnalysisContext}), sourceData_(target),
+      forEachBranch_(forEachContext, *this, "ForEach")
 {
     setUpKeywords();
 }
 
 IterateData1DProcedureNode::IterateData1DProcedureNode(std::shared_ptr<IntegerCollect1DProcedureNode> intTarget,
                                                        ProcedureNode::NodeContext forEachContext)
-    : ProcedureNode(ProcedureNode::NodeType::IterateData1D, {ProcedureNode::AnalysisContext}),
-                    sourceIntegerData_(intTarget),forEachBranch_(forEachContext, *this, "ForEach")
+    : ProcedureNode(ProcedureNode::NodeType::IterateData1D, {ProcedureNode::AnalysisContext}), sourceIntegerData_(intTarget),
+      forEachBranch_(forEachContext, *this, "ForEach")
 {
     setUpKeywords();
 }
@@ -46,8 +46,7 @@ void IterateData1DProcedureNode::setUpKeywords()
  */
 
 // Return whether processed data exists
-bool IterateData1DProcedureNode::hasProcessedData() const {
-    return (processedData_ != nullptr); }
+bool IterateData1DProcedureNode::hasProcessedData() const { return (processedData_ != nullptr); }
 
 // Return processed data
 const Data1D &IterateData1DProcedureNode::processedData() const
@@ -70,9 +69,7 @@ const Data1D &IterateData1DProcedureNode::processedData() const
  */
 
 // Prepare any necessary data, ready for execution
-bool IterateData1DProcedureNode::prepare(const ProcedureContext &procedureContext) {
-    return true; }
+bool IterateData1DProcedureNode::prepare(const ProcedureContext &procedureContext) { return true; }
 
 // Finalise any necessary data after execution
-bool IterateData1DProcedureNode::finalise(const ProcedureContext &procedureContext) {
-    return true; }
+bool IterateData1DProcedureNode::finalise(const ProcedureContext &procedureContext) { return true; }
