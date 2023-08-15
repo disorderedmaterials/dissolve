@@ -114,7 +114,7 @@ std::shared_ptr<Molecule>
 Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std::vector<Vec3<double>>> sourceCoordinates)
 {
     // Create the new Molecule object and set its Species pointer
-    std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+    auto newMolecule = std::make_shared<Molecule>();
     newMolecule->setArrayIndex(molecules_.size());
     molecules_.push_back(newMolecule);
     newMolecule->setSpecies(sp);
@@ -123,6 +123,7 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
     adjustSpeciesPopulation(sp, 1);
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
+    auto previousNAtoms = atoms_.size();
     if (sourceCoordinates)
     {
         auto r = sourceCoordinates->get();
@@ -134,6 +135,9 @@ Configuration::addMolecule(const Species *sp, OptionalReferenceWrapper<const std
         for (auto n = 0; n < sp->nAtoms(); ++n)
             addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
     }
+
+    newMolecule->updateAtoms(atoms_, previousNAtoms);
+
     return newMolecule;
 }
 
