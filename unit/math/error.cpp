@@ -15,7 +15,7 @@ const Range totalRange{0, 50};
 Data1D basicData()
 {
     Data1D d;
-    for (int x = totalRange.minimum(); x < totalRange.maximum(); x++)
+    for (int x = totalRange.minimum(); x < totalRange.maximum(); ++x)
     {
         d.addPoint(x, std::rand());
     }
