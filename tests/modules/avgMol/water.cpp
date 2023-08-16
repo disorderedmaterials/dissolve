@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023 Team Dissolve and contributors
 
-#include "unit/data/systemTest.h"
+#include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
 

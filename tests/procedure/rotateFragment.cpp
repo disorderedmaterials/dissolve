@@ -9,7 +9,8 @@
 #include "procedure/nodes/add.h"
 #include "procedure/nodes/box.h"
 #include "procedure/nodes/select.h"
-#include "unit/data/species.h"
+#include "procedure/procedure.h"
+#include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <string>
 

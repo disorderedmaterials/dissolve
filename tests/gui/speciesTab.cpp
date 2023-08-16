@@ -34,7 +34,7 @@ TEST_F(SpeciesTabTest, Atoms)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("inputs/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("benzene.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesAtomModel atom(*species, coreData);
@@ -79,7 +79,7 @@ TEST_F(SpeciesTabTest, Bonds)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("inputs/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("benzene.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesBondModel bond(species->bonds(), coreData);
@@ -118,7 +118,7 @@ TEST_F(SpeciesTabTest, Angles)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("restart/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("benzene.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesAngleModel angle(species->angles(), coreData);
@@ -159,7 +159,7 @@ TEST_F(SpeciesTabTest, Torsions)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("inputs/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("benzene.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesTorsionModel torsion(species->torsions(), coreData);
@@ -216,7 +216,7 @@ TEST_F(SpeciesTabTest, Impropers)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("inputs/py5-ntf2.txt"));
+    ASSERT_TRUE(dissolve.loadInput("py5-ntf2.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesImproperModel improper(species->impropers(), coreData);
@@ -263,7 +263,7 @@ TEST_F(SpeciesTabTest, Isotopologues)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("inputs/water.txt"));
+    ASSERT_TRUE(dissolve.loadInput("water.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesIsoModel isos(*species);

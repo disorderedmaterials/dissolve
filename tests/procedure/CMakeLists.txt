@@ -1,4 +1,4 @@
-dissolve_unit_test(calculateExpression.cpp)
-dissolve_unit_test(procedure.cpp)
-dissolve_unit_test(rotateFragment.cpp)
-dissolve_unit_test(select.cpp)
+dissolve_unit_test(SRC calculateExpression.cpp)
+dissolve_unit_test(SRC procedure.cpp)
+dissolve_unit_test(SRC rotateFragment.cpp)
+dissolve_unit_test(SRC select.cpp)

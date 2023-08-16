@@ -27,7 +27,7 @@ class XmlFFTest : public ::testing::Test
     XmlFFTest() = default;
 
     protected:
-    void SetUp() override { ASSERT_TRUE(doc.load_file("ff/methanol.xml")); }
+    void SetUp() override { ASSERT_TRUE(doc.load_file("methanol.xml")); }
 
     pugi::xml_document doc;
 };

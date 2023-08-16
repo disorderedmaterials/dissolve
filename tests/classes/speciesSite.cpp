@@ -3,7 +3,7 @@
 
 #include "classes/site.h"
 #include "classes/species.h"
-#include "unit/data/species.h"
+#include "tests/testData.h"
 #include <gtest/gtest.h>
 
 namespace UnitTest

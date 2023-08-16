@@ -5,7 +5,7 @@
 #include "classes/species.h"
 #include "data/elements.h"
 #include "data/ff/ff.h"
-#include "unit/data/species.h"
+#include "tests/testData.h"
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 #include <gtest/gtest.h>

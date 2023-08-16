@@ -1,2 +1,2 @@
-dissolve_unit_test(water.cpp)
-dissolve_unit_test(bendy.cpp)
+dissolve_unit_test(SRC water.cpp)
+dissolve_unit_test(SRC bendy.cpp)

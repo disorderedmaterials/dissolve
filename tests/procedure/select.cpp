@@ -5,7 +5,7 @@
 #include "classes/configuration.h"
 #include "main/dissolve.h"
 #include "procedure/procedure.h"
-#include "unit/data/species.h"
+#include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <string>
 

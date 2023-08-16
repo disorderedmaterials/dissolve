@@ -9,7 +9,7 @@ namespace UnitTest
 TEST(ImportCIFTest, Parse)
 {
     // Test files
-    auto cifPath = "_data/cif/";
+    auto cifPath = "cif/";
     std::vector<std::string> cifs = {"1517789.cif", "1557470.cif", "1557599.cif", "7705246.cif",
                                      "9000004.cif", "9000095.cif", "9000418.cif"};
 

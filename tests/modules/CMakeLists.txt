@@ -1,5 +1,5 @@
-dissolve_unit_test(epsr.cpp unit)
-dissolve_unit_test(forces.cpp energyforce2)
+dissolve_unit_test(SRC epsr.cpp USE_TEST_DIRECTORY unit)
+dissolve_unit_test(SRC forces.cpp USE_TEST_DIRECTORY energyforce2)
 
 # List individual module test subdirectories
 message(STATUS "Looking for individual module tests in ${CMAKE_CURRENT_SOURCE_DIR}...")
