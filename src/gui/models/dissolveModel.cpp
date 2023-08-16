@@ -1,8 +1,15 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2023 Team Dissolve and contributors
+
 #include "gui/models/dissolveModel.h"
 
-DissolveModel::DissolveModel(Dissolve &dissolve) : dissolve_(dissolve)
-{}
+DissolveModel::DissolveModel(Dissolve &dissolve) : dissolve_(dissolve) {}
 
+/*
+ * Data
+ */
+
+// Set reference to Dissolve
 void DissolveModel::setDissolve(Dissolve &dissolve)
 {
     beginResetModel();
@@ -16,9 +23,9 @@ QVariant DissolveModel::rawData(const QModelIndex index)
         return {};
     if (!dissolve_)
         return {};
-    auto& species = dissolve_->get().coreData().species();
-    auto& configurations = dissolve_->get().coreData().configurations();
-    switch(index.row())
+    auto &species = dissolve_->get().coreData().species();
+    auto &configurations = dissolve_->get().coreData().configurations();
+    switch (index.row())
     {
         case (0):
             switch (index.column())
@@ -56,9 +63,9 @@ const QVariant DissolveModel::rawData(const QModelIndex index) const
         return {};
     if (!dissolve_)
         return {};
-    auto& species = dissolve_->get().coreData().species();
-    auto& configurations = dissolve_->get().coreData().configurations();
-    switch(index.row())
+    auto &species = dissolve_->get().coreData().species();
+    auto &configurations = dissolve_->get().coreData().configurations();
+    switch (index.row())
     {
         case (0):
             switch (index.column())
@@ -90,10 +97,17 @@ const QVariant DissolveModel::rawData(const QModelIndex index) const
     return {};
 }
 
-QModelIndex DissolveModel::parent(const QModelIndex &child) const
+// Update the model
+void DissolveModel::reset()
 {
-    return QModelIndex();
+    beginResetModel();
+    endResetModel();
 }
+
+/*
+ * QAbstractItemModel overrides
+ */
+QModelIndex DissolveModel::parent(const QModelIndex &child) const { return QModelIndex(); }
 
 int DissolveModel::columnCount(const QModelIndex &parent) const
 {
@@ -105,7 +119,7 @@ QVariant DissolveModel::data(const QModelIndex &index, int role) const
 {
     auto d = rawData(index);
     if (d.isNull())
-         return {};
+        return {};
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
         switch (index.row())
@@ -127,9 +141,9 @@ QVariant DissolveModel::data(const QModelIndex &index, int role) const
                         return {};
                 }
             case (1):
-                return QString::fromStdString(std::string(d.value<Species*>()->name()));
+                return QString::fromStdString(std::string(d.value<Species *>()->name()));
             case (2):
-                return QString::fromStdString(std::string(d.value<Configuration*>()->name()));
+                return QString::fromStdString(std::string(d.value<Configuration *>()->name()));
             default:
                 return {};
         }
@@ -139,18 +153,6 @@ QVariant DissolveModel::data(const QModelIndex &index, int role) const
     return {};
 }
 
-int DissolveModel::rowCount(const QModelIndex &parent) const
-{
-    return 3;
-}
+int DissolveModel::rowCount(const QModelIndex &parent) const { return 3; }
 
-QModelIndex DissolveModel::index(int row, int column, const QModelIndex &parent) const
-{
-    return createIndex(row, column);
-}
-
-void DissolveModel::reset()
-{
-    beginResetModel();
-    endResetModel();
-}
+QModelIndex DissolveModel::index(int row, int column, const QModelIndex &parent) const { return createIndex(row, column); }

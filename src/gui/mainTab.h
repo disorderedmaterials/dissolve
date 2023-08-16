@@ -52,7 +52,7 @@ class MainTab
     QString title_;
 
     public:
-    MainTabsWidget* tabWidget();
+    MainTabsWidget *tabWidget();
 
     protected:
     // Raise suitable dialog for entering / checking new tab name

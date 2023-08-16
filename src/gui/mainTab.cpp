@@ -30,10 +30,7 @@ EnumOptions<MainTab::TabType> MainTab::tabTypes()
                                                      {MainTab::TabType::Species, "SpeciesTab"}});
 }
 
-MainTabsWidget *MainTab::tabWidget()
-{
-    return tabWidget_;
-}
+MainTabsWidget *MainTab::tabWidget() { return tabWidget_; }
 
 /*
  * Data

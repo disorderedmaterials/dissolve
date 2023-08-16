@@ -5,14 +5,15 @@
 
 #include "gui/mainTab.h"
 #include "gui/models/dissolveModel.h"
-
-
 #include <QWidget>
 
+// Forward Declarations
 class QQuickWidget;
 
+// Overview Tab
 class OverviewTab : public QWidget, public MainTab
 {
+    // All Qt declarations derived from QObject must include this macro
     Q_OBJECT
 
     public:
@@ -20,16 +21,22 @@ class OverviewTab : public QWidget, public MainTab
     ~OverviewTab() = default;
 
     /*
+     * UI
+     */
+    private:
+    // Model
+    DissolveModel dissolveModel_;
+    // QML View
+    QQuickWidget *view_{nullptr};
+    // Have the slots been setup yet?
+    bool slotsAreSetup_{false};
+
+    /*
      * MainTab Reimplementations
      */
     public:
     // Return tab type
     MainTab::TabType type() const override;
-
-    private:
-    DissolveModel dissolveModel_;
-    QQuickWidget* view_{nullptr};
-    bool slotsAreSetup_{false};
 
     /*
      * Update
@@ -42,8 +49,12 @@ class OverviewTab : public QWidget, public MainTab
     // Allow editing within tab
     void allowEditing() override;
 
+    /*
+     * Slots
+     */
     private slots:
+    // Status of the QML view changed
     void viewStatusChanged();
-    void clicked(int row, int col);
-
+    // Node has been clicked
+    void nodeClicked(int row, int col);
 };

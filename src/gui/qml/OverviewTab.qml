@@ -2,11 +2,10 @@ import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Layouts 6.0
 import QtQml.Models 6.0
-import Dissolve 1.0
 
 ColumnLayout {
     id: root
-    signal clicked(int row, int col)
+    signal nodeClicked(int row, int col)
 
     Repeater {
         model: dissolveModel
@@ -39,7 +38,7 @@ ColumnLayout {
                         width: parent.width
                         height: parent.height
                         onClicked: {
-                            root.clicked(rowIndex, columnIndex)
+                            root.nodeClicked(rowIndex, columnIndex)
                         }
                     }
 
