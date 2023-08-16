@@ -83,7 +83,10 @@ bool IterateData1DProcedureNode::execute(const ProcedureContext &procedureContex
         data.setTag(name());
 
         // Copy the averaged data from the associated Process1D node
-        data = sourceData_ ? sourceData_->data() : sourceIntegerData_->data();
+        if (instantaneous_)
+            data = sourceData_ ? sourceData_->data() : sourceIntegerData_->data();
+        else
+            data = sourceData_ ? sourceData_->accumulatedData() : sourceIntegerData_->accumulatedData();
 
         for (auto index : data.values())
         {
