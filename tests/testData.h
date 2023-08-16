@@ -7,6 +7,7 @@
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/sampledVector.h"
+#include "math/sampledData1D.h"
 
 namespace UnitTest
 {
@@ -49,6 +50,26 @@ class DissolveSystemTest
     }
     // Iterate for set number of iterations
     bool iterate(int nIterations) { return dissolve_.iterate(nIterations); }
+    // Test SampledVector data
+    bool checkData(std::string_view tagA, std::string_view tagB, double tolerance = 5.0e-3,
+                            Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+
+        // Locate the target reference datasets
+        auto optData1 = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
+        if (!optData1)
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+        auto optData2 = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagB);
+        if (!optData2)
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
+
+        // Generate the error estimate and compare against the threshold value
+        auto error = Error::error(errorType, optData1->get(), optData2->get()).error;
+        auto notOK = isnan(error) || error > tolerance;
+        Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", tagA,
+                         error, tagB, notOK ? "NOT OK" : "OK", tolerance);
+        return !notOK;
+    }
     // Test SampledVector data
     bool checkSampledVector(std::string_view tag, std::vector<double> referenceData, double tolerance = 5.0e-3,
                             Error::ErrorType errorType = Error::ErrorType::EuclideanError)

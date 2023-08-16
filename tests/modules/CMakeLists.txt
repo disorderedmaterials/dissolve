@@ -1,3 +1,4 @@
 dissolve_unit_test(SRC avgMol.cpp)
+dissolve_unit_test(SRC accumulate.cpp)
 dissolve_unit_test(SRC epsr.cpp)
 dissolve_unit_test(SRC forces.cpp)
