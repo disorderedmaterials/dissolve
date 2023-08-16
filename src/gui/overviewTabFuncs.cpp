@@ -75,6 +75,6 @@ void OverviewTab::nodeClicked(int row, int col)
     {
         tabWidget_->setCurrentIndex(1);
         auto *tab = dynamic_cast<ForcefieldTab *>(tabWidget_->currentTab());
-        tab->setTabIndex(std::min(col, 1));
+        tab->setTab(std::min(col, 1));
     }
 }
