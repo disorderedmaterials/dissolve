@@ -18,7 +18,7 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
     // We need to do this before loading the actual QML
     view_->rootContext()->setContextProperty("dissolveModel", QVariant::fromValue(&dissolveModel_));
     // Load the QML, and listen for the status of the view to be changed (i.e. for it to be ready)
-    view_->setSource(QUrl("qrc:/dialogs/qml/OverviewTab.qml"));
+    view_->setSource(QUrl("qrc:/tabs/qml/OverviewTab.qml"));
     connect(view_, SIGNAL(statusChanged(QQuickWidget::Status)), SLOT(viewStatusChanged()));
 
     // Add the view to the widget, and center it
