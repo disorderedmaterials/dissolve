@@ -51,7 +51,7 @@ TEST(RotateTest, Benzene)
     // Atom coordinates prior and posterior to rotations
     std::vector<Vec3<double>> coordinatesBefore(mol->nAtoms()), coordinatesAfter(mol->nAtoms());
     std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesBefore.begin(),
-                   [&](const auto &at) { return at->r(); });
+                   [](const auto &at) { return at->r(); });
 
     // Select the site
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
@@ -60,7 +60,7 @@ TEST(RotateTest, Benzene)
     auto rotate = forEachB.create<RotateFragmentProcedureNode>("RotateBenzene", select);
     rotate->keywords().setEnumeration("Axis", OrientedSite::SiteAxis::ZAxis);
 
-    for (auto x = 180.0; x <= 360.0; x += 180.0)
+    for (auto x = 90.0; x <= 360.0; x += 90.0)
     {
         // Rotate by 'x' degrees
         rotate->keywords().set("Rotation", NodeValueProxy(x));
@@ -74,15 +74,15 @@ TEST(RotateTest, Benzene)
 
         // Posterior atom coordinates
         std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesAfter.begin(),
-                       [&](const auto &at) { return at->r(); });
+                       [](const auto &at) { return at->r(); });
         for (auto &&[r1, r2] : zip(coordinatesBefore, coordinatesAfter))
         {
             // Check that
-            // x' = -x
-            // y' = -y
-            // z' = z
-            ASSERT_NEAR(r2.x, -r1.x, 1e-5);
-            ASSERT_NEAR(r2.y, -r1.y, 1e-5);
+            // x' = -y
+            // y' = x
+            // z' = z = 0
+            ASSERT_NEAR(r2.x, r1.y, 1e-5);
+            ASSERT_NEAR(r2.y, -r1.x, 1e-5);
             ASSERT_EQ(r2.z, r1.z);
             ASSERT_EQ(r2.z, 0.0);
         }
