@@ -87,7 +87,7 @@ Module  ImportTrajectory
   Configuration  'Bulk'
 
   # Trajectory file contains 95 frames
-  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  Format  xyz  '_data/dlpoly/water267-analysis/water-267-298K.xyz'
   EndFormat
 EndModule
 
@@ -95,30 +95,6 @@ EndModule
 Module  AvgMol  'AvgMol01'
   Configuration  'Bulk'
   Site  Water  'origin'
-EndModule
-
-Module  DataTest
-  Frequency  95
-  SampledVector  'AvgMol01//X'  values  @
-  EndSampledVector
-  3
-  -0.83305
-  0.00016
-  0.83305
-
-  SampledVector  'AvgMol01//Y'  values  @
-  EndSampledVector
-  3
-  0.00000
-  0.60443
-  0.00000
-
-  SampledVector  'AvgMol01//Z'  values  @
-  EndSampledVector
-  3
-  0.00000
-  0.00000
-  0.00000
 EndModule
 
 EndLayer
