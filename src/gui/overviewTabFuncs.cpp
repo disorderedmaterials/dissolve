@@ -14,12 +14,7 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
     view_ = new QQuickWidget(this);
     view_->rootContext()->setContextProperty("dissolveModel", QVariant::fromValue(&dissolveModel_));
     view_->setSource(QUrl("qrc:/dialogs/qml/OverviewTab.qml"));
-    //view_->setMinimumSize(300, 300);
-    //view_->setResizeMode(QQuickWidget::SizeRootObjectToView);
     connect(view_, SIGNAL(statusChanged(QQuickWidget::Status)), SLOT(viewStatusChanged()));
-    //layout()->setAlignment(view_, Qt::AlignHCenter & Qt::AlignVCenter);
-    //topLeftLayout->addWidget(view_);
-    //setLayout(topLeftLayout);
 
     topLeftLayout->addWidget(view_);
     topLeftLayout->setAlignment(view_, Qt::AlignHCenter);
@@ -34,6 +29,7 @@ void OverviewTab::updateControls()
 {
     dissolveModel_.reset();
     Messenger::print("There are {} rows and {} cols", dissolveModel_.rowCount(), dissolveModel_.columnCount());
+    view_->rootContext()->setContextProperty("dissolveModel", QVariant::fromValue(&dissolveModel_));
 }
 
 void OverviewTab::preventEditing()
@@ -52,7 +48,6 @@ void OverviewTab::viewStatusChanged()
     {
         connect(view_->rootObject(), SIGNAL(clicked(int, int)), this, SLOT(clicked(int, int)));
         slotsAreSetup_ = true;
-        //layout()->addWidget(view_);
     }
 }
 
