@@ -51,6 +51,8 @@ class MainTabsWidget : public QTabWidget
     QPointer<MessagesTab> messagesTab_;
     // Pointer to Forcefield tab
     QPointer<ForcefieldTab> forcefieldTab_;
+    // OverviewTab Toggle
+    static constexpr bool overview_flag = false;
     // Pointer to Overview tab
     QPointer<OverviewTab> overviewTab_;
     // List of Species tabs
