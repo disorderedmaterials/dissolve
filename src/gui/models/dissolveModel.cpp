@@ -21,7 +21,21 @@ QVariant DissolveModel::rawData(const QModelIndex index)
     switch(index.row())
     {
         case (0):
-            return {};
+            switch (index.column())
+            {
+                case (0):
+                    return QVariant::fromValue(dissolve_->get().coreData().atomTypes());
+                case (1):
+                    return QVariant::fromValue(&dissolve_->get().coreData().masterBonds());
+                case (2):
+                    return QVariant::fromValue(&dissolve_->get().coreData().masterAngles());
+                case (3):
+                    return QVariant::fromValue(&dissolve_->get().coreData().masterTorsions());
+                case (4):
+                    return QVariant::fromValue(&dissolve_->get().coreData().masterImpropers());
+                default:
+                    return {};
+            }
         case (1):
             if (index.column() < species.size())
                 return QVariant::fromValue(dissolve_->get().coreData().species()[index.column()].get());
@@ -52,7 +66,13 @@ const QVariant DissolveModel::rawData(const QModelIndex index) const
                 case (0):
                     return QVariant::fromValue(dissolve_->get().coreData().atomTypes());
                 case (1):
-                    return QVariant::fromValue(&dissolve_->get().coreData());
+                    return QVariant::fromValue(&dissolve_->get().coreData().masterBonds());
+                case (2):
+                    return QVariant::fromValue(&dissolve_->get().coreData().masterAngles());
+                case (3):
+                    return QVariant::fromValue(&dissolve_->get().coreData().masterTorsions());
+                case (4):
+                    return QVariant::fromValue(&dissolve_->get().coreData().masterImpropers());
                 default:
                     return {};
             }
@@ -78,7 +98,7 @@ QModelIndex DissolveModel::parent(const QModelIndex &child) const
 int DissolveModel::columnCount(const QModelIndex &parent) const
 {
     auto max = std::max(dissolve_->get().coreData().nConfigurations(), dissolve_->get().coreData().nSpecies());
-    return std::max(max, 2);
+    return std::max(max, 5);
 }
 
 QVariant DissolveModel::data(const QModelIndex &index, int role) const
@@ -96,7 +116,13 @@ QVariant DissolveModel::data(const QModelIndex &index, int role) const
                     case (0):
                         return "Atom Types";
                     case (1):
-                        return "Master Terms";
+                        return "Bonds";
+                    case (2):
+                        return "Angles";
+                    case (3):
+                        return "Torsions";
+                    case (4):
+                        return "Impropers";
                     default:
                         return {};
                 }
