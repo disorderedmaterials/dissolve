@@ -12,7 +12,7 @@ class AvgMolModuleBendyTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("../unit/modules/avgMol/bendy.txt")); }
+    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/avgMol-bendy.txt")); }
 
     void checkCoordinates()
     {
@@ -31,7 +31,7 @@ TEST_F(AvgMolModuleBendyTest, AverageCoordinates)
 
 TEST_F(AvgMolModuleBendyTest, Restart)
 {
-    ASSERT_NO_THROW(systemTest.loadRestart("../unit/modules/avgMol/bendy.124.restart"));
+    ASSERT_NO_THROW(systemTest.loadRestart("dissolve/avgMol-bendy.124.restart"));
     ASSERT_TRUE(systemTest.iterate(77));
 
     checkCoordinates();

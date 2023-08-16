@@ -85,7 +85,7 @@ Configuration  'Bulk'
       Positioning  Random
     EndAdd
     ImportCoordinates  'InputCoordinates01'
-      File  epsr  '../_data/epsr25/water1000-neutron-xray/waterbox.ato'
+      File  epsr  'epsr25/water1000-neutron-xray/waterbox.ato'
       EndFile
     EndImportCoordinates
   EndGenerator
@@ -118,7 +118,7 @@ Layer  'RDF / Neutron / XRay'
 
     SourceSQs  'SQs'
     Isotopologue  'Water'  'Natural'  1.000000
-    Reference  mint  '../_data/dummy/dummy.mint01'
+    Reference  mint  'dummy/dummy.mint01'
     EndReference
     ReferenceFTQMin  0.5
     ReferenceFTQMax  30.0
@@ -129,7 +129,7 @@ Layer  'RDF / Neutron / XRay'
 
     SourceSQs  'SQs'
     Isotopologue  'Water'  'Deuterated'  1.000000
-    Reference  mint  '../_data/dummy/dummy.mint01'
+    Reference  mint  'dummy/dummy.mint01'
     EndReference
     ReferenceFTQMin  0.5
     ReferenceFTQMax  30.0
@@ -142,7 +142,7 @@ Layer  'RDF / Neutron / XRay'
     Exchangeable  HW
     Isotopologue  'Water'  'Natural'  1.000000
     Isotopologue  'Water'  'Deuterated'  1.000000
-    Reference  mint  '../_data/dummy/dummy.mint01'
+    Reference  mint  'dummy/dummy.mint01'
     EndReference
     ReferenceFTQMin  0.5
     ReferenceFTQMax  30.0
@@ -155,7 +155,7 @@ Layer  'RDF / Neutron / XRay'
     Exchangeable  HW
     Isotopologue  'Water'  'Natural'  0.6400000
     Isotopologue  'Water'  'Deuterated'  0.3600000
-    Reference  mint  '../_data/dummy/dummy.mint01'
+    Reference  mint  'dummy/dummy.mint01'
     EndReference
     ReferenceFTQMin  0.5
     ReferenceFTQMax  30.0
@@ -164,7 +164,7 @@ Layer  'RDF / Neutron / XRay'
   Module  XRaySQ  'H2Ox'
     Frequency  1
     SourceSQs  'SQs'
-    Reference  mint  '../_data/dummy/dummy.mint01'
+    Reference  mint  'dummy/dummy.mint01'
     EndReference
     NormaliseTo  AverageOfSquares
     ReferenceNormalisedTo  AverageOfSquares

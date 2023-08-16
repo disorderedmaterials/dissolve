@@ -5,20 +5,19 @@
 cmake_policy(SET CMP0054 NEW)
 find_package(GTest REQUIRED)
 
-set(TEST_GUI FALSE)
-
 function(dissolve_unit_test)
 
   # Parse arguments
+  set(options GUI)
   set(oneValueArgs SRC USE_TEST_DIRECTORY)
-  cmake_parse_arguments(DISSOLVE_UNIT_TEST  "" "${oneValueArgs}" "" ${ARGN})
+  cmake_parse_arguments(DISSOLVE_UNIT_TEST "${options}" "${oneValueArgs}" "" ${ARGN})
 
   # Check args
   if(NOT DEFINED DISSOLVE_UNIT_TEST_SRC)
     message(FATAL_ERROR "Test registered from directory '${CMAKE_CURRENT_LIST_DIR}' did not set a SRC file.")
   endif(NOT DEFINED DISSOLVE_UNIT_TEST_SRC)
   if(NOT DEFINED DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY)
-    set(DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+    set(DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/data")
   else(NOT DEFINED DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY)
     set(DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/${DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY}")
   endif(NOT DEFINED DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY)
@@ -53,14 +52,14 @@ function(dissolve_unit_test)
     )
   endif(CONAN)
 
-  if(TEST_GUI)
+  if(DISSOLVE_UNIT_TEST_GUI)
     target_include_directories(${TEST_NAME} PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
     target_link_libraries(
             ${TEST_NAME}
             PUBLIC keywordWidgets models widgets
             PRIVATE Qt6::Core Qt6::Widgets
     )
-  endif(TEST_GUI)
+  endif(DISSOLVE_UNIT_TEST_GUI)
 
   # Register the test
   gtest_discover_tests(${TEST_NAME} WORKING_DIRECTORY ${DISSOLVE_UNIT_TEST_USE_TEST_DIRECTORY})

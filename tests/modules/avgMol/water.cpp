@@ -14,7 +14,7 @@ class AvgMolModuleWaterTest : public ::testing::Test
 
     void SetUp() override
     {
-        ASSERT_NO_THROW(systemTest.setUp("../unit/modules/avgMol/water.txt"));
+        ASSERT_NO_THROW(systemTest.setUp("dissolve/avgMol-water.txt"));
         ASSERT_TRUE(systemTest.iterate(95));
     }
 };

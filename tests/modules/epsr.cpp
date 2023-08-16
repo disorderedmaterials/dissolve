@@ -46,7 +46,7 @@ TEST(EPSRModuleTest, ScatteringMatrix)
     Dissolve dissolve(coreData);
 
     dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("epsr-5datasets.txt"));
+    ASSERT_TRUE(dissolve.loadInput("dissolve/epsr-5datasets.txt"));
     dissolve.prepare();
     ASSERT_TRUE(dissolve.iterate(1));
 
@@ -74,7 +74,7 @@ TEST(EPSRModuleTest, DataWeighting)
     Dissolve dissolve(coreData);
 
     dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("epsr-5datasets-weighted.txt"));
+    ASSERT_TRUE(dissolve.loadInput("dissolve/epsr-5datasets-weighted.txt"));
     dissolve.prepare();
     ASSERT_TRUE(dissolve.iterate(1));
 

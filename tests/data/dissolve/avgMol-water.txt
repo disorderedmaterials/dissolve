@@ -87,7 +87,7 @@ Module  ImportTrajectory
   Configuration  'Bulk'
 
   # Trajectory file contains 95 frames
-  Format  xyz  '_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  Format  xyz  'dlpoly/water267-analysis/water-267-298K.xyz'
   EndFormat
 EndModule
 
