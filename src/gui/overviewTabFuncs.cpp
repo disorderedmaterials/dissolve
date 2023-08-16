@@ -28,19 +28,11 @@ MainTab::TabType OverviewTab::type() const
 void OverviewTab::updateControls()
 {
     dissolveModel_.reset();
-    Messenger::print("There are {} rows and {} cols", dissolveModel_.rowCount(), dissolveModel_.columnCount());
-    view_->rootContext()->setContextProperty("dissolveModel", QVariant::fromValue(&dissolveModel_));
 }
 
-void OverviewTab::preventEditing()
-{
+void OverviewTab::preventEditing() {}
 
-}
-
-void OverviewTab::allowEditing()
-{
-
-}
+void OverviewTab::allowEditing() {}
 
 void OverviewTab::viewStatusChanged()
 {
@@ -52,27 +44,17 @@ void OverviewTab::viewStatusChanged()
 }
 
 void OverviewTab::clicked(int row, int col) {
-    Messenger::print("{} {}", row, col);
-    auto i = dissolveModel_.index(row, col);
-    QVariant obj = dissolveModel_.rawData(dissolveModel_.index(row, col));
-
+    auto obj = dissolveModel_.rawData(dissolveModel_.index(row, col));
     auto* sp = obj.value<Species*>();
-    auto *cfg = obj.value<Configuration*>();
+    auto* cfg = obj.value<Configuration*>();
     if (sp)
-    {
         tabWidget_->setCurrentTab(sp);
-        return Messenger::print("{}", sp->name());
-    }
     else if (cfg)
-    {
         tabWidget_->setCurrentTab(cfg);
-        return Messenger::print("{}", cfg->name());
-    }
     else
     {
         tabWidget_->setCurrentIndex(1);
         auto* tab = dynamic_cast<ForcefieldTab*>(tabWidget_->currentTab());
-        tab->setTabIndex(col);
+        tab->setTabIndex(std::min(col, 1));
     }
-
 }
