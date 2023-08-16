@@ -9,42 +9,45 @@ ColumnLayout {
 
     Repeater {
         model: dissolveModel
+
         delegate: RowLayout {
             property int rowIndex: index
 
             Repeater {
                 model: dissolveModel.columnCount()
+
                 delegate: Rectangle {
                     id: itemRect
+
                     property int columnIndex: index
                     property bool hasContent: !!dissolveModel.data(dissolveModel.index(rowIndex, columnIndex), Qt.UserRole)
 
-                    visible: hasContent
-                    height: 50
-                    color: "lightblue"
                     border.color: "steelblue"
+                    color: "lightblue"
+                    height: 50
                     radius: 5
+                    visible: hasContent
+
+                    Component.onCompleted: {
+                        itemRect.width = Math.max(100, textItem.width) + 20;
+                        textItem.width = itemRect.width;
+                    }
 
                     Text {
                         id: textItem
-                        text: hasContent ? dissolveModel.data(dissolveModel.index(rowIndex, columnIndex), Qt.DisplayRole) : ""
                         font.pixelSize: 14
-                        wrapMode: Text.WordWrap
-                        verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
+                        text: hasContent ? dissolveModel.data(dissolveModel.index(rowIndex, columnIndex), Qt.DisplayRole) : ""
+                        verticalAlignment: Text.AlignVCenter
+                        wrapMode: Text.WordWrap
                     }
-
                     MouseArea {
-                        width: parent.width
                         height: parent.height
-                        onClicked: {
-                            root.nodeClicked(rowIndex, columnIndex)
-                        }
-                    }
+                        width: parent.width
 
-                    Component.onCompleted: {
-                        itemRect.width = Math.max(100, textItem.width) + 20
-                        textItem.width = itemRect.width
+                        onClicked: {
+                            root.nodeClicked(rowIndex, columnIndex);
+                        }
                     }
                 }
             }
