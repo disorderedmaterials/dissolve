@@ -9,8 +9,9 @@
 #include "math/data1D.h"
 #include "math/filters.h"
 
-Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format)
-    : FileAndFormat(formats_, filename, (int)format)
+Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format,
+                                               int xColumn, int yColumn, int errorColumn)
+    : FileAndFormat(formats_, filename, (int)format), xColumn_(xColumn), yColumn_(yColumn), errorColumn_(errorColumn)
 {
     formats_ = EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
         "Data1DImportFileFormat", {{Data1DImportFormat::XY, "xy", "Simple XY data (x = bin centres)"},

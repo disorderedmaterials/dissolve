@@ -1,5 +1,7 @@
 dissolve_unit_test(SRC accumulate.cpp)
 dissolve_unit_test(SRC atomShake.cpp)
 dissolve_unit_test(SRC avgMol.cpp)
+dissolve_unit_test(SRC bragg.cpp)
+dissolve_unit_test(SRC broadening.cpp)
 dissolve_unit_test(SRC epsr.cpp)
 dissolve_unit_test(SRC forces.cpp)

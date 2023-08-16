@@ -4,6 +4,7 @@
 #include "classes/coreData.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include "io/import/data1D.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/sampledData1D.h"
@@ -52,39 +53,55 @@ class DissolveSystemTest
     Dissolve &dissolve() { return dissolve_; }
     // Return the CoreData object
     CoreData &coreData() { return coreData_; }
-    // Test SampledVector data
-    bool checkData(std::string_view tagA, std::string_view tagB, double tolerance = 5.0e-3,
-                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    // Test Data1D
+    [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
+                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
-
-        // Locate the target reference datasets
-        auto optData1 = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
-        if (!optData1)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
-        auto optData2 = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagB);
-        if (!optData2)
-            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
-
         // Generate the error estimate and compare against the threshold value
-        auto error = Error::error(errorType, optData1->get(), optData2->get()).error;
+        auto error = Error::error(errorType, dataA, dataB).error;
         auto notOK = isnan(error) || error > tolerance;
-        Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", tagA,
-                         error, tagB, notOK ? "NOT OK" : "OK", tolerance);
+        Messenger::print("Internal data '{}' has error of {:7.3e} with data '{}' and is {} (threshold is {:6.3e}).\n", nameA,
+                         error, nameB, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
     }
+    // Test Data1D (by tag and external file data)
+    [[nodiscard]] bool checkData1D(std::string_view tagA, Data1DImportFileFormat externalFileFormat, double tolerance = 5.0e-3,
+                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        auto optDataA = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
+        if (!optDataA)
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+
+        Data1D dataB;
+        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(dataB))
+            throw(std::runtime_error(fmt::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+
+        return checkData1D(optDataA->get(), tagA, dataB, externalFileFormat.filename(), tolerance, errorType);
+    }
+    // Test Data1D (by tags)
+    [[nodiscard]] bool checkData1D(std::string_view tagA, std::string_view tagB, double tolerance = 5.0e-3,
+                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        auto optDataA = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagA);
+        if (!optDataA)
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+
+        auto optDataB = dissolve_.processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tagB);
+        if (!optDataB)
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
+
+        return checkData1D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
+    }
     // Test SampledVector data
-    bool checkSampledVector(std::string_view tag, std::vector<double> referenceData, double tolerance = 5.0e-3,
-                            Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    [[nodiscard]] bool checkSampledVector(std::string_view tag, const std::vector<double> &referenceData,
+                                          double tolerance = 5.0e-3,
+                                          Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
         // Locate the target reference data
         auto optData = dissolve_.processingModuleData().search<const SampledVector>(tag);
         if (!optData)
-        {
-            return Messenger::error("No data with tag '{}' exists.\n", tag);
-        }
-
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tag)));
         const SampledVector &data = optData->get();
-        Messenger::print("Located reference data '{}'.\n", tag);
 
         // Generate the error estimate and compare against the threshold value
         auto error = Error::error(errorType, data.values(), referenceData).error;
