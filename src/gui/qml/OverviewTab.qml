@@ -18,7 +18,6 @@ ColumnLayout {
 
                 delegate: Rectangle {
                     id: itemRect
-
                     property int columnIndex: index
                     property bool hasContent: !!dissolveModel.data(dissolveModel.index(rowIndex, columnIndex), Qt.UserRole)
 
