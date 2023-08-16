@@ -6,8 +6,8 @@
 #include "data/elements.h"
 #include "main/dissolve.h"
 #include "math/error.h"
-#include "math/sampledVector.h"
 #include "math/sampledData1D.h"
+#include "math/sampledVector.h"
 
 namespace UnitTest
 {
@@ -48,11 +48,13 @@ class DissolveSystemTest
         if (!dissolve_.loadRestart(restartFile))
             throw(std::runtime_error(fmt::format("Restart file '{}' failed to load correctly.\n", restartFile)));
     }
-    // Iterate for set number of iterations
-    bool iterate(int nIterations) { return dissolve_.iterate(nIterations); }
+    // Return the Dissolve object
+    Dissolve &dissolve() { return dissolve_; }
+    // Return the CoreData object
+    CoreData &coreData() { return coreData_; }
     // Test SampledVector data
     bool checkData(std::string_view tagA, std::string_view tagB, double tolerance = 5.0e-3,
-                            Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
     {
 
         // Locate the target reference datasets
