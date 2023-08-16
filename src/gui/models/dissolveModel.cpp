@@ -47,7 +47,15 @@ const QVariant DissolveModel::rawData(const QModelIndex index) const
     switch(index.row())
     {
         case (0):
-            return {};
+            switch (index.column())
+            {
+                case (0):
+                    return QVariant::fromValue(dissolve_->get().coreData().atomTypes());
+                case (1):
+                    return QVariant::fromValue(&dissolve_->get().coreData());
+                default:
+                    return {};
+            }
         case (1):
             if (index.column() < species.size())
                 return QVariant::fromValue(dissolve_->get().coreData().species()[index.column()].get());
@@ -69,13 +77,14 @@ QModelIndex DissolveModel::parent(const QModelIndex &child) const
 
 int DissolveModel::columnCount(const QModelIndex &parent) const
 {
-    return std::max(dissolve_->get().coreData().nConfigurations(), dissolve_->get().coreData().nSpecies());
+    auto max = std::max(dissolve_->get().coreData().nConfigurations(), dissolve_->get().coreData().nSpecies());
+    return std::max(max, 2);
 }
 
 QVariant DissolveModel::data(const QModelIndex &index, int role) const
 {
     auto d = rawData(index);
-    if (d.isNull() && index.row() > 0)
+    if (d.isNull())
          return {};
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
@@ -106,7 +115,7 @@ QVariant DissolveModel::data(const QModelIndex &index, int role) const
 
 int DissolveModel::rowCount(const QModelIndex &parent) const
 {
-    return 2;
+    return 3;
 }
 
 QModelIndex DissolveModel::index(int row, int column, const QModelIndex &parent) const
