@@ -7,31 +7,33 @@ import Dissolve 1.0
 ColumnLayout {
     id: root
     signal clicked(int row, int col)
+
     Repeater {
         model: dissolveModel
         delegate: RowLayout {
             property int rowIndex: index
+
             Repeater {
-                model: dissolveModel
+                model: dissolveModel.columnCount()
                 delegate: Rectangle {
+                    id: itemRect
                     property int columnIndex: index
                     property bool hasContent: !!dissolveModel.data(dissolveModel.index(rowIndex, columnIndex), Qt.UserRole)
+
                     visible: hasContent
-                    width: 100
                     height: 50
                     color: "lightblue"
                     border.color: "steelblue"
                     radius: 5
 
                     Text {
+                        id: textItem
                         text: hasContent ? dissolveModel.data(dissolveModel.index(rowIndex, columnIndex), Qt.DisplayRole) : ""
-                        width: parent.width
                         font.pixelSize: 14
                         wrapMode: Text.WordWrap
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                     }
-
 
                     MouseArea {
                         width: parent.width
@@ -41,6 +43,10 @@ ColumnLayout {
                         }
                     }
 
+                    Component.onCompleted: {
+                        itemRect.width = Math.max(100, textItem.width) + 20
+                        textItem.width = itemRect.width
+                    }
                 }
             }
         }
