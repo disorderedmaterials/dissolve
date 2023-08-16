@@ -50,8 +50,7 @@ TEST(RotateTest, Benzene)
 
     // Atom coordinates prior and posterior to rotations
     std::vector<Vec3<double>> coordinatesBefore(mol->nAtoms()), coordinatesAfter(mol->nAtoms());
-    std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesBefore.begin(),
-                   [](const auto &at) { return at->r(); });
+    std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesBefore.begin(), [](const auto &at) { return at->r(); });
 
     // Select the site
     auto select = procedure.createRootNode<SelectProcedureNode>("BenzeneSite", sites);
