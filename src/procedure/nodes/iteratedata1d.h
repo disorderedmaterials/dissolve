@@ -28,6 +28,13 @@ class IterateData1DProcedureNode : public ProcedureNode
     void setUpKeywords();
 
     /*
+     * Identity
+     */
+    public:
+    // Set node name
+    void setName(std::string_view name) override;
+
+    /*
      * Data
      */
     private:

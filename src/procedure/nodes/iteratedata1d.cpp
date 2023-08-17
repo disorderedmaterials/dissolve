@@ -47,6 +47,20 @@ void IterateData1DProcedureNode::setUpKeywords()
 }
 
 /*
+ * Identity
+ */
+
+// Set node name
+void IterateData1DProcedureNode::setName(std::string_view name)
+{
+    name_ = DissolveSys::niceName(name);
+
+    // Update parameter names to match
+    xParameter_->setName(fmt::format("{}.x", name_));
+    valueParameter_->setName(fmt::format("{}.value", name_));
+}
+
+/*
  *Parameters
  */
 // Return vector of all parameters for this node
