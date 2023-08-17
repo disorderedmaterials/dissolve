@@ -10,6 +10,7 @@
 #include "procedure/nodes/calculateExpression.h"
 #include "procedure/nodes/ifValueInRange.h"
 #include "procedure/nodes/integerCollect1D.h"
+#include "procedure/nodes/iteratedata1d.h"
 #include "procedure/nodes/operateNormalise.h"
 #include "procedure/nodes/process1D.h"
 #include "procedure/nodes/select.h"
@@ -37,6 +38,14 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     siteIndex->setExpression("NF.siteIndex");
 
     auto collectNFIndex = forEachNF.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
+
+    auto iterateNFIndex = analyser_.createRootNode<IterateData1DProcedureNode>("Flatten", collectNFIndex);
+    auto &forEachNFIndex = iterateNFIndex->branch()->get();
+
+    auto value = forEachNFIndex.create<CalculateExpressionProcedureNode>({});
+    value->setExpression("value");
+    auto collectQ = forEachNFIndex.create<IntegerCollect1DProcedureNode>("Bins", value, ProcedureNode::AnalysisContext);
+    auto processNF = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectQ);
 
     /*
      * Keywords
