@@ -132,7 +132,7 @@ std::optional<ExpressionValue> Expression::evaluate() const
     if (rootNode_)
         return rootNode_->evaluate();
 
-    return std::nullopt;
+    return ExpressionValue();
 }
 
 // Execute and return as integer
