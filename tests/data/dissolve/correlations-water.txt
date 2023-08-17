@@ -40,7 +40,6 @@ Layer  'Processing'
     Frequency  1
     BinWidth 0.03
     IntraBroadening  None
-    Save  On
   EndModule
 
 Module  SQ  'SQ01'
@@ -48,20 +47,17 @@ QMin 0.05
 QBroadening  OmegaDependentGaussian  0.02    # For SLS
 WindowFunction  None
 SourceGR  'GR01'
-Save  On
 EndModule
 
 Module  NeutronSQ  'D2O'
 SourceSQs  'SQ01'
 Isotopologue  'Water'  'Deuteriated'  1.0
-# SaveSQ  On
 Frequency  1
 EndModule
 
 Module  NeutronSQ  'H2O'
 SourceSQs  'SQ01'
 Isotopologue  'Water'  'Protiated'  1.0
-# SaveSQ  On
 Frequency  1
 EndModule
 
@@ -70,7 +66,6 @@ SourceSQs  'SQ01'
 Isotopologue  'Water'  'Protiated'  0.5
 Isotopologue  'Water'  'Deuteriated'  0.5
 Exchangeable  HW
-# SaveSQ  On
 Frequency  1
 EndModule
 

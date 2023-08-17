@@ -72,7 +72,6 @@ Layer  'Correlations'
   # Calculate and test g(r)
   Module  GR  GRs
     Configurations  'Mix'
-    #Save  On
     Frequency  1
     BinWidth 0.03
     IntraBroadening  None
@@ -83,7 +82,6 @@ Layer  'Correlations'
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  Lorch0
-    #Save  On
   EndModule
 
   # Sample Structure Factor Calculations
@@ -101,9 +99,6 @@ Layer  'Correlations'
     Isotopologue  'Methanol'  'Protiated'  0.5
     Isotopologue  'Methanol'  'OD-MethylH'  0.5
     Exchangeable  HW  HO
-    #SaveGR  On
-    #SaveSQ  On
-    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -112,9 +107,6 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Deuteriated'  1.0
     Isotopologue  'Methanol'  'Protiated'  1.0
     Exchangeable  HW  HO
-    #SaveGR  On
-    #SaveSQ  On
-    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -123,9 +115,6 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Protiated'  1.0
     Isotopologue  'Methanol'  'OD-MethylH'  1.0
     Exchangeable  HW  HO
-    #SaveGR  On
-    #SaveSQ  On
-    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -134,9 +123,6 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Protiated'  1.0
     Isotopologue  'Methanol'  'MethylD-OH'  1.0
     Exchangeable  HW  HO
-    #SaveGR  On
-    #SaveSQ  On
-    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -145,9 +131,6 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Deuteriated'  1.0
     Isotopologue  'Methanol'  'OD-MethylH'  1.0
     Exchangeable  HW  HO
-    #SaveGR  On
-    #SaveSQ  On
-    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -156,9 +139,6 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Protiated'  1.0
     Isotopologue  'Methanol'  'Deuteriated'  1.0
     Exchangeable  HW  HO
-    #SaveGR  On
-    #SaveSQ  On
-    #SaveReference  On
     Frequency  1
   EndModule
   

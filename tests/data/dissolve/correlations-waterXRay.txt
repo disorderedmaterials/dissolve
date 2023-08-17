@@ -87,13 +87,10 @@ Layer  'Processing'
     Frequency  1
     SourceGR  'GR01'
     QBroadening  GaussianC2  0.0  0.02
-    #Save  On
   EndModule
 
   Module  XRaySQ  H2Oxray
     SourceSQs  'SQ01'
-    # SaveFormFactors  On
-    # SaveSQ  On
     Normalisation  AverageOfSquares
   EndModule
 
