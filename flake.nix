@@ -157,6 +157,7 @@
               gdb
               gtk3
               openmpi
+              qt-idaaas.packages.${system}.qttools
               tbb
               valgrind
               ((import ./nix/weggli.nix) {
