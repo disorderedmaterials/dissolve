@@ -31,7 +31,7 @@ QVariant DissolveModel::rawData(const QModelIndex index)
             switch (index.column())
             {
                 case (0):
-                    return QVariant::fromValue(dissolve_->get().coreData().atomTypes());
+                    return QVariant::fromValue(&dissolve_->get().coreData().atomTypes());
                 case (1):
                     return QVariant::fromValue(&dissolve_->get().coreData().masterBonds());
                 case (2):
@@ -71,7 +71,7 @@ const QVariant DissolveModel::rawData(const QModelIndex index) const
             switch (index.column())
             {
                 case (0):
-                    return QVariant::fromValue(dissolve_->get().coreData().atomTypes());
+                    return QVariant::fromValue(&dissolve_->get().coreData().atomTypes());
                 case (1):
                     return QVariant::fromValue(&dissolve_->get().coreData().masterBonds());
                 case (2):
