@@ -73,21 +73,18 @@ TEST(RotateTest, Benzene)
         // Posterior atom coordinates
         std::transform(mol->atoms().begin(), mol->atoms().end(), coordinatesAfter.begin(),
                        [](const auto &at) { return at->r(); });
-        Messenger::banner("Rotate {}", x);
         for (auto &&[r1, r2] : zip(coordinatesBefore, coordinatesAfter))
         {
             // Check that
             // x' = -y
             // y' = x
             // z' = z = 0
-            // ASSERT_NEAR(r2.x, r1.y, 1e-5);
-            // ASSERT_NEAR(r2.y, -r1.x, 1e-5);
-            // ASSERT_EQ(r2.z, r1.z);
-            // ASSERT_EQ(r2.z, 0.0);
-            Messenger::print("({} {} {}) ---> ({} {} {})", r1.x, r1.y, r1.z, r2.x, r2.y, r2.z);
+            ASSERT_NEAR(r2.x, r1.y, 1e-5);
+            ASSERT_NEAR(r2.y, -r1.x, 1e-5);
+            ASSERT_EQ(r2.z, r1.z);
+            ASSERT_EQ(r2.z, 0.0);
         }
         coordinatesBefore = coordinatesAfter;
     }
-    ASSERT_TRUE(false);
 }
 } // namespace UnitTest
