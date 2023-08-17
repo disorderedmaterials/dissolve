@@ -40,10 +40,6 @@ OptionalReferenceWrapper<ProcedureNodeSequence> IterateSelectionProcedureNode::b
 // Prepare any necessary data, ready for execution
 bool IterateSelectionProcedureNode::prepare(const ProcedureContext &procedureContext)
 {
-    // Check for at least one site being defined
-    if (speciesSites_.empty())
-        return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
-
     // If one exists, prepare the ForEach branch nodes
     if (!forEachBranch_.prepare(procedureContext))
         return false;
@@ -55,7 +51,7 @@ bool IterateSelectionProcedureNode::prepare(const ProcedureContext &procedureCon
 bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureContext)
 {
     // If a ForEach branch has been defined, process it for each of our sites in turn. Otherwise, we're done.
-    auto sites = selection_->returnSites();
+    const auto &sites = selection_->sites();
     currentSite_ = std::nullopt;
     if (!forEachBranch_.empty())
     {
@@ -74,24 +70,26 @@ bool IterateSelectionProcedureNode::execute(const ProcedureContext &procedureCon
                 return false;
         }
     }
+
     // Update parameters
     nSelectedParameter_->setValue(int(sites.size()));
+
     return true;
 }
 
 bool IterateSelectionProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
-    auto selectionSize = selection_->returnSites().size();
+    auto selectionSize = selection_->sites().size();
     // If one exists, finalise the ForEach branch nodes
     if (!forEachBranch_.finalise(procedureContext))
         return false;
 
     // Print out summary information
-    Messenger::print("Select - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(), nSelections_,
-                     selectionSize);
-    Messenger::print("Select - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
+    Messenger::print("[Iterate Selection] - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(),
+                     nSelections_, selectionSize);
+    Messenger::print("[Iterate Selection] - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
                      nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
-    Messenger::print("Select - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
+    Messenger::print("[Iterate Selection] - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
 
     return true;
 }

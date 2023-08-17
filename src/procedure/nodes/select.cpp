@@ -177,9 +177,6 @@ double SelectProcedureNode::nAvailableSitesAverage() const { return double(nAvai
 // Return current site
 OptionalReferenceWrapper<const Site> SelectProcedureNode::currentSite() const { return currentSite_; }
 
-// Return sites vector
-std::vector<std::tuple<const Site &, int, int>> SelectProcedureNode::returnSites() const { return sites_; }
-
 /*
  * Branch
  */
@@ -314,14 +311,14 @@ bool SelectProcedureNode::finalise(const ProcedureContext &procedureContext)
         return false;
 
     // Print out summary information
-    Messenger::print("Select - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(), nSelections_,
+    Messenger::print("[Select] - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(), nSelections_,
                      sites_.size());
-    Messenger::print("Select - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
+    Messenger::print("[Select] - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
                      nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
-    Messenger::print("Select - Site '{}': Average number of sites available per selection = {:.2f}.\n", name(),
+    Messenger::print("[Select] - Site '{}': Average number of sites available per selection = {:.2f}.\n", name(),
                      nSelections_ == 0 ? 0 : double(nAvailableSites_) / nSelections_);
 
-    Messenger::print("Select - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
+    Messenger::print("[Select] - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
 
     return true;
 }

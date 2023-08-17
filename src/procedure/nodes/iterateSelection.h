@@ -35,13 +35,6 @@ class IterateSelectionProcedureNode : public ProcedureNode
     std::shared_ptr<const SelectProcedureNode> selection_;
 
     /*
-     * Selection Targets
-     */
-    private:
-    // Vector of sites to select
-    std::vector<const SpeciesSite *> speciesSites_;
-
-    /*
      * Selected Sites
      */
     private:
