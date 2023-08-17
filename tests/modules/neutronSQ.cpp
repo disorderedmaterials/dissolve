@@ -64,4 +64,40 @@ TEST_F(NeutronSQModuleTest, WaterMethanol)
         {"epsr25/water300methanol600/watermeth.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 16}, 5.0e-4));
 }
 
+TEST_F(NeutronSQModuleTest, WaterReferenceFT)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/epsr-water-3n-x.txt"));
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    EXPECT_TRUE(systemTest.checkData1D(
+        "D2O//ReferenceDataFT",
+        {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 5.0e-5));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "H2O//ReferenceDataFT",
+        {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 5.0e-5));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "HDO//ReferenceDataFT",
+        {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 5.0e-5));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "H2Ox//ReferenceDataFT",
+        {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 5.0e-5));
+}
+
+
+TEST_F(NeutronSQModuleTest, Benzene)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/epsr-benzene-3n.txt"));
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    // Total F(Q)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "C6H6//WeightedSQ//Total",
+        {"epsr25/benzene200-neutron/benzene.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 2.0e-3));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "C6D6//WeightedSQ//Total",
+        {"epsr25/benzene200-neutron/benzene.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-3));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "5050//WeightedSQ//Total",
+        {"epsr25/benzene200-neutron/benzene.EPSR.u01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 2.0e-3));
+}
 } // namespace UnitTest

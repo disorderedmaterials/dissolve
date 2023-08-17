@@ -203,4 +203,32 @@ TEST_F(GRModuleTest, WaterMethanol)
         Error::ErrorType::RMSEError));
 }
 
+TEST_F(GRModuleTest, Benzene)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/epsr-benzene-3n.txt"));
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    // Partial g(r) (unbound terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GRs//Liquid//OriginalGR//CA-CA//Unbound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 3.0e-2));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GRs//Liquid//OriginalGR//CA-HA//Unbound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 2.0e-2));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GRs//Liquid//OriginalGR//HA-HA//Unbound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.g01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 4.0e-2));
+
+    // Partial g(r) (intramolecular terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GRs//Liquid//OriginalGR//CA-CA//Bound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 0.12));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GRs//Liquid//OriginalGR//CA-HA//Bound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 0.18));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "GRs//Liquid//OriginalGR//HA-HA//Bound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.y01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 9.0e-2));
+}
+
 } // namespace UnitTest

@@ -203,4 +203,33 @@ TEST_F(SQModuleTest, WaterMethanol)
         Error::ErrorType::RMSEError));
 }
 
+TEST_F(SQModuleTest, Benzene)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/epsr-benzene-3n.txt"));
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    // Partial S(Q) (unbound terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQs//UnweightedSQ//CA-CA//Unbound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 7.0e-3));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQs//UnweightedSQ//CA-HA//Unbound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 5.0e-3));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQs//UnweightedSQ//HA-HA//Unbound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.f01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 8.0e-3));
+
+    // Partial S(Q) (intramolecular terms)
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQs//UnweightedSQ//CA-CA//Bound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.s01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 2}, 1.1e-2,
+        Error::ErrorType::RMSEError));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQs//UnweightedSQ//CA-HA//Bound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.s01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 4}, 5.0e-3));
+    EXPECT_TRUE(systemTest.checkData1D(
+        "SQs//UnweightedSQ//HA-HA//Bound",
+        {"epsr25/benzene200-neutron/benzene.EPSR.s01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 6}, 1.0e-2));
+}
+
 } // namespace UnitTest
