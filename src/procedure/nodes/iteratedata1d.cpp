@@ -41,6 +41,18 @@ void IterateData1DProcedureNode::setUpKeywords()
         "SourceIntegerData", "IntegerCollect1D node containing the histogram data to process", sourceIntegerData_, this,
         ProcedureNode::NodeType::IntegerCollect1D, false);
     keywords_.addHidden<NodeBranchKeyword>("ForEach", "Branch to run on each site selected", forEachBranch_);
+
+    xParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("x"));
+    valueParameter_ = parameters_.emplace_back(std::make_shared<ExpressionVariable>("value"));
+}
+
+/*
+ *Parameters
+ */
+// Return vector of all parameters for this node
+OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> IterateData1DProcedureNode::parameters() const
+{
+    return parameters_;
 }
 
 /*
@@ -62,11 +74,7 @@ bool IterateData1DProcedureNode::prepare(const ProcedureContext &procedureContex
     }
     else if (sourceData_ || sourceIntegerData_)
     {
-        // If one exists, prepare the ForEach branch nodes
-        if (!forEachBranch_.prepare(procedureContext))
-            return false;
-        else
-            return true;
+        return forEachBranch_.prepare(procedureContext);
     }
     else
         return Messenger::error("No source data node set in '{}'.\n", name());
@@ -88,16 +96,15 @@ bool IterateData1DProcedureNode::execute(const ProcedureContext &procedureContex
         else
             data = sourceData_ ? sourceData_->accumulatedData() : sourceIntegerData_->accumulatedData();
 
-        for (auto index : data.values())
+        for (const auto &&[x, value] : zip(data.xAxis(), data.values()))
         {
-            xParameter_->setValue(data.xAxis(index));
-            valueParameter_->setValue(data.value(index));
+            xParameter_->setValue(x);
+            valueParameter_->setValue(value);
 
             // If the branch fails at any point, return failure here.  Otherwise, continue the loop
             if (!forEachBranch_.execute(procedureContext))
                 return false;
         }
-        return true;
     }
     return true;
 }
@@ -105,8 +112,5 @@ bool IterateData1DProcedureNode::execute(const ProcedureContext &procedureContex
 // Finalise any necessary data after execution
 bool IterateData1DProcedureNode::finalise(const ProcedureContext &procedureContext)
 {
-    // If one exists, finalise the ForEach branch nodes
-    if (!forEachBranch_.finalise(procedureContext))
-        return false;
-    return true;
+    return forEachBranch_.finalise(procedureContext);
 }

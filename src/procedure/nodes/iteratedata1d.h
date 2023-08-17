@@ -30,7 +30,7 @@ class IterateData1DProcedureNode : public ProcedureNode
     /*
      * Data
      */
-    // Whether to use only the current binned data of the histogram, rather than the accumulated average
+    private:
     bool instantaneous_{false};
     // Collect1D node that we are processing
     std::shared_ptr<const Collect1DProcedureNode> sourceData_;
@@ -40,8 +40,14 @@ class IterateData1DProcedureNode : public ProcedureNode
      * Parameters
      */
     private:
+    // Defined parameters
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> xParameter_, valueParameter_;
+
+    public:
+    // Return vector of all parameters for this node
+    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;
 
     /*
      * Branch
