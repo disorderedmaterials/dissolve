@@ -75,7 +75,7 @@ Configuration  'Bulk'
       SizeFactor  '1.0'
     EndSizeFactor
     ImportCoordinates  'InputCoordinates01'
-      File  epsr  '../_data/epsr25/water1000-neutron/waterbox.ato'
+      File  epsr  'epsr25/water1000-neutron/waterbox.ato'
       EndFile
     EndImportCoordinates
   EndGenerator
@@ -113,7 +113,7 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
     Isotopologue  'Water'  'Natural'  1.0
     Normalisation  None
-    Reference  mint  '../_data/epsr25/water1000-neutron/H2O.mint01'
+    Reference  mint  'epsr25/water1000-neutron/H2O.mint01'
     EndReference
     ReferenceFTQMax  30.0
     ReferenceFTQMin  0.3
@@ -128,7 +128,7 @@ Layer  'RDF / Neutron S(Q)'
     Frequency  1
     Isotopologue  'Water'  'Deuterated'  1.0
     Normalisation  None
-    Reference  mint  '../_data/epsr25/water1000-neutron/D2O.mint01'
+    Reference  mint  'epsr25/water1000-neutron/D2O.mint01'
     EndReference
     ReferenceFTQMax  30.0
     ReferenceFTQMin  0.3
@@ -145,7 +145,7 @@ Layer  'RDF / Neutron S(Q)'
     Isotopologue  'Water'  'Natural'  1.0
     Isotopologue  'Water'  'Deuterated'  1.0
     Normalisation  None
-    Reference  mint  '../_data/epsr25/water1000-neutron/HDO.mint01'
+    Reference  mint  'epsr25/water1000-neutron/HDO.mint01'
     EndReference
     ReferenceFTQMax  30.0
     ReferenceFTQMin  0.3
@@ -166,58 +166,13 @@ Layer  'Refine (EPSR)'
     ExpansionFunction  Poisson
     Feedback  0.9
     OverwritePotentials  True
-    InpAFile  '../_data/epsr25/water1000-neutron/water.EPSR.inpa'
+    InpAFile  'epsr25/water1000-neutron/water.EPSR.inpa'
     QMin  1.5
     Smoothing  0
     NPItSs  0
     Target  'D2O'
     Target  'H2O'
     Target  'HDO'
-    TestAbsEnergyEP  OW-OW  0.2475
-    TestAbsEnergyEP  OW-HW  0.3722
-    TestAbsEnergyEP  HW-HW  0.4567
-  EndModule
-
-  Module DataTest  'Estimated Partials'
-    Threshold  0.02
-    Data1D  'EPSR01//EstimatedSQ//OW-OW'  xy  '../_data/epsr25/water1000-neutron/water.EPSR.q01'
-      Y  2
-      XMin  1.5
-    EndData1D
-    Data1D  'EPSR01//EstimatedSQ//OW-HW'  xy  '../_data/epsr25/water1000-neutron/water.EPSR.q01'
-      Y  4
-      XMin  1.5
-    EndData1D
-    Data1D  'EPSR01//EstimatedSQ//HW-HW'  xy  '../_data/epsr25/water1000-neutron/water.EPSR.q01'
-      Y  6
-      XMin  1.5
-    EndData1D
-  EndModule
-
-  Module DataTest  'DeltaFQ Fits'
-    Threshold  0.02
-    Data1D  'EPSR01//DeltaFQFit//D2O'  xy  '../_data/epsr25/water1000-neutron/FQ.delfit'
-      Y  2
-    EndData1D
-    Data1D  'EPSR01//DeltaFQFit//H2O'  xy  '../_data/epsr25/water1000-neutron/FQ.delfit'
-      Y  4
-    EndData1D
-    Data1D  'EPSR01//DeltaFQFit//HDO'  xy  '../_data/epsr25/water1000-neutron/FQ.delfit'
-      Y  6
-    EndData1D
-  EndModule
-
-  Module DataTest  'Generated Potentials'
-    Threshold  0.04
-    Data1D  'Dissolve//Potential_OW-OW_Additional'  xy  '../_data/epsr25/water1000-neutron/water.EPSR.p01'
-      Y  2
-    EndData1D
-    Data1D  'Dissolve//Potential_OW-HW_Additional'  xy  '../_data/epsr25/water1000-neutron/water.EPSR.p01'
-      Y  4
-    EndData1D
-    Data1D  'Dissolve//Potential_HW-HW_Additional'  xy  '../_data/epsr25/water1000-neutron/water.EPSR.p01'
-      Y  6
-    EndData1D
   EndModule
 
 EndLayer

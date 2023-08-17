@@ -9,6 +9,7 @@
 #include "math/error.h"
 #include "math/sampledData1D.h"
 #include "math/sampledVector.h"
+#include <gtest/gtest.h>
 
 namespace UnitTest
 {
@@ -53,6 +54,19 @@ class DissolveSystemTest
     Dissolve &dissolve() { return dissolve_; }
     // Return the CoreData object
     CoreData &coreData() { return coreData_; }
+    // Find and return named module
+    template <class M> M *getModule(std::string_view name)
+    {
+        auto *module = Module::find(name);
+        if (!module)
+            throw(std::runtime_error(fmt::format("Module '{}' does not exist.\n", name)));
+        auto *castModule = dynamic_cast<M *>(module);
+        if (!castModule)
+            throw(std::runtime_error(
+                fmt::format("Module '{}' did not cast to the target type '{}' (it is of Module type '{}').\n", name,
+                            typeid(M).name(), ModuleTypes::moduleType(module->type()))));
+        return castModule;
+    }
     // Test Data1D
     [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
                                    double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)

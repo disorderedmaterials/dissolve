@@ -117,7 +117,7 @@ Configuration  'Liquid'
       Species  'Benzene'
     EndAdd
     ImportCoordinates  'InputCoordinates01'
-      File  epsr  '../_data/epsr25/benzene200-neutron/boxbenz.ato'
+      File  epsr  'epsr25/benzene200-neutron/boxbenz.ato'
       EndFile
     EndImportCoordinates
   EndGenerator
@@ -151,7 +151,7 @@ EndModule
 Module  NeutronSQ  'C6H6'
   SourceSQs  'SQs'
   Isotopologue  'Benzene'  'Natural'  1.0
-  Reference  mint  '../_data/epsr25/benzene200-neutron/C6H6.mint01'
+  Reference  mint  'epsr25/benzene200-neutron/C6H6.mint01'
   EndReference
   Frequency  1
   #SaveSQ  On
@@ -162,7 +162,7 @@ EndModule
 Module  NeutronSQ  'C6D6'
   SourceSQs  'SQs'
   Isotopologue  'Benzene'  'Deuteriated'  1.0
-  Reference  mint  '../_data/epsr25/benzene200-neutron/C6D6.mint01'
+  Reference  mint  'epsr25/benzene200-neutron/C6D6.mint01'
   EndReference
   Frequency  1
   #SaveSQ  On
@@ -174,7 +174,7 @@ Module  NeutronSQ  '5050'
   SourceSQs  'SQs'
   Isotopologue  'Benzene'  'Deuteriated'  0.5
   Isotopologue  'Benzene'  'Natural'  0.5
-  Reference  mint  '../_data/epsr25/benzene200-neutron/5050.mint01'
+  Reference  mint  'epsr25/benzene200-neutron/5050.mint01'
   EndReference
   Frequency  1
   #SaveSQ  On
@@ -186,7 +186,6 @@ Module Energy
   Configuration  'Liquid'
 EndModule
 
-# Refine potentials
 Module  EPSR
   Target  'C6H6'
   Target  'C6D6'
@@ -194,7 +193,7 @@ Module  EPSR
   Frequency  1
   NPItSs  10
   Feedback  0.9
-  PCofFile  'test.pcof'
+  PCofFile  'dissolve/epsr-benzene-3n-pcof.pcof'
 EndModule
 
 EndLayer
