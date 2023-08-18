@@ -132,7 +132,11 @@ std::optional<ExpressionValue> Expression::evaluate() const
     if (rootNode_)
         return rootNode_->evaluate();
 
-    return ExpressionValue();
+    // If there is no rootNode_ (i.e. expression) this is valid, and we just return an empty value
+    if (!rootNode_)
+        return ExpressionValue();
+
+    return rootNode_->evaluate();
 }
 
 // Execute and return as integer
