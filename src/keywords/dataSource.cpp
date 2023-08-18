@@ -1,6 +1,26 @@
 #include "dataSource.h"
+#include "io/import/data1D.h"
+#include "io/import/data2D.h"
+#include "io/import/data3D.h"
 
-template <typename T, typename F> DataSourceKeyword::DataSourceKeyword(F addData) { addData_ = addData; }
+template <typename T, typename F> DataSourceKeyword::DataSourceKeyword(F addData, std::string_view endKeyword)
+{
+    addData_ = addData;
+    endKeyword_ = endKeyword;
+
+    if (std::is_same_v<T, Data1D>)
+    {
+        format_ = Data1DFileAndFormat();
+    }
+    else if (std::is_same_v<T, Data2D>)
+    {
+        format_ = Data2DFileAndFormat();
+    }
+    else if (std::is_same_v<T, Data3D>)
+    {
+        format_ = Data3DFileAndFormat();
+    }
+}
 
 DataSource &DataSourceKeyword::data()
 {
@@ -22,19 +42,57 @@ std::optional<int> DataSourceKeyword::maxArguments() const { return std::nullopt
 template <typename T, typename F>
 bool DataSourceKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    sourceType_ = parser.nArgs() == 1 ? SourceType::Internal : SourceType::External;
+    /**
+     * TODO: We get first line -> it is either internal or external data
+     * TODO: We must pass argument one and then argument two (Maybe start by parsing lines)
+     */
+    std::vector<T> dataSources;
 
-    T data;
-
-    if (parser.nArgs() == 1)
+    while (!parser.eofOrBlank())
     {
-        data.setTag(parser.argsv(startArg));
+
+        T data;
+
+        if (DissolveSys::sameString(parser.argsv(startArg), internalKwd_))
+        {
+            data.setTag(parser.argsv(startArg + 1));
+        }
+
+        else if (DissolveSys::sameString(parser.argsv(startArg), externalKwd_))
+        {
+            if (format_.read(parser, startArg + 1, externalEndKwd_, coreData) != FileAndFormat::ReadResult::Success)
+            {
+                return false;
+            }
+
+            if (!format.importData(data, parser.processPool()))
+            {
+                return false;
+            }
+        }
+
+        // Read the next line
+        if (parser.getArgsDelim() != LineParser::Success)
+        {
+            return false;
+        }
+
+        // Is this the end of the block?
+        if (DissolveSys::sameString(parser.argsv(0), endKeyword_))
+        {
+            break;
+        }
+
+        dataSources.push_back(data);
     }
 
-    else
-        (data2D_) {}
+    if (!addData_(DataSources))
+    {
+        Messenger::error("Invalid data sources supplied for keyword '{}'", name());
+        return false;
+    }
 
-    return false;
+    return true;
 }
 
 // Serialise data to specified LineParser

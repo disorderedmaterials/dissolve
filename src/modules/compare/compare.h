@@ -69,10 +69,10 @@ class CompareModule : public Module
         return true;
     }
     // Fetch internal 1D data
-    template <> bool fetchData(const std::string_view &tag, const ModuleContext &ModuleContext)
+    template <> bool fetchData<Data1DBase>(const Data1DBase &data, const ModuleContext &ModuleContext)
     {
         // Locate target internal 1D data
-        auto optData = moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(tag);
+        auto optData = moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(data.tag);
         if (!optData)
         {
             return Messenger::error("No data with tag '{}' exists.\n", tag);
