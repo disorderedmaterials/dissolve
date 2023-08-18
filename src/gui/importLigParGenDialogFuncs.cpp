@@ -23,6 +23,9 @@ ImportLigParGenDialog::ImportLigParGenDialog(QWidget *parent, Dissolve &dissolve
     // Set model for the atom type list
     ui_.AtomTypeList->setModel(&atomTypeModel_);
 
+    // Hide site actions in the SpeciesViewer
+    ui_.SpeciesView->setSiteActionsVisible(false);
+
     // Register pages with the wizard
     registerPage(ImportLigParGenDialog::SelectFilesPage, "Choose XML and/or XYZ Files");
     registerPage(ImportLigParGenDialog::PreviewSpeciesPage, "Imported Coordinates");

@@ -106,6 +106,9 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
         postRedisplay();
 }
 
+// Toggle visibility of site management menu actions in the context menu
+void SpeciesViewer::setSiteActionsVisible(bool visible) { siteActionsVisible_ = visible; }
+
 // Context menu requested
 void SpeciesViewer::contextMenuRequested(QPoint pos)
 {
@@ -145,6 +148,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
         actionMap[createSiteMenu->addAction("Atom Types")] = "CreateDynamicAtomTypes";
         actionMap[createSiteMenu->addAction("Empty Fragment String")] = "CreateFragment";
         createSiteMenu->setEnabled(nSelected > 0);
+        createSiteMenu->menuAction()->setVisible(siteActionsVisible_);
 
         auto *modifySiteMenu = menu.addMenu("Modify current site...");
         modifySiteMenu->setFont(font());
@@ -165,6 +169,7 @@ void SpeciesViewer::contextMenuRequested(QPoint pos)
                 modifySiteMenu->setEnabled(false);
         }
         modifySiteMenu->setEnabled(sitesVisible_);
+        modifySiteMenu->menuAction()->setVisible(siteActionsVisible_);
 
         // Set menu (only if DissolveWindow is set)
         if (dissolveWindow_)
