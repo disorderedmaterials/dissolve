@@ -167,15 +167,8 @@ Layer  'Evolve (Standard)'
   EndModule
 
   Module  Forces  'Forces01'
-   Frequency  10
-
+    Frequency  10
     Configuration  'Bulk'
-    TestReference  simple  '10.forces'
-    EndTestReference
-    Test  On
-    #SaveForces  simple  '10.forces'
-    #EndSaveForces
-
   EndModule
 
 EndLayer

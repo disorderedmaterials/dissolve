@@ -5,6 +5,7 @@
 #include "classes/species.h"
 #include "data/elements.h"
 #include "io/import/data1D.h"
+#include "io/import/forces.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/sampledData1D.h"
@@ -16,13 +17,25 @@ namespace UnitTest
 class DissolveSystemTest
 {
     public:
-    DissolveSystemTest() : dissolve_(coreData_){};
+    DissolveSystemTest() : dissolve_(coreData_) { dissolve_.setRestartFileFrequency(0); };
 
+    /*
+     * Dissolve & CoreData
+     */
     private:
     CoreData coreData_;
     Dissolve dissolve_;
     bool rewriteCheck_{true};
 
+    public:
+        // Return the Dissolve object
+        Dissolve &dissolve() { return dissolve_; }
+    // Return the CoreData object
+    CoreData &coreData() { return coreData_; }
+
+    /*
+     * SetUp & Input
+     */
     public:
     // Load, parse, optionally rewrite the specified file, and prepare the simulation
     void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp = {})
@@ -55,10 +68,11 @@ class DissolveSystemTest
         if (!dissolve_.loadRestart(restartFile))
             throw(std::runtime_error(fmt::format("Restart file '{}' failed to load correctly.\n", restartFile)));
     }
-    // Return the Dissolve object
-    Dissolve &dissolve() { return dissolve_; }
-    // Return the CoreData object
-    CoreData &coreData() { return coreData_; }
+
+    /*
+     * Module Helpers
+     */
+    public:
     // Set enabled status for named module
     void setModuleEnabled(std::string_view name, bool enabled)
     {
@@ -80,6 +94,11 @@ class DissolveSystemTest
                             typeid(M).name(), ModuleTypes::moduleType(module->type()))));
         return castModule;
     }
+
+    /*
+     * Checks
+     */
+    public:
     // Test simple double
     [[nodiscard]] bool checkDouble(std::string_view quantity, double A, double B, double threshold)
     {
@@ -145,6 +164,25 @@ class DissolveSystemTest
         Messenger::print("Target data '{}' has error of {:7.3e} with reference data and is {} (threshold is {:6.3e})\n\n", tag,
                          error, notOK ? "NOT OK" : "OK", tolerance);
         return !notOK;
+    }
+    // Test Vec3 vector data
+    void checkVec3Vector(const std::vector<Vec3<double>> &A, const std::vector<Vec3<double>> &B, double tolerance)
+    {
+        ASSERT_EQ(A.size(), B.size());
+        for (auto n = 0; n < A.size(); ++n)
+        {
+            EXPECT_NEAR(A[n].x, B[n].x, tolerance);
+            EXPECT_NEAR(A[n].y, B[n].y, tolerance);
+            EXPECT_NEAR(A[n].z, B[n].z, tolerance);
+        }
+    }
+    // Test Vec3 vector data (by tag and external data)
+    void checkVec3Vector(std::string_view tag, ForceImportFileFormat externalForces, double tolerance)
+    {
+        auto &vec = dissolve_.processingModuleData().value<std::vector<Vec3<double>>>(tag);
+        std::vector<Vec3<double>> B(vec.size());
+        ASSERT_TRUE(externalForces.importData(B));
+        checkVec3Vector(vec, B, tolerance);
     }
 };
 
