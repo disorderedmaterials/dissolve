@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "io/fileAndFormat.h"
 #include "keywords/base.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
@@ -24,30 +25,31 @@ template <typename T, typename F> class DataSourceKeyword : public KeywordBase
         External
     };
 
-    explicit DataSourceKeyword(F addData);
+    explicit DataSourceKeyword(F addData, std::string_view endKeyword);
     ~DataSourceKeyword() override = default;
 
     /*
      * Data
      */
     private:
-    F addData;
-    // Size of data container
-    int containerSize_;
-    SourceType sourceType_;
-
-    public:
-    // Return reference to data
-    Data1D &data();
-    Data2D &data();
-    Data3D &data();
-    const Data1D &data() const;
-    const Data2D &data() const;
-    const Data3D &data() const;
+    // Reference to data adding function in module
+    F addData_;
+    // Format object for the data
+    FileAndFormat format_;
 
     /*
      * Arguments
      */
+    private:
+    // End keyword for the dataSource keyword
+    const std::string endKeyword_;
+    // Start keyword to specify an internal data source
+    const std::string internalKwd_{"Internal"};
+    // Start keyword to specify an external data source
+    const std::string externalKwd_{"External"};
+    // End keyword to specify an external data source
+    const std::string externalEndKwd_{"EndExternal"};
+
     public:
     // Return minimum number of arguments accepted
     int minArguments() const override;
