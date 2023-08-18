@@ -129,10 +129,11 @@ std::shared_ptr<ExpressionNode> Expression::rootNode() { return rootNode_; }
 // Execute expression
 std::optional<ExpressionValue> Expression::evaluate() const
 {
-    if (rootNode_)
-        return rootNode_->evaluate();
+    // If there is no rootNode_ (i.e. expression) this is valid, and we just return an empty value
+    if (!rootNode_)
+        return ExpressionValue();
 
-    return std::nullopt;
+    return rootNode_->evaluate();
 }
 
 // Execute and return as integer
