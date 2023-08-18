@@ -311,8 +311,7 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
             for (auto fc = 0; fc < 3; ++fc)
             {
-                if (fabs(fInter[n].get(fc)) > 1.0e-6)
-                    fRatio[fc] *= 100.0 / fInter[n].get(fc);
+                fRatio[fc] *= 100.0 / fTot[fc];
                 if (fabs(fRatio[fc]) > testThreshold_)
                     testFailed = true;
             }
@@ -322,10 +321,9 @@ Module::ExecutionResult ForcesModule::process(ModuleContext &moduleContext)
 
             if (testFailed)
             {
-                Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
-                                 "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                 n + 1, fInter[n].x - f[n].x, fRatio.x, fInter[n].y - f[n].y, fRatio.y, fInter[n].z - f[n].z,
-                                 fRatio.z);
+                Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:8.3e}%) {:15.8e} "
+                                 "({:8.3e}%) {:15.8e} ({:8.3e}%) (x y z) 10J/mol\n",
+                                 n + 1, fTot.x - f[n].x, fRatio.x, fTot.y - f[n].y, fRatio.y, fTot.z - f[n].z, fRatio.z);
                 ++nFailed;
             }
         }

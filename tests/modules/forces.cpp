@@ -102,77 +102,74 @@ TEST_F(ForcesModuleTest, Water3000Bound)
     testForces(shiftedForces, {"dlpoly/water3000_energyForce/intra.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 2.5e-2);
 }
 
+TEST_F(ForcesModuleTest, Hexane1Full)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane1.txt"));
+    systemTest.setModuleEnabled("Energy01", false);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    auto &forces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Liquid//Forces");
+    testForces(forces, {"dlpoly/hexane1/REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 0.03);
+}
+
+TEST_F(ForcesModuleTest, Hexane2Full)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane2.txt"));
+    systemTest.setModuleEnabled("Energy01", false);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    auto &forces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Liquid//Forces");
+    testForces(forces, {"dlpoly/hexane2/REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 3.0e-2);
+}
+
 TEST_F(ForcesModuleTest, Hexane200Full)
 {
-    CoreData coreData;
-    Dissolve dissolve(coreData);
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane200.txt"));
+    systemTest.setModuleEnabled("Energy01", false);
+    auto *forcesModule = systemTest.getModule<ForcesModule>("Forces01");
+    forcesModule->keywords().set("TestThreshold", 2.0e-5);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
-    dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("full.txt"));
-    ASSERT_TRUE(dissolve.regeneratePairPotentials());
-    dissolve.prepare();
-    auto &cfg = coreData.configurations().front();
-    ASSERT_TRUE(cfg != nullptr);
-
-    // Load in full reference forces
-    ForceImportFileFormat importer("../_data/dlpoly/hexane200/REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY);
-    std::vector<Vec3<double>> fReference(cfg->nAtoms());
-    ASSERT_TRUE(importer.importData(fReference));
-
-    // Calculate full forces
-    std::vector<Vec3<double>> fCalculated(cfg->nAtoms());
-    ForcesModule::totalForces(dissolve.worldPool(), cfg.get(), dissolve.potentialMap(),
-                              ForcesModule::ForceCalculationType::Full, fCalculated, fCalculated);
-    testForces(fReference, fCalculated, 0.4);
+    auto &forces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Liquid//Forces");
+    testForces(forces, {"dlpoly/hexane200/full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 0.2);
 }
 
 TEST_F(ForcesModuleTest, Hexane200Unbound)
 {
-    CoreData coreData;
-    Dissolve dissolve(coreData);
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane200.txt",
+                                     [](Dissolve &D, CoreData &C)
+                                     {
+                                         for (auto b : C.masterBonds())
+                                             b->setInteractionParameters("k=0.0 eq=0.0");
+                                         for (auto a : C.masterAngles())
+                                             a->setInteractionParameters("k=0.0 eq=0.0");
+                                         for (auto t : C.masterTorsions())
+                                             t->setInteractionParameters("k1=0.0 k2=0.0 k3=0.0");
+                                     }));
+    systemTest.setModuleEnabled("Energy01", false);
+    auto *forcesModule = systemTest.getModule<ForcesModule>("Forces01");
+    forcesModule->keywords().set("TestThreshold", 5.0e-2);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
-    dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("full.txt"));
-    ASSERT_TRUE(dissolve.regeneratePairPotentials());
-    dissolve.prepare();
-    auto &cfg = coreData.configurations().front();
-    ASSERT_TRUE(cfg != nullptr);
-
-    // Load in unbound reference forces
-    ForceImportFileFormat importer("dlpoly/hexane200_unbound/REVCON",
-                                   ForceImportFileFormat::ForceImportFormat::DLPOLY);
-    std::vector<Vec3<double>> fReference(cfg->nAtoms());
-    ASSERT_TRUE(importer.importData(fReference));
-
-    // Calculate pair potential forces
-    std::vector<Vec3<double>> fCalculated(cfg->nAtoms());
-    ForcesModule::totalForces(dissolve.worldPool(), cfg.get(), dissolve.potentialMap(),
-                              ForcesModule::ForceCalculationType::PairPotentialOnly, fCalculated, fCalculated);
-    testForces(fReference, fCalculated, 0.2);
+    auto &forces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Liquid//Forces");
+    testForces(forces, {"dlpoly/hexane200/unbound.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 0.3);
 }
 
 TEST_F(ForcesModuleTest, Hexane200Bound)
 {
-    CoreData coreData;
-    Dissolve dissolve(coreData);
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane200.txt",
+                                     [](Dissolve &D, CoreData &C)
+                                     {
+                                         for (auto at : C.atomTypes())
+                                             at->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                         D.setAtomTypeChargeSource(true);
+                                         D.setAutomaticChargeSource(false);
+                                     }));
+    systemTest.setModuleEnabled("Energy01", false);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
-    dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("full.txt"));
-    ASSERT_TRUE(dissolve.regeneratePairPotentials());
-    dissolve.prepare();
-    auto &cfg = coreData.configurations().front();
-    ASSERT_TRUE(cfg != nullptr);
-
-    // Load in bound reference forces
-    ForceImportFileFormat importer("../_data/dlpoly/hexane200_bound/REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY);
-    std::vector<Vec3<double>> fReference(cfg->nAtoms());
-    ASSERT_TRUE(importer.importData(fReference));
-
-    // Calculate bound forces
-    std::vector<Vec3<double>> fCalculated(cfg->nAtoms());
-    ForcesModule::totalForces(dissolve.worldPool(), cfg.get(), dissolve.potentialMap(),
-                              ForcesModule::ForceCalculationType::IntraMolecularGeometry, fCalculated, fCalculated);
-    testForces(fReference, fCalculated, 1.0e-4);
+    auto &forces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Liquid//Forces");
+    testForces(forces, {"dlpoly/hexane200/bound.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 2.5e-4);
 }
 
 } // namespace UnitTest
