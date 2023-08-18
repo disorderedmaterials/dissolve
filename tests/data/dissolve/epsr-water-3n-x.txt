@@ -106,7 +106,6 @@ Layer  'RDF / Neutron / XRay'
 
     Configurations  'Bulk'
     IntraBroadening  None
-    #Save  On
   EndModule
 
   Module  SQ  'SQs'
@@ -114,7 +113,6 @@ Layer  'RDF / Neutron / XRay'
 
     SourceGR  'GRs'
     QBroadening  'OmegaDependentGaussian'  0.020000
-    #Save  On
   EndModule
 
   Module  NeutronSQ  'H2O'
@@ -126,7 +124,6 @@ Layer  'RDF / Neutron / XRay'
     EndReference
     ReferenceFTQMin  0.5
     ReferenceFTQMax  30.0
-    SaveRepresentativeGR  On
   EndModule
 
   Module  NeutronSQ  'D2O'

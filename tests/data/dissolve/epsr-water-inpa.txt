@@ -119,8 +119,6 @@ Layer  'RDF / Neutron S(Q)'
     ReferenceFTQMin  0.3
     ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
-    SaveReference  True
-    SaveSQ  True
     SourceSQs  'SQ01'
   EndModule
 
@@ -134,8 +132,6 @@ Layer  'RDF / Neutron S(Q)'
     ReferenceFTQMin  0.3
     ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
-    SaveReference  True
-    SaveSQ  True
     SourceSQs  'SQ01'
   EndModule
 
@@ -151,8 +147,6 @@ Layer  'RDF / Neutron S(Q)'
     ReferenceFTQMin  0.3
     ReferenceNormalisation  None
     ReferenceWindowFunction  Lorch0
-    SaveReference  True
-    SaveSQ  True
     SourceSQs  'SQ01'
   EndModule
 EndLayer

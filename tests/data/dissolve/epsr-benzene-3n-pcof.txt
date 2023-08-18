@@ -136,7 +136,6 @@ Module  GR  'GRs'
   BinWidth  0.03
   IntraBroadening  None
   Frequency  1
-  #Save  On
 EndModule
 
 # Calcualte S(Q) from RDFs
@@ -144,7 +143,6 @@ Module SQ  'SQs'
   SourceGR  'GRs'
   QBroadening  OmegaDependentGaussian  0.02
   WindowFunction  Lorch0
-  #Save  On
 EndModule
 
 # Calculate S(Q) for the C6H6 sample
@@ -154,8 +152,6 @@ Module  NeutronSQ  'C6H6'
   Reference  mint  'epsr25/benzene200-neutron/C6H6.mint01'
   EndReference
   Frequency  1
-  #SaveSQ  On
-  #SaveGR  On
 EndModule
 
 # Calculate S(Q) for the C6D6 sample
@@ -165,8 +161,6 @@ Module  NeutronSQ  'C6D6'
   Reference  mint  'epsr25/benzene200-neutron/C6D6.mint01'
   EndReference
   Frequency  1
-  #SaveSQ  On
-  #SaveGR  On
 EndModule
 
 # Calculate S(Q) for the 5050 sample
@@ -177,8 +171,6 @@ Module  NeutronSQ  '5050'
   Reference  mint  'epsr25/benzene200-neutron/5050.mint01'
   EndReference
   Frequency  1
-  #SaveSQ  On
-  #SaveGR  On
 EndModule
 
 # Calculate energy of the Configuration
