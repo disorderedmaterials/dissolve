@@ -50,7 +50,7 @@ class CompareModule : public Module
             return false;
         }
 
-        // Set the data
+        // Set the data, getting the correct vector based on the type
         &[ data1, data2 ] = std::get<std::vector<std::pair<T, T>>>(dataVectors).emplace_back(std::pair<T, T>());
         data1 = data[0];
         data2 = data[1];
