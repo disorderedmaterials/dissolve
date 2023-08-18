@@ -112,6 +112,8 @@ class SpeciesViewer : public BaseViewer
     SpeciesSite *site_;
     // Sites are visible
     bool sitesVisible_;
+    // Site management menu actions are visible in the context menu
+    bool siteActionsVisible_{true};
 
     public:
     // Set target Species
@@ -124,6 +126,8 @@ class SpeciesViewer : public BaseViewer
     SpeciesSite *speciesSite() const;
     // Toggle site visibility
     void setSiteVisible(bool visible);
+    // Toggle visibility of site management menu actions in the context menu
+    void setSiteActionsVisible(bool visible);
 
     /*
      * Renderable

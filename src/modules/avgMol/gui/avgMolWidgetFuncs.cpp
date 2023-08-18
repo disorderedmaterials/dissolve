@@ -15,5 +15,8 @@ AvgMolModuleWidget::AvgMolModuleWidget(QWidget *parent, AvgMolModule *module, Di
 
     ui_.SpeciesView->setSpecies(&module_->averageSpecies());
 
+    // Hide site actions in the SpeciesViewer
+    ui_.SpeciesView->setSiteActionsVisible(false);
+
     refreshing_ = false;
 }
