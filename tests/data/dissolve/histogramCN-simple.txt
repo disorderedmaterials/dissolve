@@ -68,7 +68,7 @@ Configuration  'Bulk'
       Positioning  Random
     EndAdd
     ImportCoordinates  'InputCoordinates01'
-      File  xyz  './simple.xyz'
+      File  xyz  'dissolve/histogramCN-simple.xyz'
       EndFile
     EndImportCoordinates
   EndGenerator
@@ -115,16 +115,6 @@ Module  Analyse  'CN(X-Y)-Analyser'
       SourceIntegerData  'HistoCN'
     EndProcess1D
   EndAnalyser
-EndModule
-
-Module DataTest
-  Frequency  1
-  Threshold  1.0e-8
-  Data1D  'CN(X-Y)//Process1D//Histogram'  xy  './simple.dat'
-    Y  3
-  EndData1D
-  Data1D  'CN(X-Y)-Analyser//Process1D//CN'  xy  './simple.dat'
-  EndData1D
 EndModule
 
 EndLayer

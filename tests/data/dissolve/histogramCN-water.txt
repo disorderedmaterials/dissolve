@@ -97,7 +97,7 @@ Module  ImportTrajectory  'ImportTrajectory01'
   Configuration  'Bulk'
 
   # Trajectory file contains 95 frames
-  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  Format  xyz  'dlpoly/water267-analysis/water-267-298K.xyz'
   EndFormat
 EndModule
 
@@ -140,17 +140,6 @@ Module  Analyse  'CN(COM-COM)-Analyser'
       EndNormalisation
     EndProcess1D
   EndAnalyser
-EndModule
-
-Module DataTest
-  Frequency  95
-  Threshold  1.0e-8
-  Data1D  'CN(COM-COM)//Process1D//Histogram'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.cn11'
-    Y  3
-  EndData1D
-  Data1D  'CN(COM-COM)-Analyser//Process1D//CN'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.cn11'
-    Y  3
-  EndData1D
 EndModule
 
 EndLayer
