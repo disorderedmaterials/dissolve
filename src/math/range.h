@@ -19,6 +19,8 @@ class Range : public Serialisable<>
     private:
     // Minimum and maximum for range
     std::optional<double> minimum_, maximum_;
+
+    private:
     // Set range
     void set(std::optional<double> minimum, std::optional<double> maximum);
 

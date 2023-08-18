@@ -25,25 +25,15 @@ bool RangeVectorKeyword::deserialise(LineParser &parser, int startArg, const Cor
     // Loop over arguments
     for (auto n = startArg; n < parser.nArgs(); n += 2)
     {
-
         // Check to see if value pair are numbers
-        if (DissolveSys::isNumber(parser.argsv(n)))
+        if (DissolveSys::isNumber(parser.argsv(n)) && DissolveSys::isNumber(parser.argsv(n + 1)))
         {
-            if (DissolveSys::isNumber(parser.argsv(n + 1)))
-            {
-                // If both are numbers, initialise new Range
-                data_.emplace_back(parser.argd(n + 1), parser.argd(n));
-            }
-            else
-            {
-                return Messenger::error("Value '{}' provided for keyword '{}' doesn't appear to be a number.\n",
-                                        parser.argsv(n + 1), name());
-            }
+            data_.emplace_back(parser.argd(n), parser.argd(n + 1));
         }
         else
         {
-            return Messenger::error("Value '{}' provided for keyword '{}' doesn't appear to be a number.\n", parser.argsv(n),
-                                    name());
+            return Messenger::error("Value '{}' given to keyword '{}' doesn't appear to be numerical.\n",
+                                    DissolveSys::isNumber(parser.argsv(n)) ? parser.argsv(n + 1) : parser.argsv(n), name());
         }
     }
 
@@ -55,11 +45,8 @@ bool RangeVectorKeyword::serialise(LineParser &parser, std::string_view keywordN
 {
     for (auto &range : data_)
     {
-        if (!range.isDefined())
-        {
-            continue;
-        }
-        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, range.minimum(), range.maximum()))
+        // Serialising, skipping undefined ranges
+        if (range.isDefined() && !parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, range.minimum(), range.maximum()))
         {
             return false;
         }
