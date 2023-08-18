@@ -1,7 +1,7 @@
 dissolve_unit_test(SRC addForcefieldTerms.cpp GUI)
 dissolve_unit_test(SRC dataManager.cpp GUI)
 dissolve_unit_test(SRC forcefieldTab.cpp GUI)
-dissolve_unit_test(SRC isotopologueSetModel.cpp USE_TEST_DIRECTORY exchangeable GUI)
+dissolve_unit_test(SRC isotopologueSetModel.cpp GUI)
 dissolve_unit_test(SRC expressionVariableVectorModel.cpp GUI)
 dissolve_unit_test(SRC masterTerms.cpp GUI)
 dissolve_unit_test(SRC optionalDoubleKeyword.cpp GUI)

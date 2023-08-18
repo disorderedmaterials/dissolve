@@ -5,24 +5,104 @@
 #include "classes/configuration.h"
 #include "main/dissolve.h"
 #include "modules/forces/forces.h"
-#include <gmock/gmock.h>
+#include "tests/testData.h"
 #include <gtest/gtest.h>
 #include <vector>
 
 namespace UnitTest
 {
-void testForces(const std::vector<Vec3<double>> &dlpoly, const std::vector<Vec3<double>> &dslve, double tolerance)
+class ForcesModuleTest : public ::testing::Test
 {
-    ASSERT_EQ(dlpoly.size(), dslve.size());
-    for (auto n = 0; n < dlpoly.size(); ++n)
+    protected:
+    DissolveSystemTest systemTest;
+
+    void testForces(const std::vector<Vec3<double>> &A, const std::vector<Vec3<double>> &B, double tolerance)
     {
-        EXPECT_NEAR(dlpoly[n].x, dslve[n].x * 100.0, tolerance);
-        EXPECT_NEAR(dlpoly[n].y, dslve[n].y * 100.0, tolerance);
-        EXPECT_NEAR(dlpoly[n].z, dslve[n].z * 100.0, tolerance);
+        ASSERT_EQ(A.size(), B.size());
+        for (auto n = 0; n < A.size(); ++n)
+        {
+            EXPECT_NEAR(A[n].x, B[n].x, tolerance);
+            EXPECT_NEAR(A[n].y, B[n].y, tolerance);
+            EXPECT_NEAR(A[n].z, B[n].z, tolerance);
+        }
     }
+    void testForces(const std::vector<Vec3<double>> &A, ForceImportFileFormat externalForces, double tolerance)
+    {
+        std::vector<Vec3<double>> B(A.size());
+        ASSERT_TRUE(externalForces.importData(B));
+        testForces(A, B, tolerance);
+    }
+};
+
+TEST_F(ForcesModuleTest, Water3000Full)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-water3000.txt"));
+    systemTest.setModuleEnabled("Energy01", false);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    auto &forces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Bulk//Forces");
+    testForces(forces, {"dlpoly/water3000_energyForce/full.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 0.09);
 }
 
-TEST(ForcesModuleTest, Full)
+
+TEST_F(ForcesModuleTest, Water3000VanDerWaals)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-water3000.txt",
+                                     [](Dissolve &D, CoreData &C)
+                                     {
+                                         D.setAtomTypeChargeSource(true);
+                                         D.setAutomaticChargeSource(false);
+                                         C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                         C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                     }));
+    systemTest.setModuleEnabled("Energy01", false);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    auto &forces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Bulk//Forces");
+    testForces(forces, {"dlpoly/water3000_energyForce/vdw.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 8.0e-2);
+}
+
+TEST_F(ForcesModuleTest, Water3000Electrostatics)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-water3000.txt",
+                                     [](Dissolve &D, CoreData &C)
+                                     {
+                                         C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                         C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                         C.masterBonds().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                         C.masterAngles().front()->setInteractionParameters("k=0.0 eq=1.0");
+                                     }));
+    systemTest.setModuleEnabled("Energy01", false);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    // Shifted coulomb sum
+    auto shiftedForces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Bulk//Forces");
+    testForces(shiftedForces, {"dlpoly/water3000_energyForce/shifted.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 1.7e-2);
+
+    // Straight Coulomb sum (no truncation)
+    PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme::NoCoulombTruncation);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+    auto &coulombForces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Bulk//Forces");
+    testForces(coulombForces, {"dlpoly/water3000_energyForce/coulomb.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 5.0e-3);
+}
+
+TEST_F(ForcesModuleTest, Water3000Bound)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-water3000.txt",
+                                     [](Dissolve &D, CoreData &C)
+                                     {
+                                         D.setAtomTypeChargeSource(true);
+                                         C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                         C.atomType(1)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
+                                     }));
+    systemTest.setModuleEnabled("Energy01", false);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    auto shiftedForces = systemTest.dissolve().processingModuleData().value<std::vector<Vec3<double>>>("Forces01//Bulk//Forces");
+    testForces(shiftedForces, {"dlpoly/water3000_energyForce/intra.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 2.5e-2);
+}
+
+TEST_F(ForcesModuleTest, Hexane200Full)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
@@ -46,7 +126,7 @@ TEST(ForcesModuleTest, Full)
     testForces(fReference, fCalculated, 0.4);
 }
 
-TEST(ForcesModuleTest, Unbound)
+TEST_F(ForcesModuleTest, Hexane200Unbound)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
@@ -59,7 +139,7 @@ TEST(ForcesModuleTest, Unbound)
     ASSERT_TRUE(cfg != nullptr);
 
     // Load in unbound reference forces
-    ForceImportFileFormat importer("../_data/dlpoly/hexane200_unbound/REVCON",
+    ForceImportFileFormat importer("dlpoly/hexane200_unbound/REVCON",
                                    ForceImportFileFormat::ForceImportFormat::DLPOLY);
     std::vector<Vec3<double>> fReference(cfg->nAtoms());
     ASSERT_TRUE(importer.importData(fReference));
@@ -71,7 +151,7 @@ TEST(ForcesModuleTest, Unbound)
     testForces(fReference, fCalculated, 0.2);
 }
 
-TEST(ForcesModuleTest, Bound)
+TEST_F(ForcesModuleTest, Hexane200Bound)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);

@@ -21,16 +21,17 @@ class DissolveSystemTest
     private:
     CoreData coreData_;
     Dissolve dissolve_;
+    bool rewriteCheck_{true};
 
     public:
     // Load, parse, optionally rewrite the specified file, and prepare the simulation
-    void setUp(std::string_view inputFile, bool noRewriteCheck = false)
+    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp = {})
     {
         dissolve_.clear();
         if (!dissolve_.loadInput(inputFile))
             throw(std::runtime_error(fmt::format("Input file '{}' failed to load correctly.\n", inputFile)));
 
-        if (!noRewriteCheck)
+        if (rewriteCheck_)
         {
             auto newInput = fmt::format("{}.rewrite", inputFile);
             if (!dissolve_.saveInput(newInput))
@@ -40,6 +41,10 @@ class DissolveSystemTest
             if (!dissolve_.loadInput(newInput))
                 throw(std::runtime_error(fmt::format("Input file '{}' failed to reload correctly.\n", newInput)));
         }
+
+        // Run any other additional setup functions
+        if (additionalSetUp)
+            additionalSetUp(dissolve_, coreData_);
 
         if (!dissolve_.prepare())
             throw(std::runtime_error("Failed to prepare simulation.\n"));
@@ -54,6 +59,14 @@ class DissolveSystemTest
     Dissolve &dissolve() { return dissolve_; }
     // Return the CoreData object
     CoreData &coreData() { return coreData_; }
+    // Set enabled status for named module
+    void setModuleEnabled(std::string_view name, bool enabled)
+    {
+        auto *module = Module::find(name);
+        if (!module)
+            throw(std::runtime_error(fmt::format("Module '{}' does not exist.\n", name)));
+        module->setEnabled(enabled);
+    }
     // Find and return named module
     template <class M> M *getModule(std::string_view name)
     {
@@ -66,6 +79,15 @@ class DissolveSystemTest
                 fmt::format("Module '{}' did not cast to the target type '{}' (it is of Module type '{}').\n", name,
                             typeid(M).name(), ModuleTypes::moduleType(module->type()))));
         return castModule;
+    }
+    // Test simple double
+    [[nodiscard]] bool checkDouble(std::string_view quantity, double A, double B, double threshold)
+    {
+        auto delta = fabs(A - B);
+        auto isOK = delta <= threshold;
+        Messenger::print("Reference {} delta with correct value is {:15.9e} and is {} (threshold is {:10.3e})\n", quantity,
+                         delta, isOK ? "OK" : "NOT OK", threshold);
+        return isOK;
     }
     // Test Data1D
     [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,
