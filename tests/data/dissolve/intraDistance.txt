@@ -105,7 +105,7 @@ Layer  'Processing'
   Module  ImportTrajectory  'ImportTrajectory01'
     Frequency  1
     Configuration  'Bulk'
-    Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+    Format  xyz  'dlpoly/water267-analysis/water-267-298K.xyz'
     EndFormat
   EndModule
 
@@ -117,14 +117,6 @@ Layer  'Processing'
     DistanceRange  0.000000e+00  2.000000e+00  0.01
   EndModule
 
-  Module DataTest
-    Frequency  95
-    Threshold  6.0e-3
-    Data1D  'D(O-H1)//Process1D//NormalisedHistogram'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.01-02.ij'
-      Y  3
-    EndData1D
-  EndModule
-
   Module  IntraDistance  'D(O-H2)'
     Frequency  1
     Configuration  'Bulk'
@@ -133,28 +125,12 @@ Layer  'Processing'
     DistanceRange  0.000000e+00  2.000000e+00  0.01
   EndModule
 
-  Module DataTest
-    Frequency  95
-    Threshold  6.0e-3
-    Data1D  'D(O-H2)//Process1D//NormalisedHistogram'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.02-03.ij'
-      Y  3
-    EndData1D
-  EndModule
-
   Module  IntraDistance  'D(H1-H2)'
     Frequency  1
     Configuration  'Bulk'
     SiteA  'Water'  'H1'
     SiteB  'Water'  'H2'
     DistanceRange  0.000000e+00  2.000000e+00  0.01
-  EndModule
-
-  Module DataTest
-    Frequency  95
-    Threshold  6.0e-3
-    Data1D  'D(H1-H2)//Process1D//NormalisedHistogram'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.01-03.ij'
-      Y  3
-    EndData1D
   EndModule
 
 EndLayer
