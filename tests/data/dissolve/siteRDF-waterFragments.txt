@@ -89,7 +89,7 @@ Layer  'Processing'
 
   Module  ImportTrajectory  'ImportTrajectory01'
     Configuration  'Bulk'
-    Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+    Format  xyz  'dlpoly/water267-analysis/water-267-298K.xyz'
     EndFormat
   EndModule
 
@@ -139,22 +139,6 @@ Layer  'Processing'
         EndNormalisation
       EndProcess1D
     EndAnalyser
-  EndModule
-
-  Module  DataTest  'DataTest'
-    Frequency  95
-    Data1D  'RDF(OW-OW)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
-    EndData1D
-    ErrorType  Euclidean
-    Threshold  9.0e-3
-  EndModule
-
-  Module  DataTest  'DataTest01'
-    Frequency  95
-    Data1D  'RDF(OW-OW)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
-    EndData1D
-    ErrorType  Euclidean
-    Threshold  9.0e-3
   EndModule
 
   Module  SiteRDF  'RDF(H1-H2)'
@@ -209,29 +193,15 @@ Layer  'Processing'
     EndAnalyser
   EndModule
 
-  Module  DataTest  'DataTest02'
-    Frequency  95
-    Data1D  'RDF(H1-H2)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
-    EndData1D
-    ErrorType  Euclidean
-    Threshold  6.0e-3
-  EndModule
-
-  Module  DataTest  'DataTest03'
-    Frequency  95
-    Data1D  'RDF(H1-H2)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
-    EndData1D
-    ErrorType  Euclidean
-    Threshold  6.0e-3
-  EndModule
-
   Module  SiteRDF  'RDF(COM-COM)'
     Frequency  1
     Configuration  'Bulk'
     SiteA  'Water'  'COM'
     SiteB  'Water'  'COM'
     DistanceRange  0.000000e+00  2.000000e+01  5.000000e-02
-    ExcludeSameMolecule  True
+    RangeA  0.0  3.3
+    RangeB  3.3  5.6
+    RangeBEnabled  True
   EndModule
 
   Module  Analyse  'RDF(COM-COM)-Analyser'
@@ -276,19 +246,4 @@ Layer  'Processing'
     EndAnalyser
   EndModule
 
-  Module  DataTest  'DataTest04'
-    Frequency  95
-    Data1D  'RDF(COM-COM)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
-    EndData1D
-    ErrorType  Euclidean
-    Threshold  0.0005
-  EndModule
-
-  Module  DataTest  'DataTest05'
-    Frequency  95
-    Data1D  'RDF(COM-COM)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
-    EndData1D
-    ErrorType  Euclidean
-    Threshold  0.0005
-  EndModule
 EndLayer

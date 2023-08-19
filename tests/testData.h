@@ -9,6 +9,7 @@
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/sampledData1D.h"
+#include "math/sampledDouble.h"
 #include "math/sampledVector.h"
 #include <gtest/gtest.h>
 
@@ -107,6 +108,14 @@ class DissolveSystemTest
         Messenger::print("Reference {} delta with correct value is {:15.9e} and is {} (threshold is {:10.3e})\n", quantity,
                          delta, isOK ? "OK" : "NOT OK", threshold);
         return isOK;
+    }
+    // Test sampled double
+    [[nodiscard]] bool checkSampledDouble(std::string_view quantity, std::string_view tag, double B, double threshold)
+    {
+        // Locate the target reference data
+        const auto &A = dissolve_.processingModuleData().retrieve<SampledDouble>(tag);
+
+        return checkDouble(quantity, A.value(), B, threshold);
     }
     // Test Data1D
     [[nodiscard]] bool checkData1D(const Data1D &dataA, std::string_view nameA, const Data1D &dataB, std::string_view nameB,

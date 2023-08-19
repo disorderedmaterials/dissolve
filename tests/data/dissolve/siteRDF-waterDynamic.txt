@@ -44,23 +44,13 @@ Species 'Water'
   Isotopologue  'Deuteriated'  OW=0  HW=2
 
   # Analysis Sites
-  Site  'origin'
-    Origin  2
-    XAxis  1 3
-    YAxis  3
-  EndSite
   Site  'O'
-    Origin  2
+    Dynamic
+    Element  O
   EndSite
-  Site  'H1'
-    Origin  1
-  EndSite
-  Site  'H2'
-    Origin  3
-  EndSite
-  Site  'COM'
-    Origin  1  2  3
-    OriginMassWeighted  True
+  Site  'H'
+    Dynamic
+    Element  H
   EndSite
 EndSpecies
 
@@ -100,7 +90,7 @@ Module  ImportTrajectory  'ImportTrajectory01'
   Configuration  'Bulk'
 
   # Trajectory file contains 95 frames
-  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  Format  xyz  'dlpoly/water267-analysis/water-267-298K.xyz'
   EndFormat
 EndModule
 
@@ -153,38 +143,24 @@ Module  Analyse  'RDF(OW-OW)-Analyser'
   EndAnalyser
 EndModule
 
-Module DataTest
-  Frequency  95
-  Threshold  9.0e-3
-  Data1D  'RDF(OW-OW)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
-  EndData1D
-EndModule
-
-Module DataTest
-  Frequency  95
-  Threshold  9.0e-3
-  Data1D  'RDF(OW-OW)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_02_02'
-  EndData1D
-EndModule
-
-# Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations
-Module  SiteRDF  'RDF(H1-H2)'
+# Hydrogen-hydrogen (H-H, 1-3) radial distribution function, excluding intramolecular correlations
+Module  SiteRDF  'RDF(H-H)'
   Configuration  'Bulk'
-  SiteA  Water  'H1'
-  SiteB  Water  'H2'
+  SiteA  Water  'H'
+  SiteB  Water  'H'
   ExcludeSameMolecule  On
   DistanceRange  0.0  20.0  0.01
 EndModule
 
-# Hydrogen-hydrogen (H1-H2, 1-3) radial distribution function, excluding intramolecular correlations, using analyser
-Module  Analyse  'RDF(H1-H2)-Analyser'
+# Hydrogen-hydrogen (H-H, 1-3) radial distribution function, excluding intramolecular correlations, using analyser
+Module  Analyse  'RDF(H-H)-Analyser'
   Configuration  'Bulk'
   Analyser
     Select  'A'
-      Site  Water  'H1'
+      Site  Water  'H'
       ForEach
         Select  'B'
-          Site  Water  'H2'
+          Site  Water  'H'
           ExcludeSameMolecule  'A'
           ForEach
             CalculateDistance  'rHH'
@@ -215,84 +191,6 @@ Module  Analyse  'RDF(H1-H2)-Analyser'
       EndNormalisation
     EndProcess1D
   EndAnalyser
-EndModule
-
-Module DataTest
-  Frequency  95
-  Threshold  6.0e-3
-  Data1D  'RDF(H1-H2)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
-  EndData1D
-EndModule
-
-Module DataTest
-  Frequency  95
-  Threshold  6.0e-3
-  Data1D  'RDF(H1-H2)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf1_01_03'
-  EndData1D
-EndModule
-
-# Center-of-mass radial distribution function
-Module  SiteRDF  'RDF(COM-COM)'
-  Configuration  'Bulk'
-  SiteA  Water  'COM'
-  SiteB  Water  'COM'
-  ExcludeSameMolecule  On
-  DistanceRange  0.0  20.0  0.05
-EndModule
-
-# Center-of-mass radial distribution function, with analyser
-Module  Analyse  'RDF(COM-COM)-Analyser'
-  Configuration  'Bulk'
-  Analyser
-    Select  'A'
-      Site  Water  'COM'
-      ForEach
-        Select  'B'
-          Site  Water  'COM'
-          ExcludeSameMolecule  'A'
-          ForEach
-            CalculateDistance  'rCOMCOM'
-              I  'A'
-              J  'B'
-            EndCalculateDistance
-            Collect1D  'HistoCOMCOM'
-              QuantityX  'rCOMCOM'
-              RangeX  0.0  20.0  0.05
-            EndCollect1D
-          EndForEach
-        EndSelect
-      EndForEach
-    EndSelect
-    Process1D  'RDF'
-      SourceData  'HistoCOMCOM'
-      LabelValue  'gCOMCOM(r)'
-      LabelX  'r, Angstroms'
-      Normalisation
-        OperateSitePopulationNormalise
-          Site  'A'
-        EndOperateSitePopulationNormalise
-        OperateNumberDensityNormalise
-          Site  'B'
-        EndOperateNumberDensityNormalise
-        OperateSphericalShellNormalise
-        EndOperateSphericalShellNormalise
-      EndNormalisation
-    EndProcess1D
-  EndAnalyser
-EndModule
-
-Module DataTest
-  Frequency  95
-  Data1D  'RDF(COM-COM)//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
-  EndData1D
-  Threshold  5.0e-4
-EndModule
-
-Module DataTest
-  Frequency  95
-  Data1D  'RDF(COM-COM)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.rdf11'
-  EndData1D
-  Threshold  5.0e-4
 EndModule
 
 EndLayer
