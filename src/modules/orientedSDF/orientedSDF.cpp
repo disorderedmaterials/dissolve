@@ -46,8 +46,7 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF), analy
 
     // -- -- -- Collect3D: 'OSDF'
     collectVector_ =
-        ifThen.create<Collect3DProcedureNode>({}, calcVector, ProcedureNode::AnalysisContext, rangeX_.x, rangeX_.y, rangeX_.z,
-                                              rangeY_.x, rangeY_.y, rangeY_.z, rangeZ_.x, rangeZ_.y, rangeZ_.z);
+        ifThen.create<Collect3DProcedureNode>({}, calcVector, ProcedureNode::AnalysisContext, rangeX_, rangeY_, rangeZ_);
 
     // Process3D
     processPosition_ = analyser_.createRootNode<Process3DProcedureNode>("SDF", collectVector_);
