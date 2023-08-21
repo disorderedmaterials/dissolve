@@ -42,17 +42,21 @@ void runParse(std::filesystem::path input, int steps = 1)
         input.remove_filename();
         std::filesystem::current_path(input);
 
-        CoreData coreData, coreData2;
-        Dissolve initial(coreData);
-        initial.loadInput(std::string_view(std::string(filename)));
-        auto toml = initial.serialise();
-        initial.prepare();
-        auto knownGood = initial.iterate(steps);
+        SerialisedValue toml;
+        bool knownGood;
+        {
+            CoreData coreData;
+            Dissolve initial(coreData);
+            initial.loadInput(std::string_view(std::string(filename)));
+            toml = initial.serialise();
+            initial.prepare();
+            knownGood = initial.iterate(steps);
+        }
 
+        CoreData coreData2;
         Dissolve repeat(coreData2);
         repeat.setInputFilename(std::string(filename));
         EXPECT_NO_THROW(repeat.deserialise(toml));
-        repeat.deserialise(toml);
         auto toml2 = repeat.serialise();
 
         compare_toml("", toml, toml2);
