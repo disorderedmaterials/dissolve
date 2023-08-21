@@ -4,6 +4,7 @@
 #include "modules/qSpecies/qSpecies.h"
 #include "keywords/bool.h"
 #include "keywords/configuration.h"
+#include "keywords/fileAndFormat.h"
 #include "keywords/range.h"
 #include "keywords/speciesSiteVector.h"
 #include "keywords/vec3Double.h"
@@ -64,4 +65,7 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     keywords_.add<RangeKeyword>("DistanceRange",
                                 "Distance range (min, max) over which to calculate coordination number from central site",
                                 distanceRange_, 0.0, std::nullopt, Vec3Labels::MinMaxDeltaLabels);
+    keywords_.setOrganisation("Export");
+    keywords_.add<FileAndFormatKeyword>("Export", "File format and file name under which to save calculated QSpecies data",
+                                        processNF->exportFileAndFormat(), "EndExport");
 }
