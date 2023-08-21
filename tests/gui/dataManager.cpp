@@ -23,12 +23,12 @@ TEST_F(DataManagerTest, DataManager)
     Dissolve dissolve(coreData);
 
     dissolve.clear();
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
 
     DataManagerSimulationModel sim(dissolve, dissolve.processingModuleData());
 
     // Expect this file to load properly
-    ASSERT_TRUE(dissolve.loadRestart("dissolve/restart/benzene.txt.restart.test"));
+    ASSERT_TRUE(dissolve.loadRestart("dissolve/restart/full-benzene.txt.restart.test"));
 
     EXPECT_EQ(sim.columnCount(), 3);
     // There are 38 processing data items in the restart file

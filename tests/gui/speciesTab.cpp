@@ -34,7 +34,7 @@ TEST_F(SpeciesTabTest, Atoms)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesAtomModel atom(*species, coreData);
@@ -79,7 +79,7 @@ TEST_F(SpeciesTabTest, Bonds)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesBondModel bond(species->bonds(), coreData);
@@ -118,7 +118,7 @@ TEST_F(SpeciesTabTest, Angles)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesAngleModel angle(species->angles(), coreData);
@@ -159,7 +159,7 @@ TEST_F(SpeciesTabTest, Torsions)
     CoreData coreData;
     Dissolve dissolve(coreData);
 
-    ASSERT_TRUE(dissolve.loadInput("dissolve/input/benzene.txt"));
+    ASSERT_TRUE(dissolve.loadInput("dissolve/input/full-benzene.txt"));
     auto &species = coreData.species()[0];
 
     SpeciesTorsionModel torsion(species->torsions(), coreData);

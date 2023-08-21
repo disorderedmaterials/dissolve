@@ -1,11 +1,10 @@
-# CMakeLists.txt for Unit Tests
-# All tests must be single source file.
+# CMakeLists.txt for Dissolve Tests
 
 # Set policy for GoogleTest
 cmake_policy(SET CMP0054 NEW)
 find_package(GTest REQUIRED)
 
-function(dissolve_unit_test)
+function(dissolve_add_test)
 
   # Parse arguments
   set(options GUI)

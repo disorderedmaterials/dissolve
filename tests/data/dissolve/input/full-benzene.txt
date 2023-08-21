@@ -119,3 +119,115 @@ PairPotentials
   ShortRangeTruncation  Shifted
 EndPairPotentials
 
+#------------------------------------------------------------------------------#
+#                                Configurations                                #
+#------------------------------------------------------------------------------#
+
+Configuration  'Bulk'
+
+  # Modules
+  Generator
+    Parameters
+      Parameter  rho  8.760000e-01
+    EndParameters
+    Box
+      Lengths  1.000000e+00  1.000000e+00  1.000000e+00
+      Angles  9.000000e+01  9.000000e+01  9.000000e+01
+      NonPeriodic  False
+    EndBox
+    Add
+      Species  'Benzene'
+      Population  '200'
+      Density  'rho'  g/cm3
+      Rotate  True
+      Positioning  Random
+    EndAdd
+  EndGenerator
+
+  Temperature  300.000000
+
+  # Modules
+  # -- None
+EndConfiguration
+
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
+
+Layer  'Evolve (Standard)'
+  Frequency  1
+
+  Module  MolShake  'MolShake01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    RotationStepSize   1.08426e+01
+    TranslationStepSize   2.58465e-01
+  EndModule
+
+  Module  MD  'MD01'
+    Frequency  2
+
+    Configuration  'Bulk'
+  EndModule
+
+  Module  Energy  'Energy01'
+    Frequency  1
+
+    Configuration  'Bulk'
+  EndModule
+EndLayer
+
+Layer  'Analysis'
+  Frequency  1
+
+  Module  AxisAngle  'AxisAngle01'
+    Frequency  1
+
+    Configuration  'Bulk'
+    AngleRange  0.000000e+00  9.000000e+01  1.000000e+01
+    SiteA  'Benzene'  'COG'
+    AxisA  Z
+    SiteB  'Benzene'  'COG'
+    AxisB  Z
+    ExcludeSameMolecule  True
+  EndModule
+EndLayer
+
+Layer  'RDF / Neutron S(Q)'
+  Frequency  1
+
+  Module  GR  'GR01'
+    Frequency  1
+
+    Configurations  'Bulk'
+    IntraBroadening    Gaussian  1.800000e-01
+  EndModule
+
+  Module  SQ  'SQ01'
+    Frequency  1
+    SourceGR  'GR01'
+    QBroadening  'OmegaDependentGaussian'  0.020000
+  EndModule
+
+  Module  NeutronSQ  'C6H6'
+    Frequency  1
+
+    SourceSQs  'SQ01'
+  EndModule
+
+  Module  NeutronSQ  'C6D6'
+    Frequency  1
+
+    SourceSQs  'SQ01'
+    Isotopologue  'Benzene'  'Deuterated'  1.000000
+  EndModule
+
+  Module  NeutronSQ  '5050'
+    Frequency  1
+
+    SourceSQs  'SQ01'
+    Isotopologue  'Benzene'  'Natural'  1.000000
+    Isotopologue  'Benzene'  'Deuterated'  1.000000
+  EndModule
+EndLayer
