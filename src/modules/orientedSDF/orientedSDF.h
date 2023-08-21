@@ -13,7 +13,6 @@ class Collect3DProcedureNode;
 class IfValueInRangeProcedureNode;
 class Process3DProcedureNode;
 class SelectProcedureNode;
-class SpeciesSite;
 
 // CalculateSDF Module
 class OrientedSDFModule : public Module

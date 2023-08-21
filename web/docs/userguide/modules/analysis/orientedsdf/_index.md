@@ -39,7 +39,7 @@ The `OrientedSDF` module calculates a three-dimensional spatial density / distri
 |Keyword|Arguments|Default| Description                                                                                                                                                                                                     |
 |:------|:--:|:-----:|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |`ExcludeSameMolecule`|`bool`|`false`| Whether to exclude correlations between A and B sites on the same molecule.                                                                                                                                     |
-|`Symmetric`|`bool`|`false`| Whether to consider the angle as symmetric about 90, mapping all angles to the 0-90 range. For instance, if the target axes are perpendicular to a mirror plane in the mollecule, this should be set to `true`.|
+|`Symmetric`|`bool`|`false`| Whether to consider the angle as symmetric about 90, mapping all angles to the 0-90 range. For instance, if the target axes are perpendicular to a mirror plane in the molecule, this should be set to `true`.|
 
 ## Export
 

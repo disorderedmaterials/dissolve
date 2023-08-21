@@ -71,7 +71,7 @@ OrientedSDFModule::OrientedSDFModule() : Module(ModuleTypes::OrientedSDF), analy
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisA", "Axis to use from site A", calculateAxisAngle_->axis(0),
                                                               OrientedSite::siteAxis());
     keywords_.add<SpeciesSiteVectorKeyword>(
-        "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated",
+        "SiteB", "Set the site(s) 'B' for which the distribution around the origin site(s) 'A' should be calculated",
         selectB_->speciesSites(), selectB_->axesRequired());
     keywords_.add<EnumOptionsKeyword<OrientedSite::SiteAxis>>("AxisB", "Axis to use from site B", calculateAxisAngle_->axis(1),
                                                               OrientedSite::siteAxis());
