@@ -15,7 +15,7 @@ class XRaySQModuleTest : public ::testing::Test
 
 TEST_F(XRaySQModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/correlations-waterXRay.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-waterXRay.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Total F(Q)

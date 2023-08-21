@@ -26,11 +26,14 @@ class DissolveSystemTest
     private:
     CoreData coreData_;
     Dissolve dissolve_;
+    // Whether to perform rewrite checks on setUp
     bool rewriteCheck_{true};
+    // Function to execute to perform additional setup prior to prepare()
+    std::function<void(Dissolve &D, CoreData &C)> additionalSetUp_;
 
     public:
-        // Return the Dissolve object
-        Dissolve &dissolve() { return dissolve_; }
+    // Return the Dissolve object
+    Dissolve &dissolve() { return dissolve_; }
     // Return the CoreData object
     CoreData &coreData() { return coreData_; }
 
@@ -38,8 +41,8 @@ class DissolveSystemTest
      * SetUp & Input
      */
     public:
-    // Load, parse, optionally rewrite the specified file, and prepare the simulation
-    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp = {})
+    // Set up simulation ready for running, calling any additional setup function if already set
+    void setUp(std::string_view inputFile)
     {
         dissolve_.clear();
         if (!dissolve_.loadInput(inputFile))
@@ -47,7 +50,7 @@ class DissolveSystemTest
 
         if (rewriteCheck_)
         {
-            auto newInput = fmt::format("{}.rewrite", inputFile);
+            auto newInput = fmt::format("{}/TestOutput_{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'), DissolveSys::afterLastChar(inputFile, '/'));
             if (!dissolve_.saveInput(newInput))
                 throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 
@@ -57,17 +60,57 @@ class DissolveSystemTest
         }
 
         // Run any other additional setup functions
-        if (additionalSetUp)
-            additionalSetUp(dissolve_, coreData_);
+        if (additionalSetUp_)
+            additionalSetUp_(dissolve_, coreData_);
 
         if (!dissolve_.prepare())
             throw(std::runtime_error("Failed to prepare simulation.\n"));
+    }
+    void setUp(std::string_view inputFile, const std::function<void(Dissolve &D, CoreData &C)> &additionalSetUp)
+    {
+        additionalSetUp_ = additionalSetUp;
+        setUp(inputFile);
     }
     // Load restart file
     void loadRestart(std::string_view restartFile)
     {
         if (!dissolve_.loadRestart(restartFile))
             throw(std::runtime_error(fmt::format("Restart file '{}' failed to load correctly.\n", restartFile)));
+    }
+
+    /*
+     * Restart Iterator
+     */
+    public:
+    // Iterate for set number of steps but chunked into smaller runs to test restart capability
+    bool iterateRestart(const int nIterations, const int chunkSize = 20)
+    {
+        // Set the restart file frequency, and grab the input and restart filenames
+        dissolve_.setRestartFileFrequency(chunkSize);
+        auto inputFile = std::string(dissolve_.inputFilename());
+        auto restartFile = std::string(dissolve_.restartFilename());
+        rewriteCheck_ = false;
+
+        auto iterationsDone = 0;
+        while (iterationsDone != nIterations)
+        {
+            // Run another chunk of iterations - the whole chunk if possible, otherwise the remainder
+            auto itersToDo = (nIterations - iterationsDone) >= chunkSize ? chunkSize : nIterations - iterationsDone;
+            if (!dissolve_.iterate(itersToDo))
+                return false;
+
+            iterationsDone += itersToDo;
+
+            // Clear and reload restart file
+            if (iterationsDone != nIterations)
+            {
+                fmt::print("Resetting at iteration {}...\n", iterationsDone);
+                setUp(inputFile);
+                loadRestart(restartFile);
+            }
+        }
+
+        return true;
     }
 
     /*

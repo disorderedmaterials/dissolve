@@ -63,7 +63,7 @@ Module  ImportTrajectory  'ImportTrajectory01'
   Configuration  'Single'
 
   # Trajectory file contains 201 frames
-  Format  xyz  'dissolve/avgMol-bendy.xyz'
+  Format  xyz  'dissolve/input/avgMol-bendy.xyz'
   EndFormat
 EndModule
 

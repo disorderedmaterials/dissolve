@@ -15,7 +15,7 @@ class NeutronSQModuleTest : public ::testing::Test
 
 TEST_F(NeutronSQModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/correlations-water.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-water.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Total F(Q)
@@ -32,7 +32,7 @@ TEST_F(NeutronSQModuleTest, Water)
 
 TEST_F(NeutronSQModuleTest, WaterMethanol)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/correlations-waterMethanol.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-waterMethanol.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Total F(Q)
@@ -66,7 +66,7 @@ TEST_F(NeutronSQModuleTest, WaterMethanol)
 
 TEST_F(NeutronSQModuleTest, WaterReferenceFT)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/epsr-water-3n-x.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-water-3n-x.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     EXPECT_TRUE(systemTest.checkData1D(
@@ -86,7 +86,7 @@ TEST_F(NeutronSQModuleTest, WaterReferenceFT)
 
 TEST_F(NeutronSQModuleTest, Benzene)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/epsr-benzene-3n.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Total F(Q)

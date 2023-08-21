@@ -15,8 +15,8 @@ class AvgMolModuleWaterTest : public ::testing::Test
 
     void SetUp() override
     {
-        ASSERT_NO_THROW(systemTest.setUp("dissolve/avgMol-water.txt"));
-        ASSERT_TRUE(systemTest.dissolve().iterate(95));
+        ASSERT_NO_THROW(systemTest.setUp("dissolve/input/avgMol-water.txt"));
+        ASSERT_TRUE(systemTest.iterateRestart(95));
     }
 };
 
@@ -33,7 +33,7 @@ class AvgMolModuleBendyTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 
-    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/avgMol-bendy.txt")); }
+    void SetUp() override { ASSERT_NO_THROW(systemTest.setUp("dissolve/input/avgMol-bendy.txt")); }
 
     void checkCoordinates()
     {
@@ -45,15 +45,7 @@ class AvgMolModuleBendyTest : public ::testing::Test
 
 TEST_F(AvgMolModuleBendyTest, AverageCoordinates)
 {
-    ASSERT_TRUE(systemTest.dissolve().iterate(201));
-
-    checkCoordinates();
-}
-
-TEST_F(AvgMolModuleBendyTest, Restart)
-{
-    ASSERT_NO_THROW(systemTest.loadRestart("dissolve/avgMol-bendy.124.restart"));
-    ASSERT_TRUE(systemTest.dissolve().iterate(77));
+    ASSERT_TRUE(systemTest.iterateRestart(201));
 
     checkCoordinates();
 }

@@ -15,8 +15,8 @@ class IntraDistanceModuleTest : public ::testing::Test
 
 TEST_F(IntraDistanceModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/intraDistance.txt"));
-    ASSERT_TRUE(systemTest.dissolve().iterate(95));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/intraDistance.txt"));
+    ASSERT_TRUE(systemTest.iterateRestart(95));
 
     EXPECT_TRUE(systemTest.checkData1D(
         "D(O-H1)//Process1D//NormalisedHistogram",

@@ -15,7 +15,7 @@ class GRModuleTest : public ::testing::Test
 
 TEST_F(GRModuleTest, Water)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/correlations-water.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-water.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Partial g(r) (unbound terms)
@@ -46,7 +46,7 @@ TEST_F(GRModuleTest, Water)
 
 TEST_F(GRModuleTest, WaterMethanol)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/correlations-waterMethanol.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/correlations-waterMethanol.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     /*
@@ -205,7 +205,7 @@ TEST_F(GRModuleTest, WaterMethanol)
 
 TEST_F(GRModuleTest, Benzene)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/epsr-benzene-3n.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Partial g(r) (unbound terms)

@@ -15,7 +15,7 @@ class EnergyModuleTest : public ::testing::Test
 
 TEST_F(EnergyModuleTest, Water3000Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-water3000.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -30,7 +30,7 @@ TEST_F(EnergyModuleTest, Water3000Full)
 
 TEST_F(EnergyModuleTest, Water3000VanDerWaals)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-water3000.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          D.setAtomTypeChargeSource(true);
@@ -48,7 +48,7 @@ TEST_F(EnergyModuleTest, Water3000VanDerWaals)
 
 TEST_F(EnergyModuleTest, Water3000Electrostatics)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-water3000.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          C.atomType(0)->interactionPotential().parseParameters("epsilon=0.0 sigma=0.0");
@@ -71,7 +71,7 @@ TEST_F(EnergyModuleTest, Water3000Electrostatics)
 
 TEST_F(EnergyModuleTest, Water3000Bound)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-water3000.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-water3000.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          D.setAtomTypeChargeSource(true);
@@ -87,7 +87,7 @@ TEST_F(EnergyModuleTest, Water3000Bound)
 
 TEST_F(EnergyModuleTest, Hexane1Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane1.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane1.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -102,7 +102,7 @@ TEST_F(EnergyModuleTest, Hexane1Full)
 
 TEST_F(EnergyModuleTest, Hexane2Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane2.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane2.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -117,7 +117,7 @@ TEST_F(EnergyModuleTest, Hexane2Full)
 
 TEST_F(EnergyModuleTest, Hexane200Full)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane200.txt"));
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt"));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
@@ -132,7 +132,7 @@ TEST_F(EnergyModuleTest, Hexane200Full)
 
 TEST_F(EnergyModuleTest, Hexane200Bound)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane200.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          for (auto at : C.atomTypes())
@@ -150,7 +150,7 @@ TEST_F(EnergyModuleTest, Hexane200Bound)
 
 TEST_F(EnergyModuleTest, Hexane200Torsions)
 {
-    ASSERT_NO_THROW(systemTest.setUp("dissolve/energyForce-hexane200.txt",
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/energyForce-hexane200.txt",
                                      [](Dissolve &D, CoreData &C)
                                      {
                                          for (auto at : C.atomTypes())

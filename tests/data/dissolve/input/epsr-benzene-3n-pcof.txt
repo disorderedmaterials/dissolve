@@ -185,7 +185,7 @@ Module  EPSR
   Frequency  1
   NPItSs  10
   Feedback  0.9
-  PCofFile  'dissolve/epsr-benzene-3n-pcof.pcof'
+  PCofFile  'dissolve/input/epsr-benzene-3n-pcof.pcof'
 EndModule
 
 EndLayer

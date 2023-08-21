@@ -68,7 +68,7 @@ Configuration  'Bulk'
       Positioning  Random
     EndAdd
     ImportCoordinates  'InputCoordinates01'
-      File  xyz  'dissolve/histogramCN-simple.xyz'
+      File  xyz  'dissolve/input/histogramCN-simple.xyz'
       EndFile
     EndImportCoordinates
   EndGenerator
