@@ -91,7 +91,7 @@ Module  ImportTrajectory
   Configuration  'Bulk'
 
   # Trajectory file contains 95 frames
-  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  Format  xyz  'dlpoly/water267-analysis/water-267-298K.xyz'
   EndFormat
 EndModule
 
@@ -99,8 +99,6 @@ Module  AvgMol  'AvgMol01'
   Frequency  1
   Configuration  'Bulk'
   Site  'Water'  'origin'
-  ExportCoordinates  xyz  'water.avg.xyz'
-  EndExportCoordinates
 EndModule
 
 # Spatial distribution of O atoms around central molecule
@@ -111,15 +109,6 @@ Module  SDF  'SDF(O)'
   RangeX  -10.25  10.25  0.5
   RangeY  -10.25  10.25  0.5
   RangeZ  -10.25  10.25  0.5
-  ExportSDF  pdens  'test.pdens'
-  EndExportSDF
-EndModule
-
-Module DataTest
-  Frequency  95
-  Threshold  0.12
-  Data3D  'SDF(O)//Process3D//SDF'  pdens  '../_data/dlpoly/water267-analysis/water-267-298K.11.pdens'
-  EndData3D
 EndModule
 
 EndLayer

@@ -153,7 +153,7 @@ Module  ImportTrajectory
   Configuration  'Bulk'
 
   # Trajectory file contains 80 frames
-  Format  xyz  '../_data/dlpoly/benzene181/benzene181.xyz'
+  Format  xyz  'dlpoly/benzene181/benzene181.xyz'
   EndFormat
 EndModule
 
@@ -214,15 +214,5 @@ Module  Analyse  'SDF(R-R)_Analyser'
     EndProcess3D
   EndAnalyser
 EndModule
-
-Module DataTest
-  Frequency  80
-  Threshold  0.3
-  Data3D  'SDF(R-R)//Process3D//SDF'  pdens  '../_data/dlpoly/benzene181/benzene181.11.pdens'
-  EndData3D
-  Data3D  'SDF(R-R)_Analyser//Process3D//SDF'  pdens  '../_data/dlpoly/benzene181/benzene181.11.pdens'
-  EndData3D
-EndModule
-
 
 EndLayer

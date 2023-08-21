@@ -5,9 +5,11 @@
 #include "classes/species.h"
 #include "data/elements.h"
 #include "io/import/data1D.h"
+#include "io/import/data3D.h"
 #include "io/import/forces.h"
 #include "main/dissolve.h"
 #include "math/error.h"
+#include "math/data3D.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
@@ -198,6 +200,46 @@ class DissolveSystemTest
             throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
 
         return checkData1D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
+    }
+    // Test Data1D
+    [[nodiscard]] bool checkData3D(const Data3D &dataA, std::string_view nameA, const Data3D &dataB, std::string_view nameB,
+                                   double tolerance = 5.0e-3, Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        // Generate the error estimate and compare against the threshold value
+        auto error = Error::error(errorType, dataA.values().linearArray(), dataB.values().linearArray()).error;
+        auto notOK = isnan(error) || error > tolerance;
+        Messenger::print("Internal data '{}' has error of {:7.3f} with external data '{}' and is {} (threshold is {:6.3e})\n\n",
+                         nameA, error, nameB, notOK ? "NOT OK" : "OK", tolerance);
+
+        return !notOK;
+    }
+    // Test Data3D (by tag and external file data)
+    [[nodiscard]] bool checkData3D(std::string_view tagA, Data3DImportFileFormat externalFileFormat, double tolerance = 5.0e-3,
+                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        auto optDataA = dissolve_.processingModuleData().search<const Data3D>(tagA);
+        if (!optDataA)
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+
+        Data3D dataB;
+        if (!externalFileFormat.fileExists() || !externalFileFormat.importData(dataB))
+            throw(std::runtime_error(fmt::format("External data '{}' failed to load.\n", externalFileFormat.filename())));
+
+        return checkData3D(*optDataA, tagA, dataB, externalFileFormat.filename(), tolerance, errorType);
+    }
+    // Test Data3D (by tags)
+    [[nodiscard]] bool checkData3D(std::string_view tagA, std::string_view tagB, double tolerance = 5.0e-3,
+                                   Error::ErrorType errorType = Error::ErrorType::EuclideanError)
+    {
+        auto optDataA = dissolve_.processingModuleData().search<const Data3D>(tagA);
+        if (!optDataA)
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagA)));
+
+        auto optDataB = dissolve_.processingModuleData().search<const Data3D>(tagB);
+        if (!optDataB)
+            throw(std::runtime_error(fmt::format("No data with tag '{}' exists.\n", tagB)));
+
+        return checkData3D(optDataA->get(), tagA, optDataB->get(), tagB, tolerance, errorType);
     }
     // Test SampledVector data
     [[nodiscard]] bool checkSampledVector(std::string_view tag, const std::vector<double> &referenceData,
