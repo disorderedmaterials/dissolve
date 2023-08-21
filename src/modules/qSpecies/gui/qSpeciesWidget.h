@@ -31,7 +31,7 @@ class QSpeciesModuleWidget : public ModuleWidget
     Ui::QSpeciesModuleWidget ui_;
 
     // DataViewer contained within this widget
-    DataViewer *cnGraph_;
+    DataViewer *qSpeciesGraph_;
 
     public:
     // Update controls within widget

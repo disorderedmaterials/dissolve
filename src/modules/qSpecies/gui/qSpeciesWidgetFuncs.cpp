@@ -14,11 +14,11 @@ QSpeciesModuleWidget::QSpeciesModuleWidget(QWidget *parent, QSpeciesModule *modu
     ui_.setupUi(this);
 
     // Set up RDF graph
-    cnGraph_ = ui_.CNPlotWidget->dataViewer();
+    qSpeciesGraph_ = ui_.QSpeciesPlotWidget->dataViewer();
 
-    auto &view = cnGraph_->view();
+    auto &view = qSpeciesGraph_->view();
     view.setViewType(View::FlatXYView);
-    view.axes().setTitle(0, "Coordination Number");
+    view.axes().setTitle(0, "Qn");
     view.axes().setMax(0, 10.0);
     view.axes().setTitle(1, "Normalised Frequency");
     view.axes().setMin(1, 0.0);
@@ -33,15 +33,15 @@ void QSpeciesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags>
 {
 
     if (updateFlags.isSet(ModuleWidget::RecreateRenderablesFlag))
-        cnGraph_->clearRenderables();
+        qSpeciesGraph_->clearRenderables();
 
-    if (cnGraph_->renderables().empty())
-        cnGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Histogram", module_->name()), "CN");
+    if (qSpeciesGraph_->renderables().empty())
+        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Histogram", module_->name()), "CN");
 
     // Validate renderables if they need it
-    cnGraph_->validateRenderables(dissolve_.processingModuleData());
+    qSpeciesGraph_->validateRenderables(dissolve_.processingModuleData());
 
-    ui_.CNPlotWidget->updateToolbar();
+    ui_.QSpeciesPlotWidget->updateToolbar();
 
-    cnGraph_->postRedisplay();
+    qSpeciesGraph_->postRedisplay();
 }
