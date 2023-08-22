@@ -29,22 +29,25 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     selectNF_->keywords().set("ReferenceSite", selectBO_);
     selectNF_->keywords().set("InclusiveRange", distanceRange_);
 
+    // Get all BO in range
     auto &forEachNF = selectNF_->branch()->get();
     auto valuesInRange = forEachNF.create<IfValueInRangeProcedureNode>({});
     valuesInRange->keywords().set("Value", NodeValueProxy("NF.nSelected"));
     valuesInRange->keywords().set("ValidRange", Range(1.9, 2.1));
-
     auto &ifThen = valuesInRange->branch()->get();
+
+    // Get site index of NF
     auto siteIndex = ifThen.create<CalculateExpressionProcedureNode>({});
     siteIndex->setExpression("NF.siteIndex");
-
     auto collectNFIndex = forEachNF.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
 
+    // Get number of BO withing NF
     auto iterateNFIndex = analyser_.createRootNode<IterateData1DProcedureNode>("Flatten", collectNFIndex);
     auto &forEachNFIndex = iterateNFIndex->branch()->get();
-
     auto value = forEachNFIndex.create<CalculateExpressionProcedureNode>({});
     value->setExpression("value");
+
+    // Collect and process BO
     auto collectQ = forEachNFIndex.create<IntegerCollect1DProcedureNode>("Bins", value, ProcedureNode::AnalysisContext);
     auto processNF = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectQ);
 
