@@ -83,7 +83,6 @@ TEST_F(NeutronSQModuleTest, WaterReferenceFT)
         {"epsr25/water1000-neutron-xray/water.EPSR.w01", Data1DImportFileFormat::Data1DImportFormat::XY, 1, 8}, 5.0e-5));
 }
 
-
 TEST_F(NeutronSQModuleTest, Benzene)
 {
     ASSERT_NO_THROW(systemTest.setUp("dissolve/input/epsr-benzene-3n.txt"));

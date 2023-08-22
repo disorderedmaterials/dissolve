@@ -8,8 +8,8 @@
 #include "io/import/data3D.h"
 #include "io/import/forces.h"
 #include "main/dissolve.h"
-#include "math/error.h"
 #include "math/data3D.h"
+#include "math/error.h"
 #include "math/sampledData1D.h"
 #include "math/sampledDouble.h"
 #include "math/sampledVector.h"
@@ -52,7 +52,8 @@ class DissolveSystemTest
 
         if (rewriteCheck_)
         {
-            auto newInput = fmt::format("{}/TestOutput_{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'), DissolveSys::afterLastChar(inputFile, '/'));
+            auto newInput = fmt::format("{}/TestOutput_{}.rewrite", DissolveSys::beforeLastChar(inputFile, '/'),
+                                        DissolveSys::afterLastChar(inputFile, '/'));
             if (!dissolve_.saveInput(newInput))
                 throw(std::runtime_error(fmt::format("Input file '{}' failed to rewrite correctly.\n", inputFile)));
 

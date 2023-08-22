@@ -196,19 +196,18 @@ TEST_F(EnergyModuleTest, DLPOLYBenzene181VanDerWaals)
                                          D.setAtomTypeChargeSource(true);
                                          D.setAutomaticChargeSource(false);
                                          for (auto &b : C.masterBonds())
-                                            b->setInteractionForm(BondFunctions::Form::None);
+                                             b->setInteractionForm(BondFunctions::Form::None);
                                          for (auto &a : C.masterAngles())
-                                            a->setInteractionForm(AngleFunctions::Form::None);
+                                             a->setInteractionForm(AngleFunctions::Form::None);
                                          for (auto &t : C.masterTorsions())
-                                            t->setInteractionForm(TorsionFunctions::Form::None);
+                                             t->setInteractionForm(TorsionFunctions::Form::None);
                                      }));
     systemTest.setModuleEnabled("Forces01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Full van der Waals Energy: -1.152346e+03   # -1.334653E+03 (full) + 0.182307E+03 (LR correction)
     auto &interEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Bulk//Inter");
-    EXPECT_TRUE(
-        systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), -1.152346e+03, 3.5e-2));
+    EXPECT_TRUE(systemTest.checkDouble("interatomic van der Waals energy", interEnergy.values().back(), -1.152346e+03, 3.5e-2));
 }
 
 TEST_F(EnergyModuleTest, DLPOLYBenzene181Electrostatics)
@@ -281,7 +280,7 @@ TEST_F(EnergyModuleTest, MoscitoPy4OHNTf2Impropers)
 
     // Intramolecular energy: 0.055228   # (0.027614 per molecule) * 2 molecules
     auto &intraEnergy = systemTest.dissolve().processingModuleData().value<Data1D>("Energy01//Py4OH-NTf2//Intra");
-    EXPECT_TRUE(systemTest.checkDouble("improper energy", intraEnergy.values().back(), 0.055228 , 2.0e-5));
+    EXPECT_TRUE(systemTest.checkDouble("improper energy", intraEnergy.values().back(), 0.055228, 2.0e-5));
 }
 
 TEST_F(EnergyModuleTest, MoscitoPy5NTf2Torsions)

@@ -214,9 +214,9 @@ TEST_F(ForcesModuleTest, DLPOLYBenzene181Electrostatics)
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
     // Shifted coulomb sum
-    systemTest.checkVec3Vector(
-        "Forces01//Bulk//Forces",
-        {"dlpoly/benzene181/benzene181-elec.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY}, 3.0e-4);
+    systemTest.checkVec3Vector("Forces01//Bulk//Forces",
+                               {"dlpoly/benzene181/benzene181-elec.REVCON", ForceImportFileFormat::ForceImportFormat::DLPOLY},
+                               3.0e-4);
 }
 
 TEST_F(ForcesModuleTest, DLPOLYBenzene181Bound)
@@ -277,9 +277,9 @@ TEST_F(ForcesModuleTest, MoscitoPy5NTf2Torsions)
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
-    systemTest.checkVec3Vector(
-        "Forces01//Py5-NTf2//Forces",
-        {"moscito/py5_torsions/py5-ntf2-final.str", ForceImportFileFormat::ForceImportFormat::Moscito}, 0.1);
+    systemTest.checkVec3Vector("Forces01//Py5-NTf2//Forces",
+                               {"moscito/py5_torsions/py5-ntf2-final.str", ForceImportFileFormat::ForceImportFormat::Moscito},
+                               0.1);
 }
 
 TEST_F(ForcesModuleTest, MoscitoPy5NTf2Impropers)
@@ -288,9 +288,9 @@ TEST_F(ForcesModuleTest, MoscitoPy5NTf2Impropers)
     systemTest.setModuleEnabled("Energy01", false);
     ASSERT_TRUE(systemTest.dissolve().iterate(1));
 
-    systemTest.checkVec3Vector(
-        "Forces01//Py5-NTf2//Forces",
-        {"moscito/py5_impropers/py5-ntf2-final.str", ForceImportFileFormat::ForceImportFormat::Moscito}, 5.0e-3);
+    systemTest.checkVec3Vector("Forces01//Py5-NTf2//Forces",
+                               {"moscito/py5_impropers/py5-ntf2-final.str", ForceImportFileFormat::ForceImportFormat::Moscito},
+                               5.0e-3);
 }
 
 } // namespace UnitTest
