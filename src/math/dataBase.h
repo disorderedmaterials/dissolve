@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2024 Team Dissolve and contributors
+// Copyright (c) 2023 Team Dissolve and contributors
+
 
 #pragma once
 
 #include <vector>
 
-// Data Base class to allow for polymorphism between children of Data1DBase, Data2DBase and Data3DBase
+// Data Base
 class DataBase
 {
     /*
