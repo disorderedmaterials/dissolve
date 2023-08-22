@@ -98,7 +98,7 @@ Module  ImportTrajectory
   Configuration  'Bulk'
 
   # Trajectory file contains 95 frames
-  Format  xyz  '../_data/dlpoly/water267-analysis/water-267-298K.xyz'
+  Format  xyz  'dlpoly/water267-analysis/water-267-298K.xyz'
   EndFormat
 EndModule
 
@@ -224,39 +224,6 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
 
   EndAnalyser
 
-EndModule
-
-Module DataTest
-  Frequency  95
-  Data1D  'DAngle(X-H...O)//Process1D//RDF(BC)'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum'
-  EndData1D
-EndModule
-
-Module DataTest
-  Frequency  95
-  Data1D  'DAngle(X-H...O)-Analyser//Process1D//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum'
-  EndData1D
-EndModule
-
-Module DataTest
-  Frequency  95
-  Data1D  'DAngle(X-H...O)//Process1D//Angle(ABC)'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
-  EndData1D
-EndModule
-
-Module DataTest
-  Frequency  95
-  ErrorType  Euclidean
-  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Angle'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
-  EndData1D
-EndModule
-
-Module DataTest
-  Frequency  95
-  #Data2D  'DAngle(X-H...O)//Process2D//RDF-Angle'  cartesian  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.surf'
-#    XRange  0.0  5.0  0.01
-#    YRange  0.0  180  1.0
-  #EndData2D
 EndModule
 
 EndLayer
