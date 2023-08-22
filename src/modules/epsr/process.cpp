@@ -678,13 +678,6 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                     }
                     return EarlyReturn<bool>::Continue;
                 });
-            *Object Management * /
-
-                // Express as a serialisable value
-                SerialisedValue RangeVectorKeyword::serialise() const
-            {
-                return fromVector(data_, [](const auto &item) -> SerialisedValue { return item.serialise(); });
-            }
             if (!methodSuccess.value_or(true))
                 return ExecutionResult::Failed;
         }
