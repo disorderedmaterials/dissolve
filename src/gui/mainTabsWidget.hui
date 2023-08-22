@@ -52,7 +52,7 @@ class MainTabsWidget : public QTabWidget
     // Pointer to Forcefield tab
     QPointer<ForcefieldTab> forcefieldTab_;
     // OverviewTab Toggle
-    static constexpr bool overview_flag = false;
+    static constexpr bool overview_flag = true;
     // Pointer to Overview tab
     QPointer<OverviewTab> overviewTab_;
     // List of Species tabs

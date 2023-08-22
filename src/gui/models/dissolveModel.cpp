@@ -3,8 +3,6 @@
 
 #include "gui/models/dissolveModel.h"
 
-DissolveModel::DissolveModel(Dissolve &dissolve) : dissolve_(dissolve) {}
-
 /*
  * Data
  */
@@ -12,147 +10,67 @@ DissolveModel::DissolveModel(Dissolve &dissolve) : dissolve_(dissolve) {}
 // Set reference to Dissolve
 void DissolveModel::setDissolve(Dissolve &dissolve)
 {
-    beginResetModel();
-    dissolve_ = dissolve;
-    endResetModel();
+    dissolve_ = &dissolve;
+    atomTypes_.setData(dissolve_->coreData().atomTypes());
+    //atomTypes_->setIconFunction([this](const auto type) { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
+    //atomTypes_ = new AtomTypeModel(dissolve_->coreData());
+    //atomTypes_->setData(dissolve_->coreData().atomTypes());
+    masters_ = std::make_unique<MasterTermTreeModel>();
+    masters_->setData(dissolve_->coreData().masterBonds(), dissolve_->coreData().masterAngles(), dissolve_->coreData().masterTorsions(),
+                      dissolve_->coreData().masterImpropers());
+    speciesModel_.setData(dissolve_->coreData().species());
+    configurationModel_.setData(dissolve_->coreData().configurations());
 }
 
-QVariant DissolveModel::rawData(const QModelIndex index)
-{
-    if (!index.isValid())
-        return {};
-    if (!dissolve_)
-        return {};
-    auto &species = dissolve_->get().coreData().species();
-    auto &configurations = dissolve_->get().coreData().configurations();
-    switch (index.row())
-    {
-        case (0):
-            switch (index.column())
-            {
-                case (0):
-                    return QVariant::fromValue(&dissolve_->get().coreData().atomTypes());
-                case (1):
-                    return QVariant::fromValue(&dissolve_->get().coreData().masterBonds());
-                case (2):
-                    return QVariant::fromValue(&dissolve_->get().coreData().masterAngles());
-                case (3):
-                    return QVariant::fromValue(&dissolve_->get().coreData().masterTorsions());
-                case (4):
-                    return QVariant::fromValue(&dissolve_->get().coreData().masterImpropers());
-                default:
-                    return {};
-            }
-        case (1):
-            if (index.column() < species.size())
-                return QVariant::fromValue(dissolve_->get().coreData().species()[index.column()].get());
-            break;
-        case (2):
-            if (index.column() < configurations.size())
-                return QVariant::fromValue(dissolve_->get().coreData().configurations()[index.column()].get());
-            break;
-        default:
-            return {};
-    }
-    return {};
-}
+// The Atom Type Model
+AtomTypeModel *DissolveModel::atomTypes() { return &atomTypes_; }
 
-const QVariant DissolveModel::rawData(const QModelIndex index) const
-{
-    if (!index.isValid())
-        return {};
-    if (!dissolve_)
-        return {};
-    auto &species = dissolve_->get().coreData().species();
-    auto &configurations = dissolve_->get().coreData().configurations();
-    switch (index.row())
-    {
-        case (0):
-            switch (index.column())
-            {
-                case (0):
-                    return QVariant::fromValue(&dissolve_->get().coreData().atomTypes());
-                case (1):
-                    return QVariant::fromValue(&dissolve_->get().coreData().masterBonds());
-                case (2):
-                    return QVariant::fromValue(&dissolve_->get().coreData().masterAngles());
-                case (3):
-                    return QVariant::fromValue(&dissolve_->get().coreData().masterTorsions());
-                case (4):
-                    return QVariant::fromValue(&dissolve_->get().coreData().masterImpropers());
-                default:
-                    return {};
-            }
-        case (1):
-            if (index.column() < species.size())
-                return QVariant::fromValue(dissolve_->get().coreData().species()[index.column()].get());
-            break;
-        case (2):
-            if (index.column() < configurations.size())
-                return QVariant::fromValue(dissolve_->get().coreData().configurations()[index.column()].get());
-            break;
-        default:
-            return {};
-    }
-    return {};
-}
-
-// Update the model
 void DissolveModel::reset()
 {
-    beginResetModel();
-    endResetModel();
+    atomTypes_.reset();
 }
 
-/*
- * QAbstractItemModel overrides
- */
-QModelIndex DissolveModel::parent(const QModelIndex &child) const { return QModelIndex(); }
 
-int DissolveModel::columnCount(const QModelIndex &parent) const
+// The Master Bond Model
+const MasterBondModel *DissolveModel::bonds() const
 {
-    auto max = std::max(dissolve_->get().coreData().nConfigurations(), dissolve_->get().coreData().nSpecies());
-    return std::max(max, 5);
+    if (!masters_)
+        return nullptr;
+    return &masters_->bondModel_;
 }
 
-QVariant DissolveModel::data(const QModelIndex &index, int role) const
+// The Master Angle Model
+const MasterAngleModel *DissolveModel::angles() const
 {
-    auto d = rawData(index);
-    if (d.isNull())
-        return {};
-    if (role == Qt::DisplayRole || role == Qt::EditRole)
-    {
-        switch (index.row())
-        {
-            case 0:
-                switch (index.column())
-                {
-                    case (0):
-                        return "Atom Types";
-                    case (1):
-                        return "Bonds";
-                    case (2):
-                        return "Angles";
-                    case (3):
-                        return "Torsions";
-                    case (4):
-                        return "Impropers";
-                    default:
-                        return {};
-                }
-            case (1):
-                return QString::fromStdString(std::string(d.value<Species *>()->name()));
-            case (2):
-                return QString::fromStdString(std::string(d.value<Configuration *>()->name()));
-            default:
-                return {};
-        }
-    }
-    else if (role == Qt::UserRole)
-        return d;
-    return {};
+    if (!masters_)
+        return nullptr;
+    return &masters_->angleModel_;
 }
 
-int DissolveModel::rowCount(const QModelIndex &parent) const { return 3; }
+// The Master Torsion Model
+const MasterTorsionModel *DissolveModel::torsions() const
+{
+    if (!masters_)
+        return nullptr;
+    return &masters_->torsionModel_;
+}
 
-QModelIndex DissolveModel::index(int row, int column, const QModelIndex &parent) const { return createIndex(row, column); }
+// The Master Improper Model
+const MasterImproperModel *DissolveModel::impropers() const
+{
+    if (!masters_)
+        return nullptr;
+    return &masters_->improperModel_;
+}
+
+// The Species Model
+SpeciesModel* DissolveModel::species()
+{
+    return &speciesModel_;
+}
+
+// The Configuration Model
+ConfigurationModel *DissolveModel::configurations()
+{
+    return &configurationModel_;
+}
