@@ -304,14 +304,19 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
         // Calculate r-factor over specified ranges_
         for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
         {
+            if (range.minimum() < rFactorReport.firstX || range.maximum() > rFactorReport.lastX)
+            {
+                Messenger::warn("The specified range '{:.5f} to {:.5f}' is outside of the range of data '{}', which exists "
+                                "between {:.5f} and {:.5f}",
+                                range.minimum(), range.maximum(), module->name(), rFactorReport.firstX, rFactorReport.lastX);
+            }
             const auto rFactorRangeReport = Error::rFactor(tempRefData, weightedSQ.total(), range).error;
             rangeTot += rFactorRangeReport.error;
             Messenger::print("Current R-Factor for reference data '{}' over range {:.5f} to {:.5f} is {:.5f}.\n",
                              module->name(), range.minimum(), range.maximum(), rFactorRangeReport.error);
-            * /
 
-                // Get difference and fit function objects
-                auto &deltaFQ = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+            // Get difference and fit function objects
+            auto &deltaFQ = moduleContext.dissolve().processingModuleData().realise<Data1D>(
                 fmt::format("DeltaFQ//{}", module->name()), name_, GenericItem::InRestartFileFlag);
             auto &deltaFQFit = moduleContext.dissolve().processingModuleData().realise<Data1D>(
                 fmt::format("DeltaFQFit//{}", module->name()), name_, GenericItem::InRestartFileFlag);
