@@ -1,5 +1,3 @@
-# Test Case 04 - Internal test of 'simple' RDF calculation method
-
 # Define Atomic Species
 Species 'Ball'
   # Atoms
@@ -21,12 +19,12 @@ EndConfiguration
 
 Layer  'Processing'
 
-  # Test 'Simple' Method
-  Module  RDF
+  # Test 'Cells' method of RDF calculation
+  Module  GR  'GR01'
     Configurations  'Box'
     Frequency  1
+    Averaging  Off
     InternalTest  On
-    Method  Simple
   EndModule
 
 EndLayer
@@ -35,7 +33,7 @@ EndLayer
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  Parameters  'Ar'  Ar 0.0  LJ  0.0  0.0
+  Parameters  'Ar'  Ar  0.0  LJGeometric  0.0  0.0
   ManualChargeSource  True
   ForceChargeSource  True
 EndPairPotentials

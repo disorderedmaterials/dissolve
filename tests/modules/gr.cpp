@@ -2,6 +2,7 @@
 // Copyright (c) 2023 Team Dissolve and contributors
 
 #include "tests/testData.h"
+#include "modules/gr/gr.h"
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -12,6 +13,21 @@ class GRModuleTest : public ::testing::Test
     protected:
     DissolveSystemTest systemTest;
 };
+
+TEST_F(GRModuleTest, Methods)
+{
+    ASSERT_NO_THROW(systemTest.setUp("dissolve/input/rdfMethod.txt"));
+    auto *grModule = systemTest.getModule<GRModule>("GR01");
+
+    // Simple method
+    grModule->keywords().setEnumeration("Method", GRModule::PartialsMethod::SimpleMethod);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+
+    // Cells method
+    systemTest.coreData().configurations().front()->incrementContentsVersion();
+    grModule->keywords().setEnumeration("Method", GRModule::PartialsMethod::CellsMethod);
+    ASSERT_TRUE(systemTest.dissolve().iterate(1));
+}
 
 TEST_F(GRModuleTest, Water)
 {
