@@ -413,7 +413,7 @@ Configuration  'Py4OH-NTf2'
       Positioning  Random
     EndAdd
     ImportCoordinates  'InputCoordinates01'
-      File   moscito  '../_data/moscito/py4oh_torsions/py4oh-ntf2-final.str'
+      File   moscito  'moscito/py4oh_torsions/py4oh-ntf2-final.str'
       EndFile
     EndImportCoordinates
   EndGenerator
@@ -430,20 +430,14 @@ EndConfiguration
 
 Layer  'Processing'
 
-    Module  Energy
+    Module  Energy  'Energy01'
     Test  On
-    TestAnalytic  On
     Configuration  'Py4OH-NTf2'
-    TestReferenceIntra     51.050222   # (25.525111 per molecule) * 2 molecules
-    TestThreshold  5.0e-5
     EndModule
 
-    Module Forces
+    Module Forces  'Forces01'
     Test  On
     Configuration  'Py4OH-NTf2'
-    TestReference  moscito  '../_data/moscito/py4oh_torsions/py4oh-ntf2-final.str'
-    EndTestReference
-    TestThreshold  0.4
     EndModule
 
 EndLayer

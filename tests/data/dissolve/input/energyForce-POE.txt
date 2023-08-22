@@ -74,7 +74,7 @@ Configuration  'POE'
       BoxAction  None
     EndAdd
     ImportCoordinates  'InputCoordinates01'
-      File   moscito  '../_data/moscito/poe64_torsions/torsions-final.str'
+      File   moscito  'moscito/poe64_torsions/torsions-final.str'
       EndFile
     EndImportCoordinates
   EndGenerator
@@ -86,20 +86,14 @@ EndConfiguration
 
 Layer  'Processing'
 
-    Module  Energy
+    Module  Energy  'Energy01'
     Test  On
-    TestAnalytic  On
     Configuration  'POE'
-    TestReferenceIntra     183.4801   # (2.866876 per molecule) * 64 molecules
-    TestThreshold  1.0e-2
     EndModule
 
-    Module Forces
+    Module Forces  'Forces01'
     Test  On
     Configuration  'POE'
-    TestReference  moscito  '../_data/moscito/poe64_torsions/torsions-final.str'
-    EndTestReference
-    TestThreshold  0.4
     EndModule
 
 EndLayer

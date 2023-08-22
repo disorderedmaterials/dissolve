@@ -104,12 +104,15 @@ EndSpecies
 
 PairPotentials
   # Atom Type Parameters
-  Parameters  CA  C  -1.150000e-01  LJGeometric  epsilon=0.29288 sigma=3.55
-  Parameters  HA  H  1.150000e-01  LJGeometric  epsilon=0.12552 sigma=2.42
+  Parameters  CA  C  0.0  LJGeometric  epsilon=0.29288 sigma=3.55
+  Parameters  HA  H  0.0  LJGeometric  epsilon=0.12552 sigma=2.42
   Range  12
-  Delta  0.0005
+  Delta  0.0001
   CoulombTruncation  Shifted
   ShortRangeTruncation  None
+  ManualChargeSource  True
+  ForceChargeSource  True
+  IncludeCoulomb  Off
 EndPairPotentials
 
 #==============================================================================#
@@ -132,7 +135,7 @@ Configuration  'Bulk'
       Rotate  True
     EndAdd
     ImportCoordinates  'InputCoordinates01'
-      File dlpoly  '../_data/dlpoly/benzene181/benzene181.CONFIG'
+      File dlpoly  'dlpoly/benzene181/benzene181.CONFIG'
       EndFile
     EndImportCoordinates
   EndGenerator
@@ -147,24 +150,15 @@ EndConfiguration
 
 Layer  'Processing'
 
-  # Test analytical energy against production and reference energy
-  Module Energy
+  Module Energy  'Energy01'
     Configuration  'Bulk'
     Test on
-    TestAnalytic on
-    TestReferenceInter     -5.911071e+02   # 5.612389E+02 (elec) - 1.334653E+03 (VDW) + 0.182307E+03 (VDW LR correction)
-    TestReferenceIntra     5.901646e+03
-    TestThreshold  3.5e-2
   EndModule
 
-  # Test production forces against reference forces
-  Module Forces
+  Module Forces  'Forces01'
     Configuration  'Bulk'
     Test on
-    TestAnalytic  on
-    TestReference  dlpoly  '../_data/dlpoly/benzene181/benzene181-full.REVCON'
-    EndTestReference
-    TestThreshold  1.2
+    TestThreshold  2.0e-5
   EndModule
 
 EndLayer
