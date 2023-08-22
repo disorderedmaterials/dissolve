@@ -5,7 +5,10 @@ add_library(
   bool.cpp
   configuration.cpp
   configurationVector.cpp
-  dataSourceBase.cpp
+  data1DStore.cpp
+  data2DStore.cpp
+  data3DStore.cpp
+  dataSource.cpp
   double.cpp
   elementVector.cpp
   expression.cpp
@@ -40,7 +43,9 @@ add_library(
   bool.h
   configuration.h
   configurationVector.h
-  dataSourceBase.h
+  data1DStore.h
+  data2DStore.h
+  data3DStore.h
   dataSource.h
   double.h
   elementVector.h

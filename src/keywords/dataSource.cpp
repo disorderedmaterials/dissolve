@@ -3,72 +3,67 @@
 #include "io/import/data2D.h"
 #include "io/import/data3D.h"
 
-template <typename T, typename F> DataSourceKeyword::DataSourceKeyword(F addData, std::string_view endKeyword)
+template <typename T, typename F>
+DataSourceKeyword<T, F>::DataSourceKeyword(F addData, std::string_view endKeyword)
+    : KeywordBase(typeid(this)), addData_(addData), endKeyword_(endKeyword_)
 {
-    addData_ = addData;
-    endKeyword_ = endKeyword;
-
+    // Get the correct import object to use
     if (std::is_same_v<T, Data1D>)
     {
-        format_ = Data1DFileAndFormat();
+        format_ = std::make_unique<Data1DImportFileFormat>();
     }
     else if (std::is_same_v<T, Data2D>)
     {
-        format_ = Data2DFileAndFormat();
+        format_ = std::make_unique<Data2DImportFileFormat>();
     }
     else if (std::is_same_v<T, Data3D>)
     {
-        format_ = Data3DFileAndFormat();
+        format_ = std::make_unique<Data3DImportFileFormat>();
     }
 }
 
-DataSource &DataSourceKeyword::data()
-{
-    // TODO: insert return statement here
-}
-
-const DataSource &DataSourceKeyword::data() const
-{
-    // TODO: insert return statement here
-}
+/*
+ * Arguments
+ */
 
 // Return minimum number of arguments accepted
-int DataSourceKeyword::minArguments() const { return 0; }
+template <typename T, typename F> int DataSourceKeyword<T, F>::minArguments() const { return 0; }
 
 // Return maximum number of arguments accepted
-std::optional<int> DataSourceKeyword::maxArguments() const { return std::nullopt; }
+template <typename T, typename F> std::optional<int> DataSourceKeyword<T, F>::maxArguments() const { return std::nullopt; }
 
 // Deserialise from supplied LineParser, starting at given argument offset
 template <typename T, typename F>
-bool DataSourceKeyword::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
+bool DataSourceKeyword<T, F>::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    /**
-     * TODO: We get first line -> it is either internal or external data
-     * TODO: We must pass argument one and then argument two (Maybe start by parsing lines)
-     */
     std::vector<T> dataSources;
 
     while (!parser.eofOrBlank())
     {
-
         T data;
-
+        // If data is internal
         if (DissolveSys::sameString(parser.argsv(startArg), internalKwd_))
         {
             data.setTag(parser.argsv(startArg + 1));
         }
-
+        // If data is external
         else if (DissolveSys::sameString(parser.argsv(startArg), externalKwd_))
         {
-            if (format_.read(parser, startArg + 1, externalEndKwd_, coreData) != FileAndFormat::ReadResult::Success)
+            // Read the supplied arguements
+            if (format_->read(parser, startArg + 1, externalEndKwd_, coreData) != FileAndFormat::ReadResult::Success)
             {
                 return false;
             }
-
-            if (!format.importData(data, parser.processPool()))
+            // Import the data
+            if (!format_->importData(data, parser.processPool()))
             {
                 return false;
             }
+        }
+        else
+        {
+            return Messenger::error("Unsupported data location '{}' provided to keyword '{}'\n", parser.argsv(startArg),
+                                    name());
         }
 
         // Read the next line
@@ -82,38 +77,42 @@ bool DataSourceKeyword::deserialise(LineParser &parser, int startArg, const Core
         {
             break;
         }
-
+        // Add the data to vector
         dataSources.push_back(data);
     }
 
-    if (!addData_(DataSources))
+    // Once finished reading the arguements, add the data to the module
+    if (!addData_(dataSources))
     {
-        Messenger::error("Invalid data sources supplied for keyword '{}'", name());
+        Messenger::error("Failed to add data sources supplied for keyword '{}'", name());
         return false;
     }
+
+    std::for_each(dataSources.begin(), dataSources.end(), [&](T &d) { data_.push_back(d); });
 
     return true;
 }
 
 // Serialise data to specified LineParser
-bool DataSourceKeyword::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
+template <typename T, typename F>
+bool DataSourceKeyword<T, F>::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
     return false;
 }
 
 // Express as a serialisable value
-SerialisedValue DataSourceKeyword::serialise() const { return SerialisedValue(); }
+template <typename T, typename F> SerialisedValue DataSourceKeyword<T, F>::serialise() const { return SerialisedValue(); }
 
 // Read values from a serialisable value
-void DataSourceKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData) {}
+template <typename T, typename F>
+void DataSourceKeyword<T, F>::deserialise(const SerialisedValue &node, const CoreData &coreData)
+{
+}
 
 // Has not changed from initial value
-bool DataSourceKeyword::isDefault() const { return false; }
+template <typename T, typename F> bool DataSourceKeyword<T, F>::isDefault() const { return false; }
 
 // Explicit instantiation of allowed template types
-template DataSourceKeyword::DataSourceKeyword<Data1D, std::function<bool(std::vector<Data1D>)>>(
-    std::function<bool(std::vector<Data1D>)>);
-template DataSourceKeyword::DataSourceKeyword<Data2D, std::function<bool(std::vector<Data2D>)>>(
-    std::function<bool(std::vector<Data2D>)>);
-template DataSourceKeyword::DataSourceKeyword<Data3D, std::function<bool(std::vector<Data3D>)>>(
-    std::function<bool(std::vector<Data3D>)>);
+template class DataSourceKeyword<Data1D, std::function<bool(std::vector<Data1D>)>>;
+template class DataSourceKeyword<Data2D, std::function<bool(std::vector<Data2D>)>>;
+template class DataSourceKeyword<Data3D, std::function<bool(std::vector<Data3D>)>>;

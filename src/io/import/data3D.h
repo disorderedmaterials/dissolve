@@ -3,14 +3,14 @@
 
 #pragma once
 
-#include "io/fileAndFormat.h"
+#include "io/import/dataBase.h"
 
 // Forward Declarations
 class Data3D;
 class ProcessPool;
 
 // Data3D Import Formats
-class Data3DImportFileFormat : public FileAndFormat
+class Data3DImportFileFormat : public DataImportFileFormat
 {
     public:
     // Available Data3D formats
@@ -26,7 +26,7 @@ class Data3DImportFileFormat : public FileAndFormat
      */
     private:
     // Set up keywords for the format
-    void setUpKeywords();
+    void setUpKeywords() override;
 
     /*
      * Formats

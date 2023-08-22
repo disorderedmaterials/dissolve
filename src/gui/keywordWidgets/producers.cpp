@@ -37,11 +37,10 @@
 #include "gui/keywordWidgets/vec3Integer.h"
 #include "gui/keywordWidgets/vec3NodeValue.h"
 #include "gui/keywordWidgets/weightedModuleVector.h"
-#include "io/import/data1D.h"
-#include "io/import/data2D.h"
-#include "io/import/data3D.h"
+#include "keywords/data1DStore.h"
+#include "keywords/data2DStore.h"
+#include "keywords/data3DStore.h"
 #include "keywords/dataSource.h"
-#include "keywords/dataSourceBase.h"
 #include "keywords/elementVector.h"
 #include "keywords/expression.h"
 #include "keywords/nodeBranch.h"
@@ -86,10 +85,12 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<WeightedModuleVectorKeyword, WeightedModuleVectorKeywordWidget>();
 
     // Keywords with no widgets
-    registerNullProducer<DataSourceKeywordBase>();
-    registerNullProducer<DataSourceKeyword<Data1D>>();
-    registerNullProducer<DataSourceKeyword<Data2D>>();
-    registerNullProducer<DataSourceKeyword<Data3D>>();
+    registerNullProducer<Data1DStoreKeyword>();
+    registerNullProducer<Data2DStoreKeyword>();
+    registerNullProducer<Data3DStoreKeyword>();
+    registerNullProducer<DataSourceKeyword<Data1D, std::function<bool(std::vector<Data1D>)>>>();
+    registerNullProducer<DataSourceKeyword<Data2D, std::function<bool(std::vector<Data2D>)>>>();
+    registerNullProducer<DataSourceKeyword<Data3D, std::function<bool(std::vector<Data3D>)>>>();
     registerNullProducer<ElementVectorKeyword>();
     registerNullProducer<ExpressionKeyword>();
     registerNullProducer<NodeBranchKeyword>();

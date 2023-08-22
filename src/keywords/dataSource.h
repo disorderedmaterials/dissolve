@@ -3,11 +3,12 @@
 
 #pragma once
 
-#include "io/fileAndFormat.h"
+#include "io/import/dataBase.h"
 #include "keywords/base.h"
 #include "math/data1D.h"
 #include "math/data2D.h"
 #include "math/data3D.h"
+#include "math/dataBase.h"
 #include "templates/optionalRef.h"
 #include <optional>
 #include <vector>
@@ -16,15 +17,10 @@
 class DataSource;
 
 // Keyword managing data sources
+// Template arguements: data class (Data1D, Data2D ...), add data function type
 template <typename T, typename F> class DataSourceKeyword : public KeywordBase
 {
     public:
-    enum class SourceType
-    {
-        Internal,
-        External
-    };
-
     explicit DataSourceKeyword(F addData, std::string_view endKeyword);
     ~DataSourceKeyword() override = default;
 
@@ -33,9 +29,11 @@ template <typename T, typename F> class DataSourceKeyword : public KeywordBase
      */
     private:
     // Reference to data adding function in module
-    F addData_;
+    const F addData_;
     // Format object for the data
-    FileAndFormat format_;
+    std::unique_ptr<DataImportFileFormat> format_;
+    // Vector of data references
+    std::vector<std::reference_wrapper<T>> data_;
 
     /*
      * Arguments

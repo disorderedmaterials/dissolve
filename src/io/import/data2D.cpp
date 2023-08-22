@@ -7,7 +7,7 @@
 #include "keywords/vec3Double.h"
 
 Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2DImportFileFormat::Data2DImportFormat format)
-    : FileAndFormat(formats_, filename, (int)format)
+    : DataImportFileFormat(formats_, filename, (int)format)
 {
     formats_ = EnumOptions<Data2DImportFileFormat::Data2DImportFormat>(
         "Data2DImportFileFormat", {{Data2DImportFormat::Cartesian, "cartesian", "Cartesian X,Y,f(X,Y) data"}});
