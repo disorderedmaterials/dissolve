@@ -32,8 +32,8 @@ template <typename T, typename F> class DataSourceKeyword : public KeywordBase
     const F addData_;
     // Format object for the data
     std::unique_ptr<DataImportFileFormat> format_;
-    // Vector of data references
-    std::vector<std::reference_wrapper<T>> data_;
+    // Vector of vectors of pairs containing data source type and reference to data
+    std::vector<std::vector<std::pair<std::string_view, std::reference_wrapper<T>>>> data_;
 
     /*
      * Arguments

@@ -3,7 +3,6 @@
 
 #include "modules/compare/compare.h"
 #include "keywords/dataSource.h"
-#include "math/error.h"
 
 CompareModule::CompareModule() : Module(ModuleTypes::Compare)
 {
