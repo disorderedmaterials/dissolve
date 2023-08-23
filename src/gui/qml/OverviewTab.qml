@@ -5,11 +5,17 @@ import QtQml.Models 6.0
 import QtQuick 2.15
 
 ColumnLayout {
+    id: root
+    signal atomTypesClicked()
+    signal masterTermsClicked()
+    signal speciesClicked(int index)
+    signal configurationClicked(int index)
+
     spacing: 5
 
     Connections {
         target: dissolveModel
-        function onModelsReset() {
+        function onModelsUpdated() {
             atomTypesText.text = "Atom Types (" + dissolveModel.atomTypes.rowCount() + ")"
             bondsText.text = "Master Bonds (" + dissolveModel.bonds.rowCount() + ")"
             anglesText.text = "Master Angles (" + dissolveModel.angles.rowCount() + ")"
@@ -84,6 +90,11 @@ ColumnLayout {
                 font.pixelSize: 14
                 horizontalAlignment: Text.AlignHCenter
             }
+            MouseArea {
+                height: parent.height
+                width: parent.width
+                onClicked: root.atomTypesClicked()
+            }
         }
         Rectangle {
             id: bonds
@@ -101,6 +112,11 @@ ColumnLayout {
                 wrapMode: Text.WordWrap
                 font.pixelSize: 14
                 horizontalAlignment: Text.AlignHCenter
+            }
+            MouseArea {
+                height: parent.height
+                width: parent.width
+                onClicked: root.masterTermsClicked()
             }
         }
         Rectangle {
@@ -120,6 +136,11 @@ ColumnLayout {
                 font.pixelSize: 14
                 horizontalAlignment: Text.AlignHCenter
             }
+            MouseArea {
+                height: parent.height
+                width: parent.width
+                onClicked: root.masterTermsClicked()
+            }
         }
         Rectangle {
             id: torsions
@@ -137,6 +158,11 @@ ColumnLayout {
                 wrapMode: Text.WordWrap
                 font.pixelSize: 14
                 horizontalAlignment: Text.AlignHCenter
+            }
+            MouseArea {
+                height: parent.height
+                width: parent.width
+                onClicked: root.masterTermsClicked()
             }
         }
         Rectangle {
@@ -156,13 +182,18 @@ ColumnLayout {
                 font.pixelSize: 14
                 horizontalAlignment: Text.AlignHCenter
             }
+            MouseArea {
+                height: parent.height
+                width: parent.width
+                onClicked: root.masterTermsClicked()
+            }
         }
     }
 
     RowLayout {
         Repeater {
             id: species
-            model: dissolveModel.species
+            model: dissolveModel.species.rowCount()
             delegate: Rectangle {
                 border.color: "steelblue"
                 color: "lightblue"
@@ -175,7 +206,11 @@ ColumnLayout {
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
                 }
-
+                MouseArea {
+                    height: parent.height
+                    width: parent.width
+                    onClicked: root.speciesClicked(index)
+                }
             }
         }
     }
@@ -183,7 +218,7 @@ ColumnLayout {
     RowLayout {
         Repeater {
             id: configurations
-            model: dissolveModel.configurations
+            model: dissolveModel.configurations.rowCount()
             delegate: Rectangle {
                 border.color: "steelblue"
                 color: "lightblue"
@@ -195,6 +230,11 @@ ColumnLayout {
                     text: generateConfigurationMarkup(index)
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
+                }
+                MouseArea {
+                    height: parent.height
+                    width: parent.width
+                    onClicked: root.configurationClicked(index)
                 }
             }
         }

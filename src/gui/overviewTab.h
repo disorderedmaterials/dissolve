@@ -55,6 +55,12 @@ class OverviewTab : public QWidget, public MainTab
     private slots:
     // Status of the QML view changed
     void viewStatusChanged();
-    // Node has been clicked
-    void nodeClicked(int row, int col);
+    // Atom types clicked
+    void atomTypesClicked();
+    // Master terms clicked
+    void masterTermsClicked();
+    // Species clicked
+    void speciesClicked(int index);
+    // Configuration clicked
+    void configurationClicked(int index);
 };
