@@ -316,6 +316,10 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                              module->name(), range.minimum(), range.maximum(), rangedRFactorError);
         }
 
+        /*
+         * Generate difference function for fitting, spanning (maximally) only the range requested
+         */
+
         // Get difference and fit function objects
         auto &deltaFQ = moduleContext.dissolve().processingModuleData().realise<Data1D>(
             fmt::format("DeltaFQ//{}", module->name()), name_, GenericItem::InRestartFileFlag);
