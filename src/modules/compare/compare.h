@@ -29,9 +29,9 @@ class CompareModule : public Module
      */
     private:
     // Preallocated vectors of data to compare
-    std::vector<std::pair<Data1D, Data1D>> compareData1D_;
-    std::vector<std::pair<Data2D, Data2D>> compareData2D_;
-    std::vector<std::pair<Data3D, Data3D>> compareData3D_;
+    std::vector<std::pair<std::unique_ptr<Data1D>, std::unique_ptr<Data1D>>> compareData1D_;
+    std::vector<std::pair<std::unique_ptr<Data2D>, std::unique_ptr<Data2D>>> compareData2D_;
+    std::vector<std::pair<std::unique_ptr<Data3D>, std::unique_ptr<Data3D>>> compareData3D_;
     // Method of error calculation to use
     Error::ErrorType errorType_{Error::EuclideanError};
     // Threshold for error metric above which test fails
@@ -56,9 +56,8 @@ class CompareModule : public Module
         }
 
         // Set the data, getting the correct vector from the tuple based on the type
-        auto &[data1, data2] = std::get<std::vector<std::pair<T, T>> &>(dataVectors).emplace_back(std::pair<T, T>());
-        data1 = data[0];
-        data2 = data[1];
+        std::get<std::vector<std::pair<std::unique_ptr<T>, std::unique_ptr<T>>> &>(dataVectors)
+            .emplace_back(std::make_pair(std::make_unique<T>(data[0]), std::make_unique<T>(data[1])));
 
         return true;
     }

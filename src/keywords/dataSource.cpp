@@ -36,15 +36,21 @@ template <typename T, typename F> std::optional<int> DataSourceKeyword<T, F>::ma
 template <typename T, typename F>
 bool DataSourceKeyword<T, F>::deserialise(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    std::vector<T> dataSources;
+    // Vector of pairs to hold source location and reference to data objects
+    std::vector<std::pair<std::string_view, std::reference_wrapper<T>>> dataSources;
+    // Vector to hold unique_ptrs to data objects
+    std::vector<T> dataVector;
 
     while (!parser.eofOrBlank())
     {
+        std::string_view source;
         T data;
+
         // If data is internal
         if (DissolveSys::sameString(parser.argsv(startArg), internalKwd_))
         {
             data.setTag(parser.argsv(startArg + 1));
+            source = internalKwd_;
         }
         // If data is external
         else if (DissolveSys::sameString(parser.argsv(startArg), externalKwd_))
@@ -59,6 +65,10 @@ bool DataSourceKeyword<T, F>::deserialise(LineParser &parser, int startArg, cons
             {
                 return false;
             }
+            // Set tag to filename
+            data.setTag(parser.argsv(startArg + 2));
+
+            source = externalKwd_;
         }
         else
         {
@@ -77,18 +87,20 @@ bool DataSourceKeyword<T, F>::deserialise(LineParser &parser, int startArg, cons
         {
             break;
         }
-        // Add the data to vector
-        dataSources.push_back(data);
+
+        // Add the data to the vectors
+        dataVector.push_back(data);
+        dataSources.push_back(std::make_pair(source, std::reference_wrapper<T>(data)));
     }
 
     // Once finished reading the arguements, add the data to the module
-    if (!addData_(dataSources))
+    if (!addData_(dataVector))
     {
         Messenger::error("Failed to add data sources supplied for keyword '{}'", name());
         return false;
     }
 
-    std::for_each(dataSources.begin(), dataSources.end(), [&](T &d) { data_.push_back(d); });
+    data_.push_back(dataSources);
 
     return true;
 }
@@ -97,6 +109,13 @@ bool DataSourceKeyword<T, F>::deserialise(LineParser &parser, int startArg, cons
 template <typename T, typename F>
 bool DataSourceKeyword<T, F>::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+    for (auto &dataVec : data_)
+    {
+        if (!format_->writeBlock(parser, prefix))
+            return false;
+        if (!parser.writeLineF("{}End{}", prefix, keywordName))
+            return false;
+    }
     return false;
 }
 
