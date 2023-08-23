@@ -55,6 +55,14 @@ QVariant SpeciesModel::data(const QModelIndex &index, int role) const
             }
         case (Qt::UserRole):
             return QVariant::fromValue(rawData(index));
+        case (Qt::UserRole + 1):
+            return QVariant::fromValue(rawData(index)->nBonds());
+        case (Qt::UserRole + 2):
+            return QVariant::fromValue(rawData(index)->nAngles());
+        case (Qt::UserRole + 3):
+            return QVariant::fromValue(rawData(index)->nTorsions());
+        case (Qt::UserRole + 4):
+            return QVariant::fromValue(rawData(index)->nImpropers());
         default:
             return {};
     }
