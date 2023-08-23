@@ -109,18 +109,49 @@ bool DataSourceKeyword<T, F>::deserialise(LineParser &parser, int startArg, cons
 template <typename T, typename F>
 bool DataSourceKeyword<T, F>::serialise(LineParser &parser, std::string_view keywordName, std::string_view prefix) const
 {
+
     for (auto &dataVec : data_)
     {
-        if (!format_->writeBlock(parser, prefix))
+        if (!parser.writeLineF("{}End{}\n", prefix, keywordName))
             return false;
-        if (!parser.writeLineF("{}End{}", prefix, keywordName))
+
+        for (auto &[source, data] : dataVec)
+        {
+            // Write source: internal/external
+            if (!parser.writeLineF("{}{}  ", prefix, source))
+                return false;
+
+            // If data is internal
+            if (DissolveSys::sameString(internalKwd_, source))
+            {
+                if (!parser.writeLineF("'{}'\n", data.get().tag()))
+                    return false;
+            }
+            // If data is external
+            else
+            {
+                // Write filename and format
+                format_->setFilename(data.get().tag());
+                if (!format_->writeFilenameAndFormat(parser, prefix))
+                    return false;
+                // Write extra keywords
+                if (!format_->writeBlock(parser, prefix))
+                    return false;
+                // End the block
+                if (!parser.writeLineF("End{}", source))
+                    return false;
+            }
+        }
+
+        if (!parser.writeLineF("{}End{}\n", prefix, keywordName))
             return false;
     }
-    return false;
+
+    return true;
 }
 
 // Express as a serialisable value
-template <typename T, typename F> SerialisedValue DataSourceKeyword<T, F>::serialise() const { return SerialisedValue(); }
+template <typename T, typename F> SerialisedValue DataSourceKeyword<T, F>::serialise() const { return data_; }
 
 // Read values from a serialisable value
 template <typename T, typename F>
@@ -129,7 +160,7 @@ void DataSourceKeyword<T, F>::deserialise(const SerialisedValue &node, const Cor
 }
 
 // Has not changed from initial value
-template <typename T, typename F> bool DataSourceKeyword<T, F>::isDefault() const { return false; }
+template <typename T, typename F> bool DataSourceKeyword<T, F>::isDefault() const { return data_.empty(); }
 
 // Explicit instantiation of allowed template types
 template class DataSourceKeyword<Data1D, std::function<bool(std::vector<Data1D>)>>;

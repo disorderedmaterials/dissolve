@@ -61,22 +61,6 @@ class CompareModule : public Module
 
         return true;
     }
-    // Return data to be read
-    template <typename T> std::vector<T> getData()
-    {
-        std::vector<T> linearData;
-
-        auto dataVector =
-            std::get<std::vector<std::pair<T, T>> &>(std::forward_as_tuple(compareData1D_, compareData2D_, compareData3D_));
-
-        for (auto &[data1, data2] : dataVector)
-        {
-            linearData.push_back(data1);
-            linearData.push_back(data2);
-        }
-
-        return linearData;
-    }
 
     // Fetch internal data
     template <typename T> bool fetchData(T &data, ModuleContext &moduleContext)
