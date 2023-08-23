@@ -38,6 +38,8 @@ class DissolveModel : public QObject
     ConfigurationModel configurationModel_;
 
     signals:
+    // The models might've been updated
+    void modelsUpdated();
     // The Atom Types model has been replaced
     void atomTypesChanged();
     // The Master terms models have been replaced
@@ -76,5 +78,6 @@ class DissolveModel : public QObject
     public:
     // Set reference to Dissolve
     void setDissolve(Dissolve &dissolve);
-    void reset();
+    // Update models
+    void update();
 };

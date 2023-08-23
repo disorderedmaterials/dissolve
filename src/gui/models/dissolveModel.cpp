@@ -12,22 +12,22 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 {
     dissolve_ = &dissolve;
     atomTypes_.setData(dissolve_->coreData().atomTypes());
-    //atomTypes_->setIconFunction([this](const auto type) { return dissolve_->coreData().findAtomType(type->name()) != nullptr; });
-    //atomTypes_ = new AtomTypeModel(dissolve_->coreData());
-    //atomTypes_->setData(dissolve_->coreData().atomTypes());
     masters_ = std::make_unique<MasterTermTreeModel>();
     masters_->setData(dissolve_->coreData().masterBonds(), dissolve_->coreData().masterAngles(), dissolve_->coreData().masterTorsions(),
                       dissolve_->coreData().masterImpropers());
     speciesModel_.setData(dissolve_->coreData().species());
     configurationModel_.setData(dissolve_->coreData().configurations());
+    emit modelsUpdated();
+
 }
 
 // The Atom Type Model
 AtomTypeModel *DissolveModel::atomTypes() { return &atomTypes_; }
 
-void DissolveModel::reset()
+// Update models
+void DissolveModel::update()
 {
-    atomTypes_.reset();
+    emit modelsUpdated();
 }
 
 
