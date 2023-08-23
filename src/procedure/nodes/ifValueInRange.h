@@ -30,8 +30,6 @@ class IfValueInRangeProcedureNode : public ProcedureNode
     std::shared_ptr<ExpressionVariable> currentValueParameter_;
 
     public:
-    // Add new parameter
-    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, ExpressionValue initialValue);
     // Return the named parameter (if it exists)
     std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
                                                      std::shared_ptr<ExpressionVariable> excludeParameter) override;
