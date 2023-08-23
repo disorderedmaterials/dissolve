@@ -50,10 +50,6 @@ class IterateData1DProcedureNode : public ProcedureNode
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> xParameter_, valueParameter_;
 
-    public:
-    // Return vector of all parameters for this node
-    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;
-
     /*
      * Branch
      */

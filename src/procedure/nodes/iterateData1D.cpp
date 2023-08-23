@@ -61,15 +61,6 @@ void IterateData1DProcedureNode::setName(std::string_view name)
 }
 
 /*
- *Parameters
- */
-// Return vector of all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> IterateData1DProcedureNode::parameters() const
-{
-    return parameters_;
-}
-
-/*
  * Branch
  */
 // Return the branch from this node (if it has one)

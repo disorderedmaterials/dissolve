@@ -195,11 +195,13 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
                       ExpressionValue value);
 
     public:
+    // Add new parameter
+    std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, ExpressionValue initialValue);
     // Return the named parameter (if it exists)
-    virtual std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
-                                                             std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
+    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
+                                                     std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
     // Return references to all parameters for this node
-    virtual OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const;
+    const std::vector<std::shared_ptr<ExpressionVariable>> &parameters() const;
 
     /*
      * Execution

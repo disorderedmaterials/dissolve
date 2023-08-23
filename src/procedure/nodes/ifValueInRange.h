@@ -29,13 +29,6 @@ class IfValueInRangeProcedureNode : public ProcedureNode
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> currentValueParameter_;
 
-    public:
-    // Return the named parameter (if it exists)
-    std::shared_ptr<ExpressionVariable> getParameter(std::string_view name,
-                                                     std::shared_ptr<ExpressionVariable> excludeParameter) override;
-    // Return vector of all parameters for this node
-    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const override;
-
     /*
      * Value & Acceptable Range
      */

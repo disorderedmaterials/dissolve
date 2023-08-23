@@ -237,6 +237,12 @@ OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::branch() { return
  * Parameters
  */
 
+// Add new parameter
+std::shared_ptr<ExpressionVariable> ProcedureNode::addParameter(std::string_view name, ExpressionValue initialValue)
+{
+    return parameters_.emplace_back(std::make_shared<ExpressionVariable>(name, initialValue));
+}
+
 // Set named parameter in supplied vector
 bool ProcedureNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
                                  ExpressionValue value)
@@ -255,14 +261,15 @@ bool ProcedureNode::setParameter(std::vector<std::shared_ptr<ExpressionVariable>
 std::shared_ptr<ExpressionVariable> ProcedureNode::getParameter(std::string_view name,
                                                                 std::shared_ptr<ExpressionVariable> excludeParameter)
 {
+    for (auto var : parameters_)
+        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
+            return var;
+
     return nullptr;
 }
 
 // Return references to all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> ProcedureNode::parameters() const
-{
-    return std::nullopt;
-}
+const std::vector<std::shared_ptr<ExpressionVariable>> &ProcedureNode::parameters() const { return parameters_; }
 
 /*
  * Execution
