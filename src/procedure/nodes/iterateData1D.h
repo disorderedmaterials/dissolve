@@ -47,8 +47,6 @@ class IterateData1DProcedureNode : public ProcedureNode
      * Parameters
      */
     private:
-    // Defined parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> xParameter_, valueParameter_;
 

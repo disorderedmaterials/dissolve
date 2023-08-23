@@ -33,8 +33,6 @@ class IterateSelectionProcedureNode : public ProcedureNode
      * Parameters
      */
     private:
-    // Defined parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Pointers to individual parameters
     std::shared_ptr<ExpressionVariable> nSelectedParameter_, siteIndexParameter_, stackIndexParameter_, indexParameter_;
     // Selection to iterate over

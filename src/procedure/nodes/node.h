@@ -188,6 +188,8 @@ class ProcedureNode : public std::enable_shared_from_this<ProcedureNode>, public
      * Parameters
      */
     protected:
+    // Defined parameters
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
     // Set named parameter in supplied vector
     bool setParameter(std::vector<std::shared_ptr<ExpressionVariable>> &parameters, std::string_view parameter,
                       ExpressionValue value);

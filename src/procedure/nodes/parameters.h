@@ -26,10 +26,6 @@ class ParametersProcedureNode : public ProcedureNode
     /*
      * Parameters
      */
-    private:
-    // Defined parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
-
     public:
     // Add new parameter
     std::shared_ptr<ExpressionVariable> addParameter(std::string_view name, ExpressionValue initialValue);
