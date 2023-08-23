@@ -13,23 +13,18 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
     dissolve_ = &dissolve;
     atomTypes_.setData(dissolve_->coreData().atomTypes());
     masters_ = std::make_unique<MasterTermTreeModel>();
-    masters_->setData(dissolve_->coreData().masterBonds(), dissolve_->coreData().masterAngles(), dissolve_->coreData().masterTorsions(),
-                      dissolve_->coreData().masterImpropers());
+    masters_->setData(dissolve_->coreData().masterBonds(), dissolve_->coreData().masterAngles(),
+                      dissolve_->coreData().masterTorsions(), dissolve_->coreData().masterImpropers());
     speciesModel_.setData(dissolve_->coreData().species());
     configurationModel_.setData(dissolve_->coreData().configurations());
     emit modelsUpdated();
-
 }
 
 // The Atom Type Model
 AtomTypeModel *DissolveModel::atomTypes() { return &atomTypes_; }
 
 // Update models
-void DissolveModel::update()
-{
-    emit modelsUpdated();
-}
-
+void DissolveModel::update() { emit modelsUpdated(); }
 
 // The Master Bond Model
 const MasterBondModel *DissolveModel::bonds() const
@@ -64,13 +59,7 @@ const MasterImproperModel *DissolveModel::impropers() const
 }
 
 // The Species Model
-SpeciesModel* DissolveModel::species()
-{
-    return &speciesModel_;
-}
+SpeciesModel *DissolveModel::species() { return &speciesModel_; }
 
 // The Configuration Model
-ConfigurationModel *DissolveModel::configurations()
-{
-    return &configurationModel_;
-}
+ConfigurationModel *DissolveModel::configurations() { return &configurationModel_; }

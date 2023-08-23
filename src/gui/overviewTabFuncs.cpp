@@ -41,10 +41,7 @@ MainTab::TabType OverviewTab::type() const { return MainTab::TabType::Overview; 
  */
 
 // Update controls in tab
-void OverviewTab::updateControls()
-{
-    dissolveModel_.update();
-}
+void OverviewTab::updateControls() { dissolveModel_.update(); }
 
 // Prevent editing within tab
 void OverviewTab::preventEditing() {}
@@ -65,10 +62,9 @@ void OverviewTab::viewStatusChanged()
         connect(view_->rootObject(), SIGNAL(masterTermsClicked()), this, SLOT(masterTermsClicked()));
         connect(view_->rootObject(), SIGNAL(configurationClicked(int)), this, SLOT(configurationClicked(int)));
         connect(view_->rootObject(), SIGNAL(speciesClicked(int)), this, SLOT(speciesClicked(int)));
-        //slotsAreSetup_ = true;
+        // slotsAreSetup_ = true;
     }
 }
-
 
 // Atom types clicked
 void OverviewTab::atomTypesClicked()
@@ -89,13 +85,15 @@ void OverviewTab::masterTermsClicked()
 void OverviewTab::speciesClicked(int index)
 {
     Messenger::print("Species clicked.");
-    //auto *species = dissolveModel_.species()->data(dissolveModel_.species()->index(index, 0), Qt::UserRole).value<Species*>();
-    //tabWidget_->setCurrentTab(species);
+    // auto *species = dissolveModel_.species()->data(dissolveModel_.species()->index(index, 0),
+    // Qt::UserRole).value<Species*>(); tabWidget_->setCurrentTab(species);
 }
 
 // Configuration clicked
 void OverviewTab::configurationClicked(int index)
 {
-    auto *configuration = dissolveModel_.configurations()->data(dissolveModel_.configurations()->index(index, 0), Qt::UserRole).value<Configuration*>();
+    auto *configuration = dissolveModel_.configurations()
+                              ->data(dissolveModel_.configurations()->index(index, 0), Qt::UserRole)
+                              .value<Configuration *>();
     tabWidget_->setCurrentTab(configuration);
 }

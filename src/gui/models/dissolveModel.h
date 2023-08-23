@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "main/dissolve.h"
 #include "gui/models/atomTypeModel.h"
 #include "gui/models/configurationModel.h"
 #include "gui/models/masterTermTreeModel.h"
 #include "gui/models/speciesModel.h"
+#include "main/dissolve.h"
 #include "templates/optionalRef.h"
 #include <memory>
 
@@ -27,7 +27,7 @@ class DissolveModel : public QObject
     // The Species Model
     Q_PROPERTY(const SpeciesModel *species READ species NOTIFY speciesChanged)
     // The Configuration Model
-    Q_PROPERTY(const ConfigurationModel* configurations READ configurations NOTIFY configurationsChanged)
+    Q_PROPERTY(const ConfigurationModel *configurations READ configurations NOTIFY configurationsChanged)
 
     private:
     // The Atom Type Model
