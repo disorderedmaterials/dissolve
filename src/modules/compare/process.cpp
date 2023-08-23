@@ -3,4 +3,12 @@
 
 #include "modules/compare/compare.h"
 
-Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext) { return ExecutionResult::Success; }
+Module::ExecutionResult CompareModule::process(ModuleContext &moduleContext)
+{
+    for (auto &[data1, data2] : compareData1D_)
+    {
+        auto error = Error::error(errorType_, data1, data2);
+    }
+
+    return ExecutionResult::Success;
+}
