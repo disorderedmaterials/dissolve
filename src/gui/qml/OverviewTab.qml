@@ -4,15 +4,74 @@ import QtQuick.Layouts 6.0
 import QtQml.Models 6.0
 import QtQuick 2.15
 
-
 ColumnLayout {
     spacing: 5
+
+    Connections {
+        target: dissolveModel
+        function onModelsReset() {
+            atomTypesText.text = "Atom Types (" + dissolveModel.atomTypes.rowCount() + ")"
+            bondsText.text = "Master Bonds (" + dissolveModel.bonds.rowCount() + ")"
+            anglesText.text = "Master Angles (" + dissolveModel.angles.rowCount() + ")"
+            torsionsText.text = "Master Torsions (" + dissolveModel.torsions.rowCount() + ")"
+            impropersText.text = "Master Impropers (" + dissolveModel.impropers.rowCount() + ")"
+            species.model = dissolveModel.species.rowCount()
+            configurations.model = dissolveModel.configurations.rowCount()
+        }
+    }
+
+    function generateSpeciesMarkup(index) {
+        const speciesData = dissolveModel.species.data;
+        const speciesIndex = dissolveModel.species.index(index, 0);
+        const speciesName = speciesData(speciesIndex, Qt.DisplayRole);
+        const bonds = speciesData(speciesIndex, Qt.UserRole + 1);
+        const angles = speciesData(speciesIndex, Qt.UserRole + 2);
+        const torsions = speciesData(speciesIndex, Qt.UserRole + 3);
+        const impropers = speciesData(speciesIndex, Qt.UserRole + 4);
+
+        const markup = `
+        <div style="font-size: 16px;">
+            ${speciesName} <img src="qrc:/general/icons/species.svg" width="15" height="15">
+        </div>
+        <div style="font-size: 14px; text-align: center;">
+            Bonds: ${bonds}<br/>
+            Angles: ${angles}<br/>
+            Torsions: ${torsions}<br/>
+            Impropers: ${impropers}
+        </div>
+    `;
+
+        return markup;
+    }
+
+    function generateConfigurationMarkup(index) {
+        const configurationData = dissolveModel.configurations.data;
+        const configurationIndex = dissolveModel.configurations.index(index, 0);
+        const configurationName = configurationData(configurationIndex, Qt.DisplayRole);
+        const molecules = configurationData(configurationIndex, Qt.UserRole + 1);
+        const atoms = configurationData(configurationIndex, Qt.UserRole + 2);
+
+        const markup = `
+        <div style="font-size: 16px;">
+            ${configurationName} <img src="qrc:/general/icons/configuration.svg" width="15" height="15">
+        </div>
+        <div style="font-size: 14px; text-align: center;">
+            Molecules: ${molecules} <br/>
+            Atoms: ${atoms}
+        </div>
+    `;
+
+        return markup;
+    }
+
+
+
     RowLayout {
         Rectangle {
             id: atomTypes
             border.color: "steelblue"
             color: "lightblue"
-            height: 50
+            height: 100
             width: 100
 
             radius: 5
@@ -30,7 +89,7 @@ ColumnLayout {
             id: bonds
             border.color: "steelblue"
             color: "lightblue"
-            height: 50
+            height: 100
             width: 100
 
             radius: 5
@@ -48,7 +107,7 @@ ColumnLayout {
             id: angles
             border.color: "steelblue"
             color: "lightblue"
-            height: 50
+            height: 100
             width: 100
 
             radius: 5
@@ -66,7 +125,7 @@ ColumnLayout {
             id: torsions
             border.color: "steelblue"
             color: "lightblue"
-            height: 50
+            height: 100
             width: 100
 
             radius: 5
@@ -84,7 +143,7 @@ ColumnLayout {
             id: impropers
             border.color: "steelblue"
             color: "lightblue"
-            height: 50
+            height: 100
             width: 100
 
             radius: 5
@@ -102,50 +161,42 @@ ColumnLayout {
 
     RowLayout {
         Repeater {
-            model: dissolveModel.species.rowCount()
+            id: species
+            model: dissolveModel.species
             delegate: Rectangle {
-                id: species
                 border.color: "steelblue"
                 color: "lightblue"
-                height: 50
+                height: 100
                 width: 100
-
                 radius: 5
                 Text {
-                    id: speciesNameText
                     anchors.fill: parent
-                    text: '<img src="qrc:/general/icons/species.svg" width="15" height="15">' + dissolveModel.species.data(dissolveModel.species.index(index, 0), Qt.DisplayRole)
-                    verticalAlignment: Text.AlignVCenter
+                    text: generateSpeciesMarkup(index)
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 14
                     horizontalAlignment: Text.AlignHCenter
                 }
+
             }
         }
     }
 
     RowLayout {
         Repeater {
-            model: dissolveModel.configurations.rowCount()
+            id: configurations
+            model: dissolveModel.configurations
             delegate: Rectangle {
-                id: configuration
                 border.color: "steelblue"
                 color: "lightblue"
-                height: 50
+                height: 100
                 width: 100
-
                 radius: 5
                 Text {
-                    id: configurationNameText
                     anchors.fill: parent
-                    text: '<img src="qrc:/general/icons/configuration.svg" width="15" height="15">' + dissolveModel.configurations.data(dissolveModel.configurations.index(index, 0), Qt.DisplayRole)
-                    verticalAlignment: Text.AlignVCenter
+                    text: generateConfigurationMarkup(index)
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 14
                     horizontalAlignment: Text.AlignHCenter
                 }
             }
         }
     }
-
 }
