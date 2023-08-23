@@ -88,7 +88,7 @@ bool RangeVectorModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(count);
     beginInsertRows(parent, row, row);
-    ranges_->get().insert(row);
+    ranges_->get().insert(ranges_->get().begin() + row, Range());
     endInsertRows();
     return true;
 }

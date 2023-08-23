@@ -310,574 +310,569 @@ Module::ExecutionResult EPSRModule::process(ModuleContext &moduleContext)
                                 "between {:.5f} and {:.5f}",
                                 range.minimum(), range.maximum(), module->name(), rFactorReport.firstX, rFactorReport.lastX);
             }
-            const auto rFactorRangeReport = Error::rFactor(tempRefData, weightedSQ.total(), range).error;
-            rangeTot += rFactorRangeReport.error;
+            const auto rangedRFactorError = Error::rFactor(tempRefData, weightedSQ.total(), range).error;
+            rangeTot += rangedRFactorError;
             Messenger::print("Current R-Factor for reference data '{}' over range {:.5f} to {:.5f} is {:.5f}.\n",
-                             module->name(), range.minimum(), range.maximum(), rFactorRangeReport.error);
+                             module->name(), range.minimum(), range.maximum(), rangedRFactorError);
+        }
 
-            // Get difference and fit function objects
-            auto &deltaFQ = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-                fmt::format("DeltaFQ//{}", module->name()), name_, GenericItem::InRestartFileFlag);
-            auto &deltaFQFit = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-                fmt::format("DeltaFQFit//{}", module->name()), name_, GenericItem::InRestartFileFlag);
+        // Get difference and fit function objects
+        auto &deltaFQ = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+            fmt::format("DeltaFQ//{}", module->name()), name_, GenericItem::InRestartFileFlag);
+        auto &deltaFQFit = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+            fmt::format("DeltaFQFit//{}", module->name()), name_, GenericItem::InRestartFileFlag);
 
-            // Copy the original difference data and "invert" it
-            deltaFQ = differenceData;
-            deltaFQ *= -1.0;
-            for (auto &&[x, y] : zip(deltaFQ.xAxis(), deltaFQ.values()))
-                if (x < qMin_ || x > qMax_)
-                    y = 0.0;
+        // Copy the original difference data and "invert" it
+        deltaFQ = differenceData;
+        deltaFQ *= -1.0;
+        for (auto &&[x, y] : zip(deltaFQ.xAxis(), deltaFQ.values()))
+            if (x < qMin_ || x > qMax_)
+                y = 0.0;
 
-            // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from
-            // those.
-            auto [fitCoefficients, status] = moduleContext.dissolve().processingModuleData().realiseIf<std::vector<double>>(
-                fmt::format("FitCoefficients_{}", module->name()), name_, GenericItem::InRestartFileFlag);
+        // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from
+        // those.
+        auto [fitCoefficients, status] = moduleContext.dissolve().processingModuleData().realiseIf<std::vector<double>>(
+            fmt::format("FitCoefficients_{}", module->name()), name_, GenericItem::InRestartFileFlag);
 
-            auto fitError = 0.0;
-            auto nIterations = nPItSs_.value_or(0);
-            if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
-            {
-                // Construct our fitting object
-                GaussFit coeffMinimiser(deltaFQ);
+        auto fitError = 0.0;
+        auto nIterations = nPItSs_.value_or(0);
+        if (expansionFunction_ == EPSRModule::GaussianExpansionFunction)
+        {
+            // Construct our fitting object
+            GaussFit coeffMinimiser(deltaFQ);
 
-                if (status == GenericItem::ItemStatus::Created)
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01,
-                                                                  fluctuationSmoothing_);
-                else
-                {
-                    if (fitCoefficients.size() != ncoeffp)
-                    {
-                        Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
-                                        "not match the current number ({}), so will fit from scratch.\n",
-                                        fitCoefficients.size(), module->name(), ncoeffp);
-                        fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01,
-                                                                      fluctuationSmoothing_);
-                    }
-                    else
-                        fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gSigma1_, nIterations, 0.01,
-                                                                      fluctuationSmoothing_);
-                }
-
-                // Store the new fit coefficients
-                fitCoefficients = coeffMinimiser.A();
-
-                deltaFQFit = coeffMinimiser.approximation();
-            }
-            else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
-            {
-                // Construct our fitting object
-                PoissonFit coeffMinimiser(deltaFQ);
-
-                if (status == GenericItem::ItemStatus::Created)
-                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.1,
-                                                                  fluctuationSmoothing_);
-                else
-                {
-                    if (fitCoefficients.size() != ncoeffp)
-                    {
-                        Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
-                                        "not match the current number ({}), so will fit from scratch.\n",
-                                        fitCoefficients.size(), module->name(), ncoeffp);
-                        fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations,
-                                                                      0.01, fluctuationSmoothing_);
-                    }
-                    else
-                        fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, pSigma1_, pSigma2_,
-                                                                      nIterations, 0.01, fluctuationSmoothing_);
-                }
-
-                // Store the new fit coefficients
-                fitCoefficients = coeffMinimiser.C();
-
-                deltaFQFit = coeffMinimiser.approximation();
-            }
-            Messenger::print("Error between delta F(Q) and fit function is {:.2f}%.\n", fitError);
-
-            /*
-             * Calculate F(r)
-             */
-
-            // Retrieve the storage object
-            auto &simulatedFR = moduleContext.dissolve().processingModuleData().realise<Data1D>(
-                fmt::format("SimulatedFR//{}", module->name()), name_, GenericItem::InRestartFileFlag);
-
-            // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
-            simulatedFR = weightedSQ.total();
-            Filters::trim(simulatedFR, originalReferenceData);
-            Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * rho), 0.0, 0.03, 30.0,
-                            WindowFunction(WindowFunction::Form::Lorch0));
-
-            /*
-             * Add the Data to the Scattering Matrix
-             */
-
-            // Set overall weighting factor for the dataset
-            auto weightIt = std::find_if(targetWeights_.begin(), targetWeights_.end(),
-                                         [module](const auto &targetWeight) { return targetWeight.first == module; });
-            auto dataSetWeight = feedback_ * (weightIt == targetWeights_.end() ? 1.0 : weightIt->second) *
-                                 (targets_.size() / totalDataSetWeight);
-
-            if (module->type() == ModuleTypes::NeutronSQ)
-            {
-                const auto &weights =
-                    moduleContext.dissolve().processingModuleData().value<NeutronWeights>("FullWeights", module->name());
-
-                // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
-                auto refMinusIntra = originalReferenceData;
-                Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
-
-                // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
-                // normalisation from the reference data (we assume that the two are consistent)
-                auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
-                if (normType == StructureFactors::AverageOfSquaresNormalisation)
-                    refMinusIntra *= weights.boundCoherentAverageOfSquares();
-                else if (normType == StructureFactors::SquareOfAverageNormalisation)
-                    refMinusIntra *= weights.boundCoherentSquareOfAverage();
-
-                if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
-                                          : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
-                {
-                    Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
-                    return ExecutionResult::Failed;
-                }
-            }
-            else if (module->type() == ModuleTypes::XRaySQ)
-            {
-                auto &weights =
-                    moduleContext.dissolve().processingModuleData().retrieve<XRayWeights>("FullWeights", module->name());
-
-                // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency
-                // in terms of magnitude with any neutron data. If the calculated data have not been normalised, or were
-                // normalised to something else, we correct it before adding.
-                auto refMinusIntra = originalReferenceData;
-                Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
-
-                auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
-                if (normType == StructureFactors::SquareOfAverageNormalisation)
-                {
-                    // Remove square of average normalisation, and apply average of squares
-                    auto bSqOfAv = weights.boundCoherentSquareOfAverage(refMinusIntra.xAxis());
-                    auto bAvOfSq = weights.boundCoherentAverageOfSquares(refMinusIntra.xAxis());
-                    for (auto &&[val, bOld, bNew] : zip(refMinusIntra.values(), bSqOfAv, bAvOfSq))
-                        val *= bOld / bNew;
-                }
-                else if (normType == StructureFactors::NoNormalisation)
-                {
-                    auto bbar = weights.boundCoherentAverageOfSquares(refMinusIntra.xAxis());
-                    std::transform(refMinusIntra.values().begin(), refMinusIntra.values().end(), bbar.begin(),
-                                   refMinusIntra.values().begin(), std::divides<>());
-                }
-
-                if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
-                                          : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
-                {
-                    Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
-                    return ExecutionResult::Failed;
-                }
-            }
+            if (status == GenericItem::ItemStatus::Created)
+                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01,
+                                                              fluctuationSmoothing_);
             else
             {
-                Messenger::error("Don't know how to add data from a module of type '{}' to the scattering matrix.",
-                                 ModuleTypes::moduleType(module->type()));
+                if (fitCoefficients.size() != ncoeffp)
+                {
+                    Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
+                                    "not match the current number ({}), so will fit from scratch.\n",
+                                    fitCoefficients.size(), module->name(), ncoeffp);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gSigma1_, nIterations, 0.01,
+                                                                  fluctuationSmoothing_);
+                }
+                else
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gSigma1_, nIterations, 0.01,
+                                                                  fluctuationSmoothing_);
+            }
+
+            // Store the new fit coefficients
+            fitCoefficients = coeffMinimiser.A();
+
+            deltaFQFit = coeffMinimiser.approximation();
+        }
+        else if (expansionFunction_ == EPSRModule::PoissonExpansionFunction)
+        {
+            // Construct our fitting object
+            PoissonFit coeffMinimiser(deltaFQ);
+
+            if (status == GenericItem::ItemStatus::Created)
+                fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.1,
+                                                              fluctuationSmoothing_);
+            else
+            {
+                if (fitCoefficients.size() != ncoeffp)
+                {
+                    Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
+                                    "not match the current number ({}), so will fit from scratch.\n",
+                                    fitCoefficients.size(), module->name(), ncoeffp);
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, pSigma1_, pSigma2_, nIterations, 0.01,
+                                                                  fluctuationSmoothing_);
+                }
+                else
+                    fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, pSigma1_, pSigma2_, nIterations,
+                                                                  0.01, fluctuationSmoothing_);
+            }
+
+            // Store the new fit coefficients
+            fitCoefficients = coeffMinimiser.C();
+
+            deltaFQFit = coeffMinimiser.approximation();
+        }
+        Messenger::print("Error between delta F(Q) and fit function is {:.2f}%.\n", fitError);
+
+        /*
+         * Calculate F(r)
+         */
+
+        // Retrieve the storage object
+        auto &simulatedFR = moduleContext.dissolve().processingModuleData().realise<Data1D>(
+            fmt::format("SimulatedFR//{}", module->name()), name_, GenericItem::InRestartFileFlag);
+
+        // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
+        simulatedFR = weightedSQ.total();
+        Filters::trim(simulatedFR, originalReferenceData);
+        Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * rho), 0.0, 0.03, 30.0, WindowFunction(WindowFunction::Form::Lorch0));
+
+        /*
+         * Add the Data to the Scattering Matrix
+         */
+
+        // Set overall weighting factor for the dataset
+        auto weightIt = std::find_if(targetWeights_.begin(), targetWeights_.end(),
+                                     [module](const auto &targetWeight) { return targetWeight.first == module; });
+        auto dataSetWeight =
+            feedback_ * (weightIt == targetWeights_.end() ? 1.0 : weightIt->second) * (targets_.size() / totalDataSetWeight);
+
+        if (module->type() == ModuleTypes::NeutronSQ)
+        {
+            const auto &weights =
+                moduleContext.dissolve().processingModuleData().value<NeutronWeights>("FullWeights", module->name());
+
+            // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
+            auto refMinusIntra = originalReferenceData;
+            Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
+
+            // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
+            // normalisation from the reference data (we assume that the two are consistent)
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
+            if (normType == StructureFactors::AverageOfSquaresNormalisation)
+                refMinusIntra *= weights.boundCoherentAverageOfSquares();
+            else if (normType == StructureFactors::SquareOfAverageNormalisation)
+                refMinusIntra *= weights.boundCoherentSquareOfAverage();
+
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
+                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
+            {
+                Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
                 return ExecutionResult::Failed;
             }
-
-            /*
-             * Sum Unweighted S(Q)
-             */
-
-            // Add the unweighted from this target to our combined, unweighted S(Q) data
-            auto &types = unweightedSQ.atomTypeMix();
-            dissolve::for_each_pair(
-                ParallelPolicies::seq, types.begin(), types.end(),
-                [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2)
-                {
-                    auto globalI = atd1.atomType()->index();
-                    auto globalJ = atd2.atomType()->index();
-
-                    const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
-                    Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[{globalI, globalJ}], 1.0 / targets_.size());
-                });
-
-            /*
-             * Save Data
-             */
-
-            if (saveDifferenceFunctions_)
-            {
-                if (moduleContext.processPool().isMaster())
-                {
-                    Data1DExportFileFormat exportFormat(fmt::format("{}-Diff.q", module->name()));
-                    if (exportFormat.exportData(differenceData))
-                        moduleContext.processPool().decideTrue();
-                    else
-                        return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted
-                                                                          : ExecutionResult::Failed);
-                }
-                else if (!moduleContext.processPool().decision())
-                    return ExecutionResult::NotExecuted;
-
-                if (moduleContext.processPool().isMaster())
-                {
-                    Data1DExportFileFormat exportFormat(fmt::format("{}-DiffFit.q", module->name()));
-                    if (exportFormat.exportData(deltaFQFit))
-                        moduleContext.processPool().decideTrue();
-                    else
-                        return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted
-                                                                          : ExecutionResult::Failed);
-                }
-                else if (!moduleContext.processPool().decision())
-                    return ExecutionResult::NotExecuted;
-            }
-            if (saveSimulatedFR_)
-            {
-                if (moduleContext.processPool().isMaster())
-                {
-                    Data1DExportFileFormat exportFormat(fmt::format("{}-SimulatedFR.r", module->name()));
-                    if (exportFormat.exportData(simulatedFR))
-                        moduleContext.processPool().decideTrue();
-                    else
-                        return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted
-                                                                          : ExecutionResult::Failed);
-                }
-                else if (!moduleContext.processPool().decision())
-                    return ExecutionResult::NotExecuted;
-            }
-
-            /*
-             * Test Mode
-             */
-
-            if (test_)
-            {
-                testDataName = fmt::format("WeightedFR-{}-total", module->name());
-                if (testReferenceData_.containsData(testDataName))
-                {
-                    auto optRefData = testReferenceData_.data(testDataName);
-                    if (!optRefData)
-                    {
-                        Messenger::error("Reference data '{}' not found.\n", testDataName);
-                        return ExecutionResult::Failed;
-                    }
-                    auto errorReport = Error::percent(simulatedFR, *optRefData);
-                    Messenger::print(Error::errorReportString(errorReport));
-                    Messenger::print("Simulated F(r) reference data '{}' has {} error of {:7.3f}{} with calculated data "
-                                     "and is {} (threshold is {:6.3f}%)\n\n",
-                                     testDataName, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                                     errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                     errorReport.error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-                    if (errorReport.error > testThreshold_)
-                        return ExecutionResult::Failed;
-                }
-            }
         }
-
-        // Finalise and store the total r-factor
-        rFacTot /= targets_.size();
-        auto &totalRFactor =
-            moduleContext.dissolve().processingModuleData().realise<Data1D>("RFactor", name_, GenericItem::InRestartFileFlag);
-        totalRFactor.addPoint(moduleContext.dissolve().iteration(), rFacTot);
-        Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
-        for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
+        else if (module->type() == ModuleTypes::XRaySQ)
         {
-            Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", range.minimum(),
-                             range.maximum(), rangeTot /= targets_.size());
-        }
+            auto &weights =
+                moduleContext.dissolve().processingModuleData().retrieve<XRayWeights>("FullWeights", module->name());
 
-        Messenger::print("\n");
+            // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency
+            // in terms of magnitude with any neutron data. If the calculated data have not been normalised, or were
+            // normalised to something else, we correct it before adding.
+            auto refMinusIntra = originalReferenceData;
+            Interpolator::addInterpolated(weightedSQ.boundTotal(), refMinusIntra, -1.0);
 
-        /*
-         * Augment the Scattering Matrix
-         */
-
-        // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
-        auto success = for_each_pair_early(
-            atomTypes.begin(), atomTypes.end(),
-            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+            auto normType = module->keywords().getEnumeration<StructureFactors::NormalisationType>("NormaliseTo");
+            if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
-                // Copy and rename the data for clarity
-                auto data = calculatedUnweightedSQ[{i, j}];
-                data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
+                // Remove square of average normalisation, and apply average of squares
+                auto bSqOfAv = weights.boundCoherentSquareOfAverage(refMinusIntra.xAxis());
+                auto bAvOfSq = weights.boundCoherentAverageOfSquares(refMinusIntra.xAxis());
+                for (auto &&[val, bOld, bNew] : zip(refMinusIntra.values(), bSqOfAv, bAvOfSq))
+                    val *= bOld / bNew;
+            }
+            else if (normType == StructureFactors::NoNormalisation)
+            {
+                auto bbar = weights.boundCoherentAverageOfSquares(refMinusIntra.xAxis());
+                std::transform(refMinusIntra.values().begin(), refMinusIntra.values().end(), bbar.begin(),
+                               refMinusIntra.values().begin(), std::divides<>());
+            }
 
-                // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
-                if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
-                                          : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
-                {
-                    Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n", at1->name(),
-                                     at2->name());
-                    return false;
-                }
-
-                return EarlyReturn<bool>::Continue;
-            });
-        if (!success.value_or(true))
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(refMinusIntra, dataSetWeight)
+                                      : !scatteringMatrix_.addReferenceData(refMinusIntra, weights, dataSetWeight))
+            {
+                Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->name());
+                return ExecutionResult::Failed;
+            }
+        }
+        else
+        {
+            Messenger::error("Don't know how to add data from a module of type '{}' to the scattering matrix.",
+                             ModuleTypes::moduleType(module->type()));
             return ExecutionResult::Failed;
-
-        // If the scattering matrix was not set-up, need to generate the necessary inverse matrix or matrices here
-        if (!scatteringMatrixSetUp)
-            scatteringMatrix_.generateMatrices();
-
-        scatteringMatrix_.print();
-
-        if (Messenger::isVerbose())
-        {
-            Messenger::print("\nScattering Matrix Inverse (Q = 0.0):\n");
-            scatteringMatrix_.printInverse();
-
-            Messenger::print("\nIdentity (Ainv * A):\n");
-            scatteringMatrix_.matrixProduct().print();
         }
 
         /*
-         * Generate S(Q) from completed scattering matrix
+         * Sum Unweighted S(Q)
          */
 
-        auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
-            "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
-        scatteringMatrix_.generatePartials(estimatedSQ);
-        updateDeltaSQ(moduleContext.dissolve().processingModuleData(), calculatedUnweightedSQ, estimatedSQ);
+        // Add the unweighted from this target to our combined, unweighted S(Q) data
+        auto &types = unweightedSQ.atomTypeMix();
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, types.begin(), types.end(),
+            [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2)
+            {
+                auto globalI = atd1.atomType()->index();
+                auto globalJ = atd2.atomType()->index();
 
-        // Save data?
-        if (saveEstimatedPartials_)
+                const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
+                Interpolator::addInterpolated(partialIJ, calculatedUnweightedSQ[{globalI, globalJ}], 1.0 / targets_.size());
+            });
+
+        /*
+         * Save Data
+         */
+
+        if (saveDifferenceFunctions_)
         {
             if (moduleContext.processPool().isMaster())
             {
-                for (auto &sq : estimatedSQ)
-                {
-                    Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", name_, sq.tag()));
-                    if (!exportFormat.exportData(sq))
-                        return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted
-                                                                          : ExecutionResult::Failed);
-                }
-                moduleContext.processPool().decideTrue();
+                Data1DExportFileFormat exportFormat(fmt::format("{}-Diff.q", module->name()));
+                if (exportFormat.exportData(differenceData))
+                    moduleContext.processPool().decideTrue();
+                else
+                    return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
+            }
+            else if (!moduleContext.processPool().decision())
+                return ExecutionResult::NotExecuted;
+
+            if (moduleContext.processPool().isMaster())
+            {
+                Data1DExportFileFormat exportFormat(fmt::format("{}-DiffFit.q", module->name()));
+                if (exportFormat.exportData(deltaFQFit))
+                    moduleContext.processPool().decideTrue();
+                else
+                    return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
+            }
+            else if (!moduleContext.processPool().decision())
+                return ExecutionResult::NotExecuted;
+        }
+        if (saveSimulatedFR_)
+        {
+            if (moduleContext.processPool().isMaster())
+            {
+                Data1DExportFileFormat exportFormat(fmt::format("{}-SimulatedFR.r", module->name()));
+                if (exportFormat.exportData(simulatedFR))
+                    moduleContext.processPool().decideTrue();
+                else
+                    return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
             }
             else if (!moduleContext.processPool().decision())
                 return ExecutionResult::NotExecuted;
         }
 
-        // Test Mode
+        /*
+         * Test Mode
+         */
+
         if (test_)
         {
-            auto methodSuccess = for_each_pair_early(
-                atomTypes.begin(), atomTypes.end(),
-                [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+            testDataName = fmt::format("WeightedFR-{}-total", module->name());
+            if (testReferenceData_.containsData(testDataName))
+            {
+                auto optRefData = testReferenceData_.data(testDataName);
+                if (!optRefData)
                 {
-                    testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
-                    auto optRefData = testReferenceData_.data(testDataName);
-                    if (optRefData)
-                    {
-                        auto errorReport = Error::percent(estimatedSQ[{i, j}], *optRefData);
-                        Messenger::print(Error::errorReportString(errorReport));
-                        Messenger::print("Generated S(Q) reference data '{}' has {} error of {:7.3f}{} with "
-                                         "calculated data and is {} (threshold is {:6.3f}%)\n\n",
-                                         testDataName, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
-                                         errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
-                                         errorReport.error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
-                        if (errorReport.error > testThreshold_)
-                            return false;
-                    }
-                    return EarlyReturn<bool>::Continue;
-                });
-            if (!methodSuccess.value_or(true))
-                return ExecutionResult::Failed;
+                    Messenger::error("Reference data '{}' not found.\n", testDataName);
+                    return ExecutionResult::Failed;
+                }
+                auto errorReport = Error::percent(simulatedFR, *optRefData);
+                Messenger::print(Error::errorReportString(errorReport));
+                Messenger::print("Simulated F(r) reference data '{}' has {} error of {:7.3f}{} with calculated data "
+                                 "and is {} (threshold is {:6.3f}%)\n\n",
+                                 testDataName, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                                 errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                 errorReport.error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                if (errorReport.error > testThreshold_)
+                    return ExecutionResult::Failed;
+            }
         }
+    }
 
-        /*
-         * Calculate g(r) from estimatedSQ
-         */
-        auto &estimatedGR = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
-            "EstimatedGR", name_, GenericItem::InRestartFileFlag);
-        estimatedGR.initialise(nAtomTypes, nAtomTypes, true);
+    // Finalise and store the total r-factor
+    rFacTot /= targets_.size();
+    auto &totalRFactor =
+        moduleContext.dissolve().processingModuleData().realise<Data1D>("RFactor", name_, GenericItem::InRestartFileFlag);
+    totalRFactor.addPoint(moduleContext.dissolve().iteration(), rFacTot);
+    Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
+    for (auto &&[range, rangeTot] : zip(ranges_, rangedRFacTots))
+    {
+        Messenger::print("Current total R-Factor over range {:.5f} to {:.5f} is {:.5f}.\n", range.minimum(), range.maximum(),
+                         rangeTot /= targets_.size());
+    }
+
+    Messenger::print("\n");
+
+    /*
+     * Augment the Scattering Matrix
+     */
+
+    // Add a contribution from each interatomic partial S(Q), weighted according to the feedback factor
+    auto success = for_each_pair_early(
+        atomTypes.begin(), atomTypes.end(),
+        [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+        {
+            // Copy and rename the data for clarity
+            auto data = calculatedUnweightedSQ[{i, j}];
+            data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
+
+            // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
+            if (scatteringMatrixSetUp ? !scatteringMatrix_.updateReferenceData(data, 1.0 - feedback_)
+                                      : !scatteringMatrix_.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback_)))
+            {
+                Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n", at1->name(), at2->name());
+                return false;
+            }
+
+            return EarlyReturn<bool>::Continue;
+        });
+    if (!success.value_or(true))
+        return ExecutionResult::Failed;
+
+    // If the scattering matrix was not set-up, need to generate the necessary inverse matrix or matrices here
+    if (!scatteringMatrixSetUp)
+        scatteringMatrix_.generateMatrices();
+
+    scatteringMatrix_.print();
+
+    if (Messenger::isVerbose())
+    {
+        Messenger::print("\nScattering Matrix Inverse (Q = 0.0):\n");
+        scatteringMatrix_.printInverse();
+
+        Messenger::print("\nIdentity (Ainv * A):\n");
+        scatteringMatrix_.matrixProduct().print();
+    }
+
+    /*
+     * Generate S(Q) from completed scattering matrix
+     */
+
+    auto &estimatedSQ = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
+        "EstimatedSQ", name_, GenericItem::InRestartFileFlag);
+    scatteringMatrix_.generatePartials(estimatedSQ);
+    updateDeltaSQ(moduleContext.dissolve().processingModuleData(), calculatedUnweightedSQ, estimatedSQ);
+
+    // Save data?
+    if (saveEstimatedPartials_)
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            for (auto &sq : estimatedSQ)
+            {
+                Data1DExportFileFormat exportFormat(fmt::format("{}-EstSQ-{}.txt", name_, sq.tag()));
+                if (!exportFormat.exportData(sq))
+                    return (moduleContext.processPool().decideFalse() ? ExecutionResult::NotExecuted : ExecutionResult::Failed);
+            }
+            moduleContext.processPool().decideTrue();
+        }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::NotExecuted;
+    }
+
+    // Test Mode
+    if (test_)
+    {
+        auto methodSuccess = for_each_pair_early(
+            atomTypes.begin(), atomTypes.end(),
+            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool>
+            {
+                testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
+                auto optRefData = testReferenceData_.data(testDataName);
+                if (optRefData)
+                {
+                    auto errorReport = Error::percent(estimatedSQ[{i, j}], *optRefData);
+                    Messenger::print(Error::errorReportString(errorReport));
+                    Messenger::print("Generated S(Q) reference data '{}' has {} error of {:7.3f}{} with "
+                                     "calculated data and is {} (threshold is {:6.3f}%)\n\n",
+                                     testDataName, Error::errorTypes().keyword(errorReport.errorType), errorReport.error,
+                                     errorReport.errorType == Error::ErrorType::PercentError ? "%" : "",
+                                     errorReport.error <= testThreshold_ ? "OK" : "NOT OK", testThreshold_);
+                    if (errorReport.error > testThreshold_)
+                        return false;
+                }
+                return EarlyReturn<bool>::Continue;
+            });
+        if (!methodSuccess.value_or(true))
+            return ExecutionResult::Failed;
+    }
+
+    /*
+     * Calculate g(r) from estimatedSQ
+     */
+    auto &estimatedGR = moduleContext.dissolve().processingModuleData().realise<Array2D<Data1D>>(
+        "EstimatedGR", name_, GenericItem::InRestartFileFlag);
+    estimatedGR.initialise(nAtomTypes, nAtomTypes, true);
+    dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+                            [&](int i, auto at1, int j, auto at2)
+                            {
+                                auto &expGR = estimatedGR[{i, j}];
+                                expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+
+                                // Copy experimental S(Q) and FT it
+                                expGR = estimatedSQ[{i, j}];
+                                Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0,
+                                                WindowFunction(WindowFunction::Form::Lorch0));
+                                expGR += 1.0;
+                            });
+
+    /*
+     * Calculate contribution to potential coefficients.
+     * Multiply each coefficient by the associated weight in the inverse scattering matrix.
+     * Note: the data were added to the scattering matrix in the order they appear in the targets iterator.
+     */
+    auto dataIndex = 0;
+    for (auto *module : targets_)
+    {
+        // For this Module, retrieve the coefficients of the fit performed above.
+        const auto &fitCoefficients = moduleContext.dissolve().processingModuleData().value<std::vector<double>>(
+            fmt::format("FitCoefficients_{}", module->name()), name_);
+
+        // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
+        dissolve::for_each_pair(
+            ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+            [&](int i, auto at1, int j, auto at2)
+            {
+                auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.pairIndex(at1, at2), dataIndex}];
+
+                /*
+                 * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
+                 * combination with the following weighting factors (see circa line 3378 in
+                 * epsr_standalone_rev1.f):
+                 *
+                 * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
+                 * disable potential generation)
+                 * 2. A flag controlling whether specific potentials are refined (efacp)
+                 * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
+                 * multiplied by the feedback factor.
+                 */
+
+                // In the original EPSR the off-diagonal elements in the inverse matrix have also been
+                // halved so as not to double-count the i != j terms
+                if (i != j)
+                    weight *= 0.5;
+
+                // Store fluctuation coefficients ready for addition to potential coefficients later on.
+                auto [begin, end] = fluctuationCoefficients[std::tuple{i, j}];
+                std::transform(fitCoefficients.begin(), fitCoefficients.end(), begin, begin,
+                               [weight, this](auto coeff, auto result) { return result + weight * feedback_ * coeff; });
+            });
+
+        // Increase dataIndex
+        ++dataIndex;
+    }
+
+    // Generate new empirical potentials
+    auto energabs = 0.0;
+    if (modifyPotential_ && (runCount % *modifyPotential_ == 0))
+    {
+        // Sum fluctuation coefficients in to the potential coefficients
+        auto &coefficients = potentialCoefficients(moduleContext.dissolve(), nAtomTypes, ncoeffp);
         dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
                                 [&](int i, auto at1, int j, auto at2)
                                 {
-                                    auto &expGR = estimatedGR[{i, j}];
-                                    expGR.setTag(fmt::format("{}-{}", at1->name(), at2->name()));
+                                    auto &potCoeff = coefficients[{i, j}];
 
-                                    // Copy experimental S(Q) and FT it
-                                    expGR = estimatedSQ[{i, j}];
-                                    Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0,
-                                                    WindowFunction(WindowFunction::Form::Lorch0));
-                                    expGR += 1.0;
+                                    // Zero potential before adding in fluctuation coefficients?
+                                    if (overwritePotentials_)
+                                        std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
+
+                                    // Add in fluctuation coefficients
+                                    auto [begin, end] = fluctuationCoefficients[std::tuple{i, j}];
+                                    std::transform(potCoeff.begin(), potCoeff.end(), begin, potCoeff.begin(),
+                                                   [this](auto pot, auto fluct) { return pot + weighting_ * fluct; });
+
+                                    // Set first term to zero (following EPSR)
+                                    potCoeff[0] = 0.0;
                                 });
 
-        /*
-         * Calculate contribution to potential coefficients.
-         * Multiply each coefficient by the associated weight in the inverse scattering matrix.
-         * Note: the data were added to the scattering matrix in the order they appear in the targets iterator.
-         */
-        auto dataIndex = 0;
-        for (auto *module : targets_)
-        {
-            // For this Module, retrieve the coefficients of the fit performed above.
-            const auto &fitCoefficients = moduleContext.dissolve().processingModuleData().value<std::vector<double>>(
-                fmt::format("FitCoefficients_{}", module->name()), name_);
+        // Determine absolute energy of empirical potentials
+        energabs = absEnergyEP(moduleContext.dissolve());
 
-            // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
+        /*
+         * Determine the scaling we will apply to the coefficients (if any)
+         * Notes:
+         * 	- ereq is actually read in as a variable called 'pressreq', then assigned to another variable
+         * 'absolute_energy' in the EPSR25 source.
+         * 	- erequnit appears to be set to the value of ereqstep read in from the 'ereqstep' command (clamped to
+         * 0.0-1.0).
+         */
+        auto pressfac = 1.0;
+        auto erequnit = 0.0, ereqstep = 0.0;
+
+        if (fabs(eReq_) == 0.0)
+        {
+            pressfac = 0.0;
+            energabs = 0.0;
+        }
+        else if (fabs(energabs) > 0.0)
+        {
+            if (fabs(energabs) < fabs(erequnit))
+                pressfac = fabs(erequnit) / fabs(energabs);
+            else
+            {
+                pressfac = fabs(eReq_) / fabs(energabs);
+                if ((pressfac > 1.0) && (ereqstep == 0.0))
+                    pressfac = 1.0;
+            }
+        }
+        Messenger::print("  generate_ep>  {}  {}  {}\n", eReq_, energabs, pressfac);
+
+        // Scale coefficients
+        for (auto &n : coefficients)
+            std::transform(n.begin(), n.end(), n.begin(), [pressfac](auto value) { return value * pressfac; });
+        energabs *= pressfac;
+
+        // Generate additional potentials from the coefficients
+        auto sigma1 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
+        auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
+
+        if (!generateEmpiricalPotentials(moduleContext.dissolve(), expansionFunction_, rho, ncoeffp, rminpt, rmaxpt, sigma1,
+                                         sigma2))
+            return ExecutionResult::Failed;
+    }
+    else
+        energabs = absEnergyEP(moduleContext.dissolve());
+
+    // Test absolute EP energy?
+    if (!testAbsEnergyEP_.empty() && !testAbsEnergyEP(moduleContext.dissolve()))
+        return ExecutionResult::Failed;
+
+    // Save data?
+    if (saveEmpiricalPotentials_)
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
+                                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
+                                    {
+                                        // Grab pointer to the relevant pair potential
+                                        PairPotential *pp = moduleContext.dissolve().pairPotential(at1, at2);
+
+                                        Data1DExportFileFormat exportFormat(
+                                            fmt::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
+                                        if (!exportFormat.exportData(pp->uAdditional()))
+                                            return moduleContext.processPool().decideFalse();
+                                        return std::nullopt;
+                                    });
+            moduleContext.processPool().decideTrue();
+        }
+        else if (!moduleContext.processPool().decision())
+            return ExecutionResult::Failed;
+    }
+    if (savePotentialCoefficients_)
+    {
+        if (moduleContext.processPool().isMaster())
+        {
+            auto &coefficients = potentialCoefficients(moduleContext.dissolve(), nAtomTypes, ncoeffp);
+
             dissolve::for_each_pair(
                 ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                [&](int i, auto at1, int j, auto at2)
+                [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
                 {
-                    auto weight = scatteringMatrix_.qZeroMatrixInverse()[{scatteringMatrix_.pairIndex(at1, at2), dataIndex}];
+                    // Grab reference to coefficients
+                    auto &potCoeff = coefficients[{i, j}];
 
-                    /*
-                     * EPSR assembles the potential coefficients from the deltaFQ fit coefficients as a linear
-                     * combination with the following weighting factors (see circa line 3378 in
-                     * epsr_standalone_rev1.f):
-                     *
-                     * 1. The overall potential factor (potfac) which is typically set to 1.0 in EPSR (or 0.0 to
-                     * disable potential generation)
-                     * 2. A flag controlling whether specific potentials are refined (efacp)
-                     * 3. The value of the inverse scattering matrix for this dataset / potential (cwtpot),
-                     * multiplied by the feedback factor.
-                     */
-
-                    // In the original EPSR the off-diagonal elements in the inverse matrix have also been
-                    // halved so as not to double-count the i != j terms
-                    if (i != j)
-                        weight *= 0.5;
-
-                    // Store fluctuation coefficients ready for addition to potential coefficients later on.
-                    auto [begin, end] = fluctuationCoefficients[std::tuple{i, j}];
-                    std::transform(fitCoefficients.begin(), fitCoefficients.end(), begin, begin,
-                                   [weight, this](auto coeff, auto result) { return result + weight * feedback_ * coeff; });
+                    LineParser fileParser;
+                    if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", name_, at1->name(), at2->name())))
+                        return moduleContext.processPool().decideFalse();
+                    for (auto n : potCoeff)
+                        if (!fileParser.writeLineF("{}\n", n))
+                            return moduleContext.processPool().decideFalse();
+                    fileParser.closeFiles();
+                    return std::nullopt;
                 });
 
-            // Increase dataIndex
-            ++dataIndex;
+            moduleContext.processPool().decideTrue();
         }
-
-        // Generate new empirical potentials
-        auto energabs = 0.0;
-        if (modifyPotential_ && (runCount % *modifyPotential_ == 0))
-        {
-            // Sum fluctuation coefficients in to the potential coefficients
-            auto &coefficients = potentialCoefficients(moduleContext.dissolve(), nAtomTypes, ncoeffp);
-            dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                                    [&](int i, auto at1, int j, auto at2)
-                                    {
-                                        auto &potCoeff = coefficients[{i, j}];
-
-                                        // Zero potential before adding in fluctuation coefficients?
-                                        if (overwritePotentials_)
-                                            std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
-
-                                        // Add in fluctuation coefficients
-                                        auto [begin, end] = fluctuationCoefficients[std::tuple{i, j}];
-                                        std::transform(potCoeff.begin(), potCoeff.end(), begin, potCoeff.begin(),
-                                                       [this](auto pot, auto fluct) { return pot + weighting_ * fluct; });
-
-                                        // Set first term to zero (following EPSR)
-                                        potCoeff[0] = 0.0;
-                                    });
-
-            // Determine absolute energy of empirical potentials
-            energabs = absEnergyEP(moduleContext.dissolve());
-
-            /*
-             * Determine the scaling we will apply to the coefficients (if any)
-             * Notes:
-             * 	- ereq is actually read in as a variable called 'pressreq', then assigned to another variable
-             * 'absolute_energy' in the EPSR25 source.
-             * 	- erequnit appears to be set to the value of ereqstep read in from the 'ereqstep' command (clamped to
-             * 0.0-1.0).
-             */
-            auto pressfac = 1.0;
-            auto erequnit = 0.0, ereqstep = 0.0;
-
-            if (fabs(eReq_) == 0.0)
-            {
-                pressfac = 0.0;
-                energabs = 0.0;
-            }
-            else if (fabs(energabs) > 0.0)
-            {
-                if (fabs(energabs) < fabs(erequnit))
-                    pressfac = fabs(erequnit) / fabs(energabs);
-                else
-                {
-                    pressfac = fabs(eReq_) / fabs(energabs);
-                    if ((pressfac > 1.0) && (ereqstep == 0.0))
-                        pressfac = 1.0;
-                }
-            }
-            Messenger::print("  generate_ep>  {}  {}  {}\n", eReq_, energabs, pressfac);
-
-            // Scale coefficients
-            for (auto &n : coefficients)
-                std::transform(n.begin(), n.end(), n.begin(), [pressfac](auto value) { return value * pressfac; });
-            energabs *= pressfac;
-
-            // Generate additional potentials from the coefficients
-            auto sigma1 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma1_ : gSigma1_;
-            auto sigma2 = expansionFunction_ == EPSRModule::PoissonExpansionFunction ? pSigma2_ : gSigma2_;
-
-            if (!generateEmpiricalPotentials(moduleContext.dissolve(), expansionFunction_, rho, ncoeffp, rminpt, rmaxpt, sigma1,
-                                             sigma2))
-                return ExecutionResult::Failed;
-        }
-        else
-            energabs = absEnergyEP(moduleContext.dissolve());
-
-        // Test absolute EP energy?
-        if (!testAbsEnergyEP_.empty() && !testAbsEnergyEP(moduleContext.dissolve()))
+        else if (!moduleContext.processPool().decision())
             return ExecutionResult::Failed;
-
-        // Save data?
-        if (saveEmpiricalPotentials_)
-        {
-            if (moduleContext.processPool().isMaster())
-            {
-                dissolve::for_each_pair(ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                                        [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
-                                        {
-                                            // Grab pointer to the relevant pair potential
-                                            PairPotential *pp = moduleContext.dissolve().pairPotential(at1, at2);
-
-                                            Data1DExportFileFormat exportFormat(
-                                                fmt::format("{}-EP-{}-{}.txt", name_, at1->name(), at2->name()));
-                                            if (!exportFormat.exportData(pp->uAdditional()))
-                                                return moduleContext.processPool().decideFalse();
-                                            return std::nullopt;
-                                        });
-                moduleContext.processPool().decideTrue();
-            }
-            else if (!moduleContext.processPool().decision())
-                return ExecutionResult::Failed;
-        }
-        if (savePotentialCoefficients_)
-        {
-            if (moduleContext.processPool().isMaster())
-            {
-                auto &coefficients = potentialCoefficients(moduleContext.dissolve(), nAtomTypes, ncoeffp);
-
-                dissolve::for_each_pair(
-                    ParallelPolicies::seq, atomTypes.begin(), atomTypes.end(),
-                    [&](int i, auto at1, int j, auto at2) -> std::optional<bool>
-                    {
-                        // Grab reference to coefficients
-                        auto &potCoeff = coefficients[{i, j}];
-
-                        LineParser fileParser;
-                        if (!fileParser.openOutput(fmt::format("{}-PCof-{}-{}.txt", name_, at1->name(), at2->name())))
-                            return moduleContext.processPool().decideFalse();
-                        for (auto n : potCoeff)
-                            if (!fileParser.writeLineF("{}\n", n))
-                                return moduleContext.processPool().decideFalse();
-                        fileParser.closeFiles();
-                        return std::nullopt;
-                    });
-
-                moduleContext.processPool().decideTrue();
-            }
-            else if (!moduleContext.processPool().decision())
-                return ExecutionResult::Failed;
-        }
-
-        // Realise the phiMag array and make sure its object name is set
-        auto &phiArray =
-            moduleContext.dissolve().processingModuleData().realise<Data1D>("EPMag", name_, GenericItem::InRestartFileFlag);
-        phiArray.addPoint(moduleContext.dissolve().iteration(), energabs);
-
-        return ExecutionResult::Success;
     }
+
+    // Realise the phiMag array and make sure its object name is set
+    auto &phiArray =
+        moduleContext.dissolve().processingModuleData().realise<Data1D>("EPMag", name_, GenericItem::InRestartFileFlag);
+    phiArray.addPoint(moduleContext.dissolve().iteration(), energabs);
+
+    return ExecutionResult::Success;
+}
