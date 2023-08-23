@@ -33,9 +33,9 @@ void compare_toml(std::string location, SerialisedValue toml, SerialisedValue to
     }
 }
 
-void runParse(std::filesystem::path input, int steps = 1)
+  void runParse(std::filesystem::path input, int steps = 1, const bool enable = true)
 {
-    if constexpr (Dissolve::toml_testing_flag)
+    if (Dissolve::toml_testing_flag || enable)
     {
 
         auto filename = input.filename();
@@ -83,14 +83,15 @@ TEST(TOMLTest, Parse_argon_qdep0_2) { runParse("broadening/argon_qdep0.2.txt", 1
 TEST(TOMLTest, Parse_argon_qindep0_1) { runParse("broadening/argon_qindep0.1.txt", 1); }
 TEST(TOMLTest, Parse_argon_qindep0_2) { runParse("broadening/argon_qindep0.2.txt", 1); }
 
-TEST(TOMLTest, Parse_AvgMol_Bendy) { runParse("calculate_avgmol/bendy.txt", 201); }
-TEST(TOMLTest, Parse_AvgMol_Water) { runParse("calculate_avgmol/water.txt", 95); }
-TEST(TOMLTest, Parse_Dangle) { runParse("calculate_dangle/dangle.txt", 95); }
+TEST(TOMLTest, Parse_AvgMol_triatomic) { runParse("avgmol/bendy.txt", 201, false); }
+TEST(TOMLTest, Parse_AvgMol_water) { runParse("avgmol/water.txt", 95); }
+TEST(TOMLTest, Parse_DAngle) { runParse("dangle/dangle.txt", 95); }
 
-TEST(TOMLTest, Parse_Calculate_CN) { runParse("calculate_cn/cn.txt", 1); }
-TEST(TOMLTest, Parse_Calculate_RDF_npt) { runParse("calculate_rdf/npt.txt", 1); }
-TEST(TOMLTest, Parse_Calculate_RDF_rdf) { runParse("calculate_rdf/rdf.txt", 1); }
-TEST(TOMLTest, Parse_Calculate_SDF) { runParse("calculate_sdf/sdf.txt", 95); }
+TEST(TOMLTest, Parse_Calculate_CN) { runParse("siterdf/cn.txt", 1); }
+TEST(TOMLTest, Parse_Calculate_RDF_npt) { runParse("siterdf/npt.txt", 1); }
+TEST(TOMLTest, Parse_Calculate_RDF_rdf) { runParse("siterdf/rdf.txt", 1); }
+TEST(TOMLTest, Parse_Calculate_SDF_water) { runParse("sdf/water.txt", 95, false); }
+TEST(TOMLTest, Parse_Calculate_SDF_benzene) { runParse("sdf/benzene.txt", 80, false); }
 TEST(TOMLTest, Parse_Correlations) { runParse("correlations/sq.txt", 1); }
 
 TEST(TOMLTest, Parse_EnergyForce1_water3000_coul) { runParse("energyforce1/water3000-coul.txt"); }
@@ -111,10 +112,10 @@ TEST(TOMLTest, Parse_EnergyForce3_py5_ntf2) { runParse("energyforce3/py5-ntf2.tx
 TEST(TOMLTest, Parse_EnergyForce4_py4oh_ntf2) { runParse("energyforce4/py4oh-ntf2.txt"); }
 TEST(TOMLTest, Parse_EnergyForce4_py5_ntf2) { runParse("energyforce4/py5-ntf2.txt"); }
 
-TEST(TOMLTest, Parse_EPSR_estimatedsq) { runParse("epsr/benzene.txt"); }
+TEST(TOMLTest, Parse_EPSR_estimatedsq) { runParse("epsr/benzene.txt", 1, false); }
 TEST(TOMLTest, Parse_EPSR_read_pcof) { runParse("epsr/pcof.txt"); }
-TEST(TOMLTest, Parse_EPSR_neutron_xray) { runParse("epsr/water-neutron-xray.txt"); }
-TEST(TOMLTest, Parse_EPSR_poisson) { runParse("epsr/water-poisson.txt"); }
+TEST(TOMLTest, Parse_EPSR_neutron_xray) { runParse("epsr/water-neutron-xray.txt", 1, false); }
+TEST(TOMLTest, Parse_EPSR_poisson) { runParse("epsr/water-poisson.txt", 1, false); }
 
 TEST(TOMLTest, Parse_Exchangeable_mix) { runParse("exchangeable/watermeth.txt"); }
 
