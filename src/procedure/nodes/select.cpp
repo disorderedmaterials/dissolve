@@ -63,10 +63,10 @@ void SelectProcedureNode::setName(std::string_view name)
     name_ = DissolveSys::niceName(name);
 
     // Update parameter names to match
-    nSelectedParameter_->setName(fmt::format("{}.nSelected", name_));
-    siteIndexParameter_->setName(fmt::format("{}.siteIndex", name_));
-    stackIndexParameter_->setName(fmt::format("{}.stackIndex", name_));
-    indexParameter_->setName(fmt::format("{}.index", name_));
+    nSelectedParameter_->setBaseName(fmt::format("{}.nSelected", name_));
+    siteIndexParameter_->setBaseName(fmt::format("{}.siteIndex", name_));
+    stackIndexParameter_->setBaseName(fmt::format("{}.stackIndex", name_));
+    indexParameter_->setBaseName(fmt::format("{}.index", name_));
 }
 
 /*

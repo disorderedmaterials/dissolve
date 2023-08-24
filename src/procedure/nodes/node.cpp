@@ -238,7 +238,7 @@ OptionalReferenceWrapper<ProcedureNodeSequence> ProcedureNode::branch() { return
  */
 
 // Add new parameter
-std::shared_ptr<ExpressionVariable> ProcedureNode::addParameter(std::string_view name, ExpressionValue initialValue)
+std::shared_ptr<ExpressionVariable> ProcedureNode::addParameter(std::string_view name, const ExpressionValue &initialValue)
 {
     return parameters_.emplace_back(std::make_shared<ExpressionVariable>(name, initialValue));
 }

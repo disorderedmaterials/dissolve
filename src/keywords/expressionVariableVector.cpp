@@ -42,24 +42,21 @@ bool ExpressionVariableVectorKeyword::deserialise(LineParser &parser, int startA
         return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableVector data.\n");
 
     // First argument is the name of the parameter to create - does it already exist in the node's current scope?
-    auto parameter = parentNode_->getParameter(parser.argsv(startArg), true);
-    if (parameter)
+    if (parentNode_->getParameter(parser.argsv(startArg), true))
         return Messenger::error("A parameter with the name '{}' is already in scope, and cannot be redefined.\n",
                                 parser.argsv(startArg));
 
     // Create a new one
-    parameter = std::make_shared<ExpressionVariable>();
-    data_.emplace_back(parameter);
-    parameter->setName(parser.argsv(startArg));
+    auto newVar = parentNode_->addParameter(parser.argsv(startArg));
 
     // Set the value
     bool isFloatingPoint = false;
     if (DissolveSys::isNumber(parser.argsv(startArg + 1), isFloatingPoint))
     {
         if (isFloatingPoint)
-            parameter->setValue(parser.argd(startArg + 1));
+            newVar->setValue(parser.argd(startArg + 1));
         else
-            parameter->setValue(parser.argi(startArg + 1));
+            newVar->setValue(parser.argi(startArg + 1));
     }
     else
         return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n",
@@ -73,7 +70,7 @@ bool ExpressionVariableVectorKeyword::serialise(LineParser &parser, std::string_
 {
     for (const auto &node : data_)
     {
-        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, node->name(), node->value().asString()))
+        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, node->baseName(), node->value().asString()))
             return false;
     }
 
@@ -88,7 +85,7 @@ SerialisedValue ExpressionVariableVectorKeyword::serialise() const
 {
     SerialisedValue result;
     for (auto &i : data_)
-        result[std::string(i->name())] = i->value();
+        result[std::string(i->baseName())] = i->value();
     return result;
 }
 
@@ -96,8 +93,8 @@ SerialisedValue ExpressionVariableVectorKeyword::serialise() const
 void ExpressionVariableVectorKeyword::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
     data_.clear();
-    toMap(node, [this](const auto &key, const auto &value)
-          { data_.push_back(std::make_shared<ExpressionVariable>(key, toml::get<ExpressionValue>(value))); });
+    toMap(node,
+          [this](const auto &key, const auto &value) { parentNode_->addParameter(key, toml::get<ExpressionValue>(value)); });
 }
 
 /*

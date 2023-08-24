@@ -56,8 +56,8 @@ void IterateData1DProcedureNode::setName(std::string_view name)
     name_ = DissolveSys::niceName(name);
 
     // Update parameter names to match
-    xParameter_->setName(fmt::format("{}.x", name_));
-    valueParameter_->setName(fmt::format("{}.value", name_));
+    xParameter_->setBaseName(fmt::format("{}.x", name_));
+    valueParameter_->setBaseName(fmt::format("{}.value", name_));
 }
 
 /*

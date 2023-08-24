@@ -154,7 +154,7 @@ antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext
     // Check local variables first
     const std::vector<std::shared_ptr<ExpressionVariable>> &localVars = *localVariables_;
     auto it = std::find_if(localVars.begin(), localVars.end(),
-                           [ctx](auto var) { return DissolveSys::sameString(var->name(), ctx->Name()->getText()); });
+                           [ctx](auto var) { return DissolveSys::sameString(var->baseName(), ctx->Name()->getText()); });
     if (it == localVars.end())
     {
         // Do we have any external variables available?
@@ -165,7 +165,7 @@ antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext
         // Does the named variable exist?
         const std::vector<std::shared_ptr<ExpressionVariable>> &extVars = *externalVariables_;
         it = std::find_if(extVars.begin(), extVars.end(),
-                          [ctx](auto var) { return DissolveSys::sameString(var->name(), ctx->Name()->getText()); });
+                          [ctx](auto var) { return DissolveSys::sameString(var->baseName(), ctx->Name()->getText()); });
         if (it == extVars.end())
             throw(ExpressionExceptions::ExpressionSemanticException(
                 fmt::format("Variable '{}' does not exist in this context.\n", ctx->Name()->getText())));

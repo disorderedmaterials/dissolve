@@ -38,7 +38,7 @@ SerialisedValue ParametersProcedureNode::serialise() const
 {
     SerialisedValue result;
     for (auto &param : parameters_)
-        result[std::string(param->name())] = param->value();
+        result[std::string(param->baseName())] = param->value();
     return result;
 }
 
