@@ -27,6 +27,7 @@
 #include "gui/keywordWidgets/optionalDouble.hui"
 #include "gui/keywordWidgets/optionalInt.hui"
 #include "gui/keywordWidgets/range.h"
+#include "gui/keywordWidgets/rangeVector.h"
 #include "gui/keywordWidgets/species.h"
 #include "gui/keywordWidgets/speciesSite.h"
 #include "gui/keywordWidgets/speciesSiteVector.h"
@@ -77,6 +78,7 @@ KeywordWidgetProducer::KeywordWidgetProducer()
     registerProducer<OptionalDoubleKeyword, OptionalDoubleKeywordWidget>();
     registerProducer<OptionalIntegerKeyword, OptionalIntegerKeywordWidget>();
     registerProducer<RangeKeyword, RangeKeywordWidget>();
+    registerProducer<RangeVectorKeyword, RangeVectorKeywordWidget>();
     registerProducer<SpeciesKeyword, SpeciesKeywordWidget>();
     registerProducer<SpeciesSiteKeyword, SpeciesSiteKeywordWidget>();
     registerProducer<SpeciesSiteVectorKeyword, SpeciesSiteVectorKeywordWidget>();

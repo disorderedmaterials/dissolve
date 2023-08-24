@@ -8,6 +8,7 @@
 #include "keywords/moduleVector.h"
 #include "keywords/optionalDouble.h"
 #include "keywords/optionalInt.h"
+#include "keywords/rangeVector.h"
 #include "keywords/stdString.h"
 #include "keywords/vectorStringDouble.h"
 #include "keywords/weightedModuleVector.h"
@@ -35,6 +36,9 @@ EPSRModule::EPSRModule() : Module(ModuleTypes::EPSR)
     keywords_.setOrganisation("Advanced", "Control");
     keywords_.add<DoubleKeyword>("Weighting", "Factor used when adding fluctuation coefficients to pair potentials", weighting_,
                                  0.0, 100.0);
+
+    keywords_.setOrganisation("Advanced", "Additional R-Factors");
+    keywords_.add<RangeVectorKeyword>("RFactorRanges", "Ranges over which to calculate RFactors", ranges_);
 
     keywords_.setOrganisation("Advanced", "Expansion Function");
     keywords_.add<EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>>(
