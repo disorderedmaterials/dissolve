@@ -35,6 +35,7 @@ class EPSRModuleWidget : public ModuleWidget
     Ui::EPSRModuleWidget ui_;
     // DataViewer contained within this widget
     DataViewer *graph_;
+    QList<QAction *> rangeActionsList;
 
     public:
     // Update controls within widget
@@ -43,6 +44,7 @@ class EPSRModuleWidget : public ModuleWidget
     /*
      * Widgets / Functions
      */
+
     private slots:
     void on_TotalFQButton_clicked(bool checked);
     void on_DeltaFQButton_clicked(bool checked);

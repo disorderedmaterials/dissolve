@@ -7,6 +7,7 @@
 #include "classes/data1DStore.h"
 #include "classes/scatteringMatrix.h"
 #include "math/data1D.h"
+#include "math/range.h"
 #include "module/groups.h"
 #include "module/module.h"
 #include "templates/array3D.h"
@@ -101,6 +102,8 @@ class EPSRModule : public Module
     Data1DStore testReferenceData_;
     // Test threshold (%error) above which test fails
     double testThreshold_{0.1};
+    // Ranges to calculate rFactor over
+    std::vector<Range> ranges_;
 
     public:
     // Return list of target Modules / data for refinement
