@@ -36,7 +36,8 @@ void QSpeciesModuleWidget::updateControls(const Flags<ModuleWidget::UpdateFlags>
         qSpeciesGraph_->clearRenderables();
 
     if (qSpeciesGraph_->renderables().empty())
-        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Histogram", module_->name()), "Q-Species");
+        qSpeciesGraph_->createRenderable<RenderableData1D>(fmt::format("{}//Process1D//Histogram", module_->name()),
+                                                           "Q-Species");
 
     // Validate renderables if they need it
     qSpeciesGraph_->validateRenderables(dissolve_.processingModuleData());
