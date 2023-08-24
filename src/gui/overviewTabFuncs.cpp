@@ -10,6 +10,9 @@
 OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
+    qmlRegisterType<DissolveModel>("Dissolve", 1, 0, "DissolveModel");
+    qmlRegisterType<SpeciesModel>("Dissolve", 1, 0, "SpeciesModel");
+
     // Set up the model
     dissolveModel_.setDissolve(dissolve);
 
@@ -21,7 +24,8 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
     view_->rootContext()->setContextProperty("dissolveModel", &dissolveModel_);
     view_->setSource(QUrl("qrc:/tabs/qml/OverviewTab.qml"));
     view_->setMinimumSize(300, 300);
-
+    //view_->rootObject()->setProperty("dissolveModel", QVariant::fromValue(&dissolveModel_));
+    //iew_->rootObject()->findProperty<DissolveModel*>("dissolveModel")->setDissolve(dissolve);
     connect(view_, SIGNAL(statusChanged(QQuickWidget::Status)), SLOT(viewStatusChanged()));
 
     // Add the view to the widget, and center it
@@ -58,10 +62,10 @@ void OverviewTab::viewStatusChanged()
 {
     if (view_->status() == QQuickWidget::Status::Ready && !slotsAreSetup_)
     {
-        connect(view_->rootObject(), SIGNAL(atomTypesClicked()), this, SLOT(atomTypesClicked()));
-        connect(view_->rootObject(), SIGNAL(masterTermsClicked()), this, SLOT(masterTermsClicked()));
-        connect(view_->rootObject(), SIGNAL(configurationClicked(int)), this, SLOT(configurationClicked(int)));
-        connect(view_->rootObject(), SIGNAL(speciesClicked(int)), this, SLOT(speciesClicked(int)));
+        //connect(view_->rootObject(), SIGNAL(atomTypesClicked()), this, SLOT(atomTypesClicked()));
+        //connect(view_->rootObject(), SIGNAL(masterTermsClicked()), this, SLOT(masterTermsClicked()));
+        //connect(view_->rootObject(), SIGNAL(configurationClicked(int)), this, SLOT(configurationClicked(int)));
+        //connect(view_->rootObject(), SIGNAL(speciesClicked(int)), this, SLOT(speciesClicked(int)));
         // slotsAreSetup_ = true;
     }
 }
@@ -77,7 +81,6 @@ void OverviewTab::atomTypesClicked()
 void OverviewTab::masterTermsClicked()
 {
     tabWidget_->setCurrentIndex(1);
-    auto *tab = dynamic_cast<ForcefieldTab *>(tabWidget_->currentTab());
     auto *tab = dynamic_cast<ForcefieldTab *>(tabWidget_->currentTab());
     tab->setTab(1);
 }

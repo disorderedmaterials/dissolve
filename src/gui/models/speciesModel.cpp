@@ -25,6 +25,13 @@ const Species *SpeciesModel::rawData(const QModelIndex &index) const
     return species_->get()[index.row()].get();
 }
 
+// Refresh model data
+void SpeciesModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 /*
  * QAbstractItemModel overrides
  */
@@ -37,6 +44,8 @@ int SpeciesModel::rowCount(const QModelIndex &parent) const
 
 QVariant SpeciesModel::data(const QModelIndex &index, int role) const
 {
+    if (!index.isValid())
+        return {};
     switch (role)
     {
         case (Qt::DisplayRole):

@@ -20,11 +20,23 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
     emit modelsUpdated();
 }
 
+// Update models
+void DissolveModel::update() {
+    atomTypes_.reset();
+    speciesModel_.reset();
+    configurationModel_.reset();
+    emit modelsUpdated();
+}
+
 // The Atom Type Model
 AtomTypeModel *DissolveModel::atomTypes() { return &atomTypes_; }
 
-// Update models
-void DissolveModel::update() { emit modelsUpdated(); }
+// The number of atom types
+int DissolveModel::nAtomTypes()
+{
+    printf("There are %d atom types\n", atomTypes_.rowCount());
+    return atomTypes_.rowCount();
+}
 
 // The Master Bond Model
 const MasterBondModel *DissolveModel::bonds() const
@@ -32,6 +44,14 @@ const MasterBondModel *DissolveModel::bonds() const
     if (!masters_)
         return nullptr;
     return &masters_->bondModel_;
+}
+
+// The number of master bonds
+int DissolveModel::nMasterBonds()
+{
+    if (!masters_)
+        return 0;
+    return masters_->bondModel_.rowCount();
 }
 
 // The Master Angle Model
@@ -42,6 +62,14 @@ const MasterAngleModel *DissolveModel::angles() const
     return &masters_->angleModel_;
 }
 
+// The number of master angles
+int DissolveModel::nMasterAngles()
+{
+    if (!masters_)
+        return 0;
+    return masters_->angleModel_.rowCount();
+}
+
 // The Master Torsion Model
 const MasterTorsionModel *DissolveModel::torsions() const
 {
@@ -50,12 +78,28 @@ const MasterTorsionModel *DissolveModel::torsions() const
     return &masters_->torsionModel_;
 }
 
+// The number of master torsions
+int DissolveModel::nMasterTorsions()
+{
+    if (!masters_)
+        return 0;
+    return masters_->torsionModel_.rowCount();
+}
+
 // The Master Improper Model
 const MasterImproperModel *DissolveModel::impropers() const
 {
     if (!masters_)
         return nullptr;
     return &masters_->improperModel_;
+}
+
+// The number of master impropers
+int DissolveModel::nMasterImpropers()
+{
+    if (!masters_)
+        return 0;
+    return masters_->improperModel_.rowCount();
 }
 
 // The Species Model

@@ -198,6 +198,14 @@
     <file>qml/PrettyListView.qml</file>
   </qresource>
   <qresource prefix="tabs">
+    <file>qml/AtomTypes.qml</file>
+    <file>qml/Configuration.qml</file>
+    <file>qml/Species.qml</file>
+    <file>qml/SpeciesView.qml</file>
     <file>qml/OverviewTab.qml</file>
+    <file>qml/Bonds.qml</file>
+    <file>qml/Angles.qml</file>
+    <file>qml/Impropers.qml</file>
+    <file>qml/Torsions.qml</file>
   </qresource>
 </RCC>

@@ -26,6 +26,8 @@ class ConfigurationModel : public QAbstractListModel
     void setData(const std::vector<std::unique_ptr<Configuration>> &configuration);
     // Set vector containing checked items
     void setCheckStateData(std::vector<Configuration *> &checkedItemsVector);
+    // Refresh model data
+    void reset();
 
     /*
      * QAbstractItemModel overrides

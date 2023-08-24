@@ -5,6 +5,8 @@ import QtQuick.Layouts
 Rectangle {
 
     function generateConfigurationMarkup(index) {
+        if (!model)
+            return "";
         const configurationData = model.data;
         const configurationIndex = model.index(index, 0);
         const configurationName = configurationData(configurationIndex, Qt.DisplayRole);

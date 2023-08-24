@@ -25,6 +25,13 @@ Configuration *ConfigurationModel::rawData(const QModelIndex &index) const
     return configuration_->get()[index.row()].get();
 }
 
+// Refresh model data
+void ConfigurationModel::reset()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 /*
  * QAbstractItemModel overrides
  */
@@ -37,6 +44,9 @@ int ConfigurationModel::rowCount(const QModelIndex &parent) const
 
 QVariant ConfigurationModel::data(const QModelIndex &index, int role) const
 {
+    if (!index.isValid())
+        return {};
+
     switch (role)
     {
         case (Qt::DisplayRole):

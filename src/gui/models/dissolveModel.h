@@ -16,14 +16,24 @@ class DissolveModel : public QObject
     Q_OBJECT
     // The Atom Type Model
     Q_PROPERTY(AtomTypeModel *atomTypes READ atomTypes NOTIFY atomTypesChanged)
+    // The number of atom types
+    Q_PROPERTY(int nAtomTypes READ nAtomTypes NOTIFY modelsUpdated)
     // The Master Bond Model
     Q_PROPERTY(const MasterBondModel *bonds READ bonds NOTIFY mastersChanged)
+    // The number of master bonds
+    Q_PROPERTY(int nMasterBonds READ nMasterBonds NOTIFY modelsUpdated)
     // The Master Angle Model
     Q_PROPERTY(const MasterAngleModel *angles READ angles NOTIFY mastersChanged)
+    // The number of master angles
+    Q_PROPERTY(int nMasterAngles READ nMasterAngles NOTIFY modelsUpdated)
     // The Master Torsion Model
     Q_PROPERTY(const MasterTorsionModel *torsions READ torsions NOTIFY mastersChanged)
+    // The number of master torsions
+    Q_PROPERTY(int nMasterTorsions READ nMasterTorsions NOTIFY modelsUpdated)
     // The Master Improper Model
     Q_PROPERTY(const MasterImproperModel *impropers READ impropers NOTIFY mastersChanged)
+    // The number of master impropers
+    Q_PROPERTY(int nMasterImpropers READ nMasterImpropers NOTIFY modelsUpdated)
     // The Species Model
     Q_PROPERTY(const SpeciesModel *species READ species NOTIFY speciesChanged)
     // The Configuration Model
@@ -44,6 +54,8 @@ class DissolveModel : public QObject
     void atomTypesChanged();
     // The Master terms models have been replaced
     void mastersChanged();
+
+
     // Species model has been replaced
     void speciesChanged();
     // Configurations model has been replaced
@@ -55,14 +67,24 @@ class DissolveModel : public QObject
 
     // The Atom Type Model
     AtomTypeModel *atomTypes();
+    // The number of atom types
+    int nAtomTypes();
     // The Master Bond Model
     const MasterBondModel *bonds() const;
+    // The number of master bonds
+    int nMasterBonds();
     // The Master Angle Model
     const MasterAngleModel *angles() const;
+    // The number of master angles
+    int nMasterAngles();
     // The Master Torsion Model
     const MasterTorsionModel *torsions() const;
+    // The number of master torsions
+    int nMasterTorsions();
     // The Master Improper Model
     const MasterImproperModel *impropers() const;
+    // The number of master impropers
+    int nMasterImpropers();
     // The Species Model
     SpeciesModel *species();
     // The Configurations Model

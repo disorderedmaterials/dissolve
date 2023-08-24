@@ -27,6 +27,8 @@ class SpeciesModel : public QAbstractListModel
     void setData(const std::vector<std::unique_ptr<Species>> &species);
     // Set vector containing checked items
     void setCheckStateData(std::vector<const Species *> &checkedItemsVector);
+    // Refresh model data
+    void reset();
 
     /*
      * QAbstractItemModel overrides
