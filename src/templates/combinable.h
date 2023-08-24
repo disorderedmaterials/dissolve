@@ -6,7 +6,7 @@
 namespace dissolve
 {
 // A combinable container used in multithreading operations
-// The local method retrives a thread local object during the multithreading computations
+// The local method retrieves a thread local object during the multithreading computations
 // We then use finalize to combine each thread local storage instance into the parent container
 // using std::transform
 
@@ -36,8 +36,9 @@ template <class Container> class CombinableContainer
     Container &parent_;
     dissolve::combinable<Container> combinable_;
 };
+
 // A combinable value used in multithreading operations
-// The local method retrives a thread local object during the multithreading computations
+// The local method retrieves a thread local object during the multithreading computations
 // We then use finalize to combine each thread local storage instance into a final value
 // using the std::plus operator
 
@@ -49,7 +50,6 @@ template <class Container> class CombinableContainer
 // - After the parallel operation call finalize to retrieve the final accumulated value.
 template <class ValueType> class CombinableValue
 {
-
     public:
     template <typename Lambda> CombinableValue(Lambda initializer) : combinable_(initializer) {}
     ValueType finalize() { return combinable_.combine(std::plus<ValueType>()); }
@@ -57,6 +57,25 @@ template <class ValueType> class CombinableValue
 
     private:
     dissolve::combinable<ValueType> combinable_;
+};
+
+// A combinable functor used in multithreading operations
+// The local method retrieves a thread local object during the multithreading computations
+
+// Usage:
+// - Create an instance by passing in a lambda initializer which specifies how to create local
+// instances of the value type
+// - Capture the combinable by reference in the lambda operator of the parallel operation
+// - Within the lambda operator call local() to access a thread local version of the container
+template <class ClassType> class CombinableFunctor
+{
+
+    public:
+    template <typename Lambda> CombinableFunctor(Lambda initializer) : combinable_(initializer) {}
+    ClassType &local() { return combinable_.local(); }
+
+    private:
+    dissolve::combinable<ClassType> combinable_;
 };
 
 } // namespace dissolve

@@ -22,32 +22,21 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, Dissolve &dissolve)
             SLOT(speciesSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set model, signals, and lambdas for atom types list
-    atomTypesModel_.setIconFunction(
-        [&](const std::shared_ptr<AtomType> &atomType)
-        {
-            return QIcon(dissolve_.coreData().findAtomType(atomType->name()) ? ":/general/icons/warn.svg"
-                                                                             : ":/general/icons/true.svg");
-        });
+    atomTypesModel_.setIconFunction([&](const std::shared_ptr<AtomType> &atomType)
+                                    { return dissolve_.coreData().findAtomType(atomType->name()) != nullptr; });
     ui_.AtomTypesList->setModel(&atomTypesModel_);
     connect(ui_.AtomTypesList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(atomTypeSelectionChanged(const QItemSelection &, const QItemSelection &)));
 
     // Set model and signals for the master terms tree
-    masterTermModel_.setBondIconFunction(
-        [&](std::string_view name)
-        { return QIcon(dissolve_.coreData().getMasterBond(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg"); });
-    masterTermModel_.setAngleIconFunction(
-        [&](std::string_view name)
-        { return QIcon(dissolve_.coreData().getMasterAngle(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg"); });
-    masterTermModel_.setTorsionIconFunction(
-        [&](std::string_view name) {
-            return QIcon(dissolve_.coreData().getMasterTorsion(name) ? ":/general/icons/warn.svg" : ":/general/icons/true.svg");
-        });
-    masterTermModel_.setImproperIconFunction(
-        [&](std::string_view name) {
-            return QIcon(dissolve_.coreData().getMasterImproper(name) ? ":/general/icons/warn.svg"
-                                                                      : ":/general/icons/true.svg");
-        });
+    masterTermModel_.setBondIconFunction([&](std::string_view name)
+                                         { return dissolve_.coreData().getMasterBond(name).has_value(); });
+    masterTermModel_.setAngleIconFunction([&](std::string_view name)
+                                          { return dissolve_.coreData().getMasterAngle(name).has_value(); });
+    masterTermModel_.setTorsionIconFunction([&](std::string_view name)
+                                            { return dissolve_.coreData().getMasterTorsion(name).has_value(); });
+    masterTermModel_.setImproperIconFunction([&](std::string_view name)
+                                             { return dissolve_.coreData().getMasterImproper(name).has_value(); });
     ui_.MasterTermsTree->setModel(&masterTermModel_);
     connect(&masterTermModel_, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this,
             SLOT(masterTermDataChanged(const QModelIndex &, const QModelIndex &)));

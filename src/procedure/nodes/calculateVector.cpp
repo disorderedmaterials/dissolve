@@ -56,12 +56,12 @@ bool CalculateVectorProcedureNode::execute(const ProcedureContext &procedureCont
     assert(sites_[1] && sites_[1]->currentSite());
 
     // Determine the value of the observable
-    value_ = procedureContext.configuration()->box()->minimumVector(sites_[0]->currentSite()->origin(),
-                                                                    sites_[1]->currentSite()->origin());
+    value_ = procedureContext.configuration()->box()->minimumVector(sites_[0]->currentSite()->get().origin(),
+                                                                    sites_[1]->currentSite()->get().origin());
 
     // Rotate the vector into the local frame defined on the first site?
     if (rotateIntoFrame_)
-        value_ = sites_[0]->currentSite()->axes().transposeMultiply(value_);
+        value_ = sites_[0]->currentSite()->get().axes().transposeMultiply(value_);
 
     return true;
 }

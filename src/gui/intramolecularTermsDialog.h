@@ -38,8 +38,8 @@ class IntramolecularTermsDialog : public QDialog
      * Models
      */
     private:
-    SpeciesAngleModel angles_;
     SpeciesBondModel bonds_;
+    SpeciesAngleModel angles_;
     SpeciesTorsionModel torsions_;
     SpeciesImproperModel impropers_;
 
