@@ -13,6 +13,7 @@
 #include "math/data2D.h"
 #include "math/data3D.h"
 #include "math/error.h"
+#include "math/range.h"
 #include "math/sampledData1D.h"
 #include "module/context.h"
 #include "module/module.h"
@@ -36,6 +37,12 @@ class CompareModule : public Module
     Error::ErrorType errorType_{Error::EuclideanError};
     // Threshold for error metric above which test fails
     double threshold_{5.0e-3};
+    // Ranges to calculate error over
+    std::vector<Range> ranges_;
+    // Vector of pairs to hold reference to range and their associated errors
+    std::vector<std::pair<std::vector<Range> &, std::vector<double>>> rangeError1D_;
+    std::vector<std::pair<std::vector<Range> &, std::vector<double>>> rangeError2D_;
+    std::vector<std::pair<std::vector<Range> &, std::vector<double>>> rangeError3D_;
 
     /*
      * Processing
@@ -65,15 +72,22 @@ class CompareModule : public Module
     // Fetch internal data
     template <typename T> bool fetchData(T &data, ModuleContext &moduleContext)
     {
+
+        // If data is not empty (external)
+        if (!data.values().empty())
+        {
+            return true;
+        }
+
         // If data is a child of Data1DBase
         if (std::is_convertible<T *, Data1DBase *>::value)
         {
             // Locate target data from tag and cast to base
             auto optData =
-                moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(data.tag);
+                moduleContext.dissolve().processingModuleData().searchBase<Data1DBase, Data1D, SampledData1D>(data.tag());
             if (!optData)
             {
-                return Messenger::error("No data with tag '{}' exists.\n", data.tag);
+                return Messenger::error("No data with tag '{}' exists.\n", data.tag());
             }
             // Fill object with located data
             data = optData->get();
@@ -83,10 +97,10 @@ class CompareModule : public Module
         else
         {
             // Locate target data from tag and cast to base
-            auto optData = moduleContext.dissolve().processingModuleData().search<const T>(data.tag);
+            auto optData = moduleContext.dissolve().processingModuleData().search<const T>(data.tag());
             if (!optData)
             {
-                return Messenger::error("No data with tag '{}' exists.\n", data.tag);
+                return Messenger::error("No data with tag '{}' exists.\n", data.tag());
             }
             // Fill object with located data
             data = optData->get();

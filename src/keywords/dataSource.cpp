@@ -93,7 +93,7 @@ bool DataSourceKeyword<T, F>::deserialise(LineParser &parser, int startArg, cons
         dataSources.push_back(std::make_pair(source, std::reference_wrapper<T>(data)));
     }
 
-    // Once finished reading the arguements, add the data to the module
+    // Once finished reading the arguments, add the data to the module
     if (!addData_(dataVector))
     {
         Messenger::error("Failed to add data sources supplied for keyword '{}'", name());
@@ -135,7 +135,7 @@ bool DataSourceKeyword<T, F>::serialise(LineParser &parser, std::string_view key
                 if (!format_->writeFilenameAndFormat(parser, prefix))
                     return false;
                 // Write extra keywords
-                if (!format_->writeBlock(parser, prefix))
+                if (!format_->writeBlock(parser, prefix)) // Express as a serialisable value
                     return false;
                 // End the block
                 if (!parser.writeLineF("End{}", source))
@@ -151,16 +151,13 @@ bool DataSourceKeyword<T, F>::serialise(LineParser &parser, std::string_view key
 }
 
 // Express as a serialisable value
-template <typename T, typename F> SerialisedValue DataSourceKeyword<T, F>::serialise() const { return data_; }
+template <typename T, typename F> SerialisedValue DataSourceKeyword<T, F>::serialise() const { return SerialisedValue(); }
 
 // Read values from a serialisable value
 template <typename T, typename F>
 void DataSourceKeyword<T, F>::deserialise(const SerialisedValue &node, const CoreData &coreData)
 {
 }
-
-// Has not changed from initial value
-template <typename T, typename F> bool DataSourceKeyword<T, F>::isDefault() const { return data_.empty(); }
 
 // Explicit instantiation of allowed template types
 template class DataSourceKeyword<Data1D, std::function<bool(std::vector<Data1D>)>>;
