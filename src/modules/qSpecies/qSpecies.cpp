@@ -41,15 +41,17 @@ QSpeciesModule::QSpeciesModule() : Module(ModuleTypes::QSpecies), analyser_(Proc
     siteIndex->setExpression("NF.siteIndex");
     auto collectNFIndex = forEachNF.create<IntegerCollect1DProcedureNode>("NFBins", siteIndex, ProcedureNode::AnalysisContext);
 
-    // Get number of BO withing NF
+    // Get number of BO within NF
     auto iterateNFIndex = analyser_.createRootNode<IterateData1DProcedureNode>("Flatten", collectNFIndex);
     auto &forEachNFIndex = iterateNFIndex->branch()->get();
     auto value = forEachNFIndex.create<CalculateExpressionProcedureNode>({});
-    value->setExpression("value");
+    value->setExpression("Value");
 
     // Collect and process BO
     auto collectQ = forEachNFIndex.create<IntegerCollect1DProcedureNode>("Bins", value, ProcedureNode::AnalysisContext);
     auto processNF = analyser_.createRootNode<Process1DProcedureNode>("Histogram", collectQ);
+    auto &normalisation = processNF->branch()->get();
+    normalisation.create<OperateNormaliseProcedureNode>({});
 
     /*
      * Keywords
