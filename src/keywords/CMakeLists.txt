@@ -27,6 +27,7 @@ add_library(
   optionalInt.cpp
   procedure.cpp
   range.cpp
+  rangeVector.cpp
   species.cpp
   speciesSite.cpp
   speciesSiteVector.cpp
@@ -84,6 +85,7 @@ add_library(
   stdString.h
   store.h
   storeData.h
+  rangeVector.h
   valueStore.h
   vec3Double.h
   vec3Integer.h
