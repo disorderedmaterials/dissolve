@@ -7,22 +7,46 @@ import Dissolve
 
 ColumnLayout {
     id: root
+    signal atomTypesClicked
+    signal masterTermsClicked
+    signal speciesClicked(int index)
+    signal configurationClicked(int index)
 
     RowLayout {
         AtomTypes {
             nAtomTypes: dissolveModel.nAtomTypes
+            MouseArea {
+                anchors.fill: parent
+                onClicked: root.atomTypesClicked()
+            }
         }
         Bonds {
             nBonds: dissolveModel.nMasterBonds
+            MouseArea {
+                anchors.fill: parent
+                onClicked: root.masterTermsClicked()
+            }
         }
         Angles {
             nAngles: dissolveModel.nMasterAngles
+            MouseArea {
+                anchors.fill: parent
+                onClicked: root.masterTermsClicked()
+            }
         }
         Torsions {
             nTorsions: dissolveModel.nMasterTorsions
+            MouseArea {
+                anchors.fill: parent
+                onClicked: root.masterTermsClicked()
+            }
         }
         Impropers {
             nImpropers: dissolveModel.nMasterImpropers
+            MouseArea {
+                anchors.fill: parent
+                onClicked: root.masterTermsClicked()
+            }
         }
     }
 
@@ -33,6 +57,10 @@ ColumnLayout {
             delegate: Species {
                 model: dissolveModel.species
                 modelData: model
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: root.speciesClicked(index)
+                }
             }
         }
     }
@@ -44,6 +72,10 @@ ColumnLayout {
             delegate: Configuration {
                 model: dissolveModel.configurations
                 modelData: model
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: root.configurationClicked(index)
+                }
             }
         }
     }
