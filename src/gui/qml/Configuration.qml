@@ -2,11 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Rectangle {
+OverviewRectangle {
 
     function generateConfigurationMarkup(index) {
-        if (!model)
-            return "";
         const configurationData = model.data;
         const configurationIndex = model.index(index, 0);
         const configurationName = configurationData(configurationIndex, Qt.DisplayRole);
@@ -23,13 +21,6 @@ Rectangle {
     `;
         return markup;
     }
-
-    id: root
-    border.color: "steelblue"
-    color: "lightblue"
-    height: 100
-    radius: 5
-    width: 100
 
     property variant modelData
     property variant model

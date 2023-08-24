@@ -206,5 +206,6 @@
     <file>qml/Angles.qml</file>
     <file>qml/Impropers.qml</file>
     <file>qml/Torsions.qml</file>
+    <file>qml/OverviewRectangle.qml</file>
   </qresource>
 </RCC>

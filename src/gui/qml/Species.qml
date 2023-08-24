@@ -2,11 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Rectangle {
+OverviewRectangle {
 
     function generateSpeciesMarkup(index) {
-        if (!model)
-            return "";
         const speciesData = model.data;
         const speciesIndex = model.index(index, 0);
         const speciesName = speciesData(speciesIndex, Qt.DisplayRole);
@@ -27,17 +25,8 @@ Rectangle {
     `;
         return markup;
     }
-
-    id: root
-    border.color: "steelblue"
-    color: "lightblue"
-    height: 100
-    radius: 5
-    width: 100
-
     property variant modelData
     property variant model
-
     Text {
         text: generateSpeciesMarkup(index)
     }
