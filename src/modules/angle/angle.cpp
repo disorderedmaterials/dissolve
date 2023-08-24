@@ -71,8 +71,7 @@ AngleModule::AngleModule() : Module(ModuleTypes::Angle), analyser_(ProcedureNode
 
     // -- -- -- Collect3D:  'rAB vs rBC vs aABC'
     collectDDA_ = forEachC.create<Collect3DProcedureNode>({}, calcAB, calcBC, calculateAngle_, ProcedureNode::AnalysisContext,
-                                                          rangeAB_.x, rangeAB_.y, rangeAB_.z, rangeBC_.x, rangeBC_.y,
-                                                          rangeBC_.z, angleRange_.x, angleRange_.y, angleRange_.z);
+                                                          rangeAB_, rangeBC_, angleRange_);
 
     // Process1D: 'RDF(AB)'
     processAB_ = analyser_.createRootNode<Process1DProcedureNode>("RDF(AB)", collectAB_);
