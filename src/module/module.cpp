@@ -24,6 +24,7 @@ EnumOptions<ModuleTypes::ModuleType> moduleTypes_("ModuleType", {{ModuleTypes::A
                                                                  {ModuleTypes::Bragg, "Bragg"},
                                                                  {ModuleTypes::Checks, "Checks"},
                                                                  {ModuleTypes::CheckSpecies, "CheckSpecies"},
+                                                                 {ModuleTypes::Compare, "Compare"},
                                                                  {ModuleTypes::DAngle, "DAngle"},
                                                                  {ModuleTypes::DataTest, "DataTest"},
                                                                  {ModuleTypes::Energy, "Energy"},

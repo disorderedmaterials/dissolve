@@ -26,7 +26,7 @@ class Data1D : public Data1DBase, public Serialisable<>
      */
     private:
     // Tag for data (optional)
-    std::string tag_{""};
+    std::string tag_;
     // X array
     std::vector<double> x_;
     // Values at each x
