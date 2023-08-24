@@ -15,12 +15,11 @@
 Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xObservable,
                                                std::shared_ptr<CalculateProcedureNodeBase> yObservable,
                                                std::shared_ptr<CalculateProcedureNodeBase> zObservable,
-                                               ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
-                                               double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
-                                               double zMax, double zBinWidth)
+                                               ProcedureNode::NodeContext subCollectContext, Vec3<double> xMinMaxBin,
+                                               Vec3<double> yMinMaxBin, Vec3<double> zMinMaxBin)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D, {ProcedureNode::AnalysisContext}), xObservable_{xObservable, 0},
-      yObservable_{yObservable, 0}, zObservable_{zObservable, 0}, rangeX_{xMin, xMax, xBinWidth},
-      rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax, zBinWidth}, subCollectBranch_(subCollectContext, *this, "SubCollect")
+      yObservable_{yObservable, 0}, zObservable_{zObservable, 0}, rangeX_{xMinMaxBin}, rangeY_{yMinMaxBin}, rangeZ_{zMinMaxBin},
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.setOrganisation("Options", "Quantities / Ranges");
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityX", "Calculated observable to collect for x axis",
@@ -43,12 +42,12 @@ Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedur
                                            subCollectBranch_);
 }
 Collect3DProcedureNode::Collect3DProcedureNode(std::shared_ptr<CalculateProcedureNodeBase> xyzObservable,
-                                               ProcedureNode::NodeContext subCollectContext, double xMin, double xMax,
-                                               double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
-                                               double zMax, double zBinWidth)
+                                               ProcedureNode::NodeContext subCollectContext, Vec3<double> xMinMaxBin,
+                                               Vec3<double> yMinMaxBin, Vec3<double> zMinMaxBin)
     : ProcedureNode(ProcedureNode::NodeType::Collect3D, {ProcedureNode::AnalysisContext}), xObservable_{xyzObservable, 0},
-      yObservable_{xyzObservable, 1}, zObservable_{xyzObservable, 2}, rangeX_{xMin, xMax, xBinWidth},
-      rangeY_{yMin, yMax, yBinWidth}, rangeZ_{zMin, zMax, zBinWidth}, subCollectBranch_(subCollectContext, *this, "SubCollect")
+      yObservable_{xyzObservable, 1},
+      zObservable_{xyzObservable, 2}, rangeX_{xMinMaxBin}, rangeY_{yMinMaxBin}, rangeZ_{zMinMaxBin},
+      subCollectBranch_(subCollectContext, *this, "SubCollect")
 {
     keywords_.setOrganisation("Options", "Quantities / Ranges");
     keywords_.add<NodeAndIntegerKeyword<CalculateProcedureNodeBase>>("QuantityX", "Calculated observable to collect for x axis",
