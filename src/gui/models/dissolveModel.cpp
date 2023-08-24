@@ -23,6 +23,13 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 // Update models
 void DissolveModel::update() {
     atomTypes_.reset();
+    if (masters_)
+    {
+        masters_->bondModel_.reset();
+        masters_->angleModel_.reset();
+        masters_->torsionModel_.reset();
+        masters_->improperModel_.reset();
+    }
     speciesModel_.reset();
     configurationModel_.reset();
     emit modelsUpdated();
@@ -34,7 +41,6 @@ AtomTypeModel *DissolveModel::atomTypes() { return &atomTypes_; }
 // The number of atom types
 int DissolveModel::nAtomTypes()
 {
-    printf("There are %d atom types\n", atomTypes_.rowCount());
     return atomTypes_.rowCount();
 }
 
