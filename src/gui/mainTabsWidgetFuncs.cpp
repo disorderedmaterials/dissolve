@@ -344,6 +344,18 @@ void MainTabsWidget::setCurrentTab(Species *species)
     else
         Messenger::error("Can't display SpeciesTab for Species '{}' as it doesn't exist.\n", species->name());
 }
+void MainTabsWidget::setCurrentTab(const Species *species)
+{
+    if (!species)
+        return;
+
+    auto it = std::find_if(speciesTabs_.begin(), speciesTabs_.end(),
+                           [species](const auto &tab) { return tab->species() == species; });
+    if (it != speciesTabs_.end())
+        setCurrentWidget((*it)->page());
+    else
+        Messenger::error("Can't display SpeciesTab for Species '{}' as it doesn't exist.\n", species->name());
+}
 
 // Make specified Configuration tab the current one
 void MainTabsWidget::setCurrentTab(Configuration *cfg)

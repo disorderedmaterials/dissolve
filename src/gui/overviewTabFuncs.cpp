@@ -24,8 +24,7 @@ OverviewTab::OverviewTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, Mai
     view_->rootContext()->setContextProperty("dissolveModel", &dissolveModel_);
     view_->setSource(QUrl("qrc:/tabs/qml/OverviewTab.qml"));
     view_->setMinimumSize(300, 300);
-    //view_->rootObject()->setProperty("dissolveModel", QVariant::fromValue(&dissolveModel_));
-    //iew_->rootObject()->findProperty<DissolveModel*>("dissolveModel")->setDissolve(dissolve);
+
     connect(view_, SIGNAL(statusChanged(QQuickWidget::Status)), SLOT(viewStatusChanged()));
 
     // Add the view to the widget, and center it
@@ -45,7 +44,7 @@ MainTab::TabType OverviewTab::type() const { return MainTab::TabType::Overview; 
  */
 
 // Update controls in tab
-void OverviewTab::updateControls() { dissolveModel_.update(); }
+void OverviewTab::updateControls() {dissolveModel_.update();}
 
 // Prevent editing within tab
 void OverviewTab::preventEditing() {}
@@ -62,11 +61,11 @@ void OverviewTab::viewStatusChanged()
 {
     if (view_->status() == QQuickWidget::Status::Ready && !slotsAreSetup_)
     {
-        //connect(view_->rootObject(), SIGNAL(atomTypesClicked()), this, SLOT(atomTypesClicked()));
-        //connect(view_->rootObject(), SIGNAL(masterTermsClicked()), this, SLOT(masterTermsClicked()));
-        //connect(view_->rootObject(), SIGNAL(configurationClicked(int)), this, SLOT(configurationClicked(int)));
-        //connect(view_->rootObject(), SIGNAL(speciesClicked(int)), this, SLOT(speciesClicked(int)));
-        // slotsAreSetup_ = true;
+        connect(view_->rootObject(), SIGNAL(atomTypesClicked()), this, SLOT(atomTypesClicked()));
+        connect(view_->rootObject(), SIGNAL(masterTermsClicked()), this, SLOT(masterTermsClicked()));
+        connect(view_->rootObject(), SIGNAL(configurationClicked(int)), this, SLOT(configurationClicked(int)));
+        connect(view_->rootObject(), SIGNAL(speciesClicked(int)), this, SLOT(speciesClicked(int)));
+        slotsAreSetup_ = true;
     }
 }
 
@@ -87,9 +86,8 @@ void OverviewTab::masterTermsClicked()
 // Species clicked
 void OverviewTab::speciesClicked(int index)
 {
-    Messenger::print("Species clicked.");
-    // auto *species = dissolveModel_.species()->data(dissolveModel_.species()->index(index, 0),
-    // Qt::UserRole).value<Species*>(); tabWidget_->setCurrentTab(species);
+    auto *species = dissolveModel_.species()->data(dissolveModel_.species()->index(index, 0), Qt::UserRole).value<const Species*>();
+    tabWidget_->setCurrentTab(species);
 }
 
 // Configuration clicked
