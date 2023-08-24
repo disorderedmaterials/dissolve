@@ -46,29 +46,7 @@ void CalculateAxisAngleProcedureNode::setName(std::string_view name)
     name_ = DissolveSys::niceName(name);
 
     // Update parameter names to match
-    angleParameter_->setName(fmt::format("{}.theta", name_));
-}
-
-/*
- * Parameters
- */
-
-// Return the named parameter (if it exists)
-std::shared_ptr<ExpressionVariable>
-CalculateAxisAngleProcedureNode::getParameter(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter)
-{
-    for (auto var : parameters_)
-        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
-            return var;
-
-    return nullptr;
-}
-
-// Return vector of all parameters for this node
-OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>>
-CalculateAxisAngleProcedureNode::parameters() const
-{
-    return parameters_;
+    angleParameter_->setBaseName(fmt::format("{}.theta", name_));
 }
 
 /*
