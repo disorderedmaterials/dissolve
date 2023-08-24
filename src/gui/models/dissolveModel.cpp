@@ -21,7 +21,8 @@ void DissolveModel::setDissolve(Dissolve &dissolve)
 }
 
 // Update models
-void DissolveModel::update() {
+void DissolveModel::update()
+{
     atomTypes_.reset();
     if (masters_)
     {
@@ -39,10 +40,7 @@ void DissolveModel::update() {
 AtomTypeModel *DissolveModel::atomTypes() { return &atomTypes_; }
 
 // The number of atom types
-int DissolveModel::nAtomTypes()
-{
-    return atomTypes_.rowCount();
-}
+int DissolveModel::nAtomTypes() { return atomTypes_.rowCount(); }
 
 // The Master Bond Model
 const MasterBondModel *DissolveModel::bonds() const

@@ -2,8 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-OverviewRectangle{
+OverviewRectangle {
     property int nImpropers
+
     Text {
         text: `Impropers(${nImpropers})`
     }

@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 OverviewRectangle {
+    property variant model
+    property variant modelData
 
     function generateConfigurationMarkup(index) {
         const configurationData = model.data;
@@ -21,9 +23,6 @@ OverviewRectangle {
     `;
         return markup;
     }
-
-    property variant modelData
-    property variant model
 
     Text {
         text: generateConfigurationMarkup(index)

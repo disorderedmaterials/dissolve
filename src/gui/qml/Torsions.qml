@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 OverviewRectangle {
     property int nTorsions
+
     Text {
         text: `Torsions(${nTorsions})`
     }

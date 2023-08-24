@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 OverviewRectangle {
     property int nAtomTypes
+
     Text {
         text: `Atom Types(${nAtomTypes})`
     }

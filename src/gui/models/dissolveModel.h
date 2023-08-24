@@ -55,7 +55,6 @@ class DissolveModel : public QObject
     // The Master terms models have been replaced
     void mastersChanged();
 
-
     // Species model has been replaced
     void speciesChanged();
     // Configurations model has been replaced

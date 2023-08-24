@@ -3,6 +3,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 OverviewRectangle {
+    property variant model
+    property variant modelData
 
     function generateSpeciesMarkup(index) {
         const speciesData = model.data;
@@ -25,8 +27,7 @@ OverviewRectangle {
     `;
         return markup;
     }
-    property variant modelData
-    property variant model
+
     Text {
         text: generateSpeciesMarkup(index)
     }

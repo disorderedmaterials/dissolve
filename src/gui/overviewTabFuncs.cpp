@@ -44,7 +44,7 @@ MainTab::TabType OverviewTab::type() const { return MainTab::TabType::Overview; 
  */
 
 // Update controls in tab
-void OverviewTab::updateControls() {dissolveModel_.update();}
+void OverviewTab::updateControls() { dissolveModel_.update(); }
 
 // Prevent editing within tab
 void OverviewTab::preventEditing() {}
@@ -86,7 +86,8 @@ void OverviewTab::masterTermsClicked()
 // Species clicked
 void OverviewTab::speciesClicked(int index)
 {
-    auto *species = dissolveModel_.species()->data(dissolveModel_.species()->index(index, 0), Qt::UserRole).value<const Species*>();
+    auto *species =
+        dissolveModel_.species()->data(dissolveModel_.species()->index(index, 0), Qt::UserRole).value<const Species *>();
     tabWidget_->setCurrentTab(species);
 }
 
