@@ -201,7 +201,6 @@
     <file>qml/AtomTypes.qml</file>
     <file>qml/Configuration.qml</file>
     <file>qml/Species.qml</file>
-    <file>qml/SpeciesView.qml</file>
     <file>qml/OverviewTab.qml</file>
     <file>qml/Bonds.qml</file>
     <file>qml/Angles.qml</file>
